@@ -20,15 +20,15 @@ import testOnly.utils.{DelegatedEnrolmentValues, EnrolmentValues}
 
 import scala.util.Random
 
+case class UserCredentials(
+    credId:                 String,
+    affinityGroup:          String,
+    confidenceLevel:        Int,
+    credentialStrength:     String,
+    Role:                   String,
+    enrolmentData:          EnrolmentValues,
+    delegatedEnrolmentData: Option[DelegatedEnrolmentValues])
 
-case class UserCredentials(credId: String,
-                           affinityGroup: String,
-                           confidenceLevel: Int,
-                           credentialStrength: String,
-                           Role: String,
-                           enrolmentData : EnrolmentValues,
-                           delegatedEnrolmentData: Option[DelegatedEnrolmentValues])
-
-object UserCredentials{
+object UserCredentials {
   def credId: String = Random.alphanumeric.take(16).mkString("")
 }

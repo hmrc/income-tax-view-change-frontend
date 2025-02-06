@@ -38,26 +38,31 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class NextUpdatesController @Inject()(
-                                       noNextUpdatesView: NoNextUpdates,
-                                       nextUpdatesView: NextUpdates,
-                                       nextUpdatesOptOutView: NextUpdatesOptOut,
-                                       auditingService: AuditingService,
-                                       nextUpdatesService: NextUpdatesService,
-                                       itvcErrorHandler: ItvcErrorHandler,
-                                       optOutService: OptOutService,
-                                       nextUpdatesViewUtils: NextUpdatesViewUtils,
-                                       val appConfig: FrontendAppConfig,
-                                       val authActions: AuthActions
-                                     )
-                                     (
-                                       implicit mcc: MessagesControllerComponents,
-                                       val agentItvcErrorHandler: AgentItvcErrorHandler,
-                                       val ec: ExecutionContext
-                                     )
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+class NextUpdatesController @Inject() (
+    noNextUpdatesView:     NoNextUpdates,
+    nextUpdatesView:       NextUpdates,
+    nextUpdatesOptOutView: NextUpdatesOptOut,
+    auditingService:       AuditingService,
+    nextUpdatesService:    NextUpdatesService,
+    itvcErrorHandler:      ItvcErrorHandler,
+    optOutService:         OptOutService,
+    nextUpdatesViewUtils:  NextUpdatesViewUtils,
+    val appConfig:         FrontendAppConfig,
+    val authActions:       AuthActions
+  )(
+    implicit mcc:              MessagesControllerComponents,
+    val agentItvcErrorHandler: AgentItvcErrorHandler,
+    val ec:                    ExecutionContext)
+    extends FrontendController(mcc)
+    with FeatureSwitching
+    with I18nSupport {
 
-  private def hasAnyIncomeSource(action: => Future[Result])(implicit user: MtdItUser[_], origin: Option[String]): Future[Result] = {
+  private def hasAnyIncomeSource(
+      action: => Future[Result]
+    )(
+      implicit user: MtdItUser[_],
+      origin:        Option[String]
+    ): Future[Result] = {
 
     if (user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
       action
@@ -66,8 +71,14 @@ class NextUpdatesController @Inject()(
     }
   }
 
-  def getNextUpdates(backUrl: Call, isAgent: Boolean, errorHandler: ShowInternalServerError, origin: Option[String] = None)
-                    (implicit user: MtdItUser[_]): Future[Result] = {
+  def getNextUpdates(
+      backUrl:      Call,
+      isAgent:      Boolean,
+      errorHandler: ShowInternalServerError,
+      origin:       Option[String] = None
+    )(
+      implicit user: MtdItUser[_]
+    ): Future[Result] = {
 
     hasAnyIncomeSource {
       for {
@@ -100,7 +111,9 @@ class NextUpdatesController @Inject()(
             }.recoverWith {
               case ex =>
                 Logger("application").error(s"Failed to retrieve quarterly reporting content checks: ${ex.getMessage}")
-                Future.successful(Ok(nextUpdatesView(viewModel, backUrl.url, isAgent, user.isSupportingAgent, origin))) // Render view even on failure
+                Future.successful(
+                  Ok(nextUpdatesView(viewModel, backUrl.url, isAgent, user.isSupportingAgent, origin))
+                ) // Render view even on failure
             }
 
             optOutSetup
@@ -113,30 +126,43 @@ class NextUpdatesController @Inject()(
     }(user, origin)
   }
 
+  def show(origin: Option[String] = None): Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit user =>
+      getNextUpdates(
+        backUrl = controllers.routes.HomeController.show(origin),
+        isAgent = false,
+        errorHandler = itvcErrorHandler,
+        origin = origin
+      )
+    }
 
-  def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async { implicit user =>
-    getNextUpdates(
-      backUrl = controllers.routes.HomeController.show(origin),
-      isAgent = false,
-      errorHandler = itvcErrorHandler,
-      origin = origin
-    )
-  }
-
-  def showAgent: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
-    implicit mtdItUser =>
+  def showAgent: Action[AnyContent] =
+    authActions.asMTDAgentWithConfirmedClient.async { implicit mtdItUser =>
       getNextUpdates(
         backUrl = controllers.routes.HomeController.showAgent,
         isAgent = true,
         errorHandler = agentItvcErrorHandler,
         origin = None
       )
-  }
+    }
 
-  private def auditNextUpdates[A](user: MtdItUser[A], isAgent: Boolean, origin: Option[String])(implicit hc: HeaderCarrier, request: Request[_]): Unit =
+  private def auditNextUpdates[A](
+      user:    MtdItUser[A],
+      isAgent: Boolean,
+      origin:  Option[String]
+    )(
+      implicit hc: HeaderCarrier,
+      request:     Request[_]
+    ): Unit =
     if (isAgent) {
-      auditingService.extendedAudit(NextUpdatesAuditModel(user), Some(controllers.routes.NextUpdatesController.showAgent.url))
+      auditingService.extendedAudit(
+        NextUpdatesAuditModel(user),
+        Some(controllers.routes.NextUpdatesController.showAgent.url)
+      )
     } else {
-      auditingService.extendedAudit(NextUpdatesAuditModel(user), Some(controllers.routes.NextUpdatesController.show(origin).url))
+      auditingService.extendedAudit(
+        NextUpdatesAuditModel(user),
+        Some(controllers.routes.NextUpdatesController.show(origin).url)
+      )
     }
 }

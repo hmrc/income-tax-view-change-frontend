@@ -19,19 +19,17 @@ package models.liabilitycalculation
 import play.api.libs.json._
 
 case class Reliefs(
-                    residentialFinanceCosts: Option[ResidentialFinanceCosts],
-                    reliefsClaimed: Option[Seq[ReliefsClaimed]],
-                    foreignTaxCreditRelief: Option[ForeignTaxCreditRelief],
-                    topSlicingRelief: Option[TopSlicingRelief],
-                    giftAidTaxReductionWhereBasicRateDiffers: Option[GiftAidTaxReductionWhereBasicRateDiffers]
-                  )
+    residentialFinanceCosts:                  Option[ResidentialFinanceCosts],
+    reliefsClaimed:                           Option[Seq[ReliefsClaimed]],
+    foreignTaxCreditRelief:                   Option[ForeignTaxCreditRelief],
+    topSlicingRelief:                         Option[TopSlicingRelief],
+    giftAidTaxReductionWhereBasicRateDiffers: Option[GiftAidTaxReductionWhereBasicRateDiffers])
 
 object Reliefs {
   implicit val format: OFormat[Reliefs] = Json.format[Reliefs]
 }
 
-case class ReliefsClaimed(`type`: String,
-                          amountUsed: Option[BigDecimal] = None)
+case class ReliefsClaimed(`type`: String, amountUsed: Option[BigDecimal] = None)
 
 object ReliefsClaimed {
   implicit val format: OFormat[ReliefsClaimed] = Json.format[ReliefsClaimed]
@@ -58,5 +56,6 @@ object TopSlicingRelief {
 case class GiftAidTaxReductionWhereBasicRateDiffers(amount: Option[BigDecimal] = None)
 
 object GiftAidTaxReductionWhereBasicRateDiffers {
-  implicit val format: OFormat[GiftAidTaxReductionWhereBasicRateDiffers] = Json.format[GiftAidTaxReductionWhereBasicRateDiffers]
+  implicit val format: OFormat[GiftAidTaxReductionWhereBasicRateDiffers] =
+    Json.format[GiftAidTaxReductionWhereBasicRateDiffers]
 }

@@ -41,61 +41,76 @@ class IncomeSourceAddedBackErrorControllerISpec extends ControllerISpecHelper {
   }
 
   def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "/manage-your-businesses/add" else "/agents/manage-your-businesses/add"
+    val pathStart =
+      if (mtdRole == MTDIndividual) "/manage-your-businesses/add" else "/agents/manage-your-businesses/add"
     incomeSourceType match {
-      case SelfEmployment => s"$pathStart/cannot-go-back-business-reporting-method"
-      case UkProperty => s"$pathStart/cannot-go-back-uk-property-reporting-method"
+      case SelfEmployment  => s"$pathStart/cannot-go-back-business-reporting-method"
+      case UkProperty      => s"$pathStart/cannot-go-back-uk-property-reporting-method"
       case ForeignProperty => s"$pathStart/cannot-go-back-foreign-property-reporting-method"
     }
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
-      val path = getPath(mtdUserRole, incomeSourceType)
-      val additionalCookies = getAdditionalCookies(mtdUserRole)
-      s"GET $path" when {
-        s"a user is a $mtdUserRole" that {
-          "is authenticated, with a valid enrolment" should {
-            "render the self employment business not added error page" when {
-              "Income Sources FS is enabled" in {
-                enable(IncomeSourcesFs)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
+        val path              = getPath(mtdUserRole, incomeSourceType)
+        val additionalCookies = getAdditionalCookies(mtdUserRole)
+        s"GET $path" when {
+          s"a user is a $mtdUserRole" that {
+            "is authenticated, with a valid enrolment" should {
+              "render the self employment business not added error page" when {
+                "Income Sources FS is enabled" in {
+                  enable(IncomeSourcesFs)
+                  disable(NavBarFs)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"ADD-${incomeSourceType.key}",
-                  addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("1234"), incomeSourceAdded = Some(true), journeyIsComplete = None)))))
+                  await(
+                    sessionService.setMongoData(
+                      UIJourneySessionData(
+                        testSessionId,
+                        s"ADD-${incomeSourceType.key}",
+                        addIncomeSourceData = Some(
+                          AddIncomeSourceData(
+                            incomeSourceId = Some("1234"),
+                            incomeSourceAdded = Some(true),
+                            journeyIsComplete = None
+                          )
+                        )
+                      )
+                    )
+                  )
 
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                  val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-                result should have(
-                  httpStatus(OK),
-                  pageTitle(mtdUserRole, s"$title")
-                )
+                  result should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, s"$title")
+                  )
+                }
+              }
+              "redirect to home page" when {
+                "Income Sources FS is disabled" in {
+                  disable(IncomeSourcesFs)
+                  disable(NavBarFs)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+                  val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+                  result should have(
+                    httpStatus(SEE_OTHER)
+                  )
+                }
               }
             }
-            "redirect to home page" when {
-              "Income Sources FS is disabled" in {
-                disable(IncomeSourcesFs)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-                result should have(
-                  httpStatus(SEE_OTHER)
-                )
-              }
-            }
+            testAuthFailures(path, mtdUserRole)
           }
-          testAuthFailures(path, mtdUserRole)
         }
       }
-    }
   }
 }

@@ -30,7 +30,6 @@ import testUtils.UnitSpec
 import java.time.LocalDate
 import scala.concurrent.Future
 
-
 trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with ImplicitDateFormatter {
 
   lazy val mockNextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
@@ -45,15 +44,18 @@ trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with Impli
       .thenReturn(Future.successful(response))
   }
 
-  def mockBusinessError(): Unit = setupMockNextUpdatesResult()(
-    ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
-  )
+  def mockBusinessError(): Unit =
+    setupMockNextUpdatesResult()(
+      ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
+    )
 
-  def mockPropertyError(): Unit = setupMockNextUpdatesResult()(
-    ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
-  )
+  def mockPropertyError(): Unit =
+    setupMockNextUpdatesResult()(
+      ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
+    )
 
-  def mockSingleBusinessIncomeSourceWithDeadlines(): Unit = setupMockNextUpdatesResult()(singleBusinessIncomeWithDeadlines)
+  def mockSingleBusinessIncomeSourceWithDeadlines(): Unit =
+    setupMockNextUpdatesResult()(singleBusinessIncomeWithDeadlines)
 
   def mockPropertyIncomeSourceWithDeadlines(): Unit = setupMockNextUpdatesResult()(propertyIncomeOnlyWithDeadlines)
 
@@ -61,7 +63,8 @@ trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with Impli
 
   def mockNoIncomeSourcesWithDeadlines(): Unit = setupMockNextUpdatesResult()(noIncomeDetailsWithNoDeadlines)
 
-  def mockBothIncomeSourcesBusinessAlignedWithDeadlines(): Unit = setupMockNextUpdatesResult()(businessAndPropertyAlignedWithDeadlines)
+  def mockBothIncomeSourcesBusinessAlignedWithDeadlines(): Unit =
+    setupMockNextUpdatesResult()(businessAndPropertyAlignedWithDeadlines)
 
   def mockErrorIncomeSourceWithDeadlines(): Unit = setupMockNextUpdatesResult()(ObligationsErrorModel(500, "error"))
 
@@ -76,7 +79,8 @@ trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with Impli
   }
 
   def mockGetObligationsViewModel(response: ObligationsViewModel): Unit = {
-    when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())) thenReturn Future.successful(response)
+    when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())) thenReturn Future
+      .successful(response)
   }
 
   def mockGetDueDates(response: Either[Exception, Seq[LocalDate]]): Unit = {

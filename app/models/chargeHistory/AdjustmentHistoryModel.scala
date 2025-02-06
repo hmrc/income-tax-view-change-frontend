@@ -20,9 +20,6 @@ import enums.ReversalReason
 
 import java.time.LocalDate
 
-case class AdjustmentHistoryModel(creationEvent: AdjustmentModel,
-                                  adjustments: List[AdjustmentModel])
+case class AdjustmentHistoryModel(creationEvent: AdjustmentModel, adjustments: List[AdjustmentModel])
 
-case class AdjustmentModel(amount: BigDecimal,
-                           adjustmentDate: Option[LocalDate],
-                           reasonCode: ReversalReason)
+case class AdjustmentModel(amount: BigDecimal, adjustmentDate: Option[LocalDate], reasonCode: ReversalReason)

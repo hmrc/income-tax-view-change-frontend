@@ -24,8 +24,8 @@ import testOnly.models.StubClientDetailsModel
 
 object StubClientDetailsForm {
 
-  val ninoKey: String = "nino"
-  val utrKey: String = "utr"
+  val ninoKey:   String = "nino"
+  val utrKey:    String = "utr"
   val statusKey: String = "status"
 
   val isNumberConstraint: Constraint[String] = constraint[String] { text =>
@@ -41,8 +41,8 @@ object StubClientDetailsForm {
 
   val clientDetailsForm: Form[StubClientDetailsModel] = Form(
     mapping(
-      ninoKey -> nonEmptyText("Must have an nino"),
-      utrKey -> nonEmptyText("Must have a utr"),
+      ninoKey   -> nonEmptyText("Must have an nino"),
+      utrKey    -> nonEmptyText("Must have a utr"),
       statusKey -> nonEmptyText("Must have a status").verifying(isNumberConstraint).transform[Int](_.toInt, _.toString)
     )(StubClientDetailsModel.apply)(StubClientDetailsModel.unapply)
   )

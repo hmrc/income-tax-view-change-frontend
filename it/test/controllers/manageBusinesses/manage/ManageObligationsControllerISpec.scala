@@ -32,21 +32,23 @@ import testConstants.BusinessDetailsIntegrationTestConstants.business1
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.IncomeSourcesObligationsIntegrationTestConstants.{testObligationsModel, testQuarterlyObligationDates}
 
-
 class ManageObligationsControllerISpec extends ControllerISpecHelper {
 
-  val annual = "annual"
+  val annual    = "annual"
   val quarterly = "quarterly"
-  val taxYear = "2023-2024"
+  val taxYear   = "2023-2024"
 
-  val prefix: String = "incomeSources.add.manageObligations"
+  val prefix:       String = "incomeSources.add.manageObligations"
   val reusedPrefix: String = "business-added"
 
   val continueButtonText: String = messagesAPI(s"$reusedPrefix.income-sources-button")
 
   val year = 2022
   val obligationsViewModel: ObligationsViewModel = ObligationsViewModel(
-    testQuarterlyObligationDates, Seq.empty, 2023, showPrevTaxYears = false
+    testQuarterlyObligationDates,
+    Seq.empty,
+    2023,
+    showPrevTaxYears = false
   )
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
@@ -58,34 +60,34 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
 
   def getIncomeSourceDetailsResponse(incomeSourceType: IncomeSourceType) = {
     incomeSourceType match {
-      case SelfEmployment => businessOnlyResponse
-      case UkProperty => ukPropertyOnlyResponse
+      case SelfEmployment  => businessOnlyResponse
+      case UkProperty      => ukPropertyOnlyResponse
       case ForeignProperty => foreignPropertyOnlyResponse
     }
   }
 
   def getExpectedHeading(incomeSourceType: IncomeSourceType, isAnnualChange: Boolean): String = {
-    val changeToKey = if(isAnnualChange) "annually" else "quarterly"
-    val messageH1 = messagesAPI(s"$prefix.h1")
-    val messageH2 = messagesAPI(s"$prefix.h2")
-    val commonMessageEnd = messagesAPI(s"$prefix.$changeToKey") + " " + messagesAPI(s"$prefix.tax-year") + " " + "2023 to 2024"
+    val changeToKey = if (isAnnualChange) "annually" else "quarterly"
+    val messageH1   = messagesAPI(s"$prefix.h1")
+    val messageH2   = messagesAPI(s"$prefix.h2")
+    val commonMessageEnd =
+      messagesAPI(s"$prefix.$changeToKey") + " " + messagesAPI(s"$prefix.tax-year") + " " + "2023 to 2024"
     val tradingNameOrProperyMessage = incomeSourceType match {
       case SelfEmployment => business1.tradingName.getOrElse("")
-      case _ => messagesAPI(s"$prefix.${incomeSourceType.messagesSuffix}")
+      case _              => messagesAPI(s"$prefix.${incomeSourceType.messagesSuffix}")
     }
     if (messageH1.nonEmpty) {
       messageH1 + " " + tradingNameOrProperyMessage + " " + messageH2 + " " + commonMessageEnd
-    }
-    else {
+    } else {
       tradingNameOrProperyMessage + " " + messageH2 + " " + commonMessageEnd
     }
   }
 
   def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     val pathEnd = incomeSourceType match {
-      case SelfEmployment => s"/business-will-report"
-      case UkProperty => s"/uk-property-will-report"
+      case SelfEmployment  => s"/business-will-report"
+      case UkProperty      => s"/uk-property-will-report"
       case ForeignProperty => s"/foreign-property-will-report"
     }
     pathStart + "/manage-your-businesses/manage" + pathEnd
@@ -93,7 +95,7 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
 
   List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
     mtdAllRoles.foreach { mtdUserRole =>
-      val path = getPath(mtdUserRole, incomeSourceType)
+      val path              = getPath(mtdUserRole, incomeSourceType)
       val additionalCookies = getAdditionalCookies(mtdUserRole)
       s"GET $path" when {
         s"a user is a $mtdUserRole" that {
@@ -103,17 +105,26 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
                 enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  getIncomeSourceDetailsResponse(incomeSourceType)
+                )
 
-                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"MANAGE-${incomeSourceType.key}",
-                  manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId), Some(annual), Some(2024), Some(true))))))
+                await(
+                  sessionService.setMongoData(
+                    UIJourneySessionData(
+                      testSessionId,
+                      s"MANAGE-${incomeSourceType.key}",
+                      manageIncomeSourceData =
+                        Some(ManageIncomeSourceData(Some(testSelfEmploymentId), Some(annual), Some(2024), Some(true)))
+                    )
+                  )
+                )
                 IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
 
                 val pathWithValidQueryParams = path + s"?changeTo=$annual&taxYear=$taxYear"
-                val result = buildGETMTDClient(pathWithValidQueryParams, additionalCookies).futureValue
+                val result                   = buildGETMTDClient(pathWithValidQueryParams, additionalCookies).futureValue
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-
 
                 result should have(
                   httpStatus(OK),
@@ -126,14 +137,26 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
                 enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  getIncomeSourceDetailsResponse(incomeSourceType)
+                )
 
-                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"MANAGE-${incomeSourceType.key}",
-                  manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId), Some(quarterly), Some(2024), Some(true))))))
+                await(
+                  sessionService.setMongoData(
+                    UIJourneySessionData(
+                      testSessionId,
+                      s"MANAGE-${incomeSourceType.key}",
+                      manageIncomeSourceData = Some(
+                        ManageIncomeSourceData(Some(testSelfEmploymentId), Some(quarterly), Some(2024), Some(true))
+                      )
+                    )
+                  )
+                )
                 IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
 
                 val pathWithValidQueryParams = path + s"?changeTo=$quarterly&taxYear=$taxYear"
-                val result = buildGETMTDClient(pathWithValidQueryParams, additionalCookies).futureValue
+                val result                   = buildGETMTDClient(pathWithValidQueryParams, additionalCookies).futureValue
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 result should have(
@@ -149,7 +172,10 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
                 disable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  getIncomeSourceDetailsResponse(incomeSourceType)
+                )
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -164,13 +190,23 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
                 enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
-                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"MANAGE-${incomeSourceType.key}",
-                  manageIncomeSourceData = None)))
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  getIncomeSourceDetailsResponse(incomeSourceType)
+                )
+                await(
+                  sessionService.setMongoData(
+                    UIJourneySessionData(
+                      testSessionId,
+                      s"MANAGE-${incomeSourceType.key}",
+                      manageIncomeSourceData = None
+                    )
+                  )
+                )
                 IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
 
                 val pathWithValidQueryParams = path + s"?changeTo=$annual&taxYear=$taxYear"
-                val result = buildGETMTDClient(pathWithValidQueryParams, additionalCookies).futureValue
+                val result                   = buildGETMTDClient(pathWithValidQueryParams, additionalCookies).futureValue
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 result should have(
@@ -190,7 +226,10 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
               enable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                OK,
+                getIncomeSourceDetailsResponse(incomeSourceType)
+              )
 
               val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
               result should have(

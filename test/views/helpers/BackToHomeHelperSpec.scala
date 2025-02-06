@@ -26,8 +26,8 @@ class BackToHomeHelperSpec extends TestSupport {
 
   "The backToHomeHelper template" should {
 
-    lazy val view = backToHomeHelper("unitTest")(implicitly)
-    lazy val document = Jsoup.parse(view.body)
+    lazy val view           = backToHomeHelper("unitTest")(implicitly)
+    lazy val document       = Jsoup.parse(view.body)
     lazy val backToHomeLink = document.getElementById("back")
 
     s"Render the text ${messages("base.backToHome")}" in {

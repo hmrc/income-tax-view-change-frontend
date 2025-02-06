@@ -37,51 +37,57 @@ import views.html.manageBusinesses.cease.DeclareIncomeSourceCeased
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeclareIncomeSourceCeasedController @Inject()(val authActions: AuthActions,
-                                                    val view: DeclareIncomeSourceCeased,
-                                                    val sessionService: SessionService,
-                                                    val itvcErrorHandler: ItvcErrorHandler,
-                                                    val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                                   (implicit val appConfig: FrontendAppConfig,
-                                                    mcc: MessagesControllerComponents,
-                                                    val ec: ExecutionContext
-                                                   )
-  extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses {
+class DeclareIncomeSourceCeasedController @Inject() (
+    val authActions:           AuthActions,
+    val view:                  DeclareIncomeSourceCeased,
+    val sessionService:        SessionService,
+    val itvcErrorHandler:      ItvcErrorHandler,
+    val itvcErrorHandlerAgent: AgentItvcErrorHandler
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    mcc:                    MessagesControllerComponents,
+    val ec:                 ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with JourneyCheckerManageBusinesses {
 
-  private def getBackUrl(isAgent: Boolean): String = if(isAgent) {
-    controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
-  } else {
-    controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
-  }
+  private def getBackUrl(isAgent: Boolean): String =
+    if (isAgent) {
+      controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+    } else {
+      controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+    }
 
   def show(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    authActions.asMTDIndividual.async {
-      implicit user =>
-        handleRequest(id, isAgent = false, incomeSourceType)
-  }
+    authActions.asMTDIndividual.async { implicit user =>
+      handleRequest(id, isAgent = false, incomeSourceType)
+    }
 
   def showAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    authActions.asMTDAgentWithConfirmedClient.async {
-      implicit mtdItUser =>
-        handleRequest(id, isAgent = true, incomeSourceType)
-  }
+    authActions.asMTDAgentWithConfirmedClient.async { implicit mtdItUser =>
+      handleRequest(id, isAgent = true, incomeSourceType)
+    }
 
   def submit(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    authActions.asMTDIndividual.async {
-      implicit request =>
-        handleSubmitRequest(id, isAgent = false, isChange = false, incomeSourceType)
-  }
+    authActions.asMTDIndividual.async { implicit request =>
+      handleSubmitRequest(id, isAgent = false, isChange = false, incomeSourceType)
+    }
 
   def submitAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    authActions.asMTDAgentWithConfirmedClient.async {
-      implicit mtdItUser =>
-        handleSubmitRequest(id, isAgent = true, isChange = false, incomeSourceType)
-  }
+    authActions.asMTDAgentWithConfirmedClient.async { implicit mtdItUser =>
+      handleSubmitRequest(id, isAgent = true, isChange = false, incomeSourceType)
+    }
 
-  def handleRequest(id: Option[String], isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
+  def handleRequest(
+      id:               Option[String],
+      isAgent:          Boolean,
+      incomeSourceType: IncomeSourceType
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier,
+      ec:            ExecutionContext
+    ): Future[Result] =
     withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), journeyState = InitialPage) { _ =>
-
       (incomeSourceType, id, getBusinessName(user, id)) match {
         case (SelfEmployment, None, _) =>
           Logger("application").error("IncomeSourceId not found for SelfEmployment")
@@ -107,30 +113,39 @@ class DeclareIncomeSourceCeasedController @Inject()(val authActions: AuthActions
         showInternalServerError()
     }
 
-  def handleSubmitRequest(id: Option[String], isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)
-                         (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
+  def handleSubmitRequest(
+      id:               Option[String],
+      isAgent:          Boolean,
+      isChange:         Boolean,
+      incomeSourceType: IncomeSourceType
+    )(
+      implicit user: MtdItUser[_]
+    ): Future[Result] =
+    withIncomeSourcesFS {
 
-    sessionService.setMongoKey(
-        key = CeaseIncomeSourceData.ceaseIncomeSourceDeclare,
-        value = "true",
-        incomeSources = IncomeSourceJourneyType(Cease, incomeSourceType)
-      )
-      .flatMap {
-        case Right(_) => Future.successful(Redirect(redirectAction(id, isAgent, isChange, incomeSourceType)))
-        case Left(exception) => Future.failed(exception)
-      }
-  } recover {
-    case ex: Exception =>
-      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
-      showInternalServerError()
-  }
+      sessionService
+        .setMongoKey(
+          key = CeaseIncomeSourceData.ceaseIncomeSourceDeclare,
+          value = "true",
+          incomeSources = IncomeSourceJourneyType(Cease, incomeSourceType)
+        )
+        .flatMap {
+          case Right(_)        => Future.successful(Redirect(redirectAction(id, isAgent, isChange, incomeSourceType)))
+          case Left(exception) => Future.failed(exception)
+        }
+    } recover {
+      case ex: Exception =>
+        Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+        showInternalServerError()
+    }
 
   private val postAction: (Option[String], Boolean, IncomeSourceType) => Call = (id, isAgent, incomeSourceType) =>
     if (isAgent) routes.DeclareIncomeSourceCeasedController.submitAgent(id, incomeSourceType)
-    else         routes.DeclareIncomeSourceCeasedController.submit(id, incomeSourceType)
+    else routes.DeclareIncomeSourceCeasedController.submit(id, incomeSourceType)
 
-  private val redirectAction: (Option[String], Boolean, Boolean, IncomeSourceType) => Call = (id, isAgent, isChange, incomeSourceType) =>
-    routes.IncomeSourceEndDateController.show(id, incomeSourceType, isAgent, isChange)
+  private val redirectAction: (Option[String], Boolean, Boolean, IncomeSourceType) => Call =
+    (id, isAgent, isChange, incomeSourceType) =>
+      routes.IncomeSourceEndDateController.show(id, incomeSourceType, isAgent, isChange)
 
   private def showInternalServerError()(implicit mtdItUser: MtdItUser[_]): Result = {
     if (mtdItUser.userType.contains(Agent)) itvcErrorHandlerAgent

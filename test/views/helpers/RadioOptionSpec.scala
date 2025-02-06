@@ -19,7 +19,6 @@ package views.helpers
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 
-
 class RadioOptionSpec extends AnyWordSpecLike with Matchers {
 
   "call apply method" when {

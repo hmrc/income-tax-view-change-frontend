@@ -43,7 +43,7 @@ class ITSAStatusUpdateConnectorSpec extends BaseConnectorSpec {
 
         "return successful response" in {
 
-          val apiResponse = ITSAStatusUpdateResponseSuccess()
+          val apiResponse  = ITSAStatusUpdateResponseSuccess()
           val httpResponse = HttpResponse(NO_CONTENT, Json.toJson(apiResponse), Map())
 
           when(mockHttpClientV2.put(any())(any())).thenReturn(mockRequestBuilder)
@@ -54,7 +54,8 @@ class ITSAStatusUpdateConnectorSpec extends BaseConnectorSpec {
           when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
             .thenReturn(Future.successful(httpResponse))
 
-          val result: Future[ITSAStatusUpdateResponse] = connector.makeITSAStatusUpdate(taxYear, taxableEntityId, optOutUpdateReason)
+          val result: Future[ITSAStatusUpdateResponse] =
+            connector.makeITSAStatusUpdate(taxYear, taxableEntityId, optOutUpdateReason)
 
           result.futureValue shouldBe ITSAStatusUpdateResponseSuccess()
         }
@@ -64,11 +65,15 @@ class ITSAStatusUpdateConnectorSpec extends BaseConnectorSpec {
 
         "return failure response" in {
 
-          val errorItems = List(ErrorItem("INVALID_TAXABLE_ENTITY_ID",
-            "Submission has not passed validation. Invalid parameter taxableEntityId."))
+          val errorItems = List(
+            ErrorItem(
+              "INVALID_TAXABLE_ENTITY_ID",
+              "Submission has not passed validation. Invalid parameter taxableEntityId."
+            )
+          )
 
           val apiFailResponse = ITSAStatusUpdateResponseFailure(errorItems)
-          val httpResponse = HttpResponse(BAD_REQUEST, Json.toJson(apiFailResponse), Map())
+          val httpResponse    = HttpResponse(BAD_REQUEST, Json.toJson(apiFailResponse), Map())
 
           when(mockHttpClientV2.put(any())(any())).thenReturn(mockRequestBuilder)
 
@@ -78,7 +83,8 @@ class ITSAStatusUpdateConnectorSpec extends BaseConnectorSpec {
           when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
             .thenReturn(Future.successful(httpResponse))
 
-          val result: Future[ITSAStatusUpdateResponse] = connector.makeITSAStatusUpdate(taxYear, taxableEntityId, optOutUpdateReason)
+          val result: Future[ITSAStatusUpdateResponse] =
+            connector.makeITSAStatusUpdate(taxYear, taxableEntityId, optOutUpdateReason)
 
           result.futureValue shouldBe ITSAStatusUpdateResponseFailure(errorItems)
 
@@ -88,13 +94,15 @@ class ITSAStatusUpdateConnectorSpec extends BaseConnectorSpec {
 
           "return failure response" in {
 
-            val errorItems = List(ErrorItem(
-              code = "INVALID_TAXABLE_ENTITY_ID",
-              reason = "Submission has not passed validation. Invalid parameter taxableEntityId."
-            ))
+            val errorItems = List(
+              ErrorItem(
+                code = "INVALID_TAXABLE_ENTITY_ID",
+                reason = "Submission has not passed validation. Invalid parameter taxableEntityId."
+              )
+            )
 
             val apiFailResponse = ITSAStatusUpdateResponseFailure(errorItems)
-            val httpResponse = HttpResponse(BAD_REQUEST, Json.toJson(apiFailResponse), Map.empty)
+            val httpResponse    = HttpResponse(BAD_REQUEST, Json.toJson(apiFailResponse), Map.empty)
 
             when(mockHttpClientV2.put(any())(any())).thenReturn(mockRequestBuilder)
 
@@ -104,7 +112,8 @@ class ITSAStatusUpdateConnectorSpec extends BaseConnectorSpec {
             when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
               .thenReturn(Future.successful(httpResponse))
 
-            val result: Future[ITSAStatusUpdateResponse] = connector.makeITSAStatusUpdate(taxYear, taxableEntityId, optOutUpdateReason)
+            val result: Future[ITSAStatusUpdateResponse] =
+              connector.makeITSAStatusUpdate(taxYear, taxableEntityId, optOutUpdateReason)
 
             result.futureValue shouldBe ITSAStatusUpdateResponseFailure(errorItems)
 

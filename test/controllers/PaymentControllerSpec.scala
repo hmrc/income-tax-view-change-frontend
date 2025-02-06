@@ -40,73 +40,94 @@ class PaymentControllerSpec extends MockAuthActions {
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[PayApiConnector].toInstance(mockPayApiConnector)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[PaymentController]
 
   val paymentJourneyModel = PaymentJourneyModel("id", "redirect-url")
 
-
-  mtdAllRoles.foreach { case mtdUserRole =>
-    val isAgent = mtdUserRole != MTDIndividual
-    val action = if (isAgent) testController.agentPaymentHandoff(testAmountInPence) else testController.paymentHandoff(testAmountInPence)
-    val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
-    s"${if (isAgent) "agentP" else "p"}aymentHandoff" when {
-      s"the $mtdUserRole is authenticated" should {
-        if (mtdUserRole == MTDSupportingAgent) {
-          testSupportingAgentDeniedAccess(action)(fakeRequest)
-        } else {
-          "redirect to the payment api provided by payAPI" when {
-            "a successful payments journey is started" in {
-              setupMockSuccess(mtdUserRole)
-              mockSingleBusinessIncomeSource()
-              when(mockPayApiConnector.startPaymentJourney(ArgumentMatchers.eq(testSaUtr), ArgumentMatchers.eq(BigDecimal(10000)),
-                ArgumentMatchers.eq(isAgent))
-              (ArgumentMatchers.any[HeaderCarrier])).thenReturn(Future.successful(paymentJourneyModel))
-              val result = action(fakeRequest)
-
-              status(result) shouldBe SEE_OTHER
-              redirectLocation(result) shouldBe Some("redirect-url")
-              verifyExtendedAudit(InitiatePayNowAuditModel(testMtditid, testNino,
-                Some(testSaUtr), Some(testCredId),
-                Some {
-                  if (mtdUserRole == MTDIndividual) Individual else Agent
-                }))
-            }
-          }
-
-          "render the error page" when {
-            if(mtdUserRole == MTDIndividual) {
-              "an SA UTR is missing from the user" in {
-                setupMockUserAuthNoSAUtr
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      val isAgent = mtdUserRole != MTDIndividual
+      val action =
+        if (isAgent) testController.agentPaymentHandoff(testAmountInPence)
+        else testController.paymentHandoff(testAmountInPence)
+      val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
+      s"${if (isAgent) "agentP" else "p"}aymentHandoff" when {
+        s"the $mtdUserRole is authenticated" should {
+          if (mtdUserRole == MTDSupportingAgent) {
+            testSupportingAgentDeniedAccess(action)(fakeRequest)
+          } else {
+            "redirect to the payment api provided by payAPI" when {
+              "a successful payments journey is started" in {
+                setupMockSuccess(mtdUserRole)
                 mockSingleBusinessIncomeSource()
+                when(
+                  mockPayApiConnector.startPaymentJourney(
+                    ArgumentMatchers.eq(testSaUtr),
+                    ArgumentMatchers.eq(BigDecimal(10000)),
+                    ArgumentMatchers.eq(isAgent)
+                  )(ArgumentMatchers.any[HeaderCarrier])
+                ).thenReturn(Future.successful(paymentJourneyModel))
+                val result = action(fakeRequest)
+
+                status(result) shouldBe SEE_OTHER
+                redirectLocation(result) shouldBe Some("redirect-url")
+                verifyExtendedAudit(
+                  InitiatePayNowAuditModel(
+                    testMtditid,
+                    testNino,
+                    Some(testSaUtr),
+                    Some(testCredId),
+                    Some {
+                      if (mtdUserRole == MTDIndividual) Individual else Agent
+                    }
+                  )
+                )
+              }
+            }
+
+            "render the error page" when {
+              if (mtdUserRole == MTDIndividual) {
+                "an SA UTR is missing from the user" in {
+                  setupMockUserAuthNoSAUtr
+                  mockSingleBusinessIncomeSource()
+                  val result = action(fakeRequest)
+                  status(result) shouldBe INTERNAL_SERVER_ERROR
+                }
+              }
+              "an error response is returned by the connector" in {
+                setupMockSuccess(mtdUserRole)
+                mockSingleBusinessIncomeSource()
+                when(
+                  mockPayApiConnector.startPaymentJourney(
+                    ArgumentMatchers.eq(testSaUtr),
+                    ArgumentMatchers.eq(BigDecimal(10000)),
+                    ArgumentMatchers.eq(isAgent)
+                  )(ArgumentMatchers.any[HeaderCarrier])
+                ).thenReturn(Future.successful(PaymentJourneyErrorResponse(INTERNAL_SERVER_ERROR, "Error Message")))
+                val result = action(fakeRequest)
+                status(result) shouldBe INTERNAL_SERVER_ERROR
+              }
+
+              "an exception is returned by the connector" in {
+                setupMockSuccess(mtdUserRole)
+                mockSingleBusinessIncomeSource()
+                when(
+                  mockPayApiConnector.startPaymentJourney(
+                    ArgumentMatchers.eq(testSaUtr),
+                    ArgumentMatchers.eq(BigDecimal(10000)),
+                    ArgumentMatchers.eq(isAgent)
+                  )(ArgumentMatchers.any[HeaderCarrier])
+                ).thenReturn(Future.failed(new Exception("Exception Message")))
                 val result = action(fakeRequest)
                 status(result) shouldBe INTERNAL_SERVER_ERROR
               }
             }
-            "an error response is returned by the connector" in {
-              setupMockSuccess(mtdUserRole)
-              mockSingleBusinessIncomeSource()
-              when(mockPayApiConnector.startPaymentJourney(ArgumentMatchers.eq(testSaUtr), ArgumentMatchers.eq(BigDecimal(10000)),
-                ArgumentMatchers.eq(isAgent))
-              (ArgumentMatchers.any[HeaderCarrier])).thenReturn(Future.successful(PaymentJourneyErrorResponse(INTERNAL_SERVER_ERROR, "Error Message")))
-              val result = action(fakeRequest)
-              status(result) shouldBe INTERNAL_SERVER_ERROR
-            }
-
-            "an exception is returned by the connector" in {
-              setupMockSuccess(mtdUserRole)
-              mockSingleBusinessIncomeSource()
-              when(mockPayApiConnector.startPaymentJourney(ArgumentMatchers.eq(testSaUtr), ArgumentMatchers.eq(BigDecimal(10000)),
-                ArgumentMatchers.eq(isAgent))
-              (ArgumentMatchers.any[HeaderCarrier])).thenReturn(Future.failed(new Exception("Exception Message")))
-              val result = action(fakeRequest)
-              status(result) shouldBe INTERNAL_SERVER_ERROR
-            }
           }
         }
+        testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
       }
-      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
-    }
   }
 }

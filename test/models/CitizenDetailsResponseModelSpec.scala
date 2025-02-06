@@ -27,9 +27,9 @@ class CitizenDetailsResponseModelSpec extends UnitSpec with Matchers {
   "The CitizenDetailsModel" should {
 
     "be able to parse a JSON into the Model" in {
-      Json.fromJson[CitizenDetailsModel](testValidCitizenDetailsModelJson).fold(
-        invalid => invalid,
-        valid => valid) shouldBe testValidCitizenDetailsModel
+      Json
+        .fromJson[CitizenDetailsModel](testValidCitizenDetailsModelJson)
+        .fold(invalid => invalid, valid => valid) shouldBe testValidCitizenDetailsModel
     }
 
   }
@@ -41,7 +41,9 @@ class CitizenDetailsResponseModelSpec extends UnitSpec with Matchers {
     }
 
     "be able to parse a JSON into the Model" in {
-      Json.fromJson[CitizenDetailsErrorModel](testCitizenDetailsErrorModelJson) shouldBe JsSuccess(testCitizenDetailsErrorModel)
+      Json.fromJson[CitizenDetailsErrorModel](testCitizenDetailsErrorModelJson) shouldBe JsSuccess(
+        testCitizenDetailsErrorModel
+      )
     }
   }
 }

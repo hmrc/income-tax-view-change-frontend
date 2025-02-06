@@ -21,4 +21,4 @@ import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 
 @Singleton
-class FrontendAuthorisedFunctions @Inject()(val authConnector: FrontendAuthConnector) extends AuthorisedFunctions
+class FrontendAuthorisedFunctions @Inject() (val authConnector: FrontendAuthConnector) extends AuthorisedFunctions

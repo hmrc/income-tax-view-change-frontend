@@ -37,10 +37,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FinancialDetailsConnector @Inject()(
-                                           httpV2: HttpClientV2,
-                                           appConfig: FrontendAppConfig
-                                         )(implicit val ec: ExecutionContext) extends RawResponseReads {
+class FinancialDetailsConnector @Inject() (
+    httpV2:    HttpClientV2,
+    appConfig: FrontendAppConfig
+  )(
+    implicit val ec: ExecutionContext)
+    extends RawResponseReads {
 
   private[connectors] val baseUrl = s"${appConfig.itvcProtectedService}/income-tax-view-change"
 
@@ -60,10 +62,12 @@ class FinancialDetailsConnector @Inject()(
     baseUrl + s"/$nino/payment-allocations/$paymentLot/$paymentLotItem"
 
   def getPaymentAllocations(
-                             nino: Nino,
-                             paymentLot: String,
-                             paymentLotItem: String
-                           )(implicit headerCarrier: HeaderCarrier): Future[PaymentAllocationsResponse] = {
+      nino:           Nino,
+      paymentLot:     String,
+      paymentLotItem: String
+    )(
+      implicit headerCarrier: HeaderCarrier
+    ): Future[PaymentAllocationsResponse] = {
 
     val url = getPaymentAllocationsUrl(nino.value, paymentLot, paymentLotItem)
     Logger("application").debug(s"GET $url")
@@ -75,13 +79,18 @@ class FinancialDetailsConnector @Inject()(
         response.status match {
           case OK =>
             Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
-            response.json.validate[PaymentAllocations].fold(
-              invalid => {
-                Logger("application").error(s"Json Validation Error: $invalid")
-                PaymentAllocationsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Payment Allocations Data Response")
-              },
-              valid => valid
-            )
+            response.json
+              .validate[PaymentAllocations]
+              .fold(
+                invalid => {
+                  Logger("application").error(s"Json Validation Error: $invalid")
+                  PaymentAllocationsError(
+                    Status.INTERNAL_SERVER_ERROR,
+                    "Json Validation Error. Parsing Payment Allocations Data Response"
+                  )
+                },
+                valid => valid
+              )
           case status if status >= 500 =>
             Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
             PaymentAllocationsError(response.status, response.body)
@@ -89,20 +98,27 @@ class FinancialDetailsConnector @Inject()(
             Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
             PaymentAllocationsError(response.status, response.body)
         }
-      }.recover {
+      }
+      .recover {
         case ex =>
           Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
           PaymentAllocationsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
       }
   }
 
-  def getCreditsAndRefund(taxYear: TaxYear, nino: String)
-                         (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[ResponseModel[CreditsModel]] = {
+  def getCreditsAndRefund(
+      taxYear: TaxYear,
+      nino:    String
+    )(
+      implicit headerCarrier: HeaderCarrier,
+      mtdItUser:              MtdItUser[_]
+    ): Future[ResponseModel[CreditsModel]] = {
 
     val url = getCreditAndRefundUrl(nino, taxYear.financialYearStartString, taxYear.financialYearEndString)
     Logger("application").debug(s"GET $url")
 
-    val hc = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
+    val hc =
+      checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
 
     val correlationId =
       CorrelationId.fromHeaderCarrier(hc).getOrElse(CorrelationId())
@@ -118,13 +134,20 @@ class FinancialDetailsConnector @Inject()(
       }
   }
 
-  def getCreditsAndRefund(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)
-                         (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[ResponseModel[CreditsModel]] = {
+  def getCreditsAndRefund(
+      taxYearFrom: TaxYear,
+      taxYearTo:   TaxYear,
+      nino:        String
+    )(
+      implicit headerCarrier: HeaderCarrier,
+      mtdItUser:              MtdItUser[_]
+    ): Future[ResponseModel[CreditsModel]] = {
 
     val url = getCreditAndRefundUrl(nino, taxYearFrom.financialYearStartString, taxYearTo.financialYearEndString)
     Logger("application").debug(s"GET $url")
 
-    val hc = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
+    val hc =
+      checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
 
     val correlationId =
       CorrelationId.fromHeaderCarrier(hc).getOrElse(CorrelationId())
@@ -141,16 +164,22 @@ class FinancialDetailsConnector @Inject()(
   }
 
   // TODO: MFA Credits
-  def getFinancialDetails(taxYear: Int, nino: String)
-                         (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
+  def getFinancialDetails(
+      taxYear: Int,
+      nino:    String
+    )(
+      implicit headerCarrier: HeaderCarrier,
+      mtdItUser:              MtdItUser[_]
+    ): Future[FinancialDetailsResponseModel] = {
 
     val dateFrom: String = (taxYear - 1).toString + "-04-06"
-    val dateTo: String = taxYear.toString + "-04-05"
+    val dateTo:   String = taxYear.toString + "-04-05"
 
     val url = getChargesUrl(nino, dateFrom, dateTo)
     Logger("application").debug(s"GET $url")
 
-    val hc: HeaderCarrier = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
+    val hc: HeaderCarrier =
+      checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
 
     httpV2
       .get(url"$url")
@@ -160,13 +189,18 @@ class FinancialDetailsConnector @Inject()(
         response.status match {
           case OK =>
             Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
-            response.json.validate[FinancialDetailsModel].fold(
-              invalid => {
-                Logger("application").error(s"Json Validation Error: $invalid")
-                FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing FinancialDetails Data Response")
-              },
-              valid => valid
-            )
+            response.json
+              .validate[FinancialDetailsModel]
+              .fold(
+                invalid => {
+                  Logger("application").error(s"Json Validation Error: $invalid")
+                  FinancialDetailsErrorModel(
+                    Status.INTERNAL_SERVER_ERROR,
+                    "Json Validation Error. Parsing FinancialDetails Data Response"
+                  )
+                },
+                valid => valid
+              )
           case status if status >= 500 =>
             Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
             FinancialDetailsErrorModel(response.status, response.body)
@@ -174,20 +208,28 @@ class FinancialDetailsConnector @Inject()(
             Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
             FinancialDetailsErrorModel(response.status, response.body)
         }
-      }.recover {
+      }
+      .recover {
         case ex =>
           Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
           FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
       }
   }
 
-  def getFinancialDetails(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)
-                         (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
+  def getFinancialDetails(
+      taxYearFrom: TaxYear,
+      taxYearTo:   TaxYear,
+      nino:        String
+    )(
+      implicit headerCarrier: HeaderCarrier,
+      mtdItUser:              MtdItUser[_]
+    ): Future[FinancialDetailsResponseModel] = {
 
     val url = getChargesUrl(nino, taxYearFrom.financialYearStartString, taxYearTo.financialYearEndString)
     Logger("application").debug(s"GET $url")
 
-    val hc: HeaderCarrier = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
+    val hc: HeaderCarrier =
+      checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
 
     httpV2
       .get(url"$url")
@@ -197,13 +239,18 @@ class FinancialDetailsConnector @Inject()(
         response.status match {
           case OK =>
             Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
-            response.json.validate[FinancialDetailsModel].fold(
-              invalid => {
-                Logger("application").error(s"Json Validation Error: $invalid")
-                FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing FinancialDetails Data Response")
-              },
-              valid => valid
-            )
+            response.json
+              .validate[FinancialDetailsModel]
+              .fold(
+                invalid => {
+                  Logger("application").error(s"Json Validation Error: $invalid")
+                  FinancialDetailsErrorModel(
+                    Status.INTERNAL_SERVER_ERROR,
+                    "Json Validation Error. Parsing FinancialDetails Data Response"
+                  )
+                },
+                valid => valid
+              )
           case status if status >= 500 =>
             Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
             FinancialDetailsErrorModel(response.status, response.body)
@@ -211,17 +258,23 @@ class FinancialDetailsConnector @Inject()(
             Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
             FinancialDetailsErrorModel(response.status, response.body)
         }
-      }.recover {
+      }
+      .recover {
         case ex =>
           Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
           FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
       }
   }
 
-  def getPayments(taxYear: TaxYear)
-                 (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[PaymentsResponse] = {
+  def getPayments(
+      taxYear: TaxYear
+    )(
+      implicit headerCarrier: HeaderCarrier,
+      mtdUser:                MtdItUser[_]
+    ): Future[PaymentsResponse] = {
 
-    val url: String = getPaymentsUrl(mtdUser.nino, taxYear.toFinancialYearStart.toString, taxYear.toFinancialYearEnd.toString)
+    val url: String =
+      getPaymentsUrl(mtdUser.nino, taxYear.toFinancialYearStart.toString, taxYear.toFinancialYearEnd.toString)
     Logger("application").debug(s"GET $url")
 
     httpV2
@@ -231,13 +284,15 @@ class FinancialDetailsConnector @Inject()(
         response.status match {
           case OK =>
             Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
-            response.json.validate[Seq[Payment]].fold(
-              invalid => {
-                Logger("application").error(s"Json validation error: $invalid")
-                PaymentsError(response.status, "Json validation error")
-              },
-              valid => Payments(valid)
-            )
+            response.json
+              .validate[Seq[Payment]]
+              .fold(
+                invalid => {
+                  Logger("application").error(s"Json validation error: $invalid")
+                  PaymentsError(response.status, "Json validation error")
+                },
+                valid => Payments(valid)
+              )
           case status if status >= 500 =>
             Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
             PaymentsError(status, response.body)
@@ -248,10 +303,16 @@ class FinancialDetailsConnector @Inject()(
       }
   }
 
-  def getPayments(taxYearFrom: TaxYear, taxYearTo: TaxYear)
-                 (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[PaymentsResponse] = {
+  def getPayments(
+      taxYearFrom: TaxYear,
+      taxYearTo:   TaxYear
+    )(
+      implicit headerCarrier: HeaderCarrier,
+      mtdUser:                MtdItUser[_]
+    ): Future[PaymentsResponse] = {
 
-    val url: String = getPaymentsUrl(mtdUser.nino, taxYearFrom.financialYearStartString, taxYearTo.financialYearEndString)
+    val url: String =
+      getPaymentsUrl(mtdUser.nino, taxYearFrom.financialYearStartString, taxYearTo.financialYearEndString)
     Logger("application").debug(s"GET $url")
 
     httpV2
@@ -261,13 +322,15 @@ class FinancialDetailsConnector @Inject()(
         response.status match {
           case OK =>
             Logger("application").info(s"Status: ${response.status}, json: ${response.json}")
-            response.json.validate[Seq[Payment]].fold(
-              invalid => {
-                Logger("application").error(s"Json validation error: $invalid")
-                PaymentsError(response.status, "Json validation error")
-              },
-              valid => Payments(valid)
-            )
+            response.json
+              .validate[Seq[Payment]]
+              .fold(
+                invalid => {
+                  Logger("application").error(s"Json validation error: $invalid")
+                  PaymentsError(response.status, "Json validation error")
+                },
+                valid => Payments(valid)
+              )
           case status if status >= 500 =>
             Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
             PaymentsError(status, response.body)
@@ -279,9 +342,11 @@ class FinancialDetailsConnector @Inject()(
   }
 
   def getFinancialDetailsByDocumentId(
-                                       nino: Nino,
-                                       documentNumber: String
-                                     )(implicit headerCarrier: HeaderCarrier): Future[FinancialDetailsWithDocumentDetailsResponse] = {
+      nino:           Nino,
+      documentNumber: String
+    )(
+      implicit headerCarrier: HeaderCarrier
+    ): Future[FinancialDetailsWithDocumentDetailsResponse] = {
     val url = getFinancialDetailsByDocumentIdUrl(nino.value, documentNumber)
     httpV2
       .get(url"$url")
@@ -290,13 +355,18 @@ class FinancialDetailsConnector @Inject()(
       .map { response =>
         response.status match {
           case OK =>
-            response.json.validate[FinancialDetailsWithDocumentDetailsModel].fold(
-              invalid => {
-                Logger("application").error(s"Json validation error parsing calculation response, error $invalid")
-                FinancialDetailsWithDocumentDetailsErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
-              },
-              valid => valid
-            )
+            response.json
+              .validate[FinancialDetailsWithDocumentDetailsModel]
+              .fold(
+                invalid => {
+                  Logger("application").error(s"Json validation error parsing calculation response, error $invalid")
+                  FinancialDetailsWithDocumentDetailsErrorModel(
+                    INTERNAL_SERVER_ERROR,
+                    "Json validation error parsing calculation response"
+                  )
+                },
+                valid => valid
+              )
           case status if status >= INTERNAL_SERVER_ERROR =>
             Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
             FinancialDetailsWithDocumentDetailsErrorModel(response.status, response.body)

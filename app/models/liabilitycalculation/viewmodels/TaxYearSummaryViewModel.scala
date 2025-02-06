@@ -20,27 +20,28 @@ import models.incomeSourceDetails.TaxYear
 import models.obligations.ObligationsModel
 import models.taxyearsummary.TaxYearSummaryChargeItem
 
-case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary],
-                                   charges: List[TaxYearSummaryChargeItem],
-                                   obligations: ObligationsModel,
-                                   reviewAndReconcileEnabled: Boolean,
-                                   showForecastData: Boolean = false,
-                                   ctaViewModel: TYSClaimToAdjustViewModel
-                                  ) {
+case class TaxYearSummaryViewModel(
+    calculationSummary:        Option[CalculationSummary],
+    charges:                   List[TaxYearSummaryChargeItem],
+    obligations:               ObligationsModel,
+    reviewAndReconcileEnabled: Boolean,
+    showForecastData:          Boolean = false,
+    ctaViewModel:              TYSClaimToAdjustViewModel) {
 
   def showUpdates: Boolean = {
     obligations.obligations.exists(_.obligations.nonEmpty)
   }
 
-  calculationSummary.filter(_ => showForecastData).foreach(calculationSummaryValue => {
-    require(calculationSummaryValue.forecastIncomeTaxAndNics.isDefined, "missing Forecast Tax Due")
-    require(calculationSummaryValue.timestamp.isDefined, "missing Calculation timestamp")
-  })
+  calculationSummary
+    .filter(_ => showForecastData)
+    .foreach(calculationSummaryValue => {
+      require(calculationSummaryValue.forecastIncomeTaxAndNics.isDefined, "missing Forecast Tax Due")
+      require(calculationSummaryValue.timestamp.isDefined, "missing Calculation timestamp")
+    })
 
 }
 
-case class TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled: Boolean,
-                                     poaTaxYear: Option[TaxYear]) {
+case class TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled: Boolean, poaTaxYear: Option[TaxYear]) {
 
   val claimToAdjustTaxYear: Option[TaxYear] = {
     if (adjustPaymentsOnAccountFSEnabled) {

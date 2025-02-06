@@ -21,19 +21,23 @@ import models.core.{AddressModel, IncomeSourceId}
 
 import java.time.LocalDate
 
-case class CeaseIncomeSourcesViewModel(soleTraderBusinesses: List[CeaseBusinessDetailsViewModel],
-                                     ukProperty: Option[CeasePropertyDetailsViewModel],
-                                     foreignProperty: Option[CeasePropertyDetailsViewModel],
-                                     ceasedBusinesses: List[CeasedBusinessDetailsViewModel])
+case class CeaseIncomeSourcesViewModel(
+    soleTraderBusinesses: List[CeaseBusinessDetailsViewModel],
+    ukProperty:           Option[CeasePropertyDetailsViewModel],
+    foreignProperty:      Option[CeasePropertyDetailsViewModel],
+    ceasedBusinesses:     List[CeasedBusinessDetailsViewModel])
 
-case class CeaseBusinessDetailsViewModel(incomeSourceId: IncomeSourceId, tradingName: Option[String], tradingStartDate: Option[LocalDate])
+case class CeaseBusinessDetailsViewModel(
+    incomeSourceId:   IncomeSourceId,
+    tradingName:      Option[String],
+    tradingStartDate: Option[LocalDate])
 
-case class CheckCeaseIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
-                                                  tradingName: Option[String],
-                                                  trade: Option[String],
-                                                  address: Option[AddressModel],
-                                                  businessEndDate: LocalDate,
-                                                  incomeSourceType: IncomeSourceType
-                                             )
+case class CheckCeaseIncomeSourceDetailsViewModel(
+    incomeSourceId:   IncomeSourceId,
+    tradingName:      Option[String],
+    trade:            Option[String],
+    address:          Option[AddressModel],
+    businessEndDate:  LocalDate,
+    incomeSourceType: IncomeSourceType)
 
 case class CeasePropertyDetailsViewModel(tradingStartDate: Option[LocalDate])

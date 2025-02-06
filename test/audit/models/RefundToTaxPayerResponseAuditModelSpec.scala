@@ -16,7 +16,6 @@
 
 package audit.models
 
-
 import models.repaymentHistory._
 import play.api.libs.json.{JsValue, Json}
 import testUtils.TestSupport
@@ -28,65 +27,71 @@ import java.time.LocalDate
 class RefundToTaxPayerResponseAuditModelSpec extends TestSupport {
 
   val testRepaymentHistory: RepaymentHistoryModel = RepaymentHistoryModel(
-    List(RepaymentHistory(
-      Some(705.2),
-      705.2,
-      Some("BACS"),
-      Some(12345),
-      Some(Vector(
-        RepaymentItem(
+    List(
+      RepaymentHistory(
+        Some(705.2),
+        705.2,
+        Some("BACS"),
+        Some(12345),
+        Some(
           Vector(
-            RepaymentSupplementItem(
-              Some("002420002231"),
-              Some(3.78),
-              Some(LocalDate.of(2021, 7, 31)),
-              Some(LocalDate.of(2021, 9, 15)),
-              Some(2.01)
-            ),
-            RepaymentSupplementItem(
-              Some("002420002231"),
-              Some(2.63),
-              Some(LocalDate.of(2021, 9, 15)),
-              Some(LocalDate.of(2021, 10, 24)),
-              Some(1.76)
-            ),
-            RepaymentSupplementItem(
-              Some("002420002231"),
-              Some(3.26),
-              Some(LocalDate.of(2021, 10, 24)),
-              Some(LocalDate.of(2021, 11, 30)),
-              Some(2.01))
+            RepaymentItem(
+              Vector(
+                RepaymentSupplementItem(
+                  Some("002420002231"),
+                  Some(3.78),
+                  Some(LocalDate.of(2021, 7, 31)),
+                  Some(LocalDate.of(2021, 9, 15)),
+                  Some(2.01)
+                ),
+                RepaymentSupplementItem(
+                  Some("002420002231"),
+                  Some(2.63),
+                  Some(LocalDate.of(2021, 9, 15)),
+                  Some(LocalDate.of(2021, 10, 24)),
+                  Some(1.76)
+                ),
+                RepaymentSupplementItem(
+                  Some("002420002231"),
+                  Some(3.26),
+                  Some(LocalDate.of(2021, 10, 24)),
+                  Some(LocalDate.of(2021, 11, 30)),
+                  Some(2.01)
+                )
+              )
+            )
           )
-        )
-      )),
-      Some(LocalDate.of(2021, 7, 23)), Some(LocalDate.of(2021, 7, 21)), "000000003135",
-      status = RepaymentHistoryStatus("A"))
+        ),
+        Some(LocalDate.of(2021, 7, 23)),
+        Some(LocalDate.of(2021, 7, 21)),
+        "000000003135",
+        status = RepaymentHistoryStatus("A")
+      )
     )
   )
 
   val auditDetails: AffinityGroup => JsValue = af =>
     commonAuditDetails(af) ++ Json.obj(
-    "estimatedDate" -> "2021-07-23",
-    "method" -> "BACS",
-    "totalRefund" -> "12345",
-    "requestedOn" -> "2021-07-21",
-    "refundReference" -> "000000003135",
-    "requestedAmount" -> "705.2",
-    "refundAmount" -> "705.2",
-    "interestAmount" -> 9.67,
-    "interestDescription" -> "31 July 2021 to 30 November 2021 at 1.76%"
+      "estimatedDate"       -> "2021-07-23",
+      "method"              -> "BACS",
+      "totalRefund"         -> "12345",
+      "requestedOn"         -> "2021-07-21",
+      "refundReference"     -> "000000003135",
+      "requestedAmount"     -> "705.2",
+      "refundAmount"        -> "705.2",
+      "interestAmount"      -> 9.67,
+      "interestDescription" -> "31 July 2021 to 30 November 2021 at 1.76%"
     )
 
-
   val refundToTaxPayerAuditModelIndividualJsonFull = auditDetails(Individual)
-  val refundToTaxPayerAuditModelAgentJsonFull = auditDetails(Agent)
+  val refundToTaxPayerAuditModelAgentJsonFull      = auditDetails(Agent)
 
   val refundToTaxPayerAuditModelIndividualFull = RefundToTaxPayerResponseAuditModel(testRepaymentHistory)
   val refundToTaxPayerAuditModelAgentFull = {
     RefundToTaxPayerResponseAuditModel(testRepaymentHistory)(agentUserConfirmedClient())
   }
   val transactionName = enums.TransactionName.RefundToTaxPayer.name
-  val auditType = enums.AuditType.RefundToTaxPayerResponse.name
+  val auditType       = enums.AuditType.RefundToTaxPayerResponse.name
 
   "RefundToTaxPayerAuditModel" should {
     s"have the correct transaction name of '$transactionName'" when {

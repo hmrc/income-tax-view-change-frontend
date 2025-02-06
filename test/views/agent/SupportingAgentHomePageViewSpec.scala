@@ -51,15 +51,23 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
     else currentDate.getYear + 1
   }
 
-  val testMtdItUserNotMigrated: MtdItUser[_] = defaultMTDITUser(Some(Agent),
-    IncomeSourceDetailsModel(testNino, testMtditid, None, Nil, Nil), isSupportingAgent = true
+  val testMtdItUserNotMigrated: MtdItUser[_] = defaultMTDITUser(
+    Some(Agent),
+    IncomeSourceDetailsModel(testNino, testMtditid, None, Nil, Nil),
+    isSupportingAgent = true
   )
 
-  val testMtdItUserMigrated: MtdItUser[_] = defaultMTDITUser(Some(Agent),
-    IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), Nil, Nil), isSupportingAgent = true)
+  val testMtdItUserMigrated: MtdItUser[_] = defaultMTDITUser(
+    Some(Agent),
+    IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), Nil, Nil),
+    isSupportingAgent = true
+  )
 
-  val testMtdItUserNoClientName = getMinimalMTDITUser(Some(Agent), IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), Nil, Nil), isSupportingAgent = true)
-
+  val testMtdItUserNoClientName = getMinimalMTDITUser(
+    Some(Agent),
+    IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), Nil, Nil),
+    isSupportingAgent = true
+  )
 
   val year2018: Int = 2018
   val year2019: Int = 2019
@@ -69,28 +77,36 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
   val nextPaymentDue: LocalDate = LocalDate.of(year2019, Month.JANUARY, 31)
 
   val currentDate = dateService.getCurrentDate
-  private val viewModelFuture: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, false)
-  private val viewModelOneOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)), currentDate, false)
-  private val viewModelTwoOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1),
-    LocalDate.of(2018, 2, 1)), currentDate, false)
+  private val viewModelFuture: NextUpdatesTileViewModel =
+    NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, false)
+  private val viewModelOneOverdue: NextUpdatesTileViewModel =
+    NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)), currentDate, false)
+  private val viewModelTwoOverdue: NextUpdatesTileViewModel =
+    NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 2, 1)), currentDate, false)
   private val viewModelNoUpdates: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(), currentDate, false)
-  private val viewModelOptOut: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, true)
+  private val viewModelOptOut: NextUpdatesTileViewModel =
+    NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, true)
 
-  class TestSetup(nextPaymentDueDate: Option[LocalDate] = Some(nextPaymentDue),
-                  nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture,
-                  displayCeaseAnIncome: Boolean = false,
-                  incomeSourcesEnabled: Boolean = false,
-                  incomeSourcesNewJourneyEnabled: Boolean = false,
-                  reportingFrequencyEnabled: Boolean = false,
-                  currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary,
-                  user: MtdItUser[_] = testMtdItUserNotMigrated
-                 ) {
+  class TestSetup(
+      nextPaymentDueDate:             Option[LocalDate] = Some(nextPaymentDue),
+      nextUpdatesTileViewModel:       NextUpdatesTileViewModel = viewModelFuture,
+      displayCeaseAnIncome:           Boolean = false,
+      incomeSourcesEnabled:           Boolean = false,
+      incomeSourcesNewJourneyEnabled: Boolean = false,
+      reportingFrequencyEnabled:      Boolean = false,
+      currentITSAStatus:              ITSAStatus = ITSAStatus.Voluntary,
+      user:                           MtdItUser[_] = testMtdItUserNotMigrated) {
 
     val agentHome: SupportingAgentHome = app.injector.instanceOf[SupportingAgentHome]
 
-    val yourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome, incomeSourcesEnabled, incomeSourcesNewJourneyEnabled)
+    val yourBusinessesTileViewModel =
+      YourBusinessesTileViewModel(displayCeaseAnIncome, incomeSourcesEnabled, incomeSourcesNewJourneyEnabled)
 
-    val accountSettingsTileViewModel = AccountSettingsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), reportingFrequencyEnabled, currentITSAStatus)
+    val accountSettingsTileViewModel = AccountSettingsTileViewModel(
+      TaxYear(currentTaxYear, currentTaxYear + 1),
+      reportingFrequencyEnabled,
+      currentITSAStatus
+    )
 
     val view: HtmlFormat.Appendable = agentHome(
       yourBusinessesTileViewModel,
@@ -108,7 +124,6 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
       Try(document.getElementsByClass("govuk-hint").get(index).text).toOption
     }
   }
-
 
   "home" when {
 
@@ -148,7 +163,9 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
         }
         "has content of the next update due" which {
           "is overdue" in new TestSetup(nextUpdatesTileViewModel = viewModelOneOverdue) {
-            getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"OVERDUE 1 January $year2018")
+            getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(
+              s"OVERDUE 1 January $year2018"
+            )
           }
           "is not overdue" in new TestSetup(nextPaymentDueDate = Some(nextUpdateDue)) {
             getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"1 January 2100")
@@ -188,8 +205,12 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
 
         "changes with JS DISABLED" in new TestSetup {
           val langSwitchNoScript: Option[Element] = getElementById("lang-switch-en-no-js")
-          langSwitchNoScript.map(_.select("a").attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/switch-to-welsh")
-          langSwitchNoScript.map(_.select("a span:nth-child(2)").text) shouldBe Some(messages("language-switcher.welsh"))
+          langSwitchNoScript.map(_.select("a").attr("href")) shouldBe Some(
+            "/report-quarterly/income-and-expenses/view/switch-to-welsh"
+          )
+          langSwitchNoScript.map(_.select("a span:nth-child(2)").text) shouldBe Some(
+            messages("language-switcher.welsh")
+          )
         }
       }
 
@@ -198,14 +219,16 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
       }
 
       "not have a payment history tile" in new TestSetup() {
-          getElementById("payment-history-tile") shouldBe None
+        getElementById("payment-history-tile") shouldBe None
 
       }
 
       s"have a change client link" in new TestSetup {
 
         val link: Option[Elements] = getElementById("changeClientLink").map(_.select("a"))
-        link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/remove-client-sessions")
+        link.map(_.attr("href")) shouldBe Some(
+          "/report-quarterly/income-and-expenses/view/agents/remove-client-sessions"
+        )
         link.map(_.text) shouldBe Some(messages("home.agent.changeClientLink"))
       }
     }
@@ -219,25 +242,55 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
     "the feature switches are enabled" should {
       "have an Income Sources tile" which {
         "has a heading" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesEnabled = true) {
-          getElementById("income-sources-tile").map(_.select("h2").first().text()) shouldBe Some(messages("home.incomeSources.heading"))
+          getElementById("income-sources-tile").map(_.select("h2").first().text()) shouldBe Some(
+            messages("home.incomeSources.heading")
+          )
         }
-        "has a link to AddIncomeSourceController.showAgent()" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesEnabled = true) {
-          getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some(messages("home.incomeSources.addIncomeSource.view"))
-          getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url)
+        "has a link to AddIncomeSourceController.showAgent()" in new TestSetup(
+          user = testMtdItUserMigrated,
+          incomeSourcesEnabled = true
+        ) {
+          getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some(
+            messages("home.incomeSources.addIncomeSource.view")
+          )
+          getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(
+            controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
+          )
         }
-        "has a link to ManageIncomeSourceController.showAgent()" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesEnabled = true) {
-          getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").text()) shouldBe Some(messages("home.incomeSources.manageIncomeSource.view"))
-          getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").attr("href")) shouldBe Some(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url)
+        "has a link to ManageIncomeSourceController.showAgent()" in new TestSetup(
+          user = testMtdItUserMigrated,
+          incomeSourcesEnabled = true
+        ) {
+          getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").text()) shouldBe Some(
+            messages("home.incomeSources.manageIncomeSource.view")
+          )
+          getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").attr("href")) shouldBe Some(
+            controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url
+          )
         }
       }
       "have a Your Businesses tile" when {
         "the new income sources journey FS is enabled" which {
-          "has a heading" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesEnabled = true, incomeSourcesNewJourneyEnabled = true) {
-            getElementById("income-sources-tile").map(_.select("h2").first().text()) shouldBe Some(messages("home.incomeSources.newJourneyHeading"))
+          "has a heading" in new TestSetup(
+            user = testMtdItUserMigrated,
+            incomeSourcesEnabled = true,
+            incomeSourcesNewJourneyEnabled = true
+          ) {
+            getElementById("income-sources-tile").map(_.select("h2").first().text()) shouldBe Some(
+              messages("home.incomeSources.newJourneyHeading")
+            )
           }
-          "has a link to AddIncomeSourceController.show()" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesEnabled = true, incomeSourcesNewJourneyEnabled = true) {
-            getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some(messages("home.incomeSources.newJourney.view"))
-            getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url)
+          "has a link to AddIncomeSourceController.show()" in new TestSetup(
+            user = testMtdItUserMigrated,
+            incomeSourcesEnabled = true,
+            incomeSourcesNewJourneyEnabled = true
+          ) {
+            getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some(
+              messages("home.incomeSources.newJourney.view")
+            )
+            getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(
+              controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+            )
           }
         }
       }
@@ -245,26 +298,54 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
       "have an Account Settings tile" when {
         "the reporting frequency page FS is enabled" which {
           "has a heading" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true) {
-            getElementById("account-settings-tile").map(_.select("h2").first().text()) shouldBe Some("Your account settings")
+            getElementById("account-settings-tile").map(_.select("h2").first().text()) shouldBe Some(
+              "Your account settings"
+            )
           }
-          "has text for reporting quarterly(voluntary)" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true, currentITSAStatus = ITSAStatus.Voluntary) {
-            getElementById("current-itsa-status").map(_.text()) shouldBe Some(s"Reporting quarterly for $currentTaxYear to ${currentTaxYear + 1} tax year")
+          "has text for reporting quarterly(voluntary)" in new TestSetup(
+            user = testMtdItUserMigrated,
+            reportingFrequencyEnabled = true,
+            currentITSAStatus = ITSAStatus.Voluntary
+          ) {
+            getElementById("current-itsa-status").map(_.text()) shouldBe Some(
+              s"Reporting quarterly for $currentTaxYear to ${currentTaxYear + 1} tax year"
+            )
           }
-          "has text for reporting quarterly(mandated)" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true, currentITSAStatus = ITSAStatus.Mandated) {
-            getElementById("current-itsa-status").map(_.text()) shouldBe Some(s"Reporting quarterly for $currentTaxYear to ${currentTaxYear + 1} tax year")
+          "has text for reporting quarterly(mandated)" in new TestSetup(
+            user = testMtdItUserMigrated,
+            reportingFrequencyEnabled = true,
+            currentITSAStatus = ITSAStatus.Mandated
+          ) {
+            getElementById("current-itsa-status").map(_.text()) shouldBe Some(
+              s"Reporting quarterly for $currentTaxYear to ${currentTaxYear + 1} tax year"
+            )
           }
-          "has text for reporting annually" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true, currentITSAStatus = ITSAStatus.Annual) {
-            getElementById("current-itsa-status").map(_.text()) shouldBe Some(s"Reporting annually for $currentTaxYear to ${currentTaxYear + 1} tax year")
+          "has text for reporting annually" in new TestSetup(
+            user = testMtdItUserMigrated,
+            reportingFrequencyEnabled = true,
+            currentITSAStatus = ITSAStatus.Annual
+          ) {
+            getElementById("current-itsa-status").map(_.text()) shouldBe Some(
+              s"Reporting annually for $currentTaxYear to ${currentTaxYear + 1} tax year"
+            )
           }
 
-          "has a link to the reporting frequency page" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true) {
+          "has a link to the reporting frequency page" in new TestSetup(
+            user = testMtdItUserMigrated,
+            reportingFrequencyEnabled = true
+          ) {
             getElementById("reporting-frequency-link").map(_.text()) shouldBe Some("Manage your reporting frequency")
-            getElementById("reporting-frequency-link").map(_.attr("href")) shouldBe Some(controllers.routes.ReportingFrequencyPageController.show(true).url)
+            getElementById("reporting-frequency-link").map(_.attr("href")) shouldBe Some(
+              controllers.routes.ReportingFrequencyPageController.show(true).url
+            )
           }
         }
 
         "the reporting frequency page FS is disabled" which {
-          "does not have the Account Settings tile" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = false) {
+          "does not have the Account Settings tile" in new TestSetup(
+            user = testMtdItUserMigrated,
+            reportingFrequencyEnabled = false
+          ) {
             getElementById("account-settings-tile") shouldBe None
           }
         }

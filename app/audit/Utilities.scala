@@ -22,24 +22,24 @@ import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import utils.Utilities.JsonUtil
 
-
 object Utilities {
 
-  private def getBaseDetails(user: MtdItUser[_]): JsObject = Json.obj(
-    "mtditid" -> user.mtditid) ++
-    ("agentReferenceNumber", user.arn) ++
-    ("saUtr", user.saUtr) ++
-    ("credId", user.credId) ++
-    userType(user.userType)
+  private def getBaseDetails(user: MtdItUser[_]): JsObject =
+    Json.obj("mtditid" -> user.mtditid) ++
+      ("agentReferenceNumber", user.arn) ++
+      ("saUtr", user.saUtr) ++
+      ("credId", user.credId) ++
+      userType(user.userType)
 
   def userAuditDetails(user: MtdItUser[_]): JsObject =
     Json.obj("nino" -> user.nino) ++ getBaseDetails(user)
 
-  def userType(userType: Option[AffinityGroup]): JsObject = userType match {
-    case Some(Agent) => Json.obj("userType" -> "Agent")
-    case Some(_) => Json.obj("userType" -> "Individual")
-    case None => Json.obj()
-  }
+  def userType(userType: Option[AffinityGroup]): JsObject =
+    userType match {
+      case Some(Agent) => Json.obj("userType" -> "Agent")
+      case Some(_)     => Json.obj("userType" -> "Individual")
+      case None        => Json.obj()
+    }
 
   def ratePctString(rate: BigDecimal): String = s"$rate%"
 }

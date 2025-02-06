@@ -24,29 +24,28 @@ import play.twirl.api.Html
 import java.time.LocalDate
 
 case class ChargeSummaryViewModel(
-                                   currentDate: LocalDate,
-                                   chargeItem: ChargeItem,
-                                   backUrl: String,
-                                   paymentBreakdown: List[FinancialDetail],
-                                   paymentAllocations: List[PaymentHistoryAllocations],
-                                   payments: FinancialDetailsModel,
-                                   chargeHistoryEnabled: Boolean,
-                                   latePaymentInterestCharge: Boolean,
-                                   reviewAndReconcileEnabled: Boolean,
-                                   reviewAndReconcileCredit: Option[ChargeItem],
-                                   isAgent: Boolean = false,
-                                   btaNavPartial: Option[Html] = None,
-                                   origin: Option[String] = None,
-                                   gatewayPage: Option[GatewayPage] = None,
-                                   adjustmentHistory: AdjustmentHistoryModel,
-                                   poaExtraChargeLink: Option[String] = None,
-                                   poaOneChargeUrl: String,
-                                   poaTwoChargeUrl: String
-                                 ) {
+    currentDate:               LocalDate,
+    chargeItem:                ChargeItem,
+    backUrl:                   String,
+    paymentBreakdown:          List[FinancialDetail],
+    paymentAllocations:        List[PaymentHistoryAllocations],
+    payments:                  FinancialDetailsModel,
+    chargeHistoryEnabled:      Boolean,
+    latePaymentInterestCharge: Boolean,
+    reviewAndReconcileEnabled: Boolean,
+    reviewAndReconcileCredit:  Option[ChargeItem],
+    isAgent:                   Boolean = false,
+    btaNavPartial:             Option[Html] = None,
+    origin:                    Option[String] = None,
+    gatewayPage:               Option[GatewayPage] = None,
+    adjustmentHistory:         AdjustmentHistoryModel,
+    poaExtraChargeLink:        Option[String] = None,
+    poaOneChargeUrl:           String,
+    poaTwoChargeUrl:           String) {
 
-  val dueDate = chargeItem.dueDate
-  val hasDunningLocks = paymentBreakdown.exists(_.dunningLockExists)
-  val hasInterestLocks = paymentBreakdown.exists(_.interestLockExists)
+  val dueDate            = chargeItem.dueDate
+  val hasDunningLocks    = paymentBreakdown.exists(_.dunningLockExists)
+  val hasInterestLocks   = paymentBreakdown.exists(_.interestLockExists)
   val hasAccruedInterest = paymentBreakdown.exists(_.hasAccruedInterest)
 
   val isCredit = chargeItem.originalAmount < 0
@@ -61,20 +60,21 @@ case class ChargeSummaryViewModel(
   }
 
   val taxYearFrom = chargeItem.taxYear.startYear
-  val taxYearTo = chargeItem.taxYear.endYear
+  val taxYearTo   = chargeItem.taxYear.endYear
 
   val taxYearFromCodingOut = s"${chargeItem.taxYear.endYear + 1}"
-  val taxYearToCodingOut = s"${chargeItem.taxYear.endYear + 2}"
+  val taxYearToCodingOut   = s"${chargeItem.taxYear.endYear + 2}"
 
-  val messagePrefix = if(latePaymentInterestCharge)"lpi."
-  else ""
+  val messagePrefix =
+    if (latePaymentInterestCharge) "lpi."
+    else ""
   val pageTitle: String =
     s"chargeSummary.$messagePrefix${chargeItem.getChargeTypeKey(reviewAndReconcileEnabled)}"
 
   val isBalancingChargeZero: Boolean = chargeItem.transactionType match {
-    case _ if chargeItem.subTransactionType.isDefined => false
+    case _ if chargeItem.subTransactionType.isDefined      => false
     case BalancingCharge if chargeItem.originalAmount == 0 => true
-    case _ => false
+    case _                                                 => false
   }
 
   val codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment: Boolean =
@@ -83,8 +83,7 @@ case class ChargeSummaryViewModel(
   val chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit: Boolean =
     (chargeHistoryEnabled || paymentAllocations.nonEmpty) && !isBalancingChargeZero && !isCredit
 
-  val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !chargeItem.subTransactionType.contains(Accepted)
+  val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean =
+    !latePaymentInterestCharge && !chargeItem.subTransactionType.contains(Accepted)
 
 }
-
-

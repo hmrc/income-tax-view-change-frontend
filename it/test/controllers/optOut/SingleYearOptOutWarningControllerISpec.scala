@@ -31,27 +31,32 @@ import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
 class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
   private val isAgent: Boolean = false
-  private val path = "/optout/single-taxyear-warning"
-  private val validYesForm = getPageForm("true")
-  private val validNoForm = getPageForm("false")
-  private val inValidForm = getPageForm("")
+  private val path                 = "/optout/single-taxyear-warning"
+  private val validYesForm         = getPageForm("true")
+  private val validNoForm          = getPageForm("false")
+  private val inValidForm          = getPageForm("")
   private val confirmOptOutPageUrl = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
-  private val optOutCancelledUrl = controllers.optOut.routes.OptOutCancelledController.show().url
-  private val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
-  private val previousYear = currentTaxYear.addYears(-1)
+  private val optOutCancelledUrl   = controllers.optOut.routes.OptOutCancelledController.show().url
+  private val currentTaxYear       = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
+  private val previousYear         = currentTaxYear.addYears(-1)
 
-  private val expectedInsetText = s"If you continue, from 6 April ${previousYear.endYear}. you’ll be required to send quarterly updates again through software."
-  private val expectedDetailText = s"You can only opt out for the ${previousYear.startYear} to ${previousYear.endYear} tax year."
-  private val expectedFormTitle = s"Do you still want to opt out for the ${previousYear.startYear} to ${previousYear.endYear} tax year?"
-  private val expectedErrorText = s"Select yes to opt out for the ${previousYear.startYear.toString} to ${previousYear.endYear.toString} tax year"
+  private val expectedInsetText =
+    s"If you continue, from 6 April ${previousYear.endYear}. you’ll be required to send quarterly updates again through software."
+  private val expectedDetailText =
+    s"You can only opt out for the ${previousYear.startYear} to ${previousYear.endYear} tax year."
+  private val expectedFormTitle =
+    s"Do you still want to opt out for the ${previousYear.startYear} to ${previousYear.endYear} tax year?"
+  private val expectedErrorText =
+    s"Select yes to opt out for the ${previousYear.startYear.toString} to ${previousYear.endYear.toString} tax year"
 
   private val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
   private val helper = new OptOutSessionRepositoryHelper(repository)
 
-  private def getPageForm(value: String): Map[String, Seq[String]] = Map(
-    ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> Seq(value),
-    ConfirmOptOutSingleTaxYearForm.csrfToken -> Seq("")
-  )
+  private def getPageForm(value: String): Map[String, Seq[String]] =
+    Map(
+      ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> Seq(value),
+      ConfirmOptOutSingleTaxYearForm.csrfToken          -> Seq("")
+    )
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -101,11 +106,13 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        helper.stubOptOutInitialState(currentTaxYear,
+        helper.stubOptOutInitialState(
+          currentTaxYear,
           previousYearCrystallised = false,
           previousYearStatus = Voluntary,
           currentYearStatus = NoStatus,
-          nextYearStatus = NoStatus)
+          nextYearStatus = NoStatus
+        )
 
         val result = buildPOSTMTDPostClient(path, body = inValidForm).futureValue
         IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
@@ -129,11 +136,13 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        helper.stubOptOutInitialState(currentTaxYear,
+        helper.stubOptOutInitialState(
+          currentTaxYear,
           previousYearCrystallised = false,
           previousYearStatus = Voluntary,
           currentYearStatus = NoStatus,
-          nextYearStatus = NoStatus)
+          nextYearStatus = NoStatus
+        )
 
         val result = buildPOSTMTDPostClient(path, body = validYesForm).futureValue
         IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
@@ -154,11 +163,13 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        helper.stubOptOutInitialState(currentTaxYear,
+        helper.stubOptOutInitialState(
+          currentTaxYear,
           previousYearCrystallised = false,
           previousYearStatus = Voluntary,
           currentYearStatus = NoStatus,
-          nextYearStatus = NoStatus)
+          nextYearStatus = NoStatus
+        )
 
         val result = buildPOSTMTDPostClient(path, body = validNoForm).futureValue
 

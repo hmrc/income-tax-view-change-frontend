@@ -19,17 +19,16 @@ package models.claimToAdjustPoa
 import models.incomeSourceDetails.TaxYear
 
 case class PaymentOnAccountViewModel(
-                                      poaOneTransactionId: String,
-                                      poaTwoTransactionId: String,
-                                      taxYear: TaxYear,
-                                      totalAmountOne: BigDecimal,
-                                      totalAmountTwo: BigDecimal,
-                                      relevantAmountOne: BigDecimal,
-                                      relevantAmountTwo: BigDecimal,
-                                      previouslyAdjusted: Option[Boolean],
-                                      partiallyPaid: Boolean,
-                                      fullyPaid: Boolean
-                           ) {
+    poaOneTransactionId: String,
+    poaTwoTransactionId: String,
+    taxYear:             TaxYear,
+    totalAmountOne:      BigDecimal,
+    totalAmountTwo:      BigDecimal,
+    relevantAmountOne:   BigDecimal,
+    relevantAmountTwo:   BigDecimal,
+    previouslyAdjusted:  Option[Boolean],
+    partiallyPaid:       Boolean,
+    fullyPaid:           Boolean) {
 
   val totalAmount: BigDecimal = totalAmountOne + totalAmountTwo
   private val poaRelevantAmount = relevantAmountOne + relevantAmountTwo
@@ -38,7 +37,7 @@ case class PaymentOnAccountViewModel(
 
   val partiallyOrFullyPaidPoaExists: Boolean = partiallyPaid || fullyPaid
 
-  val partiallyPaidAndNotAdjusted = partiallyOrFullyPaidPoaExists && !hasBeenPreviouslyAdjusted
+  val partiallyPaidAndNotAdjusted        = partiallyOrFullyPaidPoaExists && !hasBeenPreviouslyAdjusted
   val partiallyPaidAndPreviouslyAdjusted = partiallyOrFullyPaidPoaExists && hasBeenPreviouslyAdjusted
 
   def totalAmountLessThanPoa: Boolean = {

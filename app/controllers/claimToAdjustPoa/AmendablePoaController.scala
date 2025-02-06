@@ -35,23 +35,28 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AmendablePoaController @Inject()(val authActions: AuthActions,
-                                       val claimToAdjustService: ClaimToAdjustService,
-                                       val poaSessionService: PaymentOnAccountSessionService,
-                                       view: AmendablePaymentOnAccount)
-                                      (implicit val appConfig: FrontendAppConfig,
-                                       val individualErrorHandler: ItvcErrorHandler,
-                                       val agentErrorHandler: AgentItvcErrorHandler,
-                                       val mcc: MessagesControllerComponents,
-                                       val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport
-    with ClaimToAdjustUtils with ImplicitCurrencyFormatter
-    with WithSessionAndPoa with ErrorRecovery {
+class AmendablePoaController @Inject() (
+    val authActions:          AuthActions,
+    val claimToAdjustService: ClaimToAdjustService,
+    val poaSessionService:    PaymentOnAccountSessionService,
+    view:                     AmendablePaymentOnAccount
+  )(
+    implicit val appConfig:     FrontendAppConfig,
+    val individualErrorHandler: ItvcErrorHandler,
+    val agentErrorHandler:      AgentItvcErrorHandler,
+    val mcc:                    MessagesControllerComponents,
+    val ec:                     ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with ClaimToAdjustUtils
+    with ImplicitCurrencyFormatter
+    with WithSessionAndPoa
+    with ErrorRecovery {
 
   def show(isAgent: Boolean): Action[AnyContent] =
-    authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
-      implicit user =>
-        withSessionData(journeyState = InitialPage) { _ => {
+    authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async { implicit user =>
+      withSessionData(journeyState = InitialPage) { _ =>
+        {
           for {
             poaMaybe <- EitherT(claimToAdjustService.getAmendablePoaViewModel(Nino(user.nino)))
           } yield poaMaybe

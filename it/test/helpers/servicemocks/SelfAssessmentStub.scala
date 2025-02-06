@@ -29,5 +29,3 @@ object SelfAssessmentStub {
     WiremockHelper.stubGet(calcUrl(nino, year), Status.OK, calc)
   }
 }
-
-

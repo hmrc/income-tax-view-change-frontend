@@ -34,24 +34,29 @@ import scala.concurrent.ExecutionContext
 
 class IncomeSourcesAccountingMethodControllerISpec extends ControllerISpecHelper {
 
-  def accountingMethodKey(incomeSourceType: IncomeSourceType): String = "incomeSources.add." + incomeSourceType.key + ".AccountingMethod"
+  def accountingMethodKey(incomeSourceType: IncomeSourceType): String =
+    "incomeSources.add." + incomeSourceType.key + ".AccountingMethod"
   val continueButtonText: String = messagesAPI("base.continue")
 
-  val sessionService: SessionService = app.injector.instanceOf[SessionService]
+  val sessionService:       SessionService   = app.injector.instanceOf[SessionService]
   implicit override val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
-  implicit override val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
+  implicit override val hc: HeaderCarrier    = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
 
-  def testUIJourneySessionData(incomeSourceType: IncomeSourceType, accountingMethod: Option[String]): UIJourneySessionData = UIJourneySessionData(
-    sessionId = testSessionId,
-    journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
-    addIncomeSourceData = Some(
-      AddIncomeSourceData(
-        businessName  = if (incomeSourceType.equals(SelfEmployment)) Some("testBusinessName")  else None,
-        businessTrade = if (incomeSourceType.equals(SelfEmployment)) Some("testBusinessTrade") else None,
-        incomeSourcesAccountingMethod = accountingMethod
+  def testUIJourneySessionData(
+      incomeSourceType: IncomeSourceType,
+      accountingMethod: Option[String]
+    ): UIJourneySessionData =
+    UIJourneySessionData(
+      sessionId = testSessionId,
+      journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
+      addIncomeSourceData = Some(
+        AddIncomeSourceData(
+          businessName = if (incomeSourceType.equals(SelfEmployment)) Some("testBusinessName") else None,
+          businessTrade = if (incomeSourceType.equals(SelfEmployment)) Some("testBusinessTrade") else None,
+          incomeSourcesAccountingMethod = accountingMethod
+        )
       )
     )
-  )
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -62,131 +67,155 @@ class IncomeSourcesAccountingMethodControllerISpec extends ControllerISpecHelper
   }
 
   def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "/income-sources/add" else "/agents/income-sources/add"
+    val pathStart = if (mtdRole == MTDIndividual) "/income-sources/add" else "/agents/income-sources/add"
     incomeSourceType match {
-      case SelfEmployment => s"$pathStart/business-accounting-method"
-      case UkProperty => s"$pathStart/uk-property-accounting-method"
+      case SelfEmployment  => s"$pathStart/business-accounting-method"
+      case UkProperty      => s"$pathStart/uk-property-accounting-method"
       case ForeignProperty => s"$pathStart/foreign-property-business-accounting-method"
     }
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
-      val path = getPath(mtdUserRole, incomeSourceType)
-      val additionalCookies = getAdditionalCookies(mtdUserRole)
-      s"GET $path" when {
-        s"a user is a $mtdUserRole" that {
-          "is authenticated, with a valid enrolment" should {
-            "render the Business Accounting Method page" in {
-              enable(IncomeSourcesFs)
-              disable(NavBarFs)
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
+        val path              = getPath(mtdUserRole, incomeSourceType)
+        val additionalCookies = getAdditionalCookies(mtdUserRole)
+        s"GET $path" when {
+          s"a user is a $mtdUserRole" that {
+            "is authenticated, with a valid enrolment" should {
+              "render the Business Accounting Method page" in {
+                enable(IncomeSourcesFs)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  noPropertyOrBusinessResponse
+                )
 
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-              result should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, "incomeSources.add." + incomeSourceType.key + ".AccountingMethod.heading"),
-                elementTextByID("continue-button")(continueButtonText)
-              )
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "incomeSources.add." + incomeSourceType.key + ".AccountingMethod.heading"),
+                  elementTextByID("continue-button")(continueButtonText)
+                )
+              }
             }
+            testAuthFailures(path, mtdUserRole)
           }
-          testAuthFailures(path, mtdUserRole)
+        }
+        s"POST $path" when {
+          s"a user is a $mtdUserRole" that {
+            "is authenticated, with a valid enrolment" should {
+              s"add 'cash' to session storage and redirect to check business details" when {
+                "user selects 'cash basis accounting'" in {
+                  enable(IncomeSourcesFs)
+                  disable(NavBarFs)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    noPropertyOrBusinessResponse
+                  )
+
+                  val formData: Map[String, Seq[String]] = Map(accountingMethodKey(incomeSourceType) -> Seq("cash"))
+                  val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
+
+                  await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType, Some("cash"))))
+
+                  val session =
+                    sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType))(hc, ec).futureValue
+
+                  val resultAccountingMethod = session match {
+                    case Right(Some(uiJourneySessionData)) =>
+                      uiJourneySessionData.addIncomeSourceData.get.incomeSourcesAccountingMethod
+                    case _ => None
+                  }
+
+                  val expectedUrl = if (mtdUserRole == MTDIndividual) {
+                    controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(incomeSourceType).url
+                  } else {
+                    controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController
+                      .showAgent(incomeSourceType)
+                      .url
+                  }
+
+                  result should have(
+                    httpStatus(SEE_OTHER),
+                    redirectURI(expectedUrl)
+                  )
+                  resultAccountingMethod shouldBe Some("cash")
+                }
+              }
+
+              s"add 'accruals' to session storage and redirect to check business details" when {
+                "user selects 'traditional accounting'" in {
+                  enable(IncomeSourcesFs)
+                  disable(NavBarFs)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    noPropertyOrBusinessResponse
+                  )
+
+                  val formData: Map[String, Seq[String]] =
+                    Map(accountingMethodKey(incomeSourceType) -> Seq("traditional"))
+                  val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
+
+                  await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType, Some("accruals"))))
+
+                  val session =
+                    sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType))(hc, ec).futureValue
+
+                  val resultAccountingMethod = session match {
+                    case Right(Some(uiJourneySessionData)) =>
+                      uiJourneySessionData.addIncomeSourceData.get.incomeSourcesAccountingMethod
+                    case _ => None
+                  }
+
+                  val expectedUrl = if (mtdUserRole == MTDIndividual) {
+                    controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(incomeSourceType).url
+                  } else {
+                    controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController
+                      .showAgent(incomeSourceType)
+                      .url
+                  }
+
+                  result should have(
+                    httpStatus(SEE_OTHER),
+                    redirectURI(expectedUrl)
+                  )
+                  resultAccountingMethod shouldBe Some("accruals")
+                }
+              }
+
+              s"return BAD_REQUEST" when {
+                "user does not select anything" in {
+                  enable(IncomeSourcesFs)
+                  disable(NavBarFs)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    noPropertyOrBusinessResponse
+                  )
+
+                  val formData: Map[String, Seq[String]] = Map(accountingMethodKey(incomeSourceType) -> Seq(""))
+                  val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
+
+                  result should have(
+                    httpStatus(BAD_REQUEST),
+                    elementTextByID("error-summary-heading")(messagesAPI("base.error_summary.heading"))
+                  )
+                }
+              }
+            }
+            testAuthFailures(
+              path,
+              mtdUserRole,
+              optBody = Some(Map(accountingMethodKey(incomeSourceType) -> Seq("traditional")))
+            )
+          }
         }
       }
-      s"POST $path" when {
-        s"a user is a $mtdUserRole" that {
-          "is authenticated, with a valid enrolment" should {
-            s"add 'cash' to session storage and redirect to check business details" when {
-              "user selects 'cash basis accounting'" in {
-                enable(IncomeSourcesFs)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-                val formData: Map[String, Seq[String]] = Map(accountingMethodKey(incomeSourceType) -> Seq("cash"))
-                val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
-
-                await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType, Some("cash"))))
-
-                val session = sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType))(hc, ec).futureValue
-
-                val resultAccountingMethod = session match {
-                  case Right(Some(uiJourneySessionData)) =>
-                    uiJourneySessionData.addIncomeSourceData.get.incomeSourcesAccountingMethod
-                  case _ => None
-                }
-
-                val expectedUrl = if(mtdUserRole == MTDIndividual) {
-                  controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(incomeSourceType).url
-                } else {
-                  controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType).url
-                }
-
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(expectedUrl)
-                )
-                resultAccountingMethod shouldBe Some("cash")
-              }
-            }
-
-            s"add 'accruals' to session storage and redirect to check business details" when {
-              "user selects 'traditional accounting'" in {
-                enable(IncomeSourcesFs)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-                val formData: Map[String, Seq[String]] = Map(accountingMethodKey(incomeSourceType) -> Seq("traditional"))
-                val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
-
-                await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType, Some("accruals"))))
-
-                val session = sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType))(hc, ec).futureValue
-
-                val resultAccountingMethod = session match {
-                  case Right(Some(uiJourneySessionData)) =>
-                    uiJourneySessionData.addIncomeSourceData.get.incomeSourcesAccountingMethod
-                  case _ => None
-                }
-
-                val expectedUrl = if(mtdUserRole == MTDIndividual) {
-                  controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(incomeSourceType).url
-                } else {
-                  controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType).url
-                }
-
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(expectedUrl)
-                )
-                resultAccountingMethod shouldBe Some("accruals")
-              }
-            }
-
-            s"return BAD_REQUEST" when {
-              "user does not select anything" in {
-                enable(IncomeSourcesFs)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-                val formData: Map[String, Seq[String]] = Map(accountingMethodKey(incomeSourceType) -> Seq(""))
-                val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
-
-                result should have(
-                  httpStatus(BAD_REQUEST),
-                  elementTextByID("error-summary-heading")(messagesAPI("base.error_summary.heading"))
-                )
-              }
-            }
-          }
-          testAuthFailures(path, mtdUserRole, optBody = Some(Map(accountingMethodKey(incomeSourceType) -> Seq("traditional"))))
-        }
-      }
-    }
   }
 }

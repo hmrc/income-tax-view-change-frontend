@@ -20,7 +20,6 @@ import play.api.libs.json.{Format, Json}
 
 import java.time.LocalDate
 
-
 sealed trait PaymentsResponse
 
 case class Payments(payments: Seq[Payment]) extends PaymentsResponse
@@ -39,41 +38,44 @@ case object NotYetAllocatedPaymentStatus extends PaymentAllocationStatus
 
 case object PartiallyAllocatedPaymentStatus extends PaymentAllocationStatus
 
-case class Payment(reference: Option[String],
-                   amount: Option[BigDecimal],
-                   outstandingAmount: Option[BigDecimal],
-                   method: Option[String],
-                   documentDescription: Option[String],
-                   lot: Option[String],
-                   lotItem: Option[String],
-                   dueDate: Option[LocalDate],
-                   documentDate: LocalDate,
-                   transactionId: Option[String],
-                   mainType: Option[String] = None,
-                   mainTransaction: Option[String] = None,
-                   clearingSAPDocument: Option[String] = None) {
+case class Payment(
+    reference:           Option[String],
+    amount:              Option[BigDecimal],
+    outstandingAmount:   Option[BigDecimal],
+    method:              Option[String],
+    documentDescription: Option[String],
+    lot:                 Option[String],
+    lotItem:             Option[String],
+    dueDate:             Option[LocalDate],
+    documentDate:        LocalDate,
+    transactionId:       Option[String],
+    mainType:            Option[String] = None,
+    mainTransaction:     Option[String] = None,
+    clearingSAPDocument: Option[String] = None) {
 
   val creditType: Option[CreditType] = mainTransaction.flatMap(CreditType.fromCode)
 
-  def credit: Option[BigDecimal] = amount match {
-    case None => None
-    case _ if (lotItem.isDefined && lot.isDefined) => None
-    case Some(_) if (amount.get > 0.00) => None
-    case Some(credit) => Some(credit)
-  }
+  def credit: Option[BigDecimal] =
+    amount match {
+      case None                                      => None
+      case _ if (lotItem.isDefined && lot.isDefined) => None
+      case Some(_) if (amount.get > 0.00)            => None
+      case Some(credit)                              => Some(credit)
+    }
 
-  def allocationStatus(): Option[PaymentAllocationStatus] = (outstandingAmount, amount) match {
-    case (Some(outstandingAmountValue), _) if outstandingAmountValue.equals(BigDecimal(0.0)) =>
-      Some(FullyAllocatedPaymentStatus)
-    case (Some(outstandingAmountValue), Some(originalAmountValue)) if outstandingAmountValue.equals(originalAmountValue) =>
-      Some(NotYetAllocatedPaymentStatus)
-    case (Some(_), Some(_)) =>
-      Some(PartiallyAllocatedPaymentStatus)
-    case _ => None
-  }
+  def allocationStatus(): Option[PaymentAllocationStatus] =
+    (outstandingAmount, amount) match {
+      case (Some(outstandingAmountValue), _) if outstandingAmountValue.equals(BigDecimal(0.0)) =>
+        Some(FullyAllocatedPaymentStatus)
+      case (Some(outstandingAmountValue), Some(originalAmountValue))
+          if outstandingAmountValue.equals(originalAmountValue) =>
+        Some(NotYetAllocatedPaymentStatus)
+      case (Some(_), Some(_)) =>
+        Some(PartiallyAllocatedPaymentStatus)
+      case _ => None
+    }
 
 }
-
 
 object Payment {
   implicit val format: Format[Payment] = Json.format[Payment]
@@ -84,7 +86,8 @@ case class PaymentsWithChargeType(payments: Seq[Payment], mainType: Option[Strin
     if (MfaDebitUtils.isMFADebitMainType(mainType)) {
       Some("chargeSummary.paymentAllocations.mfaDebit")
     } else {
-      FinancialDetail.getMessageKeyByTypes(mainType, chargeType)
+      FinancialDetail
+        .getMessageKeyByTypes(mainType, chargeType)
         .map(typesKey => s"chargeSummary.paymentAllocations.$typesKey")
     }
   }

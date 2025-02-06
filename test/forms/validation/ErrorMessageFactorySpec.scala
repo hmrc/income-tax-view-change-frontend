@@ -26,8 +26,12 @@ class ErrorMessageFactorySpec extends AnyWordSpec with Matchers {
     "mark form as Invalid" when {
       "when validation error" in {
 
-        val result = List(Seq(FieldError("invalid form", Seq("Please enter a value")),
-          SummaryError("invalid form", Seq("Please enter a value"))))
+        val result = List(
+          Seq(
+            FieldError("invalid form", Seq("Please enter a value")),
+            SummaryError("invalid form", Seq("Please enter a value"))
+          )
+        )
 
         ErrorMessageFactory.error("invalid form", "Please enter a value").errors.map(_.args) mustBe result
       }

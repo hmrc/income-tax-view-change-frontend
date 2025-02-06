@@ -26,19 +26,21 @@ import views.html.optOut.OptOutError
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class OptOutErrorController @Inject()(val view: OptOutError,
-                                      val authActions: AuthActions,
-                                      val itvcErrorHandler: ItvcErrorHandler,
-                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                     (implicit val appConfig: FrontendAppConfig,
-                                      val ec: ExecutionContext,
-                                      val mcc: MessagesControllerComponents
-                                     ) extends FrontendController(mcc) with I18nSupport  {
+class OptOutErrorController @Inject() (
+    val view:                  OptOutError,
+    val authActions:           AuthActions,
+    val itvcErrorHandler:      ItvcErrorHandler,
+    val itvcErrorHandlerAgent: AgentItvcErrorHandler
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    val ec:                 ExecutionContext,
+    val mcc:                MessagesControllerComponents)
+    extends FrontendController(mcc)
+    with I18nSupport {
 
-
-  def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
+  def show(isAgent: Boolean): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
       Future.successful(Ok(view(isAgent)))
-  }
+    }
 
 }

@@ -16,13 +16,18 @@
 
 package exceptions
 
-case class MissingFieldException(fieldName: String) extends RuntimeException(s"Missing Mandatory Expected Field: $fieldName")
+case class MissingFieldException(fieldName: String)
+    extends RuntimeException(s"Missing Mandatory Expected Field: $fieldName")
 
-case class MissingSessionKey(key:String) extends RuntimeException(s"Missing session key: $key")
+case class MissingSessionKey(key: String) extends RuntimeException(s"Missing session key: $key")
 
-case class NoIncomeSourceFound(hash: String) extends RuntimeException(s"User has no matching incomeSources. Hash: <$hash>")
+case class NoIncomeSourceFound(hash: String)
+    extends RuntimeException(s"User has no matching incomeSources. Hash: <$hash>")
 
-case class MultipleIncomeSourcesFound(hash: String, incomeSourceIds: List[String]) extends
-  RuntimeException(s"User has multiple matching incomeSources. hash: <$hash>. incomeSourceIds: <$incomeSourceIds>")
+case class MultipleIncomeSourcesFound(hash: String, incomeSourceIds: List[String])
+    extends RuntimeException(
+      s"User has multiple matching incomeSources. hash: <$hash>. incomeSourceIds: <$incomeSourceIds>"
+    )
 
-case class CouldNotCreateChargeItemException(msg: String) extends RuntimeException(s"Could not create charge item: $msg")
+case class CouldNotCreateChargeItemException(msg: String)
+    extends RuntimeException(s"Could not create charge item: $msg")

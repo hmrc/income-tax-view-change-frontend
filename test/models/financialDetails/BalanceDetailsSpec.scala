@@ -21,33 +21,36 @@ import testUtils.UnitSpec
 
 class BalanceDetailsSpec extends UnitSpec {
 
-  def balanceDetailsJson(availableCredit: Option[BigDecimal] = None,
-                         firstPendingAmountRequested: Option[BigDecimal] = None,
-                         secondPendingAmountRequested: Option[BigDecimal] = None): JsValue = Json.obj(
-    "balanceDueWithin30Days" -> 1.00,
-    "overDueAmount" -> 2.00,
-    "totalBalance" -> 3.00
-  ) ++ availableCredit.fold(Json.obj())(amount => Json.obj("availableCredit" -> amount)) ++
-    firstPendingAmountRequested.fold(Json.obj())(amount => Json.obj("firstPendingAmountRequested" -> amount)) ++
-    secondPendingAmountRequested.fold(Json.obj())(amount => Json.obj("secondPendingAmountRequested" -> amount))
+  def balanceDetailsJson(
+      availableCredit:              Option[BigDecimal] = None,
+      firstPendingAmountRequested:  Option[BigDecimal] = None,
+      secondPendingAmountRequested: Option[BigDecimal] = None
+    ): JsValue =
+    Json.obj(
+      "balanceDueWithin30Days" -> 1.00,
+      "overDueAmount"          -> 2.00,
+      "totalBalance"           -> 3.00
+    ) ++ availableCredit.fold(Json.obj())(amount => Json.obj("availableCredit" -> amount)) ++
+      firstPendingAmountRequested.fold(Json.obj())(amount => Json.obj("firstPendingAmountRequested" -> amount)) ++
+      secondPendingAmountRequested.fold(Json.obj())(amount => Json.obj("secondPendingAmountRequested" -> amount))
 
-
-  def balanceDetailsModel(availableCredit: Option[BigDecimal] = None,
-                          firstPendingAmountRequested: Option[BigDecimal] = None,
-                          secondPendingAmountRequested: Option[BigDecimal] = None,
-                          allocatedCredit: Option[BigDecimal] = None,
-                          unallocatedCredit: Option[BigDecimal] = None
-                         ): BalanceDetails = BalanceDetails(
-    balanceDueWithin30Days = 1.00,
-    overDueAmount = 2.00,
-    totalBalance = 3.00,
-    availableCredit,
-    allocatedCredit,
-    firstPendingAmountRequested,
-    secondPendingAmountRequested,
-    unallocatedCredit
-  )
-
+  def balanceDetailsModel(
+      availableCredit:              Option[BigDecimal] = None,
+      firstPendingAmountRequested:  Option[BigDecimal] = None,
+      secondPendingAmountRequested: Option[BigDecimal] = None,
+      allocatedCredit:              Option[BigDecimal] = None,
+      unallocatedCredit:            Option[BigDecimal] = None
+    ): BalanceDetails =
+    BalanceDetails(
+      balanceDueWithin30Days = 1.00,
+      overDueAmount = 2.00,
+      totalBalance = 3.00,
+      availableCredit,
+      allocatedCredit,
+      firstPendingAmountRequested,
+      secondPendingAmountRequested,
+      unallocatedCredit
+    )
 
   "BalanceDetails model" should {
     "return a correct model" when {
@@ -57,11 +60,13 @@ class BalanceDetailsSpec extends UnitSpec {
       }
 
       "full json is supplied" in {
-        val result = Json.parse(
-          balanceDetailsJson(Some(BigDecimal(5.00)), Some(BigDecimal(2.00) ), Some(BigDecimal(3.00))).toString()
-        ).as[BalanceDetails]
+        val result = Json
+          .parse(
+            balanceDetailsJson(Some(BigDecimal(5.00)), Some(BigDecimal(2.00)), Some(BigDecimal(3.00))).toString()
+          )
+          .as[BalanceDetails]
 
-        result shouldBe balanceDetailsModel(Some(BigDecimal(5.00)), Some(BigDecimal(2.00) ), Some(BigDecimal(3.00)))
+        result shouldBe balanceDetailsModel(Some(BigDecimal(5.00)), Some(BigDecimal(2.00)), Some(BigDecimal(3.00)))
       }
     }
 
@@ -72,10 +77,10 @@ class BalanceDetailsSpec extends UnitSpec {
 
       "a full model is supplied " in {
         val result = Json.toJson[BalanceDetails](
-          balanceDetailsModel(Some(BigDecimal(5.00)), Some(BigDecimal(2.00) ), Some(BigDecimal(3.00)))
+          balanceDetailsModel(Some(BigDecimal(5.00)), Some(BigDecimal(2.00)), Some(BigDecimal(3.00)))
         )
 
-        result shouldBe balanceDetailsJson(Some(BigDecimal(5.00)), Some(BigDecimal(2.00) ), Some(BigDecimal(3.00)))
+        result shouldBe balanceDetailsJson(Some(BigDecimal(5.00)), Some(BigDecimal(2.00)), Some(BigDecimal(3.00)))
       }
     }
 
@@ -89,8 +94,10 @@ class BalanceDetailsSpec extends UnitSpec {
       }
 
       "secondPendingAmountRequested and firstPendingAmountRequested are present" in {
-        balanceDetailsModel(firstPendingAmountRequested = Some(BigDecimal(2.00)),
-          secondPendingAmountRequested = Some(BigDecimal(2.00))).refundInProgress shouldBe true
+        balanceDetailsModel(
+          firstPendingAmountRequested = Some(BigDecimal(2.00)),
+          secondPendingAmountRequested = Some(BigDecimal(2.00))
+        ).refundInProgress shouldBe true
       }
 
       "secondPendingAmountRequested and firstPendingAmountRequested are not present" in {
@@ -100,11 +107,15 @@ class BalanceDetailsSpec extends UnitSpec {
 
     "return absolute values" when {
       "-ve available credit is passed" in {
-        balanceDetailsModel(availableCredit = Some(-2000.toDouble)).getAbsoluteAvailableCreditAmount shouldBe  Some(2000.toDouble)
+        balanceDetailsModel(availableCredit = Some(-2000.toDouble)).getAbsoluteAvailableCreditAmount shouldBe Some(
+          2000.toDouble
+        )
       }
 
       "-ve unallocated credit is passed" in {
-        balanceDetailsModel(unallocatedCredit = Some(-1000.toDouble)).getAbsoluteUnAllocatedCreditAmount shouldBe  Some(1000.toDouble)
+        balanceDetailsModel(unallocatedCredit = Some(-1000.toDouble)).getAbsoluteUnAllocatedCreditAmount shouldBe Some(
+          1000.toDouble
+        )
       }
     }
   }

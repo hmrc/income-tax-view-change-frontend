@@ -31,9 +31,16 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: AuditConnector)  {
+class AuditingService @Inject() (appConfig: FrontendAppConfig, auditConnector: AuditConnector) {
 
-  def audit(auditModel: AuditModel, path: Option[String] = None)(implicit hc: HeaderCarrier, request: Request[_], ec: ExecutionContext): Unit = {
+  def audit(
+      auditModel: AuditModel,
+      path:       Option[String] = None
+    )(
+      implicit hc: HeaderCarrier,
+      request:     Request[_],
+      ec:          ExecutionContext
+    ): Unit = {
     val dataEvent = toDataEvent(appConfig.appName, auditModel, path.fold(request.path)(x => x))
     Logger("application").debug(s"Splunk Audit Event:\n\n$dataEvent")
     auditConnector.sendEvent(dataEvent).map {
@@ -54,10 +61,14 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Au
       detail = AuditExtensions.auditHeaderCarrier(hc).toAuditDetails(auditModel.detail: _*)
     )
 
-
-  def extendedAudit(auditModel: ExtendedAuditModel, path: Option[String] = None)(implicit hc: HeaderCarrier,
-                                                                                 request: Request[_],
-                                                                                 ec: ExecutionContext): Unit = {
+  def extendedAudit(
+      auditModel: ExtendedAuditModel,
+      path:       Option[String] = None
+    )(
+      implicit hc: HeaderCarrier,
+      request:     Request[_],
+      ec:          ExecutionContext
+    ): Unit = {
     val extendedDataEvent = toExtendedDataEvent(appConfig.appName, auditModel, path.fold(request.path)(identity))
     Logger("application").debug(s"Splunk Audit Event:\n\n$extendedDataEvent")
     auditConnector.sendExtendedEvent(extendedDataEvent).map {
@@ -70,10 +81,19 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Au
     }
   }
 
-  def toExtendedDataEvent(appName: String, auditModel: ExtendedAuditModel, path: String)(implicit hc: HeaderCarrier): ExtendedDataEvent = {
+  def toExtendedDataEvent(
+      appName:    String,
+      auditModel: ExtendedAuditModel,
+      path:       String
+    )(
+      implicit hc: HeaderCarrier
+    ): ExtendedDataEvent = {
 
     val details: JsValue =
-      Json.toJson(AuditExtensions.auditHeaderCarrier(hc).toAuditDetails()).as[JsObject].deepMerge(auditModel.detail.as[JsObject])
+      Json
+        .toJson(AuditExtensions.auditHeaderCarrier(hc).toAuditDetails())
+        .as[JsObject]
+        .deepMerge(auditModel.detail.as[JsObject])
 
     ExtendedDataEvent(
       auditSource = appName,

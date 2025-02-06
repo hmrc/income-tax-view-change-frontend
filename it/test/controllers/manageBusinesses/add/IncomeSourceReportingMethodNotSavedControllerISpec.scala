@@ -29,20 +29,20 @@ class IncomeSourceReportingMethodNotSavedControllerISpec extends ControllerISpec
 
   object TestConstants {
     val selfEmployment: String = messagesAPI("incomeSources.add.error.reportingMethodNotSaved.se.incomeSource")
-    val seParagraph: String = messagesAPI("incomeSources.add.error.reportingMethodNotSaved.p1", selfEmployment)
+    val seParagraph:    String = messagesAPI("incomeSources.add.error.reportingMethodNotSaved.p1", selfEmployment)
 
-    val ukProperty: String = messagesAPI("incomeSources.add.error.reportingMethodNotSaved.uk.incomeSource")
+    val ukProperty:  String = messagesAPI("incomeSources.add.error.reportingMethodNotSaved.uk.incomeSource")
     val ukParagraph: String = messagesAPI("incomeSources.add.error.reportingMethodNotSaved.p1", ukProperty)
 
-    val foreignProperty: String = messagesAPI("incomeSources.add.error.reportingMethodNotSaved.fp.incomeSource")
+    val foreignProperty:  String = messagesAPI("incomeSources.add.error.reportingMethodNotSaved.fp.incomeSource")
     val foreignParagraph: String = messagesAPI("incomeSources.add.error.reportingMethodNotSaved.p1", foreignProperty)
 
     val continueButtonText: String = messagesAPI("base.continue")
 
     def getParagraph(incomeSourceType: IncomeSourceType): String = {
       incomeSourceType match {
-        case SelfEmployment => seParagraph
-        case UkProperty => ukParagraph
+        case SelfEmployment  => seParagraph
+        case UkProperty      => ukParagraph
         case ForeignProperty => foreignParagraph
       }
     }
@@ -50,66 +50,73 @@ class IncomeSourceReportingMethodNotSavedControllerISpec extends ControllerISpec
 
   def getIncomeSourceDetailsResponse(incomeSourceType: IncomeSourceType) = {
     incomeSourceType match {
-      case SelfEmployment => businessOnlyResponse
-      case UkProperty => ukPropertyOnlyResponse
+      case SelfEmployment  => businessOnlyResponse
+      case UkProperty      => ukPropertyOnlyResponse
       case ForeignProperty => noPropertyOrBusinessResponse
     }
   }
 
   def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "/manage-your-businesses" else "/agents/manage-your-businesses"
+    val pathStart = if (mtdRole == MTDIndividual) "/manage-your-businesses" else "/agents/manage-your-businesses"
     incomeSourceType match {
-      case SelfEmployment => s"$pathStart/add-sole-trader/error-business-reporting-method-not-saved"
-      case UkProperty => s"$pathStart/add-uk-property/error-uk-property-reporting-method-not-saved"
+      case SelfEmployment  => s"$pathStart/add-sole-trader/error-business-reporting-method-not-saved"
+      case UkProperty      => s"$pathStart/add-uk-property/error-uk-property-reporting-method-not-saved"
       case ForeignProperty => s"$pathStart/add-foreign-property/error-foreign-property-reporting-method-not-saved"
     }
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
-      val path = getPath(mtdUserRole, incomeSourceType)
-      val additionalCookies = getAdditionalCookies(mtdUserRole)
-      s"GET $path" when {
-        s"a user is a $mtdUserRole" that {
-          "is authenticated, with a valid enrolment" should {
-            "render the reporting method not saved page" when {
-              "Income Sources FS is enabled" in {
-                enable(IncomeSourcesFs)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
+        val path              = getPath(mtdUserRole, incomeSourceType)
+        val additionalCookies = getAdditionalCookies(mtdUserRole)
+        s"GET $path" when {
+          s"a user is a $mtdUserRole" that {
+            "is authenticated, with a valid enrolment" should {
+              "render the reporting method not saved page" when {
+                "Income Sources FS is enabled" in {
+                  enable(IncomeSourcesFs)
+                  disable(NavBarFs)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    getIncomeSourceDetailsResponse(incomeSourceType)
+                  )
 
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+                  val result = buildGETMTDClient(path, additionalCookies).futureValue
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-                val expectedText: String = messagesAPI("incomeSources.add.error.standardError")
+                  val expectedText: String = messagesAPI("incomeSources.add.error.standardError")
 
-                result should have(
-                  httpStatus(OK),
-                  pageTitle(mtdUserRole, expectedText),
-                  elementTextByID("paragraph-1")(TestConstants.getParagraph(incomeSourceType))
-                )
+                  result should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, expectedText),
+                    elementTextByID("paragraph-1")(TestConstants.getParagraph(incomeSourceType))
+                  )
+                }
+              }
+              "redirect to home page" when {
+                "Income Sources FS is disabled" in {
+                  disable(IncomeSourcesFs)
+                  disable(NavBarFs)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    getIncomeSourceDetailsResponse(incomeSourceType)
+                  )
+
+                  val result = buildGETMTDClient(path, additionalCookies).futureValue
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+                  result should have(
+                    httpStatus(SEE_OTHER)
+                  )
+                }
               }
             }
-            "redirect to home page" when {
-              "Income Sources FS is disabled" in {
-                disable(IncomeSourcesFs)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-                result should have(
-                  httpStatus(SEE_OTHER)
-                )
-              }
-            }
+            testAuthFailures(path, mtdUserRole)
           }
-          testAuthFailures(path, mtdUserRole)
         }
       }
-    }
   }
 }

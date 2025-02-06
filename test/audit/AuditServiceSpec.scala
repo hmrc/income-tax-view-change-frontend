@@ -28,19 +28,18 @@ import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 
 import scala.concurrent.Future
 
-
 class AuditServiceSpec extends TestSupport with PrivateMethodTester {
 
   "The AuditService" should {
 
-    val appConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])
-    val auditConnector: AuditConnector = mock(classOf[AuditConnector])
+    val appConfig:      FrontendAppConfig = mock(classOf[FrontendAppConfig])
+    val auditConnector: AuditConnector    = mock(classOf[AuditConnector])
 
     val obj = new AuditingService(appConfig, auditConnector)
     val auditModel = new ExtendedAuditModel {
-      override val transactionName: String = "transactionName"
-      override val detail: JsValue = Json.obj("detail" -> "detail")
-      override val auditType: String = "auditType"
+      override val transactionName: String  = "transactionName"
+      override val detail:          JsValue = Json.obj("detail" -> "detail")
+      override val auditType:       String  = "auditType"
     }
     s"return ExtendedDataEvent" in {
       val result = obj.toExtendedDataEvent("appName", auditModel, "path")

@@ -37,21 +37,23 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
     .overrides(
       api.inject.bind[ChargeHistoryService].toInstance(mockChargeHistoryService),
       api.inject.bind[FinancialDetailsService].toInstance(mockFinancialDetailsService)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[ChargeSummaryController]
 
-  val endYear: Int = 2018
+  val endYear:   Int = 2018
   val startYear: Int = endYear - 1
 
   mtdAllRoles.foreach { mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
 
-    def action(id: String, isInterestCharge: Boolean = false) = if (isAgent) {
-      testController.showAgent(testTaxYear, id, isInterestCharge)
-    } else {
-      testController.show(testTaxYear, id, isInterestCharge)
-    }
+    def action(id: String, isInterestCharge: Boolean = false) =
+      if (isAgent) {
+        testController.showAgent(testTaxYear, id, isInterestCharge)
+      } else {
+        testController.show(testTaxYear, id, isInterestCharge)
+      }
 
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
     s"show${if (isAgent) "Agent"}" when {
@@ -62,14 +64,15 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
           "render the charge summary page" when {
             "charge history feature is enabled and there is a user" that {
               "provided with an id associated to a Review & Reconcile Debit Charge for POA1" in new Setup(
-                testFinancialDetailsModelWithReviewAndReconcileAndPoas) {
+                testFinancialDetailsModelWithReviewAndReconcileAndPoas
+              ) {
                 enable(ReviewAndReconcilePoa)
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action(id1040000123)(fakeRequest)
-                val chargeSummaryUrl = if(isAgent) {
+                val chargeSummaryUrl = if (isAgent) {
                   routes.ChargeSummaryController.showAgent(testTaxYear, id1040000125).url
                 } else {
                   routes.ChargeSummaryController.show(testTaxYear, id1040000125).url
@@ -92,7 +95,9 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                   .text() shouldBe descriptionTextForRAR1
               }
 
-              "provided with an id associated to a Review & Reconcile Debit Charge for POA2" in new Setup(testFinancialDetailsModelWithReviewAndReconcileAndPoas) {
+              "provided with an id associated to a Review & Reconcile Debit Charge for POA2" in new Setup(
+                testFinancialDetailsModelWithReviewAndReconcileAndPoas
+              ) {
                 enable(ReviewAndReconcilePoa)
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
@@ -101,7 +106,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
-                val chargeSummaryUrl = if(isAgent) {
+                val chargeSummaryUrl = if (isAgent) {
                   routes.ChargeSummaryController.showAgent(testTaxYear, id1040000126).url
                 } else {
                   routes.ChargeSummaryController.show(testTaxYear, id1040000126).url
@@ -121,13 +126,15 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                   .text() shouldBe descriptionTextForRAR2
               }
 
-              "provided with an id associated to interest on a Review & Reconcile Debit Charge for POA" in new Setup(testFinancialDetailsModelWithReviewAndReconcileInterest) {
+              "provided with an id associated to interest on a Review & Reconcile Debit Charge for POA" in new Setup(
+                testFinancialDetailsModelWithReviewAndReconcileInterest
+              ) {
                 enable(ReviewAndReconcilePoa)
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 
-                val endYear: Int = 2018
+                val endYear:   Int = 2018
                 val startYear: Int = endYear - 1
 
                 val result: Future[Result] = action(id1040000123, isInterestCharge = true)(fakeRequest)
@@ -139,7 +146,9 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("poa1-extra-charge-p1").text() shouldBe descriptionTextRAR1Interest
               }
 
-              "provided with an id that matches a charge in the financial response" in new Setup(financialDetailsModel()) {
+              "provided with an id that matches a charge in the financial response" in new Setup(
+                financialDetailsModel()
+              ) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
@@ -154,9 +163,9 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.select("main h3").text() shouldBe paymentHistoryHeadingForPOA1Charge
               }
 
-
               "the late payment interest flag is enabled" in new Setup(
-                financialDetailsModel(lpiWithDunningLock = None)) {
+                financialDetailsModel(lpiWithDunningLock = None)
+              ) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
@@ -172,7 +181,9 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
             }
             "charge history feature is disabled and there is a user" that {
               "provided with dunning locks and late payment interest flag, not showing the locks banner" in new Setup(
-                financialDetailsModel(lpiWithDunningLock = None).copy(financialDetails = financialDetailsWithLocks(testTaxYear))) {
+                financialDetailsModel(lpiWithDunningLock = None)
+                  .copy(financialDetails = financialDetailsWithLocks(testTaxYear))
+              ) {
                 disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
@@ -186,7 +197,8 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "provided with dunning locks, showing the locks banner" in new Setup(
-                financialDetailsModel().copy(financialDetails = financialDetailsWithLocks(testTaxYear))) {
+                financialDetailsModel().copy(financialDetails = financialDetailsWithLocks(testTaxYear))
+              ) {
                 disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
@@ -200,8 +212,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.select("#heading-payment-breakdown").text() shouldBe paymentBreakdownHeading
               }
 
-              "allocations present" in new Setup(
-                chargesWithAllocatedPaymentModel()) {
+              "allocations present" in new Setup(chargesWithAllocatedPaymentModel()) {
                 disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
@@ -214,7 +225,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 doc.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
                 doc.select("main h3").text() shouldBe paymentHistoryHeadingForPOA1Charge
 
-                val allocationsUrl = if(isAgent) {
+                val allocationsUrl = if (isAgent) {
                   routes.PaymentAllocationsController.viewPaymentAllocationAgent(id1040000124).url
                 } else {
                   routes.PaymentAllocationsController.viewPaymentAllocation(id1040000124).url
@@ -223,8 +234,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 allocationLink shouldBe allocationsUrl
               }
 
-              "without allocations" in new Setup(
-                chargesWithAllocatedPaymentModel()) {
+              "without allocations" in new Setup(chargesWithAllocatedPaymentModel()) {
                 disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
@@ -239,7 +249,9 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.select("main h3").text() shouldBe paymentHistoryHeadingForPOA1Charge
               }
 
-              "displays link to poa extra charge on poa page when reconciliation charge exists" in new Setup(financialDetailsModelWithPoaExtraCharge()) {
+              "displays link to poa extra charge on poa page when reconciliation charge exists" in new Setup(
+                financialDetailsModelWithPoaExtraCharge()
+              ) {
                 enable(ReviewAndReconcilePoa)
                 disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
@@ -248,12 +260,14 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val result: Future[Result] = action(id1040000123)(fakeRequest)
 
                 status(result) shouldBe Status.OK
-                val chargeSummaryUrl = if(isAgent) {
+                val chargeSummaryUrl = if (isAgent) {
                   routes.ChargeSummaryController.showAgent(testTaxYear, "123456").url
                 } else {
                   routes.ChargeSummaryController.show(testTaxYear, "123456").url
                 }
-                JsoupParse(result).toHtmlDocument.select("#poa-extra-charge-link").attr("href") shouldBe chargeSummaryUrl
+                JsoupParse(result).toHtmlDocument
+                  .select("#poa-extra-charge-link")
+                  .attr("href") shouldBe chargeSummaryUrl
               }
               "not display link to poa extra charge if no charge exists" in new Setup(financialDetailsModel()) {
                 enable(ReviewAndReconcilePoa)
@@ -268,7 +282,8 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "display the payment processing info if the charge is not Review & Reconcile" in new Setup(
-                financialDetailsModel(documentDescription = Some("ITSA BCD"), mainTransaction = "4910")) {
+                financialDetailsModel(documentDescription = Some("ITSA BCD"), mainTransaction = "4910")
+              ) {
                 disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
@@ -295,7 +310,8 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "display the Review & Reconcile credit for POA1 when present in the user's financial details" in new Setup(
-                financialDetailsModelWithPoaOneAndTwoWithRarCredits()) {
+                financialDetailsModelWithPoaOneAndTwoWithRarCredits()
+              ) {
                 enable(ReviewAndReconcilePoa)
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
@@ -306,7 +322,9 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
 
-                document.getElementById("rar-charge-link").text() shouldBe "First payment on account: credit from your tax return"
+                document
+                  .getElementById("rar-charge-link")
+                  .text() shouldBe "First payment on account: credit from your tax return"
                 document.getElementById("rar-charge-link").attr("href") shouldBe
                   RepaymentHistoryUtils.getPoaChargeLinkUrl(isAgent = isAgent, testTaxYear, "transactionId")
                 document.getElementById("rar-total-amount").text() shouldBe "£1,000.00"
@@ -314,7 +332,8 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "display the Review & Reconcile credit for POA2 when present in the user's financial details" in new Setup(
-                financialDetailsModelWithPoaOneAndTwoWithRarCredits()) {
+                financialDetailsModelWithPoaOneAndTwoWithRarCredits()
+              ) {
                 enable(ReviewAndReconcilePoa)
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
@@ -326,15 +345,16 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
-                document.getElementById("rar-charge-link").text() shouldBe "Second payment on account: credit from your tax return"
+                document
+                  .getElementById("rar-charge-link")
+                  .text() shouldBe "Second payment on account: credit from your tax return"
                 document.getElementById("rar-charge-link").attr("href") shouldBe
                   RepaymentHistoryUtils.getPoaChargeLinkUrl(isAgent = isAgent, testTaxYear, "transactionId")
                 document.getElementById("rar-total-amount").text() shouldBe "£1,000.00"
                 document.getElementById("rar-due-date").text() shouldBe "1 Jan 2018"
               }
 
-              "the charge is an MFA Debit" in new Setup(
-                financialDetailsModelWithMFADebit()) {
+              "the charge is an MFA Debit" in new Setup(financialDetailsModelWithMFADebit()) {
                 disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
@@ -355,7 +375,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
               val result: Future[Result] = action("fakeId")(fakeRequest)
 
-              val notFoundDocumentIDUrl = if(isAgent) {
+              val notFoundDocumentIDUrl = if (isAgent) {
                 controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show.url
               } else {
                 controllers.errors.routes.NotFoundDocumentIDLookupController.show.url
@@ -367,7 +387,9 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
           "render the error page" when {
             "the charge history response is an error" in new Setup(
-              financialDetailsModel(), chargeHistoryHasError = true) {
+              financialDetailsModel(),
+              chargeHistoryHasError = true
+            ) {
               enable(ChargeHistory)
               disable(ChargeHistory)
               setupMockSuccess(mtdUserRole)
@@ -391,7 +413,9 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
             }
 
             if (mtdUserRole == MTDIndividual) {
-              "no related tax year financial details found" in new Setup(testFinancialDetailsModelWithPayeSACodingOut()) {
+              "no related tax year financial details found" in new Setup(
+                testFinancialDetailsModelWithPayeSACodingOut()
+              ) {
                 disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()

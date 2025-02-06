@@ -26,13 +26,17 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SessionService @Inject()(
-                                uiJourneySessionDataRepository: UIJourneySessionDataRepository,
-                                sensitiveUIJourneySessionDataRepository: SensitiveUIJourneySessionDataRepository,
-                                config: FrontendAppConfig
-                              ) {
+class SessionService @Inject() (
+    uiJourneySessionDataRepository:          UIJourneySessionDataRepository,
+    sensitiveUIJourneySessionDataRepository: SensitiveUIJourneySessionDataRepository,
+    config:                                  FrontendAppConfig) {
 
-  def getMongo(journeyType: JourneyType)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[UIJourneySessionData]]] = {
+  def getMongo(
+      journeyType: JourneyType
+    )(
+      implicit hc: HeaderCarrier,
+      ec:          ExecutionContext
+    ): Future[Either[Throwable, Option[UIJourneySessionData]]] = {
     if (config.encryptionIsEnabled)
       sensitiveUIJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType) map {
         case Some(data: UIJourneySessionData) =>
@@ -66,79 +70,110 @@ class SessionService @Inject()(
     }
   }
 
-  def getMongoKey(key: String, incomeSources: IncomeSourceJourneyType)
-                 (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[String]]] = {
+  def getMongoKey(
+      key:           String,
+      incomeSources: IncomeSourceJourneyType
+    )(
+      implicit hc: HeaderCarrier,
+      ec:          ExecutionContext
+    ): Future[Either[Throwable, Option[String]]] = {
     uiJourneySessionDataRepository.get(hc.sessionId.get.value, incomeSources) map {
       case Some(data: UIJourneySessionData) =>
         incomeSources.operation match {
-          case Add => getKeyFromObject[String](data.addIncomeSourceData, key)
+          case Add    => getKeyFromObject[String](data.addIncomeSourceData, key)
           case Manage => getKeyFromObject[String](data.manageIncomeSourceData, key)
-          case Cease => getKeyFromObject[String](data.ceaseIncomeSourceData, key)
+          case Cease  => getKeyFromObject[String](data.ceaseIncomeSourceData, key)
         }
       case None => Right(None)
     }
   }
 
-  def getMongoKeyTyped[A](key: String, incomeSources: IncomeSourceJourneyType)
-                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[A]]] = {
+  def getMongoKeyTyped[A](
+      key:           String,
+      incomeSources: IncomeSourceJourneyType
+    )(
+      implicit hc: HeaderCarrier,
+      ec:          ExecutionContext
+    ): Future[Either[Throwable, Option[A]]] = {
     uiJourneySessionDataRepository.get(hc.sessionId.get.value, incomeSources) map {
       case Some(data: UIJourneySessionData) =>
         incomeSources.operation match {
-          case Add => getKeyFromObject[A](data.addIncomeSourceData, key)
+          case Add    => getKeyFromObject[A](data.addIncomeSourceData, key)
           case Manage => getKeyFromObject[A](data.manageIncomeSourceData, key)
-          case Cease => getKeyFromObject[A](data.ceaseIncomeSourceData, key)
+          case Cease  => getKeyFromObject[A](data.ceaseIncomeSourceData, key)
 
         }
       case None => Right(None)
     }
   }
 
-  def setMongoData(uiJourneySessionData: UIJourneySessionData)
-                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+  def setMongoData(
+      uiJourneySessionData: UIJourneySessionData
+    )(
+      implicit hc: HeaderCarrier,
+      ec:          ExecutionContext
+    ): Future[Boolean] = {
     if (config.encryptionIsEnabled)
       sensitiveUIJourneySessionDataRepository.set(uiJourneySessionData)
     else
       uiJourneySessionDataRepository.set(uiJourneySessionData)
   }
 
-  def setMultipleMongoData(keyAndValue: Map[String, String], incomeSources: IncomeSourceJourneyType)
-                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
+  def setMultipleMongoData(
+      keyAndValue:   Map[String, String],
+      incomeSources: IncomeSourceJourneyType
+    )(
+      implicit hc: HeaderCarrier,
+      ec:          ExecutionContext
+    ): Future[Either[Throwable, Boolean]] = {
     val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, incomeSources.toString)
-    val keyValueToUpdate = keyAndValue.map { case (key, value) =>
-      incomeSources.operation match {
-        case Add => (AddIncomeSourceData.getJSONKeyPath(key), value)
-        case Manage => (ManageIncomeSourceData.getJSONKeyPath(key), value)
-        case Cease => (CeaseIncomeSourceData.getJSONKeyPath(key), value)
-      }
+    val keyValueToUpdate = keyAndValue.map {
+      case (key, value) =>
+        incomeSources.operation match {
+          case Add    => (AddIncomeSourceData.getJSONKeyPath(key), value)
+          case Manage => (ManageIncomeSourceData.getJSONKeyPath(key), value)
+          case Cease  => (CeaseIncomeSourceData.getJSONKeyPath(key), value)
+        }
     }
-    uiJourneySessionDataRepository.updateMultipleData(uiJourneySessionData, keyValueToUpdate)
-      .map(
-        result => result.wasAcknowledged() match {
-          case true => Right(true)
+    uiJourneySessionDataRepository
+      .updateMultipleData(uiJourneySessionData, keyValueToUpdate)
+      .map(result =>
+        result.wasAcknowledged() match {
+          case true  => Right(true)
           case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
-        })
+        }
+      )
   }
 
-  def setMongoKey(key: String, value: String, incomeSources: IncomeSourceJourneyType)
-                 (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
+  def setMongoKey(
+      key:           String,
+      value:         String,
+      incomeSources: IncomeSourceJourneyType
+    )(
+      implicit hc: HeaderCarrier,
+      ec:          ExecutionContext
+    ): Future[Either[Throwable, Boolean]] = {
     val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, incomeSources.toString)
     val jsonAccessorPath = incomeSources.operation match {
-      case Add => AddIncomeSourceData.getJSONKeyPath(key)
+      case Add    => AddIncomeSourceData.getJSONKeyPath(key)
       case Manage => ManageIncomeSourceData.getJSONKeyPath(key)
-      case Cease => CeaseIncomeSourceData.getJSONKeyPath(key)
+      case Cease  => CeaseIncomeSourceData.getJSONKeyPath(key)
     }
-    uiJourneySessionDataRepository.updateData(uiJourneySessionData, jsonAccessorPath, value).map(
-      result => result.wasAcknowledged() match {
-        case true => Right(true)
-        case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
-      }
-    )
+    uiJourneySessionDataRepository
+      .updateData(uiJourneySessionData, jsonAccessorPath, value)
+      .map(result =>
+        result.wasAcknowledged() match {
+          case true  => Right(true)
+          case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
+        }
+      )
   }
 
-  def deleteMongoData(journeyType: JourneyType)
-                     (implicit hc: HeaderCarrier): Future[Boolean] = {
+  def deleteMongoData(journeyType: JourneyType)(implicit hc: HeaderCarrier): Future[Boolean] = {
     if (config.encryptionIsEnabled)
-      sensitiveUIJourneySessionDataRepository.deleteOne(UIJourneySessionData(hc.sessionId.get.value, journeyType.toString))
+      sensitiveUIJourneySessionDataRepository.deleteOne(
+        UIJourneySessionData(hc.sessionId.get.value, journeyType.toString)
+      )
     else
       uiJourneySessionDataRepository.deleteOne(UIJourneySessionData(hc.sessionId.get.value, journeyType.toString))
   }
@@ -152,7 +187,7 @@ class SessionService @Inject()(
 
   def clearSession(sessionId: String)(implicit ec: ExecutionContext): Future[Unit] = {
     uiJourneySessionDataRepository.clearSession(sessionId).flatMap {
-      case true => Future.successful(())
+      case true  => Future.successful(())
       case false => Future.failed(new Exception("failed to clear session"))
     }
   }

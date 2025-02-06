@@ -22,10 +22,8 @@ import play.api.libs.json.{Json, OWrites, Reads, _}
 
 sealed trait CitizenDetailsResponseModel
 
-case class CitizenDetailsModel(firstName: Option[String],
-                               lastName: Option[String],
-                               nino: Option[String]) extends CitizenDetailsResponseModel
-
+case class CitizenDetailsModel(firstName: Option[String], lastName: Option[String], nino: Option[String])
+    extends CitizenDetailsResponseModel
 
 case class CitizenDetailsErrorModel(code: Int, message: String) extends CitizenDetailsResponseModel
 
@@ -38,6 +36,6 @@ object CitizenDetailsModel {
     readNullable[String](__ \ "name" \ "current" \ "firstName") and
       readNullable[String](__ \ "name" \ "current" \ "lastName") and
       readNullable[String](__ \ "ids" \ "nino")
-    ) (CitizenDetailsModel.apply _)
+  )(CitizenDetailsModel.apply _)
   implicit val writes: OWrites[CitizenDetailsModel] = Json.writes[CitizenDetailsModel]
 }

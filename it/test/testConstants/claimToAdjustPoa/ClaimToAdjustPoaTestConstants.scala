@@ -25,10 +25,16 @@ object ClaimToAdjustPoaTestConstants {
 
   val testTaxYearPoa = 2024
 
-  val validSession: PoaAmendmentData = PoaAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))
-  val validSessionIncreaseCase : PoaAmendmentData = PoaAmendmentData(Some(Increase), Some(BigDecimal(10000.00)))
+  val validSession:             PoaAmendmentData = PoaAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))
+  val validSessionIncreaseCase: PoaAmendmentData = PoaAmendmentData(Some(Increase), Some(BigDecimal(10000.00)))
 
   def validFinancialDetailsResponseBody(taxYear: Int): JsValue =
-    testValidFinancialDetailsModelJson(2000, 2000, (taxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+    testValidFinancialDetailsModelJson(
+      2000,
+      2000,
+      (taxYear - 1).toString,
+      testDate.toString,
+      poaRelevantAmount = Some(3000)
+    )
 
 }

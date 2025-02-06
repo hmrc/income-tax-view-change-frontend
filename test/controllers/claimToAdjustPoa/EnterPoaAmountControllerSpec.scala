@@ -41,19 +41,20 @@ import testConstants.BaseTestConstants
 
 import scala.concurrent.Future
 
-class EnterPoaAmountControllerSpec extends MockAuthActions
-  with MockClaimToAdjustService
-  with MockPaymentOnAccountSessionService
-  with PoaGenerator {
+class EnterPoaAmountControllerSpec
+    extends MockAuthActions
+    with MockClaimToAdjustService
+    with MockPaymentOnAccountSessionService
+    with PoaGenerator {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
       api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[EnterPoaAmountController]
-
 
   val poaViewModelDecreaseJourney = PaymentOnAccountViewModel(
     previouslyAdjusted = None,
@@ -87,14 +88,13 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
         .withFormUrlEncodedBody("poa-amount" -> poaAmount)
         .withSession(
           sessionUtils.SessionKeys.clientFirstName -> "Test",
-          sessionUtils.SessionKeys.clientLastName -> "User",
-          sessionUtils.SessionKeys.clientUTR -> "1234567890",
-          sessionUtils.SessionKeys.clientMTDID -> "XAIT00000000015",
-          sessionUtils.SessionKeys.clientNino -> "AA111111A",
+          sessionUtils.SessionKeys.clientLastName  -> "User",
+          sessionUtils.SessionKeys.clientUTR       -> "1234567890",
+          sessionUtils.SessionKeys.clientMTDID     -> "XAIT00000000015",
+          sessionUtils.SessionKeys.clientNino      -> "AA111111A",
           sessionUtils.SessionKeys.confirmedClient -> "true"
         )
-    }
-    else {
+    } else {
       FakeRequest(POST, routes.EnterPoaAmountController.submit(false, mode).url)
         .withFormUrlEncodedBody("poa-amount" -> poaAmount)
         .withSession("nino" -> BaseTestConstants.testNino, "origin" -> "PTA")
@@ -105,7 +105,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
     mtdAllRoles.foreach { mtdRole =>
       val isAgent = mtdRole != MTDIndividual
       s"show(isAgent = $isAgent, mode = $mode)" when {
-        val action = testController.show(isAgent, mode)
+        val action      = testController.show(isAgent, mode)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
           if (mtdRole == MTDSupportingAgent) {
@@ -141,7 +141,9 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
               "PoA tax year crystallized and newPoaAmount exists in session" in {
                 enable(AdjustPaymentsOnAccount)
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                setupMockPaymentOnAccountSessionService(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1111.22)))))))
+                setupMockPaymentOnAccountSessionService(
+                  Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1111.22))))))
+                )
                 setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
                 setupMockSuccess(mtdRole)
@@ -170,13 +172,17 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
               "FS is enabled and the journeyCompleted flag is set to true in session" in {
                 enable(AdjustPaymentsOnAccount)
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                setupMockPaymentOnAccountSessionService(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower), None, journeyCompleted = true)))))
+                setupMockPaymentOnAccountSessionService(
+                  Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower), None, journeyCompleted = true))))
+                )
                 setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
                 setupMockSuccess(mtdRole)
                 val result = action(fakeRequest)
                 status(result) shouldBe SEE_OTHER
-                redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(isAgent).url)
+                redirectLocation(result) shouldBe Some(
+                  controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(isAgent).url
+                )
               }
             }
             "return an error 500" when {
@@ -227,7 +233,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
       }
 
       s"submit(isAgent = $isAgent, mode = $mode)" when {
-        val action = testController.submit(isAgent, mode)
+        val action      = testController.submit(isAgent, mode)
         val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
           if (mtdRole == MTDSupportingAgent) {
@@ -238,12 +244,15 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 enable(AdjustPaymentsOnAccount)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaAmountViewModel(Right(poaViewModelDecreaseJourney))
-                when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Right(())))
+                when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any()))
+                  .thenReturn(Future(Right(())))
 
                 setupMockSuccess(mtdRole)
                 val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> "1234.56"))
                 status(result) shouldBe SEE_OTHER
-                redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent).url)
+                redirectLocation(result) shouldBe Some(
+                  controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent).url
+                )
               }
 
               if (mode == NormalMode) {
@@ -252,13 +261,17 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                   mockSingleBISWithCurrentYearAsMigrationYear()
                   setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
-                  when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Right(())))
-                  when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(), any())).thenReturn(Future(Right(())))
+                  when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any()))
+                    .thenReturn(Future(Right(())))
+                  when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(), any()))
+                    .thenReturn(Future(Right(())))
 
                   setupMockSuccess(mtdRole)
                   val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> "4500"))
                   status(result) shouldBe SEE_OTHER
-                  redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent).url)
+                  redirectLocation(result) shouldBe Some(
+                    controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent).url
+                  )
                 }
 
               } else if (mode == CheckMode) {
@@ -268,14 +281,19 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                     enable(AdjustPaymentsOnAccount)
                     mockSingleBISWithCurrentYearAsMigrationYear()
                     setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
-                    when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower), Some(100))))))
-                    when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Right(())))
-                    when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(), any())).thenReturn(Future(Right(())))
+                    when(mockPaymentOnAccountSessionService.getMongo(any(), any()))
+                      .thenReturn(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower), Some(100))))))
+                    when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any()))
+                      .thenReturn(Future(Right(())))
+                    when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(), any()))
+                      .thenReturn(Future(Right(())))
 
                     setupMockSuccess(mtdRole)
                     val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> "4500"))
                     status(result) shouldBe SEE_OTHER
-                    redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent).url)
+                    redirectLocation(result) shouldBe Some(
+                      controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent).url
+                    )
                   }
 
                   "They had previously decreased, and are still decreasing" in {
@@ -284,14 +302,19 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
 
                     setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
-                    when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower), Some(100))))))
-                    when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Right(())))
-                    when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(), any())).thenReturn(Future(Right(())))
+                    when(mockPaymentOnAccountSessionService.getMongo(any(), any()))
+                      .thenReturn(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower), Some(100))))))
+                    when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any()))
+                      .thenReturn(Future(Right(())))
+                    when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(), any()))
+                      .thenReturn(Future(Right(())))
 
                     setupMockSuccess(mtdRole)
                     val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> "1000"))
                     status(result) shouldBe SEE_OTHER
-                    redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent).url)
+                    redirectLocation(result) shouldBe Some(
+                      controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent).url
+                    )
                   }
                 }
 
@@ -300,14 +323,19 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                   mockSingleBISWithCurrentYearAsMigrationYear()
                   setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
-                  when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower), Some(4600))))))
-                  when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Right(())))
-                  when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(), any())).thenReturn(Future(Right(())))
+                  when(mockPaymentOnAccountSessionService.getMongo(any(), any()))
+                    .thenReturn(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower), Some(4600))))))
+                  when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any()))
+                    .thenReturn(Future(Right(())))
+                  when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(), any()))
+                    .thenReturn(Future(Right(())))
 
                   setupMockSuccess(mtdRole)
                   val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> "4500"))
                   status(result) shouldBe SEE_OTHER
-                  redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent).url)
+                  redirectLocation(result) shouldBe Some(
+                    controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent).url
+                  )
                 }
               }
             }
@@ -318,26 +346,34 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                   enable(AdjustPaymentsOnAccount)
                   mockSingleBISWithCurrentYearAsMigrationYear()
                   setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
-                  when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Right(())))
+                  when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any()))
+                    .thenReturn(Future(Right(())))
 
                   setupMockSuccess(mtdRole)
                   val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> "1234.56"))
                   status(result) shouldBe SEE_OTHER
-                  redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, mode).url)
+                  redirectLocation(result) shouldBe Some(
+                    controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, mode).url
+                  )
                 }
               } else {
                 "They had previously increased, and are now decreasing" in {
                   enable(AdjustPaymentsOnAccount)
                   mockSingleBISWithCurrentYearAsMigrationYear()
                   setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
-                  when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoaAmendmentData(Some(Increase), Some(4500))))))
-                  when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Right(())))
-                  when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(), any())).thenReturn(Future(Right(())))
+                  when(mockPaymentOnAccountSessionService.getMongo(any(), any()))
+                    .thenReturn(Future(Right(Some(PoaAmendmentData(Some(Increase), Some(4500))))))
+                  when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any()))
+                    .thenReturn(Future(Right(())))
+                  when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(), any()))
+                    .thenReturn(Future(Right(())))
 
                   setupMockSuccess(mtdRole)
                   val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> "1234.56"))
                   status(result) shouldBe SEE_OTHER
-                  redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, mode).url)
+                  redirectLocation(result) shouldBe Some(
+                    controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, mode).url
+                  )
                 }
               }
             }
@@ -346,7 +382,8 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 enable(AdjustPaymentsOnAccount)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
-                when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Right(())))
+                when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any()))
+                  .thenReturn(Future(Right(())))
 
                 setupMockSuccess(mtdRole)
                 val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> ""))
@@ -362,7 +399,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                   setupMockSuccess(mtdRole)
 
                   val inputAmount = -100
-                  val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> inputAmount.toString))
+                  val result      = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> inputAmount.toString))
                   status(result) shouldBe BAD_REQUEST
                   redirectLocation(result) shouldBe None
                 }
@@ -375,7 +412,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                   setupMockSuccess(mtdRole)
 
                   val inputAmount = generatedPoaViewModel.relevantAmountOne + 100
-                  val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> inputAmount.toString))
+                  val result      = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> inputAmount.toString))
                   status(result) shouldBe BAD_REQUEST
                   redirectLocation(result) shouldBe None
                 }
@@ -384,7 +421,8 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 enable(AdjustPaymentsOnAccount)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
-                when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Right(())))
+                when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any()))
+                  .thenReturn(Future(Right(())))
 
                 setupMockSuccess(mtdRole)
                 val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> "test"))
@@ -395,7 +433,8 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 enable(AdjustPaymentsOnAccount)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
-                when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Right(())))
+                when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any()))
+                  .thenReturn(Future(Right(())))
 
                 setupMockSuccess(mtdRole)
                 val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> "6000"))
@@ -406,7 +445,8 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 enable(AdjustPaymentsOnAccount)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
-                when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Right(())))
+                when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any()))
+                  .thenReturn(Future(Right(())))
 
                 setupMockSuccess(mtdRole)
                 val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> "4000"))
@@ -418,7 +458,8 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 enable(AdjustPaymentsOnAccount)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaAmountViewModel(Right(poaViewModelDecreaseJourney))
-                when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Left(new Error("Error setting poa amount"))))
+                when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any()))
+                  .thenReturn(Future(Left(new Error("Error setting poa amount"))))
 
                 setupMockSuccess(mtdRole)
                 val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> "1234.56"))
@@ -431,8 +472,10 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                   enable(AdjustPaymentsOnAccount)
                   mockSingleBISWithCurrentYearAsMigrationYear()
                   setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
-                  when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Right(())))
-                  when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(), any())).thenReturn(Future(Left(new Error("Error setting adjustment reason"))))
+                  when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any()))
+                    .thenReturn(Future(Right(())))
+                  when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(), any()))
+                    .thenReturn(Future(Left(new Error("Error setting adjustment reason"))))
 
                   setupMockSuccess(mtdRole)
                   val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> "4500"))
@@ -445,9 +488,12 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                   mockSingleBISWithCurrentYearAsMigrationYear()
                   setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
-                  when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(Future(Left(new Error("Error getting mongo data"))))
-                  when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Right(())))
-                  when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(), any())).thenReturn(Future(Right(())))
+                  when(mockPaymentOnAccountSessionService.getMongo(any(), any()))
+                    .thenReturn(Future(Left(new Error("Error getting mongo data"))))
+                  when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any()))
+                    .thenReturn(Future(Right(())))
+                  when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(), any()))
+                    .thenReturn(Future(Right(())))
 
                   setupMockSuccess(mtdRole)
                   val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> "1000"))

@@ -35,13 +35,16 @@ class DeductionsSummaryControllerSpec extends MockAuthActions with MockCalculati
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[CalculationService].toInstance(mockCalculationService)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[DeductionsSummaryController]
 
   mtdAllRoles.foreach { mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
-    val action = if (isAgent) testController.showDeductionsSummaryAgent(testTaxYear) else testController.showDeductionsSummary(testTaxYear)
+    val action =
+      if (isAgent) testController.showDeductionsSummaryAgent(testTaxYear)
+      else testController.showDeductionsSummary(testTaxYear)
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
     s"show${if (isAgent) "Agent"}" when {
       s"the $mtdUserRole is authenticated" should {
@@ -57,13 +60,15 @@ class DeductionsSummaryControllerSpec extends MockAuthActions with MockCalculati
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK
               lazy val document = result.toHtmlDocument
-              val title = messages("deduction_breakdown.heading")
+              val title         = messages("deduction_breakdown.heading")
               document.title() shouldBe messages(
                 if (isAgent) {
                   "htmlTitle.agent"
                 } else {
                   "htmlTitle"
-                }, title)
+                },
+                title
+              )
               document.getElementById("total-value").text() shouldBe "£12,500.00"
             }
 
@@ -75,13 +80,15 @@ class DeductionsSummaryControllerSpec extends MockAuthActions with MockCalculati
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK
               lazy val document = result.toHtmlDocument
-              val title = messages("deduction_breakdown.heading")
+              val title         = messages("deduction_breakdown.heading")
               document.title() shouldBe messages(
                 if (isAgent) {
                   "htmlTitle.agent"
                 } else {
                   "htmlTitle"
-                }, title)
+                },
+                title
+              )
               document.getElementById("total-value").text() shouldBe "£0.00"
             }
           }

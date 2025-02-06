@@ -35,17 +35,21 @@ import java.net.URI
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
-                                         val authActions: AuthActions,
-                                         creditHistoryService: CreditHistoryService,
-                                         itvcErrorHandler: ItvcErrorHandler,
-                                         agentItvcErrorHandler: AgentItvcErrorHandler
-                                        )(implicit val appConfig: FrontendAppConfig,
-                                          mcc: MessagesControllerComponents,
-                                          msgApi: MessagesApi,
-                                          val auditingService: AuditingService,
-                                          ec: ExecutionContext
-                                        ) extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+class CreditsSummaryController @Inject() (
+    creditsView:           CreditsSummary,
+    val authActions:       AuthActions,
+    creditHistoryService:  CreditHistoryService,
+    itvcErrorHandler:      ItvcErrorHandler,
+    agentItvcErrorHandler: AgentItvcErrorHandler
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    mcc:                    MessagesControllerComponents,
+    msgApi:                 MessagesApi,
+    val auditingService:    AuditingService,
+    ec:                     ExecutionContext)
+    extends FrontendController(mcc)
+    with FeatureSwitching
+    with I18nSupport {
 
   private def creditsSummaryUrl(calendarYear: Int, origin: Option[String]): String =
     controllers.routes.CreditsSummaryController.showCreditsSummary(calendarYear, origin).url
@@ -65,47 +69,58 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
   private def getBackURL(referer: Option[String], origin: Option[String], calendarYear: Int): String = {
     referer.map(URI.create(_).getPath) match {
       case Some(url) if url.equals(paymentHistoryUrl(origin)) => paymentHistoryUrl(origin)
-      case Some(url) if url.equals(creditAndRefundUrl) => creditAndRefundUrl
-      case _ => creditsSummaryUrl(calendarYear, origin)
+      case Some(url) if url.equals(creditAndRefundUrl)        => creditAndRefundUrl
+      case _                                                  => creditsSummaryUrl(calendarYear, origin)
     }
   }
 
   private def getAgentBackURL(referer: Option[String], calendarYear: Int): String = {
     referer.map(URI.create(_).getPath) match {
       case Some(`agentPaymentHistoryHomeUrl`) => agentPaymentHistoryHomeUrl
-      case Some(`agentCreditAndRefundUrl`) => agentCreditAndRefundUrl
-      case _ => agentCreditsSummaryUrl(calendarYear)
+      case Some(`agentCreditAndRefundUrl`)    => agentCreditAndRefundUrl
+      case _                                  => agentCreditsSummaryUrl(calendarYear)
     }
   }
 
-  def handleRequest(calendarYear: Int,
-                    isAgent: Boolean,
-                    origin: Option[String] = None)
-                   (implicit user: MtdItUser[_],
-                    hc: HeaderCarrier): Future[Result] = {
+  def handleRequest(
+      calendarYear: Int,
+      isAgent:      Boolean,
+      origin:       Option[String] = None
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier
+    ): Future[Result] = {
     creditHistoryService.getCreditsHistory(calendarYear, user.nino).flatMap {
       case Right(credits) =>
         val charges: List[CreditDetailModel] = credits.sortBy(_.date.toEpochDay)
         val maybeAvailableCredit: Option[BigDecimal] =
           credits.flatMap(_.balanceDetails.flatMap(_.availableCredit.filter(_ > 0.00))).headOption
         auditCreditSummary(maybeAvailableCredit, charges)
-        val backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER), calendarYear) else getBackURL(user.headers.get(REFERER), origin, calendarYear)
-        Future.successful(Ok(creditsView(
-          calendarYear = calendarYear,
-          backUrl = backUrl,
-          isAgent = isAgent,
-          utr = user.saUtr,
-          btaNavPartial = user.btaNavPartial,
-          charges = charges,
-          maybeAvailableCredit = maybeAvailableCredit,
-          origin = origin)))
+        val backUrl =
+          if (isAgent) getAgentBackURL(user.headers.get(REFERER), calendarYear)
+          else getBackURL(user.headers.get(REFERER), origin, calendarYear)
+        Future.successful(
+          Ok(
+            creditsView(
+              calendarYear = calendarYear,
+              backUrl = backUrl,
+              isAgent = isAgent,
+              utr = user.saUtr,
+              btaNavPartial = user.btaNavPartial,
+              charges = charges,
+              maybeAvailableCredit = maybeAvailableCredit,
+              origin = origin
+            )
+          )
+        )
       case Left(_) => {
         if (isAgent) {
-          Logger("application").error(s"- Could not retrieve financial details for Calendar year: $calendarYear, NINO: ${user.nino}")
+          Logger("application")
+            .error(s"- Could not retrieve financial details for Calendar year: $calendarYear, NINO: ${user.nino}")
           Future.successful(agentItvcErrorHandler.showInternalServerError())
-        }
-        else {
-          Logger("application").error(s"- Could not retrieve financial details for Calendar year: $calendarYear, NINO: ${user.nino}")
+        } else {
+          Logger("application")
+            .error(s"- Could not retrieve financial details for Calendar year: $calendarYear, NINO: ${user.nino}")
           Future.successful(itvcErrorHandler.showInternalServerError())
         }
       }
@@ -113,13 +128,12 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
   }
 
   def showCreditsSummary(calendarYear: Int, origin: Option[String] = None): Action[AnyContent] = {
-    authActions.asMTDIndividual.async {
-      implicit user =>
-        handleRequest(
-          calendarYear = calendarYear,
-          isAgent = false,
-          origin = origin
-        )
+    authActions.asMTDIndividual.async { implicit user =>
+      handleRequest(
+        calendarYear = calendarYear,
+        isAgent = false,
+        origin = origin
+      )
     }
   }
 
@@ -132,8 +146,13 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
     }
   }
 
-  private def auditCreditSummary(creditOnAccount: Option[BigDecimal], charges: Seq[CreditDetailModel])
-                                (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
+  private def auditCreditSummary(
+      creditOnAccount: Option[BigDecimal],
+      charges:         Seq[CreditDetailModel]
+    )(
+      implicit hc: HeaderCarrier,
+      user:        MtdItUser[_]
+    ): Unit = {
     import CreditSummaryAuditing._
     auditingService.extendedAudit(
       CreditsSummaryModel(

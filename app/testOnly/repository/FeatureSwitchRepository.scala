@@ -28,23 +28,26 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FeatureSwitchRepository @Inject()(val mongoComponent: MongoComponent,
-                                        val configuration: Configuration)
-                                       (implicit ec: ExecutionContext) extends PlayMongoRepository[FeatureSwitch](
-  collectionName = configuration.get[String]("mongodb.income-tax-view-change-frontend.feature-switches.name"),
-  mongoComponent = mongoComponent,
-  domainFormat = FeatureSwitch.format,
-  indexes = Seq(
-    IndexModel(
-      keys = Indexes.ascending("name"),
-      indexOptions = IndexOptions()
-        .name("name")
-        .unique(true)
+class FeatureSwitchRepository @Inject() (
+    val mongoComponent: MongoComponent,
+    val configuration:  Configuration
+  )(
+    implicit ec: ExecutionContext)
+    extends PlayMongoRepository[FeatureSwitch](
+      collectionName = configuration.get[String]("mongodb.income-tax-view-change-frontend.feature-switches.name"),
+      mongoComponent = mongoComponent,
+      domainFormat = FeatureSwitch.format,
+      indexes = Seq(
+        IndexModel(
+          keys = Indexes.ascending("name"),
+          indexOptions = IndexOptions()
+            .name("name")
+            .unique(true)
+        )
+      ),
+      extraCodecs = Codecs.playFormatSumCodecs(FeatureSwitchName.formats)
     )
-  ),
-  extraCodecs = Codecs.playFormatSumCodecs(FeatureSwitchName.formats)
-)
-  with Transactions {
+    with Transactions {
 
   private implicit val tc: TransactionConfiguration = TransactionConfiguration.strict
 
@@ -64,8 +67,8 @@ class FeatureSwitchRepository @Inject()(val mongoComponent: MongoComponent,
       .replaceOne(
         filter = equal("name", name),
         replacement = FeatureSwitch(
-          name        = name,
-          isEnabled   = enabled
+          name = name,
+          isEnabled = enabled
         ),
         options = ReplaceOptions().upsert(true)
       )
@@ -77,17 +80,16 @@ class FeatureSwitchRepository @Inject()(val mongoComponent: MongoComponent,
     val switches: List[FeatureSwitch] = featureSwitches.map {
       case (flag, status) =>
         FeatureSwitch(
-          name        = flag,
-          isEnabled   = status
+          name = flag,
+          isEnabled = status
         )
     }.toList
 
-    withSessionAndTransaction(
-      session =>
-        for {
-          _ <- collection.deleteMany(session, filter = in("name", featureSwitches.keys.toSeq: _*)).toFuture()
-          _ <- collection.insertMany(session, switches).toFuture()
-        } yield ()
+    withSessionAndTransaction(session =>
+      for {
+        _ <- collection.deleteMany(session, filter = in("name", featureSwitches.keys.toSeq: _*)).toFuture()
+        _ <- collection.insertMany(session, switches).toFuture()
+      } yield ()
     )
   }
 }

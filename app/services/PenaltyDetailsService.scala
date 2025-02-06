@@ -21,7 +21,7 @@ import models.homePage.PenaltiesAndAppealsTileViewModel
 import javax.inject.Inject
 import scala.util.Random
 
-class PenaltyDetailsService @Inject()() {
+class PenaltyDetailsService @Inject() () {
 
   val dummySubmissionFrequency: String =
     Random.shuffle(Seq("Annual", "Quarterly")).head
@@ -29,7 +29,9 @@ class PenaltyDetailsService @Inject()() {
   val dummyPenaltyPoints: Int =
     Random.nextInt(5) + 1
 
-  def getPenaltyPenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled: Boolean): PenaltiesAndAppealsTileViewModel = {
+  def getPenaltyPenaltiesAndAppealsTileViewModel(
+      penaltiesAndAppealsIsEnabled: Boolean
+    ): PenaltiesAndAppealsTileViewModel = {
 
     PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled, dummySubmissionFrequency, dummyPenaltyPoints)
   }

@@ -27,18 +27,26 @@ import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ChargeHistoryConnector @Inject()(val httpV2: HttpClientV2,
-                                       val appConfig: FrontendAppConfig
-                                      )(implicit val ec: ExecutionContext) extends RawResponseReads {
+class ChargeHistoryConnector @Inject() (
+    val httpV2:    HttpClientV2,
+    val appConfig: FrontendAppConfig
+  )(
+    implicit val ec: ExecutionContext)
+    extends RawResponseReads {
 
   def getChargeHistoryUrl(nino: String, chargeReference: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/charge-history/$nino/chargeReference/$chargeReference"
   }
 
-  def getChargeHistory(nino: String, chargeRef: Option[String])
-                      (implicit headerCarrier: HeaderCarrier): Future[ChargeHistoryResponseModel] = {
+  def getChargeHistory(
+      nino:      String,
+      chargeRef: Option[String]
+    )(
+      implicit headerCarrier: HeaderCarrier
+    ): Future[ChargeHistoryResponseModel] = {
     chargeRef match {
-      case Some(chargeReference) => val url = getChargeHistoryUrl(nino, chargeReference)
+      case Some(chargeReference) =>
+        val url = getChargeHistoryUrl(nino, chargeReference)
         Logger("application").debug(s"GET $url")
 
         httpV2
@@ -49,7 +57,8 @@ class ChargeHistoryConnector @Inject()(val httpV2: HttpClientV2,
               Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
               ChargesHistoryErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
           }
-      case None => Logger("application").info("No charge history found as no chargeReference value supplied")
+      case None =>
+        Logger("application").info("No charge history found as no chargeReference value supplied")
         Future(ChargesHistoryModel("", "", "", None))
     }
 

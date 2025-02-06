@@ -66,22 +66,28 @@ class UpdateIncomeSourceConnectorSpec extends TestSupport with MockHttpV2 with M
     s"return a valid UpdateIncomeSourceResponseModel" in new Setup {
       setupMockHttpV2Put(connector.getUpdateIncomeSourceUrl)(UpdateIncomeSourceTestConstants.successHttpResponse)
 
-      val result: Future[UpdateIncomeSourceResponse] = connector.updateCessationDate(testNino, incomeSourceId, Some(LocalDate.parse(cessationDate)))
+      val result: Future[UpdateIncomeSourceResponse] =
+        connector.updateCessationDate(testNino, incomeSourceId, Some(LocalDate.parse(cessationDate)))
       result.futureValue shouldBe successResponse
     }
 
     s"return INTERNAL_SERVER_ERROR UpdateIncomeSourceResponseError" when {
       "invalid json response" in new Setup {
-        setupMockHttpV2Put(connector.getUpdateIncomeSourceUrl)(UpdateIncomeSourceTestConstants.successInvalidJsonResponse)
+        setupMockHttpV2Put(connector.getUpdateIncomeSourceUrl)(
+          UpdateIncomeSourceTestConstants.successInvalidJsonResponse
+        )
 
-        val result: Future[UpdateIncomeSourceResponse] = connector.updateCessationDate(testNino, incomeSourceId, Some(LocalDate.parse(cessationDate)))
+        val result: Future[UpdateIncomeSourceResponse] =
+          connector.updateCessationDate(testNino, incomeSourceId, Some(LocalDate.parse(cessationDate)))
         result.futureValue shouldBe badJsonResponse
       }
       "receiving a 500+ response" in new Setup {
-        setupMockHttpV2Put(connector.getUpdateIncomeSourceUrl)(HttpResponse(status = Status.INTERNAL_SERVER_ERROR,
-          json = Json.toJson(failureResponse), headers = Map.empty))
+        setupMockHttpV2Put(connector.getUpdateIncomeSourceUrl)(
+          HttpResponse(status = Status.INTERNAL_SERVER_ERROR, json = Json.toJson(failureResponse), headers = Map.empty)
+        )
 
-        val result: Future[UpdateIncomeSourceResponse] = connector.updateCessationDate(testNino, incomeSourceId, Some(LocalDate.parse(cessationDate)))
+        val result: Future[UpdateIncomeSourceResponse] =
+          connector.updateCessationDate(testNino, incomeSourceId, Some(LocalDate.parse(cessationDate)))
         result.futureValue shouldBe failureResponse
       }
     }
@@ -92,25 +98,28 @@ class UpdateIncomeSourceConnectorSpec extends TestSupport with MockHttpV2 with M
     s"return a valid UpdateIncomeSourceResponseModel" in new Setup {
       setupMockHttpV2Put(connector.getUpdateIncomeSourceUrl)(UpdateIncomeSourceTestConstants.successHttpResponse)
 
-      val result: Future[UpdateIncomeSourceResponse] = connector.updateIncomeSourceTaxYearSpecific(
-        testNino, incomeSourceId, taxYearSpecific)
+      val result: Future[UpdateIncomeSourceResponse] =
+        connector.updateIncomeSourceTaxYearSpecific(testNino, incomeSourceId, taxYearSpecific)
       result.futureValue shouldBe successResponse
     }
 
     s"return INTERNAL_SERVER_ERROR UpdateIncomeSourceResponseError" when {
       "invalid json response" in new Setup {
-        setupMockHttpV2Put(connector.getUpdateIncomeSourceUrl)(UpdateIncomeSourceTestConstants.successInvalidJsonResponse)
+        setupMockHttpV2Put(connector.getUpdateIncomeSourceUrl)(
+          UpdateIncomeSourceTestConstants.successInvalidJsonResponse
+        )
 
-        val result: Future[UpdateIncomeSourceResponse] = connector.updateIncomeSourceTaxYearSpecific(
-          testNino, incomeSourceId, taxYearSpecific)
+        val result: Future[UpdateIncomeSourceResponse] =
+          connector.updateIncomeSourceTaxYearSpecific(testNino, incomeSourceId, taxYearSpecific)
         result.futureValue shouldBe badJsonResponse
       }
       "receiving a 500+ response" in new Setup {
-        setupMockHttpV2Put(connector.getUpdateIncomeSourceUrl)(HttpResponse(status = Status.INTERNAL_SERVER_ERROR,
-          json = Json.toJson(failureResponse), headers = Map.empty))
+        setupMockHttpV2Put(connector.getUpdateIncomeSourceUrl)(
+          HttpResponse(status = Status.INTERNAL_SERVER_ERROR, json = Json.toJson(failureResponse), headers = Map.empty)
+        )
 
-        val result: Future[UpdateIncomeSourceResponse] = connector.updateIncomeSourceTaxYearSpecific(
-          testNino, incomeSourceId, taxYearSpecific)
+        val result: Future[UpdateIncomeSourceResponse] =
+          connector.updateIncomeSourceTaxYearSpecific(testNino, incomeSourceId, taxYearSpecific)
         result.futureValue shouldBe failureResponse
       }
     }

@@ -26,30 +26,48 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnector) {
+class ChargeHistoryService @Inject() (chargeHistoryConnector: ChargeHistoryConnector) {
 
-  def chargeHistoryResponse(isLatePaymentCharge: Boolean, isPayeSelfAssessment: Boolean, chargeReference: Option[String],
-                                    isChargeHistoryEnabled: Boolean)
-                                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ChargesHistoryErrorModel, List[ChargeHistoryModel]]] = {
+  def chargeHistoryResponse(
+      isLatePaymentCharge:    Boolean,
+      isPayeSelfAssessment:   Boolean,
+      chargeReference:        Option[String],
+      isChargeHistoryEnabled: Boolean
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier,
+      ec:            ExecutionContext
+    ): Future[Either[ChargesHistoryErrorModel, List[ChargeHistoryModel]]] = {
     if (!isLatePaymentCharge && isChargeHistoryEnabled && !isPayeSelfAssessment) {
       chargeHistoryConnector.getChargeHistory(user.nino, chargeReference).map {
-        case chargesHistory: ChargesHistoryModel => Right(chargesHistory.chargeHistoryDetails.getOrElse(Nil))
-        case errorResponse: ChargesHistoryErrorModel => Left(errorResponse)
+        case chargesHistory: ChargesHistoryModel      => Right(chargesHistory.chargeHistoryDetails.getOrElse(Nil))
+        case errorResponse:  ChargesHistoryErrorModel => Left(errorResponse)
       }
     } else {
       Future.successful(Right(Nil))
     }
   }
 
-  def getAdjustmentHistory(chargeHistory: List[ChargeHistoryModel], documentDetail: DocumentDetail): AdjustmentHistoryModel = {
+  def getAdjustmentHistory(
+      chargeHistory:  List[ChargeHistoryModel],
+      documentDetail: DocumentDetail
+    ): AdjustmentHistoryModel = {
     chargeHistory match {
       case Nil =>
-        val creation = AdjustmentModel(amount = documentDetail.originalAmount,
-          adjustmentDate = Some(documentDetail.documentDate), reasonCode = CreateReversalReason)
+        val creation = AdjustmentModel(
+          amount = documentDetail.originalAmount,
+          adjustmentDate = Some(documentDetail.documentDate),
+          reasonCode = CreateReversalReason
+        )
         AdjustmentHistoryModel(creation, List.empty)
       case _ =>
-        val creation = AdjustmentModel(amount = chargeHistory.minBy(_.documentDate).totalAmount, adjustmentDate = Some(chargeHistory.minBy(_.documentDate).documentDate), reasonCode = CreateReversalReason)
-        val poaAdjustmentHistory: List[AdjustmentModel] = adjustments(chargeHistory.sortBy(_.documentDate), documentDetail.originalAmount)
+        val creation = AdjustmentModel(
+          amount = chargeHistory.minBy(_.documentDate).totalAmount,
+          adjustmentDate = Some(chargeHistory.minBy(_.documentDate).documentDate),
+          reasonCode = CreateReversalReason
+        )
+        val poaAdjustmentHistory: List[AdjustmentModel] =
+          adjustments(chargeHistory.sortBy(_.documentDate), documentDetail.originalAmount)
         AdjustmentHistoryModel(creation, poaAdjustmentHistory.sortBy(_.adjustmentDate))
     }
   }
@@ -60,7 +78,7 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
       val newAdjustment = AdjustmentModel(
         adjustmentDate = Some(current.reversalDate),
         reasonCode = current.reasonCode match {
-          case Left(ex) => throw new Exception(ex)
+          case Left(ex)  => throw new Exception(ex)
           case Right(rc) => rc
         },
         amount = nextAmount
@@ -71,15 +89,17 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
     }
   }
 
-  def getReviewAndReconcileCredit(chargeItem: ChargeItem,
-                                  chargeDetailsForTaxYear: FinancialDetailsModel,
-                                  reviewAndReconcileEnabled: Boolean): Option[ChargeItem] = {
+  def getReviewAndReconcileCredit(
+      chargeItem:                ChargeItem,
+      chargeDetailsForTaxYear:   FinancialDetailsModel,
+      reviewAndReconcileEnabled: Boolean
+    ): Option[ChargeItem] = {
     for {
       financialDetailForRarCredit <- chargeDetailsForTaxYear.financialDetails.find(
         chargeItem.transactionType match {
           case PoaOneDebit => (fd: FinancialDetail) => reviewAndReconcileEnabled && fd.isReconcilePoaOneCredit
           case PoaTwoDebit => (fd: FinancialDetail) => reviewAndReconcileEnabled && fd.isReconcilePoaTwoCredit
-          case _                   => (_:  FinancialDetail) => false
+          case _           => (_: FinancialDetail) => false
         }
       )
       id                         <- financialDetailForRarCredit.transactionId

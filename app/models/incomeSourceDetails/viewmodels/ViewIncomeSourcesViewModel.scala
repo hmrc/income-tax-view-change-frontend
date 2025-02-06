@@ -20,16 +20,17 @@ import models.core.IncomeSourceId
 
 import java.time.LocalDate
 
-case class ViewIncomeSourcesViewModel(viewSoleTraderBusinesses: List[ViewBusinessDetailsViewModel],
-                                      viewUkProperty: Option[ViewPropertyDetailsViewModel],
-                                      viewForeignProperty: Option[ViewPropertyDetailsViewModel],
-                                      viewCeasedBusinesses: List[CeasedBusinessDetailsViewModel],
-                                      displayStartDate: Boolean)
+case class ViewIncomeSourcesViewModel(
+    viewSoleTraderBusinesses: List[ViewBusinessDetailsViewModel],
+    viewUkProperty:           Option[ViewPropertyDetailsViewModel],
+    viewForeignProperty:      Option[ViewPropertyDetailsViewModel],
+    viewCeasedBusinesses:     List[CeasedBusinessDetailsViewModel],
+    displayStartDate:         Boolean)
 
-case class ViewBusinessDetailsViewModel(incomeSourceId: IncomeSourceId,
-                                        incomeSource: Option[String],
-                                        tradingName: Option[String],
-                                        tradingStartDate: Option[LocalDate]
-                                       )
+case class ViewBusinessDetailsViewModel(
+    incomeSourceId:   IncomeSourceId,
+    incomeSource:     Option[String],
+    tradingName:      Option[String],
+    tradingStartDate: Option[LocalDate])
 
 case class ViewPropertyDetailsViewModel(tradingStartDate: Option[LocalDate])

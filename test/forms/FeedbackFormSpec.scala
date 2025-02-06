@@ -22,92 +22,119 @@ import play.api.data.{Form, FormError}
 
 class FeedbackFormSpec extends AnyWordSpec with Matchers {
 
-  def testFeedbackForm(rating: Option[String] = Some("5"),
-                       name: String = "name",
-                       email: String = "email@email.com",
-                       comments: String = "comments",
-                       csrfToken: String = "csrfToken"): FeedbackForm = FeedbackForm(
-    experienceRating = rating,
-    name = name,
-    email = email,
-    comments = comments,
-    csrfToken = csrfToken
-  )
+  def testFeedbackForm(
+      rating:    Option[String] = Some("5"),
+      name:      String = "name",
+      email:     String = "email@email.com",
+      comments:  String = "comments",
+      csrfToken: String = "csrfToken"
+    ): FeedbackForm =
+    FeedbackForm(
+      experienceRating = rating,
+      name = name,
+      email = email,
+      comments = comments,
+      csrfToken = csrfToken
+    )
 
   val aToZString = "abcdefghijklmnopqrstuvwxyz"
 
-  def form(optValue: Option[FeedbackForm]): Form[FeedbackForm] = FeedbackForm.form.bind(
-    optValue.fold[Map[String, String]](Map.empty)(
-      value => Map(
-        FeedbackForm.feedbackRating -> value.experienceRating.getOrElse("N/A"),
-        FeedbackForm.feedbackName -> value.name,
-        FeedbackForm.feedbackEmail -> value.email,
-        FeedbackForm.feedbackComments -> value.comments,
-        FeedbackForm.feedbackCsrfToken -> value.csrfToken)
+  def form(optValue: Option[FeedbackForm]): Form[FeedbackForm] =
+    FeedbackForm.form.bind(
+      optValue.fold[Map[String, String]](Map.empty)(value =>
+        Map(
+          FeedbackForm.feedbackRating    -> value.experienceRating.getOrElse("N/A"),
+          FeedbackForm.feedbackName      -> value.name,
+          FeedbackForm.feedbackEmail     -> value.email,
+          FeedbackForm.feedbackComments  -> value.comments,
+          FeedbackForm.feedbackCsrfToken -> value.csrfToken
+        )
+      )
     )
-  )
 
   "FeedbackForm" must {
     "feedbackRating" when {
       "bound with a valid feedbackRating" in {
-        form(Some(testFeedbackForm(rating = Some("5")))).value.get.name mustBe Some(testFeedbackForm(rating = Some("5"))).value.name
+        form(Some(testFeedbackForm(rating = Some("5")))).value.get.name mustBe Some(
+          testFeedbackForm(rating = Some("5"))
+        ).value.name
       }
       "bound with a empty feedbackRating" in {
-        form(Some(testFeedbackForm(rating = Some("")))).errors mustBe Seq(FormError("feedback-rating", Seq("feedback.radiosError")))
+        form(Some(testFeedbackForm(rating = Some("")))).errors mustBe Seq(
+          FormError("feedback-rating", Seq("feedback.radiosError"))
+        )
       }
     }
     "feedbackName" when {
       "bound with a valid feedbackName" in {
-        form(Some(testFeedbackForm(name = "test name"))).value.get.name mustBe Some(testFeedbackForm(name = "test name")).value.name
+        form(Some(testFeedbackForm(name = "test name"))).value.get.name mustBe Some(
+          testFeedbackForm(name = "test name")
+        ).value.name
       }
       "bound with a empty feedbackName" in {
         form(Some(testFeedbackForm(name = ""))).errors mustBe Seq(
-          FormError("feedback-name", Seq("feedback.fullName.error.empty")), FormError("feedback-name", Seq("feedback.fullName.error.invalid")))
+          FormError("feedback-name", Seq("feedback.fullName.error.empty")),
+          FormError("feedback-name", Seq("feedback.fullName.error.invalid"))
+        )
       }
       "bound with a invalid feedbackName with special character" in {
         form(Some(testFeedbackForm(name = "test@name"))).errors mustBe Seq(
-          FormError("feedback-name", Seq("feedback.fullName.error.invalid")))
+          FormError("feedback-name", Seq("feedback.fullName.error.invalid"))
+        )
       }
       "bound with a invalid feedbackName with multiple special characters" in {
         form(Some(testFeedbackForm(name = "test@$£&^name"))).errors mustBe Seq(
-          FormError("feedback-name", Seq("feedback.fullName.error.invalid")))
+          FormError("feedback-name", Seq("feedback.fullName.error.invalid"))
+        )
       }
       "bound with a invalid feedbackName with more than 70 characters" in {
         form(Some(testFeedbackForm(name = aToZString * 3))).errors mustBe Seq(
-          FormError("feedback-name", Seq("feedback.fullName.error.length")))
+          FormError("feedback-name", Seq("feedback.fullName.error.length"))
+        )
       }
     }
     "feedbackEmail" when {
       "bound with a valid feedbackEmail" in {
-        form(Some(testFeedbackForm(email = "test@test.com"))).value.get.name mustBe Some(testFeedbackForm(email = "test@test.com")).value.name
+        form(Some(testFeedbackForm(email = "test@test.com"))).value.get.name mustBe Some(
+          testFeedbackForm(email = "test@test.com")
+        ).value.name
       }
       "bound with a valid feedbackEmail with domain as ip" in {
-        form(Some(testFeedbackForm(email = "test@0.0.0.0"))).value.get.name mustBe Some(testFeedbackForm(email = "test@0.0.0.0")).value.name
+        form(Some(testFeedbackForm(email = "test@0.0.0.0"))).value.get.name mustBe Some(
+          testFeedbackForm(email = "test@0.0.0.0")
+        ).value.name
       }
       "bound with a invalid feedbackEmail format" in {
         form(Some(testFeedbackForm(email = aToZString))).errors mustBe Seq(
-          FormError("feedback-email", Seq("feedback.email.error")))
+          FormError("feedback-email", Seq("feedback.email.error"))
+        )
       }
       "bound with a invalid feedbackEmail with more than 70 characters" in {
         form(Some(testFeedbackForm(email = s"${aToZString * 3}@${aToZString * 7}.com"))).errors mustBe Seq(
-          FormError("feedback-email", Seq("feedback.email.error.length")))
+          FormError("feedback-email", Seq("feedback.email.error.length"))
+        )
       }
       "bound with a invalid feedbackEmail format with domain as ip" in {
         form(Some(testFeedbackForm(email = "test@0.0.0"))).errors mustBe Seq(
-          FormError("feedback-email", Seq("feedback.email.error")))
+          FormError("feedback-email", Seq("feedback.email.error"))
+        )
       }
     }
     "feedbackComments" when {
       "bound with a valid feedbackComments" in {
-        form(Some(testFeedbackForm(comments = "test comments"))).value.get.name mustBe Some(testFeedbackForm(comments = "test comments")).value.name
+        form(Some(testFeedbackForm(comments = "test comments"))).value.get.name mustBe Some(
+          testFeedbackForm(comments = "test comments")
+        ).value.name
       }
       "bound with a empty feedbackComments " in {
         form(Some(testFeedbackForm(comments = ""))).errors mustBe Seq(
-          FormError("feedback-comments", Seq("feedback.comments.error.empty")))
+          FormError("feedback-comments", Seq("feedback.comments.error.empty"))
+        )
       }
       "bound with a invalid feedbackComments length" in {
         form(Some(testFeedbackForm(comments = s"${aToZString * 77}"))).errors mustBe Seq(
-          FormError("feedback-comments", Seq("feedback.comments.error.length")))
+          FormError("feedback-comments", Seq("feedback.comments.error.length"))
+        )
       }
     }
     "feedbackFill" when {
@@ -115,9 +142,12 @@ class FeedbackFormSpec extends AnyWordSpec with Matchers {
         form(Some(testFeedbackForm())).value.get.name mustBe FeedbackForm.form.fill(testFeedbackForm()).value.get.name
       }
       "updating a value using form.fill " in {
-        FeedbackForm.form.fill(testFeedbackForm())
+        FeedbackForm.form
+          .fill(testFeedbackForm())
           .fill(testFeedbackForm(comments = "test changed comment"))
-          .value.get.comments mustBe testFeedbackForm(comments = "test changed comment").comments
+          .value
+          .get
+          .comments mustBe testFeedbackForm(comments = "test changed comment").comments
       }
     }
   }

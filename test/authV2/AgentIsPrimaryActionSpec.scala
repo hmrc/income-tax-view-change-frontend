@@ -43,13 +43,15 @@ class AgentIsPrimaryActionSpec extends AuthActionsSpecHelper {
   }
 
   def defaultAsyncBody(
-                        requestTestCase: AuthorisedAndEnrolledRequest[_] => Assertion
-                      ): AuthorisedAndEnrolledRequest[_] => Future[Result] = testRequest => {
-    requestTestCase(testRequest)
-    Future.successful(Results.Ok("Successful"))
-  }
+      requestTestCase: AuthorisedAndEnrolledRequest[_] => Assertion
+    ): AuthorisedAndEnrolledRequest[_] => Future[Result] =
+    testRequest => {
+      requestTestCase(testRequest)
+      Future.successful(Results.Ok("Successful"))
+    }
 
-  def defaultAsync: AuthorisedAndEnrolledRequest[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
+  def defaultAsync: AuthorisedAndEnrolledRequest[_] => Future[Result] =
+    (_) => Future.successful(Results.Ok("Successful"))
 
   lazy val action = app.injector.instanceOf[AgentIsPrimaryAction]
 

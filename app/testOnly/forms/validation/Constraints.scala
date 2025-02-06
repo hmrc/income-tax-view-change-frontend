@@ -24,12 +24,11 @@ import scala.util.{Failure, Success, Try}
 
 object Constraints {
 
-  def nonEmpty(msg: String): Constraint[String] = constraint[String](
-    x => if (x.isEmpty) ErrorMessageFactory.error(msg) else Valid
-  )
+  def nonEmpty(msg: String): Constraint[String] =
+    constraint[String](x => if (x.isEmpty) ErrorMessageFactory.error(msg) else Valid)
 
-  val validJson: Constraint[String] = constraint[String](
-    x => Try {
+  val validJson: Constraint[String] = constraint[String](x =>
+    Try {
       Json.parse(x)
     } match {
       case Success(_) => Valid
@@ -37,20 +36,21 @@ object Constraints {
     }
   )
 
-  val oValidJson: Constraint[Option[String]] = constraint[Option[String]](
-    x => x.isEmpty match {
+  val oValidJson: Constraint[Option[String]] = constraint[Option[String]](x =>
+    x.isEmpty match {
       case true => Valid
-      case false => Try {
-        Json.parse(x.get)
-      } match {
-        case Success(_) => Valid
-        case Failure(_) => ErrorMessageFactory.error("Invalid Json Format")
-      }
+      case false =>
+        Try {
+          Json.parse(x.get)
+        } match {
+          case Success(_) => Valid
+          case Failure(_) => ErrorMessageFactory.error("Invalid Json Format")
+        }
     }
   )
 
-  val isNumeric: Constraint[String] = constraint[String](
-    x => Try {
+  val isNumeric: Constraint[String] = constraint[String](x =>
+    Try {
       x.toInt
     } match {
       case Success(_) => Valid

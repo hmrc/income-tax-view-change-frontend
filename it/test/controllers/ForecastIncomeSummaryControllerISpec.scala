@@ -31,37 +31,38 @@ object ForecastIncomeSummaryControllerTestConstants {
   val taxableIncome = 12500
 
   val endOfYearEstimate: EndOfYearEstimate = EndOfYearEstimate(
-    incomeSource = Some(List(
-      IncomeSource("01", Some("self-employment1"), taxableIncome),
-      IncomeSource("01", Some("self-employment2"), taxableIncome),
-      IncomeSource("02", None, taxableIncome),
-      IncomeSource("03", None, taxableIncome),
-      IncomeSource("04", None, taxableIncome),
-      IncomeSource("05", Some("employment1"), taxableIncome),
-      IncomeSource("05", Some("employment2"), taxableIncome),
-      IncomeSource("06", None, taxableIncome),
-      IncomeSource("07", None, taxableIncome),
-      IncomeSource("08", None, taxableIncome),
-      IncomeSource("09", None, taxableIncome),
-      IncomeSource("10", None, taxableIncome),
-      IncomeSource("11", None, taxableIncome),
-      IncomeSource("12", None, taxableIncome),
-      IncomeSource("13", None, taxableIncome),
-      IncomeSource("14", None, taxableIncome),
-      IncomeSource("15", None, taxableIncome),
-      IncomeSource("16", None, taxableIncome),
-      IncomeSource("17", None, taxableIncome),
-      IncomeSource("18", None, taxableIncome),
-      IncomeSource("19", None, taxableIncome),
-      IncomeSource("20", None, taxableIncome),
-      IncomeSource("21", None, taxableIncome),
-      IncomeSource("22", None, taxableIncome),
-      IncomeSource("98", None, taxableIncome)
-    )),
-    totalEstimatedIncome = Some(taxableIncome),
+    incomeSource = Some(
+      List(
+        IncomeSource("01", Some("self-employment1"), taxableIncome),
+        IncomeSource("01", Some("self-employment2"), taxableIncome),
+        IncomeSource("02", None, taxableIncome),
+        IncomeSource("03", None, taxableIncome),
+        IncomeSource("04", None, taxableIncome),
+        IncomeSource("05", Some("employment1"), taxableIncome),
+        IncomeSource("05", Some("employment2"), taxableIncome),
+        IncomeSource("06", None, taxableIncome),
+        IncomeSource("07", None, taxableIncome),
+        IncomeSource("08", None, taxableIncome),
+        IncomeSource("09", None, taxableIncome),
+        IncomeSource("10", None, taxableIncome),
+        IncomeSource("11", None, taxableIncome),
+        IncomeSource("12", None, taxableIncome),
+        IncomeSource("13", None, taxableIncome),
+        IncomeSource("14", None, taxableIncome),
+        IncomeSource("15", None, taxableIncome),
+        IncomeSource("16", None, taxableIncome),
+        IncomeSource("17", None, taxableIncome),
+        IncomeSource("18", None, taxableIncome),
+        IncomeSource("19", None, taxableIncome),
+        IncomeSource("20", None, taxableIncome),
+        IncomeSource("21", None, taxableIncome),
+        IncomeSource("22", None, taxableIncome),
+        IncomeSource("98", None, taxableIncome)
+      )
+    ),
+    totalEstimatedIncome = Some(taxableIncome)
   )
 }
-
 
 class ForecastIncomeSummaryControllerISpec extends ControllerISpecHelper {
 
@@ -70,42 +71,50 @@ class ForecastIncomeSummaryControllerISpec extends ControllerISpecHelper {
   (FakeRequest())
 
   def getPath(mtdRole: MTDUserRole): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     pathStart + s"/$testYear/forecast-income"
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    val path = getPath(mtdUserRole)
-    val additionalCookies = getAdditionalCookies(mtdUserRole)
-    s"GET $path" when {
-      s"a user is a $mtdUserRole" that {
-        "is authenticated, with a valid enrolment" should {
-          if (mtdUserRole == MTDSupportingAgent) {
-            testSupportingAgentAccessDenied(path, additionalCookies)
-          } else {
-            "render the forecast income summary page" in {
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
-              IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018")(
-                status = OK,
-                body = liabilityCalculationModelSuccessful
-              )
-              val res = buildGETMTDClient(path, additionalCookies).futureValue
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      val path              = getPath(mtdUserRole)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            if (mtdUserRole == MTDSupportingAgent) {
+              testSupportingAgentAccessDenied(path, additionalCookies)
+            } else {
+              "render the forecast income summary page" in {
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  multipleBusinessesAndUkProperty
+                )
+                IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018")(
+                  status = OK,
+                  body = liabilityCalculationModelSuccessful
+                )
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-              IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, "2018")
+                IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, "2018")
 
-              AuditStub.verifyAuditEvent(ForecastIncomeAuditModel(testUser(mtdUserRole),
-                ForecastIncomeSummaryControllerTestConstants.endOfYearEstimate))
+                AuditStub.verifyAuditEvent(
+                  ForecastIncomeAuditModel(
+                    testUser(mtdUserRole),
+                    ForecastIncomeSummaryControllerTestConstants.endOfYearEstimate
+                  )
+                )
 
-              res should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, "forecast_income.heading")
-              )
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "forecast_income.heading")
+                )
+              }
             }
           }
+          testAuthFailures(path, mtdUserRole)
         }
-        testAuthFailures(path, mtdUserRole)
       }
-    }
   }
 }

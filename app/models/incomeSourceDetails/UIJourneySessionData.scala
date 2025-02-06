@@ -26,15 +26,14 @@ import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 import java.time.Instant
 
 case class UIJourneySessionData(
-                                 sessionId: String,
-                                 journeyType: String,
-                                 addIncomeSourceData: Option[AddIncomeSourceData] = None,
-                                 manageIncomeSourceData: Option[ManageIncomeSourceData] = None,
-                                 ceaseIncomeSourceData: Option[CeaseIncomeSourceData] = None,
-                                 optOutSessionData: Option[OptOutSessionData] = None,
-                                 optInSessionData: Option[OptInSessionData] = None,
-                                 lastUpdated: Instant = Instant.now
-                               ) {
+    sessionId:              String,
+    journeyType:            String,
+    addIncomeSourceData:    Option[AddIncomeSourceData] = None,
+    manageIncomeSourceData: Option[ManageIncomeSourceData] = None,
+    ceaseIncomeSourceData:  Option[CeaseIncomeSourceData] = None,
+    optOutSessionData:      Option[OptOutSessionData] = None,
+    optInSessionData:       Option[OptInSessionData] = None,
+    lastUpdated:            Instant = Instant.now) {
 
   def encrypted: SensitiveUIJourneySessionData =
     SensitiveUIJourneySessionData(
@@ -60,22 +59,20 @@ object UIJourneySessionData {
       ~ (__ \ "ceaseIncomeSourceData").formatNullable[CeaseIncomeSourceData]
       ~ (__ \ "optOutSessionData").formatNullable[OptOutSessionData]
       ~ (__ \ "optInSessionData").formatNullable[OptInSessionData]
-      ~ (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat)
-      )(UIJourneySessionData.apply, unlift(UIJourneySessionData.unapply)
-    )
+      ~ (__ \ "lastUpdated")
+        .format(MongoJavatimeFormats.instantFormat))(UIJourneySessionData.apply, unlift(UIJourneySessionData.unapply))
   }
 }
 
 case class SensitiveUIJourneySessionData(
-                                          sessionId: String,
-                                          journeyType: String,
-                                          addIncomeSourceData: Option[SensitiveAddIncomeSourceData] = None,
-                                          manageIncomeSourceData: Option[ManageIncomeSourceData] = None,
-                                          ceaseIncomeSourceData: Option[CeaseIncomeSourceData] = None,
-                                          optOutSessionData: Option[OptOutSessionData] = None,
-                                          optInSessionData: Option[OptInSessionData] = None,
-                                          lastUpdated: Instant = Instant.now
-                                        ) {
+    sessionId:              String,
+    journeyType:            String,
+    addIncomeSourceData:    Option[SensitiveAddIncomeSourceData] = None,
+    manageIncomeSourceData: Option[ManageIncomeSourceData] = None,
+    ceaseIncomeSourceData:  Option[CeaseIncomeSourceData] = None,
+    optOutSessionData:      Option[OptOutSessionData] = None,
+    optInSessionData:       Option[OptInSessionData] = None,
+    lastUpdated:            Instant = Instant.now) {
 
   def decrypted: UIJourneySessionData =
     UIJourneySessionData(
@@ -93,7 +90,6 @@ case class SensitiveUIJourneySessionData(
 object SensitiveUIJourneySessionData {
 
   implicit def format(implicit crypto: Encrypter with Decrypter): OFormat[SensitiveUIJourneySessionData] =
-
     ((__ \ "sessionId").format[String]
       ~ (__ \ "journeyType").format[String]
       ~ (__ \ "addIncomeSourceData").formatNullable[SensitiveAddIncomeSourceData]
@@ -101,7 +97,8 @@ object SensitiveUIJourneySessionData {
       ~ (__ \ "ceaseIncomeSourceData").formatNullable[CeaseIncomeSourceData]
       ~ (__ \ "optOutSessionData").formatNullable[OptOutSessionData]
       ~ (__ \ "optInSessionData").formatNullable[OptInSessionData]
-      ~ (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat)
-      )(SensitiveUIJourneySessionData.apply, unlift(SensitiveUIJourneySessionData.unapply)
+      ~ (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat))(
+      SensitiveUIJourneySessionData.apply,
+      unlift(SensitiveUIJourneySessionData.unapply)
     )
 }

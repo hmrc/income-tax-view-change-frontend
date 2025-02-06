@@ -24,8 +24,7 @@ import java.time.LocalDate
 
 object OutstandingChargesTestConstants {
 
-  val testValidOutstandingChargesModelJson: JsValue = Json.parse(
-    """
+  val testValidOutstandingChargesModelJson: JsValue = Json.parse("""
       |  {
       |    "chargeName": "LATE",
       |    "relevantDueDate": "2021-01-31",
@@ -33,50 +32,51 @@ object OutstandingChargesTestConstants {
       |    "tieBreaker": 1234
       |  }
       |""".stripMargin)
-
 
   val testValidOutstandingChargesModelJson1: JsValue = Json.obj(
     "outstandingCharges" -> Json.arr(
       Json.obj(
         "chargeName" -> "LATE"
-      )))
+      )
+    )
+  )
 
-  val testValidOutstandingChargesModel: OutstandingChargesModel = OutstandingChargesModel(List(
-    OutstandingChargeModel("LATE", Some(LocalDate.parse("2021-01-31")), 123456789012345.67, 1234)))
+  val testValidOutstandingChargesModel: OutstandingChargesModel = OutstandingChargesModel(
+    List(OutstandingChargeModel("LATE", Some(LocalDate.parse("2021-01-31")), 123456789012345.67, 1234))
+  )
 
+  val testOutstandingChargesErrorModelParsing: OutstandingChargesErrorModel =
+    OutstandingChargesErrorModel(testErrorStatus, "Json Validation Error. Parsing OutstandingCharges Data Response")
 
-  val testOutstandingChargesErrorModelParsing: OutstandingChargesErrorModel = OutstandingChargesErrorModel(
-    testErrorStatus, "Json Validation Error. Parsing OutstandingCharges Data Response")
-
-  val testOutstandingChargesErrorModel: OutstandingChargesErrorModel = OutstandingChargesErrorModel(testErrorStatus, testErrorMessage)
+  val testOutstandingChargesErrorModel: OutstandingChargesErrorModel =
+    OutstandingChargesErrorModel(testErrorStatus, testErrorMessage)
   val testOutstandingChargesErrorModelJson: JsValue = Json.obj(
-    "code" -> testErrorStatus,
+    "code"    -> testErrorStatus,
     "message" -> testErrorMessage
   )
 
-
   val testInvalidOutstandingChargesJson: JsValue = Json.obj(
-    "chargeName" -> "LATE",
+    "chargeName"      -> "LATE",
     "relevantDueDate" -> "2021-01-31",
-    "chargeAmount" -> 123456789012345.67,
+    "chargeAmount"    -> 123456789012345.67
   )
 
   val testInvalidBadOutstandingChargesJson: JsValue = Json.obj(
     "chargeName" -> "LATE"
-
   )
 
   val testValidOutStandingChargeModelJson: JsValue = Json.obj(
     "outstandingCharges" -> Json.arr(
       Json.obj(
-        "chargeName" -> "LATE",
+        "chargeName"      -> "LATE",
         "relevantDueDate" -> "2021-01-31",
-        "chargeAmount" -> 123456789012345.67,
-        "tieBreaker" -> 1234
-      )))
+        "chargeAmount"    -> 123456789012345.67,
+        "tieBreaker"      -> 1234
+      )
+    )
+  )
 
-  val validOutStandingChargeJson: JsValue = Json.parse(
-    """
+  val validOutStandingChargeJson: JsValue = Json.parse("""
       |  {
       |    "chargeName": "LATE",
       |    "relevantDueDate": "2021-01-31",
@@ -85,15 +85,13 @@ object OutstandingChargesTestConstants {
       |  }
       |""".stripMargin)
 
-  val invalidOutStandingChargeJson: JsValue = Json.parse(
-    """
+  val invalidOutStandingChargeJson: JsValue = Json.parse("""
       |  {
       |    "chargeName": "LATE"
       |  }
       |""".stripMargin)
 
-  val testBadOutstandingChargesJson: JsValue = Json.parse(
-    """
+  val testBadOutstandingChargesJson: JsValue = Json.parse("""
       |  {
       |    "chargeName": "LATE",
       |    "relevantDueDate": "2021-01-31",
@@ -101,8 +99,7 @@ object OutstandingChargesTestConstants {
       |  }
       |""".stripMargin)
 
-  val validOutStandingChargeResponseJsonWithAciAndBcdCharges: JsValue = Json.parse(
-    """
+  val validOutStandingChargeResponseJsonWithAciAndBcdCharges: JsValue = Json.parse("""
       |{
       |  "outstandingCharges": [{
       |         "chargeName": "BCD",

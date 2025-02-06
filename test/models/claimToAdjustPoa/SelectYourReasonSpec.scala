@@ -20,7 +20,6 @@ import models.claimToAdjustPoa.SelectYourReason._
 import play.api.libs.json.{JsError, JsString, Json}
 import testUtils.UnitSpec
 
-
 class SelectYourReasonSpec extends UnitSpec {
 
   "SelectYourReason" should {
@@ -28,35 +27,35 @@ class SelectYourReasonSpec extends UnitSpec {
     "read and write from JSON correctly" when {
 
       "MainIncomeLower" in {
-        val mainIncomeLower:SelectYourReason = MainIncomeLower
+        val mainIncomeLower: SelectYourReason = MainIncomeLower
         val json = Json.toJson(mainIncomeLower)
         json shouldBe JsString("001")
         json.as[SelectYourReason] shouldBe mainIncomeLower
       }
 
       "OtherIncomeLower" in {
-        val otherIncomeLower:SelectYourReason = OtherIncomeLower
+        val otherIncomeLower: SelectYourReason = OtherIncomeLower
         val json = Json.toJson(otherIncomeLower)
         json shouldBe JsString("002")
         json.as[SelectYourReason] shouldBe otherIncomeLower
       }
 
       "AllowanceOrReliefHigher" in {
-        val allowanceOrReliefHigher:SelectYourReason = AllowanceOrReliefHigher
+        val allowanceOrReliefHigher: SelectYourReason = AllowanceOrReliefHigher
         val json = Json.toJson(allowanceOrReliefHigher)
         json shouldBe JsString("003")
         json.as[SelectYourReason] shouldBe allowanceOrReliefHigher
       }
 
       "MoreTaxedAtSource" in {
-        val moreTaxedAtSource:SelectYourReason = MoreTaxedAtSource
+        val moreTaxedAtSource: SelectYourReason = MoreTaxedAtSource
         val json = Json.toJson(moreTaxedAtSource)
         json shouldBe JsString("004")
         json.as[SelectYourReason] shouldBe moreTaxedAtSource
       }
 
       "Increase" in {
-        val increase:SelectYourReason = Increase
+        val increase: SelectYourReason = Increase
         val json = Json.toJson(increase)
         json shouldBe JsString("005")
         json.as[SelectYourReason] shouldBe increase
@@ -64,7 +63,9 @@ class SelectYourReasonSpec extends UnitSpec {
     }
 
     "return error if code is invalid" in {
-      JsString("006").validate[SelectYourReason] shouldBe JsError("Could not parse SelectYourReason from value: \"006\"")
+      JsString("006").validate[SelectYourReason] shouldBe JsError(
+        "Could not parse SelectYourReason from value: \"006\""
+      )
     }
   }
 }

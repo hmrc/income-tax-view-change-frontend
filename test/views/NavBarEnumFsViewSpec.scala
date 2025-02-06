@@ -28,10 +28,10 @@ class NavBarEnumFsViewSpec extends TestSupport {
   lazy val page: HtmlFormat.Appendable = btaNavBarView(testListLink)(implicitly)
   lazy val document = Jsoup.parse(page.body)
 
-  val home = "testEnHome"
+  val home          = "testEnHome"
   val manageAccount = "testEnAccount"
-  val message = "testEnMessages"
-  val help = "testEnHelp"
+  val message       = "testEnMessages"
+  val help          = "testEnHelp"
 
   "The BtaNavBar view" should {
 

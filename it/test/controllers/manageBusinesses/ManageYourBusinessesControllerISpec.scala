@@ -26,137 +26,154 @@ import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCea
 
 class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
 
-  val showIndividualViewIncomeSourceControllerUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
-  val pageTitleMsgKey = "manage.your.businesses.heading"
+  val showIndividualViewIncomeSourceControllerUrl: String =
+    controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+  val pageTitleMsgKey             = "manage.your.businesses.heading"
   val soleTraderBusinessesHeading = messagesAPI("manage.your.businesses.self-employed-h2")
-  val propertyBusinessesHeading = messagesAPI("manage.your.businesses.property-h2")
-  val dateStarted: String = messagesAPI("manage.your.businesses.datestarted")
-  val businessName: String = messagesAPI("manage.your.businesses.name")
-  val ukPropertyHeading: String = messagesAPI("manage.your.businesses.UK")
-  val foreignPropertyHeading: String = messagesAPI("manage.your.businesses.Foreign")
-  val ceasedBusinessHeading: String = messagesAPI("manage.your.businesses.ceasedBusinesses.heading")
-  val ukPropertyStartDate: String = "1 January 2017"
+  val propertyBusinessesHeading   = messagesAPI("manage.your.businesses.property-h2")
+  val dateStarted:              String = messagesAPI("manage.your.businesses.datestarted")
+  val businessName:             String = messagesAPI("manage.your.businesses.name")
+  val ukPropertyHeading:        String = messagesAPI("manage.your.businesses.UK")
+  val foreignPropertyHeading:   String = messagesAPI("manage.your.businesses.Foreign")
+  val ceasedBusinessHeading:    String = messagesAPI("manage.your.businesses.ceasedBusinesses.heading")
+  val ukPropertyStartDate:      String = "1 January 2017"
   val foreignPropertyStartDate: String = "1 January 2018"
 
   def getPath(mtdRole: MTDUserRole): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     pathStart + "/manage-your-businesses"
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    val path = getPath(mtdUserRole)
-    val additionalCookies = getAdditionalCookies(mtdUserRole)
-    s"GET $path" when {
-      s"a user is a $mtdUserRole" that {
-        "is authenticated, with a valid enrolment" should {
-          "render the manage your businesses page" when {
-            "the income sources is enabled and the user has multiple businesses and uk property with display business start date enabled" in {
-              enable(IncomeSourcesFs)
-              enable(DisplayBusinessStartDate)
-              disable(NavBarFs)
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      val path              = getPath(mtdUserRole)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            "render the manage your businesses page" when {
+              "the income sources is enabled and the user has multiple businesses and uk property with display business start date enabled" in {
+                enable(IncomeSourcesFs)
+                enable(DisplayBusinessStartDate)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  multipleBusinessesAndUkProperty
+                )
 
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-              result should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, pageTitleMsgKey),
-                elementTextByID("manage-your-businesses-h1")(messagesAPI(pageTitleMsgKey)),
-                elementTextByID("self-employed-h1")(soleTraderBusinessesHeading),
-                elementTextByID("business-type-0")("Fruit Ltd"),
-                elementTextByID("business-trade-name-0")("business"),
-                elementTextByID("business-date-0")(ukPropertyStartDate),
-                elementTextByID("business-date-1")(foreignPropertyStartDate),
-                elementTextByID("property-h2")(propertyBusinessesHeading),
-                elementTextByID("uk-date")(ukPropertyStartDate),
-                elementAttributeBySelector("#back-fallback", "href")(homeUrl(mtdUserRole)),
-              )
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, pageTitleMsgKey),
+                  elementTextByID("manage-your-businesses-h1")(messagesAPI(pageTitleMsgKey)),
+                  elementTextByID("self-employed-h1")(soleTraderBusinessesHeading),
+                  elementTextByID("business-type-0")("Fruit Ltd"),
+                  elementTextByID("business-trade-name-0")("business"),
+                  elementTextByID("business-date-0")(ukPropertyStartDate),
+                  elementTextByID("business-date-1")(foreignPropertyStartDate),
+                  elementTextByID("property-h2")(propertyBusinessesHeading),
+                  elementTextByID("uk-date")(ukPropertyStartDate),
+                  elementAttributeBySelector("#back-fallback", "href")(homeUrl(mtdUserRole))
+                )
+              }
+
+              "the income sources is enabled and the user has foreign property and ceased business with display business start date enabled" in {
+                enable(IncomeSourcesFs)
+                enable(DisplayBusinessStartDate)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  foreignPropertyAndCeasedBusiness
+                )
+
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, pageTitleMsgKey),
+                  elementTextByID("manage-your-businesses-h1")(messagesAPI(pageTitleMsgKey)),
+                  elementTextByID("foreign-date")(ukPropertyStartDate),
+                  elementTextByID("ceasedBusinesses-heading")(ceasedBusinessHeading)
+                )
+              }
+
+              "the income sources is enabled and the user has multiple businesses and uk property with display business start date disabled" in {
+                enable(IncomeSourcesFs)
+                disable(DisplayBusinessStartDate)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  multipleBusinessesAndUkProperty
+                )
+
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, pageTitleMsgKey),
+                  elementTextByID("manage-your-businesses-h1")(messagesAPI(pageTitleMsgKey)),
+                  elementTextByID("self-employed-h1")(soleTraderBusinessesHeading),
+                  elementTextByID("business-type-0")("Fruit Ltd"),
+                  elementTextByID("business-trade-name-0")("business"),
+                  elementTextByID("business-date-0")(""),
+                  elementTextByID("business-date-1")(""),
+                  elementTextByID("property-h2")(propertyBusinessesHeading),
+                  elementTextByID("uk-date")(""),
+                  elementAttributeBySelector("#back-fallback", "href")(homeUrl(mtdUserRole))
+                )
+              }
+
+              "the income sources is enabled and the user has foreign property and ceased business with display business start date disabled" in {
+                enable(IncomeSourcesFs)
+                disable(DisplayBusinessStartDate)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  foreignPropertyAndCeasedBusiness
+                )
+
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, pageTitleMsgKey),
+                  elementTextByID("manage-your-businesses-h1")(messagesAPI(pageTitleMsgKey)),
+                  elementTextByID("foreign-date")(""),
+                  elementTextByID("ceasedBusinesses-heading")(ceasedBusinessHeading)
+                )
+              }
             }
 
-            "the income sources is enabled and the user has foreign property and ceased business with display business start date enabled" in {
-              enable(IncomeSourcesFs)
-              enable(DisplayBusinessStartDate)
-              disable(NavBarFs)
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
+            "redirect to the home page" when {
+              "the income sources feature switch is disabled" in {
+                disable(IncomeSourcesFs)
+                disable(NavBarFs)
+                enable(DisplayBusinessStartDate)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  foreignPropertyAndCeasedBusiness
+                )
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-              result should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, pageTitleMsgKey),
-                elementTextByID("manage-your-businesses-h1")(messagesAPI(pageTitleMsgKey)),
-                elementTextByID("foreign-date")(ukPropertyStartDate),
-                elementTextByID("ceasedBusinesses-heading")(ceasedBusinessHeading)
-              )
-            }
-
-            "the income sources is enabled and the user has multiple businesses and uk property with display business start date disabled" in {
-              enable(IncomeSourcesFs)
-              disable(DisplayBusinessStartDate)
-              disable(NavBarFs)
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
-
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-              result should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, pageTitleMsgKey),
-                elementTextByID("manage-your-businesses-h1")(messagesAPI(pageTitleMsgKey)),
-                elementTextByID("self-employed-h1")(soleTraderBusinessesHeading),
-                elementTextByID("business-type-0")("Fruit Ltd"),
-                elementTextByID("business-trade-name-0")("business"),
-                elementTextByID("business-date-0")(""),
-                elementTextByID("business-date-1")(""),
-                elementTextByID("property-h2")(propertyBusinessesHeading),
-                elementTextByID("uk-date")(""),
-                elementAttributeBySelector("#back-fallback", "href")(homeUrl(mtdUserRole)),
-              )
-            }
-
-            "the income sources is enabled and the user has foreign property and ceased business with display business start date disabled" in {
-              enable(IncomeSourcesFs)
-              disable(DisplayBusinessStartDate)
-              disable(NavBarFs)
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
-
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-              result should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, pageTitleMsgKey),
-                elementTextByID("manage-your-businesses-h1")(messagesAPI(pageTitleMsgKey)),
-                elementTextByID("foreign-date")(""),
-                elementTextByID("ceasedBusinesses-heading")(ceasedBusinessHeading)
-              )
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(homeUrl(mtdUserRole))
+                )
+              }
             }
           }
-
-          "redirect to the home page" when {
-            "the income sources feature switch is disabled" in {
-              disable(IncomeSourcesFs)
-              disable(NavBarFs)
-              enable(DisplayBusinessStartDate)
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-              result should have(
-                httpStatus(SEE_OTHER),
-                redirectURI(homeUrl(mtdUserRole))
-              )
-            }
-          }
+          testAuthFailures(path, mtdUserRole)
         }
-        testAuthFailures(path, mtdUserRole)
       }
-    }
   }
 }

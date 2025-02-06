@@ -51,22 +51,30 @@ class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
   }
 
   def defaultAsyncBody(
-                        requestTestCase: AuthorisedAndEnrolledRequest[_] => Assertion
-                      ): AuthorisedAndEnrolledRequest[_] => Future[Result] = testRequest => {
-    requestTestCase(testRequest)
-    Future.successful(Results.Ok("Successful"))
-  }
+      requestTestCase: AuthorisedAndEnrolledRequest[_] => Assertion
+    ): AuthorisedAndEnrolledRequest[_] => Future[Result] =
+    testRequest => {
+      requestTestCase(testRequest)
+      Future.successful(Results.Ok("Successful"))
+    }
 
-  def defaultAsync: AuthorisedAndEnrolledRequest[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
+  def defaultAsync: AuthorisedAndEnrolledRequest[_] => Future[Result] =
+    (_) => Future.successful(Results.Ok("Successful"))
 
-  def redirectAsync(location: String): AuthorisedAndEnrolledRequest[_] => Future[Result] = (_) => Future.successful(Results.SeeOther(location))
+  def redirectAsync(location: String): AuthorisedAndEnrolledRequest[_] => Future[Result] =
+    (_) => Future.successful(Results.SeeOther(location))
 
   lazy val authAction = app.injector.instanceOf[AuthoriseAndRetrieveMtdAgent]
 
   "refine" should {
     "return the expected MtdItUserOptionNino response" when {
       s"the user is an Agent with a primary delegated enrolment (HMRC-MTD-IT)" in {
-        when(mockAuthConnector.authorise(ArgumentMatchers.eq(primaryAgentPredicate()), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
+        when(
+          mockAuthConnector.authorise(
+            ArgumentMatchers.eq(primaryAgentPredicate()),
+            ArgumentMatchers.eq(EmptyRetrieval)
+          )(any(), any())
+        ).thenReturn(
           Future.successful(EmptyRetrieval)
         )
 
@@ -85,11 +93,21 @@ class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
       }
 
       s"the user is an Agent with a secondary delegated enrolment (HMRC-MTD-IT-SUPP)" in {
-        when(mockAuthConnector.authorise(ArgumentMatchers.eq(primaryAgentPredicate()), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
+        when(
+          mockAuthConnector.authorise(
+            ArgumentMatchers.eq(primaryAgentPredicate()),
+            ArgumentMatchers.eq(EmptyRetrieval)
+          )(any(), any())
+        ).thenReturn(
           Future.failed(InsufficientEnrolments("enrolment missing"))
         )
 
-        when(mockAuthConnector.authorise(ArgumentMatchers.eq(secondaryAgentPredicate()), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
+        when(
+          mockAuthConnector.authorise(
+            ArgumentMatchers.eq(secondaryAgentPredicate()),
+            ArgumentMatchers.eq(EmptyRetrieval)
+          )(any(), any())
+        ).thenReturn(
           Future.successful(EmptyRetrieval)
         )
 
@@ -111,11 +129,21 @@ class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
     "redirect to the ClientRelationshipFailureController" when {
 
       "the user is an Agent, but has no delegated enrolments" in {
-        when(mockAuthConnector.authorise(ArgumentMatchers.eq(primaryAgentPredicate()), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
+        when(
+          mockAuthConnector.authorise(
+            ArgumentMatchers.eq(primaryAgentPredicate()),
+            ArgumentMatchers.eq(EmptyRetrieval)
+          )(any(), any())
+        ).thenReturn(
           Future.failed(InsufficientEnrolments("enrolment missing"))
         )
 
-        when(mockAuthConnector.authorise(ArgumentMatchers.eq(secondaryAgentPredicate()), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
+        when(
+          mockAuthConnector.authorise(
+            ArgumentMatchers.eq(secondaryAgentPredicate()),
+            ArgumentMatchers.eq(EmptyRetrieval)
+          )(any(), any())
+        ).thenReturn(
           Future.failed(InsufficientEnrolments("enrolment missing"))
         )
 
@@ -125,10 +153,11 @@ class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
         )
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/agents/not-authorised-to-view-client")
+        redirectLocation(result).get should include(
+          "/report-quarterly/income-and-expenses/view/agents/not-authorised-to-view-client"
+        )
       }
     }
-
 
     "redirect to Session timed out page" when {
       s"there is an expired bearer token" in {

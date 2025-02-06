@@ -36,14 +36,15 @@ class AgentHasConfirmedClientActionSpec extends AuthActionsSpecHelper {
   }
 
   def defaultAsyncBody(
-                        requestTestCase: AuthorisedAndEnrolledRequest[_] => Assertion
-                      ): AuthorisedAndEnrolledRequest[_] => Future[Result] = testRequest => {
-    requestTestCase(testRequest)
-    Future.successful(Results.Ok("Successful"))
-  }
+      requestTestCase: AuthorisedAndEnrolledRequest[_] => Assertion
+    ): AuthorisedAndEnrolledRequest[_] => Future[Result] =
+    testRequest => {
+      requestTestCase(testRequest)
+      Future.successful(Results.Ok("Successful"))
+    }
 
-
-  def defaultAsync: AuthorisedAndEnrolledRequest[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
+  def defaultAsync: AuthorisedAndEnrolledRequest[_] => Future[Result] =
+    (_) => Future.successful(Results.Ok("Successful"))
 
   lazy val action = app.injector.instanceOf[AgentHasConfirmedClientAction]
 
@@ -72,7 +73,9 @@ class AgentHasConfirmedClientActionSpec extends AuthActionsSpecHelper {
         )
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/confirm-client-details")
+        redirectLocation(result) shouldBe Some(
+          "/report-quarterly/income-and-expenses/view/agents/confirm-client-details"
+        )
 
       }
     }

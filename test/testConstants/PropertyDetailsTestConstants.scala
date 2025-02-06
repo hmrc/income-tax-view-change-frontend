@@ -37,17 +37,17 @@ object PropertyDetailsTestConstants {
 
   val testPropertyAccountingPeriod = AccountingPeriodModel(LocalDate.of(2017, 4, 6), LocalDate.of(2018, 4, 5))
 
-  val testPropertyCessation = CessationModel(Some(LocalDate.of(2018, 1, 1)), Some("It was a stupid idea anyway"))
-  val testPropertyCessation2 = CessationModel(Some(LocalDate.of(2023, 6, 6)), Some("It was a stupid idea anyway"))
-  val testPropertyCessation3 = CessationModel(Some(LocalDate.of(2020, 2, 2)), Some("It was a stupid idea anyway"))
-  val testCeaseDate = Some(LocalDate.of(2022, 1, 1))
-  val testStartDate = LocalDate.of(2022, 1, 1)
-  val testStartDate2 = LocalDate.of(2021, 1, 1)
+  val testPropertyCessation                = CessationModel(Some(LocalDate.of(2018, 1, 1)), Some("It was a stupid idea anyway"))
+  val testPropertyCessation2               = CessationModel(Some(LocalDate.of(2023, 6, 6)), Some("It was a stupid idea anyway"))
+  val testPropertyCessation3               = CessationModel(Some(LocalDate.of(2020, 2, 2)), Some("It was a stupid idea anyway"))
+  val testCeaseDate                        = Some(LocalDate.of(2022, 1, 1))
+  val testStartDate                        = LocalDate.of(2022, 1, 1)
+  val testStartDate2                       = LocalDate.of(2021, 1, 1)
   val testStartDateBeforeEarliestStartDate = LocalDate.of(2013, 1, 1)
-  val testPropertyStartDateOption: Option[LocalDate] = Some(LocalDate.of(2022, 1, 1))
+  val testPropertyStartDateOption:  Option[LocalDate] = Some(LocalDate.of(2022, 1, 1))
   val testPropertyStartDateOption2: Option[LocalDate] = Some(LocalDate.of(2021, 1, 1))
-  val testIncomeType = "property-unspecified"
-  val ukIncomeType = "uk-property"
+  val testIncomeType    = "property-unspecified"
+  val ukIncomeType      = "uk-property"
   val foreignIncomeType = "foreign-property"
 
   val propertyDetails = PropertyDetailsModel(
@@ -191,36 +191,41 @@ object PropertyDetailsTestConstants {
     cashOrAccruals = true
   )
 
-  val openCrystallised: SingleObligationModel = fakeNextUpdatesModel(SingleObligationModel(
-    start = LocalDate.of(2017, 4, 6),
-    end = LocalDate.of(2018, 4, 5),
-    due = LocalDate.of(2017, 10, 31),
-    periodKey = "#003",
-    dateReceived = None,
-    obligationType = "Crystallised",
-    status = StatusFulfilled
-  ))
+  val openCrystallised: SingleObligationModel = fakeNextUpdatesModel(
+    SingleObligationModel(
+      start = LocalDate.of(2017, 4, 6),
+      end = LocalDate.of(2018, 4, 5),
+      due = LocalDate.of(2017, 10, 31),
+      periodKey = "#003",
+      dateReceived = None,
+      obligationType = "Crystallised",
+      status = StatusFulfilled
+    )
+  )
 
   val testLatencyDetails = LatencyDetails(
     latencyEndDate = LocalDate.of(year2019, 1, 1),
     taxYear1 = year2018.toString,
     latencyIndicator1 = "A",
     taxYear2 = year2019.toString,
-    latencyIndicator2 = "Q")
+    latencyIndicator2 = "Q"
+  )
 
   val testLatencyDetails1 = LatencyDetails(
     latencyEndDate = LocalDate.of(year2023, 1, 1),
     taxYear1 = year2022.toString,
     latencyIndicator1 = "A",
     taxYear2 = year2023.toString,
-    latencyIndicator2 = "Q")
+    latencyIndicator2 = "Q"
+  )
 
   val testLatencyDetails2 = LatencyDetails(
     latencyEndDate = LocalDate.of(year2023, 1, 1),
     taxYear1 = year2023.toString,
     latencyIndicator1 = "A",
     taxYear2 = year2024.toString,
-    latencyIndicator2 = "Q")
+    latencyIndicator2 = "Q"
+  )
 
   val ceasedPropertyDetailsModel: IncomeSourceType => PropertyDetailsModel = (incomeSourceType: IncomeSourceType) => {
     require(incomeSourceType == UkProperty || incomeSourceType == ForeignProperty)

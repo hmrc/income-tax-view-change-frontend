@@ -26,8 +26,7 @@ object IncomeSourcesObligationsIntegrationTestConstants {
 
   val datesModelSeq2022: Seq[DatesModel] = Seq(generateDatesModel(taxYear))
   val datesModelSeq2023: Seq[DatesModel] = Seq(generateDatesModel(taxYear + 1))
-  val datesModel: DatesModel = (generateDatesModel(taxYear + 1))
-
+  val datesModel:        DatesModel      = (generateDatesModel(taxYear + 1))
 
   val testQuarterlyObligationDates = Seq(datesModelSeq2022, datesModelSeq2023)
 
@@ -39,29 +38,41 @@ object IncomeSourcesObligationsIntegrationTestConstants {
   )
 
   def generateDatesModel(year: Int): DatesModel = {
-    DatesModel(LocalDate.of(year, 1, 6),
+    DatesModel(
+      LocalDate.of(year, 1, 6),
       LocalDate.of(year, 4, 5),
-      LocalDate.of(year, 5, 5), "EOPS", false, obligationType = "Quarterly")
+      LocalDate.of(year, 5, 5),
+      "EOPS",
+      false,
+      obligationType = "Quarterly"
+    )
   }
 
-  val testObligationsModel: ObligationsModel = ObligationsModel(Seq(
-    GroupedObligationsModel("123", List(SingleObligationModel(
-      LocalDate.of(taxYear, 1, 6),
-      LocalDate.of(taxYear, 4, 5),
-      LocalDate.of(taxYear, 5, 5),
-      "Quarterly",
-      None,
-      "#001",
-      StatusFulfilled),
-      SingleObligationModel(
-        LocalDate.of(taxYear, 1, 6),
-        LocalDate.of(taxYear, 4, 5),
-        LocalDate.of(taxYear, 5, 5),
-        "Quarterly",
-        None,
-        "#002",
-        StatusFulfilled
+  val testObligationsModel: ObligationsModel = ObligationsModel(
+    Seq(
+      GroupedObligationsModel(
+        "123",
+        List(
+          SingleObligationModel(
+            LocalDate.of(taxYear, 1, 6),
+            LocalDate.of(taxYear, 4, 5),
+            LocalDate.of(taxYear, 5, 5),
+            "Quarterly",
+            None,
+            "#001",
+            StatusFulfilled
+          ),
+          SingleObligationModel(
+            LocalDate.of(taxYear, 1, 6),
+            LocalDate.of(taxYear, 4, 5),
+            LocalDate.of(taxYear, 5, 5),
+            "Quarterly",
+            None,
+            "#002",
+            StatusFulfilled
+          )
+        )
       )
-    ))
-  ))
+    )
+  )
 }

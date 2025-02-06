@@ -34,57 +34,66 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
-                                   clientDetailsService: ClientDetailsService,
-                                   errorHandler: AgentItvcErrorHandler,
-                                   mcc: MessagesControllerComponents,
-                                   appConfig: FrontendAppConfig)
-                                  (implicit val executionContext: ExecutionContext) {
+class RetrieveClientData @Inject() (
+    sessionDataService:   SessionDataService,
+    clientDetailsService: ClientDetailsService,
+    errorHandler:         AgentItvcErrorHandler,
+    mcc:                  MessagesControllerComponents,
+    appConfig:            FrontendAppConfig
+  )(
+    implicit val executionContext: ExecutionContext) {
 
   lazy val logger: Logger = Logger(getClass)
 
-  def authorise(useCookies: Boolean = false): ActionRefiner[AuthorisedUserRequest, AuthorisedAgentWithClientDetailsRequest] = new ActionRefiner[AuthorisedUserRequest, AuthorisedAgentWithClientDetailsRequest] {
+  def authorise(
+      useCookies: Boolean = false
+    ): ActionRefiner[AuthorisedUserRequest, AuthorisedAgentWithClientDetailsRequest] =
+    new ActionRefiner[AuthorisedUserRequest, AuthorisedAgentWithClientDetailsRequest] {
 
-    implicit val executionContext: ExecutionContext = mcc.executionContext
+      implicit val executionContext: ExecutionContext = mcc.executionContext
 
-    override protected def refine[A](request: AuthorisedUserRequest[A]): Future[Either[Result, AuthorisedAgentWithClientDetailsRequest[A]]] = {
+      override protected def refine[A](
+          request: AuthorisedUserRequest[A]
+        ): Future[Either[Result, AuthorisedAgentWithClientDetailsRequest[A]]] = {
 
-      implicit val r: Request[A] = request
-      implicit val hc: HeaderCarrier = HeaderCarrierConverter
-        .fromRequestAndSession(request, request.session)
+        implicit val r: Request[A] = request
+        implicit val hc: HeaderCarrier = HeaderCarrierConverter
+          .fromRequestAndSession(request, request.session)
 
-      val useSessionDataService = appConfig.isSessionDataStorageEnabled
+        val useSessionDataService = appConfig.isSessionDataStorageEnabled
 
-      sessionDataService.getSessionData(useCookie = useCookies || !useSessionDataService).flatMap {
-        case Right(sessionData) =>
-          clientDetailsService.checkClientDetails(sessionData.utr).map {
-            case Right(details) =>
-              val agentClientDetails = AgentClientDetails(
-                sessionData.mtditid,
-                details.firstName,
-                details.lastName,
-                sessionData.nino,
-                sessionData.utr,
-                confirmed = {
-                  if (appConfig.isSessionDataStorageEnabled) true
-                  else getBooleanFromSession(SessionKeys.confirmedClient)
-                }
-              )
-              Right(AuthorisedAgentWithClientDetailsRequest(
-              request.authUserDetails,
-                agentClientDetails
-            ))
-            case Left(error) =>
-              Logger("error").error(s"unable to find client with UTR: ${sessionData.utr} " + error)
-              Left(Redirect(routes.EnterClientsUTRController.show))
-          }
-        case Left(_: SessionDataNotFound) => Future.successful(Left(Redirect(routes.EnterClientsUTRController.show)))
-        case Left(_) => Future.successful(Left(errorHandler.showInternalServerError()))
+        sessionDataService.getSessionData(useCookie = useCookies || !useSessionDataService).flatMap {
+          case Right(sessionData) =>
+            clientDetailsService.checkClientDetails(sessionData.utr).map {
+              case Right(details) =>
+                val agentClientDetails = AgentClientDetails(
+                  sessionData.mtditid,
+                  details.firstName,
+                  details.lastName,
+                  sessionData.nino,
+                  sessionData.utr,
+                  confirmed = {
+                    if (appConfig.isSessionDataStorageEnabled) true
+                    else getBooleanFromSession(SessionKeys.confirmedClient)
+                  }
+                )
+                Right(
+                  AuthorisedAgentWithClientDetailsRequest(
+                    request.authUserDetails,
+                    agentClientDetails
+                  )
+                )
+              case Left(error) =>
+                Logger("error").error(s"unable to find client with UTR: ${sessionData.utr} " + error)
+                Left(Redirect(routes.EnterClientsUTRController.show))
+            }
+          case Left(_: SessionDataNotFound) => Future.successful(Left(Redirect(routes.EnterClientsUTRController.show)))
+          case Left(_) => Future.successful(Left(errorHandler.showInternalServerError()))
+        }
+      }
+
+      private def getBooleanFromSession(key: String)(implicit r: Request[_]): Boolean = {
+        r.session.get(key).fold(false)(_.toBoolean)
       }
     }
-
-    private def getBooleanFromSession(key: String)(implicit r: Request[_]): Boolean = {
-      r.session.get(key).fold(false)(_.toBoolean)
-    }
-  }
 }

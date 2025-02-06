@@ -36,12 +36,14 @@ class CreateIncomeSourceConnectorSpec extends TestSupport with MockHttpV2 with I
     "return success" when {
       "return expected status code OK" in {
         val expectedIncomeSourceId = "123123123"
-        val mtdId = individualUser.mtditid
+        val mtdId                  = individualUser.mtditid
 
         val url = UnderTestConnector.createBusinessIncomeSourcesUrl(mtdId)
-        val expectedResponse = HttpResponse(status = Status.OK, json = Json.toJson(
-          List(CreateIncomeSourceResponse(expectedIncomeSourceId))),
-          headers = Map.empty)
+        val expectedResponse = HttpResponse(
+          status = Status.OK,
+          json = Json.toJson(List(CreateIncomeSourceResponse(expectedIncomeSourceId))),
+          headers = Map.empty
+        )
 
         setupMockHttpV2Post(url)(expectedResponse)
 
@@ -51,16 +53,19 @@ class CreateIncomeSourceConnectorSpec extends TestSupport with MockHttpV2 with I
         result.futureValue shouldBe Right(List(CreateIncomeSourceResponse(expectedIncomeSourceId)))
       }
 
-
       "return expected status code OK - but invalid json" in {
         val mtdId = individualUser.mtditid
 
         val url = UnderTestConnector.createBusinessIncomeSourcesUrl(mtdId)
-        val expectedResponse = HttpResponse(status = Status.OK, json = Json.toJson("Error message"), headers = Map.empty)
+        val expectedResponse =
+          HttpResponse(status = Status.OK, json = Json.toJson("Error message"), headers = Map.empty)
 
         setupMockHttpV2Post(url)(expectedResponse)
-        val result: Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] = UnderTestConnector.createBusiness(mtdId, createBusinessDetailsRequestObject)
-        result.futureValue shouldBe Left(CreateIncomeSourceErrorResponse(Status.OK, s"Not valid json: \"Error message\""))
+        val result: Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] =
+          UnderTestConnector.createBusiness(mtdId, createBusinessDetailsRequestObject)
+        result.futureValue shouldBe Left(
+          CreateIncomeSourceErrorResponse(Status.OK, s"Not valid json: \" Error message \ "")
+        )
       }
     }
 
@@ -69,13 +74,16 @@ class CreateIncomeSourceConnectorSpec extends TestSupport with MockHttpV2 with I
         val mtdId = individualUser.mtditid
 
         val url = UnderTestConnector.createBusinessIncomeSourcesUrl(mtdId)
-        val expectedResponse = HttpResponse(status = Status.INTERNAL_SERVER_ERROR, json = Json.toJson(
-          CreateIncomeSourceErrorResponse(status = 500, "Some error message")),
-          headers = Map.empty)
+        val expectedResponse = HttpResponse(
+          status = Status.INTERNAL_SERVER_ERROR,
+          json = Json.toJson(CreateIncomeSourceErrorResponse(status = 500, "Some error message")),
+          headers = Map.empty
+        )
 
         setupMockHttpV2Post(url)(expectedResponse)
 
-        val result: Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] = UnderTestConnector.createBusiness(mtdId, createBusinessDetailsRequestObject)
+        val result: Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] =
+          UnderTestConnector.createBusiness(mtdId, createBusinessDetailsRequestObject)
 
         result.futureValue match {
           case Left(CreateIncomeSourceErrorResponse(500, _)) =>
@@ -91,12 +99,14 @@ class CreateIncomeSourceConnectorSpec extends TestSupport with MockHttpV2 with I
   "call create foreign property" should {
     "return expected status code OK" in {
       val expectedIncomeSourceId = "5656"
-      val mtdId = individualUser.mtditid
+      val mtdId                  = individualUser.mtditid
 
       val url = UnderTestConnector.createBusinessIncomeSourcesUrl(mtdId)
-      val expectedResponse = HttpResponse(status = Status.OK, json = Json.toJson(
-        List(CreateIncomeSourceResponse(expectedIncomeSourceId))),
-        headers = Map.empty)
+      val expectedResponse = HttpResponse(
+        status = Status.OK,
+        json = Json.toJson(List(CreateIncomeSourceResponse(expectedIncomeSourceId))),
+        headers = Map.empty
+      )
 
       setupMockHttpV2Post(url)(expectedResponse)
 
@@ -111,13 +121,17 @@ class CreateIncomeSourceConnectorSpec extends TestSupport with MockHttpV2 with I
         val mtdId = individualUser.mtditid
 
         val url = UnderTestConnector.createBusinessIncomeSourcesUrl(mtdId)
-        val expectedResponse = HttpResponse(status = Status.INTERNAL_SERVER_ERROR, json = Json.toJson(
-          CreateIncomeSourceErrorResponse(status = Status.INTERNAL_SERVER_ERROR, "Some error message")),
-          headers = Map.empty)
+        val expectedResponse = HttpResponse(
+          status = Status.INTERNAL_SERVER_ERROR,
+          json =
+            Json.toJson(CreateIncomeSourceErrorResponse(status = Status.INTERNAL_SERVER_ERROR, "Some error message")),
+          headers = Map.empty
+        )
 
         setupMockHttpV2Post(url)(expectedResponse)
 
-        val result: Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] = UnderTestConnector.createForeignProperty(mtdId, createForeignPropertyRequestObject)
+        val result: Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] =
+          UnderTestConnector.createForeignProperty(mtdId, createForeignPropertyRequestObject)
 
         result.futureValue match {
           case Left(CreateIncomeSourceErrorResponse(Status.INTERNAL_SERVER_ERROR, _)) =>
@@ -133,12 +147,14 @@ class CreateIncomeSourceConnectorSpec extends TestSupport with MockHttpV2 with I
   "call create UK property" should {
     "return expected status code OK" in {
       val expectedIncomeSourceId = "5656"
-      val mtdId = individualUser.mtditid
+      val mtdId                  = individualUser.mtditid
 
       val url = UnderTestConnector.createBusinessIncomeSourcesUrl(mtdId)
-      val expectedResponse = HttpResponse(status = Status.OK, json = Json.toJson(
-        List(CreateIncomeSourceResponse(expectedIncomeSourceId))),
-        headers = Map.empty)
+      val expectedResponse = HttpResponse(
+        status = Status.OK,
+        json = Json.toJson(List(CreateIncomeSourceResponse(expectedIncomeSourceId))),
+        headers = Map.empty
+      )
 
       setupMockHttpV2Post(url)(expectedResponse)
 
@@ -153,13 +169,17 @@ class CreateIncomeSourceConnectorSpec extends TestSupport with MockHttpV2 with I
         val mtdId = individualUser.mtditid
 
         val url = UnderTestConnector.createBusinessIncomeSourcesUrl(mtdId)
-        val expectedResponse = HttpResponse(status = Status.INTERNAL_SERVER_ERROR, json = Json.toJson(
-          CreateIncomeSourceErrorResponse(status = Status.INTERNAL_SERVER_ERROR, "Some error message")),
-          headers = Map.empty)
+        val expectedResponse = HttpResponse(
+          status = Status.INTERNAL_SERVER_ERROR,
+          json =
+            Json.toJson(CreateIncomeSourceErrorResponse(status = Status.INTERNAL_SERVER_ERROR, "Some error message")),
+          headers = Map.empty
+        )
 
         setupMockHttpV2Post(url)(expectedResponse)
 
-        val result: Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] = UnderTestConnector.createUKProperty(mtdId, createUKPropertyRequestObject)
+        val result: Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] =
+          UnderTestConnector.createUKProperty(mtdId, createUKPropertyRequestObject)
 
         result.futureValue match {
           case Left(CreateIncomeSourceErrorResponse(Status.INTERNAL_SERVER_ERROR, _)) =>

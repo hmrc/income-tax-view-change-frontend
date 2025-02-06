@@ -40,60 +40,79 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TaxDueSummaryController @Inject()(val authActions: AuthActions,
-                                        val calculationService: CalculationService,
-                                        val itvcErrorHandler: ItvcErrorHandler,
-                                        val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                        val taxCalcBreakdown: TaxCalcBreakdown,
-                                        val auditingService: AuditingService)
-                                       (implicit val appConfig: FrontendAppConfig,
-                                        val languageUtils: LanguageUtils,
-                                        mcc: MessagesControllerComponents,
-                                        val ec: ExecutionContext
-                                       ) extends FrontendController(mcc)
-  with ImplicitDateFormatter with FeatureSwitching with I18nSupport with TaxCalcFallBackBackLink {
+class TaxDueSummaryController @Inject() (
+    val authActions:           AuthActions,
+    val calculationService:    CalculationService,
+    val itvcErrorHandler:      ItvcErrorHandler,
+    val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+    val taxCalcBreakdown:      TaxCalcBreakdown,
+    val auditingService:       AuditingService
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    val languageUtils:      LanguageUtils,
+    mcc:                    MessagesControllerComponents,
+    val ec:                 ExecutionContext)
+    extends FrontendController(mcc)
+    with ImplicitDateFormatter
+    with FeatureSwitching
+    with I18nSupport
+    with TaxCalcFallBackBackLink {
 
-  def handleRequest(origin: Option[String] = None,
-                    itcvErrorHandler: ShowInternalServerError,
-                    taxYear: Int,
-                    isAgent: Boolean
-                   )
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  def handleRequest(
+      origin:           Option[String] = None,
+      itcvErrorHandler: ShowInternalServerError,
+      taxYear:          Int,
+      isAgent:          Boolean
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier
+    ): Future[Result] = {
 
     calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case liabilityCalc: LiabilityCalculationResponse =>
         val viewModel = TaxDueSummaryViewModel(liabilityCalc)
         auditingService.extendedAudit(TaxDueResponseAuditModel(user, viewModel, taxYear))
-        val fallbackBackUrl = getFallbackUrl(user.session.get(calcPagesBackPage),
-          isAgent, liabilityCalc.metadata.crystallised.getOrElse(false), taxYear, origin)
-        Ok(taxCalcBreakdown(viewModel, taxYear, backUrl = fallbackBackUrl, isAgent = isAgent, btaNavPartial = user.btaNavPartial))
+        val fallbackBackUrl = getFallbackUrl(
+          user.session.get(calcPagesBackPage),
+          isAgent,
+          liabilityCalc.metadata.crystallised.getOrElse(false),
+          taxYear,
+          origin
+        )
+        Ok(
+          taxCalcBreakdown(
+            viewModel,
+            taxYear,
+            backUrl = fallbackBackUrl,
+            isAgent = isAgent,
+            btaNavPartial = user.btaNavPartial
+          )
+        )
       case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NO_CONTENT =>
         Logger("application").info("No calculation data returned from downstream. Not Found.")
         itvcErrorHandler.showInternalServerError()
       case _: LiabilityCalculationError =>
-        Logger("application").error(
-          s"[$taxYear] No new calc deductions data error found. Downstream error")
+        Logger("application").error(s"[$taxYear] No new calc deductions data error found. Downstream error")
         itvcErrorHandler.showInternalServerError()
     }
   }
 
-
-  def showTaxDueSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
+  def showTaxDueSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit user =>
       handleRequest(
         origin = origin,
         itcvErrorHandler = itvcErrorHandler,
         taxYear = taxYear,
         isAgent = false
       )
-  }
+    }
 
-  def showTaxDueSummaryAgent(taxYear: Int): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
-    implicit mtdItUser =>
+  def showTaxDueSummaryAgent(taxYear: Int): Action[AnyContent] =
+    authActions.asMTDPrimaryAgent.async { implicit mtdItUser =>
       handleRequest(
         itcvErrorHandler = itvcErrorHandlerAgent,
         taxYear = taxYear,
         isAgent = true
       )
-  }
+    }
 }

@@ -33,49 +33,59 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageIncomeSources,
-                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                             val sessionService: SessionService,
-                                             val authActions: AuthActions,
-                                             val itvcErrorHandler: ItvcErrorHandler,
-                                             val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                            (implicit val ec: ExecutionContext,
-                                             val mcc: MessagesControllerComponents,
-                                             val appConfig: FrontendAppConfig) extends FrontendController(mcc)
-  with I18nSupport with IncomeSourcesUtils {
+class ManageIncomeSourceController @Inject() (
+    val manageIncomeSources:        ManageIncomeSources,
+    val incomeSourceDetailsService: IncomeSourceDetailsService,
+    val sessionService:             SessionService,
+    val authActions:                AuthActions,
+    val itvcErrorHandler:           ItvcErrorHandler,
+    val itvcErrorHandlerAgent:      AgentItvcErrorHandler
+  )(
+    implicit val ec: ExecutionContext,
+    val mcc:         MessagesControllerComponents,
+    val appConfig:   FrontendAppConfig)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with IncomeSourcesUtils {
 
-  def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
-    handleRequest(
-      sources = user.incomeSources,
-      isAgent = isAgent,
-      backUrl = {
-        if(isAgent) controllers.routes.HomeController.showAgent
-        else controllers.routes.HomeController.show()
-      }.url
-    )
-  }
+  def show(isAgent: Boolean): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+      handleRequest(
+        sources = user.incomeSources,
+        isAgent = isAgent,
+        backUrl = {
+          if (isAgent) controllers.routes.HomeController.showAgent
+          else controllers.routes.HomeController.show()
+        }.url
+      )
+    }
 
-  def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
-                   (implicit user: MtdItUser[_]): Future[Result] = {
+  def handleRequest(
+      sources: IncomeSourceDetailsModel,
+      isAgent: Boolean,
+      backUrl: String
+    )(
+      implicit user: MtdItUser[_]
+    ): Future[Result] = {
 
     withIncomeSourcesFS {
       incomeSourceDetailsService.getViewIncomeSourceViewModel(sources) match {
         case Right(viewModel) =>
           sessionService.deleteSession(Manage).map { _ =>
-            Ok(manageIncomeSources(
-              sources = viewModel,
-              isAgent = isAgent,
-              backUrl = backUrl
-            ))
+            Ok(
+              manageIncomeSources(
+                sources = viewModel,
+                isAgent = isAgent,
+                backUrl = backUrl
+              )
+            )
           } recover {
             case ex: Exception =>
-              Logger("application").error(
-                s"Session Error: ${ex.getMessage} - ${ex.getCause}")
+              Logger("application").error(s"Session Error: ${ex.getMessage} - ${ex.getCause}")
               showInternalServerError(isAgent)
           }
         case Left(ex) =>
-          Logger("application").error(
-            s"Error: ${ex.getMessage} - ${ex.getCause}")
+          Logger("application").error(s"Error: ${ex.getMessage} - ${ex.getCause}")
           Future(showInternalServerError(isAgent))
       }
     }

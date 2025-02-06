@@ -37,6 +37,6 @@ object ITSAStatusRepositorySupport {
       case "V" => ITSAStatus.Voluntary
       case "A" => ITSAStatus.Annual
       case "M" => ITSAStatus.Mandated
-      case _ => throw new RuntimeException("Unexpected status")
+      case _   => throw new RuntimeException("Unexpected status")
     }
 }

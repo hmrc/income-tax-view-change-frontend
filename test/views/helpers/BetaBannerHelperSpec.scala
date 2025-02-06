@@ -26,7 +26,7 @@ class BetaBannerHelperSpec extends TestSupport {
 
   "The beta banner" should {
 
-    lazy val view = betaBanner()(implicitly)
+    lazy val view     = betaBanner()(implicitly)
     lazy val document = Jsoup.parse(view.body)
 
     s"have the ${messages("base.phase")} label" in {

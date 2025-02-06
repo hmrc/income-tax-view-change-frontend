@@ -24,13 +24,13 @@ sealed abstract class RepaymentHistoryStatus(indicator: String) {
   override def toString: String = this.indicator
 }
 
-final case class Approved private(indicator: String) extends RepaymentHistoryStatus(indicator) {
+final case class Approved private (indicator: String) extends RepaymentHistoryStatus(indicator) {
   def isApprovedByRisking: Boolean = indicator.equals("A")
 
   def isApprovedManually: Boolean = indicator.equals("M")
 }
 
-final case class Rejected private(indicator: String) extends RepaymentHistoryStatus(indicator)
+final case class Rejected private (indicator: String) extends RepaymentHistoryStatus(indicator)
 
 object SentForRisking extends RepaymentHistoryStatus("I")
 
@@ -38,36 +38,39 @@ object RepaymentHistoryStatus {
   def apply(indicator: String): RepaymentHistoryStatus = {
     indicator match {
       case "A" | "M" => Approved(indicator)
-      case "I" => SentForRisking
-      case "C" => Rejected(indicator)
-      case _ => Rejected(indicator)
+      case "I"       => SentForRisking
+      case "C"       => Rejected(indicator)
+      case _         => Rejected(indicator)
     }
   }
 
   implicit val writes: Writes[RepaymentHistoryStatus] = (o: RepaymentHistoryStatus) => JsString(o.toString)
-  implicit val reads: Reads[RepaymentHistoryStatus] = __.read[String].map(RepaymentHistoryStatus(_))
+  implicit val reads:  Reads[RepaymentHistoryStatus]  = __.read[String].map(RepaymentHistoryStatus(_))
 }
 
+case class TotalInterest(
+    fromDate: LocalDate,
+    fromRate: BigDecimal,
+    toDate:   LocalDate,
+    toRate:   BigDecimal,
+    total:    BigDecimal)
 
-case class TotalInterest(fromDate: LocalDate, fromRate: BigDecimal,
-                         toDate: LocalDate, toRate: BigDecimal,
-                         total: BigDecimal)
-
-case class RepaymentHistory(amountApprovedforRepayment: Option[BigDecimal],
-                            amountRequested: BigDecimal,
-                            repaymentMethod: Option[String],
-                            totalRepaymentAmount: Option[BigDecimal],
-                            repaymentItems: Option[Seq[RepaymentItem]],
-                            estimatedRepaymentDate: Option[LocalDate],
-                            creationDate: Option[LocalDate],
-                            repaymentRequestNumber: String,
-                            status: RepaymentHistoryStatus
-                           ) {
+case class RepaymentHistory(
+    amountApprovedforRepayment: Option[BigDecimal],
+    amountRequested:            BigDecimal,
+    repaymentMethod:            Option[String],
+    totalRepaymentAmount:       Option[BigDecimal],
+    repaymentItems:             Option[Seq[RepaymentItem]],
+    estimatedRepaymentDate:     Option[LocalDate],
+    creationDate:               Option[LocalDate],
+    repaymentRequestNumber:     String,
+    status:                     RepaymentHistoryStatus) {
 
   private val fromDateOpt = (repayments: Seq[RepaymentItem]) => {
     val items = repayments
       .flatMap(_.repaymentSupplementItem)
-      .map(_.fromDate).collect {
+      .map(_.fromDate)
+      .collect {
         case Some(date) => (date.toEpochDay, date)
       }
 
@@ -83,7 +86,8 @@ case class RepaymentHistory(amountApprovedforRepayment: Option[BigDecimal],
   private val fromRateOpt = (repayments: Seq[RepaymentItem]) => {
     val items = repayments
       .flatMap(_.repaymentSupplementItem)
-      .map(_.rate).collect {
+      .map(_.rate)
+      .collect {
         case Some(rate) => rate
       }
     if (items.nonEmpty) {
@@ -96,7 +100,8 @@ case class RepaymentHistory(amountApprovedforRepayment: Option[BigDecimal],
   private val toDateOpt = (repayments: Seq[RepaymentItem]) => {
     val items = repayments
       .flatMap(_.repaymentSupplementItem)
-      .map(_.toDate).collect {
+      .map(_.toDate)
+      .collect {
         case Some(date) => (date.toEpochDay, date)
       }
     if (items.nonEmpty) {
@@ -110,7 +115,8 @@ case class RepaymentHistory(amountApprovedforRepayment: Option[BigDecimal],
   private val toRateOpt = (repayments: Seq[RepaymentItem]) => {
     val items = repayments
       .flatMap(_.repaymentSupplementItem)
-      .map(_.rate).collect {
+      .map(_.rate)
+      .collect {
         case Some(rate) => rate
       }
     if (items.nonEmpty) {
@@ -121,28 +127,31 @@ case class RepaymentHistory(amountApprovedforRepayment: Option[BigDecimal],
   }
 
   private val totalOpt = (repayments: Seq[RepaymentItem]) => {
-    Some(repayments
-      .flatMap(_.repaymentSupplementItem.map(_.amount))
-      .collect {
-        case Some(amount) => amount
-      }.sum
+    Some(
+      repayments
+        .flatMap(_.repaymentSupplementItem.map(_.amount))
+        .collect {
+          case Some(amount) => amount
+        }
+        .sum
     )
   }
 
   def aggregate: Option[TotalInterest] = {
     repaymentItems.flatMap { repaymentItems =>
       for {
-        fromDate <- fromDateOpt(repaymentItems)
-        fromRate <- fromRateOpt(repaymentItems)
-        toDate <- toDateOpt(repaymentItems)
-        toRate <- toRateOpt(repaymentItems)
+        fromDate    <- fromDateOpt(repaymentItems)
+        fromRate    <- fromRateOpt(repaymentItems)
+        toDate      <- toDateOpt(repaymentItems)
+        toRate      <- toRateOpt(repaymentItems)
         totalAmount <- totalOpt(repaymentItems)
       } yield TotalInterest(
         fromDate = fromDate,
         fromRate = fromRate,
         toDate = toDate,
         toRate = toRate,
-        total = totalAmount)
+        total = totalAmount
+      )
     }
   }
 }

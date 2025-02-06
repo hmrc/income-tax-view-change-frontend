@@ -25,9 +25,12 @@ case class AuthExchange(bearerToken: String, sessionAuthorityUri: String)
 
 object SessionBuilder {
 
-  def buildGGSession(authExchange: AuthExchange): Session = Session(Map(
-    SessionKeys.sessionId -> SessionId(s"session-${UUID.randomUUID}").value,
-    SessionKeys.authToken -> authExchange.bearerToken,
-    SessionKeys.lastRequestTimestamp -> System.currentTimeMillis().toString
-  ))
+  def buildGGSession(authExchange: AuthExchange): Session =
+    Session(
+      Map(
+        SessionKeys.sessionId            -> SessionId(s"session-${UUID.randomUUID}").value,
+        SessionKeys.authToken            -> authExchange.bearerToken,
+        SessionKeys.lastRequestTimestamp -> System.currentTimeMillis().toString
+      )
+    )
 }

@@ -35,22 +35,22 @@ import java.time.LocalDate
 class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
 
   val prefixSoleTraderBusiness: String = "add-business-start-date"
-  val continueButtonText: String = messagesAPI("base.continue")
+  val continueButtonText:       String = messagesAPI("base.continue")
   val prefixForeignProperty = "incomeSources.add.foreignProperty.startDate"
 
-  val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  val journeyTypeSE: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, SelfEmployment)
-  val journeyTypeUK: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, UkProperty)
-  val journeyTypeFP: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, ForeignProperty)
-  val testBusinessStartDate: LocalDate = LocalDate.of(2022, 10, 10)
-  val testBusinessName: String = "Test Business"
-  val testBusinessTrade: String = "Plumbing"
+  val sessionService:        SessionService          = app.injector.instanceOf[SessionService]
+  val journeyTypeSE:         IncomeSourceJourneyType = IncomeSourceJourneyType(Add, SelfEmployment)
+  val journeyTypeUK:         IncomeSourceJourneyType = IncomeSourceJourneyType(Add, UkProperty)
+  val journeyTypeFP:         IncomeSourceJourneyType = IncomeSourceJourneyType(Add, ForeignProperty)
+  val testBusinessStartDate: LocalDate               = LocalDate.of(2022, 10, 10)
+  val testBusinessName:      String                  = "Test Business"
+  val testBusinessTrade:     String                  = "Plumbing"
 
   val testAddIncomeSourceData: IncomeSourceType => AddIncomeSourceData = (incomeSourceType: IncomeSourceType) =>
     if (incomeSourceType.equals(SelfEmployment)) {
       AddIncomeSourceData(
         businessName = Some(testBusinessName),
-        businessTrade = Some(testBusinessTrade),
+        businessTrade = Some(testBusinessTrade)
       )
     } else {
       AddIncomeSourceData(
@@ -59,10 +59,12 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
       )
     }
 
-  def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
-    sessionId = testSessionId,
-    journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
-    addIncomeSourceData = Some(testAddIncomeSourceData(incomeSourceType)))
+  def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData =
+    UIJourneySessionData(
+      sessionId = testSessionId,
+      journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
+      addIncomeSourceData = Some(testAddIncomeSourceData(incomeSourceType))
+    )
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -70,43 +72,43 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
   }
 
   def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType, isChange: Boolean): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "/income-sources/add" else "/agents/income-sources/add"
-    val changeFlagIfReq = if(isChange) "/change-" else "/"
+    val pathStart       = if (mtdRole == MTDIndividual) "/income-sources/add" else "/agents/income-sources/add"
+    val changeFlagIfReq = if (isChange) "/change-" else "/"
     incomeSourceType match {
-      case SelfEmployment => pathStart + changeFlagIfReq + "business-start-date"
-      case UkProperty => pathStart + changeFlagIfReq + "uk-property-start-date"
+      case SelfEmployment  => pathStart + changeFlagIfReq + "business-start-date"
+      case UkProperty      => pathStart + changeFlagIfReq + "uk-property-start-date"
       case ForeignProperty => pathStart + changeFlagIfReq + "foreign-property-start-date"
     }
   }
 
   def getIncomeSourceDetailsResponse(incomeSourceType: IncomeSourceType) = {
     incomeSourceType match {
-      case SelfEmployment => businessOnlyResponse
-      case UkProperty => ukPropertyOnlyResponse
+      case SelfEmployment  => businessOnlyResponse
+      case UkProperty      => ukPropertyOnlyResponse
       case ForeignProperty => noPropertyOrBusinessResponse
     }
   }
 
   def getIncomeSourceJourneyType(incomeSourceType: IncomeSourceType): IncomeSourceJourneyType = {
     incomeSourceType match {
-      case SelfEmployment => journeyTypeSE
-      case UkProperty => journeyTypeUK
+      case SelfEmployment  => journeyTypeSE
+      case UkProperty      => journeyTypeUK
       case ForeignProperty => journeyTypeFP
     }
   }
 
   def getPrefix(incomeSourceType: IncomeSourceType): String = {
     incomeSourceType match {
-      case SelfEmployment => prefixSoleTraderBusiness
+      case SelfEmployment  => prefixSoleTraderBusiness
       case ForeignProperty => prefixForeignProperty
-      case _ => "incomeSources.add.UKPropertyStartDate"
+      case _               => "incomeSources.add.UKPropertyStartDate"
     }
   }
 
   List(true, false).foreach { isChange =>
     List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
       mtdAllRoles.foreach { mtdUserRole =>
-        val path = getPath(mtdUserRole, incomeSourceType, isChange)
+        val path              = getPath(mtdUserRole, incomeSourceType, isChange)
         val additionalCookies = getAdditionalCookies(mtdUserRole)
         s"GET $path" when {
           s"a user is a $mtdUserRole" that {
@@ -116,14 +118,17 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
                   enable(IncomeSourcesFs)
                   disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    getIncomeSourceDetailsResponse(incomeSourceType)
+                  )
 
                   await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
                   val result = buildGETMTDClient(path, additionalCookies).futureValue
                   IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-                  val expectedHintText: String =  messagesAPI(s"${getPrefix(incomeSourceType)}.hint") + " " +
+                  val expectedHintText: String = messagesAPI(s"${getPrefix(incomeSourceType)}.hint") + " " +
                     messagesAPI("dateForm.hint")
 
                   result should have(
@@ -144,26 +149,32 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
           s"a user is a $mtdUserRole" that {
             "is authenticated, with a valid enrolment" should {
               val addBusinessStartDateCheckUrl =
-                controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(mtdUserRole != MTDIndividual, isChange, incomeSourceType).url
+                controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController
+                  .show(mtdUserRole != MTDIndividual, isChange, incomeSourceType)
+                  .url
               s"redirect to $addBusinessStartDateCheckUrl" when {
                 "a valid date is submitted" in {
                   enable(IncomeSourcesFs)
                   disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    getIncomeSourceDetailsResponse(incomeSourceType)
+                  )
 
                   await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
                   val formData: Map[String, Seq[String]] = {
                     Map(
-                      "value.day" -> Seq("10"),
+                      "value.day"   -> Seq("10"),
                       "value.month" -> Seq("10"),
-                      "value.year" -> Seq("2022")
+                      "value.year"  -> Seq("2022")
                     )
                   }
-                  val result = buildPOSTMTDPostClient(path, additionalCookies,
-                    body = formData).futureValue
+                  val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
 
-                  sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyType).futureValue shouldBe Right(Some(testBusinessStartDate))
+                  sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyType).futureValue shouldBe Right(
+                    Some(testBusinessStartDate)
+                  )
 
                   result should have(
                     httpStatus(SEE_OTHER),
@@ -177,23 +188,28 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
                   enable(IncomeSourcesFs)
                   disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    getIncomeSourceDetailsResponse(incomeSourceType)
+                  )
 
                   await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
                   val formData: Map[String, Seq[String]] = {
                     Map(
-                      "value.day" -> Seq("$"),
+                      "value.day"   -> Seq("$"),
                       "value.month" -> Seq("%"),
-                      "value.year" -> Seq("&")
+                      "value.year"  -> Seq("&")
                     )
                   }
                   val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
 
                   result should have(
                     httpStatus(BAD_REQUEST),
-                    elementTextByID("value-error")(messagesAPI("base.error-prefix") + ": " +
-                      messagesAPI(s"${getPrefix(incomeSourceType)}.error.invalid"))
+                    elementTextByID("value-error")(
+                      messagesAPI("base.error-prefix") + ": " +
+                        messagesAPI(s"${getPrefix(incomeSourceType)}.error.invalid")
+                    )
                   )
                 }
 
@@ -201,12 +217,14 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
                   enable(IncomeSourcesFs)
                   disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    getIncomeSourceDetailsResponse(incomeSourceType)
+                  )
 
                   await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
-                  val result = buildPOSTMTDPostClient(path, additionalCookies,
-                    body = Map()).futureValue
+                  val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map()).futureValue
 
                   result should have(
                     httpStatus(BAD_REQUEST)

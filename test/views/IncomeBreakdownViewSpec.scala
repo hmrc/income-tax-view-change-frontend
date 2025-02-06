@@ -83,7 +83,6 @@ class IncomeBreakdownViewSpec extends ViewSpec {
 
   def heading(taxYear: Int): String = s"${subHeading(taxYear)} ${messages("income_breakdown.heading")}"
 
-
   "The income breakdown view" when {
 
     "provided with a calculation without taxable incomes for the 2017 tax year" should {
@@ -116,7 +115,7 @@ class IncomeBreakdownViewSpec extends ViewSpec {
       "have an income table" which {
 
         "has two table rows" in new Setup(view) {
-          layoutContent hasTableWithCorrectSize(1, 2)
+          layoutContent hasTableWithCorrectSize (1, 2)
         }
         "has a table header and amount section" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(0)
@@ -158,7 +157,7 @@ class IncomeBreakdownViewSpec extends ViewSpec {
       "have an income table" which {
 
         "has all 23 table rows" in new Setup(view) {
-          layoutContent hasTableWithCorrectSize(1, 23)
+          layoutContent hasTableWithCorrectSize (1, 23)
         }
         "has a table header and amount section" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(0)

@@ -16,7 +16,6 @@
 
 package controllers.bta
 
-
 import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import connectors.BtaNavBarPartialConnector
@@ -37,14 +36,15 @@ import scala.concurrent.Future
 
 class NavBarEnumFsControllerSpec extends TestSupport {
 
-  lazy val mockNavBarService: BtaNavBarService = mock(classOf[BtaNavBarService])
+  lazy val mockNavBarService:             BtaNavBarService          = mock(classOf[BtaNavBarService])
   lazy val mockBtaNavBarPartialConnector: BtaNavBarPartialConnector = mock(classOf[BtaNavBarPartialConnector])
 
   override lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
       api.inject.bind[BtaNavBarService].toInstance(mockNavBarService),
       api.inject.bind[BtaNavBarPartialConnector].toInstance(mockBtaNavBarPartialConnector)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[BtaNavBarController]
 
@@ -95,7 +95,6 @@ class NavBarEnumFsControllerSpec extends TestSupport {
       when(mockNavBarService.partialList(any())(any())).thenReturn(Seq())
 
       val result = testController.btaNavBarPartial(successResponse)
-
 
       whenReady(result) { response =>
         response.toString shouldBe (testView.apply(Seq()).toString())

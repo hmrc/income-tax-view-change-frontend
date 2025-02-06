@@ -31,14 +31,14 @@ class IncomeSourceNotCeasedControllerISpec extends ControllerISpecHelper {
     val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     incomeSourceType match {
       case SelfEmployment => pathStart + "/manage-your-businesses/cease/error-business-not-ceased"
-      case UkProperty => pathStart + "/manage-your-businesses/cease/error-uk-property-not-ceased"
-      case _ => pathStart + "/manage-your-businesses/cease/error-foreign-property-not-ceased"
+      case UkProperty     => pathStart + "/manage-your-businesses/cease/error-uk-property-not-ceased"
+      case _              => pathStart + "/manage-your-businesses/cease/error-foreign-property-not-ceased"
     }
   }
 
   mtdAllRoles.foreach { mtdUserRole =>
     List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
-      val path = getPath(mtdUserRole, incomeSourceType)
+      val path              = getPath(mtdUserRole, incomeSourceType)
       val additionalCookies = getAdditionalCookies(mtdUserRole)
       s"GET $path" when {
         s"a user is a $mtdUserRole" that {

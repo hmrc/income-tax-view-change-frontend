@@ -22,7 +22,7 @@ import play.api.test.Helpers.SEE_OTHER
 
 class ItvcLanguageControllerISpec extends ComponentSpecBase {
 
-  val testRefererRoute: String = "/test/referer/route"
+  val testRefererRoute:             String = "/test/referer/route"
   val testRefererRouteWithFragment: String = "/test/referer/route#fragment"
 
   val pathCY = "/switch-to-welsh"
@@ -40,7 +40,10 @@ class ItvcLanguageControllerISpec extends ComponentSpecBase {
     }
 
     "preserve the fragment in the redirect url" in {
-      lazy val resultCy = buildGETMTDClient(pathCY + "?fragment=fragment", additionalHeaders = Map("REFERER" -> testRefererRoute)).futureValue
+      lazy val resultCy = buildGETMTDClient(
+        pathCY + "?fragment=fragment",
+        additionalHeaders = Map("REFERER" -> testRefererRoute)
+      ).futureValue
 
       resultCy.headers.isDefinedAt("Set-Cookie") shouldBe true
       resultCy.headers.toString.contains("PLAY_LANG=cy;") shouldBe true
@@ -63,7 +66,8 @@ class ItvcLanguageControllerISpec extends ComponentSpecBase {
 
   s"GET $pathEN" should {
     "update the PLAY_LANG cookie to en and return the user where they were when a REFERER is in the headers" in {
-      lazy val resultEn: WSResponse = buildGETMTDClient(pathEN, additionalHeaders = Map("REFERER" -> testRefererRoute)).futureValue
+      lazy val resultEn: WSResponse =
+        buildGETMTDClient(pathEN, additionalHeaders = Map("REFERER" -> testRefererRoute)).futureValue
       resultEn.headers.isDefinedAt("Set-Cookie") shouldBe true
       resultEn.headers.toString.contains("PLAY_LANG=en;") shouldBe true
       resultEn should have(

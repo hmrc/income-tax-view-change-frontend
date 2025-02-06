@@ -20,27 +20,27 @@ import play.api.libs.json.{Json, Reads, Writes}
 
 import scala.math.abs
 
-case class BalanceDetails(balanceDueWithin30Days: BigDecimal,
-                          overDueAmount: BigDecimal,
-                          totalBalance: BigDecimal,
-                          availableCredit: Option[BigDecimal],
-                          allocatedCredit: Option[BigDecimal],
-                          firstPendingAmountRequested: Option[BigDecimal],
-                          secondPendingAmountRequested: Option[BigDecimal],
-                          unallocatedCredit: Option[BigDecimal]
-                          ) {
+case class BalanceDetails(
+    balanceDueWithin30Days:       BigDecimal,
+    overDueAmount:                BigDecimal,
+    totalBalance:                 BigDecimal,
+    availableCredit:              Option[BigDecimal],
+    allocatedCredit:              Option[BigDecimal],
+    firstPendingAmountRequested:  Option[BigDecimal],
+    secondPendingAmountRequested: Option[BigDecimal],
+    unallocatedCredit:            Option[BigDecimal]) {
 
   val refundInProgress: Boolean = firstPendingAmountRequested.isDefined || secondPendingAmountRequested.isDefined
-  val total: Option[BigDecimal] = availableCredit.map{ total =>
+  val total: Option[BigDecimal] = availableCredit.map { total =>
     total - firstPendingAmountRequested.getOrElse(0) - secondPendingAmountRequested.getOrElse(0)
   }
 
   def getAbsoluteUnAllocatedCreditAmount: Option[BigDecimal] = {
-    unallocatedCredit.map (credit => math.abs(credit.toDouble))
+    unallocatedCredit.map(credit => math.abs(credit.toDouble))
   }
 
   def getAbsoluteAvailableCreditAmount: Option[BigDecimal] = {
-    availableCredit.map (credit => math.abs(credit.toDouble))
+    availableCredit.map(credit => math.abs(credit.toDouble))
   }
 
   def getAbsoluteAllocatedCreditAmount: Option[BigDecimal] = {
@@ -49,9 +49,7 @@ case class BalanceDetails(balanceDueWithin30Days: BigDecimal,
 
 }
 
-
-
 object BalanceDetails {
   implicit val writes: Writes[BalanceDetails] = Json.writes[BalanceDetails]
-  implicit val reads: Reads[BalanceDetails] = Json.reads[BalanceDetails]
+  implicit val reads:  Reads[BalanceDetails]  = Json.reads[BalanceDetails]
 }

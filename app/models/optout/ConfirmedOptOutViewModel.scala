@@ -21,8 +21,7 @@ import services.optout.{OneYearOptOutFollowedByMandated, OptOutState}
 
 case class ConfirmedOptOutViewModel(optOutTaxYear: TaxYear, state: Option[OptOutState]) {
   val isOneYearOptOutFollowedByMandated: Boolean = state.contains(OneYearOptOutFollowedByMandated)
-  val startYear: String = optOutTaxYear.startYear.toString
-  val endYear: String = optOutTaxYear.endYear.toString
-  val nextYear: String = optOutTaxYear.nextYear.endYear.toString
+  val startYear:                         String  = optOutTaxYear.startYear.toString
+  val endYear:                           String  = optOutTaxYear.endYear.toString
+  val nextYear:                          String  = optOutTaxYear.nextYear.endYear.toString
 }
-

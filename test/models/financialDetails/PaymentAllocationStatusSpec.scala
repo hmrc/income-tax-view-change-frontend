@@ -23,9 +23,18 @@ import java.time.LocalDate
 
 object PaymentAllocationStatusSpec extends Properties("PaymentAllocationStatus_allocationStatus") {
 
-  val defaultPayment = Payment(reference = Some("ref"), amount = Some(0.00), method = Some("method"),
-    lot = Some("lot2"), lotItem = Some("lotItem2"), documentDescription = None,
-    dueDate = Some(LocalDate.parse("2018-12-12")), documentDate = LocalDate.parse("2018-12-12"), outstandingAmount = None, transactionId = Some("DOCID02"))
+  val defaultPayment = Payment(
+    reference = Some("ref"),
+    amount = Some(0.00),
+    method = Some("method"),
+    lot = Some("lot2"),
+    lotItem = Some("lotItem2"),
+    documentDescription = None,
+    dueDate = Some(LocalDate.parse("2018-12-12")),
+    documentDate = LocalDate.parse("2018-12-12"),
+    outstandingAmount = None,
+    transactionId = Some("DOCID02")
+  )
 
   property("allocationStatus_FullyAllocatedPaymentStatus") = forAll { outstanding: BigDecimal =>
     (outstanding != 0) ==> {
@@ -41,11 +50,12 @@ object PaymentAllocationStatusSpec extends Properties("PaymentAllocationStatus_a
     }
   }
 
-  property("allocationStatus_PartiallyAllocatedPaymentStatus") = forAll { (originalAmount: BigDecimal, outstanding: BigDecimal) =>
-    (outstanding != 0 && originalAmount != outstanding) ==> {
-      val payment = defaultPayment.copy(amount = Some(originalAmount), outstandingAmount = Some(outstanding))
-      payment.allocationStatus() == Some(PartiallyAllocatedPaymentStatus)
-    }
+  property("allocationStatus_PartiallyAllocatedPaymentStatus") = forAll {
+    (originalAmount: BigDecimal, outstanding: BigDecimal) =>
+      (outstanding != 0 && originalAmount != outstanding) ==> {
+        val payment = defaultPayment.copy(amount = Some(originalAmount), outstandingAmount = Some(outstanding))
+        payment.allocationStatus() == Some(PartiallyAllocatedPaymentStatus)
+      }
   }
 
   property("allocationStatus_None") = forAll { _: BigDecimal =>

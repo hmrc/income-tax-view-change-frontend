@@ -24,8 +24,10 @@ class CreditTypeSpec extends UnitSpec {
   "CreditType" should {
     "be MFA" when {
       "mainTransaction is between 4004 and 4025, excluding 4010 and 4020" in {
-        val mfaCodes = Range.inclusive(4004, 4025)
-          .filterNot(_ == 4010).filterNot(_ == 4020)
+        val mfaCodes = Range
+          .inclusive(4004, 4025)
+          .filterNot(_ == 4010)
+          .filterNot(_ == 4020)
           .toList
 
         for (mainTransaction <- mfaCodes) {

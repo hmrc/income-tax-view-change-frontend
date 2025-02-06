@@ -29,26 +29,39 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsService,
-                                  val financialDetailsConnector: FinancialDetailsConnector,
-                                  val outstandingChargesConnector: OutstandingChargesConnector,
-                                  implicit val dateService: DateServiceInterface)
-                                 (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig)
-  extends TransactionUtils with FeatureSwitching {
+class WhatYouOweService @Inject() (
+    val financialDetailsService:     FinancialDetailsService,
+    val financialDetailsConnector:   FinancialDetailsConnector,
+    val outstandingChargesConnector: OutstandingChargesConnector,
+    implicit val dateService:        DateServiceInterface
+  )(
+    implicit ec:            ExecutionContext,
+    implicit val appConfig: FrontendAppConfig)
+    extends TransactionUtils
+    with FeatureSwitching {
 
   implicit lazy val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
   val validChargeTypeCondition: ChargeItem => Boolean = chargeItem => {
     (chargeItem.transactionType, chargeItem.subTransactionType) match {
       case (_, Some(Nics2)) => true
-      case (PoaOneDebit | PoaTwoDebit | PoaOneReconciliationDebit
-            | PoaTwoReconciliationDebit | BalancingCharge | MfaDebitCharge, _) => true
+      case (
+            PoaOneDebit | PoaTwoDebit | PoaOneReconciliationDebit | PoaTwoReconciliationDebit | BalancingCharge |
+            MfaDebitCharge,
+            _
+          ) =>
+        true
       case (_, _) => false
     }
   }
 
-  def getWhatYouOweChargesList(isReviewAndReconcile: Boolean, isFilterCodedOutPoasEnabled: Boolean)
-                              (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
+  def getWhatYouOweChargesList(
+      isReviewAndReconcile:        Boolean,
+      isFilterCodedOutPoasEnabled: Boolean
+    )(
+      implicit headerCarrier: HeaderCarrier,
+      mtdUser:                MtdItUser[_]
+    ): Future[WhatYouOweChargesList] = {
     {
       for {
         unpaidChanges <- financialDetailsService.getAllUnpaidFinancialDetails()
@@ -56,43 +69,63 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     }.flatten
   }
 
-  def getWhatYouOweChargesList(unpaidCharges: List[FinancialDetailsResponseModel],
-                               isReviewAndReconciledEnabled: Boolean,
-                               isFilterCodedOutPoasEnabled: Boolean)
-                              (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
+  def getWhatYouOweChargesList(
+      unpaidCharges:                List[FinancialDetailsResponseModel],
+      isReviewAndReconciledEnabled: Boolean,
+      isFilterCodedOutPoasEnabled:  Boolean
+    )(
+      implicit headerCarrier: HeaderCarrier,
+      mtdUser:                MtdItUser[_]
+    ): Future[WhatYouOweChargesList] = {
 
     unpaidCharges match {
-      case financialDetails: List[FinancialDetailsResponseModel] if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
+      case financialDetails: List[FinancialDetailsResponseModel]
+          if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
         throw new Exception("Error response while getting Unpaid financial details")
       case financialDetails =>
         val financialDetailsModelList = financialDetails.asInstanceOf[List[FinancialDetailsModel]]
         val balanceDetails = financialDetailsModelList.headOption
-          .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
+          .map(_.balanceDetails)
+          .getOrElse(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
         val codedOutChargeItem = {
-          financialDetailsModelList.flatMap(_.toChargeItem())
+          financialDetailsModelList
+            .flatMap(_.toChargeItem())
             .filter(_.subTransactionType.contains(Accepted))
             .find(_.taxYear.endYear == (dateService.getCurrentTaxYearEnd - 1))
         }
 
         val whatYouOweChargesList = WhatYouOweChargesList(
           balanceDetails = balanceDetails,
-          chargesList = getFilteredChargesList(financialDetailsModelList, isReviewAndReconciledEnabled, isFilterCodedOutPoasEnabled),
-          codedOutDocumentDetail = codedOutChargeItem)
+          chargesList = getFilteredChargesList(
+            financialDetailsModelList,
+            isReviewAndReconciledEnabled,
+            isFilterCodedOutPoasEnabled
+          ),
+          codedOutDocumentDetail = codedOutChargeItem
+        )
 
-        callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, dateService.getCurrentTaxYearEnd).map {
-          case Some(outstandingChargesModel) => whatYouOweChargesList.copy(outstandingChargesModel = Some(outstandingChargesModel))
-          case _ => whatYouOweChargesList
-        }
+        callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, dateService.getCurrentTaxYearEnd)
+          .map {
+            case Some(outstandingChargesModel) =>
+              whatYouOweChargesList.copy(outstandingChargesModel = Some(outstandingChargesModel))
+            case _ => whatYouOweChargesList
+          }
     }
   }
 
-  private def callOutstandingCharges(saUtr: Option[String], yearOfMigration: Option[String], currentTaxYear: Int)
-                                    (implicit headerCarrier: HeaderCarrier): Future[Option[OutstandingChargesModel]] = {
+  private def callOutstandingCharges(
+      saUtr:           Option[String],
+      yearOfMigration: Option[String],
+      currentTaxYear:  Int
+    )(
+      implicit headerCarrier: HeaderCarrier
+    ): Future[Option[OutstandingChargesModel]] = {
     if (saUtr.isDefined && yearOfMigration.isDefined && yearOfMigration.get.toInt >= currentTaxYear - 1) {
       val saPreviousYear = yearOfMigration.get.toInt - 1
       outstandingChargesConnector.getOutstandingCharges("utr", saUtr.get, saPreviousYear.toString) map {
-        case outstandingChargesModel: OutstandingChargesModel => Some(outstandingChargesModel)
-        case outstandingChargesErrorModel: OutstandingChargesErrorModel if outstandingChargesErrorModel.code == 404 => None
+        case outstandingChargesModel:      OutstandingChargesModel => Some(outstandingChargesModel)
+        case outstandingChargesErrorModel: OutstandingChargesErrorModel if outstandingChargesErrorModel.code == 404 =>
+          None
         case _ => throw new Exception("Error response while getting outstanding charges")
       }
     } else {
@@ -100,19 +133,23 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     }
   }
 
-  private def getFilteredChargesList(financialDetailsList: List[FinancialDetailsModel],
-                                     isReviewAndReconcileEnabled: Boolean,
-                                     isFilterCodedOutPoasEnabled: Boolean)
-                                    (implicit user: MtdItUser[_]): List[ChargeItem] = {
+  private def getFilteredChargesList(
+      financialDetailsList:        List[FinancialDetailsModel],
+      isReviewAndReconcileEnabled: Boolean,
+      isFilterCodedOutPoasEnabled: Boolean
+    )(
+      implicit user: MtdItUser[_]
+    ): List[ChargeItem] = {
 
     def getChargeItem(financialDetails: List[FinancialDetail]): DocumentDetail => Option[ChargeItem] =
       getChargeItemOpt(financialDetails)
 
     financialDetailsList
-      .flatMap(financialDetails =>  {
+      .flatMap(financialDetails => {
         financialDetails
           .getAllDocumentDetailsWithDueDates()
-          .flatMap(dd => getChargeItem(financialDetails.financialDetails)(dd.documentDetail))})
+          .flatMap(dd => getChargeItem(financialDetails.financialDetails)(dd.documentDetail))
+      })
       .filter(validChargeTypeCondition)
       .filterNot(_.subTransactionType.contains(Accepted))
       .filterNot(_.isReviewAndReconcileCharge && !isReviewAndReconcileEnabled)

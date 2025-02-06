@@ -97,24 +97,25 @@ object TransactionType {
     }
   }
 
-  val read: Reads[TransactionType] = (JsPath).read[String].collect(JsonValidationError("Could not parse transactionType")) {
-    case MfaCreditType.key => MfaCreditType
-    case CutOverCreditType.key => CutOverCreditType
-    case BalancingChargeCreditType.key => BalancingChargeCreditType
-    case RepaymentInterest.key => RepaymentInterest
-    case PoaOneReconciliationCredit.key => PoaOneReconciliationCredit
-    case PoaTwoReconciliationCredit.key => PoaTwoReconciliationCredit
-    case PaymentType.key => PaymentType
-    case Repayment.key => Repayment
-    case PoaOneDebit.key => PoaOneDebit
-    case PoaTwoDebit.key => PoaTwoDebit
-    case PoaOneReconciliationDebit.key => PoaOneReconciliationDebit
-    case PoaTwoReconciliationDebit.key => PoaTwoReconciliationDebit
-    case BalancingCharge.key => BalancingCharge
-    case MfaDebitCharge.key => MfaDebitCharge
-  }
+  val read: Reads[TransactionType] =
+    (JsPath).read[String].collect(JsonValidationError("Could not parse transactionType")) {
+      case MfaCreditType.key              => MfaCreditType
+      case CutOverCreditType.key          => CutOverCreditType
+      case BalancingChargeCreditType.key  => BalancingChargeCreditType
+      case RepaymentInterest.key          => RepaymentInterest
+      case PoaOneReconciliationCredit.key => PoaOneReconciliationCredit
+      case PoaTwoReconciliationCredit.key => PoaTwoReconciliationCredit
+      case PaymentType.key                => PaymentType
+      case Repayment.key                  => Repayment
+      case PoaOneDebit.key                => PoaOneDebit
+      case PoaTwoDebit.key                => PoaTwoDebit
+      case PoaOneReconciliationDebit.key  => PoaOneReconciliationDebit
+      case PoaTwoReconciliationDebit.key  => PoaTwoReconciliationDebit
+      case BalancingCharge.key            => BalancingCharge
+      case MfaDebitCharge.key             => MfaDebitCharge
+    }
 
-  implicit val format: Format[TransactionType] = Format( read, write)
+  implicit val format: Format[TransactionType] = Format(read, write)
 }
 
 object ChargeType {
@@ -132,8 +133,10 @@ object ChargeType {
   private val poaOneDebit = "4920"
   private val poaTwoDebit = "4930"
 
-  private val mfaDebit = Range.inclusive(4000, 4003)
-    .map(_.toString).toList
+  private val mfaDebit = Range
+    .inclusive(4000, 4003)
+    .map(_.toString)
+    .toList
 
   def fromCode(mainTransaction: String): Option[TransactionType] = {
 
@@ -165,26 +168,29 @@ object ChargeType {
   }
 
   val read: Reads[ChargeType] = (JsPath).read[String].collect(JsonValidationError("Could not parse transactionType")) {
-    case PoaOneDebit.key => PoaOneDebit
-    case PoaTwoDebit.key => PoaTwoDebit
+    case PoaOneDebit.key               => PoaOneDebit
+    case PoaTwoDebit.key               => PoaTwoDebit
     case PoaOneReconciliationDebit.key => PoaOneReconciliationDebit
     case PoaTwoReconciliationDebit.key => PoaTwoReconciliationDebit
-    case BalancingCharge.key => BalancingCharge
-    case MfaDebitCharge.key => MfaDebitCharge
+    case BalancingCharge.key           => BalancingCharge
+    case MfaDebitCharge.key            => MfaDebitCharge
   }
 
-  implicit val format: Format[ChargeType] = Format( read, write)
+  implicit val format: Format[ChargeType] = Format(read, write)
 
 }
 
 object CreditType {
 
   // values come from EPID #1138
-  private val cutOver = "6110"
-  private val balancingCharge = "4905"
+  private val cutOver           = "6110"
+  private val balancingCharge   = "4905"
   private val repaymentInterest = "6020"
-  private val mfaCredit = Range.inclusive(4004, 4025)
-    .filterNot(_ == 4010).filterNot(_ == 4020).map(_.toString)
+  private val mfaCredit = Range
+    .inclusive(4004, 4025)
+    .filterNot(_ == 4010)
+    .filterNot(_ == 4020)
+    .map(_.toString)
     .toList
   private val poaOneReconciliationCredit = "4912"
   private val poaTwoReconciliationCredit = "4914"
@@ -218,17 +224,16 @@ object CreditType {
   }
 
   val read: Reads[CreditType] = (JsPath).read[String].collect(JsonValidationError("Could not parse transactionType")) {
-    case MfaCreditType.key => MfaCreditType
-    case CutOverCreditType.key => CutOverCreditType
-    case BalancingChargeCreditType.key => BalancingChargeCreditType
-    case RepaymentInterest.key => RepaymentInterest
+    case MfaCreditType.key              => MfaCreditType
+    case CutOverCreditType.key          => CutOverCreditType
+    case BalancingChargeCreditType.key  => BalancingChargeCreditType
+    case RepaymentInterest.key          => RepaymentInterest
     case PoaOneReconciliationCredit.key => PoaOneReconciliationCredit
     case PoaTwoReconciliationCredit.key => PoaTwoReconciliationCredit
-    case PaymentType.key => PaymentType
-    case Repayment.key => Repayment
+    case PaymentType.key                => PaymentType
+    case Repayment.key                  => Repayment
   }
 
-  implicit val format: Format[CreditType] = Format( read, write)
+  implicit val format: Format[CreditType] = Format(read, write)
 
 }
-

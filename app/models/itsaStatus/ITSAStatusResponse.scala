@@ -20,11 +20,10 @@ import play.api.libs.json.{Format, Json}
 
 sealed trait ITSAStatusResponse
 
-case class ITSAStatusResponseModel(taxYear: String,
-                                   itsaStatusDetails: Option[List[StatusDetail]] = None) extends ITSAStatusResponse
+case class ITSAStatusResponseModel(taxYear: String, itsaStatusDetails: Option[List[StatusDetail]] = None)
+    extends ITSAStatusResponse
 
 case class ITSAStatusResponseError(status: Int, reason: String) extends ITSAStatusResponse
-
 
 object ITSAStatusResponseModel {
   implicit val format: Format[ITSAStatusResponseModel] = Json.format

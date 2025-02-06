@@ -27,15 +27,19 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UpliftSuccessController @Inject()(authActions: AuthActions,
-                                        mcc: MessagesControllerComponents,
-                                        val auditingService: AuditingService
-                                       )(implicit val appConfig: FrontendAppConfig,
-                                         executionContext: ExecutionContext) extends FrontendController(mcc) with FeatureSwitching {
+class UpliftSuccessController @Inject() (
+    authActions:         AuthActions,
+    mcc:                 MessagesControllerComponents,
+    val auditingService: AuditingService
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    executionContext:       ExecutionContext)
+    extends FrontendController(mcc)
+    with FeatureSwitching {
 
-  def success(origin: String): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
+  def success(origin: String): Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit user =>
       auditingService.audit(IvOutcomeSuccessAuditModel(user.nino))
       Future.successful(Redirect(controllers.routes.HomeController.show().url).addingToSession("origin" -> origin))
-  }
+    }
 }

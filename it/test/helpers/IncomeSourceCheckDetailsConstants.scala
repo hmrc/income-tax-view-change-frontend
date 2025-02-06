@@ -25,21 +25,22 @@ import java.time.LocalDate
 
 object IncomeSourceCheckDetailsConstants {
 
-  val testBusinessId: String = testSelfEmploymentId
-  val testBusinessName: String = "Test Business"
-  val testBusinessStartDate: LocalDate = LocalDate.of(2023, 1, 1)
-  val testBusinessTrade: String = "Plumbing"
-  val testBusinessAddressLine1: String = "Test Road"
-  val testBusinessPostCode: String = "B32 1PQ"
-  val testBusinessCountryCode: String = "United Kingdom"
-  val testBusinessAccountingMethod: String = "CASH"
-  val testBusinessAccountingMethodView: String = "Cash basis accounting"
-  val testAccountingPeriodEndDate: LocalDate = LocalDate.of(2023, 11, 11)
+  val testBusinessId:                   String    = testSelfEmploymentId
+  val testBusinessName:                 String    = "Test Business"
+  val testBusinessStartDate:            LocalDate = LocalDate.of(2023, 1, 1)
+  val testBusinessTrade:                String    = "Plumbing"
+  val testBusinessAddressLine1:         String    = "Test Road"
+  val testBusinessPostCode:             String    = "B32 1PQ"
+  val testBusinessCountryCode:          String    = "United Kingdom"
+  val testBusinessAccountingMethod:     String    = "CASH"
+  val testBusinessAccountingMethodView: String    = "Cash basis accounting"
+  val testAccountingPeriodEndDate:      LocalDate = LocalDate.of(2023, 11, 11)
   val testCountryCode = "GB"
   val noAccountingMethod: String = ""
-  val testBusinessAddress: Address = Address(lines = Seq(testBusinessAddressLine1), postcode = Some(testBusinessPostCode))
-  val testErrorReason: String = "Failed to create incomeSources: CreateIncomeSourceErrorResponse(500,Error creating incomeSource: [{\"status\":500,\"reason\":\"INTERNAL_SERVER_ERROR\"}])"
-
+  val testBusinessAddress: Address =
+    Address(lines = Seq(testBusinessAddressLine1), postcode = Some(testBusinessPostCode))
+  val testErrorReason: String =
+    "Failed to create incomeSources: CreateIncomeSourceErrorResponse(500,Error creating incomeSource: [{\"status\":500,\"reason\":\"INTERNAL_SERVER_ERROR\"}])"
 
   val testSEViewModel: CheckDetailsViewModel = CheckBusinessDetailsViewModel(
     businessName = Some(testBusinessName),
@@ -68,7 +69,6 @@ object IncomeSourceCheckDetailsConstants {
     cashOrAccrualsFlag = "CASH",
     incomeSourceType = ForeignProperty
   )
-
 
   val testAddBusinessData: AddIncomeSourceData = AddIncomeSourceData(
     businessName = Some(testBusinessName),

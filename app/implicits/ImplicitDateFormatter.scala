@@ -24,9 +24,8 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.play.language.LanguageUtils
 import scala.language.implicitConversions
 
-
 @Singleton
-class ImplicitDateFormatterImpl @Inject()(val languageUtils: LanguageUtils) extends ImplicitDateFormatter
+class ImplicitDateFormatterImpl @Inject() (val languageUtils: LanguageUtils) extends ImplicitDateFormatter
 
 trait ImplicitDateFormatter extends ImplicitDateParser {
 
@@ -45,11 +44,12 @@ trait ImplicitDateFormatter extends ImplicitDateParser {
 
     def toLongDateShort: String = {
       val shortFormattedDate = d.format(DateTimeFormatter.ofPattern("d MMM yyyy"))
-      val shortDay = shortFormattedDate.split(" ").head
-      val shortMonth = shortFormattedDate.split(" ")(1)
-      val shortYear = shortFormattedDate.split(" ").last
-      val translatedShortMonth = messages.translate(s"shortMonth.${d.getMonthValue}", Seq.empty)
-        .fold(ifEmpty = shortMonth)(x => {if (x.trim.isEmpty) shortMonth else x})
+      val shortDay           = shortFormattedDate.split(" ").head
+      val shortMonth         = shortFormattedDate.split(" ")(1)
+      val shortYear          = shortFormattedDate.split(" ").last
+      val translatedShortMonth = messages
+        .translate(s"shortMonth.${d.getMonthValue}", Seq.empty)
+        .fold(ifEmpty = shortMonth)(x => { if (x.trim.isEmpty) shortMonth else x })
       s"$shortDay $translatedShortMonth $shortYear"
     }
 

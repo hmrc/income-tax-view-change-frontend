@@ -29,19 +29,34 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DynamicStubService @Inject()(itsaStatusConnector: ITSAStatusConnector,
-                                   dynamicStubConnector: DynamicStubConnector,
-                                   implicit val appConfig: FrontendAppConfig) extends FeatureSwitching {
+class DynamicStubService @Inject() (
+    itsaStatusConnector:    ITSAStatusConnector,
+    dynamicStubConnector:   DynamicStubConnector,
+    implicit val appConfig: FrontendAppConfig)
+    extends FeatureSwitching {
 
-  def overwriteCalculationList(nino: Nino, taxYearRange: String, crystallisationStatus: String)
-                              (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
-    Logger("application").debug("" +
-      s"Overwriting calculation list (1896) data via the dynamic stub with nino / taxYearRange: ${nino.value} - $taxYearRange")
+  def overwriteCalculationList(
+      nino:                  Nino,
+      taxYearRange:          String,
+      crystallisationStatus: String
+    )(
+      implicit headerCarrier: HeaderCarrier
+    ): Future[Unit] = {
+    Logger("application").debug(
+      "" +
+        s"Overwriting calculation list (1896) data via the dynamic stub with nino / taxYearRange: ${nino.value} - $taxYearRange"
+    )
     dynamicStubConnector.overwriteCalculationList(nino, taxYearRange, crystallisationStatus)
   }
 
-  def getITSAStatusDetail(taxYear: TaxYear, nino: String, futureYears: Boolean = false)
-                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[List[ITSAStatusResponseModel]] = {
+  def getITSAStatusDetail(
+      taxYear:     TaxYear,
+      nino:        String,
+      futureYears: Boolean = false
+    )(
+      implicit hc: HeaderCarrier,
+      ec:          ExecutionContext
+    ): Future[List[ITSAStatusResponseModel]] = {
 
     itsaStatusConnector.getITSAStatusDetail(
       nino = nino,
@@ -61,19 +76,30 @@ class DynamicStubService @Inject()(itsaStatusConnector: ITSAStatusConnector,
     }
   }
 
-  def overwriteItsaStatus(nino: Nino, taxYearRange: String, ITSAStatus: String)
-                         (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
-    Logger("application").debug("" +
-      s"Overwriting ITSA Status (1878) data via the dynamic stub with nino / taxYearRange: ${nino.value} - $taxYearRange")
+  def overwriteItsaStatus(
+      nino:         Nino,
+      taxYearRange: String,
+      ITSAStatus:   String
+    )(
+      implicit headerCarrier: HeaderCarrier
+    ): Future[Unit] = {
+    Logger("application").debug(
+      "" +
+        s"Overwriting ITSA Status (1878) data via the dynamic stub with nino / taxYearRange: ${nino.value} - $taxYearRange"
+    )
     dynamicStubConnector.overwriteItsaStatus(nino, taxYearRange, ITSAStatus)
   }
 
-  def addData(dataModel: DataModel)(implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
+  def addData(
+      dataModel: DataModel
+    )(
+      implicit headerCarrier: HeaderCarrier,
+      ec:                     ExecutionContext
+    ): Future[HttpResponse] = {
     dynamicStubConnector.addData(dataModel).map { response =>
       Logger("application").info(s"${response.status} " + response.body)
       response
     }
   }
-
 
 }

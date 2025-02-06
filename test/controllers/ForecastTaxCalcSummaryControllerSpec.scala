@@ -32,7 +32,8 @@ class ForecastTaxCalcSummaryControllerSpec extends MockAuthActions with MockCalc
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[CalculationService].toInstance(mockCalculationService)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[ForecastTaxCalcSummaryController]
 
@@ -41,8 +42,8 @@ class ForecastTaxCalcSummaryControllerSpec extends MockAuthActions with MockCalc
   }
 
   mtdAllRoles.foreach { mtdUserRole =>
-    val isAgent = mtdUserRole != MTDIndividual
-    val action = if (isAgent) testController.showAgent(testTaxYear) else testController.show(testTaxYear)
+    val isAgent     = mtdUserRole != MTDIndividual
+    val action      = if (isAgent) testController.showAgent(testTaxYear) else testController.show(testTaxYear)
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
     s"show${if (isAgent) "Agent"}" when {
       s"the $mtdUserRole is authenticated" should {
@@ -59,10 +60,13 @@ class ForecastTaxCalcSummaryControllerSpec extends MockAuthActions with MockCalc
             contentType(result) shouldBe Some("text/html")
             charset(result) shouldBe Some("utf-8")
             lazy val document = result.toHtmlDocument
-            val title = messages("forecast_taxCalc.heading")
-            document.title() shouldBe messages({
-              if (isAgent) "htmlTitle.agent" else "htmlTitle"
-            }, title)
+            val title         = messages("forecast_taxCalc.heading")
+            document.title() shouldBe messages(
+              {
+                if (isAgent) "htmlTitle.agent" else "htmlTitle"
+              },
+              title
+            )
           }
 
           "render the error page" when {

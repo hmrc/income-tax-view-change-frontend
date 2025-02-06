@@ -27,7 +27,7 @@ object BtaNavBarPartialConnectorStub {
       val coreResponse = aResponse().withStatus(status)
       optBody match {
         case Some(body) => coreResponse.withBody(body)
-        case _ => coreResponse
+        case _          => coreResponse
       }
     })
 

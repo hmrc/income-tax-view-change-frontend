@@ -26,10 +26,11 @@ import play.api.Application
 
 import java.time.LocalDate
 
-class ChargeSummaryControllerTest extends MockAuthActions
-  with MockFinancialDetailsService
-  with MockCreditHistoryService
-  with MockDateService {
+class ChargeSummaryControllerTest
+    extends MockAuthActions
+    with MockFinancialDetailsService
+    with MockCreditHistoryService
+    with MockDateService {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -38,14 +39,14 @@ class ChargeSummaryControllerTest extends MockAuthActions
   }
 
   lazy val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
-  lazy val documentDetail: DocumentDetail = mock(classOf[DocumentDetail])
-
+  lazy val documentDetail:            DocumentDetail            = mock(classOf[DocumentDetail])
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[DocumentDetail].toInstance(documentDetail),
       api.inject.bind[DocumentDetailWithDueDate].toInstance(documentDetailWithDueDate)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[ChargeSummaryController]
 
@@ -54,7 +55,7 @@ class ChargeSummaryControllerTest extends MockAuthActions
   "For ChargeSummaryController.mandatoryViewDataPresent " when {
     "viewing view-section-1" should {
       "return true when original amount is present" in {
-        val isLatePaymentCharge: Boolean = false
+        val isLatePaymentCharge:       Boolean                   = false
         val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
 
         enable(ChargeHistory)
@@ -66,11 +67,12 @@ class ChargeSummaryControllerTest extends MockAuthActions
         when(documentDetail.interestEndDate).thenReturn(Some(interestEndDate))
         when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
-        val outcome = testController.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
+        val outcome =
+          testController.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
 
         outcome match {
           case Right(b) => assert(b, s"should be true but got: $b")
-          case Left(e) => fail(s"should have passed but got error: $e")
+          case Left(e)  => fail(s"should have passed but got error: $e")
         }
 
       }
@@ -80,7 +82,7 @@ class ChargeSummaryControllerTest extends MockAuthActions
 
       "return true when interest end date is present" in {
 
-        val isLatePaymentCharge: Boolean = true
+        val isLatePaymentCharge:       Boolean                   = true
         val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
         enable(ChargeHistory)
 
@@ -92,18 +94,19 @@ class ChargeSummaryControllerTest extends MockAuthActions
         when(documentDetail.interestEndDate).thenReturn(Some(interestEndDate))
         when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
-        val outcome = testController.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
+        val outcome =
+          testController.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
 
         outcome match {
           case Right(b) => assert(b, s"should be true but got: $b")
-          case Left(e) => fail(s"should have passed but got error: $e")
+          case Left(e)  => fail(s"should have passed but got error: $e")
         }
 
       }
 
       "error when interest end date is missing" in {
 
-        val isLatePaymentCharge: Boolean = true
+        val isLatePaymentCharge:       Boolean                   = true
         val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
         enable(ChargeHistory)
 
@@ -115,17 +118,18 @@ class ChargeSummaryControllerTest extends MockAuthActions
         when(documentDetail.interestEndDate).thenReturn(None)
         when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
-        val outcome = testController.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
+        val outcome =
+          testController.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
 
         outcome match {
           case Right(_) => fail(s"should have failed due to missing interest end date")
-          case Left(_) =>
+          case Left(_)  =>
         }
       }
 
       "return true when latePaymentInterestAmount is present" in {
 
-        val isLatePaymentCharge: Boolean = true
+        val isLatePaymentCharge:       Boolean                   = true
         val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
         enable(ChargeHistory)
 
@@ -137,18 +141,19 @@ class ChargeSummaryControllerTest extends MockAuthActions
         when(documentDetail.interestEndDate).thenReturn(Some(interestEndDate))
         when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
-        val outcome = testController.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
+        val outcome =
+          testController.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
 
         outcome match {
           case Right(b) => assert(b, s"should be true but got: $b")
-          case Left(e) => fail(s"should have passed but got error: $e")
+          case Left(e)  => fail(s"should have passed but got error: $e")
         }
 
       }
 
       "error when latePaymentInterestAmount is missing" in {
 
-        val isLatePaymentCharge: Boolean = true
+        val isLatePaymentCharge:       Boolean                   = true
         val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
         enable(ChargeHistory)
 
@@ -161,22 +166,22 @@ class ChargeSummaryControllerTest extends MockAuthActions
         when(documentDetail.latePaymentInterestAmount).thenReturn(None)
         when(documentDetail.interestOutstandingAmount).thenReturn(None)
 
-        val outcome = testController.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
+        val outcome =
+          testController.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
 
         outcome match {
           case Right(_) => fail(s"should have failed due to missing latePaymentInterestAmount")
-          case Left(_) =>
+          case Left(_)  =>
         }
       }
 
     }
 
-
     "viewing view-section-3" should {
 
       "return true when original amount is present" in {
 
-        val isLatePaymentCharge: Boolean = false
+        val isLatePaymentCharge:       Boolean                   = false
         val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
         enable(ChargeHistory)
 
@@ -188,11 +193,12 @@ class ChargeSummaryControllerTest extends MockAuthActions
         when(documentDetail.interestEndDate).thenReturn(Some(interestEndDate))
         when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
-        val outcome = testController.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
+        val outcome =
+          testController.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
 
         outcome match {
           case Right(b) => assert(b, s"should be true but got: $b")
-          case Left(e) => fail(s"should have passed but got error: $e")
+          case Left(e)  => fail(s"should have passed but got error: $e")
         }
       }
     }

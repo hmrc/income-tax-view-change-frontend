@@ -29,9 +29,8 @@ trait TimeMachine {
   }
 
   case class TimeMachineSettings(
-                               isTimeMachineEnabled: Boolean,
-                               addYears: Int,
-                               addDays: Int
-                             )
+      isTimeMachineEnabled: Boolean,
+      addYears:             Int,
+      addDays:              Int)
 
 }

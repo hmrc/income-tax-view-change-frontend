@@ -37,29 +37,70 @@ import testConstants.BaseTestConstants
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class NextUpdatesControllerSpec extends MockAuthActions
-  with MockNextUpdatesService with MockNextUpdates with MockOptOutService {
+class NextUpdatesControllerSpec
+    extends MockAuthActions
+    with MockNextUpdatesService
+    with MockNextUpdates
+    with MockOptOutService {
 
   val nextTitle: String = messages("htmlTitle", messages("nextUpdates.heading"))
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[NextUpdatesService].toInstance(mockNextUpdatesService),
-    ).build()
+      api.inject.bind[NextUpdatesService].toInstance(mockNextUpdatesService)
+    )
+    .build()
 
   lazy val testNextUpdatesController: NextUpdatesController = app.injector.instanceOf[NextUpdatesController]
 
-  val obligationsModel: ObligationsModel = ObligationsModel(Seq(
-    GroupedObligationsModel(BaseTestConstants.testSelfEmploymentId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001", StatusFulfilled))),
-    GroupedObligationsModel(BaseTestConstants.testPropertyIncomeId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "EOPS", Some(fixedDate), "EOPS", StatusFulfilled)))
-  ))
+  val obligationsModel: ObligationsModel = ObligationsModel(
+    Seq(
+      GroupedObligationsModel(
+        BaseTestConstants.testSelfEmploymentId,
+        List(
+          SingleObligationModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001", StatusFulfilled)
+        )
+      ),
+      GroupedObligationsModel(
+        BaseTestConstants.testPropertyIncomeId,
+        List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "EOPS", Some(fixedDate), "EOPS", StatusFulfilled))
+      )
+    )
+  )
 
-  val nextUpdatesViewModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(
-    GroupedObligationsModel(BaseTestConstants.testSelfEmploymentId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001", StatusFulfilled))),
-    GroupedObligationsModel(BaseTestConstants.testPropertyIncomeId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "EOPS", Some(fixedDate), "EOPS", StatusFulfilled)))
-  )).obligationsByDate.map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
-    DeadlineViewModel(getQuarterType(obligations.head.incomeType), standardAndCalendar = false, date, obligations, Seq.empty)
-  })
+  val nextUpdatesViewModel: NextUpdatesViewModel = NextUpdatesViewModel(
+    ObligationsModel(
+      Seq(
+        GroupedObligationsModel(
+          BaseTestConstants.testSelfEmploymentId,
+          List(
+            SingleObligationModel(
+              fixedDate,
+              fixedDate,
+              fixedDate,
+              "Quarterly",
+              Some(fixedDate),
+              "#001",
+              StatusFulfilled
+            )
+          )
+        ),
+        GroupedObligationsModel(
+          BaseTestConstants.testPropertyIncomeId,
+          List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "EOPS", Some(fixedDate), "EOPS", StatusFulfilled))
+        )
+      )
+    ).obligationsByDate.map {
+      case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
+        DeadlineViewModel(
+          getQuarterType(obligations.head.incomeType),
+          standardAndCalendar = false,
+          date,
+          obligations,
+          Seq.empty
+        )
+    }
+  )
 
   private def getQuarterType(string: String) = {
     if (string == "Quarterly") QuarterlyObligation else EopsObligation
@@ -96,7 +137,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
           mockSingleBusinessIncomeSourceWithDeadlines()
           mockObligations
           mockViewModel
-          val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
+          val result        = testNextUpdatesController.show()(fakeRequestWithActiveSession)
           lazy val document = Jsoup.parse(contentAsString(result))
 
           "return Status OK (200)" in {
@@ -119,7 +160,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
           mockPropertyIncomeSource()
           mockPropertyIncomeSourceWithDeadlines()
           mockObligations
-          val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
+          val result   = testNextUpdatesController.show()(fakeRequestWithActiveSession)
           val document = Jsoup.parse(contentAsString(result))
 
           "return Status OK (200)" in {
@@ -142,7 +183,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
           mockBothIncomeSourcesBusinessAligned()
           mockBothIncomeSourcesBusinessAlignedWithDeadlines()
           mockObligations
-          val result = testNextUpdatesController.show(origin = Some("PTA"))(fakeRequestWithActiveSession)
+          val result   = testNextUpdatesController.show(origin = Some("PTA"))(fakeRequestWithActiveSession)
           val document = Jsoup.parse(contentAsString(result))
 
           "return Status OK (200)" in {
@@ -164,7 +205,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
           setupMockUserAuth
           mockSingleBusinessIncomeSource()
           mockSingleBusinessIncomeSourceWithDeadlines()
-          val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
+          val result   = testNextUpdatesController.show()(fakeRequestWithActiveSession)
           val document = Jsoup.parse(contentAsString(result))
 
           "return Status OK (200)" in {
@@ -186,7 +227,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
           setupMockUserAuth
           mockPropertyIncomeSource()
           mockPropertyIncomeSourceWithDeadlines()
-          val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
+          val result   = testNextUpdatesController.show()(fakeRequestWithActiveSession)
           val document = Jsoup.parse(contentAsString(result))
 
           "return Status OK (200)" in {
@@ -209,7 +250,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
           mockViewModel
           mockBothIncomeSourcesBusinessAligned()
           mockBothIncomeSourcesBusinessAlignedWithDeadlines()
-          val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
+          val result   = testNextUpdatesController.show()(fakeRequestWithActiveSession)
           val document = Jsoup.parse(contentAsString(result))
 
           "return Status OK (200)" in {
@@ -247,7 +288,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
 
           setupMockUserAuth
           mockNoIncomeSources()
-          val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
+          val result   = testNextUpdatesController.show()(fakeRequestWithActiveSession)
           val document = Jsoup.parse(contentAsString(result))
 
           "return Status OK (200)" in {
@@ -320,42 +361,48 @@ class NextUpdatesControllerSpec extends MockAuthActions
   }
 
   /* AGENT **/
-  Map("primary agent" -> false, "supporting agent" -> true).foreach { case (agentType, isSupportingAgent) =>
-    "The NextUpdatesController.showAgent function" when {
+  Map("primary agent" -> false, "supporting agent" -> true).foreach {
+    case (agentType, isSupportingAgent) =>
+      "The NextUpdatesController.showAgent function" when {
 
-      s"the $agentType has all correct details" should {
-        "return Status OK (200) when we have obligations" in {
-          disableAllSwitches()
+        s"the $agentType has all correct details" should {
+          "return Status OK (200) when we have obligations" in {
+            disableAllSwitches()
 
-          setupMockAgentWithClientAuth(isSupportingAgent)
-          mockSingleBusinessIncomeSourceWithDeadlines()
-          mockSingleBusinessIncomeSource()
-          mockViewModel
-          mockObligations
-          mockNextUpdates(nextUpdatesViewModel, controllers.routes.HomeController.showAgent.url, isAgent = true, isSupportingAgent)(HtmlFormat.empty)
+            setupMockAgentWithClientAuth(isSupportingAgent)
+            mockSingleBusinessIncomeSourceWithDeadlines()
+            mockSingleBusinessIncomeSource()
+            mockViewModel
+            mockObligations
+            mockNextUpdates(
+              nextUpdatesViewModel,
+              controllers.routes.HomeController.showAgent.url,
+              isAgent = true,
+              isSupportingAgent
+            )(HtmlFormat.empty)
 
-          val result: Future[Result] = testNextUpdatesController.showAgent()(
-            fakeRequestConfirmedClient(isSupportingAgent = isSupportingAgent)
-          )
+            val result: Future[Result] = testNextUpdatesController.showAgent()(
+              fakeRequestConfirmedClient(isSupportingAgent = isSupportingAgent)
+            )
 
-          status(result) shouldBe OK
-          contentType(result) shouldBe Some(HTML)
+            status(result) shouldBe OK
+            contentType(result) shouldBe Some(HTML)
+          }
+
+          "return Status INTERNAL_SERVER_ERROR (500) when we have no obligations" in {
+            setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent)
+            mockSingleBusinessIncomeSource()
+            mockNoObligations
+            mockNoIncomeSourcesWithDeadlines()
+
+            val result: Future[Result] = testNextUpdatesController.showAgent()(
+              fakeRequestConfirmedClient(isSupportingAgent = isSupportingAgent)
+            )
+            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          }
         }
 
-        "return Status INTERNAL_SERVER_ERROR (500) when we have no obligations" in {
-          setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent)
-          mockSingleBusinessIncomeSource()
-          mockNoObligations
-          mockNoIncomeSourcesWithDeadlines()
-
-          val result: Future[Result] = testNextUpdatesController.showAgent()(
-            fakeRequestConfirmedClient(isSupportingAgent= isSupportingAgent)
-          )
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        }
+        testMTDAgentAuthFailures(testNextUpdatesController.showAgent(), isSupportingAgent)
       }
-
-      testMTDAgentAuthFailures(testNextUpdatesController.showAgent(), isSupportingAgent)
-    }
   }
 }

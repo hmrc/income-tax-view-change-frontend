@@ -30,8 +30,7 @@ class OptOutUpdateRequestModelSpec extends UnitSpec with Matchers {
   "The request model" should {
 
     val requestObject = ITSAStatusUpdateRequest(TaxYear.forYearEnd(endYear).toString, optOutUpdateReason)
-    val requestJson = Json.parse(
-      """
+    val requestJson   = Json.parse("""
         {
           "taxYear": "2023-2024",
           "updateReason": "10"
@@ -45,8 +44,7 @@ class OptOutUpdateRequestModelSpec extends UnitSpec with Matchers {
 
   "The success model" should {
     val successObject = ITSAStatusUpdateResponseSuccess()
-    val successJson = Json.parse(
-      """
+    val successJson   = Json.parse("""
         {
           "correlationId": "123",
           "statusCode": 204
@@ -61,8 +59,7 @@ class OptOutUpdateRequestModelSpec extends UnitSpec with Matchers {
   "The failure model" should {
 
     val failureObject = ITSAStatusUpdateResponseFailure.defaultFailure()
-    val failureJson = Json.parse(
-      """
+    val failureJson   = Json.parse("""
         {
           "correlationId": "123",
           "statusCode": 500,

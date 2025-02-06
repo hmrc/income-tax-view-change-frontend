@@ -33,10 +33,10 @@ import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesRes
 
 class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
 
-  val pageTitleMsgKey: String = messagesAPI("add-trade.heading")
-  val pageHint: String = messagesAPI("add-trade.trade-info-1") + " " + messagesAPI("add-trade.trade-info-2")
-  val button: String = messagesAPI("base.continue")
-  val testBusinessName: String = "Test Business Name"
+  val pageTitleMsgKey:   String = messagesAPI("add-trade.heading")
+  val pageHint:          String = messagesAPI("add-trade.trade-info-1") + " " + messagesAPI("add-trade.trade-info-2")
+  val button:            String = messagesAPI("base.continue")
+  val testBusinessName:  String = "Test Business Name"
   val testBusinessTrade: String = "Test Business Trade"
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
@@ -47,240 +47,317 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
   }
 
   def getPath(mtdRole: MTDUserRole, isChange: Boolean): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
-    val pathEnd = if(isChange) "/change-business-trade" else "/business-trade"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
+    val pathEnd   = if (isChange) "/change-business-trade" else "/business-trade"
     pathStart + "/manage-your-businesses/add-sole-trader" + pathEnd
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    val path = getPath(mtdUserRole, isChange = false)
-    val changePath = getPath(mtdUserRole, isChange = true)
-    val additionalCookies = getAdditionalCookies(mtdUserRole)
-    s"GET $path" when {
-      s"a user is a $mtdUserRole" that {
-        "is authenticated, with a valid enrolment" should {
-          "render the Add Business trade page for an Agent" when {
-            "Income Sources FS enabled" in {
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      val path              = getPath(mtdUserRole, isChange = false)
+      val changePath        = getPath(mtdUserRole, isChange = true)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            "render the Add Business trade page for an Agent" when {
+              "Income Sources FS enabled" in {
+                enable(IncomeSourcesFs)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
+                await(
+                  sessionService.setMongoData(
+                    UIJourneySessionData(
+                      testSessionId,
+                      "ADD-SE",
+                      addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName)))
+                    )
+                  )
+                )
+
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, pageTitleMsgKey),
+                  elementTextByID("business-trade-hint")(pageHint),
+                  elementTextByID("continue-button")(button)
+                )
+              }
+            }
+            "303 SEE_OTHER - redirect to home page" when {
+              "Income Sources FS disabled" in {
+                disable(IncomeSourcesFs)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  noPropertyOrBusinessResponse
+                )
+
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+                val expectedUrl = if (mtdUserRole == MTDIndividual) {
+                  controllers.routes.HomeController.show().url
+                } else {
+                  controllers.routes.HomeController.showAgent.url
+                }
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(expectedUrl)
+                )
+              }
+            }
+          }
+          testAuthFailures(path, mtdUserRole)
+        }
+      }
+
+      s"GET $changePath" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            "render the Add Business trade page for an Agent" when {
+              "Income Sources FS enabled" in {
+                enable(IncomeSourcesFs)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
+                await(
+                  sessionService.setMongoData(
+                    UIJourneySessionData(
+                      testSessionId,
+                      "ADD-SE",
+                      addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName)))
+                    )
+                  )
+                )
+                val res = buildGETMTDClient(changePath, additionalCookies).futureValue
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, pageTitleMsgKey),
+                  elementTextByID("business-trade-hint")(pageHint),
+                  elementTextByID("continue-button")(button)
+                )
+              }
+            }
+            "303 SEE_OTHER - redirect to home page" when {
+              "Income Sources FS disabled" in {
+                disable(IncomeSourcesFs)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  noPropertyOrBusinessResponse
+                )
+
+                val result = buildGETMTDClient(changePath, additionalCookies).futureValue
+
+                val expectedUrl = if (mtdUserRole == MTDIndividual) {
+                  controllers.routes.HomeController.show().url
+                } else {
+                  controllers.routes.HomeController.showAgent.url
+                }
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(expectedUrl)
+                )
+              }
+            }
+          }
+          testAuthFailures(changePath, mtdUserRole)
+        }
+      }
+
+      s"POST $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            s"303 SEE_OTHER and redirect to add business address" when {
+              "User is authorised and business trade is valid" in {
+                enable(IncomeSourcesFs)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  noPropertyOrBusinessResponse
+                )
+
+                val formData: Map[String, Seq[String]] = {
+                  Map(
+                    BusinessTradeForm.businessTrade -> Seq(testBusinessTrade)
+                  )
+                }
+
+                await(
+                  sessionService.setMongoData(
+                    UIJourneySessionData(
+                      testSessionId,
+                      "ADD-SE",
+                      addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName)))
+                    )
+                  )
+                )
+
+                val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue
+
+                sessionService
+                  .getMongoKeyTyped[String](businessTradeField, IncomeSourceJourneyType(Add, SelfEmployment))
+                  .futureValue shouldBe Right(Some(testBusinessTrade))
+
+                val expectedUrl = if (mtdUserRole == MTDIndividual) {
+                  controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(isChange = false).url
+                } else {
+                  controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(isChange = false).url
+                }
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(expectedUrl)
+                )
+              }
+            }
+            "show error when form is filled incorrectly" in {
               enable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
-              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-                addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
 
-              val res = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-              res should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, pageTitleMsgKey),
-                elementTextByID("business-trade-hint")(pageHint),
-                elementTextByID("continue-button")(button)
+              await(
+                sessionService.setMongoData(
+                  UIJourneySessionData(
+                    testSessionId,
+                    "ADD-SE",
+                    addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName)))
+                  )
+                )
               )
-            }
-          }
-          "303 SEE_OTHER - redirect to home page" when {
-            "Income Sources FS disabled" in {
-              disable(IncomeSourcesFs)
-              disable(NavBarFs)
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-              val expectedUrl = if(mtdUserRole == MTDIndividual) {
-                controllers.routes.HomeController.show().url
-              } else {
-                controllers.routes.HomeController.showAgent.url
-              }
-              result should have(
-                httpStatus(SEE_OTHER),
-                redirectURI(expectedUrl)
-              )
-            }
-          }
-        }
-        testAuthFailures(path, mtdUserRole)
-      }
-    }
-
-    s"GET $changePath" when {
-      s"a user is a $mtdUserRole" that {
-        "is authenticated, with a valid enrolment" should {
-          "render the Add Business trade page for an Agent" when {
-            "Income Sources FS enabled" in {
-              enable(IncomeSourcesFs)
-              disable(NavBarFs)
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
-              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-                addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
-              val res = buildGETMTDClient(changePath, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-              res should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, pageTitleMsgKey),
-                elementTextByID("business-trade-hint")(pageHint),
-                elementTextByID("continue-button")(button)
-              )
-            }
-          }
-          "303 SEE_OTHER - redirect to home page" when {
-            "Income Sources FS disabled" in {
-              disable(IncomeSourcesFs)
-              disable(NavBarFs)
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-              val result = buildGETMTDClient(changePath, additionalCookies).futureValue
-
-              val expectedUrl = if(mtdUserRole == MTDIndividual) {
-                controllers.routes.HomeController.show().url
-              } else {
-                controllers.routes.HomeController.showAgent.url
-              }
-              result should have(
-                httpStatus(SEE_OTHER),
-                redirectURI(expectedUrl)
-              )
-            }
-          }
-        }
-        testAuthFailures(changePath, mtdUserRole)
-      }
-    }
-
-    s"POST $path" when {
-      s"a user is a $mtdUserRole" that {
-        "is authenticated, with a valid enrolment" should {
-          s"303 SEE_OTHER and redirect to add business address" when {
-            "User is authorised and business trade is valid" in {
-              enable(IncomeSourcesFs)
-              disable(NavBarFs)
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
               val formData: Map[String, Seq[String]] = {
                 Map(
-                  BusinessTradeForm.businessTrade -> Seq(testBusinessTrade)
+                  BusinessTradeForm.businessTrade -> Seq("")
                 )
               }
-
-              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-                addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
 
               val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue
 
-              sessionService.getMongoKeyTyped[String](businessTradeField, IncomeSourceJourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(testBusinessTrade))
-
-              val expectedUrl = if(mtdUserRole == MTDIndividual) {
-                controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(isChange = false).url
-              } else {
-                controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(isChange = false).url
-              }
               result should have(
-                httpStatus(SEE_OTHER),
-                redirectURI(expectedUrl)
+                httpStatus(BAD_REQUEST),
+                elementTextByID("business-trade-error")(
+                  messagesAPI("base.error-prefix") + " " +
+                    messagesAPI("add-business-trade.form.error.empty")
+                )
               )
             }
           }
-          "show error when form is filled incorrectly" in {
-            enable(IncomeSourcesFs)
-            disable(NavBarFs)
-            stubAuthorised(mtdUserRole)
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
 
-            await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-              addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
-
-            val formData: Map[String, Seq[String]] = {
+          testAuthFailures(
+            path,
+            mtdUserRole,
+            optBody = Some(
               Map(
-                BusinessTradeForm.businessTrade -> Seq("")
+                BusinessTradeForm.businessTrade -> Seq(testBusinessTrade)
               )
-            }
-
-            val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue
-
-            result should have(
-              httpStatus(BAD_REQUEST),
-              elementTextByID("business-trade-error")(messagesAPI("base.error-prefix") + " " +
-                messagesAPI("add-business-trade.form.error.empty"))
             )
-          }
+          )
         }
-
-        testAuthFailures(path, mtdUserRole, optBody = Some(Map(
-          BusinessTradeForm.businessTrade -> Seq(testBusinessTrade)
-        )))
       }
-    }
 
-    s"POST $changePath" when {
-      s"a user is a $mtdUserRole" that {
-        "is authenticated, with a valid enrolment" should {
-          s"303 SEE_OTHER and redirect to Check details" when {
-            "User is authorised and business trade is valid" in {
+      s"POST $changePath" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            s"303 SEE_OTHER and redirect to Check details" when {
+              "User is authorised and business trade is valid" in {
+                enable(IncomeSourcesFs)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  noPropertyOrBusinessResponse
+                )
+
+                val changedTrade = "Updated Business Trade"
+                val formData: Map[String, Seq[String]] = {
+                  Map(
+                    BusinessTradeForm.businessTrade -> Seq(changedTrade)
+                  )
+                }
+
+                await(
+                  sessionService.setMongoData(
+                    UIJourneySessionData(
+                      testSessionId,
+                      "ADD-SE",
+                      addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName), Some(testBusinessTrade)))
+                    )
+                  )
+                )
+
+                val result = buildPOSTMTDPostClient(changePath, additionalCookies, formData).futureValue
+
+                sessionService
+                  .getMongoKeyTyped[String](businessTradeField, IncomeSourceJourneyType(Add, SelfEmployment))
+                  .futureValue shouldBe Right(Some(changedTrade))
+
+                val expectedUrl = if (mtdUserRole == MTDIndividual) {
+                  controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
+                } else {
+                  controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController
+                    .showAgent(SelfEmployment)
+                    .url
+                }
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(expectedUrl)
+                )
+              }
+            }
+            "show error when form is filled incorrectly" in {
               enable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
 
-              val changedTrade = "Updated Business Trade"
+              await(
+                sessionService.setMongoData(
+                  UIJourneySessionData(
+                    testSessionId,
+                    "ADD-SE",
+                    addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName), Some(testBusinessTrade)))
+                  )
+                )
+              )
+
               val formData: Map[String, Seq[String]] = {
                 Map(
-                  BusinessTradeForm.businessTrade -> Seq(changedTrade)
+                  BusinessTradeForm.businessTrade -> Seq("")
                 )
               }
 
-              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-                addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName), Some(testBusinessTrade))))))
-
               val result = buildPOSTMTDPostClient(changePath, additionalCookies, formData).futureValue
 
-              sessionService.getMongoKeyTyped[String](businessTradeField, IncomeSourceJourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(changedTrade))
-
-              val expectedUrl = if(mtdUserRole == MTDIndividual) {
-                controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
-              } else {
-                controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
-              }
               result should have(
-                httpStatus(SEE_OTHER),
-                redirectURI(expectedUrl)
+                httpStatus(BAD_REQUEST),
+                elementTextByID("business-trade-error")(
+                  messagesAPI("base.error-prefix") + " " +
+                    messagesAPI("add-business-trade.form.error.empty")
+                )
               )
             }
           }
-          "show error when form is filled incorrectly" in {
-            enable(IncomeSourcesFs)
-            disable(NavBarFs)
-            stubAuthorised(mtdUserRole)
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
 
-            await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-              addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName), Some(testBusinessTrade))))))
-
-            val formData: Map[String, Seq[String]] = {
+          testAuthFailures(
+            changePath,
+            mtdUserRole,
+            optBody = Some(
               Map(
-                BusinessTradeForm.businessTrade -> Seq("")
+                BusinessTradeForm.businessTrade -> Seq(testBusinessTrade)
               )
-            }
-
-            val result = buildPOSTMTDPostClient(changePath, additionalCookies, formData).futureValue
-
-            result should have(
-              httpStatus(BAD_REQUEST),
-              elementTextByID("business-trade-error")(messagesAPI("base.error-prefix") + " " +
-                messagesAPI("add-business-trade.form.error.empty"))
             )
-          }
+          )
         }
-
-        testAuthFailures(changePath, mtdUserRole, optBody = Some(Map(
-          BusinessTradeForm.businessTrade -> Seq(testBusinessTrade)
-        )))
       }
-    }
   }
 
 }

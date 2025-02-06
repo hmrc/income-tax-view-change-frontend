@@ -30,24 +30,24 @@ import views.html.optIn.OptInCancelledView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class OptInCancelledController @Inject()(val authActions: AuthActions,
-                                         optInService: OptInService,
-                                         view: OptInCancelledView,
-                                         errorTemplate: ErrorTemplate
-                                         )(
-                                           implicit val appConfig: FrontendAppConfig,
-                                           mcc: MessagesControllerComponents,
-                                           val ec: ExecutionContext
-                                         )
+class OptInCancelledController @Inject() (
+    val authActions: AuthActions,
+    optInService:    OptInService,
+    view:            OptInCancelledView,
+    errorTemplate:   ErrorTemplate
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    mcc:                    MessagesControllerComponents,
+    val ec:                 ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with FeatureSwitching {
 
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
-
-  private def pageRender(isAgent: Boolean = false)
-                        (implicit user: MtdItUser[AnyContent]): Future[Result] = {
+  private def pageRender(isAgent: Boolean = false)(implicit user: MtdItUser[AnyContent]): Future[Result] = {
     for {
       proposition <- optInService.fetchOptInProposition()
       availableOptInYears = proposition.availableOptInYears
-      isOneYearOptIn = proposition.isOneYearOptIn
+      isOneYearOptIn      = proposition.isOneYearOptIn
     } yield {
       if (isOneYearOptIn) {
         availableOptInYears.headOption.map(_.taxYear) match {

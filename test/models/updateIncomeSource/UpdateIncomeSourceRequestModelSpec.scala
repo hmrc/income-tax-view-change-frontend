@@ -28,7 +28,9 @@ class UpdateIncomeSourceRequestModelSpec extends TestSupport with Matchers {
     }
 
     "read TaxYearSpecific request from Json" in {
-      Json.fromJson(requestTaxYearSpecificJson)(UpdateIncomeSourceRequestModel.format) shouldBe JsSuccess(requestTaxYearSpecific)
+      Json.fromJson(requestTaxYearSpecificJson)(UpdateIncomeSourceRequestModel.format) shouldBe JsSuccess(
+        requestTaxYearSpecific
+      )
     }
 
     "write cessation request to Json" in {

@@ -29,7 +29,7 @@ class TaxYearSpec extends UnitSpec with TestSupport {
   "format" when {
 
     val startYear = 2022
-    val endYear = 2023
+    val endYear   = 2023
 
     "reading a valid tax year" should {
       "return tax year from end year number" in {
@@ -109,8 +109,8 @@ class TaxYearSpec extends UnitSpec with TestSupport {
   "formatTaxYearRange method" when {
     "invoked on a TaxYear object" should {
       "return a string with the tax year range" in {
-        val taxYear: TaxYear = TaxYear(2098, 2099)
-        val taxYearRange: String = taxYear.formatTaxYearRange
+        val taxYear:      TaxYear = TaxYear(2098, 2099)
+        val taxYearRange: String  = taxYear.formatTaxYearRange
 
         val desiredTaxYearRangeString: String = "98-99"
 
@@ -263,9 +263,9 @@ class TaxYearSpec extends UnitSpec with TestSupport {
 
   ".shortenTaxYearEnd()" should {
 
-      "match required format" in {
+    "match required format" in {
 
-        TaxYear.forYearEnd(2024).shortenTaxYearEnd shouldBe "2023-24"
-      }
+      TaxYear.forYearEnd(2024).shortenTaxYearEnd shouldBe "2023-24"
     }
+  }
 }

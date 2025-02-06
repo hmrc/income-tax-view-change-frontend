@@ -24,18 +24,18 @@ import org.scalacheck.Prop.forAll
 
 object IncomeSourceIdHashSpecification extends Properties("IncomeSourceId") {
 
-  val range : Seq[Char] = ( 'a' to'z').toList ++ ( 'A' to'Z') ++ ('0' to '9').toList
+  val range: Seq[Char] = ('a' to 'z').toList ++ ('A' to 'Z') ++ ('0' to '9').toList
 
-  val incomeSourceIdGen = Gen.listOfN(7000, Gen.pick(15, range) )
+  val incomeSourceIdGen = Gen.listOfN(7000, Gen.pick(15, range))
 
   property("make sure hash is unique") = forAll(incomeSourceIdGen) { ids =>
     val hashSet: List[String] = ids.distinct.map { i =>
-      val incomeSourceId = mkIncomeSourceId( i.mkString(""))
+      val incomeSourceId = mkIncomeSourceId(i.mkString(""))
       mkIncomeSourceIdHash(incomeSourceId).hash
     }
     ids.forall(x => x.mkString("").nonEmpty) &&
-      hashSet.forall(x => x.nonEmpty) &&
-        hashSet.distinct.length == ids.distinct.length
+    hashSet.forall(x => x.nonEmpty) &&
+    hashSet.distinct.length == ids.distinct.length
   }
 
 }

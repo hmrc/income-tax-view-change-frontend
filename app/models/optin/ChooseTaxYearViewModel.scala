@@ -18,6 +18,4 @@ package models.optin
 
 import models.incomeSourceDetails.TaxYear
 
-case class ChooseTaxYearViewModel( availableOptInTaxYear: Seq[TaxYear],
-                                   cancelURL: String,
-                                   isAgent: Boolean)
+case class ChooseTaxYearViewModel(availableOptInTaxYear: Seq[TaxYear], cancelURL: String, isAgent: Boolean)

@@ -19,14 +19,14 @@ package models.outstandingCharges
 import play.api.libs.json.{Format, Json}
 import java.time.LocalDate
 
-case class OutstandingChargeModel(chargeName: String,
-                                  relevantDueDate: Option[LocalDate],
-                                  chargeAmount: BigDecimal,
-                                  tieBreaker: Int
-                                 ) {
+case class OutstandingChargeModel(
+    chargeName:      String,
+    relevantDueDate: Option[LocalDate],
+    chargeAmount:    BigDecimal,
+    tieBreaker:      Int) {
 
   def isBalancingChargeDebit: Boolean = chargeName == "BCD"
-  def isAccruingInterest    : Boolean = chargeName == "ACI"
+  def isAccruingInterest:     Boolean = chargeName == "ACI"
 
 }
 

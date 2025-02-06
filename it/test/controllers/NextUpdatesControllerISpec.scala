@@ -70,7 +70,10 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
+          testNino,
+          ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId)))
+        )
 
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
 
@@ -91,7 +94,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         Then("the page displays the property obligation dates")
         res should have(
           elementTextBySelector("#accordion-with-summary-sections-summary-1")(expectedValue = "Quarterly update"),
-          elementTextBySelector("#accordion-with-summary-sections-heading-1")(expectedValue = "1 January 2018"),
+          elementTextBySelector("#accordion-with-summary-sections-heading-1")(expectedValue = "1 January 2018")
         )
 
       }
@@ -101,7 +104,10 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
 
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testSelfEmploymentId))))
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
+          testNino,
+          ObligationsModel(Seq(singleObligationQuarterlyModel(testSelfEmploymentId)))
+        )
 
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
 
@@ -124,7 +130,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         Then("the page displays the property obligation dates")
         res should have(
           elementTextBySelector("#accordion-with-summary-sections-summary-1")(expectedValue = "Quarterly update"),
-          elementTextBySelector("#accordion-with-summary-sections-heading-1")(expectedValue = "1 January 2018"),
+          elementTextBySelector("#accordion-with-summary-sections-heading-1")(expectedValue = "1 January 2018")
         )
 
       }
@@ -133,8 +139,15 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testSelfEmploymentId),
-          singleObligationQuarterlyModel(otherTestSelfEmploymentId))))
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
+          testNino,
+          ObligationsModel(
+            Seq(
+              singleObligationQuarterlyModel(testSelfEmploymentId),
+              singleObligationQuarterlyModel(otherTestSelfEmploymentId)
+            )
+          )
+        )
 
         val res = buildGETMTDClient(path).futureValue
 
@@ -153,7 +166,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         Then("the page displays all the business obligation dates")
         res should have(
           elementTextBySelector("#accordion-with-summary-sections-summary-1")(expectedValue = "Quarterly update"),
-          elementTextBySelector("#accordion-with-summary-sections-heading-1")(expectedValue = "1 January 2018"),
+          elementTextBySelector("#accordion-with-summary-sections-heading-1")(expectedValue = "1 January 2018")
         )
 
       }
@@ -162,7 +175,10 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(noObligationsModel(testSelfEmploymentId), crystallisedEOPSModel)))
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
+          testNino,
+          ObligationsModel(Seq(noObligationsModel(testSelfEmploymentId), crystallisedEOPSModel))
+        )
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
 
         val res = buildGETMTDClient(path).futureValue
@@ -182,21 +198,25 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
       }
 
       "the user has a Opt Out Feature Switch Enabled" in {
-        
+
         enable(OptOutFs)
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
-        val previousYear = currentTaxYear - 1
+        val previousYear   = currentTaxYear - 1
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
+          testNino,
+          ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId)))
+        )
 
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(taxYear = dateService.getCurrentTaxYear)
-        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
-
+        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(
+          CalculationListIntegrationTestConstants.successResponseCrystallised.toString()
+        )
 
         val res = buildGETMTDClient(path).futureValue
 
@@ -215,7 +235,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         Then("the page displays the property obligation dates")
         res should have(
           elementTextBySelector("#accordion-with-summary-sections-summary-1")(expectedValue = "Quarterly update"),
-          elementTextBySelector("#accordion-with-summary-sections-heading-1")(expectedValue = "1 January 2018"),
+          elementTextBySelector("#accordion-with-summary-sections-heading-1")(expectedValue = "1 January 2018")
         )
 
         Then("the quarterly updates info sections")
@@ -223,10 +243,11 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           elementTextBySelector("#accordion-with-summary-sections-summary-1")(expectedValue = "Quarterly update"),
           elementTextBySelector("#accordion-with-summary-sections-heading-1")(expectedValue = "1 January 2018"),
           elementTextBySelector("#updates-software-heading")(expectedValue = "Submitting updates in software"),
-          elementTextBySelector("#updates-software-link")
-          (expectedValue = "Use your compatible record keeping software (opens in new tab) " +
-            "to keep digital records of all your business income and expenses. You must submit these " +
-            "updates through your software by each date shown."),
+          elementTextBySelector("#updates-software-link")(expectedValue =
+            "Use your compatible record keeping software (opens in new tab) " +
+              "to keep digital records of all your business income and expenses. You must submit these " +
+              "updates through your software by each date shown."
+          )
         )
 
       }
@@ -237,7 +258,10 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
+          testNino,
+          ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId)))
+        )
 
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
 
@@ -260,7 +284,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           elementTextBySelector("#accordion-with-summary-sections-summary-1")(expectedValue = "Quarterly update"),
           elementTextBySelector("#accordion-with-summary-sections-heading-1")(expectedValue = "1 January 2018"),
           isElementVisibleById("#updates-software-heading")(expectedValue = false),
-          isElementVisibleById("#updates-software-link")(expectedValue = false),
+          isElementVisibleById("#updates-software-link")(expectedValue = false)
         )
       }
     }
@@ -272,16 +296,24 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
-        val previousYear = currentTaxYear - 1
+        val previousYear   = currentTaxYear - 1
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
+          testNino,
+          ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId)))
+        )
 
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
         val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
-        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
-        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(
+          dateService.getCurrentTaxYearEnd,
+          threeYearStatus
+        )
+        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(
+          CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString()
+        )
 
         val res = buildGETMTDClient(path).futureValue
 
@@ -293,7 +325,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         Then("the quarterly updates info sections")
         res should have(
-          elementTextBySelector("#what-the-user-can-do")(expectedValue = "You are currently reporting quarterly on a voluntary basis for the 2021 to 2022 tax year. You can choose to opt out of quarterly updates and report annually instead.")
+          elementTextBySelector("#what-the-user-can-do")(expectedValue =
+            "You are currently reporting quarterly on a voluntary basis for the 2021 to 2022 tax year. You can choose to opt out of quarterly updates and report annually instead."
+          )
         )
 
       }
@@ -303,17 +337,24 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
-        val previousYear = currentTaxYear - 1
+        val previousYear   = currentTaxYear - 1
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
+          testNino,
+          ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId)))
+        )
 
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
         val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
-        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
-        CalculationListStub.stubGetLegacyCalculationList(testNino,
-          previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(
+          dateService.getCurrentTaxYearEnd,
+          threeYearStatus
+        )
+        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(
+          CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString()
+        )
 
         val res = buildGETMTDClient(path).futureValue
 
@@ -325,7 +366,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         Then("the quarterly updates info sections")
         res should have(
-          elementTextBySelector("#what-the-user-can-do")(expectedValue = "You are currently reporting quarterly on a voluntary basis. You can choose to opt out of quarterly updates and report annually instead.")
+          elementTextBySelector("#what-the-user-can-do")(expectedValue =
+            "You are currently reporting quarterly on a voluntary basis. You can choose to opt out of quarterly updates and report annually instead."
+          )
         )
       }
     }
@@ -337,17 +380,20 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
           val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
-          val previousYear = currentTaxYear.addYears(-1)
-
+          val previousYear   = currentTaxYear.addYears(-1)
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-          IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+          IncomeTaxViewChangeStub.stubGetNextUpdates(
+            testNino,
+            ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId)))
+          )
 
           IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
           ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatTaxYearRange)
-          CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
-
+          CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(
+            CalculationListIntegrationTestConstants.successResponseCrystallised.toString()
+          )
 
           val res = buildGETMTDClient(path).futureValue
 
@@ -369,17 +415,18 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
           val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
-          val previousYear = currentTaxYear.addYears(-1)
-
+          val previousYear   = currentTaxYear.addYears(-1)
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-          IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+          IncomeTaxViewChangeStub.stubGetNextUpdates(
+            testNino,
+            ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId)))
+          )
 
           IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
           ITSAStatusDetailsStub.stubGetITSAStatusDetails(previousYear.formatTaxYearRange)
           CalculationListStub.stubGetLegacyCalculationListError(testNino, previousYear.endYear.toString)
-
 
           val res = buildGETMTDClient(path).futureValue
 
@@ -401,17 +448,18 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
           val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
-          val previousYear = currentTaxYear.addYears(-1)
-
+          val previousYear   = currentTaxYear.addYears(-1)
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-          IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+          IncomeTaxViewChangeStub.stubGetNextUpdates(
+            testNino,
+            ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId)))
+          )
 
           IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
           ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatTaxYearRange)
           CalculationListStub.stubGetLegacyCalculationListError(testNino, previousYear.endYear.toString)
-
 
           val res = buildGETMTDClient(path).futureValue
 

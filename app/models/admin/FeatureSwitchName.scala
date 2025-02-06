@@ -75,23 +75,23 @@ object FeatureSwitchName {
       JsSuccess(InvalidFS)
   }
 
-
   implicit val formats: Format[FeatureSwitchName] =
     Format(reads, writes)
 
-  implicit def pathBindable: PathBindable[FeatureSwitchName] = new PathBindable[FeatureSwitchName] {
+  implicit def pathBindable: PathBindable[FeatureSwitchName] =
+    new PathBindable[FeatureSwitchName] {
 
-    override def bind(key: String, value: String): Either[String, FeatureSwitchName] =
-      JsString(value).validate[FeatureSwitchName] match {
-        case JsSuccess(name, _) =>
-          Right(name)
-        case _ =>
-          Left(s"The feature switch `$value` does not exist")
-      }
+      override def bind(key: String, value: String): Either[String, FeatureSwitchName] =
+        JsString(value).validate[FeatureSwitchName] match {
+          case JsSuccess(name, _) =>
+            Right(name)
+          case _ =>
+            Left(s"The feature switch `$value` does not exist")
+        }
 
-    override def unbind(key: String, value: FeatureSwitchName): String =
-      value.name
-  }
+      override def unbind(key: String, value: FeatureSwitchName): String =
+        value.name
+    }
 
   val allFeatureSwitches: immutable.Set[FeatureSwitchName] =
     Set(
@@ -145,52 +145,50 @@ case object PaymentHistoryRefunds extends FeatureSwitchName {
 }
 
 case object IncomeSourcesNewJourney extends FeatureSwitchName {
-  override val name = "income-sources-new-journey"
+  override val name     = "income-sources-new-journey"
   override val toString = "Income Sources New Journey"
 }
 
 case object IncomeSourcesFs extends FeatureSwitchName {
-  override val name = "income-sources"
+  override val name     = "income-sources"
   override val toString = "Income Sources"
 }
 
 case object OptOutFs extends FeatureSwitchName {
-  override val name = "opt-out"
+  override val name     = "opt-out"
   override val toString = "Opt Out"
 }
 
 case object AdjustPaymentsOnAccount extends FeatureSwitchName {
-  override val name: String = "adjust-payments-on-account"
+  override val name:     String = "adjust-payments-on-account"
   override val toString: String = "Adjust Payments On Account"
 }
 
 case object ReviewAndReconcilePoa extends FeatureSwitchName {
-  override val name: String = "review-and-reconcile-poa"
+  override val name:     String = "review-and-reconcile-poa"
   override val toString: String = "Review And Reconcile POA"
 }
 
 case object FilterCodedOutPoas extends FeatureSwitchName {
-  override val name: String = s"filter-coded-out-poas"
+  override val name:     String = s"filter-coded-out-poas"
   override val toString: String = "Filter Coded Out Poas"
 }
 
 case object InvalidFS extends FeatureSwitchName {
-  override val name: String = "invalid-feature-switch"
+  override val name:     String = "invalid-feature-switch"
   override val toString: String = "Invalid feature Switch"
 }
 
 case object ReportingFrequencyPage extends FeatureSwitchName {
-  override val name: String = "reporting-frequency-page"
+  override val name:     String = "reporting-frequency-page"
   override val toString: String = "Reporting Frequency page"
 }
 
 case object DisplayBusinessStartDate extends FeatureSwitchName {
-  override val name: String = "display-business-start-date"
+  override val name:     String = "display-business-start-date"
   override val toString: String = "Display Business Start Date"
 }
 case object PenaltiesAndAppeals extends FeatureSwitchName {
-  override val name: String = "penalties-and-appeals"
+  override val name:     String = "penalties-and-appeals"
   override val toString: String = "Penalties and Appeals"
 }
-
-

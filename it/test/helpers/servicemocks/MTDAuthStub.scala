@@ -22,11 +22,11 @@ import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 
 trait MTDAuthStub extends ComponentSpecBase {
 
-  lazy val postAuthoriseUrl = "/auth/authorise"
+  lazy val postAuthoriseUrl        = "/auth/authorise"
   lazy val requiredConfidenceLevel = 250
 
-  def stubUnauthorised(): Unit
-  def stubBearerTokenExpired(): Unit
+  def stubUnauthorised():           Unit
+  def stubBearerTokenExpired():     Unit
   def stubAuthorisedWhenNoChecks(): Unit
 
   lazy val retrivalsJson = Json.arr(
@@ -40,7 +40,7 @@ trait MTDAuthStub extends ComponentSpecBase {
   lazy val emptyPredicateRequest: JsValue = {
     Json.obj(
       "authorise" -> EmptyPredicate.toJson,
-      "retrieve" -> retrivalsJson
+      "retrieve"  -> retrivalsJson
     )
   }
 

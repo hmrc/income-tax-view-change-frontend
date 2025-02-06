@@ -28,10 +28,10 @@ import testUtils.TestSupport
 class OptInAuditModelSpec extends TestSupport {
 
   val currentYear: TaxYear = TaxYear.forYearEnd(2024)
-  val nextYear: TaxYear = currentYear.nextYear
+  val nextYear:    TaxYear = currentYear.nextYear
 
   val currentTaxYearOptIn: CurrentOptInTaxYear = CurrentOptInTaxYear(Annual, currentYear)
-  val nextTaxYearOptIn: NextOptInTaxYear = NextOptInTaxYear(Annual, nextYear, currentTaxYearOptIn)
+  val nextTaxYearOptIn:    NextOptInTaxYear    = NextOptInTaxYear(Annual, nextYear, currentTaxYearOptIn)
 
   val optInProposition: OptInProposition = OptInProposition(
     currentTaxYearOptIn,
@@ -50,16 +50,16 @@ class OptInAuditModelSpec extends TestSupport {
         auditModel.auditType shouldBe "OptInQuarterlyReportingRequest"
         auditModel.transactionName shouldBe "opt-in-quarterly-reporting-request"
         auditModel.detail shouldBe Json.obj(
-          "nino" -> tsTestUser.nino,
-          "mtditid" -> tsTestUser.mtditid,
-          "saUtr" -> tsTestUser.saUtr,
-          "credId" -> tsTestUser.credId,
-          "userType" -> tsTestUser.userType,
-          "optInRequestedFromTaxYear" -> "23-24",
-          "currentYear" -> "23-24",
-          "beforeITSAStatusCurrentYear" -> "Annual",
-          "beforeITSAStatusCurrentYear+1" -> "Annual",
-          "afterAssumedITSAStatusCurrentYear" -> "Annual",
+          "nino"                                -> tsTestUser.nino,
+          "mtditid"                             -> tsTestUser.mtditid,
+          "saUtr"                               -> tsTestUser.saUtr,
+          "credId"                              -> tsTestUser.credId,
+          "userType"                            -> tsTestUser.userType,
+          "optInRequestedFromTaxYear"           -> "23-24",
+          "currentYear"                         -> "23-24",
+          "beforeITSAStatusCurrentYear"         -> "Annual",
+          "beforeITSAStatusCurrentYear+1"       -> "Annual",
+          "afterAssumedITSAStatusCurrentYear"   -> "Annual",
           "afterAssumedITSAStatusCurrentYear+1" -> "MTD Voluntary",
           "outcome" -> Json.obj(
             "isSuccessful" -> true
@@ -72,21 +72,21 @@ class OptInAuditModelSpec extends TestSupport {
         val auditModel = OptInAuditModel(optInProposition, intentTaxYear, resolvedResponse)
 
         auditModel.detail shouldBe Json.obj(
-          "nino" -> tsTestUser.nino,
-          "mtditid" -> tsTestUser.mtditid,
-          "saUtr" -> tsTestUser.saUtr,
-          "credId" -> tsTestUser.credId,
-          "userType" -> tsTestUser.userType,
-          "optInRequestedFromTaxYear" -> "23-24",
-          "currentYear" -> "23-24",
-          "beforeITSAStatusCurrentYear" -> "Annual",
-          "beforeITSAStatusCurrentYear+1" -> "Annual",
-          "afterAssumedITSAStatusCurrentYear" -> "Annual",
+          "nino"                                -> tsTestUser.nino,
+          "mtditid"                             -> tsTestUser.mtditid,
+          "saUtr"                               -> tsTestUser.saUtr,
+          "credId"                              -> tsTestUser.credId,
+          "userType"                            -> tsTestUser.userType,
+          "optInRequestedFromTaxYear"           -> "23-24",
+          "currentYear"                         -> "23-24",
+          "beforeITSAStatusCurrentYear"         -> "Annual",
+          "beforeITSAStatusCurrentYear+1"       -> "Annual",
+          "afterAssumedITSAStatusCurrentYear"   -> "Annual",
           "afterAssumedITSAStatusCurrentYear+1" -> "MTD Voluntary",
           "outcome" -> Json.obj(
-            "isSuccessful" -> false,
+            "isSuccessful"    -> false,
             "failureCategory" -> "INTERNAL_SERVER_ERROR",
-            "failureReason" -> "Request failed due to unknown reason"
+            "failureReason"   -> "Request failed due to unknown reason"
           )
         )
       }

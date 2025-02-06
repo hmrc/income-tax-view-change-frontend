@@ -28,11 +28,12 @@ import scala.concurrent.Future
 
 class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataRepository {
 
-  object TestSessionService extends SessionService(
-    mockUIJourneySessionDataRepository,
-    mockSensitiveUIJourneySessionDataRepository,
-    mockFrontendAppConfig
-  )
+  object TestSessionService
+      extends SessionService(
+        mockUIJourneySessionDataRepository,
+        mockSensitiveUIJourneySessionDataRepository,
+        mockFrontendAppConfig
+      )
 
   "sessionService " when {
     "mongo" when {
@@ -50,38 +51,51 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
         "return the correct session value for given key" in {
           val sessionData = UIJourneySessionData("session-123456", "ADD-SE")
           mockRepositoryGet(Some(sessionData))
-          TestSessionService.getMongo(IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue shouldBe Right(Some(sessionData))
+          TestSessionService
+            .getMongo(IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier, ec)
+            .futureValue shouldBe Right(Some(sessionData))
         }
 
         "return the correct session value for given key if encryption is enabled" in {
           val sessionData = UIJourneySessionData("session-123456", "ADD-SE")
           when(mockFrontendAppConfig.encryptionIsEnabled).thenReturn(true)
           mockRepositoryGet(Some(sessionData), isSensitive = true)
-          TestSessionService.getMongo(IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue shouldBe Right(Some(sessionData))
+          TestSessionService
+            .getMongo(IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier, ec)
+            .futureValue shouldBe Right(Some(sessionData))
         }
 
       }
 
       "getMongoKey method " should {
         "return the correct session value for given key" in {
-          val sessionData = UIJourneySessionData("session-123456", "ADD-SE", Some(AddIncomeSourceData(Some("my business"))))
+          val sessionData =
+            UIJourneySessionData("session-123456", "ADD-SE", Some(AddIncomeSourceData(Some("my business"))))
           mockRepositoryGet(Some(sessionData))
-          TestSessionService.getMongoKey("businessName", IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue shouldBe Right(Some("my business"))
+          TestSessionService
+            .getMongoKey("businessName", IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier, ec)
+            .futureValue shouldBe Right(Some("my business"))
         }
       }
 
       "getMongoKeyTyped method with type" should {
         "get string value" in {
-          val sessionData = UIJourneySessionData("session-123456", "ADD-SE", Some(AddIncomeSourceData(Some("my business"))))
+          val sessionData =
+            UIJourneySessionData("session-123456", "ADD-SE", Some(AddIncomeSourceData(Some("my business"))))
           mockRepositoryGet(Some(sessionData))
-          TestSessionService.getMongoKeyTyped[String]("businessName", IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier, ec)
+          TestSessionService
+            .getMongoKeyTyped[String]("businessName", IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier, ec)
             .futureValue shouldBe Right(Some("my business"))
         }
         "get LocalDate value" in {
-          val sessionData = UIJourneySessionData("session-123456", "ADD-SE", Some(AddIncomeSourceData(
-            Some("my business"), Some("plumbing"), Some(LocalDate.of(2023, 5, 23)))))
+          val sessionData = UIJourneySessionData(
+            "session-123456",
+            "ADD-SE",
+            Some(AddIncomeSourceData(Some("my business"), Some("plumbing"), Some(LocalDate.of(2023, 5, 23))))
+          )
           mockRepositoryGet(Some(sessionData))
-          TestSessionService.getMongoKeyTyped[LocalDate]("dateStarted", IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier, ec)
+          TestSessionService
+            .getMongoKeyTyped[LocalDate]("dateStarted", IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier, ec)
             .futureValue shouldBe Right(Some(LocalDate.parse("2023-05-23")))
         }
       }
@@ -89,20 +103,20 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
       "setMongoData method" should {
         "return true when data is set" in {
           mockRepositorySet(response = true)
-          val result: Boolean = TestSessionService.setMongoData(UIJourneySessionData("session-1", "ADD-SE"))(headerCarrier, ec)
-            .futureValue
+          val result: Boolean =
+            TestSessionService.setMongoData(UIJourneySessionData("session-1", "ADD-SE"))(headerCarrier, ec).futureValue
           result shouldBe true
         }
         "return true when data is set and encryption is enabled" in {
           mockRepositorySet(response = true, isSensitive = true)
           when(mockFrontendAppConfig.encryptionIsEnabled).thenReturn(true)
-          val result: Boolean = TestSessionService.setMongoData(UIJourneySessionData("session-1", "ADD-SE"))(headerCarrier, ec)
-            .futureValue
+          val result: Boolean =
+            TestSessionService.setMongoData(UIJourneySessionData("session-1", "ADD-SE"))(headerCarrier, ec).futureValue
           result shouldBe true
         }
         "return a future error" in {
           mockRepositorySet(response = true, withFailureResult = true)
-          val result= TestSessionService.setMongoData(UIJourneySessionData("session-1", "ADD-SE"))(headerCarrier, ec)
+          val result = TestSessionService.setMongoData(UIJourneySessionData("session-1", "ADD-SE"))(headerCarrier, ec)
           result.failed.futureValue.leftSideValue.getMessage shouldBe "Error while set data"
         }
       }
@@ -110,26 +124,40 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
       "setMultipleMongoData method" should {
         "return true when journey type is Add" in {
           updateMultipleData()
-          val result: Either[Throwable, Boolean] = TestSessionService.setMultipleMongoData(Map("key" -> "value"),
-            IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue
+          val result: Either[Throwable, Boolean] = TestSessionService
+            .setMultipleMongoData(Map("key" -> "value"), IncomeSourceJourneyType(Add, SelfEmployment))(
+              headerCarrier,
+              ec
+            )
+            .futureValue
           result shouldBe Right(true)
         }
         "return true when journey type is Manage" in {
           updateMultipleData()
-          val result: Either[Throwable, Boolean] = TestSessionService.setMultipleMongoData(Map("key" -> "value"),
-            IncomeSourceJourneyType(Manage, SelfEmployment))(headerCarrier, ec).futureValue
+          val result: Either[Throwable, Boolean] = TestSessionService
+            .setMultipleMongoData(Map("key" -> "value"), IncomeSourceJourneyType(Manage, SelfEmployment))(
+              headerCarrier,
+              ec
+            )
+            .futureValue
           result shouldBe Right(true)
         }
         "return true when journey type is Cease" in {
           updateMultipleData()
-          val result: Either[Throwable, Boolean] = TestSessionService.setMultipleMongoData(Map("key" -> "value"),
-            IncomeSourceJourneyType(Cease, SelfEmployment))(headerCarrier, ec).futureValue
+          val result: Either[Throwable, Boolean] = TestSessionService
+            .setMultipleMongoData(Map("key" -> "value"), IncomeSourceJourneyType(Cease, SelfEmployment))(
+              headerCarrier,
+              ec
+            )
+            .futureValue
           result shouldBe Right(true)
         }
         "return a future error" in {
           updateMultipleData(false)
-          val result = TestSessionService.setMultipleMongoData(Map("key" -> "value"),
-            IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier, ec)
+          val result = TestSessionService.setMultipleMongoData(
+            Map("key" -> "value"),
+            IncomeSourceJourneyType(Add, SelfEmployment)
+          )(headerCarrier, ec)
           result.failed.futureValue.leftSideValue.getMessage shouldBe "Error returned from mongoDb"
         }
       }
@@ -137,20 +165,23 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
       "setMongoKey method" should {
         "return true when journey type is Add" in {
           mockRepositoryUpdateData()
-          val result: Either[Throwable, Boolean] = TestSessionService.setMongoKey("key", "value",
-            IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue
+          val result: Either[Throwable, Boolean] = TestSessionService
+            .setMongoKey("key", "value", IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier, ec)
+            .futureValue
           result shouldBe Right(true)
         }
         "return true when journey type is Manage" in {
           mockRepositoryUpdateData()
-          val result: Either[Throwable, Boolean] = TestSessionService.setMongoKey("key", "value",
-            IncomeSourceJourneyType(Manage, SelfEmployment))(headerCarrier, ec).futureValue
+          val result: Either[Throwable, Boolean] = TestSessionService
+            .setMongoKey("key", "value", IncomeSourceJourneyType(Manage, SelfEmployment))(headerCarrier, ec)
+            .futureValue
           result shouldBe Right(true)
         }
         "return true when journey type is Cease" in {
           mockRepositoryUpdateData()
-          val result: Either[Throwable, Boolean] = TestSessionService.setMongoKey("key", "value",
-            IncomeSourceJourneyType(Cease, SelfEmployment))(headerCarrier, ec).futureValue
+          val result: Either[Throwable, Boolean] = TestSessionService
+            .setMongoKey("key", "value", IncomeSourceJourneyType(Cease, SelfEmployment))(headerCarrier, ec)
+            .futureValue
           result shouldBe Right(true)
         }
       }
@@ -158,13 +189,15 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
       "deleteMongoData method" should {
         "return a future boolean value" in {
           mockDeleteOne()
-          val result: Boolean = TestSessionService.deleteMongoData(IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier).futureValue
+          val result: Boolean =
+            TestSessionService.deleteMongoData(IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier).futureValue
           result shouldBe true
         }
         "return a future boolean value if encryption is enabled" in {
           when(mockFrontendAppConfig.encryptionIsEnabled).thenReturn(true)
           mockDeleteOne(isSensitive = true)
-          val result: Boolean = TestSessionService.deleteMongoData(IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier).futureValue
+          val result: Boolean =
+            TestSessionService.deleteMongoData(IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier).futureValue
           result shouldBe true
         }
       }
@@ -187,7 +220,7 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
         "return a future unit value" in {
           mockClearSession(headerCarrier.sessionId.get.value)(Future.successful(true))
           val result: Unit = TestSessionService.clearSession(headerCarrier.sessionId.get.value).futureValue
-          result shouldBe()
+          result shouldBe ()
         }
         "return a failed future value" in {
           mockClearSession(headerCarrier.sessionId.get.value)(Future.successful(false))

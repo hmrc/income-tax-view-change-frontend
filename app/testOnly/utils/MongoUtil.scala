@@ -30,24 +30,27 @@ import org.mongodb.scala.result.{DeleteResult, UpdateResult}
 import uk.gov.hmrc.mongo.transaction.{TransactionConfiguration, Transactions}
 
 @Singleton
-class UserRepository @Inject()(val mongoComponent: MongoComponent, implicit val ec: ExecutionContext)
-  extends PlayMongoRepository[UserRecord](
-    collectionName = "user",
-    mongoComponent = mongoComponent,
-    domainFormat = UserRecord.formats,
-    indexes = Seq()
-  ) {
+class UserRepository @Inject() (val mongoComponent: MongoComponent, implicit val ec: ExecutionContext)
+    extends PlayMongoRepository[UserRecord](
+      collectionName = "user",
+      mongoComponent = mongoComponent,
+      domainFormat = UserRecord.formats,
+      indexes = Seq()
+    ) {
 
   def findAll(): Future[Seq[UserRecord]] =
     collection.find().toFuture()
 
   def findUser(nino: String): Future[UserRecord] =
-    collection.find(equal("nino", nino)).toFuture()
+    collection
+      .find(equal("nino", nino))
+      .toFuture()
       .map(records => records.head)
 
   def addUser(userRecord: UserRecord): Future[UpdateResult] = {
-    collection.replaceOne(equal("nino", userRecord.nino), userRecord,
-      options = ReplaceOptions().upsert(true)).toFuture()
+    collection
+      .replaceOne(equal("nino", userRecord.nino), userRecord, options = ReplaceOptions().upsert(true))
+      .toFuture()
   }
 
   def removeAll(): Future[DeleteResult] = {

@@ -29,17 +29,22 @@ import javax.inject.Inject
 import scala.concurrent.duration.{Duration, SECONDS}
 import scala.concurrent.{ExecutionContext, Future}
 
-
-class ClaimToAdjustPoaConnector @Inject() ( frontendAppConfig: FrontendAppConfig,
-                                            val http: HttpClientV2)
-                                          ( implicit val ec: ExecutionContext ) {
+class ClaimToAdjustPoaConnector @Inject() (
+    frontendAppConfig: FrontendAppConfig,
+    val http:          HttpClientV2
+  )(
+    implicit val ec: ExecutionContext) {
 
   val endpoint = s"${frontendAppConfig.itvcProtectedService}/income-tax-view-change/submit-claim-to-adjust-poa"
 
-  def postClaimToAdjustPoa(request: ClaimToAdjustPoaRequest)(implicit hc: HeaderCarrier
-  ): Future[ClaimToAdjustPoaResponse] = {
+  def postClaimToAdjustPoa(
+      request: ClaimToAdjustPoaRequest
+    )(
+      implicit hc: HeaderCarrier
+    ): Future[ClaimToAdjustPoaResponse] = {
 
-    val correlationId = CorrelationId.fromHeaderCarrier(hc)
+    val correlationId = CorrelationId
+      .fromHeaderCarrier(hc)
       .getOrElse(CorrelationId())
 
     http

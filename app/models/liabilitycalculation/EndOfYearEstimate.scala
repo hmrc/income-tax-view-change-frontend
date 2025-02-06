@@ -19,34 +19,32 @@ package models.liabilitycalculation
 import play.api.libs.json._
 
 case class EndOfYearEstimate(
-                              incomeSource: Option[List[IncomeSource]],
-                              totalEstimatedIncome: Option[Int] = None,
-                              totalTaxableIncome: Option[Int] = None,
-                              totalAllowancesAndDeductions: Option[BigDecimal] = None,
-                              incomeTaxAmount: Option[BigDecimal] = None,
-                              nic2: Option[BigDecimal] = None,
-                              nic4: Option[BigDecimal] = None,
-                              totalNicAmount: Option[BigDecimal] = None,
-                              totalTaxDeductedBeforeCodingOut: Option[BigDecimal] = None,
-                              saUnderpaymentsCodedOut: Option[BigDecimal] = None,
-                              totalStudentLoansRepaymentAmount: Option[BigDecimal] = None,
-                              totalAnnuityPaymentsTaxCharged: Option[BigDecimal] = None,
-                              totalRoyaltyPaymentsTaxCharged: Option[BigDecimal] = None,
-                              totalTaxDeducted: Option[BigDecimal] = None,
-                              incomeTaxNicAmount: Option[BigDecimal] = None,
-                              cgtAmount: Option[BigDecimal] = None,
-                              incomeTaxNicAndCgtAmount: Option[BigDecimal] = None
-                            )
+    incomeSource:                     Option[List[IncomeSource]],
+    totalEstimatedIncome:             Option[Int] = None,
+    totalTaxableIncome:               Option[Int] = None,
+    totalAllowancesAndDeductions:     Option[BigDecimal] = None,
+    incomeTaxAmount:                  Option[BigDecimal] = None,
+    nic2:                             Option[BigDecimal] = None,
+    nic4:                             Option[BigDecimal] = None,
+    totalNicAmount:                   Option[BigDecimal] = None,
+    totalTaxDeductedBeforeCodingOut:  Option[BigDecimal] = None,
+    saUnderpaymentsCodedOut:          Option[BigDecimal] = None,
+    totalStudentLoansRepaymentAmount: Option[BigDecimal] = None,
+    totalAnnuityPaymentsTaxCharged:   Option[BigDecimal] = None,
+    totalRoyaltyPaymentsTaxCharged:   Option[BigDecimal] = None,
+    totalTaxDeducted:                 Option[BigDecimal] = None,
+    incomeTaxNicAmount:               Option[BigDecimal] = None,
+    cgtAmount:                        Option[BigDecimal] = None,
+    incomeTaxNicAndCgtAmount:         Option[BigDecimal] = None)
 
 object EndOfYearEstimate {
   implicit val format: OFormat[EndOfYearEstimate] = Json.format[EndOfYearEstimate]
 }
 
 case class IncomeSource(
-                         incomeSourceType: String,
-                         incomeSourceName: Option[String],
-                         taxableIncome: Int
-                       )
+    incomeSourceType: String,
+    incomeSourceName: Option[String],
+    taxableIncome:    Int)
 
 object IncomeSource {
   implicit val format: OFormat[IncomeSource] = Json.format[IncomeSource]

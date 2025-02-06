@@ -35,32 +35,36 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 @Singleton
-class AddIncomeSourceController @Inject()(val authActions: AuthActions,
-                                          val addIncomeSources: AddIncomeSources,
-                                          val incomeSourceDetailsService: IncomeSourceDetailsService)
-                                         (implicit val appConfig: FrontendAppConfig,
-                                          val ec: ExecutionContext,
-                                          val itvcErrorHandler: ItvcErrorHandler,
-                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                          val sessionService: SessionService,
-                                          val mcc: MessagesControllerComponents) extends FrontendController(mcc)
-  with I18nSupport with IncomeSourcesUtils {
+class AddIncomeSourceController @Inject() (
+    val authActions:                AuthActions,
+    val addIncomeSources:           AddIncomeSources,
+    val incomeSourceDetailsService: IncomeSourceDetailsService
+  )(
+    implicit val appConfig:    FrontendAppConfig,
+    val ec:                    ExecutionContext,
+    val itvcErrorHandler:      ItvcErrorHandler,
+    val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+    val sessionService:        SessionService,
+    val mcc:                   MessagesControllerComponents)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with IncomeSourcesUtils {
 
-  lazy val homePageCall: Call = controllers.routes.HomeController.show()
+  lazy val homePageCall:      Call = controllers.routes.HomeController.show()
   lazy val homePageCallAgent: Call = controllers.routes.HomeController.showAgent
 
-  def show(): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
+  def show(): Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit user =>
       handleRequest(
         isAgent = false,
         homePageCall = homePageCall,
         sources = user.incomeSources,
         backUrl = controllers.routes.HomeController.show().url
       )(implicitly, itvcErrorHandler)
-  }
+    }
 
-  def showAgent(): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
-    implicit mtdItUser =>
+  def showAgent(): Action[AnyContent] =
+    authActions.asMTDAgentWithConfirmedClient.async { implicit mtdItUser =>
       handleRequest(
         isAgent = true,
         homePageCall = homePageCallAgent,
@@ -68,24 +72,30 @@ class AddIncomeSourceController @Inject()(val authActions: AuthActions,
         backUrl = controllers.routes.HomeController.showAgent.url
       )(implicitly, itvcErrorHandlerAgent)
 
-  }
+    }
 
-  def handleRequest(sources: IncomeSourceDetailsModel,
-                    homePageCall: Call,
-                    isAgent: Boolean,
-                    backUrl: String)
-                   (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
+  def handleRequest(
+      sources:      IncomeSourceDetailsModel,
+      homePageCall: Call,
+      isAgent:      Boolean,
+      backUrl:      String
+    )(
+      implicit user: MtdItUser[_],
+      errorHandler:  ShowInternalServerError
+    ): Future[Result] = {
     if (!isEnabled(IncomeSourcesFs)) {
       Future.successful(Redirect(homePageCall))
     } else {
       incomeSourceDetailsService.getAddIncomeSourceViewModel(sources) match {
         case Success(viewModel) =>
           sessionService.deleteSession(Add).map { _ =>
-            Ok(addIncomeSources(
-              sources = viewModel,
-              isAgent = isAgent,
-              backUrl = backUrl
-            ))
+            Ok(
+              addIncomeSources(
+                sources = viewModel,
+                isAgent = isAgent,
+                backUrl = backUrl
+              )
+            )
           } recover {
             case ex: Exception =>
               Logger("application").error(s"Session Error: ${ex.getMessage} - ${ex.getCause}")

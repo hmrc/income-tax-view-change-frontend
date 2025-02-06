@@ -29,22 +29,22 @@ import services.optIn.OptInService
 import services.optIn.core.OptInProposition.createOptInProposition
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
-class OptInCompletedControllerSpec extends MockAuthActions
-  with MockOptInService {
+class OptInCompletedControllerSpec extends MockAuthActions with MockOptInService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[OptInService].toInstance(mockOptInService)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[OptInCompletedController]
 
-  val endTaxYear = 2023
+  val endTaxYear  = 2023
   val taxYear2023 = TaxYear.forYearEnd(endTaxYear)
 
   mtdAllRoles.foreach { mtdRole =>
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
-    val isAgent = mtdRole != MTDIndividual
+    val isAgent     = mtdRole != MTDIndividual
     s"show(isAgent = $isAgent)" when {
       val action = testController.show(isAgent)
       s"the user is authenticated as a $mtdRole" should {

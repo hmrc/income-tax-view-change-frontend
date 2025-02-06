@@ -39,49 +39,72 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DeductionsSummaryController @Inject()(val authActions: AuthActions,
-                                            val calculationService: CalculationService,
-                                            val auditingService: AuditingService,
-                                            val deductionBreakdownView: DeductionBreakdown,
-                                            val itvcErrorHandler: ItvcErrorHandler,
-                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                           (implicit val appConfig: FrontendAppConfig,
-                                            val mcc: MessagesControllerComponents,
-                                            val ec: ExecutionContext,
-                                            val languageUtils: LanguageUtils)
-  extends FrontendController(mcc) with ImplicitDateFormatter with I18nSupport with TaxCalcFallBackBackLink {
+class DeductionsSummaryController @Inject() (
+    val authActions:            AuthActions,
+    val calculationService:     CalculationService,
+    val auditingService:        AuditingService,
+    val deductionBreakdownView: DeductionBreakdown,
+    val itvcErrorHandler:       ItvcErrorHandler,
+    val itvcErrorHandlerAgent:  AgentItvcErrorHandler
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    val mcc:                MessagesControllerComponents,
+    val ec:                 ExecutionContext,
+    val languageUtils:      LanguageUtils)
+    extends FrontendController(mcc)
+    with ImplicitDateFormatter
+    with I18nSupport
+    with TaxCalcFallBackBackLink {
 
-  def handleRequest(origin: Option[String] = None,
-                    itcvErrorHandler: ShowInternalServerError,
-                    taxYear: Int,
-                    isAgent: Boolean)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
+  def handleRequest(
+      origin:           Option[String] = None,
+      itcvErrorHandler: ShowInternalServerError,
+      taxYear:          Int,
+      isAgent:          Boolean
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier,
+      ec:            ExecutionContext,
+      messages:      Messages
+    ): Future[Result] = {
     calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case liabilityCalc: LiabilityCalculationResponse =>
         val viewModel = AllowancesAndDeductionsViewModel(liabilityCalc.calculation)
         auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(user, viewModel))
-        val fallbackBackUrl = getFallbackUrl(user.session.get(calcPagesBackPage), isAgent,
-          liabilityCalc.metadata.crystallised.getOrElse(false), taxYear, origin)
-        Ok(deductionBreakdownView(viewModel, taxYear, backUrl = fallbackBackUrl, btaNavPartial = user.btaNavPartial, isAgent = isAgent)(implicitly, messages))
+        val fallbackBackUrl = getFallbackUrl(
+          user.session.get(calcPagesBackPage),
+          isAgent,
+          liabilityCalc.metadata.crystallised.getOrElse(false),
+          taxYear,
+          origin
+        )
+        Ok(
+          deductionBreakdownView(
+            viewModel,
+            taxYear,
+            backUrl = fallbackBackUrl,
+            btaNavPartial = user.btaNavPartial,
+            isAgent = isAgent
+          )(implicitly, messages)
+        )
       case error: LiabilityCalculationError if error.status == NO_CONTENT =>
         Logger("application").info(s"${if (isAgent) "[Agent]"}[$taxYear] No deductions data found.")
         itvcErrorHandler.showInternalServerError()
       case _: LiabilityCalculationError =>
-        Logger("application").error(
-          s"${if (isAgent) "[Agent]"}[$taxYear] No new calc deductions data error found. Downstream error")
+        Logger("application")
+          .error(s"${if (isAgent) "[Agent]"}[$taxYear] No new calc deductions data error found. Downstream error")
         itvcErrorHandler.showInternalServerError()
     }
   }
 
   def showDeductionsSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] =
-    authActions.asMTDIndividual.async {
-      implicit user =>
-        handleRequest(
-          origin = origin,
-          itcvErrorHandler = itvcErrorHandler,
-          taxYear = taxYear,
-          isAgent = false
-        )
+    authActions.asMTDIndividual.async { implicit user =>
+      handleRequest(
+        origin = origin,
+        itcvErrorHandler = itvcErrorHandler,
+        taxYear = taxYear,
+        isAgent = false
+      )
     }
 
   def showDeductionsSummaryAgent(taxYear: Int): Action[AnyContent] = {

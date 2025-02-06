@@ -30,73 +30,135 @@ import java.time.LocalDate
 class PaymentHistoryResponseAuditModelSpec extends TestSupport {
 
   val transactionName = "payment-history-response"
-  val auditEvent = "PaymentHistoryResponse"
+  val auditEvent      = "PaymentHistoryResponse"
   val paymentFromEarlierYear: String = messages("paymentHistory.paymentFromEarlierYear")
 
-  private def paymentHistoryAuditFullTxm(userType: Option[AffinityGroup] = Some(Individual)) = PaymentHistoryResponseAuditModel(
-    mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, None, List.empty, List.empty)),
-  payments = Seq(
-      Payment(reference = Some("payment1"), amount = Some(100.00), outstandingAmount = None,
-        method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
-        dueDate = Some(LocalDate.parse("2018-02-01")), documentDate = LocalDate.parse("2018-02-05"), None,
-        mainType = Some("Payment"), mainTransaction = Some("0060")),
-      Payment(reference = Some("cutover1"), amount = Some(-100.00), outstandingAmount = None,
-        method = Some("method"), documentDescription = None, lot = None, lotItem = None, dueDate = Some(LocalDate.parse("2018-02-02")),
-        documentDate = LocalDate.parse("2018-02-05"), None, mainType = Some("ITSA Cutover Credits"), mainTransaction = Some("6110")),
-      Payment(reference = Some("cutover2"), amount = Some(-100.00), outstandingAmount = None,
-        method = Some("method"), documentDescription = None, lot = None, lotItem = None, dueDate = Some(LocalDate.parse("2018-02-03")),
-        documentDate = LocalDate.parse("2018-02-05"), None, mainType = Some("ITSA Cutover Credits"), mainTransaction = Some("6110")),
-      Payment(reference = Some("mfa1"), amount = Some(-100.00), outstandingAmount = None,
-        method = Some("method"), mainType = Some("ITSA Overpayment Relief"), mainTransaction = Some("4004"), lot = None, lotItem = None,
-        dueDate = None, documentDate = LocalDate.parse("2018-02-04"), transactionId = None, documentDescription = None),
-      Payment(reference = Some("mfa2"), amount = Some(-100.00), outstandingAmount = None,
-        method = Some("method"), mainType = Some("ITSA Overpayment Relief"), mainTransaction = Some("4004"), lot = None, lotItem = None,
-        dueDate = None, documentDate = LocalDate.parse("2018-02-05"), transactionId = None, documentDescription = None)
+  private def paymentHistoryAuditFullTxm(userType: Option[AffinityGroup] = Some(Individual)) =
+    PaymentHistoryResponseAuditModel(
+      mtdItUser =
+        defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, None, List.empty, List.empty)),
+      payments = Seq(
+        Payment(
+          reference = Some("payment1"),
+          amount = Some(100.00),
+          outstandingAmount = None,
+          method = Some("method"),
+          documentDescription = None,
+          lot = Some("lot"),
+          lotItem = Some("lotItem"),
+          dueDate = Some(LocalDate.parse("2018-02-01")),
+          documentDate = LocalDate.parse("2018-02-05"),
+          None,
+          mainType = Some("Payment"),
+          mainTransaction = Some("0060")
+        ),
+        Payment(
+          reference = Some("cutover1"),
+          amount = Some(-100.00),
+          outstandingAmount = None,
+          method = Some("method"),
+          documentDescription = None,
+          lot = None,
+          lotItem = None,
+          dueDate = Some(LocalDate.parse("2018-02-02")),
+          documentDate = LocalDate.parse("2018-02-05"),
+          None,
+          mainType = Some("ITSA Cutover Credits"),
+          mainTransaction = Some("6110")
+        ),
+        Payment(
+          reference = Some("cutover2"),
+          amount = Some(-100.00),
+          outstandingAmount = None,
+          method = Some("method"),
+          documentDescription = None,
+          lot = None,
+          lotItem = None,
+          dueDate = Some(LocalDate.parse("2018-02-03")),
+          documentDate = LocalDate.parse("2018-02-05"),
+          None,
+          mainType = Some("ITSA Cutover Credits"),
+          mainTransaction = Some("6110")
+        ),
+        Payment(
+          reference = Some("mfa1"),
+          amount = Some(-100.00),
+          outstandingAmount = None,
+          method = Some("method"),
+          mainType = Some("ITSA Overpayment Relief"),
+          mainTransaction = Some("4004"),
+          lot = None,
+          lotItem = None,
+          dueDate = None,
+          documentDate = LocalDate.parse("2018-02-04"),
+          transactionId = None,
+          documentDescription = None
+        ),
+        Payment(
+          reference = Some("mfa2"),
+          amount = Some(-100.00),
+          outstandingAmount = None,
+          method = Some("method"),
+          mainType = Some("ITSA Overpayment Relief"),
+          mainTransaction = Some("4004"),
+          lot = None,
+          lotItem = None,
+          dueDate = None,
+          documentDate = LocalDate.parse("2018-02-05"),
+          transactionId = None,
+          documentDescription = None
+        )
+      )
     )
-  )
 
   val paymentHistoryAuditMin: PaymentHistoryResponseAuditModel = PaymentHistoryResponseAuditModel(
-    mtdItUser = getMinimalMTDITUser(None, IncomeSourceDetailsModel(testNino, testMtditid, None, List.empty, List.empty)),
+    mtdItUser =
+      getMinimalMTDITUser(None, IncomeSourceDetailsModel(testNino, testMtditid, None, List.empty, List.empty)),
     payments = Seq.empty[Payment]
   )
 
   def getExpectedJson(MFA: Boolean = true): JsObject = {
-    def getCutOver: JsArray = Json.arr(
-      Json.obj(
-        "paymentDate" -> "2018-02-02",
-        "description" -> "Credit from an earlier tax year",
-        "amount" -> -100.00
-      ),
-      Json.obj(
-        "paymentDate" -> "2018-02-03",
-        "description" -> "Credit from an earlier tax year",
-        "amount" -> -100.00
-      ),
-    )
+    def getCutOver: JsArray =
+      Json.arr(
+        Json.obj(
+          "paymentDate" -> "2018-02-02",
+          "description" -> "Credit from an earlier tax year",
+          "amount"      -> -100.00
+        ),
+        Json.obj(
+          "paymentDate" -> "2018-02-03",
+          "description" -> "Credit from an earlier tax year",
+          "amount"      -> -100.00
+        )
+      )
 
-    def getMFA(MFA: Boolean): JsArray = if (MFA) Json.arr(
-      Json.obj(
-      "paymentDate" -> "2018-02-04",
-      "description" -> "Credit from HMRC adjustment",
-      "amount" -> -100.00
-    ),
-    Json.obj(
-      "paymentDate" -> "2018-02-05",
-      "description" -> "Credit from HMRC adjustment",
-      "amount" -> -100.00
-    )) else Json.arr()
+    def getMFA(MFA: Boolean): JsArray =
+      if (MFA)
+        Json.arr(
+          Json.obj(
+            "paymentDate" -> "2018-02-04",
+            "description" -> "Credit from HMRC adjustment",
+            "amount"      -> -100.00
+          ),
+          Json.obj(
+            "paymentDate" -> "2018-02-05",
+            "description" -> "Credit from HMRC adjustment",
+            "amount"      -> -100.00
+          )
+        )
+      else Json.arr()
 
     Json.obj(
-      "mtditid" -> testMtditid,
-      "nino" -> testNino,
-      "saUtr" -> testSaUtr,
-      "credId" -> testCredId,
+      "mtditid"  -> testMtditid,
+      "nino"     -> testNino,
+      "saUtr"    -> testSaUtr,
+      "credId"   -> testCredId,
       "userType" -> "Individual",
       "paymentHistory" -> (Json.arr(
         Json.obj(
           "paymentDate" -> "2018-02-01",
           "description" -> "Payment Made to HMRC",
-          "amount" -> 100.00
+          "amount"      -> 100.00
         )
       ) ++ getCutOver ++ getMFA(MFA))
     )
@@ -120,8 +182,8 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
 
         "the audit is empty" in {
           paymentHistoryAuditMin.detail shouldBe Json.obj(
-            "mtditid" -> testMtditid,
-            "nino" -> testNino,
+            "mtditid"        -> testMtditid,
+            "nino"           -> testNino,
             "paymentHistory" -> Json.arr()
           )
         }
@@ -129,4 +191,3 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
     }
   }
 }
-

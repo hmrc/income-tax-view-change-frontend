@@ -26,56 +26,64 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 class TaxYearsControllerISpec extends ControllerISpecHelper with FeatureSwitching {
 
   def getPath(mtdRole: MTDUserRole): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     pathStart + s"/tax-years"
   }
-  mtdAllRoles.foreach { case mtdUserRole =>
-    val path = getPath(mtdUserRole)
-    val additionalCookies = getAdditionalCookies(mtdUserRole)
-    s"GET $path" when {
-      s"a user is a $mtdUserRole" that {
-        "is authenticated, with a valid enrolment" should {
-          if (mtdUserRole == MTDSupportingAgent) {
-            testSupportingAgentAccessDenied(path, additionalCookies)
-          } else {
-            "render the forecast income summary page" when {
-              "the user has firstAccountingPeriodEndDate and hence valid tax years" in {
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
-
-                val res = buildGETMTDClient(path, additionalCookies).futureValue
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-                Then("The view should have the correct headings and all tax years display")
-                res should have(
-                  httpStatus(OK),
-                  pageTitle(mtdUserRole, "taxYears.heading"),
-                  nElementsWithClass("govuk-summary-list__row")(6),
-                  elementTextBySelectorList("dl", "div:nth-child(1)", "dt")(
-                    expectedValue = s"6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      val path              = getPath(mtdUserRole)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            if (mtdUserRole == MTDSupportingAgent) {
+              testSupportingAgentAccessDenied(path, additionalCookies)
+            } else {
+              "render the forecast income summary page" when {
+                "the user has firstAccountingPeriodEndDate and hence valid tax years" in {
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    multipleBusinessesAndPropertyResponseWoMigration
                   )
-                )
+
+                  val res = buildGETMTDClient(path, additionalCookies).futureValue
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+                  Then("The view should have the correct headings and all tax years display")
+                  res should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, "taxYears.heading"),
+                    nElementsWithClass("govuk-summary-list__row")(6),
+                    elementTextBySelectorList("dl", "div:nth-child(1)", "dt")(
+                      expectedValue =
+                        s"6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
+                    )
+                  )
+                }
               }
-            }
 
-            "return 500 Internal Server " when {
-              "no firstAccountingPeriodEndDate exists for both business and property" in {
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+              "return 500 Internal Server " when {
+                "no firstAccountingPeriodEndDate exists for both business and property" in {
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    noPropertyOrBusinessResponse
+                  )
 
-                val res = buildGETMTDClient(path, additionalCookies).futureValue
+                  val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-                res should have(
-                  httpStatus(INTERNAL_SERVER_ERROR)
-                )
+                  res should have(
+                    httpStatus(INTERNAL_SERVER_ERROR)
+                  )
+                }
               }
             }
           }
+          testAuthFailures(path, mtdUserRole)
         }
-        testAuthFailures(path, mtdUserRole)
       }
-    }
   }
 }

@@ -20,4 +20,8 @@ import models.financialDetails.{BalanceDetails, CreditType, DocumentDetail}
 
 import java.time.LocalDate
 
-case class CreditDetailModel(date: LocalDate, documentDetail: DocumentDetail, creditType: CreditType, balanceDetails: Option[BalanceDetails] = None)
+case class CreditDetailModel(
+    date:           LocalDate,
+    documentDetail: DocumentDetail,
+    creditType:     CreditType,
+    balanceDetails: Option[BalanceDetails] = None)

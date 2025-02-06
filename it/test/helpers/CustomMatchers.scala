@@ -69,8 +69,15 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
       }
     }
 
-  def pageTitle(mtdUserRole: MTDUserRole, messageKey: String, isInvalidInput: Boolean = false, isErrorPage: Boolean = false)
-               (implicit messagesAPI: MessagesApi, lang: Lang): HavePropertyMatcher[WSResponse, String] = {
+  def pageTitle(
+      mtdUserRole:    MTDUserRole,
+      messageKey:     String,
+      isInvalidInput: Boolean = false,
+      isErrorPage:    Boolean = false
+    )(
+      implicit messagesAPI: MessagesApi,
+      lang:                 Lang
+    ): HavePropertyMatcher[WSResponse, String] = {
     if (mtdUserRole == MTDIndividual) {
       pageTitleIndividual(messageKey, isInvalidInput, isErrorPage)
     } else {
@@ -78,8 +85,14 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
     }
   }
 
-  def pageTitleIndividual(messageKey: String, isInvalidInput: Boolean = false, isErrorPage: Boolean = false)
-                         (implicit lang: Lang, messagesAPI: MessagesApi): HavePropertyMatcher[WSResponse, String] =
+  def pageTitleIndividual(
+      messageKey:     String,
+      isInvalidInput: Boolean = false,
+      isErrorPage:    Boolean = false
+    )(
+      implicit lang: Lang,
+      messagesAPI:   MessagesApi
+    ): HavePropertyMatcher[WSResponse, String] =
     new HavePropertyMatcher[WSResponse, String] {
 
       def apply(response: WSResponse) = {
@@ -87,7 +100,7 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
         val expectedTitle = (isInvalidInput, isErrorPage) match {
           case (false, true) => messagesAPI("htmlTitle.errorPage", messagesAPI(messageKey))
           case (true, false) => messagesAPI("htmlTitle.invalidInput", messagesAPI(messageKey))
-          case (_, _) => messagesAPI("htmlTitle", messagesAPI(messageKey))
+          case (_, _)        => messagesAPI("htmlTitle", messagesAPI(messageKey))
         }
 
         Then(s"the page title should be '$expectedTitle'")
@@ -114,12 +127,15 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
       }
     }
 
-
-  def pageTitleAgent(messageKey: String,
-                     isInvalidInput: Boolean = false,
-                     isErrorPage: Boolean = false,
-                     showServiceName: Boolean = true)
-                    (implicit messagesAPI: MessagesApi, lang: Lang): HavePropertyMatcher[WSResponse, String] =
+  def pageTitleAgent(
+      messageKey:      String,
+      isInvalidInput:  Boolean = false,
+      isErrorPage:     Boolean = false,
+      showServiceName: Boolean = true
+    )(
+      implicit messagesAPI: MessagesApi,
+      lang:                 Lang
+    ): HavePropertyMatcher[WSResponse, String] =
     new HavePropertyMatcher[WSResponse, String] {
 
       def apply(response: WSResponse): HavePropertyMatchResult[String] = {
@@ -127,8 +143,8 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
         val expectedTitle = (isInvalidInput, isErrorPage, showServiceName) match {
           case (false, true, _) => messagesAPI("htmlTitle.errorPage", messagesAPI(messageKey))
           case (true, false, _) => messagesAPI("htmlTitle.invalidInput", messagesAPI(messageKey))
-          case (_, _, false) => messagesAPI("html.confirmClient", messagesAPI(messageKey))
-          case (_, _, true) => messagesAPI("htmlTitle.agent", messagesAPI(messageKey))
+          case (_, _, false)    => messagesAPI("html.confirmClient", messagesAPI(messageKey))
+          case (_, _, true)     => messagesAPI("htmlTitle.agent", messagesAPI(messageKey))
         }
 
         Then(s"the page title should be '$expectedTitle'")
@@ -141,11 +157,15 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
       }
     }
 
-  def pageTitleInd(messageKey: String,
-                   isInvalidInput: Boolean = false,
-                   isErrorPage: Boolean = false,
-                   showServiceName: Boolean = true)
-                  (implicit messagesAPI: MessagesApi, lang: Lang): HavePropertyMatcher[WSResponse, String] =
+  def pageTitleInd(
+      messageKey:      String,
+      isInvalidInput:  Boolean = false,
+      isErrorPage:     Boolean = false,
+      showServiceName: Boolean = true
+    )(
+      implicit messagesAPI: MessagesApi,
+      lang:                 Lang
+    ): HavePropertyMatcher[WSResponse, String] =
     new HavePropertyMatcher[WSResponse, String] {
 
       def apply(response: WSResponse): HavePropertyMatchResult[String] = {
@@ -153,8 +173,8 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
         val expectedTitle = (isInvalidInput, isErrorPage, showServiceName) match {
           case (false, true, _) => messagesAPI("htmlTitle.errorPage", messagesAPI(messageKey))
           case (true, false, _) => messagesAPI("htmlTitle.invalidInput", messagesAPI(messageKey))
-          case (_, _, false) => messagesAPI("html.confirmClient", messagesAPI(messageKey))
-          case (_, _, true) => messagesAPI("htmlTitle", messagesAPI(messageKey))
+          case (_, _, false)    => messagesAPI("html.confirmClient", messagesAPI(messageKey))
+          case (_, _, true)     => messagesAPI("htmlTitle", messagesAPI(messageKey))
         }
 
         Then(s"the page title should be '$expectedTitle'")
@@ -167,9 +187,14 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
       }
     }
 
-  def pageTitleAgentLogin(messageKey: String,
-                          isInvalidInput: Boolean = false,
-                          isErrorPage: Boolean = false)(implicit messagesAPI: MessagesApi, lang: Lang): HavePropertyMatcher[WSResponse, String] =
+  def pageTitleAgentLogin(
+      messageKey:     String,
+      isInvalidInput: Boolean = false,
+      isErrorPage:    Boolean = false
+    )(
+      implicit messagesAPI: MessagesApi,
+      lang:                 Lang
+    ): HavePropertyMatcher[WSResponse, String] =
     new HavePropertyMatcher[WSResponse, String] {
 
       def apply(response: WSResponse): HavePropertyMatchResult[String] = {
@@ -177,7 +202,7 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
         val expectedTitle = (isInvalidInput, isErrorPage) match {
           case (false, true) => messagesAPI("htmlTitle.errorPage", messagesAPI(messageKey))
           case (true, false) => messagesAPI("htmlTitle.invalidInput", messagesAPI(messageKey))
-          case (_, _) => messagesAPI("htmlTitle.confirmClient", messagesAPI(messageKey))
+          case (_, _)        => messagesAPI("htmlTitle.confirmClient", messagesAPI(messageKey))
 
         }
 
@@ -279,7 +304,12 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
     }
   }
 
-  def elementAttributeBySelector(selector: String, attr: String)(expectedValue: String): HavePropertyMatcher[WSResponse, String] = {
+  def elementAttributeBySelector(
+      selector: String,
+      attr:     String
+    )(
+      expectedValue: String
+    ): HavePropertyMatcher[WSResponse, String] = {
     HavePropertyMatcher[WSResponse, String] { response =>
       val body = Jsoup.parse(response.body)
       Then(s"the text of element should be '$expectedValue'")
@@ -293,7 +323,12 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
     }
   }
 
-  def elementAttributeByClass(className: String, attr: String)(expectedValue: String): HavePropertyMatcher[WSResponse, String] = {
+  def elementAttributeByClass(
+      className: String,
+      attr:      String
+    )(
+      expectedValue: String
+    ): HavePropertyMatcher[WSResponse, String] = {
     HavePropertyMatcher[WSResponse, String] { response =>
       val body = Jsoup.parse(response.body)
       HavePropertyMatchResult(
@@ -313,7 +348,7 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
       def selectHead(element: Element, selector: String): Element = {
         element.select(selector).asScala.headOption match {
           case Some(element) => element
-          case None => fail(s"Could not find element with selector: $selector")
+          case None          => fail(s"Could not find element with selector: $selector")
         }
       }
 
@@ -321,7 +356,7 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
       def recursiveSelector(selectors: List[String], currentElement: Element): Element = {
         selectors match {
           case head :: tail => recursiveSelector(tail, selectHead(currentElement, head))
-          case Nil => currentElement
+          case Nil          => currentElement
         }
       }
 
@@ -349,46 +384,49 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
       }
     }
 
-  def redirectURI(expectedValue: String): HavePropertyMatcher[WSResponse, String] = new HavePropertyMatcher[WSResponse, String] {
-    def apply(response: WSResponse) = {
-      val redirectLocation: Option[String] = response.header("Location")
-      Then(s"the redirect location should be '$expectedValue'")
-      HavePropertyMatchResult(
-        redirectLocation.contains(expectedValue),
-        "redirectURI",
-        expectedValue,
-        redirectLocation.getOrElse("")
-      )
+  def redirectURI(expectedValue: String): HavePropertyMatcher[WSResponse, String] =
+    new HavePropertyMatcher[WSResponse, String] {
+      def apply(response: WSResponse) = {
+        val redirectLocation: Option[String] = response.header("Location")
+        Then(s"the redirect location should be '$expectedValue'")
+        HavePropertyMatchResult(
+          redirectLocation.contains(expectedValue),
+          "redirectURI",
+          expectedValue,
+          redirectLocation.getOrElse("")
+        )
+      }
     }
-  }
 
-  def isElementVisibleById(id: String)(expectedValue: Boolean): HavePropertyMatcher[WSResponse, Boolean] = new HavePropertyMatcher[WSResponse, Boolean] {
+  def isElementVisibleById(id: String)(expectedValue: Boolean): HavePropertyMatcher[WSResponse, Boolean] =
+    new HavePropertyMatcher[WSResponse, Boolean] {
 
-    def apply(response: WSResponse) = {
-      val body = Jsoup.parse(response.body)
-      Then(s"it is $expectedValue that elementId '$id' should be on the page")
-      val actual = Option(body.getElementById(id)).isDefined
-      HavePropertyMatchResult(
-        actual == expectedValue,
-        s"elementByID($id)",
-        expectedValue,
-        actual
-      )
+      def apply(response: WSResponse) = {
+        val body = Jsoup.parse(response.body)
+        Then(s"it is $expectedValue that elementId '$id' should be on the page")
+        val actual = Option(body.getElementById(id)).isDefined
+        HavePropertyMatchResult(
+          actual == expectedValue,
+          s"elementByID($id)",
+          expectedValue,
+          actual
+        )
+      }
     }
-  }
 
-  def isElementVisibleBySomething(id: String)(expectedValue: Boolean): HavePropertyMatcher[WSResponse, Boolean] = new HavePropertyMatcher[WSResponse, Boolean] {
+  def isElementVisibleBySomething(id: String)(expectedValue: Boolean): HavePropertyMatcher[WSResponse, Boolean] =
+    new HavePropertyMatcher[WSResponse, Boolean] {
 
-    def apply(response: WSResponse) = {
-      val body = Jsoup.parse(response.body)
-      Then(s"it is $expectedValue that elementId '$id' should be on the page")
+      def apply(response: WSResponse) = {
+        val body = Jsoup.parse(response.body)
+        Then(s"it is $expectedValue that elementId '$id' should be on the page")
 
-      HavePropertyMatchResult(
-        body.toString.contains(id) == expectedValue,
-        s"elementByID($id)",
-        expectedValue,
-        body.toString.contains(id)
-      )
+        HavePropertyMatchResult(
+          body.toString.contains(id) == expectedValue,
+          s"elementByID($id)",
+          expectedValue,
+          body.toString.contains(id)
+        )
+      }
     }
-  }
 }

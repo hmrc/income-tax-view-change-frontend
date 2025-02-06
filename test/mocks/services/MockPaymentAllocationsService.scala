@@ -36,13 +36,19 @@ trait MockPaymentAllocationsService extends UnitSpec with BeforeAndAfterEach {
     reset(mockPaymentAllocationsService)
   }
 
-  def setupMockGetPaymentAllocation(nino: String, docNumber: String)
-                                   (response: Future[Either[PaymentAllocationError, PaymentAllocationViewModel]]): Unit =
-    when(mockPaymentAllocationsService
-      .getPaymentAllocation(
-        Nino(matches(nino)),
-        matches(docNumber)
-      )(any(), any()))
+  def setupMockGetPaymentAllocation(
+      nino:      String,
+      docNumber: String
+    )(
+      response: Future[Either[PaymentAllocationError, PaymentAllocationViewModel]]
+    ): Unit =
+    when(
+      mockPaymentAllocationsService
+        .getPaymentAllocation(
+          Nino(matches(nino)),
+          matches(docNumber)
+        )(any(), any())
+    )
       .thenReturn(response)
 
   def setupMockGetPaymentAllocationSuccess(nino: String, docNumber: String)(model: PaymentAllocationViewModel): Unit =

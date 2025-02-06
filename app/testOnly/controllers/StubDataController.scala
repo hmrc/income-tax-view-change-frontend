@@ -33,60 +33,72 @@ import testOnly.views.html.StubDataView
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class StubDataController @Inject()(stubDataView: StubDataView)
-                                  (implicit val appConfig: FrontendAppConfig,
-                                   implicit val mcc: MessagesControllerComponents,
-                                   implicit val executionContext: ExecutionContext,
-                                   val dynamicStubConnector: DynamicStubConnector
-                                  ) extends BaseController with I18nSupport {
+class StubDataController @Inject() (
+    stubDataView: StubDataView
+  )(
+    implicit val appConfig:        FrontendAppConfig,
+    implicit val mcc:              MessagesControllerComponents,
+    implicit val executionContext: ExecutionContext,
+    val dynamicStubConnector:      DynamicStubConnector)
+    extends BaseController
+    with I18nSupport {
 
   val show: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(view(StubDataForm.stubDataForm)))
   }
 
-  val submit: Action[AnyContent] = Action.async {
-    implicit request =>
-      StubDataForm.stubDataForm.bindFromRequest().fold(
+  val submit: Action[AnyContent] = Action.async { implicit request =>
+    StubDataForm.stubDataForm
+      .bindFromRequest()
+      .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
         schema => {
-          dynamicStubConnector.addData(schema).map(
-            response => response.status match {
-              case OK => Ok(view(StubDataForm.stubDataForm, showSuccess = true))
-              case _ => InternalServerError(view(StubDataForm.stubDataForm.fill(schema), errorResponse = Some(response.body)))
-            }
-          )
+          dynamicStubConnector
+            .addData(schema)
+            .map(response =>
+              response.status match {
+                case OK => Ok(view(StubDataForm.stubDataForm, showSuccess = true))
+                case _ =>
+                  InternalServerError(view(StubDataForm.stubDataForm.fill(schema), errorResponse = Some(response.body)))
+              }
+            )
         }
       )
   }
 
   val stubProxy: Action[JsValue] = Action.async(parse.json) { implicit request =>
-    withJsonBody[DataModel](
-      json => {
-        dynamicStubConnector.addData(json).map(
-          response => response.status match {
+    withJsonBody[DataModel](json => {
+      dynamicStubConnector
+        .addData(json)
+        .map(response =>
+          response.status match {
             case OK => Ok(s"The following JSON was added to the stub: \n\n${Json.toJson(json)}")
             case _ =>
               Logger("application").error(response.body)
               InternalServerError(response.body)
           }
         )
-      }
-    )
+    })
   }
 
   val deleteAllProxy: Action[AnyContent] = Action.async { implicit request =>
-    dynamicStubConnector.deleteAllData().map(
-      response => response.status match {
-        case OK => Ok("Delete All Data from the Stub...")
-        case _ => InternalServerError(response.body)
-      }
-    )
+    dynamicStubConnector
+      .deleteAllData()
+      .map(response =>
+        response.status match {
+          case OK => Ok("Delete All Data from the Stub...")
+          case _  => InternalServerError(response.body)
+        }
+      )
   }
 
-  private def view(form: Form[DataModel],
-                   showSuccess: Boolean = false,
-                   errorResponse: Option[String] = None
-                  )(implicit request: Request[AnyContent]) =
+  private def view(
+      form:          Form[DataModel],
+      showSuccess:   Boolean = false,
+      errorResponse: Option[String] = None
+    )(
+      implicit request: Request[AnyContent]
+    ) =
     stubDataView(
       form,
       testOnly.controllers.routes.StubDataController.submit,

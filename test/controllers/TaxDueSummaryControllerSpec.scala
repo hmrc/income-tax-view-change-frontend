@@ -34,56 +34,63 @@ class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationSe
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[CalculationService].toInstance(mockCalculationService)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[TaxDueSummaryController]
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    val isAgent = mtdUserRole != MTDIndividual
-    val action = if (isAgent) testController.showTaxDueSummaryAgent(testTaxYear) else testController.showTaxDueSummary(testTaxYear)
-    val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
-    s"showTaxDueSummary${if (isAgent) "Agent"}" when {
-      s"the $mtdUserRole is authenticated" should {
-        if (mtdUserRole == MTDSupportingAgent) {
-          testSupportingAgentDeniedAccess(action)(fakeRequest)
-        } else {
-          "render the payment allocation page" when {
-            "the tax year can be found in ETMP" in {
-              setupMockSuccess(mtdUserRole)
-              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
-              mockCalculationSuccessfulNew("XAIT0000123456")
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      val isAgent = mtdUserRole != MTDIndividual
+      val action =
+        if (isAgent) testController.showTaxDueSummaryAgent(testTaxYear)
+        else testController.showTaxDueSummary(testTaxYear)
+      val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
+      s"showTaxDueSummary${if (isAgent) "Agent"}" when {
+        s"the $mtdUserRole is authenticated" should {
+          if (mtdUserRole == MTDSupportingAgent) {
+            testSupportingAgentDeniedAccess(action)(fakeRequest)
+          } else {
+            "render the payment allocation page" when {
+              "the tax year can be found in ETMP" in {
+                setupMockSuccess(mtdUserRole)
+                setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+                mockCalculationSuccessfulNew("XAIT0000123456")
 
-              val result = action(fakeRequest)
-              status(result) shouldBe Status.OK
+                val result = action(fakeRequest)
+                status(result) shouldBe Status.OK
 
-              lazy val document = result.toHtmlDocument
-              contentType(result) shouldBe Some("text/html")
-              charset(result) shouldBe Some("utf-8")
-              document.title() shouldBe messages("htmlTitle" + {if(isAgent) ".agent" else ""}, messages("taxCal_breakdown.heading"))
-            }
-          }
-
-          "render the error page" when {
-            "given a tax year which can not be found in ETMP" in {
-              setupMockSuccess(mtdUserRole)
-              mockCalculationNotFoundNew("XAIT0000123456")
-              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
-              val result = action(fakeRequest)
-              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+                lazy val document = result.toHtmlDocument
+                contentType(result) shouldBe Some("text/html")
+                charset(result) shouldBe Some("utf-8")
+                document.title() shouldBe messages(
+                  "htmlTitle" + { if (isAgent) ".agent" else "" },
+                  messages("taxCal_breakdown.heading")
+                )
+              }
             }
 
-            "there is a downstream error" in {
-              setupMockSuccess(mtdUserRole)
-              mockCalculationErrorNew("XAIT0000123456")
-              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
-              val result = action(fakeRequest)
-              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            "render the error page" when {
+              "given a tax year which can not be found in ETMP" in {
+                setupMockSuccess(mtdUserRole)
+                mockCalculationNotFoundNew("XAIT0000123456")
+                setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+                val result = action(fakeRequest)
+                status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+              }
+
+              "there is a downstream error" in {
+                setupMockSuccess(mtdUserRole)
+                mockCalculationErrorNew("XAIT0000123456")
+                setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+                val result = action(fakeRequest)
+                status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+              }
             }
           }
         }
-      }
-      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
+        testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
 
-    }
+      }
   }
 }

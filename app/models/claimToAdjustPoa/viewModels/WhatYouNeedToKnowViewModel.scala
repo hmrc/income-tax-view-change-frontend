@@ -18,7 +18,4 @@ package models.claimToAdjustPoa
 
 import models.incomeSourceDetails.TaxYear
 
-case class WhatYouNeedToKnowViewModel(poaTaxYear: TaxYear,
-                                      showIncreaseAfterPaymentContent: Boolean,
-                                      redirect: String)
-
+case class WhatYouNeedToKnowViewModel(poaTaxYear: TaxYear, showIncreaseAfterPaymentContent: Boolean, redirect: String)

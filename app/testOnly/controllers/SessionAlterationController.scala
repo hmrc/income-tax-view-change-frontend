@@ -21,13 +21,13 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.Inject
 
-class SessionAlterationController @Inject()
-    (implicit mcc: MessagesControllerComponents)
-  extends FrontendController(mcc) {
+class SessionAlterationController @Inject() (implicit mcc: MessagesControllerComponents)
+    extends FrontendController(mcc) {
 
-  def addCalcId(value: String): Action[AnyContent] = Action { implicit request =>
-    Ok(value)
-      .addingToSession(calculationId -> value)
-  }
+  def addCalcId(value: String): Action[AnyContent] =
+    Action { implicit request =>
+      Ok(value)
+        .addingToSession(calculationId -> value)
+    }
 
 }

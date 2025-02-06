@@ -35,39 +35,39 @@ import java.time.LocalDate
 
 object BaseIntegrationTestConstants {
 
-  val testDate: LocalDate = LocalDate.of(2018, 5, 5)
+  val testDate:   LocalDate = LocalDate.of(2018, 5, 5)
   val futureDate: LocalDate = LocalDate.of(2100, 1, 1)
 
   val testUserTypeIndividual = Individual
-  val testUserTypeAgent = Agent
+  val testUserTypeAgent      = Agent
 
-  val testMtditidEnrolmentKey = "HMRC-MTD-IT"
+  val testMtditidEnrolmentKey        = "HMRC-MTD-IT"
   val testMtditidEnrolmentIdentifier = "MTDITID"
-  val testMtditid = "XAITSA123456"
-  val testUserName = "Albert Einstein"
-  val testClientFirstName = "Issac"
-  val testClientSurname = "Newton"
+  val testMtditid                    = "XAITSA123456"
+  val testUserName                   = "Albert Einstein"
+  val testClientFirstName            = "Issac"
+  val testClientSurname              = "Newton"
 
-  val testSaUtrEnrolmentKey = "IR-SA"
+  val testSaUtrEnrolmentKey        = "IR-SA"
   val testSaUtrEnrolmentIdentifier = "UTR"
-  val testSaUtr = "1234567890"
-  val credId = "12345-credId"
-  val testSessionId = "xsession-12345"
-  val testArn = "XAIT0000123456"
+  val testSaUtr                    = "1234567890"
+  val credId                       = "12345-credId"
+  val testSessionId                = "xsession-12345"
+  val testArn                      = "XAIT0000123456"
 
-  val testNinoEnrolmentKey = "HMRC-NI"
+  val testNinoEnrolmentKey        = "HMRC-NI"
   val testNinoEnrolmentIdentifier = "NINO"
-  val testNino = "AA123456A"
-  val testCalcId = "01234567"
-  val testCalcId2 = "01234568"
+  val testNino                    = "AA123456A"
+  val testCalcId                  = "01234567"
+  val testCalcId2                 = "01234568"
 
   val testTaxYear = 2018
   val taxYear: String = "2020-04-05"
-  val testTaxYearRange = "23-24"
-  val testTaxYearTo = "2021 to 2022 tax year"
-  val testYear = "2018"
-  val testYearPlusOne = "2019"
-  val testYearInt = 2018
+  val testTaxYearRange   = "23-24"
+  val testTaxYearTo      = "2021 to 2022 tax year"
+  val testYear           = "2018"
+  val testYearPlusOne    = "2019"
+  val testYearInt        = 2018
   val testYearPlusOneInt = 2019
 
   val testYear2023 = 2023
@@ -76,43 +76,46 @@ object BaseIntegrationTestConstants {
   val testYear2024 = 2024
 
   val testSelfEmploymentId = "ABC123456789"
-  val testIncomeSource = "Fruit Ltd"
+  val testIncomeSource     = "Fruit Ltd"
   val testSelfEmploymentIdHashed: String = mkIncomeSourceId(testSelfEmploymentId).toHash.hash
   val otherTestSelfEmploymentId = "ABC123456780"
-  val testPropertyIncomeId = "1234"
+  val testPropertyIncomeId      = "1234"
   val testPropertyIncomeIdHashed: String = mkIncomeSourceId(testPropertyIncomeId).toHash.hash
   val otherTestPropertyIncomeId = "ABC123456789"
   val testEndDate2022: String = "2022-10-10"
 
   val testTradeName = "business"
-  val testErrorStatus: Int = Status.INTERNAL_SERVER_ERROR
+  val testErrorStatus:         Int = Status.INTERNAL_SERVER_ERROR
   val testErrorNotFoundStatus: Int = Status.NOT_FOUND
   val testErrorMessage = "Dummy Error Message"
 
   val testTaxCalculationId = "CALCID"
-  val testTimeStampString = "2017-07-06T12:34:56.789Z"
+  val testTimeStampString  = "2017-07-06T12:34:56.789Z"
 
-  val stringTrue = "true"
+  val stringTrue      = "true"
   val testCredentials = Credentials(credId, "bar")
 
-  val expectedAddress: Option[AddressModel] = Some(AddressModel("Line 1", Some("Line 2"), Some("Line 3"), Some("Line 4"), Some("LN12 2NL"), "NI"))
+  val expectedAddress: Option[AddressModel] = Some(
+    AddressModel("Line 1", Some("Line 2"), Some("Line 3"), Some("Line 4"), Some("LN12 2NL"), "NI")
+  )
 
-  val mtdEnrolment              = Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "Activated", None)
-  val agentEnrolment            = Enrolment("HMRC-AS-AGENT", Seq(EnrolmentIdentifier("AgentReferenceNumber", testArn)), "Activated", None)
-  val ninoEnrolment             = Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "Activated", None)
-  val saEnrolment               = Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", testSaUtr)), "Activated", None)
+  val mtdEnrolment = Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "Activated", None)
+  val agentEnrolment =
+    Enrolment("HMRC-AS-AGENT", Seq(EnrolmentIdentifier("AgentReferenceNumber", testArn)), "Activated", None)
+  val ninoEnrolment = Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "Activated", None)
+  val saEnrolment   = Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", testSaUtr)), "Activated", None)
 
   lazy val defaultEnrolments: MTDUserRole => Enrolments = mtdUserRole => {
     mtdUserRole match {
       case MTDIndividual => Enrolments(Set(mtdEnrolment, ninoEnrolment, saEnrolment))
-      case _ => Enrolments(Set(agentEnrolment, ninoEnrolment, saEnrolment))
+      case _             => Enrolments(Set(agentEnrolment, ninoEnrolment, saEnrolment))
     }
   }
 
   lazy val defaultAuthUserDetails: MTDUserRole => AuthUserDetails = mtdUserRole => {
     AuthUserDetails(
       defaultEnrolments(mtdUserRole),
-      Some(if(mtdUserRole == MTDIndividual) Individual else Agent),
+      Some(if (mtdUserRole == MTDIndividual) Individual else Agent),
       Some(testCredentials),
       None
     )
@@ -131,7 +134,8 @@ object BaseIntegrationTestConstants {
     taxYear1 = testYear2023.toString,
     latencyIndicator1 = "A",
     taxYear2 = testYear2024.toString,
-    latencyIndicator2 = "Q")
+    latencyIndicator2 = "Q"
+  )
 
   val quarterTypeElection: QuarterTypeElection = QuarterTypeElection("STANDARD", "2021")
 
@@ -140,38 +144,37 @@ object BaseIntegrationTestConstants {
     NavLinks("testEnAccount", "testCyAccount", "testUrl"),
     NavLinks("testEnMessages", "testCyMessages", "testUrl"),
     NavLinks("testEnHelp", "testCyHelp", "testUrl"),
-    NavLinks("testEnForm", "testCyForm", "testUrl", Some(1)),
+    NavLinks("testEnForm", "testCyForm", "testUrl", Some(1))
   )
 
   val clientDetailsWithoutConfirmation: Map[String, String] = Map(
     SessionKeys.clientFirstName -> "Test",
-    SessionKeys.clientLastName -> "User",
-    SessionKeys.clientUTR -> "1234567890",
-    SessionKeys.clientNino -> testNino,
-    SessionKeys.clientMTDID -> testMtditid
+    SessionKeys.clientLastName  -> "User",
+    SessionKeys.clientUTR       -> "1234567890",
+    SessionKeys.clientNino      -> testNino,
+    SessionKeys.clientMTDID     -> testMtditid
   )
-
 
   val clientDetailsWithConfirmation: Map[String, String] = Map(
     SessionKeys.clientFirstName -> "Test",
-    SessionKeys.clientLastName -> "User",
-    SessionKeys.clientUTR -> "1234567890",
-    SessionKeys.clientNino -> testNino,
-    SessionKeys.clientMTDID -> testMtditid,
+    SessionKeys.clientLastName  -> "User",
+    SessionKeys.clientUTR       -> "1234567890",
+    SessionKeys.clientNino      -> testNino,
+    SessionKeys.clientMTDID     -> testMtditid,
     SessionKeys.confirmedClient -> "true"
   )
 
   val clientDetailsWithStartDate: Map[String, String] = Map(
     SessionKeys.clientFirstName -> "Test",
-    SessionKeys.clientLastName -> "User",
-    SessionKeys.clientUTR -> "1234567890",
-    SessionKeys.clientNino -> testNino,
-    SessionKeys.clientMTDID -> testMtditid,
+    SessionKeys.clientLastName  -> "User",
+    SessionKeys.clientUTR       -> "1234567890",
+    SessionKeys.clientNino      -> testNino,
+    SessionKeys.clientMTDID     -> testMtditid,
     SessionKeys.confirmedClient -> "true"
   )
 
   def getAgentClientDetailsForCookie(isSupportingAgent: Boolean, requiresConfirmation: Boolean): Map[String, String] = {
-    if(requiresConfirmation) {
+    if (requiresConfirmation) {
       clientDetailsWithConfirmation ++ Map(SessionKeys.isSupportingAgent -> isSupportingAgent.toString)
     } else {
       clientDetailsWithoutConfirmation ++ Map(SessionKeys.isSupportingAgent -> isSupportingAgent.toString)
@@ -184,63 +187,66 @@ object BaseIntegrationTestConstants {
     else LocalDate.of(currentDate.getYear + 1, 4, 5)
   }
 
-  val manageIncomeSourceDetailsViewModelSelfEmploymentBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
-    incomeSourceId = IncomeSourceId(testSelfEmploymentId),
-    incomeSource = Some(testTradeName),
-    tradingName = Some(testTradeName),
-    tradingStartDate = Some(testDate),
-    address = expectedAddress,
-    isTraditionalAccountingMethod = false,
-    latencyYearsQuarterly = LatencyYearsQuarterly(
-      firstYear = Some(true),
-      secondYear = Some(true)
-    ),
-    latencyYearsCrystallised = LatencyYearsCrystallised(
-      firstYear = Some(false),
-      secondYear = Some(false)
-    ),
-    latencyDetails = Some(testLatencyDetails3),
-    incomeSourceType = SelfEmployment,
-    quarterReportingType = Some(QuarterTypeStandard)
-  )
+  val manageIncomeSourceDetailsViewModelSelfEmploymentBusiness: ManageIncomeSourceDetailsViewModel =
+    ManageIncomeSourceDetailsViewModel(
+      incomeSourceId = IncomeSourceId(testSelfEmploymentId),
+      incomeSource = Some(testTradeName),
+      tradingName = Some(testTradeName),
+      tradingStartDate = Some(testDate),
+      address = expectedAddress,
+      isTraditionalAccountingMethod = false,
+      latencyYearsQuarterly = LatencyYearsQuarterly(
+        firstYear = Some(true),
+        secondYear = Some(true)
+      ),
+      latencyYearsCrystallised = LatencyYearsCrystallised(
+        firstYear = Some(false),
+        secondYear = Some(false)
+      ),
+      latencyDetails = Some(testLatencyDetails3),
+      incomeSourceType = SelfEmployment,
+      quarterReportingType = Some(QuarterTypeStandard)
+    )
 
-  val manageIncomeSourceDetailsViewModelUkPropertyBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
-    incomeSourceId = IncomeSourceId(testPropertyIncomeId),
-    incomeSource = None,
-    tradingName = None,
-    tradingStartDate = propertyTradingStartDate,
-    address = None,
-    isTraditionalAccountingMethod = false,
-    latencyYearsQuarterly = LatencyYearsQuarterly(
-      firstYear = Some(true),
-      secondYear = Some(true)
-    ),
-    latencyYearsCrystallised = LatencyYearsCrystallised(
-      firstYear = Some(false),
-      secondYear = Some(false)
-    ),
-    latencyDetails = Some(testLatencyDetails3),
-    incomeSourceType = UkProperty,
-    quarterReportingType = Some(QuarterTypeStandard)
-  )
+  val manageIncomeSourceDetailsViewModelUkPropertyBusiness: ManageIncomeSourceDetailsViewModel =
+    ManageIncomeSourceDetailsViewModel(
+      incomeSourceId = IncomeSourceId(testPropertyIncomeId),
+      incomeSource = None,
+      tradingName = None,
+      tradingStartDate = propertyTradingStartDate,
+      address = None,
+      isTraditionalAccountingMethod = false,
+      latencyYearsQuarterly = LatencyYearsQuarterly(
+        firstYear = Some(true),
+        secondYear = Some(true)
+      ),
+      latencyYearsCrystallised = LatencyYearsCrystallised(
+        firstYear = Some(false),
+        secondYear = Some(false)
+      ),
+      latencyDetails = Some(testLatencyDetails3),
+      incomeSourceType = UkProperty,
+      quarterReportingType = Some(QuarterTypeStandard)
+    )
 
-  val manageIncomeSourceDetailsViewModelForeignPropertyBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
-    incomeSourceId = IncomeSourceId(testPropertyIncomeId),
-    incomeSource = None,
-    tradingName = None,
-    tradingStartDate = propertyTradingStartDate,
-    address = None,
-    isTraditionalAccountingMethod = false,
-    latencyYearsQuarterly = LatencyYearsQuarterly(
-      firstYear = Some(true),
-      secondYear = Some(true)
-    ),
-    latencyYearsCrystallised = LatencyYearsCrystallised(
-      firstYear = Some(false),
-      secondYear = Some(false)
-    ),
-    latencyDetails = Some(testLatencyDetails3),
-    incomeSourceType = ForeignProperty,
-    quarterReportingType = None
-  )
+  val manageIncomeSourceDetailsViewModelForeignPropertyBusiness: ManageIncomeSourceDetailsViewModel =
+    ManageIncomeSourceDetailsViewModel(
+      incomeSourceId = IncomeSourceId(testPropertyIncomeId),
+      incomeSource = None,
+      tradingName = None,
+      tradingStartDate = propertyTradingStartDate,
+      address = None,
+      isTraditionalAccountingMethod = false,
+      latencyYearsQuarterly = LatencyYearsQuarterly(
+        firstYear = Some(true),
+        secondYear = Some(true)
+      ),
+      latencyYearsCrystallised = LatencyYearsCrystallised(
+        firstYear = Some(false),
+        secondYear = Some(false)
+      ),
+      latencyDetails = Some(testLatencyDetails3),
+      incomeSourceType = ForeignProperty,
+      quarterReportingType = None
+    )
 }

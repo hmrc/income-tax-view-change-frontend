@@ -25,9 +25,11 @@ object ReportingFrequency {
 
   case class QuarterlyUpdatesCountForTaxYearModel(counts: Seq[QuarterlyUpdatesCountForTaxYear]) {
 
-    def getCountFor(offeredTaxYear: TaxYear): Int = counts
-      .filter(taxYearCounts => taxYearCounts.taxYear == offeredTaxYear)
-      .map(_.count).sum
+    def getCountFor(offeredTaxYear: TaxYear): Int =
+      counts
+        .filter(taxYearCounts => taxYearCounts.taxYear == offeredTaxYear)
+        .map(_.count)
+        .sum
 
     val isQuarterlyUpdatesMade: Boolean = counts.map(_.count).sum > noQuarterlyUpdates
   }

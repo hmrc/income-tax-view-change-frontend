@@ -22,17 +22,18 @@ import BaseTestConstants._
 
 object PaymentDataTestConstants {
 
-  val testTaxType = "mtdfb-itsa"
+  val testTaxType       = "mtdfb-itsa"
   val testAmountInPence = 10000
 
-  val testPaymentDataModel: PaymentDataModel = PaymentDataModel(testTaxType, testMtditid, testAmountInPence, testPaymentRedirectUrl)
+  val testPaymentDataModel: PaymentDataModel =
+    PaymentDataModel(testTaxType, testMtditid, testAmountInPence, testPaymentRedirectUrl)
 
   val testPaymentDataJson: JsValue =
     Json.obj(
-      "taxType" -> testTaxType,
-      "taxReference" -> testMtditid,
+      "taxType"       -> testTaxType,
+      "taxReference"  -> testMtditid,
       "amountInPence" -> testAmountInPence,
-      "returnUrl" -> testPaymentRedirectUrl
+      "returnUrl"     -> testPaymentRedirectUrl
     )
 
 }

@@ -22,22 +22,22 @@ sealed trait ReversalReason {
 }
 
 // Not part of String -> ReversalReason conversion:: do we need this item?
-case object  CreateReversalReason extends ReversalReason {
+case object CreateReversalReason extends ReversalReason {
   override val value: String = "create"
 }
 
-case object  AmendedReturnReversalReason extends ReversalReason {
+case object AmendedReturnReversalReason extends ReversalReason {
   override val value: String = "amend"
 }
 
-case object  AdjustmentReversalReason extends ReversalReason {
+case object AdjustmentReversalReason extends ReversalReason {
   override val value: String = "adjustment"
 }
 
-case object  CustomerRequestReason extends ReversalReason {
+case object CustomerRequestReason extends ReversalReason {
   override val value: String = "request"
 }
 
-case object  UnknownReversalReason extends ReversalReason {
+case object UnknownReversalReason extends ReversalReason {
   override val value: String = "unrecognisedReason"
 }

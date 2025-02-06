@@ -24,20 +24,24 @@ import play.api.libs.json.{Format, Json}
 
 import java.time.LocalDate
 
-case class AllocationDetail(transactionId: Option[String],
-                            from: Option[LocalDate],
-                            to: Option[LocalDate],
-                            chargeType: Option[String],
-                            mainType: Option[String],
-                            amount: Option[BigDecimal],
-                            clearedAmount: Option[BigDecimal],
-                            chargeReference: Option[String]) {
+case class AllocationDetail(
+    transactionId:   Option[String],
+    from:            Option[LocalDate],
+    to:              Option[LocalDate],
+    chargeType:      Option[String],
+    mainType:        Option[String],
+    amount:          Option[BigDecimal],
+    clearedAmount:   Option[BigDecimal],
+    chargeReference: Option[String]) {
 
   def getPaymentAllocationKeyInPaymentAllocations: String = {
-    FinancialDetail.getMessageKeyByTypes(mainType, chargeType)
+    FinancialDetail
+      .getMessageKeyByTypes(mainType, chargeType)
       .map(typesKey => s"paymentAllocation.paymentAllocations.$typesKey")
       .getOrElse {
-        Logger("application").error(s"[PaymentAllocations] Non-matching document/charge found with main charge: $mainType and sub-charge: $chargeType")
+        Logger("application").error(
+          s"[PaymentAllocations] Non-matching document/charge found with main charge: $mainType and sub-charge: $chargeType"
+        )
         ""
       }
   }
@@ -45,7 +49,8 @@ case class AllocationDetail(transactionId: Option[String],
   def getTaxYear(implicit implicitDateFormatter: ImplicitDateFormatter): Int = {
 
     AccountingPeriodModel.determineTaxYearFromPeriodEnd(
-      to.getOrElse(throw new Exception("Missing tax period end date")))
+      to.getOrElse(throw new Exception("Missing tax period end date"))
+    )
   }
 
   def getTaxYearOpt(implicit implicitDateFormatter: ImplicitDateFormatter): Option[Int] = {

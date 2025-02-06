@@ -23,15 +23,20 @@ import testUtils.TestSupport
 class EnterClientUTRAuditModelSpec extends TestSupport {
 
   val transactionName = enums.TransactionName.EnterClientUTR.name
-  val auditType = enums.AuditType.EnterClientUTR.name
+  val auditType       = enums.AuditType.EnterClientUTR.name
 
   def getEnterClientUTRAuditModel(isSuccessful: Boolean): EnterClientUTRAuditModel = {
-    EnterClientUTRAuditModel(isSuccessful = isSuccessful, nino = testNinoAgent, mtditid = testMtditidAgent, arn = Some(testArn), saUtr = testSaUtr, credId = Some(testCredId))
+    EnterClientUTRAuditModel(
+      isSuccessful = isSuccessful,
+      nino = testNinoAgent,
+      mtditid = testMtditidAgent,
+      arn = Some(testArn),
+      saUtr = testSaUtr,
+      credId = Some(testCredId)
+    )
   }
 
-
-  val detailsAuditDataSuccess = Json.parse(
-    """{
+  val detailsAuditDataSuccess = Json.parse("""{
       |    "nino": "AA111111A",
       |    "mtditid": "XAIT00000000015",
       |    "agentReferenceNumber": "XAIT0000123456",
@@ -43,8 +48,7 @@ class EnterClientUTRAuditModelSpec extends TestSupport {
       |    "userType": "Agent"
       |}""".stripMargin)
 
-  val detailsAuditDataFailure = Json.parse(
-    """{
+  val detailsAuditDataFailure = Json.parse("""{
       |    "nino": "AA111111A",
       |    "mtditid": "XAIT00000000015",
       |    "agentReferenceNumber": "XAIT0000123456",
@@ -57,7 +61,6 @@ class EnterClientUTRAuditModelSpec extends TestSupport {
       |    },
       |    "userType": "Agent"
       |}""".stripMargin)
-
 
   "EnterClientUTRAuditModel" should {
     s"have the correct transaction name of - $transactionName on successful" in {

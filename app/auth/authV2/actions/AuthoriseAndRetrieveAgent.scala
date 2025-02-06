@@ -36,37 +36,40 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
-                                          val appConfig: FrontendAppConfig,
-                                          mcc: MessagesControllerComponents)
-  extends FeatureSwitching {
+class AuthoriseAndRetrieveAgent @Inject() (
+    val authorisedFunctions: FrontendAuthorisedFunctions,
+    val appConfig:           FrontendAppConfig,
+    mcc:                     MessagesControllerComponents)
+    extends FeatureSwitching {
 
   lazy val logger: Logger = Logger(getClass)
 
-  def authorise(arnRequired: Boolean = true): ActionRefiner[Request, AuthorisedUserRequest] = new ActionRefiner[Request, AuthorisedUserRequest] {
+  def authorise(arnRequired: Boolean = true): ActionRefiner[Request, AuthorisedUserRequest] =
+    new ActionRefiner[Request, AuthorisedUserRequest] {
 
-    implicit val executionContext: ExecutionContext = mcc.executionContext
+      implicit val executionContext: ExecutionContext = mcc.executionContext
 
-    override protected def refine[A](request: Request[A]): Future[Either[Result, AuthorisedUserRequest[A]]] = {
+      override protected def refine[A](request: Request[A]): Future[Either[Result, AuthorisedUserRequest[A]]] = {
 
-      implicit val hc: HeaderCarrier = HeaderCarrierConverter
-        .fromRequestAndSession(request, request.session)
+        implicit val hc: HeaderCarrier = HeaderCarrierConverter
+          .fromRequestAndSession(request, request.session)
 
-      implicit val req: Request[A] = request
+        implicit val req: Request[A] = request
 
-      val isAgent: Predicate = Enrolment("HMRC-AS-AGENT") and AffinityGroup.Agent
-      val isNotAgent: Predicate = AffinityGroup.Individual or AffinityGroup.Organisation
+        val isAgent:    Predicate = Enrolment("HMRC-AS-AGENT") and AffinityGroup.Agent
+        val isNotAgent: Predicate = AffinityGroup.Individual or AffinityGroup.Organisation
 
-      val predicate = if(arnRequired) {
-        isAgent or isNotAgent
-      } else EmptyPredicate
+        val predicate = if (arnRequired) {
+          isAgent or isNotAgent
+        } else EmptyPredicate
 
-      authorisedFunctions.authorised(predicate)
-        .retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
-          redirectIfNotAgent() orElse constructAgentUser()
-        }(hc, executionContext) recoverWith logAndRedirect
+        authorisedFunctions
+          .authorised(predicate)
+          .retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
+            redirectIfNotAgent() orElse constructAgentUser()
+          }(hc, executionContext) recoverWith logAndRedirect
+      }
     }
-  }
 
   def logAndRedirect[A]: PartialFunction[Throwable, Future[Either[Result, AuthorisedUserRequest[A]]]] = {
     case _: BearerTokenExpired =>
@@ -85,9 +88,10 @@ class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAutho
   type AuthRetrievals =
     Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel
 
-
-  private def constructAgentUser[A]()(
-    implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedUserRequest[A]]]] = {
+  private def constructAgentUser[A](
+    )(
+      implicit request: Request[A]
+    ): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedUserRequest[A]]]] = {
     case enrolments ~ name ~ credentials ~ affinityGroup ~ confidenceLevel =>
       val authUserDetails = AuthUserDetails(
         enrolments = enrolments,
@@ -100,9 +104,11 @@ class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAutho
       )
   }
 
-  private def redirectIfNotAgent[A]()(
-    implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedUserRequest[A]]]] = {
-    case _ ~ _ ~ Some(ag@(Organisation | Individual)) ~ _ =>
+  private def redirectIfNotAgent[A](
+    )(
+      implicit request: Request[A]
+    ): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedUserRequest[A]]]] = {
+    case _ ~ _ ~ Some(ag @ (Organisation | Individual)) ~ _ =>
       logger.error(s"$ag on endpoint for agents")
       Future.successful(Left(Redirect(controllers.routes.HomeController.show())))
   }

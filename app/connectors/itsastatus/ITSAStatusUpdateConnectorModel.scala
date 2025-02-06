@@ -28,7 +28,7 @@ object ITSAStatusUpdateRequest {
 object ITSAStatusUpdateConnectorModel {
 
   val optOutUpdateReason: String = "10"
-  val optInUpdateReason: String = "11"
+  val optInUpdateReason:  String = "11"
 
   sealed trait ITSAStatusUpdateResponse
 
@@ -45,7 +45,7 @@ object ITSAStatusUpdateConnectorModel {
       )
   }
 
-  implicit val formatSuccess: Format[ITSAStatusUpdateResponseSuccess] = Json.format[ITSAStatusUpdateResponseSuccess]
-  implicit val formatErrorItem: Format[ErrorItem] = Json.format[ErrorItem]
-  implicit val formatFailure: Format[ITSAStatusUpdateResponseFailure] = Json.format[ITSAStatusUpdateResponseFailure]
+  implicit val formatSuccess:   Format[ITSAStatusUpdateResponseSuccess] = Json.format[ITSAStatusUpdateResponseSuccess]
+  implicit val formatErrorItem: Format[ErrorItem]                       = Json.format[ErrorItem]
+  implicit val formatFailure:   Format[ITSAStatusUpdateResponseFailure] = Json.format[ITSAStatusUpdateResponseFailure]
 }

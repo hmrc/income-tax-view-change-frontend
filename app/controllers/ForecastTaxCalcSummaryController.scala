@@ -36,33 +36,47 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ForecastTaxCalcSummaryController @Inject()(val authActions: AuthActions,
-                                                 val forecastTaxCalcSummaryView: ForecastTaxCalcSummary,
-                                                 val auditingService: AuditingService,
-                                                 val calculationService: CalculationService,
-                                                 val itvcErrorHandler: ItvcErrorHandler,
-                                                 val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                                (implicit val ec: ExecutionContext,
-                                                 val languageUtils: LanguageUtils,
-                                                 val appConfig: FrontendAppConfig,
-                                                 mcc: MessagesControllerComponents)
-  extends FrontendController(mcc) with I18nSupport with ImplicitDateFormatter {
+class ForecastTaxCalcSummaryController @Inject() (
+    val authActions:                AuthActions,
+    val forecastTaxCalcSummaryView: ForecastTaxCalcSummary,
+    val auditingService:            AuditingService,
+    val calculationService:         CalculationService,
+    val itvcErrorHandler:           ItvcErrorHandler,
+    val itvcErrorHandlerAgent:      AgentItvcErrorHandler
+  )(
+    implicit val ec:   ExecutionContext,
+    val languageUtils: LanguageUtils,
+    val appConfig:     FrontendAppConfig,
+    mcc:               MessagesControllerComponents)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with ImplicitDateFormatter {
 
   def onError(message: String, isAgent: Boolean, taxYear: Int)(implicit request: Request[_]): Result = {
-    val errorPrefix: String = s"[ForecastTaxCalcSummaryController]${if (isAgent) "[Agent]" else ""}[showForecastTaxCalcSummary[$taxYear]]"
+    val errorPrefix: String =
+      s"[ForecastTaxCalcSummaryController]${if (isAgent) "[Agent]" else ""}[showForecastTaxCalcSummary[$taxYear]]"
     Logger("application").error(s"$errorPrefix $message")
     if (isAgent) itvcErrorHandlerAgent.showInternalServerError() else itvcErrorHandler.showInternalServerError()
   }
 
-  def handleRequest(taxYear: Int, isAgent: Boolean, origin: Option[String] = None)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+  def handleRequest(
+      taxYear: Int,
+      isAgent: Boolean,
+      origin:  Option[String] = None
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier,
+      ec:            ExecutionContext
+    ): Future[Result] = {
     calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case liabilityCalc: LiabilityCalculationResponse =>
         val viewModel = liabilityCalc.calculation.flatMap(calc => calc.endOfYearEstimate)
         viewModel match {
           case Some(model) =>
             auditingService.extendedAudit(ForecastTaxCalculationAuditModel(user, model))
-            Ok(forecastTaxCalcSummaryView(model, taxYear, backUrl(isAgent, taxYear, origin), isAgent, user.btaNavPartial))
+            Ok(
+              forecastTaxCalcSummaryView(model, taxYear, backUrl(isAgent, taxYear, origin), isAgent, user.btaNavPartial)
+            )
           case _ => onError("No tax calculation data could be retrieved. Not found", isAgent, taxYear)
         }
       case error: LiabilityCalculationError if error.status == NO_CONTENT =>
@@ -72,15 +86,15 @@ class ForecastTaxCalcSummaryController @Inject()(val authActions: AuthActions,
     }
   }
 
-  def show(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
+  def show(taxYear: Int, origin: Option[String] = None): Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit user =>
       handleRequest(taxYear, isAgent = false, origin)
-  }
+    }
 
-  def showAgent(taxYear: Int): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
-    implicit response =>
+  def showAgent(taxYear: Int): Action[AnyContent] =
+    authActions.asMTDPrimaryAgent.async { implicit response =>
       handleRequest(taxYear, isAgent = true)
-  }
+    }
 
   def backUrl(isAgent: Boolean, taxYear: Int, origin: Option[String]): String =
     if (isAgent) controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url

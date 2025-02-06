@@ -25,15 +25,19 @@ import views.html.navBar.BtaPartial
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
-
 @Singleton
-class BTAPartialController @Inject()(btaPartial: BtaPartial,
-                                     authActions: AuthActions)
-                                    (implicit val executionContext: ExecutionContext,
-                                     mcc: MessagesControllerComponents) extends FrontendController(mcc) with I18nSupport {
+class BTAPartialController @Inject() (
+    btaPartial:  BtaPartial,
+    authActions: AuthActions
+  )(
+    implicit val executionContext: ExecutionContext,
+    mcc:                           MessagesControllerComponents)
+    extends FrontendController(mcc)
+    with I18nSupport {
 
-  def setupPartial: Action[AnyContent] = authActions.asMTDIndividual {
-    implicit request => Ok(btaPartial())
-  }
+  def setupPartial: Action[AnyContent] =
+    authActions.asMTDIndividual { implicit request =>
+      Ok(btaPartial())
+    }
 
 }

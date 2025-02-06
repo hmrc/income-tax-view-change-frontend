@@ -24,9 +24,13 @@ import testConstants.BaseTestConstants._
 import testConstants.PaymentAllocationsTestConstants._
 import testUtils.TestSupport
 
-class PaymentAllocationsServiceSpec extends TestSupport with MockFinancialDetailsConnector with MockFinancialDetailsService {
+class PaymentAllocationsServiceSpec
+    extends TestSupport
+    with MockFinancialDetailsConnector
+    with MockFinancialDetailsService {
 
-  object TestPaymentAllocationsService extends PaymentAllocationsService(mockFinancialDetailsConnector, mockFinancialDetailsService, appConfig)
+  object TestPaymentAllocationsService
+      extends PaymentAllocationsService(mockFinancialDetailsConnector, mockFinancialDetailsService, appConfig)
 
   "get paymentAllocations" should {
     "return successful payment allocation details" when {
@@ -38,15 +42,14 @@ class PaymentAllocationsServiceSpec extends TestSupport with MockFinancialDetail
 
         result shouldBe Right(paymentAllocationViewModel)
       }
-        "paymentLot and LotItem is missing" in {
-          setupGetPaymentAllocationCharges(testNino, docNumber)(paymentAllocationChargesModelNoPayment)
+      "paymentLot and LotItem is missing" in {
+        setupGetPaymentAllocationCharges(testNino, docNumber)(paymentAllocationChargesModelNoPayment)
 
-          val result = TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue
+        val result = TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue
 
-          result shouldBe Right(paymentAllocationViewModelNoPayment)
-        }
+        result shouldBe Right(paymentAllocationViewModelNoPayment)
+      }
     }
-
 
     "return successful payment allocation details for LPI" when {
       "all fields are present" in {
@@ -63,22 +66,32 @@ class PaymentAllocationsServiceSpec extends TestSupport with MockFinancialDetail
     "return an error" when {
 
       "all calls succeed except the payment charges which returns a internal server error" in {
-        setupGetPaymentAllocationCharges(testNino, docNumber)(FinancialDetailsWithDocumentDetailsErrorModel(500, "INTERNAL_SERVER"))
+        setupGetPaymentAllocationCharges(testNino, docNumber)(
+          FinancialDetailsWithDocumentDetailsErrorModel(500, "INTERNAL_SERVER")
+        )
 
-        TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue shouldBe Left(PaymentAllocationError())
+        TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue shouldBe Left(
+          PaymentAllocationError()
+        )
       }
 
       "all calls succeed except the payment charges which returns a Not found error" in {
-        setupGetPaymentAllocationCharges(testNino, docNumber)(FinancialDetailsWithDocumentDetailsErrorModel(404, "NOT FOUND"))
+        setupGetPaymentAllocationCharges(testNino, docNumber)(
+          FinancialDetailsWithDocumentDetailsErrorModel(404, "NOT FOUND")
+        )
 
-        TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue shouldBe Left(PaymentAllocationError(Some(404)))
+        TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue shouldBe Left(
+          PaymentAllocationError(Some(404))
+        )
       }
 
       "all calls succeed except the call to payment Allocation which returns an error" in {
         setupGetPaymentAllocationCharges(testNino, docNumber)(paymentAllocationChargesModel)
         setupGetPaymentAllocation(testNino, "paymentLot", "paymentLotItem")(PaymentAllocationsError(404, "NOT FOUND"))
 
-        TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue shouldBe Left(PaymentAllocationError())
+        TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue shouldBe Left(
+          PaymentAllocationError()
+        )
       }
     }
   }

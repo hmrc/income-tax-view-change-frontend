@@ -28,19 +28,25 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class OutstandingChargesConnector @Inject()(
-                                            httpV2: HttpClientV2,
-                                            appConfig: FrontendAppConfig
-                                          )(implicit val ec: ExecutionContext) extends RawResponseReads {
+class OutstandingChargesConnector @Inject() (
+    httpV2:    HttpClientV2,
+    appConfig: FrontendAppConfig
+  )(
+    implicit val ec: ExecutionContext)
+    extends RawResponseReads {
 
   private[connectors] val baseUrl = s"${appConfig.itvcProtectedService}/income-tax-view-change"
 
   private[connectors] def getOutstandingChargesUrl(idType: String, idNumber: String, taxYear: String): String =
     baseUrl + s"/out-standing-charges/$idType/$idNumber/$taxYear"
 
-  def getOutstandingCharges(idType: String, idNumber: String, taxYear: String)
-                           (implicit headerCarrier: HeaderCarrier): Future[OutstandingChargesResponseModel] = {
-
+  def getOutstandingCharges(
+      idType:   String,
+      idNumber: String,
+      taxYear:  String
+    )(
+      implicit headerCarrier: HeaderCarrier
+    ): Future[OutstandingChargesResponseModel] = {
 
     val url = getOutstandingChargesUrl(idType, idNumber, s"$taxYear-04-05")
     Logger("application").debug(s"GET $url")
@@ -52,13 +58,18 @@ class OutstandingChargesConnector @Inject()(
         response.status match {
           case OK =>
             Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
-            response.json.validate[OutstandingChargesModel].fold(
-              invalid => {
-                Logger("application").error(s"Json Validation Error: $invalid")
-                OutstandingChargesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing OutstandingCharges Data Response")
-              },
-              valid => valid
-            )
+            response.json
+              .validate[OutstandingChargesModel]
+              .fold(
+                invalid => {
+                  Logger("application").error(s"Json Validation Error: $invalid")
+                  OutstandingChargesErrorModel(
+                    Status.INTERNAL_SERVER_ERROR,
+                    "Json Validation Error. Parsing OutstandingCharges Data Response"
+                  )
+                },
+                valid => valid
+              )
           case status if status >= Status.INTERNAL_SERVER_ERROR =>
             Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
             OutstandingChargesErrorModel(response.status, response.body)
@@ -66,12 +77,12 @@ class OutstandingChargesConnector @Inject()(
             Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
             OutstandingChargesErrorModel(response.status, response.body)
         }
-      }.recover {
+      }
+      .recover {
         case ex =>
           Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
           OutstandingChargesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
       }
   }
-
 
 }

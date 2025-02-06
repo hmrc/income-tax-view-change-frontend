@@ -180,7 +180,6 @@ class ManageYourBusinessesViewSpec extends TestSupport {
         checkAgentTitle(pageDocument)
         checkCeasedBusinessComponents(pageDocument, isMultiple = true)
 
-
       }
 
       "return the correct content when the user has all business types" in {
@@ -211,7 +210,6 @@ class ManageYourBusinessesViewSpec extends TestSupport {
         checkForeignPropertyComponents(pageDocument)
         checkCeasedBusinessComponents(pageDocument, isMultiple = false)
       }
-
 
       "return no business start dates when the displayStartDate flag is false" in {
         val viewIncomeSourcesViewModel: ViewIncomeSourcesViewModel =

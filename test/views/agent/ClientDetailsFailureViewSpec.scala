@@ -22,7 +22,6 @@ import play.twirl.api.Html
 import testUtils.ViewSpec
 import views.html.agent.errorPages.ClientRelationshipFailure
 
-
 class ClientDetailsFailureViewSpec extends ViewSpec {
 
   lazy val postAction: Call = controllers.agent.routes.EnterClientsUTRController.show
@@ -33,16 +32,18 @@ class ClientDetailsFailureViewSpec extends ViewSpec {
     postAction = postAction
   )
 
-  class ClientRelationshipFailureSetup extends Setup(
-    clientRelationshipFailure(postAction = postAction)
-  )
+  class ClientRelationshipFailureSetup
+      extends Setup(
+        clientRelationshipFailure(postAction = postAction)
+      )
 
   object ClientRelationshipMessages {
     val heading: String = s"${messages("agent.client_relationship_failure.heading")}"
-    val title: String = s"${messages("agent.client_relationship_failure.heading")} - GOV.UK"
+    val title:   String = s"${messages("agent.client_relationship_failure.heading")} - GOV.UK"
     val info: String = messages("agent.client_relationship_failure.info")
       .replace("{0}", messages("agent.client_relationship_failure.info.link") + " (opens in new tab)")
-    val clientAuthorisationLink: String = s"${messages("agent.client_relationship_failure.info.link")} ${messages("pagehelp.opensInNewTabText")}"
+    val clientAuthorisationLink: String =
+      s"${messages("agent.client_relationship_failure.info.link")} ${messages("pagehelp.opensInNewTabText")}"
     val enterDifferentDetails: String = messages("agent.client_relationship_failure.enter_different_details")
   }
 
@@ -76,6 +77,5 @@ class ClientDetailsFailureViewSpec extends ViewSpec {
       layoutContent.hasFormWith(postAction.method, postAction.url)
     }
   }
-
 
 }

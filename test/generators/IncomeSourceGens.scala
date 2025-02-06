@@ -24,9 +24,11 @@ import scala.util.{Random, Try}
 
 object IncomeSourceGens {
 
-  private val businessNamePermittedCharacters = (('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9')) ++ Seq(' ', ',', '.', '&', '\'')
+  private val businessNamePermittedCharacters =
+    (('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9')) ++ Seq(' ', ',', '.', '&', '\'')
 
-  private val businessTradePermittedCharacters = (('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9')) ++ Seq(' ', ',', '.', '&', '\'', '-')
+  private val businessTradePermittedCharacters =
+    (('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9')) ++ Seq(' ', ',', '.', '&', '\'', '-')
   val alphabet = ('a' to 'z') ++ ('A' to 'Z')
 
   case class Day(day: String, month: String, year: String)
@@ -35,7 +37,7 @@ object IncomeSourceGens {
 
   val businessTradeGenerator: Gen[List[Char]] = {
     for {
-      body <- Gen.listOf(Gen.oneOf(businessTradePermittedCharacters))
+      body     <- Gen.listOf(Gen.oneOf(businessTradePermittedCharacters))
       twoChars <- Gen.listOfN(2, Gen.oneOf(alphabet))
     } yield {
       val candidate = Random.shuffle(twoChars ++ body)
@@ -48,9 +50,9 @@ object IncomeSourceGens {
 
   val dateGenerator = (currentDate: LocalDate) => {
     for {
-      day <- Gen.oneOf(1 to 5)
+      day   <- Gen.oneOf(1 to 5)
       month <- Gen.oneOf(1 to 12)
-      year <- Gen.oneOf(1965 to 2075)
+      year  <- Gen.oneOf(1965 to 2075)
       if Try {
         LocalDate.of(year, month, day)
       }.toOption.isDefined

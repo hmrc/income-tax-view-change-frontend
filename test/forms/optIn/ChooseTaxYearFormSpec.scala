@@ -25,17 +25,17 @@ import testUtils.UnitSpec
 class ChooseTaxYearFormSpec extends UnitSpec {
 
   val forYearEnd = 2023
-  val taxYear: TaxYear = TaxYear.forYearEnd(forYearEnd)
+  val taxYear: TaxYear      = TaxYear.forYearEnd(forYearEnd)
   val choices: List[String] = List(taxYear, taxYear.nextYear).map(_.toString)
 
-  val errorMessage: String = s"Select the tax year you want to report quarterly from"
+  val errorMessage:          String   = s"Select the tax year you want to report quarterly from"
   implicit val mockMessages: Messages = mock(classOf[play.api.i18n.Messages])
 
-  def validFormData(taxYearToValidate: TaxYear): Map[String, String] = Map(ChooseTaxYearForm.choiceField -> taxYearToValidate.toString)
+  def validFormData(taxYearToValidate: TaxYear): Map[String, String] =
+    Map(ChooseTaxYearForm.choiceField -> taxYearToValidate.toString)
   val invalidFormData: Map[String, String] = Map(ChooseTaxYearForm.choiceField -> "")
 
-  when(mockMessages.apply(ChooseTaxYearForm.noResponseErrorMessageKey)
-  ).thenReturn(errorMessage)
+  when(mockMessages.apply(ChooseTaxYearForm.noResponseErrorMessageKey)).thenReturn(errorMessage)
 
   "ChooseTaxYearForm" when {
 

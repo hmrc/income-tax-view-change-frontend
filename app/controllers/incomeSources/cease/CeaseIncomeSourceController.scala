@@ -33,57 +33,75 @@ import views.html.incomeSources.cease.CeaseIncomeSources
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeSources,
-                                            val authActions: AuthActions,
-                                            val itvcErrorHandler: ItvcErrorHandler,
-                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                            val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                            val sessionService: SessionService)
-                                           (implicit val ec: ExecutionContext,
-                                            val mcc: MessagesControllerComponents,
-                                            val appConfig: FrontendAppConfig)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
+class CeaseIncomeSourceController @Inject() (
+    val ceaseIncomeSources:         CeaseIncomeSources,
+    val authActions:                AuthActions,
+    val itvcErrorHandler:           ItvcErrorHandler,
+    val itvcErrorHandlerAgent:      AgentItvcErrorHandler,
+    val incomeSourceDetailsService: IncomeSourceDetailsService,
+    val sessionService:             SessionService
+  )(
+    implicit val ec: ExecutionContext,
+    val mcc:         MessagesControllerComponents,
+    val appConfig:   FrontendAppConfig)
+    extends FrontendController(mcc)
+    with FeatureSwitching
+    with I18nSupport
+    with IncomeSourcesUtils {
 
-  def show(): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
+  def show(): Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit user =>
       handleRequest(
         sources = user.incomeSources,
         isAgent = false,
         backUrl = controllers.routes.HomeController.show().url
       )
-  }
+    }
 
-  def showAgent(): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async{
-    implicit mtdItUser =>
+  def showAgent(): Action[AnyContent] =
+    authActions.asMTDAgentWithConfirmedClient.async { implicit mtdItUser =>
       handleRequest(
         sources = mtdItUser.incomeSources,
         isAgent = true,
         backUrl = controllers.routes.HomeController.showAgent.url
       )
-  }
+    }
 
-  def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
-                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
-    showCeaseIncomeSourceView(sources, isAgent, backUrl)
-  }
+  def handleRequest(
+      sources: IncomeSourceDetailsModel,
+      isAgent: Boolean,
+      backUrl: String
+    )(
+      implicit user: MtdItUser[_]
+    ): Future[Result] =
+    withIncomeSourcesFS {
+      showCeaseIncomeSourceView(sources, isAgent, backUrl)
+    }
 
-  private def showCeaseIncomeSourceView(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)(implicit user: MtdItUser[_]): Future[Result] = {
+  private def showCeaseIncomeSourceView(
+      sources: IncomeSourceDetailsModel,
+      isAgent: Boolean,
+      backUrl: String
+    )(
+      implicit user: MtdItUser[_]
+    ): Future[Result] = {
     incomeSourceDetailsService.getCeaseIncomeSourceViewModel(sources) match {
       case Right(viewModel) =>
         sessionService.deleteSession(Cease).map { _ =>
-          Ok(ceaseIncomeSources(
-            viewModel,
-            isAgent = isAgent,
-            backUrl = backUrl
-          ))
+          Ok(
+            ceaseIncomeSources(
+              viewModel,
+              isAgent = isAgent,
+              backUrl = backUrl
+            )
+          )
         } recover {
           case ex: Exception =>
             Logger("application").error(s"Session Error: ${ex.getMessage} - ${ex.getCause}")
             showInternalServerError(isAgent)
         }
       case Left(ex) =>
-        Logger("application").error(
-          s"Error: ${ex.getMessage} - ${ex.getCause}")
+        Logger("application").error(s"Error: ${ex.getMessage} - ${ex.getCause}")
         Future(showInternalServerError(isAgent))
     }
   }

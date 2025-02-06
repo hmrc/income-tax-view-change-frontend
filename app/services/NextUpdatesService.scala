@@ -38,9 +38,11 @@ object NextUpdatesService {
 }
 
 @Singleton
-class NextUpdatesService @Inject()(
-                                    val obligationsConnector: ObligationsConnector
-                                  )(implicit ec: ExecutionContext, val dateService: DateServiceInterface) {
+class NextUpdatesService @Inject() (
+    val obligationsConnector: ObligationsConnector
+  )(
+    implicit ec:     ExecutionContext,
+    val dateService: DateServiceInterface) {
 
   def getDueDates()(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[Either[Exception, Seq[LocalDate]]] = {
     getOpenObligations().map {
@@ -53,13 +55,17 @@ class NextUpdatesService @Inject()(
     }
   }
 
-  def getObligationDueDates(implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]): Future[Either[(LocalDate, Boolean), Int]] = {
+  def getObligationDueDates(
+      implicit hc: HeaderCarrier,
+      ec:          ExecutionContext,
+      mtdItUser:   MtdItUser[_]
+    ): Future[Either[(LocalDate, Boolean), Int]] = {
     getOpenObligations().map {
 
       case deadlines: ObligationsModel if deadlines.obligations.forall(_.obligations.nonEmpty) =>
-        val dueDates = deadlines.obligations.flatMap(_.obligations.map(_.due)).sortWith(_ isBefore _)
-        val overdueDates = dueDates.filter(_ isBefore dateService.getCurrentDate)
-        val nextDueDates = dueDates.diff(overdueDates)
+        val dueDates          = deadlines.obligations.flatMap(_.obligations.map(_.due)).sortWith(_ isBefore _)
+        val overdueDates      = dueDates.filter(_ isBefore dateService.getCurrentDate)
+        val nextDueDates      = dueDates.diff(overdueDates)
         val overdueDatesCount = overdueDates.size
 
         overdueDatesCount match {
@@ -72,24 +78,37 @@ class NextUpdatesService @Inject()(
     }
   }
 
-
-  def getNextUpdatesViewModel(obligationsModel: ObligationsModel)(implicit user: MtdItUser[_]): NextUpdatesViewModel = NextUpdatesViewModel {
-    obligationsModel.obligationsByDate.map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
-      if (obligations.headOption.map(_.obligation.obligationType).contains("Quarterly")) {
-        val obligationsByType = obligationsModel.groupByQuarterPeriod(obligations)
-        DeadlineViewModel(QuarterlyObligation, standardAndCalendar = true, date, obligationsByType.getOrElse(Some(QuarterTypeStandard), Seq.empty), obligationsByType.getOrElse(Some(QuarterTypeCalendar), Seq.empty))
-      }
-      else DeadlineViewModel(EopsObligation, standardAndCalendar = false, date, obligations, Seq.empty)
-    }.filter(deadline => deadline.obligationType != EopsObligation)
-  }
+  def getNextUpdatesViewModel(obligationsModel: ObligationsModel)(implicit user: MtdItUser[_]): NextUpdatesViewModel =
+    NextUpdatesViewModel {
+      obligationsModel.obligationsByDate
+        .map {
+          case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
+            if (obligations.headOption.map(_.obligation.obligationType).contains("Quarterly")) {
+              val obligationsByType = obligationsModel.groupByQuarterPeriod(obligations)
+              DeadlineViewModel(
+                QuarterlyObligation,
+                standardAndCalendar = true,
+                date,
+                obligationsByType.getOrElse(Some(QuarterTypeStandard), Seq.empty),
+                obligationsByType.getOrElse(Some(QuarterTypeCalendar), Seq.empty)
+              )
+            } else DeadlineViewModel(EopsObligation, standardAndCalendar = false, date, obligations, Seq.empty)
+        }
+        .filter(deadline => deadline.obligationType != EopsObligation)
+    }
 
   def getOpenObligations()(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsResponseModel] = {
     Logger("application").debug(s"Requesting current Next Updates for nino: ${mtdUser.nino}")
     obligationsConnector.getOpenObligations()
   }
 
-  def getAllObligationsWithinDateRange(fromDate: LocalDate, toDate: LocalDate)(
-    implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsResponseModel] = {
+  def getAllObligationsWithinDateRange(
+      fromDate: LocalDate,
+      toDate:   LocalDate
+    )(
+      implicit hc: HeaderCarrier,
+      mtdUser:     MtdItUser[_]
+    ): Future[ObligationsResponseModel] = {
     obligationsConnector.getAllObligationsDateRange(fromDate, toDate).map {
       case obligationsResponse: ObligationsModel =>
         ObligationsModel(obligationsResponse.obligations.filter(_.obligations.nonEmpty))
@@ -97,8 +116,12 @@ class NextUpdatesService @Inject()(
     }
   }
 
-  def getQuarterlyUpdatesCounts(queryTaxYear: TaxYear)
-                               (implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[QuarterlyUpdatesCountForTaxYear] = {
+  def getQuarterlyUpdatesCounts(
+      queryTaxYear: TaxYear
+    )(
+      implicit hc: HeaderCarrier,
+      mtdUser:     MtdItUser[_]
+    ): Future[QuarterlyUpdatesCountForTaxYear] = {
     getAllObligationsWithinDateRange(queryTaxYear.toFinancialYearStart, queryTaxYear.toFinancialYearEnd).map {
       case obligationsModel: ObligationsModel =>
         QuarterlyUpdatesCountForTaxYear(queryTaxYear, obligationsModel.quarterlyUpdatesCounts)
@@ -106,46 +129,78 @@ class NextUpdatesService @Inject()(
     }
   }
 
-
-  def getObligationDates(id: String)
-                        (implicit user: MtdItUser[_], ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[DatesModel]] = {
+  def getObligationDates(
+      id: String
+    )(
+      implicit user: MtdItUser[_],
+      ec:            ExecutionContext,
+      hc:            HeaderCarrier
+    ): Future[Seq[DatesModel]] = {
     getOpenObligations() map {
       case ObligationsErrorModel(code, message) =>
-        Logger("application").error(
-          s"Error: $message, code $code")
+        Logger("application").error(s"Error: $message, code $code")
         Seq.empty
       case model: ObligationsModel =>
-        Seq(model.obligations.flatMap(nextUpdatesModel => nextUpdatesModel.currentCrystDeadlines) map {
-          source =>
-            DatesModel(source.start, source.end, source.due, source.periodKey, isFinalDec = true, obligationType = source.obligationType)
-        },
+        Seq(
+          model.obligations.flatMap(nextUpdatesModel => nextUpdatesModel.currentCrystDeadlines) map { source =>
+            DatesModel(
+              source.start,
+              source.end,
+              source.due,
+              source.periodKey,
+              isFinalDec = true,
+              obligationType = source.obligationType
+            )
+          },
           model.obligations
             .filter(nextUpdatesModel => mkIncomeSourceId(nextUpdatesModel.identification) == mkIncomeSourceId(id))
-            .flatMap(obligation => obligation.obligations.map(obligation =>
-              DatesModel(obligation.start, obligation.end, obligation.due, obligation.periodKey, isFinalDec = false, obligationType = obligation.obligationType)))
+            .flatMap(obligation =>
+              obligation.obligations.map(obligation =>
+                DatesModel(
+                  obligation.start,
+                  obligation.end,
+                  obligation.due,
+                  obligation.periodKey,
+                  isFinalDec = false,
+                  obligationType = obligation.obligationType
+                )
+              )
+            )
         ).flatten
     }
   }
 
-  def getObligationsViewModel(id: String, showPreviousTaxYears: Boolean)
-                             (implicit user: MtdItUser[_], ec: ExecutionContext, hc: HeaderCarrier): Future[ObligationsViewModel] = {
+  def getObligationsViewModel(
+      id:                   String,
+      showPreviousTaxYears: Boolean
+    )(
+      implicit user: MtdItUser[_],
+      ec:            ExecutionContext,
+      hc:            HeaderCarrier
+    ): Future[ObligationsViewModel] = {
     val processingRes = for {
       datesList <- getObligationDates(id)
     } yield {
       val (finalDeclarationDates, otherObligationDates) = datesList.partition(datesModel => datesModel.isFinalDec)
 
-      val quarterlyDates: Seq[DatesModel] = otherObligationDates.filter(datesModel => datesModel.obligationType == "Quarterly")
+      val quarterlyDates: Seq[DatesModel] = otherObligationDates
+        .filter(datesModel => datesModel.obligationType == "Quarterly")
         .sortBy(_.inboundCorrespondenceFrom)
 
-      val obligationsGroupedByYear = quarterlyDates.groupBy(datesModel => dateService.getAccountingPeriodEndDate(datesModel.inboundCorrespondenceTo).getYear)
+      val obligationsGroupedByYear = quarterlyDates.groupBy(datesModel =>
+        dateService.getAccountingPeriodEndDate(datesModel.inboundCorrespondenceTo).getYear
+      )
       val sortedObligationsByYear = obligationsGroupedByYear.toSeq.sortBy(_._1).map(_._2.distinct.sortBy(_.periodKey))
 
       val finalDecDates: Seq[DatesModel] = finalDeclarationDates.distinct.sortBy(_.inboundCorrespondenceFrom)
 
-      ObligationsViewModel(sortedObligationsByYear, finalDecDates, dateService.getCurrentTaxYearEnd, showPrevTaxYears = showPreviousTaxYears)
+      ObligationsViewModel(
+        sortedObligationsByYear,
+        finalDecDates,
+        dateService.getCurrentTaxYearEnd,
+        showPrevTaxYears = showPreviousTaxYears
+      )
     }
     processingRes
   }
 }
-
-

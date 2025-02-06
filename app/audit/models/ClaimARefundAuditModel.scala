@@ -30,10 +30,11 @@ import java.time.format.DateTimeFormatter
 
 case class ClaimARefundAuditModel(creditsModel: CreditsModel)(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
 
-  override val auditType: String = ClaimARefundResponse
+  override val auditType:       String = ClaimARefundResponse
   override val transactionName: String = ClaimARefund
 
-  private def getFullDueDate(dueDate: LocalDate) = s"${dueDate.format(DateTimeFormatter.ofPattern("dd MMMM YYYY"))}" // returns "17 January 2021"
+  private def getFullDueDate(dueDate: LocalDate) =
+    s"${dueDate.format(DateTimeFormatter.ofPattern("dd MMMM YYYY"))}" // returns "17 January 2021"
 
   private def getAvailableCredit: Double = {
     creditsModel.availableCredit.abs.toDouble
@@ -41,11 +42,11 @@ case class ClaimARefundAuditModel(creditsModel: CreditsModel)(implicit user: Mtd
 
   case class Credit(transaction: Transaction) {
     def creditType: Option[CreditType] = Some(transaction.transactionType)
-    def isPayment: Boolean = transaction.transactionType == PaymentType
+    def isPayment:  Boolean            = transaction.transactionType == PaymentType
     def taxYearString: String = {
       transaction.taxYear
-        .map(taxYear => s"${taxYear.startYear} to ${taxYear.endYear} tax year"
-      ).getOrElse("")
+        .map(taxYear => s"${taxYear.startYear} to ${taxYear.endYear} tax year")
+        .getOrElse("")
     }
 
     def dueDate: Option[LocalDate] = transaction.dueDate
@@ -53,11 +54,11 @@ case class ClaimARefundAuditModel(creditsModel: CreditsModel)(implicit user: Mtd
 
   private def getCreditDescription(credit: Credit): String = {
     (credit.creditType, credit.dueDate) match {
-      case (Some(MfaCreditType), _) => "Credit from HMRC adjustment"
-      case (Some(CutOverCreditType), _) => "Credit from an earlier tax year"
+      case (Some(MfaCreditType), _)             => "Credit from HMRC adjustment"
+      case (Some(CutOverCreditType), _)         => "Credit from an earlier tax year"
       case (Some(BalancingChargeCreditType), _) => "Balancing charge credit"
-      case (Some(RepaymentInterest), _) => s"Credit from repayment interest - ${credit.taxYearString}"
-      case (_, Some(date)) if credit.isPayment => s"Payment made on ${getFullDueDate(date)}"
+      case (Some(RepaymentInterest), _)         => s"Credit from repayment interest - ${credit.taxYearString}"
+      case (_, Some(date)) if credit.isPayment  => s"Payment made on ${getFullDueDate(date)}"
       case (_, None) if credit.isPayment =>
         Logger("application").error("Missing or non-matching credit: not a valid payment date")
         "unknownDate"
@@ -68,20 +69,19 @@ case class ClaimARefundAuditModel(creditsModel: CreditsModel)(implicit user: Mtd
   }
 
   private lazy val creditDocumentsJson: Seq[JsObject] = {
-    creditsModel.transactions.filterNot(_.transactionType == Repayment)
+    creditsModel.transactions
+      .filterNot(_.transactionType == Repayment)
       .map(transaction => {
         val credit = Credit(transaction)
         Json.obj(
           "description" -> getCreditDescription(credit),
-          "amount" -> transaction.amount
+          "amount"      -> transaction.amount
         )
       })
   }
 
-  private def getPendingRefundsJson(pendingRefund: BigDecimal):JsObject =
-    Json.obj(
-      "description" -> "Refund in progress",
-      "amount" -> pendingRefund.abs )
+  private def getPendingRefundsJson(pendingRefund: BigDecimal): JsObject =
+    Json.obj("description" -> "Refund in progress", "amount" -> pendingRefund.abs)
 
   private lazy val refundDocumentsJson: Seq[JsObject] =
     creditsModel.transactions
@@ -93,7 +93,8 @@ case class ClaimARefundAuditModel(creditsModel: CreditsModel)(implicit user: Mtd
     Json.obj(
       "creditOnAccount" -> getAvailableCredit,
       "creditDocuments" -> creditDocumentsJson,
-      "refundDocuments" -> refundDocumentsJson)
+      "refundDocuments" -> refundDocumentsJson
+    )
   }
   override val detail: JsValue = userAuditDetails(user) ++ claimARefundDetail
 }

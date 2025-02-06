@@ -34,163 +34,166 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAn
 
 import scala.concurrent.Future
 
-class
-SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutService {
+class SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[OptOutService].toInstance(mockOptOutService)
-    ).build()
+    )
+    .build()
 
   lazy val testSingleYearOptOutWarningController = app.injector.instanceOf[SingleYearOptOutWarningController]
 
-  mtdAllRoles.foreach{ case mtdUserRole =>
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      val isAgent = mtdUserRole != MTDIndividual
 
-    val isAgent = mtdUserRole != MTDIndividual
+      val requestGET        = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
+      val requestPOST       = fakePostRequestBasedOnMTDUserType(mtdUserRole)
+      val confirmOptOutPage = Some(controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url)
 
-    val requestGET = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
-    val requestPOST = fakePostRequestBasedOnMTDUserType(mtdUserRole)
-    val confirmOptOutPage = Some(controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url)
-
-    val optOutCancelledUrl =
-      if (isAgent) {
-        controllers.optOut.routes.OptOutCancelledController.showAgent().url
-      } else {
-        controllers.optOut.routes.OptOutCancelledController.show().url
-      }
-
-    val taxYear = TaxYear.forYearEnd(2024)
-    val eligibleTaxYearResponse = Future.successful(Some(OptOutOneYearViewModel(taxYear, None)))
-    val noEligibleTaxYearResponse = Future.successful(None)
-    val failedResponse = Future.failed(new Exception("some error"))
-
-    s"SingleYearOptOutWarningController - $mtdUserRole" when {
-
-      "show method is invoked" should {
-
-        val showAction = testSingleYearOptOutWarningController.show(isAgent = isAgent)
-
-        s"return result with $OK status" in {
-          setupMockSuccess(mtdUserRole)
-          enable(IncomeSourcesFs)
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
-
-          val result: Future[Result] = showAction(requestGET)
-          status(result) shouldBe Status.OK
+      val optOutCancelledUrl =
+        if (isAgent) {
+          controllers.optOut.routes.OptOutCancelledController.showAgent().url
+        } else {
+          controllers.optOut.routes.OptOutCancelledController.show().url
         }
 
-        s"return result with $INTERNAL_SERVER_ERROR status" when {
-          "there is no tax year eligible for opt out" in {
+      val taxYear                   = TaxYear.forYearEnd(2024)
+      val eligibleTaxYearResponse   = Future.successful(Some(OptOutOneYearViewModel(taxYear, None)))
+      val noEligibleTaxYearResponse = Future.successful(None)
+      val failedResponse            = Future.failed(new Exception("some error"))
+
+      s"SingleYearOptOutWarningController - $mtdUserRole" when {
+
+        "show method is invoked" should {
+
+          val showAction = testSingleYearOptOutWarningController.show(isAgent = isAgent)
+
+          s"return result with $OK status" in {
             setupMockSuccess(mtdUserRole)
             enable(IncomeSourcesFs)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-            mockRecallNextUpdatesPageOneYearOptOutViewModel(noEligibleTaxYearResponse)
+            mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
 
             val result: Future[Result] = showAction(requestGET)
-            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            status(result) shouldBe Status.OK
           }
 
-          "opt out service fails" in {
-            setupMockSuccess(mtdUserRole)
-            enable(IncomeSourcesFs)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-            mockRecallNextUpdatesPageOneYearOptOutViewModel(failedResponse)
+          s"return result with $INTERNAL_SERVER_ERROR status" when {
+            "there is no tax year eligible for opt out" in {
+              setupMockSuccess(mtdUserRole)
+              enable(IncomeSourcesFs)
+              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              mockRecallNextUpdatesPageOneYearOptOutViewModel(noEligibleTaxYearResponse)
 
-            val result: Future[Result] = showAction(requestGET)
-            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+              val result: Future[Result] = showAction(requestGET)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
+
+            "opt out service fails" in {
+              setupMockSuccess(mtdUserRole)
+              enable(IncomeSourcesFs)
+              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              mockRecallNextUpdatesPageOneYearOptOutViewModel(failedResponse)
+
+              val result: Future[Result] = showAction(requestGET)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
           }
+
+          if (isAgent)
+            testMTDAgentAuthFailures(showAction, mtdUserRole == MTDSupportingAgent)
+          else
+            testMTDIndividualAuthFailures(showAction)
         }
 
-        if (isAgent)
-          testMTDAgentAuthFailures(showAction, mtdUserRole == MTDSupportingAgent)
-        else
-          testMTDIndividualAuthFailures(showAction)
+        "submit method is invoked" should {
+
+          val submitAction = testSingleYearOptOutWarningController.submit(isAgent = isAgent)
+
+          s"return result with $SEE_OTHER status with redirect to $confirmOptOutPage" when {
+            "Yes response is submitted" in {
+              setupMockSuccess(mtdUserRole)
+              enable(IncomeSourcesFs)
+              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
+
+              val result: Future[Result] = submitAction(
+                requestPOST.withFormUrlEncodedBody(
+                  ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> "true",
+                  ConfirmOptOutSingleTaxYearForm.csrfToken          -> ""
+                )
+              )
+              status(result) shouldBe Status.SEE_OTHER
+
+              redirectLocation(result) shouldBe confirmOptOutPage
+            }
+          }
+          s"return result with 303 status with redirect to Opt Out Cancelled Page" when {
+
+            "No response is submitted" in {
+              setupMockSuccess(mtdUserRole)
+              enable(IncomeSourcesFs)
+              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
+
+              val result: Future[Result] = submitAction(
+                requestPOST.withFormUrlEncodedBody(
+                  ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> "false",
+                  ConfirmOptOutSingleTaxYearForm.csrfToken          -> ""
+                )
+              )
+              status(result) shouldBe Status.SEE_OTHER
+              redirectLocation(result) shouldBe Some(optOutCancelledUrl)
+            }
+          }
+
+          s"return result with $BAD_REQUEST status" when {
+            "invalid response is submitted" in {
+              setupMockSuccess(mtdUserRole)
+              enable(IncomeSourcesFs)
+              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
+
+              val result: Future[Result] = submitAction(
+                requestPOST.withFormUrlEncodedBody(
+                  ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> "",
+                  ConfirmOptOutSingleTaxYearForm.csrfToken          -> ""
+                )
+              )
+              status(result) shouldBe Status.BAD_REQUEST
+            }
+          }
+          s"return result with $INTERNAL_SERVER_ERROR status" when {
+            "there is no tax year eligible for opt out" in {
+              setupMockSuccess(mtdUserRole)
+              enable(IncomeSourcesFs)
+              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              mockRecallNextUpdatesPageOneYearOptOutViewModel(noEligibleTaxYearResponse)
+
+              val result: Future[Result] = submitAction(requestPOST)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
+
+            "opt out service fails" in {
+              setupMockSuccess(mtdUserRole)
+              enable(IncomeSourcesFs)
+              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              mockRecallNextUpdatesPageOneYearOptOutViewModel(failedResponse)
+
+              val result: Future[Result] = submitAction(requestPOST)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
+          }
+
+          if (isAgent)
+            testMTDAgentAuthFailures(submitAction, mtdUserRole == MTDSupportingAgent)
+          else
+            testMTDIndividualAuthFailures(submitAction)
+        }
+
       }
-
-      "submit method is invoked" should {
-
-        val submitAction = testSingleYearOptOutWarningController.submit(isAgent = isAgent)
-
-        s"return result with $SEE_OTHER status with redirect to $confirmOptOutPage" when {
-          "Yes response is submitted" in {
-            setupMockSuccess(mtdUserRole)
-            enable(IncomeSourcesFs)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-            mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
-
-            val result: Future[Result] = submitAction(
-              requestPOST.withFormUrlEncodedBody(
-                ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> "true",
-                ConfirmOptOutSingleTaxYearForm.csrfToken -> ""
-              ))
-            status(result) shouldBe Status.SEE_OTHER
-
-            redirectLocation(result) shouldBe confirmOptOutPage
-          }
-        }
-        s"return result with 303 status with redirect to Opt Out Cancelled Page" when {
-
-          "No response is submitted" in {
-            setupMockSuccess(mtdUserRole)
-            enable(IncomeSourcesFs)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-            mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
-
-            val result: Future[Result] = submitAction(
-              requestPOST.withFormUrlEncodedBody(
-                ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> "false",
-                ConfirmOptOutSingleTaxYearForm.csrfToken -> ""
-              ))
-            status(result) shouldBe Status.SEE_OTHER
-            redirectLocation(result) shouldBe Some(optOutCancelledUrl)
-        }
-          }
-
-        s"return result with $BAD_REQUEST status" when {
-          "invalid response is submitted" in {
-            setupMockSuccess(mtdUserRole)
-            enable(IncomeSourcesFs)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-            mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
-
-            val result: Future[Result] = submitAction(
-              requestPOST.withFormUrlEncodedBody(
-                ConfirmOptOutSingleTaxYearForm.confirmOptOutField -> "",
-                ConfirmOptOutSingleTaxYearForm.csrfToken -> ""
-              ))
-            status(result) shouldBe Status.BAD_REQUEST
-          }
-        }
-        s"return result with $INTERNAL_SERVER_ERROR status" when {
-          "there is no tax year eligible for opt out" in {
-            setupMockSuccess(mtdUserRole)
-            enable(IncomeSourcesFs)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-            mockRecallNextUpdatesPageOneYearOptOutViewModel(noEligibleTaxYearResponse)
-
-            val result: Future[Result] = submitAction(requestPOST)
-            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-          }
-
-          "opt out service fails" in {
-            setupMockSuccess(mtdUserRole)
-            enable(IncomeSourcesFs)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-            mockRecallNextUpdatesPageOneYearOptOutViewModel(failedResponse)
-
-            val result: Future[Result] = submitAction(requestPOST)
-            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-          }
-        }
-
-        if (isAgent)
-          testMTDAgentAuthFailures(submitAction, mtdUserRole == MTDSupportingAgent)
-        else
-          testMTDIndividualAuthFailures(submitAction)
-      }
-
-    }
 
   }
 }

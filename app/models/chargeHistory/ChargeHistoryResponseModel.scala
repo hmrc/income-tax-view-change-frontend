@@ -23,12 +23,12 @@ import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 sealed trait ChargeHistoryResponseModel
 
-
-case class ChargesHistoryModel(idType: String,
-                               idValue: String,
-                               regimeType: String,
-                               chargeHistoryDetails: Option[List[ChargeHistoryModel]]) extends ChargeHistoryResponseModel
-
+case class ChargesHistoryModel(
+    idType:               String,
+    idValue:              String,
+    regimeType:           String,
+    chargeHistoryDetails: Option[List[ChargeHistoryModel]])
+    extends ChargeHistoryResponseModel
 
 object ChargesHistoryModel {
   implicit val format: Format[ChargesHistoryModel] = Json.format[ChargesHistoryModel]
@@ -46,16 +46,23 @@ object ChargesHistoryResponse {
       response.status match {
         case OK =>
           Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
-          response.json.validate[ChargesHistoryModel].fold(
-            invalid => {
-              Logger("application").error(s"Json Validation Error: $invalid")
-              ChargesHistoryErrorModel(INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing ChargeHistory Data Response")
-            },
-            valid => valid
-          )
+          response.json
+            .validate[ChargesHistoryModel]
+            .fold(
+              invalid => {
+                Logger("application").error(s"Json Validation Error: $invalid")
+                ChargesHistoryErrorModel(
+                  INTERNAL_SERVER_ERROR,
+                  "Json Validation Error. Parsing ChargeHistory Data Response"
+                )
+              },
+              valid => valid
+            )
         case status =>
           if (status == NOT_FOUND || status == FORBIDDEN) {
-            Logger("application").info(s"No charge history found at url: $url - Status: ${response.status}, body: ${response.body}")
+            Logger("application").info(
+              s"No charge history found at url: $url - Status: ${response.status}, body: ${response.body}"
+            )
             ChargesHistoryModel("", "", "", None)
           } else {
             if (status >= 500) {

@@ -25,21 +25,25 @@ import testUtils.UnitSpec
 
 class ConfirmOptOutSingleTaxYearFormSpec extends UnitSpec {
 
-  val validFormData: Map[String, String] = Map(confirmOptOutField -> "true", csrfToken -> "")
-  val invalidFormData: Map[String, String] = Map(confirmOptOutField -> "", csrfToken -> "")
-  val taxYear: TaxYear = TaxYear.forYearEnd(2024)
-  val errorMessage: String = s"Select yes to opt out for the ${taxYear.startYear} to ${taxYear.endYear} tax year"
-  implicit val mockMessages: Messages = mock(classOf[play.api.i18n.Messages])
+  val validFormData:         Map[String, String] = Map(confirmOptOutField -> "true", csrfToken -> "")
+  val invalidFormData:       Map[String, String] = Map(confirmOptOutField -> "", csrfToken -> "")
+  val taxYear:               TaxYear             = TaxYear.forYearEnd(2024)
+  val errorMessage:          String              = s"Select yes to opt out for the ${taxYear.startYear} to ${taxYear.endYear} tax year"
+  implicit val mockMessages: Messages            = mock(classOf[play.api.i18n.Messages])
 
-  when(mockMessages.apply(
-    ConfirmOptOutSingleTaxYearForm.noResponseErrorMessageKey,
-    taxYear.startYear.toString,
-    taxYear.endYear.toString)).thenReturn(errorMessage)
+  when(
+    mockMessages.apply(
+      ConfirmOptOutSingleTaxYearForm.noResponseErrorMessageKey,
+      taxYear.startYear.toString,
+      taxYear.endYear.toString
+    )
+  ).thenReturn(errorMessage)
 
   "ConfirmOptOutSingleTaxYearForm" when {
     "bind with a valid response" should {
       "contain the response - true" in {
-        val completedForm: Form[ConfirmOptOutSingleTaxYearForm] = ConfirmOptOutSingleTaxYearForm(taxYear).bind(validFormData)
+        val completedForm: Form[ConfirmOptOutSingleTaxYearForm] =
+          ConfirmOptOutSingleTaxYearForm(taxYear).bind(validFormData)
         completedForm.hasErrors shouldBe false
         completedForm.data.get(confirmOptOutField) shouldBe Some("true")
       }
@@ -47,7 +51,8 @@ class ConfirmOptOutSingleTaxYearFormSpec extends UnitSpec {
 
     "bind with a empty response" should {
       "contain the error message" in {
-        val completedForm: Form[ConfirmOptOutSingleTaxYearForm] = ConfirmOptOutSingleTaxYearForm(taxYear).bind(invalidFormData)
+        val completedForm: Form[ConfirmOptOutSingleTaxYearForm] =
+          ConfirmOptOutSingleTaxYearForm(taxYear).bind(invalidFormData)
         completedForm.data.get(confirmOptOutField) shouldBe Some("")
         completedForm.errors shouldBe List(FormError(confirmOptOutField, List(errorMessage)))
       }

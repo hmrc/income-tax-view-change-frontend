@@ -36,28 +36,32 @@ class DateServiceSpec extends TestSupport {
 
   val mockDateServiceInterface: DateServiceInterface = mock(classOf[DateServiceInterface])
 
-  class TestDateService(isTimeMachineEnabled: Boolean = false, addYears: Int = 0, addDays: Int = 0) extends DateService() {
+  class TestDateService(isTimeMachineEnabled: Boolean = false, addYears: Int = 0, addDays: Int = 0)
+      extends DateService() {
     override def now(): LocalDate = fixedDate
 
-    override def getTimeMachineConfig: TimeMachineSettings = TimeMachineSettings(isTimeMachineEnabled = isTimeMachineEnabled, addYears, addDays)
+    override def getTimeMachineConfig: TimeMachineSettings =
+      TimeMachineSettings(isTimeMachineEnabled = isTimeMachineEnabled, addYears, addDays)
   }
 
   val baseTestDateService = new TestDateService()
 
   def getTaxYearStartDate(year: Int): LocalDate = LocalDate.of(year, 4, 6)
 
-  val testUser: MtdItUser[_] = defaultMTDITUser(Some(Individual), IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
+  val testUser: MtdItUser[_] =
+    defaultMTDITUser(Some(Individual), IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(appConfig)
   }
 
-  def fixture(date: LocalDate) = new {
-    val fakeTestDateService: DateService = new DateService() {
-      override def getCurrentDate: LocalDate = date
+  def fixture(date: LocalDate) =
+    new {
+      val fakeTestDateService: DateService = new DateService() {
+        override def getCurrentDate: LocalDate = date
+      }
     }
-  }
 
   "The getCurrentDate method when TimeMachine FS is off" should {
     "return the current date and time" in {

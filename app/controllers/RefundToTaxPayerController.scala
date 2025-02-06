@@ -37,22 +37,30 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTaxPayer,
-                                           val repaymentHistoryConnector: RepaymentHistoryConnector,
-                                           val authActions: AuthActions,
-                                           itvcErrorHandler: ItvcErrorHandler,
-                                           itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                           auditingService: AuditingService)
-                                          (implicit mcc: MessagesControllerComponents,
-                                           val ec: ExecutionContext,
-                                           val appConfig: FrontendAppConfig) extends FrontendController(mcc)
-  with I18nSupport with FeatureSwitching {
+class RefundToTaxPayerController @Inject() (
+    val refundToTaxPayerView:      RefundToTaxPayer,
+    val repaymentHistoryConnector: RepaymentHistoryConnector,
+    val authActions:               AuthActions,
+    itvcErrorHandler:              ItvcErrorHandler,
+    itvcErrorHandlerAgent:         AgentItvcErrorHandler,
+    auditingService:               AuditingService
+  )(
+    implicit mcc:  MessagesControllerComponents,
+    val ec:        ExecutionContext,
+    val appConfig: FrontendAppConfig)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with FeatureSwitching {
 
-  def handleRequest(backUrl: String,
-                    origin: Option[String] = None,
-                    itvcErrorHandler: ShowInternalServerError,
-                    repaymentRequestNumber: String)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  def handleRequest(
+      backUrl:                String,
+      origin:                 Option[String] = None,
+      itvcErrorHandler:       ShowInternalServerError,
+      repaymentRequestNumber: String
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier
+    ): Future[Result] = {
     if (isEnabled(PaymentHistoryRefunds)) {
       repaymentHistoryConnector.getRepaymentHistoryByRepaymentId(Nino(user.nino), repaymentRequestNumber).map {
         case repaymentHistoryModel: RepaymentHistoryModel =>
@@ -61,13 +69,18 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
             refundToTaxPayerView(
               repaymentHistoryModel,
               paymentHistoryRefundsEnabled = true,
-              backUrl, user.saUtr,
+              backUrl,
+              user.saUtr,
               btaNavPartial = user.btaNavPartial,
-              isAgent = user.isAgent()))
+              isAgent = user.isAgent()
+            )
+          )
         case error: RepaymentHistoryErrorModel =>
           Logger("application")
-            .error(s"${if (user.isAgent()) "[Agent] "}Could not retrieve repayment history" +
-              s" for repaymentRequestNumber: $repaymentRequestNumber - ${error.message} - ${error.code}")
+            .error(
+              s"${if (user.isAgent()) "[Agent] "}Could not retrieve repayment history" +
+                s" for repaymentRequestNumber: $repaymentRequestNumber - ${error.message} - ${error.code}"
+            )
           itvcErrorHandler.showInternalServerError()
       }
     } else {
@@ -75,29 +88,29 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
     }
   }
 
-  def show(repaymentRequestNumber: String,
-           origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
+  def show(repaymentRequestNumber: String, origin: Option[String] = None): Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit user =>
       handleRequest(
         backUrl = controllers.routes.PaymentHistoryController.show(origin).url,
         origin = origin,
         itvcErrorHandler = itvcErrorHandler,
         repaymentRequestNumber = repaymentRequestNumber
       )
-  }
+    }
 
-  def showAgent(repaymentRequestNumber: String): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
-    implicit mtdItUser =>
+  def showAgent(repaymentRequestNumber: String): Action[AnyContent] =
+    authActions.asMTDPrimaryAgent.async { implicit mtdItUser =>
       handleRequest(
         backUrl = controllers.routes.PaymentHistoryController.showAgent.url,
         itvcErrorHandler = itvcErrorHandlerAgent,
         repaymentRequestNumber = repaymentRequestNumber
       )
-  }
+    }
 
-  lazy val homeUrl: Boolean => String = isAgent => if(isAgent) {
-    controllers.routes.HomeController.showAgent.url
-  } else {
-    controllers.routes.HomeController.show().url
-  }
+  lazy val homeUrl: Boolean => String = isAgent =>
+    if (isAgent) {
+      controllers.routes.HomeController.showAgent.url
+    } else {
+      controllers.routes.HomeController.show().url
+    }
 }

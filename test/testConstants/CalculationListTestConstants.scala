@@ -20,8 +20,7 @@ import models.calculationList.{CalculationListModel, CalculationListResponseMode
 import play.api.libs.json.{JsValue, Json}
 
 object CalculationListTestConstants {
-  val jsonResponseFull: JsValue = Json.parse(
-    """
+  val jsonResponseFull: JsValue = Json.parse("""
       |{
       |   "calculationId":"c432a56d-e811-474c-a26a-76fc3bcaefe5",
       |   "calculationTimestamp":"2023-10-31T12:55:51.159Z",
@@ -29,7 +28,6 @@ object CalculationListTestConstants {
       |   "crystallised": true
       |}
       |""".stripMargin)
-
 
   val calculationListFull: CalculationListResponseModel = {
     CalculationListModel(
@@ -58,8 +56,7 @@ object CalculationListTestConstants {
     )
   }
 
-  val jsonResponseMin: JsValue = Json.parse(
-    """
+  val jsonResponseMin: JsValue = Json.parse("""
       |{
       |   "calculationId":"c432a56d-e811-474c-a26a-76fc3bcaefe5",
       |   "calculationTimestamp":"2023-10-31T12:55:51.159Z",

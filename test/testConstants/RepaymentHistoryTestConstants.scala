@@ -23,32 +23,33 @@ import java.time.LocalDate
 
 object RepaymentHistoryTestConstants {
 
-
   val validRepaymentHistoryOneRSIJson: JsValue = Json.obj(
     "repaymentsViewerDetails" ->
       Json.arr(
         Json.obj(
           "amountApprovedforRepayment" -> Some(100.0),
-          "amountRequested" -> Some(200.0),
-          "repaymentMethod" -> Some("BACD"),
-          "totalRepaymentAmount" -> Some(300.0),
-          "repaymentItems" -> Some(Json.arr(
-            Json.obj(
-              "repaymentSupplementItem" -> Json.arr(
-                Json.obj(
-                  "parentCreditReference" -> Some("002420002231"),
-                  "amount" -> Some(400.0),
-                  "fromDate" -> Some(LocalDate.parse("2021-07-23")),
-                  "toDate" -> Some(LocalDate.parse("2021-08-23")),
-                  "rate" -> Some(12.12)
+          "amountRequested"            -> Some(200.0),
+          "repaymentMethod"            -> Some("BACD"),
+          "totalRepaymentAmount"       -> Some(300.0),
+          "repaymentItems" -> Some(
+            Json.arr(
+              Json.obj(
+                "repaymentSupplementItem" -> Json.arr(
+                  Json.obj(
+                    "parentCreditReference" -> Some("002420002231"),
+                    "amount"                -> Some(400.0),
+                    "fromDate"              -> Some(LocalDate.parse("2021-07-23")),
+                    "toDate"                -> Some(LocalDate.parse("2021-08-23")),
+                    "rate"                  -> Some(12.12)
+                  )
                 )
               )
             )
-          )),
+          ),
           "estimatedRepaymentDate" -> LocalDate.parse("2021-08-21"),
-          "creationDate" -> LocalDate.parse("2021-07-21"),
+          "creationDate"           -> LocalDate.parse("2021-07-21"),
           "repaymentRequestNumber" -> "000000003135",
-          "status" -> "A"
+          "status"                 -> "A"
         )
       )
   )
@@ -58,86 +59,91 @@ object RepaymentHistoryTestConstants {
       Json.arr(
         Json.obj(
           "amountApprovedforRepayment" -> Some(100.0),
-          "amountRequested" -> Some(200.0),
-          "repaymentMethod" -> Some("BACD"),
-          "totalRepaymentAmount" -> Some(300.0),
-          "repaymentItems" -> Some(Json.arr(
-            Json.obj(
-              "repaymentSupplementItem" -> Json.arr(
-                Json.obj(
-                  "parentCreditReference" -> Some("002420002231"),
-                  "amount" -> Some(400.0),
-                  "fromDate" -> Some(LocalDate.parse("2021-07-23")),
-                  "toDate" -> Some(LocalDate.parse("2021-08-23")),
-                  "rate" -> Some(12.12)
-                ),
-                Json.obj(
-                  "parentCreditReference" -> Some("002420002232"),
-                  "amount" -> Some(500.0),
-                  "fromDate" -> Some(LocalDate.parse("2021-07-24")),
-                  "toDate" -> Some(LocalDate.parse("2021-08-24")),
-                  "rate" -> Some(13.13)
+          "amountRequested"            -> Some(200.0),
+          "repaymentMethod"            -> Some("BACD"),
+          "totalRepaymentAmount"       -> Some(300.0),
+          "repaymentItems" -> Some(
+            Json.arr(
+              Json.obj(
+                "repaymentSupplementItem" -> Json.arr(
+                  Json.obj(
+                    "parentCreditReference" -> Some("002420002231"),
+                    "amount"                -> Some(400.0),
+                    "fromDate"              -> Some(LocalDate.parse("2021-07-23")),
+                    "toDate"                -> Some(LocalDate.parse("2021-08-23")),
+                    "rate"                  -> Some(12.12)
+                  ),
+                  Json.obj(
+                    "parentCreditReference" -> Some("002420002232"),
+                    "amount"                -> Some(500.0),
+                    "fromDate"              -> Some(LocalDate.parse("2021-07-24")),
+                    "toDate"                -> Some(LocalDate.parse("2021-08-24")),
+                    "rate"                  -> Some(13.13)
+                  )
                 )
               )
             )
-          )),
+          ),
           "estimatedRepaymentDate" -> LocalDate.parse("2021-08-21"),
-          "creationDate" -> LocalDate.parse("2021-07-21"),
+          "creationDate"           -> LocalDate.parse("2021-07-21"),
           "repaymentRequestNumber" -> "000000003135",
-          "status" -> "A"
+          "status"                 -> "A"
         )
       )
   )
-
 
   val validMultipleRepaymentHistoryJson: JsValue = Json.obj(
     "repaymentsViewerDetails" ->
       Json.arr(
         Json.obj(
           "amountApprovedforRepayment" -> Some(100.0),
-          "amountRequested" -> Some(200.0),
-          "repaymentMethod" -> Some("BACD"),
-          "totalRepaymentAmount" -> Some(300.0),
-          "repaymentItems" -> Some(Json.arr(
-            Json.obj(
-              "repaymentSupplementItem" -> Json.arr(
-                Json.obj(
-                  "parentCreditReference" -> Some("002420002231"),
-                  "amount" -> Some(400.0),
-                  "fromDate" -> Some(LocalDate.parse("2021-07-23")),
-                  "toDate" -> Some(LocalDate.parse("2021-08-23")),
-                  "rate" -> Some(12.12)
+          "amountRequested"            -> Some(200.0),
+          "repaymentMethod"            -> Some("BACD"),
+          "totalRepaymentAmount"       -> Some(300.0),
+          "repaymentItems" -> Some(
+            Json.arr(
+              Json.obj(
+                "repaymentSupplementItem" -> Json.arr(
+                  Json.obj(
+                    "parentCreditReference" -> Some("002420002231"),
+                    "amount"                -> Some(400.0),
+                    "fromDate"              -> Some(LocalDate.parse("2021-07-23")),
+                    "toDate"                -> Some(LocalDate.parse("2021-08-23")),
+                    "rate"                  -> Some(12.12)
+                  )
                 )
               )
             )
-          )),
+          ),
           "estimatedRepaymentDate" -> Some(LocalDate.parse("2021-08-21")),
-          "creationDate" -> Some(LocalDate.parse("2021-07-21")),
+          "creationDate"           -> Some(LocalDate.parse("2021-07-21")),
           "repaymentRequestNumber" -> "000000003135",
-          "status" -> "A"
+          "status"                 -> "A"
         ),
         Json.obj(
           "amountApprovedforRepayment" -> Some(100.0),
-          "amountRequested" -> Some(200.0),
-          "repaymentMethod" -> Some("BACD"),
-          "totalRepaymentAmount" -> Some(300.0),
-          "repaymentItems" -> Some(Json.arr(
-            Json.obj(
-              "repaymentSupplementItem" -> Json.arr(
-                Json.obj(
-                  "parentCreditReference" -> Some("002420002231"),
-                  "amount" -> Some(400.0),
-                  "fromDate" -> Some(LocalDate.parse("2021-07-23")),
-                  "toDate" -> Some(LocalDate.parse("2021-08-23")),
-                  "rate" -> Some(12.12)
+          "amountRequested"            -> Some(200.0),
+          "repaymentMethod"            -> Some("BACD"),
+          "totalRepaymentAmount"       -> Some(300.0),
+          "repaymentItems" -> Some(
+            Json.arr(
+              Json.obj(
+                "repaymentSupplementItem" -> Json.arr(
+                  Json.obj(
+                    "parentCreditReference" -> Some("002420002231"),
+                    "amount"                -> Some(400.0),
+                    "fromDate"              -> Some(LocalDate.parse("2021-07-23")),
+                    "toDate"                -> Some(LocalDate.parse("2021-08-23")),
+                    "rate"                  -> Some(12.12)
+                  )
                 )
               )
             )
-          )),
+          ),
           "estimatedRepaymentDate" -> Some(LocalDate.parse("2021-08-21")),
-          "creationDate" -> Some(LocalDate.parse("2021-07-21")),
+          "creationDate"           -> Some(LocalDate.parse("2021-07-21")),
           "repaymentRequestNumber" -> "000000003135",
-          "status" -> "A"
+          "status"                 -> "A"
         )
       )
   )
@@ -146,18 +152,21 @@ object RepaymentHistoryTestConstants {
     amountRequested = 200.0,
     repaymentMethod = Some("BACD"),
     totalRepaymentAmount = Some(300.0),
-    repaymentItems = Some(Seq[RepaymentItem](
-      RepaymentItem(
-        repaymentSupplementItem = Seq(RepaymentSupplementItem(
-          parentCreditReference = Some("002420002231"),
-          amount = Some(400.0),
-          fromDate = Some(LocalDate.parse("2021-07-23")),
-          toDate = Some(LocalDate.parse("2021-08-23")),
-          rate = Some(12.12)
-        )
+    repaymentItems = Some(
+      Seq[RepaymentItem](
+        RepaymentItem(
+          repaymentSupplementItem = Seq(
+            RepaymentSupplementItem(
+              parentCreditReference = Some("002420002231"),
+              amount = Some(400.0),
+              fromDate = Some(LocalDate.parse("2021-07-23")),
+              toDate = Some(LocalDate.parse("2021-08-23")),
+              rate = Some(12.12)
+            )
+          )
         )
       )
-    )),
+    ),
     estimatedRepaymentDate = Some(LocalDate.parse("2021-08-21")),
     creationDate = Some(LocalDate.parse("2021-07-21")),
     repaymentRequestNumber = "000000003135",
@@ -169,24 +178,28 @@ object RepaymentHistoryTestConstants {
     amountRequested = 200.0,
     repaymentMethod = Some("BACD"),
     totalRepaymentAmount = Some(300.0),
-    repaymentItems = Some(Seq[RepaymentItem](
-      RepaymentItem(
-        repaymentSupplementItem = Seq(RepaymentSupplementItem(
-          parentCreditReference = Some("002420002231"),
-          amount = Some(400.0),
-          fromDate = Some(LocalDate.parse("2021-07-23")),
-          toDate = Some(LocalDate.parse("2021-08-23")),
-          rate = Some(12.12)
-        ),
-          RepaymentSupplementItem(
-            parentCreditReference = Some("002420002232"),
-            amount = Some(500.0),
-            fromDate = Some(LocalDate.parse("2021-07-24")),
-            toDate = Some(LocalDate.parse("2021-08-24")),
-            rate = Some(13.13)
+    repaymentItems = Some(
+      Seq[RepaymentItem](
+        RepaymentItem(
+          repaymentSupplementItem = Seq(
+            RepaymentSupplementItem(
+              parentCreditReference = Some("002420002231"),
+              amount = Some(400.0),
+              fromDate = Some(LocalDate.parse("2021-07-23")),
+              toDate = Some(LocalDate.parse("2021-08-23")),
+              rate = Some(12.12)
+            ),
+            RepaymentSupplementItem(
+              parentCreditReference = Some("002420002232"),
+              amount = Some(500.0),
+              fromDate = Some(LocalDate.parse("2021-07-24")),
+              toDate = Some(LocalDate.parse("2021-08-24")),
+              rate = Some(13.13)
+            )
           )
-
-        )))),
+        )
+      )
+    ),
     estimatedRepaymentDate = Some(LocalDate.parse("2021-08-21")),
     creationDate = Some(LocalDate.parse("2021-07-21")),
     repaymentRequestNumber = "000000003135",

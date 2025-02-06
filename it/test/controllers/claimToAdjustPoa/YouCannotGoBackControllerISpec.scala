@@ -36,96 +36,106 @@ class YouCannotGoBackControllerISpec extends ControllerISpecHelper {
     super.beforeEach()
     await(sessionService.setMongoData(None))
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-      OK, multipleBusinessesResponse
+      OK,
+      multipleBusinessesResponse
     )
   }
 
   def stubFinancialDetailsResponse(response: JsValue = validFinancialDetailsResponseBody(testTaxYearPoa)): Unit = {
-    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK, response)
-    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 2}-04-06", s"${testTaxYearPoa - 1}-04-05")(OK, response)
+    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+      testNino,
+      s"${testTaxYearPoa - 1}-04-06",
+      s"$testTaxYearPoa-04-05"
+    )(OK, response)
+    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+      testNino,
+      s"${testTaxYearPoa - 2}-04-06",
+      s"${testTaxYearPoa - 1}-04-05"
+    )(OK, response)
   }
 
   def getPath(mtdUserRole: MTDUserRole): String = {
-    val pathStart = if(mtdUserRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdUserRole == MTDIndividual) "" else "/agents"
     pathStart + "/adjust-poa/poa-updated-cannot-go-back"
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    val path = getPath(mtdUserRole)
-    val additionalCookies = getAdditionalCookies(mtdUserRole)
-    s"GET $path" when {
-      s"a user is a $mtdUserRole" that {
-        "is authenticated, with a valid enrolment" should {
-          if (mtdUserRole == MTDSupportingAgent) {
-            testSupportingAgentAccessDenied(path, additionalCookies)
-          } else {
-            s"render the You cannot go back page" when {
-              s"the AdjustPaymentsOnAccount FS enabled and journeyCompleted flag is set to false" in {
-                enable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-                stubFinancialDetailsResponse()
-                await(sessionService.setMongoData(Some(validSession)))
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      val path              = getPath(mtdUserRole)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            if (mtdUserRole == MTDSupportingAgent) {
+              testSupportingAgentAccessDenied(path, additionalCookies)
+            } else {
+              s"render the You cannot go back page" when {
+                s"the AdjustPaymentsOnAccount FS enabled and journeyCompleted flag is set to false" in {
+                  enable(AdjustPaymentsOnAccount)
+                  stubAuthorised(mtdUserRole)
+                  stubFinancialDetailsResponse()
+                  await(sessionService.setMongoData(Some(validSession)))
 
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                result should have(
-                  httpStatus(OK),
-                  pageTitle(mtdUserRole, "claimToAdjustPoa.youCannotGoBack.heading")
-                )
+                  val result = buildGETMTDClient(path, additionalCookies).futureValue
+                  result should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, "claimToAdjustPoa.youCannotGoBack.heading")
+                  )
+                }
+
+                s"the AdjustPaymentsOnAccount FS enabled and journeyCompleted flag is set to true" in {
+                  enable(AdjustPaymentsOnAccount)
+                  stubAuthorised(mtdUserRole)
+                  stubFinancialDetailsResponse()
+                  await(sessionService.setMongoData(Some(validSession.copy(journeyCompleted = true))))
+
+                  val result = buildGETMTDClient(path, additionalCookies).futureValue
+                  result should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, "claimToAdjustPoa.youCannotGoBack.heading")
+                  )
+                }
               }
+              s"return status $SEE_OTHER" when {
+                "the AdjustPaymentsOnAccount FS is disabled" in {
+                  disable(AdjustPaymentsOnAccount)
+                  stubAuthorised(mtdUserRole)
+                  stubFinancialDetailsResponse()
+                  await(sessionService.setMongoData(Some(validSession)))
 
-              s"the AdjustPaymentsOnAccount FS enabled and journeyCompleted flag is set to true" in {
-                enable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-                stubFinancialDetailsResponse()
-                await(sessionService.setMongoData(Some(validSession.copy(journeyCompleted = true))))
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                result should have(
-                  httpStatus(OK),
-                  pageTitle(mtdUserRole, "claimToAdjustPoa.youCannotGoBack.heading")
-                )
+                  val result = buildGETMTDClient(path, additionalCookies).futureValue
+                  result should have(
+                    httpStatus(SEE_OTHER),
+                    redirectURI(homeUrl(mtdUserRole))
+                  )
+                }
               }
-            }
-            s"return status $SEE_OTHER" when {
-              "the AdjustPaymentsOnAccount FS is disabled" in {
-                disable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-                stubFinancialDetailsResponse()
-                await(sessionService.setMongoData(Some(validSession)))
+              s"return status $INTERNAL_SERVER_ERROR" when {
+                "session is missing" in {
+                  enable(AdjustPaymentsOnAccount)
+                  stubAuthorised(mtdUserRole)
+                  stubFinancialDetailsResponse()
 
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
-                )
-              }
-            }
-            s"return status $INTERNAL_SERVER_ERROR" when {
-              "session is missing" in {
-                enable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-                stubFinancialDetailsResponse()
+                  val result = buildGETMTDClient(path, additionalCookies).futureValue
+                  result should have(
+                    httpStatus(INTERNAL_SERVER_ERROR)
+                  )
+                }
+                "poa data is missing" in {
+                  enable(AdjustPaymentsOnAccount)
+                  stubAuthorised(mtdUserRole)
+                  await(sessionService.setMongoData(Some(validSession.copy(journeyCompleted = true))))
 
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                result should have(
-                  httpStatus(INTERNAL_SERVER_ERROR)
-                )
-              }
-              "poa data is missing" in {
-                enable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-                await(sessionService.setMongoData(Some(validSession.copy(journeyCompleted = true))))
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                result should have(
-                  httpStatus(INTERNAL_SERVER_ERROR)
-                )
+                  val result = buildGETMTDClient(path, additionalCookies).futureValue
+                  result should have(
+                    httpStatus(INTERNAL_SERVER_ERROR)
+                  )
+                }
               }
             }
           }
+          testAuthFailures(path, mtdUserRole)
         }
-        testAuthFailures(path, mtdUserRole)
       }
-    }
   }
 }

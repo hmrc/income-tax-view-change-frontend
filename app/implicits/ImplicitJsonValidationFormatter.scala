@@ -21,7 +21,9 @@ import play.api.libs.json.JsPath
 
 trait ImplicitJsonValidationFormatter {
   implicit class CurrencyFormatter(x: Seq[(JsPath, Seq[ValidationError])]) {
-    val asString: String = x.foldRight[String]("")((errors, existing) => existing + s", path: ${errors._1} and errors: ${errors._2.mkString(",")}")
+    val asString: String = x.foldRight[String]("")((errors, existing) =>
+      existing + s", path: ${errors._1} and errors: ${errors._2.mkString(",")}"
+    )
   }
 }
 

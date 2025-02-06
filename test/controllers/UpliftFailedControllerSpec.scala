@@ -30,19 +30,21 @@ import scala.concurrent.ExecutionContext
 
 class UpliftFailedControllerSpec extends TestSupport with MockAuditingService {
 
-  val expectedJourneyId: String = "testJourneyId"
+  val expectedJourneyId:  String = "testJourneyId"
   val upliftFailureTitle: String = messages("upliftFailure.title")
 
-  object TestUpliftFailedController extends UpliftFailedController(
-    app.injector.instanceOf[UpliftFailed],
-    app.injector.instanceOf[MessagesControllerComponents],
-    mockAuditingService
-  )(app.injector.instanceOf[ExecutionContext])
+  object TestUpliftFailedController
+      extends UpliftFailedController(
+        app.injector.instanceOf[UpliftFailed],
+        app.injector.instanceOf[MessagesControllerComponents],
+        mockAuditingService
+      )(app.injector.instanceOf[ExecutionContext])
 
   "the UpliftFailedController.show() action" should {
 
     "audited V-uplift-failure-outcome when ivJourneyId is defined" in {
-      lazy val result = TestUpliftFailedController.show()(FakeRequest("GET", s"/test-path?journeyId=$expectedJourneyId"))
+      lazy val result =
+        TestUpliftFailedController.show()(FakeRequest("GET", s"/test-path?journeyId=$expectedJourneyId"))
 
       val expectedIvOutcomeFailureAuditModel = IvOutcomeFailureAuditModel(expectedJourneyId)
 
@@ -50,7 +52,10 @@ class UpliftFailedControllerSpec extends TestSupport with MockAuditingService {
         verifyAudit(expectedIvOutcomeFailureAuditModel)
 
         response.header.status shouldBe Status.FORBIDDEN
-        Jsoup.parse(response.body.asInstanceOf[HttpEntity.Strict].data.utf8String).getElementsByTag("h1").text() shouldBe upliftFailureTitle
+        Jsoup
+          .parse(response.body.asInstanceOf[HttpEntity.Strict].data.utf8String)
+          .getElementsByTag("h1")
+          .text() shouldBe upliftFailureTitle
       }
     }
 
@@ -59,7 +64,10 @@ class UpliftFailedControllerSpec extends TestSupport with MockAuditingService {
 
       whenReady(result) { response =>
         response.header.status shouldBe Status.FORBIDDEN
-        Jsoup.parse(response.body.asInstanceOf[HttpEntity.Strict].data.utf8String).getElementsByTag("h1").text() shouldBe upliftFailureTitle
+        Jsoup
+          .parse(response.body.asInstanceOf[HttpEntity.Strict].data.utf8String)
+          .getElementsByTag("h1")
+          .text() shouldBe upliftFailureTitle
       }
     }
   }

@@ -35,23 +35,30 @@ import views.html.optOut.ConfirmedOptOut
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-
-class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
-                                          confirmedOptOutViewUtils: ConfirmedOptOutViewUtils,
-                                          val view: ConfirmedOptOut,
-                                          val itvcErrorHandler: ItvcErrorHandler,
-                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                          val optOutService: OptOutService
-                                         )
-                                         (implicit val appConfig: FrontendAppConfig,
-                                          mcc: MessagesControllerComponents,
-                                          val ec: ExecutionContext
-                                         )
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+class ConfirmedOptOutController @Inject() (
+    val authActions:           AuthActions,
+    confirmedOptOutViewUtils:  ConfirmedOptOutViewUtils,
+    val view:                  ConfirmedOptOut,
+    val itvcErrorHandler:      ItvcErrorHandler,
+    val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+    val optOutService:         OptOutService
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    mcc:                    MessagesControllerComponents,
+    val ec:                 ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with FeatureSwitching {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+  private def withRecover(
+      isAgent: Boolean
+    )(
+      code: => Future[Result]
+    )(
+      implicit mtdItUser: MtdItUser[_]
+    ): Future[Result] = {
     code.recover {
       case ex: Exception =>
         Logger("application").error(s"request failed :: $ex")
@@ -59,16 +66,16 @@ class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
     }
   }
 
-  def show(isAgent: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
+  def show(isAgent: Boolean = false): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
       withRecover(isAgent) {
 
         val showReportingFrequencyContent = isEnabled(ReportingFrequencyPage)
 
         for {
-          proposition: OptOutProposition <- optOutService.fetchOptOutProposition()
-          chosenTaxYear: ChosenTaxYear <- optOutService.determineOptOutIntentYear()
-          viewModel: Option[ConfirmedOptOutViewModel] <- optOutService.optOutConfirmedPageViewModel()
+          proposition:                OptOutProposition <- optOutService.fetchOptOutProposition()
+          chosenTaxYear:              ChosenTaxYear <- optOutService.determineOptOutIntentYear()
+          viewModel:                  Option[ConfirmedOptOutViewModel] <- optOutService.optOutConfirmedPageViewModel()
           submitYourTaxReturnContent: Option[Html] =
             confirmedOptOutViewUtils
               .submitYourTaxReturnContent(
@@ -89,5 +96,5 @@ class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
           }
         }
       }
-  }
+    }
 }

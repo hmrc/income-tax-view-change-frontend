@@ -24,16 +24,14 @@ import play.twirl.api.{Html, HtmlFormat}
 
 import javax.inject.Inject
 
-class ConfirmedOptOutViewUtils @Inject()(
-                                          link: views.html.components.link,
-                                          h2: views.html.components.h2,
-                                          p: views.html.components.p,
-                                          appConfig: FrontendAppConfig
-                                        ) {
-
+class ConfirmedOptOutViewUtils @Inject() (
+    link:      views.html.components.link,
+    h2:        views.html.components.h2,
+    p:         views.html.components.p,
+    appConfig: FrontendAppConfig) {
 
   val selfAssessmentTaxReturnLink = appConfig.selfAssessmentTaxReturn
-  val compatibleSoftwareLink = appConfig.compatibleSoftwareLink
+  val compatibleSoftwareLink      = appConfig.compatibleSoftwareLink
 
   private def submitYourTaxReturnHeading()(implicit messages: Messages): HtmlFormat.Appendable =
     h2(msg = "optout.confirmedOptOut.submitTax", optId = Some("submit-tax-heading"))
@@ -43,7 +41,13 @@ class ConfirmedOptOutViewUtils @Inject()(
       HtmlFormat.fill(
         Seq(
           Html(messages("optout.confirmedOptOut.submitTax.confirmed.p1")),
-          link(link = selfAssessmentTaxReturnLink, id = Some("fill-your-tax-return-link"), messageKey = "optout.confirmedOptOut.submitTax.confirmed.p1.link", target = Some("_blank"), additionalOpenTabMessage = Some("."))
+          link(
+            link = selfAssessmentTaxReturnLink,
+            id = Some("fill-your-tax-return-link"),
+            messageKey = "optout.confirmedOptOut.submitTax.confirmed.p1.link",
+            target = Some("_blank"),
+            additionalOpenTabMessage = Some(".")
+          )
         )
       )
     }
@@ -53,19 +57,27 @@ class ConfirmedOptOutViewUtils @Inject()(
       HtmlFormat.fill(
         Seq(
           Html(messages("optout.confirmedOptOut.submitTax.confirmed.p2")),
-          link(link = compatibleSoftwareLink, id = Some("compatible-software-link"), messageKey = "optout.confirmedOptOut.submitTax.confirmed.p2.link", target = Some("_blank"), additionalOpenTabMessage = Some("."))
+          link(
+            link = compatibleSoftwareLink,
+            id = Some("compatible-software-link"),
+            messageKey = "optout.confirmedOptOut.submitTax.confirmed.p2.link",
+            target = Some("_blank"),
+            additionalOpenTabMessage = Some(".")
+          )
         )
       )
     }
 
   def submitYourTaxReturnContent(
-                                  `itsaStatusCY-1`: ITSAStatus,
-                                  itsaStatusCY: ITSAStatus,
-                                  `itsaStatusCY+1`: ITSAStatus,
-                                  chosenTaxYear: ChosenTaxYear,
-                                  isMultiYear: Boolean,
-                                  isPreviousYearCrystallised: Boolean
-                                )(implicit messages: Messages): Option[Html] = {
+      `itsaStatusCY-1`:           ITSAStatus,
+      itsaStatusCY:               ITSAStatus,
+      `itsaStatusCY+1`:           ITSAStatus,
+      chosenTaxYear:              ChosenTaxYear,
+      isMultiYear:                Boolean,
+      isPreviousYearCrystallised: Boolean
+    )(
+      implicit messages: Messages
+    ): Option[Html] = {
 
     (`itsaStatusCY-1`, itsaStatusCY, `itsaStatusCY+1`, chosenTaxYear) match {
       case (Voluntary | Mandated, Voluntary | Mandated, Annual, CurrentTaxYear) if isMultiYear =>
@@ -74,13 +86,15 @@ class ConfirmedOptOutViewUtils @Inject()(
             Seq(submitYourTaxReturnHeading, firstParagraph, secondParagraph)
           )
         )
-      case (Voluntary | Mandated, Voluntary | Mandated, Voluntary | Mandated, CurrentTaxYear) if isMultiYear && isPreviousYearCrystallised =>
+      case (Voluntary | Mandated, Voluntary | Mandated, Voluntary | Mandated, CurrentTaxYear)
+          if isMultiYear && isPreviousYearCrystallised =>
         Some(
           HtmlFormat.fill(
             Seq(submitYourTaxReturnHeading, firstParagraph)
           )
         )
-      case (Voluntary | Mandated, Voluntary | Mandated, Voluntary | Mandated, CurrentTaxYear | NextTaxYear) if isMultiYear =>
+      case (Voluntary | Mandated, Voluntary | Mandated, Voluntary | Mandated, CurrentTaxYear | NextTaxYear)
+          if isMultiYear =>
         Some(
           HtmlFormat.fill(
             Seq(submitYourTaxReturnHeading, firstParagraph, secondParagraph)

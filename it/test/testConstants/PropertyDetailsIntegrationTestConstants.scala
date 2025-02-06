@@ -25,27 +25,28 @@ import java.time.LocalDate
 
 object PropertyDetailsIntegrationTestConstants {
 
-  val startYear = getCurrentTaxYearEnd.getYear - 5
-  val propertyAccountingStart = startYear.toString + "-01-01"
+  val startYear                        = getCurrentTaxYearEnd.getYear - 5
+  val propertyAccountingStart          = startYear.toString + "-01-01"
   val propertyAccountingStartLocalDate = LocalDate.of(startYear, 1, 1)
-  val propertyAccountingEnd = startYear.toString + "-12-31"
-  val propertyAccounringEndLocalDate = LocalDate.of(startYear, 12, 31)
-  val propertyIncomeType = Some("property-unspecified")
-  val propertyTradingStartDate = Some(LocalDate.parse((startYear - 1).toString + "-01-01"))
-  val ukPropertyIncomeType = Some("uk-property")
-  val foreignPropertyIncomeType = Some("foreign-property")
+  val propertyAccountingEnd            = startYear.toString + "-12-31"
+  val propertyAccounringEndLocalDate   = LocalDate.of(startYear, 12, 31)
+  val propertyIncomeType               = Some("property-unspecified")
+  val propertyTradingStartDate         = Some(LocalDate.parse((startYear - 1).toString + "-01-01"))
+  val ukPropertyIncomeType             = Some("uk-property")
+  val foreignPropertyIncomeType        = Some("foreign-property")
 
   def propertyAccountingStartLocalDateOfCurrentYear(year: Int) = LocalDate.of(year, 1, 1)
 
   def propertyAccounringEndLocalDateOfCurrentYear(year: Int) = LocalDate.of(year, 12, 31)
 
-
   val property: PropertyDetailsModel = PropertyDetailsModel(
     incomeSourceId = testPropertyIncomeId,
-    accountingPeriod = Some(AccountingPeriodModel(
-      start = propertyAccountingStartLocalDate,
-      end = propertyAccounringEndLocalDate
-    )),
+    accountingPeriod = Some(
+      AccountingPeriodModel(
+        start = propertyAccountingStartLocalDate,
+        end = propertyAccounringEndLocalDate
+      )
+    ),
     firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
     propertyIncomeType,
     propertyTradingStartDate,
@@ -55,10 +56,12 @@ object PropertyDetailsIntegrationTestConstants {
 
   val oldProperty: PropertyDetailsModel = PropertyDetailsModel(
     incomeSourceId = testPropertyIncomeId,
-    accountingPeriod = Some(AccountingPeriodModel(
-      start = propertyAccountingStartLocalDate,
-      end = propertyAccounringEndLocalDate
-    )),
+    accountingPeriod = Some(
+      AccountingPeriodModel(
+        start = propertyAccountingStartLocalDate,
+        end = propertyAccounringEndLocalDate
+      )
+    ),
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
     propertyIncomeType,
     propertyTradingStartDate,
@@ -66,25 +69,30 @@ object PropertyDetailsIntegrationTestConstants {
     cashOrAccruals = false
   )
 
-  def propertyWithCurrentYear(endYear: Int): PropertyDetailsModel = PropertyDetailsModel(
-    incomeSourceId = testPropertyIncomeId,
-    accountingPeriod = Some(AccountingPeriodModel(
-      start = propertyAccountingStartLocalDateOfCurrentYear(endYear),
-      end = propertyAccounringEndLocalDateOfCurrentYear(endYear)
-    )),
-    firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDateOfCurrentYear(endYear)),
-    propertyIncomeType,
-    propertyTradingStartDate,
-    None,
-    cashOrAccruals = false
-  )
+  def propertyWithCurrentYear(endYear: Int): PropertyDetailsModel =
+    PropertyDetailsModel(
+      incomeSourceId = testPropertyIncomeId,
+      accountingPeriod = Some(
+        AccountingPeriodModel(
+          start = propertyAccountingStartLocalDateOfCurrentYear(endYear),
+          end = propertyAccounringEndLocalDateOfCurrentYear(endYear)
+        )
+      ),
+      firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDateOfCurrentYear(endYear)),
+      propertyIncomeType,
+      propertyTradingStartDate,
+      None,
+      cashOrAccruals = false
+    )
 
   val ukProperty: PropertyDetailsModel = PropertyDetailsModel(
     incomeSourceId = testPropertyIncomeId,
-    accountingPeriod = Some(AccountingPeriodModel(
-      start = propertyAccountingStartLocalDate,
-      end = propertyAccounringEndLocalDate
-    )),
+    accountingPeriod = Some(
+      AccountingPeriodModel(
+        start = propertyAccountingStartLocalDate,
+        end = propertyAccounringEndLocalDate
+      )
+    ),
     firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
     ukPropertyIncomeType,
     propertyTradingStartDate,
@@ -94,10 +102,12 @@ object PropertyDetailsIntegrationTestConstants {
 
   val ukPropertyWithUnknowns: PropertyDetailsModel = PropertyDetailsModel(
     incomeSourceId = testPropertyIncomeId,
-    accountingPeriod = Some(AccountingPeriodModel(
-      start = propertyAccountingStartLocalDate,
-      end = propertyAccounringEndLocalDate
-    )),
+    accountingPeriod = Some(
+      AccountingPeriodModel(
+        start = propertyAccountingStartLocalDate,
+        end = propertyAccounringEndLocalDate
+      )
+    ),
     firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
     ukPropertyIncomeType,
     None,
@@ -107,10 +117,12 @@ object PropertyDetailsIntegrationTestConstants {
 
   val foreignProperty: PropertyDetailsModel = PropertyDetailsModel(
     incomeSourceId = testPropertyIncomeId,
-    accountingPeriod = Some(AccountingPeriodModel(
-      start = propertyAccountingStartLocalDate,
-      end = propertyAccounringEndLocalDate
-    )),
+    accountingPeriod = Some(
+      AccountingPeriodModel(
+        start = propertyAccountingStartLocalDate,
+        end = propertyAccounringEndLocalDate
+      )
+    ),
     firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
     foreignPropertyIncomeType,
     propertyTradingStartDate,
@@ -120,10 +132,12 @@ object PropertyDetailsIntegrationTestConstants {
 
   val foreignPropertyWithUnknowns: PropertyDetailsModel = PropertyDetailsModel(
     incomeSourceId = testPropertyIncomeId,
-    accountingPeriod = Some(AccountingPeriodModel(
-      start = propertyAccountingStartLocalDate,
-      end = propertyAccounringEndLocalDate
-    )),
+    accountingPeriod = Some(
+      AccountingPeriodModel(
+        start = propertyAccountingStartLocalDate,
+        end = propertyAccounringEndLocalDate
+      )
+    ),
     firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
     foreignPropertyIncomeType,
     None,
@@ -135,16 +149,18 @@ object PropertyDetailsIntegrationTestConstants {
     "incomeSourceId" -> testPropertyIncomeId,
     "accountingPeriod" -> Json.obj(
       "start" -> propertyAccountingStart,
-      "end" -> propertyAccountingEnd
+      "end"   -> propertyAccountingEnd
     )
   )
 
   val ukPropertyAudit: PropertyDetailsModel = PropertyDetailsModel(
     incomeSourceId = testPropertyIncomeId,
-    accountingPeriod = Some(AccountingPeriodModel(
-      start = propertyAccountingStartLocalDate,
-      end = propertyAccounringEndLocalDate
-    )),
+    accountingPeriod = Some(
+      AccountingPeriodModel(
+        start = propertyAccountingStartLocalDate,
+        end = propertyAccounringEndLocalDate
+      )
+    ),
     firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
     incomeSourceType = ukPropertyIncomeType,
     tradingStartDate = propertyTradingStartDate,
@@ -155,10 +171,12 @@ object PropertyDetailsIntegrationTestConstants {
 
   val foreignPropertyAudit: PropertyDetailsModel = PropertyDetailsModel(
     incomeSourceId = testPropertyIncomeId,
-    accountingPeriod = Some(AccountingPeriodModel(
-      start = propertyAccountingStartLocalDate,
-      end = propertyAccounringEndLocalDate
-    )),
+    accountingPeriod = Some(
+      AccountingPeriodModel(
+        start = propertyAccountingStartLocalDate,
+        end = propertyAccounringEndLocalDate
+      )
+    ),
     firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
     incomeSourceType = foreignPropertyIncomeType,
     tradingStartDate = propertyTradingStartDate,

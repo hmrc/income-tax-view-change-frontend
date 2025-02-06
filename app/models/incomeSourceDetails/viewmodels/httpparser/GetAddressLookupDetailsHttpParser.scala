@@ -26,16 +26,18 @@ object GetAddressLookupDetailsHttpParser {
 
   type GetAddressLookupDetailsResponse = Either[GetAddressLookupDetailsFailure, Option[BusinessAddressModel]]
 
-  implicit def getAddressLookupDetailsHttpReads: HttpReads[GetAddressLookupDetailsResponse] = HttpReads { (_, _, response) =>
-    response.status match {
-      case OK => response.json.validate[BusinessAddressModel] match {
-        case JsSuccess(value, _) => Right(Some(value))
-        case _ => Left(InvalidJson)
+  implicit def getAddressLookupDetailsHttpReads: HttpReads[GetAddressLookupDetailsResponse] =
+    HttpReads { (_, _, response) =>
+      response.status match {
+        case OK =>
+          response.json.validate[BusinessAddressModel] match {
+            case JsSuccess(value, _) => Right(Some(value))
+            case _                   => Left(InvalidJson)
+          }
+        case NOT_FOUND => Right(None)
+        case status    => Left(UnexpectedGetStatusFailure(status))
       }
-      case NOT_FOUND => Right(None)
-      case status => Left(UnexpectedGetStatusFailure(status))
     }
-  }
 
   sealed trait GetAddressLookupDetailsFailure
 

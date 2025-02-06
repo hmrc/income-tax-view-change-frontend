@@ -31,17 +31,19 @@ import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 
 import scala.concurrent.Future
 
-class CheckYourAnswersControllerSpec extends MockAuthActions
-  with MockClaimToAdjustService
-  with MockPaymentOnAccountSessionService
-  with MockClaimToAdjustPoaCalculationService {
+class CheckYourAnswersControllerSpec
+    extends MockAuthActions
+    with MockClaimToAdjustService
+    with MockPaymentOnAccountSessionService
+    with MockClaimToAdjustPoaCalculationService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
       api.inject.bind[ClaimToAdjustPoaCalculationService].toInstance(mockClaimToAdjustPoaCalculationService),
       api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[CheckYourAnswersController]
 
@@ -57,16 +59,17 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
       partiallyPaid = false,
       fullyPaid = false,
       previouslyAdjusted = None
-    ))
+    )
+  )
 
-  val emptySession: PoaAmendmentData = PoaAmendmentData(None, None)
-  val validSession: PoaAmendmentData = PoaAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))
+  val emptySession:         PoaAmendmentData = PoaAmendmentData(None, None)
+  val validSession:         PoaAmendmentData = PoaAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))
   val validSessionIncrease: PoaAmendmentData = PoaAmendmentData(Some(Increase), Some(BigDecimal(1000.00)))
 
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual
     s"show(isAgent = $isAgent)" when {
-      val action = testController.show(isAgent)
+      val action      = testController.show(isAgent)
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         if (mtdRole == MTDSupportingAgent) {
@@ -120,11 +123,15 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
               enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPaymentsOnAccount(poa)
-              setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
+              setupMockPaymentOnAccountSessionService(
+                Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true))))
+              )
               setupMockSuccess(mtdRole)
               val result = action(fakeRequest)
               status(result) shouldBe SEE_OTHER
-              redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(isAgent).url)
+              redirectLocation(result) shouldBe Some(
+                controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(isAgent).url
+              )
             }
           }
 
@@ -161,7 +168,9 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
               enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPaymentsOnAccount(None)
-              setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSession.copy(poaAdjustmentReason = None)))))
+              setupMockPaymentOnAccountSessionService(
+                Future.successful(Right(Some(validSession.copy(poaAdjustmentReason = None))))
+              )
               setupMockSuccess(mtdRole)
               val result = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -170,7 +179,9 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
               enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPaymentsOnAccount(None)
-              setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSession.copy(newPoaAmount = None)))))
+              setupMockPaymentOnAccountSessionService(
+                Future.successful(Right(Some(validSession.copy(newPoaAmount = None))))
+              )
               setupMockSuccess(mtdRole)
               val result = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -202,7 +213,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
     }
 
     s"submit(isAgent = $isAgent)" when {
-      val action = testController.submit(isAgent)
+      val action      = testController.submit(isAgent)
       val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         if (mtdRole == MTDSupportingAgent) {
@@ -219,7 +230,9 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSession))))
 
               val result = action(fakeRequest)
-              redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.PoaAdjustedController.show(isAgent).url)
+              redirectLocation(result) shouldBe Some(
+                controllers.claimToAdjustPoa.routes.PoaAdjustedController.show(isAgent).url
+              )
             }
           }
           "redirect to API error page" when {
@@ -233,7 +246,9 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSession))))
 
               val result = action(fakeRequest)
-              redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(isAgent).url)
+              redirectLocation(result) shouldBe Some(
+                controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(isAgent).url
+              )
             }
           }
           "redirect to the home page" when {

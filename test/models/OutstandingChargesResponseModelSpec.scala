@@ -27,13 +27,15 @@ class OutstandingChargesResponseModelSpec extends UnitSpec with Matchers {
   "The OutstandingChargesModel" should {
 
     "be formatted to JSON correctly" in {
-      Json.toJson[OutstandingChargesModel](testValidOutstandingChargesModel) shouldBe testValidOutStandingChargeModelJson
+      Json.toJson[OutstandingChargesModel](
+        testValidOutstandingChargesModel
+      ) shouldBe testValidOutStandingChargeModelJson
     }
 
     "be able to parse a JSON into the Model" in {
-      Json.fromJson[OutstandingChargesModel](testValidOutStandingChargeModelJson).fold(
-        invalid => invalid,
-        valid => valid) shouldBe testValidOutstandingChargesModel
+      Json
+        .fromJson[OutstandingChargesModel](testValidOutStandingChargeModelJson)
+        .fold(invalid => invalid, valid => valid) shouldBe testValidOutstandingChargesModel
     }
 
   }
@@ -41,11 +43,15 @@ class OutstandingChargesResponseModelSpec extends UnitSpec with Matchers {
   "The OutstandingChargesErrorModel" should {
 
     "be formatted to JSON correctly" in {
-      Json.toJson[OutstandingChargesErrorModel](testOutstandingChargesErrorModel) shouldBe testOutstandingChargesErrorModelJson
+      Json.toJson[OutstandingChargesErrorModel](
+        testOutstandingChargesErrorModel
+      ) shouldBe testOutstandingChargesErrorModelJson
     }
 
     "be able to parse a JSON into the Model" in {
-      Json.fromJson[OutstandingChargesErrorModel](testOutstandingChargesErrorModelJson) shouldBe JsSuccess(testOutstandingChargesErrorModel)
+      Json.fromJson[OutstandingChargesErrorModel](testOutstandingChargesErrorModelJson) shouldBe JsSuccess(
+        testOutstandingChargesErrorModel
+      )
     }
   }
 

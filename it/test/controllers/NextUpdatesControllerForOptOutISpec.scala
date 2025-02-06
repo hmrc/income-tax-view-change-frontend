@@ -54,17 +54,24 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
         optOutSessionDataRepository.saveIntent(TaxYear.forYearEnd(2024)).futureValue
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
-        val previousYear = currentTaxYear - 1
+        val previousYear   = currentTaxYear - 1
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
+          testNino,
+          ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId)))
+        )
 
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
         val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
-        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
-        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
-
+        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(
+          dateService.getCurrentTaxYearEnd,
+          threeYearStatus
+        )
+        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(
+          CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString()
+        )
 
         val savedTaxYearOpn: Option[TaxYear] = optOutSessionDataRepository.fetchSavedIntent().futureValue
         savedTaxYearOpn.isDefined shouldBe true
@@ -84,9 +91,11 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
 
         Then("the quarterly updates info sections")
         res should have(
-          elementTextBySelector("#one-year-opt-out-message")(expectedValue = "You are currently reporting quarterly on a " +
-            "voluntary basis for the 2021 to 2022 tax year. You can choose to opt out of quarterly updates and " +
-            "report annually instead.")
+          elementTextBySelector("#one-year-opt-out-message")(expectedValue =
+            "You are currently reporting quarterly on a " +
+              "voluntary basis for the 2021 to 2022 tax year. You can choose to opt out of quarterly updates and " +
+              "report annually instead."
+          )
         )
 
       }
@@ -96,17 +105,24 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
-        val previousYear = currentTaxYear - 1
+        val previousYear   = currentTaxYear - 1
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
+          testNino,
+          ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId)))
+        )
 
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
         val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
-        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
-        CalculationListStub.stubGetLegacyCalculationList(testNino,
-          previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(
+          dateService.getCurrentTaxYearEnd,
+          threeYearStatus
+        )
+        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(
+          CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString()
+        )
 
         optOutSessionDataRepository.saveIntent(TaxYear.forYearEnd(2024)).futureValue
         val savedTaxYearOpn: Option[TaxYear] = optOutSessionDataRepository.fetchSavedIntent().futureValue
@@ -127,8 +143,10 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
 
         Then("the quarterly updates info sections")
         res should have(
-          elementTextBySelector("#multi-year-opt-out-message")(expectedValue = "You are currently reporting quarterly on a " +
-            "voluntary basis. You can choose to opt out of quarterly updates and report annually instead.")
+          elementTextBySelector("#multi-year-opt-out-message")(expectedValue =
+            "You are currently reporting quarterly on a " +
+              "voluntary basis. You can choose to opt out of quarterly updates and report annually instead."
+          )
         )
       }
     }

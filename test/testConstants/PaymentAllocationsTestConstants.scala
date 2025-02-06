@@ -112,35 +112,38 @@ object PaymentAllocationsTestConstants {
     chargeType = Some(NIC4_WALES),
     mainType = Some("SA Payment on Account 1"),
     mainTransaction = Some("4920"),
-    items = Some(Seq(
-      SubItem(
-        subItemId = Some("1"),
-        amount = Some(BigDecimal("100.00")),
-        clearingDate = Some(LocalDate.parse("2021-01-31")),
-        clearingReason = None,
-        outgoingPaymentMethod = Some("outgoingPaymentMethod"),
-        paymentReference = Some("paymentReference"),
-        paymentAmount = Some(BigDecimal("2000.00")),
-        dueDate = Some(LocalDate.parse("2021-01-31")),
-        paymentMethod = Some("paymentMethod"),
-        paymentLot = Some("paymentLot"),
-        paymentLotItem = Some("paymentLotItem"),
-        paymentId = Some("paymentLot-paymentLotItem")
-      ),
-      SubItem(
-        subItemId = Some("2"),
-        amount = Some(BigDecimal("200.00")),
-        clearingDate = None,
-        clearingReason = None,
-        outgoingPaymentMethod = Some("outgoingPaymentMethod2"),
-        paymentReference = None,
-        paymentAmount = Some(BigDecimal("3000.00")),
-        dueDate = Some(LocalDate.parse("2021-01-31")),
-        paymentMethod = Some("paymentMethod2"),
-        paymentLot = Some("paymentLot2"),
-        paymentLotItem = None,
-        paymentId = None
-      )))
+    items = Some(
+      Seq(
+        SubItem(
+          subItemId = Some("1"),
+          amount = Some(BigDecimal("100.00")),
+          clearingDate = Some(LocalDate.parse("2021-01-31")),
+          clearingReason = None,
+          outgoingPaymentMethod = Some("outgoingPaymentMethod"),
+          paymentReference = Some("paymentReference"),
+          paymentAmount = Some(BigDecimal("2000.00")),
+          dueDate = Some(LocalDate.parse("2021-01-31")),
+          paymentMethod = Some("paymentMethod"),
+          paymentLot = Some("paymentLot"),
+          paymentLotItem = Some("paymentLotItem"),
+          paymentId = Some("paymentLot-paymentLotItem")
+        ),
+        SubItem(
+          subItemId = Some("2"),
+          amount = Some(BigDecimal("200.00")),
+          clearingDate = None,
+          clearingReason = None,
+          outgoingPaymentMethod = Some("outgoingPaymentMethod2"),
+          paymentReference = None,
+          paymentAmount = Some(BigDecimal("3000.00")),
+          dueDate = Some(LocalDate.parse("2021-01-31")),
+          paymentMethod = Some("paymentMethod2"),
+          paymentLot = Some("paymentLot2"),
+          paymentLotItem = None,
+          paymentId = None
+        )
+      )
+    )
   )
 
   val financialDetailNoPayment: FinancialDetail = FinancialDetail(
@@ -155,30 +158,33 @@ object PaymentAllocationsTestConstants {
     chargeType = Some(NIC4_WALES),
     mainType = Some("SA Payment on Account 1"),
     mainTransaction = Some("4920"),
-    items = Some(Seq(
-      SubItem(
-        subItemId = Some("1"),
-        amount = Some(BigDecimal("100.00")),
-        clearingDate = Some(LocalDate.parse("2021-01-31")),
-        clearingReason = None,
-        outgoingPaymentMethod = Some("outgoingPaymentMethod"),
-        paymentReference = Some("paymentReference"),
-        paymentAmount = Some(BigDecimal("2000.00")),
-        dueDate = Some(LocalDate.parse("2021-01-31")),
-        paymentMethod = Some("paymentMethod"),
-        paymentId = None
-      ),
-      SubItem(
-        subItemId = Some("2"),
-        amount = Some(BigDecimal("200.00")),
-        clearingDate = None,
-        clearingReason = None,
-        outgoingPaymentMethod = Some("outgoingPaymentMethod2"),
-        paymentReference = None,
-        paymentAmount = Some(BigDecimal("3000.00")),
-        dueDate = Some(LocalDate.parse("2021-01-31")),
-        paymentMethod = Some("paymentMethod2")
-      )))
+    items = Some(
+      Seq(
+        SubItem(
+          subItemId = Some("1"),
+          amount = Some(BigDecimal("100.00")),
+          clearingDate = Some(LocalDate.parse("2021-01-31")),
+          clearingReason = None,
+          outgoingPaymentMethod = Some("outgoingPaymentMethod"),
+          paymentReference = Some("paymentReference"),
+          paymentAmount = Some(BigDecimal("2000.00")),
+          dueDate = Some(LocalDate.parse("2021-01-31")),
+          paymentMethod = Some("paymentMethod"),
+          paymentId = None
+        ),
+        SubItem(
+          subItemId = Some("2"),
+          amount = Some(BigDecimal("200.00")),
+          clearingDate = None,
+          clearingReason = None,
+          outgoingPaymentMethod = Some("outgoingPaymentMethod2"),
+          paymentReference = None,
+          paymentAmount = Some(BigDecimal("3000.00")),
+          dueDate = Some(LocalDate.parse("2021-01-31")),
+          paymentMethod = Some("paymentMethod2")
+        )
+      )
+    )
   )
 
   val financialDetailNoPaymentCredit: FinancialDetail = FinancialDetail(
@@ -193,30 +199,33 @@ object PaymentAllocationsTestConstants {
     chargeType = Some(NIC4_WALES),
     mainType = Some("SA Payment on Account 1"),
     mainTransaction = Some("4920"),
-    items = Some(Seq(
-      SubItem(
-        subItemId = Some("1"),
-        amount = Some(BigDecimal("100.00")),
-        clearingDate = Some(LocalDate.parse("2021-01-31")),
-        clearingReason = None,
-        outgoingPaymentMethod = Some("outgoingPaymentMethod"),
-        paymentReference = Some("paymentReference"),
-        paymentAmount = Some(BigDecimal("2000.00")),
-        dueDate = Some(LocalDate.parse("2021-01-31")),
-        paymentMethod = Some("paymentMethod"),
-        paymentId = None
-      ),
-      SubItem(
-        subItemId = Some("2"),
-        amount = Some(BigDecimal("200.00")),
-        clearingDate = None,
-        clearingReason = None,
-        outgoingPaymentMethod = Some("outgoingPaymentMethod2"),
-        paymentReference = None,
-        paymentAmount = Some(BigDecimal("3000.00")),
-        dueDate = Some(LocalDate.parse("2021-01-31")),
-        paymentMethod = Some("paymentMethod2")
-      )))
+    items = Some(
+      Seq(
+        SubItem(
+          subItemId = Some("1"),
+          amount = Some(BigDecimal("100.00")),
+          clearingDate = Some(LocalDate.parse("2021-01-31")),
+          clearingReason = None,
+          outgoingPaymentMethod = Some("outgoingPaymentMethod"),
+          paymentReference = Some("paymentReference"),
+          paymentAmount = Some(BigDecimal("2000.00")),
+          dueDate = Some(LocalDate.parse("2021-01-31")),
+          paymentMethod = Some("paymentMethod"),
+          paymentId = None
+        ),
+        SubItem(
+          subItemId = Some("2"),
+          amount = Some(BigDecimal("200.00")),
+          clearingDate = None,
+          clearingReason = None,
+          outgoingPaymentMethod = Some("outgoingPaymentMethod2"),
+          paymentReference = None,
+          paymentAmount = Some(BigDecimal("3000.00")),
+          dueDate = Some(LocalDate.parse("2021-01-31")),
+          paymentMethod = Some("paymentMethod2")
+        )
+      )
+    )
   )
 
   val financialDetail2: FinancialDetail = FinancialDetail(
@@ -231,21 +240,24 @@ object PaymentAllocationsTestConstants {
     chargeType = Some(NIC4_WALES),
     mainType = Some("SA Payment on Account 1"),
     mainTransaction = Some("4920"),
-    items = Some(Seq(
-      SubItem(
-        subItemId = Some("2"),
-        amount = Some(BigDecimal("200.00")),
-        clearingDate = None,
-        clearingReason = None,
-        outgoingPaymentMethod = Some("outgoingPaymentMethod2"),
-        paymentReference = Some("paymentReference2"),
-        paymentAmount = Some(BigDecimal("3000.00")),
-        dueDate = Some(LocalDate.parse("2021-01-31")),
-        paymentMethod = Some("paymentMethod2"),
-        paymentLot = Some("paymentLot2"),
-        paymentLotItem = Some("paymentLotItem2"),
-        paymentId = Some("paymentLot2-paymentLotItem2")
-      )))
+    items = Some(
+      Seq(
+        SubItem(
+          subItemId = Some("2"),
+          amount = Some(BigDecimal("200.00")),
+          clearingDate = None,
+          clearingReason = None,
+          outgoingPaymentMethod = Some("outgoingPaymentMethod2"),
+          paymentReference = Some("paymentReference2"),
+          paymentAmount = Some(BigDecimal("3000.00")),
+          dueDate = Some(LocalDate.parse("2021-01-31")),
+          paymentMethod = Some("paymentMethod2"),
+          paymentLot = Some("paymentLot2"),
+          paymentLotItem = Some("paymentLotItem2"),
+          paymentId = Some("paymentLot2-paymentLotItem2")
+        )
+      )
+    )
   )
 
   val financialDetail3: FinancialDetail = FinancialDetail(
@@ -260,47 +272,50 @@ object PaymentAllocationsTestConstants {
     chargeType = Some("Test"),
     mainType = Some("ITSA Misc Charge"),
     mainTransaction = Some("4003"),
-    items = Some(Seq(
-      SubItem(
-        subItemId = Some("001"),
-        amount = Some(BigDecimal("300.00")),
-        clearingDate = None,
-        clearingReason = None,
-        outgoingPaymentMethod = Some("outgoingPaymentMethod3"),
-        paymentReference = Some("paymentReference3"),
-        paymentAmount = Some(BigDecimal("300.00")),
-        dueDate = Some(LocalDate.parse("2021-01-31")),
-        paymentMethod = Some("paymentMethod3"),
-        paymentLot = Some("paymentLot3"),
-        paymentLotItem = Some("paymentLotItem3"),
-        paymentId = Some("paymentLot3-paymentLotItem3")
-      )))
+    items = Some(
+      Seq(
+        SubItem(
+          subItemId = Some("001"),
+          amount = Some(BigDecimal("300.00")),
+          clearingDate = None,
+          clearingReason = None,
+          outgoingPaymentMethod = Some("outgoingPaymentMethod3"),
+          paymentReference = Some("paymentReference3"),
+          paymentAmount = Some(BigDecimal("300.00")),
+          dueDate = Some(LocalDate.parse("2021-01-31")),
+          paymentMethod = Some("paymentMethod3"),
+          paymentLot = Some("paymentLot3"),
+          paymentLotItem = Some("paymentLotItem3"),
+          paymentId = Some("paymentLot3-paymentLotItem3")
+        )
+      )
+    )
   )
 
   val testValidPaymentAllocationsModelJson: JsValue = Json.obj(
-    "amount" -> 110.10,
-    "method" -> "Payment by Card",
+    "amount"          -> 110.10,
+    "method"          -> "Payment by Card",
     "transactionDate" -> "2019-05-27",
-    "reference" -> "reference",
+    "reference"       -> "reference",
     "allocations" -> Json.arr(
       Json.obj(
-        "transactionId" -> "1040000872",
-        "from" -> "2019-06-27",
-        "to" -> "2019-08-27",
-        "chargeType" -> NIC4_WALES,
-        "mainType" -> "SA Payment on Account 1",
-        "amount" -> 10.10,
-        "clearedAmount" -> 5.50,
+        "transactionId"   -> "1040000872",
+        "from"            -> "2019-06-27",
+        "to"              -> "2019-08-27",
+        "chargeType"      -> NIC4_WALES,
+        "mainType"        -> "SA Payment on Account 1",
+        "amount"          -> 10.10,
+        "clearedAmount"   -> 5.50,
         "chargeReference" -> "chargeReference1"
       ),
       Json.obj(
-        "transactionId" -> "1040000873",
-        "from" -> "2019-07-28",
-        "to" -> "2019-09-28",
-        "chargeType" -> NIC4_WALES,
-        "mainType" -> "SA Payment on Account 1",
-        "amount" -> 10.90,
-        "clearedAmount" -> 5.90,
+        "transactionId"   -> "1040000873",
+        "from"            -> "2019-07-28",
+        "to"              -> "2019-09-28",
+        "chargeType"      -> NIC4_WALES,
+        "mainType"        -> "SA Payment on Account 1",
+        "amount"          -> 10.90,
+        "clearedAmount"   -> 5.90,
         "chargeReference" -> "chargeReference2"
       )
     )
@@ -308,90 +323,215 @@ object PaymentAllocationsTestConstants {
 
   val testValidPaymentAllocationsModel: PaymentAllocations =
     PaymentAllocations(
-      Some(110.10), Some("Payment by Card"),
+      Some(110.10),
+      Some("Payment by Card"),
       Some(LocalDate.parse("2019-05-27")),
       Some("reference"),
       Seq(
-        AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1")),
-        AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))
+        AllocationDetail(
+          Some("1040000872"),
+          Some(LocalDate.parse("2019-06-27")),
+          Some(LocalDate.parse("2019-08-27")),
+          Some(NIC4_WALES),
+          Some("SA Payment on Account 1"),
+          Some(10.10),
+          Some(5.50),
+          Some("chargeReference1")
+        ),
+        AllocationDetail(
+          Some("1040000873"),
+          Some(LocalDate.parse("2019-07-28")),
+          Some(LocalDate.parse("2019-09-28")),
+          Some(NIC4_WALES),
+          Some("SA Payment on Account 1"),
+          Some(10.90),
+          Some(5.90),
+          Some("chargeReference2")
+        )
       )
     )
 
   val testValidLpiPaymentAllocationsModel: PaymentAllocations = PaymentAllocations(
-    Some(110.10), Some("Payment by Card"), Some(LocalDate.parse("2019-05-27")), Some("reference"),
+    Some(110.10),
+    Some("Payment by Card"),
+    Some(LocalDate.parse("2019-05-27")),
+    Some("reference"),
     Seq(
-      AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some(ITSA_NIC4_INTEREST_GB), Some("SA Late Payment Interest"), Some(10.10), Some(5.50), Some("latePaymentInterestId")),
-      AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some(ITSA_NIC4_INTEREST_GB), Some("SA Late Payment Interest"), Some(10.90), Some(5.90), Some("latePaymentInterestId"))
+      AllocationDetail(
+        Some("1040000872"),
+        Some(LocalDate.parse("2019-06-27")),
+        Some(LocalDate.parse("2019-08-27")),
+        Some(ITSA_NIC4_INTEREST_GB),
+        Some("SA Late Payment Interest"),
+        Some(10.10),
+        Some(5.50),
+        Some("latePaymentInterestId")
+      ),
+      AllocationDetail(
+        Some("1040000873"),
+        Some(LocalDate.parse("2019-07-28")),
+        Some(LocalDate.parse("2019-09-28")),
+        Some(ITSA_NIC4_INTEREST_GB),
+        Some("SA Late Payment Interest"),
+        Some(10.90),
+        Some(5.90),
+        Some("latePaymentInterestId")
+      )
     )
   )
 
   val testInvalidPaymentAllocationsModelJson: JsValue = Json.obj(
-    "amount" -> "invalidAmount",
+    "amount"    -> "invalidAmount",
     "payMethod" -> "Payment by Card",
-    "valDate" -> "2019-05-27"
+    "valDate"   -> "2019-05-27"
   )
 
-  val testPaymentAllocationsErrorModelParsing: PaymentAllocationsError = PaymentAllocationsError(
-    testErrorStatus, "Json Validation Error. Parsing Payment Allocations Data Response")
+  val testPaymentAllocationsErrorModelParsing: PaymentAllocationsError =
+    PaymentAllocationsError(testErrorStatus, "Json Validation Error. Parsing Payment Allocations Data Response")
 
-  val testPaymentAllocationsErrorModel: PaymentAllocationsError = PaymentAllocationsError(testErrorStatus, testErrorMessage)
+  val testPaymentAllocationsErrorModel: PaymentAllocationsError =
+    PaymentAllocationsError(testErrorStatus, testErrorMessage)
   val testPaymentAllocationsErrorModelJson: JsValue = Json.obj(
-    "code" -> testErrorStatus,
+    "code"    -> testErrorStatus,
     "message" -> testErrorMessage
   )
 
-  val paymentAllocationChargesModel: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(List(documentDetail), List(financialDetail))
-  val paymentAllocationChargesModelWithCredit: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(List(documentDetailWithCredit), List(financialDetail))
-  val paymentAllocationChargesModelNoPayment: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(List(documentDetailNoPayment), List(financialDetailNoPayment))
+  val paymentAllocationChargesModel: FinancialDetailsWithDocumentDetailsModel =
+    FinancialDetailsWithDocumentDetailsModel(List(documentDetail), List(financialDetail))
+  val paymentAllocationChargesModelWithCredit: FinancialDetailsWithDocumentDetailsModel =
+    FinancialDetailsWithDocumentDetailsModel(List(documentDetailWithCredit), List(financialDetail))
+  val paymentAllocationChargesModelNoPayment: FinancialDetailsWithDocumentDetailsModel =
+    FinancialDetailsWithDocumentDetailsModel(List(documentDetailNoPayment), List(financialDetailNoPayment))
 
-  val paymentAllocationViewModel: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModel,
+  val paymentAllocationViewModel: PaymentAllocationViewModel = PaymentAllocationViewModel(
+    paymentAllocationChargesModel,
     Seq(
       AllocationDetailWithClearingDate(
-        Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
-        Some(LocalDate.parse("2019-05-27"))),
+        Some(
+          AllocationDetail(
+            Some("1040000872"),
+            Some(LocalDate.parse("2019-06-27")),
+            Some(LocalDate.parse("2019-08-27")),
+            Some("NIC4 Wales"),
+            Some("SA Payment on Account 1"),
+            Some(10.10),
+            Some(5.50),
+            Some("chargeReference1")
+          )
+        ),
+        Some(LocalDate.parse("2019-05-27"))
+      ),
       AllocationDetailWithClearingDate(
-        Some(AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))),
+        Some(
+          AllocationDetail(
+            Some("1040000873"),
+            Some(LocalDate.parse("2019-07-28")),
+            Some(LocalDate.parse("2019-09-28")),
+            Some("NIC4 Wales"),
+            Some("SA Payment on Account 1"),
+            Some(10.90),
+            Some(5.90),
+            Some("chargeReference2")
+          )
+        ),
         Some(LocalDate.parse("2019-05-27"))
       )
-    ))
-
-  val paymentAllocationViewModelNoPayment: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModelNoPayment)
-
-
-  val financialDetailsWithCreditZeroOutstanding: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
-    List(documentDetailNoPaymentCredit),
-    List(financialDetailNoPaymentCredit)
+    )
   )
 
-  val financialDetailsHmrcAdjustment: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
-    List(documentDetail3),
-    List(financialDetail3)
+  val paymentAllocationViewModelNoPayment: PaymentAllocationViewModel = PaymentAllocationViewModel(
+    paymentAllocationChargesModelNoPayment
   )
 
-  val paymentAllocationViewModelWithCreditZeroOutstanding: PaymentAllocationViewModel = PaymentAllocationViewModel(financialDetailsWithCreditZeroOutstanding,
+  val financialDetailsWithCreditZeroOutstanding: FinancialDetailsWithDocumentDetailsModel =
+    FinancialDetailsWithDocumentDetailsModel(
+      List(documentDetailNoPaymentCredit),
+      List(financialDetailNoPaymentCredit)
+    )
+
+  val financialDetailsHmrcAdjustment: FinancialDetailsWithDocumentDetailsModel =
+    FinancialDetailsWithDocumentDetailsModel(
+      List(documentDetail3),
+      List(financialDetail3)
+    )
+
+  val paymentAllocationViewModelWithCreditZeroOutstanding: PaymentAllocationViewModel = PaymentAllocationViewModel(
+    financialDetailsWithCreditZeroOutstanding,
     Seq(
       AllocationDetailWithClearingDate(
-        Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
-        Some(LocalDate.parse("2021-01-31"))),
+        Some(
+          AllocationDetail(
+            Some("1040000872"),
+            Some(LocalDate.parse("2019-06-27")),
+            Some(LocalDate.parse("2019-08-27")),
+            Some(NIC4_WALES),
+            Some("SA Payment on Account 1"),
+            Some(10.10),
+            Some(5.50),
+            Some("chargeReference1")
+          )
+        ),
+        Some(LocalDate.parse("2021-01-31"))
+      ),
       AllocationDetailWithClearingDate(
-        Some(AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))),
+        Some(
+          AllocationDetail(
+            Some("1040000873"),
+            Some(LocalDate.parse("2019-07-28")),
+            Some(LocalDate.parse("2019-09-28")),
+            Some(NIC4_WALES),
+            Some("SA Payment on Account 1"),
+            Some(10.90),
+            Some(5.90),
+            Some("chargeReference2")
+          )
+        ),
         Some(LocalDate.parse("2021-01-31"))
       )
-    ))
+    )
+  )
 
-  val paymentAllocationViewModelWithNoClearingAmount: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModel,
+  val paymentAllocationViewModelWithNoClearingAmount: PaymentAllocationViewModel = PaymentAllocationViewModel(
+    paymentAllocationChargesModel,
     Seq(
       AllocationDetailWithClearingDate(
-        Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
-        None)
-    ))
+        Some(
+          AllocationDetail(
+            Some("1040000872"),
+            Some(LocalDate.parse("2019-06-27")),
+            Some(LocalDate.parse("2019-08-27")),
+            Some(NIC4_WALES),
+            Some("SA Payment on Account 1"),
+            Some(10.10),
+            Some(5.50),
+            Some("chargeReference1")
+          )
+        ),
+        None
+      )
+    )
+  )
 
-  val paymentAllocationViewModelHmrcAdjustment: PaymentAllocationViewModel = PaymentAllocationViewModel(financialDetailsHmrcAdjustment,
+  val paymentAllocationViewModelHmrcAdjustment: PaymentAllocationViewModel = PaymentAllocationViewModel(
+    financialDetailsHmrcAdjustment,
     Seq(
       AllocationDetailWithClearingDate(
-        Some(AllocationDetail(Some("chargeReference3"), Some(LocalDate.parse("2021-04-06")), Some(LocalDate.parse("2022-04-05")), Some("Test"), Some("ITSA Misc Charge"), Some(300.00), Some(300.00), Some("chargeReference3"))),
-        Some(LocalDate.parse("2021-01-31")))
-    ))
+        Some(
+          AllocationDetail(
+            Some("chargeReference3"),
+            Some(LocalDate.parse("2021-04-06")),
+            Some(LocalDate.parse("2022-04-05")),
+            Some("Test"),
+            Some("ITSA Misc Charge"),
+            Some(300.00),
+            Some(300.00),
+            Some("chargeReference3")
+          )
+        ),
+        Some(LocalDate.parse("2021-01-31"))
+      )
+    )
+  )
 
   val lpiParentChargeDocumentDetail = DocumentDetail(
     taxYear = 2020,
@@ -422,10 +562,11 @@ object PaymentAllocationsTestConstants {
     paymentLot = Some("paymentLot")
   )
 
-  val lpiPaymentAllocationParentChargesModel: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
-    documentDetails = List(lpiPaymentsDocumentDetail), List(financialDetail))
+  val lpiPaymentAllocationParentChargesModel: FinancialDetailsWithDocumentDetailsModel =
+    FinancialDetailsWithDocumentDetailsModel(documentDetails = List(lpiPaymentsDocumentDetail), List(financialDetail))
 
-  val paymentAllocationViewModelLpi: PaymentAllocationViewModel = PaymentAllocationViewModel(lpiPaymentAllocationParentChargesModel,
+  val paymentAllocationViewModelLpi: PaymentAllocationViewModel = PaymentAllocationViewModel(
+    lpiPaymentAllocationParentChargesModel,
     Seq(),
     Some(LatePaymentInterestPaymentAllocationDetails(lpiParentChargeDocumentDetail, -300.00)),
     true
@@ -437,13 +578,13 @@ object PaymentAllocationsTestConstants {
     financialDetails = List(financialDetail)
   )
 
-  val singleTestPaymentAllocationChargeWithOutstandingAmountZero: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
-    List(documentDetail.copy(outstandingAmount = 0)),
-    List(financialDetail)
-  )
+  val singleTestPaymentAllocationChargeWithOutstandingAmountZero: FinancialDetailsWithDocumentDetailsModel =
+    FinancialDetailsWithDocumentDetailsModel(
+      List(documentDetail.copy(outstandingAmount = 0)),
+      List(financialDetail)
+    )
 
-  val validWrittenPaymentAllocationChargesJson: JsValue = Json.parse(
-    """{
+  val validWrittenPaymentAllocationChargesJson: JsValue = Json.parse("""{
 			|    "documentDetails": [
 			|        {
 			|            "documentDate": "2018-03-29",
@@ -500,8 +641,7 @@ object PaymentAllocationsTestConstants {
 			|}
 			|""".stripMargin)
 
-  val validPaymentAllocationChargesJson: JsValue = Json.parse(
-    """{
+  val validPaymentAllocationChargesJson: JsValue = Json.parse("""{
 			|    "documentDetails": [
 			|        {
 			|            "documentDate": "2018-03-29",
@@ -559,8 +699,7 @@ object PaymentAllocationsTestConstants {
 			|}
 			|""".stripMargin)
 
-  val variedFinancialDetailsJson: JsValue = Json.parse(
-    """{
+  val variedFinancialDetailsJson: JsValue = Json.parse("""{
 			|    "documentDetails": [
 			|        {
 			|            "documentDate": "2018-03-29",
@@ -644,8 +783,7 @@ object PaymentAllocationsTestConstants {
 			|}
 			|""".stripMargin)
 
-  val validMultiplePaymentAllocationChargesJson: JsValue = Json.parse(
-    """{
+  val validMultiplePaymentAllocationChargesJson: JsValue = Json.parse("""{
 			|    "documentDetails": [
 			|        {
 			|            "documentDate": "2018-03-29",
@@ -742,6 +880,9 @@ object PaymentAllocationsTestConstants {
 			|}
 			|""".stripMargin)
 
-  val paymentAllocationChargesModelMultiplePayments: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(List(documentDetail, documentDetail2),
-    List(financialDetail, financialDetail2))
+  val paymentAllocationChargesModelMultiplePayments: FinancialDetailsWithDocumentDetailsModel =
+    FinancialDetailsWithDocumentDetailsModel(
+      List(documentDetail, documentDetail2),
+      List(financialDetail, financialDetail2)
+    )
 }

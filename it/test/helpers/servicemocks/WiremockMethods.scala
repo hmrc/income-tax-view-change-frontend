@@ -33,12 +33,23 @@ trait WiremockMethods {
     new Mapping(method, uri, headers, None)
   }
 
-  def when[T](method: HTTPMethod, uri: String, headers: Map[String, String], body: T)(implicit writes: Writes[T]): Mapping = {
+  def when[T](
+      method:  HTTPMethod,
+      uri:     String,
+      headers: Map[String, String],
+      body:    T
+    )(
+      implicit writes: Writes[T]
+    ): Mapping = {
     val stringBody = writes.writes(body).toString()
     new Mapping(method, uri, headers, Some(stringBody))
   }
 
-  class Mapping(method: HTTPMethod, uri: String, headers: Map[String, String], body: Option[String]) {
+  class Mapping(
+      method:  HTTPMethod,
+      uri:     String,
+      headers: Map[String, String],
+      body:    Option[String]) {
     private val mapping = {
       val uriMapping = method.wireMockMapping(urlMatching(uri))
 
@@ -48,7 +59,7 @@ trait WiremockMethods {
 
       body match {
         case Some(extractedBody) => uriMappingWithHeaders.withRequestBody(equalTo(extractedBody))
-        case None => uriMappingWithHeaders
+        case None                => uriMappingWithHeaders
       }
     }
 
@@ -74,7 +85,7 @@ trait WiremockMethods {
         }
         body match {
           case Some(extractedBody) => responseWithHeaders.withBody(extractedBody)
-          case None => responseWithHeaders
+          case None                => responseWithHeaders
         }
       }
 
@@ -102,32 +113,37 @@ trait WiremockMethods {
     verifyInternalDoesNotContainJson(method, uri, Some(jsonBodyPart))
   }
 
-  private def verifyInternal(method: HTTPMethod, uri: String, bodyString: Option[String]): Unit = method match {
-    case GET => WiremockHelper.verifyGet(uri)
-    case POST => WiremockHelper.verifyPost(uri, bodyString)
-    case _ => ()
-  }
+  private def verifyInternal(method: HTTPMethod, uri: String, bodyString: Option[String]): Unit =
+    method match {
+      case GET  => WiremockHelper.verifyGet(uri)
+      case POST => WiremockHelper.verifyPost(uri, bodyString)
+      case _    => ()
+    }
 
-  private def verifyInternalContains(method: HTTPMethod, uri: String, bodyString: Option[String]): Unit = method match {
-    case GET => WiremockHelper.verifyGet(uri)
-    case POST => WiremockHelper.verifyPostContaining(uri, bodyString)
-    case _ => ()
-  }
+  private def verifyInternalContains(method: HTTPMethod, uri: String, bodyString: Option[String]): Unit =
+    method match {
+      case GET  => WiremockHelper.verifyGet(uri)
+      case POST => WiremockHelper.verifyPostContaining(uri, bodyString)
+      case _    => ()
+    }
 
-  private def verifyInternalDoesNotContain(method: HTTPMethod, uri: String, bodyString: Option[String]): Unit = method match {
-    case POST => WiremockHelper.verifyPostDoesNotContain(uri, bodyString)
-    case _ => ()
-  }
+  private def verifyInternalDoesNotContain(method: HTTPMethod, uri: String, bodyString: Option[String]): Unit =
+    method match {
+      case POST => WiremockHelper.verifyPostDoesNotContain(uri, bodyString)
+      case _    => ()
+    }
 
-  private def verifyInternalContainsJson(method: HTTPMethod, uri: String, bodyPart: Option[JsValue]): Unit = method match {
-    case POST => WiremockHelper.verifyPostContainingJson(uri, bodyPart)
-    case _ => verifyInternalContains(method, uri, bodyPart.map(_.toString))
-  }
+  private def verifyInternalContainsJson(method: HTTPMethod, uri: String, bodyPart: Option[JsValue]): Unit =
+    method match {
+      case POST => WiremockHelper.verifyPostContainingJson(uri, bodyPart)
+      case _    => verifyInternalContains(method, uri, bodyPart.map(_.toString))
+    }
 
-  private def verifyInternalDoesNotContainJson(method: HTTPMethod, uri: String, bodyPart: Option[JsValue]): Unit = method match {
-    case POST => WiremockHelper.verifyPostDoesNotContainJson(uri, bodyPart)
-    case _ => verifyInternalDoesNotContain(method, uri, bodyPart.map(_.toString))
-  }
+  private def verifyInternalDoesNotContainJson(method: HTTPMethod, uri: String, bodyPart: Option[JsValue]): Unit =
+    method match {
+      case POST => WiremockHelper.verifyPostDoesNotContainJson(uri, bodyPart)
+      case _    => verifyInternalDoesNotContain(method, uri, bodyPart.map(_.toString))
+    }
 
   sealed trait HTTPMethod {
     val wireMockMapping: UrlPattern => MappingBuilder

@@ -27,14 +27,19 @@ import views.html.components.link
 
 import javax.inject.Inject
 
-class NextUpdatesViewUtils @Inject()(
-                                      link: link
-                                    )(
-                                      implicit val appConfig: FrontendAppConfig
-                                    ) extends FeatureSwitching {
+class NextUpdatesViewUtils @Inject() (
+    link: link
+  )(
+    implicit val appConfig: FrontendAppConfig)
+    extends FeatureSwitching {
 
-
-  def whatTheUserCanDo(optOutViewModel: Option[OptOutViewModel], isAgent: Boolean)(implicit user: MtdItUser[_], messages: Messages): Option[Html] = {
+  def whatTheUserCanDo(
+      optOutViewModel: Option[OptOutViewModel],
+      isAgent:         Boolean
+    )(
+      implicit user: MtdItUser[_],
+      messages:      Messages
+    ): Option[Html] = {
     val reportingFrequencyLink = controllers.routes.ReportingFrequencyPageController.show(isAgent).url
     optOutViewModel.map {
       case m: OptOutOneYearViewModel if isEnabled(ReportingFrequencyPage) =>

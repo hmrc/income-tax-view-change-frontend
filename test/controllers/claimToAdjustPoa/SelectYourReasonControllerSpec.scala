@@ -33,16 +33,18 @@ import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.testPoa1Mayb
 
 import scala.concurrent.Future
 
-class SelectYourReasonControllerSpec extends MockAuthActions
-  with MockClaimToAdjustService
-  with MockPaymentOnAccountSessionService
-  with MockCalculationListService {
+class SelectYourReasonControllerSpec
+    extends MockAuthActions
+    with MockClaimToAdjustService
+    with MockPaymentOnAccountSessionService
+    with MockCalculationListService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
       api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[SelectYourReasonController]
 
@@ -58,13 +60,16 @@ class SelectYourReasonControllerSpec extends MockAuthActions
       partiallyPaid = false,
       fullyPaid = false,
       previouslyAdjusted = None
-    ))
+    )
+  )
 
-  val poaTotalLessThanRelevant: Option[PaymentOnAccountViewModel] = poa.map(_.copy(
-    totalAmountOne = 1000.0,
-    totalAmountTwo = 1000.0))
+  val poaTotalLessThanRelevant: Option[PaymentOnAccountViewModel] =
+    poa.map(_.copy(totalAmountOne = 1000.0, totalAmountTwo = 1000.0))
 
-  def setupTest(sessionResponse: Either[Throwable, Option[PoaAmendmentData]], claimToAdjustResponse: Option[PaymentOnAccountViewModel]): Unit = {
+  def setupTest(
+      sessionResponse:       Either[Throwable, Option[PoaAmendmentData]],
+      claimToAdjustResponse: Option[PaymentOnAccountViewModel]
+    ): Unit = {
     enable(AdjustPaymentsOnAccount)
     mockSingleBISWithCurrentYearAsMigrationYear()
     setupMockGetPaymentsOnAccount(claimToAdjustResponse)
@@ -76,7 +81,7 @@ class SelectYourReasonControllerSpec extends MockAuthActions
     mtdAllRoles.foreach { mtdRole =>
       val isAgent = mtdRole != MTDIndividual
       s"show(isAgent = $isAgent, mode = $mode)" when {
-        val action = testController.show(isAgent, mode)
+        val action      = testController.show(isAgent, mode)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
           if (mtdRole == MTDSupportingAgent) {
@@ -87,9 +92,14 @@ class SelectYourReasonControllerSpec extends MockAuthActions
                 "has pre-populated the answer with AllowanceOrReliefHigher" when {
                   "POA tax year crystallized and the user previously selected the AllowanceOrReliefHigher checkbox" in {
                     setupTest(
-                      sessionResponse = Right(Some(
-                        PoaAmendmentData(newPoaAmount = Some(200.0), poaAdjustmentReason = Some(AllowanceOrReliefHigher))
-                      )),
+                      sessionResponse = Right(
+                        Some(
+                          PoaAmendmentData(
+                            newPoaAmount = Some(200.0),
+                            poaAdjustmentReason = Some(AllowanceOrReliefHigher)
+                          )
+                        )
+                      ),
                       claimToAdjustResponse = testPoa1Maybe
                     )
 
@@ -104,9 +114,7 @@ class SelectYourReasonControllerSpec extends MockAuthActions
               } else {
                 "does not have a pre-populated answer" when {
                   "session data has no poaAdjustmentReason data" in {
-                    setupTest(
-                      sessionResponse = Right(Some(PoaAmendmentData())),
-                      claimToAdjustResponse = testPoa1Maybe)
+                    setupTest(sessionResponse = Right(Some(PoaAmendmentData())), claimToAdjustResponse = testPoa1Maybe)
 
                     setupMockSuccess(mtdRole)
                     val result = action(fakeRequest)
@@ -119,7 +127,8 @@ class SelectYourReasonControllerSpec extends MockAuthActions
                   "session data has valid poaAdjustmentReason data" in {
                     setupTest(
                       sessionResponse = Right(Some(PoaAmendmentData(poaAdjustmentReason = Some(MoreTaxedAtSource)))),
-                      claimToAdjustResponse = testPoa1Maybe)
+                      claimToAdjustResponse = testPoa1Maybe
+                    )
                     setupMockGetSessionDataSuccess()
                     setupMockGetClientDetailsSuccess()
                     setupMockSuccess(mtdRole)
@@ -135,7 +144,8 @@ class SelectYourReasonControllerSpec extends MockAuthActions
               "new amount is greater than current amount" in {
                 setupTest(
                   sessionResponse = Right(Some(PoaAmendmentData(newPoaAmount = Some(20000.0)))),
-                  claimToAdjustResponse = testPoa1Maybe)
+                  claimToAdjustResponse = testPoa1Maybe
+                )
 
                 setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(Increase)
 
@@ -150,7 +160,8 @@ class SelectYourReasonControllerSpec extends MockAuthActions
               "Adjust Payments On Account FS is Disabled" in {
                 setupTest(
                   sessionResponse = Right(Some(PoaAmendmentData(newPoaAmount = Some(20000.0)))),
-                  claimToAdjustResponse = testPoa1Maybe)
+                  claimToAdjustResponse = testPoa1Maybe
+                )
 
                 disable(AdjustPaymentsOnAccount)
 
@@ -170,22 +181,24 @@ class SelectYourReasonControllerSpec extends MockAuthActions
             "redirect to the You cannot go back page" when {
               "Adjust Payments On Account FS is Enabled but journeyCompleted flag is true" in {
                 setupTest(
-                  sessionResponse = Right(Some(PoaAmendmentData(None, newPoaAmount = Some(20000.0), journeyCompleted = true))),
-                  claimToAdjustResponse = testPoa1Maybe)
+                  sessionResponse =
+                    Right(Some(PoaAmendmentData(None, newPoaAmount = Some(20000.0), journeyCompleted = true))),
+                  claimToAdjustResponse = testPoa1Maybe
+                )
 
                 setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(Increase)
 
                 setupMockSuccess(mtdRole)
                 val result = action(fakeRequest)
                 status(result) shouldBe SEE_OTHER
-                redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(isAgent).url)
+                redirectLocation(result) shouldBe Some(
+                  controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(isAgent).url
+                )
               }
             }
             s"return status: $INTERNAL_SERVER_ERROR" when {
               "Payment On Account Session data is missing" in {
-                setupTest(
-                  sessionResponse = Right(None),
-                  claimToAdjustResponse = testPoa1Maybe)
+                setupTest(sessionResponse = Right(None), claimToAdjustResponse = testPoa1Maybe)
 
                 setupMockSuccess(mtdRole)
                 val result = action(fakeRequest)
@@ -193,9 +206,7 @@ class SelectYourReasonControllerSpec extends MockAuthActions
               }
 
               "POA data is missing" in {
-                setupTest(
-                  sessionResponse = Right(Some(PoaAmendmentData())),
-                  claimToAdjustResponse = None)
+                setupTest(sessionResponse = Right(Some(PoaAmendmentData())), claimToAdjustResponse = None)
 
                 setupMockSuccess(mtdRole)
                 val result = action(fakeRequest)
@@ -205,7 +216,8 @@ class SelectYourReasonControllerSpec extends MockAuthActions
               "Something goes wrong in payment on account session Service" in {
                 setupTest(
                   sessionResponse = Left(new Exception("Something went wrong")),
-                  claimToAdjustResponse = testPoa1Maybe)
+                  claimToAdjustResponse = testPoa1Maybe
+                )
 
                 setupMockSuccess(mtdRole)
                 val result = action(fakeRequest)
@@ -218,7 +230,7 @@ class SelectYourReasonControllerSpec extends MockAuthActions
       }
 
       s"submit(isAgent = $isAgent, mode = $mode)" when {
-        val action = testController.submit(isAgent, mode)
+        val action      = testController.submit(isAgent, mode)
         val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
           if (mtdRole == MTDSupportingAgent) {
@@ -259,9 +271,7 @@ class SelectYourReasonControllerSpec extends MockAuthActions
               "redirect to enter POA amount" when {
                 "'totalAmount' is equal to or greater than 'poaRelevantAmount'" in {
 
-                  setupTest(
-                    sessionResponse = Right(Some(PoaAmendmentData())),
-                    claimToAdjustResponse = testPoa1Maybe)
+                  setupTest(sessionResponse = Right(Some(PoaAmendmentData())), claimToAdjustResponse = testPoa1Maybe)
 
                   setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(MainIncomeLower)
 
@@ -275,9 +285,7 @@ class SelectYourReasonControllerSpec extends MockAuthActions
 
             s"return $BAD_REQUEST" when {
               s"no option is selected" in {
-                setupTest(
-                  sessionResponse = Right(Some(PoaAmendmentData())),
-                  claimToAdjustResponse = testPoa1Maybe)
+                setupTest(sessionResponse = Right(Some(PoaAmendmentData())), claimToAdjustResponse = testPoa1Maybe)
 
                 setupMockSuccess(mtdRole)
                 val result = action(fakeRequest)

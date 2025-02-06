@@ -36,25 +36,33 @@ import views.html.FinalTaxCalculationView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FinalTaxCalculationController @Inject()(authActions: AuthActions,
-                                              view: FinalTaxCalculationView,
-                                              calcService: CalculationService,
-                                              itvcErrorHandler: ItvcErrorHandler,
-                                              val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                              val incomeSourceDetailsService: IncomeSourceDetailsService
-                                             )(implicit val appConfig: FrontendAppConfig,
-                                               val mcc: MessagesControllerComponents,
-                                               ec: ExecutionContext) extends FrontendController(mcc)
-  with I18nSupport with FeatureSwitching {
+class FinalTaxCalculationController @Inject() (
+    authActions:                    AuthActions,
+    view:                           FinalTaxCalculationView,
+    calcService:                    CalculationService,
+    itvcErrorHandler:               ItvcErrorHandler,
+    val itvcErrorHandlerAgent:      AgentItvcErrorHandler,
+    val incomeSourceDetailsService: IncomeSourceDetailsService
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    val mcc:                MessagesControllerComponents,
+    ec:                     ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with FeatureSwitching {
 
-  def handleShowRequest(taxYear: Int,
-                        itvcErrorHandler: ShowInternalServerError,
-                        isAgent: Boolean,
-                        origin: Option[String] = None)
-                       (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  def handleShowRequest(
+      taxYear:          Int,
+      itvcErrorHandler: ShowInternalServerError,
+      isAgent:          Boolean,
+      origin:           Option[String] = None
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier
+    ): Future[Result] = {
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calculationResponse: LiabilityCalculationResponse =>
-        lazy val backUrl: String = appConfig.submissionFrontendTaxOverviewUrl(taxYear)
+        lazy val backUrl:       String             = appConfig.submissionFrontendTaxOverviewUrl(taxYear)
         val calculationSummary: CalculationSummary = CalculationSummary(calculationResponse)
         Ok(view(calculationSummary, taxYear, isAgent = isAgent, backUrl))
           .addingToSession(calcPagesBackPage -> "submission")
@@ -67,40 +75,46 @@ class FinalTaxCalculationController @Inject()(authActions: AuthActions,
     }
   }
 
-
-  def show(taxYear: Int, origin: Option[String]): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
+  def show(taxYear: Int, origin: Option[String]): Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit user =>
       handleShowRequest(
         itvcErrorHandler = itvcErrorHandler,
         isAgent = false,
         taxYear = taxYear,
         origin = origin
       )
-  }
+    }
 
-  def showAgent(taxYear: Int): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
-    implicit mtdItUser =>
+  def showAgent(taxYear: Int): Action[AnyContent] =
+    authActions.asMTDPrimaryAgent.async { implicit mtdItUser =>
       handleShowRequest(
         itvcErrorHandler = itvcErrorHandlerAgent,
         isAgent = true,
         taxYear = taxYear
       )
-  }
-
-  def submit(taxYear: Int, origin: Option[String]): Action[AnyContent] = authActions.asMTDIndividual.async { implicit user =>
-    val fullNameOptional = user.userName.map { nameModel =>
-      (nameModel.name.getOrElse("") + " " + nameModel.lastName.getOrElse("")).trim
     }
-    finalDeclarationSubmit(taxYear, fullNameOptional)
-  }
 
-  def agentSubmit(taxYear: Int): Action[AnyContent] = authActions.asMTDPrimaryAgent.async { implicit user =>
-    val fullName = user.optClientNameAsString.getOrElse("").trim
-    agentFinalDeclarationSubmit(taxYear, fullName)(user, hc)
-  }
+  def submit(taxYear: Int, origin: Option[String]): Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit user =>
+      val fullNameOptional = user.userName.map { nameModel =>
+        (nameModel.name.getOrElse("") + " " + nameModel.lastName.getOrElse("")).trim
+      }
+      finalDeclarationSubmit(taxYear, fullNameOptional)
+    }
 
-  def agentFinalDeclarationSubmit(taxYear: Int, fullName: String)
-                                 (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier): Future[Result] = {
+  def agentSubmit(taxYear: Int): Action[AnyContent] =
+    authActions.asMTDPrimaryAgent.async { implicit user =>
+      val fullName = user.optClientNameAsString.getOrElse("").trim
+      agentFinalDeclarationSubmit(taxYear, fullName)(user, hc)
+    }
+
+  def agentFinalDeclarationSubmit(
+      taxYear:  Int,
+      fullName: String
+    )(
+      implicit user: MtdItUser[AnyContent],
+      hc:            HeaderCarrier
+    ): Future[Result] = {
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calcResponse: LiabilityCalculationResponse =>
         val calcOverview: CalculationSummary = CalculationSummary(calcResponse)
@@ -131,8 +145,13 @@ class FinalTaxCalculationController @Inject()(authActions: AuthActions,
     }
   }
 
-  def finalDeclarationSubmit(taxYear: Int, fullNameOptional: Option[String])
-                            (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  def finalDeclarationSubmit(
+      taxYear:          Int,
+      fullNameOptional: Option[String]
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier
+    ): Future[Result] = {
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calcResponse: LiabilityCalculationResponse =>
         val calcOverview: CalculationSummary = CalculationSummary(calcResponse)

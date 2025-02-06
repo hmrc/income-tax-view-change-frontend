@@ -16,14 +16,13 @@
 
 package utils
 
-
 package object converters {
 
   implicit class OptionExtension(in: Option[String]) {
     def trim(): Option[String] = {
       in match {
         case Some("") => None
-        case _ => in
+        case _        => in
       }
     }
   }

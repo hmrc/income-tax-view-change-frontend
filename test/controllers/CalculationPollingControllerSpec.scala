@@ -32,19 +32,21 @@ class CalculationPollingControllerSpec extends MockAuthActions with MockCalculat
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[CalculationPollingService].toInstance(mockCalculationPollingService)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[CalculationPollingController]
 
   mtdAllRoles.foreach { mtdRole =>
-    val isAgent = mtdRole != MTDIndividual
+    val isAgent     = mtdRole != MTDIndividual
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
     s"calculationPoller${if (isAgent) "Agent"}" when {
-      def action(isFinalCalc: Boolean = false) = if (isAgent) {
-        testController.calculationPollerAgent(testTaxYear, isFinalCalc)
-      } else {
-        testController.calculationPoller(testTaxYear, isFinalCalc)
-      }
+      def action(isFinalCalc: Boolean = false) =
+        if (isAgent) {
+          testController.calculationPollerAgent(testTaxYear, isFinalCalc)
+        } else {
+          testController.calculationPoller(testTaxYear, isFinalCalc)
+        }
 
       s"the user is authenticated as a $mtdRole" should {
         if (mtdRole == MTDSupportingAgent) {

@@ -32,9 +32,13 @@ object RepaymentHistoryUtils {
 
   private def getControllerHref(transactionId: Option[String], isAgent: Boolean) = {
     if (isAgent) {
-      controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(transactionId.getOrElse(throw MissingFieldException("Transaction ID"))).url
+      controllers.routes.PaymentAllocationsController
+        .viewPaymentAllocationAgent(transactionId.getOrElse(throw MissingFieldException("Transaction ID")))
+        .url
     } else {
-      controllers.routes.PaymentAllocationsController.viewPaymentAllocation(transactionId.getOrElse(throw MissingFieldException("Transaction ID"))).url
+      controllers.routes.PaymentAllocationsController
+        .viewPaymentAllocation(transactionId.getOrElse(throw MissingFieldException("Transaction ID")))
+        .url
     }
   }
 
@@ -63,56 +67,86 @@ object RepaymentHistoryUtils {
         .map { case (_, payments) => payments }
     }
 
-    payments.groupBy[Int] { payment => {
-      payment.date.getYear
-    }
-    }.toList.sortBy(_._1).reverse
+    payments
+      .groupBy[Int] { payment =>
+        {
+          payment.date.getYear
+        }
+      }
+      .toList
+      .sortBy(_._1)
+      .reverse
       .map { case (year, payments) => (year, sortPayments(payments)) }
   }
 
-  def getGroupedPaymentHistoryData(payments: List[Payment], repayments: List[RepaymentHistory], isAgent: Boolean, reviewAndReconcileEnabled: Boolean, languageUtils: LanguageUtils
-                                  )(implicit messages: Messages, dateServiceInterface: DateServiceInterface): List[(Int, List[PaymentHistoryEntry])] = {
+  def getGroupedPaymentHistoryData(
+      payments:                  List[Payment],
+      repayments:                List[RepaymentHistory],
+      isAgent:                   Boolean,
+      reviewAndReconcileEnabled: Boolean,
+      languageUtils:             LanguageUtils
+    )(
+      implicit messages:    Messages,
+      dateServiceInterface: DateServiceInterface
+    ): List[(Int, List[PaymentHistoryEntry])] = {
 
-    val combinedPayments = combinePaymentHistoryData(payments, repayments, isAgent, reviewAndReconcileEnabled, languageUtils)
+    val combinedPayments =
+      combinePaymentHistoryData(payments, repayments, isAgent, reviewAndReconcileEnabled, languageUtils)
 
     groupedPayments(combinedPayments)
   }
 
-  private def combinePaymentHistoryData(payments: List[Payment],
-                                        repayments: List[RepaymentHistory],
-                                        isAgent: Boolean,
-                                        reviewAndReconcileEnabled: Boolean,
-                                        languageUtils: LanguageUtils
-                                       )(implicit messages: Messages, dateServiceInterface: DateServiceInterface): List[PaymentHistoryEntry] = {
+  private def combinePaymentHistoryData(
+      payments:                  List[Payment],
+      repayments:                List[RepaymentHistory],
+      isAgent:                   Boolean,
+      reviewAndReconcileEnabled: Boolean,
+      languageUtils:             LanguageUtils
+    )(
+      implicit messages:    Messages,
+      dateServiceInterface: DateServiceInterface
+    ): List[PaymentHistoryEntry] = {
 
     val filteredPayments = payments.flatMap(payment => filterPayment(payment, isAgent, reviewAndReconcileEnabled))
 
-    val filteredRepayments = repayments.filter(_.status.isInstanceOf[Approved]).map(repayment => filterRepayment(repayment)(messages, languageUtils, dateServiceInterface))
+    val filteredRepayments = repayments
+      .filter(_.status.isInstanceOf[Approved])
+      .map(repayment => filterRepayment(repayment)(messages, languageUtils, dateServiceInterface))
 
     filteredPayments ++ filteredRepayments
   }
 
-  private def filterPayment(payment: Payment,
-                            isAgent: Boolean,
-                            reviewAndReconcileEnabled: Boolean
-                           )(implicit messages: Messages, dateservice: DateServiceInterface): Option[PaymentHistoryEntry] = {
+  private def filterPayment(
+      payment:                   Payment,
+      isAgent:                   Boolean,
+      reviewAndReconcileEnabled: Boolean
+    )(
+      implicit messages: Messages,
+      dateservice:       DateServiceInterface
+    ): Option[PaymentHistoryEntry] = {
 
     val hasCredit = payment.credit.isDefined
-    val hasLot = payment.lot.isDefined && payment.lotItem.isDefined
+    val hasLot    = payment.lot.isDefined && payment.lotItem.isDefined
 
-    (hasCredit,  reviewAndReconcileEnabled, hasLot, payment.creditType) match {
-      case (true, _, _, Some(MfaCreditType))                                   => Some(mfaCreditEntry(payment, isAgent))
-      case (true, _, _, Some(CutOverCreditType))                               => Some(creditEntry(payment, isAgent))
-      case (true, true, _, Some(PoaOneReconciliationCredit))  => Some(creditEntry(payment, isAgent, true))
-      case (true, true, _, Some(PoaTwoReconciliationCredit))  => Some(creditEntry(payment, isAgent, true))
-      case (true, _, _, Some(BalancingChargeCreditType))                       => Some(creditEntry(payment, isAgent))
-      case (true, _, _, Some(RepaymentInterest))                               => Some(creditEntry(payment, isAgent))
-      case (false, _, true, Some(PaymentType))                                 => Some(paymentToHMRCEntry(payment, isAgent))
-      case (_, _, _, _)                                                        => None
+    (hasCredit, reviewAndReconcileEnabled, hasLot, payment.creditType) match {
+      case (true, _, _, Some(MfaCreditType))                 => Some(mfaCreditEntry(payment, isAgent))
+      case (true, _, _, Some(CutOverCreditType))             => Some(creditEntry(payment, isAgent))
+      case (true, true, _, Some(PoaOneReconciliationCredit)) => Some(creditEntry(payment, isAgent, true))
+      case (true, true, _, Some(PoaTwoReconciliationCredit)) => Some(creditEntry(payment, isAgent, true))
+      case (true, _, _, Some(BalancingChargeCreditType))     => Some(creditEntry(payment, isAgent))
+      case (true, _, _, Some(RepaymentInterest))             => Some(creditEntry(payment, isAgent))
+      case (false, _, true, Some(PaymentType))               => Some(paymentToHMRCEntry(payment, isAgent))
+      case (_, _, _, _)                                      => None
     }
   }
 
-  private def paymentToHMRCEntry(payment: Payment, isAgent: Boolean)(implicit messages: Messages, dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
+  private def paymentToHMRCEntry(
+      payment: Payment,
+      isAgent: Boolean
+    )(
+      implicit messages:    Messages,
+      dateServiceInterface: DateServiceInterface
+    ): PaymentHistoryEntry = {
     Logger("application").info("json:" + Json.prettyPrint(Json.toJson(payment)))
     PaymentHistoryEntry(
       date = payment.dueDate.getOrElse(throw MissingFieldException("Payment Due Date")),
@@ -120,11 +154,18 @@ object RepaymentHistoryUtils {
       transactionId = payment.transactionId,
       amount = payment.amount,
       linkUrl = getControllerHref(payment.transactionId, isAgent),
-      visuallyHiddenText = s"${payment.dueDate.get} ${payment.amount.getOrElse(throw MissingFieldException("Amount")).abs.toCurrency}"
+      visuallyHiddenText =
+        s"${payment.dueDate.get} ${payment.amount.getOrElse(throw MissingFieldException("Amount")).abs.toCurrency}"
     )
   }
 
-  private def mfaCreditEntry(payment: Payment, isAgent: Boolean)(implicit messages: Messages, dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
+  private def mfaCreditEntry(
+      payment: Payment,
+      isAgent: Boolean
+    )(
+      implicit messages:    Messages,
+      dateServiceInterface: DateServiceInterface
+    ): PaymentHistoryEntry = {
     PaymentHistoryEntry(
       date = payment.documentDate,
       creditType = MfaCreditType,
@@ -134,20 +175,46 @@ object RepaymentHistoryUtils {
     )
   }
 
-  private def creditEntry(payment: Payment, isAgent: Boolean, isPoaReconciliationCredit: Boolean = false)(implicit messages: Messages, dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
+  private def creditEntry(
+      payment:                   Payment,
+      isAgent:                   Boolean,
+      isPoaReconciliationCredit: Boolean = false
+    )(
+      implicit messages:    Messages,
+      dateServiceInterface: DateServiceInterface
+    ): PaymentHistoryEntry = {
     val creditType = payment.creditType.getOrElse(throw MissingFieldException("Credit type"))
     PaymentHistoryEntry(
-      date = payment.dueDate.getOrElse(throw MissingFieldException(s"Payment Due Date - ${creditType.getClass.getSimpleName}")),
+      date = payment.dueDate.getOrElse(
+        throw MissingFieldException(s"Payment Due Date - ${creditType.getClass.getSimpleName}")
+      ),
       creditType = creditType,
       amount = payment.amount,
-      linkUrl = if (isPoaReconciliationCredit) getPoaChargeLinkUrl(isAgent, payment.documentDate.getYear, payment.transactionId.getOrElse(throw MissingFieldException("Transaction ID"))) else getCreditsLinkUrl(payment.dueDate.get, isAgent),
+      linkUrl =
+        if (isPoaReconciliationCredit)
+          getPoaChargeLinkUrl(
+            isAgent,
+            payment.documentDate.getYear,
+            payment.transactionId.getOrElse(throw MissingFieldException("Transaction ID"))
+          )
+        else getCreditsLinkUrl(payment.dueDate.get, isAgent),
       visuallyHiddenText = s"${payment.transactionId.getOrElse(throw MissingFieldException("Document ID"))}"
     )
   }
 
-  private def filterRepayment(repayment: RepaymentHistory)(implicit messages: Messages, languageUtils: LanguageUtils, dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
+  private def filterRepayment(
+      repayment: RepaymentHistory
+    )(
+      implicit messages:    Messages,
+      languageUtils:        LanguageUtils,
+      dateServiceInterface: DateServiceInterface
+    ): PaymentHistoryEntry = {
     PaymentHistoryEntry(
-      date = LocalDate.parse(languageUtils.Dates.shortDate(repayment.estimatedRepaymentDate.getOrElse(throw MissingFieldException("Estimated Repayment Date")))(messages)),
+      date = LocalDate.parse(
+        languageUtils.Dates.shortDate(
+          repayment.estimatedRepaymentDate.getOrElse(throw MissingFieldException("Estimated Repayment Date"))
+        )(messages)
+      ),
       creditType = Repayment,
       amount = repayment.totalRepaymentAmount,
       linkUrl = s"refund-to-taxpayer/${repayment.repaymentRequestNumber}",

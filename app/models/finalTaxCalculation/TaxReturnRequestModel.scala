@@ -19,13 +19,12 @@ package models.finalTaxCalculation
 import play.api.libs.json.{Json, OFormat}
 
 case class TaxReturnRequestModel(
-                                  name: String,
-                                  incomeTaxAndNationalInsuranceContributions: BigDecimal,
-                                  saUTR: String,
-                                  income: BigDecimal,
-                                  allowancesAndDeductions: BigDecimal,
-                                  totalTaxableIncome: BigDecimal
-                                ) {
+    name:                                       String,
+    incomeTaxAndNationalInsuranceContributions: BigDecimal,
+    saUTR:                                      String,
+    income:                                     BigDecimal,
+    allowancesAndDeductions:                    BigDecimal,
+    totalTaxableIncome:                         BigDecimal) {
 
   def asJsonString: String = Json.stringify(Json.toJson(this))
 

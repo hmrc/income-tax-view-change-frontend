@@ -48,7 +48,7 @@ class ClaimToAdjustPoaConnectorSpec extends AnyWordSpec with ComponentSpecBase {
           }
           """
 
-  val timeout: PatienceConfig = PatienceConfig(5.seconds)
+  val timeout:        PatienceConfig            = PatienceConfig(5.seconds)
   lazy val connector: ClaimToAdjustPoaConnector = app.injector.instanceOf[ClaimToAdjustPoaConnector]
 
   "ClaimToAdjustPoaConnector" when {
@@ -76,11 +76,12 @@ class ClaimToAdjustPoaConnectorSpec extends AnyWordSpec with ComponentSpecBase {
 
         result shouldBe Right(ClaimToAdjustPoaSuccess(processingDate))
 
-        WiremockHelper.verifyPost(s"/income-tax-view-change/submit-claim-to-adjust-poa",
+        WiremockHelper.verifyPost(
+          s"/income-tax-view-change/submit-claim-to-adjust-poa",
           Some(Json.stringify(Json.parse(successRequestBody))),
-          (CorrelationId.correlationId, correlationId.id.toString))
+          (CorrelationId.correlationId, correlationId.id.toString)
+        )
       }
-
 
       "generate correlationID when none provided" in {
 
@@ -101,19 +102,23 @@ class ClaimToAdjustPoaConnectorSpec extends AnyWordSpec with ComponentSpecBase {
 
         result shouldBe Right(ClaimToAdjustPoaSuccess(processingDate))
 
-        verify(postRequestedFor(
-          urlEqualTo(s"/income-tax-view-change/submit-claim-to-adjust-poa"))
-          .withHeader(CorrelationId.correlationId, matching("[\\d\\w-]+")))
+        verify(
+          postRequestedFor(urlEqualTo(s"/income-tax-view-change/submit-claim-to-adjust-poa"))
+            .withHeader(CorrelationId.correlationId, matching("[\\d\\w-]+"))
+        )
       }
-
 
       "return a successful response" in {
 
-        WiremockHelper.stubPost(s"/income-tax-view-change/submit-claim-to-adjust-poa", CREATED, s"""
+        WiremockHelper.stubPost(
+          s"/income-tax-view-change/submit-claim-to-adjust-poa",
+          CREATED,
+          s"""
           {
              "processingDate": "$processingDate"
           }
-          """)
+          """
+        )
 
         val result: Either[ClaimToAdjustPoaFailure, ClaimToAdjustPoaSuccess] =
           connector.postClaimToAdjustPoa(request).futureValue
@@ -125,8 +130,7 @@ class ClaimToAdjustPoaConnectorSpec extends AnyWordSpec with ComponentSpecBase {
 
         "successful response cannot be parsed" in {
 
-          WiremockHelper.stubPost(s"/income-tax-view-change/submit-claim-to-adjust-poa", CREATED,
-            s"""
+          WiremockHelper.stubPost(s"/income-tax-view-change/submit-claim-to-adjust-poa", CREATED, s"""
           {
              "invalid": "response"
           }
@@ -154,11 +158,15 @@ class ClaimToAdjustPoaConnectorSpec extends AnyWordSpec with ComponentSpecBase {
 
         "an error response is received" in {
 
-          WiremockHelper.stubPost(s"/income-tax-view-change/submit-claim-to-adjust-poa", BAD_REQUEST, s"""
+          WiremockHelper.stubPost(
+            s"/income-tax-view-change/submit-claim-to-adjust-poa",
+            BAD_REQUEST,
+            s"""
           {
              "message": "INVALID_REQUEST"
           }
-          """)
+          """
+          )
 
           val result: Either[ClaimToAdjustPoaFailure, ClaimToAdjustPoaSuccess] =
             connector.postClaimToAdjustPoa(request).futureValue
@@ -168,10 +176,12 @@ class ClaimToAdjustPoaConnectorSpec extends AnyWordSpec with ComponentSpecBase {
 
         "a server error is received" in {
 
-          stubFor(post(urlEqualTo(s"/income-tax-view-change/submit-claim-to-adjust-poa"))
-            .willReturn(
-              serverError()
-            ))
+          stubFor(
+            post(urlEqualTo(s"/income-tax-view-change/submit-claim-to-adjust-poa"))
+              .willReturn(
+                serverError()
+              )
+          )
 
           val result: Either[ClaimToAdjustPoaFailure, ClaimToAdjustPoaSuccess] =
             connector.postClaimToAdjustPoa(request).futureValue

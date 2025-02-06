@@ -31,49 +31,49 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-class CreditService @Inject()(val financialDetailsConnector: FinancialDetailsConnector,
-                              implicit val dateService: DateServiceInterface)
-                             (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig) {
+class CreditService @Inject() (
+    val financialDetailsConnector: FinancialDetailsConnector,
+    implicit val dateService:      DateServiceInterface
+  )(
+    implicit ec:            ExecutionContext,
+    implicit val appConfig: FrontendAppConfig) {
   @deprecated("Use getAllCreditsV2 instead", "MISUV-8845")
-  def getAllCredits(implicit user: MtdItUser[_],
-                    hc: HeaderCarrier): Future[CreditsModel] = {
+  def getAllCredits(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[CreditsModel] = {
 
     val mergeCreditAndRefundModels = (x: CreditsModel, y: CreditsModel) =>
       x.copy(transactions = x.transactions :++ y.transactions.filterNot(_.transactionType == Repayment))
 
-    Logger("application").debug(
-      s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
+    Logger("application").debug(s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
 
-    Future.sequence(
-        user.incomeSources.orderedTaxYearsByYearOfMigration.map { taxYearInt =>
-          Logger("application").debug(s"Getting financial details for TaxYear: ${taxYearInt}")
-          for {
-            taxYear <- Future.fromTry(Try(TaxYear.forYearEnd(taxYearInt)))
-            response <- financialDetailsConnector.getCreditsAndRefund(taxYear, user.nino)
-          } yield response match {
-            case Right(financialDetails: CreditsModel) => Some(financialDetails)
-            case Left(error: ErrorModel) if error.code != NOT_FOUND =>
-              throw new Exception("Error response while getting Unpaid financial details")
-            case _ => None
-          }
-        })
+    Future
+      .sequence(user.incomeSources.orderedTaxYearsByYearOfMigration.map { taxYearInt =>
+        Logger("application").debug(s"Getting financial details for TaxYear: ${taxYearInt}")
+        for {
+          taxYear  <- Future.fromTry(Try(TaxYear.forYearEnd(taxYearInt)))
+          response <- financialDetailsConnector.getCreditsAndRefund(taxYear, user.nino)
+        } yield response match {
+          case Right(financialDetails: CreditsModel) => Some(financialDetails)
+          case Left(error: ErrorModel) if error.code != NOT_FOUND =>
+            throw new Exception("Error response while getting Unpaid financial details")
+          case _ => None
+        }
+      })
       .map(_.flatten)
       .map(_.reduceOption(mergeCreditAndRefundModels).getOrElse(CreditsModel(0, 0, Nil)))
   }
 
-  def getAllCreditsV2(implicit user: MtdItUser[_],
-                      hc: HeaderCarrier): Future[CreditsModel] = {
+  def getAllCreditsV2(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[CreditsModel] = {
 
-    Logger("application").debug(
-      s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
+    Logger("application").debug(s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
 
-    val (from, to) = (user.incomeSources.orderedTaxYearsByYearOfMigration.min, user.incomeSources.orderedTaxYearsByYearOfMigration.max)
+    val (from, to) =
+      (user.incomeSources.orderedTaxYearsByYearOfMigration.min, user.incomeSources.orderedTaxYearsByYearOfMigration.max)
     Logger("application").debug(s"Getting financial details for TaxYears: ${from} - ${to}")
 
     for {
       taxYearFrom <- Future.fromTry(Try(TaxYear.forYearEnd(from)))
-      taxYearTo <- Future.fromTry(Try(TaxYear.forYearEnd(to)))
-      response <- financialDetailsConnector.getCreditsAndRefund(taxYearFrom, taxYearTo, user.nino)
+      taxYearTo   <- Future.fromTry(Try(TaxYear.forYearEnd(to)))
+      response    <- financialDetailsConnector.getCreditsAndRefund(taxYearFrom, taxYearTo, user.nino)
     } yield response match {
       case Right(financialDetails: CreditsModel) => financialDetails
       case Left(error: ErrorModel) if error.code != NOT_FOUND =>

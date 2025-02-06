@@ -26,33 +26,42 @@ object User {
   val ninoNonEmptyMapping: Mapping[Nino] = {
 
     // TODO: remove usage of .head
-    text.verifying("You must supply a valid Nino", nino => {
-      Nino.isValid(nino.split(" ").head)
-    }).transform[Nino](Nino(_), _.value)
+    text
+      .verifying(
+        "You must supply a valid Nino",
+        nino => {
+          Nino.isValid(nino.split(" ").head)
+        }
+      )
+      .transform[Nino](Nino(_), _.value)
   }
 
   val form: Form[User] =
     Form(
       mapping(
-        "nino" -> ninoNonEmptyMapping,
+        "nino"    -> ninoNonEmptyMapping,
         "isAgent" -> boolean
       )(User.apply)(User.unapply)
     )
 }
 
-case class UserRecord(nino: String, mtditid: String, utr: String, description: String)
+case class UserRecord(
+    nino:        String,
+    mtditid:     String,
+    utr:         String,
+    description: String)
 
 object UserRecord {
   implicit val formats: OFormat[UserRecord] = Json.format[UserRecord]
 }
 
-case class PostedUser(nino: String,
-                      agentType: Option[String],
-                      cyMinusOneCrystallisationStatus: Option[String],
-                      cyMinusOneItsaStatus: Option[String],
-                      cyItsaStatus: Option[String],
-                      cyPlusOneItsaStatus: Option[String]
-                     ) {
+case class PostedUser(
+    nino:                            String,
+    agentType:                       Option[String],
+    cyMinusOneCrystallisationStatus: Option[String],
+    cyMinusOneItsaStatus:            Option[String],
+    cyItsaStatus:                    Option[String],
+    cyPlusOneItsaStatus:             Option[String]) {
 
   def isAgent: Boolean = AgentTypeEnums.apply(this.agentType).isDefined
 
@@ -64,15 +73,15 @@ case class PostedUser(nino: String,
 }
 
 object PostedUser {
-    val form: Form[PostedUser] =
-      Form(
-        mapping(
-          "nino" -> text,
-          "AgentType" -> optional(text),
-          "cyMinusOneCrystallisationStatus" -> optional(text),
-          "cyMinusOneItsaStatus" -> optional(text),
-          "cyItsaStatus" -> optional(text),
-          "cyPlusOneItsaStatus" -> optional(text)
-        )(PostedUser.apply)(PostedUser.unapply)
-      )
+  val form: Form[PostedUser] =
+    Form(
+      mapping(
+        "nino"                            -> text,
+        "AgentType"                       -> optional(text),
+        "cyMinusOneCrystallisationStatus" -> optional(text),
+        "cyMinusOneItsaStatus"            -> optional(text),
+        "cyItsaStatus"                    -> optional(text),
+        "cyPlusOneItsaStatus"             -> optional(text)
+      )(PostedUser.apply)(PostedUser.unapply)
+    )
 }

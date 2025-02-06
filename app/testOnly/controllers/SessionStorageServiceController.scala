@@ -29,33 +29,40 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SessionStorageServiceController @Inject()(val authActions: AuthActions,
-                                                val itvcErrorHandler: ItvcErrorHandler,
-                                                val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                                val authorisedFunctions: FrontendAuthorisedFunctions,
-                                                val sessionDataService: SessionDataService
-                                               )(implicit val ec: ExecutionContext,
-                                                 val mcc: MessagesControllerComponents) extends FrontendController(mcc) {
+class SessionStorageServiceController @Inject() (
+    val authActions:           AuthActions,
+    val itvcErrorHandler:      ItvcErrorHandler,
+    val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+    val authorisedFunctions:   FrontendAuthorisedFunctions,
+    val sessionDataService:    SessionDataService
+  )(
+    implicit val ec: ExecutionContext,
+    val mcc:         MessagesControllerComponents)
+    extends FrontendController(mcc) {
 
-  def show(): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
+  def show(): Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit user =>
       handleShow(isAgent = false)
-  }
+    }
 
-  def showAgent: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
-    implicit mtdItUser =>
+  def showAgent: Action[AnyContent] =
+    authActions.asMTDAgentWithConfirmedClient.async { implicit mtdItUser =>
       handleShow(isAgent = true)
-  }
+    }
 
   private def handleShow(isAgent: Boolean)(implicit request: Request[_], hc: HeaderCarrier): Future[Result] = {
     sessionDataService.getSessionData() map {
       case Left(ex: Throwable) =>
-        Logger("application").error(s"${if (isAgent) "Agent" else "Individual"}" +
-          s" - GET user data request to income-tax-session-data unsuccessful: - message: ${ex.getMessage} - cause: ${ex.getCause} - ")
-        InternalServerError("Internal server error. There was an unexpected error fetching this data from income-tax-session-data service")
+        Logger("application").error(
+          s"${if (isAgent) "Agent" else "Individual"}" +
+            s" - GET user data request to income-tax-session-data unsuccessful: - message: ${ex.getMessage} - cause: ${ex.getCause} - "
+        )
+        InternalServerError(
+          "Internal server error. There was an unexpected error fetching this data from income-tax-session-data service"
+        )
       case Right(model: SessionDataGetSuccess) =>
         Ok(
-            s"Session Data Service GET request was successful!\n" +
+          s"Session Data Service GET request was successful!\n" +
             s"User model:        ${model.toString}\n" +
             s"session id:        ${model.sessionId}\n" +
             s"internal id:       Not Implemented in FE Auth Predicate\n" +

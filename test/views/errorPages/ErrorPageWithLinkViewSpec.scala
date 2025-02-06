@@ -21,12 +21,17 @@ import testUtils.ViewSpec
 import views.html.errorPages.templates.ErrorTemplateWithLink
 
 class ErrorPageWithLinkViewSpec extends ViewSpec {
-  val view: HtmlFormat.Appendable = app.injector.instanceOf[ErrorTemplateWithLink].apply(pageTitle = "pageTitle",
-    heading = "heading",
-    message = "message",
-    linkText = "linkText",
-    linkUrl = controllers.routes.HomeController.show().url,
-    linkPrefix = Some("linkPrefix"), isAgent = false)
+  val view: HtmlFormat.Appendable = app.injector
+    .instanceOf[ErrorTemplateWithLink]
+    .apply(
+      pageTitle = "pageTitle",
+      heading = "heading",
+      message = "message",
+      linkText = "linkText",
+      linkUrl = controllers.routes.HomeController.show().url,
+      linkPrefix = Some("linkPrefix"),
+      isAgent = false
+    )
 
   "The error page with link view" should {
     "display a h1" in new Setup(view) {

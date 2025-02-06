@@ -43,28 +43,28 @@ class FeatureSwitchRetrievalActionSpec extends AuthActionsSpecHelper {
   }
 
   def defaultAsyncBody(
-                        requestTestCase: MtdItUser[_] => Assertion
-                      ): MtdItUser[_] => Future[Result] = testRequest => {
-    requestTestCase(testRequest)
-    Future.successful(Results.Ok("Successful"))
-  }
+      requestTestCase: MtdItUser[_] => Assertion
+    ): MtdItUser[_] => Future[Result] =
+    testRequest => {
+      requestTestCase(testRequest)
+      Future.successful(Results.Ok("Successful"))
+    }
 
   def defaultAsync: MtdItUser[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
 
   lazy val action = app.injector.instanceOf[FeatureSwitchRetrievalAction]
 
-
   "refine" when {
     "The feature switches are retrieved" should {
       "Return list of feature switches" in {
-        val featureSwitch = List(FeatureSwitch(NavBarFs, true))
+        val featureSwitch    = List(FeatureSwitch(NavBarFs, true))
         val mtdItUserRequest = getMtdItUser(Individual)(fakeRequestWithActiveSession)
         when(mockFeatureSwitchService.getAll)
           .thenReturn(Future(featureSwitch))
 
         val result = action.invokeBlock(
           mtdItUserRequest,
-          defaultAsyncBody (_.featureSwitches shouldBe featureSwitch)
+          defaultAsyncBody(_.featureSwitches shouldBe featureSwitch)
         )
 
         status(result) shouldBe OK

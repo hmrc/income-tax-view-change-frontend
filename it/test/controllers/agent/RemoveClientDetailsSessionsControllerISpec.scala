@@ -60,7 +60,6 @@ class RemoveClientDetailsSessionsControllerISpec extends ControllerISpecHelper {
       testAuthFailures(path, MTDPrimaryAgent, requiresConfirmedClient = false)
     }
 
-
     s"a user is a supporting agent (session data isSupportingAgent = true)" that {
       val isSupportingAgent = true
       val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)

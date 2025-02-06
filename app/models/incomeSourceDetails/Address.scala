@@ -23,16 +23,14 @@ import uk.gov.hmrc.crypto.Sensitive.SensitiveString
 import uk.gov.hmrc.crypto.json.JsonEncryption
 
 case class Address(
-                    lines:    Seq[String],
-                    postcode: Option[String]
-                  ) {
+    lines:    Seq[String],
+    postcode: Option[String]) {
 
   def encrypted: SensitiveAddress =
     SensitiveAddress(
-      lines     .map(SensitiveString),
-      postcode  .map(SensitiveString)
+      lines.map(SensitiveString),
+      postcode.map(SensitiveString)
     )
-
 
   override def toString: String =
     s"${lines.mkString(", ")}${postcode.map(stringValue => s", $stringValue").getOrElse("")}"
@@ -43,14 +41,13 @@ object Address {
 }
 
 case class SensitiveAddress(
-                             lines:    Seq[SensitiveString],
-                             postcode: Option[SensitiveString]
-                           ) {
+    lines:    Seq[SensitiveString],
+    postcode: Option[SensitiveString]) {
 
   def decrypted: Address =
     Address(
-      lines     .map(_.decryptedValue),
-      postcode  .map(_.decryptedValue)
+      lines.map(_.decryptedValue),
+      postcode.map(_.decryptedValue)
     )
 }
 
@@ -60,9 +57,7 @@ object SensitiveAddress {
     JsonEncryption.sensitiveEncrypterDecrypter(SensitiveString.apply)
 
   implicit def format(implicit crypto: Encrypter with Decrypter): Format[SensitiveAddress] = {
-        ((__ \ "lines"    ).format[Seq[SensitiveString]]
-      ~  (__ \ "postcode" ).formatNullable[SensitiveString]
-      )(SensitiveAddress.apply, unlift(SensitiveAddress.unapply)
-    )
+    ((__ \ "lines").format[Seq[SensitiveString]]
+      ~ (__ \ "postcode").formatNullable[SensitiveString])(SensitiveAddress.apply, unlift(SensitiveAddress.unapply))
   }
 }

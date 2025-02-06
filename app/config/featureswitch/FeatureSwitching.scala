@@ -24,7 +24,7 @@ trait FeatureSwitching {
 
   val appConfig: FrontendAppConfig
 
-  val FEATURE_SWITCH_ON = "true"
+  val FEATURE_SWITCH_ON  = "true"
   val FEATURE_SWITCH_OFF = "false"
 
   def isEnabledFromConfig(featureSwitch: FeatureSwitchName): Boolean = {
@@ -32,8 +32,7 @@ trait FeatureSwitching {
       appConfig.config.getOptional[String](s"feature-switch.enable-${featureSwitch.name}") contains FEATURE_SWITCH_ON
   }
 
-  def isEnabled(featureSwitch: FeatureSwitchName)
-               (implicit user: MtdItUser[_]): Boolean = {
+  def isEnabled(featureSwitch: FeatureSwitchName)(implicit user: MtdItUser[_]): Boolean = {
     isEnabled(featureSwitch, user.featureSwitches)
   }
 

@@ -28,13 +28,14 @@ trait ControllerISpecHelper extends ComponentSpecBase {
 
   val mtdAllRoles = List(MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent)
 
-  def homeUrl(mtdUserRole: MTDUserRole): String = mtdUserRole match {
-    case MTDIndividual => controllers.routes.HomeController.show().url
-    case _ => controllers.routes.HomeController.showAgent.url
-  }
+  def homeUrl(mtdUserRole: MTDUserRole): String =
+    mtdUserRole match {
+      case MTDIndividual => controllers.routes.HomeController.show().url
+      case _             => controllers.routes.HomeController.showAgent.url
+    }
 
   def stubAuthorised(mtdRole: MTDUserRole): Unit = {
-    if(mtdRole != MTDIndividual) {
+    if (mtdRole != MTDIndividual) {
       SessionDataStub.stubGetSessionDataResponseSuccess()
       stubGetCitizenDetails()
       stubGetBusinessDetails()()
@@ -42,18 +43,19 @@ trait ControllerISpecHelper extends ComponentSpecBase {
     stubAuthCalls(mtdRole)
   }
 
-  def stubAuthCalls(mtdUserRole: MTDUserRole): Unit = mtdUserRole match {
-    case MTDIndividual => MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
-    case MTDPrimaryAgent => MTDAgentAuthStub.stubAuthorisedAndMTDEnrolled(false)
-    case _ => MTDAgentAuthStub.stubAuthorisedAndMTDEnrolled(true)
-  }
+  def stubAuthCalls(mtdUserRole: MTDUserRole): Unit =
+    mtdUserRole match {
+      case MTDIndividual   => MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
+      case MTDPrimaryAgent => MTDAgentAuthStub.stubAuthorisedAndMTDEnrolled(false)
+      case _               => MTDAgentAuthStub.stubAuthorisedAndMTDEnrolled(true)
+    }
 
-  def getAdditionalCookies(mtdUserRole: MTDUserRole, requiresConfirmedClient: Boolean = true) = mtdUserRole match {
-    case MTDIndividual => Map.empty[String, String]
-    case MTDPrimaryAgent => getAgentClientDetailsForCookie(false, requiresConfirmedClient)
-    case _ => getAgentClientDetailsForCookie(true, requiresConfirmedClient)
-  }
-
+  def getAdditionalCookies(mtdUserRole: MTDUserRole, requiresConfirmedClient: Boolean = true) =
+    mtdUserRole match {
+      case MTDIndividual   => Map.empty[String, String]
+      case MTDPrimaryAgent => getAgentClientDetailsForCookie(false, requiresConfirmedClient)
+      case _               => getAgentClientDetailsForCookie(true, requiresConfirmedClient)
+    }
 
   def testNoClientDataFailure(requestPath: String, optBody: Option[Map[String, Seq[String]]] = None): Unit = {
     "the user does not have client session data" should {
@@ -84,15 +86,17 @@ trait ControllerISpecHelper extends ComponentSpecBase {
     }
   }
 
-  def testAuthFailures(requestPath: String,
-                                  mtdUserRole: MTDUserRole,
-                                  optBody: Option[Map[String, Seq[String]]] = None,
-                                  requiresConfirmedClient: Boolean = true): Unit = {
-    val isAgent = mtdUserRole != MTDIndividual
-    val mtdAuthStub = if(!isAgent) MTDIndividualAuthStub else MTDAgentAuthStub
+  def testAuthFailures(
+      requestPath:             String,
+      mtdUserRole:             MTDUserRole,
+      optBody:                 Option[Map[String, Seq[String]]] = None,
+      requiresConfirmedClient: Boolean = true
+    ): Unit = {
+    val isAgent           = mtdUserRole != MTDIndividual
+    val mtdAuthStub       = if (!isAgent) MTDIndividualAuthStub else MTDAgentAuthStub
     val additionalCookies = getAdditionalCookies(mtdUserRole, requiresConfirmedClient)
 
-    if(mtdUserRole != MTDSupportingAgent) {
+    if (mtdUserRole != MTDSupportingAgent) {
       "does not have a valid session" should {
         s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" in {
           if (mtdUserRole != MTDIndividual) {
@@ -128,15 +132,14 @@ trait ControllerISpecHelper extends ComponentSpecBase {
       }
     }
 
-    if(isAgent) {
+    if (isAgent) {
       testAgentAuthFailures(requestPath, additionalCookies, optBody, requiresConfirmedClient, mtdUserRole)
     } else {
       testIndividualAuthFailures(requestPath, optBody)
     }
   }
 
-  def testIndividualAuthFailures(requestPath: String,
-                                 optBody: Option[Map[String, Seq[String]]]): Unit = {
+  def testIndividualAuthFailures(requestPath: String, optBody: Option[Map[String, Seq[String]]]): Unit = {
     "does not have HMRC-MTD-IT enrolment" should {
       s"redirect ($SEE_OTHER) to ${controllers.errors.routes.NotEnrolledController.show.url}" in {
         MTDIndividualAuthStub.stubInsufficientEnrolments()
@@ -173,11 +176,13 @@ trait ControllerISpecHelper extends ComponentSpecBase {
     }
   }
 
-  def testAgentAuthFailures(requestPath: String,
-                            additionalCookies: Map[String, String],
-                            optBody: Option[Map[String, Seq[String]]],
-                            requiresConfirmedClient: Boolean,
-                            mtdUserRole: MTDUserRole): Unit = {
+  def testAgentAuthFailures(
+      requestPath:             String,
+      additionalCookies:       Map[String, String],
+      optBody:                 Option[Map[String, Seq[String]]],
+      requiresConfirmedClient: Boolean,
+      mtdUserRole:             MTDUserRole
+    ): Unit = {
     if (mtdUserRole == MTDPrimaryAgent) {
       "does not have arn enrolment" should {
         s"redirect ($SEE_OTHER) to ${controllers.agent.errors.routes.AgentErrorController.show.url}" in {
@@ -231,9 +236,11 @@ trait ControllerISpecHelper extends ComponentSpecBase {
     }
   }
 
-  def testSupportingAgentAccessDenied(requestPath: String,
-                                      additionalCookies: Map[String, String],
-                                      optBody: Option[Map[String, Seq[String]]] = None): Unit = {
+  def testSupportingAgentAccessDenied(
+      requestPath:       String,
+      additionalCookies: Map[String, String],
+      optBody:           Option[Map[String, Seq[String]]] = None
+    ): Unit = {
     "render the supporting agent unauthorised page" in {
       stubAuthorised(MTDSupportingAgent)
       val result = buildMTDClient(requestPath, additionalCookies, optBody).futureValue

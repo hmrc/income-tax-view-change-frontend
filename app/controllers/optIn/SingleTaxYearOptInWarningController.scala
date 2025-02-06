@@ -32,23 +32,31 @@ import views.html.optIn.SingleTaxYearWarningView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SingleTaxYearOptInWarningController @Inject()(
-                                                     val view: SingleTaxYearWarningView,
-                                                     val optInService: OptInService,
-                                                     val authActions: AuthActions,
-                                                     val itvcErrorHandler: ItvcErrorHandler,
-                                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler
-                                                   )(
-                                                     implicit val appConfig: FrontendAppConfig,
-                                                     mcc: MessagesControllerComponents,
-                                                     val ec: ExecutionContext
-                                                   ) extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+class SingleTaxYearOptInWarningController @Inject() (
+    val view:                  SingleTaxYearWarningView,
+    val optInService:          OptInService,
+    val authActions:           AuthActions,
+    val itvcErrorHandler:      ItvcErrorHandler,
+    val itvcErrorHandlerAgent: AgentItvcErrorHandler
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    mcc:                    MessagesControllerComponents,
+    val ec:                 ExecutionContext)
+    extends FrontendController(mcc)
+    with FeatureSwitching
+    with I18nSupport {
 
   val logger = Logger(getClass)
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+  private def withRecover(
+      isAgent: Boolean
+    )(
+      code: => Future[Result]
+    )(
+      implicit mtdItUser: MtdItUser[_]
+    ): Future[Result] = {
     code.recover {
       case ex: Exception =>
         Logger("application").error(s"request failed :: $ex")
@@ -56,28 +64,36 @@ class SingleTaxYearOptInWarningController @Inject()(
     }
   }
 
-  private val submitAction = (isAgent: Boolean) => controllers.optIn.routes.SingleTaxYearOptInWarningController.submit(isAgent)
+  private val submitAction = (isAgent: Boolean) =>
+    controllers.optIn.routes.SingleTaxYearOptInWarningController.submit(isAgent)
 
-  private[controllers] def handleSubmitRequest(isAgent: Boolean, taxYear: TaxYear)(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+  private[controllers] def handleSubmitRequest(
+      isAgent: Boolean,
+      taxYear: TaxYear
+    )(
+      implicit mtdItUser: MtdItUser[_]
+    ): Future[Result] = {
 
     SingleTaxYearOptInWarningForm(taxYear)
       .bindFromRequest()
       .fold(
         formWithError => {
-          Future.successful(BadRequest(view(
-            form = formWithError,
-            submitAction = submitAction(isAgent),
-            isAgent = isAgent,
-            taxYear = taxYear
-          )))
+          Future.successful(
+            BadRequest(
+              view(
+                form = formWithError,
+                submitAction = submitAction(isAgent),
+                isAgent = isAgent,
+                taxYear = taxYear
+              )
+            )
+          )
         },
         {
           case SingleTaxYearOptInWarningForm(Some(true)) =>
             optInService
               .saveIntent(TaxYear.makeTaxYearWithEndYear(taxYear.endYear))
-              .map(_ =>
-                Redirect(controllers.optIn.routes.ConfirmTaxYearController.show(isAgent))
-              )
+              .map(_ => Redirect(controllers.optIn.routes.ConfirmTaxYearController.show(isAgent)))
           case SingleTaxYearOptInWarningForm(Some(false)) if isAgent =>
             Future.successful(Redirect(controllers.optIn.routes.OptInCancelledController.showAgent().url))
           case SingleTaxYearOptInWarningForm(Some(false)) =>
@@ -90,28 +106,26 @@ class SingleTaxYearOptInWarningController @Inject()(
   }
 
   def show(isAgent: Boolean = false): Action[AnyContent] =
-    authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-      implicit user =>
-        withRecover(isAgent) {
-          optInService.availableOptInTaxYear().map {
-            case Seq(singleYear) =>
-              Ok(view(SingleTaxYearOptInWarningForm(singleYear), submitAction(isAgent), isAgent, singleYear))
-            case _ =>
-              Redirect(controllers.optIn.routes.ChooseYearController.show(isAgent))
-          }
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+      withRecover(isAgent) {
+        optInService.availableOptInTaxYear().map {
+          case Seq(singleYear) =>
+            Ok(view(SingleTaxYearOptInWarningForm(singleYear), submitAction(isAgent), isAgent, singleYear))
+          case _ =>
+            Redirect(controllers.optIn.routes.ChooseYearController.show(isAgent))
         }
+      }
     }
 
   def submit(isAgent: Boolean): Action[AnyContent] =
-    authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-      implicit request =>
-        withRecover(isAgent) {
-          optInService.availableOptInTaxYear().flatMap {
-            case Seq(singleYear) =>
-              handleSubmitRequest(isAgent, singleYear)
-            case _ =>
-              Future.successful(Redirect(controllers.optIn.routes.ChooseYearController.show(isAgent)))
-          }
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit request =>
+      withRecover(isAgent) {
+        optInService.availableOptInTaxYear().flatMap {
+          case Seq(singleYear) =>
+            handleSubmitRequest(isAgent, singleYear)
+          case _ =>
+            Future.successful(Redirect(controllers.optIn.routes.ChooseYearController.show(isAgent)))
         }
+      }
     }
 }

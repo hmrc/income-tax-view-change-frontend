@@ -16,7 +16,6 @@
 
 package controllers
 
-
 import enums.{MTDIndividual, MTDSupportingAgent}
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
@@ -34,76 +33,83 @@ import testConstants.PaymentAllocationsTestConstants._
 
 import scala.concurrent.Future
 
-class PaymentAllocationControllerSpec extends MockAuthActions
-  with ImplicitDateFormatter with MockPaymentAllocationsService {
+class PaymentAllocationControllerSpec
+    extends MockAuthActions
+    with ImplicitDateFormatter
+    with MockPaymentAllocationsService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[PaymentAllocationsService].toInstance(mockPaymentAllocationsService)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[PaymentAllocationsController]
 
-  val singleTestPaymentAllocationCharge: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
-    List(documentDetail),
-    List(financialDetail)
-  )
+  val singleTestPaymentAllocationCharge: FinancialDetailsWithDocumentDetailsModel =
+    FinancialDetailsWithDocumentDetailsModel(
+      List(documentDetail),
+      List(financialDetail)
+    )
 
   val docNumber = "docNumber1"
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    val isAgent = mtdUserRole != MTDIndividual
-    val action = if (isAgent) testController.viewPaymentAllocationAgent(docNumber) else testController.viewPaymentAllocation(docNumber)
-    val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
-    s"show${if (isAgent) "Agent"}" when {
-      s"the $mtdUserRole is authenticated" should {
-        if (mtdUserRole == MTDSupportingAgent) {
-          testSupportingAgentDeniedAccess(action)(fakeRequest)
-        } else {
-          "render the payment allocation page" when {
-            "the user has payment allocations" in {
-              val successfulResponse = Right(paymentAllocationViewModel)
-              setupMockSuccess(mtdUserRole)
-              mockSingleBusinessIncomeSource()
-              when(mockPaymentAllocationsService.getPaymentAllocation(Nino(any()), any())(any(), any()))
-                .thenReturn(Future.successful(successfulResponse))
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      val isAgent = mtdUserRole != MTDIndividual
+      val action =
+        if (isAgent) testController.viewPaymentAllocationAgent(docNumber)
+        else testController.viewPaymentAllocation(docNumber)
+      val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
+      s"show${if (isAgent) "Agent"}" when {
+        s"the $mtdUserRole is authenticated" should {
+          if (mtdUserRole == MTDSupportingAgent) {
+            testSupportingAgentDeniedAccess(action)(fakeRequest)
+          } else {
+            "render the payment allocation page" when {
+              "the user has payment allocations" in {
+                val successfulResponse = Right(paymentAllocationViewModel)
+                setupMockSuccess(mtdUserRole)
+                mockSingleBusinessIncomeSource()
+                when(mockPaymentAllocationsService.getPaymentAllocation(Nino(any()), any())(any(), any()))
+                  .thenReturn(Future.successful(successfulResponse))
 
-              val result = action(fakeRequest)
-              status(result) shouldBe Status.OK
+                val result = action(fakeRequest)
+                status(result) shouldBe Status.OK
+              }
+              "the user has late payment charges" in {
+                setupMockSuccess(mtdUserRole)
+                mockSingleBusinessIncomeSource()
+                when(mockPaymentAllocationsService.getPaymentAllocation(Nino(any()), any())(any(), any()))
+                  .thenReturn(Future.successful(Right(paymentAllocationViewModelLpi)))
+                val result = action(fakeRequest)
+                status(result) shouldBe Status.OK
+              }
+
+              "the user has no late payment charges (HMRC adjustment)" in {
+                setupMockSuccess(mtdUserRole)
+                mockSingleBusinessIncomeSource()
+                when(mockPaymentAllocationsService.getPaymentAllocation(Nino(any()), any())(any(), any()))
+                  .thenReturn(Future.successful(Right(paymentAllocationViewModelHmrcAdjustment)))
+                val result = action(fakeRequest)
+                status(result) shouldBe Status.OK
+              }
             }
-            "the user has late payment charges" in {
-              setupMockSuccess(mtdUserRole)
-              mockSingleBusinessIncomeSource()
-              when(mockPaymentAllocationsService.getPaymentAllocation(Nino(any()), any())(any(), any()))
-                .thenReturn(Future.successful(Right(paymentAllocationViewModelLpi)))
-              val result = action(fakeRequest)
-              status(result) shouldBe Status.OK
-            }
 
-            "the user has no late payment charges (HMRC adjustment)" in {
-              setupMockSuccess(mtdUserRole)
-              mockSingleBusinessIncomeSource()
-              when(mockPaymentAllocationsService.getPaymentAllocation(Nino(any()), any())(any(), any()))
-                .thenReturn(Future.successful(Right(paymentAllocationViewModelHmrcAdjustment)))
-              val result = action(fakeRequest)
-              status(result) shouldBe Status.OK
-            }
-          }
+            "render the error page" when {
+              "retrieving the users payment allocation fails" in {
+                setupMockSuccess(mtdUserRole)
+                mockSingleBusinessIncomeSource()
+                when(mockPaymentAllocationsService.getPaymentAllocation(Nino(any()), any())(any(), any()))
+                  .thenReturn(Future.successful(Left(PaymentAllocationError())))
 
-          "render the error page" when {
-            "retrieving the users payment allocation fails" in {
-              setupMockSuccess(mtdUserRole)
-              mockSingleBusinessIncomeSource()
-              when(mockPaymentAllocationsService.getPaymentAllocation(Nino(any()), any())(any(), any()))
-                .thenReturn(Future.successful(Left(PaymentAllocationError())))
-
-              val result = action(fakeRequest)
-              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+                val result = action(fakeRequest)
+                status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+              }
             }
           }
         }
+        testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
       }
-      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
-    }
   }
 }

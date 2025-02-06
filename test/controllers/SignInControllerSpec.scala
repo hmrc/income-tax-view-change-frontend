@@ -24,9 +24,11 @@ import testUtils.TestSupport
 
 class SignInControllerSpec extends TestSupport {
 
-  object TestSignInController extends SignInController(
-    app.injector.instanceOf[FrontendAppConfig])(app.injector.instanceOf[MessagesControllerComponents])
-  
+  object TestSignInController
+      extends SignInController(app.injector.instanceOf[FrontendAppConfig])(
+        app.injector.instanceOf[MessagesControllerComponents]
+      )
+
   "navigating to SignIn page" should {
     lazy val result = TestSignInController.signIn(fakeRequestNoSession)
 

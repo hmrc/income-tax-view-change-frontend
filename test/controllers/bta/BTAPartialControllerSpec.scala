@@ -35,7 +35,7 @@ class BTAPartialControllerSpec extends MockAuthActions {
         setupMockSuccess(MTDIndividual)
         mockBusinessIncomeSource()
 
-        val result = action(fakeRequestWithActiveSession)
+        val result        = action(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
 
         status(result) shouldBe Status.OK

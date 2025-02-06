@@ -35,13 +35,33 @@ trait MockRepaymentHistoryConnector extends UnitSpec with BeforeAndAfterEach {
     reset(mockRepaymentHistoryConnector)
   }
 
-  def setupGetRepaymentHistoryByRepaymentId(nino: String, repaymentId: String)(response: RepaymentHistoryModel): Unit = {
-    when(mockRepaymentHistoryConnector.getRepaymentHistoryByRepaymentId(Nino(ArgumentMatchers.eq(nino)), ArgumentMatchers.eq(repaymentId))(any()))
+  def setupGetRepaymentHistoryByRepaymentId(
+      nino:        String,
+      repaymentId: String
+    )(
+      response: RepaymentHistoryModel
+    ): Unit = {
+    when(
+      mockRepaymentHistoryConnector.getRepaymentHistoryByRepaymentId(
+        Nino(ArgumentMatchers.eq(nino)),
+        ArgumentMatchers.eq(repaymentId)
+      )(any())
+    )
       .thenReturn(Future.successful(response))
   }
 
-  def setupGetRepaymentHistoryByRepaymentIdError(nino: String, repaymentId: String)(response: RepaymentHistoryErrorModel): Unit = {
-    when(mockRepaymentHistoryConnector.getRepaymentHistoryByRepaymentId(Nino(ArgumentMatchers.eq(nino)), ArgumentMatchers.eq(repaymentId))(any()))
+  def setupGetRepaymentHistoryByRepaymentIdError(
+      nino:        String,
+      repaymentId: String
+    )(
+      response: RepaymentHistoryErrorModel
+    ): Unit = {
+    when(
+      mockRepaymentHistoryConnector.getRepaymentHistoryByRepaymentId(
+        Nino(ArgumentMatchers.eq(nino)),
+        ArgumentMatchers.eq(repaymentId)
+      )(any())
+    )
       .thenReturn(Future.successful(response))
   }
 }

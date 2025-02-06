@@ -35,12 +35,12 @@ case class QuarterTypeElection(quarterReportingType: String, taxYearofElection: 
     quarterReportingType match {
       case QuarterTypeStandard.value => Some(QuarterTypeStandard)
       case QuarterTypeCalendar.value => Some(QuarterTypeCalendar)
-      case _ => None
+      case _                         => None
     }
   }
 }
 
 object QuarterTypeElection {
-  implicit val format: Format[QuarterTypeElection] = Json.format[QuarterTypeElection]
+  implicit val format:             Format[QuarterTypeElection]            = Json.format[QuarterTypeElection]
   implicit val orderingByTypeName: Ordering[Option[QuarterReportingType]] = Ordering.by(e => e.map(_.value))
 }

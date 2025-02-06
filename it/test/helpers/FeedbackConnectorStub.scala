@@ -16,7 +16,6 @@
 
 package helpers
 
-
 object FeedbackConnectorStub {
 
   def stubPostFeedback(status: Int): Unit =

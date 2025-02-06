@@ -19,7 +19,6 @@ package controllers.agent
 import helpers.ComponentSpecBase
 import play.api.http.Status.SEE_OTHER
 
-
 class AgentLanguageControllerISpec extends ComponentSpecBase {
 
   val testRefererRoute: String = "/test/referer/route"

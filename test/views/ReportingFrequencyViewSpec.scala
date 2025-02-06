@@ -25,50 +25,51 @@ import testUtils.TestSupport
 import views.html.ReportingFrequencyView
 import views.messages.ReportingFrequencyViewMessages._
 
-
 class ReportingFrequencyViewSpec extends TestSupport {
 
   val view: ReportingFrequencyView = app.injector.instanceOf[ReportingFrequencyView]
 
   def beforeYouStartUrl(isAgent: Boolean): String = controllers.optIn.routes.BeforeYouStartController.show(isAgent).url
 
-  def optOutChooseTaxYearUrl(isAgent: Boolean): String = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url
+  def optOutChooseTaxYearUrl(isAgent: Boolean): String =
+    controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url
 
   def confirmOptOutUrl(isAgent: Boolean): String = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
 
-  val govGuidanceUrl = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+  val govGuidanceUrl =
+    "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
 
   def bullet(i: Int): String = s"#main-content > div > div > div > ul > li:nth-child($i) > a"
 
   object Selectors {
-    val h1 = "reporting-frequency-heading"
-    val h2 = "manage-reporting-frequency-heading"
-    val p1 = "change-reporting-frequency"
-    val p2 = "what-you-can-do"
-    val mandatoryReportingH2 = "mandatory-reporting-heading"
+    val h1                      = "reporting-frequency-heading"
+    val h2                      = "manage-reporting-frequency-heading"
+    val p1                      = "change-reporting-frequency"
+    val p2                      = "what-you-can-do"
+    val mandatoryReportingH2    = "mandatory-reporting-heading"
     val mandatoryReportingInset = "mandatory-reporting-inset"
-    val mandatoryReportingLink = "mandatory-reporting-link"
-    val mandatoryReportingText = "mandatory-reporting-text"
-    val compatibleSoftwareH2 = "compatible-software-heading"
-    val compatibleSoftwareP1 = "compatible-software-text"
-    val compatibleSoftwareP2 = "compatible-software-text-2"
-    val govGuidance = "#compatible-software-link"
+    val mandatoryReportingLink  = "mandatory-reporting-link"
+    val mandatoryReportingText  = "mandatory-reporting-text"
+    val compatibleSoftwareH2    = "compatible-software-heading"
+    val compatibleSoftwareP1    = "compatible-software-text"
+    val compatibleSoftwareP2    = "compatible-software-text-2"
+    val govGuidance             = "#compatible-software-link"
   }
 
   def testContentByIds(pageDocument: Document, additionalIdsAndContent: Seq[(String, String)] = Seq()): Unit = {
     val expectedContent: Seq[(String, String)] =
       Seq(
-        Selectors.h1 -> h1Content,
-        Selectors.h2 -> h2Content,
-        Selectors.p1 -> p1Content,
-        Selectors.p2 -> p2Content,
-        Selectors.mandatoryReportingH2 -> mandatoryReportingHeading,
+        Selectors.h1                      -> h1Content,
+        Selectors.h2                      -> h2Content,
+        Selectors.p1                      -> p1Content,
+        Selectors.p2                      -> p2Content,
+        Selectors.mandatoryReportingH2    -> mandatoryReportingHeading,
         Selectors.mandatoryReportingInset -> mandatoryReportingInset,
-        Selectors.mandatoryReportingLink -> mandatoryReportingLink,
-        Selectors.mandatoryReportingText -> mandatoryReportingText,
-        Selectors.compatibleSoftwareH2 -> compatibleSoftwareH2,
-        Selectors.compatibleSoftwareP1 -> compatibleSoftwareP1,
-        Selectors.compatibleSoftwareP2 -> compatibleSoftwareP2
+        Selectors.mandatoryReportingLink  -> mandatoryReportingLink,
+        Selectors.mandatoryReportingText  -> mandatoryReportingText,
+        Selectors.compatibleSoftwareH2    -> compatibleSoftwareH2,
+        Selectors.compatibleSoftwareP1    -> compatibleSoftwareP1,
+        Selectors.compatibleSoftwareP2    -> compatibleSoftwareP2
       ) ++ additionalIdsAndContent
 
     expectedContent.foreach {
@@ -172,7 +173,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
             itsaStatusTable = Seq(
               "2023 to 2024" -> Some("Quarterly (mandatory)"),
               "2024 to 2025" -> Some("Quarterly"),
-              "2025 to 2026" -> Some("Annual"),
+              "2025 to 2026" -> Some("Annual")
             ),
             isAnyOfBusinessLatent = false,
             displayCeasedBusinessWarning = false
@@ -209,26 +210,26 @@ class ReportingFrequencyViewSpec extends TestSupport {
           Seq(
             "2023 to 2024",
             "2024 to 2025",
-            "2025 to 2026",
+            "2025 to 2026"
           )
 
-        tableTaxYearColumnContent
-          .zipWithIndex
-          .foreach { case (tableContent, i) =>
-            pageDocument.select(s"#table-taxyear-$i").text() shouldBe tableContent
+        tableTaxYearColumnContent.zipWithIndex
+          .foreach {
+            case (tableContent, i) =>
+              pageDocument.select(s"#table-taxyear-$i").text() shouldBe tableContent
           }
 
         val tableReportingFrequencyColumnContent =
           Seq(
             "Quarterly (mandatory)",
             "Quarterly",
-            "Annual",
+            "Annual"
           )
 
-        tableReportingFrequencyColumnContent
-          .zipWithIndex
-          .foreach { case (tableContent, i) =>
-            pageDocument.select(s"#table-status-$i").text() shouldBe tableContent
+        tableReportingFrequencyColumnContent.zipWithIndex
+          .foreach {
+            case (tableContent, i) =>
+              pageDocument.select(s"#table-status-$i").text() shouldBe tableContent
           }
       }
     }
@@ -301,9 +302,13 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
         testContentByIds(pageDocument)
 
-        pageDocument.getElementById("ceased-business-warning").text() shouldBe "Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page."
+        pageDocument
+          .getElementById("ceased-business-warning")
+          .text() shouldBe "Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page."
 
-        pageDocument.getElementById("ceased-business-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/manage-your-businesses"
+        pageDocument
+          .getElementById("ceased-business-link")
+          .attr("href") shouldBe "/report-quarterly/income-and-expenses/view/manage-your-businesses"
       }
 
       "return the correct content when the user has a ceased business and is an agent" in {
@@ -333,9 +338,13 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
         testContentByIds(pageDocument)
 
-        pageDocument.getElementById("ceased-business-warning").text() shouldBe "Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page."
+        pageDocument
+          .getElementById("ceased-business-warning")
+          .text() shouldBe "Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page."
 
-        pageDocument.getElementById("ceased-business-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/manage-your-businesses"
+        pageDocument
+          .getElementById("ceased-business-link")
+          .attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/manage-your-businesses"
       }
     }
   }

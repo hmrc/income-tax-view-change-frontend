@@ -30,4 +30,3 @@ object ReviewAndReconcileUtils {
   def isReviewAndReconcilePoaTwo(mainTransaction: Option[String]): Boolean =
     mainTransaction.contains(poaTwoReviewAndReconcileDebit)
 }
-

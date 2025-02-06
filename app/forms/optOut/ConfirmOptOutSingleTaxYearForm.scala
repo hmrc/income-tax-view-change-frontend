@@ -24,21 +24,18 @@ import play.api.i18n.Messages
 case class ConfirmOptOutSingleTaxYearForm(confirmOptOut: Option[Boolean], csrfToken: String)
 
 object ConfirmOptOutSingleTaxYearForm {
-  val confirmOptOutField: String = "confirm-opt-out"
+  val confirmOptOutField:        String = "confirm-opt-out"
   val noResponseErrorMessageKey: String = "optOut.confirmSingleYearOptOut.form.no-select.error"
-  val csrfToken: String = "csrfToken"
-
+  val csrfToken:                 String = "csrfToken"
 
   def apply(taxYear: TaxYear)(implicit messages: Messages): Form[ConfirmOptOutSingleTaxYearForm] = {
     val noSelectionErrorMessage: String =
-      messages(noResponseErrorMessageKey,
-        taxYear.startYear.toString,
-        taxYear.endYear.toString)
+      messages(noResponseErrorMessageKey, taxYear.startYear.toString, taxYear.endYear.toString)
 
     Form(
       mapping(
-        confirmOptOutField -> optional(boolean).verifying(
-          noSelectionErrorMessage, response => response.isInstanceOf[Some[Boolean]]),
+        confirmOptOutField -> optional(boolean)
+          .verifying(noSelectionErrorMessage, response => response.isInstanceOf[Some[Boolean]]),
         csrfToken -> text
       )(ConfirmOptOutSingleTaxYearForm.apply)(ConfirmOptOutSingleTaxYearForm.unapply)
     )

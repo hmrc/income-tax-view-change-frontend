@@ -27,12 +27,12 @@ import views.html.feedback.Feedback
 
 class FeedbackViewSpec extends ViewSpec {
 
-  val feedbackView: Feedback = app.injector.instanceOf[Feedback]
-  lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
-  implicit val lang: Lang = Lang("GB")
+  val feedbackView:  Feedback    = app.injector.instanceOf[Feedback]
+  lazy val msgs:     MessagesApi = app.injector.instanceOf[MessagesApi]
+  implicit val lang: Lang        = Lang("GB")
 
   class TestSetup(isAgent: Boolean = false) {
-    val view: Html = feedbackView(FeedbackForm.form, testCall, isAgent)
+    val view:     Html     = feedbackView(FeedbackForm.form, testCall, isAgent)
     val document: Document = Jsoup.parse(view.toString())
   }
 

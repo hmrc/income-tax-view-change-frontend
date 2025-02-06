@@ -24,23 +24,29 @@ object OptInCompletedViewMessages {
 
   val panelBodyContent = "You opted in to quarterly reporting from 2022 to 2023 tax year onwards"
 
-  def overdueUpdatesGenericInset(yearStart: String, yearEnd: String) = s"You may have overdue updates for the $yearStart to $yearEnd tax year. You must submit these updates with all required income and expenses through your compatible software."
+  def overdueUpdatesGenericInset(yearStart: String, yearEnd: String) =
+    s"You may have overdue updates for the $yearStart to $yearEnd tax year. You must submit these updates with all required income and expenses through your compatible software."
 
   val yourRevisedDeadlineH2 = "Your revised deadlines"
 
   val yourRevisedDeadlineInset = "Your revised deadlines will be available in the next few minutes."
 
-  val yourRevisedDeadlineContentP1 = "Even if they are not displayed right away on the updates and deadlines page, your account has been updated."
+  val yourRevisedDeadlineContentP1 =
+    "Even if they are not displayed right away on the updates and deadlines page, your account has been updated."
 
-  val yourRevisedDeadlineContentP2 = "You can decide at any time to opt out of reporting quarterly for all your businesses on your reporting frequency page."
+  val yourRevisedDeadlineContentP2 =
+    "You can decide at any time to opt out of reporting quarterly for all your businesses on your reporting frequency page."
 
-  val optinCompletedViewP3 = "For any tax year you are reporting quarterly, you will need software compatible with Making Tax Digital for Income Tax (opens in new tab)."
+  val optinCompletedViewP3 =
+    "For any tax year you are reporting quarterly, you will need software compatible with Making Tax Digital for Income Tax (opens in new tab)."
 
-  val optinCompletedViewP4 = "When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software."
+  val optinCompletedViewP4 =
+    "When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software."
 
-  val optinCompletedViewP5 = "You are voluntarily opted in to reporting quarterly from the next tax year onwards, but in the future it could be mandatory for you if:"
+  val optinCompletedViewP5 =
+    "You are voluntarily opted in to reporting quarterly from the next tax year onwards, but in the future it could be mandatory for you if:"
 
-  val bullet1Content =  "HMRC lowered the income threshold for Making Tax Digital for Income Tax"
+  val bullet1Content = "HMRC lowered the income threshold for Making Tax Digital for Income Tax"
   val bullet2Content = "you reported an increase in your qualifying income in a tax return"
 
   val optinCompletedViewP6 = "You can check the threshold for qualifying income in the criteria for people who will " +

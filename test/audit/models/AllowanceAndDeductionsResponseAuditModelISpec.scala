@@ -25,10 +25,11 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 class AllowanceAndDeductionsResponseAuditModelISpec extends TestSupport {
 
   val transactionName = "allowances-deductions-details-response"
-  val auditEvent = "AllowancesDeductionsDetailsResponse"
+  val auditEvent      = "AllowancesDeductionsDetailsResponse"
 
   "The AllowanceAndDeductionsResponseAuditModel" should {
-    val testAllowanceAndDeductionsResponseAuditModel = AllowanceAndDeductionsResponseAuditModel(testMtdItAgentUser,
+    val testAllowanceAndDeductionsResponseAuditModel = AllowanceAndDeductionsResponseAuditModel(
+      testMtdItAgentUser,
       AllowancesAndDeductionsViewModel(
         personalAllowance = Some(123.12),
         pensionContributions = Some(456.78),
@@ -56,22 +57,25 @@ class AllowanceAndDeductionsResponseAuditModelISpec extends TestSupport {
       "information for the audit is complete" in {
         testAllowanceAndDeductionsResponseAuditModel.detail shouldBe
           commonAuditDetails(Agent) ++ Json.obj(
-          "personalAllowance" -> 123.12,
-          "pensionContributions" -> 456.78,
-          "lossRelief" -> 1234.12,
-          "giftsToCharity" -> 4561.78,
-          "annualPayments" -> 1235.12,
-          "qualifyingLoanInterest" -> 4562.78,
-          "postCessationTradeReceipts" -> 1236.12,
-          "tradeUnionPayments" -> 4563.78,
-          "marriageAllowanceTransfer" -> 256.78
-        )
+            "personalAllowance"          -> 123.12,
+            "pensionContributions"       -> 456.78,
+            "lossRelief"                 -> 1234.12,
+            "giftsToCharity"             -> 4561.78,
+            "annualPayments"             -> 1235.12,
+            "qualifyingLoanInterest"     -> 4562.78,
+            "postCessationTradeReceipts" -> 1236.12,
+            "tradeUnionPayments"         -> 4563.78,
+            "marriageAllowanceTransfer"  -> 256.78
+          )
       }
 
       "information for the audit has minimal details" in {
-        AllowanceAndDeductionsResponseAuditModel(testMtdItUserMinimal, AllowancesAndDeductionsViewModel()).detail shouldBe Json.obj(
+        AllowanceAndDeductionsResponseAuditModel(
+          testMtdItUserMinimal,
+          AllowancesAndDeductionsViewModel()
+        ).detail shouldBe Json.obj(
           "mtditid" -> testMtditid,
-          "nino" -> testNino
+          "nino"    -> testNino
         )
       }
     }

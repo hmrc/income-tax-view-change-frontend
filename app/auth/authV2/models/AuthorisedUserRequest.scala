@@ -19,20 +19,24 @@ package auth.authV2.models
 import enums.MTDUserRole
 import play.api.mvc.{Request, WrappedRequest}
 
-case class AuthorisedUserRequest[A](authUserDetails: AuthUserDetails)
-                                   (implicit request: Request[A]) extends WrappedRequest[A](request)
+case class AuthorisedUserRequest[A](authUserDetails: AuthUserDetails)(implicit request: Request[A])
+    extends WrappedRequest[A](request)
 
+case class AuthorisedAgentWithClientDetailsRequest[A](
+    authUserDetails: AuthUserDetails,
+    clientDetails:   AgentClientDetails
+  )(
+    implicit request: Request[A])
+    extends WrappedRequest[A](request)
 
-case class AuthorisedAgentWithClientDetailsRequest[A](authUserDetails: AuthUserDetails,
-                                                      clientDetails: AgentClientDetails)
-                                                     (implicit request: Request[A]) extends WrappedRequest[A](request)
-
-
-case class AuthorisedAndEnrolledRequest[A](mtditId: String,
-                                           mtdUserRole: MTDUserRole,
-                                           authUserDetails: AuthUserDetails,
-                                           clientDetails: Option[AgentClientDetails])
-                                           (implicit request: Request[A]) extends WrappedRequest[A](request) {
-  val saUtr: Option[String] = if(clientDetails.isDefined) clientDetails.map(_.utr) else authUserDetails.saUtr
+case class AuthorisedAndEnrolledRequest[A](
+    mtditId:         String,
+    mtdUserRole:     MTDUserRole,
+    authUserDetails: AuthUserDetails,
+    clientDetails:   Option[AgentClientDetails]
+  )(
+    implicit request: Request[A])
+    extends WrappedRequest[A](request) {
+  val saUtr: Option[String] = if (clientDetails.isDefined) clientDetails.map(_.utr) else authUserDetails.saUtr
 
 }

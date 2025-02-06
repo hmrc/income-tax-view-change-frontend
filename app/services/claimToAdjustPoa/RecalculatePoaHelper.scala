@@ -25,7 +25,7 @@ import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoaAmendmentData}
 import models.core.Nino
 import play.api.Logger
-import play.api.i18n.{Lang, Messages,LangImplicits}
+import play.api.i18n.{Lang, Messages, LangImplicits}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
@@ -34,9 +34,13 @@ import utils.ErrorRecovery
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait RecalculatePoaHelper extends  FeatureSwitching with LangImplicits with ErrorRecovery {
-  private def dataFromSession(poaSessionService: PaymentOnAccountSessionService)(implicit hc: HeaderCarrier, ec: ExecutionContext)
-  : Future[PoaAmendmentData] = {
+trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with ErrorRecovery {
+  private def dataFromSession(
+      poaSessionService: PaymentOnAccountSessionService
+    )(
+      implicit hc: HeaderCarrier,
+      ec:          ExecutionContext
+    ): Future[PoaAmendmentData] = {
     poaSessionService.getMongo(hc, ec).flatMap {
       case Right(Some(newPoaData: PoaAmendmentData)) =>
         Future.successful(newPoaData)
@@ -45,33 +49,45 @@ trait RecalculatePoaHelper extends  FeatureSwitching with LangImplicits with Err
     }
   }
 
-  private def handlePoaAndOtherData(poa: PaymentOnAccountViewModel,
-                                    otherData: PoaAmendmentData, nino: Nino, ctaCalculationService: ClaimToAdjustPoaCalculationService, auditingService: AuditingService)
-                                     (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-    implicit val lang : Lang = Lang("en")
+  private def handlePoaAndOtherData(
+      poa:                   PaymentOnAccountViewModel,
+      otherData:             PoaAmendmentData,
+      nino:                  Nino,
+      ctaCalculationService: ClaimToAdjustPoaCalculationService,
+      auditingService:       AuditingService
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier,
+      ec:            ExecutionContext
+    ): Future[Result] = {
+    implicit val lang: Lang = Lang("en")
     otherData match {
       case PoaAmendmentData(Some(poaAdjustmentReason), Some(amount), _) =>
         ctaCalculationService.recalculate(nino, poa.taxYear, amount, poaAdjustmentReason) map {
           case Left(ex) =>
             Logger("application").error(s"POA recalculation request failed: ${ex.getMessage}")
-            auditingService.extendedAudit(AdjustPaymentsOnAccountAuditModel(
-              isSuccessful = false,
-              previousPaymentOnAccountAmount = poa.totalAmountOne,
-              requestedPaymentOnAccountAmount = amount,
-              adjustmentReasonCode = poaAdjustmentReason.code,
-              adjustmentReasonDescription = Messages(poaAdjustmentReason.messagesKey)(lang2Messages),
-              isDecreased = amount < poa.totalAmountOne
-            ))
+            auditingService.extendedAudit(
+              AdjustPaymentsOnAccountAuditModel(
+                isSuccessful = false,
+                previousPaymentOnAccountAmount = poa.totalAmountOne,
+                requestedPaymentOnAccountAmount = amount,
+                adjustmentReasonCode = poaAdjustmentReason.code,
+                adjustmentReasonDescription = Messages(poaAdjustmentReason.messagesKey)(lang2Messages),
+                isDecreased = amount < poa.totalAmountOne
+              )
+            )
             Redirect(controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(user.isAgent()))
           case Right(_) =>
-            auditingService.extendedAudit(AdjustPaymentsOnAccountAuditModel(
-              isSuccessful = true,
-              previousPaymentOnAccountAmount = poa.totalAmountOne,
-              requestedPaymentOnAccountAmount = amount,
-              adjustmentReasonCode = poaAdjustmentReason.code,
-              adjustmentReasonDescription = Messages(poaAdjustmentReason.messagesKey,lang)(lang2Messages),
-              isDecreased = amount < poa.totalAmountOne
-            ))
+            auditingService.extendedAudit(
+              AdjustPaymentsOnAccountAuditModel(
+                isSuccessful = true,
+                previousPaymentOnAccountAmount = poa.totalAmountOne,
+                requestedPaymentOnAccountAmount = amount,
+                adjustmentReasonCode = poaAdjustmentReason.code,
+                adjustmentReasonDescription = Messages(poaAdjustmentReason.messagesKey, lang)(lang2Messages),
+                isDecreased = amount < poa.totalAmountOne
+              )
+            )
             Redirect(controllers.claimToAdjustPoa.routes.PoaAdjustedController.show(user.isAgent()))
         }
       case PoaAmendmentData(_, _, _) =>
@@ -79,9 +95,16 @@ trait RecalculatePoaHelper extends  FeatureSwitching with LangImplicits with Err
     }
   }
 
-  protected def handleSubmitPoaData(claimToAdjustService: ClaimToAdjustService, ctaCalculationService: ClaimToAdjustPoaCalculationService,
-                                    poaSessionService: PaymentOnAccountSessionService, auditingService: AuditingService)
-                                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+  protected def handleSubmitPoaData(
+      claimToAdjustService:  ClaimToAdjustService,
+      ctaCalculationService: ClaimToAdjustPoaCalculationService,
+      poaSessionService:     PaymentOnAccountSessionService,
+      auditingService:       AuditingService
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier,
+      ec:            ExecutionContext
+    ): Future[Result] = {
     if (isEnabled(AdjustPaymentsOnAccount)) {
       {
         for {

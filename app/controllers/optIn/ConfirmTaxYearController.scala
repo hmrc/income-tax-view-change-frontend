@@ -34,20 +34,30 @@ import views.html.optIn.ConfirmTaxYear
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ConfirmTaxYearController @Inject()(val view: ConfirmTaxYear,
-                                         val optInService: OptInService,
-                                         val authActions: AuthActions,
-                                         val itvcErrorHandler: ItvcErrorHandler,
-                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                        (implicit val dateService: DateService,
-                                         val appConfig: FrontendAppConfig,
-                                         mcc: MessagesControllerComponents,
-                                         val ec: ExecutionContext)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+class ConfirmTaxYearController @Inject() (
+    val view:                  ConfirmTaxYear,
+    val optInService:          OptInService,
+    val authActions:           AuthActions,
+    val itvcErrorHandler:      ItvcErrorHandler,
+    val itvcErrorHandlerAgent: AgentItvcErrorHandler
+  )(
+    implicit val dateService: DateService,
+    val appConfig:            FrontendAppConfig,
+    mcc:                      MessagesControllerComponents,
+    val ec:                   ExecutionContext)
+    extends FrontendController(mcc)
+    with FeatureSwitching
+    with I18nSupport {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+  private def withRecover(
+      isAgent: Boolean
+    )(
+      code: => Future[Result]
+    )(
+      implicit mtdItUser: MtdItUser[_]
+    ): Future[Result] = {
     code.recover {
       case ex: Exception =>
         Logger("application").error(s"request failed :: $ex")
@@ -55,28 +65,34 @@ class ConfirmTaxYearController @Inject()(val view: ConfirmTaxYear,
     }
   }
 
-  def show(isAgent: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
+  def show(isAgent: Boolean = false): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
       withRecover(isAgent) {
         optInService.getConfirmTaxYearViewModel(isAgent) map {
-          case Some(model) => Ok(view(ConfirmTaxYearViewModel(
-            model.availableOptInTaxYear,
-            model.cancelURL,
-            model.isNextTaxYear,
-            model.isAgent)))
+          case Some(model) =>
+            Ok(
+              view(
+                ConfirmTaxYearViewModel(
+                  model.availableOptInTaxYear,
+                  model.cancelURL,
+                  model.isNextTaxYear,
+                  model.isAgent
+                )
+              )
+            )
           case None => errorHandler(isAgent).showInternalServerError()
         }
 
       }
-  }
+    }
 
-  def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
+  def submit(isAgent: Boolean): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
       optInService.makeOptInCall() map {
         case ITSAStatusUpdateResponseSuccess(_) => redirectToCheckpointPage(isAgent)
-        case _ => Redirect(OptInErrorController.show(isAgent))
+        case _                                  => Redirect(OptInErrorController.show(isAgent))
       }
-  }
+    }
 
   private def redirectToCheckpointPage(isAgent: Boolean): Result = {
     val nextPage = controllers.optIn.routes.OptInCompletedController.show(isAgent)

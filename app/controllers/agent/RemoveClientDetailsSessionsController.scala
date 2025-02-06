@@ -28,25 +28,29 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class RemoveClientDetailsSessionsController @Inject()(val authActions: AuthActions)
-                                                     (implicit mcc: MessagesControllerComponents,
-                                                      val appConfig: FrontendAppConfig,
-                                                      val itvcErrorHandler: AgentItvcErrorHandler,
-                                                      val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+class RemoveClientDetailsSessionsController @Inject() (
+    val authActions: AuthActions
+  )(
+    implicit mcc:         MessagesControllerComponents,
+    val appConfig:        FrontendAppConfig,
+    val itvcErrorHandler: AgentItvcErrorHandler,
+    val ec:               ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with FeatureSwitching {
 
+  def show: Action[AnyContent] =
+    authActions.asMTDAgentWithConfirmedClient { implicit user =>
+      Redirect(controllers.agent.routes.EnterClientsUTRController.show.url)
+        .removingFromSession(
+          SessionKeys.clientFirstName,
+          SessionKeys.clientLastName,
+          SessionKeys.clientMTDID,
+          SessionKeys.clientUTR,
+          SessionKeys.clientNino,
+          SessionKeys.isSupportingAgent,
+          SessionKeys.confirmedClient
+        )
 
-  def show: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient { implicit user =>
-    Redirect(controllers.agent.routes.EnterClientsUTRController.show.url)
-      .removingFromSession(
-        SessionKeys.clientFirstName,
-        SessionKeys.clientLastName,
-        SessionKeys.clientMTDID,
-        SessionKeys.clientUTR,
-        SessionKeys.clientNino,
-        SessionKeys.isSupportingAgent,
-        SessionKeys.confirmedClient
-      )
-
-  }
+    }
 }

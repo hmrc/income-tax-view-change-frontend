@@ -36,40 +36,77 @@ trait MockCalculationService extends UnitSpec with BeforeAndAfterEach {
     reset(mockCalculationService)
   }
 
-  def setupMockGetCalculationNew(mtditid: String, nino: String, taxYear: Int)(response: LiabilityCalculationResponseModel): Unit = {
-    when(mockCalculationService
-      .getLiabilityCalculationDetail(
-        ArgumentMatchers.eq(mtditid),
-        ArgumentMatchers.eq(nino),
-        ArgumentMatchers.eq(taxYear)
-      )(ArgumentMatchers.any()))
+  def setupMockGetCalculationNew(
+      mtditid: String,
+      nino:    String,
+      taxYear: Int
+    )(
+      response: LiabilityCalculationResponseModel
+    ): Unit = {
+    when(
+      mockCalculationService
+        .getLiabilityCalculationDetail(
+          ArgumentMatchers.eq(mtditid),
+          ArgumentMatchers.eq(nino),
+          ArgumentMatchers.eq(taxYear)
+        )(ArgumentMatchers.any())
+    )
       .thenReturn(Future.successful(response))
   }
 
-  def setupMockGetLatestCalculation(mtditid: String, nino: String, calcId: String, taxYear: Int)(response: LiabilityCalculationResponseModel): Unit = {
-    when(mockCalculationService.getLatestCalculation(
-      ArgumentMatchers.eq(mtditid),
-      ArgumentMatchers.eq(nino),
-      ArgumentMatchers.eq(calcId),
-      ArgumentMatchers.eq(taxYear)
-    )(ArgumentMatchers.any())) thenReturn Future.successful(response)
+  def setupMockGetLatestCalculation(
+      mtditid: String,
+      nino:    String,
+      calcId:  String,
+      taxYear: Int
+    )(
+      response: LiabilityCalculationResponseModel
+    ): Unit = {
+    when(
+      mockCalculationService.getLatestCalculation(
+        ArgumentMatchers.eq(mtditid),
+        ArgumentMatchers.eq(nino),
+        ArgumentMatchers.eq(calcId),
+        ArgumentMatchers.eq(taxYear)
+      )(ArgumentMatchers.any())
+    ) thenReturn Future.successful(response)
   }
 
-  def mockCalculationSuccessfulNew(mtditid: String = "XAIT00000000015", nino: String = testNino, taxYear: Int = testTaxYear): Unit =
+  def mockCalculationSuccessfulNew(
+      mtditid: String = "XAIT00000000015",
+      nino:    String = testNino,
+      taxYear: Int = testTaxYear
+    ): Unit =
     setupMockGetCalculationNew(mtditid, nino, taxYear)(liabilityCalculationModelSuccessful)
 
-  def mockCalculationSuccessfulNotCrystallised(mtditid: String = "XAIT00000000015", nino: String = testNino, taxYear: Int = testTaxYear): Unit =
+  def mockCalculationSuccessfulNotCrystallised(
+      mtditid: String = "XAIT00000000015",
+      nino:    String = testNino,
+      taxYear: Int = testTaxYear
+    ): Unit =
     setupMockGetCalculationNew(mtditid, nino, taxYear)(liabilityCalculationModelSuccessfulNotCrystallised)
 
   def mockCalculationSuccessMinimalNew(mtditid: String = "XAIT00000000015", taxYear: Int = testTaxYear): Unit =
     setupMockGetCalculationNew(mtditid, testNino, taxYear)(liabilityCalculationModelDeductionsMinimal())
 
-  def mockCalculationErrorNew(mtditid: String = "XAIT00000000015", nino: String = testNino, year: Int = testTaxYear): Unit =
+  def mockCalculationErrorNew(
+      mtditid: String = "XAIT00000000015",
+      nino:    String = testNino,
+      year:    Int = testTaxYear
+    ): Unit =
     setupMockGetCalculationNew(mtditid, nino, year)(LiabilityCalculationError(500, "Internal server error"))
 
-  def mockCalculationNotFoundNew(mtditid: String = "XAIT00000000015", nino: String = testNino, year: Int = testTaxYear): Unit =
+  def mockCalculationNotFoundNew(
+      mtditid: String = "XAIT00000000015",
+      nino:    String = testNino,
+      year:    Int = testTaxYear
+    ): Unit =
     setupMockGetCalculationNew(mtditid, nino, year)(LiabilityCalculationError(204, "not found"))
 
-  def mockCalculationWithErrorMessages(mtditid: String = "XAIT00000000015", nino: String = testNino, taxYear: Int = testTaxYear): Unit =
+  def mockCalculationWithErrorMessages(
+      mtditid: String = "XAIT00000000015",
+      nino:    String = testNino,
+      taxYear: Int = testTaxYear
+    ): Unit =
     setupMockGetCalculationNew(mtditid, nino, taxYear)(liabilityCalculationModelErrorMessagesForIndividual)
 }

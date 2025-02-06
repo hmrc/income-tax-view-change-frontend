@@ -35,7 +35,7 @@ class NoNextUpdatesViewSpec extends TestSupport {
 
   "The NoNextUpdates view" should {
 
-    lazy val page: Html = NoNextUpdatesView("testBackURL")(FakeRequest(), implicitly)
+    lazy val page:     Html     = NoNextUpdatesView("testBackURL")(FakeRequest(), implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     s"have the title ${messages("htmlTitle", heading)}" in {
@@ -51,6 +51,5 @@ class NoNextUpdatesViewSpec extends TestSupport {
     }
 
   }
-
 
 }

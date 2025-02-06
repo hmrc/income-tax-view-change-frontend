@@ -18,7 +18,7 @@ package models.core
 
 import models.core.IncomeSourceIdHash.mkIncomeSourceIdHash
 
-class IncomeSourceId private(val value: String) extends AnyVal {
+class IncomeSourceId private (val value: String) extends AnyVal {
   def toHash: IncomeSourceIdHash = mkIncomeSourceIdHash(this)
 
   override def toString: String = s"IncomeSourceId: $value"

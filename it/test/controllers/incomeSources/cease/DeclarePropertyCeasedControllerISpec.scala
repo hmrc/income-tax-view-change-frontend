@@ -36,7 +36,7 @@ class DeclarePropertyCeasedControllerISpec extends ControllerISpecHelper {
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
   val buttonLabel: String = messagesAPI("base.continue")
-  val stringTrue: String = "true"
+  val stringTrue:  String = "true"
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -44,16 +44,16 @@ class DeclarePropertyCeasedControllerISpec extends ControllerISpecHelper {
   }
 
   def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     incomeSourceType match {
       case UkProperty => pathStart + "/income-sources/cease/uk-property-declare"
-      case _ => pathStart + "/income-sources/cease/foreign-property-declare"
+      case _          => pathStart + "/income-sources/cease/foreign-property-declare"
     }
   }
 
   mtdAllRoles.foreach { mtdUserRole =>
     List(UkProperty, ForeignProperty).foreach { incomeSourceType =>
-      val path = getPath(mtdUserRole, incomeSourceType)
+      val path              = getPath(mtdUserRole, incomeSourceType)
       val additionalCookies = getAdditionalCookies(mtdUserRole)
       s"GET $path" when {
         s"a user is a $mtdUserRole" that {
@@ -62,11 +62,15 @@ class DeclarePropertyCeasedControllerISpec extends ControllerISpecHelper {
               stubAuthorised(mtdUserRole)
               disable(NavBarFs)
               enable(IncomeSourcesFs)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                OK,
+                multipleBusinessesAndPropertyResponse
+              )
               val result = buildGETMTDClient(path, additionalCookies).futureValue
               IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-              val checkboxLabelMessage: String = messagesAPI(s"incomeSources.cease.${incomeSourceType.key}.checkboxLabel")
+              val checkboxLabelMessage: String =
+                messagesAPI(s"incomeSources.cease.${incomeSourceType.key}.checkboxLabel")
 
               result should have(
                 httpStatus(OK),
@@ -88,24 +92,35 @@ class DeclarePropertyCeasedControllerISpec extends ControllerISpecHelper {
                 stubAuthorised(mtdUserRole)
                 disable(NavBarFs)
                 enable(IncomeSourcesFs)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"CEASE-${incomeSourceType.key}")))
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  multipleBusinessesAndPropertyResponse
+                )
+                await(
+                  sessionService.setMongoData(UIJourneySessionData(testSessionId, s"CEASE-${incomeSourceType.key}"))
+                )
 
-                val result = buildPOSTMTDPostClient(path,
+                val result = buildPOSTMTDPostClient(
+                  path,
                   additionalCookies,
-                  body = DeclareIncomeSourceCeasedForm(Some("true"), "csrfToken").toFormMap).futureValue
+                  body = DeclareIncomeSourceCeasedForm(Some("true"), "csrfToken").toFormMap
+                ).futureValue
 
-                val expectedRedirectUrl = if(mtdUserRole == MTDIndividual) {
+                val expectedRedirectUrl = if (mtdUserRole == MTDIndividual) {
                   controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, incomeSourceType).url
                 } else {
-                  controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, incomeSourceType).url
+                  controllers.incomeSources.cease.routes.IncomeSourceEndDateController
+                    .showAgent(None, incomeSourceType)
+                    .url
                 }
 
                 result should have(
                   httpStatus(SEE_OTHER),
                   redirectURI(expectedRedirectUrl)
                 )
-                sessionService.getMongoKey(ceaseIncomeSourceDeclare, IncomeSourceJourneyType(Cease, incomeSourceType)).futureValue shouldBe Right(Some(stringTrue))
+                sessionService
+                  .getMongoKey(ceaseIncomeSourceDeclare, IncomeSourceJourneyType(Cease, incomeSourceType))
+                  .futureValue shouldBe Right(Some(stringTrue))
 
               }
             }
@@ -114,19 +129,25 @@ class DeclarePropertyCeasedControllerISpec extends ControllerISpecHelper {
                 stubAuthorised(mtdUserRole)
                 disable(NavBarFs)
                 enable(IncomeSourcesFs)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  multipleBusinessesAndPropertyResponse
+                )
 
-                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"CEASE-${incomeSourceType.key}")))
+                await(
+                  sessionService.setMongoData(UIJourneySessionData(testSessionId, s"CEASE-${incomeSourceType.key}"))
+                )
 
-                val result = buildPOSTMTDPostClient(path,
-                  additionalCookies,
-                  body = Map.empty).futureValue
+                val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map.empty).futureValue
 
-                val checkboxErrorMessage: String = messagesAPI(s"incomeSources.cease.${incomeSourceType.key}.checkboxError")
+                val checkboxErrorMessage: String =
+                  messagesAPI(s"incomeSources.cease.${incomeSourceType.key}.checkboxError")
 
                 result should have(
                   httpStatus(BAD_REQUEST),
-                  elementTextByID("cease-income-source-declaration-error")(messagesAPI("base.error-prefix") + " " + checkboxErrorMessage)
+                  elementTextByID("cease-income-source-declaration-error")(
+                    messagesAPI("base.error-prefix") + " " + checkboxErrorMessage
+                  )
                 )
               }
             }

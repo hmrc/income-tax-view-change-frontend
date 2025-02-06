@@ -25,24 +25,25 @@ import models.financialDetails.TransactionType.format
 
 import java.time.LocalDate
 
-case class ChargeItem (
-                        transactionId: String,
-                        taxYear: TaxYear,
-                        transactionType: TransactionType,
-                        subTransactionType: Option[SubTransactionType],
-                        documentDate: LocalDate,
-                        dueDate: Option[LocalDate],
-                        originalAmount: BigDecimal,
-                        outstandingAmount: BigDecimal,
-                        interestOutstandingAmount: Option[BigDecimal],
-                        latePaymentInterestAmount: Option[BigDecimal],
-                        interestFromDate: Option[LocalDate],
-                        interestEndDate: Option[LocalDate],
-                        interestRate: Option[BigDecimal],
-                        lpiWithDunningLock: Option[BigDecimal],
-                        amountCodedOut: Option[BigDecimal],
-                        dunningLock: Boolean,
-                        poaRelevantAmount: Option[BigDecimal]) extends TransactionItem {
+case class ChargeItem(
+    transactionId:             String,
+    taxYear:                   TaxYear,
+    transactionType:           TransactionType,
+    subTransactionType:        Option[SubTransactionType],
+    documentDate:              LocalDate,
+    dueDate:                   Option[LocalDate],
+    originalAmount:            BigDecimal,
+    outstandingAmount:         BigDecimal,
+    interestOutstandingAmount: Option[BigDecimal],
+    latePaymentInterestAmount: Option[BigDecimal],
+    interestFromDate:          Option[LocalDate],
+    interestEndDate:           Option[LocalDate],
+    interestRate:              Option[BigDecimal],
+    lpiWithDunningLock:        Option[BigDecimal],
+    amountCodedOut:            Option[BigDecimal],
+    dunningLock:               Boolean,
+    poaRelevantAmount:         Option[BigDecimal])
+    extends TransactionItem {
 
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean =
     dueDate.exists(_ isBefore dateService.getCurrentDate)
@@ -60,7 +61,7 @@ case class ChargeItem (
   }
 
   def getDueDateForNonZeroBalancingCharge: Option[LocalDate] = {
-    if(transactionType == BalancingCharge && (subTransactionType.isEmpty) && originalAmount == 0.0) {
+    if (transactionType == BalancingCharge && (subTransactionType.isEmpty) && originalAmount == 0.0) {
       None
     } else {
       dueDate
@@ -69,38 +70,44 @@ case class ChargeItem (
 
   def getDueDate: LocalDate = dueDate.getOrElse(throw MissingFieldException("documentDueDate"))
 
-  def getInterestFromDate: LocalDate = interestFromDate.getOrElse(throw MissingFieldException("documentInterestFromDate"))
+  def getInterestFromDate: LocalDate =
+    interestFromDate.getOrElse(throw MissingFieldException("documentInterestFromDate"))
 
   def getInterestEndDate: LocalDate = interestEndDate.getOrElse(throw MissingFieldException("documentInterestEndDate"))
 
   def getInterestRate: BigDecimal = interestRate.getOrElse(throw MissingFieldException("documentInterestRate"))
 
-  def getInterestOutstandingAmount: BigDecimal = interestOutstandingAmount.getOrElse(throw MissingFieldException("documentInterestOutstandingAmount"))
+  def getInterestOutstandingAmount: BigDecimal =
+    interestOutstandingAmount.getOrElse(throw MissingFieldException("documentInterestOutstandingAmount"))
 
   def getAmountCodedOut: BigDecimal = amountCodedOut.getOrElse(throw MissingFieldException("documentAmountCodedOut"))
 
-  def isPaid: Boolean = outstandingAmount match {
-    case amount if amount == 0 => true
-    case _ => false
-  }
+  def isPaid: Boolean =
+    outstandingAmount match {
+      case amount if amount == 0 => true
+      case _                     => false
+    }
 
   val isLatePaymentInterest: Boolean = latePaymentInterestAmount match {
     case Some(amount) if amount <= 0 => false
-    case Some(_) => true
-    case _ => false
+    case Some(_)                     => true
+    case _                           => false
   }
 
-  def isOnlyInterest(implicit dateService: DateServiceInterface): Boolean = {(isOverdue() && isLatePaymentInterest) || (interestRemainingToPay > 0 && isPaid)}
+  def isOnlyInterest(implicit dateService: DateServiceInterface): Boolean = {
+    (isOverdue() && isLatePaymentInterest) || (interestRemainingToPay > 0 && isPaid)
+  }
 
   def isCodingOut: Boolean = {
     val codingOutSubTypes = Seq(Nics2, Accepted, Cancelled)
     subTransactionType.exists(subType => codingOutSubTypes.contains(subType))
   }
 
-  def interestIsPaid: Boolean = interestOutstandingAmount match {
-    case Some(amount) if amount == 0 => true
-    case _ => false
-  }
+  def interestIsPaid: Boolean =
+    interestOutstandingAmount match {
+      case Some(amount) if amount == 0 => true
+      case _                           => false
+    }
 
   def remainingToPay: BigDecimal = {
     if (isPaid) BigDecimal(0)
@@ -114,7 +121,8 @@ case class ChargeItem (
 
   val isPartPaid: Boolean = outstandingAmount != originalAmount
 
-  val interestIsPartPaid: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != latePaymentInterestAmount.getOrElse[BigDecimal](0)
+  val interestIsPartPaid: Boolean =
+    interestOutstandingAmount.getOrElse[BigDecimal](0) != latePaymentInterestAmount.getOrElse[BigDecimal](0)
 
   val isPoaReconciliationCredit: Boolean = transactionType == PoaOneReconciliationCredit ||
     transactionType == PoaTwoReconciliationCredit
@@ -145,22 +153,27 @@ case class ChargeItem (
     else interestOutstandingAmount.getOrElse(latePaymentInterestAmount.getOrElse(0))
   }
 
-  def poaLinkForDrilldownPage: String = transactionType match {
-    case PoaOneDebit => "4911"
-    case PoaTwoDebit => "4913"
-    case _ => "no valid case"
-  }
+  def poaLinkForDrilldownPage: String =
+    transactionType match {
+      case PoaOneDebit => "4911"
+      case PoaTwoDebit => "4913"
+      case _           => "no valid case"
+    }
 }
 
 object ChargeItem {
 
   implicit val format: Format[ChargeItem] = Json.format[ChargeItem]
 
-  def filterAllowedCharges(isChargeTypeEnabled:Boolean, chargeType: ChargeType*)
-                          (chargeItem: TransactionItem): Boolean = {
+  def filterAllowedCharges(
+      isChargeTypeEnabled: Boolean,
+      chargeType:          ChargeType*
+    )(
+      chargeItem: TransactionItem
+    ): Boolean = {
     (isChargeTypeEnabled, chargeItem.transactionType) match {
       case (false, transactionType) if chargeType.toList.contains(transactionType) => false
-      case _ => true
+      case _                                                                       => true
     }
   }
 
@@ -168,21 +181,32 @@ object ChargeItem {
 
     val financialDetail = financialDetails.find(_.transactionId.contains(documentDetail.transactionId)) match {
       case Some(fd) => fd
-      case _ => throw CouldNotCreateChargeItemException(s"Financial detail is not defined for charge ${documentDetail.transactionId}")
+      case _ =>
+        throw CouldNotCreateChargeItemException(
+          s"Financial detail is not defined for charge ${documentDetail.transactionId}"
+        )
     }
 
     val mainTransaction = financialDetail.mainTransaction match {
       case Some(mt) => mt
-      case _ => throw CouldNotCreateChargeItemException(s"Main transaction is not defined for charge ${documentDetail.transactionId}")
+      case _ =>
+        throw CouldNotCreateChargeItemException(
+          s"Main transaction is not defined for charge ${documentDetail.transactionId}"
+        )
     }
 
     val chargeType = ChargeType.fromCode(mainTransaction) match {
       case Some(ct) => ct
-      case _ => throw CouldNotCreateChargeItemException(s"Could not identify charge type from $mainTransaction for charge ${documentDetail.transactionId}")
+      case _ =>
+        throw CouldNotCreateChargeItemException(
+          s"Could not identify charge type from $mainTransaction for charge ${documentDetail.transactionId}"
+        )
     }
 
     val dunningLockExists =
-      financialDetails.exists(financialDetail => financialDetail.transactionId.contains(documentDetail.transactionId) && financialDetail.dunningLockExists)
+      financialDetails.exists(financialDetail =>
+        financialDetail.transactionId.contains(documentDetail.transactionId) && financialDetail.dunningLockExists
+      )
 
     ChargeItem(
       transactionId = documentDetail.transactionId,

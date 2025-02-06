@@ -25,9 +25,9 @@ import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment}
 object MTDIndividualAuthStub extends MTDAuthStub {
 
   lazy val enrolledIndividualRequest: JsValue = {
-    lazy val isAgentPredicate = AffinityGroup.Agent
+    lazy val isAgentPredicate    = AffinityGroup.Agent
     lazy val isNotAgentPredicate = AffinityGroup.Organisation or AffinityGroup.Individual
-    lazy val hasEnrolment = Enrolment("HMRC-MTD-IT")
+    lazy val hasEnrolment        = Enrolment("HMRC-MTD-IT")
 
     val predicateJson = {
       val predicate = (hasEnrolment and isNotAgentPredicate) or isAgentPredicate
@@ -86,10 +86,11 @@ object MTDIndividualAuthStub extends MTDAuthStub {
     )
   }
 
-
   def stubInsufficientEnrolments(): Unit = {
-    val responseHeaders = Map("WWW-Authenticate" -> "MDTP detail=\"InsufficientEnrolments\"",
-      "Failing-Enrolment" -> "no HMRC-MTD-IT enrolment")
+    val responseHeaders = Map(
+      "WWW-Authenticate"  -> "MDTP detail=\"InsufficientEnrolments\"",
+      "Failing-Enrolment" -> "no HMRC-MTD-IT enrolment"
+    )
 
     stubPostWithRequestAndResponseHeaders(
       url = postAuthoriseUrl,
@@ -130,95 +131,100 @@ object MTDIndividualAuthStub extends MTDAuthStub {
     )
   }
 
-
-
-  def mtdIndividualUserSuccessResponse(optConfidenceLevel: Option[Int] = None,
-                                       hasNinoEnrolment: Boolean = true,
-                                       hasSaEnrolment: Boolean = true,
-                                       hasName: Boolean = true): String = {
+  def mtdIndividualUserSuccessResponse(
+      optConfidenceLevel: Option[Int] = None,
+      hasNinoEnrolment:   Boolean = true,
+      hasSaEnrolment:     Boolean = true,
+      hasName:            Boolean = true
+    ): String = {
     val confidenceLevel: Int = optConfidenceLevel.getOrElse(requiredConfidenceLevel)
 
-    val userNameJsObj = if(hasName) {
+    val userNameJsObj = if (hasName) {
       Json.obj(
         "optionalName" -> Json.obj(
-          "name" -> "Albert",
+          "name"     -> "Albert",
           "lastName" -> "Einstein"
         )
       )
     } else Json.obj()
 
-    Json.stringify(Json.obj(
-      "allEnrolments" -> getEnrolmentsJson(hasNinoEnrolment, hasSaEnrolment)
-    ) ++ userNameJsObj ++ Json.obj(
-      "optionalCredentials" -> Json.obj(
-        "providerId" -> credId,
-        "providerType" -> "GovernmentGateway"
-      ),
-      "affinityGroup" -> "Individual",
-      "confidenceLevel" -> confidenceLevel
-    ))
+    Json.stringify(
+      Json.obj(
+        "allEnrolments" -> getEnrolmentsJson(hasNinoEnrolment, hasSaEnrolment)
+      ) ++ userNameJsObj ++ Json.obj(
+        "optionalCredentials" -> Json.obj(
+          "providerId"   -> credId,
+          "providerType" -> "GovernmentGateway"
+        ),
+        "affinityGroup"   -> "Individual",
+        "confidenceLevel" -> confidenceLevel
+      )
+    )
   }
 
-  def getEnrolmentsJson(hasNinoEnrolment: Boolean = true,
-                        hasSaEnrolment: Boolean = true): JsArray = {
-    lazy val ninoEnrolment = if(hasNinoEnrolment) {
+  def getEnrolmentsJson(hasNinoEnrolment: Boolean = true, hasSaEnrolment: Boolean = true): JsArray = {
+    lazy val ninoEnrolment = if (hasNinoEnrolment) {
       Json.obj(
         "key" -> testNinoEnrolmentKey,
         "identifiers" -> Json.arr(
           Json.obj(
-            "key" -> testNinoEnrolmentIdentifier,
+            "key"   -> testNinoEnrolmentIdentifier,
             "value" -> testNino
           )
         )
       )
     } else Json.obj()
 
-    lazy val saEnrolment = if(hasSaEnrolment) {
+    lazy val saEnrolment = if (hasSaEnrolment) {
       Json.obj(
         "key" -> testSaUtrEnrolmentKey,
         "identifiers" -> Json.arr(
           Json.obj(
-            "key" -> testSaUtrEnrolmentIdentifier,
+            "key"   -> testSaUtrEnrolmentIdentifier,
             "value" -> testSaUtr
           )
         )
       )
-    } else {Json.obj()}
+    } else { Json.obj() }
 
     Json.arr(
       Json.obj(
         "key" -> testMtditidEnrolmentKey,
         "identifiers" -> Json.arr(
           Json.obj(
-            "key" -> testMtditidEnrolmentIdentifier,
+            "key"   -> testMtditidEnrolmentIdentifier,
             "value" -> testMtditid
           )
         )
-      ), ninoEnrolment, saEnrolment
+      ),
+      ninoEnrolment,
+      saEnrolment
     )
   }
 
   val mtdAgentSuccessResponse: String = {
 
-    Json.stringify(Json.obj(
-      "allEnrolments" -> Json.arr(
-        Json.obj(
-          "key" -> "HMRC-AS-AGENT",
-          "identifiers" -> Json.arr(
-            Json.obj(
-              "key" -> "AgentReferenceNumber",
-              "value" -> testArn
+    Json.stringify(
+      Json.obj(
+        "allEnrolments" -> Json.arr(
+          Json.obj(
+            "key" -> "HMRC-AS-AGENT",
+            "identifiers" -> Json.arr(
+              Json.obj(
+                "key"   -> "AgentReferenceNumber",
+                "value" -> testArn
+              )
             )
           )
-        )
-      ),
-      "optionalCredentials" -> Json.obj(
-        "providerId" -> credId,
-        "providerType" -> "GovernmentGateway"
-      ),
-      "affinityGroup" -> "Agent",
-      "confidenceLevel" -> requiredConfidenceLevel
-    ))
+        ),
+        "optionalCredentials" -> Json.obj(
+          "providerId"   -> credId,
+          "providerType" -> "GovernmentGateway"
+        ),
+        "affinityGroup"   -> "Agent",
+        "confidenceLevel" -> requiredConfidenceLevel
+      )
+    )
   }
 
 }

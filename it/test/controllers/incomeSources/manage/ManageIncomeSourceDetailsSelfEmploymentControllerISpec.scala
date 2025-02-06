@@ -31,12 +31,12 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncomeSourceDetailsISpecHelper {
 
   def getPath(mtdRole: MTDUserRole): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     pathStart + s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentIdHashed"
   }
 
   mtdAllRoles.foreach { mtdUserRole =>
-    val path = getPath(mtdUserRole)
+    val path              = getPath(mtdUserRole)
     val additionalCookies = getAdditionalCookies(mtdUserRole)
     s"GET $path" when {
       s"a user is a $mtdUserRole" that {
@@ -52,7 +52,9 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
               await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
-              sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
+              sessionService
+                .getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Manage, SelfEmployment))
+                .futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
 
               result should have(
                 httpStatus(OK),
@@ -72,17 +74,26 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
               enable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails))
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                OK,
+                singleBusinessResponseInLatencyPeriod2(latencyDetails)
+              )
 
               // TODO after reenabling TimeMachine, change the tax year range to 25-26 for the below stub
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2024-25")
-              CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
-              CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+              CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(
+                CalculationListIntegrationTestConstants.successResponseCrystallised.toString()
+              )
+              CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(
+                CalculationListIntegrationTestConstants.successResponseCrystallised.toString()
+              )
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
               And("Mongo storage is successfully set")
-              sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
+              sessionService
+                .getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Manage, SelfEmployment))
+                .futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
 
               result should have(
                 httpStatus(OK),
@@ -94,10 +105,16 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(3)", "dt")("Date started"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(3)", "dd")(businessStartDate),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dt")("Accounting method"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dd")(businessAccountingMethod),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(5)", "dt")("Reporting frequency 2022 to 2023"),
+                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dd")(
+                  businessAccountingMethod
+                ),
+                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(5)", "dt")(
+                  "Reporting frequency 2022 to 2023"
+                ),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(5)", "dd")(messagesQuarterly),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(6)", "dt")("Reporting frequency 2023 to 2024"),
+                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(6)", "dt")(
+                  "Reporting frequency 2023 to 2024"
+                ),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(6)", "dd")(messagesAnnually),
                 elementTextByID("change-link-1")(""),
                 elementTextByID("change-link-2")("")
@@ -107,16 +124,25 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
               enable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails2))
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                OK,
+                singleBusinessResponseInLatencyPeriod2(latencyDetails2)
+              )
 
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
-              CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-              CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+              CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(
+                CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString()
+              )
+              CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(
+                CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString()
+              )
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
               And("Mongo storage is successfully set")
-              sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
+              sessionService
+                .getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Manage, SelfEmployment))
+                .futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
 
               result should have(
                 httpStatus(OK),
@@ -128,10 +154,16 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(3)", "dt")("Date started"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(3)", "dd")(businessStartDate),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dt")("Accounting method"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dd")(businessAccountingMethod),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(5)", "dt")("Reporting frequency 2022 to 2023"),
+                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dd")(
+                  businessAccountingMethod
+                ),
+                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(5)", "dt")(
+                  "Reporting frequency 2022 to 2023"
+                ),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(5)", "dd")(messagesAnnually),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(6)", "dt")("Reporting frequency 2023 to 2024"),
+                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(6)", "dt")(
+                  "Reporting frequency 2023 to 2024"
+                ),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(6)", "dd")(messagesQuarterly),
                 elementTextByID("change-link-1")(messagesChangeLinkText),
                 elementTextByID("change-link-2")(messagesChangeLinkText)
@@ -141,7 +173,10 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
               enable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWithUnknownsInLatencyPeriod(latencyDetails))
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                OK,
+                singleBusinessResponseWithUnknownsInLatencyPeriod(latencyDetails)
+              )
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual")
 
               await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
@@ -149,7 +184,9 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
               And("Mongo storage is successfully set")
-              sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
+              sessionService
+                .getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Manage, SelfEmployment))
+                .futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
 
               result should have(
                 httpStatus(OK),

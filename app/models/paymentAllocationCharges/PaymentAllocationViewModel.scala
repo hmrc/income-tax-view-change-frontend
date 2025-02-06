@@ -28,16 +28,18 @@ case class AllocationDetailWithClearingDate(allocationDetail: Option[AllocationD
 
 case class LatePaymentInterestPaymentAllocationDetails(documentDetail: DocumentDetail, amount: BigDecimal)
 
-case class PaymentAllocationViewModel(paymentAllocationChargeModel: FinancialDetailsWithDocumentDetailsModel,
-                                      originalPaymentAllocationWithClearingDate: Seq[AllocationDetailWithClearingDate] = Seq(),
-                                      latePaymentInterestPaymentAllocationDetails: Option[LatePaymentInterestPaymentAllocationDetails] = None,
-                                      isLpiPayment: Boolean = false) {
+case class PaymentAllocationViewModel(
+    paymentAllocationChargeModel:                FinancialDetailsWithDocumentDetailsModel,
+    originalPaymentAllocationWithClearingDate:   Seq[AllocationDetailWithClearingDate] = Seq(),
+    latePaymentInterestPaymentAllocationDetails: Option[LatePaymentInterestPaymentAllocationDetails] = None,
+    isLpiPayment:                                Boolean = false) {
 
   def hasDocumentDetailWithCredit: Boolean =
     paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)
 
   def getEffectiveDateOfPayment: LocalDate =
-      paymentAllocationChargeModel.documentDetails.head.effectiveDateOfPayment.getOrElse(throw MissingFieldException("Effective Date Of Payment"))
+    paymentAllocationChargeModel.documentDetails.head.effectiveDateOfPayment
+      .getOrElse(throw MissingFieldException("Effective Date Of Payment"))
 
   def getOriginalAmount: String =
     paymentAllocationChargeModel.filteredDocumentDetails.head.originalAmount.abs.toCurrencyString

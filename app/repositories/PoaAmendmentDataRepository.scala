@@ -29,31 +29,32 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PoaAmendmentDataRepository @Inject()(
-                                             mongoComponent: MongoComponent,
-                                             appConfig: FrontendAppConfig,
-                                             clock: Clock
-                                           )(implicit ec: ExecutionContext)
-  extends PlayMongoRepository[PoaSessionData](
-    collectionName = "poa-ui-journey-session-data",
-    mongoComponent = mongoComponent,
-    domainFormat = PoaSessionData.format,
-    indexes = Seq(
-      IndexModel(
-        Indexes.ascending("sessionId"),
-        IndexOptions()
-          .name("sessionIdIndex")
-          .unique(true)
+class PoaAmendmentDataRepository @Inject() (
+    mongoComponent: MongoComponent,
+    appConfig:      FrontendAppConfig,
+    clock:          Clock
+  )(
+    implicit ec: ExecutionContext)
+    extends PlayMongoRepository[PoaSessionData](
+      collectionName = "poa-ui-journey-session-data",
+      mongoComponent = mongoComponent,
+      domainFormat = PoaSessionData.format,
+      indexes = Seq(
+        IndexModel(
+          Indexes.ascending("sessionId"),
+          IndexOptions()
+            .name("sessionIdIndex")
+            .unique(true)
+        ),
+        IndexModel(
+          Indexes.ascending("lastUpdated"),
+          IndexOptions()
+            .name("lastUpdatedIdx")
+            .expireAfter(appConfig.cacheTtl, TimeUnit.SECONDS)
+        )
       ),
-      IndexModel(
-        Indexes.ascending("lastUpdated"),
-        IndexOptions()
-          .name("lastUpdatedIdx")
-          .expireAfter(appConfig.cacheTtl, TimeUnit.SECONDS)
-      )
-    ),
-    replaceIndexes = true
-  ) {
+      replaceIndexes = true
+    ) {
 
   private def dataFilter(data: PoaSessionData): Bson = {
     import Filters._
@@ -62,10 +63,10 @@ class PoaAmendmentDataRepository @Inject()(
 
   def get(sessionId: String): Future[Option[PoaSessionData]] = {
     val data = PoaSessionData(sessionId)
-        collection
-          .find(dataFilter(data))
-          .headOption()
-    }
+    collection
+      .find(dataFilter(data))
+      .headOption()
+  }
 
   def set(data: PoaSessionData): Future[Boolean] = {
 

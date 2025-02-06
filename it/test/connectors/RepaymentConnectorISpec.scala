@@ -22,7 +22,6 @@ import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{ACCEPTED, INTERNAL_SERVER_ERROR}
 import play.api.libs.json.Json
 
-
 class RepaymentConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
   lazy val connector: RepaymentConnector = app.injector.instanceOf[RepaymentConnector]
@@ -36,7 +35,7 @@ class RepaymentConnectorISpec extends AnyWordSpec with ComponentSpecBase {
         "return a successful RepaymentJourneyModel" in {
 
           val testUserNino = "AA123456A"
-          val fullAmount = 1337.99
+          val fullAmount   = 1337.99
           val response: RepaymentJourneyModel = RepaymentJourneyModel(nextUrl = "/some-fake-next-url")
 
           val url = "/self-assessment-refund-backend/itsa-viewer/journey/start-refund"
@@ -56,9 +55,9 @@ class RepaymentConnectorISpec extends AnyWordSpec with ComponentSpecBase {
           "return a RepaymentJourneyErrorResponse a message notifying us of json validation errors" in {
 
             val testUserNino = "AA123456A"
-            val fullAmount = 1337.99
+            val fullAmount   = 1337.99
 
-            val url = "/self-assessment-refund-backend/itsa-viewer/journey/start-refund"
+            val url      = "/self-assessment-refund-backend/itsa-viewer/journey/start-refund"
             val response = """{"bad_key":"bad_value"}"""
 
             WiremockHelper.stubPost(url, ACCEPTED, response)
@@ -80,9 +79,9 @@ class RepaymentConnectorISpec extends AnyWordSpec with ComponentSpecBase {
           "return a RepaymentJourneyErrorResponse containing the error status and error response" in {
 
             val testUserNino = "AA123456A"
-            val fullAmount = 1337.99
+            val fullAmount   = 1337.99
 
-            val url = s"/self-assessment-refund-backend/itsa-viewer/journey/start-refund"
+            val url      = s"/self-assessment-refund-backend/itsa-viewer/journey/start-refund"
             val response = """{"fake_error_key: "fake_error_value"}"""
 
             WiremockHelper.stubPost(url, INTERNAL_SERVER_ERROR, response)
@@ -107,7 +106,7 @@ class RepaymentConnectorISpec extends AnyWordSpec with ComponentSpecBase {
           val testUserNino = "AA123456A"
 
           val url = "/self-assessment-refund-backend/itsa-viewer/journey/view-history"
-          val response:RepaymentJourneyModel = RepaymentJourneyModel(nextUrl = "/some-fake-next-url")
+          val response: RepaymentJourneyModel = RepaymentJourneyModel(nextUrl = "/some-fake-next-url")
 
           WiremockHelper.stubPost(url, ACCEPTED, Json.toJson(response).toString())
 
@@ -125,7 +124,7 @@ class RepaymentConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
             val testUserNino = "AA123456A"
 
-            val url = "/self-assessment-refund-backend/itsa-viewer/journey/view-history"
+            val url      = "/self-assessment-refund-backend/itsa-viewer/journey/view-history"
             val response = """{"bad_key":"bad_value"}"""
 
             WiremockHelper.stubPost(url, ACCEPTED, response)
@@ -148,7 +147,7 @@ class RepaymentConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
             val testUserNino = "AA123456A"
 
-            val url = "/self-assessment-refund-backend/itsa-viewer/journey/view-history"
+            val url      = "/self-assessment-refund-backend/itsa-viewer/journey/view-history"
             val response = """{"fake_error_key: "fake_error_value"}"""
 
             WiremockHelper.stubPost(url, INTERNAL_SERVER_ERROR, response)

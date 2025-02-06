@@ -19,6 +19,5 @@ package models.claimToAdjustPoa
 import models.incomeSourceDetails.TaxYear
 
 case class ConfirmationForAdjustingPoaViewModel(
-                                               poaTaxYear: TaxYear,
-                                               isAmountZero: Boolean
-                                               )
+    poaTaxYear:   TaxYear,
+    isAmountZero: Boolean)

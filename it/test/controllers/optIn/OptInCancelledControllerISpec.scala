@@ -45,24 +45,39 @@ class OptInCancelledControllerISpec extends ControllerISpecHelper with FeatureSw
     pathStart + "/opt-in/cancelled"
   }
 
-  val forYearEnd = 2023
+  val forYearEnd     = 2023
   val currentTaxYear = TaxYear.forYearEnd(forYearEnd)
-  val nextTaxYear = currentTaxYear.nextYear
+  val nextTaxYear    = currentTaxYear.nextYear
 
   val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
-  private def setupOptInSessionData(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value, nextYearStatus: ITSAStatus.Value): Unit = {
+  private def setupOptInSessionData(
+      currentTaxYear:    TaxYear,
+      currentYearStatus: ITSAStatus.Value,
+      nextYearStatus:    ITSAStatus.Value
+    ): Unit = {
     repository.set(
-      UIJourneySessionData(testSessionId,
+      UIJourneySessionData(
+        testSessionId,
         Opt(OptInJourney).toString,
-        optInSessionData =
-          Some(OptInSessionData(
-            Some(OptInContextData(
-              currentTaxYear.toString, statusToString(currentYearStatus), statusToString(nextYearStatus))), None))))
+        optInSessionData = Some(
+          OptInSessionData(
+            Some(
+              OptInContextData(
+                currentTaxYear.toString,
+                statusToString(currentYearStatus),
+                statusToString(nextYearStatus)
+              )
+            ),
+            None
+          )
+        )
+      )
+    )
   }
 
   mtdAllRoles.foreach { mtdUserRole =>
-    val path = getPath(mtdUserRole)
+    val path              = getPath(mtdUserRole)
     val additionalCookies = getAdditionalCookies(mtdUserRole)
     s"GET $path" when {
       s"a user is a $mtdUserRole" that {
@@ -72,9 +87,14 @@ class OptInCancelledControllerISpec extends ControllerISpecHelper with FeatureSw
               val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
               stubAuthorised(mtdUserRole)
 
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                OK,
+                businessAndPropertyResponseWoMigration
+              )
 
-              CalculationListStub.stubGetLegacyCalculationList(testNino, previousTaxYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+              CalculationListStub.stubGetLegacyCalculationList(testNino, previousTaxYear.toString)(
+                CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString()
+              )
 
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                 taxYear = dateService.getCurrentTaxYear,
@@ -100,9 +120,14 @@ class OptInCancelledControllerISpec extends ControllerISpecHelper with FeatureSw
               val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
 
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                OK,
+                businessAndPropertyResponseWoMigration
+              )
 
-              CalculationListStub.stubGetLegacyCalculationList(testNino, previousTaxYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+              CalculationListStub.stubGetLegacyCalculationList(testNino, previousTaxYear.toString)(
+                CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString()
+              )
 
               setupOptInSessionData(currentTaxYear, currentYearStatus = Mandated, nextYearStatus = Mandated)
 
@@ -126,9 +151,14 @@ class OptInCancelledControllerISpec extends ControllerISpecHelper with FeatureSw
               val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
 
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                OK,
+                businessAndPropertyResponseWoMigration
+              )
 
-              CalculationListStub.stubGetLegacyCalculationList(testNino, previousTaxYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+              CalculationListStub.stubGetLegacyCalculationList(testNino, previousTaxYear.toString)(
+                CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString()
+              )
 
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                 taxYear = dateService.getCurrentTaxYear,

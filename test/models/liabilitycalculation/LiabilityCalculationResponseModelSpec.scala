@@ -33,13 +33,15 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
 
     "successful successModelMinimal" should {
       val successModelMinimal = LiabilityCalculationResponse(
-        inputs = Inputs(personalInformation = PersonalInformation(taxRegime = "UK", class2VoluntaryContributions = None)),
+        inputs =
+          Inputs(personalInformation = PersonalInformation(taxRegime = "UK", class2VoluntaryContributions = None)),
         messages = None,
         calculation = None,
         metadata = Metadata(
           calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
           crystallised = Some(true),
-          calculationReason = Some("customerRequest"))
+          calculationReason = Some("customerRequest")
+        )
       )
       val expectedJson =
         s"""
@@ -53,7 +55,6 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
            |}
            |""".stripMargin.trim
 
-
       "be translated to Json correctly" in {
         Json.toJson(successModelMinimal) shouldBe Json.parse(expectedJson)
       }
@@ -65,21 +66,25 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
 
     "successful with zero length or null arrays" should {
       val source = Source.fromURL(getClass.getResource("/liabilityResponseArrayTest.json"))
-      val arraysTestJson = try source.mkString finally source.close()
+      val arraysTestJson =
+        try source.mkString
+        finally source.close()
 
       "be translated to Json correctly" in {
         Json.toJson(arrayTestFull) shouldBe Json.parse(arraysTestJson)
       }
       "should convert from json to model" in {
         val calcModel = Json.fromJson[LiabilityCalculationResponse](Json.parse(arraysTestJson))
-        Json.toJson(calcModel.get) shouldBe Json.parse( arraysTestJson)
+        Json.toJson(calcModel.get) shouldBe Json.parse(arraysTestJson)
       }
     }
 
     "successful successModelFull" should {
 
       val source = Source.fromURL(getClass.getResource("/liabilityResponsePruned.json"))
-      val expectedJsonPruned = try source.mkString finally source.close()
+      val expectedJsonPruned =
+        try source.mkString
+        finally source.close()
 
       "be translated to Json correctly" in {
         Json.toJson(liabilityCalculationModelSuccessful) shouldBe Json.parse(expectedJsonPruned)
@@ -92,9 +97,9 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
     }
 
     "not successful" should {
-      val errorStatus = 500
+      val errorStatus  = 500
       val errorMessage = "Error Message"
-      val errorModel = LiabilityCalculationError(Status.INTERNAL_SERVER_ERROR, "Error Message")
+      val errorModel   = LiabilityCalculationError(Status.INTERNAL_SERVER_ERROR, "Error Message")
 
       "have the correct Status (500)" in {
         errorModel.status shouldBe Status.INTERNAL_SERVER_ERROR
@@ -124,16 +129,21 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
 
     "call getModifiedBaseTaxBand" should {
       "return expected TaxBand" in {
-        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionPB)
-          .getModifiedBaseTaxBand shouldBe Some(TaxBands("BRT", BigDecimal("20"), 12500, 12500, 12500, BigDecimal("5000.99")))
-        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionSB)
-          .getModifiedBaseTaxBand shouldBe Some(TaxBands("BRT", BigDecimal("20"), 12510, 12520, 12530, BigDecimal("5001.99")))
-        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionDB)
-          .getModifiedBaseTaxBand shouldBe Some(TaxBands("BRT", BigDecimal("21"), 12700, 12800, 12900, BigDecimal("5123.99")))
-        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionLS)
-          .getModifiedBaseTaxBand shouldBe Some(TaxBands("BRT", BigDecimal("30"), 13500, 15500, 16500, BigDecimal("7000.99")))
-        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionGLP)
-          .getModifiedBaseTaxBand shouldBe Some(TaxBands("BRT", BigDecimal("50"), 32500, 42500, 52500, BigDecimal("7000.99")))
+        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionPB).getModifiedBaseTaxBand shouldBe Some(
+          TaxBands("BRT", BigDecimal("20"), 12500, 12500, 12500, BigDecimal("5000.99"))
+        )
+        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionSB).getModifiedBaseTaxBand shouldBe Some(
+          TaxBands("BRT", BigDecimal("20"), 12510, 12520, 12530, BigDecimal("5001.99"))
+        )
+        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionDB).getModifiedBaseTaxBand shouldBe Some(
+          TaxBands("BRT", BigDecimal("21"), 12700, 12800, 12900, BigDecimal("5123.99"))
+        )
+        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionLS).getModifiedBaseTaxBand shouldBe Some(
+          TaxBands("BRT", BigDecimal("30"), 13500, 15500, 16500, BigDecimal("7000.99"))
+        )
+        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionGLP).getModifiedBaseTaxBand shouldBe Some(
+          TaxBands("BRT", BigDecimal("50"), 32500, 42500, 52500, BigDecimal("7000.99"))
+        )
       }
     }
   }
@@ -159,7 +169,10 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
 
     "translate date variable values from messages for individual" in {
       val values = Messages(errors = errorMessagesIndividual).getErrorMessageVariables(messagesApi, isAgent = false)
-      Messages.translateMessageDateVariables(values)(messagesApi.preferred(Seq(Lang("cy"))),mockImplicitDateFormatter) shouldBe Seq(
+      Messages.translateMessageDateVariables(values)(
+        messagesApi.preferred(Seq(Lang("cy"))),
+        mockImplicitDateFormatter
+      ) shouldBe Seq(
         Message("C55012", "5 Ionawr 2023"),
         Message("C15507", "£2000"),
         Message("C15510", "10"),
@@ -168,7 +181,10 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
     }
     "translate date variable values from messages for agent" in {
       val values = Messages(errors = errorMessagesAgent).getErrorMessageVariables(messagesApi, isAgent = true)
-      Messages.translateMessageDateVariables(values)(messagesApi.preferred(Seq(Lang("cy"))),mockImplicitDateFormatter) shouldBe Seq(
+      Messages.translateMessageDateVariables(values)(
+        messagesApi.preferred(Seq(Lang("cy"))),
+        mockImplicitDateFormatter
+      ) shouldBe Seq(
         Message("C55012", "5 Ionawr 2023"),
         Message("C15507", "£2000"),
         Message("C15510", "10"),
@@ -177,16 +193,32 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
     }
 
     "Scottish tax regime info messages" in {
-      Messages(info = InfoMessagesScottishTaxRegime).formatMessagesScottishWelshTaxRegime(InfoMessagesScottishTaxRegime.get.toSeq) shouldBe Seq(
-        Message("C22225_Scottish", "Your tax has been reduced because of Gift Aid charity donations - the Scottish Basic Rate of Income Tax is higher than the rate at which charities have obtained relief."),
-        Message("C22226_Scottish", "Your tax has increased because of Gift Aid charity donations - the Scottish Basic Rate of Income Tax is lower than the rate at which charities have obtained relief."),
+      Messages(info = InfoMessagesScottishTaxRegime).formatMessagesScottishWelshTaxRegime(
+        InfoMessagesScottishTaxRegime.get.toSeq
+      ) shouldBe Seq(
+        Message(
+          "C22225_Scottish",
+          "Your tax has been reduced because of Gift Aid charity donations - the Scottish Basic Rate of Income Tax is higher than the rate at which charities have obtained relief."
+        ),
+        Message(
+          "C22226_Scottish",
+          "Your tax has increased because of Gift Aid charity donations - the Scottish Basic Rate of Income Tax is lower than the rate at which charities have obtained relief."
+        )
       )
     }
 
     "Welsh tax regime info messages" in {
-      Messages(info = InfoMessagesWelshTaxRegime).formatMessagesScottishWelshTaxRegime(InfoMessagesWelshTaxRegime.get.toSeq) shouldBe Seq(
-        Message("C22225", "Your tax has been reduced because of Gift Aid charity donations - the Welsh Basic Rate of Income Tax is higher than the rate at which charities have obtained relief."),
-        Message("C22226", "Your tax has increased because of Gift Aid charity donations - the Welsh Basic Rate of Income Tax is lower than the rate at which charities have obtained relief."),
+      Messages(info = InfoMessagesWelshTaxRegime).formatMessagesScottishWelshTaxRegime(
+        InfoMessagesWelshTaxRegime.get.toSeq
+      ) shouldBe Seq(
+        Message(
+          "C22225",
+          "Your tax has been reduced because of Gift Aid charity donations - the Welsh Basic Rate of Income Tax is higher than the rate at which charities have obtained relief."
+        ),
+        Message(
+          "C22226",
+          "Your tax has increased because of Gift Aid charity donations - the Welsh Basic Rate of Income Tax is lower than the rate at which charities have obtained relief."
+        )
       )
     }
   }

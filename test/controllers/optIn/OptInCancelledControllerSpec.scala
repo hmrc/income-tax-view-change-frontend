@@ -38,21 +38,22 @@ import views.html.optIn.OptInCancelledView
 
 import scala.concurrent.Future
 
-
 class OptInCancelledControllerSpec extends MockAuthActions with MockOptInService with MockitoSugar {
 
-  def config: Map[String, Object] = Map(
-    "feature-switches.read-from-mongo" -> "false"
-  )
-
-  override def fakeApplication(): Application = applicationBuilderWithAuthBindings
-    .overrides(
-      api.inject.bind[OptInService].toInstance(mockOptInService)
+  def config: Map[String, Object] =
+    Map(
+      "feature-switches.read-from-mongo" -> "false"
     )
-    .configure(config)
-    .build()
 
-  val testController = fakeApplication().injector.instanceOf[OptInCancelledController]
+  override def fakeApplication(): Application =
+    applicationBuilderWithAuthBindings
+      .overrides(
+        api.inject.bind[OptInService].toInstance(mockOptInService)
+      )
+      .configure(config)
+      .build()
+
+  val testController     = fakeApplication().injector.instanceOf[OptInCancelledController]
   val optInCancelledView = fakeApplication().injector.instanceOf[OptInCancelledView]
 
   mtdAllRoles.foreach { mtdRole =>
@@ -91,7 +92,8 @@ class OptInCancelledControllerSpec extends MockAuthActions with MockOptInService
 
         "show the Error Template view" when {
           "and return Internal Server Error - 500" in {
-            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
+            val singleBusinessIncome =
+              IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
             setupMockSuccess(mtdRole)
 

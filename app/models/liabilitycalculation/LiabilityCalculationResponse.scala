@@ -24,7 +24,6 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import scala.util.matching.Regex
 
-
 sealed trait LiabilityCalculationResponseModel
 
 case class LiabilityCalculationError(status: Int, message: String) extends LiabilityCalculationResponseModel
@@ -34,21 +33,22 @@ object LiabilityCalculationError {
 }
 
 case class LiabilityCalculationResponse(
-                                         inputs: Inputs,
-                                         metadata: Metadata,
-                                         messages: Option[Messages],
-                                         calculation: Option[Calculation]
-                                       ) extends LiabilityCalculationResponseModel
+    inputs:      Inputs,
+    metadata:    Metadata,
+    messages:    Option[Messages],
+    calculation: Option[Calculation])
+    extends LiabilityCalculationResponseModel
 
 object LiabilityCalculationResponse {
   implicit val format: OFormat[LiabilityCalculationResponse] = Json.format[LiabilityCalculationResponse]
 }
 
-case class Metadata(calculationTimestamp: Option[String],
-                    crystallised: Option[Boolean] = Some(false),
-                    calculationReason: Option[String] = None,
-                    periodFrom: Option[LocalDate] = None,
-                    periodTo: Option[LocalDate] = None)
+case class Metadata(
+    calculationTimestamp: Option[String],
+    crystallised:         Option[Boolean] = Some(false),
+    calculationReason:    Option[String] = None,
+    periodFrom:           Option[LocalDate] = None,
+    periodTo:             Option[LocalDate] = None)
 
 object Metadata {
   implicit val format: OFormat[Metadata] = Json.format[Metadata]
@@ -72,23 +72,47 @@ object Message {
   implicit val format: OFormat[Message] = Json.format[Message]
 }
 
-case class Messages(info: Option[Seq[Message]] = None, warnings: Option[Seq[Message]] = None, errors: Option[Seq[Message]] = None) {
+case class Messages(
+    info:     Option[Seq[Message]] = None,
+    warnings: Option[Seq[Message]] = None,
+    errors:   Option[Seq[Message]] = None) {
   // When updating the accepted messages also update the audit for the TaxCalculationDetailsResponseAuditModel
-  private val acceptedMessages: Seq[String] = Seq("C22202", "C22203", "C22206", "C22207", "C22210", "C22211",
-    "C22212", "C22213", "C22214", "C22215", "C22216", "C22217", "C22218", "C22223", "C22224", "C22225", "C22226", "C22225_Scottish", "C22226_Scottish")
+  private val acceptedMessages: Seq[String] = Seq(
+    "C22202",
+    "C22203",
+    "C22206",
+    "C22207",
+    "C22210",
+    "C22211",
+    "C22212",
+    "C22213",
+    "C22214",
+    "C22215",
+    "C22216",
+    "C22217",
+    "C22218",
+    "C22223",
+    "C22224",
+    "C22225",
+    "C22226",
+    "C22225_Scottish",
+    "C22226_Scottish"
+  )
 
   def formatMessagesScottishWelshTaxRegime(info: Seq[Message]): Seq[Message] = {
-    val taxRegimeScottish: String = "Scottish Basic Rate"
+    val taxRegimeScottish:    String      = "Scottish Basic Rate"
     val taxRegimeScottishIds: Seq[String] = Seq("C22225", "C22226")
 
     info.map {
-      case message if taxRegimeScottishIds.contains(message.id) && message.text.contains(taxRegimeScottish) => message.copy(id = message.id + "_Scottish")
+      case message if taxRegimeScottishIds.contains(message.id) && message.text.contains(taxRegimeScottish) =>
+        message.copy(id = message.id + "_Scottish")
       case otherMessage => otherMessage
     }
   }
 
   val allMessages: Seq[Message] = {
-    formatMessagesScottishWelshTaxRegime(info.getOrElse(Seq.empty)) ++ warnings.getOrElse(Seq.empty) ++ errors.getOrElse(Seq.empty)
+    formatMessagesScottishWelshTaxRegime(info.getOrElse(Seq.empty)) ++ warnings.getOrElse(Seq.empty) ++ errors
+      .getOrElse(Seq.empty)
   }
   val errorMessages: Seq[Message] = errors.getOrElse(Seq.empty)
 
@@ -97,7 +121,7 @@ case class Messages(info: Option[Seq[Message]] = None, warnings: Option[Seq[Mess
   def getErrorMessageVariables(messagesProperty: MessagesApi, isAgent: Boolean): Seq[Message] = {
     val lang = Lang("GB")
     val errMessages = errorMessages.map(msg => {
-      val key = if(isAgent) "tax-year-summary.agent.message." + msg.id else "tax-year-summary.message." + msg.id
+      val key = if (isAgent) "tax-year-summary.agent.message." + msg.id else "tax-year-summary.message." + msg.id
       if (messagesProperty.isDefinedAt(key)(lang)) {
         val regex = "\\d{2}/\\d{2}/\\d{4}|£\\d+,\\d+|\\d+|£\\d+".r
         val variable: String = regex.findFirstIn(msg.text).getOrElse("")
@@ -114,7 +138,12 @@ case class Messages(info: Option[Seq[Message]] = None, warnings: Option[Seq[Mess
 object Messages {
   implicit val format: OFormat[Messages] = Json.format[Messages]
 
-  def translateMessageDateVariables(messages: Seq[Message])(implicit message: play.api.i18n.Messages, implicitDateFormatter: ImplicitDateFormatter): Seq[Message] = {
+  def translateMessageDateVariables(
+      messages: Seq[Message]
+    )(
+      implicit message:      play.api.i18n.Messages,
+      implicitDateFormatter: ImplicitDateFormatter
+    ): Seq[Message] = {
 
     val pattern = DateTimeFormatter.ofPattern("d/MM/yyyy")
     val errorMessagesDateFormat: Seq[String] = Seq("C15014", "C55014", "C55008", "C55011", "C55012", "C55013")
@@ -122,7 +151,7 @@ object Messages {
     val errorMessages = messages.map(msg => {
       errorMessagesDateFormat.contains(msg.id) match {
         case true =>
-          val date = LocalDate.parse(msg.text, pattern)
+          val date     = LocalDate.parse(msg.text, pattern)
           val dateText = implicitDateFormatter.longDate(date).toLongDate
           Message(id = msg.id, text = dateText)
         case false =>

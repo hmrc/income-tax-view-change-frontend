@@ -49,8 +49,8 @@ class OptInCancelledViewSpec extends TestSupport {
 
   object Selectors {
     val title = "reporting-frequency-heading"
-    val h1 = "opt-in-cancelled"
-    val p1 = "continue-to-report-quarterly"
+    val h1    = "opt-in-cancelled"
+    val p1    = "continue-to-report-quarterly"
   }
 
   "OptInCancelledView" when {
@@ -69,7 +69,7 @@ class OptInCancelledViewSpec extends TestSupport {
               view.apply(
                 isAgent = isAgentFlag,
                 currentTaxYearStart = dateService.getCurrentTaxYear.startYear.toString,
-                currentTaxYearEnd = dateService.getCurrentTaxYear.endYear.toString,
+                currentTaxYearEnd = dateService.getCurrentTaxYear.endYear.toString
               )
             )
           )
@@ -103,7 +103,7 @@ class OptInCancelledViewSpec extends TestSupport {
       "return the correct content" in {
 
         disableAllSwitches()
-        
+
         val isAgentFlag = false
 
         val pageDocument: Document =
@@ -112,7 +112,7 @@ class OptInCancelledViewSpec extends TestSupport {
               view.apply(
                 isAgent = isAgentFlag,
                 currentTaxYearStart = dateService.getCurrentTaxYear.startYear.toString,
-                currentTaxYearEnd = dateService.getCurrentTaxYear.endYear.toString,
+                currentTaxYearEnd = dateService.getCurrentTaxYear.endYear.toString
               )
             )
           )
@@ -126,7 +126,7 @@ class OptInCancelledViewSpec extends TestSupport {
         val expectedContent: Seq[(String, String)] =
           Seq(
             Selectors.h1 -> h1Content,
-            Selectors.p1 -> p1Content,
+            Selectors.p1 -> p1Content
           )
 
         pageDocument.title() shouldBe titleIndividualContent

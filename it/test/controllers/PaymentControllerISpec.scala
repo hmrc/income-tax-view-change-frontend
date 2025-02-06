@@ -51,51 +51,68 @@ class PaymentControllerISpec extends ControllerISpecHelper {
   )
 
   def getPath(mtdRole: MTDUserRole): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     pathStart + s"/payment?amountInPence=10000"
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    val path = getPath(mtdUserRole)
-    val additionalCookies = getAdditionalCookies(mtdUserRole)
-    s"GET $path" when {
-      s"a user is a $mtdUserRole" that {
-        "is authenticated, with a valid enrolment" should {
-          if (mtdUserRole == MTDSupportingAgent) {
-            testSupportingAgentAccessDenied(path, additionalCookies)
-          } else {
-            "redirect the user correctly" when {
-              "the payments api responds with a 200 and valid json" in {
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
-                IncomeTaxViewChangeStub.stubPayApiResponse(url, 201, Json.toJson(PaymentJourneyModel("id", "redirect-url")))
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      val path              = getPath(mtdUserRole)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            if (mtdUserRole == MTDSupportingAgent) {
+              testSupportingAgentAccessDenied(path, additionalCookies)
+            } else {
+              "redirect the user correctly" when {
+                "the payments api responds with a 200 and valid json" in {
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    multipleBusinessesAndUkProperty
+                  )
+                  IncomeTaxViewChangeStub.stubPayApiResponse(
+                    url,
+                    201,
+                    Json.toJson(PaymentJourneyModel("id", "redirect-url"))
+                  )
 
-                val res = buildGETMTDClient(path, additionalCookies).futureValue
-                IncomeTaxViewChangeStub.verifyStubPayApi(url,
-                  if(mtdUserRole == MTDIndividual) submissionJson else agentSubmissionJson
-                )
-                res.status shouldBe 303
-                res.header("Location") shouldBe Some("redirect-url")
+                  val res = buildGETMTDClient(path, additionalCookies).futureValue
+                  IncomeTaxViewChangeStub.verifyStubPayApi(
+                    url,
+                    if (mtdUserRole == MTDIndividual) submissionJson else agentSubmissionJson
+                  )
+                  res.status shouldBe 303
+                  res.header("Location") shouldBe Some("redirect-url")
+                }
               }
-            }
 
-            "return an internal server error" when {
-              "the payments api responds with a 500" in {
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
-                IncomeTaxViewChangeStub.stubPayApiResponse(url, 500, Json.toJson(PaymentJourneyModel("id", "redirect-url")))
+              "return an internal server error" when {
+                "the payments api responds with a 500" in {
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    multipleBusinessesAndUkProperty
+                  )
+                  IncomeTaxViewChangeStub.stubPayApiResponse(
+                    url,
+                    500,
+                    Json.toJson(PaymentJourneyModel("id", "redirect-url"))
+                  )
 
-                val res = buildGETMTDClient(path, additionalCookies).futureValue
-                IncomeTaxViewChangeStub.verifyStubPayApi(url,
-                  if(mtdUserRole == MTDIndividual) submissionJson else agentSubmissionJson
-                )
-                res.status shouldBe 500
+                  val res = buildGETMTDClient(path, additionalCookies).futureValue
+                  IncomeTaxViewChangeStub.verifyStubPayApi(
+                    url,
+                    if (mtdUserRole == MTDIndividual) submissionJson else agentSubmissionJson
+                  )
+                  res.status shouldBe 500
+                }
               }
             }
           }
+          testAuthFailures(path, mtdUserRole)
         }
-        testAuthFailures(path, mtdUserRole)
       }
-    }
   }
 }

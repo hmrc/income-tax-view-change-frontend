@@ -27,32 +27,39 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeTaxCalculationConnector @Inject()(http: HttpClientV2,
-                                              config: FrontendAppConfig) extends RawResponseReads {
+class IncomeTaxCalculationConnector @Inject() (http: HttpClientV2, config: FrontendAppConfig) extends RawResponseReads {
   val baseUrl: String = config.incomeTaxCalculationService
 
-  def getCalculationResponseUrl(nino: String): String = s"$baseUrl/income-tax-calculation/income-tax/nino/$nino/calculation-details"
+  def getCalculationResponseUrl(nino: String): String =
+    s"$baseUrl/income-tax-calculation/income-tax/nino/$nino/calculation-details"
 
   def getCalculationResponseByCalcIdUrl(nino: String, calcId: String): String =
     s"$baseUrl/income-tax-calculation/income-tax/nino/$nino/calc-id/$calcId/calculation-details"
 
-  def getCalculationResponse(mtditid: String, nino: String, taxYear: String)
-                            (implicit headerCarrier: HeaderCarrier,
-                             ec: ExecutionContext): Future[LiabilityCalculationResponseModel] = {
+  def getCalculationResponse(
+      mtditid: String,
+      nino:    String,
+      taxYear: String
+    )(
+      implicit headerCarrier: HeaderCarrier,
+      ec:                     ExecutionContext
+    ): Future[LiabilityCalculationResponseModel] = {
 
-    http.get(url"${getCalculationResponseUrl(nino)}?taxYear=$taxYear")
+    http
+      .get(url"${getCalculationResponseUrl(nino)}?taxYear=$taxYear")
       .setHeader("mtditid" -> mtditid)
       .execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
-          response.json.validate[LiabilityCalculationResponse].fold(
-            invalid => {
-              Logger("application").error(
-                s"Json validation error parsing calculation response, error $invalid")
-              LiabilityCalculationError(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
-            },
-            valid => valid
-          )
+          response.json
+            .validate[LiabilityCalculationResponse]
+            .fold(
+              invalid => {
+                Logger("application").error(s"Json validation error parsing calculation response, error $invalid")
+                LiabilityCalculationError(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
+              },
+              valid => valid
+            )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
             Logger("application").error(s"Response status: ${response.status},body: ${response.body}")
@@ -64,29 +71,35 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClientV2,
     }
   }
 
-  def getCalculationResponseByCalcId(mtditid: String, nino: String, calcId: String, taxYear: Int)
-                                    (implicit headerCarrier: HeaderCarrier,
-                                     ec: ExecutionContext): Future[LiabilityCalculationResponseModel] = {
-    http.get(url"${getCalculationResponseByCalcIdUrl(nino, calcId)}?taxYear=${taxYear.toString}")
+  def getCalculationResponseByCalcId(
+      mtditid: String,
+      nino:    String,
+      calcId:  String,
+      taxYear: Int
+    )(
+      implicit headerCarrier: HeaderCarrier,
+      ec:                     ExecutionContext
+    ): Future[LiabilityCalculationResponseModel] = {
+    http
+      .get(url"${getCalculationResponseByCalcIdUrl(nino, calcId)}?taxYear=${taxYear.toString}")
       .setHeader("mtditid" -> mtditid)
       .execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
-          response.json.validate[LiabilityCalculationResponse].fold(
-            invalid => {
-              Logger("application").error(
-                s"Json validation error parsing calculation response, error $invalid")
-              LiabilityCalculationError(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
-            },
-            valid => valid
-          )
+          response.json
+            .validate[LiabilityCalculationResponse]
+            .fold(
+              invalid => {
+                Logger("application").error(s"Json validation error parsing calculation response, error $invalid")
+                LiabilityCalculationError(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
+              },
+              valid => valid
+            )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(
-              s"Response status: ${response.status},body: ${response.body}")
+            Logger("application").error(s"Response status: ${response.status},body: ${response.body}")
           } else {
-            Logger("application").warn(
-              s"Response status: ${response.status}, body: ${response.body}")
+            Logger("application").warn(s"Response status: ${response.status}, body: ${response.body}")
           }
           LiabilityCalculationError(response.status, response.body)
       }

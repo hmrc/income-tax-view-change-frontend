@@ -31,14 +31,14 @@ class UpliftSuccessControllerSpec extends MockAuthActions {
 
   lazy val testController = app.injector.instanceOf[UpliftSuccessController]
 
-  val action = testController.success("PTA")
+  val action      = testController.success("PTA")
   val fakeRequest = fakeGetRequestBasedOnMTDUserType(MTDIndividual)
   s"success()" when {
     s"the user is an authenticated individual" should {
       "audit and redirect to the home controller" in {
         setupMockSuccess(MTDIndividual)
         mockSingleBusinessIncomeSource()
-        val result = action(fakeRequest)
+        val result                             = action(fakeRequest)
         val expectedIvOutcomeSuccessAuditModel = IvOutcomeSuccessAuditModel(testNino)
         whenReady(result) { response =>
           verifyAudit(expectedIvOutcomeSuccessAuditModel)

@@ -25,7 +25,6 @@ import testUtils.TestSupport
 import views.html.optIn.OptInCompletedView
 import views.messages.OptInCompletedViewMessages._
 
-
 class OptInCompletedViewSpec extends TestSupport {
 
   val taxYear22_23: TaxYear = TaxYear(2022, 2023)
@@ -36,14 +35,14 @@ class OptInCompletedViewSpec extends TestSupport {
 
   def nextUpdatesLink(origin: Option[String] = None) = controllers.routes.NextUpdatesController.show(origin).url
 
-  def reportingFrequencyLinkUrl(isAgent: Boolean) = controllers.optIn.routes.OptInCompletedController.show(isAgent).url //TODO: Needs fixing/updating
+  def reportingFrequencyLinkUrl(isAgent: Boolean) =
+    controllers.optIn.routes.OptInCompletedController.show(isAgent).url //TODO: Needs fixing/updating
 
   class SetupForCurrentYear(
-                             isAgent: Boolean = true,
-                             taxYear: TaxYear,
-                             followingYearVoluntary: Boolean,
-                             annualWithFollowingYearMandated: Boolean = false
-                           ) {
+      isAgent:                         Boolean = true,
+      taxYear:                         TaxYear,
+      followingYearVoluntary:          Boolean,
+      annualWithFollowingYearMandated: Boolean = false) {
     val model: OptInCompletedViewModel =
       OptInCompletedViewModel(
         isAgent = isAgent,
@@ -59,38 +58,50 @@ class OptInCompletedViewSpec extends TestSupport {
 
   object Selectors {
 
-    val pageTitleClass = "govuk-panel__title"
-    val pagePanelBodyClass = "govuk-panel__body"
-    val warningInsetId = "warning-inset"
+    val pageTitleClass                = "govuk-panel__title"
+    val pagePanelBodyClass            = "govuk-panel__body"
+    val warningInsetId                = "warning-inset"
     val warningInsetAnnualFollowingId = "warning-inset-annual-following"
 
     def paragraphId(i: Int) = s"optin-completed-view-p$i"
 
     val overdueUpdatesInset = "overdue-updates-inset"
 
-    val yourRevisedDeadlineH2 = "your-revised-deadline-heading"
-    val yourRevisedDeadlineInset = "your-revised-deadline-inset"
-    val yourRevisedDeadlineP1 = "your-account-has-been-updated"
+    val yourRevisedDeadlineH2     = "your-revised-deadline-heading"
+    val yourRevisedDeadlineInset  = "your-revised-deadline-inset"
+    val yourRevisedDeadlineP1     = "your-account-has-been-updated"
     val yourRevisedDeadlineP1Link = "#your-account-has-been-updated > a"
-    val yourRevisedDeadlineP2 = "opt-out-reporting-quarterly"
+    val yourRevisedDeadlineP2     = "opt-out-reporting-quarterly"
     val yourRevisedDeadlineP2Link = "#opt-out-reporting-quarterly > a"
   }
 
-  s"has the correct content for year $taxYear22_23 which is the current year" in new SetupForCurrentYear(false, taxYear22_23, false) {
+  s"has the correct content for year $taxYear22_23 which is the current year" in new SetupForCurrentYear(
+    false,
+    taxYear22_23,
+    false
+  ) {
 
     pageDocument.title() shouldBe titleContent
 
     pageDocument.getElementsByClass(Selectors.pageTitleClass).text() shouldBe panelTitleContent
-    pageDocument.getElementsByClass(Selectors.pagePanelBodyClass).text() shouldBe "You are now reporting quarterly from 2022 to 2023 tax year onwards"
+    pageDocument
+      .getElementsByClass(Selectors.pagePanelBodyClass)
+      .text() shouldBe "You are now reporting quarterly from 2022 to 2023 tax year onwards"
 
-    pageDocument.getElementById(Selectors.overdueUpdatesInset).text() shouldBe overdueUpdatesGenericInset(taxYear22_23.startYear.toString, taxYear22_23.endYear.toString)
+    pageDocument.getElementById(Selectors.overdueUpdatesInset).text() shouldBe overdueUpdatesGenericInset(
+      taxYear22_23.startYear.toString,
+      taxYear22_23.endYear.toString
+    )
 
-    val expectedText: String = "For example, if your income from self-employment or property, or both, exceeds the threshold " +
-      "in the 2022 to 2023 tax year, you would have to report quarterly from 6 April 2024."
+    val expectedText: String =
+      "For example, if your income from self-employment or property, or both, exceeds the threshold " +
+        "in the 2022 to 2023 tax year, you would have to report quarterly from 6 April 2024."
 
     pageDocument.getElementById(Selectors.warningInsetId).text() shouldBe expectedText
 
-    pageDocument.getElementById(Selectors.paragraphId(5)).text() shouldBe "You have just chosen to voluntarily report quarterly from the 2022 to 2023 tax year onwards, but in the future it could be mandatory for you if:"
+    pageDocument
+      .getElementById(Selectors.paragraphId(5))
+      .text() shouldBe "You have just chosen to voluntarily report quarterly from the 2022 to 2023 tax year onwards, but in the future it could be mandatory for you if:"
     pageDocument.getElementById(Selectors.paragraphId(6)).text() shouldBe optinCompletedViewP6
 
   }
@@ -98,17 +109,27 @@ class OptInCompletedViewSpec extends TestSupport {
   val anotherForYearEnd = 2022
   val taxYear21_22: TaxYear = TaxYear.forYearEnd(anotherForYearEnd)
 
-  s"has the correct content for year $taxYear21_22 which is the current year" in new SetupForCurrentYear(false, taxYear21_22, false) {
+  s"has the correct content for year $taxYear21_22 which is the current year" in new SetupForCurrentYear(
+    false,
+    taxYear21_22,
+    false
+  ) {
 
     pageDocument.title() shouldBe titleContent
 
     pageDocument.getElementsByClass(Selectors.pageTitleClass).text() shouldBe panelTitleContent
 
-    pageDocument.getElementById(Selectors.overdueUpdatesInset).text() shouldBe overdueUpdatesGenericInset(taxYear21_22.startYear.toString, taxYear21_22.endYear.toString)
+    pageDocument.getElementById(Selectors.overdueUpdatesInset).text() shouldBe overdueUpdatesGenericInset(
+      taxYear21_22.startYear.toString,
+      taxYear21_22.endYear.toString
+    )
 
-    pageDocument.getElementsByClass(Selectors.pagePanelBodyClass).text() shouldBe "You are now reporting quarterly from 2021 to 2022 tax year onwards"
-    val expectedText: String = "For example, if your income from self-employment or property, or both, exceeds the threshold " +
-      "in the 2021 to 2022 tax year, you would have to report quarterly from 6 April 2023."
+    pageDocument
+      .getElementsByClass(Selectors.pagePanelBodyClass)
+      .text() shouldBe "You are now reporting quarterly from 2021 to 2022 tax year onwards"
+    val expectedText: String =
+      "For example, if your income from self-employment or property, or both, exceeds the threshold " +
+        "in the 2021 to 2022 tax year, you would have to report quarterly from 6 April 2023."
 
     pageDocument.getElementById(Selectors.warningInsetId).text() shouldBe expectedText
 
@@ -119,21 +140,35 @@ class OptInCompletedViewSpec extends TestSupport {
 
   }
 
-  s"has the correct heading for year $taxYear22_23 which is the current year and next year is Voluntary" in new SetupForCurrentYear(false, taxYear22_23, true) {
+  s"has the correct heading for year $taxYear22_23 which is the current year and next year is Voluntary" in new SetupForCurrentYear(
+    false,
+    taxYear22_23,
+    true
+  ) {
 
     pageDocument.title() shouldBe titleContent
 
-    pageDocument.getElementById(Selectors.overdueUpdatesInset).text() shouldBe overdueUpdatesGenericInset(taxYear22_23.startYear.toString, taxYear22_23.endYear.toString)
+    pageDocument.getElementById(Selectors.overdueUpdatesInset).text() shouldBe overdueUpdatesGenericInset(
+      taxYear22_23.startYear.toString,
+      taxYear22_23.endYear.toString
+    )
 
     pageDocument.getElementsByClass(Selectors.pageTitleClass).text() shouldBe panelTitleContent
-    pageDocument.getElementsByClass(Selectors.pagePanelBodyClass).text() shouldBe messages("optin.completedOptIn.followingVoluntary.heading.desc", "2022", "2023")
+    pageDocument.getElementsByClass(Selectors.pagePanelBodyClass).text() shouldBe messages(
+      "optin.completedOptIn.followingVoluntary.heading.desc",
+      "2022",
+      "2023"
+    )
 
-    val expectedText: String = "For example, if your income from self-employment or property, or both, exceeds the threshold " +
-      "in the 2022 to 2023 tax year, you would have to report quarterly from 6 April 2024."
+    val expectedText: String =
+      "For example, if your income from self-employment or property, or both, exceeds the threshold " +
+        "in the 2022 to 2023 tax year, you would have to report quarterly from 6 April 2024."
 
     pageDocument.getElementById(Selectors.warningInsetId).text() shouldBe expectedText
 
-    pageDocument.getElementById(Selectors.paragraphId(5)).text() shouldBe "You have just chosen to voluntarily report quarterly from the 2022 to 2023 tax year onwards, but in the future it could be mandatory for you if:"
+    pageDocument
+      .getElementById(Selectors.paragraphId(5))
+      .text() shouldBe "You have just chosen to voluntarily report quarterly from the 2022 to 2023 tax year onwards, but in the future it could be mandatory for you if:"
     pageDocument.getElementById(Selectors.paragraphId(6)).text() shouldBe optinCompletedViewP6
   }
 
@@ -142,17 +177,27 @@ class OptInCompletedViewSpec extends TestSupport {
 
       pageDocument.title() shouldBe titleContent
 
-      pageDocument.getElementById(Selectors.overdueUpdatesInset).text() shouldBe overdueUpdatesGenericInset(taxYear22_23.startYear.toString, taxYear22_23.endYear.toString)
+      pageDocument.getElementById(Selectors.overdueUpdatesInset).text() shouldBe overdueUpdatesGenericInset(
+        taxYear22_23.startYear.toString,
+        taxYear22_23.endYear.toString
+      )
 
       pageDocument.getElementsByClass(Selectors.pageTitleClass).text() shouldBe panelTitleContent
-      pageDocument.getElementsByClass(Selectors.pagePanelBodyClass).text() shouldBe messages("optin.completedOptIn.followingVoluntary.heading.desc", "2022", "2023")
+      pageDocument.getElementsByClass(Selectors.pagePanelBodyClass).text() shouldBe messages(
+        "optin.completedOptIn.followingVoluntary.heading.desc",
+        "2022",
+        "2023"
+      )
 
-      val expectedText: String = "From 6 April 2023, you’ll be required to send quarterly updates through compatible software."
+      val expectedText: String =
+        "From 6 April 2023, you’ll be required to send quarterly updates through compatible software."
       pageDocument.getElementById(Selectors.warningInsetAnnualFollowingId).text() shouldBe expectedText
 
       Option(pageDocument.getElementById(Selectors.warningInsetId)) shouldBe None
 
-      pageDocument.getElementById(Selectors.paragraphId(5)).text() shouldBe "You have just chosen to voluntarily report quarterly from the 2022 to 2023 tax year."
+      pageDocument
+        .getElementById(Selectors.paragraphId(5))
+        .text() shouldBe "You have just chosen to voluntarily report quarterly from the 2022 to 2023 tax year."
 
       pageDocument.select(bullet(1)).text() shouldBe bullet1Content
       pageDocument.select(bullet(2)).text() shouldBe bullet2Content
@@ -161,9 +206,8 @@ class OptInCompletedViewSpec extends TestSupport {
     }
 
   class SetupNextYear(
-                       isAgent: Boolean = true,
-                       taxYear: TaxYear
-                     ) {
+      isAgent: Boolean = true,
+      taxYear: TaxYear) {
     val model: OptInCompletedViewModel =
       OptInCompletedViewModel(
         isAgent = isAgent,
@@ -188,14 +232,14 @@ class OptInCompletedViewSpec extends TestSupport {
 
       val expectedContent: Seq[(String, String)] =
         Seq(
-          Selectors.yourRevisedDeadlineH2 -> yourRevisedDeadlineH2,
+          Selectors.yourRevisedDeadlineH2    -> yourRevisedDeadlineH2,
           Selectors.yourRevisedDeadlineInset -> yourRevisedDeadlineInset,
-          Selectors.yourRevisedDeadlineP1 -> yourRevisedDeadlineContentP1,
-          Selectors.yourRevisedDeadlineP2 -> yourRevisedDeadlineContentP2,
-          Selectors.paragraphId(3) -> optinCompletedViewP3,
-          Selectors.paragraphId(4) -> optinCompletedViewP4,
-          Selectors.paragraphId(5) -> optinCompletedViewP5,
-          Selectors.paragraphId(6) -> optinCompletedViewP6,
+          Selectors.yourRevisedDeadlineP1    -> yourRevisedDeadlineContentP1,
+          Selectors.yourRevisedDeadlineP2    -> yourRevisedDeadlineContentP2,
+          Selectors.paragraphId(3)           -> optinCompletedViewP3,
+          Selectors.paragraphId(4)           -> optinCompletedViewP4,
+          Selectors.paragraphId(5)           -> optinCompletedViewP5,
+          Selectors.paragraphId(6)           -> optinCompletedViewP6
         )
 
       pageDocument.title() shouldBe titleContent

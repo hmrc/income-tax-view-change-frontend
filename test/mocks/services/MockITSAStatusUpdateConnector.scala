@@ -36,9 +36,19 @@ trait MockITSAStatusUpdateConnector extends UnitSpec with BeforeAndAfterEach {
     reset(mockOptOutConnector)
   }
 
-  def setupMockRequestOptOutForTaxYear(taxYear: TaxYear, taxableEntityId: String)(out: ITSAStatusUpdateResponse): Unit = {
-    when(mockOptOutConnector.makeITSAStatusUpdate(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(taxableEntityId), optOutUpdateReason)
-      (any())).thenReturn(Future.successful(out))
+  def setupMockRequestOptOutForTaxYear(
+      taxYear:         TaxYear,
+      taxableEntityId: String
+    )(
+      out: ITSAStatusUpdateResponse
+    ): Unit = {
+    when(
+      mockOptOutConnector.makeITSAStatusUpdate(
+        ArgumentMatchers.eq(taxYear),
+        ArgumentMatchers.eq(taxableEntityId),
+        optOutUpdateReason
+      )(any())
+    ).thenReturn(Future.successful(out))
   }
 
 }

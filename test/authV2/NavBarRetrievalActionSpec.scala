@@ -40,9 +40,10 @@ import scala.concurrent.Future
 
 class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
 
-  def config: Map[String, Object] = Map(
-    "feature-switches.read-from-mongo" -> "true"
-  )
+  def config: Map[String, Object] =
+    Map(
+      "feature-switches.read-from-mongo" -> "true"
+    )
 
   override lazy val app: Application = {
     new GuiceApplicationBuilder()
@@ -56,38 +57,35 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
   }
 
   def defaultAsyncBody(
-                        requestTestCase: MtdItUser[_] => Assertion
-                      ): MtdItUser[_] => Future[Result] = testRequest => {
-    requestTestCase(testRequest)
-    Future.successful(Results.Ok("Successful"))
-  }
+      requestTestCase: MtdItUser[_] => Assertion
+    ): MtdItUser[_] => Future[Result] =
+    testRequest => {
+      requestTestCase(testRequest)
+      Future.successful(Results.Ok("Successful"))
+    }
 
   def defaultAsync: MtdItUser[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
 
   val featureSwitchesIncludingNavBarEnabled = List(FeatureSwitch(NavBarFs, true))
-  lazy val action = app.injector.instanceOf[NavBarRetrievalAction]
+  lazy val action                           = app.injector.instanceOf[NavBarRetrievalAction]
 
   "refine" when {
     "the user is an Agent" should {
       "make no changes and return the request" in {
         val mtdIdUserRequest = getMtdItUser(Agent)
-        val result = action.invokeBlock(
-          mtdIdUserRequest,
-          defaultAsyncBody(_.btaNavPartial shouldBe None))
+        val result           = action.invokeBlock(mtdIdUserRequest, defaultAsyncBody(_.btaNavPartial shouldBe None))
 
         status(result) shouldBe OK
         contentAsString(result) shouldBe "Successful"
       }
     }
 
-    List(Individual, Organisation).foreach{affinityGroup =>
+    List(Individual, Organisation).foreach { affinityGroup =>
       s"the user is an ${affinityGroup.toString}" should {
         "make no changes and return the request" when {
           "the navigation bar is disabled" in {
             val mtdIdUserRequest = getMtdItUser(affinityGroup)
-            val result = action.invokeBlock(
-              mtdIdUserRequest,
-              defaultAsyncBody(_.btaNavPartial shouldBe None))
+            val result           = action.invokeBlock(mtdIdUserRequest, defaultAsyncBody(_.btaNavPartial shouldBe None))
 
             status(result) shouldBe OK
             contentAsString(result) shouldBe "Successful"
@@ -100,13 +98,13 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
             val fakeRequest = fakeRequestWithActiveSession.withSession(
               SessionKeys.origin -> "PTA"
             )
-            val mtdIdUserRequest = getMtdItUser(affinityGroup, featureSwitches = featureSwitchesIncludingNavBarEnabled)(fakeRequest)
+            val mtdIdUserRequest =
+              getMtdItUser(affinityGroup, featureSwitches = featureSwitchesIncludingNavBarEnabled)(fakeRequest)
             when(mockPtaPartial.apply()(any(), any(), any()))
               .thenReturn(ptaNavBar)
 
-            val result = action.invokeBlock(
-              mtdIdUserRequest,
-              defaultAsyncBody(_.btaNavPartial shouldBe Some(ptaNavBar)))
+            val result =
+              action.invokeBlock(mtdIdUserRequest, defaultAsyncBody(_.btaNavPartial shouldBe Some(ptaNavBar)))
 
             status(result) shouldBe OK
             contentAsString(result) shouldBe "Successful"
@@ -119,13 +117,13 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
             val fakeRequest = fakeRequestWithActiveSession.withSession(
               SessionKeys.origin -> "BTA"
             )
-            val mtdIdUserRequest = getMtdItUser(affinityGroup, featureSwitches = featureSwitchesIncludingNavBarEnabled)(fakeRequest)
+            val mtdIdUserRequest =
+              getMtdItUser(affinityGroup, featureSwitches = featureSwitchesIncludingNavBarEnabled)(fakeRequest)
             when(mockBtaNavBarController.btaNavBarPartial(any())(any(), any()))
               .thenReturn(Future.successful(btaNavBar))
 
-            val result = action.invokeBlock(
-              mtdIdUserRequest,
-              defaultAsyncBody(_.btaNavPartial shouldBe Some(btaNavBar)))
+            val result =
+              action.invokeBlock(mtdIdUserRequest, defaultAsyncBody(_.btaNavPartial shouldBe Some(btaNavBar)))
 
             status(result) shouldBe OK
             contentAsString(result) shouldBe "Successful"
@@ -135,11 +133,11 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
         "redirect to taxAccountRouterUrl" when {
           "the request has no origin in the query parameters or session request" in {
 
-            val mtdIdUserRequest = getMtdItUser(affinityGroup, featureSwitches = featureSwitchesIncludingNavBarEnabled)(fakeRequestWithActiveSession)
+            val mtdIdUserRequest = getMtdItUser(affinityGroup, featureSwitches = featureSwitchesIncludingNavBarEnabled)(
+              fakeRequestWithActiveSession
+            )
 
-            val result = action.invokeBlock(
-              mtdIdUserRequest,
-              defaultAsync)
+            val result = action.invokeBlock(mtdIdUserRequest, defaultAsync)
 
             status(result) shouldBe SEE_OTHER
             redirectLocation(result) shouldBe Some("http://localhost:9280/account")
@@ -151,11 +149,10 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
             val fakeRequest = fakeRequestWithActiveSession
               .withTarget(RequestTarget("http://test/testing", "/testing", Map(SessionKeys.origin -> Seq("pta"))))
 
-            val mtdIdUserRequest = getMtdItUser(affinityGroup, featureSwitches = featureSwitchesIncludingNavBarEnabled)(fakeRequest)
+            val mtdIdUserRequest =
+              getMtdItUser(affinityGroup, featureSwitches = featureSwitchesIncludingNavBarEnabled)(fakeRequest)
 
-            val result = action.invokeBlock(
-              mtdIdUserRequest,
-              defaultAsync)
+            val result = action.invokeBlock(mtdIdUserRequest, defaultAsync)
 
             status(result) shouldBe SEE_OTHER
             redirectLocation(result) shouldBe Some("/testing")
@@ -166,11 +163,10 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
             val fakeRequest = fakeRequestWithActiveSession
               .withTarget(RequestTarget("http://test/testing", "/testing", Map(SessionKeys.origin -> Seq("bta"))))
 
-            val mtdIdUserRequest = getMtdItUser(affinityGroup, featureSwitches = featureSwitchesIncludingNavBarEnabled)(fakeRequest)
+            val mtdIdUserRequest =
+              getMtdItUser(affinityGroup, featureSwitches = featureSwitchesIncludingNavBarEnabled)(fakeRequest)
 
-            val result = action.invokeBlock(
-              mtdIdUserRequest,
-              defaultAsync)
+            val result = action.invokeBlock(mtdIdUserRequest, defaultAsync)
 
             status(result) shouldBe SEE_OTHER
             redirectLocation(result) shouldBe Some("/testing")
@@ -184,11 +180,10 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
                 SessionKeys.origin -> "BTA"
               )
 
-            val mtdIdUserRequest = getMtdItUser(affinityGroup, featureSwitches = featureSwitchesIncludingNavBarEnabled)(fakeRequest)
+            val mtdIdUserRequest =
+              getMtdItUser(affinityGroup, featureSwitches = featureSwitchesIncludingNavBarEnabled)(fakeRequest)
 
-            val result = action.invokeBlock(
-              mtdIdUserRequest,
-              defaultAsync)
+            val result = action.invokeBlock(mtdIdUserRequest, defaultAsync)
 
             status(result) shouldBe SEE_OTHER
             redirectLocation(result) shouldBe Some("/testing")
@@ -202,11 +197,10 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
                 SessionKeys.origin -> "PTA"
               )
 
-            val mtdIdUserRequest = getMtdItUser(affinityGroup, featureSwitches = featureSwitchesIncludingNavBarEnabled)(fakeRequest)
+            val mtdIdUserRequest =
+              getMtdItUser(affinityGroup, featureSwitches = featureSwitchesIncludingNavBarEnabled)(fakeRequest)
 
-            val result = action.invokeBlock(
-              mtdIdUserRequest,
-              defaultAsync)
+            val result = action.invokeBlock(mtdIdUserRequest, defaultAsync)
 
             status(result) shouldBe SEE_OTHER
             redirectLocation(result) shouldBe Some("/testing")

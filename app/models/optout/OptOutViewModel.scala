@@ -21,7 +21,8 @@ import services.optout.{OneYearOptOutFollowedByMandated, OneYearOptOutState}
 
 sealed trait OptOutViewModel
 
-case class OptOutOneYearViewModel(oneYearOptOutTaxYear: TaxYear, state: Option[OneYearOptOutState]) extends OptOutViewModel {
+case class OptOutOneYearViewModel(oneYearOptOutTaxYear: TaxYear, state: Option[OneYearOptOutState])
+    extends OptOutViewModel {
   def startYear: String = oneYearOptOutTaxYear.startYear.toString
 
   def endYear: String = oneYearOptOutTaxYear.endYear.toString

@@ -18,9 +18,11 @@ package views.messages
 
 object ConfirmOptOutMessages {
   val heading: String = "Confirm and opt out for the 2021 to 2022 tax year"
-  val title: String = s"$heading - Manage your Income Tax updates - GOV.UK"
-  val summary: String = "If you opt out, you can submit your tax return through your HMRC online account or compatible software."
-  val infoMessage: String = "In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know."
+  val title:   String = s"$heading - Manage your Income Tax updates - GOV.UK"
+  val summary: String =
+    "If you opt out, you can submit your tax return through your HMRC online account or compatible software."
+  val infoMessage: String =
+    "In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know."
   val confirmButton: String = "Confirm and save"
-  val cancelLink: String = "Cancel"
+  val cancelLink:    String = "Cancel"
 }

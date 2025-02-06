@@ -23,7 +23,7 @@ import java.util.UUID.randomUUID
 
 class CorrelationIdSpec extends UnitSpec {
 
-  val id =  randomUUID()
+  val id            = randomUUID()
   val correlationId = CorrelationId(id)
 
   ".asHeader" should {

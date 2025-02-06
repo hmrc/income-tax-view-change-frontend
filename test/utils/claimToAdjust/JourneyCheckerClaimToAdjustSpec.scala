@@ -41,29 +41,31 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
   val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val TestJourneyCheckerClaimToAdjust: JourneyCheckerClaimToAdjust = new JourneyCheckerClaimToAdjust {
-    override val appConfig: FrontendAppConfig = mockAppConfig
-    override val poaSessionService: PaymentOnAccountSessionService = mockPaymentOnAccountSessionService
-    override val individualErrorHandler: ItvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler]
-    override val agentErrorHandler: AgentItvcErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
-    override implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
+    override val appConfig:              FrontendAppConfig              = mockAppConfig
+    override val poaSessionService:      PaymentOnAccountSessionService = mockPaymentOnAccountSessionService
+    override val individualErrorHandler: ItvcErrorHandler               = app.injector.instanceOf[ItvcErrorHandler]
+    override val agentErrorHandler:      AgentItvcErrorHandler          = app.injector.instanceOf[AgentItvcErrorHandler]
+    override implicit val ec:            ExecutionContext               = app.injector.instanceOf[ExecutionContext]
   }
 
   val TestJourneyCheckerClaimToAdjustSpy: JourneyCheckerClaimToAdjust = spy(new JourneyCheckerClaimToAdjust {
-    override val appConfig: FrontendAppConfig = mockAppConfig
-    override val poaSessionService: PaymentOnAccountSessionService = mockPaymentOnAccountSessionService
-    override val individualErrorHandler: ItvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler]
-    override val agentErrorHandler: AgentItvcErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
-    override implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
+    override val appConfig:              FrontendAppConfig              = mockAppConfig
+    override val poaSessionService:      PaymentOnAccountSessionService = mockPaymentOnAccountSessionService
+    override val individualErrorHandler: ItvcErrorHandler               = app.injector.instanceOf[ItvcErrorHandler]
+    override val agentErrorHandler:      AgentItvcErrorHandler          = app.injector.instanceOf[AgentItvcErrorHandler]
+    override implicit val ec:            ExecutionContext               = app.injector.instanceOf[ExecutionContext]
   })
 
   val whatYouNeedToKnowView: WhatYouNeedToKnow = app.injector.instanceOf[WhatYouNeedToKnow]
 
-  def successfulFutureOk: PoaAmendmentData => Future[Result] = _ => {
-    Future.successful(Ok(whatYouNeedToKnowView(isAgent = false, whatYouNeedToKnowViewModel(false, false))))
-}
-  def successfulFutureOkAgent: PoaAmendmentData => Future[Result] = _ => {
-    Future.successful(Ok(whatYouNeedToKnowView(isAgent = true, whatYouNeedToKnowViewModel(true, true))))
-  }
+  def successfulFutureOk: PoaAmendmentData => Future[Result] =
+    _ => {
+      Future.successful(Ok(whatYouNeedToKnowView(isAgent = false, whatYouNeedToKnowViewModel(false, false))))
+    }
+  def successfulFutureOkAgent: PoaAmendmentData => Future[Result] =
+    _ => {
+      Future.successful(Ok(whatYouNeedToKnowView(isAgent = true, whatYouNeedToKnowViewModel(true, true))))
+    }
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -93,14 +95,18 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
     "return true" when {
       "journeyCompleted = true, journeyState = BeforeSubmissionPage" in {
 
-        val res = TestJourneyCheckerClaimToAdjust.showCannotGoBackErrorPage(journeyCompleted = true, journeyState = BeforeSubmissionPage)
+        val res = TestJourneyCheckerClaimToAdjust.showCannotGoBackErrorPage(
+          journeyCompleted = true,
+          journeyState = BeforeSubmissionPage
+        )
 
         res shouldBe true
 
       }
       "journeyCompleted = true, journeyState = InitialPage" in {
 
-        val res = TestJourneyCheckerClaimToAdjust.showCannotGoBackErrorPage(journeyCompleted = true, journeyState = InitialPage)
+        val res =
+          TestJourneyCheckerClaimToAdjust.showCannotGoBackErrorPage(journeyCompleted = true, journeyState = InitialPage)
 
         res shouldBe true
 
@@ -110,42 +116,60 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
 
       "journeyCompleted = true, journeyState = CannotGoBackPage" in {
 
-        val res = TestJourneyCheckerClaimToAdjust.showCannotGoBackErrorPage(journeyCompleted = true, journeyState = CannotGoBackPage)
+        val res = TestJourneyCheckerClaimToAdjust.showCannotGoBackErrorPage(
+          journeyCompleted = true,
+          journeyState = CannotGoBackPage
+        )
 
         res shouldBe false
 
       }
       "journeyCompleted = true, journeyState = AfterSubmissionPage" in {
 
-        val res = TestJourneyCheckerClaimToAdjust.showCannotGoBackErrorPage(journeyCompleted = true, journeyState = AfterSubmissionPage)
+        val res = TestJourneyCheckerClaimToAdjust.showCannotGoBackErrorPage(
+          journeyCompleted = true,
+          journeyState = AfterSubmissionPage
+        )
 
         res shouldBe false
 
       }
       "journeyCompleted = false, journeyState = CannotGoBackPage" in {
 
-        val res = TestJourneyCheckerClaimToAdjust.showCannotGoBackErrorPage(journeyCompleted = false, journeyState = CannotGoBackPage)
+        val res = TestJourneyCheckerClaimToAdjust.showCannotGoBackErrorPage(
+          journeyCompleted = false,
+          journeyState = CannotGoBackPage
+        )
 
         res shouldBe false
 
       }
       "journeyCompleted = false, journeyState = AfterSubmissionPage" in {
 
-        val res = TestJourneyCheckerClaimToAdjust.showCannotGoBackErrorPage(journeyCompleted = false, journeyState = AfterSubmissionPage)
+        val res = TestJourneyCheckerClaimToAdjust.showCannotGoBackErrorPage(
+          journeyCompleted = false,
+          journeyState = AfterSubmissionPage
+        )
 
         res shouldBe false
 
       }
       "journeyCompleted = false, journeyState = BeforeSubmissionPage" in {
 
-        val res = TestJourneyCheckerClaimToAdjust.showCannotGoBackErrorPage(journeyCompleted = false, journeyState = BeforeSubmissionPage)
+        val res = TestJourneyCheckerClaimToAdjust.showCannotGoBackErrorPage(
+          journeyCompleted = false,
+          journeyState = BeforeSubmissionPage
+        )
 
         res shouldBe false
 
       }
       "journeyCompleted = false, journeyState = InitialPage" in {
 
-        val res = TestJourneyCheckerClaimToAdjust.showCannotGoBackErrorPage(journeyCompleted = false, journeyState = InitialPage)
+        val res = TestJourneyCheckerClaimToAdjust.showCannotGoBackErrorPage(
+          journeyCompleted = false,
+          journeyState = InitialPage
+        )
 
         res shouldBe false
 
@@ -156,28 +180,52 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
   "JourneyCheckerClaimToAdjust.withSessionData when not on the initial page" should {
     "redirect to the You Cannot Go Back error page" when {
       "showCannotGoBackErrorPage returns true" in {
-        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
+        setupMockPaymentOnAccountSessionService(
+          Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true))))
+        )
 
-        when(TestJourneyCheckerClaimToAdjustSpy.showCannotGoBackErrorPage(ArgumentMatchers.eq(true), ArgumentMatchers.eq(BeforeSubmissionPage))).thenReturn(true)
+        when(
+          TestJourneyCheckerClaimToAdjustSpy.showCannotGoBackErrorPage(
+            ArgumentMatchers.eq(true),
+            ArgumentMatchers.eq(BeforeSubmissionPage)
+          )
+        ).thenReturn(true)
 
-        val res = TestJourneyCheckerClaimToAdjustSpy.withSessionData(journeyState = BeforeSubmissionPage)(successfulFutureOk)(tsTestUser, headerCarrier)
-        val resAgent = TestJourneyCheckerClaimToAdjustSpy.withSessionData(journeyState = BeforeSubmissionPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
+        val res = TestJourneyCheckerClaimToAdjustSpy.withSessionData(journeyState = BeforeSubmissionPage)(
+          successfulFutureOk
+        )(tsTestUser, headerCarrier)
+        val resAgent = TestJourneyCheckerClaimToAdjustSpy.withSessionData(journeyState = BeforeSubmissionPage)(
+          successfulFutureOkAgent
+        )(tsTestUserAgent, headerCarrier)
 
         status(res) shouldBe SEE_OTHER
-        redirectLocation(res) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(false).url)
+        redirectLocation(res) shouldBe Some(
+          controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(false).url
+        )
         status(resAgent) shouldBe SEE_OTHER
-        redirectLocation(resAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(true).url)
+        redirectLocation(resAgent) shouldBe Some(
+          controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(true).url
+        )
       }
     }
     "run the code block and go to the what you need to know page" when {
       "showCannotGoBackErrorPage returns false" in {
         setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
 
-        when(TestJourneyCheckerClaimToAdjustSpy.showCannotGoBackErrorPage(ArgumentMatchers.eq(false), ArgumentMatchers.eq(CannotGoBackPage))).thenReturn(false)
+        when(
+          TestJourneyCheckerClaimToAdjustSpy.showCannotGoBackErrorPage(
+            ArgumentMatchers.eq(false),
+            ArgumentMatchers.eq(CannotGoBackPage)
+          )
+        ).thenReturn(false)
 
-        val res = TestJourneyCheckerClaimToAdjustSpy.withSessionData(journeyState = CannotGoBackPage)(successfulFutureOk)(tsTestUser, headerCarrier)
-        val resAgent = TestJourneyCheckerClaimToAdjustSpy.withSessionData(journeyState = CannotGoBackPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
-        val doc: Document = Jsoup.parse(contentAsString(res))
+        val res = TestJourneyCheckerClaimToAdjustSpy.withSessionData(journeyState = CannotGoBackPage)(
+          successfulFutureOk
+        )(tsTestUser, headerCarrier)
+        val resAgent = TestJourneyCheckerClaimToAdjustSpy.withSessionData(journeyState = CannotGoBackPage)(
+          successfulFutureOkAgent
+        )(tsTestUserAgent, headerCarrier)
+        val doc:      Document = Jsoup.parse(contentAsString(res))
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
         status(res) shouldBe OK
@@ -190,9 +238,14 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
       "getMongo returns None so there is not an active session" in {
         setupMockPaymentOnAccountSessionService(Future.successful(Right(None)))
 
-        val res = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = CannotGoBackPage)(successfulFutureOk)(tsTestUser, headerCarrier)
-        val resAgent = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = CannotGoBackPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
-        val doc: Document = Jsoup.parse(contentAsString(res))
+        val res = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = CannotGoBackPage)(successfulFutureOk)(
+          tsTestUser,
+          headerCarrier
+        )
+        val resAgent = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = CannotGoBackPage)(
+          successfulFutureOkAgent
+        )(tsTestUserAgent, headerCarrier)
+        val doc:      Document = Jsoup.parse(contentAsString(res))
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
         status(res) shouldBe INTERNAL_SERVER_ERROR
@@ -203,9 +256,14 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
       "getMongo returns an exception" in {
         setupMockPaymentOnAccountSessionService(Future.successful(Left(new Exception("Error"))))
 
-        val res = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = CannotGoBackPage)(successfulFutureOk)(tsTestUser, headerCarrier)
-        val resAgent = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = CannotGoBackPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
-        val doc: Document = Jsoup.parse(contentAsString(res))
+        val res = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = CannotGoBackPage)(successfulFutureOk)(
+          tsTestUser,
+          headerCarrier
+        )
+        val resAgent = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = CannotGoBackPage)(
+          successfulFutureOkAgent
+        )(tsTestUserAgent, headerCarrier)
+        val doc:      Document = Jsoup.parse(contentAsString(res))
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
         status(res) shouldBe INTERNAL_SERVER_ERROR
@@ -220,9 +278,14 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
       "getMongo returns a right containing PoA session data but the journeyComplete flag is set to false" in {
         setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
 
-        val res = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = InitialPage)(successfulFutureOk)(tsTestUser, headerCarrier)
-        val resAgent = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = InitialPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
-        val doc: Document = Jsoup.parse(contentAsString(res))
+        val res = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = InitialPage)(successfulFutureOk)(
+          tsTestUser,
+          headerCarrier
+        )
+        val resAgent = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = InitialPage)(
+          successfulFutureOkAgent
+        )(tsTestUserAgent, headerCarrier)
+        val doc:      Document = Jsoup.parse(contentAsString(res))
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
         status(res) shouldBe OK
@@ -234,9 +297,14 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
         setupMockPaymentOnAccountSessionService(Future.successful(Right(None)))
         setupMockPaymentOnAccountSessionServiceCreateSession(Future.successful(Right((): Unit)))
 
-        val res = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = InitialPage)(successfulFutureOk)(tsTestUser, headerCarrier)
-        val resAgent = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = InitialPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
-        val doc: Document = Jsoup.parse(contentAsString(res))
+        val res = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = InitialPage)(successfulFutureOk)(
+          tsTestUser,
+          headerCarrier
+        )
+        val resAgent = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = InitialPage)(
+          successfulFutureOkAgent
+        )(tsTestUserAgent, headerCarrier)
+        val doc:      Document = Jsoup.parse(contentAsString(res))
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
         status(res) shouldBe OK
@@ -245,12 +313,19 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
         docAgent.title() shouldBe "What you need to know - Manage your client’s Income Tax updates - GOV.UK"
       }
       "getMongo returns a right containing PoA session data, the journeyComplete flag is set to true and createSession returns a Right containing a Unit" in {
-        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
+        setupMockPaymentOnAccountSessionService(
+          Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true))))
+        )
         setupMockPaymentOnAccountSessionServiceCreateSession(Future.successful(Right((): Unit)))
 
-        val res = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = InitialPage)(successfulFutureOk)(tsTestUser, headerCarrier)
-        val resAgent = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = InitialPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
-        val doc: Document = Jsoup.parse(contentAsString(res))
+        val res = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = InitialPage)(successfulFutureOk)(
+          tsTestUser,
+          headerCarrier
+        )
+        val resAgent = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = InitialPage)(
+          successfulFutureOkAgent
+        )(tsTestUserAgent, headerCarrier)
+        val doc:      Document = Jsoup.parse(contentAsString(res))
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
         status(res) shouldBe OK
@@ -261,12 +336,19 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
     }
     "return an internal server error" when {
       "journeyComplete flag is set to true and createSession returns an exception" in {
-        setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
+        setupMockPaymentOnAccountSessionService(
+          Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true))))
+        )
         setupMockPaymentOnAccountSessionServiceCreateSession(Future.successful(Left(new Exception("Error"))))
 
-        val res = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = InitialPage)(successfulFutureOk)(tsTestUser, headerCarrier)
-        val resAgent = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = InitialPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
-        val doc: Document = Jsoup.parse(contentAsString(res))
+        val res = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = InitialPage)(successfulFutureOk)(
+          tsTestUser,
+          headerCarrier
+        )
+        val resAgent = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = InitialPage)(
+          successfulFutureOkAgent
+        )(tsTestUserAgent, headerCarrier)
+        val doc:      Document = Jsoup.parse(contentAsString(res))
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
         doc.title() shouldBe "Sorry, there is a problem with the service - GOV.UK"
@@ -278,9 +360,14 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
       "getMongo returns an exception" in {
         setupMockPaymentOnAccountSessionService(Future.successful(Left(new Exception("Error"))))
 
-        val res = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = InitialPage)(successfulFutureOk)(tsTestUser, headerCarrier)
-        val resAgent = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = InitialPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
-        val doc: Document = Jsoup.parse(contentAsString(res))
+        val res = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = InitialPage)(successfulFutureOk)(
+          tsTestUser,
+          headerCarrier
+        )
+        val resAgent = TestJourneyCheckerClaimToAdjust.withSessionData(journeyState = InitialPage)(
+          successfulFutureOkAgent
+        )(tsTestUserAgent, headerCarrier)
+        val doc:      Document = Jsoup.parse(contentAsString(res))
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
         status(res) shouldBe INTERNAL_SERVER_ERROR

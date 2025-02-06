@@ -32,24 +32,34 @@ import views.html.claimToAdjustPoa.YouCannotGoBackView
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class YouCannotGoBackController @Inject()(val authActions: AuthActions,
-                                          val claimToAdjustService: ClaimToAdjustService,
-                                          val poaSessionService: PaymentOnAccountSessionService,
-                                          val view: YouCannotGoBackView)
-                                         (implicit val appConfig: FrontendAppConfig,
-                                          val individualErrorHandler: ItvcErrorHandler,
-                                          val agentErrorHandler: AgentItvcErrorHandler,
-                                          val mcc: MessagesControllerComponents,
-                                          val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with RecalculatePoaHelper with WithSessionAndPoa {
+class YouCannotGoBackController @Inject() (
+    val authActions:          AuthActions,
+    val claimToAdjustService: ClaimToAdjustService,
+    val poaSessionService:    PaymentOnAccountSessionService,
+    val view:                 YouCannotGoBackView
+  )(
+    implicit val appConfig:     FrontendAppConfig,
+    val individualErrorHandler: ItvcErrorHandler,
+    val agentErrorHandler:      AgentItvcErrorHandler,
+    val mcc:                    MessagesControllerComponents,
+    val ec:                     ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with FeatureSwitching
+    with RecalculatePoaHelper
+    with WithSessionAndPoa {
 
-  def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
-    implicit user =>
-      withSessionDataAndPoa(journeyState = CannotGoBackPage) {(_, poa) =>
-        EitherT.rightT(Ok(view(
-          isAgent = user.isAgent(),
-          poaTaxYear = poa.taxYear
-        )))
+  def show(isAgent: Boolean): Action[AnyContent] =
+    authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async { implicit user =>
+      withSessionDataAndPoa(journeyState = CannotGoBackPage) { (_, poa) =>
+        EitherT.rightT(
+          Ok(
+            view(
+              isAgent = user.isAgent(),
+              poaTaxYear = poa.taxYear
+            )
+          )
+        )
       } recover logAndRedirect
-  }
+    }
 }

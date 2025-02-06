@@ -23,11 +23,14 @@ import play.api.mvc.MessagesControllerComponents
 import uk.gov.hmrc.play.language.{LanguageController, LanguageUtils}
 
 @Singleton
-class AgentLanguageController @Inject()(implicit mcc: MessagesControllerComponents,
-                                        appConfig: FrontendAppConfig,
-                                        languageUtils: LanguageUtils) extends LanguageController(languageUtils, mcc) {
+class AgentLanguageController @Inject() (
+    implicit mcc:  MessagesControllerComponents,
+    appConfig:     FrontendAppConfig,
+    languageUtils: LanguageUtils)
+    extends LanguageController(languageUtils, mcc) {
 
-  override def fallbackURL: String = controllers.agent.routes.EnterClientsUTRController.show.url //will fall back to Agent home when implemented
+  override def fallbackURL: String =
+    controllers.agent.routes.EnterClientsUTRController.show.url //will fall back to Agent home when implemented
 
   override protected def languageMap: Map[String, Lang] = appConfig.languageMap
 

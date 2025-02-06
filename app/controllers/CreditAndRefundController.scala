@@ -16,7 +16,6 @@
 
 package controllers
 
-
 import audit.AuditingService
 import audit.models.ClaimARefundAuditModel
 import auth.MtdItUser
@@ -39,31 +38,42 @@ import views.html.errorPages.CustomNotFoundError
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CreditAndRefundController @Inject()(val authActions: AuthActions,
-                                          val creditService: CreditService,
-                                          val view: CreditAndRefunds,
-                                          val repaymentService: RepaymentService,
-                                          val auditingService: AuditingService,
-                                          mcc: MessagesControllerComponents)
-                                         (implicit val appConfig: FrontendAppConfig,
-                                          val individualErrorHandler: ItvcErrorHandler,
-                                          val agentErrorHandler: AgentItvcErrorHandler,
-                                          val languageUtils: LanguageUtils,
-                                          val ec: ExecutionContext,
-                                          val customNotFoundErrorView: CustomNotFoundError)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ErrorRecovery {
+class CreditAndRefundController @Inject() (
+    val authActions:      AuthActions,
+    val creditService:    CreditService,
+    val view:             CreditAndRefunds,
+    val repaymentService: RepaymentService,
+    val auditingService:  AuditingService,
+    mcc:                  MessagesControllerComponents
+  )(
+    implicit val appConfig:      FrontendAppConfig,
+    val individualErrorHandler:  ItvcErrorHandler,
+    val agentErrorHandler:       AgentItvcErrorHandler,
+    val languageUtils:           LanguageUtils,
+    val ec:                      ExecutionContext,
+    val customNotFoundErrorView: CustomNotFoundError)
+    extends FrontendController(mcc)
+    with FeatureSwitching
+    with I18nSupport
+    with ErrorRecovery {
 
   def show(origin: Option[String] = None): Action[AnyContent] =
-    authActions.asMTDIndividual.async {
-      implicit user =>
-        handleRequest(
-          backUrl = controllers.routes.HomeController.show(origin).url,
-          isAgent = user.isAgent()
-        ) recover logAndRedirect
+    authActions.asMTDIndividual.async { implicit user =>
+      handleRequest(
+        backUrl = controllers.routes.HomeController.show(origin).url,
+        isAgent = user.isAgent()
+      ) recover logAndRedirect
     }
 
-  def handleRequest(isAgent: Boolean, backUrl: String)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
+  def handleRequest(
+      isAgent: Boolean,
+      backUrl: String
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier,
+      ec:            ExecutionContext,
+      messages:      Messages
+    ): Future[Result] = {
     creditService.getAllCredits map {
       case _ if !isEnabled(CreditsRefundsRepay) =>
         Ok(customNotFoundErrorView()(user, messages))
@@ -76,30 +86,35 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
   }
 
   def showAgent(): Action[AnyContent] = {
-    authActions.asMTDPrimaryAgent async {
-      implicit mtdItUser =>
-        handleRequest(
-          backUrl = controllers.routes.HomeController.showAgent.url,
-          isAgent = mtdItUser.isAgent()
-        ) recover logAndRedirect
+    authActions.asMTDPrimaryAgent async { implicit mtdItUser =>
+      handleRequest(
+        backUrl = controllers.routes.HomeController.showAgent.url,
+        isAgent = mtdItUser.isAgent()
+      ) recover logAndRedirect
     }
   }
 
   def startRefund(): Action[AnyContent] =
-    authActions.asMTDIndividual async {
-      implicit user =>
-        if (isEnabled(CreditsRefundsRepay)) {
-          handleRefundRequest(
-            backUrl = "", // TODO: do we need a backUrl
-            isAgent = false
-          ) recover logAndRedirect
-        } else {
-          Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
-        }
+    authActions.asMTDIndividual async { implicit user =>
+      if (isEnabled(CreditsRefundsRepay)) {
+        handleRefundRequest(
+          backUrl = "", // TODO: do we need a backUrl
+          isAgent = false
+        ) recover logAndRedirect
+      } else {
+        Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
+      }
     }
 
-  private def handleRefundRequest(isAgent: Boolean, backUrl: String)
-                                 (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
+  private def handleRefundRequest(
+      isAgent: Boolean,
+      backUrl: String
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier,
+      ec:            ExecutionContext,
+      messages:      Messages
+    ): Future[Result] = {
     creditService.getAllCredits flatMap {
       case _ if !isEnabled(CreditsRefundsRepay) =>
         Future.successful(Ok(customNotFoundErrorView()(user, messages)))
@@ -115,8 +130,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
     }
   }
 
-  private def auditClaimARefund(creditsModel: CreditsModel)
-                               (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
+  private def auditClaimARefund(creditsModel: CreditsModel)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
 
     auditingService.extendedAudit(ClaimARefundAuditModel(creditsModel))
   }

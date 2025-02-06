@@ -37,9 +37,11 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
     disable(NavBarFs)
   }
 
-  val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+  val calculationTaxYear: String =
+    s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
 
-  val emptyCTAModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = false, poaTaxYear = None)
+  val emptyCTAModel: TYSClaimToAdjustViewModel =
+    TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = false, poaTaxYear = None)
 
   val financialDetailsSuccess: FinancialDetailsModel = FinancialDetailsModel(
     BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
@@ -57,7 +59,8 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
         latePaymentInterestAmount = Some(100.00),
         effectiveDateOfPayment = Some(LocalDate.of(2021, 4, 23)),
         documentDueDate = Some(LocalDate.of(2021, 4, 23))
-      )),
+      )
+    ),
     List(
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -230,20 +233,21 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
 
   val financialDetailsDunningLockSuccess: FinancialDetailsModel = FinancialDetailsModel(
     BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    List(DocumentDetail(
-      taxYear = getCurrentTaxYearEnd.getYear,
-      transactionId = "testDunningTransactionId",
-      documentDescription = Some("ITSA- POA 1"),
-      documentText = Some("documentText"),
-      documentDate = LocalDate.of(2018, 3, 29),
-      originalAmount = 1000.00,
-      outstandingAmount = 500.00,
-      interestOutstandingAmount = Some(0.00),
-      interestEndDate = Some(LocalDate.of(2021, 6, 24)),
-      latePaymentInterestAmount = Some(100.00),
-      effectiveDateOfPayment = Some(LocalDate.of(2021, 4, 23)),
-      documentDueDate = Some(LocalDate.of(2021, 4, 23))
-    ),
+    List(
+      DocumentDetail(
+        taxYear = getCurrentTaxYearEnd.getYear,
+        transactionId = "testDunningTransactionId",
+        documentDescription = Some("ITSA- POA 1"),
+        documentText = Some("documentText"),
+        documentDate = LocalDate.of(2018, 3, 29),
+        originalAmount = 1000.00,
+        outstandingAmount = 500.00,
+        interestOutstandingAmount = Some(0.00),
+        interestEndDate = Some(LocalDate.of(2021, 6, 24)),
+        latePaymentInterestAmount = Some(100.00),
+        effectiveDateOfPayment = Some(LocalDate.of(2021, 4, 23)),
+        documentDueDate = Some(LocalDate.of(2021, 4, 23))
+      ),
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear,
         transactionId = "testDunningTransactionId2",
@@ -256,21 +260,40 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
         interestEndDate = Some(LocalDate.of(2021, 6, 24)),
         effectiveDateOfPayment = Some(LocalDate.of(2021, 4, 23)),
         documentDueDate = Some(LocalDate.of(2021, 4, 23))
-      )),
+      )
+    ),
     List(
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         transactionId = Some("testDunningTransactionId"),
         mainType = Some("SA Payment on Account 1"),
         mainTransaction = Some("4920"),
-        items = Some(Seq(SubItem(Some(LocalDate.of(2021, 4, 23)), amount = Some(12), dunningLock = Some("Stand over order"), transactionId = Some("testDunningTransactionId"))))
+        items = Some(
+          Seq(
+            SubItem(
+              Some(LocalDate.of(2021, 4, 23)),
+              amount = Some(12),
+              dunningLock = Some("Stand over order"),
+              transactionId = Some("testDunningTransactionId")
+            )
+          )
+        )
       ),
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         transactionId = Some("testDunningTransactionId2"),
         mainType = Some("SA Payment on Account 2"),
         mainTransaction = Some("4930"),
-        items = Some(Seq(SubItem(Some(LocalDate.of(2021, 4, 23)), amount = Some(12), dunningLock = Some("Dunning Lock"), transactionId = Some("testDunningTransactionId2"))))
+        items = Some(
+          Seq(
+            SubItem(
+              Some(LocalDate.of(2021, 4, 23)),
+              amount = Some(12),
+              dunningLock = Some("Dunning Lock"),
+              transactionId = Some("testDunningTransactionId2")
+            )
+          )
+        )
       )
     )
   )
@@ -303,7 +326,8 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
         interestEndDate = None,
         effectiveDateOfPayment = Some(LocalDate.of(2021, 4, 22)),
         documentDueDate = Some(LocalDate.of(2021, 4, 22))
-      )),
+      )
+    ),
     List(
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -324,36 +348,43 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
 
   val emptyPaymentsList: List[TaxYearSummaryChargeItem] = List.empty
 
-  val allObligations: ObligationsModel = ObligationsModel(Seq(
-    GroupedObligationsModel(
-      identification = "ABC123456789",
-      obligations = List(
-        SingleObligationModel(
-          start = getCurrentTaxYearEnd.minusMonths(3),
-          end = getCurrentTaxYearEnd,
-          due = getCurrentTaxYearEnd,
-          obligationType = "Quarterly",
-          dateReceived = Some(getCurrentTaxYearEnd),
-          periodKey = "#003",
-          StatusFulfilled
-        ))
-    ),
-    GroupedObligationsModel(
-      identification = "ABC123456789",
-      obligations = List(
-        SingleObligationModel(
-          start = getCurrentTaxYearEnd.minusMonths(3),
-          end = getCurrentTaxYearEnd,
-          due = getCurrentTaxYearEnd,
-          obligationType = "Quarterly",
-          dateReceived = Some(getCurrentTaxYearEnd),
-          periodKey = "#004",
-          StatusFulfilled
-        ))
+  val allObligations: ObligationsModel = ObligationsModel(
+    Seq(
+      GroupedObligationsModel(
+        identification = "ABC123456789",
+        obligations = List(
+          SingleObligationModel(
+            start = getCurrentTaxYearEnd.minusMonths(3),
+            end = getCurrentTaxYearEnd,
+            due = getCurrentTaxYearEnd,
+            obligationType = "Quarterly",
+            dateReceived = Some(getCurrentTaxYearEnd),
+            periodKey = "#003",
+            StatusFulfilled
+          )
+        )
+      ),
+      GroupedObligationsModel(
+        identification = "ABC123456789",
+        obligations = List(
+          SingleObligationModel(
+            start = getCurrentTaxYearEnd.minusMonths(3),
+            end = getCurrentTaxYearEnd,
+            due = getCurrentTaxYearEnd,
+            obligationType = "Quarterly",
+            dateReceived = Some(getCurrentTaxYearEnd),
+            periodKey = "#004",
+            StatusFulfilled
+          )
+        )
+      )
     )
-  ))
+  )
 
-  def testUser(mtdUserRole: MTDUserRole, incomeSources: IncomeSourceDetailsModel = multipleBusinessesAndPropertyResponse): MtdItUser[_] = {
+  def testUser(
+      mtdUserRole:   MTDUserRole,
+      incomeSources: IncomeSourceDetailsModel = multipleBusinessesAndPropertyResponse
+    ): MtdItUser[_] = {
     getTestUser(mtdUserRole, incomeSources)
   }
 

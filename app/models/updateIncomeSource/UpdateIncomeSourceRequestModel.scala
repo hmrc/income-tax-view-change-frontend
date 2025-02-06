@@ -34,10 +34,12 @@ object Cessation {
   implicit val format: Format[Cessation] = Json.format
 }
 
-case class UpdateIncomeSourceRequestModel(nino: String,
-                                          incomeSourceID: String,
-                                          cessation: Option[Cessation] = None,
-                                          taxYearSpecific: Option[TaxYearSpecific] = None) extends UpdateIncomeSourceRequest
+case class UpdateIncomeSourceRequestModel(
+    nino:            String,
+    incomeSourceID:  String,
+    cessation:       Option[Cessation] = None,
+    taxYearSpecific: Option[TaxYearSpecific] = None)
+    extends UpdateIncomeSourceRequest
 
 object UpdateIncomeSourceRequestModel {
   implicit val format: Format[UpdateIncomeSourceRequestModel] = Json.format

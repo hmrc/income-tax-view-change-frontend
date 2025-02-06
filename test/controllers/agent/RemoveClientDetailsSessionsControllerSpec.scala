@@ -25,16 +25,15 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import views.html.agent.EnterClientsUTR
 
-class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
-  with MockEnterClientsUTR {
+class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions with MockEnterClientsUTR {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[EnterClientsUTR].toInstance(enterClientsUTR)
-    ).build()
+    )
+    .build()
 
   lazy val testRemoveClientDetailsSessionsController = app.injector.instanceOf[RemoveClientDetailsSessionsController]
-
 
   ".show" when {
     s"there is a user" that {
@@ -61,33 +60,34 @@ class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
       }
     }
 
-    Map("primary agent" -> false, "supporting agent" -> true).foreach { case (agentType, isSupportingAgent) =>
-      val fakeRequest = fakeRequestConfirmedClient(isSupportingAgent = isSupportingAgent)
+    Map("primary agent" -> false, "supporting agent" -> true).foreach {
+      case (agentType, isSupportingAgent) =>
+        val fakeRequest = fakeRequestConfirmedClient(isSupportingAgent = isSupportingAgent)
 
-      s"the user is a $agentType" should {
+        s"the user is a $agentType" should {
 
-        "remove client details session keys and redirect to the enter client UTR page" in {
-          setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent = isSupportingAgent)
+          "remove client details session keys and redirect to the enter client UTR page" in {
+            setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent = isSupportingAgent)
 
-          val result = testRemoveClientDetailsSessionsController.show()(fakeRequest)
+            val result = testRemoveClientDetailsSessionsController.show()(fakeRequest)
 
-          val removedSessionKeys: List[String] =
-            List(
-              "SessionKeys.clientLastName",
-              "SessionKeys.clientFirstName",
-              "SessionKeys.clientNino",
-              "SessionKeys.clientUTR",
-              "SessionKeys.isSupportingAgent",
-              "SessionKeys.confirmedClient"
-            )
+            val removedSessionKeys: List[String] =
+              List(
+                "SessionKeys.clientLastName",
+                "SessionKeys.clientFirstName",
+                "SessionKeys.clientNino",
+                "SessionKeys.clientUTR",
+                "SessionKeys.isSupportingAgent",
+                "SessionKeys.confirmedClient"
+              )
 
-          removedSessionKeys.foreach(key => result.futureValue.header.headers.get(key) shouldBe None)
+            removedSessionKeys.foreach(key => result.futureValue.header.headers.get(key) shouldBe None)
 
-          status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/client-utr")
+            status(result) shouldBe SEE_OTHER
+            redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/client-utr")
 
+          }
         }
-      }
     }
   }
 }

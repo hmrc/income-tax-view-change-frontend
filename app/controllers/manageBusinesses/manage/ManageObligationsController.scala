@@ -36,72 +36,86 @@ import views.html.manageBusinesses.manage.ManageObligations
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ManageObligationsController @Inject()(val authActions: AuthActions,
-                                            val itvcErrorHandler: ItvcErrorHandler,
-                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                            val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                            val obligationsView: ManageObligations,
-                                            val sessionService: SessionService,
-                                            nextUpdatesService: NextUpdatesService)
-                                           (implicit val ec: ExecutionContext,
-                                            val mcc: MessagesControllerComponents,
-                                            val appConfig: FrontendAppConfig) extends FrontendController(mcc)
-  with I18nSupport with JourneyCheckerManageBusinesses {
+class ManageObligationsController @Inject() (
+    val authActions:                AuthActions,
+    val itvcErrorHandler:           ItvcErrorHandler,
+    val itvcErrorHandlerAgent:      AgentItvcErrorHandler,
+    val incomeSourceDetailsService: IncomeSourceDetailsService,
+    val obligationsView:            ManageObligations,
+    val sessionService:             SessionService,
+    nextUpdatesService:             NextUpdatesService
+  )(
+    implicit val ec: ExecutionContext,
+    val mcc:         MessagesControllerComponents,
+    val appConfig:   FrontendAppConfig)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with JourneyCheckerManageBusinesses {
 
-  private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+  private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) =>
+    if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  def show(isAgent: Boolean,
-           incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
-      withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = CannotGoBackPage) { sessionData =>
-        val (reportingMethodOpt, taxYearOpt, incomeSourceIdStringOpt) = (
-          sessionData.manageIncomeSourceData.flatMap(_.reportingMethod),
-          sessionData.manageIncomeSourceData.flatMap(_.taxYear),
-          sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
-        )
-        withIncomeSourcesFS {
-          (incomeSourceType, taxYearOpt, reportingMethodOpt, incomeSourceIdStringOpt) match {
-            case (SelfEmployment, Some(taxYear), Some(reportingMethod), incomeSourceIdStringOpt) =>
-              val incomeSourceId: Option[IncomeSourceId] = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
-              handleRequest(
-                incomeSourceType,
-                isAgent,
-                s"${taxYear - 1}-$taxYear",
-                reportingMethod,
-                incomeSourceId
-              )
-            case (_, Some(taxYear), Some(reportingMethod), _) =>
-              handleRequest(
-                incomeSourceType,
-                isAgent,
-                s"${taxYear - 1}-$taxYear",
-                reportingMethod,
-                None
-              )
-            case (_, _, _, _) =>
-              Logger("application").error(s"Missing session values")
-              Future.successful {
-                errorHandler(isAgent).showInternalServerError()
-              }
+  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+      withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = CannotGoBackPage) {
+        sessionData =>
+          val (reportingMethodOpt, taxYearOpt, incomeSourceIdStringOpt) = (
+            sessionData.manageIncomeSourceData.flatMap(_.reportingMethod),
+            sessionData.manageIncomeSourceData.flatMap(_.taxYear),
+            sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
+          )
+          withIncomeSourcesFS {
+            (incomeSourceType, taxYearOpt, reportingMethodOpt, incomeSourceIdStringOpt) match {
+              case (SelfEmployment, Some(taxYear), Some(reportingMethod), incomeSourceIdStringOpt) =>
+                val incomeSourceId: Option[IncomeSourceId] = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
+                handleRequest(
+                  incomeSourceType,
+                  isAgent,
+                  s"${taxYear - 1}-$taxYear",
+                  reportingMethod,
+                  incomeSourceId
+                )
+              case (_, Some(taxYear), Some(reportingMethod), _) =>
+                handleRequest(
+                  incomeSourceType,
+                  isAgent,
+                  s"${taxYear - 1}-$taxYear",
+                  reportingMethod,
+                  None
+                )
+              case (_, _, _, _) =>
+                Logger("application").error(s"Missing session values")
+                Future.successful {
+                  errorHandler(isAgent).showInternalServerError()
+                }
+            }
           }
-        }
       }
-  }
+    }
 
   private lazy val successPostUrl = (isAgent: Boolean) => {
     controllers.manageBusinesses.manage.routes.ManageObligationsController.submit(isAgent)
   }
 
-  def handleRequest(incomeSourceType: IncomeSourceType, isAgent: Boolean, taxYear: String, changeTo: String, incomeSourceId: Option[IncomeSourceId])
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  def handleRequest(
+      incomeSourceType: IncomeSourceType,
+      isAgent:          Boolean,
+      taxYear:          String,
+      changeTo:         String,
+      incomeSourceId:   Option[IncomeSourceId]
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier
+    ): Future[Result] = {
     withIncomeSourcesFS {
       (getTaxYearModel(taxYear), changeTo) match {
         case (Some(years), AnnualReportingMethod.name | QuarterlyReportingMethod.name) =>
           getIncomeSourceId(incomeSourceType, incomeSourceId, isAgent = isAgent) match {
             case Some(incomeSourceId) =>
               val addedBusinessName: String = getBusinessName(incomeSourceType, Some(incomeSourceId))
-              nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears = false) map { viewModel =>
-                Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, successPostUrl(isAgent)))
+              nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears = false) map {
+                viewModel =>
+                  Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, successPostUrl(isAgent)))
               }
             case None => showError(isAgent, s"Unable to retrieve income source ID for $incomeSourceType")
           }
@@ -114,32 +128,43 @@ class ManageObligationsController @Inject()(val authActions: AuthActions,
   }
 
   def showError(isAgent: Boolean, message: String)(implicit user: MtdItUser[_]): Future[Result] = {
-    Logger("application").error(
-      s"${if (isAgent) "[Agent]"}$message")
+    Logger("application").error(s"${if (isAgent) "[Agent]"}$message")
     Future.successful {
       errorHandler(isAgent).showInternalServerError()
     }
   }
 
-  def getBusinessName(mode: IncomeSourceType, incomeSourceId: Option[IncomeSourceId])(implicit user: MtdItUser[_]): String = {
+  def getBusinessName(
+      mode:           IncomeSourceType,
+      incomeSourceId: Option[IncomeSourceId]
+    )(
+      implicit user: MtdItUser[_]
+    ): String = {
     (mode, incomeSourceId) match {
       case (SelfEmployment, Some(incomeSourceId)) =>
         val businessDetailsParams = for {
-          addedBusiness <- user.incomeSources.businesses.find(businessDetailsModel => businessDetailsModel.incomeSourceId.contains(incomeSourceId.value))
+          addedBusiness <- user.incomeSources.businesses.find(businessDetailsModel =>
+            businessDetailsModel.incomeSourceId.contains(incomeSourceId.value)
+          )
           businessName <- addedBusiness.tradingName
         } yield (addedBusiness, businessName)
         businessDetailsParams match {
           case Some((_, name)) => name
-          case None => "Not Found"
+          case None            => "Not Found"
         }
-      case (UkProperty, _) => "UK property"
+      case (UkProperty, _)      => "UK property"
       case (ForeignProperty, _) => "Foreign property"
-      case _ => "Not Found"
+      case _                    => "Not Found"
     }
   }
 
-  def getIncomeSourceId(incomeSourceType: IncomeSourceType, id: Option[IncomeSourceId], isAgent: Boolean)
-                       (implicit user: MtdItUser[_]): Option[IncomeSourceId] = {
+  def getIncomeSourceId(
+      incomeSourceType: IncomeSourceType,
+      id:               Option[IncomeSourceId],
+      isAgent:          Boolean
+    )(
+      implicit user: MtdItUser[_]
+    ): Option[IncomeSourceId] = {
 
     incomeSourceType match {
       case SelfEmployment =>
@@ -153,8 +178,8 @@ class ManageObligationsController @Inject()(val authActions: AuthActions,
     }
   }
 
-
-  def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { _ =>
-    Future.successful(Redirect(controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(isAgent)))
-  }
+  def submit(isAgent: Boolean): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { _ =>
+      Future.successful(Redirect(controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(isAgent)))
+    }
 }

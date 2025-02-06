@@ -43,22 +43,24 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
     nino = testNino,
     mtdbsa = testMtditid,
     yearOfMigration = None,
-    businesses = List(BusinessDetailsModel(
-      "testId",
-      incomeSource = Some(testIncomeSource),
-      Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
-      None,
-      None,
-      Some(getCurrentTaxYearEnd),
-      None,
-      address = Some(address),
-      cashOrAccruals = false
-    )),
+    businesses = List(
+      BusinessDetailsModel(
+        "testId",
+        incomeSource = Some(testIncomeSource),
+        Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
+        None,
+        None,
+        Some(getCurrentTaxYearEnd),
+        None,
+        address = Some(address),
+        cashOrAccruals = false
+      )
+    ),
     properties = Nil
   )
 
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
-  implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
+  implicit val messages:     Messages              = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
   val path = "/agents/next-updates"
 
@@ -75,13 +77,24 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           "has obligations" in {
             stubAuthorised(mtdUserRole)
 
-            val currentObligations: ObligationsModel = ObligationsModel(Seq(
-              GroupedObligationsModel(
-                identification = "testId",
-                obligations = List(
-                  SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                ))
-            ))
+            val currentObligations: ObligationsModel = ObligationsModel(
+              Seq(
+                GroupedObligationsModel(
+                  identification = "testId",
+                  obligations = List(
+                    SingleObligationModel(
+                      fixedDate,
+                      fixedDate.plusDays(1),
+                      fixedDate.minusDays(1),
+                      "Quarterly",
+                      None,
+                      "testPeriodKey",
+                      StatusFulfilled
+                    )
+                  )
+                )
+              )
+            )
 
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,
@@ -105,7 +118,13 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
               pageTitleAgent("nextUpdates.heading")
             )
 
-            verifyAuditContainsDetail(NextUpdatesResponseAuditModel(getTestUser(MTDPrimaryAgent, incomeSourceDetails), "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+            verifyAuditContainsDetail(
+              NextUpdatesResponseAuditModel(
+                getTestUser(MTDPrimaryAgent, incomeSourceDetails),
+                "testId",
+                currentObligations.obligations.flatMap(_.obligations)
+              ).detail
+            )
           }
 
           "has no obligations" in {
@@ -136,14 +155,25 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
             stubAuthorised(mtdUserRole)
             enable(OptOutFs)
             val currentTaxYear = dateService.getCurrentTaxYearEnd
-            val previousYear = currentTaxYear - 1
-            val currentObligations: ObligationsModel = ObligationsModel(Seq(
-              GroupedObligationsModel(
-                identification = "testId",
-                obligations = List(
-                  SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                ))
-            ))
+            val previousYear   = currentTaxYear - 1
+            val currentObligations: ObligationsModel = ObligationsModel(
+              Seq(
+                GroupedObligationsModel(
+                  identification = "testId",
+                  obligations = List(
+                    SingleObligationModel(
+                      fixedDate,
+                      fixedDate.plusDays(1),
+                      fixedDate.minusDays(1),
+                      "Quarterly",
+                      None,
+                      "testPeriodKey",
+                      StatusFulfilled
+                    )
+                  )
+                )
+              )
+            )
 
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,
@@ -157,8 +187,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
               taxYear = dateService.getCurrentTaxYear
             )
-            CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
-
+            CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(
+              CalculationListIntegrationTestConstants.successResponseCrystallised.toString()
+            )
 
             val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -171,26 +202,44 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
               httpStatus(OK),
               pageTitleAgent("nextUpdates.heading"),
               elementTextBySelector("#updates-software-heading")(expectedValue = "Submitting updates in software"),
-              elementTextBySelector("#updates-software-link")
-              (expectedValue = "Use your compatible record keeping software (opens in new tab) " +
-                "to keep digital records of all your business income and expenses. You must submit these " +
-                "updates through your software by each date shown."),
+              elementTextBySelector("#updates-software-link")(expectedValue =
+                "Use your compatible record keeping software (opens in new tab) " +
+                  "to keep digital records of all your business income and expenses. You must submit these " +
+                  "updates through your software by each date shown."
+              )
             )
 
-            verifyAuditContainsDetail(NextUpdatesResponseAuditModel(getTestUser(MTDPrimaryAgent, incomeSourceDetails), "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+            verifyAuditContainsDetail(
+              NextUpdatesResponseAuditModel(
+                getTestUser(MTDPrimaryAgent, incomeSourceDetails),
+                "testId",
+                currentObligations.obligations.flatMap(_.obligations)
+              ).detail
+            )
           }
 
           "has obligations and the Opt Out feature switch disabled" in {
             stubAuthorised(mtdUserRole)
             disable(OptOutFs)
 
-            val currentObligations: ObligationsModel = ObligationsModel(Seq(
-              GroupedObligationsModel(
-                identification = "testId",
-                obligations = List(
-                  SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                ))
-            ))
+            val currentObligations: ObligationsModel = ObligationsModel(
+              Seq(
+                GroupedObligationsModel(
+                  identification = "testId",
+                  obligations = List(
+                    SingleObligationModel(
+                      fixedDate,
+                      fixedDate.plusDays(1),
+                      fixedDate.minusDays(1),
+                      "Quarterly",
+                      None,
+                      "testPeriodKey",
+                      StatusFulfilled
+                    )
+                  )
+                )
+              )
+            )
 
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,
@@ -213,10 +262,16 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
               httpStatus(OK),
               pageTitleAgent("nextUpdates.heading"),
               isElementVisibleById("#updates-software-heading")(expectedValue = false),
-              isElementVisibleById("#updates-software-link")(expectedValue = false),
+              isElementVisibleById("#updates-software-link")(expectedValue = false)
             )
 
-            verifyAuditContainsDetail(NextUpdatesResponseAuditModel(getTestUser(MTDPrimaryAgent, incomeSourceDetails), "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+            verifyAuditContainsDetail(
+              NextUpdatesResponseAuditModel(
+                getTestUser(MTDPrimaryAgent, incomeSourceDetails),
+                "testId",
+                currentObligations.obligations.flatMap(_.obligations)
+              ).detail
+            )
           }
 
           "Opt Out feature switch is enabled" should {
@@ -226,14 +281,25 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
                 stubAuthorised(mtdUserRole)
                 enable(OptOutFs)
                 val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
-                val previousYear = currentTaxYear.addYears(-1)
-                val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                  GroupedObligationsModel(
-                    identification = "testId",
-                    obligations = List(
-                      SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                    ))
-                ))
+                val previousYear   = currentTaxYear.addYears(-1)
+                val currentObligations: ObligationsModel = ObligationsModel(
+                  Seq(
+                    GroupedObligationsModel(
+                      identification = "testId",
+                      obligations = List(
+                        SingleObligationModel(
+                          fixedDate,
+                          fixedDate.plusDays(1),
+                          fixedDate.minusDays(1),
+                          "Quarterly",
+                          None,
+                          "testPeriodKey",
+                          StatusFulfilled
+                        )
+                      )
+                    )
+                  )
+                )
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
@@ -245,8 +311,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
                   deadlines = currentObligations
                 )
                 ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatTaxYearRange, futureYears = true)
-                CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
-
+                CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(
+                  CalculationListIntegrationTestConstants.successResponseCrystallised.toString()
+                )
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -265,14 +332,25 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
                 stubAuthorised(mtdUserRole)
                 enable(OptOutFs)
                 val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
-                val previousYear = currentTaxYear.addYears(-1)
-                val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                  GroupedObligationsModel(
-                    identification = "testId",
-                    obligations = List(
-                      SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                    ))
-                ))
+                val previousYear   = currentTaxYear.addYears(-1)
+                val currentObligations: ObligationsModel = ObligationsModel(
+                  Seq(
+                    GroupedObligationsModel(
+                      identification = "testId",
+                      obligations = List(
+                        SingleObligationModel(
+                          fixedDate,
+                          fixedDate.plusDays(1),
+                          fixedDate.minusDays(1),
+                          "Quarterly",
+                          None,
+                          "testPeriodKey",
+                          StatusFulfilled
+                        )
+                      )
+                    )
+                  )
+                )
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
@@ -285,7 +363,6 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
                 )
                 ITSAStatusDetailsStub.stubGetITSAStatusDetails(previousYear.formatTaxYearRange)
                 CalculationListStub.stubGetLegacyCalculationListError(testNino, previousYear.endYear.toString)
-
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -304,14 +381,25 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
                 stubAuthorised(mtdUserRole)
                 enable(OptOutFs)
                 val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
-                val previousYear = currentTaxYear.addYears(-1)
-                val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                  GroupedObligationsModel(
-                    identification = "testId",
-                    obligations = List(
-                      SingleObligationModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                    ))
-                ))
+                val previousYear   = currentTaxYear.addYears(-1)
+                val currentObligations: ObligationsModel = ObligationsModel(
+                  Seq(
+                    GroupedObligationsModel(
+                      identification = "testId",
+                      obligations = List(
+                        SingleObligationModel(
+                          fixedDate,
+                          fixedDate.plusDays(1),
+                          fixedDate.minusDays(1),
+                          "Quarterly",
+                          None,
+                          "testPeriodKey",
+                          StatusFulfilled
+                        )
+                      )
+                    )
+                  )
+                )
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
@@ -324,7 +412,6 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
                 )
                 ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatTaxYearRange, futureYears = true)
                 CalculationListStub.stubGetLegacyCalculationListError(testNino, previousYear.endYear.toString)
-
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 

@@ -24,8 +24,11 @@ import views.html.errorPages.CustomNotFoundError
 import scala.concurrent.Future
 
 @Singleton
-class NotFoundDocumentIDLookupController @Inject()(customNotFoundError: CustomNotFoundError)
-                                                  (implicit mcc: MessagesControllerComponents) extends FrontendController(mcc) {
+class NotFoundDocumentIDLookupController @Inject() (
+    customNotFoundError: CustomNotFoundError
+  )(
+    implicit mcc: MessagesControllerComponents)
+    extends FrontendController(mcc) {
   val show: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(customNotFoundError()))
   }

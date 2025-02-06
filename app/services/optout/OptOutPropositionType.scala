@@ -24,21 +24,29 @@ sealed trait OptOutPropositionTypes {
   def state(): Option[OptOutState]
 }
 
-case class OneYearOptOutProposition private(proposition: OptOutProposition) extends OptOutPropositionTypes {
+case class OneYearOptOutProposition private (proposition: OptOutProposition) extends OptOutPropositionTypes {
   val intent: OptOutTaxYear = proposition.availableOptOutYears.head
 
   override def state(): Option[OneYearOptOutState] = {
     proposition match {
-      case OptOutProposition(previousTaxYear, currentTaxYear, _) if previousTaxYear == intent && currentTaxYear.status == Mandated => Some(OneYearOptOutFollowedByMandated)
-      case OptOutProposition(_, currentTaxYear, nextTaxYear) if currentTaxYear == intent && nextTaxYear.status == Mandated => Some(OneYearOptOutFollowedByMandated)
-      case OptOutProposition(previousTaxYear, currentTaxYear, _) if previousTaxYear == intent && currentTaxYear.status == Annual => Some(OneYearOptOutFollowedByAnnual)
-      case OptOutProposition(_, currentTaxYear, nextTaxYear) if currentTaxYear == intent && nextTaxYear.status == Annual => Some(OneYearOptOutFollowedByAnnual)
+      case OptOutProposition(previousTaxYear, currentTaxYear, _)
+          if previousTaxYear == intent && currentTaxYear.status == Mandated =>
+        Some(OneYearOptOutFollowedByMandated)
+      case OptOutProposition(_, currentTaxYear, nextTaxYear)
+          if currentTaxYear == intent && nextTaxYear.status == Mandated =>
+        Some(OneYearOptOutFollowedByMandated)
+      case OptOutProposition(previousTaxYear, currentTaxYear, _)
+          if previousTaxYear == intent && currentTaxYear.status == Annual =>
+        Some(OneYearOptOutFollowedByAnnual)
+      case OptOutProposition(_, currentTaxYear, nextTaxYear)
+          if currentTaxYear == intent && nextTaxYear.status == Annual =>
+        Some(OneYearOptOutFollowedByAnnual)
       case OptOutProposition(_, _, nextTaxYear) if nextTaxYear == intent => Some(NextYearOptOut)
-      case _ => None
+      case _                                                             => None
     }
   }
 }
 
-case class MultiYearOptOutProposition private(proposition: OptOutProposition) extends OptOutPropositionTypes {
+case class MultiYearOptOutProposition private (proposition: OptOutProposition) extends OptOutPropositionTypes {
   override def state(): Option[OptOutState] = Some(MultiYearOptOutDefault)
 }

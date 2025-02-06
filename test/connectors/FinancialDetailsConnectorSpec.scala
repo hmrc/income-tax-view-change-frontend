@@ -40,7 +40,6 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.{ExecutionContext, Future}
 
-
 class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
 
   trait Setup {
@@ -141,7 +140,8 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
         when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
           .thenReturn(Future(successResponseBadJson))
 
-        val result: Future[PaymentAllocationsResponse] = connector.getPaymentAllocations(testUserNino, testPaymentLot, testPaymentLotItem)
+        val result: Future[PaymentAllocationsResponse] =
+          connector.getPaymentAllocations(testUserNino, testPaymentLot, testPaymentLotItem)
         result.futureValue shouldBe testPaymentAllocationsErrorModelParsing
       }
 
@@ -155,7 +155,8 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
         when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
           .thenReturn(Future(badResponse))
 
-        val result: Future[PaymentAllocationsResponse] = connector.getPaymentAllocations(testUserNino, testPaymentLot, testPaymentLotItem)
+        val result: Future[PaymentAllocationsResponse] =
+          connector.getPaymentAllocations(testUserNino, testPaymentLot, testPaymentLotItem)
         result.futureValue shouldBe PaymentAllocationsError(Status.BAD_REQUEST, "Error Message")
       }
 
@@ -169,15 +170,21 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
         when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
           .thenReturn(Future.failed(new Exception("unknown error")))
 
-        val result: Future[PaymentAllocationsResponse] = connector.getPaymentAllocations(testUserNino, testPaymentLot, testPaymentLotItem)
-        result.futureValue shouldBe PaymentAllocationsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
+        val result: Future[PaymentAllocationsResponse] =
+          connector.getPaymentAllocations(testUserNino, testPaymentLot, testPaymentLotItem)
+        result.futureValue shouldBe PaymentAllocationsError(
+          Status.INTERNAL_SERVER_ERROR,
+          s"Unexpected failure, unknown error"
+        )
       }
     }
 
     ".getFinancialDetails() for a single tax year" should {
 
-      val successResponse = HttpResponse(status = Status.OK, json = testValidFinancialDetailsModelJsonReads, headers = Map.empty)
-      val successResponseBadJson = HttpResponse(status = Status.OK, json = testInvalidFinancialDetailsJson, headers = Map.empty)
+      val successResponse =
+        HttpResponse(status = Status.OK, json = testValidFinancialDetailsModelJsonReads, headers = Map.empty)
+      val successResponseBadJson =
+        HttpResponse(status = Status.OK, json = testInvalidFinancialDetailsJson, headers = Map.empty)
       val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
 
       "return a FinancialDetails model when successful JSON is received" in new Setup {
@@ -245,15 +252,20 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
           .thenReturn(Future.failed(new Exception("unknown error")))
 
         val result: Future[FinancialDetailsResponseModel] = connector.getFinancialDetails(testYear2017, testNino)
-        result.futureValue shouldBe FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
+        result.futureValue shouldBe FinancialDetailsErrorModel(
+          Status.INTERNAL_SERVER_ERROR,
+          s"Unexpected failure, unknown error"
+        )
       }
 
     }
 
     ".getFinancialDetails() for a range of tax years" should {
 
-      val successResponse = HttpResponse(status = Status.OK, json = testValidFinancialDetailsModelJsonReads, headers = Map.empty)
-      val successResponseBadJson = HttpResponse(status = Status.OK, json = testInvalidFinancialDetailsJson, headers = Map.empty)
+      val successResponse =
+        HttpResponse(status = Status.OK, json = testValidFinancialDetailsModelJsonReads, headers = Map.empty)
+      val successResponseBadJson =
+        HttpResponse(status = Status.OK, json = testInvalidFinancialDetailsJson, headers = Map.empty)
       val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
 
       "return a FinancialDetails model when successful JSON is received" in new Setup {
@@ -269,7 +281,8 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
         when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
           .thenReturn(Future(successResponse))
 
-        val result: Future[FinancialDetailsResponseModel] = connector.getFinancialDetails(testTaxYear2017, testTaxYear2017.addYears(1), testNino)
+        val result: Future[FinancialDetailsResponseModel] =
+          connector.getFinancialDetails(testTaxYear2017, testTaxYear2017.addYears(1), testNino)
         result.futureValue shouldBe testValidFinancialDetailsModel
       }
 
@@ -286,7 +299,8 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
         when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
           .thenReturn(Future(successResponseBadJson))
 
-        val result: Future[FinancialDetailsResponseModel] = connector.getFinancialDetails(testTaxYear2017, testTaxYear2017.addYears(1), testNino)
+        val result: Future[FinancialDetailsResponseModel] =
+          connector.getFinancialDetails(testTaxYear2017, testTaxYear2017.addYears(1), testNino)
         result.futureValue shouldBe testFinancialDetailsErrorModelParsing
       }
 
@@ -303,7 +317,8 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
         when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
           .thenReturn(Future(badResponse))
 
-        val result: Future[FinancialDetailsResponseModel] = connector.getFinancialDetails(testTaxYear2017, testTaxYear2017.nextYear, testNino)
+        val result: Future[FinancialDetailsResponseModel] =
+          connector.getFinancialDetails(testTaxYear2017, testTaxYear2017.nextYear, testNino)
         result.futureValue shouldBe FinancialDetailsErrorModel(Status.BAD_REQUEST, "Error Message")
       }
 
@@ -320,8 +335,12 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
         when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
           .thenReturn(Future.failed(new Exception("unknown error")))
 
-        val result: Future[FinancialDetailsResponseModel] = connector.getFinancialDetails(testTaxYear2017, testTaxYear2017.addYears(1), testNino)
-        result.futureValue shouldBe FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
+        val result: Future[FinancialDetailsResponseModel] =
+          connector.getFinancialDetails(testTaxYear2017, testTaxYear2017.addYears(1), testNino)
+        result.futureValue shouldBe FinancialDetailsErrorModel(
+          Status.INTERNAL_SERVER_ERROR,
+          s"Unexpected failure, unknown error"
+        )
       }
 
     }
@@ -330,9 +349,18 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
 
       val payments: Seq[Payment] =
         Seq(
-          Payment(reference = Some("reference"), amount = Some(100.00), outstandingAmount = None,
-            method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
-            dueDate = Some(fixedDate), documentDate = fixedDate, Some("DOCID01"))
+          Payment(
+            reference = Some("reference"),
+            amount = Some(100.00),
+            outstandingAmount = None,
+            method = Some("method"),
+            documentDescription = None,
+            lot = Some("lot"),
+            lotItem = Some("lotItem"),
+            dueDate = Some(fixedDate),
+            documentDate = fixedDate,
+            Some("DOCID01")
+          )
         )
 
       val successResponse: HttpResponse =
@@ -430,9 +458,18 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
 
       val payments: Seq[Payment] =
         Seq(
-          Payment(reference = Some("reference"), amount = Some(100.00), outstandingAmount = None,
-            method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
-            dueDate = Some(fixedDate), documentDate = fixedDate, Some("DOCID01"))
+          Payment(
+            reference = Some("reference"),
+            amount = Some(100.00),
+            outstandingAmount = None,
+            method = Some("method"),
+            documentDescription = None,
+            lot = Some("lot"),
+            lotItem = Some("lotItem"),
+            dueDate = Some(fixedDate),
+            documentDate = fixedDate,
+            Some("DOCID01")
+          )
         )
 
       val successResponse: HttpResponse =
@@ -531,7 +568,8 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
       "a payment allocation" when {
 
         val successResponse = HttpResponse(status = OK, json = validPaymentAllocationChargesJson, headers = Map.empty)
-        val successResponseMultiplePayments = HttpResponse(status = OK, json = validMultiplePaymentAllocationChargesJson, headers = Map.empty)
+        val successResponseMultiplePayments =
+          HttpResponse(status = OK, json = validMultiplePaymentAllocationChargesJson, headers = Map.empty)
 
         "receiving an OK with only one valid data item" in new Setup {
 
@@ -546,7 +584,8 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
           when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
             .thenReturn(Future(successResponse))
 
-          val result: Future[FinancialDetailsWithDocumentDetailsResponse] = connector.getFinancialDetailsByDocumentId(testUserNino, docNumber)
+          val result: Future[FinancialDetailsWithDocumentDetailsResponse] =
+            connector.getFinancialDetailsByDocumentId(testUserNino, docNumber)
           result.futureValue shouldBe paymentAllocationChargesModel
         }
 
@@ -563,7 +602,8 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
           when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
             .thenReturn(Future(successResponseMultiplePayments))
 
-          val result: Future[FinancialDetailsWithDocumentDetailsResponse] = connector.getFinancialDetailsByDocumentId(testUserNino, docNumber)
+          val result: Future[FinancialDetailsWithDocumentDetailsResponse] =
+            connector.getFinancialDetailsByDocumentId(testUserNino, docNumber)
           result.futureValue shouldBe paymentAllocationChargesModelMultiplePayments
         }
       }
@@ -572,7 +612,8 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
 
         "receiving a not found response" in new Setup {
 
-          val response = HttpResponse(status = Status.NOT_FOUND, json = Json.toJson("Error message"), headers = Map.empty)
+          val response =
+            HttpResponse(status = Status.NOT_FOUND, json = Json.toJson("Error message"), headers = Map.empty)
 
           when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
 
@@ -585,7 +626,8 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
           when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
             .thenReturn(Future(response))
 
-          val result: Future[FinancialDetailsWithDocumentDetailsResponse] = connector.getFinancialDetailsByDocumentId(testUserNino, docNumber)
+          val result: Future[FinancialDetailsWithDocumentDetailsResponse] =
+            connector.getFinancialDetailsByDocumentId(testUserNino, docNumber)
           result.futureValue shouldBe FinancialDetailsWithDocumentDetailsErrorModel(404, """"Error message"""")
         }
       }
@@ -594,7 +636,8 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
 
         "receiving a 500+ response" in new Setup {
 
-          val response = HttpResponse(status = Status.SERVICE_UNAVAILABLE, json = Json.toJson("Error message"), headers = Map.empty)
+          val response =
+            HttpResponse(status = Status.SERVICE_UNAVAILABLE, json = Json.toJson("Error message"), headers = Map.empty)
 
           when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
 
@@ -607,13 +650,15 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
           when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
             .thenReturn(Future(response))
 
-          val result: Future[FinancialDetailsWithDocumentDetailsResponse] = connector.getFinancialDetailsByDocumentId(testUserNino, docNumber)
+          val result: Future[FinancialDetailsWithDocumentDetailsResponse] =
+            connector.getFinancialDetailsByDocumentId(testUserNino, docNumber)
           result.futureValue shouldBe FinancialDetailsWithDocumentDetailsErrorModel(503, """"Error message"""")
         }
 
         "receiving a 400- response" in new Setup {
 
-          val response = HttpResponse(status = Status.BAD_REQUEST, json = Json.toJson("Error message"), headers = Map.empty)
+          val response =
+            HttpResponse(status = Status.BAD_REQUEST, json = Json.toJson("Error message"), headers = Map.empty)
 
           when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
 
@@ -626,7 +671,8 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
           when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
             .thenReturn(Future(response))
 
-          val result: Future[FinancialDetailsWithDocumentDetailsResponse] = connector.getFinancialDetailsByDocumentId(testUserNino, docNumber)
+          val result: Future[FinancialDetailsWithDocumentDetailsResponse] =
+            connector.getFinancialDetailsByDocumentId(testUserNino, docNumber)
           result.futureValue shouldBe FinancialDetailsWithDocumentDetailsErrorModel(400, """"Error message"""")
         }
       }

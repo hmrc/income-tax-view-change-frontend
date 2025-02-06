@@ -29,16 +29,18 @@ import testConstants.BaseTestConstants.{calendarYear2018, testSaUtr}
 import testConstants.FinancialDetailsTestConstants._
 import views.html.CreditsSummary
 
-
-class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationService
-  with MockFinancialDetailsService
-  with MockCreditHistoryService {
+class CreditsSummaryControllerSpec
+    extends MockAuthActions
+    with MockCalculationService
+    with MockFinancialDetailsService
+    with MockCreditHistoryService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[CalculationService].toInstance(mockCalculationService),
       api.inject.bind[CreditHistoryService].toInstance(mockCreditHistoryService)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[CreditsSummaryController]
 
@@ -60,7 +62,9 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
   mtdAllRoles.foreach { mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
     s"show${if (isAgent) "AgentCreditsSummary"}" when {
-      val action = if (isAgent) testController.showAgentCreditsSummary(calendarYear2018) else testController.showCreditsSummary(calendarYear2018)
+      val action =
+        if (isAgent) testController.showAgentCreditsSummary(calendarYear2018)
+        else testController.showCreditsSummary(calendarYear2018)
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
       s"the $mtdUserRole is authenticated" should {
         if (mtdUserRole == MTDSupportingAgent) {
@@ -89,9 +93,11 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   calendarYear = calendarYear2018
                 ).toString
 
-                val result = action(fakeRequest.withHeaders(
-                  HeaderNames.REFERER -> backUrl
-                ))
+                val result = action(
+                  fakeRequest.withHeaders(
+                    HeaderNames.REFERER -> backUrl
+                  )
+                )
 
                 status(result) shouldBe Status.OK
 
@@ -103,7 +109,8 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
             "contains a back link to the Payment Refund History and the Money in your account section should not be available" when {
               "available credit is Some(0.00)" in {
                 val emptyBalanceDetails = BalanceDetails(0.00, 0.00, 0.00, Some(0.0), None, None, None, None)
-                val chargesList = creditAndRefundCreditDetailListMFA.map(_.copy(balanceDetails = Some(emptyBalanceDetails)))
+                val chargesList =
+                  creditAndRefundCreditDetailListMFA.map(_.copy(balanceDetails = Some(emptyBalanceDetails)))
                 setupMockSuccess(mtdUserRole)
                 mockSingleBusinessIncomeSource()
                 mockCreditHistoryService(chargesList)
@@ -122,9 +129,11 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   calendarYear = calendarYear2018
                 ).toString
 
-                val result = action(fakeRequest.withHeaders(
-                  HeaderNames.REFERER -> backUrl
-                ))
+                val result = action(
+                  fakeRequest.withHeaders(
+                    HeaderNames.REFERER -> backUrl
+                  )
+                )
 
                 status(result) shouldBe Status.OK
                 contentAsString(result) shouldBe expectedContent
@@ -152,9 +161,11 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   calendarYear = calendarYear2018
                 ).toString
 
-                val result = action(fakeRequest.withHeaders(
-                  HeaderNames.REFERER -> backUrl
-                ))
+                val result = action(
+                  fakeRequest.withHeaders(
+                    HeaderNames.REFERER -> backUrl
+                  )
+                )
                 status(result) shouldBe Status.OK
                 contentAsString(result) shouldBe expectedContent
                 contentType(result) shouldBe Some(HTML)
@@ -209,9 +220,11 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   calendarYear = calendarYear2018
                 ).toString
 
-                val result = action(fakeRequest.withHeaders(
-                  HeaderNames.REFERER -> backUrl
-                ))
+                val result = action(
+                  fakeRequest.withHeaders(
+                    HeaderNames.REFERER -> backUrl
+                  )
+                )
                 status(result) shouldBe Status.OK
                 contentAsString(result) shouldBe expectedContent
                 contentType(result) shouldBe Some(HTML)

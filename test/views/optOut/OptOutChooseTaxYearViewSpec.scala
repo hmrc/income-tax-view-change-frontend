@@ -29,11 +29,11 @@ import views.html.optOut.OptOutChooseTaxYear
 
 class OptOutChooseTaxYearViewSpec extends TestSupport {
 
-  lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  lazy val mockAppConfig:      FrontendAppConfig   = app.injector.instanceOf[FrontendAppConfig]
   val optOutChooseTaxYearView: OptOutChooseTaxYear = app.injector.instanceOf[OptOutChooseTaxYear]
   //test data needs to be added
-  val taxYear: TaxYear = TaxYear.forYearEnd(2024)
-  val availableOptOutTaxYear: Seq[TaxYear] = Seq(taxYear)
+  val taxYear:                     TaxYear      = TaxYear.forYearEnd(2024)
+  val availableOptOutTaxYear:      Seq[TaxYear] = Seq(taxYear)
   val availableOptOutTaxYearsList: List[String] = List(taxYear.toString)
   val submissionsCountForTaxYearModel: QuarterlyUpdatesCountForTaxYearModel =
     QuarterlyUpdatesCountForTaxYearModel(Seq(QuarterlyUpdatesCountForTaxYear(TaxYear.forYearEnd(2024), 6)))
@@ -41,27 +41,49 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
     QuarterlyUpdatesCountForTaxYearModel(Seq())
 
   class Setup(isAgent: Boolean = true) {
-    val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
-    val pageDocument: Document = Jsoup.parse(contentAsString(optOutChooseTaxYearView(ConfirmOptOutMultiTaxYearChoiceForm(availableOptOutTaxYearsList), availableOptOutTaxYear, submissionsCountForTaxYearModel, isAgent, cancelURL)))
+    val cancelURL =
+      if (isAgent) controllers.routes.NextUpdatesController.showAgent.url
+      else controllers.routes.NextUpdatesController.show().url
+    val pageDocument: Document = Jsoup.parse(
+      contentAsString(
+        optOutChooseTaxYearView(
+          ConfirmOptOutMultiTaxYearChoiceForm(availableOptOutTaxYearsList),
+          availableOptOutTaxYear,
+          submissionsCountForTaxYearModel,
+          isAgent,
+          cancelURL
+        )
+      )
+    )
   }
-  class SetupNoSubmissions(isAgent: Boolean = true) extends Setup{
+  class SetupNoSubmissions(isAgent: Boolean = true) extends Setup {
     //This is for tests without previous tax submissions
-    override val pageDocument: Document = Jsoup.parse(contentAsString(optOutChooseTaxYearView(ConfirmOptOutMultiTaxYearChoiceForm(availableOptOutTaxYearsList), availableOptOutTaxYear, submissionsCountEmpty, isAgent, cancelURL)))
+    override val pageDocument: Document = Jsoup.parse(
+      contentAsString(
+        optOutChooseTaxYearView(
+          ConfirmOptOutMultiTaxYearChoiceForm(availableOptOutTaxYearsList),
+          availableOptOutTaxYear,
+          submissionsCountEmpty,
+          isAgent,
+          cancelURL
+        )
+      )
+    )
   }
 
   object optOutChooseTaxYear {
-    val heading: String = messages("optout.chooseOptOutTaxYear.heading")
-    val title: String = messages("htmlTitle", heading)
-    val summary: String = messages("optout.chooseOptOutTaxYear.desc")
-    val whichTaxYear: String = messages("optout.chooseOptOutTaxYear.whichTaxYear")
-    val confirmOptOutURL: String = controllers.optOut.routes.ConfirmOptOutController.show(isAgent = false).url
+    val heading:               String = messages("optout.chooseOptOutTaxYear.heading")
+    val title:                 String = messages("htmlTitle", heading)
+    val summary:               String = messages("optout.chooseOptOutTaxYear.desc")
+    val whichTaxYear:          String = messages("optout.chooseOptOutTaxYear.whichTaxYear")
+    val confirmOptOutURL:      String = controllers.optOut.routes.ConfirmOptOutController.show(isAgent = false).url
     val confirmOptOutURLAgent: String = controllers.optOut.routes.ConfirmOptOutController.show(isAgent = true).url
-    val cancelButton: String = messages("optout.chooseOptOutTaxYear.cancel")
-    val cancelButtonHref: String = controllers.routes.NextUpdatesController.show().url
+    val cancelButton:          String = messages("optout.chooseOptOutTaxYear.cancel")
+    val cancelButtonHref:      String = controllers.routes.NextUpdatesController.show().url
     val cancelButtonAgentHref: String = controllers.routes.NextUpdatesController.showAgent.url
-    val continueButton: String = messages("optout.chooseOptOutTaxYear.continue")
-    val warningInsertMessage: String = messages("optout.chooseOptOutTaxYear.submissions.deleted")
-    val warningInsertClass: String = "govuk-inset-text"
+    val continueButton:        String = messages("optout.chooseOptOutTaxYear.continue")
+    val warningInsertMessage:  String = messages("optout.chooseOptOutTaxYear.submissions.deleted")
+    val warningInsertClass:    String = "govuk-inset-text"
   }
 
   "Opt-out confirm page (with submissions)" should {
@@ -113,4 +135,3 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
     }
   }
 }
-

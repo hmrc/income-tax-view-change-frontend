@@ -36,16 +36,25 @@ import java.time.LocalDate
 
 class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
 
-  val prefix: String = "business-added"
-  val continueButtonText: String = messagesAPI(s"$prefix.income-sources-button")
-  val viewAllBusinessesLinkText: String = messagesAPI(s"$prefix.view-all-businesses")
-  val day: LocalDate = LocalDate.of(2023, 1, 1)
-  val testObligationsModel: ObligationsModel = ObligationsModel(Seq(GroupedObligationsModel("123", List(SingleObligationModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "EOPS", StatusFulfilled)))))
+  val prefix:                    String    = "business-added"
+  val continueButtonText:        String    = messagesAPI(s"$prefix.income-sources-button")
+  val viewAllBusinessesLinkText: String    = messagesAPI(s"$prefix.view-all-businesses")
+  val day:                       LocalDate = LocalDate.of(2023, 1, 1)
+  val testObligationsModel: ObligationsModel = ObligationsModel(
+    Seq(
+      GroupedObligationsModel(
+        "123",
+        List(SingleObligationModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "EOPS", StatusFulfilled))
+      )
+    )
+  )
 
-  val pageTitle: String = messagesAPI("htmlTitle.agent", {
-    s"${messagesAPI("business-added.uk-property.h1")} " +
-      s"${messagesAPI("business-added.uk-property.base")}".trim()
-  })
+  val pageTitle: String = messagesAPI(
+    "htmlTitle.agent", {
+      s"${messagesAPI("business-added.uk-property.h1")} " +
+        s"${messagesAPI("business-added.uk-property.base")}".trim()
+    }
+  )
   val confirmationPanelContent: String = {
     s"${messagesAPI("business-added.uk-property.h1")} " +
       s"${messagesAPI("business-added.uk-property.base")}"
@@ -59,10 +68,10 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
   }
 
   def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "/income-sources/add" else "/agents/income-sources/add"
+    val pathStart = if (mtdRole == MTDIndividual) "/income-sources/add" else "/agents/income-sources/add"
     incomeSourceType match {
-      case SelfEmployment => s"$pathStart/business-added"
-      case UkProperty => s"$pathStart/uk-property-added"
+      case SelfEmployment  => s"$pathStart/business-added"
+      case UkProperty      => s"$pathStart/uk-property-added"
       case ForeignProperty => s"$pathStart/foreign-property-added"
     }
   }
@@ -70,102 +79,139 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
   def getExpectedPageTitle(incomeSourceType: IncomeSourceType): String = {
     incomeSourceType match {
       case SelfEmployment if (messagesAPI("business-added.sole-trader.head").nonEmpty) =>
-        messagesAPI("business-added.sole-trader.head") + " " + business1.tradingName.getOrElse("") + " " + messagesAPI("business-added.sole-trader.base")
+        messagesAPI("business-added.sole-trader.head") + " " + business1.tradingName.getOrElse("") + " " + messagesAPI(
+          "business-added.sole-trader.base"
+        )
       case SelfEmployment => business1.tradingName.getOrElse("") + " " + messagesAPI("business-added.sole-trader.base")
       case UkProperty =>
         s"${messagesAPI("business-added.uk-property.h1")} " +
           s"${messagesAPI("business-added.uk-property.base")}".trim()
-      case _ => messagesAPI("business-added.foreign-property.h1") + " " + messagesAPI("business-added.foreign-property.base")
+      case _ =>
+        messagesAPI("business-added.foreign-property.h1") + " " + messagesAPI("business-added.foreign-property.base")
     }
   }
 
   def getIncomeSourceDetailsResponse(incomeSourceType: IncomeSourceType) = {
     incomeSourceType match {
-      case SelfEmployment => businessOnlyResponse
-      case UkProperty => ukPropertyOnlyResponse
+      case SelfEmployment  => businessOnlyResponse
+      case UkProperty      => ukPropertyOnlyResponse
       case ForeignProperty => foreignPropertyOnlyResponse
     }
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
-      val path = getPath(mtdUserRole, incomeSourceType)
-      s"GET $path" when {
-        val additionalCookies = getAdditionalCookies(mtdUserRole)
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
+        val path = getPath(mtdUserRole, incomeSourceType)
         s"GET $path" when {
-          s"a user is a $mtdUserRole" that {
-            "is authenticated, with a valid enrolment" should {
-              "render the Business Added page" when {
-                "income sources is enabled" in {
-                  enable(IncomeSourcesFs)
-                  disable(NavBarFs)
-                  stubAuthorised(mtdUserRole)
-                  await(sessionService.createSession(IncomeSourceJourneyType(Add, incomeSourceType)))
-                  val (incomeSourceId, journeyType) = incomeSourceType match {
-                    case SelfEmployment => (testSelfEmploymentId, "ADD-SE")
-                    case UkProperty => (testPropertyIncomeId, "ADD-UK")
-                    case _ => (testPropertyIncomeId, "ADD-FP")
-                  }
-                  await(sessionService.setMongoData(UIJourneySessionData(testSessionId, journeyType,
-                    addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(incomeSourceId), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
-                  IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
-
-                  val result = buildGETMTDClient(path, additionalCookies).futureValue
-                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-                  val expectedText: String = getExpectedPageTitle(incomeSourceType)
-
-                  sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
-
-                  result should have(
-                    httpStatus(OK),
-                    pageTitle(mtdUserRole, expectedText),
-                    elementTextByID("continue-button")(continueButtonText)
-                  )
-                }
-              }
-              s"redirect to home controller" when {
-                "Income Sources Feature Switch is disabled" in {
-                  disable(IncomeSourcesFs)
-                  disable(NavBarFs)
-                  stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
-
-                  val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-                  result should have(
-                    httpStatus(SEE_OTHER),
-                    redirectURI(homeUrl(mtdUserRole))
-                  )
-                }
-              }
-
-              if (incomeSourceType == UkProperty) {
-                "render error page" when {
-                  "UK property income source is missing trading start date" in {
+          val additionalCookies = getAdditionalCookies(mtdUserRole)
+          s"GET $path" when {
+            s"a user is a $mtdUserRole" that {
+              "is authenticated, with a valid enrolment" should {
+                "render the Business Added page" when {
+                  "income sources is enabled" in {
                     enable(IncomeSourcesFs)
                     disable(NavBarFs)
                     stubAuthorised(mtdUserRole)
-                    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse.copy(properties = List(ukProperty.copy(tradingStartDate = None))))
+                    await(sessionService.createSession(IncomeSourceJourneyType(Add, incomeSourceType)))
+                    val (incomeSourceId, journeyType) = incomeSourceType match {
+                      case SelfEmployment => (testSelfEmploymentId, "ADD-SE")
+                      case UkProperty     => (testPropertyIncomeId, "ADD-UK")
+                      case _              => (testPropertyIncomeId, "ADD-FP")
+                    }
+                    await(
+                      sessionService.setMongoData(
+                        UIJourneySessionData(
+                          testSessionId,
+                          journeyType,
+                          addIncomeSourceData = Some(
+                            AddIncomeSourceData(
+                              incomeSourceId = Some(incomeSourceId),
+                              dateStarted = Some(LocalDate.of(2024, 1, 1))
+                            )
+                          )
+                        )
+                      )
+                    )
+                    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                      OK,
+                      getIncomeSourceDetailsResponse(incomeSourceType)
+                    )
+                    IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
 
-                    await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-UK",
-                      addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId))))))
+                    val result = buildGETMTDClient(path, additionalCookies).futureValue
+                    IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+                    val expectedText: String = getExpectedPageTitle(incomeSourceType)
+
+                    sessionService
+                      .getMongoKey(
+                        AddIncomeSourceData.journeyIsCompleteField,
+                        IncomeSourceJourneyType(Add, incomeSourceType)
+                      )
+                      .futureValue shouldBe Right(Some(true))
+
+                    result should have(
+                      httpStatus(OK),
+                      pageTitle(mtdUserRole, expectedText),
+                      elementTextByID("continue-button")(continueButtonText)
+                    )
+                  }
+                }
+                s"redirect to home controller" when {
+                  "Income Sources Feature Switch is disabled" in {
+                    disable(IncomeSourcesFs)
+                    disable(NavBarFs)
+                    stubAuthorised(mtdUserRole)
+                    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                      OK,
+                      getIncomeSourceDetailsResponse(incomeSourceType)
+                    )
 
                     val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                     result should have(
-                      httpStatus(INTERNAL_SERVER_ERROR),
-                      pageTitle(mtdUserRole, "standardError.heading", isErrorPage = true)
+                      httpStatus(SEE_OTHER),
+                      redirectURI(homeUrl(mtdUserRole))
                     )
                   }
                 }
+
+                if (incomeSourceType == UkProperty) {
+                  "render error page" when {
+                    "UK property income source is missing trading start date" in {
+                      enable(IncomeSourcesFs)
+                      disable(NavBarFs)
+                      stubAuthorised(mtdUserRole)
+                      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                        OK,
+                        ukPropertyOnlyResponse.copy(properties = List(ukProperty.copy(tradingStartDate = None)))
+                      )
+
+                      await(
+                        sessionService.setMongoData(
+                          UIJourneySessionData(
+                            testSessionId,
+                            "ADD-UK",
+                            addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId)))
+                          )
+                        )
+                      )
+
+                      val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+                      result should have(
+                        httpStatus(INTERNAL_SERVER_ERROR),
+                        pageTitle(mtdUserRole, "standardError.heading", isErrorPage = true)
+                      )
+                    }
+                  }
+                }
+                testAuthFailures(path, mtdUserRole)
               }
-              testAuthFailures(path, mtdUserRole)
             }
           }
         }
       }
-    }
   }
 }

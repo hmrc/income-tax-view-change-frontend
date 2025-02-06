@@ -24,34 +24,37 @@ import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, Che
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities._
 
-case class CreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
-                                        viewModel: CheckDetailsViewModel,
-                                        failureCategory: Option[String],
-                                        failureReason: Option[String],
-                                        createIncomeSourceResponse: Option[CreateIncomeSourceResponse]
-                                       )(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
-
+case class CreateIncomeSourceAuditModel(
+    incomeSourceType:           IncomeSourceType,
+    viewModel:                  CheckDetailsViewModel,
+    failureCategory:            Option[String],
+    failureReason:              Option[String],
+    createIncomeSourceResponse: Option[CreateIncomeSourceResponse]
+  )(
+    implicit user: MtdItUser[_])
+    extends ExtendedAuditModel {
 
   private val isSuccessful = failureCategory.isEmpty
   override val transactionName: String = enums.TransactionName.CreateIncomeSource
-  override val auditType: String = enums.AuditType.CreateIncomeSource
+  override val auditType:       String = enums.AuditType.CreateIncomeSource
 
   private val outcome: JsObject = {
     val outcome: JsObject = Json.obj("isSuccessful" -> isSuccessful)
 
     if (isSuccessful) outcome
-    else outcome ++ Json.obj(
-      "isSuccessful" -> isSuccessful,
-      "failureCategory" -> failureCategory,
-      "failureReason" -> failureReason)
+    else
+      outcome ++ Json.obj(
+        "isSuccessful"    -> isSuccessful,
+        "failureCategory" -> failureCategory,
+        "failureReason"   -> failureReason
+      )
   }
-
 
   override val detail: JsValue = {
 
     val baseDetails = userAuditDetails(user) ++
       Json.obj(
-        "outcome" -> outcome,
+        "outcome"     -> outcome,
         "journeyType" -> incomeSourceType.journeyType
       ) ++
       ("addedIncomeSourceID", createIncomeSourceResponse.map(x => x.incomeSourceId))
@@ -77,8 +80,7 @@ case class CreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
         propDetails
     }
 
-    baseDetails ++ businessDetails ++ Json.obj(
-      "accountingMethod" -> viewModel.cashOrAccruals)
+    baseDetails ++ businessDetails ++ Json.obj("accountingMethod" -> viewModel.cashOrAccruals)
 
   }
 }

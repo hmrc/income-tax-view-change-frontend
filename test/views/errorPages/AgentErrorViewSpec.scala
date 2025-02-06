@@ -23,10 +23,10 @@ import views.html.agent.errorPages.AgentError
 class AgentErrorViewSpec extends ViewSpec {
 
   object AgentErrorMessages {
-    val heading: String = messages("agent-error.heading")
-    val title: String = messages("htmlTitle.errorPage", messages("agent-error.heading"))
+    val heading:          String = messages("agent-error.heading")
+    val title:            String = messages("htmlTitle.errorPage", messages("agent-error.heading"))
     val setupAccountLink: String = s"${messages("agent-error.link")} ${messages("pagehelp.opensInNewTabText")}"
-    val notAnAgentNote: String = s"${messages("agent-error.note")} $setupAccountLink."
+    val notAnAgentNote:   String = s"${messages("agent-error.note")} $setupAccountLink."
   }
 
   def agentErrorView: Html = app.injector.instanceOf[AgentError].apply()
@@ -50,8 +50,12 @@ class AgentErrorViewSpec extends ViewSpec {
     }
 
     s"have a link in the paragraph: ${AgentErrorMessages.setupAccountLink}" in new Setup(agentErrorView) {
-      layoutContent.selectFirst(Selectors.p)
-        .hasCorrectLink(AgentErrorMessages.setupAccountLink, "https://www.gov.uk/guidance/get-an-hmrc-agent-services-account")
+      layoutContent
+        .selectFirst(Selectors.p)
+        .hasCorrectLink(
+          AgentErrorMessages.setupAccountLink,
+          "https://www.gov.uk/guidance/get-an-hmrc-agent-services-account"
+        )
     }
 
     s"have a sign out button stating: ${messages("base.sign-out")}" in new Setup(agentErrorView) {

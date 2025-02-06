@@ -24,11 +24,10 @@ import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 object SessionDataGetResponse {
 
   case class SessionDataGetSuccess(
-                                    mtditid: String,
-                                    nino: String,
-                                    utr: String,
-                                    sessionId: String
-                                  )
+      mtditid:   String,
+      nino:      String,
+      utr:       String,
+      sessionId: String)
 
   object SessionDataGetSuccess {
     implicit val format: OFormat[SessionDataGetSuccess] = Json.format[SessionDataGetSuccess]
@@ -51,10 +50,13 @@ object SessionDataGetResponse {
       response.status match {
         case OK =>
           Logger("application").info("Get session call successful. OK response was returned from the API")
-          response.json.validate[SessionDataGetSuccess].fold(
-            invalid => Left(SessionDataUnexpectedResponse(s"Json validation error for SessionDataModel. Invalid: $invalid")),
-            valid => Right(valid)
-          )
+          response.json
+            .validate[SessionDataGetSuccess]
+            .fold(
+              invalid =>
+                Left(SessionDataUnexpectedResponse(s"Json validation error for SessionDataModel. Invalid: $invalid")),
+              valid => Right(valid)
+            )
         case NOT_FOUND =>
           Logger("application").error(s"No user session was found. status: $NOT_FOUND")
           Left(SessionDataNotFound(s"No user session was found. status: $NOT_FOUND"))

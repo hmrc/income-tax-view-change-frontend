@@ -53,30 +53,36 @@ class SingleTaxYearOptInWarningControllerISpec extends ControllerISpecHelper {
     )
 
   private def setupOptInSessionData(
-                                     currentTaxYear: TaxYear,
-                                     currentYearStatus: ITSAStatus.Value,
-                                     nextYearStatus: ITSAStatus.Value,
-                                     intent: TaxYear
-                                   ): Future[Boolean] = {
+      currentTaxYear:    TaxYear,
+      currentYearStatus: ITSAStatus.Value,
+      nextYearStatus:    ITSAStatus.Value,
+      intent:            TaxYear
+    ): Future[Boolean] = {
     repository.set(
-      UIJourneySessionData(testSessionId,
+      UIJourneySessionData(
+        testSessionId,
         Opt(OptInJourney).toString,
-        optInSessionData =
-          Some(OptInSessionData(
-            optInContextData = Some(OptInContextData(
-              currentTaxYear = currentTaxYear.toString,
-              currentYearITSAStatus = statusToString(currentYearStatus),
-              nextYearITSAStatus = statusToString(nextYearStatus)
-            )),
-            selectedOptInYear = Some(intent.toString))))
+        optInSessionData = Some(
+          OptInSessionData(
+            optInContextData = Some(
+              OptInContextData(
+                currentTaxYear = currentTaxYear.toString,
+                currentYearITSAStatus = statusToString(currentYearStatus),
+                nextYearITSAStatus = statusToString(nextYearStatus)
+              )
+            ),
+            selectedOptInYear = Some(intent.toString)
+          )
+        )
+      )
     )
   }
 
   private val path = "/opt-in/single-taxyear-warning"
 
   private val validYesForm = getPageForm("true")
-  private val validNoForm = getPageForm("false")
-  private val inValidForm = getPageForm("")
+  private val validNoForm  = getPageForm("false")
+  private val inValidForm  = getPageForm("")
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -93,12 +99,17 @@ class SingleTaxYearOptInWarningControllerISpec extends ControllerISpecHelper {
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         val responseBody = Json.arr(successITSAStatusResponseJson)
-        val url = s"/income-tax-view-change/itsa-status/status/AA123456A/21-22?futureYears=true&history=false"
+        val url          = s"/income-tax-view-change/itsa-status/status/AA123456A/21-22?futureYears=true&history=false"
 
         val currentTaxYear: TaxYear = TaxYear(2020, 2021)
 
         val intent = currentTaxYear
-        setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Voluntary, intent).futureValue shouldBe true
+        setupOptInSessionData(
+          currentTaxYear,
+          currentYearStatus = Annual,
+          nextYearStatus = Voluntary,
+          intent
+        ).futureValue shouldBe true
 
         WiremockHelper.stubGet(url, OK, responseBody.toString())
 
@@ -109,7 +120,9 @@ class SingleTaxYearOptInWarningControllerISpec extends ControllerISpecHelper {
 
         result should have(
           httpStatus(OK),
-          pageTitleCustom("Voluntarily opting in to reporting quarterly for a single tax year - Manage your Income Tax updates - GOV.UK")
+          pageTitleCustom(
+            "Voluntarily opting in to reporting quarterly for a single tax year - Manage your Income Tax updates - GOV.UK"
+          )
         )
       }
     }
@@ -128,14 +141,19 @@ class SingleTaxYearOptInWarningControllerISpec extends ControllerISpecHelper {
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         val responseBody = Json.arr(successITSAStatusResponseJson)
-        val url = s"/income-tax-view-change/itsa-status/status/AA123456A/21-22?futureYears=true&history=false"
+        val url          = s"/income-tax-view-change/itsa-status/status/AA123456A/21-22?futureYears=true&history=false"
 
         WiremockHelper.stubGet(url, OK, responseBody.toString())
 
         val currentTaxYear: TaxYear = TaxYear(2020, 2021)
 
         val intent = currentTaxYear
-        setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Voluntary, intent).futureValue shouldBe true
+        setupOptInSessionData(
+          currentTaxYear,
+          currentYearStatus = Annual,
+          nextYearStatus = Voluntary,
+          intent
+        ).futureValue shouldBe true
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -144,7 +162,9 @@ class SingleTaxYearOptInWarningControllerISpec extends ControllerISpecHelper {
 
         result should have(
           httpStatus(BAD_REQUEST),
-          pageTitleCustom("Voluntarily opting in to reporting quarterly for a single tax year - Manage your Income Tax updates - GOV.UK")
+          pageTitleCustom(
+            "Voluntarily opting in to reporting quarterly for a single tax year - Manage your Income Tax updates - GOV.UK"
+          )
         )
 
       }
@@ -158,14 +178,19 @@ class SingleTaxYearOptInWarningControllerISpec extends ControllerISpecHelper {
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         val responseBody = Json.arr(successITSAStatusResponseJson)
-        val url = s"/income-tax-view-change/itsa-status/status/AA123456A/21-22?futureYears=true&history=false"
+        val url          = s"/income-tax-view-change/itsa-status/status/AA123456A/21-22?futureYears=true&history=false"
 
         WiremockHelper.stubGet(url, OK, responseBody.toString())
 
         val currentTaxYear: TaxYear = TaxYear(2020, 2021)
 
         val intent = currentTaxYear
-        setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Voluntary, intent).futureValue shouldBe true
+        setupOptInSessionData(
+          currentTaxYear,
+          currentYearStatus = Annual,
+          nextYearStatus = Voluntary,
+          intent
+        ).futureValue shouldBe true
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -187,14 +212,19 @@ class SingleTaxYearOptInWarningControllerISpec extends ControllerISpecHelper {
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         val responseBody = Json.arr(successITSAStatusResponseJson)
-        val url = s"/income-tax-view-change/itsa-status/status/AA123456A/21-22?futureYears=true&history=false"
+        val url          = s"/income-tax-view-change/itsa-status/status/AA123456A/21-22?futureYears=true&history=false"
 
         WiremockHelper.stubGet(url, OK, responseBody.toString())
 
         val currentTaxYear: TaxYear = TaxYear(2020, 2021)
 
         val intent = currentTaxYear
-        setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Voluntary, intent).futureValue shouldBe true
+        setupOptInSessionData(
+          currentTaxYear,
+          currentYearStatus = Annual,
+          nextYearStatus = Voluntary,
+          intent
+        ).futureValue shouldBe true
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 

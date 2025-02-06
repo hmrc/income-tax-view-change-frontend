@@ -23,15 +23,20 @@ import testUtils.TestSupport
 class ConfirmClientDetailsAuditModelSpec extends TestSupport {
 
   val transactionName = enums.TransactionName.ClientDetailsConfirmed.name
-  val auditType = enums.AuditType.ClientDetailsConfirmed.name
+  val auditType       = enums.AuditType.ClientDetailsConfirmed.name
 
   def getConfirmClientDetailsAuditModel(): ConfirmClientDetailsAuditModel = {
-    ConfirmClientDetailsAuditModel(clientName = "Test User", nino = testNinoAgent, mtditid = testMtditidAgent, arn = testArn, saUtr = testSaUtr, credId = Some(testCredId))
+    ConfirmClientDetailsAuditModel(
+      clientName = "Test User",
+      nino = testNinoAgent,
+      mtditid = testMtditidAgent,
+      arn = testArn,
+      saUtr = testSaUtr,
+      credId = Some(testCredId)
+    )
   }
 
-
-  val detailsAuditData = Json.parse(
-    """{
+  val detailsAuditData = Json.parse("""{
       |    "nino": "AA111111A",
       |    "mtditid": "XAIT00000000015",
       |    "agentReferenceNumber": "XAIT0000123456",
@@ -40,7 +45,6 @@ class ConfirmClientDetailsAuditModelSpec extends TestSupport {
       |    "userType": "Agent",
       |    "clientName": "Test User"
       |}""".stripMargin)
-
 
   "ConfirmClientDetailsAuditModel" should {
     s"have the correct transaction name of - $transactionName" in {

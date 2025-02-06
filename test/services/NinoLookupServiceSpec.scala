@@ -25,7 +25,6 @@ class NinoLookupServiceSpec extends TestSupport with MockBusinessDetailsConnecto
 
   object TestNinoLookupService extends NinoLookupService(mockBusinessDetailsConnector)
 
-
   "The NinoLookupService.getNino method" when {
 
     "a successful NINO response is returned from the connector" should {

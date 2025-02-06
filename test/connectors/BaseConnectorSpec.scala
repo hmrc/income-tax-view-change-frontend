@@ -40,27 +40,34 @@ import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
 
-trait BaseConnectorSpec extends UnitSpec with BeforeAndAfterEach with GuiceOneAppPerSuite with Injecting with ScalaFutures with FeatureSwitching {
+trait BaseConnectorSpec
+    extends UnitSpec
+    with BeforeAndAfterEach
+    with GuiceOneAppPerSuite
+    with Injecting
+    with ScalaFutures
+    with FeatureSwitching {
 
-  val mockHttpClientV2: HttpClientV2 = mock(classOf[HttpClientV2])
+  val mockHttpClientV2:   HttpClientV2   = mock(classOf[HttpClientV2])
   val mockRequestBuilder: RequestBuilder = mock(classOf[RequestBuilder])
-  val mockTimerContext: Timer.Context = mock(classOf[Timer.Context])
+  val mockTimerContext:   Timer.Context  = mock(classOf[Timer.Context])
 
   def messagesApi: MessagesApi = inject[MessagesApi]
 
   implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
 
-  implicit val headerCarrier: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("session-123456")), deviceID = Some("some device Id")).withExtraHeaders(HeaderNames.REFERER -> testReferrerUrl)
+  implicit val headerCarrier: HeaderCarrier =
+    HeaderCarrier(sessionId = Some(SessionId("session-123456")), deviceID = Some("some device Id"))
+      .withExtraHeaders(HeaderNames.REFERER -> testReferrerUrl)
 
-  implicit val conf: Configuration = app.configuration
-  implicit val environment: Environment = app.injector.instanceOf[Environment]
-  implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  implicit val conf:        Configuration     = app.configuration
+  implicit val environment: Environment       = app.injector.instanceOf[Environment]
+  implicit val appConfig:   FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   def getIndividualUser(request: FakeRequest[AnyContentAsEmpty.type]): MtdItUser[_] =
-    defaultMTDITUser(Some(testUserTypeIndividual),businessAndPropertyAligned, request)
+    defaultMTDITUser(Some(testUserTypeIndividual), businessAndPropertyAligned, request)
 
   implicit val individualUser: MtdItUser[_] = getIndividualUser(FakeRequest())
-
 
   def disableAllSwitches(): Unit = {
     allFeatureSwitches.foreach(switch => disable(switch))

@@ -29,21 +29,21 @@ class CeaseIncomeSourcesControllerISpec extends ControllerISpecHelper {
   val pageTitleMsgKey = "cease-income-sources.heading"
   val soleTraderBusinessName1: String = "business"
   val soleTraderBusinessName2: String = "secondBusiness"
-  val ceaseMessage: String = messagesAPI("cease-income-sources.cease")
-  val startDateMessage: String = messagesAPI("cease-income-sources.table-head.date-started")
-  val ceasedDateMessage: String = messagesAPI("cease-income-sources.table-head.date-ended")
-  val businessNameMessage: String = messagesAPI("cease-income-sources.table-head.business-name")
+  val ceaseMessage:            String = messagesAPI("cease-income-sources.cease")
+  val startDateMessage:        String = messagesAPI("cease-income-sources.table-head.date-started")
+  val ceasedDateMessage:       String = messagesAPI("cease-income-sources.table-head.date-ended")
+  val businessNameMessage:     String = messagesAPI("cease-income-sources.table-head.business-name")
   val startDate = "1 January 2017"
   val ceasedBusinessMessage: String = messagesAPI("cease-income-sources.ceased-businesses.h1")
-  val ceasedBusinessName: String = "ceasedBusiness"
+  val ceasedBusinessName:    String = "ceasedBusiness"
 
   def getPath(mtdRole: MTDUserRole): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     pathStart + "/income-sources/cease/cease-an-income-source"
   }
 
   mtdAllRoles.foreach { mtdUserRole =>
-    val path = getPath(mtdUserRole)
+    val path              = getPath(mtdUserRole)
     val additionalCookies = getAdditionalCookies(mtdUserRole)
     s"GET $path" when {
       s"a user is a $mtdUserRole" that {
@@ -53,7 +53,10 @@ class CeaseIncomeSourcesControllerISpec extends ControllerISpecHelper {
               stubAuthorised(mtdUserRole)
               disable(NavBarFs)
               enable(IncomeSourcesFs)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                OK,
+                multipleBusinessesAndUkProperty
+              )
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -72,11 +75,13 @@ class CeaseIncomeSourcesControllerISpec extends ControllerISpecHelper {
               )
             }
 
-
             "Income source details are enabled for for foreign property" in {
               stubAuthorised(mtdUserRole)
               enable(IncomeSourcesFs)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                OK,
+                foreignPropertyAndCeasedBusiness
+              )
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
               IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)

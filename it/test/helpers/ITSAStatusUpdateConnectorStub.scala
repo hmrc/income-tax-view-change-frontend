@@ -17,6 +17,16 @@
 package helpers
 
 object ITSAStatusUpdateConnectorStub {
-  def stubItsaStatusUpdate(taxableEntityId: String, status: Int, responseBody: String, headers: Map[String, String] = Map()): Unit =
-    WiremockHelper.stubPutWithHeaders(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", status = status, responseBody = responseBody, headers)
+  def stubItsaStatusUpdate(
+      taxableEntityId: String,
+      status:          Int,
+      responseBody:    String,
+      headers:         Map[String, String] = Map()
+    ): Unit =
+    WiremockHelper.stubPutWithHeaders(
+      s"/income-tax-view-change/itsa-status/update/$taxableEntityId",
+      status = status,
+      responseBody = responseBody,
+      headers
+    )
 }

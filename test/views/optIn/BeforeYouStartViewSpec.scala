@@ -26,7 +26,7 @@ import views.html.optIn.BeforeYouStart
 class BeforeYouStartViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-  val beforeYouStartView: BeforeYouStart = app.injector.instanceOf[BeforeYouStart]
+  val beforeYouStartView: BeforeYouStart    = app.injector.instanceOf[BeforeYouStart]
   val startButtonUrl = "/some/optIn/url"
 
   class Setup(isAgent: Boolean = true) {
@@ -34,14 +34,14 @@ class BeforeYouStartViewSpec extends TestSupport {
   }
 
   object beforeYouStart {
-    val heading: String = messages("optIn.beforeYouStart.heading")
-    val title: String = messages("htmlTitle", heading)
-    val desc1: String = messages("optIn.beforeYouStart.desc1")
-    val desc2: String = messages("optIn.beforeYouStart.desc2")
-    val reportQuarterly: String = messages("optIn.beforeYouStart.reportQuarterly")
-    val voluntaryStatus: String = messages("optIn.beforeYouStart.voluntaryStatus")
+    val heading:             String = messages("optIn.beforeYouStart.heading")
+    val title:               String = messages("htmlTitle", heading)
+    val desc1:               String = messages("optIn.beforeYouStart.desc1")
+    val desc2:               String = messages("optIn.beforeYouStart.desc2")
+    val reportQuarterly:     String = messages("optIn.beforeYouStart.reportQuarterly")
+    val voluntaryStatus:     String = messages("optIn.beforeYouStart.voluntaryStatus")
     val voluntaryStatusText: String = messages("optIn.beforeYouStart.voluntaryStatus.text")
-    val startButton: String = messages("optIn.beforeYouStart.button.start")
+    val startButton:         String = messages("optIn.beforeYouStart.button.start")
   }
 
   "Before you start page" should {

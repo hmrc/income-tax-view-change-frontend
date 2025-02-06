@@ -34,7 +34,6 @@ import views.html.PaymentAllocation
 import java.time.LocalDate
 import scala.jdk.CollectionConverters._
 
-
 class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
@@ -44,69 +43,94 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
   val testMtdItUser: MtdItUser[_] = defaultMTDITUser(Some(Individual), businessAndPropertyAligned)
 
-  val singleTestPaymentAllocationChargeWithOutstandingAmountZero: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
-    List(documentDetail.copy(outstandingAmount = 0)),
-    List(financialDetail)
-  )
+  val singleTestPaymentAllocationChargeWithOutstandingAmountZero: FinancialDetailsWithDocumentDetailsModel =
+    FinancialDetailsWithDocumentDetailsModel(
+      List(documentDetail.copy(outstandingAmount = 0)),
+      List(financialDetail)
+    )
 
-  val singleTestPaymentAllocationChargeWithOutstandingAmountZeroCredit: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
-    List(documentDetailNoPaymentCredit.copy(outstandingAmount = 0)),
-    List(financialDetailNoPaymentCredit)
-  )
+  val singleTestPaymentAllocationChargeWithOutstandingAmountZeroCredit: FinancialDetailsWithDocumentDetailsModel =
+    FinancialDetailsWithDocumentDetailsModel(
+      List(documentDetailNoPaymentCredit.copy(outstandingAmount = 0)),
+      List(financialDetailNoPaymentCredit)
+    )
 
-  val heading: String = messages("paymentAllocation.heading")
-  val date: String = "31 January 2021"
-  val amount: String = "£300.00"
+  val heading:                  String = messages("paymentAllocation.heading")
+  val date:                     String = "31 January 2021"
+  val amount:                   String = "£300.00"
   val paymentAllocationHeading: String = messages("paymentAllocation.tableSection.heading")
-  val tableHeadings: Seq[String] = Seq(messages("paymentAllocation.tableHead.allocation"), messages("paymentAllocation.tableHead.allocated-date"), messages("paymentAllocation.tableHead.amount"))
-  val moneyOnAccount: String = messages("paymentAllocation.moneyOnAccount")
-  val moneyOnAccountAmount: String = "£200.00"
-  val allocationsTableHeading: String = messages("paymentAllocation.tableSection.heading")
-  val allocationsTableHeadersText: String = s"$paymentAllocationHeading ${tableHeadings.mkString(" ")}"
+  val tableHeadings: Seq[String] = Seq(
+    messages("paymentAllocation.tableHead.allocation"),
+    messages("paymentAllocation.tableHead.allocated-date"),
+    messages("paymentAllocation.tableHead.amount")
+  )
+  val moneyOnAccount:                  String = messages("paymentAllocation.moneyOnAccount")
+  val moneyOnAccountAmount:            String = "£200.00"
+  val allocationsTableHeading:         String = messages("paymentAllocation.tableSection.heading")
+  val allocationsTableHeadersText:     String = s"$paymentAllocationHeading ${tableHeadings.mkString(" ")}"
   val paymentAllocationsPoa1IncomeTax: String = messages("paymentAllocation.paymentAllocations.poa1.incomeTax")
   val paymentAllocationsPoa2IncomeTax: String = messages("paymentAllocation.paymentAllocations.poa2.incomeTax")
-  val paymentAllocationsPoa1Nic4: String = messages("paymentAllocation.paymentAllocations.poa1.nic4")
-  val paymentAllocationsPoa2Nic4: String = messages("paymentAllocation.paymentAllocations.poa2.nic4")
-  val moneyOnAccountNA: String = s"${messages("paymentAllocation.moneyOnAccount")} ${messages("paymentAllocation.na")}"
-  val moneyOnAccountMessage: String = s"${messages("paymentAllocation.moneyOnAccount")}"
+  val paymentAllocationsPoa1Nic4:      String = messages("paymentAllocation.paymentAllocations.poa1.nic4")
+  val paymentAllocationsPoa2Nic4:      String = messages("paymentAllocation.paymentAllocations.poa2.nic4")
+  val moneyOnAccountNA:                String = s"${messages("paymentAllocation.moneyOnAccount")} ${messages("paymentAllocation.na")}"
+  val moneyOnAccountMessage:           String = s"${messages("paymentAllocation.moneyOnAccount")}"
   val dueDate = "31 Jan 2021"
   val paymentAllocationTaxYearFrom2017to2018: String = messages("paymentAllocation.taxYear", "2017", "2018")
   val paymentAllocationTaxYearFrom2018to2019: String = messages("paymentAllocation.taxYear", "2018", "2019")
   val paymentAllocationTaxYearFrom2019to2020: String = messages("paymentAllocation.taxYear", "2019", "2020")
   val paymentAllocationTaxYearFrom2021to2022: String = messages("paymentAllocation.taxYear", "2021", "2022")
-  val paymentAllocationsHmrcAdjustment: String = messages("paymentAllocation.paymentAllocations.hmrcAdjustment.text")
-  val paymentAllocationViewModelDueDate: Option[LocalDate] = paymentAllocationViewModel.paymentAllocationChargeModel
-    .financialDetails.headOption.flatMap(_.items.flatMap(_.headOption.flatMap(_.dueDate)))
-  val paymentAllocationViewModelOutstandingAmount: Option[BigDecimal] = paymentAllocationViewModel
-    .paymentAllocationChargeModel.documentDetails.headOption.map(_.outstandingAmount)
+  val paymentAllocationsHmrcAdjustment:       String = messages("paymentAllocation.paymentAllocations.hmrcAdjustment.text")
+  val paymentAllocationViewModelDueDate: Option[LocalDate] =
+    paymentAllocationViewModel.paymentAllocationChargeModel.financialDetails.headOption
+      .flatMap(_.items.flatMap(_.headOption.flatMap(_.dueDate)))
+  val paymentAllocationViewModelOutstandingAmount: Option[BigDecimal] =
+    paymentAllocationViewModel.paymentAllocationChargeModel.documentDetails.headOption.map(_.outstandingAmount)
   val paymentAllocationViewModelWithCreditZeroOutstandingDueDate: Option[LocalDate] =
-    paymentAllocationViewModelWithCreditZeroOutstanding.paymentAllocationChargeModel
-      .financialDetails.headOption.flatMap(_.items.flatMap(_.headOption.flatMap(_.dueDate)))
+    paymentAllocationViewModelWithCreditZeroOutstanding.paymentAllocationChargeModel.financialDetails.headOption
+      .flatMap(_.items.flatMap(_.headOption.flatMap(_.dueDate)))
   val paymentAllocationViewModelWithCreditZeroOutstandingOutstandingAmount: Option[BigDecimal] =
-    paymentAllocationViewModelWithCreditZeroOutstanding
-      .paymentAllocationChargeModel.documentDetails.headOption.map(_.outstandingAmount)
+    paymentAllocationViewModelWithCreditZeroOutstanding.paymentAllocationChargeModel.documentDetails.headOption
+      .map(_.outstandingAmount)
 
-  class PaymentAllocationSetup(viewModel: PaymentAllocationViewModel = paymentAllocationViewModel, saUtr: Option[String] = None,
-                               creditsRefundsRepayEnabled: Boolean = true,
-                               dueDate: Option[LocalDate] = paymentAllocationViewModelDueDate,
-                               outstandingAmount: Option[BigDecimal] = paymentAllocationViewModelOutstandingAmount) extends Setup(
-    paymentAllocationView(viewModel, backUrl, saUtr = saUtr,
-      creditsRefundsRepayEnabled = creditsRefundsRepayEnabled, dueDate = dueDate,
-      outstandingAmount = outstandingAmount)) {
+  class PaymentAllocationSetup(
+      viewModel:                  PaymentAllocationViewModel = paymentAllocationViewModel,
+      saUtr:                      Option[String] = None,
+      creditsRefundsRepayEnabled: Boolean = true,
+      dueDate:                    Option[LocalDate] = paymentAllocationViewModelDueDate,
+      outstandingAmount:          Option[BigDecimal] = paymentAllocationViewModelOutstandingAmount)
+      extends Setup(
+        paymentAllocationView(
+          viewModel,
+          backUrl,
+          saUtr = saUtr,
+          creditsRefundsRepayEnabled = creditsRefundsRepayEnabled,
+          dueDate = dueDate,
+          outstandingAmount = outstandingAmount
+        )
+      ) {
     paymentAllocationViewModel.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
   }
 
-  class PaymentAllocationSetupCreditZeroOutstanding(viewModel: PaymentAllocationViewModel = paymentAllocationViewModelWithCreditZeroOutstanding,
-                                                    dueDate: Option[LocalDate] =
-                                                    paymentAllocationViewModelWithCreditZeroOutstandingDueDate,
-                                                    outstandingAmount: Option[BigDecimal] =
-                                                    paymentAllocationViewModelWithCreditZeroOutstandingOutstandingAmount) extends Setup(
-    paymentAllocationView(viewModel, backUrl, saUtr = Some("1234567890"),
-      dueDate = dueDate,
-      outstandingAmount = outstandingAmount)) {
-    paymentAllocationViewModelWithCreditZeroOutstanding.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
+  class PaymentAllocationSetupCreditZeroOutstanding(
+      viewModel:         PaymentAllocationViewModel = paymentAllocationViewModelWithCreditZeroOutstanding,
+      dueDate:           Option[LocalDate] = paymentAllocationViewModelWithCreditZeroOutstandingDueDate,
+      outstandingAmount: Option[BigDecimal] = paymentAllocationViewModelWithCreditZeroOutstandingOutstandingAmount)
+      extends Setup(
+        paymentAllocationView(
+          viewModel,
+          backUrl,
+          saUtr = Some("1234567890"),
+          dueDate = dueDate,
+          outstandingAmount = outstandingAmount
+        )
+      ) {
+    paymentAllocationViewModelWithCreditZeroOutstanding
+      .originalPaymentAllocationWithClearingDate(0)
+      .allocationDetail
+      .get
+      .chargeType
+      .get
   }
-
 
   "Payment Allocation Page for non LPI" should {
     "check that the first section information is present" when {
@@ -115,13 +139,19 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       s"have the correct date of $date" in new PaymentAllocationSetup {
-        document.selectById("payment-allocation-charge-table")
-          .getElementsByTag("dd").eq(0).text shouldBe date
+        document
+          .selectById("payment-allocation-charge-table")
+          .getElementsByTag("dd")
+          .eq(0)
+          .text shouldBe date
       }
 
       s"have the correct Amount of $amount" in new PaymentAllocationSetup {
-        document.selectById("payment-allocation-charge-table")
-          .getElementsByTag("dd").last.text shouldBe amount
+        document
+          .selectById("payment-allocation-charge-table")
+          .getElementsByTag("dd")
+          .last
+          .text shouldBe amount
       }
 
       "have payment allocation introduction" in new PaymentAllocationSetup() {
@@ -170,7 +200,9 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       "has a payment within the table" in new PaymentAllocationSetup() {
         val allTableData = document.selectHead("tbody").selectHead("tr")
-        allTableData.selectNth("td", 1).text() shouldBe s"${messages("paymentAllocation.paymentAllocations.poa1.nic4")} ${messages("paymentAllocation.taxYear", "2019", "2020")} ${messages("paymentAllocation.taxYear", "2019", "2020")}"
+        allTableData.selectNth("td", 1).text() shouldBe s"${messages(
+          "paymentAllocation.paymentAllocations.poa1.nic4"
+        )} ${messages("paymentAllocation.taxYear", "2019", "2020")} ${messages("paymentAllocation.taxYear", "2019", "2020")}"
         allTableData.selectNth("td", 2).text() shouldBe "27 May 2019"
         allTableData.selectNth("td", 3).text() shouldBe "£10.10"
       }
@@ -190,28 +222,36 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           allTableData.get(2).text() shouldBe moneyOnAccountAmount
         }
 
-      "should not have Credit on account row within payment details" in new PaymentAllocationSetup(outstandingAmount =
-        paymentAllocationViewModelWithCreditZeroOutstandingOutstandingAmount) {
+      "should not have Credit on account row within payment details" in new PaymentAllocationSetup(
+        outstandingAmount = paymentAllocationViewModelWithCreditZeroOutstandingOutstandingAmount
+      ) {
         findElementById("money-on-account") shouldBe None
       }
 
       "checking the earlier tax year page when the cutOverCredit FS enabled with no payment items" in
         new PaymentAllocationSetup(paymentAllocationViewModelNoPayment, saUtr = Some("1234567890")) {
           document.getElementsByTag("h1").text shouldBe messages("paymentAllocation.earlyTaxYear.heading")
-          document.getElementById("sa-note-migrated").text shouldBe s"${messages("paymentAllocation.sa.info")} ${messages("taxYears.oldSa.content.link")} ${messages("pagehelp.opensInNewTabText")}."
+          document
+            .getElementById("sa-note-migrated")
+            .text shouldBe s"${messages("paymentAllocation.sa.info")} ${messages("taxYears.oldSa.content.link")} ${messages("pagehelp.opensInNewTabText")}."
           val moneyOnAccountData: Elements = document.getElementById("money-on-account").getElementsByTag("td")
           moneyOnAccountData.get(0).text() shouldBe moneyOnAccount
           moneyOnAccountData.get(1).text() shouldBe "31 Jan 2021"
           moneyOnAccountData.get(2).text() shouldBe moneyOnAccountAmount
         }
 
-      "has a payment within the table for HMRC Adjustments with link back to charge view" in new PaymentAllocationSetup(viewModel = paymentAllocationViewModelHmrcAdjustment) {
-        val allTableData = document.selectHead("tbody").selectHead("tr")
+      "has a payment within the table for HMRC Adjustments with link back to charge view" in new PaymentAllocationSetup(
+        viewModel = paymentAllocationViewModelHmrcAdjustment
+      ) {
+        val allTableData   = document.selectHead("tbody").selectHead("tr")
         val chargePageLink = document.selectHead("tbody").link.attr("href")
-        val taxYear = 2022
-        val chargePageLinkTrue = s"/report-quarterly/income-and-expenses/view/tax-years/$taxYear/charge?id=chargeReference3"
+        val taxYear        = 2022
+        val chargePageLinkTrue =
+          s"/report-quarterly/income-and-expenses/view/tax-years/$taxYear/charge?id=chargeReference3"
 
-        allTableData.selectNth("td", 1).text() shouldBe s"$paymentAllocationsHmrcAdjustment ${messages("paymentAllocation.taxYear", "2021", "2022")} $paymentAllocationTaxYearFrom2021to2022"
+        allTableData
+          .selectNth("td", 1)
+          .text() shouldBe s"$paymentAllocationsHmrcAdjustment ${messages("paymentAllocation.taxYear", "2021", "2022")} $paymentAllocationTaxYearFrom2021to2022"
         allTableData.selectNth("td", 2).text() shouldBe "31 Jan 2021"
         allTableData.selectNth("td", 3).text() shouldBe amount
         chargePageLink shouldBe chargePageLinkTrue
@@ -235,13 +275,19 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         document.getElementsByTag("h1").text shouldBe heading
       }
       s"have the correct date of $date" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
-        document.selectById("payment-allocation-charge-table")
-          .getElementsByTag("dd").eq(0).text shouldBe date
+        document
+          .selectById("payment-allocation-charge-table")
+          .getElementsByTag("dd")
+          .eq(0)
+          .text shouldBe date
       }
 
       s"have the correct Amount of $amount" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
-        document.selectById("payment-allocation-charge-table")
-          .getElementsByTag("dd").last.text shouldBe amount
+        document
+          .selectById("payment-allocation-charge-table")
+          .getElementsByTag("dd")
+          .last
+          .text shouldBe amount
       }
 
       "have payment allocation introduction" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
@@ -281,7 +327,9 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       "has a payment within the table" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
         val allTableData = document.selectHead("tbody").selectHead("tr")
-        allTableData.selectNth("td", 1).text() shouldBe s"${messages("paymentAllocation.paymentAllocations.balancingCharge.text")} ${messages("paymentAllocation.taxYear", "2019", "2020")} ${messages("paymentAllocation.taxYear", "2019", "2020")}"
+        allTableData.selectNth("td", 1).text() shouldBe s"${messages(
+          "paymentAllocation.paymentAllocations.balancingCharge.text"
+        )} ${messages("paymentAllocation.taxYear", "2019", "2020")} ${messages("paymentAllocation.taxYear", "2019", "2020")}"
         allTableData.selectNth("td", 2).text() shouldBe messages("paymentAllocation.na")
         allTableData.selectNth("td", 3).text() shouldBe "£300.00"
 
@@ -309,33 +357,51 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
     "have Payment allocations table" when {
 
-      def allocationDetail(sapDocNumber: String, taxPeriodEndDate: String,
-                           mainType: String, chargeType: String, amount: BigDecimal): AllocationDetail =
-        AllocationDetail(transactionId = Some(sapDocNumber), Some("2017-03-23"), to = Some(taxPeriodEndDate),
-          chargeType = Some(chargeType), mainType = Some(mainType), amount = Some(amount), Some(1.23), Some("chargeReference1"))
+      def allocationDetail(
+          sapDocNumber:     String,
+          taxPeriodEndDate: String,
+          mainType:         String,
+          chargeType:       String,
+          amount:           BigDecimal
+        ): AllocationDetail =
+        AllocationDetail(
+          transactionId = Some(sapDocNumber),
+          Some("2017-03-23"),
+          to = Some(taxPeriodEndDate),
+          chargeType = Some(chargeType),
+          mainType = Some(mainType),
+          amount = Some(amount),
+          Some(1.23),
+          Some("chargeReference1")
+        )
 
       def viewModel(allocationDetailWithClearingDate: (AllocationDetail, String)*): PaymentAllocationViewModel = {
 
-        PaymentAllocationViewModel(paymentAllocationChargesModel,
+        PaymentAllocationViewModel(
+          paymentAllocationChargesModel,
           originalPaymentAllocationWithClearingDate = allocationDetailWithClearingDate.map {
-            case (allocationDetail, clearingDate) => AllocationDetailWithClearingDate(Some(allocationDetail), Some(clearingDate))
+            case (allocationDetail, clearingDate) =>
+              AllocationDetailWithClearingDate(Some(allocationDetail), Some(clearingDate))
           }
         )
       }
 
-      val POA1 = "SA Payment on Account 1"
-      val POA2 = "SA Payment on Account 2"
+      val POA1       = "SA Payment on Account 1"
+      val POA2       = "SA Payment on Account 2"
       val BAL_CHARGE = "SA Balancing Charge"
 
-      "a payment on account 1 of 2" in new PaymentAllocationSetup(viewModel(
-        allocationDetail("poa1_1", "2018-03-15", POA1, ITSA_ENGLAND_AND_NI, 1234.56) -> "2019-06-27",
-        allocationDetail("poa1_2", "2018-04-05", POA1, ITSA_NI, 2345.67) -> "2019-06-28",
-        allocationDetail("poa1_3", "2018-04-06", POA1, ITSA_SCOTLAND, 3456.78) -> "2019-06-29",
-        allocationDetail("poa1_4", "2018-06-23", POA1, ITSA_WALES, 4567.89) -> "2019-06-30",
-        allocationDetail("poa1_5", "2018-12-31", POA1, NIC4_GB, 9876.54) -> "2019-08-27",
-        allocationDetail("poa1_6", "2019-01-01", POA1, NIC4_SCOTLAND, 8765.43) -> "2019-08-28",
-        allocationDetail("poa1_7", "2019-04-05", POA1, NIC4_WALES, 7654.32) -> "2019-08-29",
-        allocationDetail("poa1_8", "2019-04-06", POA1, NIC4_NI, 6543.21) -> "2019-08-30")) {
+      "a payment on account 1 of 2" in new PaymentAllocationSetup(
+        viewModel(
+          allocationDetail("poa1_1", "2018-03-15", POA1, ITSA_ENGLAND_AND_NI, 1234.56) -> "2019-06-27",
+          allocationDetail("poa1_2", "2018-04-05", POA1, ITSA_NI, 2345.67)             -> "2019-06-28",
+          allocationDetail("poa1_3", "2018-04-06", POA1, ITSA_SCOTLAND, 3456.78)       -> "2019-06-29",
+          allocationDetail("poa1_4", "2018-06-23", POA1, ITSA_WALES, 4567.89)          -> "2019-06-30",
+          allocationDetail("poa1_5", "2018-12-31", POA1, NIC4_GB, 9876.54)             -> "2019-08-27",
+          allocationDetail("poa1_6", "2019-01-01", POA1, NIC4_SCOTLAND, 8765.43)       -> "2019-08-28",
+          allocationDetail("poa1_7", "2019-04-05", POA1, NIC4_WALES, 7654.32)          -> "2019-08-29",
+          allocationDetail("poa1_8", "2019-04-06", POA1, NIC4_NI, 6543.21)             -> "2019-08-30"
+        )
+      ) {
 
         val expectedLinkUrls = Seq(
           controllers.routes.ChargeSummaryController.show(2018, "poa1_1").url,
@@ -364,19 +430,26 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
              |$moneyOnAccountMessage $dueDate £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
-        layoutContent.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
-          .eachAttr("href").asScala shouldBe expectedLinkUrls
+        layoutContent
+          .selectById("payment-allocation-table")
+          .select(Selectors.tableRow)
+          .select(Selectors.link)
+          .eachAttr("href")
+          .asScala shouldBe expectedLinkUrls
       }
 
-      "a payment on account 2 of 2" in new PaymentAllocationSetup(viewModel(
-        allocationDetail("poa2_1", "2018-03-15", POA2, ITSA_ENGLAND_AND_NI, 1234.56) -> "2019-06-27",
-        allocationDetail("poa2_2", "2018-04-05", POA2, ITSA_NI, 2345.67) -> "2019-06-28",
-        allocationDetail("poa2_3", "2018-04-06", POA2, ITSA_SCOTLAND, 3456.78) -> "2019-06-29",
-        allocationDetail("poa2_4", "2018-06-23", POA2, ITSA_WALES, 4567.89) -> "2019-06-30",
-        allocationDetail("poa2_5", "2018-12-31", POA2, NIC4_GB, 9876.54) -> "2019-08-27",
-        allocationDetail("poa2_6", "2019-01-01", POA2, NIC4_SCOTLAND, 8765.43) -> "2019-08-28",
-        allocationDetail("poa2_7", "2019-04-05", POA2, NIC4_WALES, 7654.32) -> "2019-08-29",
-        allocationDetail("poa2_8", "2019-04-06", POA2, NIC4_NI, 6543.21) -> "2019-08-30")) {
+      "a payment on account 2 of 2" in new PaymentAllocationSetup(
+        viewModel(
+          allocationDetail("poa2_1", "2018-03-15", POA2, ITSA_ENGLAND_AND_NI, 1234.56) -> "2019-06-27",
+          allocationDetail("poa2_2", "2018-04-05", POA2, ITSA_NI, 2345.67)             -> "2019-06-28",
+          allocationDetail("poa2_3", "2018-04-06", POA2, ITSA_SCOTLAND, 3456.78)       -> "2019-06-29",
+          allocationDetail("poa2_4", "2018-06-23", POA2, ITSA_WALES, 4567.89)          -> "2019-06-30",
+          allocationDetail("poa2_5", "2018-12-31", POA2, NIC4_GB, 9876.54)             -> "2019-08-27",
+          allocationDetail("poa2_6", "2019-01-01", POA2, NIC4_SCOTLAND, 8765.43)       -> "2019-08-28",
+          allocationDetail("poa2_7", "2019-04-05", POA2, NIC4_WALES, 7654.32)          -> "2019-08-29",
+          allocationDetail("poa2_8", "2019-04-06", POA2, NIC4_NI, 6543.21)             -> "2019-08-30"
+        )
+      ) {
 
         val expectedLinkUrls = Seq(
           controllers.routes.ChargeSummaryController.show(2018, "poa2_1").url,
@@ -405,17 +478,24 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
              |$moneyOnAccountMessage $dueDate £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
-        layoutContent.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
-          .eachAttr("href").asScala shouldBe expectedLinkUrls
+        layoutContent
+          .selectById("payment-allocation-table")
+          .select(Selectors.tableRow)
+          .select(Selectors.link)
+          .eachAttr("href")
+          .asScala shouldBe expectedLinkUrls
       }
 
-      "a balancing charge" in new PaymentAllocationSetup(viewModel(
-        allocationDetail("bcd_1", "2018-03-15", BAL_CHARGE, ITSA_SCOTLAND, 1234.56) -> "2019-06-27",
-        allocationDetail("bcd_2", "2018-04-05", BAL_CHARGE, NIC4_WALES, 2345.67) -> "2019-06-28",
-        allocationDetail("bcd_3", "2018-04-06", BAL_CHARGE, NIC2_GB, 3456.78) -> "2019-06-29",
-        allocationDetail("bcd_4", "2019-01-01", BAL_CHARGE, CGT, 9876.54) -> "2019-08-27",
-        allocationDetail("bcd_5", "2019-04-05", BAL_CHARGE, SL, 8765.43) -> "2019-08-28",
-        allocationDetail("bcd_6", "2019-04-06", BAL_CHARGE, VOLUNTARY_NIC2_NI, 7654.32) -> "2019-08-29")) {
+      "a balancing charge" in new PaymentAllocationSetup(
+        viewModel(
+          allocationDetail("bcd_1", "2018-03-15", BAL_CHARGE, ITSA_SCOTLAND, 1234.56)     -> "2019-06-27",
+          allocationDetail("bcd_2", "2018-04-05", BAL_CHARGE, NIC4_WALES, 2345.67)        -> "2019-06-28",
+          allocationDetail("bcd_3", "2018-04-06", BAL_CHARGE, NIC2_GB, 3456.78)           -> "2019-06-29",
+          allocationDetail("bcd_4", "2019-01-01", BAL_CHARGE, CGT, 9876.54)               -> "2019-08-27",
+          allocationDetail("bcd_5", "2019-04-05", BAL_CHARGE, SL, 8765.43)                -> "2019-08-28",
+          allocationDetail("bcd_6", "2019-04-06", BAL_CHARGE, VOLUNTARY_NIC2_NI, 7654.32) -> "2019-08-29"
+        )
+      ) {
 
         val expectedLinkUrls = Seq(
           controllers.routes.ChargeSummaryController.show(2018, "bcd_1").url,
@@ -440,8 +520,12 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
              |$moneyOnAccountMessage $dueDate £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
-        layoutContent.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
-          .eachAttr("href").asScala shouldBe expectedLinkUrls
+        layoutContent
+          .selectById("payment-allocation-table")
+          .select(Selectors.tableRow)
+          .select(Selectors.link)
+          .eachAttr("href")
+          .asScala shouldBe expectedLinkUrls
       }
     }
 
@@ -452,16 +536,22 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
     }
 
-    "not have Credit on account row within payment details" in new PaymentAllocationSetup(outstandingAmount =
-      paymentAllocationViewModelWithCreditZeroOutstandingOutstandingAmount) {
+    "not have Credit on account row within payment details" in new PaymentAllocationSetup(
+      outstandingAmount = paymentAllocationViewModelWithCreditZeroOutstandingOutstandingAmount
+    ) {
       findElementById("money-on-account") shouldBe None
     }
 
     "The payments allocation view has Allocation Detail but no clearing date" should {
       "throw a MissingFieldException" in {
         val thrownException = intercept[MissingFieldException] {
-          paymentAllocationView(paymentAllocationViewModelWithNoClearingAmount, backUrl, saUtr = None, dueDate = None,
-            outstandingAmount = None)
+          paymentAllocationView(
+            paymentAllocationViewModelWithNoClearingAmount,
+            backUrl,
+            saUtr = None,
+            dueDate = None,
+            outstandingAmount = None
+          )
         }
         thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Payment Clearing Date"
       }

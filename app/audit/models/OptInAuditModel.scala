@@ -23,10 +23,13 @@ import models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{JsObject, JsValue, Json}
 import services.optIn.core.OptInProposition
 
-case class OptInAuditModel(optInProposition: OptInProposition,
-                            intentTaxYear: TaxYear,
-                            resolvedOutcome: ITSAStatusUpdateResponse
-                           )(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
+case class OptInAuditModel(
+    optInProposition: OptInProposition,
+    intentTaxYear:    TaxYear,
+    resolvedOutcome:  ITSAStatusUpdateResponse
+  )(
+    implicit user: MtdItUser[_])
+    extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.OptInQuarterlyReportingRequest
 
@@ -34,9 +37,19 @@ case class OptInAuditModel(optInProposition: OptInProposition,
 
   val outcome: JsObject = {
     val outcome = resolvedOutcome match {
-      case response: ITSAStatusUpdateResponseFailure => Json.obj("isSuccessful" -> false, "failureCategory" -> response.failures.head.code, "failureReason" -> response.failures.head.reason)
+      case response: ITSAStatusUpdateResponseFailure =>
+        Json.obj(
+          "isSuccessful"    -> false,
+          "failureCategory" -> response.failures.head.code,
+          "failureReason"   -> response.failures.head.reason
+        )
       case _: ITSAStatusUpdateResponseSuccess => Json.obj("isSuccessful" -> true)
-      case _ => Json.obj("isSuccessful" -> false, "failureCategory" -> "Unknown failure reason", "failureReason" -> "Unknown failure category")
+      case _ =>
+        Json.obj(
+          "isSuccessful"    -> false,
+          "failureCategory" -> "Unknown failure reason",
+          "failureReason"   -> "Unknown failure category"
+        )
     }
     Json.obj("outcome" -> outcome)
   }
@@ -44,11 +57,11 @@ case class OptInAuditModel(optInProposition: OptInProposition,
   override val detail: JsValue =
     Utilities.userAuditDetails(user) ++ outcome ++
       Json.obj(
-        "optInRequestedFromTaxYear" -> intentTaxYear.formatTaxYearRange,
-        "currentYear" -> optInProposition.currentTaxYear.taxYear.formatTaxYearRange,
-        "beforeITSAStatusCurrentYear" -> optInProposition.currentTaxYear.status,
-        "beforeITSAStatusCurrentYear+1" -> optInProposition.nextTaxYear.status,
-        "afterAssumedITSAStatusCurrentYear" -> optInProposition.currentTaxYear.expectedItsaStatusAfter(intentTaxYear),
+        "optInRequestedFromTaxYear"           -> intentTaxYear.formatTaxYearRange,
+        "currentYear"                         -> optInProposition.currentTaxYear.taxYear.formatTaxYearRange,
+        "beforeITSAStatusCurrentYear"         -> optInProposition.currentTaxYear.status,
+        "beforeITSAStatusCurrentYear+1"       -> optInProposition.nextTaxYear.status,
+        "afterAssumedITSAStatusCurrentYear"   -> optInProposition.currentTaxYear.expectedItsaStatusAfter(intentTaxYear),
         "afterAssumedITSAStatusCurrentYear+1" -> optInProposition.nextTaxYear.expectedItsaStatusAfter(intentTaxYear)
       )
 }

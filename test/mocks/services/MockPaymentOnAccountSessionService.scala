@@ -27,7 +27,9 @@ import scala.concurrent.Future
 
 trait MockPaymentOnAccountSessionService extends UnitSpec with BeforeAndAfterEach {
 
-  lazy val mockPaymentOnAccountSessionService: PaymentOnAccountSessionService = mock(classOf[PaymentOnAccountSessionService])
+  lazy val mockPaymentOnAccountSessionService: PaymentOnAccountSessionService = mock(
+    classOf[PaymentOnAccountSessionService]
+  )
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -35,15 +37,17 @@ trait MockPaymentOnAccountSessionService extends UnitSpec with BeforeAndAfterEac
   }
 
   def setupMockPaymentOnAccountSessionService(response: Future[Either[Throwable, Option[PoaAmendmentData]]]): Unit = {
-      when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(response)
+    when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(response)
   }
 
   def setupMockPaymentOnAccountSessionServiceCreateSession(response: Future[Either[Throwable, Unit]]): Unit = {
     when(mockPaymentOnAccountSessionService.createSession(any(), any())).thenReturn(response)
   }
 
-  def setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(reason: SelectYourReason,
-                                                                 response: Future[Either[Throwable, Unit]] = Future.successful(Right(()))): Unit = {
+  def setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(
+      reason:   SelectYourReason,
+      response: Future[Either[Throwable, Unit]] = Future.successful(Right(()))
+    ): Unit = {
     when(mockPaymentOnAccountSessionService.setAdjustmentReason(same(reason))(any(), any())).thenReturn(response)
   }
 

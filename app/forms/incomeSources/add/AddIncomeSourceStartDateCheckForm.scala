@@ -19,13 +19,11 @@ package forms.incomeSources.add
 import play.api.data.Form
 import play.api.data.Forms._
 
-
 object AddIncomeSourceStartDateCheckForm {
 
-  val responseNo: String = "No"
+  val responseNo:  String = "No"
   val responseYes: String = "Yes"
-  val response: String = "start-date-check"
-
+  val response:    String = "start-date-check"
 
   def apply(messagesPrefix: String): Form[AddIncomeSourceStartDateCheckForm] = {
 
@@ -34,14 +32,18 @@ object AddIncomeSourceStartDateCheckForm {
     Form[AddIncomeSourceStartDateCheckForm](
       mapping(
         response -> optional(text)
-          .verifying(radiosEmptyError, value => value.nonEmpty && (value.contains(responseYes) || value.contains(responseNo)))
+          .verifying(
+            radiosEmptyError,
+            value => value.nonEmpty && (value.contains(responseYes) || value.contains(responseNo))
+          )
       )(AddIncomeSourceStartDateCheckForm.apply)(AddIncomeSourceStartDateCheckForm.unapply)
     )
   }
 }
 
 case class AddIncomeSourceStartDateCheckForm(response: Option[String]) {
-  def toFormMap: Map[String, Seq[String]] = Map(
-    AddIncomeSourceStartDateCheckForm.response -> Seq(response.getOrElse("N/A"))
-  )
+  def toFormMap: Map[String, Seq[String]] =
+    Map(
+      AddIncomeSourceStartDateCheckForm.response -> Seq(response.getOrElse("N/A"))
+    )
 }

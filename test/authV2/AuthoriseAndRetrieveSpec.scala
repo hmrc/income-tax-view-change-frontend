@@ -42,17 +42,18 @@ class AuthoriseAndRetrieveSpec extends AuthActionsSpecHelper {
     new GuiceApplicationBuilder()
       .overrides(
         api.inject.bind[FrontendAuthorisedFunctions].toInstance(frontendAuthFunctions),
-        api.inject.bind[AuditingService].toInstance(mockAuditingService),
+        api.inject.bind[AuditingService].toInstance(mockAuditingService)
       )
       .build()
   }
 
   def defaultAsyncBody(
-                        requestTestCase: AuthorisedUserRequest[_] => Assertion
-                      ): AuthorisedUserRequest[_] => Future[Result] = testRequest => {
-    requestTestCase(testRequest)
-    Future.successful(Results.Ok("Successful"))
-  }
+      requestTestCase: AuthorisedUserRequest[_] => Assertion
+    ): AuthorisedUserRequest[_] => Future[Result] =
+    testRequest => {
+      requestTestCase(testRequest)
+      Future.successful(Results.Ok("Successful"))
+    }
 
   def defaultAsync: AuthorisedUserRequest[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
 
@@ -62,7 +63,7 @@ class AuthoriseAndRetrieveSpec extends AuthActionsSpecHelper {
     "return the expected AuthorisedData response" when {
       s"the user is an Agent enrolled as a HMRC-AS-AGENT" that {
         "has nino and sa enrolment" in {
-          val allEnrolments = getAllEnrolmentsAgent(true, true)
+          val allEnrolments    = getAllEnrolmentsAgent(true, true)
           val expectedResponse = getAuthorisedData(allEnrolments)(fakeRequestWithActiveSession)
 
           when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
@@ -71,16 +72,15 @@ class AuthoriseAndRetrieveSpec extends AuthActionsSpecHelper {
             )
           )
 
-          val result = authAction.invokeBlock(
-            fakeRequestWithActiveSession,
-            defaultAsyncBody(_ shouldBe expectedResponse))
+          val result =
+            authAction.invokeBlock(fakeRequestWithActiveSession, defaultAsyncBody(_ shouldBe expectedResponse))
 
           status(result) shouldBe OK
           contentAsString(result) shouldBe "Successful"
         }
 
         "has no additional enrolments" in {
-          val allEnrolments = getAllEnrolmentsAgent(false, false)
+          val allEnrolments    = getAllEnrolmentsAgent(false, false)
           val expectedResponse = getAuthorisedData(allEnrolments)(fakeRequestWithActiveSession)
 
           when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
@@ -89,9 +89,8 @@ class AuthoriseAndRetrieveSpec extends AuthActionsSpecHelper {
             )
           )
 
-          val result = authAction.invokeBlock(
-            fakeRequestWithActiveSession,
-            defaultAsyncBody(_ shouldBe expectedResponse))
+          val result =
+            authAction.invokeBlock(fakeRequestWithActiveSession, defaultAsyncBody(_ shouldBe expectedResponse))
 
           status(result) shouldBe OK
           contentAsString(result) shouldBe "Successful"
@@ -105,9 +104,7 @@ class AuthoriseAndRetrieveSpec extends AuthActionsSpecHelper {
           )
         )
 
-        val result = authAction.invokeBlock(
-          fakeRequestWithActiveSession,
-          defaultAsync)
+        val result = authAction.invokeBlock(fakeRequestWithActiveSession, defaultAsync)
 
         status(result) shouldBe OK
         contentAsString(result) shouldBe "Successful"
@@ -121,9 +118,7 @@ class AuthoriseAndRetrieveSpec extends AuthActionsSpecHelper {
         )
       )
 
-      val result = authAction.invokeBlock(
-        fakeRequestWithActiveSession,
-        defaultAsync)
+      val result = authAction.invokeBlock(fakeRequestWithActiveSession, defaultAsync)
 
       status(result) shouldBe OK
       contentAsString(result) shouldBe "Successful"
@@ -136,9 +131,7 @@ class AuthoriseAndRetrieveSpec extends AuthActionsSpecHelper {
         )
       )
 
-      val result = authAction.invokeBlock(
-        fakeRequestWithActiveSession,
-        defaultAsync)
+      val result = authAction.invokeBlock(fakeRequestWithActiveSession, defaultAsync)
 
       status(result) shouldBe OK
       contentAsString(result) shouldBe "Successful"
@@ -152,9 +145,7 @@ class AuthoriseAndRetrieveSpec extends AuthActionsSpecHelper {
         Future.failed[AuthRetrievals](BearerTokenExpired())
       )
 
-      val result = authAction.invokeBlock(
-        fakeRequestWithActiveSession,
-        defaultAsync)
+      val result = authAction.invokeBlock(fakeRequestWithActiveSession, defaultAsync)
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/session-timeout")
@@ -168,9 +159,7 @@ class AuthoriseAndRetrieveSpec extends AuthActionsSpecHelper {
         Future.failed[AuthRetrievals](MissingBearerToken())
       )
 
-      val result = authAction.invokeBlock(
-        fakeRequestWithActiveSession,
-        defaultAsync)
+      val result = authAction.invokeBlock(fakeRequestWithActiveSession, defaultAsync)
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/sign-in")

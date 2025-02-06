@@ -24,23 +24,23 @@ case class ConfirmOptOutMultiTaxYearChoiceForm(choice: Option[String])
 
 object ConfirmOptOutMultiTaxYearChoiceForm {
 
-  val choiceField: String = "choice"
+  val choiceField:               String = "choice"
   val noResponseErrorMessageKey: String = "optOut.ConfirmOptOutMultiTaxYearChoice.form.no-select.error"
-  val csrfToken: String = "csrfToken"
+  val csrfToken:                 String = "csrfToken"
 
-  def
-  apply(optionValue: List[String])(implicit messages: Messages): Form[ConfirmOptOutMultiTaxYearChoiceForm] = {
+  def apply(optionValue: List[String])(implicit messages: Messages): Form[ConfirmOptOutMultiTaxYearChoiceForm] = {
     val noSelectionErrorMessage: String = messages(noResponseErrorMessageKey)
 
     form(noSelectionErrorMessage, optionValue)
 
   }
 
-  def form(msg: String, optOutYears: List[String]): Form[ConfirmOptOutMultiTaxYearChoiceForm] = Form[ConfirmOptOutMultiTaxYearChoiceForm](
-    mapping(
-      choiceField -> optional(text).verifying(msg, optionalChoice => optionalChoice.nonEmpty && optOutYears.contains(optionalChoice.get))
-    )(ConfirmOptOutMultiTaxYearChoiceForm.apply)(ConfirmOptOutMultiTaxYearChoiceForm.unapply)
-  )
-
+  def form(msg: String, optOutYears: List[String]): Form[ConfirmOptOutMultiTaxYearChoiceForm] =
+    Form[ConfirmOptOutMultiTaxYearChoiceForm](
+      mapping(
+        choiceField -> optional(text)
+          .verifying(msg, optionalChoice => optionalChoice.nonEmpty && optOutYears.contains(optionalChoice.get))
+      )(ConfirmOptOutMultiTaxYearChoiceForm.apply)(ConfirmOptOutMultiTaxYearChoiceForm.unapply)
+    )
 
 }

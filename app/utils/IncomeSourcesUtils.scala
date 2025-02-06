@@ -34,15 +34,18 @@ trait IncomeSourcesUtils extends FeatureSwitching {
     if (!isEnabled(IncomeSourcesFs)) {
       user.userType match {
         case Some(Agent) => Future.successful(Redirect(controllers.routes.HomeController.showAgent))
-        case _ => Future.successful(Redirect(controllers.routes.HomeController.show()))
+        case _           => Future.successful(Redirect(controllers.routes.HomeController.show()))
       }
     } else {
       codeBlock
     }
   }
 
-  def getActiveProperty(incomeSourceType: IncomeSourceType)
-                       (implicit user: MtdItUser[_]): Option[PropertyDetailsModel] = {
+  def getActiveProperty(
+      incomeSourceType: IncomeSourceType
+    )(
+      implicit user: MtdItUser[_]
+    ): Option[PropertyDetailsModel] = {
 
     def selectActiveProperty(filter: PropertyDetailsModel => Boolean): Option[PropertyDetailsModel] = {
       val activeProperty = user.incomeSources.properties.filter(p => !p.isCeased && filter(p))
@@ -50,15 +53,17 @@ trait IncomeSourcesUtils extends FeatureSwitching {
       activeProperty match {
         case property :: Nil => Some(property)
         case _ =>
-          Logger("application").error(s"Invalid amount of $incomeSourceType: expected 1, found ${activeProperty.length}")
+          Logger("application").error(
+            s"Invalid amount of $incomeSourceType: expected 1, found ${activeProperty.length}"
+          )
           None
       }
     }
 
     incomeSourceType match {
       case SelfEmployment => None
-      case UkProperty => selectActiveProperty(_.isUkProperty)
-      case _ => selectActiveProperty(_.isForeignProperty)
+      case UkProperty     => selectActiveProperty(_.isUkProperty)
+      case _              => selectActiveProperty(_.isForeignProperty)
     }
   }
 }

@@ -23,9 +23,11 @@ import services.optIn.core.OptInProposition.OneItem
 object OptInProposition {
   private val OneItem = 1
 
-  def createOptInProposition(currentYear: TaxYear,
-                             currentYearItsaStatus: ITSAStatus,
-                             nextYearItsaStatus: ITSAStatus): OptInProposition = {
+  def createOptInProposition(
+      currentYear:           TaxYear,
+      currentYearItsaStatus: ITSAStatus,
+      nextYearItsaStatus:    ITSAStatus
+    ): OptInProposition = {
 
     val currentOptInTaxYear = CurrentOptInTaxYear(
       status = currentYearItsaStatus,
@@ -51,15 +53,15 @@ case class OptInProposition(currentTaxYear: CurrentOptInTaxYear, nextTaxYear: Ne
 
   val availableTaxYearsForOptIn: Seq[TaxYear] = availableOptInYears.map(_.taxYear)
 
-  val isOneYearOptIn: Boolean = availableOptInYears.size == OneItem
-  val isTwoYearOptIn: Boolean = availableOptInYears.size > OneItem
+  val isOneYearOptIn:     Boolean = availableOptInYears.size == OneItem
+  val isTwoYearOptIn:     Boolean = availableOptInYears.size > OneItem
   val isNoOptInAvailable: Boolean = availableOptInYears.isEmpty
 
   def optInPropositionType: Option[OptInPropositionTypes] = {
     (isOneYearOptIn, isTwoYearOptIn) match {
       case (true, false) => Some(OneYearOptInProposition(this))
       case (false, true) => Some(MultiYearOptInProposition(this))
-      case _ => None
+      case _             => None
     }
   }
 

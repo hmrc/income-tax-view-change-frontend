@@ -22,26 +22,28 @@ import models.financialDetails._
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities.JsonUtil
 
-case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
-                                            payments: Seq[Payment]) extends ExtendedAuditModel {
+case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_], payments: Seq[Payment])
+    extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.PaymentHistoryResponse
-  override val auditType: String = enums.AuditType.PaymentHistoryResponse
+  override val auditType:       String = enums.AuditType.PaymentHistoryResponse
 
-  private def getPayment(payment: Payment, desc: String): JsObject = Json.obj("description" -> desc) ++
-    ("paymentDate", if (payment.creditType.contains(MfaCreditType)) Some(payment.documentDate) else payment.dueDate) ++
-    ("amount", payment.amount)
+  private def getPayment(payment: Payment, desc: String): JsObject =
+    Json.obj("description" -> desc) ++
+      ("paymentDate", if (payment.creditType.contains(MfaCreditType)) Some(payment.documentDate)
+      else payment.dueDate) ++
+      ("amount", payment.amount)
 
   private def paymentHistoryMapper(payment: Payment): Option[JsObject] = {
     val hasCredit = payment.credit.isDefined
     val hasLot    = payment.lot.isDefined && payment.lotItem.isDefined
     payment.creditType match {
-      case Some(MfaCreditType)             if hasCredit                           => Some(getPayment(payment, "Credit from HMRC adjustment"))
-      case Some(CutOverCreditType)         if hasCredit                           => Some(getPayment(payment, "Credit from an earlier tax year"))
-      case Some(BalancingChargeCreditType) if hasCredit                           => Some(getPayment(payment, "Balancing charge credit"))
-      case Some(RepaymentInterest)         if hasCredit                           => Some(getPayment(payment, "Interest on set off charge"))
-      case Some(PaymentType)               if !hasCredit && hasLot                => Some(getPayment(payment, "Payment Made to HMRC"))
-      case _ => None
+      case Some(MfaCreditType) if hasCredit             => Some(getPayment(payment, "Credit from HMRC adjustment"))
+      case Some(CutOverCreditType) if hasCredit         => Some(getPayment(payment, "Credit from an earlier tax year"))
+      case Some(BalancingChargeCreditType) if hasCredit => Some(getPayment(payment, "Balancing charge credit"))
+      case Some(RepaymentInterest) if hasCredit         => Some(getPayment(payment, "Interest on set off charge"))
+      case Some(PaymentType) if !hasCredit && hasLot    => Some(getPayment(payment, "Payment Made to HMRC"))
+      case _                                            => None
     }
   }
 

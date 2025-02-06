@@ -20,8 +20,9 @@ import java.time.LocalDate
 
 case class NextUpdatesViewModel(allDeadlines: Seq[DeadlineViewModel])
 
-case class DeadlineViewModel(obligationType: ObligationType,
-                             standardAndCalendar: Boolean,
-                             deadline: LocalDate,
-                             standardQuarters: Seq[ObligationWithIncomeType],
-                             calendarQuarters: Seq[ObligationWithIncomeType]) {}
+case class DeadlineViewModel(
+    obligationType:      ObligationType,
+    standardAndCalendar: Boolean,
+    deadline:            LocalDate,
+    standardQuarters:    Seq[ObligationWithIncomeType],
+    calendarQuarters:    Seq[ObligationWithIncomeType]) {}

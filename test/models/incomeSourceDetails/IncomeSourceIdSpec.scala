@@ -46,7 +46,8 @@ class IncomeSourceIdSpec extends UnitSpec {
 
         val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = Option(mkIncomeSourceId(testSelfEmploymentId).toHash)
 
-        val hashCompareResult: Option[Either[Throwable, IncomeSourceId]] = incomeSourceIdHashMaybe.map(x => user.incomeSources.compareHashToQueryString(x))
+        val hashCompareResult: Option[Either[Throwable, IncomeSourceId]] =
+          incomeSourceIdHashMaybe.map(x => user.incomeSources.compareHashToQueryString(x))
 
         val result: Option[IncomeSourceId] = IncomeSourceId.toOption(hashCompareResult)
 
@@ -70,5 +71,4 @@ class IncomeSourceIdSpec extends UnitSpec {
     }
   }
 
-
-  }
+}

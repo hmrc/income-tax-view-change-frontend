@@ -35,10 +35,22 @@ trait MockITSAStatusConnector extends UnitSpec with BeforeAndAfterEach {
     reset(mockITSAStatusConnector)
   }
 
-  def setupGetITSAStatusDetail(nino: String, taxYear: String, futureYears: Boolean, history: Boolean)(
-    response: Either[ITSAStatusResponse, List[ITSAStatusResponseModel]]): Unit = {
-    when(mockITSAStatusConnector.getITSAStatusDetail(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(taxYear),
-      ArgumentMatchers.eq(futureYears), ArgumentMatchers.eq(history))(any()))
+  def setupGetITSAStatusDetail(
+      nino:        String,
+      taxYear:     String,
+      futureYears: Boolean,
+      history:     Boolean
+    )(
+      response: Either[ITSAStatusResponse, List[ITSAStatusResponseModel]]
+    ): Unit = {
+    when(
+      mockITSAStatusConnector.getITSAStatusDetail(
+        ArgumentMatchers.eq(nino),
+        ArgumentMatchers.eq(taxYear),
+        ArgumentMatchers.eq(futureYears),
+        ArgumentMatchers.eq(history)
+      )(any())
+    )
       .thenReturn(Future.successful(response))
   }
 

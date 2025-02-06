@@ -27,22 +27,27 @@ object CitizenDetailsStub {
   def citizenDetailsUrl(utr: String): String = s"/citizen-details/sautr/$utr"
 
   //Financial Transactions
-  def stubGetCitizenDetails(utr: String = testSaUtr, status: Int = OK, response: JsValue = validCitizenDetailsResponse(testClientFirstName, testClientSurname, testNino)): Unit =
+  def stubGetCitizenDetails(
+      utr:      String = testSaUtr,
+      status:   Int = OK,
+      response: JsValue = validCitizenDetailsResponse(testClientFirstName, testClientSurname, testNino)
+    ): Unit =
     WiremockHelper.stubGet(citizenDetailsUrl(utr), status, response.toString())
 
   //Verifications
   def verifyGetCitizenDetails(utr: String): Unit =
     WiremockHelper.verifyGet(citizenDetailsUrl(utr))
 
-  def validCitizenDetailsResponse(firstName: String, lastName: String, nino: String): JsValue = Json.obj(
-    "name" -> Json.obj(
-      "current" -> Json.obj(
-        "firstName" -> firstName,
-        "lastName" -> lastName
+  def validCitizenDetailsResponse(firstName: String, lastName: String, nino: String): JsValue =
+    Json.obj(
+      "name" -> Json.obj(
+        "current" -> Json.obj(
+          "firstName" -> firstName,
+          "lastName"  -> lastName
+        )
+      ),
+      "ids" -> Json.obj(
+        "nino" -> nino
       )
-    ),
-    "ids" -> Json.obj(
-      "nino" -> nino
     )
-  )
 }

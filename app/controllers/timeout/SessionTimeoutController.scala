@@ -25,10 +25,12 @@ import views.html.timeout.Timeout
 import scala.concurrent.Future
 
 @Singleton
-class SessionTimeoutController @Inject()(val timeoutView: Timeout)
-                                        (implicit val config: FrontendAppConfig,
-                                         mcc: MessagesControllerComponents
-                                        ) extends FrontendController(mcc) {
+class SessionTimeoutController @Inject() (
+    val timeoutView: Timeout
+  )(
+    implicit val config: FrontendAppConfig,
+    mcc:                 MessagesControllerComponents)
+    extends FrontendController(mcc) {
 
   val timeout: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(timeoutView()).withNewSession)

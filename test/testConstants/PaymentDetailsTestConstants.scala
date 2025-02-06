@@ -31,17 +31,18 @@ object PaymentDetailsTestConstants {
   )
 
   val testInvalidPaymentAllocationsModelJson: JsValue = Json.obj(
-    "amount" -> "invalidAmount",
+    "amount"    -> "invalidAmount",
     "payMethod" -> "Payment by Card",
-    "valDate" -> "2019-05-27"
+    "valDate"   -> "2019-05-27"
   )
 
-  val testPaymentAllocationsErrorModelParsing: PaymentAllocationsError = PaymentAllocationsError(
-    testErrorStatus, "Json Validation Error. Parsing Payment Allocations Data Response")
+  val testPaymentAllocationsErrorModelParsing: PaymentAllocationsError =
+    PaymentAllocationsError(testErrorStatus, "Json Validation Error. Parsing Payment Allocations Data Response")
 
-  val testPaymentAllocationsErrorModel: PaymentAllocationsError = PaymentAllocationsError(testErrorStatus, testErrorMessage)
+  val testPaymentAllocationsErrorModel: PaymentAllocationsError =
+    PaymentAllocationsError(testErrorStatus, testErrorMessage)
   val testPaymentAllocationsErrorModelJson: JsValue = Json.obj(
-    "code" -> testErrorStatus,
+    "code"    -> testErrorStatus,
     "message" -> testErrorMessage
   )
 }

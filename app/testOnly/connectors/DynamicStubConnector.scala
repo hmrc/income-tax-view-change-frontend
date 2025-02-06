@@ -29,69 +29,93 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
-                                     val http: HttpClientV2
-                                    )(implicit ec: ExecutionContext) extends RawResponseReads {
+class DynamicStubConnector @Inject() (
+    val appConfig: TestOnlyAppConfig,
+    val http:      HttpClientV2
+  )(
+    implicit ec: ExecutionContext)
+    extends RawResponseReads {
 
   def addSchema(schemaModel: SchemaModel)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     lazy val url = s"${appConfig.dynamicStubUrl}/setup/schema"
-    http.post(url"$url")
-        .withBody(Json.toJson[SchemaModel](schemaModel))
-        .execute[HttpResponse]
+    http
+      .post(url"$url")
+      .withBody(Json.toJson[SchemaModel](schemaModel))
+      .execute[HttpResponse]
   }
 
   def addData(dataModel: DataModel)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
     lazy val url = s"${appConfig.dynamicStubUrl}/setup/data"
-    http.post(url"$url")
-        .withBody(Json.toJson[DataModel](dataModel))
-        .execute[HttpResponse]
+    http
+      .post(url"$url")
+      .withBody(Json.toJson[DataModel](dataModel))
+      .execute[HttpResponse]
   }
 
   def deleteAllData()(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
     lazy val url = s"${appConfig.dynamicStubUrl}/setup/all-data"
-    http.delete(url"$url")
-        .execute[HttpResponse]
+    http
+      .delete(url"$url")
+      .execute[HttpResponse]
 
   }
 
   def deleteAllSchemas()(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
     lazy val url = s"${appConfig.dynamicStubUrl}/setup/all-schemas"
-    http.delete(url"$url")
-        .execute[HttpResponse]
+    http
+      .delete(url"$url")
+      .execute[HttpResponse]
   }
 
   def showLogin(resourceUrl: String)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
     lazy val url = s"${appConfig.dynamicStubUrl}/$resourceUrl"
-    http.get(url"$url")
-        .execute[HttpResponse]
+    http
+      .get(url"$url")
+      .execute[HttpResponse]
   }
 
-  def postLogin(resourceUrl: String, nino: String, isAgent: String)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
-    lazy val url = s"${appConfig.dynamicStubUrl}/$resourceUrl"
+  def postLogin(
+      resourceUrl: String,
+      nino:        String,
+      isAgent:     String
+    )(
+      implicit headerCarrier: HeaderCarrier
+    ): Future[HttpResponse] = {
+    lazy val url  = s"${appConfig.dynamicStubUrl}/$resourceUrl"
     lazy val data = Map("nino" -> Seq(nino), "isAgent" -> Seq(isAgent))
-    http.post(url"$url")
-        .withBody(data)
-        .execute[HttpResponse]
+    http
+      .post(url"$url")
+      .withBody(data)
+      .execute[HttpResponse]
   }
 
   def getOverwriteItsaStatusUrl(nino: String, taxYearRange: String, itsaStatus: String): String = {
     s"${appConfig.dynamicStubUrl}/income-tax-view-change/itsa-status/$nino/$taxYearRange/overwrite/$itsaStatus"
   }
 
-
-  def overwriteItsaStatus(nino: Nino, taxYearRange: String, itsaStatus: String)
-                         (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
+  def overwriteItsaStatus(
+      nino:         Nino,
+      taxYearRange: String,
+      itsaStatus:   String
+    )(
+      implicit headerCarrier: HeaderCarrier
+    ): Future[Unit] = {
 
     val url = getOverwriteItsaStatusUrl(nino.value, taxYearRange, itsaStatus)
-    http.get(url"$url")
-        .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
-        .execute[HttpResponse] map { response =>
+    http
+      .get(url"$url")
+      .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
+      .execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
           (): Unit
         case _ =>
-          Logger("application").error(s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
-          throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+          Logger("application").error(
+            s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >"
+          )
+          throw new Exception(
+            s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >"
+          )
       }
     }
   }
@@ -100,19 +124,29 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
     s"${appConfig.dynamicStubUrl}/income-tax-view-change/calculation-list/$nino/$taxYearRange/overwrite/$crystallisationStatus"
   }
 
-  def overwriteCalculationList(nino: Nino, taxYearRange: String, crystallisationStatus: String)
-                              (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
+  def overwriteCalculationList(
+      nino:                  Nino,
+      taxYearRange:          String,
+      crystallisationStatus: String
+    )(
+      implicit headerCarrier: HeaderCarrier
+    ): Future[Unit] = {
 
-    val url=getOverwriteCalculationListUrl(nino.value, taxYearRange, crystallisationStatus)
-    http.get(url"$url")
-        .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
-        .execute[HttpResponse] map { response =>
+    val url = getOverwriteCalculationListUrl(nino.value, taxYearRange, crystallisationStatus)
+    http
+      .get(url"$url")
+      .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
+      .execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
           (): Unit
         case _ =>
-          Logger("application").error(s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
-          throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+          Logger("application").error(
+            s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >"
+          )
+          throw new Exception(
+            s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >"
+          )
       }
     }
   }

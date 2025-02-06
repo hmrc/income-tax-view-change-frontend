@@ -26,7 +26,7 @@ import testConstants.BusinessDetailsIntegrationTestConstants.testMtdItId
 import testConstants.IncomeSourceIntegrationTestConstants._
 
 class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
-  
+
   val path = "/agents/client-utr"
 
   s"GET $path" should {
@@ -117,7 +117,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
         MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
 
         val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq("abc"))).futureValue
-        
+
         result should have(
           httpStatus(BAD_REQUEST),
           pageTitleAgent("agent.enter_clients_utr.heading", isInvalidInput = true)
@@ -149,7 +149,8 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
       "the utr is submitted by a primary agent is valid" in {
         val validUTR: String = "1234567890"
         MTDAgentAuthStub.stubAuthorisedAndMTDEnrolled(false)
-        CitizenDetailsStub.stubGetCitizenDetails(validUTR,
+        CitizenDetailsStub.stubGetCitizenDetails(
+          validUTR,
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(
             firstName = "testFirstName",
@@ -163,8 +164,17 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
         )
 
         val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(validUTR))).futureValue
-        
-        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId)))
+
+        AuditStub.verifyAuditEvent(
+          EnterClientUTRAuditModel(
+            isSuccessful = true,
+            nino = testNino,
+            mtditid = testMtdItId,
+            arn = Some(testArn),
+            saUtr = validUTR,
+            credId = Some(credId)
+          )
+        )
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -176,7 +186,8 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
         val validUTR: String = "1234567890"
         MTDAgentAuthStub.stubAuthorisedAndMTDEnrolled(true)
 
-        CitizenDetailsStub.stubGetCitizenDetails(validUTR,
+        CitizenDetailsStub.stubGetCitizenDetails(
+          validUTR,
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(
             firstName = "testFirstName",
@@ -191,7 +202,16 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
         val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(validUTR))).futureValue
 
-        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId)))
+        AuditStub.verifyAuditEvent(
+          EnterClientUTRAuditModel(
+            isSuccessful = true,
+            nino = testNino,
+            mtditid = testMtdItId,
+            arn = Some(testArn),
+            saUtr = validUTR,
+            credId = Some(credId)
+          )
+        )
 
         Then("The enter clients utr page is returned with an error")
         result should have(
@@ -201,12 +221,13 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
       }
 
       "the utr submitted by a primary agent contains spaces and is valid" in {
-        val validUTR: String = "1234567890"
+        val validUTR:      String = "1234567890"
         val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
 
         MTDAgentAuthStub.stubAuthorisedAndMTDEnrolled(false)
 
-        CitizenDetailsStub.stubGetCitizenDetails(validUTR,
+        CitizenDetailsStub.stubGetCitizenDetails(
+          validUTR,
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(
             firstName = "testFirstName",
@@ -221,7 +242,16 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
         val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(utrWithSpaces))).futureValue
 
-        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId)))
+        AuditStub.verifyAuditEvent(
+          EnterClientUTRAuditModel(
+            isSuccessful = true,
+            nino = testNino,
+            mtditid = testMtdItId,
+            arn = Some(testArn),
+            saUtr = validUTR,
+            credId = Some(credId)
+          )
+        )
 
         Then("The enter clients utr page is returned with an error")
         result should have(
@@ -231,12 +261,13 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
       }
 
       "the utr submitted by a secondary agent contains spaces and is valid" in {
-        val validUTR: String = "1234567890"
+        val validUTR:      String = "1234567890"
         val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
 
         MTDAgentAuthStub.stubAuthorisedAndMTDEnrolled(true)
 
-        CitizenDetailsStub.stubGetCitizenDetails(validUTR,
+        CitizenDetailsStub.stubGetCitizenDetails(
+          validUTR,
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(
             firstName = "testFirstName",
@@ -251,7 +282,16 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
         val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(utrWithSpaces))).futureValue
 
-        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId)))
+        AuditStub.verifyAuditEvent(
+          EnterClientUTRAuditModel(
+            isSuccessful = true,
+            nino = testNino,
+            mtditid = testMtdItId,
+            arn = Some(testArn),
+            saUtr = validUTR,
+            credId = Some(credId)
+          )
+        )
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -265,10 +305,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
         val validUTR: String = "1234567890"
 
         MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
-        CitizenDetailsStub.stubGetCitizenDetails(validUTR,
-          status = NOT_FOUND,
-          response = Json.obj()
-        )
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR, status = NOT_FOUND, response = Json.obj())
 
         val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(validUTR))).futureValue
 
@@ -283,7 +320,8 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
         val validUTR: String = "1234567890"
 
         MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
-        CitizenDetailsStub.stubGetCitizenDetails(validUTR,
+        CitizenDetailsStub.stubGetCitizenDetails(
+          validUTR,
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(
             firstName = "testFirstName",
@@ -309,7 +347,8 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
         val validUTR: String = "1234567890"
 
         MTDAgentAuthStub.stubAuthorisedButNotMTDEnrolled()
-        CitizenDetailsStub.stubGetCitizenDetails(validUTR,
+        CitizenDetailsStub.stubGetCitizenDetails(
+          validUTR,
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(
             firstName = "testFirstName",

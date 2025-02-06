@@ -36,9 +36,11 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 @Singleton
-class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: BusinessDetailsConnector,
-                                           implicit val ec: ExecutionContext,
-                                           implicit val appConfig: FrontendAppConfig) extends FeatureSwitching {
+class IncomeSourceDetailsService @Inject() (
+    val businessDetailsConnector: BusinessDetailsConnector,
+    implicit val ec:              ExecutionContext,
+    implicit val appConfig:       FrontendAppConfig)
+    extends FeatureSwitching {
   val cacheExpiry: Duration = Duration(1, "day")
   val emptyAddress = AddressModel(
     addressLine1 = "",
@@ -49,41 +51,47 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
     countryCode = ""
   )
 
-  def getIncomeSourceDetails()(implicit hc: HeaderCarrier,
-                               mtdUser: AuthorisedAndEnrolledRequest[_]): Future[IncomeSourceDetailsResponse] = {
+  def getIncomeSourceDetails(
+    )(
+      implicit hc: HeaderCarrier,
+      mtdUser:     AuthorisedAndEnrolledRequest[_]
+    ): Future[IncomeSourceDetailsResponse] = {
     businessDetailsConnector.getIncomeSources()
   }
 
-  def getAddIncomeSourceViewModel(sources: IncomeSourceDetailsModel): Try[AddIncomeSourcesViewModel] = Try {
-    val soleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
-    val ukProperty = sources.properties.filterNot(_.isCeased).find(_.isUkProperty)
-    val foreignProperty = sources.properties.filterNot(_.isCeased).find(_.isForeignProperty)
+  def getAddIncomeSourceViewModel(sources: IncomeSourceDetailsModel): Try[AddIncomeSourcesViewModel] =
+    Try {
+      val soleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
+      val ukProperty           = sources.properties.filterNot(_.isCeased).find(_.isUkProperty)
+      val foreignProperty      = sources.properties.filterNot(_.isCeased).find(_.isForeignProperty)
 
-    AddIncomeSourcesViewModel(
-      soleTraderBusinesses = soleTraderBusinesses.map { business =>
-        BusinessDetailsViewModel(
-          business.tradingName,
-          business.tradingStartDate)
-      },
-      ukProperty = ukProperty.map { property =>
-        PropertyDetailsViewModel(property.tradingStartDate)
-      },
-      foreignProperty = foreignProperty.map { property =>
-        PropertyDetailsViewModel(property.tradingStartDate)
-      },
-      ceasedBusinesses = getCeasedBusinesses(sources = sources)
-    )
-  }
+      AddIncomeSourcesViewModel(
+        soleTraderBusinesses = soleTraderBusinesses.map { business =>
+          BusinessDetailsViewModel(business.tradingName, business.tradingStartDate)
+        },
+        ukProperty = ukProperty.map { property =>
+          PropertyDetailsViewModel(property.tradingStartDate)
+        },
+        foreignProperty = foreignProperty.map { property =>
+          PropertyDetailsViewModel(property.tradingStartDate)
+        },
+        ceasedBusinesses = getCeasedBusinesses(sources = sources)
+      )
+    }
 
-  def getViewIncomeSourceViewModel(sources: IncomeSourceDetailsModel)(implicit user: MtdItUser[_]): Either[Throwable, ViewIncomeSourcesViewModel] = {
+  def getViewIncomeSourceViewModel(
+      sources: IncomeSourceDetailsModel
+    )(
+      implicit user: MtdItUser[_]
+    ): Either[Throwable, ViewIncomeSourcesViewModel] = {
 
-    val maybeSoleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
+    val maybeSoleTraderBusinesses  = sources.businesses.filterNot(_.isCeased)
     val soleTraderBusinessesExists = maybeSoleTraderBusinesses.nonEmpty
 
-    val maybeUkProperty = sources.properties.filterNot(_.isCeased).find(_.isUkProperty)
+    val maybeUkProperty  = sources.properties.filterNot(_.isCeased).find(_.isUkProperty)
     val ukPropertyExists = maybeUkProperty.nonEmpty
 
-    val maybeForeignProperty = sources.properties.filterNot(_.isCeased).find(_.isForeignProperty)
+    val maybeForeignProperty  = sources.properties.filterNot(_.isCeased).find(_.isForeignProperty)
     val foreignPropertyExists = maybeForeignProperty.nonEmpty
 
     Try {
@@ -99,14 +107,18 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
           }
         } else Nil,
         viewUkProperty = if (ukPropertyExists) {
-          Some(ViewPropertyDetailsViewModel(
-            maybeUkProperty.flatMap(_.tradingStartDate)
-          ))
+          Some(
+            ViewPropertyDetailsViewModel(
+              maybeUkProperty.flatMap(_.tradingStartDate)
+            )
+          )
         } else None,
         viewForeignProperty = if (foreignPropertyExists) {
-          Some(ViewPropertyDetailsViewModel(
-            maybeForeignProperty.flatMap(_.tradingStartDate)
-          ))
+          Some(
+            ViewPropertyDetailsViewModel(
+              maybeForeignProperty.flatMap(_.tradingStartDate)
+            )
+          )
         } else None,
         getCeasedBusinesses(sources = sources),
         isEnabled(DisplayBusinessStartDate)
@@ -114,15 +126,17 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
     }.toEither
   }
 
-  def getCeaseIncomeSourceViewModel(sources: IncomeSourceDetailsModel): Either[Throwable, CeaseIncomeSourcesViewModel] = {
+  def getCeaseIncomeSourceViewModel(
+      sources: IncomeSourceDetailsModel
+    ): Either[Throwable, CeaseIncomeSourcesViewModel] = {
 
-    val maybeSoleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
+    val maybeSoleTraderBusinesses  = sources.businesses.filterNot(_.isCeased)
     val soleTraderBusinessesExists = maybeSoleTraderBusinesses.nonEmpty
 
-    val maybeUkProperty = sources.properties.filterNot(_.isCeased).find(_.isUkProperty)
+    val maybeUkProperty  = sources.properties.filterNot(_.isCeased).find(_.isUkProperty)
     val ukPropertyExists = maybeUkProperty.nonEmpty
 
-    val maybeForeignProperty = sources.properties.filterNot(_.isCeased).find(_.isForeignProperty)
+    val maybeForeignProperty  = sources.properties.filterNot(_.isCeased).find(_.isForeignProperty)
     val foreignPropertyExists = maybeForeignProperty.nonEmpty
 
     Try {
@@ -137,44 +151,54 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
           }
         } else Nil,
         ukProperty = if (ukPropertyExists) {
-          Some(CeasePropertyDetailsViewModel(
-            maybeUkProperty.flatMap(_.tradingStartDate)
-          ))
+          Some(
+            CeasePropertyDetailsViewModel(
+              maybeUkProperty.flatMap(_.tradingStartDate)
+            )
+          )
         } else None,
         foreignProperty = if (foreignPropertyExists) {
-          Some(CeasePropertyDetailsViewModel(
-            maybeForeignProperty.flatMap(_.tradingStartDate)
-          ))
+          Some(
+            CeasePropertyDetailsViewModel(
+              maybeForeignProperty.flatMap(_.tradingStartDate)
+            )
+          )
         } else None,
         getCeasedBusinesses(sources = sources)
       )
     }.toEither
   }
 
-  def getCheckCeaseSelfEmploymentDetailsViewModel(sources: IncomeSourceDetailsModel,
-                                                  incomeSourceId: IncomeSourceId,
-                                                  businessEndDate: LocalDate)
-  : Either[Throwable, CheckCeaseIncomeSourceDetailsViewModel] = Try {
-    val soleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
-      .find(m => mkIncomeSourceId(m.incomeSourceId) == incomeSourceId)
+  def getCheckCeaseSelfEmploymentDetailsViewModel(
+      sources:         IncomeSourceDetailsModel,
+      incomeSourceId:  IncomeSourceId,
+      businessEndDate: LocalDate
+    ): Either[Throwable, CheckCeaseIncomeSourceDetailsViewModel] =
+    Try {
+      val soleTraderBusinesses = sources.businesses
+        .filterNot(_.isCeased)
+        .find(m => mkIncomeSourceId(m.incomeSourceId) == incomeSourceId)
 
-    soleTraderBusinesses.map { business =>
-      CheckCeaseIncomeSourceDetailsViewModel(
-        mkIncomeSourceId(business.incomeSourceId),
-        business.tradingName,
-        business.incomeSource,
-        business.address,
-        businessEndDate,
-        incomeSourceType = SelfEmployment
-      )
-    }.get
-  }.toEither
+      soleTraderBusinesses.map { business =>
+        CheckCeaseIncomeSourceDetailsViewModel(
+          mkIncomeSourceId(business.incomeSourceId),
+          business.tradingName,
+          business.incomeSource,
+          business.address,
+          businessEndDate,
+          incomeSourceType = SelfEmployment
+        )
+      }.get
+    }.toEither
 
-  def getCheckCeasePropertyIncomeSourceDetailsViewModel(sources: IncomeSourceDetailsModel, businessEndDate: LocalDate, incomeSourceType: IncomeSourceType)
-  : Either[Throwable, CheckCeaseIncomeSourceDetailsViewModel] = {
+  def getCheckCeasePropertyIncomeSourceDetailsViewModel(
+      sources:          IncomeSourceDetailsModel,
+      businessEndDate:  LocalDate,
+      incomeSourceType: IncomeSourceType
+    ): Either[Throwable, CheckCeaseIncomeSourceDetailsViewModel] = {
     val propertyBusiness = incomeSourceType match {
       case UkProperty => sources.properties.filterNot(_.isCeased).find(_.isUkProperty)
-      case _ => sources.properties.filterNot(_.isCeased).find(_.isForeignProperty)
+      case _          => sources.properties.filterNot(_.isCeased).find(_.isForeignProperty)
     }
     Try {
       propertyBusiness.map { business =>
@@ -193,7 +217,7 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
   private def getCeasedBusinesses(sources: IncomeSourceDetailsModel): List[CeasedBusinessDetailsViewModel] = {
     val viewModelsForCeasedSEBusinesses = {
       for {
-        business <- sources.businesses.filter(_.isCeased)
+        business      <- sources.businesses.filter(_.isCeased)
         cessationDate <- business.cessation.flatMap(_.date)
       } yield CeasedBusinessDetailsViewModel(
         tradingName = business.tradingName,
@@ -206,9 +230,9 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
       for {
         property <- sources.properties.filter(_.isCeased)
         incomeSourceType <- property.incomeSourceType match {
-          case Some("uk-property") => Some(UkProperty)
+          case Some("uk-property")      => Some(UkProperty)
           case Some("foreign-property") => Some(ForeignProperty)
-          case _ => None
+          case _                        => None
         }
         cessationDate <- property.cessation.flatMap(_.date)
       } yield {
@@ -223,7 +247,12 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
     viewModelsForCeasedSEBusinesses ++ viewModelsForCeasedPropertyBusinesses
   }
 
-  def getIncomeSourceFromUser(incomeSourceType: IncomeSourceType, incomeSourceId: IncomeSourceId)(implicit user: MtdItUser[_]): Option[(LocalDate, Option[String])] = {
+  def getIncomeSourceFromUser(
+      incomeSourceType: IncomeSourceType,
+      incomeSourceId:   IncomeSourceId
+    )(
+      implicit user: MtdItUser[_]
+    ): Option[(LocalDate, Option[String])] = {
     incomeSourceType match {
       case SelfEmployment =>
         user.incomeSources.businesses
@@ -231,15 +260,16 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
           .flatMap { addedBusiness =>
             for {
               businessName <- addedBusiness.tradingName
-              startDate <- addedBusiness.tradingStartDate
+              startDate    <- addedBusiness.tradingStartDate
             } yield (startDate, Some(businessName))
           }
       case UkProperty =>
         for {
-          newlyAddedProperty <- user.incomeSources.properties
-            .find(incomeSource =>
-              mkIncomeSourceId(incomeSource.incomeSourceId) == incomeSourceId && incomeSource.isUkProperty
-            )
+          newlyAddedProperty <-
+            user.incomeSources.properties
+              .find(incomeSource =>
+                mkIncomeSourceId(incomeSource.incomeSourceId) == incomeSourceId && incomeSource.isUkProperty
+              )
           startDate <- newlyAddedProperty.tradingStartDate
         } yield (startDate, None)
       case ForeignProperty =>
@@ -252,4 +282,3 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
     }
   }
 }
-

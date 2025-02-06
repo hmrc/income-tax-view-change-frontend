@@ -25,37 +25,41 @@ import play.twirl.api.Html
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.retrieve.Name
 
-case class MtdItUser[A](mtditid: String,
-                        nino: String,
-                        usersRole: MTDUserRole,
-                        authUserDetails: AuthUserDetails,
-                        clientDetails: Option[AgentClientDetails],
-                        incomeSources: IncomeSourceDetailsModel,
-                        btaNavPartial: Option[Html] = None,
-                        featureSwitches: List[FeatureSwitch] = List.empty // TODO: remove default
-                       )(implicit request: Request[A]) extends WrappedRequest[A](request){
+case class MtdItUser[A](
+    mtditid:         String,
+    nino:            String,
+    usersRole:       MTDUserRole,
+    authUserDetails: AuthUserDetails,
+    clientDetails:   Option[AgentClientDetails],
+    incomeSources:   IncomeSourceDetailsModel,
+    btaNavPartial:   Option[Html] = None,
+    featureSwitches: List[FeatureSwitch] = List.empty // TODO: remove default
+  )(
+    implicit request: Request[A])
+    extends WrappedRequest[A](request) {
 
-  val saUtr: Option[String] = if(clientDetails.isDefined) clientDetails.map(_.utr)
-  else authUserDetails.saUtr
-  val credId: Option[String] = authUserDetails.credId
+  val saUtr: Option[String] =
+    if (clientDetails.isDefined) clientDetails.map(_.utr)
+    else authUserDetails.saUtr
+  val credId:   Option[String]        = authUserDetails.credId
   val userType: Option[AffinityGroup] = authUserDetails.affinityGroup
-  val arn: Option[String] = authUserDetails.agentReferenceNumber
+  val arn:      Option[String]        = authUserDetails.agentReferenceNumber
 
-  def isAgent(): Boolean = usersRole != MTDIndividual
-  def userName: Option[Name] = authUserDetails.name
+  def isAgent(): Boolean      = usersRole != MTDIndividual
+  def userName:  Option[Name] = authUserDetails.name
   def optClientNameAsString: Option[String] = {
     val optClientName = clientDetails.fold[Option[Name]](None)(_.clientName)
-    val firstName = optClientName.fold[Option[String]](None)(_.name)
-    val lastName  = optClientName.fold[Option[String]](None)(_.lastName)
+    val firstName     = optClientName.fold[Option[String]](None)(_.name)
+    val lastName      = optClientName.fold[Option[String]](None)(_.lastName)
     (firstName, lastName) match {
       case (Some(fn), Some(ln)) => Some(s"$fn $ln")
-      case _ => None
+      case _                    => None
     }
   }
 
   val isSupportingAgent: Boolean = usersRole == MTDSupportingAgent
 
   def addFeatureSwitches(newFeatureSwitches: List[FeatureSwitch]) = copy(featureSwitches = newFeatureSwitches)
-  def addNavBar(partial: Html) = copy(btaNavPartial = Some(partial))
+  def addNavBar(partial:                     Html)                = copy(btaNavPartial = Some(partial))
 
 }

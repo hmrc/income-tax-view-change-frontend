@@ -26,13 +26,14 @@ import views.html.notEnrolled.NotEnrolled
 
 class NotEnrolledControllerSpec extends TestSupport {
 
-  object TestNotEnrolledController extends NotEnrolledController(app.injector.instanceOf[NotEnrolled])(
-    app.injector.instanceOf[MessagesControllerComponents]
-  )
+  object TestNotEnrolledController
+      extends NotEnrolledController(app.injector.instanceOf[NotEnrolled])(
+        app.injector.instanceOf[MessagesControllerComponents]
+      )
 
   "the NotEnrolledController.show() action" should {
 
-    lazy val result = TestNotEnrolledController.show(fakeRequestNoSession)
+    lazy val result   = TestNotEnrolledController.show(fakeRequestNoSession)
     lazy val document = Jsoup.parse(contentAsString(result))
 
     "return OK (200)" in {

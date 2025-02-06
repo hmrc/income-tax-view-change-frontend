@@ -26,17 +26,19 @@ import views.html.optIn.OptInError
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class OptInErrorController @Inject()(val view: OptInError,
-                                     val authActions: AuthActions)
-                                    (implicit val appConfig: FrontendAppConfig,
-                                      val ec: ExecutionContext,
-                                      val mcc: MessagesControllerComponents
-                                     ) extends FrontendController(mcc) with I18nSupport {
+class OptInErrorController @Inject() (
+    val view:        OptInError,
+    val authActions: AuthActions
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    val ec:                 ExecutionContext,
+    val mcc:                MessagesControllerComponents)
+    extends FrontendController(mcc)
+    with I18nSupport {
 
-
-  def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
+  def show(isAgent: Boolean): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
       Future.successful(Ok(view(isAgent)))
-  }
+    }
 
 }

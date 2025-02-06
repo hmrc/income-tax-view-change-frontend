@@ -26,7 +26,7 @@ object UserModelForm {
   val userModelForm: Form[UserModel] = Form(
     mapping(
       "mtdItId" -> text.verifying(nonEmpty("Must have an MTDID")),
-      "nino" -> text.verifying(nonEmpty("Must have a NINO"))
+      "nino"    -> text.verifying(nonEmpty("Must have a NINO"))
     )(UserModel.apply)(UserModel.unapply)
   )
 }

@@ -20,15 +20,23 @@ import models.financialDetails.{FinancialDetail, MfaDebitUtils}
 
 import java.time.LocalDate
 
-case class PaymentHistoryAllocations (allocations: Seq[PaymentHistoryAllocation], chargeMainType: Option[String], chargeType: Option[String]) {
+case class PaymentHistoryAllocations(
+    allocations:    Seq[PaymentHistoryAllocation],
+    chargeMainType: Option[String],
+    chargeType:     Option[String]) {
   def getPaymentAllocationTextInChargeSummary: Option[String] = {
     if (MfaDebitUtils.isMFADebitMainType(chargeMainType)) {
       Some("chargeSummary.paymentAllocations.mfaDebit")
     } else {
-      FinancialDetail.getMessageKeyByTypes(chargeMainType, chargeType)
+      FinancialDetail
+        .getMessageKeyByTypes(chargeMainType, chargeType)
         .map(typesKey => s"chargeSummary.paymentAllocations.$typesKey")
     }
   }
 }
 
-case class PaymentHistoryAllocation (dueDate: Option[LocalDate], amount: Option[BigDecimal], clearingSAPDocument: Option[String], clearingId: Option[String])
+case class PaymentHistoryAllocation(
+    dueDate:             Option[LocalDate],
+    amount:              Option[BigDecimal],
+    clearingSAPDocument: Option[String],
+    clearingId:          Option[String])

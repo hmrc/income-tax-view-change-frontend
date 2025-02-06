@@ -24,10 +24,15 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.Future
 
 @Singleton
-class SignInController @Inject()(val appConfig: FrontendAppConfig)
-                                (implicit mcc: MessagesControllerComponents) extends FrontendController(mcc) {
+class SignInController @Inject() (val appConfig: FrontendAppConfig)(implicit mcc: MessagesControllerComponents)
+    extends FrontendController(mcc) {
 
   val signIn: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Redirect(appConfig.ggSignInUrl, Map("continue_url" -> Seq(appConfig.homePageUrl), "origin" -> Seq(appConfig.appName))))
+    Future.successful(
+      Redirect(
+        appConfig.ggSignInUrl,
+        Map("continue_url" -> Seq(appConfig.homePageUrl), "origin" -> Seq(appConfig.appName))
+      )
+    )
   }
 }

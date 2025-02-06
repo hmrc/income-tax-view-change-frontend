@@ -29,10 +29,10 @@ class PaymentOnAccountViewModelSessionServiceSpec extends TestSupport {
 
   val mockRepository: PoaAmendmentDataRepository = mock(classOf[PoaAmendmentDataRepository])
 
-  object TestPaymentOnAccountSessionService extends PaymentOnAccountSessionService(
-    mockRepository)
+  object TestPaymentOnAccountSessionService extends PaymentOnAccountSessionService(mockRepository)
 
-  val ammendmentData: PoaAmendmentData = PoaAmendmentData(poaAdjustmentReason = Some(MainIncomeLower), newPoaAmount = None)
+  val ammendmentData: PoaAmendmentData =
+    PoaAmendmentData(poaAdjustmentReason = Some(MainIncomeLower), newPoaAmount = None)
 
   val sessionData: PoaSessionData = PoaSessionData(
     sessionId = "session-123456",
@@ -72,7 +72,7 @@ class PaymentOnAccountViewModelSessionServiceSpec extends TestSupport {
         val result = TestPaymentOnAccountSessionService.setAdjustmentReason(MainIncomeLower)
         result.futureValue match {
           case Left(ex) => ex.getMessage shouldBe "No active mongo session found"
-          case _ => Fail
+          case _        => Fail
         }
       }
     }
@@ -90,7 +90,7 @@ class PaymentOnAccountViewModelSessionServiceSpec extends TestSupport {
         val result = TestPaymentOnAccountSessionService.setNewPoaAmount(100.00)
         result.futureValue match {
           case Left(ex) => ex.getMessage shouldBe "No active mongo session found"
-          case _ => Fail
+          case _        => Fail
         }
       }
     }

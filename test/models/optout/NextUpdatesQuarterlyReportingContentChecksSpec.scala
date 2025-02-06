@@ -23,75 +23,65 @@ class NextUpdatesQuarterlyReportingContentChecksSpec extends TestSupport {
   "QuarterlyReportingContentChecks" when {
     "called showUpdateTypeDetailsSection" should {
       "return Some[Unit] indicating to show - update type detail section" in {
-        Seq((true, true, true),
-          (true, false, true),
-          (true, true, false),
-          (true, false, false),
-          (false, true, false)).foreach {
+        Seq((true, true, true), (true, false, true), (true, true, false), (true, false, false), (false, true, false))
+          .foreach {
 
-          case (currentYearMandatoryOrVoluntary, previousYearMandatoryOrVoluntary, previousYearCrystallised) =>
-            val viewModel = NextUpdatesQuarterlyReportingContentChecks(
-              currentYearItsaStatus = currentYearMandatoryOrVoluntary,
-              previousYearItsaStatus = previousYearMandatoryOrVoluntary,
-              previousYearCrystallisedStatus = previousYearCrystallised)
+            case (currentYearMandatoryOrVoluntary, previousYearMandatoryOrVoluntary, previousYearCrystallised) =>
+              val viewModel = NextUpdatesQuarterlyReportingContentChecks(
+                currentYearItsaStatus = currentYearMandatoryOrVoluntary,
+                previousYearItsaStatus = previousYearMandatoryOrVoluntary,
+                previousYearCrystallisedStatus = previousYearCrystallised
+              )
 
-            viewModel.showUpdateTypeDetailsSection shouldBe Some({})
-        }
+              viewModel.showUpdateTypeDetailsSection shouldBe Some({})
+          }
       }
 
       "return None indicating absence of - update type detail section" in {
-        Seq((false, false, true),
-          (false, false, false),
-          (false, true, true)).foreach {
+        Seq((false, false, true), (false, false, false), (false, true, true)).foreach {
 
           case (currentYearMandatoryOrVoluntary, previousYearMandatoryOrVoluntary, previousYearCrystallised) =>
-
             val viewModel = NextUpdatesQuarterlyReportingContentChecks(
               currentYearItsaStatus = currentYearMandatoryOrVoluntary,
               previousYearItsaStatus = previousYearMandatoryOrVoluntary,
-              previousYearCrystallisedStatus = previousYearCrystallised)
+              previousYearCrystallisedStatus = previousYearCrystallised
+            )
 
             viewModel.showUpdateTypeDetailsSection shouldBe None
         }
       }
     }
-
 
     "called showUseCompatibleSoftwareSection" should {
       "return Some[Unit] indicating to show - update type detail section" in {
-        Seq((true, true, true),
-          (true, false, true),
-          (true, true, false),
-          (true, false, false),
-          (false, true, false)).foreach {
+        Seq((true, true, true), (true, false, true), (true, true, false), (true, false, false), (false, true, false))
+          .foreach {
 
-          case (currentYearMandatoryOrVoluntary, previousYearMandatoryOrVoluntary, previousYearCrystallised) =>
-            val viewModel = NextUpdatesQuarterlyReportingContentChecks(
-              currentYearItsaStatus = currentYearMandatoryOrVoluntary,
-              previousYearItsaStatus = previousYearMandatoryOrVoluntary,
-              previousYearCrystallisedStatus = previousYearCrystallised)
+            case (currentYearMandatoryOrVoluntary, previousYearMandatoryOrVoluntary, previousYearCrystallised) =>
+              val viewModel = NextUpdatesQuarterlyReportingContentChecks(
+                currentYearItsaStatus = currentYearMandatoryOrVoluntary,
+                previousYearItsaStatus = previousYearMandatoryOrVoluntary,
+                previousYearCrystallisedStatus = previousYearCrystallised
+              )
 
-            viewModel.showUpdateTypeDetailsSection shouldBe Some({})
-        }
+              viewModel.showUpdateTypeDetailsSection shouldBe Some({})
+          }
       }
 
       "return None indicating absence of - update type detail section" in {
-        Seq((false, false, true),
-          (false, false, false),
-          (false, true, true)).foreach {
+        Seq((false, false, true), (false, false, false), (false, true, true)).foreach {
 
           case (currentYearMandatoryOrVoluntary, previousYearMandatoryOrVoluntary, previousYearCrystallised) =>
-
             val viewModel = NextUpdatesQuarterlyReportingContentChecks(
               currentYearItsaStatus = currentYearMandatoryOrVoluntary,
               previousYearItsaStatus = previousYearMandatoryOrVoluntary,
-              previousYearCrystallisedStatus = previousYearCrystallised)
+              previousYearCrystallisedStatus = previousYearCrystallised
+            )
 
             viewModel.showUpdateTypeDetailsSection shouldBe None
         }
       }
     }
-
 
   }
 }

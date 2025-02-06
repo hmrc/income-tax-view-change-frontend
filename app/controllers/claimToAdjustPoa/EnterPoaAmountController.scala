@@ -36,65 +36,96 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EnterPoaAmountController @Inject()(val authActions: AuthActions,
-                                         val poaSessionService: PaymentOnAccountSessionService,
-                                         view: EnterPoaAmountView,
-                                         val claimToAdjustService: ClaimToAdjustService)
-                                        (implicit val appConfig: FrontendAppConfig,
-                                         val individualErrorHandler: ItvcErrorHandler,
-                                         val agentErrorHandler: AgentItvcErrorHandler,
-                                         val mcc: MessagesControllerComponents,
-                                         val ec: ExecutionContext)
-  extends FrontendController(mcc) with FeatureSwitching with ClaimToAdjustUtils with I18nSupport with JourneyCheckerClaimToAdjust with ErrorRecovery {
+class EnterPoaAmountController @Inject() (
+    val authActions:          AuthActions,
+    val poaSessionService:    PaymentOnAccountSessionService,
+    view:                     EnterPoaAmountView,
+    val claimToAdjustService: ClaimToAdjustService
+  )(
+    implicit val appConfig:     FrontendAppConfig,
+    val individualErrorHandler: ItvcErrorHandler,
+    val agentErrorHandler:      AgentItvcErrorHandler,
+    val mcc:                    MessagesControllerComponents,
+    val ec:                     ExecutionContext)
+    extends FrontendController(mcc)
+    with FeatureSwitching
+    with ClaimToAdjustUtils
+    with I18nSupport
+    with JourneyCheckerClaimToAdjust
+    with ErrorRecovery {
 
   def show(isAgent: Boolean, mode: Mode): Action[AnyContent] =
-    authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
-      implicit user =>
-        ifAdjustPoaIsEnabled(user.isAgent()) {
-          withSessionData() { session =>
-            claimToAdjustService.getPoaViewModelWithAdjustmentReason(Nino(user.nino)).map {
-              case Right(viewModel) =>
-                val filledForm = session.newPoaAmount.fold(EnterPoaAmountForm.form)(value =>
-                  EnterPoaAmountForm.form.fill(EnterPoaAmountForm(value))
-                )
-                Ok(view(filledForm, viewModel, user.isAgent(), EnterPoaAmountController.submit(user.isAgent(), mode)))
-              case Left(ex) =>
-                logAndRedirect(s"Error while retrieving charge history details : ${ex.getMessage} - ${ex.getCause}")
-            }
+    authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async { implicit user =>
+      ifAdjustPoaIsEnabled(user.isAgent()) {
+        withSessionData() { session =>
+          claimToAdjustService.getPoaViewModelWithAdjustmentReason(Nino(user.nino)).map {
+            case Right(viewModel) =>
+              val filledForm = session.newPoaAmount.fold(EnterPoaAmountForm.form)(value =>
+                EnterPoaAmountForm.form.fill(EnterPoaAmountForm(value))
+              )
+              Ok(view(filledForm, viewModel, user.isAgent(), EnterPoaAmountController.submit(user.isAgent(), mode)))
+            case Left(ex) =>
+              logAndRedirect(s"Error while retrieving charge history details : ${ex.getMessage} - ${ex.getCause}")
           }
-        } recover logAndRedirect
+        }
+      } recover logAndRedirect
     }
 
-  def submit(isAgent: Boolean, mode: Mode): Action[AnyContent] = authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
-    implicit user =>
+  def submit(isAgent: Boolean, mode: Mode): Action[AnyContent] =
+    authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async { implicit user =>
       ifAdjustPoaIsEnabled(user.isAgent()) {
         claimToAdjustService.getPoaViewModelWithAdjustmentReason(Nino(user.nino)).flatMap {
           case Right(viewModel) =>
             handleForm(viewModel, user.isAgent(), mode)
           case Left(ex) =>
-            Future.successful(logAndRedirect(s"Error while retrieving charge history details : ${ex.getMessage} - ${ex.getCause}"))
+            Future.successful(
+              logAndRedirect(s"Error while retrieving charge history details : ${ex.getMessage} - ${ex.getCause}")
+            )
         } recover logAndRedirect
       }
+    }
+
+  def handleForm(
+      viewModel: PaymentOnAccountViewModel,
+      isAgent:   Boolean,
+      mode:      Mode
+    )(
+      implicit user: MtdItUser[_]
+    ): Future[Result] = {
+    EnterPoaAmountForm
+      .checkValueConstraints(
+        EnterPoaAmountForm.form.bindFromRequest(),
+        viewModel.totalAmountOne,
+        viewModel.relevantAmountOne
+      )
+      .fold(
+        formWithErrors =>
+          Future.successful(
+            BadRequest(
+              view(formWithErrors, viewModel, user.isAgent(), EnterPoaAmountController.submit(user.isAgent(), mode))
+            )
+          ),
+        validForm =>
+          poaSessionService.setNewPoaAmount(validForm.amount).flatMap {
+            case Left(ex) =>
+              Future.successful(logAndRedirect(s"Error while setting mongo data : ${ex.getMessage} - ${ex.getCause}"))
+            case Right(_) => getRedirect(viewModel, validForm.amount, user.isAgent(), mode)
+          }
+      )
   }
 
-  def handleForm(viewModel: PaymentOnAccountViewModel, isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
-    EnterPoaAmountForm.checkValueConstraints(EnterPoaAmountForm.form.bindFromRequest(), viewModel.totalAmountOne, viewModel.relevantAmountOne).fold(
-      formWithErrors =>
-        Future.successful(BadRequest(view(formWithErrors, viewModel, user.isAgent(), EnterPoaAmountController.submit(user.isAgent(), mode)))),
-      validForm =>
-        poaSessionService.setNewPoaAmount(validForm.amount).flatMap {
-          case Left(ex) =>
-            Future.successful(logAndRedirect(s"Error while setting mongo data : ${ex.getMessage} - ${ex.getCause}"))
-          case Right(_) => getRedirect(viewModel, validForm.amount, user.isAgent(), mode)
-        }
-    )
-  }
-
-  def getRedirect(viewModel: PaymentOnAccountViewModel, newPoaAmount: BigDecimal, isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
+  def getRedirect(
+      viewModel:    PaymentOnAccountViewModel,
+      newPoaAmount: BigDecimal,
+      isAgent:      Boolean,
+      mode:         Mode
+    )(
+      implicit user: MtdItUser[_]
+    ): Future[Result] = {
     (viewModel.totalAmountLessThanPoa, newPoaAmount > viewModel.totalAmountOne) match {
       case (true, true) => hasIncreased(user.isAgent())
-      case (true, _) => hasDecreased(user.isAgent(), mode)
-      case _ => Future.successful(Redirect(CheckYourAnswersController.show(user.isAgent())))
+      case (true, _)    => hasDecreased(user.isAgent(), mode)
+      case _            => Future.successful(Redirect(CheckYourAnswersController.show(user.isAgent())))
     }
   }
 
@@ -110,15 +141,20 @@ class EnterPoaAmountController @Inject()(val authActions: AuthActions,
   //user has decreased but could have increased:
   private def hasDecreased(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
     if (mode == NormalMode)
-      Future.successful(Redirect(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(user.isAgent(), NormalMode)))
+      Future.successful(
+        Redirect(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(user.isAgent(), NormalMode))
+      )
     else {
       poaSessionService.getMongo.map {
-        case Right(Some(mongoData)) => mongoData.poaAdjustmentReason match {
-          case Some(reason) if reason != Increase => Redirect(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(user.isAgent()))
-          case _ => Redirect(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(user.isAgent(), CheckMode))
-        }
+        case Right(Some(mongoData)) =>
+          mongoData.poaAdjustmentReason match {
+            case Some(reason) if reason != Increase =>
+              Redirect(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(user.isAgent()))
+            case _ =>
+              Redirect(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(user.isAgent(), CheckMode))
+          }
         case _ =>
-         logAndRedirect(s"No active mongo data found")
+          logAndRedirect(s"No active mongo data found")
       }
     }
   }

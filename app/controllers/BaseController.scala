@@ -24,14 +24,14 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
 
-abstract class BaseController @Inject()(implicit mcc: MessagesControllerComponents) extends FrontendController(mcc) {
+abstract class BaseController @Inject() (implicit mcc: MessagesControllerComponents) extends FrontendController(mcc) {
 
   implicit val executionContext: ExecutionContext
 
   override implicit def hc(implicit rh: RequestHeader): HeaderCarrier = {
     rh.headers.headers.find(_._1 == HeaderNames.REFERER) match {
       case Some(referrer) => super.hc.withExtraHeaders(referrer)
-      case _ => super.hc
+      case _              => super.hc
     }
   }
 

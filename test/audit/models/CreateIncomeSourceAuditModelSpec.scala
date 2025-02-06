@@ -30,11 +30,11 @@ import java.time.LocalDate
 class CreateIncomeSourceAuditModelSpec extends TestSupport {
 
   val transactionName = enums.TransactionName.CreateIncomeSource.name
-  val auditType = enums.AuditType.CreateIncomeSource.name
-  val hcWithDeviceID = headerCarrier.copy(deviceID = Some("some device id"))
+  val auditType       = enums.AuditType.CreateIncomeSource.name
+  val hcWithDeviceID  = headerCarrier.copy(deviceID = Some("some device id"))
   val failureCategory = ApiFailure
-  val failureReason = "Failure Reason"
-  val incomeSourceId = testSelfEmploymentId
+  val failureReason   = "Failure Reason"
+  val incomeSourceId  = testSelfEmploymentId
 
   val createBusinessViewModel = CheckBusinessDetailsViewModel(
     businessName = Some("someBusinessName"),
@@ -55,68 +55,104 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
   val createForeignPropertyViewModel = CheckPropertyViewModel(
     tradingStartDate = LocalDate.of(2022, 1, 1),
     cashOrAccrualsFlag = "CASH",
-    incomeSourceType = ForeignProperty)
+    incomeSourceType = ForeignProperty
+  )
 
   val createUKPropertyViewModel = CheckPropertyViewModel(
     tradingStartDate = LocalDate.of(2022, 1, 1),
     cashOrAccrualsFlag = "CASH",
-    incomeSourceType = UkProperty)
+    incomeSourceType = UkProperty
+  )
 
-  def getCreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType, isAgent: Boolean, isError: Boolean): CreateIncomeSourceAuditModel = {
+  def getCreateIncomeSourceAuditModel(
+      incomeSourceType: IncomeSourceType,
+      isAgent:          Boolean,
+      isError:          Boolean
+    ): CreateIncomeSourceAuditModel = {
     (incomeSourceType, isAgent, isError) match {
-      case (SelfEmployment, false, true) => CreateIncomeSourceAuditModel(incomeSourceType, createBusinessViewModel, Some(failureCategory), Some(failureReason), None)
-      case (SelfEmployment, false, false) => CreateIncomeSourceAuditModel(incomeSourceType, createBusinessViewModel, None, None, Some(CreateIncomeSourceResponse(incomeSourceId)))
-      case (SelfEmployment, true, false) => CreateIncomeSourceAuditModel(incomeSourceType, createBusinessViewModel, None, None, Some(CreateIncomeSourceResponse(incomeSourceId)))(agentUserConfirmedClient())
-      case _ => CreateIncomeSourceAuditModel(incomeSourceType, createForeignPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(incomeSourceId)))
+      case (SelfEmployment, false, true) =>
+        CreateIncomeSourceAuditModel(
+          incomeSourceType,
+          createBusinessViewModel,
+          Some(failureCategory),
+          Some(failureReason),
+          None
+        )
+      case (SelfEmployment, false, false) =>
+        CreateIncomeSourceAuditModel(
+          incomeSourceType,
+          createBusinessViewModel,
+          None,
+          None,
+          Some(CreateIncomeSourceResponse(incomeSourceId))
+        )
+      case (SelfEmployment, true, false) =>
+        CreateIncomeSourceAuditModel(
+          incomeSourceType,
+          createBusinessViewModel,
+          None,
+          None,
+          Some(CreateIncomeSourceResponse(incomeSourceId))
+        )(agentUserConfirmedClient())
+      case _ =>
+        CreateIncomeSourceAuditModel(
+          incomeSourceType,
+          createForeignPropertyViewModel,
+          None,
+          None,
+          Some(CreateIncomeSourceResponse(incomeSourceId))
+        )
     }
   }
 
   val seAuditDetails: Boolean => JsObject = isSuccess => {
-    val outcome = if(isSuccess) {
+    val outcome = if (isSuccess) {
       Json.obj(
-          "isSuccessful" -> true
-        )
+        "isSuccessful" -> true
+      )
     } else {
       Json.obj(
-        "isSuccessful" -> false,
+        "isSuccessful"    -> false,
         "failureCategory" -> "API_FAILURE",
-        "failureReason" -> "Failure Reason"
+        "failureReason"   -> "Failure Reason"
       )
     }
     Json.obj(
-      "outcome" -> outcome,
-      "journeyType" -> "SE",
-      "dateStarted" -> "2022-01-01",
-      "businessName" -> "someBusinessName",
+      "outcome"             -> outcome,
+      "journeyType"         -> "SE",
+      "dateStarted"         -> "2022-01-01",
+      "businessName"        -> "someBusinessName",
       "businessDescription" -> "someBusinessTrade",
-      "addressLine1" -> "2 Test Lane",
-      "addressLine2" -> "Test Unit",
-      "addressTownOrCity" -> "Test City",
-      "addressPostcode" -> "TE5 7TT",
-      "addressCountry" -> "GB",
-      "accountingMethod" -> "CASH"
-    ) ++ {if(isSuccess) Json.obj("addedIncomeSourceID" -> "XA00001234") else Json.obj()}
+      "addressLine1"        -> "2 Test Lane",
+      "addressLine2"        -> "Test Unit",
+      "addressTownOrCity"   -> "Test City",
+      "addressPostcode"     -> "TE5 7TT",
+      "addressCountry"      -> "GB",
+      "accountingMethod"    -> "CASH"
+    ) ++ { if (isSuccess) Json.obj("addedIncomeSourceID" -> "XA00001234") else Json.obj() }
   }
-
 
   val detailIndividualSE = commonAuditDetails(Individual) ++ seAuditDetails(true)
 
   val detailAgentSE = commonAuditDetails(Agent) ++ seAuditDetails(true)
 
-
   val detailOutcomeError = commonAuditDetails(Individual) ++ seAuditDetails(false)
 
   val detailProperty = commonAuditDetails(Individual) ++ Json.obj(
-    "outcome" -> Json.obj("isSuccessful" -> true),
-    "journeyType" -> "UKPROPERTY",
-    "addedIncomeSourceID" ->"XA00001234",
-    "dateStarted" -> "2022-01-01",
-    "accountingMethod" -> "CASH"
+    "outcome"             -> Json.obj("isSuccessful" -> true),
+    "journeyType"         -> "UKPROPERTY",
+    "addedIncomeSourceID" -> "XA00001234",
+    "dateStarted"         -> "2022-01-01",
+    "accountingMethod"    -> "CASH"
   )
 
   "CeaseIncomeSourceAuditModel" should {
     s"have the correct transaction name of - $transactionName" in {
-      getCreateIncomeSourceAuditModel(SelfEmployment, isAgent = false, isError = false).transactionName shouldBe transactionName
+      getCreateIncomeSourceAuditModel(
+        SelfEmployment,
+        isAgent = false,
+        isError = false
+      ).transactionName shouldBe transactionName
     }
   }
 
@@ -126,7 +162,11 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
 
   "have the correct detail for the audit event" when {
     "user is an Individual and when income source type is Self Employment" in {
-      getCreateIncomeSourceAuditModel(SelfEmployment, isAgent = false, isError = false).detail shouldBe detailIndividualSE
+      getCreateIncomeSourceAuditModel(
+        SelfEmployment,
+        isAgent = false,
+        isError = false
+      ).detail shouldBe detailIndividualSE
     }
 
     "user is an Agent and when income source type is Self Employment" in {
@@ -134,7 +174,11 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
     }
 
     "error while updating income source" in {
-      getCreateIncomeSourceAuditModel(SelfEmployment, isAgent = false, isError = true).detail shouldBe detailOutcomeError
+      getCreateIncomeSourceAuditModel(
+        SelfEmployment,
+        isAgent = false,
+        isError = true
+      ).detail shouldBe detailOutcomeError
     }
 
     "user is an Individual and when income source type is Property" in {

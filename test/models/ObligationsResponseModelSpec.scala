@@ -90,18 +90,22 @@ class ObligationsResponseModelSpec extends TestSupport with Matchers with Implic
     }
 
     "be formatted to JSON correctly" in {
-      Json.toJson[GroupedObligationsModel](nextUpdatesDataSelfEmploymentSuccessModel) shouldBe obligationsDataSuccessJson
+      Json.toJson[GroupedObligationsModel](
+        nextUpdatesDataSelfEmploymentSuccessModel
+      ) shouldBe obligationsDataSuccessJson
     }
 
     "be able to parse a JSON into the Model" in {
-      Json.fromJson[GroupedObligationsModel](obligationsDataSuccessJson).fold(
-        invalid => invalid,
-        valid => valid) shouldBe nextUpdatesDataSelfEmploymentSuccessModel
+      Json
+        .fromJson[GroupedObligationsModel](obligationsDataSuccessJson)
+        .fold(invalid => invalid, valid => valid) shouldBe nextUpdatesDataSelfEmploymentSuccessModel
     }
 
     "call to .currentCrystDeadlines should return sorted obligations by Crystallised obligationType" in {
-      val nextUpdatesModel = GroupedObligationsModel(testSelfEmploymentId,
-        List(openObligation, crystallisedObligation, quarterlyBusinessObligation, crystallisedObligationTwo))
+      val nextUpdatesModel = GroupedObligationsModel(
+        testSelfEmploymentId,
+        List(openObligation, crystallisedObligation, quarterlyBusinessObligation, crystallisedObligationTwo)
+      )
 
       nextUpdatesModel.currentCrystDeadlines shouldBe List(crystallisedObligation, crystallisedObligationTwo)
     }
@@ -133,7 +137,8 @@ class ObligationsResponseModelSpec extends TestSupport with Matchers with Implic
 
       "calling .allDeadlinesWithSource" in {
         NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allDeadlinesWithSource()(
-          BaseTestConstants.testMtdItUser) shouldBe List(
+          BaseTestConstants.testMtdItUser
+        ) shouldBe List(
           ObligationWithIncomeType("nextUpdates.propertyIncome", overdueQuarterlyObligation),
           ObligationWithIncomeType("nextUpdates.business", overdueObligation),
           ObligationWithIncomeType("nextUpdates.business", openObligation),
@@ -146,11 +151,21 @@ class ObligationsResponseModelSpec extends TestSupport with Matchers with Implic
     "return a list of all models with source in dateReceived order if the previous flag is set to true" when {
 
       "calling .allDeadlinesWithSource" in {
-        NextUpdatesTestConstants.obligationsAllDeadlinesWithDateReceivedSuccessModel.allDeadlinesWithSource(previous = true)(
-          BaseTestConstants.testMtdItUser) shouldBe List(
-          ObligationWithIncomeType("nextUpdates.business", openObligation.copy(dateReceived = Some(mockedCurrentTime20171031.plusDays(1)))),
-          ObligationWithIncomeType("nextUpdates.propertyIncome", overdueQuarterlyObligation.copy(dateReceived = Some(mockedCurrentTime20171031.minusDays(3)))),
-          ObligationWithIncomeType("nextUpdates.crystallisedAll", crystallisedObligation.copy(dateReceived = Some(mockedCurrentTime20171031.minusDays(6))))
+        NextUpdatesTestConstants.obligationsAllDeadlinesWithDateReceivedSuccessModel.allDeadlinesWithSource(previous =
+          true
+        )(BaseTestConstants.testMtdItUser) shouldBe List(
+          ObligationWithIncomeType(
+            "nextUpdates.business",
+            openObligation.copy(dateReceived = Some(mockedCurrentTime20171031.plusDays(1)))
+          ),
+          ObligationWithIncomeType(
+            "nextUpdates.propertyIncome",
+            overdueQuarterlyObligation.copy(dateReceived = Some(mockedCurrentTime20171031.minusDays(3)))
+          ),
+          ObligationWithIncomeType(
+            "nextUpdates.crystallisedAll",
+            crystallisedObligation.copy(dateReceived = Some(mockedCurrentTime20171031.minusDays(6)))
+          )
         )
       }
     }
@@ -159,7 +174,8 @@ class ObligationsResponseModelSpec extends TestSupport with Matchers with Implic
 
       "calling .allDeadlinesWithSource" in {
         obligationsAllDeadlinesSuccessNotValidObligationType.allDeadlinesWithSource()(
-          BaseTestConstants.testMtdItUserNoIncomeSource) shouldBe List()
+          BaseTestConstants.testMtdItUserNoIncomeSource
+        ) shouldBe List()
       }
     }
 
@@ -167,7 +183,8 @@ class ObligationsResponseModelSpec extends TestSupport with Matchers with Implic
 
       "calling .allQuarterly" in {
         NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allQuarterly(
-          BaseTestConstants.testMtdItUser) shouldBe List(
+          BaseTestConstants.testMtdItUser
+        ) shouldBe List(
           ObligationWithIncomeType("nextUpdates.propertyIncome", overdueQuarterlyObligation),
           ObligationWithIncomeType("nextUpdates.business", overdueObligation),
           ObligationWithIncomeType("nextUpdates.business", openObligation),
@@ -177,7 +194,8 @@ class ObligationsResponseModelSpec extends TestSupport with Matchers with Implic
 
       "calling .allCrystallised" in {
         NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allCrystallised(
-          BaseTestConstants.testMtdItUser) shouldBe List(
+          BaseTestConstants.testMtdItUser
+        ) shouldBe List(
           ObligationWithIncomeType("nextUpdates.crystallisedAll", crystallisedObligation)
         )
       }
@@ -192,15 +210,66 @@ class ObligationsResponseModelSpec extends TestSupport with Matchers with Implic
         )
 
         NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.groupByQuarterPeriod(
-          nextUpdateModelWithIncomeTypeList) shouldBe Map(
+          nextUpdateModelWithIncomeTypeList
+        ) shouldBe Map(
           None -> List(
-            ObligationWithIncomeType("nextUpdates.crystallisedAll", SingleObligationModel("2017-10-01", "2018-10-30", "2017-10-31", "Crystallised", None, "", StatusFulfilled))),
+            ObligationWithIncomeType(
+              "nextUpdates.crystallisedAll",
+              SingleObligationModel("2017-10-01", "2018-10-30", "2017-10-31", "Crystallised", None, "", StatusFulfilled)
+            )
+          ),
           Some(QuarterTypeCalendar) -> List(
-            ObligationWithIncomeType("nextUpdates.business", SingleObligationModel("2017-07-01", "2017-09-30", "2017-10-30", "Quarterly", None, "#002", StatusFulfilled)),
-            ObligationWithIncomeType("nextUpdates.business", SingleObligationModel("2017-07-01", "2017-09-30", "2017-10-31", "Quarterly", None, "#003", StatusFulfilled))),
+            ObligationWithIncomeType(
+              "nextUpdates.business",
+              SingleObligationModel(
+                "2017-07-01",
+                "2017-09-30",
+                "2017-10-30",
+                "Quarterly",
+                None,
+                "#002",
+                StatusFulfilled
+              )
+            ),
+            ObligationWithIncomeType(
+              "nextUpdates.business",
+              SingleObligationModel(
+                "2017-07-01",
+                "2017-09-30",
+                "2017-10-31",
+                "Quarterly",
+                None,
+                "#003",
+                StatusFulfilled
+              )
+            )
+          ),
           Some(QuarterTypeStandard) -> List(
-            ObligationWithIncomeType("nextUpdates.propertyIncome", SingleObligationModel("2017-04-06", "2018-04-05", "2017-10-01", "Quarterly", None, "#002", StatusFulfilled)),
-            ObligationWithIncomeType("nextUpdates.propertyIncome", SingleObligationModel("2017-04-06", "2018-04-05", "2017-10-31", "Quarterly", None, "#003", StatusFulfilled)))
+            ObligationWithIncomeType(
+              "nextUpdates.propertyIncome",
+              SingleObligationModel(
+                "2017-04-06",
+                "2018-04-05",
+                "2017-10-01",
+                "Quarterly",
+                None,
+                "#002",
+                StatusFulfilled
+              )
+            ),
+            ObligationWithIncomeType(
+              "nextUpdates.propertyIncome",
+              SingleObligationModel(
+                "2017-04-06",
+                "2018-04-05",
+                "2017-10-31",
+                "Quarterly",
+                None,
+                "#003",
+                StatusFulfilled
+              )
+            )
+          )
         )
       }
     }

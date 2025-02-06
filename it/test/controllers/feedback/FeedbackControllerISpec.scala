@@ -27,14 +27,14 @@ class FeedbackControllerISpec extends ControllerISpecHelper {
 
   def getPath(isAgent: Boolean, isThankyou: Boolean = false): String = {
     val pathStart = if (isAgent) "/agents" else ""
-    val pathEnd = if(isThankyou) "/thankyou" else "/feedback"
+    val pathEnd   = if (isThankyou) "/thankyou" else "/feedback"
     pathStart + pathEnd
   }
 
   List(false, true).foreach { isAgent =>
-    val feedbackPath = getPath(isAgent)
-    val thankyouPath = getPath(isAgent, true)
-    val (authStub, role) = if(isAgent) (MTDAgentAuthStub, "Agent") else (MTDIndividualAuthStub, "Individual")
+    val feedbackPath     = getPath(isAgent)
+    val thankyouPath     = getPath(isAgent, true)
+    val (authStub, role) = if (isAgent) (MTDAgentAuthStub, "Agent") else (MTDIndividualAuthStub, "Individual")
 
     s"calling GET $feedbackPath" should {
       "render the Feedback page" when {
@@ -44,7 +44,7 @@ class FeedbackControllerISpec extends ControllerISpecHelper {
 
           result should have(
             httpStatus(OK),
-            pageTitle(if(isAgent) MTDPrimaryAgent else MTDIndividual, "feedback.heading")
+            pageTitle(if (isAgent) MTDPrimaryAgent else MTDIndividual, "feedback.heading")
           )
         }
       }
@@ -58,12 +58,12 @@ class FeedbackControllerISpec extends ControllerISpecHelper {
 
           val formData: Map[String, Seq[String]] = {
             Map(
-              "feedback-rating" -> Seq("Test Business"),
-              "feedback-name" -> Seq("Albert Einstein"),
-              "feedback-email" -> Seq("alberteinstein@gmail.com"),
+              "feedback-rating"   -> Seq("Test Business"),
+              "feedback-name"     -> Seq("Albert Einstein"),
+              "feedback-email"    -> Seq("alberteinstein@gmail.com"),
               "feedback-comments" -> Seq("MCXSIMMKZC"),
-              "csrfToken" -> Seq("mdkdmskd"),
-              "referrer" -> Seq("MCXSIMMKZC")
+              "csrfToken"         -> Seq("mdkdmskd"),
+              "referrer"          -> Seq("MCXSIMMKZC")
             )
           }
 
@@ -92,11 +92,11 @@ class FeedbackControllerISpec extends ControllerISpecHelper {
           When("Full name is missing")
           val formData: Map[String, Seq[String]] = {
             Map(
-              "feedback-rating" -> Seq("Test Business"),
-              "feedback-email" -> Seq("alberteinstein@gmail.com"),
+              "feedback-rating"   -> Seq("Test Business"),
+              "feedback-email"    -> Seq("alberteinstein@gmail.com"),
               "feedback-comments" -> Seq("MCXSIMMKZC"),
-              "csrfToken" -> Seq(""),
-              "referrer" -> Seq("MCXSIMMKZC")
+              "csrfToken"         -> Seq(""),
+              "referrer"          -> Seq("MCXSIMMKZC")
             )
           }
 
@@ -104,7 +104,7 @@ class FeedbackControllerISpec extends ControllerISpecHelper {
 
           res should have(
             httpStatus(BAD_REQUEST),
-            pageTitle(if(isAgent) MTDPrimaryAgent else MTDIndividual, "feedback.heading", isInvalidInput = true)
+            pageTitle(if (isAgent) MTDPrimaryAgent else MTDIndividual, "feedback.heading", isInvalidInput = true)
           )
         }
       }
@@ -120,11 +120,10 @@ class FeedbackControllerISpec extends ControllerISpecHelper {
 
           res should have(
             httpStatus(OK),
-            pageTitle(if(isAgent) MTDPrimaryAgent else MTDIndividual, "feedback.thankYou")
+            pageTitle(if (isAgent) MTDPrimaryAgent else MTDIndividual, "feedback.thankYou")
           )
         }
       }
     }
   }
 }
-

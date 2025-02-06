@@ -25,14 +25,15 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SessionTimeoutAction @Inject()(val parser: BodyParsers.Default)(implicit val executionContext: ExecutionContext)
-  extends ActionRefiner[Request, Request] with ActionBuilder[Request, AnyContent] {
+class SessionTimeoutAction @Inject() (val parser: BodyParsers.Default)(implicit val executionContext: ExecutionContext)
+    extends ActionRefiner[Request, Request]
+    with ActionBuilder[Request, AnyContent] {
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, Request[A]]] = {
 
     val updatedHeaders = request.session.get("Gov-Test-Scenario") match {
       case Some(data) => request.headers.add(("Gov-Test-Scenario", data))
-      case _ => request.headers
+      case _          => request.headers
     }
 
     (request.session.get(SessionKeys.lastRequestTimestamp), request.session.get(SessionKeys.authToken)) match {

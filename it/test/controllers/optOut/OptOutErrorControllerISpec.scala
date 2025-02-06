@@ -29,9 +29,9 @@ import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
 class OptOutErrorControllerISpec extends ControllerISpecHelper {
 
-  val headingText = "Sorry, there is a problem with the service"
-  val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
-  val nextTaxYear = currentTaxYear.nextYear
+  val headingText     = "Sorry, there is a problem with the service"
+  val currentTaxYear  = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
+  val nextTaxYear     = currentTaxYear.nextYear
   val previousTaxYear = currentTaxYear.previousYear
 
   val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
@@ -41,28 +41,29 @@ class OptOutErrorControllerISpec extends ControllerISpecHelper {
     pathStart + "/optout/error"
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    val path = getPath(mtdUserRole)
-    val additionalCookies = getAdditionalCookies(mtdUserRole)
-    s"GET $path" when {
-      s"a user is a $mtdUserRole" that {
-        "is authenticated, with a valid enrolment" should {
-          "render the optOut error page" in {
-            disable(NavBarFs)
-            stubAuthorised(mtdUserRole)
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      val path              = getPath(mtdUserRole)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            "render the optOut error page" in {
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-            val result = buildGETMTDClient(path, additionalCookies).futureValue
-            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-            result should have(
-              httpStatus(OK),
-              elementTextBySelector(".govuk-heading-l")(headingText),
-            )
+              result should have(
+                httpStatus(OK),
+                elementTextBySelector(".govuk-heading-l")(headingText)
+              )
+            }
           }
+          testAuthFailures(path, mtdUserRole)
         }
-        testAuthFailures(path, mtdUserRole)
       }
-    }
   }
 }

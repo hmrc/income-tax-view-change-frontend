@@ -35,14 +35,14 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAn
 
 import scala.concurrent.Future
 
-class ConfirmTaxYearControllerSpec extends MockAuthActions
-  with MockOptInService with MockDateService {
+class ConfirmTaxYearControllerSpec extends MockAuthActions with MockOptInService with MockDateService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[OptInService].toInstance(mockOptInService),
       api.inject.bind[DateService].toInstance(mockDateService)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[ConfirmTaxYearController]
 
@@ -55,7 +55,7 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual
     s"show(isAgent = $isAgent)" when {
-      val action = testController.show(isAgent)
+      val action      = testController.show(isAgent)
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         "render the confirm tax year page for current tax year" in {
@@ -63,10 +63,18 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
           when(mockOptInService.getConfirmTaxYearViewModel(any())(any(), any(), any()))
-            .thenReturn(Future.successful(Some(ConfirmTaxYearViewModel(
-              taxYear2024_25, routes.ReportingFrequencyPageController.show(isAgent).url, isNextTaxYear = false,
-              isAgent)
-            )))
+            .thenReturn(
+              Future.successful(
+                Some(
+                  ConfirmTaxYearViewModel(
+                    taxYear2024_25,
+                    routes.ReportingFrequencyPageController.show(isAgent).url,
+                    isNextTaxYear = false,
+                    isAgent
+                  )
+                )
+              )
+            )
 
           val result = action(fakeRequest)
           status(result) shouldBe Status.OK
@@ -77,10 +85,18 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
           when(mockOptInService.getConfirmTaxYearViewModel(any())(any(), any(), any()))
-            .thenReturn(Future.successful(Some(ConfirmTaxYearViewModel(
-              taxYear2025_26, routes.ReportingFrequencyPageController.show(isAgent).url, isNextTaxYear = true,
-              isAgent)
-            )))
+            .thenReturn(
+              Future.successful(
+                Some(
+                  ConfirmTaxYearViewModel(
+                    taxYear2025_26,
+                    routes.ReportingFrequencyPageController.show(isAgent).url,
+                    isNextTaxYear = true,
+                    isAgent
+                  )
+                )
+              )
+            )
 
           val result = action(fakeRequest)
           status(result) shouldBe Status.OK
@@ -103,7 +119,7 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
     }
 
     s"submit(isAgent = $isAgent)" when {
-      val action = testController.submit(isAgent)
+      val action      = testController.submit(isAgent)
       val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         "redirect to OptInCompletedController" in {

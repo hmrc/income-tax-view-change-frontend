@@ -34,20 +34,30 @@ import views.html.optIn.CheckYourAnswersView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
-                                           val optInService: OptInService,
-                                           val authActions: AuthActions,
-                                           val itvcErrorHandler: ItvcErrorHandler,
-                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                          (implicit val dateService: DateService,
-                                           val appConfig: FrontendAppConfig,
-                                           mcc: MessagesControllerComponents,
-                                           val ec: ExecutionContext)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+class CheckYourAnswersController @Inject() (
+    val view:                  CheckYourAnswersView,
+    val optInService:          OptInService,
+    val authActions:           AuthActions,
+    val itvcErrorHandler:      ItvcErrorHandler,
+    val itvcErrorHandlerAgent: AgentItvcErrorHandler
+  )(
+    implicit val dateService: DateService,
+    val appConfig:            FrontendAppConfig,
+    mcc:                      MessagesControllerComponents,
+    val ec:                   ExecutionContext)
+    extends FrontendController(mcc)
+    with FeatureSwitching
+    with I18nSupport {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+  private def withRecover(
+      isAgent: Boolean
+    )(
+      code: => Future[Result]
+    )(
+      implicit mtdItUser: MtdItUser[_]
+    ): Future[Result] = {
     code.recover {
       case ex: Exception =>
         Logger("application").error(s"request failed :: $ex")
@@ -55,29 +65,35 @@ class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
     }
   }
 
-  def show(isAgent: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
+  def show(isAgent: Boolean = false): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
       withRecover(isAgent) {
 
         optInService.getMultiYearCheckYourAnswersViewModel(isAgent) map {
-          case Some(model) => Ok(view(MultiYearCheckYourAnswersViewModel(
-            model.intentTaxYear,
-            model.isAgent,
-            model.cancelURL,
-            model.intentIsNextYear)))
+          case Some(model) =>
+            Ok(
+              view(
+                MultiYearCheckYourAnswersViewModel(
+                  model.intentTaxYear,
+                  model.isAgent,
+                  model.cancelURL,
+                  model.intentIsNextYear
+                )
+              )
+            )
           case None => errorHandler(isAgent).showInternalServerError()
         }
 
       }
-  }
+    }
 
-  def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
+  def submit(isAgent: Boolean): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
       optInService.makeOptInCall() map {
         case ITSAStatusUpdateResponseSuccess(_) => redirectToCheckpointPage(isAgent)
-        case _ => Redirect(OptInErrorController.show(isAgent))
+        case _                                  => Redirect(OptInErrorController.show(isAgent))
       }
-  }
+    }
 
   private def redirectToCheckpointPage(isAgent: Boolean): Result = {
     val nextPage = controllers.optIn.routes.OptInCompletedController.show(isAgent)

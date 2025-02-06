@@ -34,19 +34,29 @@ import views.html.optIn.ChooseTaxYearView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ChooseYearController @Inject()(val optInService: OptInService,
-                                     val view: ChooseTaxYearView,
-                                     val authActions: AuthActions,
-                                     val itvcErrorHandler: ItvcErrorHandler,
-                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                    (implicit val appConfig: FrontendAppConfig,
-                                     mcc: MessagesControllerComponents,
-                                     val ec: ExecutionContext)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+class ChooseYearController @Inject() (
+    val optInService:          OptInService,
+    val view:                  ChooseTaxYearView,
+    val authActions:           AuthActions,
+    val itvcErrorHandler:      ItvcErrorHandler,
+    val itvcErrorHandlerAgent: AgentItvcErrorHandler
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    mcc:                    MessagesControllerComponents,
+    val ec:                 ExecutionContext)
+    extends FrontendController(mcc)
+    with FeatureSwitching
+    with I18nSupport {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+  private def withRecover(
+      isAgent: Boolean
+    )(
+      code: => Future[Result]
+    )(
+      implicit mtdItUser: MtdItUser[_]
+    ): Future[Result] = {
     code.recover {
       case ex: Exception =>
         Logger("application").error(s"request failed :: $ex")
@@ -54,8 +64,8 @@ class ChooseYearController @Inject()(val optInService: OptInService,
     }
   }
 
-  def show(isAgent: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
+  def show(isAgent: Boolean = false): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
       withRecover(isAgent) {
 
         optInService.availableOptInTaxYear().flatMap { taxYears =>
@@ -66,27 +76,36 @@ class ChooseYearController @Inject()(val optInService: OptInService,
           }).getOrElse(createResult(None, taxYears, isAgent))
         }
       }
-  }
+    }
 
-  private def createResult(savedTaxYear: Option[TaxYear], taxYears: Seq[TaxYear], isAgent: Boolean)
-                          (implicit messages: Messages, user: MtdItUser[_]): Result = {
-    val form = ChooseTaxYearForm(taxYears.map(_.toString))(messages)
+  private def createResult(
+      savedTaxYear: Option[TaxYear],
+      taxYears:     Seq[TaxYear],
+      isAgent:      Boolean
+    )(
+      implicit messages: Messages,
+      user:              MtdItUser[_]
+    ): Result = {
+    val form       = ChooseTaxYearForm(taxYears.map(_.toString))(messages)
     val filledForm = savedTaxYear.map(ty => form.fill(ChooseTaxYearForm(Some(ty.toString)))).getOrElse(form)
     Ok(view(filledForm, viewModel(taxYears, isAgent))(messages, user))
   }
 
-  def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
+  def submit(isAgent: Boolean): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
       optInService.availableOptInTaxYear().flatMap { taxYears =>
-        ChooseTaxYearForm(taxYears.map(_.toString)).bindFromRequest().fold(
-          formWithError => Future.successful(BadRequest(view(formWithError, viewModel(taxYears, isAgent)))),
-          form => saveTaxYearChoice(form).map {
-            case true => redirectToCheckpointPage(isAgent)
-            case false => itvcErrorHandler.showInternalServerError()
-          }
-        )
+        ChooseTaxYearForm(taxYears.map(_.toString))
+          .bindFromRequest()
+          .fold(
+            formWithError => Future.successful(BadRequest(view(formWithError, viewModel(taxYears, isAgent)))),
+            form =>
+              saveTaxYearChoice(form).map {
+                case true  => redirectToCheckpointPage(isAgent)
+                case false => itvcErrorHandler.showInternalServerError()
+              }
+          )
       }
-  }
+    }
 
   private def saveTaxYearChoice(form: ChooseTaxYearForm)(implicit mtdItUser: MtdItUser[_]): Future[Boolean] = {
     form.choice.flatMap(strFormat => TaxYear.getTaxYearModel(strFormat)).map { intent =>
@@ -105,6 +124,10 @@ class ChooseYearController @Inject()(val optInService: OptInService,
   }
 
   private def viewModel(availableOptInTaxYear: Seq[TaxYear], isAgent: Boolean): ChooseTaxYearViewModel = {
-    ChooseTaxYearViewModel(availableOptInTaxYear = availableOptInTaxYear, cancelURL = cancelUrl(isAgent), isAgent = isAgent)
+    ChooseTaxYearViewModel(
+      availableOptInTaxYear = availableOptInTaxYear,
+      cancelURL = cancelUrl(isAgent),
+      isAgent = isAgent
+    )
   }
 }

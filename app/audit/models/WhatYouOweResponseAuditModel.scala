@@ -24,24 +24,32 @@ import play.api.libs.json._
 import services.DateServiceInterface
 import utils.Utilities.JsonUtil
 
-case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
-                                        whatYouOweChargesList: WhatYouOweChargesList,
-                                        implicit val dateService: DateServiceInterface) extends ExtendedAuditModel with PaymentSharedFunctions {
+case class WhatYouOweResponseAuditModel(
+    user:                     MtdItUser[_],
+    whatYouOweChargesList:    WhatYouOweChargesList,
+    implicit val dateService: DateServiceInterface)
+    extends ExtendedAuditModel
+    with PaymentSharedFunctions {
 
   val currentTaxYear: Int = dateService.getCurrentTaxYearEnd
 
   override val transactionName: String = enums.TransactionName.WhatYouOweResponse
-  override val auditType: String = enums.AuditType.WhatYouOweResponse
+  override val auditType:       String = enums.AuditType.WhatYouOweResponse
 
   private val docDetailsListJson: List[JsObject] =
-    whatYouOweChargesList.chargesList.map(documentDetails) ++ whatYouOweChargesList.outstandingChargesModel.map(outstandingChargeDetails)
+    whatYouOweChargesList.chargesList.map(documentDetails) ++ whatYouOweChargesList.outstandingChargesModel.map(
+      outstandingChargeDetails
+    )
 
   override val detail: JsValue = {
-    (whatYouOweChargesList.codedOutDocumentDetail.map(chargeItem => Json.obj("codingOut" -> codingOut(chargeItem)))) match {
-      case Some(codingOutJson) => userAuditDetails(user) ++
-        balanceDetailsJson ++
-        Json.obj("charges" -> docDetailsListJson) ++
-        codingOutJson
+    (
+      whatYouOweChargesList.codedOutDocumentDetail.map(chargeItem => Json.obj("codingOut" -> codingOut(chargeItem)))
+    ) match {
+      case Some(codingOutJson) =>
+        userAuditDetails(user) ++
+          balanceDetailsJson ++
+          Json.obj("charges" -> docDetailsListJson) ++
+          codingOutJson
       case _ =>
         userAuditDetails(user) ++
           balanceDetailsJson ++
@@ -65,8 +73,6 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
     if (secondOrMoreYearOfMigration && fields.values.nonEmpty) Json.obj("balanceDetails" -> fields)
     else Json.obj()
   }
-
-
 
   private def documentDetails(chargeItem: ChargeItem): JsObject = {
     Json.obj(
@@ -92,17 +98,18 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
     }
   }
 
-  private def outstandingChargeDetails(outstandingCharge: OutstandingChargesModel) = Json.obj(
-    "chargeType" -> "Remaining balance"
-  ) ++
-    ("outstandingAmount", outstandingCharge.bcdChargeType.map(_.chargeAmount)) ++
-    ("dueDate", outstandingCharge.bcdChargeType.map(_.relevantDueDate)) ++
-    ("accruingInterest", outstandingCharge.aciChargeType.map(_.chargeAmount))
+  private def outstandingChargeDetails(outstandingCharge: OutstandingChargesModel) =
+    Json.obj(
+      "chargeType" -> "Remaining balance"
+    ) ++
+      ("outstandingAmount", outstandingCharge.bcdChargeType.map(_.chargeAmount)) ++
+      ("dueDate", outstandingCharge.bcdChargeType.map(_.relevantDueDate)) ++
+      ("accruingInterest", outstandingCharge.aciChargeType.map(_.chargeAmount))
 
   private def codingOut(chargeItem: ChargeItem): JsObject = {
-      Json.obj(
-        "amountCodedOut" -> chargeItem.amountCodedOut,
-        "endTaxYear" -> chargeItem.taxYear.endYear.toString
-      )
+    Json.obj(
+      "amountCodedOut" -> chargeItem.amountCodedOut,
+      "endTaxYear"     -> chargeItem.taxYear.endYear.toString
+    )
   }
 }

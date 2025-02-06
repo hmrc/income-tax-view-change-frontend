@@ -26,24 +26,34 @@ import java.time.LocalDate
 
 class PaymentSpec extends AnyWordSpecLike with Matchers {
 
-  val paymentFull: Payment = Payment(reference = Some("reference"), amount = Some(100.00), outstandingAmount = Some(50.00),
-    method = Some("method"), documentDescription = Some("docDescription"), lot = Some("lot"), lotItem = Some("lotItem"),
-    dueDate = Some(LocalDate.parse("2022-08-16")), documentDate = LocalDate.parse("2022-08-16"), Some("DOCID01"))
-
-  val paymentFullJson: JsObject = Json.obj(
-    "reference" -> "reference",
-    "amount" -> 100.00,
-    "outstandingAmount" -> 50.00,
-    "method" -> "method",
-    "documentDescription" -> "docDescription",
-    "lot" -> "lot",
-    "lotItem" -> "lotItem",
-    "dueDate" -> "2022-08-16",
-    "documentDate" -> "2022-08-16",
-    "transactionId" -> "DOCID01"
+  val paymentFull: Payment = Payment(
+    reference = Some("reference"),
+    amount = Some(100.00),
+    outstandingAmount = Some(50.00),
+    method = Some("method"),
+    documentDescription = Some("docDescription"),
+    lot = Some("lot"),
+    lotItem = Some("lotItem"),
+    dueDate = Some(LocalDate.parse("2022-08-16")),
+    documentDate = LocalDate.parse("2022-08-16"),
+    Some("DOCID01")
   )
 
-  val paymentMinimal: Payment = Payment(None, None, None, None, None, None, None, None, LocalDate.parse("2018-08-16"), None)
+  val paymentFullJson: JsObject = Json.obj(
+    "reference"           -> "reference",
+    "amount"              -> 100.00,
+    "outstandingAmount"   -> 50.00,
+    "method"              -> "method",
+    "documentDescription" -> "docDescription",
+    "lot"                 -> "lot",
+    "lotItem"             -> "lotItem",
+    "dueDate"             -> "2022-08-16",
+    "documentDate"        -> "2022-08-16",
+    "transactionId"       -> "DOCID01"
+  )
+
+  val paymentMinimal: Payment =
+    Payment(None, None, None, None, None, None, None, None, LocalDate.parse("2018-08-16"), None)
 
   val paymentMinimalJson: JsObject = Json.obj("documentDate" -> "2018-08-16")
 

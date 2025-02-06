@@ -19,13 +19,11 @@ package models.sessionData
 import play.api.libs.json.{Json, OFormat}
 
 case class SessionDataModel(
-                             mtditid: String,
-                             nino: String,
-                             utr: String,
-                             isSupportingAgent: Boolean = false
-                           )
+    mtditid:           String,
+    nino:              String,
+    utr:               String,
+    isSupportingAgent: Boolean = false)
 
 object SessionDataModel {
   implicit val formats: OFormat[SessionDataModel] = Json.format[SessionDataModel]
 }
-

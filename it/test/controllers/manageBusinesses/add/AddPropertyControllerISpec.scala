@@ -28,18 +28,22 @@ import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 
 class AddPropertyControllerISpec extends ControllerISpecHelper {
 
-  val startDateUkPropertyUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = true, incomeSourceType = UkProperty, isChange = false).url
-  val startDateForeignPropertyUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = true, incomeSourceType = ForeignProperty, isChange = false).url
+  val startDateUkPropertyUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController
+    .show(isAgent = true, incomeSourceType = UkProperty, isChange = false)
+    .url
+  val startDateForeignPropertyUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController
+    .show(isAgent = true, incomeSourceType = ForeignProperty, isChange = false)
+    .url
 
   val continueButtonText: String = messagesAPI("base.continue")
 
   def getPath(mtdRole: MTDUserRole): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     pathStart + "/manage-your-businesses/add-property/property-type"
   }
 
   List(MTDPrimaryAgent, MTDSupportingAgent).foreach { mtdUserRole =>
-    val path = getPath(mtdUserRole)
+    val path              = getPath(mtdUserRole)
     val additionalCookies = getAdditionalCookies(mtdUserRole)
     s"GET $path" when {
       s"a user is a $mtdUserRole" that {
@@ -74,8 +78,11 @@ class AddPropertyControllerISpec extends ControllerISpecHelper {
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-              val result = buildPOSTMTDPostClient(path, additionalCookies,
-                body = Map(AddProprertyForm.response -> Seq(AddProprertyForm.responseUK))).futureValue
+              val result = buildPOSTMTDPostClient(
+                path,
+                additionalCookies,
+                body = Map(AddProprertyForm.response -> Seq(AddProprertyForm.responseUK))
+              ).futureValue
 
               result should have(
                 httpStatus(SEE_OTHER),
@@ -90,8 +97,11 @@ class AddPropertyControllerISpec extends ControllerISpecHelper {
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-              val result = buildPOSTMTDPostClient(path, additionalCookies,
-                body = Map(AddProprertyForm.response -> Seq(AddProprertyForm.responseForeign))).futureValue
+              val result = buildPOSTMTDPostClient(
+                path,
+                additionalCookies,
+                body = Map(AddProprertyForm.response -> Seq(AddProprertyForm.responseForeign))
+              ).futureValue
 
               result should have(
                 httpStatus(SEE_OTHER),
@@ -106,8 +116,11 @@ class AddPropertyControllerISpec extends ControllerISpecHelper {
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-              val result = buildPOSTMTDPostClient(path, additionalCookies,
-                body = Map(AddProprertyForm.response -> Seq())).futureValue
+              val result = buildPOSTMTDPostClient(
+                path,
+                additionalCookies,
+                body = Map(AddProprertyForm.response -> Seq())
+              ).futureValue
 
               result should have(
                 httpStatus(BAD_REQUEST)
@@ -119,8 +132,11 @@ class AddPropertyControllerISpec extends ControllerISpecHelper {
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-              val result = buildPOSTMTDPostClient(path, additionalCookies,
-                body = Map(AddProprertyForm.response -> Seq("£"))).futureValue
+              val result = buildPOSTMTDPostClient(
+                path,
+                additionalCookies,
+                body = Map(AddProprertyForm.response -> Seq("£"))
+              ).futureValue
 
               result should have(
                 httpStatus(BAD_REQUEST)
@@ -128,7 +144,11 @@ class AddPropertyControllerISpec extends ControllerISpecHelper {
             }
           }
         }
-        testAuthFailures(path, mtdUserRole, optBody = Some(Map(AddProprertyForm.response -> Seq(AddProprertyForm.responseUK))))
+        testAuthFailures(
+          path,
+          mtdUserRole,
+          optBody = Some(Map(AddProprertyForm.response -> Seq(AddProprertyForm.responseUK)))
+        )
       }
     }
   }

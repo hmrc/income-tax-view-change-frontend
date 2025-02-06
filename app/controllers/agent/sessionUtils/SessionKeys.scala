@@ -18,11 +18,11 @@ package controllers.agent.sessionUtils
 
 object SessionKeys {
 
-  val clientNino: String = "ClientNino"
-  val clientMTDID: String = "ClientMTDID"
-  val clientUTR: String = "ClientUTR"
-  val clientFirstName: String = "ClientFirstName"
-  val clientLastName: String = "ClientLastName"
+  val clientNino:        String = "ClientNino"
+  val clientMTDID:       String = "ClientMTDID"
+  val clientUTR:         String = "ClientUTR"
+  val clientFirstName:   String = "ClientFirstName"
+  val clientLastName:    String = "ClientLastName"
   val isSupportingAgent: String = "isSupportingAgent"
 
   val confirmedClient: String = "ConfirmedClient"

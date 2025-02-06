@@ -28,8 +28,7 @@ import testUtils.TestSupport
 
 import scala.concurrent.{ExecutionException, Future}
 
-class RepaymentServiceSpec extends TestSupport
-  with MockHttp with MockBusinessDetailsConnector {
+class RepaymentServiceSpec extends TestSupport with MockHttp with MockBusinessDetailsConnector {
 
   val nino = "AA010101Q"
   val fullAmount: BigDecimal = BigDecimal("303.00")
@@ -71,7 +70,7 @@ class RepaymentServiceSpec extends TestSupport
           actualFutureResult.futureValue match {
             case Right(_) =>
               fail("Failure expected")
-            case Left(RepaymentStartJourneyException(INTERNAL_SERVER_ERROR,"Server error details")) =>
+            case Left(RepaymentStartJourneyException(INTERNAL_SERVER_ERROR, "Server error details")) =>
               succeed
             case _ =>
               fail("Unexpected error")
@@ -129,7 +128,7 @@ class RepaymentServiceSpec extends TestSupport
         }
         "return not standard failure" in {
           when(repaymentConnector.view(any())(any()))
-            .thenReturn(Future.failed { new Error("Some Error")})
+            .thenReturn(Future.failed { new Error("Some Error") })
           val actualFutureResult = UnderTestService.view(nino)
           actualFutureResult.futureValue match {
             case Right(_) => fail("Failure expected")

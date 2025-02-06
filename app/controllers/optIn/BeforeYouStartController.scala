@@ -31,20 +31,29 @@ import views.html.optIn.BeforeYouStart
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class BeforeYouStartController @Inject()(authActions: AuthActions,
-                                         val beforeYouStart: BeforeYouStart,
-                                         val optInService: OptInService,
-                                         val itvcErrorHandler: ItvcErrorHandler,
-                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                        (implicit val appConfig: FrontendAppConfig,
-                                         val ec: ExecutionContext,
-                                         mcc: MessagesControllerComponents
-                                        )
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+class BeforeYouStartController @Inject() (
+    authActions:               AuthActions,
+    val beforeYouStart:        BeforeYouStart,
+    val optInService:          OptInService,
+    val itvcErrorHandler:      ItvcErrorHandler,
+    val itvcErrorHandlerAgent: AgentItvcErrorHandler
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    val ec:                 ExecutionContext,
+    mcc:                    MessagesControllerComponents)
+    extends FrontendController(mcc)
+    with FeatureSwitching
+    with I18nSupport {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+  private def withRecover(
+      isAgent: Boolean
+    )(
+      code: => Future[Result]
+    )(
+      implicit mtdItUser: MtdItUser[_]
+    ): Future[Result] = {
     code.recover {
       case ex: Exception =>
         Logger("application").error(s"request failed :: $ex")
@@ -60,12 +69,12 @@ class BeforeYouStartController @Inject()(authActions: AuthActions,
     }
   }
 
-  def show(isAgent: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
+  def show(isAgent: Boolean = false): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
       withRecover(isAgent) {
         optInService.availableOptInTaxYear().flatMap { availableYears =>
           Future.successful(Ok(beforeYouStart(isAgent, startButtonUrl(isAgent, availableYears).url)))
         }
       }
-  }
+    }
 }

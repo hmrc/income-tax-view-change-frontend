@@ -25,15 +25,19 @@ import views.html.errorPages.UpliftFailed
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UpliftFailedController @Inject()(upliftFailedView: UpliftFailed,
-                                       mcc: MessagesControllerComponents,
-                                       auditingService: AuditingService)
-                                      (implicit ec: ExecutionContext) extends FrontendController(mcc) {
-  def show(): Action[AnyContent] = Action.async { implicit request =>
-    val journeyId = request.getQueryString("journeyId")
-    if (journeyId.isDefined) {
-      auditingService.audit(IvOutcomeFailureAuditModel(journeyId.get))
+class UpliftFailedController @Inject() (
+    upliftFailedView: UpliftFailed,
+    mcc:              MessagesControllerComponents,
+    auditingService:  AuditingService
+  )(
+    implicit ec: ExecutionContext)
+    extends FrontendController(mcc) {
+  def show(): Action[AnyContent] =
+    Action.async { implicit request =>
+      val journeyId = request.getQueryString("journeyId")
+      if (journeyId.isDefined) {
+        auditingService.audit(IvOutcomeFailureAuditModel(journeyId.get))
+      }
+      Future.successful(Forbidden(upliftFailedView()))
     }
-    Future.successful(Forbidden(upliftFailedView()))
-  }
 }

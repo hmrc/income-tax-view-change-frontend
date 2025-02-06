@@ -30,13 +30,20 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AddressLookupService @Inject()(val frontendAppConfig: FrontendAppConfig,
-                                     addressLookupConnector: AddressLookupConnector)
-                                    (implicit ec: ExecutionContext) {
+class AddressLookupService @Inject() (
+    val frontendAppConfig:  FrontendAppConfig,
+    addressLookupConnector: AddressLookupConnector
+  )(
+    implicit ec: ExecutionContext) {
   case class AddressError(status: String) extends RuntimeException
 
-  def initialiseAddressJourney(isAgent: Boolean, isChange: Boolean)
-                              (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[String]]] = {
+  def initialiseAddressJourney(
+      isAgent:  Boolean,
+      isChange: Boolean
+    )(
+      implicit hc: HeaderCarrier,
+      user:        MtdItUser[_]
+    ): Future[Either[Throwable, Option[String]]] = {
     addressLookupConnector.initialiseAddressLookup(
       isAgent = isAgent,
       isChange = isChange
@@ -50,14 +57,19 @@ class AddressLookupService @Inject()(val frontendAppConfig: FrontendAppConfig,
     }
   }
 
-  def fetchAddress(id: Option[IncomeSourceId])(implicit hc: HeaderCarrier): Future[Either[Throwable, BusinessAddressModel]] = {
+  def fetchAddress(
+      id: Option[IncomeSourceId]
+    )(
+      implicit hc: HeaderCarrier
+    ): Future[Either[Throwable, BusinessAddressModel]] = {
     id match {
       case Some(incomeSourceId: IncomeSourceId) =>
         addressLookupConnector.getAddressDetails(incomeSourceId.value) map {
           case Left(UnexpectedGetStatusFailure(status)) =>
             Logger("application").error(s"failed to get details for $id with status $status")
             Left(AddressError("status: " + status))
-          case Left(_) => Logger("application").error(s"failed to get details for $id with unknown status")
+          case Left(_) =>
+            Logger("application").error(s"failed to get details for $id with unknown status")
             Left(AddressError("status: unknown"))
           case Right(None) =>
             Logger("application").info(s"failed to get details for $id")

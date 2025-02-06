@@ -36,12 +36,12 @@ import views.html.optOut.OptOutCancelledView
 
 import scala.concurrent.Future
 
-
 class OptOutCancelledControllerSpec extends MockAuthActions with MockOptOutService with MockitoSugar {
 
-  def config: Map[String, Object] = Map(
-    "feature-switches.read-from-mongo" -> "false"
-  )
+  def config: Map[String, Object] =
+    Map(
+      "feature-switches.read-from-mongo" -> "false"
+    )
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
@@ -50,7 +50,7 @@ class OptOutCancelledControllerSpec extends MockAuthActions with MockOptOutServi
     .configure(config)
     .build()
 
-  lazy val testController = app.injector.instanceOf[OptOutCancelledController]
+  lazy val testController      = app.injector.instanceOf[OptOutCancelledController]
   lazy val optOutCancelledView = app.injector.instanceOf[OptOutCancelledView]
 
   mtdAllRoles.foreach { mtdRole =>
@@ -58,7 +58,7 @@ class OptOutCancelledControllerSpec extends MockAuthActions with MockOptOutServi
 
     s"show(isAgent = $isAgent)" when {
 
-      val action = if (isAgent) testController.showAgent() else testController.show()
+      val action      = if (isAgent) testController.showAgent() else testController.show()
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
 
       s"the user is authenticated as a $mtdRole" when {
@@ -67,13 +67,13 @@ class OptOutCancelledControllerSpec extends MockAuthActions with MockOptOutServi
 
           "render the opt out cancelled page" in {
 
-            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
+            val singleBusinessIncome =
+              IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
             setupMockSuccess(mtdRole)
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
             ).thenReturn(Future(singleBusinessIncome))
-
 
             when(mockOptOutService.getTaxYearForOptOutCancelled()(any(), any(), any()))
               .thenReturn(
@@ -103,13 +103,12 @@ class OptOutCancelledControllerSpec extends MockAuthActions with MockOptOutServi
           }
         }
 
-
-
         "user hits the cancel page before a tax year is selected for a multi year scenario and no tax year is returned" should {
 
           "render the opt out cancelled page - OK 200" in {
 
-            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
+            val singleBusinessIncome =
+              IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
             setupMockSuccess(mtdRole)
 
@@ -151,7 +150,8 @@ class OptOutCancelledControllerSpec extends MockAuthActions with MockOptOutServi
 
             "recover and return error template Internal Server Error - 500" in {
 
-              val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
+              val singleBusinessIncome =
+                IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
               setupMockSuccess(mtdRole)
 

@@ -21,9 +21,9 @@ import models.incomeSourceDetails.TaxYear
 object ITSAStatusUpdateConnectorConstants {
 
   val optOutUpdateReason = "10"
-  val optInUpdateReason = "11"
+  val optInUpdateReason  = "11"
   val taxYear2024: TaxYear = TaxYear.forYearEnd(2024)
-  val taxYear2023 = TaxYear.forYearEnd(2023)
+  val taxYear2023     = TaxYear.forYearEnd(2023)
   val taxableEntityId = "AB123456A"
 
   val correctOptOutRequestBody =

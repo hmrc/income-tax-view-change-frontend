@@ -29,21 +29,25 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ApiFailureSubmittingPoaController @Inject()(val authActions: AuthActions,
-                                                  view: ApiFailureSubmittingPoaView,
-                                                  implicit val itvcErrorHandler: ItvcErrorHandler,
-                                                  implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                                 (implicit val appConfig: FrontendAppConfig,
-                                                  val mcc: MessagesControllerComponents,
-                                                  val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with ClaimToAdjustUtils {
+class ApiFailureSubmittingPoaController @Inject() (
+    val authActions:                    AuthActions,
+    view:                               ApiFailureSubmittingPoaView,
+    implicit val itvcErrorHandler:      ItvcErrorHandler,
+    implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    val mcc:                MessagesControllerComponents,
+    val ec:                 ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with FeatureSwitching
+    with ClaimToAdjustUtils {
 
   def show(isAgent: Boolean): Action[AnyContent] = {
-    authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
-      implicit user =>
-        ifAdjustPoaIsEnabled(user.isAgent()) {
-          Future.successful(Ok(view(user.isAgent())))
-        }
+    authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async { implicit user =>
+      ifAdjustPoaIsEnabled(user.isAgent()) {
+        Future.successful(Ok(view(user.isAgent())))
+      }
     }
   }
 }

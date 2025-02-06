@@ -31,25 +31,28 @@ import java.time.LocalDate
 class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers with ChargeConstants {
 
   implicit val dateService: DateService = app.injector.instanceOf[DateService]
-  lazy val fixedDate : LocalDate = LocalDate.of(2023, 12, 15)
+  lazy val fixedDate:       LocalDate   = LocalDate.of(2023, 12, 15)
 
   val outstandingCharges: OutstandingChargesModel = outstandingChargesModel(fixedDate.minusMonths(13))
 
-  def whatYouOweAllData(dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = financialDetailsDueIn30DaysCi(dunningLock)
-      ++ financialDetailsDueInMoreThan30DaysCi(dunningLock)
-      ++ financialDetailsOverdueDataCi(dunningLock),
-    outstandingChargesModel = Some(outstandingCharges)
-  )
+  def whatYouOweAllData(dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList =
+    WhatYouOweChargesList(
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+      chargesList = financialDetailsDueIn30DaysCi(dunningLock)
+        ++ financialDetailsDueInMoreThan30DaysCi(dunningLock)
+        ++ financialDetailsOverdueDataCi(dunningLock),
+      outstandingChargesModel = Some(outstandingCharges)
+    )
 
-  def whatYouOweFinancialDataWithoutOutstandingCharges(dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = financialDetailsDueIn30DaysCi(dunningLock)
-      ++ financialDetailsDueInMoreThan30DaysCi(dunningLock)
-      ++ financialDetailsOverdueDataCi(dunningLock)
-  )
-
+  def whatYouOweFinancialDataWithoutOutstandingCharges(
+      dunningLock: List[Option[String]] = noDunningLocks
+    ): WhatYouOweChargesList =
+    WhatYouOweChargesList(
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+      chargesList = financialDetailsDueIn30DaysCi(dunningLock)
+        ++ financialDetailsDueInMoreThan30DaysCi(dunningLock)
+        ++ financialDetailsOverdueDataCi(dunningLock)
+    )
 
   "The WhatYouOweChargesList model" when {
 
@@ -132,7 +135,6 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers with ChargeC
         exception shouldBe MissingFieldException("documentAciChargeType")
       }
 
-
     }
 
     "all values in model exists with tie breaker matching in OutstandingCharges Model" should {
@@ -165,8 +167,9 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers with ChargeC
         whatYouOweFinancialDataWithoutOutstandingCharges().isChargesListEmpty shouldBe false
       }
       "getEarliestTaxYearAndAmountByDueDate should have correct values" in {
-        whatYouOweFinancialDataWithoutOutstandingCharges()
-          .getEarliestTaxYearAndAmountByDueDate.get._1 shouldBe fixedDate.minusDays(10).getYear
+        whatYouOweFinancialDataWithoutOutstandingCharges().getEarliestTaxYearAndAmountByDueDate.get._1 shouldBe fixedDate
+          .minusDays(10)
+          .getYear
         whatYouOweFinancialDataWithoutOutstandingCharges().getEarliestTaxYearAndAmountByDueDate.get._2 shouldBe 50.0
       }
     }

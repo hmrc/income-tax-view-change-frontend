@@ -57,120 +57,442 @@ class EnterPoaAmountControllerISpec extends ControllerISpecHelper {
     }
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    val path = getPath(mtdUserRole, false)
-    val changePath = getPath(mtdUserRole, true)
-    val additionalCookies = getAdditionalCookies(mtdUserRole)
-    val isAgent = mtdUserRole != MTDIndividual
-    s"GET $path" when {
-      s"a user is a $mtdUserRole" that {
-        "is authenticated, with a valid enrolment" should {
-          if (mtdUserRole == MTDSupportingAgent) {
-            testSupportingAgentAccessDenied(path, additionalCookies)
-          } else {
-            s"render the Enter PoA Amount page" when {
-              "the user has not previously adjusted their PoA" in {
-                enable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
-                )
-                await(sessionService.setMongoData(Some(PoaAmendmentData())))
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                result should have(
-                  httpStatus(OK),
-                  elementTextByClass("govuk-table__head")(msg("amountPreviousHeading"))
-                )
-              }
-              "User is authorised and has not previously adjusted their PoA but PoA amount is populated in session data" in {
-                enable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
-                )
-                await(sessionService.setMongoData(Some(PoaAmendmentData(None, Some(BigDecimal(3333.33))))))
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                result should have(
-                  httpStatus(OK),
-                  elementTextByClass("govuk-table__head")(msg("amountPreviousHeading"))
-                )
-              }
-              "User has previously adjusted their PoA" in {
-                enable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
-                )
-                IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testMtditid, "1040000124", 1500))
-                await(sessionService.setMongoData(Some(PoaAmendmentData())))
-
-                val expectedMsg = msg("amountPreviousHeading") + " " + msg("adjustedAmount")
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                result should have(
-                  httpStatus(OK),
-                  elementTextByClass("govuk-table__head")(expectedMsg)
-                )
-              }
-              s"redirect to the home page" when {
-                "AdjustPaymentsOnAccount FS is disabled" in {
-                  disable(AdjustPaymentsOnAccount)
-                  stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                    OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
-                  )
-                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-                    OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
-                  )
-                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-                    OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
-                  )
-
-                  val result = buildGETMTDClient(path, additionalCookies).futureValue
-                  result should have(
-                    httpStatus(SEE_OTHER),
-                    redirectURI(homeUrl(mtdUserRole))
-                  )
-                }
-              }
-              s"redirect to the You Cannot Go Back page" when {
-                "journeyCompleted flag is true and the user tries to access the page" in {
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      val path              = getPath(mtdUserRole, false)
+      val changePath        = getPath(mtdUserRole, true)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      val isAgent           = mtdUserRole != MTDIndividual
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            if (mtdUserRole == MTDSupportingAgent) {
+              testSupportingAgentAccessDenied(path, additionalCookies)
+            } else {
+              s"render the Enter PoA Amount page" when {
+                "the user has not previously adjusted their PoA" in {
                   enable(AdjustPaymentsOnAccount)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                    OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+                    OK,
+                    propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
                   )
-                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-                    OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 1}-04-06",
+                    s"$testTaxYear-04-05"
+                  )(
+                    OK,
+                    testValidFinancialDetailsModelJson(
+                      2000,
+                      2000,
+                      (testTaxYear - 1).toString,
+                      testDate.toString,
+                      poaRelevantAmount = Some(2000)
+                    )
                   )
-                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-                    OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 2}-04-06",
+                    s"${testTaxYear - 1}-04-05"
+                  )(
+                    OK,
+                    testValidFinancialDetailsModelJson(
+                      2000,
+                      2000,
+                      (testTaxYear - 1).toString,
+                      testDate.toString,
+                      poaRelevantAmount = Some(2000)
+                    )
                   )
-                  await(sessionService.setMongoData(Some(PoaAmendmentData(None, None, journeyCompleted = true))))
+                  await(sessionService.setMongoData(Some(PoaAmendmentData())))
 
                   val result = buildGETMTDClient(path, additionalCookies).futureValue
                   result should have(
+                    httpStatus(OK),
+                    elementTextByClass("govuk-table__head")(msg("amountPreviousHeading"))
+                  )
+                }
+                "User is authorised and has not previously adjusted their PoA but PoA amount is populated in session data" in {
+                  enable(AdjustPaymentsOnAccount)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+                  )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 1}-04-06",
+                    s"$testTaxYear-04-05"
+                  )(
+                    OK,
+                    testValidFinancialDetailsModelJson(
+                      2000,
+                      2000,
+                      (testTaxYear - 1).toString,
+                      testDate.toString,
+                      poaRelevantAmount = Some(2000)
+                    )
+                  )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 2}-04-06",
+                    s"${testTaxYear - 1}-04-05"
+                  )(
+                    OK,
+                    testValidFinancialDetailsModelJson(
+                      2000,
+                      2000,
+                      (testTaxYear - 1).toString,
+                      testDate.toString,
+                      poaRelevantAmount = Some(2000)
+                    )
+                  )
+                  await(sessionService.setMongoData(Some(PoaAmendmentData(None, Some(BigDecimal(3333.33))))))
+
+                  val result = buildGETMTDClient(path, additionalCookies).futureValue
+                  result should have(
+                    httpStatus(OK),
+                    elementTextByClass("govuk-table__head")(msg("amountPreviousHeading"))
+                  )
+                }
+                "User has previously adjusted their PoA" in {
+                  enable(AdjustPaymentsOnAccount)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+                  )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 1}-04-06",
+                    s"$testTaxYear-04-05"
+                  )(
+                    OK,
+                    testValidFinancialDetailsModelJson(
+                      2000,
+                      2000,
+                      (testTaxYear - 1).toString,
+                      testDate.toString,
+                      poaRelevantAmount = Some(2000)
+                    )
+                  )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 2}-04-06",
+                    s"${testTaxYear - 1}-04-05"
+                  )(
+                    OK,
+                    testValidFinancialDetailsModelJson(
+                      2000,
+                      2000,
+                      (testTaxYear - 1).toString,
+                      testDate.toString,
+                      poaRelevantAmount = Some(2000)
+                    )
+                  )
+                  IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(
+                    OK,
+                    testChargeHistoryJson(testMtditid, "1040000124", 1500)
+                  )
+                  await(sessionService.setMongoData(Some(PoaAmendmentData())))
+
+                  val expectedMsg = msg("amountPreviousHeading") + " " + msg("adjustedAmount")
+                  val result      = buildGETMTDClient(path, additionalCookies).futureValue
+                  result should have(
+                    httpStatus(OK),
+                    elementTextByClass("govuk-table__head")(expectedMsg)
+                  )
+                }
+                s"redirect to the home page" when {
+                  "AdjustPaymentsOnAccount FS is disabled" in {
+                    disable(AdjustPaymentsOnAccount)
+                    stubAuthorised(mtdUserRole)
+                    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                      OK,
+                      propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+                    )
+                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                      testNino,
+                      s"${testTaxYear - 1}-04-06",
+                      s"$testTaxYear-04-05"
+                    )(
+                      OK,
+                      testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
+                    )
+                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                      testNino,
+                      s"${testTaxYear - 2}-04-06",
+                      s"${testTaxYear - 1}-04-05"
+                    )(
+                      OK,
+                      testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
+                    )
+
+                    val result = buildGETMTDClient(path, additionalCookies).futureValue
+                    result should have(
+                      httpStatus(SEE_OTHER),
+                      redirectURI(homeUrl(mtdUserRole))
+                    )
+                  }
+                }
+                s"redirect to the You Cannot Go Back page" when {
+                  "journeyCompleted flag is true and the user tries to access the page" in {
+                    enable(AdjustPaymentsOnAccount)
+                    stubAuthorised(mtdUserRole)
+                    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                      OK,
+                      propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+                    )
+                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                      testNino,
+                      s"${testTaxYear - 1}-04-06",
+                      s"$testTaxYear-04-05"
+                    )(
+                      OK,
+                      testValidFinancialDetailsModelJson(
+                        2000,
+                        2000,
+                        (testTaxYear - 1).toString,
+                        testDate.toString,
+                        poaRelevantAmount = Some(2000)
+                      )
+                    )
+                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                      testNino,
+                      s"${testTaxYear - 2}-04-06",
+                      s"${testTaxYear - 1}-04-05"
+                    )(
+                      OK,
+                      testValidFinancialDetailsModelJson(
+                        2000,
+                        2000,
+                        (testTaxYear - 1).toString,
+                        testDate.toString,
+                        poaRelevantAmount = Some(2000)
+                      )
+                    )
+                    await(sessionService.setMongoData(Some(PoaAmendmentData(None, None, journeyCompleted = true))))
+
+                    val result = buildGETMTDClient(path, additionalCookies).futureValue
+                    result should have(
+                      httpStatus(SEE_OTHER),
+                      redirectURI(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(isAgent).url)
+                    )
+                  }
+                }
+                s"return $INTERNAL_SERVER_ERROR" when {
+                  "no non-crystallised financial details are found" in {
+                    enable(AdjustPaymentsOnAccount)
+                    stubAuthorised(mtdUserRole)
+                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                      testNino,
+                      s"${testTaxYear - 1}-04-06",
+                      s"$testTaxYear-04-05"
+                    )(
+                      OK,
+                      testEmptyFinancialDetailsModelJson
+                    )
+                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                      testNino,
+                      s"${testTaxYear - 2}-04-06",
+                      s"${testTaxYear - 1}-04-05"
+                    )(
+                      OK,
+                      testEmptyFinancialDetailsModelJson
+                    )
+                    await(sessionService.setMongoData(Some(PoaAmendmentData())))
+
+                    val result = buildGETMTDClient(path, additionalCookies).futureValue
+                    result should have(
+                      httpStatus(INTERNAL_SERVER_ERROR)
+                    )
+                  }
+
+                  "no adjust POA session is found" in {
+                    enable(AdjustPaymentsOnAccount)
+                    stubAuthorised(mtdUserRole)
+                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                      testNino,
+                      s"${testTaxYear - 1}-04-06",
+                      s"$testTaxYear-04-05"
+                    )(
+                      OK,
+                      testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
+                    )
+                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                      testNino,
+                      s"${testTaxYear - 2}-04-06",
+                      s"${testTaxYear - 1}-04-05"
+                    )(
+                      OK,
+                      testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
+                    )
+
+                    val result = buildGETMTDClient(path, additionalCookies).futureValue
+                    result should have(
+                      httpStatus(INTERNAL_SERVER_ERROR)
+                    )
+                  }
+                }
+              }
+            }
+          }
+          testAuthFailures(path, mtdUserRole)
+        }
+      }
+
+      s"POST $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            if (mtdUserRole == MTDSupportingAgent) {
+              testSupportingAgentAccessDenied(path, additionalCookies)
+            } else {
+              "redirect to Select your reason page" when {
+                "user has decreased poa" in {
+                  enable(AdjustPaymentsOnAccount)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+                  )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 1}-04-06",
+                    s"$testTaxYear-04-05"
+                  )(
+                    OK,
+                    testValidFinancialDetailsModelJson(
+                      2000,
+                      2000,
+                      (testTaxYear - 1).toString,
+                      testDate.toString,
+                      poaRelevantAmount = Some(3000)
+                    )
+                  )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 2}-04-06",
+                    s"${testTaxYear - 1}-04-05"
+                  )(
+                    OK,
+                    testValidFinancialDetailsModelJson(
+                      2000,
+                      2000,
+                      (testTaxYear - 1).toString,
+                      testDate.toString,
+                      poaRelevantAmount = Some(3000)
+                    )
+                  )
+                  await(sessionService.setMongoData(Some(PoaAmendmentData())))
+
+                  val result = buildPOSTMTDPostClient(path, additionalCookies, formData(1234.56)).futureValue
+
+                  result should have(
                     httpStatus(SEE_OTHER),
-                    redirectURI(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(isAgent).url)
+                    redirectURI(routes.SelectYourReasonController.show(isAgent, NormalMode).url)
+                  )
+
+                  sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(None, Some(1234.56))))
+                }
+              }
+              s"return status $SEE_OTHER and redirect to check details page" when {
+                "user has increased poa" in {
+                  enable(AdjustPaymentsOnAccount)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+                  )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 1}-04-06",
+                    s"$testTaxYear-04-05"
+                  )(
+                    OK,
+                    testValidFinancialDetailsModelJson(
+                      2000,
+                      2000,
+                      (testTaxYear - 1).toString,
+                      testDate.toString,
+                      poaRelevantAmount = Some(3000)
+                    )
+                  )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 2}-04-06",
+                    s"${testTaxYear - 1}-04-05"
+                  )(
+                    OK,
+                    testValidFinancialDetailsModelJson(
+                      2000,
+                      2000,
+                      (testTaxYear - 1).toString,
+                      testDate.toString,
+                      poaRelevantAmount = Some(3000)
+                    )
+                  )
+                  await(sessionService.setMongoData(Some(PoaAmendmentData())))
+
+                  val result = buildPOSTMTDPostClient(path, additionalCookies, formData(2500.00)).futureValue
+
+                  result should have(
+                    httpStatus(SEE_OTHER),
+                    redirectURI(routes.CheckYourAnswersController.show(isAgent).url)
+                  )
+
+                  sessionService.getMongo.futureValue shouldBe Right(
+                    Some(PoaAmendmentData(Some(Increase), Some(2500.00)))
+                  )
+                }
+                "user was on decrease only journey" in {
+                  enable(AdjustPaymentsOnAccount)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+                  )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 1}-04-06",
+                    s"$testTaxYear-04-05"
+                  )(
+                    OK,
+                    testValidFinancialDetailsModelJson(
+                      2000,
+                      2000,
+                      (testTaxYear - 1).toString,
+                      testDate.toString,
+                      poaRelevantAmount = Some(2000)
+                    )
+                  )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 2}-04-06",
+                    s"${testTaxYear - 1}-04-05"
+                  )(
+                    OK,
+                    testValidFinancialDetailsModelJson(
+                      2000,
+                      2000,
+                      (testTaxYear - 1).toString,
+                      testDate.toString,
+                      poaRelevantAmount = Some(2000)
+                    )
+                  )
+                  await(sessionService.setMongoData(Some(PoaAmendmentData(Some(MainIncomeLower)))))
+
+                  When(s"I call POST")
+
+                  val result = buildPOSTMTDPostClient(path, additionalCookies, formData(1.11)).futureValue
+
+                  result should have(
+                    httpStatus(SEE_OTHER),
+                    redirectURI(routes.CheckYourAnswersController.show(isAgent).url)
+                  )
+
+                  sessionService.getMongo.futureValue shouldBe Right(
+                    Some(PoaAmendmentData(Some(MainIncomeLower), Some(1.11)))
                   )
                 }
               }
@@ -178,15 +500,27 @@ class EnterPoaAmountControllerISpec extends ControllerISpecHelper {
                 "no non-crystallised financial details are found" in {
                   enable(AdjustPaymentsOnAccount)
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-                    OK, testEmptyFinancialDetailsModelJson
+
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 1}-04-06",
+                    s"$testTaxYear-04-05"
+                  )(
+                    OK,
+                    testEmptyFinancialDetailsModelJson
                   )
-                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-                    OK, testEmptyFinancialDetailsModelJson
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 2}-04-06",
+                    s"${testTaxYear - 1}-04-05"
+                  )(
+                    OK,
+                    testEmptyFinancialDetailsModelJson
                   )
                   await(sessionService.setMongoData(Some(PoaAmendmentData())))
 
-                  val result = buildGETMTDClient(path, additionalCookies).futureValue
+                  val result = buildPOSTMTDPostClient(path, additionalCookies, formData(2000)).futureValue
+
                   result should have(
                     httpStatus(INTERNAL_SERVER_ERROR)
                   )
@@ -195,14 +529,24 @@ class EnterPoaAmountControllerISpec extends ControllerISpecHelper {
                 "no adjust POA session is found" in {
                   enable(AdjustPaymentsOnAccount)
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-                    OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 1}-04-06",
+                    s"$testTaxYear-04-05"
+                  )(
+                    OK,
+                    testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
                   )
-                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-                    OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 2}-04-06",
+                    s"${testTaxYear - 1}-04-05"
+                  )(
+                    OK,
+                    testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
                   )
+                  val result = buildPOSTMTDPostClient(path, additionalCookies, formData(2000)).futureValue
 
-                  val result = buildGETMTDClient(path, additionalCookies).futureValue
                   result should have(
                     httpStatus(INTERNAL_SERVER_ERROR)
                   )
@@ -210,295 +554,313 @@ class EnterPoaAmountControllerISpec extends ControllerISpecHelper {
               }
             }
           }
+          testAuthFailures(path, mtdUserRole, Some(Map.empty))
         }
-        testAuthFailures(path, mtdUserRole)
       }
-    }
 
-    s"POST $path" when {
-      s"a user is a $mtdUserRole" that {
-        "is authenticated, with a valid enrolment" should {
-          if (mtdUserRole == MTDSupportingAgent) {
-            testSupportingAgentAccessDenied(path, additionalCookies)
-          } else {
-            "redirect to Select your reason page" when {
-              "user has decreased poa" in {
-                enable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
-                )
-                await(sessionService.setMongoData(Some(PoaAmendmentData())))
+      s"GET $changePath" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            if (mtdUserRole == MTDSupportingAgent) {
+              testSupportingAgentAccessDenied(changePath, additionalCookies)
+            } else {
+              s"render the Enter PoA Amount page" that {
+                "has the amount pre-populated" in {
+                  enable(AdjustPaymentsOnAccount)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+                  )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 1}-04-06",
+                    s"$testTaxYear-04-05"
+                  )(
+                    OK,
+                    testValidFinancialDetailsModelJson(
+                      2000,
+                      2000,
+                      (testTaxYear - 1).toString,
+                      testDate.toString,
+                      poaRelevantAmount = Some(2000)
+                    )
+                  )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 2}-04-06",
+                    s"${testTaxYear - 1}-04-05"
+                  )(
+                    OK,
+                    testValidFinancialDetailsModelJson(
+                      2000,
+                      2000,
+                      (testTaxYear - 1).toString,
+                      testDate.toString,
+                      poaRelevantAmount = Some(2000)
+                    )
+                  )
+                  await(sessionService.setMongoData(Some(PoaAmendmentData(Some(MainIncomeLower), Some(100)))))
 
-                val result = buildPOSTMTDPostClient(path, additionalCookies, formData(1234.56)).futureValue
+                  val result = buildGETMTDClient(changePath, additionalCookies).futureValue
 
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(routes.SelectYourReasonController.show(isAgent, NormalMode).url)
-                )
-
-                sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(None, Some(1234.56))))
-              }
-            }
-            s"return status $SEE_OTHER and redirect to check details page" when {
-              "user has increased poa" in {
-                enable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
-                )
-                await(sessionService.setMongoData(Some(PoaAmendmentData())))
-
-                val result = buildPOSTMTDPostClient(path, additionalCookies, formData(2500.00)).futureValue
-
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(routes.CheckYourAnswersController.show(isAgent).url)
-                )
-
-                sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(Some(Increase), Some(2500.00))))
-              }
-              "user was on decrease only journey" in {
-                enable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
-                )
-                await(sessionService.setMongoData(Some(PoaAmendmentData(Some(MainIncomeLower)))))
-
-                When(s"I call POST")
-
-                val result = buildPOSTMTDPostClient(path, additionalCookies, formData(1.11)).futureValue
-
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(routes.CheckYourAnswersController.show(isAgent).url)
-                )
-
-                sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(Some(MainIncomeLower), Some(1.11))))
-              }
-            }
-            s"return $INTERNAL_SERVER_ERROR" when {
-              "no non-crystallised financial details are found" in {
-                enable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-                  OK, testEmptyFinancialDetailsModelJson
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-                  OK, testEmptyFinancialDetailsModelJson
-                )
-                await(sessionService.setMongoData(Some(PoaAmendmentData())))
-
-                val result = buildPOSTMTDPostClient(path, additionalCookies, formData(2000)).futureValue
-
-                result should have(
-                  httpStatus(INTERNAL_SERVER_ERROR)
-                )
-              }
-
-              "no adjust POA session is found" in {
-                enable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
-                )
-                val result = buildPOSTMTDPostClient(path, additionalCookies, formData(2000)).futureValue
-
-                result should have(
-                  httpStatus(INTERNAL_SERVER_ERROR)
-                )
+                  result should have(
+                    httpStatus(OK),
+                    elementTextByClass("govuk-table__head")(msg("amountPreviousHeading")),
+                    elementAttributeByClass("govuk-input", "value")("100")
+                  )
+                }
               }
             }
           }
+          testAuthFailures(changePath, mtdUserRole)
         }
-        testAuthFailures(path, mtdUserRole, Some(Map.empty))
       }
-    }
 
-    s"GET $changePath" when {
-      s"a user is a $mtdUserRole" that {
-        "is authenticated, with a valid enrolment" should {
-          if (mtdUserRole == MTDSupportingAgent) {
-            testSupportingAgentAccessDenied(changePath, additionalCookies)
-          } else {
-            s"render the Enter PoA Amount page" that {
-              "has the amount pre-populated" in {
-                enable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
-                )
-                await(sessionService.setMongoData(Some(PoaAmendmentData(Some(MainIncomeLower), Some(100)))))
+      s"POST $changePath" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            if (mtdUserRole == MTDSupportingAgent) {
+              testSupportingAgentAccessDenied(changePath, additionalCookies)
+            } else {
+              "redirect to check your answers page, and overwrite amount in session" when {
+                "user is on decrease only journey, and has entered new amount" in {
+                  enable(AdjustPaymentsOnAccount)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+                  )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 1}-04-06",
+                    s"$testTaxYear-04-05"
+                  )(
+                    OK,
+                    testValidFinancialDetailsModelJson(
+                      2000,
+                      2000,
+                      (testTaxYear - 1).toString,
+                      testDate.toString,
+                      poaRelevantAmount = Some(2000)
+                    )
+                  )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 2}-04-06",
+                    s"${testTaxYear - 1}-04-05"
+                  )(
+                    OK,
+                    testValidFinancialDetailsModelJson(
+                      2000,
+                      2000,
+                      (testTaxYear - 1).toString,
+                      testDate.toString,
+                      poaRelevantAmount = Some(2000)
+                    )
+                  )
+                  await(sessionService.setMongoData(Some(PoaAmendmentData(Some(MainIncomeLower), Some(1200)))))
 
-                val result = buildGETMTDClient(changePath, additionalCookies).futureValue
+                  val result = buildPOSTMTDPostClient(changePath, additionalCookies, formData(100)).futureValue
+                  result should have(
+                    httpStatus(SEE_OTHER),
+                    redirectURI(routes.CheckYourAnswersController.show(isAgent).url)
+                  )
 
-                result should have(
-                  httpStatus(OK),
-                  elementTextByClass("govuk-table__head")(msg("amountPreviousHeading")),
-                  elementAttributeByClass("govuk-input", "value")("100")
-                )
+                  sessionService.getMongo.futureValue shouldBe Right(
+                    Some(PoaAmendmentData(Some(MainIncomeLower), Some(100)))
+                  )
+                }
+                "user is on increase/decrease journey, had previously increased, is still increasing" in {
+                  enable(AdjustPaymentsOnAccount)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+                  )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 1}-04-06",
+                    s"$testTaxYear-04-05"
+                  )(
+                    OK,
+                    testValidFinancialDetailsModelJson(
+                      2000,
+                      2000,
+                      (testTaxYear - 1).toString,
+                      testDate.toString,
+                      poaRelevantAmount = Some(3000)
+                    )
+                  )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 2}-04-06",
+                    s"${testTaxYear - 1}-04-05"
+                  )(
+                    OK,
+                    testValidFinancialDetailsModelJson(
+                      2000,
+                      2000,
+                      (testTaxYear - 1).toString,
+                      testDate.toString,
+                      poaRelevantAmount = Some(3000)
+                    )
+                  )
+                  await(sessionService.setMongoData(Some(PoaAmendmentData(Some(MainIncomeLower), Some(2500)))))
+
+                  val result = buildPOSTMTDPostClient(changePath, additionalCookies, formData(2800)).futureValue
+                  result should have(
+                    httpStatus(SEE_OTHER),
+                    redirectURI(routes.CheckYourAnswersController.show(isAgent).url)
+                  )
+
+                  sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(Some(Increase), Some(2800))))
+                }
+                "user is on increase/decrease journey, had previously decreased, is now increasing" in {
+                  enable(AdjustPaymentsOnAccount)
+                  stubAuthorised(mtdUserRole)
+
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+                  )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 1}-04-06",
+                    s"$testTaxYear-04-05"
+                  )(
+                    OK,
+                    testValidFinancialDetailsModelJson(
+                      2000,
+                      2000,
+                      (testTaxYear - 1).toString,
+                      testDate.toString,
+                      poaRelevantAmount = Some(3000)
+                    )
+                  )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 2}-04-06",
+                    s"${testTaxYear - 1}-04-05"
+                  )(
+                    OK,
+                    testValidFinancialDetailsModelJson(
+                      2000,
+                      2000,
+                      (testTaxYear - 1).toString,
+                      testDate.toString,
+                      poaRelevantAmount = Some(3000)
+                    )
+                  )
+                  await(sessionService.setMongoData(Some(PoaAmendmentData(Some(MainIncomeLower), Some(500)))))
+
+                  val result = buildPOSTMTDPostClient(changePath, additionalCookies, formData(2800)).futureValue
+                  result should have(
+                    httpStatus(SEE_OTHER),
+                    redirectURI(routes.CheckYourAnswersController.show(isAgent).url)
+                  )
+
+                  sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(Some(Increase), Some(2800))))
+                }
+                "user is on increase/decrease journey, had previously decreased, is still decreasing" in {
+                  enable(AdjustPaymentsOnAccount)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+                  )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 1}-04-06",
+                    s"$testTaxYear-04-05"
+                  )(
+                    OK,
+                    testValidFinancialDetailsModelJson(
+                      2000,
+                      2000,
+                      (testTaxYear - 1).toString,
+                      testDate.toString,
+                      poaRelevantAmount = Some(3000)
+                    )
+                  )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 2}-04-06",
+                    s"${testTaxYear - 1}-04-05"
+                  )(
+                    OK,
+                    testValidFinancialDetailsModelJson(
+                      2000,
+                      2000,
+                      (testTaxYear - 1).toString,
+                      testDate.toString,
+                      poaRelevantAmount = Some(3000)
+                    )
+                  )
+                  await(sessionService.setMongoData(Some(PoaAmendmentData(Some(MainIncomeLower), Some(500)))))
+
+                  val result = buildPOSTMTDPostClient(changePath, additionalCookies, formData(1000)).futureValue
+                  result should have(
+                    httpStatus(SEE_OTHER),
+                    redirectURI(routes.CheckYourAnswersController.show(isAgent).url)
+                  )
+
+                  sessionService.getMongo.futureValue shouldBe Right(
+                    Some(PoaAmendmentData(Some(MainIncomeLower), Some(1000)))
+                  )
+                }
+              }
+              s"return status $SEE_OTHER and redirect to select your reason page" when {
+                "user is on increase/decrease journey, had previously increased, is now decreasing" in {
+                  enable(AdjustPaymentsOnAccount)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
+                  )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 1}-04-06",
+                    s"$testTaxYear-04-05"
+                  )(
+                    OK,
+                    testValidFinancialDetailsModelJson(
+                      2000,
+                      2000,
+                      (testTaxYear - 1).toString,
+                      testDate.toString,
+                      poaRelevantAmount = Some(3000)
+                    )
+                  )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    testNino,
+                    s"${testTaxYear - 2}-04-06",
+                    s"${testTaxYear - 1}-04-05"
+                  )(
+                    OK,
+                    testValidFinancialDetailsModelJson(
+                      2000,
+                      2000,
+                      (testTaxYear - 1).toString,
+                      testDate.toString,
+                      poaRelevantAmount = Some(3000)
+                    )
+                  )
+                  await(sessionService.setMongoData(Some(PoaAmendmentData(Some(Increase), Some(2500)))))
+
+                  val result = buildPOSTMTDPostClient(changePath, additionalCookies, formData(500)).futureValue
+                  result should have(
+                    httpStatus(SEE_OTHER),
+                    redirectURI(routes.SelectYourReasonController.show(isAgent, CheckMode).url)
+                  )
+
+                  sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(Some(Increase), Some(500))))
+                }
               }
             }
           }
+          testAuthFailures(changePath, mtdUserRole, Some(Map.empty))
         }
-        testAuthFailures(changePath, mtdUserRole)
       }
-    }
-
-    s"POST $changePath" when {
-      s"a user is a $mtdUserRole" that {
-        "is authenticated, with a valid enrolment" should {
-          if (mtdUserRole == MTDSupportingAgent) {
-            testSupportingAgentAccessDenied(changePath, additionalCookies)
-          } else {
-            "redirect to check your answers page, and overwrite amount in session" when {
-              "user is on decrease only journey, and has entered new amount" in {
-                enable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
-                )
-                await(sessionService.setMongoData(Some(PoaAmendmentData(Some(MainIncomeLower), Some(1200)))))
-
-                val result = buildPOSTMTDPostClient(changePath, additionalCookies, formData(100)).futureValue
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(routes.CheckYourAnswersController.show(isAgent).url)
-                )
-
-                sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(Some(MainIncomeLower), Some(100))))
-              }
-              "user is on increase/decrease journey, had previously increased, is still increasing" in {
-                enable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
-                )
-                await(sessionService.setMongoData(Some(PoaAmendmentData(Some(MainIncomeLower), Some(2500)))))
-
-                val result = buildPOSTMTDPostClient(changePath, additionalCookies, formData(2800)).futureValue
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(routes.CheckYourAnswersController.show(isAgent).url)
-                )
-
-                sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(Some(Increase), Some(2800))))
-              }
-              "user is on increase/decrease journey, had previously decreased, is now increasing" in {
-                enable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
-                )
-                await(sessionService.setMongoData(Some(PoaAmendmentData(Some(MainIncomeLower), Some(500)))))
-
-                val result = buildPOSTMTDPostClient(changePath, additionalCookies, formData(2800)).futureValue
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(routes.CheckYourAnswersController.show(isAgent).url)
-                )
-
-                sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(Some(Increase), Some(2800))))
-              }
-              "user is on increase/decrease journey, had previously decreased, is still decreasing" in {
-                enable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
-                )
-                await(sessionService.setMongoData(Some(PoaAmendmentData(Some(MainIncomeLower), Some(500)))))
-
-                val result = buildPOSTMTDPostClient(changePath, additionalCookies, formData(1000)).futureValue
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(routes.CheckYourAnswersController.show(isAgent).url)
-                )
-
-                sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(Some(MainIncomeLower), Some(1000))))
-              }
-            }
-            s"return status $SEE_OTHER and redirect to select your reason page" when {
-              "user is on increase/decrease journey, had previously increased, is now decreasing" in {
-                enable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
-                )
-                await(sessionService.setMongoData(Some(PoaAmendmentData(Some(Increase), Some(2500)))))
-
-                val result = buildPOSTMTDPostClient(changePath, additionalCookies, formData(500)).futureValue
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(routes.SelectYourReasonController.show(isAgent, CheckMode).url)
-                )
-
-                sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(Some(Increase), Some(500))))
-              }
-            }
-          }
-        }
-        testAuthFailures(changePath, mtdUserRole, Some(Map.empty))
-      }
-    }
   }
 }

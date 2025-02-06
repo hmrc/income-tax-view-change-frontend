@@ -30,27 +30,29 @@ trait SessionCookieBaker {
 
   private def cookieValue(sessionData: Map[String, String]) = {
     def encode(data: Map[String, String]): PlainText = {
-      val encoded = data.map {
-        case (k, v) => URLEncoder.encode(k, "UTF-8") + "=" + URLEncoder.encode(v, "UTF-8")
-      }.mkString("&")
+      val encoded = data
+        .map {
+          case (k, v) => URLEncoder.encode(k, "UTF-8") + "=" + URLEncoder.encode(v, "UTF-8")
+        }
+        .mkString("&")
       val key = "yNhI04vHs9<_HWbC`]20u`37=NGLGYY5:0Tg5?y`W<NoJnXWqmjcgZBec@rOxb^G".getBytes
       PlainText(cookieSigner.sign(encoded, key) + "-" + encoded)
     }
 
     val encodedCookie = encode(sessionData)
-    val encrypted = SymmetricCryptoFactory.aesGcmCrypto(cookieKey).encrypt(encodedCookie).value
+    val encrypted     = SymmetricCryptoFactory.aesGcmCrypto(cookieKey).encrypt(encodedCookie).value
 
     s"""mdtp="$encrypted"; Path=/; HTTPOnly"; Path=/; HTTPOnly"""
   }
 
   private def cookieData(additionalData: Map[String, String], timeStampRollback: Long): Map[String, String] = {
 
-    val timeStamp = new java.util.Date().getTime
+    val timeStamp         = new java.util.Date().getTime
     val rollbackTimestamp = (timeStamp - timeStampRollback).toString
 
     Map(
       SessionKeys.lastRequestTimestamp -> rollbackTimestamp,
-      SessionKeys.authToken -> "auth",
+      SessionKeys.authToken            -> "auth"
     ) ++ additionalData
   }
 

@@ -32,10 +32,13 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ObligationsConnector @Inject()(val http: HttpClientV2,
-                                     val auditingService: AuditingService,
-                                     val appConfig: FrontendAppConfig
-                                    )(implicit val ec: ExecutionContext) extends RawResponseReads {
+class ObligationsConnector @Inject() (
+    val http:            HttpClientV2,
+    val auditingService: AuditingService,
+    val appConfig:       FrontendAppConfig
+  )(
+    implicit val ec: ExecutionContext)
+    extends RawResponseReads {
 
   def getOpenObligationsUrl(nino: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/open-obligations"
@@ -45,7 +48,11 @@ class ObligationsConnector @Inject()(val http: HttpClientV2,
     s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/obligations/from/$fromDate/to/$toDate"
   }
 
-  def getOpenObligations()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsResponseModel] = {
+  def getOpenObligations(
+    )(
+      implicit headerCarrier: HeaderCarrier,
+      mtdUser:                MtdItUser[_]
+    ): Future[ObligationsResponseModel] = {
 
     val url = getOpenObligationsUrl(mtdUser.nino)
     Logger("application").debug(s"GET $url")
@@ -54,21 +61,30 @@ class ObligationsConnector @Inject()(val http: HttpClientV2,
       response.status match {
         case OK =>
           Logger("application").debug(s"RESPONSE status: ${response.status}, json: ${response.json}")
-          response.json.validate[ObligationsModel].fold(
-            invalid => {
-              Logger("application").error(s"Json Validation Error: $invalid")
-              ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Next Updates Data Response")
-            },
-            valid => {
-              val validWithoutEops = ObligationsModel(
-                valid.obligations.map(model => GroupedObligationsModel(model.identification, model.obligations.filter(_.obligationType != "EOPS"))))
+          response.json
+            .validate[ObligationsModel]
+            .fold(
+              invalid => {
+                Logger("application").error(s"Json Validation Error: $invalid")
+                ObligationsErrorModel(
+                  Status.INTERNAL_SERVER_ERROR,
+                  "Json Validation Error. Parsing Next Updates Data Response"
+                )
+              },
+              valid => {
+                val validWithoutEops = ObligationsModel(
+                  valid.obligations.map(model =>
+                    GroupedObligationsModel(model.identification, model.obligations.filter(_.obligationType != "EOPS"))
+                  )
+                )
 
-              validWithoutEops.obligations.foreach { data =>
-                auditingService.extendedAudit(NextUpdatesResponseAuditModel(mtdUser, data.identification, data.obligations))
+                validWithoutEops.obligations.foreach { data =>
+                  auditingService
+                    .extendedAudit(NextUpdatesResponseAuditModel(mtdUser, data.identification, data.obligations))
+                }
+                validWithoutEops
               }
-              validWithoutEops
-            }
-          )
+            )
         case NOT_FOUND | FORBIDDEN =>
           Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
           ObligationsModel(Seq.empty)
@@ -87,8 +103,13 @@ class ObligationsConnector @Inject()(val http: HttpClientV2,
     }
   }
 
-  def getAllObligationsDateRange(fromDate: LocalDate, toDate: LocalDate)
-                                (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsResponseModel] = {
+  def getAllObligationsDateRange(
+      fromDate: LocalDate,
+      toDate:   LocalDate
+    )(
+      implicit headerCarrier: HeaderCarrier,
+      mtdUser:                MtdItUser[_]
+    ): Future[ObligationsResponseModel] = {
 
     val url = getAllObligationsDateRangeUrl(fromDate, toDate, mtdUser.nino)
     Logger("application").debug(s"GET $url")
@@ -97,18 +118,24 @@ class ObligationsConnector @Inject()(val http: HttpClientV2,
       response.status match {
         case OK =>
           Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
-          response.json.validate[ObligationsModel].fold(
-            invalid => {
-              Logger("application").error(s"Json Validation Error: $invalid")
-              ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Next Updates Data Response")
-            },
-            valid => {
-              valid.obligations.foreach { data =>
-                auditingService.extendedAudit(NextUpdatesResponseAuditModel(mtdUser, data.identification, data.obligations))
+          response.json
+            .validate[ObligationsModel]
+            .fold(
+              invalid => {
+                Logger("application").error(s"Json Validation Error: $invalid")
+                ObligationsErrorModel(
+                  Status.INTERNAL_SERVER_ERROR,
+                  "Json Validation Error. Parsing Next Updates Data Response"
+                )
+              },
+              valid => {
+                valid.obligations.foreach { data =>
+                  auditingService
+                    .extendedAudit(NextUpdatesResponseAuditModel(mtdUser, data.identification, data.obligations))
+                }
+                valid
               }
-              valid
-            }
-          )
+            )
         case NOT_FOUND | FORBIDDEN =>
           Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
           ObligationsModel(Seq.empty)

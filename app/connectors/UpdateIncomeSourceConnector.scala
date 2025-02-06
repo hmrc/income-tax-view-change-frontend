@@ -29,67 +29,105 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UpdateIncomeSourceConnector @Inject()(val http: HttpClientV2,
-                                            val appConfig: FrontendAppConfig
-                                           )(implicit val ec: ExecutionContext) extends RawResponseReads {
+class UpdateIncomeSourceConnector @Inject() (
+    val http:      HttpClientV2,
+    val appConfig: FrontendAppConfig
+  )(
+    implicit val ec: ExecutionContext)
+    extends RawResponseReads {
   def getUpdateIncomeSourceUrl: String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/update-income-source"
   }
 
-  def updateCessationDate(nino: String, incomeSourceId: String, cessationDate: Option[LocalDate])(
-    implicit headerCarrier: HeaderCarrier): Future[UpdateIncomeSourceResponse] = {
-    val body = UpdateIncomeSourceRequestModel(nino = nino, incomeSourceID = incomeSourceId,
-      cessation = Some(Cessation(cessationIndicator = true, cessationDate = cessationDate)))
+  def updateCessationDate(
+      nino:           String,
+      incomeSourceId: String,
+      cessationDate:  Option[LocalDate]
+    )(
+      implicit headerCarrier: HeaderCarrier
+    ): Future[UpdateIncomeSourceResponse] = {
+    val body = UpdateIncomeSourceRequestModel(
+      nino = nino,
+      incomeSourceID = incomeSourceId,
+      cessation = Some(Cessation(cessationIndicator = true, cessationDate = cessationDate))
+    )
 
-    http.put(url"$getUpdateIncomeSourceUrl")
+    http
+      .put(url"$getUpdateIncomeSourceUrl")
       .withBody(Json.toJson[UpdateIncomeSourceRequestModel](body))
-      .execute[HttpResponse].map { response =>
-      response.status match {
-        case OK => response.json.validate[UpdateIncomeSourceResponseModel].fold(
-          invalid => {
-            Logger("application").error("" +
-              s"Json validation error parsing update income source response, error $invalid")
-            UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Json validation error parsing response")
-          },
-          valid => valid
-        )
-        case _ =>
-          response.json.validate[UpdateIncomeSourceResponseError].fold(
-            invalid => {
-              Logger("application").error("" +
-                s"Json validation error parsing update income source response, error $invalid")
-              UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Json validation error parsing response")
-            },
-            valid => valid
-          )
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case OK =>
+            response.json
+              .validate[UpdateIncomeSourceResponseModel]
+              .fold(
+                invalid => {
+                  Logger("application").error(
+                    "" +
+                      s"Json validation error parsing update income source response, error $invalid"
+                  )
+                  UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Json validation error parsing response")
+                },
+                valid => valid
+              )
+          case _ =>
+            response.json
+              .validate[UpdateIncomeSourceResponseError]
+              .fold(
+                invalid => {
+                  Logger("application").error(
+                    "" +
+                      s"Json validation error parsing update income source response, error $invalid"
+                  )
+                  UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Json validation error parsing response")
+                },
+                valid => valid
+              )
+        }
       }
-    }
   }
 
-  def updateIncomeSourceTaxYearSpecific(nino: String, incomeSourceId: String, taxYearSpecific: TaxYearSpecific)
-                                       (implicit headerCarrier: HeaderCarrier): Future[UpdateIncomeSourceResponse] = {
-    val body = UpdateIncomeSourceRequestModel(nino = nino, incomeSourceID = incomeSourceId, taxYearSpecific = Some(taxYearSpecific))
+  def updateIncomeSourceTaxYearSpecific(
+      nino:            String,
+      incomeSourceId:  String,
+      taxYearSpecific: TaxYearSpecific
+    )(
+      implicit headerCarrier: HeaderCarrier
+    ): Future[UpdateIncomeSourceResponse] = {
+    val body = UpdateIncomeSourceRequestModel(
+      nino = nino,
+      incomeSourceID = incomeSourceId,
+      taxYearSpecific = Some(taxYearSpecific)
+    )
 
-    http.put(url"$getUpdateIncomeSourceUrl")
+    http
+      .put(url"$getUpdateIncomeSourceUrl")
       .withBody(Json.toJson[UpdateIncomeSourceRequestModel](body))
-      .execute[HttpResponse].map { response =>
-      response.status match {
-        case OK => response.json.validate[UpdateIncomeSourceResponseModel].fold(
-          invalid => {
-            Logger("application").error(s"Json validation error parsing repayment response, error $invalid")
-            UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Json validation error parsing response")
-          },
-          valid => valid
-        )
-        case _ =>
-          response.json.validate[UpdateIncomeSourceResponseError].fold(
-            invalid => {
-              Logger("application").error(s"Json validation error parsing repayment response, error $invalid")
-              UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Json validation error parsing response")
-            },
-            valid => valid
-          )
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case OK =>
+            response.json
+              .validate[UpdateIncomeSourceResponseModel]
+              .fold(
+                invalid => {
+                  Logger("application").error(s"Json validation error parsing repayment response, error $invalid")
+                  UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Json validation error parsing response")
+                },
+                valid => valid
+              )
+          case _ =>
+            response.json
+              .validate[UpdateIncomeSourceResponseError]
+              .fold(
+                invalid => {
+                  Logger("application").error(s"Json validation error parsing repayment response, error $invalid")
+                  UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Json validation error parsing response")
+                },
+                valid => valid
+              )
+        }
       }
-    }
   }
 }

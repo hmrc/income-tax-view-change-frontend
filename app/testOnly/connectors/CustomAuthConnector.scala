@@ -49,17 +49,25 @@ object GovernmentGatewayToken {
 case class AuthExchange(bearerToken: String, sessionAuthorityUri: String)
 
 @Singleton
-class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
-                                    val userRepository: UserRepository,
-                                    val http: HttpClientV2)
-                                   (implicit ec: ExecutionContext) extends PlayAuthConnector {
-  override val serviceUrl: String = servicesConfig.baseUrl("auth-login")
+class CustomAuthConnector @Inject() (
+    servicesConfig:     ServicesConfig,
+    val userRepository: UserRepository,
+    val http:           HttpClientV2
+  )(
+    implicit ec: ExecutionContext)
+    extends PlayAuthConnector {
+  override val serviceUrl:   String       = servicesConfig.baseUrl("auth-login")
   override def httpClientV2: HttpClientV2 = http
 
-  def login(nino: Nino, isAgent: Boolean, isSupporting: Boolean)(implicit hc: HeaderCarrier): Future[(AuthExchange, GovernmentGatewayToken)] = {
-    createPayload(nino, isAgent, isSupporting) flatMap {
-      payload =>
-        loginRequest(payload)
+  def login(
+      nino:         Nino,
+      isAgent:      Boolean,
+      isSupporting: Boolean
+    )(
+      implicit hc: HeaderCarrier
+    ): Future[(AuthExchange, GovernmentGatewayToken)] = {
+    createPayload(nino, isAgent, isSupporting) flatMap { payload =>
+      loginRequest(payload)
     }
   }
 
@@ -69,13 +77,13 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
       val headerNames = List(headerName, headerName.take(1).toUpperCase() + headerName.drop(1))
       headerNames.flatMap(name => headers.get(name)).headOption.map(_.mkString)
     }
-    val sessionUrl=s"$serviceUrl/government-gateway/session/login"
+    val sessionUrl = s"$serviceUrl/government-gateway/session/login"
 
     http
       .post(url"$sessionUrl")
       .withBody(payload)
       .execute[HttpResponse] flatMap {
-      case response@HttpResponse(CREATED, _, headers) =>
+      case response @ HttpResponse(CREATED, _, headers) =>
         (
           getHeader("authorization", headers),
           getHeader("location", headers),
@@ -87,52 +95,62 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
             Logger("application").info("HEADERS: " + headers)
             Logger("application").info("response json:" + response.json)
             Logger("application").info(s"login response info: $token :: $sessionUri :: $gatewayToken")
-            Future.failed(new RuntimeException("Internal Error, missing headers or gatewayToken in response from auth-login-api"))
+            Future.failed(
+              new RuntimeException("Internal Error, missing headers or gatewayToken in response from auth-login-api")
+            )
         }
-      case response@HttpResponse(TOO_MANY_REQUESTS, _, _) =>
-        Future.failed(new TooManyRequestException(s"response from $serviceUrl/government-gateway/session/login was ${response.status}. Body ${response.body}"))
+      case response @ HttpResponse(TOO_MANY_REQUESTS, _, _) =>
+        Future.failed(
+          new TooManyRequestException(
+            s"response from $serviceUrl/government-gateway/session/login was ${response.status}. Body ${response.body}"
+          )
+        )
       case response =>
-        Future.failed(new RuntimeException(s"response from $serviceUrl/government-gateway/session/login was ${response.status}. Body ${response.body}"))
+        Future.failed(
+          new RuntimeException(
+            s"response from $serviceUrl/government-gateway/session/login was ${response.status}. Body ${response.body}"
+          )
+        )
     }
   }
 
   private def createPayload(nino: Nino, isAgent: Boolean, isSupporting: Boolean): Future[JsValue] = {
-    getUserCredentials(nino.nino, userRepository) map {
-      userCredentials =>
-        val delegateEnrolments = getDelegatedEnrolmentData(isAgent = isAgent, isSupporting = isSupporting, userCredentials.enrolmentData)
-        Json.obj(
-          "credId" -> userCredentials.credId,
-          "affinityGroup" -> {
-            if (isAgent) "Agent" else {
-              "Individual"
-            }
-          },
-          "confidenceLevel" -> userCredentials.confidenceLevel,
-          "credentialStrength" -> userCredentials.credentialStrength,
-          "credentialRole" -> userCredentials.Role,
-          "usersName" -> "usersName",
-          "enrolments" -> getEnrolmentData(isAgent = isAgent, userCredentials.enrolmentData),
-          "delegatedEnrolments" -> delegateEnrolments
-        ) ++ {
-          if (isAgent) {
-            removeEmptyValues(
-              "email" -> Some("user@test.com")
-            ) ++
-              Json.obj(
-                "gatewayInformation" -> JsObject.empty)
-
-          } else {
-            removeEmptyValues(
-              "nino" -> Some(nino.value),
-              "groupIdentifier" -> Some("groupIdentifier"),
-              "gatewayToken" -> Some("gatewayToken"),
-              "agentId" -> Some("agentId"),
-              "agentCode" -> Some("agentCode"),
-              "agentFriendlyName" -> Some("agentFriendlyName"),
-              "email" -> Some("email")
-            )
+    getUserCredentials(nino.nino, userRepository) map { userCredentials =>
+      val delegateEnrolments =
+        getDelegatedEnrolmentData(isAgent = isAgent, isSupporting = isSupporting, userCredentials.enrolmentData)
+      Json.obj(
+        "credId" -> userCredentials.credId,
+        "affinityGroup" -> {
+          if (isAgent) "Agent"
+          else {
+            "Individual"
           }
+        },
+        "confidenceLevel"     -> userCredentials.confidenceLevel,
+        "credentialStrength"  -> userCredentials.credentialStrength,
+        "credentialRole"      -> userCredentials.Role,
+        "usersName"           -> "usersName",
+        "enrolments"          -> getEnrolmentData(isAgent = isAgent, userCredentials.enrolmentData),
+        "delegatedEnrolments" -> delegateEnrolments
+      ) ++ {
+        if (isAgent) {
+          removeEmptyValues(
+            "email" -> Some("user@test.com")
+          ) ++
+            Json.obj("gatewayInformation" -> JsObject.empty)
+
+        } else {
+          removeEmptyValues(
+            "nino"              -> Some(nino.value),
+            "groupIdentifier"   -> Some("groupIdentifier"),
+            "gatewayToken"      -> Some("gatewayToken"),
+            "agentId"           -> Some("agentId"),
+            "agentCode"         -> Some("agentCode"),
+            "agentFriendlyName" -> Some("agentFriendlyName"),
+            "email"             -> Some("email")
+          )
         }
+      }
 
     }
   }

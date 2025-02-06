@@ -34,7 +34,8 @@ class IncomeSourceUtilsSpec extends TestSupport {
   "getActiveProperty where ForeignProperty" when {
     "user has income sources" should {
       "return a PropertyDetailsModel when the user has one active property" in {
-        implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, foreignPropertyIncome)
+        implicit val user: MtdItUser[_] =
+          getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, foreignPropertyIncome)
 
         val result = TestIncomeSourcesUtils.getActiveProperty(ForeignProperty)(user = user)
 
@@ -43,7 +44,8 @@ class IncomeSourceUtilsSpec extends TestSupport {
     }
     "user has income sources" should {
       "return an exception when the user has more than one active property" in {
-        implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, twoActiveForeignPropertyIncomes)
+        implicit val user: MtdItUser[_] =
+          getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, twoActiveForeignPropertyIncomes)
 
         val result = TestIncomeSourcesUtils.getActiveProperty(ForeignProperty)(user = user)
 
@@ -52,7 +54,8 @@ class IncomeSourceUtilsSpec extends TestSupport {
     }
     "user has income sources" should {
       "return an exception when the user has no active property" in {
-        implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, noIncomeDetails)
+        implicit val user: MtdItUser[_] =
+          getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, noIncomeDetails)
 
         val result = TestIncomeSourcesUtils.getActiveProperty(ForeignProperty)(user = user)
 
@@ -64,7 +67,8 @@ class IncomeSourceUtilsSpec extends TestSupport {
   "getActiveProperty where UkProperty" when {
     "user has income sources" should {
       "return a PropertyDetailsModel when the user has one active property" in {
-        implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, ukPropertyIncome)
+        implicit val user: MtdItUser[_] =
+          getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, ukPropertyIncome)
 
         val result = TestIncomeSourcesUtils.getActiveProperty(UkProperty)(user = user)
 
@@ -73,7 +77,8 @@ class IncomeSourceUtilsSpec extends TestSupport {
     }
     "user has income sources" should {
       "return an exception when the user has more than one active property" in {
-        implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, twoActiveUkPropertyBusinesses)
+        implicit val user: MtdItUser[_] =
+          getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, twoActiveUkPropertyBusinesses)
 
         val result = TestIncomeSourcesUtils.getActiveProperty(UkProperty)(user = user)
 
@@ -82,7 +87,8 @@ class IncomeSourceUtilsSpec extends TestSupport {
     }
     "user has income sources" should {
       "return an exception when the user has no active property" in {
-        implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, noIncomeDetails)
+        implicit val user: MtdItUser[_] =
+          getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, noIncomeDetails)
 
         val result = TestIncomeSourcesUtils.getActiveProperty(UkProperty)(user = user)
 

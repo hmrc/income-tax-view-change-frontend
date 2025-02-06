@@ -18,7 +18,11 @@ package models.core
 
 import play.api.libs.json.{Format, Json}
 
-case class PaymentDataModel(taxType: String, taxReference: String, amountInPence: Long, returnUrl: String)
+case class PaymentDataModel(
+    taxType:       String,
+    taxReference:  String,
+    amountInPence: Long,
+    returnUrl:     String)
 
 object PaymentDataModel {
   implicit val format: Format[PaymentDataModel] = Json.format[PaymentDataModel]

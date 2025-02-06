@@ -22,7 +22,6 @@ import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{CREATED, INTERNAL_SERVER_ERROR}
 import play.api.libs.json.Json
 
-
 class PayApiConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
   lazy val connector: PayApiConnector = app.injector.instanceOf[PayApiConnector]
@@ -35,7 +34,7 @@ class PayApiConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
         "return a successful response with valid json" in {
 
-          val utr = "saUtr"
+          val utr           = "saUtr"
           val amountInPence = 10000
 
           val url = s"/pay-api/mtd-income-tax/sa/journey/start"
@@ -58,7 +57,8 @@ class PayApiConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
           WiremockHelper.stubPostWithRequest(url, requestBody, CREATED, json)
 
-          val result: PaymentJourneyResponse = connector.startPaymentJourney(utr, amountInPence, isAgent = false).futureValue
+          val result: PaymentJourneyResponse =
+            connector.startPaymentJourney(utr, amountInPence, isAgent = false).futureValue
 
           result shouldBe expectedResponse
 
@@ -72,7 +72,7 @@ class PayApiConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
         "return a successful response with invalid json" in {
 
-          val utr = "saUtr"
+          val utr           = "saUtr"
           val amountInPence = 10000
 
           val url = s"/pay-api/mtd-income-tax/sa/journey/start"
@@ -95,7 +95,8 @@ class PayApiConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
           WiremockHelper.stubPostWithRequest(url, requestBody, CREATED, "{}")
 
-          val result: PaymentJourneyResponse = connector.startPaymentJourney(utr, amountInPence, isAgent = false).futureValue
+          val result: PaymentJourneyResponse =
+            connector.startPaymentJourney(utr, amountInPence, isAgent = false).futureValue
 
           result shouldBe expectedResponse
 
@@ -109,7 +110,7 @@ class PayApiConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
         "return PaymentJourneyErrorResponse" in {
 
-          val utr = "saUtr"
+          val utr           = "saUtr"
           val amountInPence = 10000
 
           val url = s"/pay-api/mtd-income-tax/sa/journey/start"
@@ -132,7 +133,8 @@ class PayApiConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
           WiremockHelper.stubPostWithRequest(url, requestBody, INTERNAL_SERVER_ERROR, "Error Message")
 
-          val result: PaymentJourneyResponse = connector.startPaymentJourney(utr, amountInPence, isAgent = false).futureValue
+          val result: PaymentJourneyResponse =
+            connector.startPaymentJourney(utr, amountInPence, isAgent = false).futureValue
 
           result shouldBe expectedResponse
 

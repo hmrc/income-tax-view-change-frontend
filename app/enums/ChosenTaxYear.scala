@@ -25,6 +25,3 @@ case object CurrentTaxYear extends ChosenTaxYear
 case object NextTaxYear extends ChosenTaxYear
 
 case object NoChosenTaxYear extends ChosenTaxYear
-
-
-

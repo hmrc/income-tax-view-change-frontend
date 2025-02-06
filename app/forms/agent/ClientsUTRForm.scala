@@ -24,12 +24,12 @@ import play.api.data.validation.{Constraint, Invalid, Valid}
 
 object ClientsUTRForm {
 
-  val utr: String = "utr"
-  val utrLength: Int = 10
+  val utr:       String = "utr"
+  val utrLength: Int    = 10
 
-  val utrEmptyError: String = "agent.error.enter_clients_utr.empty"
+  val utrEmptyError:      String = "agent.error.enter_clients_utr.empty"
   val utrLengthIncorrect: String = "agent.error.enter_clients_utr.length"
-  val utrNonNumeric: String = "agent.error.enter_clients_utr.non_numeric"
+  val utrNonNumeric:      String = "agent.error.enter_clients_utr.non_numeric"
 
   val containsOnlyNumbers: Constraint[String] = Constraint(value =>
     if (value.forall(_.isDigit)) {

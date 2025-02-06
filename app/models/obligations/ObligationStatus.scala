@@ -30,14 +30,14 @@ case object StatusFulfilled extends ObligationStatus {
 
 object ObligationStatus {
   implicit val obligationStatusWrites: Writes[ObligationStatus] = Writes[ObligationStatus] {
-    case StatusOpen => JsString("Open")
+    case StatusOpen      => JsString("Open")
     case StatusFulfilled => JsString("Fulfilled")
   }
 
   implicit val obligationStatusReads: Reads[ObligationStatus] = Reads[ObligationStatus] {
-    case JsString("Open") => JsSuccess(StatusOpen)
+    case JsString("Open")      => JsSuccess(StatusOpen)
     case JsString("Fulfilled") => JsSuccess(StatusFulfilled)
-    case _ => JsError("Unknown Obligation Status")
+    case _                     => JsError("Unknown Obligation Status")
   }
 
   implicit val obligationStatusFormat: Format[ObligationStatus] = Format(obligationStatusReads, obligationStatusWrites)

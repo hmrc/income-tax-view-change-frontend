@@ -47,7 +47,10 @@ trait MockITSAStatusService extends UnitSpec with BeforeAndAfterEach {
   }
 
   def setupMockHasMandatedOrVoluntaryStatusForLatencyYears(taxYear1Status: Boolean, taxYear2Status: Boolean): Unit = {
-    when(mockITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(any[Option[LatencyDetails]]())(any(), any(), any()))
+    when(
+      mockITSAStatusService
+        .hasMandatedOrVoluntaryStatusForLatencyYears(any[Option[LatencyDetails]]())(any(), any(), any())
+    )
       .thenReturn(Future.successful((taxYear1Status, taxYear2Status)))
   }
 

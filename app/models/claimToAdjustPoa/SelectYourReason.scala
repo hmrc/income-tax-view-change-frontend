@@ -22,29 +22,29 @@ import play.api.libs.json._
 import scala.util.Try
 
 sealed trait SelectYourReason {
-  val code: String
+  val code:        String
   val messagesKey: String
 }
 
 case object MainIncomeLower extends SelectYourReason {
   override val code: String = "001"
-  val messagesKey: String = "claimToAdjustPoa.selectYourReason.radios.main-lower"
+  val messagesKey:   String = "claimToAdjustPoa.selectYourReason.radios.main-lower"
 }
 case object OtherIncomeLower extends SelectYourReason {
   override val code: String = "002"
-  val messagesKey: String = "claimToAdjustPoa.selectYourReason.radios.other-lower"
+  val messagesKey:   String = "claimToAdjustPoa.selectYourReason.radios.other-lower"
 }
 case object AllowanceOrReliefHigher extends SelectYourReason {
   override val code: String = "003"
-  val messagesKey: String = "claimToAdjustPoa.selectYourReason.radios.relief-higher"
+  val messagesKey:   String = "claimToAdjustPoa.selectYourReason.radios.relief-higher"
 }
 case object MoreTaxedAtSource extends SelectYourReason {
   override val code: String = "004"
-  val messagesKey: String = "claimToAdjustPoa.selectYourReason.radios.taxed-at-source"
+  val messagesKey:   String = "claimToAdjustPoa.selectYourReason.radios.taxed-at-source"
 }
 case object Increase extends SelectYourReason {
   override val code: String = "005"
-  val messagesKey: String = ""
+  val messagesKey:   String = ""
 }
 
 object SelectYourReason {
@@ -55,13 +55,12 @@ object SelectYourReason {
     AllowanceOrReliefHigher,
     MoreTaxedAtSource,
     Increase
-  ).map(reason => (reason.code -> reason))
-    .toMap
+  ).map(reason => (reason.code -> reason)).toMap
 
   implicit val format: Format[SelectYourReason] = Format(
     Reads {
       case JsString(value) if codeMapping.contains(value) => JsResult.fromTry(Try(codeMapping(value)))
-      case value => JsError(s"Could not parse SelectYourReason from value: $value")
+      case value                                          => JsError(s"Could not parse SelectYourReason from value: $value")
     },
     Writes[SelectYourReason] { value =>
       JsString(value.code)

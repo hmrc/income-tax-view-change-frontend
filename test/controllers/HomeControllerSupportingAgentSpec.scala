@@ -39,7 +39,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
     when(mockDateService.getCurrentDate) thenReturn fixedDate
     when(mockDateService.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
 
-    lazy val homePageTitle = s"${messages("htmlTitle.agent", messages("home.agent.heading"))}"
+    lazy val homePageTitle   = s"${messages("htmlTitle.agent", messages("home.agent.heading"))}"
     lazy val homePageCaption = "You are signed in as a supporting agent"
     lazy val homePageHeading = s"${messages("home.agent.headingWithClientName", "Test User")}"
 
@@ -50,18 +50,19 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
     disableAllSwitches()
   }
 
-
   "show()" when {
-    val agentType = MTDSupportingAgent
+    val agentType         = MTDSupportingAgent
     val isSupportingAgent = true
-    val fakeRequest = fakeRequestConfirmedClient(isSupportingAgent = true)
+    val fakeRequest       = fakeRequestConfirmedClient(isSupportingAgent = true)
     s"the user is authenticated $agentType" should {
       "render the home page controller with the next updates tile" when {
         "there is a future update date to display" in new Setup {
           setupMockAgentWithClientAuth(true)
           mockGetDueDates(Right(futureDueDates))
           mockSingleBusinessIncomeSource()
-          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(
+            Future.successful(Map(staticTaxYear -> baseStatusDetail))
+          )
 
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -77,7 +78,9 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           setupMockAgentWithClientAuth(true)
           mockGetDueDates(Right(overdueDueDates))
           mockSingleBusinessIncomeSource()
-          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(
+            Future.successful(Map(staticTaxYear -> baseStatusDetail))
+          )
 
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -91,7 +94,9 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           setupMockAgentWithClientAuth(true)
           mockGetDueDates(Right(Seq()))
           mockSingleBusinessIncomeSource()
-          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(
+            Future.successful(Map(staticTaxYear -> baseStatusDetail))
+          )
 
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -107,7 +112,9 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           setupMockAgentWithClientAuth(true)
           mockSingleBusinessIncomeSource()
           mockGetDueDates(Right(Seq()))
-          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(
+            Future.successful(Map(staticTaxYear -> baseStatusDetail))
+          )
 
           val result: Future[Result] = controller.showAgent()(fakeRequest)
           status(result) shouldBe Status.OK
@@ -125,19 +132,35 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
             enable(IncomeSourcesFs)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
             mockGetDueDates(Right(futureDueDates))
-            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(
+              Future.successful(Map(staticTaxYear -> baseStatusDetail))
+            )
 
             val result: Future[Result] = controller.showAgent()(fakeRequest)
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
-            document.select("#income-sources-tile h2:nth-child(1)").text() shouldBe messages("home.incomeSources.heading")
-            document.select("#income-sources-tile > div > p:nth-child(2) > a").text() shouldBe messages("home.incomeSources.addIncomeSource.view")
-            document.select("#income-sources-tile > div > p:nth-child(2) > a").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
-            document.select("#income-sources-tile > div > p:nth-child(3) > a").text() shouldBe messages("home.incomeSources.manageIncomeSource.view")
-            document.select("#income-sources-tile > div > p:nth-child(3) > a").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url
-            document.select("#income-sources-tile > div > p:nth-child(4) > a").text() shouldBe messages("home.incomeSources.ceaseIncomeSource.view")
-            document.select("#income-sources-tile > div > p:nth-child(4) > a").attr("href") shouldBe controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url
+            document.select("#income-sources-tile h2:nth-child(1)").text() shouldBe messages(
+              "home.incomeSources.heading"
+            )
+            document.select("#income-sources-tile > div > p:nth-child(2) > a").text() shouldBe messages(
+              "home.incomeSources.addIncomeSource.view"
+            )
+            document
+              .select("#income-sources-tile > div > p:nth-child(2) > a")
+              .attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
+            document.select("#income-sources-tile > div > p:nth-child(3) > a").text() shouldBe messages(
+              "home.incomeSources.manageIncomeSource.view"
+            )
+            document
+              .select("#income-sources-tile > div > p:nth-child(3) > a")
+              .attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url
+            document.select("#income-sources-tile > div > p:nth-child(4) > a").text() shouldBe messages(
+              "home.incomeSources.ceaseIncomeSource.view"
+            )
+            document
+              .select("#income-sources-tile > div > p:nth-child(4) > a")
+              .attr("href") shouldBe controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url
           }
         }
 
@@ -147,19 +170,37 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
             enable(IncomeSourcesFs)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncomeCeased)
             mockGetDueDates(Right(futureDueDates))
-            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(
+              Future.successful(Map(staticTaxYear -> baseStatusDetail))
+            )
 
             val result: Future[Result] = controller.showAgent()(fakeRequest)
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
-            document.select("#income-sources-tile h2:nth-child(1)").text() shouldBe messages("home.incomeSources.heading")
-            document.select("#income-sources-tile > div > p:nth-child(2) > a").text() shouldBe messages("home.incomeSources.addIncomeSource.view")
-            document.select("#income-sources-tile > div > p:nth-child(2) > a").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
-            document.select("#income-sources-tile > div > p:nth-child(3) > a").text() shouldBe messages("home.incomeSources.manageIncomeSource.view")
-            document.select("#income-sources-tile > div > p:nth-child(3) > a").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url
-            document.select("#income-sources-tile > div > p:nth-child(4) > a").text() should not be messages("home.incomeSources.ceaseIncomeSource.view")
-            document.select("#income-sources-tile > div > p:nth-child(4) > a").attr("href") should not be controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url
+            document.select("#income-sources-tile h2:nth-child(1)").text() shouldBe messages(
+              "home.incomeSources.heading"
+            )
+            document.select("#income-sources-tile > div > p:nth-child(2) > a").text() shouldBe messages(
+              "home.incomeSources.addIncomeSource.view"
+            )
+            document
+              .select("#income-sources-tile > div > p:nth-child(2) > a")
+              .attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
+            document.select("#income-sources-tile > div > p:nth-child(3) > a").text() shouldBe messages(
+              "home.incomeSources.manageIncomeSource.view"
+            )
+            document
+              .select("#income-sources-tile > div > p:nth-child(3) > a")
+              .attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url
+            document.select("#income-sources-tile > div > p:nth-child(4) > a").text() should not be messages(
+              "home.incomeSources.ceaseIncomeSource.view"
+            )
+            document
+              .select("#income-sources-tile > div > p:nth-child(4) > a")
+              .attr("href") should not be controllers.incomeSources.cease.routes.CeaseIncomeSourceController
+              .showAgent()
+              .url
           }
         }
       }
@@ -171,15 +212,23 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           enable(IncomeSourcesNewJourney)
           mockGetDueDates(Right(futureDueDates))
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(
+            Future.successful(Map(staticTaxYear -> baseStatusDetail))
+          )
 
           val result: Future[Result] = controller.showAgent()(fakeRequest)
           status(result) shouldBe Status.OK
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#income-sources-tile h2:nth-child(1)").text() shouldBe messages("home.incomeSources.newJourneyHeading")
-          document.select("#income-sources-tile > div > p:nth-child(2) > a").text() shouldBe messages("home.incomeSources.newJourney.view")
-          document.select("#income-sources-tile > div > p:nth-child(2) > a").attr("href") shouldBe controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+          document.select("#income-sources-tile h2:nth-child(1)").text() shouldBe messages(
+            "home.incomeSources.newJourneyHeading"
+          )
+          document.select("#income-sources-tile > div > p:nth-child(2) > a").text() shouldBe messages(
+            "home.incomeSources.newJourney.view"
+          )
+          document
+            .select("#income-sources-tile > div > p:nth-child(2) > a")
+            .attr("href") shouldBe controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
         }
       }
 
@@ -188,7 +237,9 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           "Reporting Frequency FS is enabled and the current ITSA status is annually" in new Setup {
             enable(ReportingFrequencyPage)
             setupMockAgentWithClientAuth(isSupportingAgent)
-            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(
+              Future.successful(Map(staticTaxYear -> baseStatusDetail))
+            )
 
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
@@ -205,7 +256,9 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           "Reporting Frequency FS is enabled and the current ITSA status is voluntary" in new Setup {
             enable(ReportingFrequencyPage)
             setupMockAgentWithClientAuth(isSupportingAgent)
-            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Voluntary))))
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(
+              Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Voluntary)))
+            )
 
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
@@ -221,7 +274,9 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           "Reporting Frequency FS is enabled and the current ITSA status is mandated" in new Setup {
             enable(ReportingFrequencyPage)
             setupMockAgentWithClientAuth(isSupportingAgent)
-            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Mandated))))
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(
+              Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Mandated)))
+            )
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
 
@@ -239,7 +294,9 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         setupMockAgentWithClientAuth(true)
         mockGetDueDates(Right(overdueDueDates))
         mockSingleBusinessIncomeSource()
-        setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+        setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(
+          Future.successful(Map(staticTaxYear -> baseStatusDetail))
+        )
 
         val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -255,7 +312,9 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         setupMockAgentWithClientAuth(true)
         mockGetDueDates(Right(overdueDueDates))
         mockSingleBusinessIncomeSource()
-        setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+        setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(
+          Future.successful(Map(staticTaxYear -> baseStatusDetail))
+        )
 
         val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -271,7 +330,9 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         setupMockAgentWithClientAuth(true)
         mockGetDueDates(Right(overdueDueDates))
         mockSingleBusinessIncomeSource()
-        setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+        setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(
+          Future.successful(Map(staticTaxYear -> baseStatusDetail))
+        )
 
         val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -288,7 +349,9 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         setupMockAgentWithClientAuth(true)
         mockGetDueDates(Right(overdueDueDates))
         mockSingleBusinessIncomeSource()
-        setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+        setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(
+          Future.successful(Map(staticTaxYear -> baseStatusDetail))
+        )
 
         val result: Future[Result] = controller.showAgent()(fakeRequest)
 

@@ -24,22 +24,24 @@ import uk.gov.hmrc.play.language.LanguageUtils
 
 import javax.inject.Inject
 
+class MessageCheckController @Inject() (
+    messageCheckView: MessageCheckView,
+    mcc:              MessagesControllerComponents,
+    appConfig:        FrontendAppConfig,
+    languageUtils:    LanguageUtils)
+    extends ItvcLanguageController(mcc, appConfig, languageUtils) {
 
-class MessageCheckController @Inject()(messageCheckView: MessageCheckView,
-                                       mcc: MessagesControllerComponents,
-                                       appConfig: FrontendAppConfig,
-                                       languageUtils: LanguageUtils) extends ItvcLanguageController(mcc, appConfig, languageUtils) {
+  def show(): Action[AnyContent] =
+    Action { implicit req =>
+      val keys = readMessageFileKeys("default")
+      Ok(messageCheckView(keys))
+    }
 
-
-  def show(): Action[AnyContent] = Action { implicit req =>
-    val keys = readMessageFileKeys("default")
-    Ok(messageCheckView(keys))
-  }
-
-  def showWelsh(): Action[AnyContent] = Action { implicit req =>
-    val keys = readMessageFileKeys("cy")
-    Ok(messageCheckView(keys))
-  }
+  def showWelsh(): Action[AnyContent] =
+    Action { implicit req =>
+      val keys = readMessageFileKeys("cy")
+      Ok(messageCheckView(keys))
+    }
 
   private def readMessageFileKeys(language: String): List[String] = {
     mcc.messagesApi.messages.filter(_._1 == language).flatMap(_._2).keys.toList

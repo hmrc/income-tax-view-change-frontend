@@ -75,7 +75,7 @@ class TestDateService extends DateServiceInterface {
   override def getCurrentTaxYear: TaxYear = TaxYear.forYearEnd(getCurrentTaxYearEnd)
 
   override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate = {
-    val startDateYear = startDate.getYear
+    val startDateYear           = startDate.getYear
     val accountingPeriodEndDate = LocalDate.of(startDateYear, APRIL, 5)
 
     if (startDate.isBefore(accountingPeriodEndDate) || startDate.isEqual(accountingPeriodEndDate)) {
@@ -88,25 +88,35 @@ class TestDateService extends DateServiceInterface {
   override def isAfterTaxReturnDeadlineButBeforeTaxYearEnd: Boolean = true
 }
 
-trait ComponentSpecBase extends TestSuite with CustomMatchers
-  with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
-  with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually
-  with FeatureSwitching with SessionCookieBaker {
+trait ComponentSpecBase
+    extends TestSuite
+    with CustomMatchers
+    with GuiceOneServerPerSuite
+    with ScalaFutures
+    with IntegrationPatience
+    with Matchers
+    with WiremockHelper
+    with BeforeAndAfterEach
+    with BeforeAndAfterAll
+    with Eventually
+    with FeatureSwitching
+    with SessionCookieBaker {
 
-  val mockHost: String = WiremockHelper.wiremockHost
-  val mockPort: String = WiremockHelper.wiremockPort.toString
-  val mockUrl: String = s"http://$mockHost:$mockPort"
-  val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-  val cache: AsyncCacheApi = app.injector.instanceOf[AsyncCacheApi]
-  val languageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
-  implicit val messagesAPI: MessagesApi = app.injector.instanceOf[MessagesApi]
-  val mockLanguageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
-  implicit val lang: Lang = Lang("GB")
+  val mockHost:                           String                    = WiremockHelper.wiremockHost
+  val mockPort:                           String                    = WiremockHelper.wiremockPort.toString
+  val mockUrl:                            String                    = s"http://$mockHost:$mockPort"
+  val appConfig:                          FrontendAppConfig         = app.injector.instanceOf[FrontendAppConfig]
+  val cache:                              AsyncCacheApi             = app.injector.instanceOf[AsyncCacheApi]
+  val languageUtils:                      LanguageUtils             = app.injector.instanceOf[LanguageUtils]
+  implicit val messagesAPI:               MessagesApi               = app.injector.instanceOf[MessagesApi]
+  val mockLanguageUtils:                  LanguageUtils             = app.injector.instanceOf[LanguageUtils]
+  implicit val lang:                      Lang                      = Lang("GB")
   implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)
-  implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
-  implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
-  implicit val testAppConfig: FrontendAppConfig = appConfig
-  implicit val optOutSessionDataRepository: OptOutSessionDataRepository = app.injector.instanceOf[OptOutSessionDataRepository]
+  implicit val ec:                        ExecutionContext          = app.injector.instanceOf[ExecutionContext]
+  implicit val hc:                        HeaderCarrier             = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
+  implicit val testAppConfig:             FrontendAppConfig         = appConfig
+  implicit val optOutSessionDataRepository: OptOutSessionDataRepository =
+    app.injector.instanceOf[OptOutSessionDataRepository]
   implicit val uiRepository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
   implicit val dateService: DateService = new DateService()(frontendAppConfig = testAppConfig) {
     override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
@@ -117,12 +127,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   override lazy val cookieSigner: DefaultCookieSigner = app.injector.instanceOf[DefaultCookieSigner]
 
   val titleInternalServer: String = "standardError.heading"
-  val titleTechError = "Sorry, we are experiencing technical difficulties - 500"
-  val titleNotFound = "Page not found - 404"
+  val titleTechError       = "Sorry, we are experiencing technical difficulties - 500"
+  val titleNotFound        = "Page not found - 404"
   val titleProbWithService = "Sorry, there is a problem with the service"
   val titleThereIsAProblem = "There’s a problem"
-  implicit val csbTestUser: MtdItUser[_] = getTestUser(MTDIndividual,
-    IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
+  implicit val csbTestUser: MtdItUser[_] =
+    getTestUser(MTDIndividual, IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
 
   def getTestUser(mtdUserRole: MTDUserRole, incomeSources: IncomeSourceDetailsModel): MtdItUser[_] = {
     MtdItUser(
@@ -130,52 +140,53 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       testNino,
       mtdUserRole,
       defaultAuthUserDetails(mtdUserRole),
-      if(mtdUserRole == MTDIndividual) None else Some(defaultClientDetails),
+      if (mtdUserRole == MTDIndividual) None else Some(defaultClientDetails),
       incomeSources
     )(FakeRequest())
   }
 
-  def config: Map[String, Object] = Map(
-    "play.filters.disabled" -> Seq("uk.gov.hmrc.play.bootstrap.frontend.filters.SessionIdFilter"),
-    "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
-    "microservice.services.auth.host" -> mockHost,
-    "microservice.services.auth.port" -> mockPort,
-    "microservice.services.identity-verification-frontend.host" -> "http://stubIV.com",
-    "microservice.services.income-tax-view-change.host" -> mockHost,
-    "microservice.services.income-tax-view-change.port" -> mockPort,
-    "microservice.services.self-assessment-api.host" -> mockHost,
-    "microservice.services.self-assessment-api.port" -> mockPort,
-    "microservice.services.business-account.host" -> mockHost,
-    "microservice.services.business-account.port" -> mockPort,
-    "microservice.services.financial-transactions.host" -> mockHost,
-    "microservice.services.financial-transactions.port" -> mockPort,
-    "microservice.services.repayment-api.host" -> mockHost,
-    "microservice.services.repayment-api.port" -> mockPort,
-    "microservice.services.pay-api.host" -> mockHost,
-    "microservice.services.pay-api.port" -> mockPort,
-    "microservice.services.income-tax-calculation.host" -> mockHost,
-    "microservice.services.income-tax-calculation.port" -> mockPort,
-    "calculation-polling.interval" -> "500",
-    "calculation-polling.timeout" -> "3000",
-    "calculation-polling.attempts" -> "10",
-    "calculation-polling.delayBetweenAttemptInMilliseconds" -> "500",
-    "auditing.consumer.baseUri.host" -> mockHost,
-    "auditing.consumer.baseUri.port" -> mockPort,
-    "microservice.services.address-lookup-frontend.port" -> mockPort,
-    "auditing.enabled" -> "true",
-    "encryption.key" -> "QmFyMTIzNDVCYXIxMjM0NQ==",
-    "encryption.isEnabled" -> "false",
-    "microservice.services.contact-frontend.host" -> mockHost,
-    "microservice.services.contact-frontend.port" -> mockPort,
-    "microservice.services.income-tax-session-data.host" -> mockHost,
-    "microservice.services.income-tax-session-data.port" -> mockPort,
-    "microservice.services.citizen-details.host" -> mockHost,
-    "microservice.services.citizen-details.port" -> mockPort,
-    "feature-switches.read-from-mongo" -> "false",
-    "feature-switch.enable-time-machine" -> "false",
-    "time-machine.add-years" -> "0",
-    "time-machine.add-days" -> "0"
-  )
+  def config: Map[String, Object] =
+    Map(
+      "play.filters.disabled"                                     -> Seq("uk.gov.hmrc.play.bootstrap.frontend.filters.SessionIdFilter"),
+      "play.filters.csrf.header.bypassHeaders.Csrf-Token"         -> "nocheck",
+      "microservice.services.auth.host"                           -> mockHost,
+      "microservice.services.auth.port"                           -> mockPort,
+      "microservice.services.identity-verification-frontend.host" -> "http://stubIV.com",
+      "microservice.services.income-tax-view-change.host"         -> mockHost,
+      "microservice.services.income-tax-view-change.port"         -> mockPort,
+      "microservice.services.self-assessment-api.host"            -> mockHost,
+      "microservice.services.self-assessment-api.port"            -> mockPort,
+      "microservice.services.business-account.host"               -> mockHost,
+      "microservice.services.business-account.port"               -> mockPort,
+      "microservice.services.financial-transactions.host"         -> mockHost,
+      "microservice.services.financial-transactions.port"         -> mockPort,
+      "microservice.services.repayment-api.host"                  -> mockHost,
+      "microservice.services.repayment-api.port"                  -> mockPort,
+      "microservice.services.pay-api.host"                        -> mockHost,
+      "microservice.services.pay-api.port"                        -> mockPort,
+      "microservice.services.income-tax-calculation.host"         -> mockHost,
+      "microservice.services.income-tax-calculation.port"         -> mockPort,
+      "calculation-polling.interval"                              -> "500",
+      "calculation-polling.timeout"                               -> "3000",
+      "calculation-polling.attempts"                              -> "10",
+      "calculation-polling.delayBetweenAttemptInMilliseconds"     -> "500",
+      "auditing.consumer.baseUri.host"                            -> mockHost,
+      "auditing.consumer.baseUri.port"                            -> mockPort,
+      "microservice.services.address-lookup-frontend.port"        -> mockPort,
+      "auditing.enabled"                                          -> "true",
+      "encryption.key"                                            -> "QmFyMTIzNDVCYXIxMjM0NQ==",
+      "encryption.isEnabled"                                      -> "false",
+      "microservice.services.contact-frontend.host"               -> mockHost,
+      "microservice.services.contact-frontend.port"               -> mockPort,
+      "microservice.services.income-tax-session-data.host"        -> mockHost,
+      "microservice.services.income-tax-session-data.port"        -> mockPort,
+      "microservice.services.citizen-details.host"                -> mockHost,
+      "microservice.services.citizen-details.port"                -> mockPort,
+      "feature-switches.read-from-mongo"                          -> "false",
+      "feature-switch.enable-time-machine"                        -> "false",
+      "time-machine.add-years"                                    -> "0",
+      "time-machine.add-days"                                     -> "0"
+    )
 
   val btaPartialUrl = "/business-account/partial/service-info"
 
@@ -185,7 +196,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       LocalDate.of(currentDate.getYear, 4, 5)
     else LocalDate.of(currentDate.getYear + 1, 4, 5)
   }
-
 
   override implicit lazy val app: Application =
     new GuiceApplicationBuilder()
@@ -214,4 +224,3 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     FeatureSwitchName.allFeatureSwitches foreach disable
   }
 }
-

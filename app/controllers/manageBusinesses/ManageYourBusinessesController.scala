@@ -33,56 +33,71 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageYourBusinesses,
-                                               val authActions: AuthActions,
-                                               incomeSourceDetailsService: IncomeSourceDetailsService,
-                                               val sessionService: SessionService)
-                                              (implicit val ec: ExecutionContext,
-                                               implicit val mcc: MessagesControllerComponents,
-                                               implicit val itvcErrorHandler: ItvcErrorHandler,
-                                               implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                               val appConfig: FrontendAppConfig) extends FrontendController(mcc)
-  with FeatureSwitching with IncomeSourcesUtils with I18nSupport {
+class ManageYourBusinessesController @Inject() (
+    val manageYourBusinesses:   ManageYourBusinesses,
+    val authActions:            AuthActions,
+    incomeSourceDetailsService: IncomeSourceDetailsService,
+    val sessionService:         SessionService
+  )(
+    implicit val ec:                    ExecutionContext,
+    implicit val mcc:                   MessagesControllerComponents,
+    implicit val itvcErrorHandler:      ItvcErrorHandler,
+    implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+    val appConfig:                      FrontendAppConfig)
+    extends FrontendController(mcc)
+    with FeatureSwitching
+    with IncomeSourcesUtils
+    with I18nSupport {
 
-  def show(): Action[AnyContent] = authActions.asMTDIndividual.async { implicit user =>
-    handleRequest(
-      sources = user.incomeSources,
-      isAgent = false,
-      backUrl = controllers.routes.HomeController.show().url
-    )(user, itvcErrorHandler)
-  }
+  def show(): Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit user =>
+      handleRequest(
+        sources = user.incomeSources,
+        isAgent = false,
+        backUrl = controllers.routes.HomeController.show().url
+      )(user, itvcErrorHandler)
+    }
 
-  def showAgent(): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async { implicit user =>
-    handleRequest(
-      sources = user.incomeSources,
-      isAgent = true,
-      backUrl = controllers.routes.HomeController.showAgent.url
-    )(user, itvcErrorHandlerAgent)
-  }
+  def showAgent(): Action[AnyContent] =
+    authActions.asMTDAgentWithConfirmedClient.async { implicit user =>
+      handleRequest(
+        sources = user.incomeSources,
+        isAgent = true,
+        backUrl = controllers.routes.HomeController.showAgent.url
+      )(user, itvcErrorHandlerAgent)
+    }
 
-  def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
-                   (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
+  def handleRequest(
+      sources: IncomeSourceDetailsModel,
+      isAgent: Boolean,
+      backUrl: String
+    )(
+      implicit user: MtdItUser[_],
+      errorHandler:  ShowInternalServerError
+    ): Future[Result] = {
 
     withIncomeSourcesFS {
       incomeSourceDetailsService.getViewIncomeSourceViewModel(sources) match {
         case Right(viewModel) =>
-          Future(hc.sessionId.get).flatMap { sessionId =>
-            sessionService.clearSession(sessionId.value).map { _ =>
-              Ok(manageYourBusinesses(
-                sources = viewModel,
-                isAgent = isAgent,
-                backUrl = backUrl
-              ))
+          Future(hc.sessionId.get)
+            .flatMap { sessionId =>
+              sessionService.clearSession(sessionId.value).map { _ =>
+                Ok(
+                  manageYourBusinesses(
+                    sources = viewModel,
+                    isAgent = isAgent,
+                    backUrl = backUrl
+                  )
+                )
+              }
             }
-          }.recover {
-            case ex: Exception =>
-              Logger("application").error(
-                s"Session Error: ${ex.getMessage} - ${ex.getCause}")
-              errorHandler.showInternalServerError()
-          }
+            .recover {
+              case ex: Exception =>
+                Logger("application").error(s"Session Error: ${ex.getMessage} - ${ex.getCause}")
+                errorHandler.showInternalServerError()
+            }
         case Left(ex) =>
-          Logger("application").error(
-            s"Error: ${ex.getMessage} - ${ex.getCause}")
+          Logger("application").error(s"Error: ${ex.getMessage} - ${ex.getCause}")
           Future(errorHandler.showInternalServerError())
       }
     }

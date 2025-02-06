@@ -22,7 +22,9 @@ import play.api.http.Status
 object BtaPartialStub extends ComponentSpecBase {
 
   def stubGetServiceInfoPartial(): Unit = {
-    WiremockHelper.stubGet(btaPartialUrl, Status.OK,
+    WiremockHelper.stubGet(
+      btaPartialUrl,
+      Status.OK,
       s"""
          |    <a id="service-info-home-link"
          |       class="service-info__item service-info__left font-xsmall button button--link button--link-table button--small soft-half--sides"
@@ -49,6 +51,7 @@ object BtaPartialStub extends ComponentSpecBase {
          |      </a>
          |    </li>
          |  </ul>
-       """.stripMargin)
+       """.stripMargin
+    )
   }
 }

@@ -29,11 +29,14 @@ object ConfirmOptOutControllerConstants {
 
   def previousYear(dateService: DateService) = currentTaxYear(dateService).addYears(-1)
 
-  def expectedTitle(dateService: DateService) = s"Confirm and opt out for the ${previousYear(dateService).startYear} to ${previousYear(dateService).endYear} tax year"
+  def expectedTitle(dateService: DateService) =
+    s"Confirm and opt out for the ${previousYear(dateService).startYear} to ${previousYear(dateService).endYear} tax year"
 
-  val summary = "If you opt out, you can submit your tax return through your HMRC online account or compatible software."
-  val infoMessage = s"In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know."
-  val emptyBodyString = ""
+  val summary =
+    "If you opt out, you can submit your tax return through your HMRC online account or compatible software."
+  val infoMessage =
+    s"In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know."
+  val emptyBodyString     = ""
   val optOutExpectedTitle = "Check your answers"
 
   def testUser(mtdUserRole: MTDUserRole): MtdItUser[_] = {

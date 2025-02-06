@@ -20,13 +20,16 @@ import audit.Utilities
 import auth.MtdItUser
 import play.api.libs.json.{JsObject, JsValue, Json}
 
-case class AdjustPaymentsOnAccountAuditModel(isSuccessful: Boolean,
-                                             previousPaymentOnAccountAmount: BigDecimal,
-                                             requestedPaymentOnAccountAmount: BigDecimal,
-                                             adjustmentReasonCode: String,
-                                             adjustmentReasonDescription: String,
-                                             isDecreased: Boolean
-                                                       )(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
+case class AdjustPaymentsOnAccountAuditModel(
+    isSuccessful:                    Boolean,
+    previousPaymentOnAccountAmount:  BigDecimal,
+    requestedPaymentOnAccountAmount: BigDecimal,
+    adjustmentReasonCode:            String,
+    adjustmentReasonDescription:     String,
+    isDecreased:                     Boolean
+  )(
+    implicit user: MtdItUser[_])
+    extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.AdjustPaymentsOnAccount
 
@@ -40,9 +43,9 @@ case class AdjustPaymentsOnAccountAuditModel(isSuccessful: Boolean,
   private val failureOutcome: JsObject = Json.obj(
     "outcome" ->
       Json.obj(
-        "isSuccessful" -> isSuccessful,
+        "isSuccessful"    -> isSuccessful,
         "failureCategory" -> "API_FAILURE",
-        "failureReason" -> "API 1773 returned errors - not able to update payments on account"
+        "failureReason"   -> "API 1773 returned errors - not able to update payments on account"
       )
   )
 
@@ -51,10 +54,10 @@ case class AdjustPaymentsOnAccountAuditModel(isSuccessful: Boolean,
   override val detail: JsValue =
     Utilities.userAuditDetails(user) ++ outcome ++
       Json.obj(
-        "previousPaymentOnAccountAmount" -> previousPaymentOnAccountAmount,
+        "previousPaymentOnAccountAmount"  -> previousPaymentOnAccountAmount,
         "requestedPaymentOnAccountAmount" -> requestedPaymentOnAccountAmount,
-        "adjustmentReasonCode" -> adjustmentReasonCode,
-        "adjustmentReasonDescription" -> adjustmentReasonDescription,
-        "isDecreased" -> isDecreased
+        "adjustmentReasonCode"            -> adjustmentReasonCode,
+        "adjustmentReasonDescription"     -> adjustmentReasonDescription,
+        "isDecreased"                     -> isDecreased
       )
 }

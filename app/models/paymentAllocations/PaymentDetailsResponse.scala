@@ -22,7 +22,6 @@ sealed trait PaymentDetailsResponse
 
 case class PaymentDetails(paymentDetails: Seq[PaymentAllocations]) extends PaymentDetailsResponse
 
-
 object PaymentDetails {
   implicit val format: Format[PaymentDetails] = Json.format[PaymentDetails]
 }

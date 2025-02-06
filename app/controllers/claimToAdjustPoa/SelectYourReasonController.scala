@@ -36,60 +36,76 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SelectYourReasonController @Inject()(val authActions: AuthActions,
-                                           val view: SelectYourReasonView,
-                                           val formProvider: SelectYourReasonFormProvider,
-                                           val poaSessionService: PaymentOnAccountSessionService,
-                                           val claimToAdjustService: ClaimToAdjustService)
-                                          (implicit val appConfig: FrontendAppConfig,
-                                           val individualErrorHandler: ItvcErrorHandler,
-                                           val agentErrorHandler: AgentItvcErrorHandler,
-                                           val mcc: MessagesControllerComponents,
-                                           val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with ClaimToAdjustUtils with WithSessionAndPoa {
+class SelectYourReasonController @Inject() (
+    val authActions:          AuthActions,
+    val view:                 SelectYourReasonView,
+    val formProvider:         SelectYourReasonFormProvider,
+    val poaSessionService:    PaymentOnAccountSessionService,
+    val claimToAdjustService: ClaimToAdjustService
+  )(
+    implicit val appConfig:     FrontendAppConfig,
+    val individualErrorHandler: ItvcErrorHandler,
+    val agentErrorHandler:      AgentItvcErrorHandler,
+    val mcc:                    MessagesControllerComponents,
+    val ec:                     ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with ClaimToAdjustUtils
+    with WithSessionAndPoa {
 
-  def show(isAgent: Boolean, mode: Mode): Action[AnyContent] = authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
-    implicit user =>
+  def show(isAgent: Boolean, mode: Mode): Action[AnyContent] =
+    authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async { implicit user =>
       withSessionDataAndPoa() { (session, poa) =>
         session.newPoaAmount match {
           case Some(amount) if amount >= poa.totalAmount =>
             saveValueAndRedirect(mode, Increase, poa)
           case _ =>
             val form = formProvider.apply()
-            EitherT.rightT(Ok(view(
-              selectYourReasonForm = session.poaAdjustmentReason.fold(form)(form.fill),
-              taxYear = poa.taxYear,
-              isAgent = user.isAgent(),
-              mode = mode,
-              useFallbackLink = true)))
+            EitherT.rightT(
+              Ok(
+                view(
+                  selectYourReasonForm = session.poaAdjustmentReason.fold(form)(form.fill),
+                  taxYear = poa.taxYear,
+                  isAgent = user.isAgent(),
+                  mode = mode,
+                  useFallbackLink = true
+                )
+              )
+            )
         }
       } recover logAndRedirect
-  }
+    }
 
-  def submit(isAgent: Boolean, mode: Mode): Action[AnyContent] = authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
-    implicit user =>
+  def submit(isAgent: Boolean, mode: Mode): Action[AnyContent] =
+    authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async { implicit user =>
       withSessionDataAndPoa() { (_, poa) =>
-        formProvider.apply()
+        formProvider
+          .apply()
           .bindFromRequest()
           .fold(
-            formWithErrors =>
-              EitherT.rightT(BadRequest(view(formWithErrors, poa.taxYear, user.isAgent(), mode, true)))
-            ,
+            formWithErrors => EitherT.rightT(BadRequest(view(formWithErrors, poa.taxYear, user.isAgent(), mode, true))),
             value => saveValueAndRedirect(mode, value, poa)
           )
       } recover logAndRedirect
-  }
+    }
 
-  private def saveValueAndRedirect(mode: Mode, value: SelectYourReason, poa: PaymentOnAccountViewModel)
-                                  (implicit user: MtdItUser[_]): EitherT[Future, Throwable, Result] = {
+  private def saveValueAndRedirect(
+      mode:  Mode,
+      value: SelectYourReason,
+      poa:   PaymentOnAccountViewModel
+    )(
+      implicit user: MtdItUser[_]
+    ): EitherT[Future, Throwable, Result] = {
     for {
       res <- EitherT(poaSessionService.setAdjustmentReason(value))
     } yield {
       res match {
-        case _ => (mode, poa.totalAmountLessThanPoa) match {
-          case (NormalMode, false) if value != Increase => Redirect(EnterPoaAmountController.show(user.isAgent(), NormalMode))
-          case (_, _) => Redirect(CheckYourAnswersController.show(user.isAgent()))
-        }
+        case _ =>
+          (mode, poa.totalAmountLessThanPoa) match {
+            case (NormalMode, false) if value != Increase =>
+              Redirect(EnterPoaAmountController.show(user.isAgent(), NormalMode))
+            case (_, _) => Redirect(CheckYourAnswersController.show(user.isAgent()))
+          }
       }
     }
   }

@@ -33,11 +33,15 @@ trait MockWhatYouOweService extends UnitSpec with MockDateService with BeforeAnd
 
   lazy val mockWhatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
 
-  val emptyWhatYouOweChargesList: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.0, 0.0, 0.0, None, None, None, None, None))
+  val emptyWhatYouOweChargesList: WhatYouOweChargesList = WhatYouOweChargesList(
+    BalanceDetails(0.0, 0.0, 0.0, None, None, None, None, None)
+  )
 
   val oneOverdueBCDPaymentInWhatYouOweChargesList: WhatYouOweChargesList =
     emptyWhatYouOweChargesList.copy(
-      outstandingChargesModel = Some(OutstandingChargesModel(List(OutstandingChargeModel("BCD", Some(LocalDate.parse("2019-01-31")), 1.67, 2345))))
+      outstandingChargesModel = Some(
+        OutstandingChargesModel(List(OutstandingChargeModel("BCD", Some(LocalDate.parse("2019-01-31")), 1.67, 2345)))
+      )
     )
 
   override def beforeEach(): Unit = {

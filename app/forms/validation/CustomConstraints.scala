@@ -25,44 +25,48 @@ import scala.util.Try
 trait CustomConstraints extends Constraints {
 
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
-    Constraint {
-      input =>
-        constraints
-          .map(_.apply(input))
-          .find(_ != Valid)
-          .getOrElse(Valid)
+    Constraint { input =>
+      constraints
+        .map(_.apply(input))
+        .find(_ != Valid)
+        .getOrElse(Valid)
     }
 
-  protected def optMaxLength(max: Int, err: Invalid): Constraint[Option[String]] = Constraint {
-    case Some(x) if x.length > max => err
-    case _ => Valid
-  }
+  protected def optMaxLength(max: Int, err: Invalid): Constraint[Option[String]] =
+    Constraint {
+      case Some(x) if x.length > max => err
+      case _                         => Valid
+    }
 
   private def tupleToDate(dateTuple: (String, String, String)) = {
-    LocalDate.parse(s"${dateTuple._1}-${dateTuple._2}-${dateTuple._3}", DateTimeFormatter.ofPattern("d-M-uuuu").withResolverStyle(ResolverStyle.STRICT))
+    LocalDate.parse(
+      s"${dateTuple._1}-${dateTuple._2}-${dateTuple._3}",
+      DateTimeFormatter.ofPattern("d-M-uuuu").withResolverStyle(ResolverStyle.STRICT)
+    )
   }
 
-  protected def validDate(errKey: String, args: Seq[String] = Seq()): Constraint[(String, String, String)] = Constraint {
-    input: (String, String, String) =>
+  protected def validDate(errKey: String, args: Seq[String] = Seq()): Constraint[(String, String, String)] =
+    Constraint { input: (String, String, String) =>
       val date = Try {
         tupleToDate(input)
       }.toOption
       date match {
         case Some(_) => Valid
-        case None => Invalid(errKey, args: _*)
+        case None    => Invalid(errKey, args: _*)
       }
-  }
+    }
 
-  protected def nonEmptyDateFields(errKey: String, args: Seq[String] = Seq()): Constraint[(String, String, String)] = Constraint {
-    case ("", "", "") => Invalid(errKey, args: _*)
-    case ("", "", _) => Invalid(errKey + "DayMonth", args: _*)
-    case ("", _, "") => Invalid(errKey + "DayYear", args: _*)
-    case (_, "", "") => Invalid(errKey + "MonthYear", args: _*)
-    case ("", _, _) => Invalid(errKey + "Day", args: _*)
-    case (_, "", _) => Invalid(errKey + "Month", args: _*)
-    case (_, _, "") => Invalid(errKey + "Year", args: _*)
-    case _ => Valid
-  }
+  protected def nonEmptyDateFields(errKey: String, args: Seq[String] = Seq()): Constraint[(String, String, String)] =
+    Constraint {
+      case ("", "", "") => Invalid(errKey, args: _*)
+      case ("", "", _)  => Invalid(errKey + "DayMonth", args: _*)
+      case ("", _, "")  => Invalid(errKey + "DayYear", args: _*)
+      case (_, "", "")  => Invalid(errKey + "MonthYear", args: _*)
+      case ("", _, _)   => Invalid(errKey + "Day", args: _*)
+      case (_, "", _)   => Invalid(errKey + "Month", args: _*)
+      case (_, _, "")   => Invalid(errKey + "Year", args: _*)
+      case _            => Valid
+    }
 
   protected def maxDate(maximum: LocalDate, errorKey: String, args: Any*): Constraint[LocalDate] =
     Constraint {

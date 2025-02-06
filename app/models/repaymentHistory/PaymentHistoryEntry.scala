@@ -22,16 +22,19 @@ import services.DateServiceInterface
 
 import java.time.LocalDate
 
-case class PaymentHistoryEntry(date: LocalDate,
-                               creditType: CreditType,
-                               amount: Option[BigDecimal],
-                               transactionId: Option[String] = None,
-                               linkUrl: String,
-                               visuallyHiddenText: String)(implicit val dateService: DateServiceInterface) {
+case class PaymentHistoryEntry(
+    date:               LocalDate,
+    creditType:         CreditType,
+    amount:             Option[BigDecimal],
+    transactionId:      Option[String] = None,
+    linkUrl:            String,
+    visuallyHiddenText: String
+  )(
+    implicit val dateService: DateServiceInterface) {
 
   def getTaxYear: TaxYear = {
     val endYear = dateService.getAccountingPeriodEndDate(date).getYear
-    TaxYear(endYear-1, endYear)
+    TaxYear(endYear - 1, endYear)
   }
 
   private val creditTypes: Seq[CreditType] = Seq(

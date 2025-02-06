@@ -32,7 +32,6 @@ import testConstants.PaymentAllocationsTestConstants.{paymentAllocationChargesMo
 
 import java.time.LocalDate
 
-
 class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
   lazy val connector: FinancialDetailsConnector = app.injector.instanceOf[FinancialDetailsConnector]
@@ -53,11 +52,13 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           WiremockHelper.stubGet(url, OK, response)
 
           val result: PaymentAllocationsResponse =
-            connector.getPaymentAllocations(
-              Nino(testUserNino),
-              testPaymentLot,
-              testPaymentLotItem
-            ).futureValue
+            connector
+              .getPaymentAllocations(
+                Nino(testUserNino),
+                testPaymentLot,
+                testPaymentLotItem
+              )
+              .futureValue
 
           result shouldBe testValidPaymentAllocationsModel
           WiremockHelper.verifyGet(uri = url)
@@ -68,18 +69,23 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           "return a PaymentAllocationsError a message notifying us of json validation errors" in {
 
             val testUserNino = "AB123456C"
-            val url = s"/income-tax-view-change/$testUserNino/payment-allocations/$testPaymentLot/$testPaymentLotItem"
+            val url          = s"/income-tax-view-change/$testUserNino/payment-allocations/$testPaymentLot/$testPaymentLotItem"
 
             WiremockHelper.stubGet(url, OK, """{"bad_key":"bad_value"}""")
 
             val result: PaymentAllocationsResponse =
-              connector.getPaymentAllocations(
-                Nino(testUserNino),
-                testPaymentLot,
-                testPaymentLotItem
-              ).futureValue
+              connector
+                .getPaymentAllocations(
+                  Nino(testUserNino),
+                  testPaymentLot,
+                  testPaymentLotItem
+                )
+                .futureValue
 
-            result shouldBe PaymentAllocationsError(INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Payment Allocations Data Response")
+            result shouldBe PaymentAllocationsError(
+              INTERNAL_SERVER_ERROR,
+              "Json Validation Error. Parsing Payment Allocations Data Response"
+            )
             WiremockHelper.verifyGet(uri = url)
           }
         }
@@ -92,17 +98,19 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           "return a PaymentAllocationsError containing the error status and error response" in {
 
             val testUserNino = "AB123456C"
-            val url = s"/income-tax-view-change/$testUserNino/payment-allocations/$testPaymentLot/$testPaymentLotItem"
-            val response = """{"fake_error_key: "fake_error_value"}"""
+            val url          = s"/income-tax-view-change/$testUserNino/payment-allocations/$testPaymentLot/$testPaymentLotItem"
+            val response     = """{"fake_error_key: "fake_error_value"}"""
 
             WiremockHelper.stubGet(url, INTERNAL_SERVER_ERROR, response)
 
             val result: PaymentAllocationsResponse =
-              connector.getPaymentAllocations(
-                Nino(testUserNino),
-                testPaymentLot,
-                testPaymentLotItem
-              ).futureValue
+              connector
+                .getPaymentAllocations(
+                  Nino(testUserNino),
+                  testPaymentLot,
+                  testPaymentLotItem
+                )
+                .futureValue
 
             result shouldBe PaymentAllocationsError(INTERNAL_SERVER_ERROR, response)
             WiremockHelper.verifyGet(uri = url)
@@ -117,7 +125,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
 
         "return a successful Right(CreditsModel)" in {
 
-          val testUserNino = "AB123456C"
+          val testUserNino    = "AB123456C"
           val testCreditModel = CreditsModel(0.0, 0.0, Nil)
           val response: String = Json.toJson(testCreditModel).toString()
 
@@ -126,10 +134,12 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           WiremockHelper.stubGet(url, OK, response)
 
           val result: ResponseModel[CreditsModel] =
-            connector.getCreditsAndRefund(
-              taxYear = TaxYear(2023, 2024),
-              nino = testUserNino,
-            ).futureValue
+            connector
+              .getCreditsAndRefund(
+                taxYear = TaxYear(2023, 2024),
+                nino = testUserNino
+              )
+              .futureValue
 
           result shouldBe Right(testCreditModel)
           WiremockHelper.verifyGet(uri = url)
@@ -140,15 +150,17 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           "return a Left(ErrorModel(500, \"Invalid JSON\"))" in {
 
             val testUserNino = "AB123456C"
-            val url = s"/income-tax-view-change/$testUserNino/financial-details/credits/from/2023-04-06/to/2024-04-05"
+            val url          = s"/income-tax-view-change/$testUserNino/financial-details/credits/from/2023-04-06/to/2024-04-05"
 
             WiremockHelper.stubGet(url, OK, """{"bad_key":"bad_value"}""")
 
             val result: ResponseModel[CreditsModel] =
-              connector.getCreditsAndRefund(
-                taxYear = TaxYear(2023, 2024),
-                nino = testUserNino,
-              ).futureValue
+              connector
+                .getCreditsAndRefund(
+                  taxYear = TaxYear(2023, 2024),
+                  nino = testUserNino
+                )
+                .futureValue
 
             result shouldBe Left(ErrorModel(INTERNAL_SERVER_ERROR, "Invalid JSON"))
             WiremockHelper.verifyGet(uri = url)
@@ -163,16 +175,18 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           "return a Left(ErrorModel(500, \"Invalid JSON\"))" in {
 
             val testUserNino = "AB123456C"
-            val url = s"/income-tax-view-change/$testUserNino/financial-details/credits/from/2023-04-06/to/2024-04-05"
-            val response = """{"fake_error_key: "fake_error_value"}"""
+            val url          = s"/income-tax-view-change/$testUserNino/financial-details/credits/from/2023-04-06/to/2024-04-05"
+            val response     = """{"fake_error_key: "fake_error_value"}"""
 
             WiremockHelper.stubGet(url, INTERNAL_SERVER_ERROR, response)
 
             val result: ResponseModel[CreditsModel] =
-              connector.getCreditsAndRefund(
-                taxYear = TaxYear(2023, 2024),
-                nino = testUserNino,
-              ).futureValue
+              connector
+                .getCreditsAndRefund(
+                  taxYear = TaxYear(2023, 2024),
+                  nino = testUserNino
+                )
+                .futureValue
 
             result shouldBe Left(ErrorModel(INTERNAL_SERVER_ERROR, "Invalid JSON"))
             WiremockHelper.verifyGet(uri = url)
@@ -187,7 +201,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
 
         "return a successful Right(CreditsModel)" in {
 
-          val testUserNino = "AB123456C"
+          val testUserNino    = "AB123456C"
           val testCreditModel = CreditsModel(0.0, 0.0, Nil)
           val response: String = Json.toJson(testCreditModel).toString()
 
@@ -196,11 +210,13 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           WiremockHelper.stubGet(url, OK, response)
 
           val result: ResponseModel[CreditsModel] =
-            connector.getCreditsAndRefund(
-              taxYearFrom = TaxYear(2023, 2024),
-              taxYearTo = TaxYear(2024, 2025),
-              nino = testUserNino,
-            ).futureValue
+            connector
+              .getCreditsAndRefund(
+                taxYearFrom = TaxYear(2023, 2024),
+                taxYearTo = TaxYear(2024, 2025),
+                nino = testUserNino
+              )
+              .futureValue
 
           result shouldBe Right(testCreditModel)
           WiremockHelper.verifyGet(uri = url)
@@ -211,16 +227,18 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           "return a Left(ErrorModel(500, \"Invalid JSON\"))" in {
 
             val testUserNino = "AB123456C"
-            val url = s"/income-tax-view-change/$testUserNino/financial-details/credits/from/2023-04-06/to/2025-04-05"
+            val url          = s"/income-tax-view-change/$testUserNino/financial-details/credits/from/2023-04-06/to/2025-04-05"
 
             WiremockHelper.stubGet(url, OK, """{"bad_key":"bad_value"}""")
 
             val result: ResponseModel[CreditsModel] =
-              connector.getCreditsAndRefund(
-                taxYearFrom = TaxYear(2023, 2024),
-                taxYearTo = TaxYear(2024, 2025),
-                nino = testUserNino,
-              ).futureValue
+              connector
+                .getCreditsAndRefund(
+                  taxYearFrom = TaxYear(2023, 2024),
+                  taxYearTo = TaxYear(2024, 2025),
+                  nino = testUserNino
+                )
+                .futureValue
 
             result shouldBe Left(ErrorModel(INTERNAL_SERVER_ERROR, "Invalid JSON"))
             WiremockHelper.verifyGet(uri = url)
@@ -235,17 +253,19 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           "return a Left(ErrorModel(500, \"Invalid JSON\"))" in {
 
             val testUserNino = "AB123456C"
-            val url = s"/income-tax-view-change/$testUserNino/financial-details/credits/from/2023-04-06/to/2025-04-05"
-            val response = """{"fake_error_key: "fake_error_value"}"""
+            val url          = s"/income-tax-view-change/$testUserNino/financial-details/credits/from/2023-04-06/to/2025-04-05"
+            val response     = """{"fake_error_key: "fake_error_value"}"""
 
             WiremockHelper.stubGet(url, INTERNAL_SERVER_ERROR, response)
 
             val result: ResponseModel[CreditsModel] =
-              connector.getCreditsAndRefund(
-                taxYearFrom = TaxYear(2023, 2024),
-                taxYearTo = TaxYear(2024, 2025),
-                nino = testUserNino,
-              ).futureValue
+              connector
+                .getCreditsAndRefund(
+                  taxYearFrom = TaxYear(2023, 2024),
+                  taxYearTo = TaxYear(2024, 2025),
+                  nino = testUserNino
+                )
+                .futureValue
 
             result shouldBe Left(ErrorModel(INTERNAL_SERVER_ERROR, "Invalid JSON"))
             WiremockHelper.verifyGet(uri = url)
@@ -261,7 +281,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
         "return a successful Payments" in {
 
           val testUserNino = "AA123456A"
-          val url = s"/income-tax-view-change/$testUserNino/financial-details/payments/from/2023-04-06/to/2024-04-05"
+          val url          = s"/income-tax-view-change/$testUserNino/financial-details/payments/from/2023-04-06/to/2024-04-05"
 
           val paymentFull: List[Payment] =
             List(
@@ -274,7 +294,8 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
                 lot = Some("lot"),
                 lotItem = Some("lotItem"),
                 dueDate = Some(LocalDate.of(2024, 1, 1)),
-                documentDate = LocalDate.of(2024, 1, 1), Some("DOCID01")
+                documentDate = LocalDate.of(2024, 1, 1),
+                Some("DOCID01")
               )
             )
 
@@ -282,7 +303,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
 
           WiremockHelper.stubGet(url, OK, Json.toJson(response).toString())
 
-          val result = connector.getPayments(TaxYear(2023,2024)).futureValue
+          val result = connector.getPayments(TaxYear(2023, 2024)).futureValue
 
           result shouldBe Payments(response)
           WiremockHelper.verifyGet(uri = url)
@@ -293,13 +314,13 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           "return a PaymentsError" in {
 
             val testUserNino = "AA123456A"
-            val url = s"/income-tax-view-change/$testUserNino/financial-details/payments/from/2023-04-06/to/2024-04-05"
+            val url          = s"/income-tax-view-change/$testUserNino/financial-details/payments/from/2023-04-06/to/2024-04-05"
 
             val response = """{"bad_key":"bad_value"}"""
 
             WiremockHelper.stubGet(url, OK, response)
 
-            val result = connector.getPayments(TaxYear(2023,2024)).futureValue
+            val result = connector.getPayments(TaxYear(2023, 2024)).futureValue
 
             result shouldBe PaymentsError(OK, "Json validation error")
             WiremockHelper.verifyGet(uri = url)
@@ -314,13 +335,13 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           "return a OutstandingChargesErrorModel with response body message" in {
 
             val testUserNino = "AA123456A"
-            val url = s"/income-tax-view-change/$testUserNino/financial-details/payments/from/2023-04-06/to/2024-04-05"
+            val url          = s"/income-tax-view-change/$testUserNino/financial-details/payments/from/2023-04-06/to/2024-04-05"
 
             val response = """{"fake_error_key: "fake_error_value"}"""
 
             WiremockHelper.stubGet(url, INTERNAL_SERVER_ERROR, response)
 
-            val result = connector.getPayments(TaxYear(2023,2024)).futureValue
+            val result = connector.getPayments(TaxYear(2023, 2024)).futureValue
 
             result shouldBe PaymentsError(INTERNAL_SERVER_ERROR, response)
             WiremockHelper.verifyGet(uri = url)
@@ -336,7 +357,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
         "return a successful Payments" in {
 
           val testUserNino = "AA123456A"
-          val url = s"/income-tax-view-change/$testUserNino/financial-details/payments/from/2023-04-06/to/2025-04-05"
+          val url          = s"/income-tax-view-change/$testUserNino/financial-details/payments/from/2023-04-06/to/2025-04-05"
 
           val paymentFull: List[Payment] =
             List(
@@ -349,7 +370,8 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
                 lot = Some("lot"),
                 lotItem = Some("lotItem"),
                 dueDate = Some(LocalDate.of(2024, 1, 1)),
-                documentDate = LocalDate.of(2024, 1, 1), Some("DOCID01")
+                documentDate = LocalDate.of(2024, 1, 1),
+                Some("DOCID01")
               )
             )
 
@@ -368,7 +390,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           "return a PaymentsError" in {
 
             val testUserNino = "AA123456A"
-            val url = s"/income-tax-view-change/$testUserNino/financial-details/payments/from/2023-04-06/to/2025-04-05"
+            val url          = s"/income-tax-view-change/$testUserNino/financial-details/payments/from/2023-04-06/to/2025-04-05"
 
             val response = """{"bad_key":"bad_value"}"""
 
@@ -389,7 +411,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           "return a OutstandingChargesErrorModel with response body message" in {
 
             val testUserNino = "AA123456A"
-            val url = s"/income-tax-view-change/$testUserNino/financial-details/payments/from/2023-04-06/to/2025-04-05"
+            val url          = s"/income-tax-view-change/$testUserNino/financial-details/payments/from/2023-04-06/to/2025-04-05"
 
             val response = """{"fake_error_key: "fake_error_value"}"""
 
@@ -410,18 +432,20 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
 
         "return a FinancialDetailsWithDocumentDetailsModel" in {
 
-          val testUserNino = "AA123456A"
+          val testUserNino   = "AA123456A"
           val documentNumber = "12345"
-          val url = s"/income-tax-view-change/$testUserNino/financial-details/charges/documentId/$documentNumber"
+          val url            = s"/income-tax-view-change/$testUserNino/financial-details/charges/documentId/$documentNumber"
 
           val response: FinancialDetailsWithDocumentDetailsModel = paymentAllocationChargesModelMultiplePayments
 
           WiremockHelper.stubGet(url, OK, Json.toJson(response).toString())
 
-          val result = connector.getFinancialDetailsByDocumentId(
-            nino = Nino(testUserNino),
-            documentNumber = documentNumber
-          ).futureValue
+          val result = connector
+            .getFinancialDetailsByDocumentId(
+              nino = Nino(testUserNino),
+              documentNumber = documentNumber
+            )
+            .futureValue
 
           result shouldBe response
           WiremockHelper.verifyGet(uri = url)
@@ -431,18 +455,20 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
 
           "return an empty FinancialDetailsWithDocumentDetailsModel" in {
 
-            val testUserNino = "AA123456A"
+            val testUserNino   = "AA123456A"
             val documentNumber = "12345"
-            val url = s"/income-tax-view-change/$testUserNino/financial-details/charges/documentId/$documentNumber"
+            val url            = s"/income-tax-view-change/$testUserNino/financial-details/charges/documentId/$documentNumber"
 
             val response = """{"bad_key": 1}"""
 
             WiremockHelper.stubGet(url, OK, response)
 
-            val result = connector.getFinancialDetailsByDocumentId(
-              nino = Nino(testUserNino),
-              documentNumber = documentNumber
-            ).futureValue
+            val result = connector
+              .getFinancialDetailsByDocumentId(
+                nino = Nino(testUserNino),
+                documentNumber = documentNumber
+              )
+              .futureValue
 
             result shouldBe FinancialDetailsWithDocumentDetailsModel(List(), List())
             WiremockHelper.verifyGet(uri = url)
@@ -456,18 +482,20 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
 
           "return a FinancialDetailsWithDocumentDetailsErrorModel response body message" in {
 
-            val testUserNino = "AA123456A"
+            val testUserNino   = "AA123456A"
             val documentNumber = "12345"
-            val url = s"/income-tax-view-change/$testUserNino/financial-details/charges/documentId/$documentNumber"
+            val url            = s"/income-tax-view-change/$testUserNino/financial-details/charges/documentId/$documentNumber"
 
             val response = """{"fake_error_key: "fake_error_value"}"""
 
             WiremockHelper.stubGet(url, INTERNAL_SERVER_ERROR, response)
 
-            val result = connector.getFinancialDetailsByDocumentId(
-              nino = Nino(testUserNino),
-              documentNumber = documentNumber
-            ).futureValue
+            val result = connector
+              .getFinancialDetailsByDocumentId(
+                nino = Nino(testUserNino),
+                documentNumber = documentNumber
+              )
+              .futureValue
 
             result shouldBe FinancialDetailsWithDocumentDetailsErrorModel(INTERNAL_SERVER_ERROR, response)
             WiremockHelper.verifyGet(uri = url)

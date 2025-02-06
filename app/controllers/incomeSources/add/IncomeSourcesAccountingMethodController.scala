@@ -37,58 +37,71 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeSourcesAccountingMethodController @Inject()(val authActions: AuthActions,
-                                                        val view: IncomeSourcesAccountingMethod,
-                                                        val customNotFoundErrorView: CustomNotFoundError,
-                                                        val sessionService: SessionService,
-                                                        val itvcErrorHandler: ItvcErrorHandler,
-                                                        val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                                       (implicit val appConfig: FrontendAppConfig,
-                                                        mcc: MessagesControllerComponents,
-                                                        val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with JourneyChecker {
+class IncomeSourcesAccountingMethodController @Inject() (
+    val authActions:             AuthActions,
+    val view:                    IncomeSourcesAccountingMethod,
+    val customNotFoundErrorView: CustomNotFoundError,
+    val sessionService:          SessionService,
+    val itvcErrorHandler:        ItvcErrorHandler,
+    val itvcErrorHandlerAgent:   AgentItvcErrorHandler
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    mcc:                    MessagesControllerComponents,
+    val ec:                 ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with JourneyChecker {
 
-  private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+  private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) =>
+    if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  def handleUserActiveBusinessesCashOrAccruals(isAgent: Boolean,
-                                               incomeSourceType: IncomeSourceType,
-                                               cashOrAccrualsFlag: Option[String])
-                                              (implicit user: MtdItUser[_],
-                                               backUrl: String, postAction: Call): Future[Result] = {
-    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
-      val cashOrAccrualsRecords = user.incomeSources.getBusinessCashOrAccruals()
-      if (cashOrAccrualsRecords.distinct.size > 1) {
-        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-          "Error multiple values for business cashOrAccruals Field found")
-      }
-      cashOrAccrualsRecords.headOption match {
-        case Some(cashOrAccrualsField) =>
-          sessionService.setMongoData(
-            sessionData.copy(
-              addIncomeSourceData =
-                sessionData.addIncomeSourceData.map(
+  def handleUserActiveBusinessesCashOrAccruals(
+      isAgent:            Boolean,
+      incomeSourceType:   IncomeSourceType,
+      cashOrAccrualsFlag: Option[String]
+    )(
+      implicit user: MtdItUser[_],
+      backUrl:       String,
+      postAction:    Call
+    ): Future[Result] = {
+    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) {
+      sessionData =>
+        val cashOrAccrualsRecords = user.incomeSources.getBusinessCashOrAccruals()
+        if (cashOrAccrualsRecords.distinct.size > 1) {
+          Logger("application").error(
+            s"${if (isAgent) "[Agent]"}" +
+              "Error multiple values for business cashOrAccruals Field found"
+          )
+        }
+        cashOrAccrualsRecords.headOption match {
+          case Some(cashOrAccrualsField) =>
+            sessionService.setMongoData(
+              sessionData.copy(
+                addIncomeSourceData = sessionData.addIncomeSourceData.map(
                   _.copy(
-                    incomeSourcesAccountingMethod =
-                      Some(fromApiField(cashOrAccrualsField).name)
+                    incomeSourcesAccountingMethod = Some(fromApiField(cashOrAccrualsField).name)
                   )
                 )
+              )
+            ) flatMap {
+              case true  => Future.successful(Redirect(successCall(isAgent, incomeSourceType)))
+              case false => throw new Exception("Failed to set mongo data")
+            }
+          case None =>
+            Future.successful(
+              Ok(
+                view(
+                  cashOrAccrualsFlag = cashOrAccrualsFlag,
+                  incomeSourcesType = incomeSourceType,
+                  form = IncomeSourcesAccountingMethodForm(incomeSourceType),
+                  postAction = postAction,
+                  isAgent = isAgent,
+                  backUrl = backUrl,
+                  btaNavPartial = user.btaNavPartial
+                )
+              )
             )
-          ) flatMap {
-            case true => Future.successful(Redirect(successCall(isAgent, incomeSourceType)))
-            case false => throw new Exception("Failed to set mongo data")
-          }
-        case None =>
-          Future.successful(
-            Ok(view(
-              cashOrAccrualsFlag = cashOrAccrualsFlag,
-              incomeSourcesType = incomeSourceType,
-              form = IncomeSourcesAccountingMethodForm(incomeSourceType),
-              postAction = postAction,
-              isAgent = isAgent,
-              backUrl = backUrl,
-              btaNavPartial = user.btaNavPartial
-            )))
-      }
+        }
     }
   }.recover {
     case ex =>
@@ -96,79 +109,107 @@ class IncomeSourcesAccountingMethodController @Inject()(val authActions: AuthAct
       errorHandler(isAgent).showInternalServerError()
   }
 
-  private def loadIncomeSourceAccountingMethod(isAgent: Boolean,
-                                               incomeSourceType: IncomeSourceType,
-                                               cashOrAccrualsFlag: Option[String])
-                                              (implicit user: MtdItUser[_],
-                                               backUrl: String,
-                                               postAction: Call
-                                              ): Future[Result] = {
+  private def loadIncomeSourceAccountingMethod(
+      isAgent:            Boolean,
+      incomeSourceType:   IncomeSourceType,
+      cashOrAccrualsFlag: Option[String]
+    )(
+      implicit user: MtdItUser[_],
+      backUrl:       String,
+      postAction:    Call
+    ): Future[Result] = {
 
-    Future.successful(Ok(view(
-      cashOrAccrualsFlag = cashOrAccrualsFlag,
-      incomeSourcesType = incomeSourceType,
-      form = IncomeSourcesAccountingMethodForm(incomeSourceType),
-      postAction = postAction,
-      isAgent = isAgent,
-      backUrl = backUrl,
-      btaNavPartial = user.btaNavPartial
-    )))
+    Future.successful(
+      Ok(
+        view(
+          cashOrAccrualsFlag = cashOrAccrualsFlag,
+          incomeSourcesType = incomeSourceType,
+          form = IncomeSourcesAccountingMethodForm(incomeSourceType),
+          postAction = postAction,
+          isAgent = isAgent,
+          backUrl = backUrl,
+          btaNavPartial = user.btaNavPartial
+        )
+      )
+    )
   }
 
-  def handleRequest(isAgent: Boolean,
-                    incomeSourceType: IncomeSourceType,
-                    cashOrAccrualsFlag: Option[String] = None,
-                    isChange: Boolean)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
+  def handleRequest(
+      isAgent:            Boolean,
+      incomeSourceType:   IncomeSourceType,
+      cashOrAccrualsFlag: Option[String] = None,
+      isChange:           Boolean
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier,
+      ec:            ExecutionContext
+    ): Future[Result] =
     withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { _ =>
-
       val backUrl = getBackUrl(isAgent, isChange, incomeSourceType)
 
       {
         if (incomeSourceType == SelfEmployment) {
           handleUserActiveBusinessesCashOrAccruals(isAgent, incomeSourceType, cashOrAccrualsFlag)(
-            user, backUrl, postAction(isAgent, incomeSourceType))
+            user,
+            backUrl,
+            postAction(isAgent, incomeSourceType)
+          )
         } else {
           loadIncomeSourceAccountingMethod(isAgent, incomeSourceType, cashOrAccrualsFlag)(
-            user, backUrl, postAction(isAgent, incomeSourceType))
+            user,
+            backUrl,
+            postAction(isAgent, incomeSourceType)
+          )
         }
       }
     }.recover {
       case ex: Exception =>
-        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-          s"Error getting BusinessEndDate page: - ${ex.getMessage} - ${ex.getCause}")
+        Logger("application").error(
+          s"${if (isAgent) "[Agent]"}" +
+            s"Error getting BusinessEndDate page: - ${ex.getMessage} - ${ex.getCause}"
+        )
         errorHandler(isAgent).showInternalServerError()
     }
 
-
-  def handleSubmitRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
-    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
-      IncomeSourcesAccountingMethodForm(incomeSourceType).bindFromRequest().fold(
-        hasErrors => Future.successful(BadRequest(view(
-          incomeSourcesType = incomeSourceType,
-          form = hasErrors,
-          postAction = postAction(isAgent, incomeSourceType),
-          backUrl = getBackUrl(isAgent, isChange = false, incomeSourceType),
-          isAgent = isAgent
-        ))),
-        validatedInput => {
-          val accountingMethod = if (validatedInput.contains("cash")) "cash" else "accruals"
-          sessionService.setMongoData(
-            sessionData.copy(
-              addIncomeSourceData =
-                sessionData.addIncomeSourceData.map(
-                  _.copy(
-                    incomeSourcesAccountingMethod =
-                      Some(accountingMethod)
+  def handleSubmitRequest(
+      isAgent:          Boolean,
+      incomeSourceType: IncomeSourceType
+    )(
+      implicit user: MtdItUser[_]
+    ): Future[Result] = {
+    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) {
+      sessionData =>
+        IncomeSourcesAccountingMethodForm(incomeSourceType)
+          .bindFromRequest()
+          .fold(
+            hasErrors =>
+              Future.successful(
+                BadRequest(
+                  view(
+                    incomeSourcesType = incomeSourceType,
+                    form = hasErrors,
+                    postAction = postAction(isAgent, incomeSourceType),
+                    backUrl = getBackUrl(isAgent, isChange = false, incomeSourceType),
+                    isAgent = isAgent
                   )
                 )
-            )
-          ) flatMap {
-            case true => Future.successful(Redirect(successCall(isAgent, incomeSourceType)))
-            case false => throw new Exception("Failed to set mongo data")
-          }
-        }
-      )
+              ),
+            validatedInput => {
+              val accountingMethod = if (validatedInput.contains("cash")) "cash" else "accruals"
+              sessionService.setMongoData(
+                sessionData.copy(
+                  addIncomeSourceData = sessionData.addIncomeSourceData.map(
+                    _.copy(
+                      incomeSourcesAccountingMethod = Some(accountingMethod)
+                    )
+                  )
+                )
+              ) flatMap {
+                case true  => Future.successful(Redirect(successCall(isAgent, incomeSourceType)))
+                case false => throw new Exception("Failed to set mongo data")
+              }
+            }
+          )
     }
   }.recover {
     case ex =>
@@ -188,42 +229,40 @@ class IncomeSourcesAccountingMethodController @Inject()(val authActions: AuthAct
   private def getBackUrl(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): String = {
     ((isAgent, isChange, incomeSourceType) match {
       case (false, false, SelfEmployment) => routes.AddBusinessAddressController.show(isChange)
-      case (_, false, SelfEmployment) => routes.AddBusinessAddressController.showAgent(isChange)
-      case (_, false, _) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange, incomeSourceType)
-      case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
-      case (_, _, _) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
+      case (_, false, SelfEmployment)     => routes.AddBusinessAddressController.showAgent(isChange)
+      case (_, false, _)                  => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange, incomeSourceType)
+      case (false, _, _)                  => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
+      case (_, _, _)                      => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
     }).url
   }
 
-  def show(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
+  def show(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
       handleRequest(
         isAgent,
         incomeSourceType = incomeSourceType,
         isChange = false
       )
-  }
+    }
 
   def submit(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] =
-    authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-      implicit user =>
-        handleSubmitRequest(
-          isAgent,
-          incomeSourceType
-        )
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+      handleSubmitRequest(
+        isAgent,
+        incomeSourceType
+      )
     }
 
   def changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] =
-    authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-      implicit user =>
-        withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
-          val accountingMethodOpt = sessionData.addIncomeSourceData.flatMap(_.incomeSourcesAccountingMethod)
-          handleRequest(
-            isAgent,
-            incomeSourceType = incomeSourceType,
-            cashOrAccrualsFlag = accountingMethodOpt,
-            isChange = true
-          )
-        }
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+      withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
+        val accountingMethodOpt = sessionData.addIncomeSourceData.flatMap(_.incomeSourcesAccountingMethod)
+        handleRequest(
+          isAgent,
+          incomeSourceType = incomeSourceType,
+          cashOrAccrualsFlag = accountingMethodOpt,
+          isChange = true
+        )
+      }
     }
 }

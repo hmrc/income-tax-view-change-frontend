@@ -23,7 +23,8 @@ object MfaDebitUtils {
     (4000 -> "ITSA PAYE Charge"),
     (4001 -> "ITSA Calc Error Correction"),
     (4002 -> "ITSA Manual Penalty Pre CY-4"),
-    (4003 -> "ITSA Misc Charge"))
+    (4003 -> "ITSA Misc Charge")
+  )
 
   def isMFADebitMainTransaction(mainTransaction: Option[String]): Boolean = {
     mainTransaction

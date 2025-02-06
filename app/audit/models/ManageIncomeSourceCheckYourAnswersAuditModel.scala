@@ -20,13 +20,16 @@ import audit.Utilities
 import auth.MtdItUser
 import play.api.libs.json.{JsObject, JsValue, Json}
 
-case class ManageIncomeSourceCheckYourAnswersAuditModel(isSuccessful: Boolean,
-                                                        journeyType: String,
-                                                        operationType: String,
-                                                        reportingMethodChangeTo: String,
-                                                        taxYear: String,
-                                                        businessName: String
-                                                       )(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
+case class ManageIncomeSourceCheckYourAnswersAuditModel(
+    isSuccessful:            Boolean,
+    journeyType:             String,
+    operationType:           String,
+    reportingMethodChangeTo: String,
+    taxYear:                 String,
+    businessName:            String
+  )(
+    implicit user: MtdItUser[_])
+    extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.UpdateIncomeSource
 
@@ -40,9 +43,9 @@ case class ManageIncomeSourceCheckYourAnswersAuditModel(isSuccessful: Boolean,
   private val failureOutcome: JsObject = Json.obj(
     "outcome" ->
       Json.obj(
-        "isSuccessful" -> isSuccessful,
+        "isSuccessful"    -> isSuccessful,
         "failureCategory" -> "API_FAILURE",
-        "failureReason" -> "API 1776 returned errors - not able to add income source"
+        "failureReason"   -> "API 1776 returned errors - not able to add income source"
       )
   )
 
@@ -51,10 +54,10 @@ case class ManageIncomeSourceCheckYourAnswersAuditModel(isSuccessful: Boolean,
   override val detail: JsValue =
     Utilities.userAuditDetails(user) ++ outcome ++
       Json.obj(
-        "journeyType" -> journeyType,
-        "operationType" -> operationType,
+        "journeyType"             -> journeyType,
+        "operationType"           -> operationType,
         "reportingMethodChangeTo" -> reportingMethodChangeTo,
-        "taxYear" -> taxYear,
-        "businessName" -> businessName
+        "taxYear"                 -> taxYear,
+        "businessName"            -> businessName
       )
 }

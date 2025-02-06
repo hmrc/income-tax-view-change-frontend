@@ -20,14 +20,15 @@ import play.api.libs.json.{Format, Json}
 
 sealed trait OutstandingChargesResponseModel
 
-
-case class OutstandingChargesModel(outstandingCharges: List[OutstandingChargeModel]) extends OutstandingChargesResponseModel {
+case class OutstandingChargesModel(outstandingCharges: List[OutstandingChargeModel])
+    extends OutstandingChargesResponseModel {
   def bcdChargeType: Option[OutstandingChargeModel] = outstandingCharges.find(_.isBalancingChargeDebit)
 
   def aciChargeType: Option[OutstandingChargeModel] = outstandingCharges.find(_.isAccruingInterest)
 
   def getAciChargeWithTieBreaker: Option[OutstandingChargeModel] = {
-    if (bcdChargeType.isDefined
+    if (
+      bcdChargeType.isDefined
       && bcdChargeType.get.chargeAmount > 0
       && aciChargeType.isDefined
       && (bcdChargeType.get.tieBreaker == aciChargeType.get.tieBreaker)
@@ -40,11 +41,9 @@ case class OutstandingChargesModel(outstandingCharges: List[OutstandingChargeMod
   }
 }
 
-
 object OutstandingChargesModel {
   implicit val format: Format[OutstandingChargesModel] = Json.format[OutstandingChargesModel]
 }
-
 
 case class OutstandingChargesErrorModel(code: Int, message: String) extends OutstandingChargesResponseModel
 

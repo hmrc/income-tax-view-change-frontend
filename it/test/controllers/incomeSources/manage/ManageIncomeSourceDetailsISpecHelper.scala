@@ -29,15 +29,21 @@ import java.time.Month.APRIL
 
 class ManageIncomeSourceDetailsISpecHelper extends ControllerISpecHelper {
 
-  val manageSelfEmploymentShowUrl: String = controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = false, SelfEmployment, Some(testSelfEmploymentId)).url
-  val manageUKPropertyShowUrl: String = controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = false, UkProperty, None).url
-  val manageForeignPropertyShowUrl: String = controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = false, ForeignProperty, None).url
-  val currentTaxYear: Int = dateService.getCurrentTaxYearEnd
+  val manageSelfEmploymentShowUrl: String = controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController
+    .show(isAgent = false, SelfEmployment, Some(testSelfEmploymentId))
+    .url
+  val manageUKPropertyShowUrl: String = controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController
+    .show(isAgent = false, UkProperty, None)
+    .url
+  val manageForeignPropertyShowUrl: String = controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController
+    .show(isAgent = false, ForeignProperty, None)
+    .url
+  val currentTaxYear:          Int       = dateService.getCurrentTaxYearEnd
   val lastDayOfCurrentTaxYear: LocalDate = LocalDate.of(currentTaxYear, APRIL, 5)
-  val taxYear1: Int = currentTaxYear
-  val taxYear2: Int = (currentTaxYear + 1)
-  val quarterlyIndicator: String = "Q"
-  val annuallyIndicator: String = "A"
+  val taxYear1:                Int       = currentTaxYear
+  val taxYear2:                Int       = (currentTaxYear + 1)
+  val quarterlyIndicator:      String    = "Q"
+  val annuallyIndicator:       String    = "A"
   val latencyDetails: LatencyDetails = LatencyDetails(
     latencyEndDate = lastDayOfCurrentTaxYear.plusYears(1),
     taxYear1 = taxYear1.toString,
@@ -52,21 +58,23 @@ class ManageIncomeSourceDetailsISpecHelper extends ControllerISpecHelper {
     taxYear2 = taxYear2.toString,
     latencyIndicator2 = quarterlyIndicator
   )
-  val addressAsString: String = "64 Zoo Lane Happy Place Magical Land England ZL1 064 United Kingdom"
-  val businessTradingName: String = "business"
-  val businessStartDate: String = "1 January 2017"
+  val addressAsString:          String = "64 Zoo Lane Happy Place Magical Land England ZL1 064 United Kingdom"
+  val businessTradingName:      String = "business"
+  val businessStartDate:        String = "1 January 2017"
   val businessAccountingMethod: String = "Cash basis accounting"
   val thisTestSelfEmploymentId = "ABC123456789"
   val thisTestSelfEmploymentIdHashed: String = mkIncomeSourceId(thisTestSelfEmploymentId).toHash.hash
-  val messagesAnnually: String = messagesAPI("incomeSources.manage.business-manage-details.annually")
-  val messagesQuarterly: String = messagesAPI("incomeSources.manage.business-manage-details.quarterly")
-  val messagesChangeLinkText: String = messagesAPI("incomeSources.manage.business-manage-details.change")
-  val messagesUnknown: String = messagesAPI("incomeSources.generic.unknown")
+  val messagesAnnually:               String = messagesAPI("incomeSources.manage.business-manage-details.annually")
+  val messagesQuarterly:              String = messagesAPI("incomeSources.manage.business-manage-details.quarterly")
+  val messagesChangeLinkText:         String = messagesAPI("incomeSources.manage.business-manage-details.change")
+  val messagesUnknown:                String = messagesAPI("incomeSources.generic.unknown")
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
-  def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
-    sessionId = testSessionId,
-    journeyType = IncomeSourceJourneyType(Manage, incomeSourceType).toString)
+  def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData =
+    UIJourneySessionData(
+      sessionId = testSessionId,
+      journeyType = IncomeSourceJourneyType(Manage, incomeSourceType).toString
+    )
 
 }

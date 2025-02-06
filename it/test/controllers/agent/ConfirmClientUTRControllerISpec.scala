@@ -48,7 +48,8 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
           )
 
           val document: Document = Jsoup.parse(result.toString)
-          document.select(".govuk-header__content")
+          document
+            .select(".govuk-header__content")
             .select(".hmrc-header__service-name hmrc-header__service-name--linked")
             .text() shouldBe ""
         }
@@ -73,7 +74,8 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
           )
 
           val document: Document = Jsoup.parse(result.toString)
-          document.select(".govuk-header__content")
+          document
+            .select(".govuk-header__content")
             .select(".hmrc-header__service-name hmrc-header__service-name--linked")
             .text() shouldBe ""
         }
@@ -103,7 +105,16 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
             httpStatus(SEE_OTHER),
             redirectURI(controllers.routes.HomeController.showAgent.url)
           )
-          AuditStub.verifyAuditEvent(ConfirmClientDetailsAuditModel(clientName = "Issac Newton", nino = testNino, mtditid = testMtditid, arn = testArn, saUtr = testSaUtr, credId = Some(credId)))
+          AuditStub.verifyAuditEvent(
+            ConfirmClientDetailsAuditModel(
+              clientName = "Issac Newton",
+              nino = testNino,
+              mtditid = testMtditid,
+              arn = testArn,
+              saUtr = testSaUtr,
+              credId = Some(credId)
+            )
+          )
 
         }
       }
@@ -157,7 +168,16 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
             httpStatus(SEE_OTHER),
             redirectURI(controllers.routes.HomeController.showAgent.url)
           )
-          AuditStub.verifyAuditEvent(ConfirmClientDetailsAuditModel(clientName = "Issac Newton", nino = testNino, mtditid = testMtditid, arn = testArn, saUtr = testSaUtr, credId = Some(credId)))
+          AuditStub.verifyAuditEvent(
+            ConfirmClientDetailsAuditModel(
+              clientName = "Issac Newton",
+              nino = testNino,
+              mtditid = testMtditid,
+              arn = testArn,
+              saUtr = testSaUtr,
+              credId = Some(credId)
+            )
+          )
 
         }
       }

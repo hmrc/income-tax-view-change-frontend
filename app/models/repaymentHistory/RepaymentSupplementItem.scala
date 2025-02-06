@@ -20,11 +20,12 @@ import play.api.libs.json.{Format, Json}
 
 import java.time.LocalDate
 
-case class RepaymentSupplementItem(parentCreditReference: Option[String],
-                                   amount: Option[BigDecimal],
-                                   fromDate: Option[LocalDate],
-                                   toDate: Option[LocalDate],
-                                   rate: Option[BigDecimal])
+case class RepaymentSupplementItem(
+    parentCreditReference: Option[String],
+    amount:                Option[BigDecimal],
+    fromDate:              Option[LocalDate],
+    toDate:                Option[LocalDate],
+    rate:                  Option[BigDecimal])
 
 object RepaymentSupplementItem {
   implicit val format: Format[RepaymentSupplementItem] = Json.format[RepaymentSupplementItem]

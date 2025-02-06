@@ -20,17 +20,16 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 case class AllowancesAndDeductions(
-                                    personalAllowance: Option[Int] = None,
-                                    marriageAllowanceTransferOut: Option[MarriageAllowanceTransferOut] = None,
-                                    reducedPersonalAllowance: Option[Int] = None,
-                                    giftOfInvestmentsAndPropertyToCharity: Option[Int] = None,
-                                    lossesAppliedToGeneralIncome: Option[Int] = None,
-                                    qualifyingLoanInterestFromInvestments: Option[BigDecimal] = None,
-                                    postCessationTradeReceipts: Option[BigDecimal] = None,
-                                    paymentsToTradeUnionsForDeathBenefits: Option[BigDecimal] = None,
-                                    grossAnnuityPayments: Option[BigDecimal] = None,
-                                    pensionContributions: Option[BigDecimal] = None
-                                  )
+    personalAllowance:                     Option[Int] = None,
+    marriageAllowanceTransferOut:          Option[MarriageAllowanceTransferOut] = None,
+    reducedPersonalAllowance:              Option[Int] = None,
+    giftOfInvestmentsAndPropertyToCharity: Option[Int] = None,
+    lossesAppliedToGeneralIncome:          Option[Int] = None,
+    qualifyingLoanInterestFromInvestments: Option[BigDecimal] = None,
+    postCessationTradeReceipts:            Option[BigDecimal] = None,
+    paymentsToTradeUnionsForDeathBenefits: Option[BigDecimal] = None,
+    grossAnnuityPayments:                  Option[BigDecimal] = None,
+    pensionContributions:                  Option[BigDecimal] = None)
 
 object AllowancesAndDeductions {
   implicit val writes: OWrites[AllowancesAndDeductions] = (
@@ -44,7 +43,7 @@ object AllowancesAndDeductions {
       (JsPath \ "paymentsToTradeUnionsForDeathBenefits").writeNullable[BigDecimal] and
       (JsPath \ "grossAnnuityPayments").writeNullable[BigDecimal] and
       (JsPath \ "pensionContributions").writeNullable[BigDecimal]
-    ) (unlift(AllowancesAndDeductions.unapply))
+  )(unlift(AllowancesAndDeductions.unapply))
 
   implicit val reads: Reads[AllowancesAndDeductions] = (
     (JsPath \ "personalAllowance").readNullable[Int] and
@@ -57,13 +56,12 @@ object AllowancesAndDeductions {
       (JsPath \ "paymentsToTradeUnionsForDeathBenefits").readNullable[BigDecimal] and
       (JsPath \ "grossAnnuityPayments").readNullable[BigDecimal] and
       (JsPath \ "pensionContributions").readNullable[BigDecimal]
-    ) (AllowancesAndDeductions.apply _)
+  )(AllowancesAndDeductions.apply _)
 }
 
 case class MarriageAllowanceTransferOut(
-                                         personalAllowanceBeforeTransferOut: BigDecimal,
-                                         transferredOutAmount: BigDecimal
-                                       )
+    personalAllowanceBeforeTransferOut: BigDecimal,
+    transferredOutAmount:               BigDecimal)
 
 object MarriageAllowanceTransferOut {
   implicit val format: OFormat[MarriageAllowanceTransferOut] = Json.format[MarriageAllowanceTransferOut]

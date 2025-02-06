@@ -39,7 +39,7 @@ import uk.gov.hmrc.auth.core.retrieve.Name
 class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
 
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
-  implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
+  implicit val messages:     Messages              = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
   val clientName = Name(Some("Test"), Some("User"))
 
@@ -47,17 +47,19 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
     nino = testNino,
     mtdbsa = testMtditid,
     yearOfMigration = Some(getCurrentTaxYearEnd.getYear.toString),
-    businesses = List(BusinessDetailsModel(
-      "testId",
-      incomeSource = Some(testIncomeSource),
-      Some(AccountingPeriodModel(currentDate, currentDate.plusYears(1))),
-      None,
-      Some(getCurrentTaxYearEnd),
-      Some(b2TradingStart),
-      Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason))),
-      address = Some(address),
-      cashOrAccruals = false
-    )),
+    businesses = List(
+      BusinessDetailsModel(
+        "testId",
+        incomeSource = Some(testIncomeSource),
+        Some(AccountingPeriodModel(currentDate, currentDate.plusYears(1))),
+        None,
+        Some(getCurrentTaxYearEnd),
+        Some(b2TradingStart),
+        Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason))),
+        address = Some(address),
+        cashOrAccruals = false
+      )
+    ),
     properties = Nil
   )
 
@@ -69,7 +71,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
 
   "GET /" when {
     val additionalCookies = getAgentClientDetailsForCookie(true, true)
-    val mtdUserRole = MTDSupportingAgent
+    val mtdUserRole       = MTDSupportingAgent
     s"there is a supporting agent" that {
       s"is a authenticated for a client" should {
         "render the home page" which {
@@ -82,29 +84,45 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
                 response = incomeSourceDetailsModel
               )
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
-              val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                GroupedObligationsModel(
-                  identification = "testId",
-                  obligations = List(
-                    SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                  ))
-              ))
+              val currentObligations: ObligationsModel = ObligationsModel(
+                Seq(
+                  GroupedObligationsModel(
+                    identification = "testId",
+                    obligations = List(
+                      SingleObligationModel(
+                        currentDate,
+                        currentDate.plusDays(1),
+                        currentDate,
+                        "Quarterly",
+                        None,
+                        "testPeriodKey",
+                        StatusFulfilled
+                      )
+                    )
+                  )
+                )
+              )
 
               IncomeTaxViewChangeStub.stubGetNextUpdates(
                 nino = testNino,
                 deadlines = currentObligations
               )
 
-
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
               result should have(
                 httpStatus(OK),
                 pageTitle(mtdUserRole, "home.agent.heading"),
-                elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+                elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate)
               )
 
-              verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+              verifyAuditContainsDetail(
+                NextUpdatesResponseAuditModel(
+                  testUser,
+                  "testId",
+                  currentObligations.obligations.flatMap(_.obligations)
+                ).detail
+              )
             }
           }
 
@@ -117,13 +135,24 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
                 response = incomeSourceDetailsModel
               )
 
-              val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                GroupedObligationsModel(
-                  identification = "testId",
-                  obligations = List(
-                    SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                  ))
-              ))
+              val currentObligations: ObligationsModel = ObligationsModel(
+                Seq(
+                  GroupedObligationsModel(
+                    identification = "testId",
+                    obligations = List(
+                      SingleObligationModel(
+                        currentDate,
+                        currentDate.plusDays(1),
+                        currentDate.minusDays(1),
+                        "Quarterly",
+                        None,
+                        "testPeriodKey",
+                        StatusFulfilled
+                      )
+                    )
+                  )
+                )
+              )
 
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
 
@@ -137,10 +166,18 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
               result should have(
                 httpStatus(OK),
                 pageTitle(mtdUserRole, "home.agent.heading"),
-                elementTextBySelector("#updates-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}"),
+                elementTextBySelector("#updates-tile p:nth-child(2)")(
+                  s"$overdue ${currentDate.minusDays(1).toLongDate}"
+                )
               )
 
-              verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+              verifyAuditContainsDetail(
+                NextUpdatesResponseAuditModel(
+                  testUser,
+                  "testId",
+                  currentObligations.obligations.flatMap(_.obligations)
+                ).detail
+              )
             }
           }
 
@@ -160,10 +197,28 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
                     GroupedObligationsModel(
                       identification = "testId",
                       obligations = List(
-                        SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled),
-                        SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(2), "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                      ))
-                  ))
+                        SingleObligationModel(
+                          currentDate,
+                          currentDate.plusDays(1),
+                          currentDate.minusDays(1),
+                          "Quarterly",
+                          None,
+                          "testPeriodKey",
+                          StatusFulfilled
+                        ),
+                        SingleObligationModel(
+                          currentDate,
+                          currentDate.plusDays(1),
+                          currentDate.minusDays(2),
+                          "Quarterly",
+                          None,
+                          "testPeriodKey",
+                          StatusFulfilled
+                        )
+                      )
+                    )
+                  )
+                )
 
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
               IncomeTaxViewChangeStub.stubGetNextUpdates(
@@ -176,10 +231,16 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
               result should have(
                 httpStatus(OK),
                 pageTitle(mtdUserRole, "home.agent.heading"),
-                elementTextBySelector("#updates-tile p:nth-child(2)")(overdueUpdates(numberOverdue = "2")),
+                elementTextBySelector("#updates-tile p:nth-child(2)")(overdueUpdates(numberOverdue = "2"))
               )
 
-              verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
+              verifyAuditContainsDetail(
+                NextUpdatesResponseAuditModel(
+                  testUser,
+                  "testId",
+                  currentObligations.obligations.flatMap(_.obligations)
+                ).detail
+              )
             }
           }
           "display Income Sources tile" when {
@@ -193,13 +254,24 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
                 response = incomeSourceDetailsModel
               )
 
-              val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                GroupedObligationsModel(
-                  identification = "testId",
-                  obligations = List(
-                    SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                  ))
-              ))
+              val currentObligations: ObligationsModel = ObligationsModel(
+                Seq(
+                  GroupedObligationsModel(
+                    identification = "testId",
+                    obligations = List(
+                      SingleObligationModel(
+                        currentDate,
+                        currentDate.plusDays(1),
+                        currentDate,
+                        "Quarterly",
+                        None,
+                        "testPeriodKey",
+                        StatusFulfilled
+                      )
+                    )
+                  )
+                )
+              )
 
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
 
@@ -230,13 +302,24 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
                 response = incomeSourceDetailsModel
               )
 
-              val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                GroupedObligationsModel(
-                  identification = "testId",
-                  obligations = List(
-                    SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                  ))
-              ))
+              val currentObligations: ObligationsModel = ObligationsModel(
+                Seq(
+                  GroupedObligationsModel(
+                    identification = "testId",
+                    obligations = List(
+                      SingleObligationModel(
+                        currentDate,
+                        currentDate.plusDays(1),
+                        currentDate,
+                        "Quarterly",
+                        None,
+                        "testPeriodKey",
+                        StatusFulfilled
+                      )
+                    )
+                  )
+                )
+              )
 
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
 
@@ -286,8 +369,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
 
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
 
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsErrorResponse(testMtditid)(
-              status = INTERNAL_SERVER_ERROR)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsErrorResponse(testMtditid)(status = INTERNAL_SERVER_ERROR)
 
             val result = buildGETMTDClient(path, additionalCookies).futureValue
 

@@ -29,24 +29,27 @@ import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import scala.concurrent.Future
 
 class AmendablePoaControllerSpec
-  extends MockAuthActions
+    extends MockAuthActions
     with MockClaimToAdjustService
     with MockCalculationListService
     with MockPaymentOnAccountSessionService {
 
   val getMongoResponseJourneyIncomplete: Option[PoaAmendmentData] = Some(PoaAmendmentData())
-  val getMongoResponseJourneyComplete: Option[PoaAmendmentData] = Some(PoaAmendmentData(None, None, journeyCompleted = true))
+  val getMongoResponseJourneyComplete: Option[PoaAmendmentData] = Some(
+    PoaAmendmentData(None, None, journeyCompleted = true)
+  )
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
       api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[AmendablePoaController]
 
   mtdAllRoles.foreach { mtdRole =>
-    val isAgent = mtdRole != MTDIndividual
+    val isAgent     = mtdRole != MTDIndividual
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
     s"show(isAgent = $isAgent)" when {
       val action = testController.show(isAgent)
@@ -130,7 +133,9 @@ class AmendablePoaControllerSpec
               setupMockSuccess(mtdRole)
 
               mockSingleBISWithCurrentYearAsMigrationYear()
-              setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
+              setupMockPaymentOnAccountSessionService(
+                Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true))))
+              )
               setupMockPaymentOnAccountSessionServiceCreateSession(Future.successful(Left(new Error("Error"))))
               setupMockGetPaymentOnAccountViewModel()
               setupMockTaxYearNotCrystallised()

@@ -29,12 +29,12 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageIncomeSourceDetailsISpecHelper {
 
   def getPath(mtdRole: MTDUserRole): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     pathStart + s"/manage-your-businesses/manage/your-details-foreign-property"
   }
 
   mtdAllRoles.foreach { mtdUserRole =>
-    val path = getPath(mtdUserRole)
+    val path              = getPath(mtdUserRole)
     val additionalCookies = getAdditionalCookies(mtdUserRole)
     s"GET $path" when {
       s"a user is a $mtdUserRole" that {
@@ -68,14 +68,21 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
               enable(DisplayBusinessStartDate)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                OK,
+                singleForeignPropertyResponseInLatencyPeriod(latencyDetails)
+              )
 
               // TODO after reenabling TimeMachine, change the tax year range to 25-26 for the below stub
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2022-23")
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
 
-              CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
-              CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+              CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(
+                CalculationListIntegrationTestConstants.successResponseCrystallised.toString()
+              )
+              CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(
+                CalculationListIntegrationTestConstants.successResponseCrystallised.toString()
+              )
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -85,7 +92,9 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(businessAccountingMethod),
+                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(
+                  businessAccountingMethod
+                ),
                 elementTextByID("change-link-1")(""),
                 elementTextByID("change-link-2")("")
               )
@@ -95,12 +104,19 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
               enable(DisplayBusinessStartDate)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails2))
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                OK,
+                singleForeignPropertyResponseInLatencyPeriod(latencyDetails2)
+              )
 
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2022-23")
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
-              CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-              CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+              CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(
+                CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString()
+              )
+              CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(
+                CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString()
+              )
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -110,7 +126,9 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(businessAccountingMethod),
+                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(
+                  businessAccountingMethod
+                ),
                 elementTextByID("change-link-1")(messagesChangeLinkText),
                 elementTextByID("change-link-2")(messagesChangeLinkText)
               )
@@ -121,12 +139,19 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
               enable(DisplayBusinessStartDate)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails2))
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                OK,
+                singleForeignPropertyResponseInLatencyPeriod(latencyDetails2)
+              )
 
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", "2022-23")
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
-              CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-              CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+              CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(
+                CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString()
+              )
+              CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(
+                CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString()
+              )
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -136,7 +161,9 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(businessAccountingMethod),
+                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(
+                  businessAccountingMethod
+                ),
                 elementTextByID("change-link-1")(""),
                 elementTextByID("change-link-2")(messagesChangeLinkText)
               )
@@ -147,7 +174,10 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
               enable(DisplayBusinessStartDate)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseWithUnknownsInLatencyPeriod(latencyDetails))
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                OK,
+                singleForeignPropertyResponseWithUnknownsInLatencyPeriod(latencyDetails)
+              )
 
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", "2022-23")
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", "2023-24")

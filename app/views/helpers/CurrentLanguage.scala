@@ -25,7 +25,7 @@ object CurrentLanguage {
     messages.lang.code match {
       case En.code => En
       case Cy.code => Cy
-      case _ => default
+      case _       => default
     }
   }
 

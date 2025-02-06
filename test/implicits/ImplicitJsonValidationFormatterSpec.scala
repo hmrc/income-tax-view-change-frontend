@@ -22,18 +22,19 @@ import play.api.data.validation.ValidationError
 import play.api.libs.json.JsPath
 import testUtils.UnitSpec
 
-
 class ImplicitJsonValidationFormatterSpec extends UnitSpec with Matchers {
 
-  val jSPath: JsPath = JsPath \ "someNode"
+  val jSPath:               JsPath = JsPath \ "someNode"
   val someValidationError1: String = "someValidationError1"
   val someValidationError2: String = "someValidationError2"
-  val someArg1: String = "someArg1"
-  val someArg2: String = "someArg2"
+  val someArg1:             String = "someArg1"
+  val someArg2:             String = "someArg2"
 
-  val testValidationErrors: Seq[(JsPath, Seq[ValidationError])] = Seq((jSPath, Seq(ValidationError(Seq(someValidationError1, someValidationError2), Seq(someArg1, someArg2)))))
+  val testValidationErrors: Seq[(JsPath, Seq[ValidationError])] = Seq(
+    (jSPath, Seq(ValidationError(Seq(someValidationError1, someValidationError2), Seq(someArg1, someArg2))))
+  )
   val testEmptyValidationErrors: Seq[(JsPath, Seq[ValidationError])] = Seq((jSPath, Seq.empty))
-  val testEmptySequence: Seq[(JsPath, Seq[ValidationError])] = Seq.empty
+  val testEmptySequence:         Seq[(JsPath, Seq[ValidationError])] = Seq.empty
 
   "ImplicitJsonValidationFormatter.CurrencyFormatter" when {
 

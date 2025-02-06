@@ -24,20 +24,24 @@ import testOnly.models.DataModel
 
 object StubDataForm {
 
-  val url = "_id"
+  val url        = "_id"
   val schemaName = "schemaId"
-  val method = "method"
-  val status = "status"
-  val response = "response"
+  val method     = "method"
+  val status     = "status"
+  val response   = "response"
 
   val stubDataForm = Form(
     mapping(
-      url -> text.verifying(nonEmpty("You must supply the URL to mock the response for")),
+      url        -> text.verifying(nonEmpty("You must supply the URL to mock the response for")),
       schemaName -> text.verifying(nonEmpty("You must supply a Schema Name to validate against")),
-      method -> text.verifying(nonEmpty("You must specify the Http Method of the request being stubbed")),
-      status -> text.verifying(isNumeric).transform[Int](_.toInt, _.toString),
-      response -> optional(text).verifying(oValidJson).transform[Option[JsValue]](x => x.fold[Option[JsValue]](None)(value => Some(Json.parse(value))),
-        y => y.fold[Option[String]](None)(json => Some(json.toString())))
+      method     -> text.verifying(nonEmpty("You must specify the Http Method of the request being stubbed")),
+      status     -> text.verifying(isNumeric).transform[Int](_.toInt, _.toString),
+      response -> optional(text)
+        .verifying(oValidJson)
+        .transform[Option[JsValue]](
+          x => x.fold[Option[JsValue]](None)(value => Some(Json.parse(value))),
+          y => y.fold[Option[String]](None)(json => Some(json.toString()))
+        )
     )(DataModel.apply)(DataModel.unapply)
   )
 }

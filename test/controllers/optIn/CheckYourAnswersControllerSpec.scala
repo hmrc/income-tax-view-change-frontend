@@ -34,23 +34,23 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAn
 
 import scala.concurrent.Future
 
-class CheckYourAnswersControllerSpec extends MockAuthActions
-  with MockOptInService {
+class CheckYourAnswersControllerSpec extends MockAuthActions with MockOptInService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[OptInService].toInstance(mockOptInService)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[CheckYourAnswersController]
 
-  val endTaxYear = 2023
+  val endTaxYear  = 2023
   val taxYear2023 = TaxYear.forYearEnd(endTaxYear)
 
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual
     s"show(isAgent = $isAgent)" when {
-      val action = testController.show(isAgent)
+      val action      = testController.show(isAgent)
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         "render the check your answers page" in {
@@ -58,11 +58,18 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
           when(mockOptInService.getMultiYearCheckYourAnswersViewModel(any())(any(), any(), any()))
-            .thenReturn(Future.successful(Some(MultiYearCheckYourAnswersViewModel(
-              taxYear2023,
-              isAgent, routes.ReportingFrequencyPageController.show(isAgent).url,
-              intentIsNextYear = true)
-            )))
+            .thenReturn(
+              Future.successful(
+                Some(
+                  MultiYearCheckYourAnswersViewModel(
+                    taxYear2023,
+                    isAgent,
+                    routes.ReportingFrequencyPageController.show(isAgent).url,
+                    intentIsNextYear = true
+                  )
+                )
+              )
+            )
 
           val result = action(fakeRequest)
           status(result) shouldBe Status.OK
@@ -85,7 +92,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
     }
 
     s"submit(isAgent = $isAgent)" when {
-      val action = testController.submit(isAgent)
+      val action      = testController.submit(isAgent)
       val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         "redirect to OptInCompletedController" in {

@@ -20,9 +20,8 @@ import uk.gov.hmrc.auth.core.AuthorisationException
 
 object AuthExceptions {
 
-  case class MissingMtdId(r:String = "Could not retrieve MTD ID from request")
-    extends AuthorisationException(r)
-  case class MissingAgentReferenceNumber(r:String = "Agent Reference Number was not found in user's enrolments")
-    extends AuthorisationException(r)
+  case class MissingMtdId(r: String = "Could not retrieve MTD ID from request") extends AuthorisationException(r)
+  case class MissingAgentReferenceNumber(r: String = "Agent Reference Number was not found in user's enrolments")
+      extends AuthorisationException(r)
 
 }

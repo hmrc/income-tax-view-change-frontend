@@ -28,22 +28,28 @@ sealed trait IncomeSourceDetailsResponse {
   def toJson: JsValue
 }
 
-case class IncomeSourceDetailsModel(nino: String,
-                                    mtdbsa: String,
-                                    yearOfMigration: Option[String],
-                                    businesses: List[BusinessDetailsModel],
-                                    properties: List[PropertyDetailsModel]) extends IncomeSourceDetailsResponse with Logging {
+case class IncomeSourceDetailsModel(
+    nino:            String,
+    mtdbsa:          String,
+    yearOfMigration: Option[String],
+    businesses:      List[BusinessDetailsModel],
+    properties:      List[PropertyDetailsModel])
+    extends IncomeSourceDetailsResponse
+    with Logging {
 
   val hasPropertyIncome: Boolean = properties.nonEmpty
   val hasBusinessIncome: Boolean = businesses.nonEmpty
-  val hasOngoingBusinessOrPropertyIncome: Boolean = businesses.exists(businessDetailsModel => businessDetailsModel.cessation.forall(_.date.isEmpty)) ||
-    properties.exists(propertyDetailsModel => propertyDetailsModel.cessation.forall(_.date.isEmpty))
+  val hasOngoingBusinessOrPropertyIncome: Boolean =
+    businesses.exists(businessDetailsModel => businessDetailsModel.cessation.forall(_.date.isEmpty)) ||
+      properties.exists(propertyDetailsModel => propertyDetailsModel.cessation.forall(_.date.isEmpty))
 
   override def toJson: JsValue = Json.toJson(this)
 
   def sanitise: IncomeSourceDetailsModel = {
-    val property2 = properties.map(propertyDetailsModel => propertyDetailsModel.copy(incomeSourceId = "", accountingPeriod = None))
-    val businesses2 = businesses.map(businessDetailsModel => businessDetailsModel.copy(incomeSourceId = "", accountingPeriod = None))
+    val property2 =
+      properties.map(propertyDetailsModel => propertyDetailsModel.copy(incomeSourceId = "", accountingPeriod = None))
+    val businesses2 =
+      businesses.map(businessDetailsModel => businessDetailsModel.copy(incomeSourceId = "", accountingPeriod = None))
     this.copy(properties = property2, businesses = businesses2)
   }
 
@@ -51,11 +57,16 @@ case class IncomeSourceDetailsModel(nino: String,
     (startingTaxYear to dateService.getCurrentTaxYearEnd).toList
   }
 
-  def startingTaxYear: Int = (businesses.flatMap(_.firstAccountingPeriodEndDate) ++ properties.flatMap(_.firstAccountingPeriodEndDate))
-    .map(_.getYear).sortWith(_ < _).headOption.getOrElse(throw new RuntimeException("User missing first accounting period information"))
+  def startingTaxYear: Int =
+    (businesses.flatMap(_.firstAccountingPeriodEndDate) ++ properties.flatMap(_.firstAccountingPeriodEndDate))
+      .map(_.getYear)
+      .sortWith(_ < _)
+      .headOption
+      .getOrElse(throw new RuntimeException("User missing first accounting period information"))
 
   def orderedTaxYearsByYearOfMigration(implicit dateService: DateServiceInterface): List[Int] = {
-    val taxYears = yearOfMigration.map(year => (year.toInt to dateService.getCurrentTaxYearEnd).toList).getOrElse(List.empty[Int])
+    val taxYears =
+      yearOfMigration.map(year => (year.toInt to dateService.getCurrentTaxYearEnd).toList).getOrElse(List.empty[Int])
     Logger("application").debug(s"Tax years list = $taxYears")
     taxYears
   }
@@ -72,41 +83,50 @@ case class IncomeSourceDetailsModel(nino: String,
     businesses.find(_.isOngoingSoleTraderBusiness(id))
   }
 
-  def getIncomeSourceId(incomeSourceType: IncomeSourceType, soleTraderBusinessId: Option[String] = None): Option[IncomeSourceId] = {
+  def getIncomeSourceId(
+      incomeSourceType:     IncomeSourceType,
+      soleTraderBusinessId: Option[String] = None
+    ): Option[IncomeSourceId] = {
     (incomeSourceType, soleTraderBusinessId) match {
       case (SelfEmployment, Some(id)) => getSoleTraderBusiness(id).map(m => mkIncomeSourceId(m.incomeSourceId))
-      case (UkProperty, _) => getUKProperty.map(m => mkIncomeSourceId(m.incomeSourceId))
-      case (ForeignProperty, _) => getForeignProperty.map(m => mkIncomeSourceId(m.incomeSourceId))
-      case _ => None
+      case (UkProperty, _)            => getUKProperty.map(m => mkIncomeSourceId(m.incomeSourceId))
+      case (ForeignProperty, _)       => getForeignProperty.map(m => mkIncomeSourceId(m.incomeSourceId))
+      case _                          => None
     }
   }
 
-  def getIncomeSourceBusinessName(incomeSourceType: IncomeSourceType, soleTraderBusinessId: Option[String] = None): Option[String] = {
+  def getIncomeSourceBusinessName(
+      incomeSourceType:     IncomeSourceType,
+      soleTraderBusinessId: Option[String] = None
+    ): Option[String] = {
     (incomeSourceType, soleTraderBusinessId) match {
       case (SelfEmployment, Some(id)) => getSoleTraderBusiness(id).map(_.tradingName.getOrElse("Unknown"))
-      case (UkProperty, _) => Some("UK property")
-      case (ForeignProperty, _) => Some("Foreign property")
-      case _ => None
+      case (UkProperty, _)            => Some("UK property")
+      case (ForeignProperty, _)       => Some("Foreign property")
+      case _                          => None
     }
   }
 
   def getLatencyDetails(incomeSourceType: IncomeSourceType, id: String): Option[LatencyDetails] = {
     incomeSourceType match {
-      case SelfEmployment => getSoleTraderBusiness(id).flatMap(_.latencyDetails)
-      case UkProperty => getUKProperty.flatMap(_.latencyDetails)
+      case SelfEmployment  => getSoleTraderBusiness(id).flatMap(_.latencyDetails)
+      case UkProperty      => getUKProperty.flatMap(_.latencyDetails)
       case ForeignProperty => getForeignProperty.flatMap(_.latencyDetails)
-      case _ => None
+      case _               => None
     }
   }
 
-  def compareHashToQueryString(incomeSourceIdHash: IncomeSourceIdHash)
-                              (implicit user: MtdItUser[_]): Either[Throwable, IncomeSourceId] = {
-    val allUserIncomeSourceIds: List[IncomeSourceId] = user.incomeSources.businesses.filterNot(_.isCeased).map(m => mkIncomeSourceId(m.incomeSourceId))
+  def compareHashToQueryString(
+      incomeSourceIdHash: IncomeSourceIdHash
+    )(
+      implicit user: MtdItUser[_]
+    ): Either[Throwable, IncomeSourceId] = {
+    val allUserIncomeSourceIds: List[IncomeSourceId] =
+      user.incomeSources.businesses.filterNot(_.isCeased).map(m => mkIncomeSourceId(m.incomeSourceId))
     incomeSourceIdHash.findIncomeSourceIdMatchingHash(ids = allUserIncomeSourceIds)
   }
 
-  def getBusinessCashOrAccruals()
-                               (implicit user: MtdItUser[_]): List[Boolean] = {
+  def getBusinessCashOrAccruals()(implicit user: MtdItUser[_]): List[Boolean] = {
     user.incomeSources.businesses
       .filterNot(_.isCeased)
       .map(_.cashOrAccruals)

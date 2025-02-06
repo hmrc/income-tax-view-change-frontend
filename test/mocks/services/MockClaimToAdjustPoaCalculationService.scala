@@ -28,7 +28,9 @@ import scala.concurrent.Future
 
 trait MockClaimToAdjustPoaCalculationService extends UnitSpec with BeforeAndAfterEach {
 
-  lazy val mockClaimToAdjustPoaCalculationService: ClaimToAdjustPoaCalculationService = mock(classOf[ClaimToAdjustPoaCalculationService])
+  lazy val mockClaimToAdjustPoaCalculationService: ClaimToAdjustPoaCalculationService = mock(
+    classOf[ClaimToAdjustPoaCalculationService]
+  )
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -36,11 +38,15 @@ trait MockClaimToAdjustPoaCalculationService extends UnitSpec with BeforeAndAfte
   }
 
   def setupMockRecalculateSuccess(): Unit =
-    when(mockClaimToAdjustPoaCalculationService.recalculate(Nino(ArgumentMatchers.anyString()), any(), any(), any())(any()))
+    when(
+      mockClaimToAdjustPoaCalculationService.recalculate(Nino(ArgumentMatchers.anyString()), any(), any(), any())(any())
+    )
       .thenReturn(Future.successful(Right((): Unit)))
 
   def setupMockRecalculateFailure(): Unit =
-    when(mockClaimToAdjustPoaCalculationService.recalculate(Nino(ArgumentMatchers.anyString()), any(), any(), any())(any()))
+    when(
+      mockClaimToAdjustPoaCalculationService.recalculate(Nino(ArgumentMatchers.anyString()), any(), any(), any())(any())
+    )
       .thenReturn(Future.successful(Left(new Exception())))
 
 }

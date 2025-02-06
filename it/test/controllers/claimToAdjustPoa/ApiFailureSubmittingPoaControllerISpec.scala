@@ -27,53 +27,56 @@ import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesResp
 class ApiFailureSubmittingPoaControllerISpec extends ControllerISpecHelper {
 
   def getPath(mtdUserRole: MTDUserRole) = {
-    val pathStart = if(mtdUserRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdUserRole == MTDIndividual) "" else "/agents"
     pathStart + "/adjust-poa/error-poa-not-updated"
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    val path = getPath(mtdUserRole)
-    val additionalCookies = getAdditionalCookies(mtdUserRole)
-    s"GET $path" when {
-      s"a user is a $mtdUserRole" that {
-        "is authenticated, with a valid enrolment" should {
-          if (mtdUserRole == MTDSupportingAgent) {
-            testSupportingAgentAccessDenied(path, additionalCookies)
-          } else {
-            s"render the Adjusting your payments on account page" when {
-              s"AdjustPaymentsOnAccount FS enabled" in {
-                enable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  OK, multipleBusinessesResponse
-                )
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      val path              = getPath(mtdUserRole)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            if (mtdUserRole == MTDSupportingAgent) {
+              testSupportingAgentAccessDenied(path, additionalCookies)
+            } else {
+              s"render the Adjusting your payments on account page" when {
+                s"AdjustPaymentsOnAccount FS enabled" in {
+                  enable(AdjustPaymentsOnAccount)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    multipleBusinessesResponse
+                  )
 
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                result should have(
-                  httpStatus(OK),
-                  pageTitle(mtdUserRole, "claimToAdjustPoa.apiFailure.heading")
-                )
+                  val result = buildGETMTDClient(path, additionalCookies).futureValue
+                  result should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, "claimToAdjustPoa.apiFailure.heading")
+                  )
+                }
               }
-            }
-            s"redirect to home page" when {
-              s"AdjustPaymentsOnAccount FS disabled" in {
-                disable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  OK, multipleBusinessesResponse
-                )
+              s"redirect to home page" when {
+                s"AdjustPaymentsOnAccount FS disabled" in {
+                  disable(AdjustPaymentsOnAccount)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    multipleBusinessesResponse
+                  )
 
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
-                )
+                  val result = buildGETMTDClient(path, additionalCookies).futureValue
+                  result should have(
+                    httpStatus(SEE_OTHER),
+                    redirectURI(homeUrl(mtdUserRole))
+                  )
+                }
               }
             }
           }
+          testAuthFailures(path, mtdUserRole)
         }
-        testAuthFailures(path, mtdUserRole)
       }
-    }
   }
 }

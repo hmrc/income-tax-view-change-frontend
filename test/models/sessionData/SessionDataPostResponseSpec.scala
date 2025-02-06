@@ -25,26 +25,28 @@ import uk.gov.hmrc.http.HttpResponse
 class SessionDataPostResponseSpec extends UnitSpec {
 
   val testHttpVerbPost = "POST"
-  val testUri = "/test"
+  val testUri          = "/test"
 
   "SessionDataPostResponse.read" should {
     "parse OK status and return a success response" in {
       val httpResponse = HttpResponse(OK, json = Json.obj(), headers = Map.empty)
-      val result = SessionDataPostResponseReads.read(testHttpVerbPost, testUri, httpResponse)
+      val result       = SessionDataPostResponseReads.read(testHttpVerbPost, testUri, httpResponse)
 
       result shouldBe Right(SessionDataPostSuccess(OK))
     }
     "parse CONFLICT status and return a success response" in {
       val httpResponse = HttpResponse(CONFLICT, json = Json.obj(), headers = Map.empty)
-      val result = SessionDataPostResponseReads.read(testHttpVerbPost, testUri, httpResponse)
+      val result       = SessionDataPostResponseReads.read(testHttpVerbPost, testUri, httpResponse)
 
       result shouldBe Right(SessionDataPostSuccess(CONFLICT))
     }
     "parse INTERNAL SERVER ERROR status and return an error response" in {
       val httpResponse = HttpResponse(INTERNAL_SERVER_ERROR, json = Json.obj(), headers = Map.empty)
-      val result = SessionDataPostResponseReads.read(testHttpVerbPost, testUri, httpResponse)
+      val result       = SessionDataPostResponseReads.read(testHttpVerbPost, testUri, httpResponse)
 
-      result shouldBe Left(SessionDataPostFailure(INTERNAL_SERVER_ERROR, "User session could not be saved. status: 500"))
+      result shouldBe Left(
+        SessionDataPostFailure(INTERNAL_SERVER_ERROR, "User session could not be saved. status: 500")
+      )
     }
   }
 

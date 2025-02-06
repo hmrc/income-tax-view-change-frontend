@@ -31,13 +31,19 @@ import java.net.{URI, URL}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FeedbackConnector @Inject()(val http: HttpClientV2,
-                                  val config: FrontendAppConfig,
-                                  val itvcHeaderCarrierForPartialsConverter: HeaderCarrierForPartialsConverter
-                                 )(implicit val ec: ExecutionContext) extends RawResponseReads with HeaderNames {
+class FeedbackConnector @Inject() (
+    val http:                                  HttpClientV2,
+    val config:                                FrontendAppConfig,
+    val itvcHeaderCarrierForPartialsConverter: HeaderCarrierForPartialsConverter
+  )(
+    implicit val ec: ExecutionContext)
+    extends RawResponseReads
+    with HeaderNames {
 
   val feedbackServiceSubmitUrl: URL =
-    new URI(s"${config.contactFrontendBaseUrl}/contact/beta-feedback/submit?service=${urlEncode(config.contactFormServiceIdentifier)}").toURL
+    new URI(
+      s"${config.contactFrontendBaseUrl}/contact/beta-feedback/submit?service=${urlEncode(config.contactFormServiceIdentifier)}"
+    ).toURL
 
   implicit val readForm: HttpReads[HttpResponse] = (method: String, url: String, response: HttpResponse) => response
 
@@ -46,22 +52,22 @@ class FeedbackConnector @Inject()(val http: HttpClientV2,
     itvcHeaderCarrierForPartialsConverter.headerCarrierForPartialsToHeaderCarrier(hc)
   }
 
-  def submit(formData: FeedbackForm)
-            (implicit request: Request[_]): Future[Either[Int, Unit]] = {
+  def submit(formData: FeedbackForm)(implicit request: Request[_]): Future[Either[Int, Unit]] = {
     val ref: String = request.headers.get(REFERER).getOrElse("N/A")
     val data = formData.toFormMap(ref)
-    http.post(feedbackServiceSubmitUrl)(partialsReadyHeaderCarrier)
+    http
+      .post(feedbackServiceSubmitUrl)(partialsReadyHeaderCarrier)
       .withBody(data)
       .execute[HttpResponse]
-      .map {resp =>
-          resp.status match {
-            case OK =>
-              Logger("application").info(s"RESPONSE status: ${resp.status}")
-              Right(())
-            case status =>
-              Logger("application").error(s"RESPONSE status: ${resp.status}")
-              Left(status)
-          }
-    }
+      .map { resp =>
+        resp.status match {
+          case OK =>
+            Logger("application").info(s"RESPONSE status: ${resp.status}")
+            Right(())
+          case status =>
+            Logger("application").error(s"RESPONSE status: ${resp.status}")
+            Left(status)
+        }
+      }
   }
 }

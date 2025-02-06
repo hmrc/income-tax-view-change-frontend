@@ -25,7 +25,6 @@ import testConstants.BaseTestConstants.{testNino, testTaxYear, testTaxYearRange}
 import testConstants.CalculationListTestConstants
 import testUtils.TestSupport
 
-
 class CalculationListServiceSpec extends TestSupport with MockCalculationListConnector {
   val mockDateService: DateService = mock(classOf[DateService])
 
@@ -45,7 +44,9 @@ class CalculationListServiceSpec extends TestSupport with MockCalculationListCon
       }
       "return a CalculationListErrorModel" when {
         "an error response is received from the connector" in {
-          setupGetLegacyCalculationList(testNino, testTaxYear.toString)(CalculationListErrorModel(NOT_FOUND, notFoundText))
+          setupGetLegacyCalculationList(testNino, testTaxYear.toString)(
+            CalculationListErrorModel(NOT_FOUND, notFoundText)
+          )
           TestCalculationListService.getLegacyCalculationList(Nino(testNino), testTaxYear.toString).futureValue shouldBe
             CalculationListErrorModel(NOT_FOUND, notFoundText)
         }
@@ -95,12 +96,16 @@ class CalculationListServiceSpec extends TestSupport with MockCalculationListCon
       "returns InternalServerException" in {
         val error = CalculationListErrorModel(IM_A_TEAPOT, "I'm a teapot")
         setupGetLegacyCalculationList(testNino, taxYearEnd)(error)
-        TestCalculationListService.determineTaxYearCrystallised(taxYearEnd.toInt).failed.futureValue.getMessage shouldBe error.message
+        TestCalculationListService
+          .determineTaxYearCrystallised(taxYearEnd.toInt)
+          .failed
+          .futureValue
+          .getMessage shouldBe error.message
       }
     }
 
     "for year 2023-24" should {
-      val taxYearEnd = "2024"
+      val taxYearEnd       = "2024"
       val testTaxYearRange = "23-24"
       "returns Some(true)" in {
         setupGetCalculationList(testNino, testTaxYearRange)(CalculationListTestConstants.calculationListFull)
@@ -122,7 +127,11 @@ class CalculationListServiceSpec extends TestSupport with MockCalculationListCon
       "returns InternalServerException" in {
         val error = CalculationListErrorModel(IM_A_TEAPOT, "I'm a teapot")
         setupGetCalculationList(testNino, testTaxYearRange)(error)
-        TestCalculationListService.determineTaxYearCrystallised(taxYearEnd.toInt).failed.futureValue.getMessage shouldBe error.message
+        TestCalculationListService
+          .determineTaxYearCrystallised(taxYearEnd.toInt)
+          .failed
+          .futureValue
+          .getMessage shouldBe error.message
       }
     }
     "for year 2024-25" should {

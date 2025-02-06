@@ -25,16 +25,19 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-
 trait OptInJourney {
   self =>
   val sessionService: SessionService
 
   implicit val ec: ExecutionContext
 
-  def withSessionData(handleSessionData: UIJourneySessionData => Future[Result],
-                      handleErrorCase: Throwable => Future[Result])
-                     (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  def withSessionData(
+      handleSessionData: UIJourneySessionData => Future[Result],
+      handleErrorCase:   Throwable => Future[Result]
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier
+    ): Future[Result] = {
 
     sessionService.getMongo(Opt(OptInJourney)).flatMap {
       case Right(Some(data: UIJourneySessionData)) => handleSessionData(data)

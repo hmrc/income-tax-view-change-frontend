@@ -22,89 +22,94 @@ import testUtils.UnitSpec
 
 class ViewInYearTaxEstimateAuditModelSpec extends UnitSpec {
 
-  val taxDue = 1000.00
-  val income = 500
-  val deductions = 800.00
+  val taxDue       = 1000.00
+  val income       = 500
+  val deductions   = 800.00
   val totalTaxable = 300
-  
+
   val taxYear = 2022
-  
-  val nino = "AA000000A"
-  val mtditid = "1234567890"
+
+  val nino       = "AA000000A"
+  val mtditid    = "1234567890"
   val individual = "individual"
 
   val taxCalc: CalculationSummary = CalculationSummary(None, None, false, taxDue, income, deductions, totalTaxable)
-  
-  val viewInYearBodyNormal: ViewInYearTaxEstimateAuditBody = ViewInYearTaxEstimateAuditBody(income, deductions, totalTaxable, taxDue)
+
+  val viewInYearBodyNormal: ViewInYearTaxEstimateAuditBody =
+    ViewInYearTaxEstimateAuditBody(income, deductions, totalTaxable, taxDue)
   val viewInYearBodyApplyModel: ViewInYearTaxEstimateAuditBody = ViewInYearTaxEstimateAuditBody(taxCalc)
 
   val expectedInYearBodyJson: JsObject = Json.obj(
-    "income" -> income,
-    "allowancesAndDeductions" -> deductions,
-    "totalTaxableIncome" -> totalTaxable,
+    "income"                                     -> income,
+    "allowancesAndDeductions"                    -> deductions,
+    "totalTaxableIncome"                         -> totalTaxable,
     "incomeTaxAndNationalInsuranceContributions" -> taxDue
   )
-  
+
   val expectedKey = "ViewInYearTaxEstimate"
-  
+
   val viewInYearModel: ViewInYearTaxEstimateAuditModel = ViewInYearTaxEstimateAuditModel(
-    nino, mtditid, individual, taxYear, viewInYearBodyNormal
+    nino,
+    mtditid,
+    individual,
+    taxYear,
+    viewInYearBodyNormal
   )
-  
+
   "ViewInYearBody" when {
-    
+
     ".apply is called" should {
 
       "create the model the same as the normal apply method" in {
         viewInYearBodyNormal shouldBe viewInYearBodyApplyModel
       }
-      
+
     }
-    
+
     "the writes are called" should {
-      
+
       "correctly write to Json" in {
         Json.toJson(viewInYearBodyNormal) shouldBe expectedInYearBodyJson
       }
-      
+
     }
-    
+
   }
-  
+
   "ViewInYearTaxEstimateAuditModel" when {
-    
+
     "transactionName is called" should {
-      
+
       s"return a value of ${expectedKey}" in {
         viewInYearModel.transactionName shouldBe expectedKey
       }
-      
+
     }
-    
+
     "auditType is called" should {
-      
+
       s"return a value of ${expectedKey}" in {
         viewInYearModel.auditType shouldBe expectedKey
       }
-      
+
     }
-    
+
     "details is called" should {
-      
+
       "create a sequence that can be sent for audit" in {
         val expectedSeq: Seq[(String, String)] = Seq(
-          "nino" -> nino,
-          "mtditid" -> mtditid,
+          "nino"     -> nino,
+          "mtditid"  -> mtditid,
           "userType" -> individual,
-          "taxYear" -> s"$taxYear",
-          "body" -> expectedInYearBodyJson.toString()
+          "taxYear"  -> s"$taxYear",
+          "body"     -> expectedInYearBodyJson.toString()
         )
-        
+
         viewInYearModel.detail shouldBe expectedSeq
       }
-      
+
     }
-    
+
   }
-  
+
 }

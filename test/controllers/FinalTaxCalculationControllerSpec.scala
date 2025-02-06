@@ -33,32 +33,31 @@ import testConstants.BaseTestConstants.testTaxYear
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 
 import scala.concurrent.Future
-class FinalTaxCalculationControllerSpec extends MockAuthActions
-  with MockCalculationService
-  with ImplicitDateFormatter {
+class FinalTaxCalculationControllerSpec extends MockAuthActions with MockCalculationService with ImplicitDateFormatter {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[CalculationService].toInstance(mockCalculationService)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[FinalTaxCalculationController]
 
-
-  val testCalcError: LiabilityCalculationError = LiabilityCalculationError(Status.OK, "Test message")
+  val testCalcError:     LiabilityCalculationError = LiabilityCalculationError(Status.OK, "Test message")
   val testCalcNOCONTENT: LiabilityCalculationError = LiabilityCalculationError(Status.NO_CONTENT, "Test message")
 
   val testCalcResponse: LiabilityCalculationResponse = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(taxRegime = "UK", class2VoluntaryContributions = None)),
     messages = None,
     calculation = None,
-    metadata = Metadata(None))
+    metadata = Metadata(None)
+  )
   val taxYear = 2018
 
   mtdAllRoles.foreach { mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
     s"show${if (isAgent) "Agent"}" when {
-      val action = if (isAgent) testController.showAgent(testTaxYear) else testController.show(testTaxYear, None)
+      val action      = if (isAgent) testController.showAgent(testTaxYear) else testController.show(testTaxYear, None)
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
       s"the $mtdUserRole is authenticated" should {
         if (mtdUserRole == MTDSupportingAgent) {
@@ -90,7 +89,7 @@ class FinalTaxCalculationControllerSpec extends MockAuthActions
     }
 
     s"submit${if (isAgent) "Agent"}" when {
-      val action = if (isAgent) testController.agentSubmit(testTaxYear) else testController.submit(testTaxYear, None)
+      val action      = if (isAgent) testController.agentSubmit(testTaxYear) else testController.submit(testTaxYear, None)
       val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdUserRole)
       s"the $mtdUserRole is authenticated" should {
         if (mtdUserRole == MTDSupportingAgent) {

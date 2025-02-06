@@ -30,17 +30,27 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUser,
-                                          val authActions: AuthActions,
-                                          val itvcErrorHandler: ItvcErrorHandler,
-                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                         (implicit val ec: ExecutionContext,
-                                          mcc: MessagesControllerComponents,
-                                          val appConfig: FrontendAppConfig) extends FrontendController(mcc)
-  with I18nSupport with FeatureSwitching {
+class NotMigratedUserController @Inject() (
+    val notMigrated:           NotMigratedUser,
+    val authActions:           AuthActions,
+    val itvcErrorHandler:      ItvcErrorHandler,
+    val itvcErrorHandlerAgent: AgentItvcErrorHandler
+  )(
+    implicit val ec: ExecutionContext,
+    mcc:             MessagesControllerComponents,
+    val appConfig:   FrontendAppConfig)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with FeatureSwitching {
 
-  def handleShowRequest(errorHandler: ShowInternalServerError, isAgent: Boolean, backUrl: String)
-                       (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  def handleShowRequest(
+      errorHandler: ShowInternalServerError,
+      isAgent:      Boolean,
+      backUrl:      String
+    )(
+      implicit user: MtdItUser[_],
+      ec:            ExecutionContext
+    ): Future[Result] = {
     {
       if (user.incomeSources.yearOfMigration.isEmpty) {
         Future {
@@ -50,7 +60,7 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUser,
         Logger("application").error("Migrated user not allowed to access this page")
         Future.successful(errorHandler.showInternalServerError())
       }
-    } .recover {
+    }.recover {
       case ex =>
         Logger("application")
           .error(s"error, ${ex.getMessage} - ${ex.getCause}")
@@ -58,24 +68,33 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUser,
     }
   }
 
-  def show(): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
-      handleShowRequest(errorHandler = itvcErrorHandler, isAgent = false,
-        backUrl = controllers.routes.HomeController.show().url)
-  }
+  def show(): Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit user =>
+      handleShowRequest(
+        errorHandler = itvcErrorHandler,
+        isAgent = false,
+        backUrl = controllers.routes.HomeController.show().url
+      )
+    }
 
-  def redirect(): Action[AnyContent] = Action {
-    Redirect("https://www.tax.service.gov.uk/contact/self-assessment/ind/%3CUTR%3E/repayment")
-  }
+  def redirect(): Action[AnyContent] =
+    Action {
+      Redirect("https://www.tax.service.gov.uk/contact/self-assessment/ind/%3CUTR%3E/repayment")
+    }
 
-  def redirectAgent(): Action[AnyContent] = Action {
-    Redirect("https://www.gov.uk/government/collections/hmrc-online-services-for-agents#hmrc-online-services-for-agents-account")
-  }
+  def redirectAgent(): Action[AnyContent] =
+    Action {
+      Redirect(
+        "https://www.gov.uk/government/collections/hmrc-online-services-for-agents#hmrc-online-services-for-agents-account"
+      )
+    }
 
-  def showAgent(): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
-    implicit user =>
-      handleShowRequest(errorHandler = itvcErrorHandlerAgent,
+  def showAgent(): Action[AnyContent] =
+    authActions.asMTDPrimaryAgent.async { implicit user =>
+      handleShowRequest(
+        errorHandler = itvcErrorHandlerAgent,
         isAgent = true,
-        backUrl = controllers.routes.HomeController.showAgent.url)
-  }
+        backUrl = controllers.routes.HomeController.showAgent.url
+      )
+    }
 }

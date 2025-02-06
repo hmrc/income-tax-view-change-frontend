@@ -29,19 +29,24 @@ import testUtils.UnitSpec
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.components.{h2, link, p}
 
-class ConfirmedOptOutViewUtilsSpec extends UnitSpec with FeatureSwitching with ImplicitDateFormatter with GuiceOneAppPerSuite {
+class ConfirmedOptOutViewUtilsSpec
+    extends UnitSpec
+    with FeatureSwitching
+    with ImplicitDateFormatter
+    with GuiceOneAppPerSuite {
 
-  override implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-  override implicit val languageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
+  override implicit val appConfig:     FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  override implicit val languageUtils: LanguageUtils     = app.injector.instanceOf[LanguageUtils]
 
-  val linkComponent: link = app.injector.instanceOf[link]
-  val paragraphComponent: p = app.injector.instanceOf[p]
-  val h2Component: h2 = app.injector.instanceOf[h2]
+  val linkComponent:      link = app.injector.instanceOf[link]
+  val paragraphComponent: p    = app.injector.instanceOf[p]
+  val h2Component:        h2   = app.injector.instanceOf[h2]
 
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
   val taxReturnLink = "https://www.gov.uk/log-in-file-self-assessment-tax-return"
-  val compatibleSoftwareLink = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+  val compatibleSoftwareLink =
+    "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
 
   val confirmedOptOutViewUtils =
     new ConfirmedOptOutViewUtils(linkComponent, h2Component, paragraphComponent, appConfig)
@@ -54,7 +59,13 @@ class ConfirmedOptOutViewUtilsSpec extends UnitSpec with FeatureSwitching with I
       HtmlFormat.fill(
         Seq(
           Html(messages("Now you have opted out, you will need to go back to the way you have previously")),
-          linkComponent(link = taxReturnLink, id = Some("fill-your-tax-return-link"), messageKey = "optout.confirmedOptOut.submitTax.confirmed.p1.link", target = Some("_blank"), additionalOpenTabMessage = Some("."))
+          linkComponent(
+            link = taxReturnLink,
+            id = Some("fill-your-tax-return-link"),
+            messageKey = "optout.confirmedOptOut.submitTax.confirmed.p1.link",
+            target = Some("_blank"),
+            additionalOpenTabMessage = Some(".")
+          )
         )
       )
     }
@@ -64,7 +75,13 @@ class ConfirmedOptOutViewUtilsSpec extends UnitSpec with FeatureSwitching with I
       HtmlFormat.fill(
         Seq(
           Html(messages("For any tax year you are reporting quarterly, you will need")),
-          linkComponent(link = compatibleSoftwareLink, id = Some("compatible-software-link"), messageKey = "optout.confirmedOptOut.submitTax.confirmed.p2.link", target = Some("_blank"), additionalOpenTabMessage = Some("."))
+          linkComponent(
+            link = compatibleSoftwareLink,
+            id = Some("compatible-software-link"),
+            messageKey = "optout.confirmedOptOut.submitTax.confirmed.p2.link",
+            target = Some("_blank"),
+            additionalOpenTabMessage = Some(".")
+          )
         )
       )
     }
@@ -183,7 +200,6 @@ class ConfirmedOptOutViewUtilsSpec extends UnitSpec with FeatureSwitching with I
               Seq(submitYourTaxReturnHeading, firstParagraph, secondParagraph)
             )
 
-
           actual shouldBe Some(expected)
         }
       }
@@ -205,7 +221,6 @@ class ConfirmedOptOutViewUtilsSpec extends UnitSpec with FeatureSwitching with I
             HtmlFormat.fill(
               Seq(submitYourTaxReturnHeading, firstParagraph)
             )
-
 
           actual shouldBe Some(expected)
         }
@@ -229,7 +244,6 @@ class ConfirmedOptOutViewUtilsSpec extends UnitSpec with FeatureSwitching with I
               Seq(submitYourTaxReturnHeading, firstParagraph)
             )
 
-
           actual shouldBe Some(expected)
         }
       }
@@ -251,7 +265,6 @@ class ConfirmedOptOutViewUtilsSpec extends UnitSpec with FeatureSwitching with I
             HtmlFormat.fill(
               Seq(submitYourTaxReturnHeading, firstParagraph)
             )
-
 
           actual shouldBe Some(expected)
         }

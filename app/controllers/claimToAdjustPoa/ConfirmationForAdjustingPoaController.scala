@@ -34,21 +34,27 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ConfirmationForAdjustingPoaController @Inject()(val authActions: AuthActions,
-                                                      val claimToAdjustService: ClaimToAdjustService,
-                                                      val poaSessionService: PaymentOnAccountSessionService,
-                                                      val ctaCalculationService: ClaimToAdjustPoaCalculationService,
-                                                      val view: ConfirmationForAdjustingPoa,
-                                                      val auditingService: AuditingService)
-                                                     (implicit val appConfig: FrontendAppConfig,
-                                                      val individualErrorHandler: ItvcErrorHandler,
-                                                      val agentErrorHandler: AgentItvcErrorHandler,
-                                                      val mcc: MessagesControllerComponents,
-                                                      val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with RecalculatePoaHelper with WithSessionAndPoa {
+class ConfirmationForAdjustingPoaController @Inject() (
+    val authActions:           AuthActions,
+    val claimToAdjustService:  ClaimToAdjustService,
+    val poaSessionService:     PaymentOnAccountSessionService,
+    val ctaCalculationService: ClaimToAdjustPoaCalculationService,
+    val view:                  ConfirmationForAdjustingPoa,
+    val auditingService:       AuditingService
+  )(
+    implicit val appConfig:     FrontendAppConfig,
+    val individualErrorHandler: ItvcErrorHandler,
+    val agentErrorHandler:      AgentItvcErrorHandler,
+    val mcc:                    MessagesControllerComponents,
+    val ec:                     ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with FeatureSwitching
+    with RecalculatePoaHelper
+    with WithSessionAndPoa {
 
-  def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
-    implicit user =>
+  def show(isAgent: Boolean): Action[AnyContent] =
+    authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async { implicit user =>
       withSessionDataAndPoa() { (sessionData, poa) =>
         sessionData.newPoaAmount match {
           case Some(value) =>
@@ -56,20 +62,19 @@ class ConfirmationForAdjustingPoaController @Inject()(val authActions: AuthActio
             val viewModel = ConfirmationForAdjustingPoaViewModel(poa.taxYear, isAmountZero)
             EitherT.rightT(Ok(view(user.isAgent(), viewModel)))
           case None =>
-
             EitherT.rightT(logAndRedirect(s"Error, New PoA Amount was not found in session"))
         }
       } recover logAndRedirect
-  }
+    }
 
-  def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
-    implicit user =>
+  def submit(isAgent: Boolean): Action[AnyContent] =
+    authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async { implicit user =>
       handleSubmitPoaData(
         claimToAdjustService = claimToAdjustService,
         ctaCalculationService = ctaCalculationService,
         poaSessionService = poaSessionService,
         auditingService = auditingService
       ) recover logAndRedirect
-  }
+    }
 
 }

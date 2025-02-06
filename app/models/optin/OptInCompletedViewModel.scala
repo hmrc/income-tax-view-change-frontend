@@ -21,26 +21,25 @@ import models.incomeSourceDetails.TaxYear
 import java.time.format.DateTimeFormatter
 
 case class OptInCompletedViewModel(
-                                    isAgent: Boolean,
-                                    optInTaxYear: TaxYear,
-                                    isCurrentYear: Boolean,
-                                    showAnnualReportingAdvice: Boolean,
-                                    optInIncludedNextYear: Boolean,
-                                    annualWithFollowingYearMandated: Boolean
-                                  ) {
+    isAgent:                         Boolean,
+    optInTaxYear:                    TaxYear,
+    isCurrentYear:                   Boolean,
+    showAnnualReportingAdvice:       Boolean,
+    optInIncludedNextYear:           Boolean,
+    annualWithFollowingYearMandated: Boolean) {
 
-  val startYear: String = optInTaxYear.startYear.toString
-  val endYear: String = optInTaxYear.endYear.toString
-  val nextYear: String = optInTaxYear.nextYear.endYear.toString
+  val startYear:                 String            = optInTaxYear.startYear.toString
+  val endYear:                   String            = optInTaxYear.endYear.toString
+  val nextYear:                  String            = optInTaxYear.nextYear.endYear.toString
   private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM uuuu")
-  val startDateNextYear: String = optInTaxYear.toFinancialYearEnd.plusDays(1).format(dateTimeFormatter)
+  val startDateNextYear:         String            = optInTaxYear.toFinancialYearEnd.plusDays(1).format(dateTimeFormatter)
 
   def headingMessageKey: String = {
     (isCurrentYear, optInIncludedNextYear, annualWithFollowingYearMandated) match {
-      case (true, _, true) => "optin.completedOptIn.followingVoluntary.heading.desc"
-      case (true, true, _) => "optin.completedOptIn.followingVoluntary.heading.desc"
+      case (true, _, true)  => "optin.completedOptIn.followingVoluntary.heading.desc"
+      case (true, true, _)  => "optin.completedOptIn.followingVoluntary.heading.desc"
       case (true, false, _) => "optin.completedOptIn.cy.heading.desc"
-      case _ => "optin.completedOptIn.ny.heading.desc"
+      case _                => "optin.completedOptIn.ny.heading.desc"
     }
   }
 
@@ -49,6 +48,7 @@ case class OptInCompletedViewModel(
     else controllers.routes.NextUpdatesController.show().url
   }
 
-  val reportingFrequencyLink: String = controllers.optIn.routes.OptInCompletedController.show(isAgent).url // TODO: Fix the navigation in future stories
+  val reportingFrequencyLink: String =
+    controllers.optIn.routes.OptInCompletedController.show(isAgent).url // TODO: Fix the navigation in future stories
 
 }

@@ -39,11 +39,14 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   val repository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
-  val businessCeasedObligationsShowUrl: String = controllers.manageBusinesses.cease.routes.IncomeSourceCeasedObligationsController.show(SelfEmployment).url
-  val foreignPropertyCeasedObligationsShowUrl: String = controllers.manageBusinesses.cease.routes.IncomeSourceCeasedObligationsController.show(ForeignProperty).url
-  val ukPropertyCeasedObligationsShowUrl: String = controllers.manageBusinesses.cease.routes.IncomeSourceCeasedObligationsController.show(UkProperty).url
-  val testDate: String = "2020-11-10"
-  val prefix: String = "business-ceased.obligation"
+  val businessCeasedObligationsShowUrl: String =
+    controllers.manageBusinesses.cease.routes.IncomeSourceCeasedObligationsController.show(SelfEmployment).url
+  val foreignPropertyCeasedObligationsShowUrl: String =
+    controllers.manageBusinesses.cease.routes.IncomeSourceCeasedObligationsController.show(ForeignProperty).url
+  val ukPropertyCeasedObligationsShowUrl: String =
+    controllers.manageBusinesses.cease.routes.IncomeSourceCeasedObligationsController.show(UkProperty).url
+  val testDate:           String = "2020-11-10"
+  val prefix:             String = "business-ceased.obligation"
   val continueButtonText: String = messagesAPI(s"$prefix.income-sources-button")
   val htmlTitle = " - Manage your Income Tax updates - GOV.UK"
   val day: LocalDate = LocalDate.of(2023, 1, 1)
@@ -54,40 +57,61 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
   }
 
   def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     incomeSourceType match {
       case SelfEmployment => pathStart + "/manage-your-businesses/cease-sole-trader/cease-success"
-      case UkProperty => pathStart + "/manage-your-businesses/cease-uk-property/cease-success"
-      case _ => pathStart + "/manage-your-businesses/cease-foreign-property/cease-success"
+      case UkProperty     => pathStart + "/manage-your-businesses/cease-uk-property/cease-success"
+      case _              => pathStart + "/manage-your-businesses/cease-foreign-property/cease-success"
     }
   }
 
-  def getIncomeSourceResponse(incomeSourceType: IncomeSourceType) = incomeSourceType match {
-    case SelfEmployment => businessOnlyResponse
-    case UkProperty => ukPropertyOnlyResponse
-    case ForeignProperty => foreignPropertyOnlyResponse
-  }
+  def getIncomeSourceResponse(incomeSourceType: IncomeSourceType) =
+    incomeSourceType match {
+      case SelfEmployment  => businessOnlyResponse
+      case UkProperty      => ukPropertyOnlyResponse
+      case ForeignProperty => foreignPropertyOnlyResponse
+    }
 
   def getExpectedTitle(incomeSourceType: IncomeSourceType): String = {
     incomeSourceType match {
       case SelfEmployment => b1TradingName + " " + messagesAPI(s"$prefix.heading1.base")
-      case UkProperty => messagesAPI("business-ceased.obligation.heading1.uk-property.part2") + " " + messagesAPI("business-ceased.obligation.heading1.base")
-      case ForeignProperty => messagesAPI("business-ceased.obligation.heading1.foreign-property.part2") + " " + messagesAPI("business-ceased.obligation.heading1.base")
+      case UkProperty =>
+        messagesAPI("business-ceased.obligation.heading1.uk-property.part2") + " " + messagesAPI(
+          "business-ceased.obligation.heading1.base"
+        )
+      case ForeignProperty =>
+        messagesAPI("business-ceased.obligation.heading1.foreign-property.part2") + " " + messagesAPI(
+          "business-ceased.obligation.heading1.base"
+        )
     }
   }
 
   def setupTestMongoData(incomeSourceType: IncomeSourceType) = {
     val incomeSourceId = incomeSourceType match {
       case SelfEmployment => testSelfEmploymentId
-      case _ => testPropertyIncomeId
+      case _              => testPropertyIncomeId
     }
-    await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"CEASE-${incomeSourceType.key}", ceaseIncomeSourceData =
-      Some(CeaseIncomeSourceData(incomeSourceId = Some(incomeSourceId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(true))))))
+    await(
+      sessionService.setMongoData(
+        UIJourneySessionData(
+          testSessionId,
+          s"CEASE-${incomeSourceType.key}",
+          ceaseIncomeSourceData = Some(
+            CeaseIncomeSourceData(
+              incomeSourceId = Some(incomeSourceId),
+              endDate = Some(LocalDate.parse(testEndDate2022)),
+              ceaseIncomeSourceDeclare = None,
+              journeyIsComplete = Some(true)
+            )
+          )
+        )
+      )
+    )
   }
 
   mtdAllRoles.foreach { mtdUserRole =>
     List(UkProperty, ForeignProperty).foreach { incomeSourceType =>
-      val path = getPath(mtdUserRole, incomeSourceType)
+      val path              = getPath(mtdUserRole, incomeSourceType)
       val additionalCookies = getAdditionalCookies(mtdUserRole)
       s"GET $path" when {
         s"a user is a $mtdUserRole" that {
@@ -96,7 +120,10 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
               stubAuthorised(mtdUserRole)
               disable(NavBarFs)
               enable(IncomeSourcesFs)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                OK,
+                getIncomeSourceResponse(incomeSourceType)
+              )
               IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
               setupTestMongoData(incomeSourceType)
 
@@ -105,7 +132,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
 
               result should have(
                 httpStatus(OK),
-                pageTitle(mtdUserRole, getExpectedTitle(incomeSourceType)),
+                pageTitle(mtdUserRole, getExpectedTitle(incomeSourceType))
               )
             }
           }

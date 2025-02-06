@@ -30,21 +30,20 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.DurationLong
 import scala.concurrent.{Await, ExecutionContext}
 
-
 @Singleton
-class FrontendAuthConnector @Inject()(config: ServicesConfig,
-                                      val WSHttp: HttpClientV2) extends PlayAuthConnector {
+class FrontendAuthConnector @Inject() (config: ServicesConfig, val WSHttp: HttpClientV2) extends PlayAuthConnector {
   lazy val serviceUrl: String = config.baseUrl("auth")
   lazy val httpClientV2 = WSHttp
 }
 
 @Singleton
-class ItvcHeaderCarrierForPartialsConverter @Inject()(val sessionCookieCrypto: SessionCookieCrypto) extends HeaderCarrierForPartialsConverter {}
+class ItvcHeaderCarrierForPartialsConverter @Inject() (val sessionCookieCrypto: SessionCookieCrypto)
+    extends HeaderCarrierForPartialsConverter {}
 
 @Singleton
-class FormPartialProvider @Inject()(override val httpGet: HttpClient,
-                                    override val headerCarrierForPartialsConverter: HeaderCarrierForPartialsConverter
-                                   )(implicit executionContext: ExecutionContext) extends FormPartialRetriever { }
-
-
-
+class FormPartialProvider @Inject() (
+    override val httpGet:                           HttpClient,
+    override val headerCarrierForPartialsConverter: HeaderCarrierForPartialsConverter
+  )(
+    implicit executionContext: ExecutionContext)
+    extends FormPartialRetriever {}

@@ -19,7 +19,6 @@ package testOnly.forms.validation
 import play.api.data.{Field, Form, FormError}
 import testOnly.forms.validation.models.{FieldError, SummaryError, TargetIds}
 
-
 object ErrorMessageHelper {
 
   import ErrorMessageFactory.{SummaryErrorLoc, TargetIdsLoc}
@@ -39,7 +38,8 @@ object ErrorMessageHelper {
         // or if it's a cross validation error designated for the field
         val args = err.args
         err.args.size match {
-          case 3 => val targets = args(TargetIdsLoc).asInstanceOf[TargetIds]
+          case 3 =>
+            val targets = args(TargetIdsLoc).asInstanceOf[TargetIds]
             targets.anchor == fieldName || targets.otherIds.contains(fieldName)
           case _ => false
         }
@@ -59,14 +59,13 @@ object ErrorMessageHelper {
   def getFieldError(field: Field, parentForm: Option[Form[_]] = None): Option[FieldError] =
     parentForm match {
       case Some(form) => getFieldError(field, form)
-      case _ => getFieldError(field)
+      case _          => getFieldError(field)
     }
 
   /**
-   *
-   * @param form
-   * @return (String,SummaryError) where the String is the anchor and SummaryError describes the error message
-   */
+    * @param form
+    * @return (String,SummaryError) where the String is the anchor and SummaryError describes the error message
+    */
   def getSummaryErrors(form: Form[_]): Seq[(String, SummaryError)] = {
     val err = form.errors
     err.map(e => {

@@ -20,13 +20,13 @@ import play.api.mvc.JavascriptLiteral
 
 sealed trait Mode
 
-case object CheckMode extends Mode
+case object CheckMode  extends Mode
 case object NormalMode extends Mode
 
 object Mode {
 
   implicit val jsLiteral: JavascriptLiteral[Mode] = {
     case NormalMode => "NormalMode"
-    case CheckMode => "CheckMode"
+    case CheckMode  => "CheckMode"
   }
 }

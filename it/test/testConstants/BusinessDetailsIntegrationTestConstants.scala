@@ -22,36 +22,36 @@ import models.core.{AccountingPeriodModel, AddressModel, CessationModel}
 import models.incomeSourceDetails.BusinessDetailsModel
 
 object BusinessDetailsIntegrationTestConstants {
-  val startYear = getCurrentTaxYearEnd.getYear - 5
-  val endYear = getCurrentTaxYearEnd.getYear - 4
-  val b1CessationDate = LocalDate.of(startYear, 12, 31)
-  val b1CessationReason = "It really, really was a bad idea"
-  val b1TradingStart = LocalDate.parse("2017-01-01")
-  val b1TradingName = "business"
-  val b1AccountingStart = LocalDate.of(startYear, 1, 1)
-  val b1AccountingEnd = LocalDate.of(startYear, 12, 31)
-  val b1AddressLine1 = "64 Zoo Lane"
-  val b1AddressLine2 = "Happy Place"
-  val b1AddressLine3 = "Magical Land"
-  val b1AddressLine4 = "England"
-  val b1AddressLine5 = "ZL1 064"
-  val b1CountryCode = "UK"
+  val startYear          = getCurrentTaxYearEnd.getYear - 5
+  val endYear            = getCurrentTaxYearEnd.getYear - 4
+  val b1CessationDate    = LocalDate.of(startYear, 12, 31)
+  val b1CessationReason  = "It really, really was a bad idea"
+  val b1TradingStart     = LocalDate.parse("2017-01-01")
+  val b1TradingName      = "business"
+  val b1AccountingStart  = LocalDate.of(startYear, 1, 1)
+  val b1AccountingEnd    = LocalDate.of(startYear, 12, 31)
+  val b1AddressLine1     = "64 Zoo Lane"
+  val b1AddressLine2     = "Happy Place"
+  val b1AddressLine3     = "Magical Land"
+  val b1AddressLine4     = "England"
+  val b1AddressLine5     = "ZL1 064"
+  val b1CountryCode      = "UK"
   val b1AccountingMethod = false
 
-  val b2CessationDate = LocalDate.of(endYear, 12, 31)
-  val b2CessationReason = "It really, really was a bad idea"
-  val b2TradingStart = LocalDate.parse("2018-01-01")
-  val b2TradingName = "secondBusiness"
-  val b3TradingName = "thirdBusiness"
-  val b2AccountingStart = LocalDate.of(endYear, 1, 1)
-  val b2AccountingEnd = LocalDate.of(endYear, 12, 31)
-  val b2AddressLine1 = "742 Evergreen Terrace"
-  val b2AddressLine2 = "Springfield"
-  val b2AddressLine3 = "Oregon"
-  val b2AddressLine4 = "USA"
-  val b2AddressLine5 = "51MP 50N5"
-  val b2CountryCode = "USA"
-  val testMtdItId = "XAITSA123456"
+  val b2CessationDate           = LocalDate.of(endYear, 12, 31)
+  val b2CessationReason         = "It really, really was a bad idea"
+  val b2TradingStart            = LocalDate.parse("2018-01-01")
+  val b2TradingName             = "secondBusiness"
+  val b3TradingName             = "thirdBusiness"
+  val b2AccountingStart         = LocalDate.of(endYear, 1, 1)
+  val b2AccountingEnd           = LocalDate.of(endYear, 12, 31)
+  val b2AddressLine1            = "742 Evergreen Terrace"
+  val b2AddressLine2            = "Springfield"
+  val b2AddressLine3            = "Oregon"
+  val b2AddressLine4            = "USA"
+  val b2AddressLine5            = "51MP 50N5"
+  val b2CountryCode             = "USA"
+  val testMtdItId               = "XAITSA123456"
   val ceasedBusinessTradingName = "ceasedBusiness"
   val testBusinessAddress: AddressModel = AddressModel(
     addressLine1 = "64 Zoo Lane",
@@ -62,15 +62,18 @@ object BusinessDetailsIntegrationTestConstants {
     countryCode = "UK"
   )
 
-  val address = AddressModel("8 Test", Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), "United Kingdom")
+  val address =
+    AddressModel("8 Test", Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), "United Kingdom")
 
   val business1 = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
     incomeSource = Some(testIncomeSource),
-    accountingPeriod = Some(AccountingPeriodModel(
-      start = b1AccountingStart,
-      end = b1AccountingEnd
-    )),
+    accountingPeriod = Some(
+      AccountingPeriodModel(
+        start = b1AccountingStart,
+        end = b1AccountingEnd
+      )
+    ),
     tradingName = Some(b1TradingName),
     firstAccountingPeriodEndDate = Some(b1AccountingEnd),
     tradingStartDate = Some(b1TradingStart),
@@ -82,10 +85,12 @@ object BusinessDetailsIntegrationTestConstants {
   val business1WithAddress2 = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
     incomeSource = Some(testIncomeSource),
-    accountingPeriod = Some(AccountingPeriodModel(
-      start = b1AccountingStart,
-      end = b1AccountingEnd
-    )),
+    accountingPeriod = Some(
+      AccountingPeriodModel(
+        start = b1AccountingStart,
+        end = b1AccountingEnd
+      )
+    ),
     tradingName = Some(b1TradingName),
     firstAccountingPeriodEndDate = Some(b1AccountingEnd),
     tradingStartDate = Some(b1TradingStart),
@@ -97,10 +102,12 @@ object BusinessDetailsIntegrationTestConstants {
   val business2 = BusinessDetailsModel(
     incomeSourceId = otherTestSelfEmploymentId,
     incomeSource = Some(testIncomeSource),
-    accountingPeriod = Some(AccountingPeriodModel(
-      start = b2AccountingStart,
-      end = b2AccountingEnd
-    )),
+    accountingPeriod = Some(
+      AccountingPeriodModel(
+        start = b2AccountingStart,
+        end = b2AccountingEnd
+      )
+    ),
     tradingName = Some(b2TradingName),
     firstAccountingPeriodEndDate = Some(b2AccountingEnd),
     tradingStartDate = Some(b2TradingStart),
@@ -112,10 +119,12 @@ object BusinessDetailsIntegrationTestConstants {
   val business3 = BusinessDetailsModel(
     incomeSourceId = otherTestSelfEmploymentId,
     incomeSource = Some(testIncomeSource),
-    accountingPeriod = Some(AccountingPeriodModel(
-      start = b2AccountingStart,
-      end = b2AccountingEnd
-    )),
+    accountingPeriod = Some(
+      AccountingPeriodModel(
+        start = b2AccountingStart,
+        end = b2AccountingEnd
+      )
+    ),
     tradingName = Some(b3TradingName),
     firstAccountingPeriodEndDate = Some(b2AccountingEnd),
     tradingStartDate = Some(b2TradingStart),
@@ -127,10 +136,12 @@ object BusinessDetailsIntegrationTestConstants {
   val business3WithUnknowns: BusinessDetailsModel = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
     incomeSource = Some(testIncomeSource),
-    accountingPeriod = Some(AccountingPeriodModel(
-      start = b1AccountingStart,
-      end = b1AccountingEnd
-    )),
+    accountingPeriod = Some(
+      AccountingPeriodModel(
+        start = b1AccountingStart,
+        end = b1AccountingEnd
+      )
+    ),
     tradingName = None,
     firstAccountingPeriodEndDate = Some(b1AccountingEnd),
     tradingStartDate = None,
@@ -142,10 +153,12 @@ object BusinessDetailsIntegrationTestConstants {
   val businessWithAddressAndAccountingMethod = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
     incomeSource = Some(testIncomeSource),
-    accountingPeriod = Some(AccountingPeriodModel(
-      start = b1AccountingStart,
-      end = b1AccountingEnd
-    )),
+    accountingPeriod = Some(
+      AccountingPeriodModel(
+        start = b1AccountingStart,
+        end = b1AccountingEnd
+      )
+    ),
     tradingName = Some(b1TradingName),
     firstAccountingPeriodEndDate = Some(b1AccountingEnd),
     tradingStartDate = Some(b1TradingStart),
@@ -157,10 +170,12 @@ object BusinessDetailsIntegrationTestConstants {
   val ceasedBusiness1 = BusinessDetailsModel(
     incomeSourceId = otherTestSelfEmploymentId,
     incomeSource = Some(testIncomeSource),
-    accountingPeriod = Some(AccountingPeriodModel(
-      start = b2AccountingStart,
-      end = b2AccountingEnd
-    )),
+    accountingPeriod = Some(
+      AccountingPeriodModel(
+        start = b2AccountingStart,
+        end = b2AccountingEnd
+      )
+    ),
     tradingName = Some(ceasedBusinessTradingName),
     firstAccountingPeriodEndDate = Some(b2AccountingEnd),
     tradingStartDate = Some(b2TradingStart),
@@ -172,10 +187,12 @@ object BusinessDetailsIntegrationTestConstants {
   val businessUnknownAddressName = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
     incomeSource = None,
-    accountingPeriod = Some(AccountingPeriodModel(
-      start = b1AccountingStart,
-      end = b1AccountingEnd
-    )),
+    accountingPeriod = Some(
+      AccountingPeriodModel(
+        start = b1AccountingStart,
+        end = b1AccountingEnd
+      )
+    ),
     tradingName = None,
     firstAccountingPeriodEndDate = Some(b1AccountingEnd),
     tradingStartDate = Some(b1TradingStart),
@@ -187,10 +204,12 @@ object BusinessDetailsIntegrationTestConstants {
   val businessWithLatencyForManageYourDetailsAudit = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
     incomeSource = Some(testIncomeSource),
-    accountingPeriod = Some(AccountingPeriodModel(
-      start = b1AccountingStart,
-      end = b1AccountingEnd
-    )),
+    accountingPeriod = Some(
+      AccountingPeriodModel(
+        start = b1AccountingStart,
+        end = b1AccountingEnd
+      )
+    ),
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(b1AccountingEnd),
     tradingStartDate = Some(testDate),

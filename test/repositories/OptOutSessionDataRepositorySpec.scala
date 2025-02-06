@@ -36,35 +36,35 @@ import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class OptOutSessionDataRepositorySpec extends UnitSpec
-  with BeforeAndAfter
-  with MockITSAStatusService
-  with MockCalculationListService
-  with MockDateService
-  with OneInstancePerTest
-  with MockITSAStatusUpdateConnector {
+class OptOutSessionDataRepositorySpec
+    extends UnitSpec
+    with BeforeAndAfter
+    with MockITSAStatusService
+    with MockCalculationListService
+    with MockDateService
+    with OneInstancePerTest
+    with MockITSAStatusUpdateConnector {
 
   implicit val defaultPatience: PatienceConfig =
     PatienceConfig(timeout = Span(10, Seconds), interval = Span(5, Millis))
 
-  val optOutConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
-  val nextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
-  val repository: UIJourneySessionDataRepository = mock(classOf[UIJourneySessionDataRepository])
+  val optOutConnector:    ITSAStatusUpdateConnector      = mock(classOf[ITSAStatusUpdateConnector])
+  val nextUpdatesService: NextUpdatesService             = mock(classOf[NextUpdatesService])
+  val repository:         UIJourneySessionDataRepository = mock(classOf[UIJourneySessionDataRepository])
 
-  implicit val user: MtdItUser[_] = mock(classOf[MtdItUser[_]])
-  implicit val hc: HeaderCarrier = mock(classOf[HeaderCarrier])
+  implicit val user: MtdItUser[_]  = mock(classOf[MtdItUser[_]])
+  implicit val hc:   HeaderCarrier = mock(classOf[HeaderCarrier])
 
   val taxYear2022_2023 = TaxYear.forYearEnd(2023)
   val taxYear2023_2024 = taxYear2022_2023.nextYear
   val taxYear2024_2025 = taxYear2023_2024.nextYear
 
-  val taxYear: TaxYear = TaxYear.forYearEnd(2021)
+  val taxYear:         TaxYear = TaxYear.forYearEnd(2021)
   val previousTaxYear: TaxYear = taxYear.previousYear
-  val crystallised: Boolean = true
+  val crystallised:    Boolean = true
 
   val sessionIdValue = "123"
-  val error = new RuntimeException("Some Error")
-
+  val error          = new RuntimeException("Some Error")
 
   val optOutRepository: OptOutSessionDataRepository = new OptOutSessionDataRepository(repository)
 
@@ -125,28 +125,40 @@ class OptOutSessionDataRepositorySpec extends UnitSpec
       val data = UIJourneySessionData(
         sessionId = hc.sessionId.get.value,
         journeyType = OptOutJourney.toString,
-        optOutSessionData = Some(OptOutSessionData(Some(
-          OptOutContextData(
-            currentYear = "2023-2024",
-            crystallisationStatus = true,
-            previousYearITSAStatus = "V",
-            currentYearITSAStatus = "V",
-            nextYearITSAStatus = "U")),
-          selectedOptOutYear = None))
+        optOutSessionData = Some(
+          OptOutSessionData(
+            Some(
+              OptOutContextData(
+                currentYear = "2023-2024",
+                crystallisationStatus = true,
+                previousYearITSAStatus = "V",
+                currentYearITSAStatus = "V",
+                nextYearITSAStatus = "U"
+              )
+            ),
+            selectedOptOutYear = None
+          )
+        )
       )
       when(repository.get(any(), any())).thenReturn(Future.successful(Some(data)))
 
       val initialState = optOutRepository.recallOptOutProposition()
 
       initialState.futureValue.isDefined shouldBe true
-      initialState.futureValue.get shouldBe createOptOutProposition(taxYear2023_2024, true, Voluntary, Voluntary, NoStatus)
+      initialState.futureValue.get shouldBe createOptOutProposition(
+        taxYear2023_2024,
+        true,
+        Voluntary,
+        Voluntary,
+        NoStatus
+      )
     }
   }
 
   "OptOutService.fetchSavedIntent" should {
     "retrieve the intent year only" in {
 
-      val forYearEnd = 2024
+      val forYearEnd     = 2024
       val customerIntent = TaxYear.forYearEnd(forYearEnd)
 
       when(hc.sessionId).thenReturn(Some(SessionId("123")))

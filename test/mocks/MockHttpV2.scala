@@ -29,7 +29,7 @@ import scala.concurrent.Future
 
 trait MockHttpV2 extends UnitSpec with BeforeAndAfterEach {
 
-  lazy val mockHttpClientV2: HttpClientV2 = mock(classOf[HttpClientV2])
+  lazy val mockHttpClientV2:   HttpClientV2   = mock(classOf[HttpClientV2])
   lazy val mockRequestBuilder: RequestBuilder = mock(classOf[RequestBuilder])
 
   override def beforeEach(): Unit = {
@@ -39,28 +39,38 @@ trait MockHttpV2 extends UnitSpec with BeforeAndAfterEach {
   }
 
   def setupMockHttpV2Get[T](url: String)(response: T): OngoingStubbing[Future[T]] = {
-    when(mockHttpClientV2
-      .get(ArgumentMatchers.eq(url"$url"))(ArgumentMatchers.any()))
+    when(
+      mockHttpClientV2
+        .get(ArgumentMatchers.eq(url"$url"))(ArgumentMatchers.any())
+    )
       .thenReturn(mockRequestBuilder)
 
     when(mockRequestBuilder.setHeader(any[(String, String)]))
       .thenReturn(mockRequestBuilder)
 
-    when(mockRequestBuilder
-      .setHeader(any[(String, String)]))
+    when(
+      mockRequestBuilder
+        .setHeader(any[(String, String)])
+    )
       .thenReturn(mockRequestBuilder)
 
-    when(mockRequestBuilder
-      .execute[T](ArgumentMatchers.any(), ArgumentMatchers.any()))
+    when(
+      mockRequestBuilder
+        .execute[T](ArgumentMatchers.any(), ArgumentMatchers.any())
+    )
       .thenReturn(Future.successful(response))
   }
 
   def setupMockFailedHttpV2Get[T](url: String): OngoingStubbing[Future[T]] = {
-    when(mockHttpClientV2
-      .get(ArgumentMatchers.eq(url"$url"))(ArgumentMatchers.any())).thenReturn(mockRequestBuilder)
+    when(
+      mockHttpClientV2
+        .get(ArgumentMatchers.eq(url"$url"))(ArgumentMatchers.any())
+    ).thenReturn(mockRequestBuilder)
 
-    when(mockRequestBuilder
-      .execute[T](ArgumentMatchers.any(), ArgumentMatchers.any()))
+    when(
+      mockRequestBuilder
+        .execute[T](ArgumentMatchers.any(), ArgumentMatchers.any())
+    )
       .thenReturn(Future.failed(new Exception("unknown error")))
   }
 

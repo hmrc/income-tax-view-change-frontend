@@ -25,7 +25,7 @@ import testUtils.UnitSpec
 
 import scala.concurrent.Future
 
-trait MockFeatureSwitchRepository extends UnitSpec with BeforeAndAfterEach{
+trait MockFeatureSwitchRepository extends UnitSpec with BeforeAndAfterEach {
 
   val mockFeatureSwitchRepository: FeatureSwitchRepository = mock(classOf[FeatureSwitchRepository])
 
@@ -53,7 +53,5 @@ trait MockFeatureSwitchRepository extends UnitSpec with BeforeAndAfterEach{
     when(mockFeatureSwitchRepository.setFeatureSwitches(any()))
       .thenReturn(Future.successful(()))
   }
-
-
 
 }

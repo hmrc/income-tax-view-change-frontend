@@ -19,54 +19,51 @@ package models.liabilitycalculation.taxcalculation
 import play.api.libs.json._
 
 case class CapitalGainsTax(
-                            totalTaxableGains: BigDecimal,
-                            adjustments: Option[BigDecimal] = None,
-                            foreignTaxCreditRelief: Option[BigDecimal] = None,
-                            taxOnGainsAlreadyPaid: Option[BigDecimal] = None,
-                            capitalGainsTaxDue: BigDecimal,
-                            capitalGainsOverpaid: Option[BigDecimal] = None,
-                            residentialPropertyAndCarriedInterest: Option[ResidentialPropertyAndCarriedInterest] = None,
-                            otherGains: Option[OtherGains] = None,
-                            businessAssetsDisposalsAndInvestorsRel: Option[BusinessAssetsDisposalsAndInvestorsRel] = None
-                          )
+    totalTaxableGains:                      BigDecimal,
+    adjustments:                            Option[BigDecimal] = None,
+    foreignTaxCreditRelief:                 Option[BigDecimal] = None,
+    taxOnGainsAlreadyPaid:                  Option[BigDecimal] = None,
+    capitalGainsTaxDue:                     BigDecimal,
+    capitalGainsOverpaid:                   Option[BigDecimal] = None,
+    residentialPropertyAndCarriedInterest:  Option[ResidentialPropertyAndCarriedInterest] = None,
+    otherGains:                             Option[OtherGains] = None,
+    businessAssetsDisposalsAndInvestorsRel: Option[BusinessAssetsDisposalsAndInvestorsRel] = None)
 
 object CapitalGainsTax {
   implicit val format: OFormat[CapitalGainsTax] = Json.format[CapitalGainsTax]
 }
 
 case class ResidentialPropertyAndCarriedInterest(
-                                                  cgtTaxBands: Option[Seq[CgtTaxBands]]
-                                                )
+    cgtTaxBands: Option[Seq[CgtTaxBands]])
 
 object ResidentialPropertyAndCarriedInterest {
-  implicit val format: OFormat[ResidentialPropertyAndCarriedInterest] = Json.format[ResidentialPropertyAndCarriedInterest]
+  implicit val format: OFormat[ResidentialPropertyAndCarriedInterest] =
+    Json.format[ResidentialPropertyAndCarriedInterest]
 }
 
 case class OtherGains(
-                       cgtTaxBands: Option[Seq[CgtTaxBands]]
-                     )
+    cgtTaxBands: Option[Seq[CgtTaxBands]])
 
 object OtherGains {
   implicit val format: OFormat[OtherGains] = Json.format[OtherGains]
 }
 
 case class CgtTaxBands(
-                        name: String,
-                        rate: BigDecimal,
-                        income: BigDecimal,
-                        taxAmount: BigDecimal
-                      )
+    name:      String,
+    rate:      BigDecimal,
+    income:    BigDecimal,
+    taxAmount: BigDecimal)
 
 object CgtTaxBands {
   implicit val format: OFormat[CgtTaxBands] = Json.format[CgtTaxBands]
 }
 
 case class BusinessAssetsDisposalsAndInvestorsRel(
-                                                   taxableGains: Option[BigDecimal] = None,
-                                                   rate: Option[BigDecimal] = None,
-                                                   taxAmount: Option[BigDecimal] = None
-                                                 )
+    taxableGains: Option[BigDecimal] = None,
+    rate:         Option[BigDecimal] = None,
+    taxAmount:    Option[BigDecimal] = None)
 
 object BusinessAssetsDisposalsAndInvestorsRel {
-  implicit val format: OFormat[BusinessAssetsDisposalsAndInvestorsRel] = Json.format[BusinessAssetsDisposalsAndInvestorsRel]
+  implicit val format: OFormat[BusinessAssetsDisposalsAndInvestorsRel] =
+    Json.format[BusinessAssetsDisposalsAndInvestorsRel]
 }

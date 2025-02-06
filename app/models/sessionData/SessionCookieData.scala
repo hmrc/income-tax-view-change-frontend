@@ -19,23 +19,23 @@ package models.sessionData
 import controllers.agent.sessionUtils.SessionKeys
 import services.agent.ClientDetailsService.ClientDetails
 
-case class SessionCookieData(mtditid: String,
-                             nino: String,
-                             utr: String,
-                             clientFirstName: Option[String],
-                             clientLastName: Option[String],
-                             isSupportingAgent: Boolean = false
-                            ) {
+case class SessionCookieData(
+    mtditid:           String,
+    nino:              String,
+    utr:               String,
+    clientFirstName:   Option[String],
+    clientLastName:    Option[String],
+    isSupportingAgent: Boolean = false) {
   val toSessionDataModel: SessionDataModel = {
     SessionDataModel(mtditid = mtditid, nino = nino, utr = utr, isSupportingAgent)
   }
 
   val toSessionCookieSeq: Seq[(String, String)] = {
     Seq(
-      SessionKeys.clientMTDID -> mtditid,
-      SessionKeys.clientNino -> nino,
-      SessionKeys.clientUTR -> utr,
-      SessionKeys.isSupportingAgent -> isSupportingAgent.toString
+      SessionKeys.clientMTDID                            -> mtditid,
+      SessionKeys.clientNino                             -> nino,
+      SessionKeys.clientUTR                              -> utr,
+      SessionKeys.isSupportingAgent                      -> isSupportingAgent.toString
     ) ++ clientFirstName.map(SessionKeys.clientFirstName -> _) ++ clientLastName.map(SessionKeys.clientLastName -> _)
   }
 }

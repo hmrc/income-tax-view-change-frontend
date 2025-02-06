@@ -25,60 +25,75 @@ import scala.language.implicitConversions
 
 object CreditSummaryAuditing {
 
-  case class CreditSummaryDetails(date: String, description: String, status: String, amount: String)
+  case class CreditSummaryDetails(
+      date:        String,
+      description: String,
+      status:      String,
+      amount:      String)
 
-  private def toStatus(charge: CreditDetailModel): String = charge.documentDetail.getChargePaidStatus match {
-    case "paid" => "Fully allocated"
-    case "part-paid" => "Partially allocated"
-    case "unpaid" | _ => "Not allocated"
-  }
+  private def toStatus(charge: CreditDetailModel): String =
+    charge.documentDetail.getChargePaidStatus match {
+      case "paid"       => "Fully allocated"
+      case "part-paid"  => "Partially allocated"
+      case "unpaid" | _ => "Not allocated"
+    }
 
-  private def toDescription(creditType: CreditType)
-                           (implicit messages: MessagesApi): String = messages(s"credit.description.${creditType.key}")(Lang("en"))
+  private def toDescription(creditType: CreditType)(implicit messages: MessagesApi): String =
+    messages(s"credit.description.${creditType.key}")(Lang("en"))
 
-  implicit def creditDetailModelToCreditSummaryDetails(charge: CreditDetailModel)
-                                                      (implicit messages: MessagesApi): CreditSummaryDetails = {
+  implicit def creditDetailModelToCreditSummaryDetails(
+      charge: CreditDetailModel
+    )(
+      implicit messages: MessagesApi
+    ): CreditSummaryDetails = {
     // we assume that we would never show amount equal to zero
     CreditSummaryDetails(
       date = charge.date.toString,
       description = toDescription(charge.creditType)(messages),
       status = toStatus(charge),
-      amount = charge.documentDetail.originalAmount.abs.toString())
+      amount = charge.documentDetail.originalAmount.abs.toString()
+    )
   }
 
-  implicit def toCreditSummaryDetailsSeq(charge: Seq[CreditDetailModel])
-                                        (implicit messages: MessagesApi): Seq[CreditSummaryDetails] = charge.map(creditDetailModelToCreditSummaryDetails)
+  implicit def toCreditSummaryDetailsSeq(
+      charge: Seq[CreditDetailModel]
+    )(
+      implicit messages: MessagesApi
+    ): Seq[CreditSummaryDetails] = charge.map(creditDetailModelToCreditSummaryDetails)
 
-
-  case class CreditsSummaryModel(saUTR: String,
-                                 nino: String,
-                                 userType: String,
-                                 credId: String,
-                                 mtdRef: String,
-                                 creditOnAccount: String,
-                                 creditDetails: Seq[CreditSummaryDetails]) extends ExtendedAuditModel {
+  case class CreditsSummaryModel(
+      saUTR:           String,
+      nino:            String,
+      userType:        String,
+      credId:          String,
+      mtdRef:          String,
+      creditOnAccount: String,
+      creditDetails:   Seq[CreditSummaryDetails])
+      extends ExtendedAuditModel {
 
     override val transactionName: String = enums.TransactionName.CreditsSummary
-    override val auditType: String = enums.AuditType.CreditsSummaryResponse
+    override val auditType:       String = enums.AuditType.CreditsSummaryResponse
 
     private def creditDetailToJson(credit: CreditSummaryDetails): JsObject = {
       Json.obj(
-        "date" -> credit.date,
+        "date"        -> credit.date,
         "description" -> credit.description,
-        "status" -> credit.status,
-        "amount" -> credit.amount)
+        "status"      -> credit.status,
+        "amount"      -> credit.amount
+      )
     }
 
     def getCreditDetails: Seq[JsObject] = creditDetails.map(creditDetailToJson)
 
     override val detail: JsValue =
-      Json.obj("saUtr" -> saUTR,
-        "nino" -> nino,
-        "userType" -> userType,
-        "credId" -> credId,
-        "mtditid" -> mtdRef,
+      Json.obj(
+        "saUtr"           -> saUTR,
+        "nino"            -> nino,
+        "userType"        -> userType,
+        "credId"          -> credId,
+        "mtditid"         -> mtdRef,
         "creditOnAccount" -> creditOnAccount,
-        "creditDetails" -> getCreditDetails
+        "creditDetails"   -> getCreditDetails
       )
 
   }

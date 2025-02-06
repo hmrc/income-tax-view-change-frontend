@@ -28,17 +28,24 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetailsConnector,
-                                     val appConfig: FrontendAppConfig)
-                                    (implicit ec: ExecutionContext) {
+class CreditHistoryService @Inject() (
+    financialDetailsConnector: FinancialDetailsConnector,
+    val appConfig:             FrontendAppConfig
+  )(
+    implicit ec: ExecutionContext) {
 
   // This logic is based on the findings in => RepaymentHistoryUtils.combinePaymentHistoryData method
   // Problem: we need to get list of credits (MFA + CutOver) and filter it out by calendar year
   // MFA credits are driven by taxYear
   // CutOver credit by dueDate found in financialDetails related to the corresponding documentDetail (see getDueDateFor)
   @deprecated("Use getCreditsByTaxYearV2 instead", "MISUV-8845")
-  private def getCreditsByTaxYear(taxYear: Int, nino: String)
-                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
+  private def getCreditsByTaxYear(
+      taxYear: Int,
+      nino:    String
+    )(
+      implicit hc: HeaderCarrier,
+      user:        MtdItUser[_]
+    ): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
     financialDetailsConnector.getFinancialDetails(taxYear, nino).flatMap {
       case financialDetailsModel: FinancialDetailsModel =>
         val fdRes = financialDetailsModel.getPairedDocumentDetails().flatMap {
@@ -46,10 +53,25 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
             (financialDetail.getCreditType, document.credit.isDefined) match {
               case (Some(CutOverCreditType), true) =>
                 // if we didn't find CutOverCredit dueDate then we "lost" this document
-                financialDetailsModel.getDueDateForFinancialDetail(financialDetail)
-                  .map(dueDate => CreditDetailModel(date = dueDate, document, CutOverCreditType, Some(financialDetailsModel.balanceDetails)))
+                financialDetailsModel
+                  .getDueDateForFinancialDetail(financialDetail)
+                  .map(dueDate =>
+                    CreditDetailModel(
+                      date = dueDate,
+                      document,
+                      CutOverCreditType,
+                      Some(financialDetailsModel.balanceDetails)
+                    )
+                  )
               case (Some(creditType), true) =>
-                Some(CreditDetailModel(date = document.documentDate, document, creditType, Some(financialDetailsModel.balanceDetails)))
+                Some(
+                  CreditDetailModel(
+                    date = document.documentDate,
+                    document,
+                    creditType,
+                    Some(financialDetailsModel.balanceDetails)
+                  )
+                )
               case (_, _) => None
             }
         }
@@ -63,8 +85,14 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
     }
   }
 
-  private def getCreditsByTaxYearV2(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)
-                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
+  private def getCreditsByTaxYearV2(
+      taxYearFrom: TaxYear,
+      taxYearTo:   TaxYear,
+      nino:        String
+    )(
+      implicit hc: HeaderCarrier,
+      user:        MtdItUser[_]
+    ): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
     financialDetailsConnector.getFinancialDetails(taxYearFrom, taxYearTo, nino).flatMap {
       case financialDetailsModel: FinancialDetailsModel =>
         val fdRes = financialDetailsModel.getPairedDocumentDetails().flatMap {
@@ -72,10 +100,25 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
             (financialDetail.getCreditType, document.credit.isDefined) match {
               case (Some(CutOverCreditType), true) =>
                 // if we didn't find CutOverCredit dueDate then we "lost" this document
-                financialDetailsModel.getDueDateForFinancialDetail(financialDetail)
-                  .map(dueDate => CreditDetailModel(date = dueDate, document, CutOverCreditType, Some(financialDetailsModel.balanceDetails)))
+                financialDetailsModel
+                  .getDueDateForFinancialDetail(financialDetail)
+                  .map(dueDate =>
+                    CreditDetailModel(
+                      date = dueDate,
+                      document,
+                      CutOverCreditType,
+                      Some(financialDetailsModel.balanceDetails)
+                    )
+                  )
               case (Some(creditType), true) =>
-                Some(CreditDetailModel(date = document.documentDate, document, creditType, Some(financialDetailsModel.balanceDetails)))
+                Some(
+                  CreditDetailModel(
+                    date = document.documentDate,
+                    document,
+                    creditType,
+                    Some(financialDetailsModel.balanceDetails)
+                  )
+                )
               case (_, _) => None
             }
         }
@@ -90,16 +133,23 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
   }
 
   @deprecated("Use getCreditsHistoryV2 instead", "MISUV-8845")
-  def getCreditsHistory(calendarYear: Int, nino: String)
-                       (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
+  def getCreditsHistory(
+      calendarYear: Int,
+      nino:         String
+    )(
+      implicit hc: HeaderCarrier,
+      user:        MtdItUser[_]
+    ): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
 
     for {
-      creditModelForTaxYear <- getCreditsByTaxYear(calendarYear, nino)
+      creditModelForTaxYear        <- getCreditsByTaxYear(calendarYear, nino)
       creditModelForTaxYearPlusOne <- getCreditsByTaxYear(calendarYear + 1, nino)
     } yield (creditModelForTaxYear, creditModelForTaxYearPlusOne) match {
       case (Right(creditModelTY), Right(creditModelTYandOne)) =>
         val creditsForTaxYearAndPlusOne =
-          (creditModelTY ++ creditModelTYandOne).filter(creditDetailModel => creditDetailModel.documentDetail.taxYear == calendarYear)
+          (creditModelTY ++ creditModelTYandOne).filter(creditDetailModel =>
+            creditDetailModel.documentDetail.taxYear == calendarYear
+          )
         Right(creditsForTaxYearAndPlusOne)
       case (Right(creditModelTY), Left(_)) =>
         val creditsForTaxYear =
@@ -114,14 +164,21 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
     }
   }
 
-  def getCreditsHistoryV2(calendarYear: Int, nino: String)
-                       (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
+  def getCreditsHistoryV2(
+      calendarYear: Int,
+      nino:         String
+    )(
+      implicit hc: HeaderCarrier,
+      user:        MtdItUser[_]
+    ): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
 
     for {
-      creditModelsForBothYears <- getCreditsByTaxYearV2(TaxYear(calendarYear-1, calendarYear), TaxYear(calendarYear, calendarYear + 1), nino)
+      creditModelsForBothYears <-
+        getCreditsByTaxYearV2(TaxYear(calendarYear - 1, calendarYear), TaxYear(calendarYear, calendarYear + 1), nino)
     } yield creditModelsForBothYears match {
       case Right(creditModel) =>
-        val creditsForTaxYearAndPlusOne = creditModel.filter(creditDetailModel => creditDetailModel.documentDetail.taxYear == calendarYear)
+        val creditsForTaxYearAndPlusOne =
+          creditModel.filter(creditDetailModel => creditDetailModel.documentDetail.taxYear == calendarYear)
         Right(creditsForTaxYearAndPlusOne)
       case _ =>
         Left(CreditHistoryError)

@@ -57,7 +57,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class BusinessDetailsConnectorSpec extends BaseConnectorSpec {
 
-  lazy val mockAuditingService: AuditingService = mock(classOf[AuditingService])
+  lazy val mockAuditingService:              AuditingService                 = mock(classOf[AuditingService])
   implicit val authorisedAndEnrolledRequest: AuthorisedAndEnrolledRequest[_] = testAuthorisedAndEnrolled
 
   def verifyAudit(model: AuditModel, path: Option[String] = None): Unit = {
@@ -107,10 +107,10 @@ class BusinessDetailsConnectorSpec extends BaseConnectorSpec {
 
   val incomeSourceOverride =
     Seq(
-      "uk-property-reporting-method", // UK Property Select reporting method
+      "uk-property-reporting-method",      // UK Property Select reporting method
       "foreign-property-reporting-method", // Foreign Property Select reporting method
-      "business-reporting-method", // Sole Trader Select reporting method
-      "reporting-frequency" // Manage business reporting frequency
+      "business-reporting-method",         // Sole Trader Select reporting method
+      "reporting-frequency"                // Manage business reporting frequency
     )
 
   override def beforeEach(): Unit = {
@@ -122,13 +122,17 @@ class BusinessDetailsConnectorSpec extends BaseConnectorSpec {
 
     ".getBusinessDetailsUrl()" should {
       "return the correct url" in new Setup {
-        connector.getBusinessDetailsUrl(testNino) shouldBe s"$baseUrl/income-tax-view-change/get-business-details/nino/$testNino"
+        connector.getBusinessDetailsUrl(
+          testNino
+        ) shouldBe s"$baseUrl/income-tax-view-change/get-business-details/nino/$testNino"
       }
     }
 
     ".getIncomeSourcesUrl()" should {
       "return the correct url" in new Setup {
-        connector.getIncomeSourcesUrl(testMtditid) shouldBe s"$baseUrl/income-tax-view-change/income-sources/$testMtditid"
+        connector.getIncomeSourcesUrl(
+          testMtditid
+        ) shouldBe s"$baseUrl/income-tax-view-change/income-sources/$testMtditid"
       }
     }
 
@@ -140,9 +144,10 @@ class BusinessDetailsConnectorSpec extends BaseConnectorSpec {
 
     ".getBusinessDetails()" should {
 
-      val successResponse = HttpResponse(status = Status.OK, json = Json.toJson(singleBusinessIncome), headers = Map.empty)
+      val successResponse =
+        HttpResponse(status = Status.OK, json = Json.toJson(singleBusinessIncome), headers = Map.empty)
       val successResponseBadJson = HttpResponse(status = Status.OK, json = Json.parse("{}"), headers = Map.empty)
-      val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
+      val badResponse            = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
 
       "return an IncomeSourceDetailsModel when successful JSON is received" in new Setup {
 
@@ -169,7 +174,10 @@ class BusinessDetailsConnectorSpec extends BaseConnectorSpec {
           .thenReturn(Future(successResponseBadJson))
 
         val result: Future[IncomeSourceDetailsResponse] = connector.getBusinessDetails(testNino)
-        result.futureValue shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
+        result.futureValue shouldBe IncomeSourceDetailsError(
+          Status.INTERNAL_SERVER_ERROR,
+          "Json Validation Error Parsing Income Source Details response"
+        )
       }
 
       "return IncomeSourceDetailsError model in case of failure" in new Setup {
@@ -197,152 +205,176 @@ class BusinessDetailsConnectorSpec extends BaseConnectorSpec {
           .thenReturn(Future.failed(new Exception("unknown error")))
 
         val result: Future[IncomeSourceDetailsResponse] = connector.getBusinessDetails(testNino)
-        result.futureValue shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error, unknown error")
+        result.futureValue shouldBe IncomeSourceDetailsError(
+          Status.INTERNAL_SERVER_ERROR,
+          "Unexpected future failed error, unknown error"
+        )
       }
     }
 
-        ".getIncomeSources()" should {
+    ".getIncomeSources()" should {
 
-          val successResponse = HttpResponse(status = Status.OK, json = Json.toJson(singleBusinessAndPropertyMigrat2019), headers = Map.empty)
-          val successResponseBadJson = HttpResponse(status = Status.OK, json = Json.parse("{}"), headers = Map.empty)
-          val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
+      val successResponse =
+        HttpResponse(status = Status.OK, json = Json.toJson(singleBusinessAndPropertyMigrat2019), headers = Map.empty)
+      val successResponseBadJson = HttpResponse(status = Status.OK, json = Json.parse("{}"), headers = Map.empty)
+      val badResponse            = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
 
-          "return an IncomeSourceDetailsModel when successful JSON is received" in new Setup {
+      "return an IncomeSourceDetailsModel when successful JSON is received" in new Setup {
 
-            when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
 
-            when(mockRequestBuilder.withBody(any())(any(), any(), any()))
-              .thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+          .thenReturn(mockRequestBuilder)
 
-            when(mockRequestBuilder.setHeader(any()))
-              .thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.setHeader(any()))
+          .thenReturn(mockRequestBuilder)
 
-            when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
-              .thenReturn(Future(successResponse))
+        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+          .thenReturn(Future(successResponse))
 
-            val result: Future[IncomeSourceDetailsResponse] = connector.getIncomeSources()
-            result.futureValue shouldBe singleBusinessAndPropertyMigrat2019
+        val result: Future[IncomeSourceDetailsResponse] = connector.getIncomeSources()
+        result.futureValue shouldBe singleBusinessAndPropertyMigrat2019
 
-            verifyExtendedAudit(IncomeSourceDetailsResponseAuditModel(testAuthorisedAndEnrolled, testNino, List(testSelfEmploymentId), List(testPropertyIncomeId), Some(testMigrationYear2019)))
-          }
+        verifyExtendedAudit(
+          IncomeSourceDetailsResponseAuditModel(
+            testAuthorisedAndEnrolled,
+            testNino,
+            List(testSelfEmploymentId),
+            List(testPropertyIncomeId),
+            Some(testMigrationYear2019)
+          )
+        )
+      }
 
-          "return IncomeSourceDetailsError in case of bad/malformed JSON response" in new Setup {
+      "return IncomeSourceDetailsError in case of bad/malformed JSON response" in new Setup {
 
-            when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
 
-            when(mockRequestBuilder.withBody(any())(any(), any(), any()))
-              .thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+          .thenReturn(mockRequestBuilder)
 
-            when(mockRequestBuilder.setHeader(any()))
-              .thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.setHeader(any()))
+          .thenReturn(mockRequestBuilder)
 
-            when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
-              .thenReturn(Future(successResponseBadJson))
+        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+          .thenReturn(Future(successResponseBadJson))
 
-            val result: Future[IncomeSourceDetailsResponse] = connector.getIncomeSources()
-            result.futureValue shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
+        val result: Future[IncomeSourceDetailsResponse] = connector.getIncomeSources()
+        result.futureValue shouldBe IncomeSourceDetailsError(
+          Status.INTERNAL_SERVER_ERROR,
+          "Json Validation Error Parsing Income Source Details response"
+        )
 
-          }
+      }
 
-          "return IncomeSourceDetailsError model in case of failure" in new Setup {
+      "return IncomeSourceDetailsError model in case of failure" in new Setup {
 
-            when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
 
-            when(mockRequestBuilder.withBody(any())(any(), any(), any()))
-              .thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+          .thenReturn(mockRequestBuilder)
 
-            when(mockRequestBuilder.setHeader(any()))
-              .thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.setHeader(any()))
+          .thenReturn(mockRequestBuilder)
 
-            when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
-              .thenReturn(Future(badResponse))
+        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+          .thenReturn(Future(badResponse))
 
-            val result: Future[IncomeSourceDetailsResponse] = connector.getIncomeSources()
-            result.futureValue shouldBe IncomeSourceDetailsError(Status.BAD_REQUEST, "Error Message")
+        val result: Future[IncomeSourceDetailsResponse] = connector.getIncomeSources()
+        result.futureValue shouldBe IncomeSourceDetailsError(Status.BAD_REQUEST, "Error Message")
 
-          }
+      }
 
-          "return IncomeSourceDetailsError model in case of future failed scenario" in new Setup {
+      "return IncomeSourceDetailsError model in case of future failed scenario" in new Setup {
 
-            when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
 
-            when(mockRequestBuilder.withBody(any())(any(), any(), any()))
-              .thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+          .thenReturn(mockRequestBuilder)
 
-            when(mockRequestBuilder.setHeader(any()))
-              .thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.setHeader(any()))
+          .thenReturn(mockRequestBuilder)
 
-            when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
-              .thenReturn(Future.failed(new Exception("unknown error")))
+        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+          .thenReturn(Future.failed(new Exception("unknown error")))
 
-            val result: Future[IncomeSourceDetailsResponse] = connector.getIncomeSources()
-            result.futureValue shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error, unknown error")
+        val result: Future[IncomeSourceDetailsResponse] = connector.getIncomeSources()
+        result.futureValue shouldBe IncomeSourceDetailsError(
+          Status.INTERNAL_SERVER_ERROR,
+          "Unexpected future failed error, unknown error"
+        )
 
-          }
-        }
+      }
+    }
 
-        ".getNino()" should {
+    ".getNino()" should {
 
-          val successResponse = HttpResponse(status = Status.OK, json = testNinoModelJson, headers = Map.empty)
-          val successResponseBadJson = HttpResponse(status = Status.OK, json = Json.parse("{}"), headers = Map.empty)
-          val badResponse = HttpResponse(Status.BAD_REQUEST, body = "Error Message")
+      val successResponse        = HttpResponse(status = Status.OK, json = testNinoModelJson, headers = Map.empty)
+      val successResponseBadJson = HttpResponse(status = Status.OK, json = Json.parse("{}"), headers = Map.empty)
+      val badResponse            = HttpResponse(Status.BAD_REQUEST, body = "Error Message")
 
-          "return a Nino model when successful JSON is received" in new Setup {
+      "return a Nino model when successful JSON is received" in new Setup {
 
-            when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
 
-            when(mockRequestBuilder.withBody(any())(any(), any(), any()))
-              .thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+          .thenReturn(mockRequestBuilder)
 
-            when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
-              .thenReturn(Future(successResponse))
+        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+          .thenReturn(Future(successResponse))
 
-            val result: Future[NinoResponse] = connector.getNino(testMtditid)
-            result.futureValue shouldBe testNinoModel
-          }
+        val result: Future[NinoResponse] = connector.getNino(testMtditid)
+        result.futureValue shouldBe testNinoModel
+      }
 
-          "return NinoResponseError model in case of bad/malformed JSON response" in new Setup {
+      "return NinoResponseError model in case of bad/malformed JSON response" in new Setup {
 
-            when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
 
-            when(mockRequestBuilder.withBody(any())(any(), any(), any()))
-              .thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+          .thenReturn(mockRequestBuilder)
 
-            when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
-              .thenReturn(Future(successResponseBadJson))
+        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+          .thenReturn(Future(successResponseBadJson))
 
-            val result: Future[NinoResponse] = connector.getNino(testMtditid)
-            result.futureValue shouldBe NinoResponseError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Nino Response")
-          }
+        val result: Future[NinoResponse] = connector.getNino(testMtditid)
+        result.futureValue shouldBe NinoResponseError(
+          Status.INTERNAL_SERVER_ERROR,
+          "Json Validation Error. Parsing Nino Response"
+        )
+      }
 
-          "return NinoResponseError model in case of failure" in new Setup {
+      "return NinoResponseError model in case of failure" in new Setup {
 
-            when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
 
-            when(mockRequestBuilder.withBody(any())(any(), any(), any()))
-              .thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+          .thenReturn(mockRequestBuilder)
 
-            when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
-              .thenReturn(Future(badResponse))
+        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+          .thenReturn(Future(badResponse))
 
-            val result: Future[NinoResponse] = connector.getNino(testMtditid)
-            result.futureValue shouldBe NinoResponseError(Status.BAD_REQUEST, "Error Message")
-          }
+        val result: Future[NinoResponse] = connector.getNino(testMtditid)
+        result.futureValue shouldBe NinoResponseError(Status.BAD_REQUEST, "Error Message")
+      }
 
-          "return NinoResponseError model in case of future failed scenario" in new Setup {
+      "return NinoResponseError model in case of future failed scenario" in new Setup {
 
-            when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
 
-            when(mockRequestBuilder.withBody(any())(any(), any(), any()))
-              .thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+          .thenReturn(mockRequestBuilder)
 
-            when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
-              .thenReturn(Future.failed(new Exception("unknown error")))
+        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+          .thenReturn(Future.failed(new Exception("unknown error")))
 
-            val result: Future[NinoResponse] = connector.getNino(testMtditid)
-            result.futureValue shouldBe NinoResponseError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, unknown error")
-          }
-        }
+        val result: Future[NinoResponse] = connector.getNino(testMtditid)
+        result.futureValue shouldBe NinoResponseError(
+          Status.INTERNAL_SERVER_ERROR,
+          s"Unexpected future failed error, unknown error"
+        )
+      }
+    }
 
     ".modifyHeaderCarrier()" should {
 
@@ -351,7 +383,11 @@ class BusinessDetailsConnectorSpec extends BaseConnectorSpec {
         val scenarios =
           Table(
             ("scenarioName", "path", "expectedHeader"),
-            ("Manage Business Journey", "/manage-your-businesses/reporting-frequency", Some("afterIncomeSourceCreated")),
+            (
+              "Manage Business Journey",
+              "/manage-your-businesses/reporting-frequency",
+              Some("afterIncomeSourceCreated")
+            ),
             ("UK Property", "/income-sources/uk-property-reporting-method", Some("afterIncomeSourceCreated")),
             ("Foreign Property", "/income-sources/foreign-property-reporting-method", Some("afterIncomeSourceCreated")),
             ("Sole Trader", "/income-sources/business-reporting-method", Some("afterIncomeSourceCreated"))
@@ -359,8 +395,8 @@ class BusinessDetailsConnectorSpec extends BaseConnectorSpec {
 
         forAll(scenarios) { (scenarioName: String, path: String, expectedHeader: Option[String]) =>
           s"add test header for $scenarioName with path: $path" in new Setup {
-            implicit val appConfig: FrontendAppConfig = getAppConfig()
-            val modifiedHeaderCarrier: HeaderCarrier = connector.modifyHeaderCarrier(path, hc)
+            implicit val appConfig:    FrontendAppConfig = getAppConfig()
+            val modifiedHeaderCarrier: HeaderCarrier     = connector.modifyHeaderCarrier(path, hc)
 
             modifiedHeaderCarrier.extraHeaders.toMap.get("Gov-Test-Scenario") shouldBe expectedHeader
           }
@@ -378,8 +414,8 @@ class BusinessDetailsConnectorSpec extends BaseConnectorSpec {
 
         forAll(noHeaderScenarios) { (scenarioName: String, path: String, expectedHeader: Option[String]) =>
           s"not add test header for $scenarioName with path: $path" in new Setup {
-            implicit val appConfig: FrontendAppConfig = getAppConfig()
-            val modifiedHeaderCarrier: HeaderCarrier = connector.modifyHeaderCarrier(path, hc)
+            implicit val appConfig:    FrontendAppConfig = getAppConfig()
+            val modifiedHeaderCarrier: HeaderCarrier     = connector.modifyHeaderCarrier(path, hc)
 
             modifiedHeaderCarrier.extraHeaders.toMap.get("Gov-Test-Scenario") shouldBe expectedHeader
           }

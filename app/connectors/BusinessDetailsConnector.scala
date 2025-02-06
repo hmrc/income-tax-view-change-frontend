@@ -34,11 +34,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class BusinessDetailsConnector @Inject()(
-                                          httpClient: HttpClientV2,
-                                          auditingService: AuditingService,
-                                          appConfig: FrontendAppConfig
-                                        )(implicit val ec: ExecutionContext) {
+class BusinessDetailsConnector @Inject() (
+    httpClient:      HttpClientV2,
+    auditingService: AuditingService,
+    appConfig:       FrontendAppConfig
+  )(
+    implicit val ec: ExecutionContext) {
 
   private[connectors] def getBusinessDetailsUrl(nino: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/get-business-details/nino/$nino"
@@ -63,13 +64,18 @@ class BusinessDetailsConnector @Inject()(
         response.status match {
           case OK =>
             Logger("application").debug(s"RESPONSE status: ${response.status}, json: ${response.json}")
-            response.json.validate[IncomeSourceDetailsModel].fold(
-              invalid => {
-                Logger("application").error(s"$invalid")
-                IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
-              },
-              valid => valid
-            )
+            response.json
+              .validate[IncomeSourceDetailsModel]
+              .fold(
+                invalid => {
+                  Logger("application").error(s"$invalid")
+                  IncomeSourceDetailsError(
+                    Status.INTERNAL_SERVER_ERROR,
+                    "Json Validation Error Parsing Income Source Details response"
+                  )
+                },
+                valid => valid
+              )
           case status if status >= 500 =>
             Logger("application").error(s"RESPONSE status: ${response.status}, body: ${response.body}")
             IncomeSourceDetailsError(response.status, response.body)
@@ -77,19 +83,23 @@ class BusinessDetailsConnector @Inject()(
             Logger("application").warn(s"RESPONSE status: ${response.status}, body: ${response.body}")
             IncomeSourceDetailsError(response.status, response.body)
         }
-      }.recover {
+      }
+      .recover {
         case ex =>
           Logger("application").error(s"Unexpected future failed error, ${ex.getMessage}")
           IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
       }
   }
 
-  def modifyHeaderCarrier(path: String,
-                          headerCarrier: HeaderCarrier
-                         )(implicit appConfig: FrontendAppConfig): HeaderCarrier = {
+  def modifyHeaderCarrier(
+      path:          String,
+      headerCarrier: HeaderCarrier
+    )(
+      implicit appConfig: FrontendAppConfig
+    ): HeaderCarrier = {
 
     val manageBusinessesPattern = """.*/manage-your-businesses/.*""".r
-    val incomeSourcesPattern = """.*/income-sources/.*""".r
+    val incomeSourcesPattern    = """.*/income-sources/.*""".r
 
     path match {
       case manageBusinessesPattern(_*) | incomeSourcesPattern(_*) =>
@@ -99,11 +109,11 @@ class BusinessDetailsConnector @Inject()(
     }
   }
 
-
-  def getIncomeSources()(
-    implicit headerCarrier: HeaderCarrier,
-    mtdItUser: AuthorisedAndEnrolledRequest[_]
-  ): Future[IncomeSourceDetailsResponse] = {
+  def getIncomeSources(
+    )(
+      implicit headerCarrier: HeaderCarrier,
+      mtdItUser:              AuthorisedAndEnrolledRequest[_]
+    ): Future[IncomeSourceDetailsResponse] = {
 
     val url = getIncomeSourcesUrl(mtdItUser.mtditId)
     Logger("application").debug(s"GET $url")
@@ -112,29 +122,35 @@ class BusinessDetailsConnector @Inject()(
 
     httpClient
       .get(url"$url")
-      .setHeader(hc.extraHeaders:_*)
+      .setHeader(hc.extraHeaders: _*)
       .execute[HttpResponse]
       .map { response =>
         response.status match {
           case OK =>
             Logger("application").debug(s"RESPONSE status: ${response.status}, json: ${response.json}")
-            response.json.validate[IncomeSourceDetailsModel].fold(
-              invalid => {
-                Logger("application").error(s"$invalid")
-                IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
-              },
-              valid => {
-                auditingService.extendedAudit(
-                  IncomeSourceDetailsResponseAuditModel(
-                    mtdItUser,
-                    valid.nino,
-                    valid.businesses.map(_.incomeSourceId),
-                    valid.properties.map(_.incomeSourceId),
-                    valid.yearOfMigration
-                  ))
-                valid
-              }
-            )
+            response.json
+              .validate[IncomeSourceDetailsModel]
+              .fold(
+                invalid => {
+                  Logger("application").error(s"$invalid")
+                  IncomeSourceDetailsError(
+                    Status.INTERNAL_SERVER_ERROR,
+                    "Json Validation Error Parsing Income Source Details response"
+                  )
+                },
+                valid => {
+                  auditingService.extendedAudit(
+                    IncomeSourceDetailsResponseAuditModel(
+                      mtdItUser,
+                      valid.nino,
+                      valid.businesses.map(_.incomeSourceId),
+                      valid.properties.map(_.incomeSourceId),
+                      valid.yearOfMigration
+                    )
+                  )
+                  valid
+                }
+              )
           case status if (status >= 500) =>
             Logger("application").error(s"RESPONSE status: ${response.status}, body: ${response.body}")
             IncomeSourceDetailsError(response.status, response.body)
@@ -142,7 +158,8 @@ class BusinessDetailsConnector @Inject()(
             Logger("application").warn(s"RESPONSE status: ${response.status}, body: ${response.body}")
             IncomeSourceDetailsError(response.status, response.body)
         }
-      }.recover {
+      }
+      .recover {
         case ex =>
           Logger("application").error(s"Unexpected future failed error, ${ex.getMessage}")
           IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
@@ -161,7 +178,8 @@ class BusinessDetailsConnector @Inject()(
         response.status match {
           case OK =>
             Logger("application").debug(s"RESPONSE status: ${response.status}, json: ${response.json}")
-            response.json.validate[NinoResponseSuccess]
+            response.json
+              .validate[NinoResponseSuccess]
               .fold(
                 invalid => {
                   Logger("application").error(s"Json Validation Error - $invalid")

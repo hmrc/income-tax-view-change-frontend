@@ -36,8 +36,10 @@ trait MockNinoLookupService extends UnitSpec with BeforeAndAfterEach {
   }
 
   def setupMockGetNino(mtdRef: String)(response: NinoResponse): Unit =
-    when(mockNinoLookupService
-      .getNino(ArgumentMatchers.eq(mtdRef))(ArgumentMatchers.any()))
+    when(
+      mockNinoLookupService
+        .getNino(ArgumentMatchers.eq(mtdRef))(ArgumentMatchers.any())
+    )
       .thenReturn(Future.successful(response))
 
 }

@@ -29,17 +29,17 @@ import views.html.navBar.PtaPartial
 
 trait AuthActionsSpecHelper extends TestSupport with ScalaFutures {
 
-  lazy val mockAuthConnector = mock[FrontendAuthConnector]
+  lazy val mockAuthConnector              = mock[FrontendAuthConnector]
   lazy val mockIncomeSourceDetailsService = mock[IncomeSourceDetailsService]
-  lazy val mockAppConfig = mock[FrontendAppConfig]
-  lazy val mockAuditingService = mock[AuditingService]
-  lazy val mockSessionDataService = mock[SessionDataService]
-  lazy val mockItvcErrorHandler = mock[ItvcErrorHandler]
+  lazy val mockAppConfig                  = mock[FrontendAppConfig]
+  lazy val mockAuditingService            = mock[AuditingService]
+  lazy val mockSessionDataService         = mock[SessionDataService]
+  lazy val mockItvcErrorHandler           = mock[ItvcErrorHandler]
 
-  lazy val mockBtaNavBarController = mock[BtaNavBarController]
-  lazy val mockPtaPartial = mock[PtaPartial]
+  lazy val mockBtaNavBarController  = mock[BtaNavBarController]
+  lazy val mockPtaPartial           = mock[PtaPartial]
   lazy val mockFeatureSwitchService = mock[FeatureSwitchService]
-  lazy val mockAgentErrorHandler = mock[AgentItvcErrorHandler]
+  lazy val mockAgentErrorHandler    = mock[AgentItvcErrorHandler]
 
   override def beforeEach(): Unit = {
     super.beforeEach()

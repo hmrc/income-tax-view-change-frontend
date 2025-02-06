@@ -20,16 +20,14 @@ import play.api.mvc.Call
 import testUtils.ViewSpec
 import views.html.agent.confirmClient
 
-
 class ConfirmClientViewSpec extends ViewSpec {
 
-  lazy val postAction: Call = controllers.agent.routes.ConfirmClientUTRController.submit
-  lazy val backUrl: String = controllers.agent.routes.EnterClientsUTRController.show.url
+  lazy val postAction:     Call           = controllers.agent.routes.ConfirmClientUTRController.submit
+  lazy val backUrl:        String         = controllers.agent.routes.EnterClientsUTRController.show.url
   lazy val testClientName: Option[String] = Some("Test Name")
-  lazy val testClientUTR: Option[String] = Some("1234567890")
+  lazy val testClientUTR:  Option[String] = Some("1234567890")
 
   val confirmClient: confirmClient = app.injector.instanceOf[confirmClient]
-
 
   val confirmClientView = confirmClient(
     clientName = testClientName,
@@ -39,13 +37,13 @@ class ConfirmClientViewSpec extends ViewSpec {
   )
 
   object confirmClientMessages {
-    val heading: String = messages("agent.confirmClient.heading")
-    val title: String = messages("htmlTitle.confirmClient", heading)
-    val backLink: String = messages("base.back")
+    val heading:           String = messages("agent.confirmClient.heading")
+    val title:             String = messages("htmlTitle.confirmClient", heading)
+    val backLink:          String = messages("base.back")
     val clientNameHeading: String = messages("agent.confirmClient.clientName")
-    val clientUTRHeading: String = messages("agent.confirmClient.clientUtr")
-    val changeClient: String = messages("agent.confirmClient.changeClient")
-    val confirmContinue: String = messages("agent.confirmClient.confirmContinue")
+    val clientUTRHeading:  String = messages("agent.confirmClient.clientUtr")
+    val changeClient:      String = messages("agent.confirmClient.changeClient")
+    val confirmContinue:   String = messages("agent.confirmClient.confirmContinue")
   }
 
   "the Confirm Client page" should {
@@ -63,7 +61,9 @@ class ConfirmClientViewSpec extends ViewSpec {
     }
 
     s"have the sub heading ${confirmClientMessages.clientNameHeading}" in new Setup(confirmClientView) {
-      layoutContent.selectHead("dl > div:nth-child(1) > dt:nth-child(1)").text shouldBe confirmClientMessages.clientNameHeading
+      layoutContent
+        .selectHead("dl > div:nth-child(1) > dt:nth-child(1)")
+        .text shouldBe confirmClientMessages.clientNameHeading
     }
 
     s"display the client name as ${testClientName.get}" in new Setup(confirmClientView) {
@@ -71,7 +71,9 @@ class ConfirmClientViewSpec extends ViewSpec {
     }
 
     s"have the sub heading ${confirmClientMessages.clientUTRHeading}" in new Setup(confirmClientView) {
-      layoutContent.selectHead("dl > div:nth-child(2) > dt:nth-child(1)").text shouldBe confirmClientMessages.clientUTRHeading
+      layoutContent
+        .selectHead("dl > div:nth-child(2) > dt:nth-child(1)")
+        .text shouldBe confirmClientMessages.clientUTRHeading
     }
 
     s"display the client UTR as ${testClientUTR.get}" in new Setup(confirmClientView) {
@@ -88,10 +90,11 @@ class ConfirmClientViewSpec extends ViewSpec {
       button.text shouldBe confirmClientMessages.confirmContinue
     }
     s"have the black banner empty" in new Setup(confirmClientView) {
-      document.select(".govuk-header__content")
-        .select(".hmrc-header__service-name hmrc-header__service-name--linked").text shouldBe ("")
+      document
+        .select(".govuk-header__content")
+        .select(".hmrc-header__service-name hmrc-header__service-name--linked")
+        .text shouldBe ("")
     }
   }
-
 
 }

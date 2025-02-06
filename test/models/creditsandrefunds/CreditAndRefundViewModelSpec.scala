@@ -27,31 +27,31 @@ class CreditAndRefundViewModelSpec extends UnitSpec {
 
   "sorted credit rows" should {
 
-   "return credits in reverse date order" in {
+    "return credits in reverse date order" in {
 
-     val model = ANewCreditAndRefundModel()
-       .withCutoverCredit(dueDate = dateInYear(2023), outstandingAmount = 1.0)
-       .withBalancingChargeCredit(dueDate = dateInYear(2024), outstandingAmount = 2.0)
-       .withMfaCredit(dueDate = dateInYear(2021), outstandingAmount = 3.0)
-       .withRepaymentInterest(dueDate = dateInYear(2022), outstandingAmount = 4.0)
-       .get()
+      val model = ANewCreditAndRefundModel()
+        .withCutoverCredit(dueDate = dateInYear(2023), outstandingAmount = 1.0)
+        .withBalancingChargeCredit(dueDate = dateInYear(2024), outstandingAmount = 2.0)
+        .withMfaCredit(dueDate = dateInYear(2021), outstandingAmount = 3.0)
+        .withRepaymentInterest(dueDate = dateInYear(2022), outstandingAmount = 4.0)
+        .get()
 
-     val rows = CreditAndRefundViewModel.fromCreditAndRefundModel(model).creditRows
+      val rows = CreditAndRefundViewModel.fromCreditAndRefundModel(model).creditRows
 
-     rows shouldBe List(
-       CreditViewRow(2.0, BalancingChargeCreditType, TaxYear.forYearEnd(2024)),
-       CreditViewRow(1.0, CutOverCreditType, TaxYear.forYearEnd(2023)),
-       CreditViewRow(4.0, RepaymentInterest, TaxYear.forYearEnd(2022)),
-       CreditViewRow(3.0, MfaCreditType, TaxYear.forYearEnd(2021))
-     )
-   }
+      rows shouldBe List(
+        CreditViewRow(2.0, BalancingChargeCreditType, TaxYear.forYearEnd(2024)),
+        CreditViewRow(1.0, CutOverCreditType, TaxYear.forYearEnd(2023)),
+        CreditViewRow(4.0, RepaymentInterest, TaxYear.forYearEnd(2022)),
+        CreditViewRow(3.0, MfaCreditType, TaxYear.forYearEnd(2021))
+      )
+    }
 
     "return refunds in reverse order of amount" in {
 
       val model = ANewCreditAndRefundModel()
-               .withFirstRefund(10.0)
-               .withSecondRefund(20.0)
-               .get()
+        .withFirstRefund(10.0)
+        .withSecondRefund(20.0)
+        .get()
 
       val rows = CreditAndRefundViewModel.fromCreditAndRefundModel(model).creditRows
 

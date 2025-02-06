@@ -36,35 +36,36 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UIJourneySessionDataRepository @Inject()(
-                                                mongoComponent: MongoComponent,
-                                                appConfig: FrontendAppConfig,
-                                                clock: Clock
-                                              )(implicit ec: ExecutionContext)
-  extends PlayMongoRepository[UIJourneySessionData](
-    collectionName = "ui-journey-session-data",
-    mongoComponent = mongoComponent,
-    domainFormat = UIJourneySessionData.format,
-    indexes = Seq(
-      IndexModel(
-        Indexes.ascending("sessionId"),
-        IndexOptions()
-          .name("sessionIdIdx")
+class UIJourneySessionDataRepository @Inject() (
+    mongoComponent: MongoComponent,
+    appConfig:      FrontendAppConfig,
+    clock:          Clock
+  )(
+    implicit ec: ExecutionContext)
+    extends PlayMongoRepository[UIJourneySessionData](
+      collectionName = "ui-journey-session-data",
+      mongoComponent = mongoComponent,
+      domainFormat = UIJourneySessionData.format,
+      indexes = Seq(
+        IndexModel(
+          Indexes.ascending("sessionId"),
+          IndexOptions()
+            .name("sessionIdIdx")
+        ),
+        IndexModel(
+          Indexes.ascending("journeyType"),
+          IndexOptions()
+            .name("journeyTypeIdx")
+        ),
+        IndexModel(
+          Indexes.ascending("lastUpdated"),
+          IndexOptions()
+            .name("lastUpdatedIdx")
+            .expireAfter(appConfig.cacheTtl, TimeUnit.SECONDS)
+        )
       ),
-      IndexModel(
-        Indexes.ascending("journeyType"),
-        IndexOptions()
-          .name("journeyTypeIdx")
-      ),
-      IndexModel(
-        Indexes.ascending("lastUpdated"),
-        IndexOptions()
-          .name("lastUpdatedIdx")
-          .expireAfter(appConfig.cacheTtl, TimeUnit.SECONDS)
-      )
-    ),
-    replaceIndexes = true
-  ) {
+      replaceIndexes = true
+    ) {
 
   implicit val instantFormat: Format[Instant] = MongoJavatimeFormats.instantFormat
 
@@ -89,11 +90,10 @@ class UIJourneySessionDataRepository @Inject()(
 
   def get(sessionId: String, journeyType: JourneyType): Future[Option[UIJourneySessionData]] = {
     val data = UIJourneySessionData(sessionId, journeyType.toString)
-    keepAlive(data).flatMap {
-      _ =>
-        collection
-          .find(dataFilter(data))
-          .headOption()
+    keepAlive(data).flatMap { _ =>
+      collection
+        .find(dataFilter(data))
+        .headOption()
     }
   }
 
@@ -112,17 +112,25 @@ class UIJourneySessionDataRepository @Inject()(
   }
 
   def updateData(data: UIJourneySessionData, key: String, value: String): Future[UpdateResult] = {
-    collection.updateOne(
-      filter = dataFilter(data),
-      update = Document("$set" -> Document(key -> value))
-    ).toFuture()
+    collection
+      .updateOne(
+        filter = dataFilter(data),
+        update = Document("$set" -> Document(key -> value))
+      )
+      .toFuture()
   }
 
   def updateMultipleData(data: UIJourneySessionData, keyAndValue: Map[String, String]): Future[UpdateResult] = {
-    collection.updateOne(
-      filter = dataFilter(data),
-      update = combine(keyAndValue.map(keyAndValueTuple => org.mongodb.scala.model.Updates.set(keyAndValueTuple._1, keyAndValueTuple._2)).toList: _*)
-    ).toFuture()
+    collection
+      .updateOne(
+        filter = dataFilter(data),
+        update = combine(
+          keyAndValue
+            .map(keyAndValueTuple => org.mongodb.scala.model.Updates.set(keyAndValueTuple._1, keyAndValueTuple._2))
+            .toList: _*
+        )
+      )
+      .toFuture()
   }
 
   def deleteOne(data: UIJourneySessionData): Future[Boolean] =
@@ -138,7 +146,9 @@ class UIJourneySessionDataRepository @Inject()(
       .map(_.wasAcknowledged())
 
   def clearSession(sessionId: String): Future[Boolean] = {
-    collection.deleteMany(equal("sessionId", sessionId)).toFuture()
+    collection
+      .deleteMany(equal("sessionId", sessionId))
+      .toFuture()
       .map(_.wasAcknowledged())
   }
 }

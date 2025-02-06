@@ -20,15 +20,16 @@ import models.incomeSourceDetails.TaxYear
 import services.DateServiceInterface
 
 case class ReportingFrequencyViewModel(
-                                        isAgent: Boolean,
-                                        optOutJourneyUrl: Option[String],
-                                        optOutTaxYears: Seq[TaxYear],
-                                        optInTaxYears: Seq[TaxYear],
-                                        itsaStatusTable: Seq[(String, Option[String])],
-                                        displayCeasedBusinessWarning: Boolean,
-                                        isAnyOfBusinessLatent: Boolean,
-                                        displayManageYourRfSection: Boolean = true
-                                      )(implicit dateService: DateServiceInterface) {
+    isAgent:                      Boolean,
+    optOutJourneyUrl:             Option[String],
+    optOutTaxYears:               Seq[TaxYear],
+    optInTaxYears:                Seq[TaxYear],
+    itsaStatusTable:              Seq[(String, Option[String])],
+    displayCeasedBusinessWarning: Boolean,
+    isAnyOfBusinessLatent:        Boolean,
+    displayManageYourRfSection:   Boolean = true
+  )(
+    implicit dateService: DateServiceInterface) {
 
   val isOptInLinkOnward: Boolean =
     optInTaxYears.size == 1 && optInTaxYears.head == dateService.getCurrentTaxYear.nextYear
@@ -38,7 +39,9 @@ case class ReportingFrequencyViewModel(
 
   val isOptInLinkFirst: Boolean =
     optOutTaxYears.isEmpty ||
-      (optInTaxYears.nonEmpty && (optInTaxYears.minBy(_.startYear).startYear < optOutTaxYears.minBy(_.startYear).startYear))
+      (optInTaxYears.nonEmpty && (optInTaxYears.minBy(_.startYear).startYear < optOutTaxYears
+        .minBy(_.startYear)
+        .startYear))
 
   val atLeastOneOfOptInOrOptOutExists: Boolean = optOutTaxYears.nonEmpty || optInTaxYears.nonEmpty
 }

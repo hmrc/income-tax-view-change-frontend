@@ -18,7 +18,8 @@ package models.optin
 
 import models.incomeSourceDetails.TaxYear
 
-case class ConfirmTaxYearViewModel(availableOptInTaxYear: TaxYear,
-                                   cancelURL: String,
-                                   isNextTaxYear: Boolean,
-                                   isAgent: Boolean)
+case class ConfirmTaxYearViewModel(
+    availableOptInTaxYear: TaxYear,
+    cancelURL:             String,
+    isNextTaxYear:         Boolean,
+    isAgent:               Boolean)

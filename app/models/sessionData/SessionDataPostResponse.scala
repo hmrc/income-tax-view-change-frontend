@@ -31,7 +31,7 @@ object SessionDataPostResponse {
     override def read(method: String, url: String, response: HttpResponse): SessionDataPostResponse = {
       response.status match {
         case status if status == OK || status == CONFLICT => Right(SessionDataPostSuccess(status))
-        case status => Left(SessionDataPostFailure(status, s"User session could not be saved. status: $status"))
+        case status                                       => Left(SessionDataPostFailure(status, s"User session could not be saved. status: $status"))
       }
     }
   }

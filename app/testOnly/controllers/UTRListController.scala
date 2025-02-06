@@ -34,40 +34,46 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UTRListController @Inject()(listUTRsView: ListUTRs,
-                                   val authorisedFunctions: AuthorisedFunctions,
-                                   enrolmentService: EnrolmentService,
-                                   userRepository: UserRepository
-                                 )(implicit
-                                   val appConfig: FrontendAppConfig,
-                                   mcc: MessagesControllerComponents,
-                                   implicit val ec: ExecutionContext,
-                                   val itvcErrorHandler: AgentItvcErrorHandler
-                                 ) extends FrontendController(mcc) with I18nSupport with FeatureSwitching with RawResponseReads {
+class UTRListController @Inject() (
+    listUTRsView:            ListUTRs,
+    val authorisedFunctions: AuthorisedFunctions,
+    enrolmentService:        EnrolmentService,
+    userRepository:          UserRepository
+  )(
+    implicit
+    val appConfig:        FrontendAppConfig,
+    mcc:                  MessagesControllerComponents,
+    implicit val ec:      ExecutionContext,
+    val itvcErrorHandler: AgentItvcErrorHandler)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with FeatureSwitching
+    with RawResponseReads {
 
-  def listUTRs(): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
-    authorisedFunctions.authorised().retrieve(allEnrolments and affinityGroup and groupIdentifier) {
-      case _ ~ _ ~ Some(groupId) =>
-        Logger("application").info(s"${Console.YELLOW} agent groupid found: $groupId" + Console.WHITE)
-        enrolmentService.fetchEnrolments(groupId).flatMap {
-          case Right(enrolmentsResponse) =>
-            val agentMTDITIDs = enrolmentsResponse.enrolments.flatMap(_.identifiers.collect {
-              case Identifier("MTDITID", value) => value
-            })
+  def listUTRs(): Action[AnyContent] =
+    Action.async { implicit request: Request[AnyContent] =>
+      authorisedFunctions.authorised().retrieve(allEnrolments and affinityGroup and groupIdentifier) {
+        case _ ~ _ ~ Some(groupId) =>
+          Logger("application").info(s"${Console.YELLOW} agent groupid found: $groupId" + Console.WHITE)
+          enrolmentService.fetchEnrolments(groupId).flatMap {
+            case Right(enrolmentsResponse) =>
+              val agentMTDITIDs = enrolmentsResponse.enrolments.flatMap(_.identifiers.collect {
+                case Identifier("MTDITID", value) => value
+              })
 
-            userRepository.findAll().map { userRecords =>
-              val matchedRecords = enrolmentService.filterUserRecords(userRecords.toList, agentMTDITIDs)
-              Ok(listUTRsView(utrs = matchedRecords))
-            }
+              userRepository.findAll().map { userRecords =>
+                val matchedRecords = enrolmentService.filterUserRecords(userRecords.toList, agentMTDITIDs)
+                Ok(listUTRsView(utrs = matchedRecords))
+              }
 
-          case Left(errorMessage) =>
-            Logger("application").error(errorMessage)
-            Future.successful(InternalServerError(errorMessage))
-        }
+            case Left(errorMessage) =>
+              Logger("application").error(errorMessage)
+              Future.successful(InternalServerError(errorMessage))
+          }
 
-      case _ =>
-        Logger("application").error("Group ID not found")
-        Future.successful(BadRequest("Group ID not found"))
+        case _ =>
+          Logger("application").error("Group ID not found")
+          Future.successful(BadRequest("Group ID not found"))
+      }
     }
-  }
 }

@@ -31,10 +31,16 @@ object FileUtil {
     }.toEither
   }
 
-  def getUserCredentials(nino: String, userRepository: UserRepository)(implicit executor: ExecutionContext): Future[UserCredentials] = {
+  def getUserCredentials(
+      nino:           String,
+      userRepository: UserRepository
+    )(
+      implicit executor: ExecutionContext
+    ): Future[UserCredentials] = {
     userRepository.findUser(nino).map {
       case record: UserRecord =>
-        UserCredentials(credId = UserCredentials.credId,
+        UserCredentials(
+          credId = UserCredentials.credId,
           affinityGroup = "Individual",
           confidenceLevel = 250,
           credentialStrength = "strong",

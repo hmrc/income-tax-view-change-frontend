@@ -29,17 +29,20 @@ import views.html.optOut.SingleYearOptOutWarning
 class SingleYearOptOutWarningViewSpec extends ViewSpec {
 
   val singleYearOptOutWarningView: SingleYearOptOutWarning = app.injector.instanceOf[SingleYearOptOutWarning]
-  val taxYear: TaxYear = TaxYear.forYearEnd(2024)
+  val taxYear:                     TaxYear                 = TaxYear.forYearEnd(2024)
 
   val form: Form[ConfirmOptOutSingleTaxYearForm] = ConfirmOptOutSingleTaxYearForm(taxYear)
 
   val errorMessage: String = "some error message"
-  val formWithError: Form[ConfirmOptOutSingleTaxYearForm] = form.withError(ConfirmOptOutSingleTaxYearForm.confirmOptOutField, errorMessage)
+  val formWithError: Form[ConfirmOptOutSingleTaxYearForm] =
+    form.withError(ConfirmOptOutSingleTaxYearForm.confirmOptOutField, errorMessage)
 
   val submitAction: Call = Call(HttpVerbs.POST, "/some/url")
   val backUrl = "/some/back/url"
-  val renderedView: HtmlFormat.Appendable = singleYearOptOutWarningView(taxYear, form, submitAction, backUrl, isAgent = false)
-  val renderedErrorView: HtmlFormat.Appendable = singleYearOptOutWarningView(taxYear, formWithError, submitAction, backUrl, isAgent = false)
+  val renderedView: HtmlFormat.Appendable =
+    singleYearOptOutWarningView(taxYear, form, submitAction, backUrl, isAgent = false)
+  val renderedErrorView: HtmlFormat.Appendable =
+    singleYearOptOutWarningView(taxYear, formWithError, submitAction, backUrl, isAgent = false)
 
   "SingleYearOptOutWarningView" when {
     "called" should {
@@ -52,23 +55,28 @@ class SingleYearOptOutWarningViewSpec extends ViewSpec {
       }
 
       "have the correct detail text" in new Setup(renderedView) {
-        document.selectById("detail-text").text() shouldBe s"You can only opt out for the ${taxYear.startYear} to ${taxYear.endYear} tax year."
+        document
+          .selectById("detail-text")
+          .text() shouldBe s"You can only opt out for the ${taxYear.startYear} to ${taxYear.endYear} tax year."
       }
 
       "have the correct inset text" in new Setup(renderedView) {
-        document.selectById("warning-inset").text() shouldBe s"If you continue, from 6 April ${taxYear.endYear}. you’ll be required to send quarterly updates again through software."
+        document
+          .selectById("warning-inset")
+          .text() shouldBe s"If you continue, from 6 April ${taxYear.endYear}. you’ll be required to send quarterly updates again through software."
       }
 
       "have correct form details" in new Setup(renderedView) {
         private val form: Element = document.selectById("confirm-single-year-opt-out-form")
-        private val formTitle = form.selectFirst(".govuk-fieldset__legend--m")
-        private val options = form.selectFirst(".govuk-radios")
+        private val formTitle    = form.selectFirst(".govuk-fieldset__legend--m")
+        private val options      = form.selectFirst(".govuk-radios")
         private val optionLabels = options.select(".govuk-radios__label")
 
         form.attr("method") shouldBe submitAction.method
         form.attr("action") shouldBe submitAction.url
 
-        formTitle.text() shouldBe s"Do you still want to opt out for the ${taxYear.startYear} to ${taxYear.endYear} tax year?"
+        formTitle
+          .text() shouldBe s"Do you still want to opt out for the ${taxYear.startYear} to ${taxYear.endYear} tax year?"
 
         options.childrenSize() shouldBe 2
         optionLabels.get(0).text() shouldBe "Yes"

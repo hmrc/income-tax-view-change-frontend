@@ -32,12 +32,15 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeSourceRetrievalAction @Inject()(val incomeSourceDetailsService: IncomeSourceDetailsService)
-                                           (implicit val executionContext: ExecutionContext,
-                                            val individualErrorHandler: ItvcErrorHandler,
-                                            val agentErrorHandler: AgentItvcErrorHandler,
-                                            mcc: MessagesControllerComponents) extends BaseController with
-  ActionRefiner[AuthorisedAndEnrolledRequest, MtdItUser] {
+class IncomeSourceRetrievalAction @Inject() (
+    val incomeSourceDetailsService: IncomeSourceDetailsService
+  )(
+    implicit val executionContext: ExecutionContext,
+    val individualErrorHandler:    ItvcErrorHandler,
+    val agentErrorHandler:         AgentItvcErrorHandler,
+    mcc:                           MessagesControllerComponents)
+    extends BaseController
+    with ActionRefiner[AuthorisedAndEnrolledRequest, MtdItUser] {
 
   override def refine[A](request: AuthorisedAndEnrolledRequest[A]): Future[Either[Result, MtdItUser[A]]] = {
 
@@ -46,13 +49,25 @@ class IncomeSourceRetrievalAction @Inject()(val incomeSourceDetailsService: Inco
     // no caching for now
     incomeSourceDetailsService.getIncomeSourceDetails() map {
       case response: IncomeSourceDetailsModel =>
-        Right(MtdItUser(request.mtditId, response.nino, request.mtdUserRole, request.authUserDetails, request.clientDetails, response))
+        Right(
+          MtdItUser(
+            request.mtditId,
+            response.nino,
+            request.mtdUserRole,
+            request.authUserDetails,
+            request.clientDetails,
+            response
+          )
+        )
       case error: IncomeSourceDetailsError => Left(logWithUserType(s"[${error.status}] ${error.reason}"))
     } recover logAndRedirect()
 
   }
 
-  def logAndRedirect[A]()(implicit req: AuthorisedAndEnrolledRequest[A]): PartialFunction[Throwable, Either[Result, MtdItUser[A]]] = {
+  def logAndRedirect[A](
+    )(
+      implicit req: AuthorisedAndEnrolledRequest[A]
+    ): PartialFunction[Throwable, Either[Result, MtdItUser[A]]] = {
     case throwable: Throwable =>
       Left(logWithUserType(s"[${throwable.getClass.getSimpleName}] ${throwable.getLocalizedMessage}"))
   }

@@ -30,33 +30,43 @@ import java.time.LocalDate
 
 class NextUpdatesViewSpec extends TestSupport {
 
-  lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-  val nextUpdatesView: NextUpdates = app.injector.instanceOf[NextUpdates]
-  val claimToAdjustPoaMessage: String = messages("nextUpdates.claim-to-adjust.text")
-  val claimToAdjustPoaLink: String = "/report-quarterly/income-and-expenses/view/adjust-poa/start"
+  lazy val mockAppConfig:      FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  val nextUpdatesView:         NextUpdates       = app.injector.instanceOf[NextUpdates]
+  val claimToAdjustPoaMessage: String            = messages("nextUpdates.claim-to-adjust.text")
+  val claimToAdjustPoaLink:    String            = "/report-quarterly/income-and-expenses/view/adjust-poa/start"
 
   class Setup(currentObligations: NextUpdatesViewModel, isSupportingAgent: Boolean = false) {
-    val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, "testBackURL", isSupportingAgent = isSupportingAgent)))
+    val pageDocument: Document = Jsoup.parse(
+      contentAsString(nextUpdatesView(currentObligations, "testBackURL", isSupportingAgent = isSupportingAgent))
+    )
   }
 
   object obligationsMessages {
-    val heading: String = messages("nextUpdates.heading")
-    val title: String = messages("htmlTitle", heading)
-    val summary: String = messages("nextUpdates.dropdown.info")
-    val summaryQuarterly: String = messages("obligations.quarterlyUpdates")
-    val quarterlyLine1: String = messages("nextUpdates.dropdown.quarterlyReturn.text")
-    val quarterlyLine2: String = messages("nextUpdates.dropdown.quarterlyReturn.text.lin2")
-    val declarationLine1: String = messages("nextUpdates.dropdown.finalDeclaration.text")
+    val heading:            String = messages("nextUpdates.heading")
+    val title:              String = messages("htmlTitle", heading)
+    val summary:            String = messages("nextUpdates.dropdown.info")
+    val summaryQuarterly:   String = messages("obligations.quarterlyUpdates")
+    val quarterlyLine1:     String = messages("nextUpdates.dropdown.quarterlyReturn.text")
+    val quarterlyLine2:     String = messages("nextUpdates.dropdown.quarterlyReturn.text.lin2")
+    val declarationLine1:   String = messages("nextUpdates.dropdown.finalDeclaration.text")
     val summaryDeclaration: String = messages("obligations.finalDeclarationUpdate")
-    val info: String = s"${messages("nextUpdates.previousYears.textOne")} ${messages("nextUpdates.previousYears.link")} ${messages("nextUpdates.previousYears.textTwo")}"
+    val info: String =
+      s"${messages("nextUpdates.previousYears.textOne")} ${messages("nextUpdates.previousYears.link")} ${messages("nextUpdates.previousYears.textTwo")}"
   }
 
-  lazy val obligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(
-    business1.incomeSourceId,
-    twoObligationsSuccessModel.obligations
-  ))).obligationsByDate.map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
-    DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
-  })
+  lazy val obligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(
+    ObligationsModel(
+      Seq(
+        GroupedObligationsModel(
+          business1.incomeSourceId,
+          twoObligationsSuccessModel.obligations
+        )
+      )
+    ).obligationsByDate.map {
+      case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
+        DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
+    }
+  )
 
   "Next Updates page" should {
 
@@ -99,7 +109,9 @@ class NextUpdatesViewSpec extends TestSupport {
     s"have the information ${obligationsMessages.info}" when {
       "a primary agent or individual" in new Setup(obligationsModel) {
         pageDocument.select("p:nth-child(6)").text shouldBe obligationsMessages.info
-        pageDocument.select("p:nth-child(6) a").attr("href") shouldBe controllers.routes.TaxYearsController.showTaxYears().url
+        pageDocument.select("p:nth-child(6) a").attr("href") shouldBe controllers.routes.TaxYearsController
+          .showTaxYears()
+          .url
       }
     }
 

@@ -25,14 +25,15 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.{JsArray, Json}
 import testConstants.BaseIntegrationTestConstants.testNino
 
-
 object ITSAStatusDetailsStub extends ComponentSpecBase {
 
   def getUrl(taxYearRange: String = "23-24", futureYears: Boolean = false): String =
     s"/income-tax-view-change/itsa-status/status/$testNino/$taxYearRange?futureYears=$futureYears&history=false"
 
   def stubGetITSAStatusDetails(status: String, taxYearRange: String = "2024-25"): StubMapping = {
-    WiremockHelper.stubGet(getUrl(taxYearRange.takeRight(5)), OK,
+    WiremockHelper.stubGet(
+      getUrl(taxYearRange.takeRight(5)),
+      OK,
       s"""|[
           |  {
           |    "taxYear": "$taxYearRange",
@@ -50,29 +51,29 @@ object ITSAStatusDetailsStub extends ComponentSpecBase {
   }
 
   def stubGetITSAStatusFutureYearsDetails(
-                                           taxYear: TaxYear,
-                                           `itsaStatusCY-1`: ITSAStatus = ITSAStatus.Mandated,
-                                           itsaStatusCY: ITSAStatus = ITSAStatus.Mandated,
-                                           `itsaStatusCY+1`: ITSAStatus = ITSAStatus.Mandated
-                                         ): StubMapping = {
+      taxYear:          TaxYear,
+      `itsaStatusCY-1`: ITSAStatus = ITSAStatus.Mandated,
+      itsaStatusCY:     ITSAStatus = ITSAStatus.Mandated,
+      `itsaStatusCY+1`: ITSAStatus = ITSAStatus.Mandated
+    ): StubMapping = {
     val previousYear = taxYear.previousYear
-    val futureYear = taxYear.nextYear
+    val futureYear   = taxYear.nextYear
 
     val taxYearToStatus: Map[String, String] =
       Map(
-        s"${futureYear.startYear}-${futureYear.shortenTaxYearEnd}" -> `itsaStatusCY+1`.toString,
-        s"${taxYear.startYear}-${taxYear.shortenTaxYearEnd}" -> itsaStatusCY.toString,
+        s"${futureYear.startYear}-${futureYear.shortenTaxYearEnd}"     -> `itsaStatusCY+1`.toString,
+        s"${taxYear.startYear}-${taxYear.shortenTaxYearEnd}"           -> itsaStatusCY.toString,
         s"${previousYear.startYear}-${previousYear.shortenTaxYearEnd}" -> `itsaStatusCY-1`.toString
       )
 
     WiremockHelper.stubGet(
       url = getUrl(s"${previousYear.`taxYearYY-YY`}", futureYears = true),
       status = OK,
-      body = taxYearToStatus.foldLeft(JsArray()) {
-        case (array, (taxYear, status)) =>
-          val itsaStatusObject =
-            Json.parse(
-              s"""{
+      body = taxYearToStatus
+        .foldLeft(JsArray()) {
+          case (array, (taxYear, status)) =>
+            val itsaStatusObject =
+              Json.parse(s"""{
                  |  "taxYear": "$taxYear",
                  |  "itsaStatusDetails": [
                  |    {
@@ -83,30 +84,35 @@ object ITSAStatusDetailsStub extends ComponentSpecBase {
                  |    }
                  |  ]
                  |}""".stripMargin)
-          array.append(itsaStatusObject)
-      }.toString()
+            array.append(itsaStatusObject)
+        }
+        .toString()
     )
   }
 
-  case class ITSAYearStatus(previousYear: ITSAStatus.ITSAStatus, currentYear: ITSAStatus.ITSAStatus, nextYear: ITSAStatus.ITSAStatus)
+  case class ITSAYearStatus(
+      previousYear: ITSAStatus.ITSAStatus,
+      currentYear:  ITSAStatus.ITSAStatus,
+      nextYear:     ITSAStatus.ITSAStatus)
 
   def stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(taxYear: Int, yearStatus: ITSAYearStatus): StubMapping = {
     val previousYear = taxYear - 1
-    val futureYear = taxYear + 1
+    val futureYear   = taxYear + 1
 
     def shortTaxYear(taxYear: Int) = taxYear.toString.takeRight(2).toInt
 
     val taxYearToStatus: Map[String, String] = Map(
-      s"${futureYear - 1}-${shortTaxYear(futureYear)}" -> yearStatus.nextYear.toString,
-      s"${taxYear - 1}-${shortTaxYear(taxYear)}" -> yearStatus.currentYear.toString,
+      s"${futureYear - 1}-${shortTaxYear(futureYear)}"     -> yearStatus.nextYear.toString,
+      s"${taxYear - 1}-${shortTaxYear(taxYear)}"           -> yearStatus.currentYear.toString,
       s"${previousYear - 1}-${shortTaxYear(previousYear)}" -> yearStatus.previousYear.toString
     )
-    WiremockHelper.stubGet(getUrl(s"${shortTaxYear(previousYear) - 1}-${shortTaxYear(previousYear)}", futureYears = true), OK,
-
-      taxYearToStatus.foldLeft(JsArray()) {
-        case (array, (taxYear, status)) =>
-          val itsaStatusObject = Json.parse(
-            s"""  {
+    WiremockHelper.stubGet(
+      getUrl(s"${shortTaxYear(previousYear) - 1}-${shortTaxYear(previousYear)}", futureYears = true),
+      OK,
+      taxYearToStatus
+        .foldLeft(JsArray()) {
+          case (array, (taxYear, status)) =>
+            val itsaStatusObject = Json.parse(s"""  {
                |    "taxYear": "$taxYear",
                |    "itsaStatusDetails": [
                |      {
@@ -117,14 +123,18 @@ object ITSAStatusDetailsStub extends ComponentSpecBase {
                |      }
                |    ]
                |  }""".stripMargin)
-          array.append(itsaStatusObject)
-      }.toString()
+            array.append(itsaStatusObject)
+        }
+        .toString()
     )
   }
 
   def stubGetITSAStatusDetailsError(taxYear: String = "23-24", futureYears: Boolean = false): StubMapping = {
-    WiremockHelper.stubGet(getUrl(taxYear, futureYears), INTERNAL_SERVER_ERROR, "IF is currently experiencing problems that require live service intervention.")
+    WiremockHelper.stubGet(
+      getUrl(taxYear, futureYears),
+      INTERNAL_SERVER_ERROR,
+      "IF is currently experiencing problems that require live service intervention."
+    )
   }
-
 
 }

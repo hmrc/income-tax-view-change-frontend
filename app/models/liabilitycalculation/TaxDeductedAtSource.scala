@@ -19,17 +19,16 @@ package models.liabilitycalculation
 import play.api.libs.json._
 
 case class TaxDeductedAtSource(
-                                bbsi: Option[BigDecimal] = None,
-                                ukLandAndProperty: Option[BigDecimal] = None,
-                                cis: Option[BigDecimal] = None,
-                                voidedIsa: Option[BigDecimal] = None,
-                                payeEmployments: Option[BigDecimal] = None,
-                                occupationalPensions: Option[BigDecimal] = None,
-                                stateBenefits: Option[BigDecimal] = None,
-                                specialWithholdingTaxOrUkTaxPaid: Option[BigDecimal] = None,
-                                inYearAdjustmentCodedInLaterTaxYear: Option[BigDecimal] = None,
-                                taxTakenOffTradingIncome: Option[BigDecimal] = None
-                              )
+    bbsi:                                Option[BigDecimal] = None,
+    ukLandAndProperty:                   Option[BigDecimal] = None,
+    cis:                                 Option[BigDecimal] = None,
+    voidedIsa:                           Option[BigDecimal] = None,
+    payeEmployments:                     Option[BigDecimal] = None,
+    occupationalPensions:                Option[BigDecimal] = None,
+    stateBenefits:                       Option[BigDecimal] = None,
+    specialWithholdingTaxOrUkTaxPaid:    Option[BigDecimal] = None,
+    inYearAdjustmentCodedInLaterTaxYear: Option[BigDecimal] = None,
+    taxTakenOffTradingIncome:            Option[BigDecimal] = None)
 
 object TaxDeductedAtSource {
   implicit val format: OFormat[TaxDeductedAtSource] = Json.format[TaxDeductedAtSource]

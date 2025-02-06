@@ -29,15 +29,15 @@ import scala.language.implicitConversions
 
 trait ViewSpec extends TestSupport {
 
-  val testCall: Call = Call("POST", "/test-url")
+  val testCall:    Call   = Call("POST", "/test-url")
   val testBackUrl: String = "/test-url"
 
   implicit val messagesLookUp: Messages = app.injector.instanceOf[MessagesApi].preferred(individualUser)
 
   class Setup(page: Html) {
-    val document: Document = Jsoup.parse(page.body)
-    lazy val content: Element = document.selectHead("#content")
-    implicit lazy val layoutContent: Element = document.selectHead("#main-content")
+    val document:                    Document = Jsoup.parse(page.body)
+    lazy val content:                Element  = document.selectHead("#content")
+    implicit lazy val layoutContent: Element  = document.selectHead("#main-content")
 
     def pageContent(pageContentSelector: String) = document.selectHead(pageContentSelector)
 
@@ -47,19 +47,19 @@ trait ViewSpec extends TestSupport {
   }
 
   object Selectors {
-    val h1: String = "h1"
-    val h2: String = "h2"
-    val h3: String = "h3"
-    val backLink: String = id("back")
-    val backToHome: String = "back"
-    val form: String = "form"
+    val h1:           String = "h1"
+    val h2:           String = "h2"
+    val h3:           String = "h3"
+    val backLink:     String = id("back")
+    val backToHome:   String = "back"
+    val form:         String = "form"
     val summaryError: String = "#error-summary-display ul a"
-    val inputError: String = ".error-notification"
-    val link: String = "a"
-    val table: String = "table"
-    val tableRow: String = "tr"
-    val div: String = "div"
-    val p: String = "p"
+    val inputError:   String = ".error-notification"
+    val link:         String = "a"
+    val table:        String = "table"
+    val tableRow:     String = "tr"
+    val div:          String = "div"
+    val p:            String = "p"
 
     def id(id: String): String = s"#$id"
   }
@@ -70,10 +70,11 @@ trait ViewSpec extends TestSupport {
 
   implicit class CustomSelectors(element: Element) {
 
-    def selectHead(selector: String): Element = element.select(selector).toList.headOption match {
-      case Some(element) => element
-      case None => fail(s"$selector not found")
-    }
+    def selectHead(selector: String): Element =
+      element.select(selector).toList.headOption match {
+        case Some(element) => element
+        case None          => fail(s"$selector not found")
+      }
 
     def selectNth(selector: String, nth: Int): Element = element.selectHead(s"$selector:nth-of-type($nth)")
 
@@ -196,13 +197,15 @@ trait ViewSpec extends TestSupport {
       errorSummaryHeading.text shouldBe errorSummaryHeadingText
       errorSummary.attr("aria-labelledby") shouldBe errorSummaryHeading.attr("id")
 
-      fieldErrors.zipWithIndex.map {
-        case ((field, error), index) =>
-          val listItem: Element = errorSummary.selectHead("div").selectHead("ul").selectNth("li", index + 1)
-          val errorLink = listItem.selectHead("a")
-          errorLink.attr("href") shouldBe s"#$field"
-          errorLink.text shouldBe error
-      }.forall(_ == Succeeded) shouldBe true
+      fieldErrors.zipWithIndex
+        .map {
+          case ((field, error), index) =>
+            val listItem: Element = errorSummary.selectHead("div").selectHead("ul").selectNth("li", index + 1)
+            val errorLink = listItem.selectHead("a")
+            errorLink.attr("href") shouldBe s"#$field"
+            errorLink.text shouldBe error
+        }
+        .forall(_ == Succeeded) shouldBe true
     }
 
     def getSummaryListValueNth(index: Int = 0): Element = {

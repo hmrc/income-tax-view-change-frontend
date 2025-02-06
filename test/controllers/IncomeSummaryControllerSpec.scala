@@ -28,16 +28,15 @@ import services.CalculationService
 import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 
-class IncomeSummaryControllerSpec extends MockAuthActions
-  with MockCalculationService
-  with MockIncomeSummary {
+class IncomeSummaryControllerSpec extends MockAuthActions with MockCalculationService with MockIncomeSummary {
 
   val testYear: Int = 2020
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[CalculationService].toInstance(mockCalculationService)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[IncomeSummaryController]
 
@@ -48,7 +47,8 @@ class IncomeSummaryControllerSpec extends MockAuthActions
 
   mtdAllRoles.foreach { mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
-    val action = if (isAgent) testController.showIncomeSummaryAgent(testTaxYear) else testController.showIncomeSummary(testTaxYear)
+    val action =
+      if (isAgent) testController.showIncomeSummaryAgent(testTaxYear) else testController.showIncomeSummary(testTaxYear)
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
     s"showIncomeSummary${if (isAgent) "Agent"}" when {
       s"the $mtdUserRole is authenticated" should {
@@ -66,10 +66,13 @@ class IncomeSummaryControllerSpec extends MockAuthActions
               contentType(result) shouldBe Some("text/html")
               charset(result) shouldBe Some("utf-8")
               lazy val document = result.toHtmlDocument
-              val title = messages("income_breakdown.heading")
-              document.title() shouldBe messages({
-                if (isAgent) "htmlTitle.agent" else "htmlTitle"
-              }, title)
+              val title         = messages("income_breakdown.heading")
+              document.title() shouldBe messages(
+                {
+                  if (isAgent) "htmlTitle.agent" else "htmlTitle"
+                },
+                title
+              )
             }
           }
 

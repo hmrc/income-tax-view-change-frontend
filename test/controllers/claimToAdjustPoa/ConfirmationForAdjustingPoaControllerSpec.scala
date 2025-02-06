@@ -30,10 +30,11 @@ import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 
 import scala.concurrent.Future
 
-class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
-  with MockClaimToAdjustService
-  with MockPaymentOnAccountSessionService
-  with MockClaimToAdjustPoaCalculationService {
+class ConfirmationForAdjustingPoaControllerSpec
+    extends MockAuthActions
+    with MockClaimToAdjustService
+    with MockPaymentOnAccountSessionService
+    with MockClaimToAdjustPoaCalculationService {
 
   val poa: PoaAmendmentData = PoaAmendmentData(
     None,
@@ -48,14 +49,15 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
       api.inject.bind[ClaimToAdjustPoaCalculationService].toInstance(mockClaimToAdjustPoaCalculationService),
       api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[ConfirmationForAdjustingPoaController]
 
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual
     s"show(isAgent = $isAgent)" when {
-      val action = testController.show(isAgent)
+      val action      = testController.show(isAgent)
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         if (mtdRole == MTDSupportingAgent) {
@@ -93,13 +95,17 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
             "FS is enabled and the journeyCompleted flag is set to true in session" in {
               enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
-              setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
+              setupMockPaymentOnAccountSessionService(
+                Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true))))
+              )
               setupMockGetPaymentsOnAccount()
 
               setupMockSuccess(mtdRole)
               val result = action(fakeRequest)
               status(result) shouldBe SEE_OTHER
-              redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(isAgent).url)
+              redirectLocation(result) shouldBe Some(
+                controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(isAgent).url
+              )
             }
           }
           "return an error 500" when {
@@ -141,7 +147,7 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
     }
 
     s"submit(isAgent = $isAgent)" when {
-      val action = testController.submit(isAgent)
+      val action      = testController.submit(isAgent)
       val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         if (mtdRole == MTDSupportingAgent) {
@@ -157,7 +163,9 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
 
               setupMockSuccess(mtdRole)
               val result = action(fakeRequest)
-              redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.PoaAdjustedController.show(isAgent = isAgent).url)
+              redirectLocation(result) shouldBe Some(
+                controllers.claimToAdjustPoa.routes.PoaAdjustedController.show(isAgent = isAgent).url
+              )
             }
           }
 
@@ -187,7 +195,9 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
 
               setupMockSuccess(mtdRole)
               val result = action(fakeRequest)
-              redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(isAgent).url)
+              redirectLocation(result) shouldBe Some(
+                controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(isAgent).url
+              )
             }
           }
           "redirect an error 500" when {

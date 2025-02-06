@@ -44,7 +44,6 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
 
   "CreateBusinessDetailsService call create business" when {
 
-
     "return success response with incomeSourceId" in {
       when(mockIncomeSourceConnector.createBusiness(any(), any())(any()))
         .thenReturn(Future {
@@ -63,7 +62,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
         })
       val result = UnderTestCreateBusinessDetailsService.createBusiness(createBusinessViewModel)
       result.futureValue match {
-        case Left(_) => succeed
+        case Left(_)  => succeed
         case Right(_) => fail("Expecting to fail")
       }
     }
@@ -76,20 +75,33 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
 
       // set view model with the wrong data
       val viewModel = createBusinessViewModel.copy(businessName = None)
-      val result = UnderTestCreateBusinessDetailsService.createBusiness(viewModel)
+      val result    = UnderTestCreateBusinessDetailsService.createBusiness(viewModel)
       result.futureValue match {
-        case Left(_) => succeed
+        case Left(_)  => succeed
         case Right(_) => fail("Incorrect data in the view model")
       }
     }
     "convertToCreateBusinessIncomeSourceRequest" should {
       "convert to correct CreateBusinessIncomeSourceRequest model " in {
         val viewModel = createBusinessViewModel
-        val result = UnderTestCreateBusinessDetailsService.convertToCreateBusinessIncomeSourceRequest(viewModel)
-        result shouldBe Right(CreateBusinessIncomeSourceRequest(
-          List(BusinessDetails("2022-11-11", "2022-11-11", "someBusinessName",
-            AddressDetails("businessAddressLine1", None, None, None, Some("GB"), Some("SE15 4ER")),
-            Some("someBusinessTrade"), "2022-11-11", "CASH", None, None))))
+        val result    = UnderTestCreateBusinessDetailsService.convertToCreateBusinessIncomeSourceRequest(viewModel)
+        result shouldBe Right(
+          CreateBusinessIncomeSourceRequest(
+            List(
+              BusinessDetails(
+                "2022-11-11",
+                "2022-11-11",
+                "someBusinessName",
+                AddressDetails("businessAddressLine1", None, None, None, Some("GB"), Some("SE15 4ER")),
+                Some("someBusinessTrade"),
+                "2022-11-11",
+                "CASH",
+                None,
+                None
+              )
+            )
+          )
+        )
       }
     }
 
@@ -120,7 +132,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
         })
       val result = UnderTestCreateBusinessDetailsService.createForeignProperty(createForeignPropertyViewModel)
       result.futureValue match {
-        case Left(_) => succeed
+        case Left(_)  => succeed
         case Right(_) => fail("Expecting to fail")
       }
     }
@@ -139,7 +151,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
       )
       val result = UnderTestCreateBusinessDetailsService.createForeignProperty(viewModel)
       result.futureValue match {
-        case Left(_) => succeed
+        case Left(_)  => succeed
         case Right(_) => fail("Incorrect data in the view model")
       }
     }
@@ -176,7 +188,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
       )
       val result = UnderTestCreateBusinessDetailsService.createUKProperty(viewModel)
       result.futureValue match {
-        case Left(_) => succeed
+        case Left(_)  => succeed
         case Right(_) => fail("Expecting to fail")
       }
     }
@@ -195,7 +207,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
       )
       val result = UnderTestCreateBusinessDetailsService.createUKProperty(viewModel)
       result.futureValue match {
-        case Left(_) => succeed
+        case Left(_)  => succeed
         case Right(_) => fail("Incorrect data in the view model")
       }
     }

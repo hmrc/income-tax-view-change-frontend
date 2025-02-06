@@ -16,7 +16,8 @@
 
 package models.incomeSourceDetails.viewmodels
 
-case class ForeignPropertyReportingMethodViewModel(taxYear1: Option[String] = None,
-                                                   latencyIndicator1: Option[String] = None,
-                                                   taxYear2: Option[String] = None,
-                                                   latencyIndicator2: Option[String] = None)
+case class ForeignPropertyReportingMethodViewModel(
+    taxYear1:          Option[String] = None,
+    latencyIndicator1: Option[String] = None,
+    taxYear2:          Option[String] = None,
+    latencyIndicator2: Option[String] = None)

@@ -41,7 +41,7 @@ import java.time.LocalDate
 import scala.concurrent.ExecutionContext
 
 trait ControllerISpecBase
-  extends AnyWordSpecLike
+    extends AnyWordSpecLike
     with OptionValues
     with Matchers
     with ScalaFutures
@@ -57,13 +57,13 @@ trait ControllerISpecBase
 
   val mockHost = WiremockHelper.wiremockHost
   val mockPort = WiremockHelper.wiremockPort.toString
-  val mockUrl = s"http://$mockHost:$mockPort"
+  val mockUrl  = s"http://$mockHost:$mockPort"
 
-  val testAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-  val cache: AsyncCacheApi = app.injector.instanceOf[AsyncCacheApi]
-  val languageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
-  val messagesAPI: MessagesApi = app.injector.instanceOf[MessagesApi]
-  val mockLanguageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
+  val testAppConfig:     FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  val cache:             AsyncCacheApi     = app.injector.instanceOf[AsyncCacheApi]
+  val languageUtils:     LanguageUtils     = app.injector.instanceOf[LanguageUtils]
+  val messagesAPI:       MessagesApi       = app.injector.instanceOf[MessagesApi]
+  val mockLanguageUtils: LanguageUtils     = app.injector.instanceOf[LanguageUtils]
 
   implicit val lang: Lang = Lang("GB")
 
@@ -71,9 +71,10 @@ trait ControllerISpecBase
     new ImplicitDateFormatterImpl(mockLanguageUtils)
 
   implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
-  implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
+  implicit val hc: HeaderCarrier    = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
 
-  implicit val optOutSessionDataRepository: OptOutSessionDataRepository = app.injector.instanceOf[OptOutSessionDataRepository]
+  implicit val optOutSessionDataRepository: OptOutSessionDataRepository =
+    app.injector.instanceOf[OptOutSessionDataRepository]
   implicit val uiRepository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
   implicit val dateService: DateService =
@@ -93,38 +94,37 @@ trait ControllerISpecBase
       .configure(config)
       .build()
 
-
-  def config: Map[String, Object] = Map(
-    "play.filters.disabled" -> Seq("uk.gov.hmrc.play.bootstrap.frontend.filters.SessionIdFilter"),
-    "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
-    "microservice.services.auth.host" -> mockHost,
-    "microservice.services.auth.port" -> mockPort,
-    "microservice.services.income-tax-view-change.host" -> mockHost,
-    "microservice.services.income-tax-view-change.port" -> mockPort,
-    "microservice.services.self-assessment-api.host" -> mockHost,
-    "microservice.services.self-assessment-api.port" -> mockPort,
-    "microservice.services.business-account.host" -> mockHost,
-    "microservice.services.business-account.port" -> mockPort,
-    "microservice.services.financial-transactions.host" -> mockHost,
-    "microservice.services.financial-transactions.port" -> mockPort,
-    "microservice.services.pay-api.host" -> mockHost,
-    "microservice.services.pay-api.port" -> mockPort,
-    "microservice.services.income-tax-calculation.host" -> mockHost,
-    "microservice.services.income-tax-calculation.port" -> mockPort,
-    "calculation-polling.interval" -> "500",
-    "calculation-polling.timeout" -> "3000",
-    "calculation-polling.attempts" -> "10",
-    "calculation-polling.delayBetweenAttemptInMilliseconds" -> "500",
-    "microservice.services.address-lookup-frontend.port" -> mockPort,
-    "encryption.key" -> "QmFyMTIzNDVCYXIxMjM0NQ==",
-    "encryption.isEnabled" -> "false",
-    "microservice.services.contact-frontend.host" -> mockHost,
-    "microservice.services.contact-frontend.port" -> mockPort,
-    "feature-switches.read-from-mongo" -> "false",
-    "feature-switch.enable-time-machine" -> "false",
-    "time-machine.add-years" -> "0",
-    "time-machine.add-days" -> "0"
-  )
-
+  def config: Map[String, Object] =
+    Map(
+      "play.filters.disabled"                                 -> Seq("uk.gov.hmrc.play.bootstrap.frontend.filters.SessionIdFilter"),
+      "play.filters.csrf.header.bypassHeaders.Csrf-Token"     -> "nocheck",
+      "microservice.services.auth.host"                       -> mockHost,
+      "microservice.services.auth.port"                       -> mockPort,
+      "microservice.services.income-tax-view-change.host"     -> mockHost,
+      "microservice.services.income-tax-view-change.port"     -> mockPort,
+      "microservice.services.self-assessment-api.host"        -> mockHost,
+      "microservice.services.self-assessment-api.port"        -> mockPort,
+      "microservice.services.business-account.host"           -> mockHost,
+      "microservice.services.business-account.port"           -> mockPort,
+      "microservice.services.financial-transactions.host"     -> mockHost,
+      "microservice.services.financial-transactions.port"     -> mockPort,
+      "microservice.services.pay-api.host"                    -> mockHost,
+      "microservice.services.pay-api.port"                    -> mockPort,
+      "microservice.services.income-tax-calculation.host"     -> mockHost,
+      "microservice.services.income-tax-calculation.port"     -> mockPort,
+      "calculation-polling.interval"                          -> "500",
+      "calculation-polling.timeout"                           -> "3000",
+      "calculation-polling.attempts"                          -> "10",
+      "calculation-polling.delayBetweenAttemptInMilliseconds" -> "500",
+      "microservice.services.address-lookup-frontend.port"    -> mockPort,
+      "encryption.key"                                        -> "QmFyMTIzNDVCYXIxMjM0NQ==",
+      "encryption.isEnabled"                                  -> "false",
+      "microservice.services.contact-frontend.host"           -> mockHost,
+      "microservice.services.contact-frontend.port"           -> mockPort,
+      "feature-switches.read-from-mongo"                      -> "false",
+      "feature-switch.enable-time-machine"                    -> "false",
+      "time-machine.add-years"                                -> "0",
+      "time-machine.add-days"                                 -> "0"
+    )
 
 }

@@ -27,7 +27,7 @@ trait SessionCookieCrumbler {
   val cookieSigner: DefaultCookieSigner
 
   private def crumbleCookie(cookie: WSCookie) = {
-    val crypted = Crypted(cookie.value)
+    val crypted   = Crypted(cookie.value)
     val decrypted = SymmetricCryptoFactory.aesGcmCrypto(cookieKey).decrypt(crypted).value
 
     def decode(data: String): Map[String, String] = {
@@ -41,10 +41,15 @@ trait SessionCookieCrumbler {
         throw new RuntimeException("Cookie MAC didn't match content, this should never happen")
       }
       val Regex = """(.*)=(.*)""".r
-      map.split("&").view.map {
-        case Regex(k, v) => Map(k -> v)
-        case _ => Map(""->"")
-      }.view.reduce(_ ++ _)
+      map
+        .split("&")
+        .view
+        .map {
+          case Regex(k, v) => Map(k -> v)
+          case _           => Map("" -> "")
+        }
+        .view
+        .reduce(_ ++ _)
     }
 
     decode(decrypted)

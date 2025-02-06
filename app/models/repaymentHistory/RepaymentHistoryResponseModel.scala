@@ -20,9 +20,7 @@ import play.api.libs.json.{Format, Json}
 
 sealed trait RepaymentHistoryResponseModel
 
-
 case class RepaymentHistoryModel(repaymentsViewerDetails: List[RepaymentHistory]) extends RepaymentHistoryResponseModel
-
 
 object RepaymentHistoryModel {
   implicit val format: Format[RepaymentHistoryModel] = Json.format[RepaymentHistoryModel]

@@ -27,40 +27,60 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ITSAStatusConnector @Inject()(val http: HttpClientV2,
-                                    val appConfig: FrontendAppConfig
-                                   )(implicit val ec: ExecutionContext) extends RawResponseReads {
+class ITSAStatusConnector @Inject() (
+    val http:      HttpClientV2,
+    val appConfig: FrontendAppConfig
+  )(
+    implicit val ec: ExecutionContext)
+    extends RawResponseReads {
 
-  def getITSAStatusDetailUrl(taxableEntityId: String, taxYear: String, futureYears: Boolean, history: Boolean): String = {
+  def getITSAStatusDetailUrl(
+      taxableEntityId: String,
+      taxYear:         String,
+      futureYears:     Boolean,
+      history:         Boolean
+    ): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/itsa-status/status/$taxableEntityId/$taxYear?futureYears=${futureYears.toString}&history=${history.toString}"
   }
 
-  def getITSAStatusDetail(nino: String, taxYear: String, futureYears: Boolean, history: Boolean)
-                         (implicit headerCarrier: HeaderCarrier): Future[Either[ITSAStatusResponse, List[ITSAStatusResponseModel]]] = {
+  def getITSAStatusDetail(
+      nino:        String,
+      taxYear:     String,
+      futureYears: Boolean,
+      history:     Boolean
+    )(
+      implicit headerCarrier: HeaderCarrier
+    ): Future[Either[ITSAStatusResponse, List[ITSAStatusResponseModel]]] = {
     val itsaURL = getITSAStatusDetailUrl(nino, taxYear, futureYears, history)
 
-    http.get(url"$itsaURL")
+    http
+      .get(url"$itsaURL")
       .transform(_.addHttpHeaders("Accept" -> "application/vnd.hmrc.2.0+json"))
       .execute[HttpResponse] map { response =>
-        response.status match {
-          case OK =>
-            response.json.validate[List[ITSAStatusResponseModel]].fold(
+      response.status match {
+        case OK =>
+          response.json
+            .validate[List[ITSAStatusResponseModel]]
+            .fold(
               invalid => {
                 Logger("application").error(s"Json validation error parsing itsa-status response, error $invalid")
-                Left(ITSAStatusResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing itsa-status response"))
+                Left(
+                  ITSAStatusResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing itsa-status response")
+                )
               },
               valid => Right(valid)
             )
-          case status =>
-            if (status >= INTERNAL_SERVER_ERROR) {
-              Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
-            } else {
-              Logger("application").warn(s"Response status: ${response.status}, body: ${response.body}")
-            }
-            Left(ITSAStatusResponseError(response.status, response.body))
-        }
-      } recover { case e: Exception =>
-        Left(ITSAStatusResponseError(INTERNAL_SERVER_ERROR, e.getMessage))
+        case status =>
+          if (status >= INTERNAL_SERVER_ERROR) {
+            Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
+          } else {
+            Logger("application").warn(s"Response status: ${response.status}, body: ${response.body}")
+          }
+          Left(ITSAStatusResponseError(response.status, response.body))
       }
+    } recover {
+      case e: Exception =>
+        Left(ITSAStatusResponseError(INTERNAL_SERVER_ERROR, e.getMessage))
+    }
   }
 }

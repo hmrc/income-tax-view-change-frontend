@@ -47,8 +47,8 @@ object IncomeSourcesFormsSpec extends Properties("incomeSourcesForms.validation"
 
     override def isAfterTaxReturnDeadlineButBeforeTaxYearEnd: Boolean = false
 
-    override def getAccountingPeriodEndDate(startDate: LocalDate):LocalDate = {
-      val startDateYear = startDate.getYear
+    override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate = {
+      val startDateYear           = startDate.getYear
       val accountingPeriodEndDate = LocalDate.of(startDateYear, APRIL, 5)
 
       if (startDate.isBefore(accountingPeriodEndDate) || startDate.isEqual(accountingPeriodEndDate)) {
@@ -62,21 +62,26 @@ object IncomeSourcesFormsSpec extends Properties("incomeSourcesForms.validation"
   }
 
   val ukPropertyFormFactory = new UKPropertyEndDateForm(testDateService)
-  val ukPropertyForm = ukPropertyFormFactory(individualUser)
+  val ukPropertyForm        = ukPropertyFormFactory(individualUser)
 
-  val businessNameForm = (optValue: Option[String]) => BusinessNameForm.form.bind(
-    optValue.fold[Map[String, String]](Map.empty)(value => Map("business-name" -> value))
-  )
+  val businessNameForm = (optValue: Option[String]) =>
+    BusinessNameForm.form.bind(
+      optValue.fold[Map[String, String]](Map.empty)(value => Map("business-name" -> value))
+    )
 
-  val businessTradeForm = (optValue: Option[String]) => BusinessTradeForm.form.bind(
-    optValue.fold[Map[String, String]](Map.empty)(value => Map("business-trade" -> value))
-  )
+  val businessTradeForm = (optValue: Option[String]) =>
+    BusinessTradeForm.form.bind(
+      optValue.fold[Map[String, String]](Map.empty)(value => Map("business-trade" -> value))
+    )
 
-  val ukPropertyFormUnderTest = (date: Day) => ukPropertyForm.bind(
-    Map("uk-property-end-date.day" -> date.day,
-      "uk-property-end-date.month" -> date.month,
-      "uk-property-end-date.year" -> date.year)
-  )
+  val ukPropertyFormUnderTest = (date: Day) =>
+    ukPropertyForm.bind(
+      Map(
+        "uk-property-end-date.day"   -> date.day,
+        "uk-property-end-date.month" -> date.month,
+        "uk-property-end-date.year"  -> date.year
+      )
+    )
 
 //  property("businessName") = forAll(businessNameGenerator) { (charsList: List[Char]) =>
 //    (charsList.length > 0 && charsList.length <= BusinessNameForm.MAX_LENGTH) ==> {

@@ -30,23 +30,29 @@ import java.time.LocalDate
 
 class AddIncomeSourceStartDateFormProvider extends Mappings {
 
-  def apply(messagesPrefix: String)(implicit messages: Messages, dateService: DateServiceInterface, dateFormatter: ImplicitDateFormatter): Form[LocalDate] = {
+  def apply(
+      messagesPrefix: String
+    )(
+      implicit messages: Messages,
+      dateService:       DateServiceInterface,
+      dateFormatter:     ImplicitDateFormatter
+    ): Form[LocalDate] = {
 
     val maximumAllowableDate: LocalDate = dateService.getCurrentDate.plusDays(6)
-    val earliestInvalidDate: LocalDate = maximumAllowableDate.plusDays(1)
+    val earliestInvalidDate:  LocalDate = maximumAllowableDate.plusDays(1)
 
     val earliestLongInvalidDate: String = dateFormatter.longDate(earliestInvalidDate).toLongDate
     val invalidFutureDateErrorMessage = messages(s"$messagesPrefix.error.future", earliestLongInvalidDate)
 
     val dateFormErrorPrefix = "dateForm.error"
-    val invalidMessage = s"$dateFormErrorPrefix.date.error.invalid"
+    val invalidMessage      = s"$dateFormErrorPrefix.date.error.invalid"
 
     Form(
       "value" -> localDate(
-        invalidKey     = s"$dateFormErrorPrefix.invalid",
+        invalidKey = s"$dateFormErrorPrefix.invalid",
         allRequiredKey = s"$messagesPrefix.required.all",
         twoRequiredKey = s"$dateFormErrorPrefix.required.two",
-        requiredKey    = s"$dateFormErrorPrefix.required"
+        requiredKey = s"$dateFormErrorPrefix.required"
       ).verifying(
         maxDate(maximumAllowableDate, invalidFutureDateErrorMessage),
         fourDigitValidYear(invalidMessage)

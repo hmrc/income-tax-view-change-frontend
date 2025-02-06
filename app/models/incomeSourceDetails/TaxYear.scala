@@ -88,8 +88,8 @@ object TaxYear {
         .filter(JsError("Could not parse tax year"))(v => TaxYear.isValidYear(s"$v"))
         .map(TaxYear.forYearEnd)
     ),
-    tjs = (o: TaxYear) => JsNumber(o.endYear))
-
+    tjs = (o: TaxYear) => JsNumber(o.endYear)
+  )
 
   private def isValidYear(year: String): Boolean =
     year.length == 4 &&
@@ -101,8 +101,8 @@ object TaxYear {
       yearOne.toInt + 1 == yearTwo.toInt
 
     isValidYear(yearOne) &&
-      isValidYear(yearTwo) &&
-      differenceIsOne(yearOne, yearTwo)
+    isValidYear(yearTwo) &&
+    differenceIsOne(yearOne, yearTwo)
   }
 
   def getTaxYearModel(years: String): Option[TaxYear] = {
@@ -134,4 +134,3 @@ object TaxYear {
   }
 
 }
-

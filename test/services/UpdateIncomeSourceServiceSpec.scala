@@ -46,12 +46,16 @@ class UpdateIncomeSourceServiceSpec extends TestSupport with FeatureSwitching {
       "valid response" in {
         when(mockUpdateIncomeSourceConnector.updateCessationDate(any(), any(), any())(any()))
           .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.successResponse))
-        TestUpdateIncomeSourceService.updateCessationDate(testNino, testMtditid, cessationDate).futureValue shouldBe Right(UpdateIncomeSourceSuccess(testMtditid))
+        TestUpdateIncomeSourceService
+          .updateCessationDate(testNino, testMtditid, cessationDate)
+          .futureValue shouldBe Right(UpdateIncomeSourceSuccess(testMtditid))
       }
       "invalid response" in {
         when(mockUpdateIncomeSourceConnector.updateCessationDate(any(), any(), any())(any()))
           .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.failureResponse))
-        TestUpdateIncomeSourceService.updateCessationDate(testNino, testMtditid, cessationDate).futureValue shouldBe Left(failureResponse)
+        TestUpdateIncomeSourceService
+          .updateCessationDate(testNino, testMtditid, cessationDate)
+          .futureValue shouldBe Left(failureResponse)
       }
     }
   }
@@ -62,12 +66,16 @@ class UpdateIncomeSourceServiceSpec extends TestSupport with FeatureSwitching {
       "valid response" in {
         when(mockUpdateIncomeSourceConnector.updateCessationDate(any(), any(), any())(any()))
           .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.successResponse))
-        TestUpdateIncomeSourceService.updateCessationDate(testNino, testIncomeSourceId, cessationDate).futureValue shouldBe Right(UpdateIncomeSourceSuccess(testIncomeSourceId))
+        TestUpdateIncomeSourceService
+          .updateCessationDate(testNino, testIncomeSourceId, cessationDate)
+          .futureValue shouldBe Right(UpdateIncomeSourceSuccess(testIncomeSourceId))
       }
       "invalid response" in {
         when(mockUpdateIncomeSourceConnector.updateCessationDate(any(), any(), any())(any()))
           .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.failureResponse))
-        TestUpdateIncomeSourceService.updateCessationDate(testNino, testIncomeSourceId, cessationDate).futureValue shouldBe Left(failureResponse)
+        TestUpdateIncomeSourceService
+          .updateCessationDate(testNino, testIncomeSourceId, cessationDate)
+          .futureValue shouldBe Left(failureResponse)
       }
     }
   }
@@ -78,12 +86,16 @@ class UpdateIncomeSourceServiceSpec extends TestSupport with FeatureSwitching {
       "valid response" in {
         when(mockUpdateIncomeSourceConnector.updateIncomeSourceTaxYearSpecific(any(), any(), any())(any()))
           .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.successResponse))
-        TestUpdateIncomeSourceService.updateTaxYearSpecific(testNino, testIncomeSourceId, taxYearSpecific).futureValue shouldBe successResponse
+        TestUpdateIncomeSourceService
+          .updateTaxYearSpecific(testNino, testIncomeSourceId, taxYearSpecific)
+          .futureValue shouldBe successResponse
       }
       "invalid response" in {
         when(mockUpdateIncomeSourceConnector.updateIncomeSourceTaxYearSpecific(any(), any(), any())(any()))
           .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.failureResponse))
-        TestUpdateIncomeSourceService.updateTaxYearSpecific(testNino, testIncomeSourceId, taxYearSpecific).futureValue shouldBe failureResponse
+        TestUpdateIncomeSourceService
+          .updateTaxYearSpecific(testNino, testIncomeSourceId, taxYearSpecific)
+          .futureValue shouldBe failureResponse
       }
     }
   }

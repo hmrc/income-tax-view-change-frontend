@@ -38,24 +38,24 @@ import uk.gov.hmrc.auth.core.InvalidBearerToken
 
 import scala.concurrent.Future
 
-class FeedbackControllerSpec extends MockAuthActions
-  with ImplicitDateFormatter {
+class FeedbackControllerSpec extends MockAuthActions with ImplicitDateFormatter {
 
   lazy val mockFeedbackConnector: FeedbackConnector = mock(classOf[FeedbackConnector])
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[FeedbackConnector].toInstance(mockFeedbackConnector)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[FeedbackController]
 
   val fields = Map(
-    "feedback-name" -> "name",
-    "feedback-email" -> "test@test.com",
-    "feedback-rating" -> "2",
+    "feedback-name"     -> "name",
+    "feedback-email"    -> "test@test.com",
+    "feedback-rating"   -> "2",
     "feedback-comments" -> "comments",
-    "csrfToken" -> "token"
+    "csrfToken"         -> "token"
   )
 
   "show()" when {
@@ -74,7 +74,7 @@ class FeedbackControllerSpec extends MockAuthActions
   }
 
   "showAgent()" when {
-    val action = testController.showAgent()
+    val action      = testController.showAgent()
     val fakeRequest = fakeRequestWithActiveSession
     "the user is an agent" should {
       "render the feedback page" in {
@@ -89,7 +89,7 @@ class FeedbackControllerSpec extends MockAuthActions
   }
 
   "submit()" when {
-    val action = testController.submit()
+    val action      = testController.submit()
     val fakeRequest = fakePostRequestBasedOnMTDUserType(MTDIndividual)
 
     "the user is an enrolled authenticated individual" should {
@@ -128,7 +128,7 @@ class FeedbackControllerSpec extends MockAuthActions
 
   "submitAgent()" when {
     "the user is an agent" should {
-      val action = testController.submitAgent()
+      val action      = testController.submitAgent()
       val fakeRequest = fakePostRequestWithActiveSession
       "submit the form and redirect to the thank you page" when {
         "the form has no errors" in {
@@ -177,7 +177,7 @@ class FeedbackControllerSpec extends MockAuthActions
   }
 
   "thankyouAgent" when {
-    val action = testController.thankYouAgent
+    val action      = testController.thankYouAgent
     val fakeRequest = fakeRequestWithActiveSession
     "the user is an agent" should {
       "render the thank you page" in {

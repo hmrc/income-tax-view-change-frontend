@@ -32,31 +32,41 @@ class ITSAStatusServiceSpec extends TestSupport with MockITSAStatusConnector {
 
   object TestITSAStatusService extends ITSAStatusService(mockITSAStatusConnector, mockDateService, appConfig)
 
-  val taxYear = TaxYear.forYearEnd(2023)
+  val taxYear    = TaxYear.forYearEnd(2023)
   val taxYearEnd = taxYear.endYear
-  val yearRange = taxYear.formatTaxYearRange
+  val yearRange  = taxYear.formatTaxYearRange
 
-  val taxYear2 = TaxYear.forYearEnd(2024)
+  val taxYear2        = TaxYear.forYearEnd(2024)
   val secondYearRange = taxYear2.formatTaxYearRange
   "hasMandatedOrVoluntaryStatusCurrentYear " when {
 
     "ITSAStatus is returned " should {
       "return True if the status is in [MTD Mandated, MTD Voluntary ] " in {
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
-        setupGetITSAStatusDetail(testNino, yearRange, false, false)(Right(List(successITSAStatusResponseMTDMandatedModel)))
-        TestITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(testMtdItUser, headerCarrier, ec).futureValue shouldBe true
+        setupGetITSAStatusDetail(testNino, yearRange, false, false)(
+          Right(List(successITSAStatusResponseMTDMandatedModel))
+        )
+        TestITSAStatusService
+          .hasMandatedOrVoluntaryStatusCurrentYear(testMtdItUser, headerCarrier, ec)
+          .futureValue shouldBe true
       }
       "return false" in {
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
         setupGetITSAStatusDetail(testNino, yearRange, false, false)(Right(List(successITSAStatusResponseModel)))
-        TestITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(testMtdItUser, headerCarrier, ec).futureValue shouldBe false
+        TestITSAStatusService
+          .hasMandatedOrVoluntaryStatusCurrentYear(testMtdItUser, headerCarrier, ec)
+          .futureValue shouldBe false
       }
     }
     "ITSAStatus connector return an error" should {
       "return a failed future with error" in {
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
         setupGetITSAStatusDetail(testNino, yearRange, false, false)(Left(errorITSAStatusError))
-        TestITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(testMtdItUser, headerCarrier, ec).failed.futureValue.getMessage shouldBe
+        TestITSAStatusService
+          .hasMandatedOrVoluntaryStatusCurrentYear(testMtdItUser, headerCarrier, ec)
+          .failed
+          .futureValue
+          .getMessage shouldBe
           "Failed to retrieve ITSAStatus"
       }
     }
@@ -67,19 +77,24 @@ class ITSAStatusServiceSpec extends TestSupport with MockITSAStatusConnector {
       "return a Map of TaxYear and Status" in {
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
         setupGetITSAStatusDetail(testNino, yearRange, true, false)(Right(successMultipleYearITSAStatusResponse))
-        TestITSAStatusService.getStatusTillAvailableFutureYears(taxYear)(testMtdItUser, headerCarrier, ec).futureValue shouldBe yearToStatus
+        TestITSAStatusService
+          .getStatusTillAvailableFutureYears(taxYear)(testMtdItUser, headerCarrier, ec)
+          .futureValue shouldBe yearToStatus
       }
     }
 
     "the tax years all have NO STATUS" should {
       "return a Map of TaxYear and Status" in {
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
-        setupGetITSAStatusDetail(testNino, yearRange, true, false)(Right(successMultipleYearITSAStatusWithUnknownResponse))
-        TestITSAStatusService.getStatusTillAvailableFutureYears(taxYear)(testMtdItUser, headerCarrier, ec).futureValue shouldBe yearToUnknownStatus
+        setupGetITSAStatusDetail(testNino, yearRange, true, false)(
+          Right(successMultipleYearITSAStatusWithUnknownResponse)
+        )
+        TestITSAStatusService
+          .getStatusTillAvailableFutureYears(taxYear)(testMtdItUser, headerCarrier, ec)
+          .futureValue shouldBe yearToUnknownStatus
       }
     }
   }
-
 
   "hasMandatedOrVoluntaryStatusForCurrentAndPreviousYear" when {
 
@@ -87,31 +102,44 @@ class ITSAStatusServiceSpec extends TestSupport with MockITSAStatusConnector {
 
       "return (true, true) if both years have MTD Mandated or MTD Voluntary" in {
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
-        setupGetITSAStatusDetail(testNino, yearRange, false, false)(Right(List(successITSAStatusResponseMTDMandatedModel)))
-        setupGetITSAStatusDetail(testNino, secondYearRange, false, false)(Right(List(successITSAStatusResponseMTDMandatedModel)))
+        setupGetITSAStatusDetail(testNino, yearRange, false, false)(
+          Right(List(successITSAStatusResponseMTDMandatedModel))
+        )
+        setupGetITSAStatusDetail(testNino, secondYearRange, false, false)(
+          Right(List(successITSAStatusResponseMTDMandatedModel))
+        )
 
-        val result = TestITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(testLatencyDetails3))(testMtdItUser, headerCarrier, ec).futureValue
+        val result = TestITSAStatusService
+          .hasMandatedOrVoluntaryStatusForLatencyYears(Some(testLatencyDetails3))(testMtdItUser, headerCarrier, ec)
+          .futureValue
 
-        result shouldBe(true, true)
+        result shouldBe (true, true)
       }
 
       "return (true, true) if first year is MTD Mandated Or MTD Voluntary and second year has No Status (fall back to first year status)" in {
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
-        setupGetITSAStatusDetail(testNino, yearRange, false, false)(Right(List(successITSAStatusResponseMTDMandatedModel)))
+        setupGetITSAStatusDetail(testNino, yearRange, false, false)(
+          Right(List(successITSAStatusResponseMTDMandatedModel))
+        )
         setupGetITSAStatusDetail(testNino, secondYearRange, false, false)(Right(List(successITSAStatusResponseModel)))
 
-
-        val result = TestITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(testLatencyDetails4))(testMtdItUser, headerCarrier, ec).futureValue
-        result shouldBe(true, true)
+        val result = TestITSAStatusService
+          .hasMandatedOrVoluntaryStatusForLatencyYears(Some(testLatencyDetails4))(testMtdItUser, headerCarrier, ec)
+          .futureValue
+        result shouldBe (true, true)
       }
 
       "return (false, true) if only second year has MTD Mandated or MTD Voluntary" in {
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
         setupGetITSAStatusDetail(testNino, yearRange, false, false)(Right(List(successITSAStatusResponseModel)))
-        setupGetITSAStatusDetail(testNino, secondYearRange, false, false)(Right(List(successITSAStatusResponseMTDMandatedModel)))
+        setupGetITSAStatusDetail(testNino, secondYearRange, false, false)(
+          Right(List(successITSAStatusResponseMTDMandatedModel))
+        )
 
-        val result = TestITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(testLatencyDetails3))(testMtdItUser, headerCarrier, ec).futureValue
-        result shouldBe(false, true)
+        val result = TestITSAStatusService
+          .hasMandatedOrVoluntaryStatusForLatencyYears(Some(testLatencyDetails3))(testMtdItUser, headerCarrier, ec)
+          .futureValue
+        result shouldBe (false, true)
       }
 
       "return (false, false) if neither current nor previous years have MTD Mandated or MTD Voluntary" in {
@@ -119,8 +147,10 @@ class ITSAStatusServiceSpec extends TestSupport with MockITSAStatusConnector {
         setupGetITSAStatusDetail(testNino, yearRange, false, false)(Right(List(successITSAStatusResponseModel)))
         setupGetITSAStatusDetail(testNino, secondYearRange, false, false)(Right(List(successITSAStatusResponseModel)))
 
-        val result = TestITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(testLatencyDetails5))(testMtdItUser, headerCarrier, ec).futureValue
-        result shouldBe(false, false)
+        val result = TestITSAStatusService
+          .hasMandatedOrVoluntaryStatusForLatencyYears(Some(testLatencyDetails5))(testMtdItUser, headerCarrier, ec)
+          .futureValue
+        result shouldBe (false, false)
       }
 
     }

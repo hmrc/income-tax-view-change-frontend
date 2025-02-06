@@ -48,16 +48,18 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
   class Setup(quarterlyUpdateContentShow: Boolean = true, isSupportingAgent: Boolean = false) {
 
     val checks: NextUpdatesQuarterlyReportingContentChecks =
-      if (quarterlyUpdateContentShow) NextUpdatesQuarterlyReportingContentChecks(
-        currentYearItsaStatus = true,
-        previousYearItsaStatus = true,
-        previousYearCrystallisedStatus = true)
+      if (quarterlyUpdateContentShow)
+        NextUpdatesQuarterlyReportingContentChecks(
+          currentYearItsaStatus = true,
+          previousYearItsaStatus = true,
+          previousYearCrystallisedStatus = true
+        )
       else
         NextUpdatesQuarterlyReportingContentChecks(
           currentYearItsaStatus = false,
           previousYearItsaStatus = true,
-          previousYearCrystallisedStatus = true)
-
+          previousYearCrystallisedStatus = true
+        )
 
     val optOutOneYearViewModel: OptOutOneYearViewModel =
       OptOutOneYearViewModel(TaxYear.forYearEnd(2024), Some(OneYearOptOutFollowedByAnnual))
@@ -77,61 +79,116 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       nextUpdatesViewUtils.whatTheUserCanDo(Some(optOutMultiYearViewModel), isSupportingAgent)
 
     lazy val obligationsModel: NextUpdatesViewModel =
-      NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(
-        business1.incomeSourceId,
-        twoObligationsSuccessModel.obligations
-      ))).obligationsByDate.map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
-        DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
-      })
+      NextUpdatesViewModel(
+        ObligationsModel(
+          Seq(
+            GroupedObligationsModel(
+              business1.incomeSourceId,
+              twoObligationsSuccessModel.obligations
+            )
+          )
+        ).obligationsByDate.map {
+          case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
+            DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
+        }
+      )
 
     def oneYearOptOutAnnualView: Document =
-      Jsoup.parse(contentAsString(
-        nextUpdatesView(obligationsModel, Some(optOutOneYearViewModel), checks, "testBackURL", isSupportingAgent = isSupportingAgent, whatTheUserCanDo = whatTheUserCanDoContentSingleAnnual)
-      ))
+      Jsoup.parse(
+        contentAsString(
+          nextUpdatesView(
+            obligationsModel,
+            Some(optOutOneYearViewModel),
+            checks,
+            "testBackURL",
+            isSupportingAgent = isSupportingAgent,
+            whatTheUserCanDo = whatTheUserCanDoContentSingleAnnual
+          )
+        )
+      )
 
     def pageDocumentWithReportingContent: Document =
-      Jsoup.parse(contentAsString(
-        nextUpdatesView(obligationsModel, Some(optOutOneYearViewModel), checks, "testBackURL", isSupportingAgent = isSupportingAgent, whatTheUserCanDo = whatTheUserCanDoContentSingleAnnual)
-      ))
+      Jsoup.parse(
+        contentAsString(
+          nextUpdatesView(
+            obligationsModel,
+            Some(optOutOneYearViewModel),
+            checks,
+            "testBackURL",
+            isSupportingAgent = isSupportingAgent,
+            whatTheUserCanDo = whatTheUserCanDoContentSingleAnnual
+          )
+        )
+      )
 
     def pageDocumentWithWarning: Document =
-      Jsoup.parse(contentAsString(
-        nextUpdatesView(obligationsModel, Some(optOutOneYearViewModelWithMandated), checks, "testBackURL", isSupportingAgent = isSupportingAgent, whatTheUserCanDo = whatTheUserCanDoContentSingleMandated)
-      ))
+      Jsoup.parse(
+        contentAsString(
+          nextUpdatesView(
+            obligationsModel,
+            Some(optOutOneYearViewModelWithMandated),
+            checks,
+            "testBackURL",
+            isSupportingAgent = isSupportingAgent,
+            whatTheUserCanDo = whatTheUserCanDoContentSingleMandated
+          )
+        )
+      )
 
     def pageDocumentWithWarningWithReportingContent: Document =
-      Jsoup.parse(contentAsString(
-        nextUpdatesView(obligationsModel, Some(optOutOneYearViewModelWithMandated), checks, "testBackURL", isSupportingAgent = isSupportingAgent, whatTheUserCanDo = whatTheUserCanDoContentSingleMandated)
-      ))
-
+      Jsoup.parse(
+        contentAsString(
+          nextUpdatesView(
+            obligationsModel,
+            Some(optOutOneYearViewModelWithMandated),
+            checks,
+            "testBackURL",
+            isSupportingAgent = isSupportingAgent,
+            whatTheUserCanDo = whatTheUserCanDoContentSingleMandated
+          )
+        )
+      )
 
     def pageDocumentMultiYearOptOut: Document =
-      Jsoup.parse(contentAsString(
-        nextUpdatesView(obligationsModel, Some(optOutMultiYearViewModel), checks, "testBackURL", isSupportingAgent = isSupportingAgent, whatTheUserCanDo = whatTheUserCanDoContentMulti)
-      ))
+      Jsoup.parse(
+        contentAsString(
+          nextUpdatesView(
+            obligationsModel,
+            Some(optOutMultiYearViewModel),
+            checks,
+            "testBackURL",
+            isSupportingAgent = isSupportingAgent,
+            whatTheUserCanDo = whatTheUserCanDoContentMulti
+          )
+        )
+      )
   }
 
   //TODO: Move this object out to help clean up this file and modularise a little
   object ObligationsMessages {
-    val heading: String = messages("nextUpdates.heading")
-    val title: String = messages("htmlTitle", heading)
-    val summary: String = messages("nextUpdates.dropdown.info")
-    val summaryQuarterly: String = messages("obligations.quarterlyUpdates")
-    val quarterlyLine1: String = messages("nextUpdates.dropdown.quarterlyReturn.text")
-    val quarterlyLine2: String = messages("nextUpdates.dropdown.quarterlyReturn.text.lin2")
-    val declarationLine1: String = messages("nextUpdates.dropdown.finalDeclaration.text")
+    val heading:            String = messages("nextUpdates.heading")
+    val title:              String = messages("htmlTitle", heading)
+    val summary:            String = messages("nextUpdates.dropdown.info")
+    val summaryQuarterly:   String = messages("obligations.quarterlyUpdates")
+    val quarterlyLine1:     String = messages("nextUpdates.dropdown.quarterlyReturn.text")
+    val quarterlyLine2:     String = messages("nextUpdates.dropdown.quarterlyReturn.text.lin2")
+    val declarationLine1:   String = messages("nextUpdates.dropdown.finalDeclaration.text")
     val summaryDeclaration: String = messages("obligations.finalDeclarationUpdate")
-    val updatesInSoftware: String = messages("nextUpdates.updates.software.heading")
-    val updatesInSoftwareDesc: String = s"${messages("nextUpdates.updates.software.dec1")} ${messages("nextUpdates.updates.software.dec2")} ${messages("pagehelp.opensInNewTabText")} ${messages("nextUpdates.updates.software.dec3")}"
-    val info: String = s"${messages("nextUpdates.previousYears.textOne")} ${messages("nextUpdates.previousYears.link")} ${messages("nextUpdates.previousYears.textTwo")}"
-    val oneYearOptOutMessage: String = s"${messages("nextUpdates.optOutOneYear.p.message", "2023", "2024")} ${messages("nextUpdates.optOutOneYear.p.link")}"
-    val multiYearOptOutMessage: String = s"${messages("nextUpdates.optOutMultiYear.p.message")} ${messages("nextUpdates.optOutMultiYear.p.link")}"
+    val updatesInSoftware:  String = messages("nextUpdates.updates.software.heading")
+    val updatesInSoftwareDesc: String =
+      s"${messages("nextUpdates.updates.software.dec1")} ${messages("nextUpdates.updates.software.dec2")} ${messages("pagehelp.opensInNewTabText")} ${messages("nextUpdates.updates.software.dec3")}"
+    val info: String =
+      s"${messages("nextUpdates.previousYears.textOne")} ${messages("nextUpdates.previousYears.link")} ${messages("nextUpdates.previousYears.textTwo")}"
+    val oneYearOptOutMessage: String =
+      s"${messages("nextUpdates.optOutOneYear.p.message", "2023", "2024")} ${messages("nextUpdates.optOutOneYear.p.link")}"
+    val multiYearOptOutMessage: String =
+      s"${messages("nextUpdates.optOutMultiYear.p.message")} ${messages("nextUpdates.optOutMultiYear.p.link")}"
   }
 
-  val confirmOptOutLink = "/report-quarterly/income-and-expenses/view/optout/review-confirm-taxyear"
+  val confirmOptOutLink           = "/report-quarterly/income-and-expenses/view/optout/review-confirm-taxyear"
   val singleYearOptOutWarningLink = "/report-quarterly/income-and-expenses/view/optout/single-taxyear-warning"
-  val multiYearOptOutLink = "/report-quarterly/income-and-expenses/view/optout/choose-taxyear"
-  val reportingFrequencyLink = "/report-quarterly/income-and-expenses/view/reporting-frequency"
+  val multiYearOptOutLink         = "/report-quarterly/income-and-expenses/view/optout/choose-taxyear"
+  val reportingFrequencyLink      = "/report-quarterly/income-and-expenses/view/reporting-frequency"
 
   "NextUpdatesOptOut view" when {
 
@@ -155,8 +212,12 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       }
 
       "have the correct details for quarterly updates section" in new Setup() {
-        oneYearOptOutAnnualView.getElementById("quarterly-dropdown-line1").text() shouldBe ObligationsMessages.quarterlyLine1
-        oneYearOptOutAnnualView.getElementById("quarterly-dropdown-line2").text() shouldBe ObligationsMessages.quarterlyLine2
+        oneYearOptOutAnnualView
+          .getElementById("quarterly-dropdown-line1")
+          .text() shouldBe ObligationsMessages.quarterlyLine1
+        oneYearOptOutAnnualView
+          .getElementById("quarterly-dropdown-line2")
+          .text() shouldBe ObligationsMessages.quarterlyLine2
       }
 
       "don't show quarterly updates section" in new Setup(quarterlyUpdateContentShow = false) {
@@ -169,7 +230,9 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       }
 
       "have the correct line 1 for final declaration section" in new Setup() {
-        oneYearOptOutAnnualView.getElementById("final-declaration-line1").text() shouldBe ObligationsMessages.declarationLine1
+        oneYearOptOutAnnualView
+          .getElementById("final-declaration-line1")
+          .text() shouldBe ObligationsMessages.declarationLine1
       }
 
       "have an updates accordion" in new Setup() {
@@ -179,7 +242,9 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       s"have the information ${ObligationsMessages.info}" when {
         "a primary agent or individual" in new Setup() {
           oneYearOptOutAnnualView.select("p:nth-child(6)").text shouldBe ObligationsMessages.info
-          oneYearOptOutAnnualView.select("p:nth-child(6) a").attr("href") shouldBe controllers.routes.TaxYearsController.showTaxYears().url
+          oneYearOptOutAnnualView.select("p:nth-child(6) a").attr("href") shouldBe controllers.routes.TaxYearsController
+            .showTaxYears()
+            .url
         }
       }
 
@@ -192,15 +257,19 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       s"have the correct TradeName" in new Setup() {
 
         val section = oneYearOptOutAnnualView.select(".govuk-accordion__section:nth-of-type(2)")
-        val table = section.select(".govuk-table")
+        val table   = section.select(".govuk-table")
 
         table.select(".govuk-table__cell:nth-of-type(1)").text() shouldBe messages("nextUpdates.quarterly")
         table.select(".govuk-table__cell:nth-of-type(2)").text() shouldBe messages(testTradeName)
       }
 
       s"have the Submitting updates in software" in new Setup() {
-        oneYearOptOutAnnualView.getElementById("updates-software-heading").text() shouldBe ObligationsMessages.updatesInSoftware
-        oneYearOptOutAnnualView.getElementById("updates-software-link").text() shouldBe ObligationsMessages.updatesInSoftwareDesc
+        oneYearOptOutAnnualView
+          .getElementById("updates-software-heading")
+          .text() shouldBe ObligationsMessages.updatesInSoftware
+        oneYearOptOutAnnualView
+          .getElementById("updates-software-link")
+          .text() shouldBe ObligationsMessages.updatesInSoftwareDesc
       }
 
       s"don't show the Submitting updates in software section" in new Setup(quarterlyUpdateContentShow = false) {
@@ -209,7 +278,9 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       }
 
       "have the one year opt out message" in new Setup() {
-        oneYearOptOutAnnualView.getElementById("what-the-user-can-do").text() shouldBe ObligationsMessages.oneYearOptOutMessage
+        oneYearOptOutAnnualView
+          .getElementById("what-the-user-can-do")
+          .text() shouldBe ObligationsMessages.oneYearOptOutMessage
       }
 
       "have the confirm opt out link" in new Setup() {
@@ -224,17 +295,23 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
 
       "have the confirm opt out with reporting content and link)" in new Setup() {
         enable(ReportingFrequencyPage)
-        pageDocumentWithWarningWithReportingContent.getElementById("reporting-frequency-link").attr("href") shouldBe reportingFrequencyLink
+        pageDocumentWithWarningWithReportingContent
+          .getElementById("reporting-frequency-link")
+          .attr("href") shouldBe reportingFrequencyLink
       }
 
       "have the single year opt out with reporting content and link" in new Setup() {
         enable(ReportingFrequencyPage)
-        pageDocumentWithWarningWithReportingContent.getElementById("reporting-frequency-link").attr("href") shouldBe reportingFrequencyLink
+        pageDocumentWithWarningWithReportingContent
+          .getElementById("reporting-frequency-link")
+          .attr("href") shouldBe reportingFrequencyLink
       }
 
       "multi year scenario opt out with reporting content and link" in new Setup() {
         enable(ReportingFrequencyPage)
-        pageDocumentMultiYearOptOut.getElementById("reporting-frequency-link").attr("href") shouldBe reportingFrequencyLink
+        pageDocumentMultiYearOptOut
+          .getElementById("reporting-frequency-link")
+          .attr("href") shouldBe reportingFrequencyLink
       }
     }
   }
@@ -245,7 +322,9 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
 
       "Mandated single year have the single year opt out warning link" in new Setup() {
         disable(ReportingFrequencyPage)
-        pageDocumentWithWarning.getElementById("single-year-opt-out-warning-link").attr("href") shouldBe singleYearOptOutWarningLink
+        pageDocumentWithWarning
+          .getElementById("single-year-opt-out-warning-link")
+          .attr("href") shouldBe singleYearOptOutWarningLink
       }
 
       //TODO: Improve test descriptions
@@ -253,7 +332,9 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
 
         "have the multi year opt out message" in new Setup() {
           disable(ReportingFrequencyPage)
-          pageDocumentMultiYearOptOut.getElementById("what-the-user-can-do").text() shouldBe ObligationsMessages.multiYearOptOutMessage
+          pageDocumentMultiYearOptOut
+            .getElementById("what-the-user-can-do")
+            .text() shouldBe ObligationsMessages.multiYearOptOutMessage
         }
 
         "have the multi year opt out message link" in new Setup() {

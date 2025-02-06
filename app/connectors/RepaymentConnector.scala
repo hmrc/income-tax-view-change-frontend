@@ -26,43 +26,58 @@ import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 
-
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
+class RepaymentConnector @Inject() (
+    httpClient: HttpClientV2,
+    config:     FrontendAppConfig
+  )(
+    implicit ec: ExecutionContext) {
 
-class RepaymentConnector @Inject()(
-                                    httpClient: HttpClientV2,
-                                    config: FrontendAppConfig
-                                  )(implicit ec: ExecutionContext) {
+  private[connectors] val startRefundUrl: String =
+    s"${config.repaymentsUrl}/self-assessment-refund-backend/itsa-viewer/journey/start-refund"
+  private[connectors] val viewRefundUrl: String =
+    s"${config.repaymentsUrl}/self-assessment-refund-backend/itsa-viewer/journey/view-history"
 
-  private[connectors] val startRefundUrl: String = s"${config.repaymentsUrl}/self-assessment-refund-backend/itsa-viewer/journey/start-refund"
-  private[connectors] val viewRefundUrl: String = s"${config.repaymentsUrl}/self-assessment-refund-backend/itsa-viewer/journey/view-history"
-
-  def start(nino: String, fullAmount: BigDecimal)(implicit headerCarrier: HeaderCarrier): Future[RepaymentJourneyResponseModel] = {
+  def start(
+      nino:       String,
+      fullAmount: BigDecimal
+    )(
+      implicit headerCarrier: HeaderCarrier
+    ): Future[RepaymentJourneyResponseModel] = {
 
     val body = Json.toJson[RepaymentRefund](RepaymentRefund(nino, fullAmount))
 
     httpClient
       .post(url"$startRefundUrl")
       .withBody(body)
-      .execute[HttpResponse].map {
+      .execute[HttpResponse]
+      .map {
         case response if response.status == ACCEPTED =>
-          response.json.validate[RepaymentJourneyModel].fold(
-            invalidJson => {
-              Logger("application").error(s"Invalid Json with $invalidJson")
-              RepaymentJourneyErrorResponse(response.status, "Invalid Json")
-            },
-            identity
-          )
+          response.json
+            .validate[RepaymentJourneyModel]
+            .fold(
+              invalidJson => {
+                Logger("application").error(s"Invalid Json with $invalidJson")
+                RepaymentJourneyErrorResponse(response.status, "Invalid Json")
+              },
+              identity
+            )
         case response if response.status == UNAUTHORIZED =>
-          Logger("application").error(s"Repayment journey start error with response code: ${response.status} and body: ${response.body}")
+          Logger("application").error(
+            s"Repayment journey start error with response code: ${response.status} and body: ${response.body}"
+          )
           RepaymentJourneyErrorResponse(response.status, response.body)
         case response if response.status >= INTERNAL_SERVER_ERROR =>
-          Logger("application").error(s"Repayment journey start error with response code: ${response.status} and body: ${response.body}")
+          Logger("application").error(
+            s"Repayment journey start error with response code: ${response.status} and body: ${response.body}"
+          )
           RepaymentJourneyErrorResponse(response.status, response.body)
         case response =>
-          Logger("application").warn(s"Repayment journey start error with response code: ${response.status} and body: ${response.body}")
+          Logger("application").warn(
+            s"Repayment journey start error with response code: ${response.status} and body: ${response.body}"
+          )
           RepaymentJourneyErrorResponse(response.status, response.body)
       }
   }
@@ -74,23 +89,32 @@ class RepaymentConnector @Inject()(
     httpClient
       .post(url"$viewRefundUrl")
       .withBody(body)
-      .execute[HttpResponse].map {
+      .execute[HttpResponse]
+      .map {
         case response if response.status == ACCEPTED =>
-          response.json.validate[RepaymentJourneyModel].fold(
-            invalidJson => {
-              Logger("application").error(s"Invalid Json with $invalidJson")
-              RepaymentJourneyErrorResponse(response.status, "Invalid Json")
-            },
-            identity
-          )
+          response.json
+            .validate[RepaymentJourneyModel]
+            .fold(
+              invalidJson => {
+                Logger("application").error(s"Invalid Json with $invalidJson")
+                RepaymentJourneyErrorResponse(response.status, "Invalid Json")
+              },
+              identity
+            )
         case response if response.status == UNAUTHORIZED =>
-          Logger("application").error(s"Repayment journey start error with response code: ${response.status} and body: ${response.body}")
+          Logger("application").error(
+            s"Repayment journey start error with response code: ${response.status} and body: ${response.body}"
+          )
           RepaymentJourneyErrorResponse(response.status, response.body)
         case response if response.status >= INTERNAL_SERVER_ERROR =>
-          Logger("application").error(s"Repayment journey start error with response code: ${response.status} and body: ${response.body}")
+          Logger("application").error(
+            s"Repayment journey start error with response code: ${response.status} and body: ${response.body}"
+          )
           RepaymentJourneyErrorResponse(response.status, response.body)
         case response =>
-          Logger("application").warn(s"Repayment journey start error with response code: ${response.status} and body: ${response.body}")
+          Logger("application").warn(
+            s"Repayment journey start error with response code: ${response.status} and body: ${response.body}"
+          )
           RepaymentJourneyErrorResponse(response.status, response.body)
       }
   }

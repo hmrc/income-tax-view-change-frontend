@@ -32,10 +32,11 @@ import testConstants.PaymentAllocationIntegrationTestConstants._
 
 class PaymentAllocationControllerISpec extends ControllerISpecHelper with FeatureSwitching {
 
-  val singleTestPaymentAllocationCharge: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
-    List(documentDetail),
-    List(financialDetail)
-  )
+  val singleTestPaymentAllocationCharge: FinancialDetailsWithDocumentDetailsModel =
+    FinancialDetailsWithDocumentDetailsModel(
+      List(documentDetail),
+      List(financialDetail)
+    )
   val docNumber = "docNumber1"
 
   val testUser: MTDUserRole => MtdItUser[_] = mtdUserRole =>
@@ -46,82 +47,135 @@ class PaymentAllocationControllerISpec extends ControllerISpecHelper with Featur
     pathStart + s"/payment-made-to-hmrc?documentNumber=$documentNum"
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    val path = getPath(mtdUserRole)
-    val additionalCookies = getAdditionalCookies(mtdUserRole)
-    s"GET $path" when {
-      s"a user is a $mtdUserRole" that {
-        "is authenticated, with a valid enrolment" should {
-          if (mtdUserRole == MTDSupportingAgent) {
-            testSupportingAgentAccessDenied(path, additionalCookies)
-          } else {
-            s"render the payment allocation page" which {
-              "is for non LPI" in {
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      val path              = getPath(mtdUserRole)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            if (mtdUserRole == MTDSupportingAgent) {
+              testSupportingAgentAccessDenied(path, additionalCookies)
+            } else {
+              s"render the payment allocation page" which {
+                "is for non LPI" in {
+                  disable(NavBarFs)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    paymentHistoryBusinessAndPropertyResponse
+                  )
+
+                  IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(
+                    OK,
+                    validPaymentAllocationChargesJson
+                  )
+                  IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, "paymentLot", "paymentLotItem")(
+                    OK,
+                    Json.toJson(testValidPaymentAllocationsModel)
+                  )
+
+                  val result = buildGETMTDClient(path, additionalCookies).futureValue
+                  result should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, "paymentAllocation.heading")
+                  )
+
+                  verifyAuditContainsDetail(
+                    PaymentAllocationsResponseAuditModel(testUser(mtdUserRole), paymentAllocationViewModel).detail
+                  )
+                }
+              }
+
+              "shows payment allocation for HMRC adjustment" in {
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
+                val docNumber = "MA999991A202202"
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  paymentHistoryBusinessAndPropertyResponse
+                )
+                IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(
+                  OK,
+                  validPaymentAllocationChargesHmrcAdjustmentJson
+                )
+                IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, "MA999991A", "5")(
+                  OK,
+                  Json.toJson(testValidNoLpiPaymentAllocationHmrcAdjustment)
+                )
 
-                IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(OK, validPaymentAllocationChargesJson)
-                IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, "paymentLot", "paymentLotItem")(OK, Json.toJson(testValidPaymentAllocationsModel))
+                val result = buildGETMTDClient(getPath(mtdUserRole, docNumber), additionalCookies).futureValue
 
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "paymentAllocation.heading"),
+                  elementTextBySelector("tbody")(
+                    "HMRC adjustment Tax year 2021 to 2022 Tax year 2021 to 2022 31 Jan 2021 £800.00"
+                  )
                 )
 
-                verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser(mtdUserRole), paymentAllocationViewModel).detail)
+                verifyAuditContainsDetail(
+                  PaymentAllocationsResponseAuditModel(
+                    testUser(mtdUserRole),
+                    paymentAllocationViewModelHmrcAdjustment
+                  ).detail
+                )
+              }
+
+              s"is for LPI" in {
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  paymentHistoryBusinessAndPropertyResponse
+                )
+
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                  nino = testNino,
+                  from = s"${getCurrentTaxYearEnd.getYear - 1}-04-06",
+                  to = s"${getCurrentTaxYearEnd.getYear}-04-05"
+                )(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
+
+                IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(
+                  OK,
+                  validPaymentAllocationChargesJson
+                )
+                IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, "paymentLot", "paymentLotItem")(
+                  OK,
+                  Json.toJson(testValidLpiPaymentAllocationsModel)
+                )
+                IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, "1040000872")(
+                  OK,
+                  validPaymentAllocationChargesJson
+                )
+                IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, "1040000873")(
+                  OK,
+                  validPaymentAllocationChargesJson
+                )
+
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "paymentAllocation.heading"),
+                  elementAttributeBySelector("#payment-allocation-0 a", "href")(
+                    "/report-quarterly/income-and-expenses/view" + {
+                      if (mtdUserRole != MTDIndividual) "/agents" else ""
+                    } + "/tax-years/9999/charge?id=PAYID01&isInterestCharge=true"
+                  ),
+                  elementTextBySelector("#payment-allocation-0 a")(
+                    s"${messagesAPI("paymentAllocation.paymentAllocations.balancingCharge.text")} ${messagesAPI("paymentAllocation.taxYear", "9998", "9999")}"
+                  )
+                )
+
+                verifyAuditContainsDetail(
+                  PaymentAllocationsResponseAuditModel(testUser(mtdUserRole), lpiPaymentAllocationViewModel).detail
+                )
               }
             }
-
-            "shows payment allocation for HMRC adjustment" in {
-              disable(NavBarFs)
-              stubAuthorised(mtdUserRole)
-              val docNumber = "MA999991A202202"
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
-              IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(OK, validPaymentAllocationChargesHmrcAdjustmentJson)
-              IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, "MA999991A", "5")(OK, Json.toJson(testValidNoLpiPaymentAllocationHmrcAdjustment))
-
-              val result = buildGETMTDClient(getPath(mtdUserRole, docNumber), additionalCookies).futureValue
-
-              result should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, "paymentAllocation.heading"),
-                elementTextBySelector("tbody")("HMRC adjustment Tax year 2021 to 2022 Tax year 2021 to 2022 31 Jan 2021 £800.00"),
-              )
-
-              verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser(mtdUserRole), paymentAllocationViewModelHmrcAdjustment).detail)
-            }
-
-            s"is for LPI" in {
-              disable(NavBarFs)
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
-
-              IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(nino = testNino, from = s"${getCurrentTaxYearEnd.getYear - 1}-04-06",
-                to = s"${getCurrentTaxYearEnd.getYear}-04-05")(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
-
-              IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(OK, validPaymentAllocationChargesJson)
-              IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, "paymentLot", "paymentLotItem")(OK, Json.toJson(testValidLpiPaymentAllocationsModel))
-              IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, "1040000872")(OK, validPaymentAllocationChargesJson)
-              IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, "1040000873")(OK, validPaymentAllocationChargesJson)
-
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-              result should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, "paymentAllocation.heading"),
-                elementAttributeBySelector("#payment-allocation-0 a", "href")(
-                  "/report-quarterly/income-and-expenses/view" + {if(mtdUserRole != MTDIndividual) "/agents" else ""} +"/tax-years/9999/charge?id=PAYID01&isInterestCharge=true"),
-                elementTextBySelector("#payment-allocation-0 a")(s"${messagesAPI("paymentAllocation.paymentAllocations.balancingCharge.text")} ${messagesAPI("paymentAllocation.taxYear", "9998", "9999")}")
-              )
-
-              verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser(mtdUserRole), lpiPaymentAllocationViewModel).detail)
-            }
           }
+          testAuthFailures(path, mtdUserRole)
         }
-        testAuthFailures(path, mtdUserRole)
       }
-    }
   }
 }

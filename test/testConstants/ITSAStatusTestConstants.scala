@@ -23,13 +23,16 @@ import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.http.HttpResponse
 
-
 object ITSAStatusTestConstants {
-  val statusDetail = StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.NoStatus, "Sign up - return available", Some(8000.25))
-  val statusDetailMTDMandated = StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.Mandated, "Sign up - return available", Some(8000.25))
-  val statusDetailMinimal = StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.NoStatus, "Sign up - return available", None)
+  val statusDetail =
+    StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.NoStatus, "Sign up - return available", Some(8000.25))
+  val statusDetailMTDMandated =
+    StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.Mandated, "Sign up - return available", Some(8000.25))
+  val statusDetailMinimal =
+    StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.NoStatus, "Sign up - return available", None)
   val successITSAStatusResponseModel = ITSAStatusResponseModel("2019-20", Some(List(statusDetail)))
-  val successITSAStatusResponseMTDMandatedModel = ITSAStatusResponseModel("2019-20", Some(List(statusDetailMTDMandated)))
+  val successITSAStatusResponseMTDMandatedModel =
+    ITSAStatusResponseModel("2019-20", Some(List(statusDetailMTDMandated)))
   val successMultipleYearITSAStatusResponse = {
     List(
       ITSAStatusResponseModel("2019-20", Some(List(statusDetail))),
@@ -44,8 +47,9 @@ object ITSAStatusTestConstants {
     )
   }
   val successITSAStatusResponseModelMinimal = ITSAStatusResponseModel("2019-20", None)
-  val errorITSAStatusError = ITSAStatusResponseError(BAD_REQUEST, "Dummy message")
-  val badJsonErrorITSAStatusError = ITSAStatusResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing itsa-status response")
+  val errorITSAStatusError                  = ITSAStatusResponseError(BAD_REQUEST, "Dummy message")
+  val badJsonErrorITSAStatusError =
+    ITSAStatusResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing itsa-status response")
   val failedFutureITSAStatusError = ITSAStatusResponseError(INTERNAL_SERVER_ERROR, s"Unexpected failed future, error")
 
   val successMultipleYearMandatedITSAStatusResponse = {
@@ -76,8 +80,7 @@ object ITSAStatusTestConstants {
     )
   }
 
-  val statusDetailMinimalJson = Json.parse(
-    """
+  val statusDetailMinimalJson = Json.parse("""
       |{
       | "submittedOn": "2023-06-15T15:38:33.960Z",
       | "status": "No Status",
@@ -92,8 +95,7 @@ object ITSAStatusTestConstants {
       |}
       |""".stripMargin
   )
-  val successITSAStatusResponseJson = Json.parse(
-    """
+  val successITSAStatusResponseJson = Json.parse("""
       |{
       |    "taxYear": "2019-20",
       |    "itsaStatusDetails": [
@@ -107,8 +109,7 @@ object ITSAStatusTestConstants {
       |  }
       |""".stripMargin)
 
-  val successITSAStatusListResponseJson = Json.parse(
-    """
+  val successITSAStatusListResponseJson = Json.parse("""
       |[{
       |    "taxYear": "2019-20",
       |    "itsaStatusDetails": [
@@ -122,13 +123,17 @@ object ITSAStatusTestConstants {
       |  }]
       |""".stripMargin)
 
-  val successHttpResponse = HttpResponse(Status.OK, Json.arr(successITSAStatusResponseJson), Map.empty)
-  val errorHttpResponse = HttpResponse(Status.BAD_REQUEST, "Dummy message", Map.empty)
+  val successHttpResponse  = HttpResponse(Status.OK, Json.arr(successITSAStatusResponseJson), Map.empty)
+  val errorHttpResponse    = HttpResponse(Status.BAD_REQUEST, "Dummy message", Map.empty)
   val notFoundHttpResponse = HttpResponse(Status.NOT_FOUND, "Dummy message", Map.empty)
-  val badJsonHttpResponse = HttpResponse(Status.OK, Json.obj(), Map.empty)
+  val badJsonHttpResponse  = HttpResponse(Status.OK, Json.obj(), Map.empty)
 
-
-  val yearToStatus: Map[TaxYear, StatusDetail] = Map(TaxYear.forYearEnd(2020) -> statusDetail, TaxYear.forYearEnd(2021) -> statusDetailMTDMandated)
-  val yearToUnknownStatus: Map[TaxYear, StatusDetail] = Map(TaxYear.forYearEnd(2020) -> statusDetail, TaxYear.forYearEnd(2021) -> statusDetail, TaxYear.forYearEnd(2022) -> statusDetail)
+  val yearToStatus: Map[TaxYear, StatusDetail] =
+    Map(TaxYear.forYearEnd(2020) -> statusDetail, TaxYear.forYearEnd(2021) -> statusDetailMTDMandated)
+  val yearToUnknownStatus: Map[TaxYear, StatusDetail] = Map(
+    TaxYear.forYearEnd(2020) -> statusDetail,
+    TaxYear.forYearEnd(2021) -> statusDetail,
+    TaxYear.forYearEnd(2022) -> statusDetail
+  )
 
 }

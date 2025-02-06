@@ -30,15 +30,17 @@ import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.testPoa1Mayb
 
 import scala.concurrent.Future
 
-class YouCannotGoBackControllerSpec extends MockAuthActions
-  with MockClaimToAdjustService
-  with MockPaymentOnAccountSessionService {
+class YouCannotGoBackControllerSpec
+    extends MockAuthActions
+    with MockClaimToAdjustService
+    with MockPaymentOnAccountSessionService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
       api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[YouCannotGoBackController]
 
@@ -48,7 +50,7 @@ class YouCannotGoBackControllerSpec extends MockAuthActions
   }
 
   mtdAllRoles.foreach { mtdRole =>
-    val isAgent = mtdRole != MTDIndividual
+    val isAgent     = mtdRole != MTDIndividual
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
     s"show(isAgent = $isAgent)" when {
       val action = testController.show(isAgent)
@@ -62,7 +64,9 @@ class YouCannotGoBackControllerSpec extends MockAuthActions
               setupMockSuccess(mtdRole)
 
               setupMockGetPaymentsOnAccount(testPoa1Maybe)
-              setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
+              setupMockPaymentOnAccountSessionService(
+                Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true))))
+              )
 
               val result = action(fakeRequest)
               status(result) shouldBe OK
@@ -87,7 +91,9 @@ class YouCannotGoBackControllerSpec extends MockAuthActions
               setupTest()
               disable(AdjustPaymentsOnAccount)
               setupMockGetPaymentsOnAccount(testPoa1Maybe)
-              setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
+              setupMockPaymentOnAccountSessionService(
+                Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true))))
+              )
 
               setupMockSuccess(mtdRole)
               val result = action(fakeRequest)
@@ -107,7 +113,9 @@ class YouCannotGoBackControllerSpec extends MockAuthActions
               setupTest()
 
               setupMockGetPaymentsOnAccount(None)
-              setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
+              setupMockPaymentOnAccountSessionService(
+                Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true))))
+              )
 
               setupMockSuccess(mtdRole)
               val result = action(fakeRequest)

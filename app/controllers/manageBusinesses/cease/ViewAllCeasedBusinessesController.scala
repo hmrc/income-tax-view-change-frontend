@@ -33,51 +33,62 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ViewAllCeasedBusinessesController @Inject()(val viewAllCeasedBusinesses: ViewAllCeasedBusinesses,
-                                                  val authActions: AuthActions,
-                                                  val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                  val sessionService: SessionService,
-                                                  val itvcErrorHandler: ItvcErrorHandler,
-                                                  val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                                 (implicit val ec: ExecutionContext,
-                                             val mcc: MessagesControllerComponents,
-                                             val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with IncomeSourcesUtils {
+class ViewAllCeasedBusinessesController @Inject() (
+    val viewAllCeasedBusinesses:    ViewAllCeasedBusinesses,
+    val authActions:                AuthActions,
+    val incomeSourceDetailsService: IncomeSourceDetailsService,
+    val sessionService:             SessionService,
+    val itvcErrorHandler:           ItvcErrorHandler,
+    val itvcErrorHandlerAgent:      AgentItvcErrorHandler
+  )(
+    implicit val ec: ExecutionContext,
+    val mcc:         MessagesControllerComponents,
+    val appConfig:   FrontendAppConfig)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with IncomeSourcesUtils {
 
-  def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
-    val backUrl = if(isAgent) {
-      controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
-    } else {
-      controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+  def show(isAgent: Boolean): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+      val backUrl = if (isAgent) {
+        controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+      } else {
+        controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+      }
+      handleRequest(
+        sources = user.incomeSources,
+        isAgent = isAgent,
+        backUrl = backUrl
+      )
     }
-    handleRequest(
-      sources = user.incomeSources,
-      isAgent = isAgent,
-      backUrl = backUrl
-    )
-  }
 
-  def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
-                   (implicit user: MtdItUser[_]): Future[Result] = {
-    lazy val errorHandler = if(isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+  def handleRequest(
+      sources: IncomeSourceDetailsModel,
+      isAgent: Boolean,
+      backUrl: String
+    )(
+      implicit user: MtdItUser[_]
+    ): Future[Result] = {
+    lazy val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     withIncomeSourcesFS {
       incomeSourceDetailsService.getCeaseIncomeSourceViewModel(sources) match {
         case Right(viewModel) =>
           sessionService.deleteSession(Manage).map { _ =>
-            Ok(viewAllCeasedBusinesses(
-              sources = viewModel,
-              isAgent = isAgent,
-              backUrl = backUrl
-            ))
+            Ok(
+              viewAllCeasedBusinesses(
+                sources = viewModel,
+                isAgent = isAgent,
+                backUrl = backUrl
+              )
+            )
           } recover {
             case ex: Exception =>
-              Logger("application").error(
-                s"Session Error: ${ex.getMessage} - ${ex.getCause}")
+              Logger("application").error(s"Session Error: ${ex.getMessage} - ${ex.getCause}")
               errorHandler.showInternalServerError()
           }
         case Left(ex) =>
-          Logger("application").error(
-            s"Error: ${ex.getMessage} - ${ex.getCause}")
+          Logger("application").error(s"Error: ${ex.getMessage} - ${ex.getCause}")
           Future(errorHandler.showInternalServerError())
       }
     }

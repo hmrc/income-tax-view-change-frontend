@@ -29,8 +29,9 @@ case object QuarterlyReportingMethod extends ReportingMethod {
 }
 
 object ReportingMethod {
-  def apply(method: String): ReportingMethod = method.toLowerCase match {
-    case "annual" => AnnualReportingMethod
-    case "quarterly" => QuarterlyReportingMethod
-  }
+  def apply(method: String): ReportingMethod =
+    method.toLowerCase match {
+      case "annual"    => AnnualReportingMethod
+      case "quarterly" => QuarterlyReportingMethod
+    }
 }

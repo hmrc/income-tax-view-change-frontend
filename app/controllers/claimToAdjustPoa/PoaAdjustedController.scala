@@ -36,41 +36,64 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class PoaAdjustedController @Inject()(val authActions: AuthActions,
-                                      val view: PoaAdjustedView,
-                                      val poaSessionService: PaymentOnAccountSessionService,
-                                      val claimToAdjustService: ClaimToAdjustService,
-                                      val dateService: DateService)
-                                     (implicit val appConfig: FrontendAppConfig,
-                                      val individualErrorHandler: ItvcErrorHandler,
-                                      val agentErrorHandler: AgentItvcErrorHandler,
-                                      val mcc: MessagesControllerComponents,
-                                      val ec: ExecutionContext)
-  extends FrontendController(mcc) with ClaimToAdjustUtils with I18nSupport with WithSessionAndPoa with ErrorRecovery {
+class PoaAdjustedController @Inject() (
+    val authActions:          AuthActions,
+    val view:                 PoaAdjustedView,
+    val poaSessionService:    PaymentOnAccountSessionService,
+    val claimToAdjustService: ClaimToAdjustService,
+    val dateService:          DateService
+  )(
+    implicit val appConfig:     FrontendAppConfig,
+    val individualErrorHandler: ItvcErrorHandler,
+    val agentErrorHandler:      AgentItvcErrorHandler,
+    val mcc:                    MessagesControllerComponents,
+    val ec:                     ExecutionContext)
+    extends FrontendController(mcc)
+    with ClaimToAdjustUtils
+    with I18nSupport
+    with WithSessionAndPoa
+    with ErrorRecovery {
 
-  def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
-    implicit user =>
+  def show(isAgent: Boolean): Action[AnyContent] =
+    authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async { implicit user =>
       withSessionDataAndPoa(journeyState = AfterSubmissionPage) { (session, poa) =>
         checkAndLogAPIDataSet(session, poa)
         EitherT.liftF(handleView(poa, session))
       } recover logAndRedirect
-  }
+    }
 
   private def checkAndLogAPIDataSet(session: PoaAmendmentData, poa: PaymentOnAccountViewModel): Unit = {
     if (session.newPoaAmount.contains(poa.totalAmountOne)) {
       Logger("application").info(s"Amount returned from API equals amount in mongo: ${poa.totalAmountOne}")
-    }
-    else {
-      Logger("application").error(s"Amount returned from API: ${poa.totalAmountOne} does not equal amount in mongo: ${session.newPoaAmount}")
+    } else {
+      Logger("application").error(
+        s"Amount returned from API: ${poa.totalAmountOne} does not equal amount in mongo: ${session.newPoaAmount}"
+      )
     }
   }
 
-  private def handleView(poa: PaymentOnAccountViewModel, session: PoaAmendmentData)(implicit user: MtdItUser[_]): Future[Result] = {
+  private def handleView(
+      poa:     PaymentOnAccountViewModel,
+      session: PoaAmendmentData
+    )(
+      implicit user: MtdItUser[_]
+    ): Future[Result] = {
     poaSessionService.setCompletedJourney(hc, ec).flatMap {
-      case Right(_) => Future.successful(
-        Ok(view(user.isAgent(), poa.taxYear, poa.totalAmountOne, showOverdueCharges(poa.taxYear, session.poaAdjustmentReason))))
+      case Right(_) =>
+        Future.successful(
+          Ok(
+            view(
+              user.isAgent(),
+              poa.taxYear,
+              poa.totalAmountOne,
+              showOverdueCharges(poa.taxYear, session.poaAdjustmentReason)
+            )
+          )
+        )
       case Left(ex) =>
-        Future.successful(logAndRedirect(s"Error setting journey completed flag in mongo${ex.getMessage} - ${ex.getCause}"))
+        Future.successful(
+          logAndRedirect(s"Error setting journey completed flag in mongo${ex.getMessage} - ${ex.getCause}")
+        )
     }
   }
 

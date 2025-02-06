@@ -19,20 +19,18 @@ package models.liabilitycalculation.taxcalculation
 import play.api.libs.json.{Json, OFormat}
 
 case class Nics(
-                 class4Nics: Option[Class4Nics] = None,
-                 class2Nics: Option[Class2Nics] = None
-               )
+    class4Nics: Option[Class4Nics] = None,
+    class2Nics: Option[Class2Nics] = None)
 
 object Nics {
   implicit val format: OFormat[Nics] = Json.format[Nics]
 }
 
 case class Nic4Bands(
-                      name: String,
-                      income: Int,
-                      rate: BigDecimal,
-                      amount: BigDecimal
-                    )
+    name:   String,
+    income: Int,
+    rate:   BigDecimal,
+    amount: BigDecimal)
 
 object Nic4Bands {
   implicit val format: OFormat[Nic4Bands] = Json.format[Nic4Bands]

@@ -35,7 +35,7 @@ class ApiFailureSubmittingPoaControllerSpec extends MockAuthActions {
   val firstParagraphView = "Your payments on account could not be updated."
 
   mtdAllRoles.foreach { mtdRole =>
-    val isAgent = mtdRole != MTDIndividual
+    val isAgent     = mtdRole != MTDIndividual
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
     s"show(isAgent = $isAgent)" when {
       val action = testController.show(isAgent)

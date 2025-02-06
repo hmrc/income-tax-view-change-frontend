@@ -37,7 +37,8 @@ trait MockOptInService extends UnitSpec with BeforeAndAfterEach {
   }
 
   def mockSaveIntent(intent: TaxYear, isSuccessful: Boolean = true): Unit = {
-    when(mockOptInService.saveIntent(ArgumentMatchers.eq(intent))(any(), any(), any())).thenReturn(Future.successful(isSuccessful))
+    when(mockOptInService.saveIntent(ArgumentMatchers.eq(intent))(any(), any(), any()))
+      .thenReturn(Future.successful(isSuccessful))
   }
 
   def mockAvailableOptInTaxYear(choices: List[TaxYear]): Unit = {
@@ -52,7 +53,8 @@ trait MockOptInService extends UnitSpec with BeforeAndAfterEach {
     propositionOpl.map { proposition =>
       when(mockOptInService.fetchOptInProposition()(any(), any(), any())).thenReturn(Future.successful(proposition))
     } getOrElse {
-      when(mockOptInService.fetchOptInProposition()(any(), any(), any())).thenReturn(Future.failed(new RuntimeException("Some error")))
+      when(mockOptInService.fetchOptInProposition()(any(), any(), any()))
+        .thenReturn(Future.failed(new RuntimeException("Some error")))
     }
   }
 }

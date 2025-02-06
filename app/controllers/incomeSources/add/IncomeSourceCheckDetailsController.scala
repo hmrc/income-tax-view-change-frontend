@@ -37,104 +37,140 @@ import views.html.incomeSources.add.IncomeSourceCheckDetails
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeSourceCheckDetails,
-                                                   val authActions: AuthActions,
-                                                   val businessDetailsService: CreateBusinessDetailsService,
-                                                   val auditingService: AuditingService,
-                                                   val sessionService: SessionService,
-                                                   val itvcErrorHandler: ItvcErrorHandler,
-                                                   val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                                  (implicit val ec: ExecutionContext,
-                                                   val mcc: MessagesControllerComponents,
-                                                   val appConfig: FrontendAppConfig) extends FrontendController(mcc)
-  with JourneyChecker with I18nSupport {
+class IncomeSourceCheckDetailsController @Inject() (
+    val checkDetailsView:       IncomeSourceCheckDetails,
+    val authActions:            AuthActions,
+    val businessDetailsService: CreateBusinessDetailsService,
+    val auditingService:        AuditingService,
+    val sessionService:         SessionService,
+    val itvcErrorHandler:       ItvcErrorHandler,
+    val itvcErrorHandlerAgent:  AgentItvcErrorHandler
+  )(
+    implicit val ec: ExecutionContext,
+    val mcc:         MessagesControllerComponents,
+    val appConfig:   FrontendAppConfig)
+    extends FrontendController(mcc)
+    with JourneyChecker
+    with I18nSupport {
 
-  private lazy val errorRedirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
-    if (isAgent) routes.IncomeSourceNotAddedController.showAgent(incomeSourceType).url
-    else routes.IncomeSourceNotAddedController.show(incomeSourceType).url
+  private lazy val errorRedirectUrl: (Boolean, IncomeSourceType) => String =
+    (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
+      if (isAgent) routes.IncomeSourceNotAddedController.showAgent(incomeSourceType).url
+      else routes.IncomeSourceNotAddedController.show(incomeSourceType).url
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit user =>
       handleRequest(
         sources = user.incomeSources,
         isAgent = false,
         incomeSourceType
       )(implicitly, itvcErrorHandler)
-  }
+    }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
-    implicit mtdItUser =>
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    authActions.asMTDAgentWithConfirmedClient.async { implicit mtdItUser =>
       handleRequest(
         sources = mtdItUser.incomeSources,
         isAgent = true,
         incomeSourceType
       )(implicitly, itvcErrorHandlerAgent)
-  }
-
-  private def handleRequest(sources: IncomeSourceDetailsModel,
-                            isAgent: Boolean,
-                            incomeSourceType: IncomeSourceType)
-                           (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
-    val backUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent).url
-    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType) else {
-      controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.submit(incomeSourceType)
     }
-    getViewModel(incomeSourceType, sessionData)(user) match {
-      case Some(viewModel) =>
-        Future.successful {
-          Ok(checkDetailsView(
-            viewModel,
-            postAction = postAction,
-            isAgent,
-            backUrl = backUrl
-          ))
+
+  private def handleRequest(
+      sources:          IncomeSourceDetailsModel,
+      isAgent:          Boolean,
+      incomeSourceType: IncomeSourceType
+    )(
+      implicit user: MtdItUser[_],
+      errorHandler:  ShowInternalServerError
+    ): Future[Result] =
+    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) {
+      sessionData =>
+        val backUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController
+          .show(incomeSourceType, isAgent)
+          .url
+        val postAction: Call =
+          if (isAgent)
+            controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType)
+          else {
+            controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.submit(incomeSourceType)
+          }
+        getViewModel(incomeSourceType, sessionData)(user) match {
+          case Some(viewModel) =>
+            Future.successful {
+              Ok(
+                checkDetailsView(
+                  viewModel,
+                  postAction = postAction,
+                  isAgent,
+                  backUrl = backUrl
+                )
+              )
+            }
+          case None =>
+            val agentPrefix = if (isAgent) "[Agent]" else ""
+            Logger("application").error(
+              agentPrefix +
+                s"Unable to construct view model for $incomeSourceType"
+            )
+            Future.successful {
+              errorHandler.showInternalServerError()
+            }
         }
-      case None =>
+    }.recover {
+      case ex: Throwable =>
         val agentPrefix = if (isAgent) "[Agent]" else ""
-        Logger("application").error(agentPrefix +
-          s"Unable to construct view model for $incomeSourceType")
-        Future.successful {
-          errorHandler.showInternalServerError()
-        }
+        Logger("application").error(
+          agentPrefix +
+            s"Unexpected exception ${ex.getMessage} - ${ex.getCause}"
+        )
+        errorHandler.showInternalServerError()
     }
-  }.recover {
-    case ex: Throwable =>
-      val agentPrefix = if (isAgent) "[Agent]" else ""
-      Logger("application").error(agentPrefix +
-        s"Unexpected exception ${ex.getMessage} - ${ex.getCause}")
-      errorHandler.showInternalServerError()
+
+  private def getViewModel(
+      incomeSourceType: IncomeSourceType,
+      sessionData:      UIJourneySessionData
+    )(
+      implicit user: MtdItUser[_]
+    ): Option[CheckDetailsViewModel] = {
+    if (incomeSourceType == SelfEmployment) getBusinessModel(sessionData)
+    else getPropertyModel(incomeSourceType, sessionData)
   }
 
-  private def getViewModel(incomeSourceType: IncomeSourceType, sessionData: UIJourneySessionData)
-                          (implicit user: MtdItUser[_]): Option[CheckDetailsViewModel] = {
-    if (incomeSourceType == SelfEmployment) getBusinessModel(sessionData) else getPropertyModel(incomeSourceType, sessionData)
-  }
-
-  private def getPropertyModel(incomeSourceType: IncomeSourceType, sessionData: UIJourneySessionData): Option[CheckPropertyViewModel] = {
+  private def getPropertyModel(
+      incomeSourceType: IncomeSourceType,
+      sessionData:      UIJourneySessionData
+    ): Option[CheckPropertyViewModel] = {
     val accountingMethodOpt = sessionData.addIncomeSourceData.flatMap(_.incomeSourcesAccountingMethod)
-    val dateStartedOpt = sessionData.addIncomeSourceData.flatMap(_.dateStarted)
+    val dateStartedOpt      = sessionData.addIncomeSourceData.flatMap(_.dateStarted)
     (dateStartedOpt, accountingMethodOpt) match {
       case (Some(dateStarted), Some(accountingMethod)) =>
-        Some(CheckPropertyViewModel(
-          tradingStartDate = dateStarted,
-          cashOrAccrualsFlag = accountingMethod,
-          incomeSourceType = incomeSourceType
-        ))
+        Some(
+          CheckPropertyViewModel(
+            tradingStartDate = dateStarted,
+            cashOrAccrualsFlag = accountingMethod,
+            incomeSourceType = incomeSourceType
+          )
+        )
       case (_, _) =>
         None
     }
   }
 
-  private def getBusinessModel(sessionData: UIJourneySessionData)(implicit user: MtdItUser[_]): Option[CheckBusinessDetailsViewModel] = {
-    val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
-    val showAccountingMethodPage: Boolean = userActiveBusinesses.isEmpty
+  private def getBusinessModel(
+      sessionData: UIJourneySessionData
+    )(
+      implicit user: MtdItUser[_]
+    ): Option[CheckBusinessDetailsViewModel] = {
+    val userActiveBusinesses:     List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
+    val showAccountingMethodPage: Boolean                    = userActiveBusinesses.isEmpty
 
     sessionData.addIncomeSourceData.flatMap { addIncomeSourceData =>
       for {
-        address <- addIncomeSourceData.address
-        accountingPeriodEndDate <- addIncomeSourceData.accountingPeriodEndDate
-        businessTrade <- addIncomeSourceData.businessTrade
-        businessAddressLine1 <- address.lines.headOption
+        address                       <- addIncomeSourceData.address
+        accountingPeriodEndDate       <- addIncomeSourceData.accountingPeriodEndDate
+        businessTrade                 <- addIncomeSourceData.businessTrade
+        businessAddressLine1          <- address.lines.headOption
         incomeSourcesAccountingMethod <- addIncomeSourceData.incomeSourcesAccountingMethod
       } yield CheckBusinessDetailsViewModel(
         businessName = addIncomeSourceData.businessName,
@@ -154,20 +190,23 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     }
   }
 
-
-  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
+  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit user =>
       handleSubmit(isAgent = false, incomeSourceType)
-  }
+    }
 
-  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
-    implicit mtdItUser =>
+  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    authActions.asMTDAgentWithConfirmedClient.async { implicit mtdItUser =>
       handleSubmit(isAgent = true, incomeSourceType)
-  }
+    }
 
-  private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
+  private def handleSubmit(
+      isAgent:          Boolean,
+      incomeSourceType: IncomeSourceType
+    )(
+      implicit user: MtdItUser[_]
+    ): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
-
       val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
         routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url
 
@@ -178,31 +217,44 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
           businessDetailsService.createRequest(viewModel) flatMap {
             case Right(CreateIncomeSourceResponse(id)) =>
               auditingService.extendedAudit(
-                CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id)))
+                CreateIncomeSourceAuditModel(
+                  incomeSourceType,
+                  viewModel,
+                  None,
+                  None,
+                  Some(CreateIncomeSourceResponse(id))
+                )
               )
               sessionService.setMongoData(
                 sessionData.copy(
-                  addIncomeSourceData =
-                    sessionData.addIncomeSourceData.map(
-                      _.copy(
-                        incomeSourceId = Some(id)
-                      )
+                  addIncomeSourceData = sessionData.addIncomeSourceData.map(
+                    _.copy(
+                      incomeSourceId = Some(id)
                     )
+                  )
                 )
               ) flatMap {
-                case true => Future.successful(Redirect(redirectUrl(isAgent, incomeSourceType)))
+                case true  => Future.successful(Redirect(redirectUrl(isAgent, incomeSourceType)))
                 case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
               }
             case Left(ex) =>
               auditingService.extendedAudit(
-                CreateIncomeSourceAuditModel(incomeSourceType, viewModel, Some(enums.FailureCategory.ApiFailure), Some(ex.getMessage), None)
+                CreateIncomeSourceAuditModel(
+                  incomeSourceType,
+                  viewModel,
+                  Some(enums.FailureCategory.ApiFailure),
+                  Some(ex.getMessage),
+                  None
+                )
               )
               Future.failed(ex)
           }
         case None =>
           val agentPrefix = if (isAgent) "[Agent]" else ""
-          Logger("application").error(agentPrefix +
-            s"Unable to construct view model for $incomeSourceType")
+          Logger("application").error(
+            agentPrefix +
+              s"Unable to construct view model for $incomeSourceType"
+          )
           Future.successful {
             Redirect(errorRedirectUrl(isAgent, incomeSourceType))
           }

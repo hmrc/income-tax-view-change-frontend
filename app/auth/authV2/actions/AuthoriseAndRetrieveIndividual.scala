@@ -41,14 +41,16 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
-                                               val appConfig: FrontendAppConfig,
-                                               mcc: MessagesControllerComponents,
-                                               val auditingService: AuditingService)
-  extends AuthoriseHelper with ActionRefiner[Request, AuthorisedAndEnrolledRequest]{
+class AuthoriseAndRetrieveIndividual @Inject() (
+    val authorisedFunctions: FrontendAuthorisedFunctions,
+    val appConfig:           FrontendAppConfig,
+    mcc:                     MessagesControllerComponents,
+    val auditingService:     AuditingService)
+    extends AuthoriseHelper
+    with ActionRefiner[Request, AuthorisedAndEnrolledRequest] {
 
-  implicit val executionContext: ExecutionContext = mcc.executionContext
-  lazy val requiredConfidenceLevel: Int = appConfig.requiredConfidenceLevel
+  implicit val executionContext:    ExecutionContext = mcc.executionContext
+  lazy val requiredConfidenceLevel: Int              = appConfig.requiredConfidenceLevel
 
   lazy val logger = Logger(getClass)
 
@@ -64,57 +66,66 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
       Enrolment(mtdEnrolmentName) and
         (AffinityGroup.Organisation or AffinityGroup.Individual)
 
-    authorisedFunctions.authorised(predicate or AffinityGroup.Agent)
+    authorisedFunctions
+      .authorised(predicate or AffinityGroup.Agent)
       .retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
         redirectIfAgent() orElse
-        redirectIfInsufficientConfidence() orElse constructAuthorisedAndEnrolledUser()
+          redirectIfInsufficientConfidence() orElse constructAuthorisedAndEnrolledUser()
       }(hc, executionContext) recoverWith logAndRedirect()
   }
 
   // this URL is incorrect in live - the completion and failure URLs must be URL encoded
   lazy val ivUpliftRedirectUrl: String = {
     val host = if (appConfig.relativeIVUpliftParams) "" else appConfig.itvcFrontendEnvironment
-    val completionUrl: String = s"$host${controllers.routes.UpliftSuccessController.success(OriginEnum.PTA.toString).url}"
+    val completionUrl: String =
+      s"$host${controllers.routes.UpliftSuccessController.success(OriginEnum.PTA.toString).url}"
     val failureUrl: String = s"$host${controllers.errors.routes.UpliftFailedController.show.url}"
-    s"${appConfig.ivUrl}/uplift?origin=ITVC&confidenceLevel=$requiredConfidenceLevel&completionURL=${URLEncoder.encode(completionUrl, "UTF-8")}&failureURL=${URLEncoder.encode(failureUrl, "UTF-8")}"
+    s"${appConfig.ivUrl}/uplift?origin=ITVC&confidenceLevel=$requiredConfidenceLevel&completionURL=${URLEncoder.encode(completionUrl, "UTF-8")}&failureURL=${URLEncoder
+      .encode(failureUrl, "UTF-8")}"
   }
 
-  private def redirectIfInsufficientConfidence[A]()(
-    implicit request: Request[A],
-    hc: HeaderCarrier): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
+  private def redirectIfInsufficientConfidence[A](
+    )(
+      implicit request: Request[A],
+      hc:               HeaderCarrier
+    ): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
 
-    case _ ~ _ ~ _ ~ ag ~ confidenceLevel
-      if confidenceLevel.level < requiredConfidenceLevel =>
-      auditingService.audit(IvUpliftRequiredAuditModel(ag.fold("")(_.toString), confidenceLevel.level, requiredConfidenceLevel), Some(request.path))
+    case _ ~ _ ~ _ ~ ag ~ confidenceLevel if confidenceLevel.level < requiredConfidenceLevel =>
+      auditingService.audit(
+        IvUpliftRequiredAuditModel(ag.fold("")(_.toString), confidenceLevel.level, requiredConfidenceLevel),
+        Some(request.path)
+      )
       Future.successful(Left(Redirect(ivUpliftRedirectUrl)))
   }
 
-  private def constructAuthorisedAndEnrolledUser[A]()(
-    implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
+  private def constructAuthorisedAndEnrolledUser[A](
+    )(
+      implicit request: Request[A]
+    ): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
     case enrolments ~ userName ~ credentials ~ affinityGroup ~ _ =>
       lazy val optMtdId: Option[String] =
-        enrolments.getEnrolment(Constants.mtdEnrolmentName)
+        enrolments
+          .getEnrolment(Constants.mtdEnrolmentName)
           .flatMap(_.getIdentifier(Constants.mtdEnrolmentIdentifierKey))
           .map(_.value)
 
-      optMtdId.fold(throw InsufficientEnrolments("Missing MTDId Individual")) {
-        mtdItId =>
-          val authUserDetails = AuthUserDetails(
-            enrolments,
-            affinityGroup,
-            credentials,
-            userName
-          )
-          Future.successful(
-            Right(
-              AuthorisedAndEnrolledRequest(
-                mtditId = mtdItId,
-                MTDIndividual,
-                authUserDetails = authUserDetails,
-                clientDetails = None
-              )
+      optMtdId.fold(throw InsufficientEnrolments("Missing MTDId Individual")) { mtdItId =>
+        val authUserDetails = AuthUserDetails(
+          enrolments,
+          affinityGroup,
+          credentials,
+          userName
+        )
+        Future.successful(
+          Right(
+            AuthorisedAndEnrolledRequest(
+              mtditId = mtdItId,
+              MTDIndividual,
+              authUserDetails = authUserDetails,
+              clientDetails = None
             )
           )
+        )
       }
   }
 }

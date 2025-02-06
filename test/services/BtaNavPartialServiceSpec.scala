@@ -23,11 +23,10 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.i18n.{Lang, Messages}
 import testUtils.TestSupport
 
-
 class BtaNavPartialServiceSpec extends TestSupport with ScalaFutures with Matchers {
 
-  val mockService: BtaNavBarService = new BtaNavBarService()(appConfig)
-  implicit val message: Messages = messages
+  val mockService:      BtaNavBarService = new BtaNavBarService()(appConfig)
+  implicit val message: Messages         = messages
 
   "BtaNavPartialPartialService" when {
     "notificationBadgeCount" should {
@@ -60,29 +59,29 @@ class BtaNavPartialServiceSpec extends TestSupport with ScalaFutures with Matche
     "formsNav" should {
       "return en messages when there is 1 alert and lang is set to eng" in {
         implicit val lang = messagesApi.preferred(Seq(Lang("en"))).lang
-        val testNavLinks = NavLinks("testEn", "testCy", "testUrl", Some(1))
-        val result = mockService.formsNav(testNavLinks)(lang)
+        val testNavLinks  = NavLinks("testEn", "testCy", "testUrl", Some(1))
+        val result        = mockService.formsNav(testNavLinks)(lang)
         result mustBe ListLinks("testEn", "testUrl", Some("1"))
       }
 
       "return cy messages when there is 1 alert and lang is set to eng" in {
         implicit val lang = messagesApi.preferred(Seq(Lang("cy"))).lang
-        val testNavLinks = NavLinks("testEn", "testCy", "testUrl", Some(1))
-        val result = mockService.formsNav(testNavLinks)(lang)
+        val testNavLinks  = NavLinks("testEn", "testCy", "testUrl", Some(1))
+        val result        = mockService.formsNav(testNavLinks)(lang)
         result mustBe ListLinks("testCy", "testUrl", Some("1"))
       }
 
       "return an empty ListLink with showBoolean set true when there are 0 alerts" in {
         implicit val lang = messages.lang
-        val testNavLinks = NavLinks("testEn", "testCy", "testUrl", Some(0))
-        val result = mockService.formsNav(testNavLinks)(lang)
+        val testNavLinks  = NavLinks("testEn", "testCy", "testUrl", Some(0))
+        val result        = mockService.formsNav(testNavLinks)(lang)
         result mustBe ListLinks("", "", showBoolean = Some(false))
       }
 
       "return an empty ListLink with showBoolean set true when there are no alerts provided" in {
         implicit val lang = messages.lang
-        val testNavLinks = NavLinks("testEn", "testCy", "testUrl")
-        val result = mockService.formsNav(testNavLinks)(lang)
+        val testNavLinks  = NavLinks("testEn", "testCy", "testUrl")
+        val result        = mockService.formsNav(testNavLinks)(lang)
         result mustBe ListLinks("", "", showBoolean = Some(false))
       }
     }
@@ -95,7 +94,7 @@ class BtaNavPartialServiceSpec extends TestSupport with ScalaFutures with Matche
           NavLinks("testEnAccount", "testCyAccount", "testUrl"),
           NavLinks("testEnMessages", "testCyMessages", "testUrl"),
           NavLinks("testEnHelp", "testCyHelp", "testUrl"),
-          NavLinks("testEnForm", "testCyForm", "testUrl", Some(1)),
+          NavLinks("testEnForm", "testCyForm", "testUrl", Some(1))
         )
 
         val result = mockService.partialList(Some(navContent))(messages)
@@ -116,7 +115,7 @@ class BtaNavPartialServiceSpec extends TestSupport with ScalaFutures with Matche
           NavLinks("testEnAccount", "testCyAccount", "testUrl"),
           NavLinks("testEnMessages", "testCyMessages", "testUrl"),
           NavLinks("testEnHelp", "testCyHelp", "testUrl"),
-          NavLinks("testEnForm", "testCyForm", "testUrl", Some(1)),
+          NavLinks("testEnForm", "testCyForm", "testUrl", Some(1))
         )
 
         val result = mockService.partialList(Some(navContent))(messages)
@@ -125,7 +124,7 @@ class BtaNavPartialServiceSpec extends TestSupport with ScalaFutures with Matche
           ListLinks("testCyAccount", "testUrl"),
           ListLinks("testCyMessages", "testUrl", Some("0")),
           ListLinks("testCyForm", "testUrl", Some("1")),
-          ListLinks("testCyHelp", "testUrl"),
+          ListLinks("testCyHelp", "testUrl")
         )
       }
 
@@ -136,7 +135,7 @@ class BtaNavPartialServiceSpec extends TestSupport with ScalaFutures with Matche
           NavLinks("testEnAccount", "testCyAccount", "testUrl"),
           NavLinks("testEnMessages", "testCyMessages", "testUrl"),
           NavLinks("testEnHelp", "testCyHelp", "testUrl"),
-          NavLinks("testEnForm", "testCyForm", "testUrl", Some(0)),
+          NavLinks("testEnForm", "testCyForm", "testUrl", Some(0))
         )
 
         val result = mockService.partialList(Some(navContent))
@@ -145,7 +144,7 @@ class BtaNavPartialServiceSpec extends TestSupport with ScalaFutures with Matche
           ListLinks("testEnAccount", "testUrl"),
           ListLinks("testEnMessages", "testUrl", Some("0")),
           ListLinks("", "", showBoolean = Some(false)),
-          ListLinks("testEnHelp", "testUrl"),
+          ListLinks("testEnHelp", "testUrl")
         )
       }
 
@@ -156,7 +155,7 @@ class BtaNavPartialServiceSpec extends TestSupport with ScalaFutures with Matche
           NavLinks("testEnAccount", "testCyAccount", "testUrl"),
           NavLinks("testEnMessages", "testCyMessages", "testUrl", Some(99)),
           NavLinks("testEnHelp", "testCyHelp", "testUrl"),
-          NavLinks("testEnForm", "testCyForm", "testUrl", Some(99)),
+          NavLinks("testEnForm", "testCyForm", "testUrl", Some(99))
         )
 
         val result = mockService.partialList(Some(navContent))
@@ -165,7 +164,7 @@ class BtaNavPartialServiceSpec extends TestSupport with ScalaFutures with Matche
           ListLinks("testEnAccount", "testUrl"),
           ListLinks("testEnMessages", "testUrl", Some("99")),
           ListLinks("testEnForm", "testUrl", Some("99")),
-          ListLinks("testEnHelp", "testUrl"),
+          ListLinks("testEnHelp", "testUrl")
         )
       }
 
@@ -176,7 +175,7 @@ class BtaNavPartialServiceSpec extends TestSupport with ScalaFutures with Matche
           NavLinks("testEnAccount", "testCyAccount", "testUrl"),
           NavLinks("testEnMessages", "testCyMessages", "testUrl", Some(100)),
           NavLinks("testEnHelp", "testCyHelp", "testUrl"),
-          NavLinks("testEnForm", "testCyForm", "testUrl", Some(100)),
+          NavLinks("testEnForm", "testCyForm", "testUrl", Some(100))
         )
 
         val result = mockService.partialList(Some(navContent))
@@ -185,7 +184,7 @@ class BtaNavPartialServiceSpec extends TestSupport with ScalaFutures with Matche
           ListLinks("testEnAccount", "testUrl"),
           ListLinks("testEnMessages", "testUrl", Some("+99")),
           ListLinks("testEnForm", "testUrl", Some("+99")),
-          ListLinks("testEnHelp", "testUrl"),
+          ListLinks("testEnHelp", "testUrl")
         )
       }
 

@@ -26,32 +26,34 @@ import services.DateServiceInterface
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 
-
 @Singleton
-class UKPropertyEndDateForm @Inject()(val dateService: DateServiceInterface) extends CustomConstraints {
+class UKPropertyEndDateForm @Inject() (val dateService: DateServiceInterface) extends CustomConstraints {
 
-  val dateMustBeEntered = "incomeSources.cease.UKPropertyEndDate.error.incomplete"
-  val dateMustBeReal = "incomeSources.cease.UKPropertyEndDate.error.invalid"
+  val dateMustBeEntered        = "incomeSources.cease.UKPropertyEndDate.error.incomplete"
+  val dateMustBeReal           = "incomeSources.cease.UKPropertyEndDate.error.invalid"
   val dateMustNotBeInTheFuture = "incomeSources.cease.UKPropertyEndDate.error.future"
   val dateMustBeAfterStartDate = "incomeSources.cease.UKPropertyEndDate.error.beforeStartDate"
 
-
   def apply(implicit user: MtdItUser[_]): Form[DateFormElement] = {
     val currentDate: LocalDate = dateService.getCurrentDate
-    val UKPropertyStartDate: Option[LocalDate] = user.incomeSources.properties.filter(_.isUkProperty).flatMap(_.tradingStartDate).headOption
+    val UKPropertyStartDate: Option[LocalDate] =
+      user.incomeSources.properties.filter(_.isUkProperty).flatMap(_.tradingStartDate).headOption
 
     Form(
-      mapping("uk-property-end-date" -> tuple(
-        "day" -> default(text(), ""),
-        "month" -> default(text(), ""),
-        "year" -> default(text(), ""))
-        .verifying(firstError(nonEmptyDateFields(dateMustBeEntered),
-          validDate(dateMustBeReal))
-        ).transform[LocalDate](
-        { case (day, month, year) => LocalDate.of(year.toInt, month.toInt, day.toInt) },
-        date => (date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
-      ).verifying(minDate(UKPropertyStartDate.getOrElse(LocalDate.MIN), dateMustBeAfterStartDate))
-        .verifying(maxDate(currentDate, dateMustNotBeInTheFuture))
-      )(DateFormElement.apply)(DateFormElement.unapply))
+      mapping(
+        "uk-property-end-date" -> tuple(
+          "day"   -> default(text(), ""),
+          "month" -> default(text(), ""),
+          "year"  -> default(text(), "")
+        )
+          .verifying(firstError(nonEmptyDateFields(dateMustBeEntered), validDate(dateMustBeReal)))
+          .transform[LocalDate](
+            { case (day, month, year) => LocalDate.of(year.toInt, month.toInt, day.toInt) },
+            date => (date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
+          )
+          .verifying(minDate(UKPropertyStartDate.getOrElse(LocalDate.MIN), dateMustBeAfterStartDate))
+          .verifying(maxDate(currentDate, dateMustNotBeInTheFuture))
+      )(DateFormElement.apply)(DateFormElement.unapply)
+    )
   }
 }

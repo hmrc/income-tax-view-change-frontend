@@ -29,12 +29,26 @@ import java.time.LocalDate
 class ChargeHistoryResponseModelSpec extends UnitSpec with Matchers {
 
   val testHttpVerb = "GET"
-  val testUri = "/test"
+  val testUri      = "/test"
 
-  val testChargeHistoryModelSuccess: ChargeHistoryModel = ChargeHistoryModel(taxYear = "2017", documentId = "123456789", documentDate = LocalDate.of(2020, 1, 29), documentDescription = "Balancing Charge", totalAmount = 123456789012345.67, reversalDate = LocalDate.of(2020, 2, 24), reversalReason = "amended return", poaAdjustmentReason = Some("005"))
+  val testChargeHistoryModelSuccess: ChargeHistoryModel = ChargeHistoryModel(
+    taxYear = "2017",
+    documentId = "123456789",
+    documentDate = LocalDate.of(2020, 1, 29),
+    documentDescription = "Balancing Charge",
+    totalAmount = 123456789012345.67,
+    reversalDate = LocalDate.of(2020, 2, 24),
+    reversalReason = "amended return",
+    poaAdjustmentReason = Some("005")
+  )
 
   val successResponseModel: ChargeHistoryResponseModel =
-    ChargesHistoryModel(idType = "NINO", idValue = "AB123456C", regimeType = "ITSA", chargeHistoryDetails = Some(List(testChargeHistoryModelSuccess)))
+    ChargesHistoryModel(
+      idType = "NINO",
+      idValue = "AB123456C",
+      regimeType = "ITSA",
+      chargeHistoryDetails = Some(List(testChargeHistoryModelSuccess))
+    )
 
   val notFoundResponseModel: ChargeHistoryResponseModel = ChargesHistoryModel("", "", "", None)
 
@@ -46,31 +60,34 @@ class ChargeHistoryResponseModelSpec extends UnitSpec with Matchers {
     "parse OK status" when {
       "json is valid" in {
         val httpResponse = HttpResponse(OK, json = testValidChargeHistoryDetailsModelJson, headers = Map.empty)
-        lazy val result = ChargesHistoryResponseReads.read(testHttpVerb, testUri, httpResponse)
+        lazy val result  = ChargesHistoryResponseReads.read(testHttpVerb, testUri, httpResponse)
         result shouldBe successResponseModel
       }
       "json is invalid" in {
         val httpResponse = HttpResponse(OK, json = testInvalidChargeHistoryDetailsModelJson, headers = Map.empty)
-        lazy val result = ChargesHistoryResponseReads.read(testHttpVerb, testUri, httpResponse)
-        result shouldBe ChargesHistoryErrorModel(INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing ChargeHistory Data Response")
+        lazy val result  = ChargesHistoryResponseReads.read(testHttpVerb, testUri, httpResponse)
+        result shouldBe ChargesHistoryErrorModel(
+          INTERNAL_SERVER_ERROR,
+          "Json Validation Error. Parsing ChargeHistory Data Response"
+        )
       }
     }
     "parse NOT_FOUND or FORBIDDEN status" when {
       "no charge history is found" in {
         val httpResponse = HttpResponse(NOT_FOUND, json = testValidChargeHistoryDetailsModelJson, headers = Map.empty)
-        lazy val result = ChargesHistoryResponseReads.read(testHttpVerb, testUri, httpResponse)
+        lazy val result  = ChargesHistoryResponseReads.read(testHttpVerb, testUri, httpResponse)
         result shouldBe notFoundResponseModel
       }
       "user is forbidden" in {
         val httpResponse = HttpResponse(FORBIDDEN, json = testValidChargeHistoryDetailsModelJson, headers = Map.empty)
-        lazy val result = ChargesHistoryResponseReads.read(testHttpVerb, testUri, httpResponse)
+        lazy val result  = ChargesHistoryResponseReads.read(testHttpVerb, testUri, httpResponse)
         result shouldBe forbiddenResponseModel
       }
     }
     "parse error statuses" when {
       "there is an error in the response" in {
         val httpResponse = HttpResponse(INTERNAL_SERVER_ERROR, json = Json.obj(), headers = Map.empty)
-        lazy val result = ChargesHistoryResponseReads.read(testHttpVerb, testUri, httpResponse)
+        lazy val result  = ChargesHistoryResponseReads.read(testHttpVerb, testUri, httpResponse)
         result shouldBe chargesHistoryErrorModel
       }
     }

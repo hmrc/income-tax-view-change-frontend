@@ -26,20 +26,25 @@ import uk.gov.hmrc.play.language.{LanguageController, LanguageUtils}
 import scala.concurrent.Future
 
 @Singleton
-class ItvcLanguageController @Inject()(mcc: MessagesControllerComponents,
-                                       appConfig: FrontendAppConfig,
-                                       languageUtils: LanguageUtils) extends LanguageController(languageUtils, mcc) {
-
+class ItvcLanguageController @Inject() (
+    mcc:           MessagesControllerComponents,
+    appConfig:     FrontendAppConfig,
+    languageUtils: LanguageUtils)
+    extends LanguageController(languageUtils, mcc) {
 
   override def fallbackURL: String = controllers.routes.HomeController.show().url
 
   val english: Lang = Lang("en")
-  val welsh: Lang = Lang("cy")
-
+  val welsh:   Lang = Lang("cy")
 
   override def languageMap: Map[String, Lang] = Map("en" -> english, "cy" -> welsh)
 
-  private def switchLang(fragment: Option[String], lang: String)(implicit request: Request[AnyContent]): Future[Result] = {
+  private def switchLang(
+      fragment: Option[String],
+      lang:     String
+    )(
+      implicit request: Request[AnyContent]
+    ): Future[Result] = {
     val frag = if (fragment.isDefined) s"#${fragment.get}" else ""
     if (request.headers.get("Referer").isDefined) {
       val currentReferer = request.headers.get("Referer").get
@@ -47,13 +52,13 @@ class ItvcLanguageController @Inject()(mcc: MessagesControllerComponents,
     } else switchToLanguage(lang)(request)
   }
 
-  def switchToEnglish(fragment: Option[String]): Action[AnyContent] = Action.async {
-    request: Request[AnyContent] =>
+  def switchToEnglish(fragment: Option[String]): Action[AnyContent] =
+    Action.async { request: Request[AnyContent] =>
       switchLang(fragment, "en")(request)
-  }
+    }
 
-  def switchToWelsh(fragment: Option[String]): Action[AnyContent] = Action.async {
-    request: Request[AnyContent] =>
+  def switchToWelsh(fragment: Option[String]): Action[AnyContent] =
+    Action.async { request: Request[AnyContent] =>
       switchLang(fragment, "cy")(request)
-  }
+    }
 }

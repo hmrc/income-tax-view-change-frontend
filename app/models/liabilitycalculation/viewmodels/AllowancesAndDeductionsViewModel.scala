@@ -19,20 +19,19 @@ package models.liabilitycalculation.viewmodels
 import models.liabilitycalculation.Calculation
 
 case class AllowancesAndDeductionsViewModel(
-                                             personalAllowance: Option[BigDecimal] = None,
-                                             reducedPersonalAllowance: Option[BigDecimal] = None,
-                                             personalAllowanceBeforeTransferOut: Option[BigDecimal] = None,
-                                             transferredOutAmount: Option[BigDecimal] = None,
-                                             pensionContributions: Option[BigDecimal] = None,
-                                             lossesAppliedToGeneralIncome: Option[BigDecimal] = None,
-                                             giftOfInvestmentsAndPropertyToCharity: Option[BigDecimal] = None,
-                                             grossAnnuityPayments: Option[BigDecimal] = None,
-                                             qualifyingLoanInterestFromInvestments: Option[BigDecimal] = None,
-                                             postCessationTradeReceipts: Option[BigDecimal] = None,
-                                             paymentsToTradeUnionsForDeathBenefits: Option[BigDecimal] = None,
-                                             totalAllowancesAndDeductions: Option[BigDecimal] = None,
-                                             totalReliefs: Option[BigDecimal] = None
-                                           ) {
+    personalAllowance:                     Option[BigDecimal] = None,
+    reducedPersonalAllowance:              Option[BigDecimal] = None,
+    personalAllowanceBeforeTransferOut:    Option[BigDecimal] = None,
+    transferredOutAmount:                  Option[BigDecimal] = None,
+    pensionContributions:                  Option[BigDecimal] = None,
+    lossesAppliedToGeneralIncome:          Option[BigDecimal] = None,
+    giftOfInvestmentsAndPropertyToCharity: Option[BigDecimal] = None,
+    grossAnnuityPayments:                  Option[BigDecimal] = None,
+    qualifyingLoanInterestFromInvestments: Option[BigDecimal] = None,
+    postCessationTradeReceipts:            Option[BigDecimal] = None,
+    paymentsToTradeUnionsForDeathBenefits: Option[BigDecimal] = None,
+    totalAllowancesAndDeductions:          Option[BigDecimal] = None,
+    totalReliefs:                          Option[BigDecimal] = None) {
 
   val personalAllowanceDisplayValue: Option[BigDecimal] =
     personalAllowanceBeforeTransferOut.fold(reducedPersonalAllowance.fold(personalAllowance)(Some(_)))(Some(_))
@@ -43,20 +42,28 @@ object AllowancesAndDeductionsViewModel {
     calcOpt match {
       case Some(calc) =>
         AllowancesAndDeductionsViewModel(
-          personalAllowance = calc.allowancesAndDeductions.flatMap(ad => ad.personalAllowance.map(pa => BigDecimal(pa))),
-          reducedPersonalAllowance = calc.allowancesAndDeductions.flatMap(ad => ad.reducedPersonalAllowance.map(rpa => BigDecimal(rpa))),
+          personalAllowance =
+            calc.allowancesAndDeductions.flatMap(ad => ad.personalAllowance.map(pa => BigDecimal(pa))),
+          reducedPersonalAllowance =
+            calc.allowancesAndDeductions.flatMap(ad => ad.reducedPersonalAllowance.map(rpa => BigDecimal(rpa))),
           personalAllowanceBeforeTransferOut = calc.allowancesAndDeductions.flatMap(ad =>
-            ad.marriageAllowanceTransferOut.flatMap(ma => Some(ma.personalAllowanceBeforeTransferOut))),
+            ad.marriageAllowanceTransferOut.flatMap(ma => Some(ma.personalAllowanceBeforeTransferOut))
+          ),
           transferredOutAmount = calc.allowancesAndDeductions.flatMap(ad =>
-            ad.marriageAllowanceTransferOut.flatMap(ma => Some(ma.transferredOutAmount))),
+            ad.marriageAllowanceTransferOut.flatMap(ma => Some(ma.transferredOutAmount))
+          ),
           pensionContributions = calc.allowancesAndDeductions.flatMap(ad => ad.pensionContributions),
-          lossesAppliedToGeneralIncome = calc.allowancesAndDeductions.flatMap(ad => ad.lossesAppliedToGeneralIncome.map(la => BigDecimal(la))),
+          lossesAppliedToGeneralIncome =
+            calc.allowancesAndDeductions.flatMap(ad => ad.lossesAppliedToGeneralIncome.map(la => BigDecimal(la))),
           giftOfInvestmentsAndPropertyToCharity = calc.allowancesAndDeductions.flatMap(ad =>
-            ad.giftOfInvestmentsAndPropertyToCharity.map(gift => BigDecimal(gift))),
+            ad.giftOfInvestmentsAndPropertyToCharity.map(gift => BigDecimal(gift))
+          ),
           grossAnnuityPayments = calc.allowancesAndDeductions.flatMap(ad => ad.grossAnnuityPayments),
-          qualifyingLoanInterestFromInvestments = calc.allowancesAndDeductions.flatMap(ad => ad.qualifyingLoanInterestFromInvestments),
+          qualifyingLoanInterestFromInvestments =
+            calc.allowancesAndDeductions.flatMap(ad => ad.qualifyingLoanInterestFromInvestments),
           postCessationTradeReceipts = calc.allowancesAndDeductions.flatMap(ad => ad.postCessationTradeReceipts),
-          paymentsToTradeUnionsForDeathBenefits = calc.allowancesAndDeductions.flatMap(ad => ad.paymentsToTradeUnionsForDeathBenefits),
+          paymentsToTradeUnionsForDeathBenefits =
+            calc.allowancesAndDeductions.flatMap(ad => ad.paymentsToTradeUnionsForDeathBenefits),
           totalAllowancesAndDeductions = calc.taxCalculation.map(tc => tc.incomeTax.totalAllowancesAndDeductions),
           totalReliefs = calc.taxCalculation.flatMap(tc => tc.incomeTax.totalReliefs)
         )

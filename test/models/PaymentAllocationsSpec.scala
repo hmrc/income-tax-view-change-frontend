@@ -31,7 +31,9 @@ class PaymentAllocationsSpec extends UnitSpec with Matchers {
     }
 
     "be able to parse a JSON into the Model" in {
-      Json.fromJson[PaymentAllocations](testValidPaymentAllocationsModelJson) shouldBe JsSuccess(testValidPaymentAllocationsModel)
+      Json.fromJson[PaymentAllocations](testValidPaymentAllocationsModelJson) shouldBe JsSuccess(
+        testValidPaymentAllocationsModel
+      )
     }
 
   }

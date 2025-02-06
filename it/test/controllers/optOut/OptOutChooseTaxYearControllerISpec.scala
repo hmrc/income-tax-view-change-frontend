@@ -33,14 +33,14 @@ import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
 class OptOutChooseTaxYearControllerISpec extends ControllerISpecHelper {
 
-  private val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
+  private val currentTaxYear  = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
   private val previousTaxYear = currentTaxYear.previousYear
-  private val nextTaxYear = currentTaxYear.nextYear
+  private val nextTaxYear     = currentTaxYear.nextYear
 
   val headingText = "Opting out of quarterly reporting"
-  val descriptionText = "You can opt out from any of the tax years available and report annually from that year onwards. This means you’ll then report annually for all of your current businesses and any that you add in future."
+  val descriptionText =
+    "You can opt out from any of the tax years available and report annually from that year onwards. This means you’ll then report annually for all of your current businesses and any that you add in future."
   val radioLabel3 = "2023 to 2024 onwards"
-
 
   private val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
   private val helper = new OptOutSessionRepositoryHelper(repository)
@@ -51,186 +51,230 @@ class OptOutChooseTaxYearControllerISpec extends ControllerISpecHelper {
   }
 
   def getPath(mtdRole: MTDUserRole): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     pathStart + "/optout/choose-taxyear"
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    val path = getPath(mtdUserRole)
-    val additionalCookies = getAdditionalCookies(mtdUserRole)
-    s"GET $path" when {
-      s"a user is a $mtdUserRole" that {
-        "is authenticated, with a valid enrolment" should {
-          "render the choose tax year page" in {
-            disable(NavBarFs)
-            stubAuthorised(mtdUserRole)
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      val path              = getPath(mtdUserRole)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            "render the choose tax year page" in {
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-            helper.stubOptOutInitialState(currentTaxYear,
-              previousYearCrystallised = false,
-              previousYearStatus = Voluntary,
-              currentYearStatus = Voluntary,
-              nextYearStatus = Voluntary)
+              helper.stubOptOutInitialState(
+                currentTaxYear,
+                previousYearCrystallised = false,
+                previousYearStatus = Voluntary,
+                currentYearStatus = Voluntary,
+                nextYearStatus = Voluntary
+              )
 
-            IncomeTaxViewChangeStub.stubGetAllObligations(testNino, currentTaxYear.toFinancialYearStart, currentTaxYear.toFinancialYearEnd, allObligations)
+              IncomeTaxViewChangeStub.stubGetAllObligations(
+                testNino,
+                currentTaxYear.toFinancialYearStart,
+                currentTaxYear.toFinancialYearEnd,
+                allObligations
+              )
 
-            val result = buildGETMTDClient(path, additionalCookies).futureValue
-            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-            result should have(
-              httpStatus(OK),
-              elementTextByID("heading")(headingText),
-              elementTextByID("description")(descriptionText),
-              elementTextBySelector("div.govuk-radios__item:nth-child(3) > label:nth-child(2)")(radioLabel3),
-            )
+              result should have(
+                httpStatus(OK),
+                elementTextByID("heading")(headingText),
+                elementTextByID("description")(descriptionText),
+                elementTextBySelector("div.govuk-radios__item:nth-child(3) > label:nth-child(2)")(radioLabel3)
+              )
+            }
           }
+          testAuthFailures(path, mtdUserRole)
         }
-        testAuthFailures(path, mtdUserRole)
       }
-    }
 
-    s"POST $path" when {
-      s"a user is a $mtdUserRole" that {
-        "is authenticated, with a valid enrolment" should {
-          "redirect to check your answers page" when {
-            "previous tax year selected" in {
-              disable(NavBarFs)
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+      s"POST $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            "redirect to check your answers page" when {
+              "previous tax year selected" in {
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-              helper.stubOptOutInitialState(currentTaxYear,
-                previousYearCrystallised = false,
-                previousYearStatus = Voluntary,
-                currentYearStatus = Voluntary,
-                nextYearStatus = Voluntary)
+                helper.stubOptOutInitialState(
+                  currentTaxYear,
+                  previousYearCrystallised = false,
+                  previousYearStatus = Voluntary,
+                  currentYearStatus = Voluntary,
+                  nextYearStatus = Voluntary
+                )
 
-              IncomeTaxViewChangeStub.stubGetAllObligations(testNino, currentTaxYear.toFinancialYearStart, currentTaxYear.toFinancialYearEnd, allObligations)
+                IncomeTaxViewChangeStub.stubGetAllObligations(
+                  testNino,
+                  currentTaxYear.toFinancialYearStart,
+                  currentTaxYear.toFinancialYearEnd,
+                  allObligations
+                )
 
-              val formData: Map[String, Seq[String]] = Map(
-                ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> Seq(previousTaxYear.toString),
-                ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> Seq(""))
+                val formData: Map[String, Seq[String]] = Map(
+                  ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> Seq(previousTaxYear.toString),
+                  ConfirmOptOutMultiTaxYearChoiceForm.csrfToken   -> Seq("")
+                )
 
-              val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+                val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-              result should have(
-                httpStatus(Status.SEE_OTHER),
-                //todo add more asserts in MISUV-8006
-              )
-            }
+                result should have(
+                  httpStatus(Status.SEE_OTHER)
+                  //todo add more asserts in MISUV-8006
+                )
+              }
 
-            "current tax year selected" in {
-              disable(NavBarFs)
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+              "current tax year selected" in {
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-              helper.stubOptOutInitialState(currentTaxYear,
-                previousYearCrystallised = false,
-                previousYearStatus = Voluntary,
-                currentYearStatus = Voluntary,
-                nextYearStatus = Voluntary)
+                helper.stubOptOutInitialState(
+                  currentTaxYear,
+                  previousYearCrystallised = false,
+                  previousYearStatus = Voluntary,
+                  currentYearStatus = Voluntary,
+                  nextYearStatus = Voluntary
+                )
 
-              IncomeTaxViewChangeStub.stubGetAllObligations(testNino, currentTaxYear.toFinancialYearStart, currentTaxYear.toFinancialYearEnd, allObligations)
+                IncomeTaxViewChangeStub.stubGetAllObligations(
+                  testNino,
+                  currentTaxYear.toFinancialYearStart,
+                  currentTaxYear.toFinancialYearEnd,
+                  allObligations
+                )
 
-              val formData: Map[String, Seq[String]] = Map(
-                ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> Seq(currentTaxYear.toString),
-                ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> Seq(""))
+                val formData: Map[String, Seq[String]] = Map(
+                  ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> Seq(currentTaxYear.toString),
+                  ConfirmOptOutMultiTaxYearChoiceForm.csrfToken   -> Seq("")
+                )
 
-              val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+                val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-              result should have(
-                httpStatus(Status.SEE_OTHER),
-                //todo add more asserts in MISUV-8006
-              )
-            }
+                result should have(
+                  httpStatus(Status.SEE_OTHER)
+                  //todo add more asserts in MISUV-8006
+                )
+              }
 
               "next tax year selected" in {
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-                helper.stubOptOutInitialState(currentTaxYear,
+                helper.stubOptOutInitialState(
+                  currentTaxYear,
                   previousYearCrystallised = false,
                   previousYearStatus = Voluntary,
                   currentYearStatus = Voluntary,
-                  nextYearStatus = Voluntary)
+                  nextYearStatus = Voluntary
+                )
 
-                IncomeTaxViewChangeStub.stubGetAllObligations(testNino, currentTaxYear.toFinancialYearStart, currentTaxYear.toFinancialYearEnd, allObligations)
+                IncomeTaxViewChangeStub.stubGetAllObligations(
+                  testNino,
+                  currentTaxYear.toFinancialYearStart,
+                  currentTaxYear.toFinancialYearEnd,
+                  allObligations
+                )
 
                 val formData: Map[String, Seq[String]] = Map(
                   ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> Seq(nextTaxYear.toString),
-                  ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> Seq(""))
+                  ConfirmOptOutMultiTaxYearChoiceForm.csrfToken   -> Seq("")
+                )
 
                 val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 result should have(
-                  httpStatus(Status.SEE_OTHER),
+                  httpStatus(Status.SEE_OTHER)
                   //todo add more asserts in MISUV-8006
                 )
               }
             }
 
-          "return a BadRequest" when {
-            "the form is invalid" in {
-              disable(NavBarFs)
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+            "return a BadRequest" when {
+              "the form is invalid" in {
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-              helper.stubOptOutInitialState(currentTaxYear,
-                previousYearCrystallised = false,
-                previousYearStatus = Voluntary,
-                currentYearStatus = Voluntary,
-                nextYearStatus = Voluntary)
+                helper.stubOptOutInitialState(
+                  currentTaxYear,
+                  previousYearCrystallised = false,
+                  previousYearStatus = Voluntary,
+                  currentYearStatus = Voluntary,
+                  nextYearStatus = Voluntary
+                )
 
-              IncomeTaxViewChangeStub.stubGetAllObligations(testNino, currentTaxYear.toFinancialYearStart, currentTaxYear.toFinancialYearEnd, allObligations)
+                IncomeTaxViewChangeStub.stubGetAllObligations(
+                  testNino,
+                  currentTaxYear.toFinancialYearStart,
+                  currentTaxYear.toFinancialYearEnd,
+                  allObligations
+                )
 
-              val formData: Map[String, Seq[String]] = Map(
-                ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> Seq(),
-                ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> Seq(""))
-              val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+                val formData: Map[String, Seq[String]] = Map(
+                  ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> Seq(),
+                  ConfirmOptOutMultiTaxYearChoiceForm.csrfToken   -> Seq("")
+                )
+                val result = buildPOSTMTDPostClient(path, additionalCookies, body = formData).futureValue
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-              result should have(
-                httpStatus(Status.BAD_REQUEST),
-                //elementTextByID("heading")("Confirm and opt out for the 2021 to 2022 tax year"),
-                //todo add more asserts as part MISUV-7538
-              )
+                result should have(
+                  httpStatus(Status.BAD_REQUEST)
+                  //elementTextByID("heading")("Confirm and opt out for the 2021 to 2022 tax year"),
+                  //todo add more asserts as part MISUV-7538
+                )
+              }
             }
           }
+          testAuthFailures(path, mtdUserRole, Some(Map.empty))
         }
-        testAuthFailures(path, mtdUserRole, Some(Map.empty))
       }
-    }
   }
 
-  val allObligations: ObligationsModel = ObligationsModel(Seq(
-    GroupedObligationsModel(
-      identification = "ABC123456789",
-      obligations = List(
-        SingleObligationModel(
-          start = getCurrentTaxYearEnd.minusMonths(3),
-          end = getCurrentTaxYearEnd,
-          due = getCurrentTaxYearEnd,
-          obligationType = "Quarterly",
-          dateReceived = Some(getCurrentTaxYearEnd),
-          periodKey = "#003",
-          StatusFulfilled
-        ))
-    ),
-    GroupedObligationsModel(
-      identification = "ABC123456789",
-      obligations = List(
-        SingleObligationModel(
-          start = getCurrentTaxYearEnd.minusMonths(3),
-          end = getCurrentTaxYearEnd,
-          due = getCurrentTaxYearEnd,
-          obligationType = "Quarterly",
-          dateReceived = Some(getCurrentTaxYearEnd),
-          periodKey = "#004",
-          StatusFulfilled
-        ))
+  val allObligations: ObligationsModel = ObligationsModel(
+    Seq(
+      GroupedObligationsModel(
+        identification = "ABC123456789",
+        obligations = List(
+          SingleObligationModel(
+            start = getCurrentTaxYearEnd.minusMonths(3),
+            end = getCurrentTaxYearEnd,
+            due = getCurrentTaxYearEnd,
+            obligationType = "Quarterly",
+            dateReceived = Some(getCurrentTaxYearEnd),
+            periodKey = "#003",
+            StatusFulfilled
+          )
+        )
+      ),
+      GroupedObligationsModel(
+        identification = "ABC123456789",
+        obligations = List(
+          SingleObligationModel(
+            start = getCurrentTaxYearEnd.minusMonths(3),
+            end = getCurrentTaxYearEnd,
+            due = getCurrentTaxYearEnd,
+            obligationType = "Quarterly",
+            dateReceived = Some(getCurrentTaxYearEnd),
+            periodKey = "#004",
+            StatusFulfilled
+          )
+        )
+      )
     )
-  ))
+  )
 }

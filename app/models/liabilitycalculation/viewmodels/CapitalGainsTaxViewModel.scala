@@ -19,33 +19,32 @@ package models.liabilitycalculation.viewmodels
 import models.liabilitycalculation.taxcalculation.{BusinessAssetsDisposalsAndInvestorsRel, CapitalGainsTax, CgtTaxBands}
 
 case class CapitalGainsTaxViewModel(
-                                     totalTaxableGains: Option[BigDecimal] = None,
-                                     adjustments: Option[BigDecimal] = None,
-                                     foreignTaxCreditRelief: Option[BigDecimal] = None,
-                                     taxOnGainsAlreadyPaid: Option[BigDecimal] = None,
-                                     capitalGainsTaxDue: Option[BigDecimal] = None,
-                                     capitalGainsOverpaid: Option[BigDecimal] = None,
-                                     propertyAndInterestTaxBands: Option[Seq[CgtTaxBands]] = None,
-                                     otherGainsTaxBands: Option[Seq[CgtTaxBands]] = None,
-                                     businessAssetsDisposalsAndInvestorsRel: Option[BusinessAssetsDisposalsAndInvestorsRel] = None
-                                   )
+    totalTaxableGains:                      Option[BigDecimal] = None,
+    adjustments:                            Option[BigDecimal] = None,
+    foreignTaxCreditRelief:                 Option[BigDecimal] = None,
+    taxOnGainsAlreadyPaid:                  Option[BigDecimal] = None,
+    capitalGainsTaxDue:                     Option[BigDecimal] = None,
+    capitalGainsOverpaid:                   Option[BigDecimal] = None,
+    propertyAndInterestTaxBands:            Option[Seq[CgtTaxBands]] = None,
+    otherGainsTaxBands:                     Option[Seq[CgtTaxBands]] = None,
+    businessAssetsDisposalsAndInvestorsRel: Option[BusinessAssetsDisposalsAndInvestorsRel] = None)
 
 object CapitalGainsTaxViewModel {
   def apply(capitalGainsTaxOpt: Option[CapitalGainsTax]): CapitalGainsTaxViewModel = {
     capitalGainsTaxOpt match {
-      case Some(cgt) => CapitalGainsTaxViewModel(
-        totalTaxableGains = Some(cgt.totalTaxableGains),
-        adjustments = cgt.adjustments,
-        foreignTaxCreditRelief = cgt.foreignTaxCreditRelief,
-        taxOnGainsAlreadyPaid = cgt.taxOnGainsAlreadyPaid,
-        capitalGainsTaxDue = Some(cgt.capitalGainsTaxDue),
-        capitalGainsOverpaid = cgt.capitalGainsOverpaid,
-        propertyAndInterestTaxBands = cgt.residentialPropertyAndCarriedInterest.map(rpc =>
-          rpc.cgtTaxBands.getOrElse(Seq())),
-        otherGainsTaxBands = cgt.otherGains.map(rpc =>
-          rpc.cgtTaxBands.getOrElse(Seq())),
-        businessAssetsDisposalsAndInvestorsRel = cgt.businessAssetsDisposalsAndInvestorsRel
-      )
+      case Some(cgt) =>
+        CapitalGainsTaxViewModel(
+          totalTaxableGains = Some(cgt.totalTaxableGains),
+          adjustments = cgt.adjustments,
+          foreignTaxCreditRelief = cgt.foreignTaxCreditRelief,
+          taxOnGainsAlreadyPaid = cgt.taxOnGainsAlreadyPaid,
+          capitalGainsTaxDue = Some(cgt.capitalGainsTaxDue),
+          capitalGainsOverpaid = cgt.capitalGainsOverpaid,
+          propertyAndInterestTaxBands =
+            cgt.residentialPropertyAndCarriedInterest.map(rpc => rpc.cgtTaxBands.getOrElse(Seq())),
+          otherGainsTaxBands = cgt.otherGains.map(rpc => rpc.cgtTaxBands.getOrElse(Seq())),
+          businessAssetsDisposalsAndInvestorsRel = cgt.businessAssetsDisposalsAndInvestorsRel
+        )
       case None => CapitalGainsTaxViewModel()
     }
   }

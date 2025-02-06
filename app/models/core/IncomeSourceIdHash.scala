@@ -20,7 +20,7 @@ import exceptions.{MultipleIncomeSourcesFound, NoIncomeSourceFound}
 
 import scala.util.Try
 
-class IncomeSourceIdHash private(val hash: String) extends AnyVal {
+class IncomeSourceIdHash private (val hash: String) extends AnyVal {
   override def toString: String = s"IncomeSourceIdHash: $hash"
 
   def findIncomeSourceIdMatchingHash(ids: List[IncomeSourceId]): Either[Throwable, IncomeSourceId] = {
@@ -28,12 +28,12 @@ class IncomeSourceIdHash private(val hash: String) extends AnyVal {
     val matchingIncomeSourceIds = ids.filter(_.toHash.hash == this.hash)
 
     val noIncomeSourceFound: Int = 0
-    val success: Int = 1
+    val success:             Int = 1
 
     matchingIncomeSourceIds.length match {
       case matchedHash if matchedHash == noIncomeSourceFound => Left(NoIncomeSourceFound(hash = this.hash))
-      case matchedHash if matchedHash == success => Right(matchingIncomeSourceIds.head)
-      case _ => Left(MultipleIncomeSourcesFound(hash = this.hash, matchingIncomeSourceIds.map(_.value)))
+      case matchedHash if matchedHash == success             => Right(matchingIncomeSourceIds.head)
+      case _                                                 => Left(MultipleIncomeSourcesFound(hash = this.hash, matchingIncomeSourceIds.map(_.value)))
     }
   }
 
@@ -51,8 +51,9 @@ object IncomeSourceIdHash {
     new IncomeSourceIdHash(s"$hashB$hashA")
   }
 
-  def mkFromQueryString(hashCodeAsString: String): Either[Throwable, IncomeSourceIdHash] = Try {
-    new IncomeSourceIdHash(hashCodeAsString)
-  }.toEither
+  def mkFromQueryString(hashCodeAsString: String): Either[Throwable, IncomeSourceIdHash] =
+    Try {
+      new IncomeSourceIdHash(hashCodeAsString)
+    }.toEither
 
 }

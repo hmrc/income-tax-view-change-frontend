@@ -25,7 +25,7 @@ import play.api.libs.json.Json
 
 import java.time.LocalDate
 
-class OutstandingChargesConnectorISpec extends AnyWordSpec with ComponentSpecBase{
+class OutstandingChargesConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
   lazy val connector: OutstandingChargesConnector = app.injector.instanceOf[OutstandingChargesConnector]
 
@@ -36,16 +36,18 @@ class OutstandingChargesConnectorISpec extends AnyWordSpec with ComponentSpecBas
 
         "return a successful OutstandingChargesModel" in {
 
-          val idType = "fakeId"
+          val idType   = "fakeId"
           val idNumber = "1337"
           val taxYear: String = "2023"
           val url = s"/income-tax-view-change/out-standing-charges/$idType/$idNumber/$taxYear-04-05"
 
           val response: OutstandingChargesModel =
-            OutstandingChargesModel(List(
-              OutstandingChargeModel("BCD", Some(LocalDate.of(2025, 1, 1)), 123456789012345.67, 1234),
-              OutstandingChargeModel("ACI", None, 12.67, 1234)
-            ))
+            OutstandingChargesModel(
+              List(
+                OutstandingChargeModel("BCD", Some(LocalDate.of(2025, 1, 1)), 123456789012345.67, 1234),
+                OutstandingChargeModel("ACI", None, 12.67, 1234)
+              )
+            )
 
           WiremockHelper.stubGet(url, OK, Json.toJson(response).toString())
 
@@ -60,7 +62,7 @@ class OutstandingChargesConnectorISpec extends AnyWordSpec with ComponentSpecBas
 
           "return a OutstandingChargesErrorModel" in {
 
-            val idType = "fakeId"
+            val idType   = "fakeId"
             val idNumber = "1337"
             val taxYear: String = "2023"
             val url = s"/income-tax-view-change/out-standing-charges/$idType/$idNumber/$taxYear-04-05"
@@ -70,7 +72,10 @@ class OutstandingChargesConnectorISpec extends AnyWordSpec with ComponentSpecBas
             val result: OutstandingChargesResponseModel =
               connector.getOutstandingCharges(idType, idNumber, taxYear).futureValue
 
-            result shouldBe OutstandingChargesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing OutstandingCharges Data Response")
+            result shouldBe OutstandingChargesErrorModel(
+              Status.INTERNAL_SERVER_ERROR,
+              "Json Validation Error. Parsing OutstandingCharges Data Response"
+            )
             WiremockHelper.verifyGet(uri = url)
           }
         }
@@ -82,7 +87,7 @@ class OutstandingChargesConnectorISpec extends AnyWordSpec with ComponentSpecBas
 
           "return a OutstandingChargesErrorModel with response body message" in {
 
-            val idType = "fakeId"
+            val idType   = "fakeId"
             val idNumber = "1337"
             val taxYear: String = "2023"
             val url = s"/income-tax-view-change/out-standing-charges/$idType/$idNumber/$taxYear-04-05"

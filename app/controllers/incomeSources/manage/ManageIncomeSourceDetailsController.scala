@@ -39,74 +39,82 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSourceDetails,
-                                                    val authActions: AuthActions,
-                                                    val itsaStatusService: ITSAStatusService,
-                                                    val dateService: DateService,
-                                                    val calculationListService: CalculationListService,
-                                                    val sessionService: SessionService)
-                                                   (implicit val ec: ExecutionContext,
-                                                    val itvcErrorHandler: ItvcErrorHandler,
-                                                    val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                                    val mcc: MessagesControllerComponents,
-                                                    val appConfig: FrontendAppConfig) extends FrontendController(mcc)
-    with I18nSupport with JourneyChecker {
+class ManageIncomeSourceDetailsController @Inject() (
+    val view:                   ManageIncomeSourceDetails,
+    val authActions:            AuthActions,
+    val itsaStatusService:      ITSAStatusService,
+    val dateService:            DateService,
+    val calculationListService: CalculationListService,
+    val sessionService:         SessionService
+  )(
+    implicit val ec:           ExecutionContext,
+    val itvcErrorHandler:      ItvcErrorHandler,
+    val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+    val mcc:                   MessagesControllerComponents,
+    val appConfig:             FrontendAppConfig)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with JourneyChecker {
 
-
-  def show(isAgent: Boolean,
-           incomeSourceType: IncomeSourceType,
-           id: Option[String]): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
+  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: Option[String]): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
       withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), InitialPage) { _ =>
         incomeSourceType match {
-          case SelfEmployment => id match {
-            case Some(realId) => handleSoleTrader(realId, isAgent)
-            case None => Logger("application")
-              .error(s"no incomeSourceId supplied with SelfEmployment isAgent = $isAgent")
-              Future.successful(if (isAgent) {
-                itvcErrorHandlerAgent.showInternalServerError()
-              } else {
-                itvcErrorHandler.showInternalServerError()
-              })
-          }
-          case _ => handleProperty(
-            sources = user.incomeSources,
-            isAgent = isAgent,
-            backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(isAgent).url,
-            incomeSourceType = incomeSourceType
-          )
+          case SelfEmployment =>
+            id match {
+              case Some(realId) => handleSoleTrader(realId, isAgent)
+              case None =>
+                Logger("application")
+                  .error(s"no incomeSourceId supplied with SelfEmployment isAgent = $isAgent")
+                Future.successful(if (isAgent) {
+                  itvcErrorHandlerAgent.showInternalServerError()
+                } else {
+                  itvcErrorHandler.showInternalServerError()
+                })
+            }
+          case _ =>
+            handleProperty(
+              sources = user.incomeSources,
+              isAgent = isAgent,
+              backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(isAgent).url,
+              incomeSourceType = incomeSourceType
+            )
         }
       }
-  }
-
-  def handleSoleTrader(hashIdString: String,
-                       isAgent: Boolean)
-                      (implicit user: MtdItUser[_]): Future[Result] = {
-
-    def setMongoKey(incomeSourceId: IncomeSourceId): Future[Boolean] = sessionService.setMongoKey(
-      ManageIncomeSourceData.incomeSourceIdField,
-      incomeSourceId.value,
-      IncomeSourceJourneyType(Manage, SelfEmployment)
-    ).flatMap {
-      case Right(keySet) => Future.successful(keySet)
-      case Left(exception) => Future.failed(exception)
     }
+
+  def handleSoleTrader(hashIdString: String, isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+
+    def setMongoKey(incomeSourceId: IncomeSourceId): Future[Boolean] =
+      sessionService
+        .setMongoKey(
+          ManageIncomeSourceData.incomeSourceIdField,
+          incomeSourceId.value,
+          IncomeSourceJourneyType(Manage, SelfEmployment)
+        )
+        .flatMap {
+          case Right(keySet)   => Future.successful(keySet)
+          case Left(exception) => Future.failed(exception)
+        }
 
     val result = for {
       incomeSourceIdHash <- getIncomeSourceIdHash(hashIdString)
-      incomeSourceId <- validateIncomeSourcesContainsIncomeSourceId(incomeSourceIdHash)
-      _ <- setMongoKey(incomeSourceId)
+      incomeSourceId     <- validateIncomeSourcesContainsIncomeSourceId(incomeSourceIdHash)
+      _                  <- setMongoKey(incomeSourceId)
       viewModel <- getManageIncomeSourceViewModel(
         sources = user.incomeSources,
         incomeSourceId = incomeSourceId,
         isAgent
       )
-    } yield Ok(view(viewModel = viewModel,
-      isAgent = isAgent,
-      backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(isAgent).url
-    ))
+    } yield Ok(
+      view(
+        viewModel = viewModel,
+        isAgent = isAgent,
+        backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(isAgent).url
+      )
+    )
 
-    result.recover{
+    result.recover {
       case ex =>
         Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
         if (isAgent) {
@@ -117,18 +125,27 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     }
   }
 
-
-  def handleProperty(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String,
-                     incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  def handleProperty(
+      sources:          IncomeSourceDetailsModel,
+      isAgent:          Boolean,
+      backUrl:          String,
+      incomeSourceType: IncomeSourceType
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier
+    ): Future[Result] = {
 
     getManageIncomeSourceViewModelProperty(sources = sources, isAgent = isAgent, incomeSourceType = incomeSourceType)
       .map { viewModel =>
-        Ok(view(
-          viewModel = viewModel,
-          isAgent = isAgent,
-          backUrl = backUrl
-        ))
-      }.recover {
+        Ok(
+          view(
+            viewModel = viewModel,
+            isAgent = isAgent,
+            backUrl = backUrl
+          )
+        )
+      }
+      .recover {
         case ex =>
           Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
           if (isAgent) {
@@ -148,9 +165,13 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     }
   }
 
-  private def validateIncomeSourcesContainsIncomeSourceId(incomeSourceIdHash: IncomeSourceIdHash)
-                                                         (implicit user: MtdItUser[_]): Future[IncomeSourceId] = {
-    val hashCompareResult: Either[Throwable, IncomeSourceId] = user.incomeSources.compareHashToQueryString(incomeSourceIdHash)
+  private def validateIncomeSourcesContainsIncomeSourceId(
+      incomeSourceIdHash: IncomeSourceIdHash
+    )(
+      implicit user: MtdItUser[_]
+    ): Future[IncomeSourceId] = {
+    val hashCompareResult: Either[Throwable, IncomeSourceId] =
+      user.incomeSources.compareHashToQueryString(incomeSourceIdHash)
     hashCompareResult match {
       case Left(exception: Exception) => Future.failed(exception)
       case Left(_) => Future.failed(new Error(s"Unexpected exception incomeSourceIdHash: <$incomeSourceIdHash>"))
@@ -158,17 +179,22 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     }
   }
 
-  private def getQuarterType(latencyDetails: Option[LatencyDetails],
-                             quarterTypeElection: Option[QuarterTypeElection])
-                            (implicit user: MtdItUser[_]): Option[QuarterReportingType] = {
+  private def getQuarterType(
+      latencyDetails:      Option[LatencyDetails],
+      quarterTypeElection: Option[QuarterTypeElection]
+    )(
+      implicit user: MtdItUser[_]
+    ): Option[QuarterReportingType] = {
     quarterTypeElection.flatMap(quarterTypeElection => {
       latencyDetails match {
         case Some(latencyDetails: LatencyDetails) =>
-          val quarterIndicator = "Q"
+          val quarterIndicator  = "Q"
           val currentTaxYearEnd = dateService.getCurrentTaxYearEnd.toString
-          val showForLatencyTaxYear1 = (latencyDetails.taxYear1 == currentTaxYearEnd) && latencyDetails.latencyIndicator1.equals(quarterIndicator)
-          val showForLatencyTaxYear2 = (latencyDetails.taxYear2 == currentTaxYearEnd) && latencyDetails.latencyIndicator2.equals(quarterIndicator)
-          val showIfLatencyExpired = latencyDetails.taxYear2 < currentTaxYearEnd
+          val showForLatencyTaxYear1 =
+            (latencyDetails.taxYear1 == currentTaxYearEnd) && latencyDetails.latencyIndicator1.equals(quarterIndicator)
+          val showForLatencyTaxYear2 =
+            (latencyDetails.taxYear2 == currentTaxYearEnd) && latencyDetails.latencyIndicator2.equals(quarterIndicator)
+          val showIfLatencyExpired     = latencyDetails.taxYear2 < currentTaxYearEnd
           val showQuarterReportingType = showForLatencyTaxYear1 || showForLatencyTaxYear2 || showIfLatencyExpired
           if (showQuarterReportingType) quarterTypeElection.isStandardQuarterlyReporting else None
         case None => quarterTypeElection.isStandardQuarterlyReporting
@@ -176,8 +202,12 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     })
   }
 
-  private def getCrystallisationInformation(latencyDetails: Option[LatencyDetails])
-                                           (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Option[List[Boolean]]] = {
+  private def getCrystallisationInformation(
+      latencyDetails: Option[LatencyDetails]
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier
+    ): Future[Option[List[Boolean]]] = {
     latencyDetails match {
       case Some(x) =>
         for {
@@ -191,8 +221,14 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     }
   }
 
-  private def variableViewModelSEBusiness(incomeSource: BusinessDetailsModel, itsaStatus: Boolean, crystallisationTaxYear1: Option[Boolean],
-                                          crystallisationTaxYear2: Option[Boolean])(implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
+  private def variableViewModelSEBusiness(
+      incomeSource:            BusinessDetailsModel,
+      itsaStatus:              Boolean,
+      crystallisationTaxYear1: Option[Boolean],
+      crystallisationTaxYear2: Option[Boolean]
+    )(
+      implicit user: MtdItUser[_]
+    ): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
       incomeSource = incomeSource.incomeSource,
@@ -214,11 +250,15 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     )
   }
 
-  private def variableViewModelPropertyBusiness(incomeSource: PropertyDetailsModel,
-                                                itsaStatus: Boolean,
-                                                crystallisationTaxYear1: Option[Boolean],
-                                                crystallisationTaxYear2: Option[Boolean],
-                                                incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
+  private def variableViewModelPropertyBusiness(
+      incomeSource:            PropertyDetailsModel,
+      itsaStatus:              Boolean,
+      crystallisationTaxYear1: Option[Boolean],
+      crystallisationTaxYear2: Option[Boolean],
+      incomeSourceType:        IncomeSourceType
+    )(
+      implicit user: MtdItUser[_]
+    ): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
       incomeSource = None,
@@ -240,13 +280,15 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     )
   }
 
-
-  private def getManageIncomeSourceViewModel(sources: IncomeSourceDetailsModel,
-                                             incomeSourceId: IncomeSourceId,
-                                             isAgent: Boolean)
-                                            (implicit user: MtdItUser[_],
-                                             hc: HeaderCarrier,
-                                             ec: ExecutionContext): Future[ManageIncomeSourceDetailsViewModel] = {
+  private def getManageIncomeSourceViewModel(
+      sources:        IncomeSourceDetailsModel,
+      incomeSourceId: IncomeSourceId,
+      isAgent:        Boolean
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier,
+      ec:            ExecutionContext
+    ): Future[ManageIncomeSourceDetailsViewModel] = {
 
     val desiredIncomeSourceMaybe: Option[BusinessDetailsModel] = sources.businesses
       .filterNot(_.isCeased)
@@ -256,11 +298,15 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
         case true =>
           getCrystallisationInformation(desiredIncomeSourceMaybe.get.latencyDetails).flatMap {
-            case None => Future(variableViewModelSEBusiness(
-              incomeSource = desiredIncomeSourceMaybe.get,
-              itsaStatus = true,
-              crystallisationTaxYear1 = None,
-              crystallisationTaxYear2 = None))
+            case None =>
+              Future(
+                variableViewModelSEBusiness(
+                  incomeSource = desiredIncomeSourceMaybe.get,
+                  itsaStatus = true,
+                  crystallisationTaxYear1 = None,
+                  crystallisationTaxYear2 = None
+                )
+              )
             case Some(crystallisationData: List[Boolean]) =>
               Future(
                 variableViewModelSEBusiness(
@@ -268,7 +314,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                   itsaStatus = true,
                   crystallisationTaxYear1 = crystallisationData.headOption,
                   crystallisationTaxYear2 = crystallisationData.lastOption
-                ))
+                )
+              )
           }
         case false =>
           Future(
@@ -276,7 +323,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
               incomeSource = desiredIncomeSourceMaybe.get,
               itsaStatus = false,
               crystallisationTaxYear1 = None,
-              crystallisationTaxYear2 = None)
+              crystallisationTaxYear2 = None
+            )
           )
       }
     } else {
@@ -286,12 +334,15 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     }
   }
 
-  private def getManageIncomeSourceViewModelProperty(sources: IncomeSourceDetailsModel,
-                                                     incomeSourceType: IncomeSourceType,
-                                                     isAgent: Boolean)
-                                                    (implicit user: MtdItUser[_],
-                                                     hc: HeaderCarrier,
-                                                     ec: ExecutionContext): Future[ManageIncomeSourceDetailsViewModel] = {
+  private def getManageIncomeSourceViewModelProperty(
+      sources:          IncomeSourceDetailsModel,
+      incomeSourceType: IncomeSourceType,
+      isAgent:          Boolean
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier,
+      ec:            ExecutionContext
+    ): Future[ManageIncomeSourceDetailsViewModel] = {
     val desiredIncomeSourceMaybe: Option[PropertyDetailsModel] = {
       if (incomeSourceType == UkProperty) {
         sources.properties
@@ -308,12 +359,16 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
         case true =>
           getCrystallisationInformation(desiredIncomeSourceMaybe.get.latencyDetails).flatMap {
-            case None => Future(variableViewModelPropertyBusiness(
-              incomeSource = desiredIncomeSourceMaybe.get,
-              itsaStatus = true,
-              crystallisationTaxYear1 = None,
-              crystallisationTaxYear2 = None,
-              incomeSourceType = incomeSourceType))
+            case None =>
+              Future(
+                variableViewModelPropertyBusiness(
+                  incomeSource = desiredIncomeSourceMaybe.get,
+                  itsaStatus = true,
+                  crystallisationTaxYear1 = None,
+                  crystallisationTaxYear2 = None,
+                  incomeSourceType = incomeSourceType
+                )
+              )
             case Some(crystallisationData: List[Boolean]) =>
               Future(
                 variableViewModelPropertyBusiness(
@@ -322,7 +377,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                   crystallisationTaxYear1 = crystallisationData.headOption,
                   crystallisationTaxYear2 = crystallisationData.lastOption,
                   incomeSourceType = incomeSourceType
-                ))
+                )
+              )
           }
         case false =>
           Future(
@@ -331,7 +387,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
               itsaStatus = false,
               crystallisationTaxYear1 = None,
               crystallisationTaxYear2 = None,
-              incomeSourceType = incomeSourceType)
+              incomeSourceType = incomeSourceType
+            )
           )
       }
     } else {

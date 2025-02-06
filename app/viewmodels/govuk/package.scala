@@ -18,7 +18,5 @@ package views.viewmodels
 
 package object govuk {
 
-  object all
-    extends ErrorSummaryFluency
-    with DateFluency
+  object all extends ErrorSummaryFluency with DateFluency
 }

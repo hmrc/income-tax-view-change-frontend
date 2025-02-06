@@ -21,14 +21,13 @@ object Constants {
   val agentServiceEnrolmentName = "HMRC-AS-AGENT"
   val agentServiceIdentifierKey = "AgentReferenceNumber"
 
-  val ninoEnrolmentName = "HMRC-NI"
+  val ninoEnrolmentName          = "HMRC-NI"
   val ninoEnrolmentIdentifierKey = "NINO"
 
-  val saEnrolmentName = "IR-SA"
+  val saEnrolmentName          = "IR-SA"
   val saEnrolmentIdentifierKey = "UTR"
 
-  val mtdEnrolmentName = "HMRC-MTD-IT"
+  val mtdEnrolmentName          = "HMRC-MTD-IT"
   val mtdEnrolmentIdentifierKey = "MTDITID"
-
 
 }

@@ -33,22 +33,26 @@ import views.html.optOut.{CheckOptOutAnswers, ConfirmOptOut}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
-                                        checkOptOutAnswers: CheckOptOutAnswers,
-                                        optOutService: OptOutService,
-                                        authActions: AuthActions,
-                                        val itvcErrorHandler: ItvcErrorHandler,
-                                        val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                       (implicit val appConfig: FrontendAppConfig,
-                                        val ec: ExecutionContext,
-                                        val mcc: MessagesControllerComponents)
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+class ConfirmOptOutController @Inject() (
+    view:                      ConfirmOptOut,
+    checkOptOutAnswers:        CheckOptOutAnswers,
+    optOutService:             OptOutService,
+    authActions:               AuthActions,
+    val itvcErrorHandler:      ItvcErrorHandler,
+    val itvcErrorHandlerAgent: AgentItvcErrorHandler
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    val ec:                 ExecutionContext,
+    val mcc:                MessagesControllerComponents)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with FeatureSwitching {
 
-  def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
+  def show(isAgent: Boolean): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
       withRecover(isAgent) {
         val cancelURL =
-          if (isAgent){
+          if (isAgent) {
             controllers.optOut.routes.OptOutCancelledController.showAgent().url
           } else {
             controllers.optOut.routes.OptOutCancelledController.show().url
@@ -56,30 +60,41 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
 
         val resultToReturn = for {
           viewModel <- OptionT(optOutService.optOutCheckPointPageViewModel())
-          result <- OptionT(Future(Option(toPropositionView(isAgent, viewModel, cancelURL))))
+          result    <- OptionT(Future(Option(toPropositionView(isAgent, viewModel, cancelURL))))
         } yield result
 
         resultToReturn.getOrElse(handleError("No qualified tax year available for opt out", isAgent))
 
       }
-  }
-
-  private def toPropositionView(isAgent: Boolean, viewModel: OptOutCheckpointViewModel, cancelURL: String)(implicit mtdItUser: MtdItUser[_]) =
-    viewModel match {
-    case oneYear: OneYearOptOutCheckpointViewModel => Ok(view(oneYear, isAgent = isAgent, cancelURL))
-    case multiYear: MultiYearOptOutCheckpointViewModel => Ok(checkOptOutAnswers(multiYear, isAgent, cancelURL))
-  }
-
-  def submit(isAgent: Boolean): Action[AnyContent] =
-    authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-      implicit user =>
-        optOutService.makeOptOutUpdateRequest().map {
-          case ITSAStatusUpdateResponseSuccess(_) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
-          case _ => Redirect(routes.OptOutErrorController.show(isAgent))
-        }
     }
 
-  private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+  private def toPropositionView(
+      isAgent:   Boolean,
+      viewModel: OptOutCheckpointViewModel,
+      cancelURL: String
+    )(
+      implicit mtdItUser: MtdItUser[_]
+    ) =
+    viewModel match {
+      case oneYear:   OneYearOptOutCheckpointViewModel   => Ok(view(oneYear, isAgent = isAgent, cancelURL))
+      case multiYear: MultiYearOptOutCheckpointViewModel => Ok(checkOptOutAnswers(multiYear, isAgent, cancelURL))
+    }
+
+  def submit(isAgent: Boolean): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+      optOutService.makeOptOutUpdateRequest().map {
+        case ITSAStatusUpdateResponseSuccess(_) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
+        case _                                  => Redirect(routes.OptOutErrorController.show(isAgent))
+      }
+    }
+
+  private def withRecover(
+      isAgent: Boolean
+    )(
+      code: => Future[Result]
+    )(
+      implicit mtdItUser: MtdItUser[_]
+    ): Future[Result] = {
     code.recover {
       case ex: Exception => handleError(s"request failed :: $ex", isAgent)
     }

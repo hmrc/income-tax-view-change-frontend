@@ -23,13 +23,12 @@ import java.time.LocalDate
 sealed trait PaymentAllocationsResponse
 
 case class PaymentAllocations(
-                               amount: Option[BigDecimal],
-                               method: Option[String],
-                               transactionDate: Option[LocalDate],
-                               reference: Option[String],
-                               allocations: Seq[AllocationDetail]
-                             ) extends PaymentAllocationsResponse
-
+    amount:          Option[BigDecimal],
+    method:          Option[String],
+    transactionDate: Option[LocalDate],
+    reference:       Option[String],
+    allocations:     Seq[AllocationDetail])
+    extends PaymentAllocationsResponse
 
 object PaymentAllocations {
   implicit val format: Format[PaymentAllocations] = Json.format[PaymentAllocations]

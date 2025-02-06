@@ -33,9 +33,9 @@ class IncomeTaxCalculationConnectorISpec extends AnyWordSpec with ComponentSpecB
     AuditStub.stubAuditing()
   }
 
-  val nino = "AA123456A"
-  val taxYear = "2024"
-  val mtditid = "XAIT0000123456"
+  val nino          = "AA123456A"
+  val taxYear       = "2024"
+  val mtditid       = "XAIT0000123456"
   val calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2"
 
   val jsonResponse: String =
@@ -58,60 +58,106 @@ class IncomeTaxCalculationConnectorISpec extends AnyWordSpec with ComponentSpecB
     ".getCalculationResponse()" when {
       "sending a request" should {
         "return a successful response" in {
-          WiremockHelper.stubGet(s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear", OK, jsonResponse)
+          WiremockHelper.stubGet(
+            s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear",
+            OK,
+            jsonResponse
+          )
 
           val result = connector.getCalculationResponse(mtditid, nino, taxYear).futureValue
 
-          result shouldBe LiabilityCalculationResponse(Inputs(PersonalInformation("UK", None)), Metadata(Some("2024-02-15T09:35:15.094Z"), Some(false), Some("customerRequest"), None, None), None, None)
-          WiremockHelper.verifyGet(s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear")
+          result shouldBe LiabilityCalculationResponse(
+            Inputs(PersonalInformation("UK", None)),
+            Metadata(Some("2024-02-15T09:35:15.094Z"), Some(false), Some("customerRequest"), None, None),
+            None,
+            None
+          )
+          WiremockHelper.verifyGet(
+            s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear"
+          )
         }
 
         "return an error when the request returns an invalid JSON" in {
-          WiremockHelper.stubGet(s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear", OK, "{}")
+          WiremockHelper.stubGet(
+            s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear",
+            OK,
+            "{}"
+          )
 
           val result = connector.getCalculationResponse(mtditid, nino, taxYear).futureValue
 
           result shouldBe LiabilityCalculationError(500, "Json validation error parsing calculation response")
-          WiremockHelper.verifyGet(s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear")
+          WiremockHelper.verifyGet(
+            s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear"
+          )
         }
 
         "return an error when the request returns an INTERNAL SERVER ERROR" in {
-          WiremockHelper.stubGet(s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear", INTERNAL_SERVER_ERROR, "{}")
+          WiremockHelper.stubGet(
+            s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear",
+            INTERNAL_SERVER_ERROR,
+            "{}"
+          )
 
           val result = connector.getCalculationResponse(mtditid, nino, taxYear).futureValue
 
           result shouldBe LiabilityCalculationError(500, "{}")
-          WiremockHelper.verifyGet(s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear")
+          WiremockHelper.verifyGet(
+            s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear"
+          )
         }
       }
     }
     "getCalculationResponseByCalcId()" when {
       "sending a request" should {
         "return a successful response" in {
-          WiremockHelper.stubGet(s"/income-tax-calculation/income-tax/nino/$nino/calc-id/$calculationId/calculation-details?taxYear=$taxYear", OK, jsonResponse)
+          WiremockHelper.stubGet(
+            s"/income-tax-calculation/income-tax/nino/$nino/calc-id/$calculationId/calculation-details?taxYear=$taxYear",
+            OK,
+            jsonResponse
+          )
 
           val result = connector.getCalculationResponseByCalcId(mtditid, nino, calculationId, taxYear.toInt).futureValue
 
-          result shouldBe LiabilityCalculationResponse(Inputs(PersonalInformation("UK", None)), Metadata(Some("2024-02-15T09:35:15.094Z"), Some(false), Some("customerRequest"), None, None), None, None)
-          WiremockHelper.verifyGet(s"/income-tax-calculation/income-tax/nino/$nino/calc-id/$calculationId/calculation-details?taxYear=$taxYear")
+          result shouldBe LiabilityCalculationResponse(
+            Inputs(PersonalInformation("UK", None)),
+            Metadata(Some("2024-02-15T09:35:15.094Z"), Some(false), Some("customerRequest"), None, None),
+            None,
+            None
+          )
+          WiremockHelper.verifyGet(
+            s"/income-tax-calculation/income-tax/nino/$nino/calc-id/$calculationId/calculation-details?taxYear=$taxYear"
+          )
         }
 
-        "return an error when the request returns an invalid JSON" in{
-          WiremockHelper.stubGet(s"/income-tax-calculation/income-tax/nino/$nino/calc-id/$calculationId/calculation-details?taxYear=$taxYear", OK, "{}")
+        "return an error when the request returns an invalid JSON" in {
+          WiremockHelper.stubGet(
+            s"/income-tax-calculation/income-tax/nino/$nino/calc-id/$calculationId/calculation-details?taxYear=$taxYear",
+            OK,
+            "{}"
+          )
 
           val result = connector.getCalculationResponseByCalcId(mtditid, nino, calculationId, taxYear.toInt).futureValue
 
           result shouldBe LiabilityCalculationError(500, "Json validation error parsing calculation response")
-          WiremockHelper.verifyGet(s"/income-tax-calculation/income-tax/nino/$nino/calc-id/$calculationId/calculation-details?taxYear=$taxYear")
+          WiremockHelper.verifyGet(
+            s"/income-tax-calculation/income-tax/nino/$nino/calc-id/$calculationId/calculation-details?taxYear=$taxYear"
+          )
         }
 
-        "return an error when the request returns an INTERNAL SERVER ERROR" in{
-          WiremockHelper.stubGet(s"/income-tax-calculation/income-tax/nino/$nino/calc-id/$calculationId/calculation-details?taxYear=$taxYear", INTERNAL_SERVER_ERROR, "{}")
+        "return an error when the request returns an INTERNAL SERVER ERROR" in {
+          WiremockHelper.stubGet(
+            s"/income-tax-calculation/income-tax/nino/$nino/calc-id/$calculationId/calculation-details?taxYear=$taxYear",
+            INTERNAL_SERVER_ERROR,
+            "{}"
+          )
 
           val result = connector.getCalculationResponseByCalcId(mtditid, nino, calculationId, taxYear.toInt).futureValue
 
           result shouldBe LiabilityCalculationError(500, "{}")
-          WiremockHelper.verifyGet(s"/income-tax-calculation/income-tax/nino/$nino/calc-id/$calculationId/calculation-details?taxYear=$taxYear")
+          WiremockHelper.verifyGet(
+            s"/income-tax-calculation/income-tax/nino/$nino/calc-id/$calculationId/calculation-details?taxYear=$taxYear"
+          )
         }
       }
     }

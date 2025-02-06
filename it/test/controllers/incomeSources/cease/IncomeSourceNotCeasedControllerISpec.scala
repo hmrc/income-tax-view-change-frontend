@@ -28,17 +28,17 @@ import testConstants.IncomeSourceIntegrationTestConstants.ukPropertyOnlyResponse
 class IncomeSourceNotCeasedControllerISpec extends ControllerISpecHelper {
 
   def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     incomeSourceType match {
       case SelfEmployment => pathStart + "/income-sources/cease/error-business-not-ceased"
-      case UkProperty => pathStart + "/income-sources/cease/error-uk-property-not-ceased"
-      case _ => pathStart + "/income-sources/cease/error-foreign-property-not-ceased"
+      case UkProperty     => pathStart + "/income-sources/cease/error-uk-property-not-ceased"
+      case _              => pathStart + "/income-sources/cease/error-foreign-property-not-ceased"
     }
   }
 
   mtdAllRoles.foreach { mtdUserRole =>
     List(UkProperty, ForeignProperty).foreach { incomeSourceType =>
-      val path = getPath(mtdUserRole, incomeSourceType)
+      val path              = getPath(mtdUserRole, incomeSourceType)
       val additionalCookies = getAdditionalCookies(mtdUserRole)
       s"GET $path" when {
         s"a user is a $mtdUserRole" that {

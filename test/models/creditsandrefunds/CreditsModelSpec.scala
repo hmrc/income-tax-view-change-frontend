@@ -27,9 +27,9 @@ import java.time.LocalDate
 
 class CreditsModelSpec extends UnitSpec {
 
-  val availableCredit:BigDecimal = 20
+  val availableCredit: BigDecimal = 20
 
-  val allocatedCredit:BigDecimal = 10
+  val allocatedCredit: BigDecimal = 10
 
   val allCreditsJson =
     s"""
@@ -66,32 +66,38 @@ class CreditsModelSpec extends UnitSpec {
       |}
       |""".stripMargin
 
-  val allCreditsObj = CreditsModel(availableCredit, allocatedCredit, List(
-    Transaction(transactionType = Repayment,
-      amount = 5,
-      taxYear = None,
-      dueDate = None),
-    Transaction(transactionType = Repayment,
-      amount = 5,
-      taxYear = None,
-      dueDate = None),
-    Transaction(transactionType = CutOverCreditType,
-      amount = 1,
-      taxYear = Some(TaxYear.forYearEnd(2023)),
-      dueDate = Some(dateInYear(2023))),
-    Transaction(transactionType = BalancingChargeCreditType,
-      amount = 2,
-      taxYear = Some(TaxYear.forYearEnd(2024)),
-      dueDate = Some(dateInYear(2024))),
-    Transaction(transactionType = MfaCreditType,
-      amount = 3,
-      taxYear = Some(TaxYear.forYearEnd(2021)),
-      dueDate = Some(dateInYear(2021))),
-    Transaction(transactionType = RepaymentInterest,
-      amount = 4,
-      taxYear = Some(TaxYear.forYearEnd(2022)),
-      dueDate = Some(dateInYear(2022)))
-  ))
+  val allCreditsObj = CreditsModel(
+    availableCredit,
+    allocatedCredit,
+    List(
+      Transaction(transactionType = Repayment, amount = 5, taxYear = None, dueDate = None),
+      Transaction(transactionType = Repayment, amount = 5, taxYear = None, dueDate = None),
+      Transaction(
+        transactionType = CutOverCreditType,
+        amount = 1,
+        taxYear = Some(TaxYear.forYearEnd(2023)),
+        dueDate = Some(dateInYear(2023))
+      ),
+      Transaction(
+        transactionType = BalancingChargeCreditType,
+        amount = 2,
+        taxYear = Some(TaxYear.forYearEnd(2024)),
+        dueDate = Some(dateInYear(2024))
+      ),
+      Transaction(
+        transactionType = MfaCreditType,
+        amount = 3,
+        taxYear = Some(TaxYear.forYearEnd(2021)),
+        dueDate = Some(dateInYear(2021))
+      ),
+      Transaction(
+        transactionType = RepaymentInterest,
+        amount = 4,
+        taxYear = Some(TaxYear.forYearEnd(2022)),
+        dueDate = Some(dateInYear(2022))
+      )
+    )
+  )
 
   "httpParser" when {
 
@@ -126,12 +132,12 @@ class CreditsModelSpec extends UnitSpec {
     }
   }
 
-
   "CreditAndRefundModel" should {
 
     "parse from JSON correctly" in {
 
-      val result: JsResult[CreditsModel] = Json.parse(allCreditsJson)
+      val result: JsResult[CreditsModel] = Json
+        .parse(allCreditsJson)
         .validate[CreditsModel]
 
       result match {
@@ -140,7 +146,6 @@ class CreditsModelSpec extends UnitSpec {
         case _ => fail("Model did not validate correctly")
       }
     }
-
 
     "write to JSON correctly" in {
 
@@ -172,7 +177,8 @@ class CreditsModelSpec extends UnitSpec {
           |}
           |""".stripMargin
 
-      val result: JsResult[CreditsModel] = Json.parse(invalid)
+      val result: JsResult[CreditsModel] = Json
+        .parse(invalid)
         .validate[CreditsModel]
 
       result match {
@@ -186,6 +192,5 @@ class CreditsModelSpec extends UnitSpec {
   }
 
   def dateInYear(year: Int) = LocalDate.of(year, 1, 1)
-
 
 }

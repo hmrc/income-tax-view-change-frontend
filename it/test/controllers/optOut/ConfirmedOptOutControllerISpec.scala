@@ -47,40 +47,43 @@ class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
     pathStart + "/optout/confirmed"
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    val path = getPath(mtdUserRole)
-    val additionalCookies = getAdditionalCookies(mtdUserRole)
-    s"GET $path" when {
-      s"a user is a $mtdUserRole" that {
-        "is authenticated, with a valid enrolment" should {
-          s"render confirm single year opt out page" in {
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      val path              = getPath(mtdUserRole)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            s"render confirm single year opt out page" in {
 
-            disable(NavBarFs)
-            stubAuthorised(mtdUserRole)
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-            val responseBody = Json.arr(successITSAStatusResponseJson)
-            val url = s"/income-tax-view-change/itsa-status/status/AA123456A/21-22?futureYears=true&history=false"
+              val responseBody = Json.arr(successITSAStatusResponseJson)
+              val url          = s"/income-tax-view-change/itsa-status/status/AA123456A/21-22?futureYears=true&history=false"
 
-            WiremockHelper.stubGet(url, OK, responseBody.toString())
+              WiremockHelper.stubGet(url, OK, responseBody.toString())
 
-            helper.stubOptOutInitialState(currentTaxYear,
-              previousYearCrystallised = false,
-              previousYearStatus = Voluntary,
-              currentYearStatus = Mandated,
-              nextYearStatus = Mandated)
+              helper.stubOptOutInitialState(
+                currentTaxYear,
+                previousYearCrystallised = false,
+                previousYearStatus = Voluntary,
+                currentYearStatus = Mandated,
+                nextYearStatus = Mandated
+              )
 
-            val result = buildGETMTDClient(path, additionalCookies).futureValue
-            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-            result should have(
-              httpStatus(OK),
-              pageTitle(mtdUserRole, "optout.confirmedOptOut.heading")
-            )
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "optout.confirmedOptOut.heading")
+              )
+            }
           }
+          testAuthFailures(path, mtdUserRole)
         }
-        testAuthFailures(path, mtdUserRole)
       }
-    }
   }
 }

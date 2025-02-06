@@ -30,47 +30,64 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class StubClientDetailsController @Inject()(stubClientDetails: StubClientDetails,
-                                            matchingStubConnector: MatchingStubConnector)
-                                           (implicit mcc: MessagesControllerComponents,
-                                            val appConfig: FrontendAppConfig,
-                                            ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport {
+class StubClientDetailsController @Inject() (
+    stubClientDetails:     StubClientDetails,
+    matchingStubConnector: MatchingStubConnector
+  )(
+    implicit mcc:  MessagesControllerComponents,
+    val appConfig: FrontendAppConfig,
+    ec:            ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport {
 
-  def form: Form[StubClientDetailsModel] = StubClientDetailsForm.clientDetailsForm.fill(
-    StubClientDetailsModel(
-      nino = "AA888888A",
-      utr = "1234567890",
-      status = OK
+  def form: Form[StubClientDetailsModel] =
+    StubClientDetailsForm.clientDetailsForm.fill(
+      StubClientDetailsModel(
+        nino = "AA888888A",
+        utr = "1234567890",
+        status = OK
+      )
     )
-  )
 
-  def show: Action[AnyContent] = Action { implicit req =>
-    Ok(stubClientDetails(
-      clientDetailsForm = form,
-      postAction = testOnly.controllers.routes.StubClientDetailsController.submit
-    ))
-  }
-
-  def submitWithParams(nino: String, utr: String): Action[AnyContent] = Action.async { implicit request =>
-    matchingStubConnector.stubClient(StubClientDetailsModel(nino, utr, OK)) map { response =>
-      Logger("application").info(s"matching stub, status: ${response.status}, body: ${response.body}")
-      Redirect(controllers.agent.routes.EnterClientsUTRController.showWithUtr(utr))
+  def show: Action[AnyContent] =
+    Action { implicit req =>
+      Ok(
+        stubClientDetails(
+          clientDetailsForm = form,
+          postAction = testOnly.controllers.routes.StubClientDetailsController.submit
+        )
+      )
     }
-  }
 
-  def submit: Action[AnyContent] = Action.async { implicit request =>
-    StubClientDetailsForm.clientDetailsForm.bindFromRequest().fold(
-      hasErrors => Future.successful(BadRequest(stubClientDetails(
-        clientDetailsForm = hasErrors,
-        postAction = testOnly.controllers.routes.StubClientDetailsController.submit
-      ))), { data =>
-        matchingStubConnector.stubClient(data) map { response =>
-          Logger("application").info(s"matching stub, status: ${response.status}, body: ${response.body}")
-          Redirect(controllers.agent.routes.EnterClientsUTRController.show)
-        }
+  def submitWithParams(nino: String, utr: String): Action[AnyContent] =
+    Action.async { implicit request =>
+      matchingStubConnector.stubClient(StubClientDetailsModel(nino, utr, OK)) map { response =>
+        Logger("application").info(s"matching stub, status: ${response.status}, body: ${response.body}")
+        Redirect(controllers.agent.routes.EnterClientsUTRController.showWithUtr(utr))
       }
-    )
-  }
+    }
+
+  def submit: Action[AnyContent] =
+    Action.async { implicit request =>
+      StubClientDetailsForm.clientDetailsForm
+        .bindFromRequest()
+        .fold(
+          hasErrors =>
+            Future.successful(
+              BadRequest(
+                stubClientDetails(
+                  clientDetailsForm = hasErrors,
+                  postAction = testOnly.controllers.routes.StubClientDetailsController.submit
+                )
+              )
+            ),
+          { data =>
+            matchingStubConnector.stubClient(data) map { response =>
+              Logger("application").info(s"matching stub, status: ${response.status}, body: ${response.body}")
+              Redirect(controllers.agent.routes.EnterClientsUTRController.show)
+            }
+          }
+        )
+    }
 
 }

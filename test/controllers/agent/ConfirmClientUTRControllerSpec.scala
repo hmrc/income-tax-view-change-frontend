@@ -33,13 +33,13 @@ import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNi
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
 import views.html.agent.confirmClient
 
-class ConfirmClientUTRControllerSpec extends MockAuthActions
-  with MockConfirmClient {
+class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmClient {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[confirmClient].toInstance(mockConfirmClient),
-    ).build()
+      api.inject.bind[confirmClient].toInstance(mockConfirmClient)
+    )
+    .build()
 
   lazy val testConfirmClientUTRController = app.injector.instanceOf[ConfirmClientUTRController]
 
@@ -104,23 +104,24 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions
       }
     }
 
-    Map("primary agent" -> false, "supporting agent" -> true).foreach { case (agentType, isSupportingAgent) =>
-      val fakeRequest = fakeRequestUnconfirmedClient(isSupportingAgent = isSupportingAgent)
+    Map("primary agent" -> false, "supporting agent" -> true).foreach {
+      case (agentType, isSupportingAgent) =>
+        val fakeRequest = fakeRequestUnconfirmedClient(isSupportingAgent = isSupportingAgent)
 
-      s"there is a $agentType user" that {
+        s"there is a $agentType user" that {
 
-        "is fully authenticated" should {
-          "return OK and display confirm Client details page" in {
-            setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent)
-            mockConfirmClientResponse(HtmlFormat.empty)
+          "is fully authenticated" should {
+            "return OK and display confirm Client details page" in {
+              setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent)
+              mockConfirmClientResponse(HtmlFormat.empty)
 
-            val result = testConfirmClientUTRController.show()(fakeRequest)
+              val result = testConfirmClientUTRController.show()(fakeRequest)
 
-            status(result) shouldBe OK
-            contentType(result) shouldBe Some(HTML)
+              status(result) shouldBe OK
+              contentType(result) shouldBe Some(HTML)
+            }
           }
         }
-      }
     }
   }
 
@@ -185,46 +186,58 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions
       }
     }
 
-    Map("primary agent" -> false, "supporting agent" -> true).foreach { case (agentType, isSupportingAgent) =>
-      val fakeRequest = fakeRequestUnconfirmedClient(isSupportingAgent = isSupportingAgent)
+    Map("primary agent" -> false, "supporting agent" -> true).foreach {
+      case (agentType, isSupportingAgent) =>
+        val fakeRequest = fakeRequestUnconfirmedClient(isSupportingAgent = isSupportingAgent)
 
-      s"there is a $agentType user" that {
+        s"there is a $agentType user" that {
 
-        "is fully authenticated" should {
-          "redirect to Home page and relevant data added to session or sent to session data service successfully" in {
-            setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent)
-
-            setupMockPostSessionData(Right(SessionDataPostSuccess(OK)))
-
-            val result = testConfirmClientUTRController.submit()(fakeRequest)
-
-            val expectedAudit = ConfirmClientDetailsAuditModel(clientName = "Test User", nino = testNino, mtditid = testMtditid, arn = testArn, saUtr = testSaUtr, credId = Some(testCredId))
-
-            status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
-            if (!appConfig.isSessionDataStorageEnabled) {
-              session(result).get(SessionKeys.confirmedClient) shouldBe Some("true")
-            }
-            else {
-              val sessionDataModel: SessionDataModel = SessionDataModel(testMtditid, testNino, testSaUtr, isSupportingAgent)
-              verify(mockSessionDataService, times(1)).postSessionData(ArgumentMatchers.eq(sessionDataModel))(any())
-            }
-            verifyExtendedAuditSent(expectedAudit)
-          }
-
-          if (appConfig.isSessionDataStorageEnabled) {
-            "throw an error if session data service flag is true and request to session data service is unsuccessful" in {
+          "is fully authenticated" should {
+            "redirect to Home page and relevant data added to session or sent to session data service successfully" in {
               setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent)
 
-              setupMockPostSessionData(Left(SessionDataPostFailure(INTERNAL_SERVER_ERROR, "POST to session data service was unsuccessful TEST")))
+              setupMockPostSessionData(Right(SessionDataPostSuccess(OK)))
 
-              val result = testConfirmClientUTRController.submit()(fakeRequestWithClientDetails)
+              val result = testConfirmClientUTRController.submit()(fakeRequest)
 
-              status(result) shouldBe INTERNAL_SERVER_ERROR
+              val expectedAudit = ConfirmClientDetailsAuditModel(
+                clientName = "Test User",
+                nino = testNino,
+                mtditid = testMtditid,
+                arn = testArn,
+                saUtr = testSaUtr,
+                credId = Some(testCredId)
+              )
+
+              status(result) shouldBe SEE_OTHER
+              redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+              if (!appConfig.isSessionDataStorageEnabled) {
+                session(result).get(SessionKeys.confirmedClient) shouldBe Some("true")
+              } else {
+                val sessionDataModel: SessionDataModel =
+                  SessionDataModel(testMtditid, testNino, testSaUtr, isSupportingAgent)
+                verify(mockSessionDataService, times(1)).postSessionData(ArgumentMatchers.eq(sessionDataModel))(any())
+              }
+              verifyExtendedAuditSent(expectedAudit)
+            }
+
+            if (appConfig.isSessionDataStorageEnabled) {
+              "throw an error if session data service flag is true and request to session data service is unsuccessful" in {
+                setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent)
+
+                setupMockPostSessionData(
+                  Left(
+                    SessionDataPostFailure(INTERNAL_SERVER_ERROR, "POST to session data service was unsuccessful TEST")
+                  )
+                )
+
+                val result = testConfirmClientUTRController.submit()(fakeRequestWithClientDetails)
+
+                status(result) shouldBe INTERNAL_SERVER_ERROR
+              }
             }
           }
         }
-      }
     }
   }
 }

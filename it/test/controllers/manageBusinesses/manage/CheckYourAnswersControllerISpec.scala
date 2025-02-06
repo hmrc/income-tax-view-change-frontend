@@ -37,15 +37,15 @@ import java.time.Month.APRIL
 
 class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
 
-  val annual = "annual"
+  val annual    = "annual"
   val quarterly = "quarterly"
   val quarterlyIndicator: String = "Q"
-  val annuallyIndicator: String = "A"
-  val taxYear = "2024"
+  val annuallyIndicator:  String = "A"
+  val taxYear   = "2024"
   val timestamp = "2023-01-31T09:26:17Z"
-  val currentTaxYear: Int = dateService.getCurrentTaxYearEnd
-  val taxYear1: Int = currentTaxYear
-  val taxYear2: Int = currentTaxYear + 1
+  val currentTaxYear:          Int       = dateService.getCurrentTaxYearEnd
+  val taxYear1:                Int       = currentTaxYear
+  val taxYear2:                Int       = currentTaxYear + 1
   val lastDayOfCurrentTaxYear: LocalDate = LocalDate.of(currentTaxYear, APRIL, 5)
   val latencyDetails: LatencyDetails =
     LatencyDetails(
@@ -64,16 +64,25 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
-  def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
-    sessionId = testSessionId,
-    journeyType = IncomeSourceJourneyType(Manage, incomeSourceType).toString,
-    manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), reportingMethod = Some(annual), taxYear = Some(2024))))
+  def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData =
+    UIJourneySessionData(
+      sessionId = testSessionId,
+      journeyType = IncomeSourceJourneyType(Manage, incomeSourceType).toString,
+      manageIncomeSourceData = Some(
+        ManageIncomeSourceData(
+          incomeSourceId = Some(testSelfEmploymentId),
+          reportingMethod = Some(annual),
+          taxYear = Some(2024)
+        )
+      )
+    )
 
   def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "/manage-your-businesses/manage" else "/agents/manage-your-businesses/manage"
+    val pathStart =
+      if (mtdRole == MTDIndividual) "/manage-your-businesses/manage" else "/agents/manage-your-businesses/manage"
     val pathEnd = incomeSourceType match {
-      case SelfEmployment => "/business-check-your-answers"
-      case UkProperty => "/uk-property-check-your-answers"
+      case SelfEmployment  => "/business-check-your-answers"
+      case UkProperty      => "/uk-property-check-your-answers"
       case ForeignProperty => "/foreign-property-check-your-answers"
     }
     pathStart + pathEnd
@@ -81,23 +90,27 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
 
   def verifyCheckAnswersAudit(incomeSourceType: IncomeSourceType, mtdUserRole: MTDUserRole) = {
     val businessName = incomeSourceType match {
-      case SelfEmployment => "business"
-      case UkProperty => "UK property"
+      case SelfEmployment  => "business"
+      case UkProperty      => "UK property"
       case ForeignProperty => "Foreign property"
     }
     AuditStub.verifyAuditContainsDetail(
       ManageIncomeSourceCheckYourAnswersAuditModel(
-        true, incomeSourceType.journeyType,
-        "MANAGE", "Annually",
-        "2023-2024", businessName
-      )(getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
+        true,
+        incomeSourceType.journeyType,
+        "MANAGE",
+        "Annually",
+        "2023-2024",
+        businessName
+      )(getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail
+    )
 
   }
 
   def getIncomeSourceDetailsResponse(incomeSourceType: IncomeSourceType) = {
     incomeSourceType match {
-      case SelfEmployment => singleBusinessResponseInLatencyPeriod(latencyDetails)
-      case UkProperty => singleUKPropertyResponseInLatencyPeriod(latencyDetails)
+      case SelfEmployment  => singleBusinessResponseInLatencyPeriod(latencyDetails)
+      case UkProperty      => singleUKPropertyResponseInLatencyPeriod(latencyDetails)
       case ForeignProperty => singleForeignPropertyResponseInLatencyPeriod(latencyDetails)
     }
   }
@@ -105,16 +118,24 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
   def setupMongoSessionData(incomeSourceType: IncomeSourceType) = {
     val incomeId = incomeSourceType match {
       case SelfEmployment => testSelfEmploymentId
-      case _ => testPropertyIncomeId
+      case _              => testPropertyIncomeId
     }
-    await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"MANAGE-${incomeSourceType.key}",
-      manageIncomeSourceData = Some(ManageIncomeSourceData(Some(incomeId), Some(annual), Some(taxYear.toInt), Some(false))))))
+    await(
+      sessionService.setMongoData(
+        UIJourneySessionData(
+          testSessionId,
+          s"MANAGE-${incomeSourceType.key}",
+          manageIncomeSourceData =
+            Some(ManageIncomeSourceData(Some(incomeId), Some(annual), Some(taxYear.toInt), Some(false)))
+        )
+      )
+    )
   }
 
   List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
     mtdAllRoles.foreach { mtdUserRole =>
-      val isAgent = mtdUserRole != MTDIndividual
-      val path = getPath(mtdUserRole, incomeSourceType)
+      val isAgent           = mtdUserRole != MTDIndividual
+      val path              = getPath(mtdUserRole, incomeSourceType)
       val additionalCookies = getAdditionalCookies(mtdUserRole)
       s"GET $path" when {
         s"a user is a $mtdUserRole" that {
@@ -124,12 +145,32 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
                 enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
-                IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  getIncomeSourceDetailsResponse(incomeSourceType)
+                )
+                IncomeTaxViewChangeStub.stubUpdateIncomeSource(
+                  OK,
+                  Json.toJson(UpdateIncomeSourceResponseModel(timestamp))
+                )
 
                 if (incomeSourceType == SelfEmployment) {
-                  await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-                    manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId), Some(annual), Some(taxYear.toInt), Some(false))))))
+                  await(
+                    sessionService.setMongoData(
+                      UIJourneySessionData(
+                        testSessionId,
+                        "MANAGE-SE",
+                        manageIncomeSourceData = Some(
+                          ManageIncomeSourceData(
+                            Some(testSelfEmploymentId),
+                            Some(annual),
+                            Some(taxYear.toInt),
+                            Some(false)
+                          )
+                        )
+                      )
+                    )
+                  )
                 } else {
                   await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
                 }
@@ -151,17 +192,37 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
                 disable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  getIncomeSourceDetailsResponse(incomeSourceType)
+                )
 
                 if (incomeSourceType == SelfEmployment) {
-                  await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-                    manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId), Some(annual), Some(taxYear.toInt), Some(false))))))
+                  await(
+                    sessionService.setMongoData(
+                      UIJourneySessionData(
+                        testSessionId,
+                        "MANAGE-SE",
+                        manageIncomeSourceData = Some(
+                          ManageIncomeSourceData(
+                            Some(testSelfEmploymentId),
+                            Some(annual),
+                            Some(taxYear.toInt),
+                            Some(false)
+                          )
+                        )
+                      )
+                    )
+                  )
                 } else {
                   await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
                 }
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-                IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+                IncomeTaxViewChangeStub.stubUpdateIncomeSource(
+                  OK,
+                  Json.toJson(UpdateIncomeSourceResponseModel(timestamp))
+                )
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
@@ -184,8 +245,14 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
                 enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
-                IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  getIncomeSourceDetailsResponse(incomeSourceType)
+                )
+                IncomeTaxViewChangeStub.stubUpdateIncomeSource(
+                  OK,
+                  Json.toJson(UpdateIncomeSourceResponseModel(timestamp))
+                )
 
                 setupMongoSessionData(incomeSourceType)
 
@@ -203,8 +270,14 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
                 disable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
-                IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  getIncomeSourceDetailsResponse(incomeSourceType)
+                )
+                IncomeTaxViewChangeStub.stubUpdateIncomeSource(
+                  OK,
+                  Json.toJson(UpdateIncomeSourceResponseModel(timestamp))
+                )
 
                 val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
 

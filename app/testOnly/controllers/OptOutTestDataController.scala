@@ -36,60 +36,86 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class OptOutTestDataController @Inject()(val authActions: AuthActions,
-                                          val appConfig: FrontendAppConfig,
-                                          val calculationListService: CalculationListService,
-                                          val dynamicStubService: DynamicStubService,
-                                          implicit val dateService: DateServiceInterface,
-                                          implicit val mcc: MessagesControllerComponents,
-                                          val itvcErrorHandler: ItvcErrorHandler,
-                                          implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                          implicit val executionContext: ExecutionContext
-                                        )
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+class OptOutTestDataController @Inject() (
+    val authActions:                    AuthActions,
+    val appConfig:                      FrontendAppConfig,
+    val calculationListService:         CalculationListService,
+    val dynamicStubService:             DynamicStubService,
+    implicit val dateService:           DateServiceInterface,
+    implicit val mcc:                   MessagesControllerComponents,
+    val itvcErrorHandler:               ItvcErrorHandler,
+    implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+    implicit val executionContext:      ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with FeatureSwitching {
 
-  private def retrieveData(nino: String, isAgent: Boolean)
-                          (implicit hc: HeaderCarrier, request: MtdItUser[_]): Future[Result] = {
+  private def retrieveData(
+      nino:    String,
+      isAgent: Boolean
+    )(
+      implicit hc: HeaderCarrier,
+      request:     MtdItUser[_]
+    ): Future[Result] = {
 
     val taxYear: TaxYear = TaxYear(
       dateService.getCurrentTaxYearStart.getYear,
       dateService.getCurrentTaxYearEnd
     )
-    val taxYearPlusOne = taxYear.addYears(1)
+    val taxYearPlusOne  = taxYear.addYears(1)
     val taxYearMinusOne = taxYear.addYears(-1)
 
-    def combinedResults: Future[(CalculationListResponseModel, ITSAStatusResponseModel, ITSAStatusResponseModel, ITSAStatusResponseModel, List[ITSAStatusResponseModel])] = for {
-      crystallisationStatusResponseCyMinusOne <- cyMinusOneCrystallisationStatusResult(nino, taxYear.addYears(-1))
-      itsaStatusResponseCyMinusOne <- dynamicStubService.getITSAStatusDetail(taxYearMinusOne, nino)
-      itsaStatusResponseCy <- dynamicStubService.getITSAStatusDetail(taxYear, nino)
-      itsaStatusResponseCyPlusOne <- dynamicStubService.getITSAStatusDetail(taxYearPlusOne, nino)
-      itsaStatusFutureYearResponseCyMinusOne <- dynamicStubService.getITSAStatusDetail(taxYearMinusOne, nino, futureYears = true)
-    } yield (
-      crystallisationStatusResponseCyMinusOne,
-      itsaStatusResponseCyMinusOne.head,
-      itsaStatusResponseCy.head,
-      itsaStatusResponseCyPlusOne.head,
-      itsaStatusFutureYearResponseCyMinusOne)
+    def combinedResults: Future[
+      (
+          CalculationListResponseModel,
+          ITSAStatusResponseModel,
+          ITSAStatusResponseModel,
+          ITSAStatusResponseModel,
+          List[ITSAStatusResponseModel]
+      )
+    ] =
+      for {
+        crystallisationStatusResponseCyMinusOne <- cyMinusOneCrystallisationStatusResult(nino, taxYear.addYears(-1))
+        itsaStatusResponseCyMinusOne            <- dynamicStubService.getITSAStatusDetail(taxYearMinusOne, nino)
+        itsaStatusResponseCy                    <- dynamicStubService.getITSAStatusDetail(taxYear, nino)
+        itsaStatusResponseCyPlusOne             <- dynamicStubService.getITSAStatusDetail(taxYearPlusOne, nino)
+        itsaStatusFutureYearResponseCyMinusOne <-
+          dynamicStubService.getITSAStatusDetail(taxYearMinusOne, nino, futureYears = true)
+      } yield (
+        crystallisationStatusResponseCyMinusOne,
+        itsaStatusResponseCyMinusOne.head,
+        itsaStatusResponseCy.head,
+        itsaStatusResponseCyPlusOne.head,
+        itsaStatusFutureYearResponseCyMinusOne
+      )
 
-    combinedResults.map { seqResult =>
-      Ok(
-        s"Crystallisation Status:               ${Json.toJson(seqResult._1)}\n" +
-          s"ITSA Status CY-1:                   ${Json.toJson(seqResult._2)}\n" +
-          s"ITSA Status CY:                     ${Json.toJson(seqResult._3)}\n" +
-          s"ITSA Status CY+1:                   ${Json.toJson(seqResult._4)}\n" +
-          s"ITSA Status Future Year from CY-1:  ${Json.toJson(seqResult._5)}\n")
+    combinedResults
+      .map { seqResult =>
+        Ok(
+          s"Crystallisation Status:               ${Json.toJson(seqResult._1)}\n" +
+            s"ITSA Status CY-1:                   ${Json.toJson(seqResult._2)}\n" +
+            s"ITSA Status CY:                     ${Json.toJson(seqResult._3)}\n" +
+            s"ITSA Status CY+1:                   ${Json.toJson(seqResult._4)}\n" +
+            s"ITSA Status Future Year from CY-1:  ${Json.toJson(seqResult._5)}\n"
+        )
 
-    }.recover {
-      case ex: Throwable =>
-        val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-        Logger("application").error(s"${if (isAgent) "Agent" else "Individual"} - Could not retrieve Opt Out user Data, status: - ${ex.getMessage} - ${ex.getCause} - ")
-        errorHandler.showInternalServerError()
-    }
+      }
+      .recover {
+        case ex: Throwable =>
+          val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+          Logger("application").error(s"${if (isAgent) "Agent"
+          else "Individual"} - Could not retrieve Opt Out user Data, status: - ${ex.getMessage} - ${ex.getCause} - ")
+          errorHandler.showInternalServerError()
+      }
 
   }
 
-  private def cyMinusOneCrystallisationStatusResult(nino: String, taxYear: TaxYear)
-                                                   (implicit hc: HeaderCarrier): Future[CalculationListResponseModel] = {
+  private def cyMinusOneCrystallisationStatusResult(
+      nino:    String,
+      taxYear: TaxYear
+    )(
+      implicit hc: HeaderCarrier
+    ): Future[CalculationListResponseModel] = {
 
     if (taxYear.endYear >= 2024) {
       calculationListService.getCalculationList(nino = Nino(nino), taxYearRange = taxYear.formatTaxYearRange)
@@ -98,20 +124,19 @@ class OptOutTestDataController @Inject()(val authActions: AuthActions,
     }
   }
 
-  val show: Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
-      retrieveData(
-        nino = user.nino,
-        isAgent = false
-      )
+  val show: Action[AnyContent] = authActions.asMTDIndividual.async { implicit user =>
+    retrieveData(
+      nino = user.nino,
+      isAgent = false
+    )
   }
 
-  def showAgent: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
-    implicit mtdItUser =>
+  def showAgent: Action[AnyContent] =
+    authActions.asMTDAgentWithConfirmedClient.async { implicit mtdItUser =>
       retrieveData(
         nino = mtdItUser.nino,
         isAgent = true
       )
-  }
+    }
 
 }

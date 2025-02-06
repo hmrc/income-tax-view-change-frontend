@@ -33,9 +33,14 @@ trait WithSessionAndPoa extends JourneyCheckerClaimToAdjust {
 
   val claimToAdjustService: ClaimToAdjustService
 
-  def withSessionDataAndPoa(journeyState: JourneyState = BeforeSubmissionPage)
-                           (codeBlock: (PoaAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result])
-                           (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  def withSessionDataAndPoa(
+      journeyState: JourneyState = BeforeSubmissionPage
+    )(
+      codeBlock: (PoaAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result]
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier
+    ): Future[Result] = {
     ifAdjustPoaIsEnabled(user.isAgent()) {
       {
         if (journeyState == InitialPage) {
@@ -50,18 +55,26 @@ trait WithSessionAndPoa extends JourneyCheckerClaimToAdjust {
     }
   }
 
-  private def handleSessionAndPoaStartPage(codeBlock: (PoaAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result])
-                              (implicit hc: HeaderCarrier, user: MtdItUser[_]): EitherT[Future, Throwable, Result] = {
+  private def handleSessionAndPoaStartPage(
+      codeBlock: (PoaAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result]
+    )(
+      implicit hc: HeaderCarrier,
+      user:        MtdItUser[_]
+    ): EitherT[Future, Throwable, Result] = {
     for {
       session <- EitherT(poaSessionService.getMongo)
-      poa <- EitherT(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)))
+      poa     <- EitherT(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)))
       result <- (session, poa) match {
         case (Some(s), Some(p)) =>
           if (s.journeyCompleted) {
-            Logger("application").info(s"The current active mongo Claim to Adjust POA session has been completed by the user, so a new session will be created")
+            Logger("application").info(
+              s"The current active mongo Claim to Adjust POA session has been completed by the user, so a new session will be created"
+            )
             createSessionCodeBlock(p)(codeBlock)
           } else {
-            Logger("application").info(s"The current active mongo Claim to Adjust POA session has not been completed by the user")
+            Logger("application").info(
+              s"The current active mongo Claim to Adjust POA session has not been completed by the user"
+            )
             codeBlock(s, p)
           }
         case (None, Some(p)) =>
@@ -73,24 +86,39 @@ trait WithSessionAndPoa extends JourneyCheckerClaimToAdjust {
     } yield result
   }
 
-  private def createSessionCodeBlock(p: PaymentOnAccountViewModel)
-                                    (codeBlock: (PoaAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result])
-                                    (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): EitherT[Future, Throwable, Result] = {
+  private def createSessionCodeBlock(
+      p: PaymentOnAccountViewModel
+    )(
+      codeBlock: (PoaAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result]
+    )(
+      implicit hc: HeaderCarrier,
+      user:        MtdItUser[_],
+      ec:          ExecutionContext
+    ): EitherT[Future, Throwable, Result] = {
     EitherT(poaSessionService.createSession.map {
       case Right(_) =>
         codeBlock(PoaAmendmentData(), p).value
       case Left(ex: Throwable) =>
         val x: EitherT[Future, Throwable, Result] = EitherT.rightT(
-          logAndRedirect(s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >"))
+          logAndRedirect(
+            s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >"
+          )
+        )
         x.value
     }.flatten)
   }
 
-  private def handleSessionAndPoa(journeyState: JourneyState)(codeBlock: (PoaAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result])
-                            (implicit hc: HeaderCarrier, user: MtdItUser[_]): EitherT[Future, Throwable, Result] = {
+  private def handleSessionAndPoa(
+      journeyState: JourneyState
+    )(
+      codeBlock: (PoaAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result]
+    )(
+      implicit hc: HeaderCarrier,
+      user:        MtdItUser[_]
+    ): EitherT[Future, Throwable, Result] = {
     for {
       session <- EitherT(poaSessionService.getMongo)
-      poa <- EitherT(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)))
+      poa     <- EitherT(claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino)))
       result <- (session, poa) match {
         case (Some(s), Some(_)) if showCannotGoBackErrorPage(s.journeyCompleted, journeyState) =>
           val x: EitherT[Future, Throwable, Result] = EitherT.rightT(redirectToYouCannotGoBackPage(user))

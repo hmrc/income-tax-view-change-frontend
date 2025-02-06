@@ -31,53 +31,72 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class StubSchemaController @Inject()(stubSchemaView: StubSchemaView)
-                                    (implicit val appConfig: FrontendAppConfig,
-                                     implicit val mcc: MessagesControllerComponents,
-                                     implicit val executionContext: ExecutionContext,
-                                     val dynamicStubConnector: DynamicStubConnector
-                                    ) extends BaseController with I18nSupport {
+class StubSchemaController @Inject() (
+    stubSchemaView: StubSchemaView
+  )(
+    implicit val appConfig:        FrontendAppConfig,
+    implicit val mcc:              MessagesControllerComponents,
+    implicit val executionContext: ExecutionContext,
+    val dynamicStubConnector:      DynamicStubConnector)
+    extends BaseController
+    with I18nSupport {
 
   val show: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(view(StubSchemaForm.stubSchemaForm)))
   }
 
-  val submit: Action[AnyContent] = Action.async {
-    implicit request =>
-      StubSchemaForm.stubSchemaForm.bindFromRequest().fold(
+  val submit: Action[AnyContent] = Action.async { implicit request =>
+    StubSchemaForm.stubSchemaForm
+      .bindFromRequest()
+      .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
         schema => {
-          dynamicStubConnector.addSchema(schema).map(
-            response => response.status match {
-              case OK => Ok(view(StubSchemaForm.stubSchemaForm, showSuccess = true))
-              case _ => InternalServerError(view(StubSchemaForm.stubSchemaForm.fill(schema), errorMessage = Some(response.body)))
-            }
-          )
+          dynamicStubConnector
+            .addSchema(schema)
+            .map(response =>
+              response.status match {
+                case OK => Ok(view(StubSchemaForm.stubSchemaForm, showSuccess = true))
+                case _ =>
+                  InternalServerError(
+                    view(StubSchemaForm.stubSchemaForm.fill(schema), errorMessage = Some(response.body))
+                  )
+              }
+            )
         }
       )
   }
 
   val stubProxy: Action[JsValue] = Action.async(parse.json) { implicit request =>
-    withJsonBody[SchemaModel](
-      json => dynamicStubConnector.addSchema(json).map(
-        response => response.status match {
-          case OK => Ok(s"The following JSON was added to the stub: \n\n${Json.toJson(json)}")
-          case _ => InternalServerError(response.body)
-        }
-      )
+    withJsonBody[SchemaModel](json =>
+      dynamicStubConnector
+        .addSchema(json)
+        .map(response =>
+          response.status match {
+            case OK => Ok(s"The following JSON was added to the stub: \n\n${Json.toJson(json)}")
+            case _  => InternalServerError(response.body)
+          }
+        )
     )
   }
 
   val deleteAllProxy: Action[AnyContent] = Action.async { implicit request =>
-    dynamicStubConnector.deleteAllSchemas().map(
-      response => response.status match {
-        case OK => Ok("Deleting All Schemas from the Stub...")
-        case _ => InternalServerError(response.body)
-      }
-    )
+    dynamicStubConnector
+      .deleteAllSchemas()
+      .map(response =>
+        response.status match {
+          case OK => Ok("Deleting All Schemas from the Stub...")
+          case _  => InternalServerError(response.body)
+        }
+      )
   }
 
-  private def view(form: Form[SchemaModel], showSuccess: Boolean = false, errorMessage: Option[String] = None)(implicit request: Request[AnyContent]) =
+  private def view(
+      form:         Form[SchemaModel],
+      showSuccess:  Boolean = false,
+      errorMessage: Option[String] = None
+    )(
+      implicit request: Request[AnyContent]
+    ) =
     stubSchemaView(
       form,
       testOnly.controllers.routes.StubSchemaController.submit,

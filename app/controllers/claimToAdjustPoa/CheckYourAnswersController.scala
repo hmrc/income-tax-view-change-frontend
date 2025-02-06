@@ -37,55 +37,65 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CheckYourAnswersController @Inject()(val authActions: AuthActions,
-                                           val claimToAdjustService: ClaimToAdjustService,
-                                           val poaSessionService: PaymentOnAccountSessionService,
-                                           val ctaCalculationService: ClaimToAdjustPoaCalculationService,
-                                           val checkYourAnswers: CheckYourAnswers,
-                                           val auditingService: AuditingService)
-                                          (implicit val appConfig: FrontendAppConfig,
-                                           val individualErrorHandler: ItvcErrorHandler,
-                                           val agentErrorHandler: AgentItvcErrorHandler,
-                                           val mcc: MessagesControllerComponents,
-                                           val ec: ExecutionContext)
-  extends FrontendController(mcc) with ClaimToAdjustUtils with RecalculatePoaHelper with I18nSupport with WithSessionAndPoa with ErrorRecovery{
+class CheckYourAnswersController @Inject() (
+    val authActions:           AuthActions,
+    val claimToAdjustService:  ClaimToAdjustService,
+    val poaSessionService:     PaymentOnAccountSessionService,
+    val ctaCalculationService: ClaimToAdjustPoaCalculationService,
+    val checkYourAnswers:      CheckYourAnswers,
+    val auditingService:       AuditingService
+  )(
+    implicit val appConfig:     FrontendAppConfig,
+    val individualErrorHandler: ItvcErrorHandler,
+    val agentErrorHandler:      AgentItvcErrorHandler,
+    val mcc:                    MessagesControllerComponents,
+    val ec:                     ExecutionContext)
+    extends FrontendController(mcc)
+    with ClaimToAdjustUtils
+    with RecalculatePoaHelper
+    with I18nSupport
+    with WithSessionAndPoa
+    with ErrorRecovery {
 
   def show(isAgent: Boolean): Action[AnyContent] =
-    authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
-      implicit user =>
-        withSessionDataAndPoa() { (session, poa) =>
-          withValidSession(session) { (reason, amount) =>
-            EitherT.rightT(
-              Ok(
-                checkYourAnswers(
-                  isAgent = user.isAgent(),
-                  poaReason = reason,
-                  taxYear = poa.taxYear,
-                  adjustedFirstPoaAmount = amount,
-                  adjustedSecondPoaAmount = amount,
-                  redirectUrl = ConfirmationForAdjustingPoaController.show(user.isAgent()).url,
-                  changePoaAmountUrl = EnterPoaAmountController.show(user.isAgent(), CheckMode).url,
-                  changePoaReasonUrl = SelectYourReasonController.show(user.isAgent(), CheckMode).url
-                )
+    authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async { implicit user =>
+      withSessionDataAndPoa() { (session, poa) =>
+        withValidSession(session) { (reason, amount) =>
+          EitherT.rightT(
+            Ok(
+              checkYourAnswers(
+                isAgent = user.isAgent(),
+                poaReason = reason,
+                taxYear = poa.taxYear,
+                adjustedFirstPoaAmount = amount,
+                adjustedSecondPoaAmount = amount,
+                redirectUrl = ConfirmationForAdjustingPoaController.show(user.isAgent()).url,
+                changePoaAmountUrl = EnterPoaAmountController.show(user.isAgent(), CheckMode).url,
+                changePoaReasonUrl = SelectYourReasonController.show(user.isAgent(), CheckMode).url
               )
             )
-          }
-        } recover logAndRedirect
+          )
+        }
+      } recover logAndRedirect
     }
 
-  def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent).async {
-    implicit user =>
+  def submit(isAgent: Boolean): Action[AnyContent] =
+    authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent).async { implicit user =>
       handleSubmitPoaData(
         claimToAdjustService = claimToAdjustService,
         ctaCalculationService = ctaCalculationService,
         poaSessionService = poaSessionService,
         auditingService = auditingService
       ) recover logAndRedirect
-  }
+    }
 
-  private def withValidSession(session: PoaAmendmentData)
-                              (block: (SelectYourReason, BigDecimal) => EitherT[Future, Throwable, Result])
-                              (implicit user: MtdItUser[_]): EitherT[Future, Throwable, Result] = {
+  private def withValidSession(
+      session: PoaAmendmentData
+    )(
+      block: (SelectYourReason, BigDecimal) => EitherT[Future, Throwable, Result]
+    )(
+      implicit user: MtdItUser[_]
+    ): EitherT[Future, Throwable, Result] = {
 
     (session.poaAdjustmentReason, session.newPoaAmount) match {
       case (Some(reason), Some(amount)) =>

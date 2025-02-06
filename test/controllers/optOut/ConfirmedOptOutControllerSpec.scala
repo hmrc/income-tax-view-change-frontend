@@ -35,25 +35,26 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAn
 
 import scala.concurrent.Future
 
-class ConfirmedOptOutControllerSpec extends MockAuthActions
-  with MockOptOutService {
+class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[OptOutService].toInstance(mockOptOutService)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[ConfirmedOptOutController]
 
   val taxYear = TaxYear.forYearEnd(2024)
   val optOutYear: OptOutTaxYear = CurrentOptOutTaxYear(ITSAStatus.Voluntary, taxYear)
-  val eligibleTaxYearResponse = Future.successful(Some(ConfirmedOptOutViewModel(optOutYear.taxYear, Some(OneYearOptOutFollowedByMandated))))
+  val eligibleTaxYearResponse =
+    Future.successful(Some(ConfirmedOptOutViewModel(optOutYear.taxYear, Some(OneYearOptOutFollowedByMandated))))
   val noEligibleTaxYearResponse = Future.successful(None)
-  val failedResponse = Future.failed(new Exception("some error"))
+  val failedResponse            = Future.failed(new Exception("some error"))
 
   mtdAllRoles.foreach { mtdRole =>
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
-    val isAgent = mtdRole != MTDIndividual
+    val isAgent     = mtdRole != MTDIndividual
 
     s"show(isAgent = $isAgent)" when {
       val action = testController.show(isAgent)

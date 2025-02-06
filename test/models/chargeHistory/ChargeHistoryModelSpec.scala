@@ -26,12 +26,28 @@ import java.time.LocalDate
 class ChargeHistoryModelSpec extends UnitSpec with Matchers {
 
   def testChargeHistoryModel(reversalReason: String): ChargeHistoryModel = {
-    ChargeHistoryModel("2021", "DOCID01", LocalDate.parse("2020-07-08"), "docDescription", 15000.0,
-      LocalDate.of(2021, 9, 9), reversalReason, None)
+    ChargeHistoryModel(
+      "2021",
+      "DOCID01",
+      LocalDate.parse("2020-07-08"),
+      "docDescription",
+      15000.0,
+      LocalDate.of(2021, 9, 9),
+      reversalReason,
+      None
+    )
   }
   def testPoaChargeHistoryModel(reversalReason: String): ChargeHistoryModel = {
-    ChargeHistoryModel("2021", "DOCID01", LocalDate.parse("2020-07-08"), "docDescription", 15000.0,
-      LocalDate.of(2021, 9, 9), reversalReason, Some("001"))
+    ChargeHistoryModel(
+      "2021",
+      "DOCID01",
+      LocalDate.parse("2020-07-08"),
+      "docDescription",
+      15000.0,
+      LocalDate.of(2021, 9, 9),
+      reversalReason,
+      Some("001")
+    )
   }
 
   "chargeHistoryModel" when {
@@ -57,9 +73,10 @@ class ChargeHistoryModelSpec extends UnitSpec with Matchers {
 
         "return an exception and message when the reversal reason is unknown" in {
           val result = testChargeHistoryModel("Unknown").reasonCode
-          inside(result) { case Left(e) =>
-            e shouldBe an[Exception]
-            e.leftSideValue.getMessage shouldBe "Unable to resolve reversal reason"
+          inside(result) {
+            case Left(e) =>
+              e shouldBe an[Exception]
+              e.leftSideValue.getMessage shouldBe "Unable to resolve reversal reason"
           }
         }
       }

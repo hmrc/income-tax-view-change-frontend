@@ -16,7 +16,6 @@
 
 package controllers.manageBusinesses.manage
 
-
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
@@ -41,12 +40,12 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
   val annual = "Annual"
   val quarterlyIndicator: String = "Q"
-  val annuallyIndicator: String = "A"
-  val taxYear = "2023-2024"
+  val annuallyIndicator:  String = "A"
+  val taxYear   = "2023-2024"
   val timestamp = "2023-01-31T09:26:17Z"
-  val currentTaxYear: Int = dateService.getCurrentTaxYearEnd
-  val taxYear1: Int = currentTaxYear
-  val taxYear2: Int = currentTaxYear + 1
+  val currentTaxYear:          Int       = dateService.getCurrentTaxYearEnd
+  val taxYear1:                Int       = currentTaxYear
+  val taxYear2:                Int       = currentTaxYear + 1
   val lastDayOfCurrentTaxYear: LocalDate = LocalDate.of(currentTaxYear, APRIL, 5)
   val latencyDetails: LatencyDetails =
     LatencyDetails(
@@ -61,14 +60,13 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
     val pathStart = if (mtdUserRole == MTDIndividual) "" else "/agents"
     val pathEnd = incomeSourceType match {
       case SelfEmployment => "/confirm-you-want-to-report"
-      case UkProperty => "/confirm-you-want-to-report-uk-property"
-      case _ => "/confirm-you-want-to-report-foreign-property"
+      case UkProperty     => "/confirm-you-want-to-report-uk-property"
+      case _              => "/confirm-you-want-to-report-foreign-property"
     }
     pathStart + "/manage-your-businesses/manage" + pathEnd + s"?taxYear=$taxYear&changeTo=$annual"
   }
 
-  private lazy val checkYourAnswersController = controllers.manageBusinesses.manage.routes
-    .CheckYourAnswersController
+  private lazy val checkYourAnswersController = controllers.manageBusinesses.manage.routes.CheckYourAnswersController
 
   val prefix: String = "incomeSources.manage.propertyReportingMethod"
 
@@ -78,15 +76,23 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
-  def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
-    sessionId = testSessionId,
-    journeyType = IncomeSourceJourneyType(Manage, incomeSourceType).toString,
-    manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), reportingMethod = Some(annual), taxYear = Some(2024))))
+  def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData =
+    UIJourneySessionData(
+      sessionId = testSessionId,
+      journeyType = IncomeSourceJourneyType(Manage, incomeSourceType).toString,
+      manageIncomeSourceData = Some(
+        ManageIncomeSourceData(
+          incomeSourceId = Some(testSelfEmploymentId),
+          reportingMethod = Some(annual),
+          taxYear = Some(2024)
+        )
+      )
+    )
 
   mtdAllRoles.foreach { mtdUserRole =>
-    val isAgent = mtdUserRole != MTDIndividual
+    val isAgent           = mtdUserRole != MTDIndividual
     val additionalCookies = getAdditionalCookies(mtdUserRole)
-    val pathSE = getPath(mtdUserRole, SelfEmployment)
+    val pathSE            = getPath(mtdUserRole, SelfEmployment)
     s"GET $pathSE" when {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
@@ -96,12 +102,25 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
 
-              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-                manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
+              await(
+                sessionService.setMongoData(
+                  UIJourneySessionData(
+                    testSessionId,
+                    "MANAGE-SE",
+                    manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId)))
+                  )
+                )
+              )
 
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod(latencyDetails))
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                OK,
+                singleBusinessResponseInLatencyPeriod(latencyDetails)
+              )
 
-              IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+              IncomeTaxViewChangeStub.stubUpdateIncomeSource(
+                OK,
+                Json.toJson(UpdateIncomeSourceResponseModel(timestamp))
+              )
 
               val result = buildGETMTDClient(pathSE, additionalCookies).futureValue
               IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
@@ -118,14 +137,24 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             "Income Sources FS is Disabled" in {
               disable(IncomeSourcesFs)
               disable(NavBarFs)
-               stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole)
 
-              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-                manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
+              await(
+                sessionService.setMongoData(
+                  UIJourneySessionData(
+                    testSessionId,
+                    "MANAGE-SE",
+                    manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId)))
+                  )
+                )
+              )
 
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-              IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+              IncomeTaxViewChangeStub.stubUpdateIncomeSource(
+                OK,
+                Json.toJson(UpdateIncomeSourceResponseModel(timestamp))
+              )
 
               val result = buildGETMTDClient(pathSE, additionalCookies).futureValue
               IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
@@ -149,11 +178,17 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             "all query parameters are valid" in {
               enable(IncomeSourcesFs)
               disable(NavBarFs)
-               stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole)
 
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails))
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                OK,
+                singleUKPropertyResponseInLatencyPeriod(latencyDetails)
+              )
 
-              IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+              IncomeTaxViewChangeStub.stubUpdateIncomeSource(
+                OK,
+                Json.toJson(UpdateIncomeSourceResponseModel(timestamp))
+              )
 
               await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
@@ -172,11 +207,17 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             "Income Sources FS is Disabled" in {
               disable(IncomeSourcesFs)
               disable(NavBarFs)
-               stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole)
 
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails))
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                OK,
+                singleUKPropertyResponseInLatencyPeriod(latencyDetails)
+              )
 
-              IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+              IncomeTaxViewChangeStub.stubUpdateIncomeSource(
+                OK,
+                Json.toJson(UpdateIncomeSourceResponseModel(timestamp))
+              )
 
               await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
@@ -202,11 +243,17 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             "all query parameters are valid" in {
               enable(IncomeSourcesFs)
               disable(NavBarFs)
-               stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole)
 
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                OK,
+                singleForeignPropertyResponseInLatencyPeriod(latencyDetails)
+              )
 
-              IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+              IncomeTaxViewChangeStub.stubUpdateIncomeSource(
+                OK,
+                Json.toJson(UpdateIncomeSourceResponseModel(timestamp))
+              )
 
               await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
@@ -225,11 +272,17 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             "Income Sources FS is Disabled" in {
               disable(IncomeSourcesFs)
               disable(NavBarFs)
-               stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole)
 
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                OK,
+                singleForeignPropertyResponseInLatencyPeriod(latencyDetails)
+              )
 
-              IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+              IncomeTaxViewChangeStub.stubUpdateIncomeSource(
+                OK,
+                Json.toJson(UpdateIncomeSourceResponseModel(timestamp))
+              )
 
               await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
@@ -254,10 +307,17 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             "called with a valid form" in {
               enable(IncomeSourcesFs)
               disable(NavBarFs)
-               stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole)
 
-              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-                manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
+              await(
+                sessionService.setMongoData(
+                  UIJourneySessionData(
+                    testSessionId,
+                    "MANAGE-SE",
+                    manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId)))
+                  )
+                )
+              )
 
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
@@ -278,14 +338,24 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             "called with a invalid form" in {
               enable(IncomeSourcesFs)
               disable(NavBarFs)
-               stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole)
 
-              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-                manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
+              await(
+                sessionService.setMongoData(
+                  UIJourneySessionData(
+                    testSessionId,
+                    "MANAGE-SE",
+                    manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId)))
+                  )
+                )
+              )
 
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-              IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+              IncomeTaxViewChangeStub.stubUpdateIncomeSource(
+                OK,
+                Json.toJson(UpdateIncomeSourceResponseModel(timestamp))
+              )
 
               val formData = Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("RANDOM"))
 
@@ -301,11 +371,14 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             "Income Sources FS is disabled" in {
               disable(IncomeSourcesFs)
               disable(NavBarFs)
-               stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole)
 
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-              IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+              IncomeTaxViewChangeStub.stubUpdateIncomeSource(
+                OK,
+                Json.toJson(UpdateIncomeSourceResponseModel(timestamp))
+              )
 
               val formData = Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("RANDOM"))
 
@@ -320,9 +393,11 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
         }
 
-        testAuthFailures(pathSE, mtdUserRole, optBody = Some(Map
-        (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
-        )))
+        testAuthFailures(
+          pathSE,
+          mtdUserRole,
+          optBody = Some(Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")))
+        )
       }
     }
 
@@ -333,7 +408,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             "called with a valid form" in {
               enable(IncomeSourcesFs)
               disable(NavBarFs)
-               stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole)
 
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
@@ -354,7 +429,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             "called with a invalid form" in {
               enable(IncomeSourcesFs)
               disable(NavBarFs)
-               stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole)
 
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
@@ -374,7 +449,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             "Income Sources FS is disabled" in {
               disable(IncomeSourcesFs)
               disable(NavBarFs)
-               stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole)
 
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
@@ -391,9 +466,11 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             }
           }
 
-          testAuthFailures(pathUK, mtdUserRole, optBody = Some(Map
-          (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
-          )))
+          testAuthFailures(
+            pathUK,
+            mtdUserRole,
+            optBody = Some(Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")))
+          )
         }
       }
     }
@@ -405,7 +482,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             "called with a valid form" in {
               enable(IncomeSourcesFs)
               disable(NavBarFs)
-               stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole)
 
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
@@ -426,7 +503,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             "called with a invalid form" in {
               enable(IncomeSourcesFs)
               disable(NavBarFs)
-               stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole)
 
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
@@ -447,7 +524,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             "Income Sources FS is disabled" in {
               disable(IncomeSourcesFs)
               disable(NavBarFs)
-               stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole)
 
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
@@ -464,9 +541,11 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             }
           }
 
-          testAuthFailures(pathFP, mtdUserRole,
-            Some(Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
-            )))
+          testAuthFailures(
+            pathFP,
+            mtdUserRole,
+            Some(Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")))
+          )
         }
       }
     }

@@ -26,16 +26,21 @@ import testUtils.TestSupport
 class CalculationServiceSpec extends TestSupport with MockIncomeTaxCalculationConnector with FeatureSwitching {
 
   val liabilityCalculationSuccessResponse: LiabilityCalculationResponse = LiabilityCalculationResponse(
-    inputs = Inputs(personalInformation = PersonalInformation(
-      taxRegime = "UK", class2VoluntaryContributions = None
-    )),
+    inputs = Inputs(personalInformation =
+      PersonalInformation(
+        taxRegime = "UK",
+        class2VoluntaryContributions = None
+      )
+    ),
     messages = None,
     metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), Some(false), Some("customerRequest")),
-    calculation = None)
+    calculation = None
+  )
 
-  val liabilityCalculationNoContentResponse: LiabilityCalculationError = LiabilityCalculationError(Status.NO_CONTENT, "not found")
-  val liabilityCalculationErrorResponse: LiabilityCalculationError = LiabilityCalculationError(Status.INTERNAL_SERVER_ERROR, "Internal server error")
-
+  val liabilityCalculationNoContentResponse: LiabilityCalculationError =
+    LiabilityCalculationError(Status.NO_CONTENT, "not found")
+  val liabilityCalculationErrorResponse: LiabilityCalculationError =
+    LiabilityCalculationError(Status.INTERNAL_SERVER_ERROR, "Internal server error")
 
   object TestCalculationService extends CalculationService(mockIncomeTaxCalculationConnector)
 
@@ -47,21 +52,27 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxCalculationCo
         "return a LiabilityCalculationModel" in {
           mockGetCalculationResponse(testMtditid, testNino, "2018")(liabilityCalculationSuccessResponse)
 
-          TestCalculationService.getLiabilityCalculationDetail(testMtditid, testNino, testTaxYear).futureValue shouldBe liabilityCalculationSuccessResponse
+          TestCalculationService
+            .getLiabilityCalculationDetail(testMtditid, testNino, testTaxYear)
+            .futureValue shouldBe liabilityCalculationSuccessResponse
 
         }
         "NO_CONTENT response is returned from the IncomeTaxCalculationConnector" should {
           "return a LiabilityCalculationError" in {
             mockGetCalculationResponse(testMtditid, testNino, "2018")(liabilityCalculationNoContentResponse)
 
-            TestCalculationService.getLiabilityCalculationDetail(testMtditid, testNino, testTaxYear).futureValue shouldBe liabilityCalculationNoContentResponse
+            TestCalculationService
+              .getLiabilityCalculationDetail(testMtditid, testNino, testTaxYear)
+              .futureValue shouldBe liabilityCalculationNoContentResponse
           }
         }
         "error response is returned from the IncomeTaxCalculationConnector" should {
           "return a LiabilityCalculationError" in {
             mockGetCalculationResponse(testMtditid, testNino, "2018")(liabilityCalculationErrorResponse)
 
-            TestCalculationService.getLiabilityCalculationDetail(testMtditid, testNino, testTaxYear).futureValue shouldBe liabilityCalculationErrorResponse
+            TestCalculationService
+              .getLiabilityCalculationDetail(testMtditid, testNino, testTaxYear)
+              .futureValue shouldBe liabilityCalculationErrorResponse
           }
         }
       }

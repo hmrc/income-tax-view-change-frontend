@@ -21,10 +21,17 @@ import testConstants.NextUpdatesTestConstants.nextUpdatesDataPropertySuccessMode
 import models.obligations.ObligationsModel
 
 object IncomeSourcesWithDeadlinesTestConstants {
-  val businessAndPropertyIncomeWithDeadlines = ObligationsModel(Seq(obligationsDataSuccessModel,
-    obligationsDataSuccessModel.copy(identification = business2.incomeSourceId), nextUpdatesDataPropertySuccessModel))
+  val businessAndPropertyIncomeWithDeadlines = ObligationsModel(
+    Seq(
+      obligationsDataSuccessModel,
+      obligationsDataSuccessModel.copy(identification = business2.incomeSourceId),
+      nextUpdatesDataPropertySuccessModel
+    )
+  )
   val singleBusinessIncomeWithDeadlines = ObligationsModel(Seq(obligationsDataSuccessModel))
-  val propertyIncomeOnlyWithDeadlines = ObligationsModel(Seq(nextUpdatesDataPropertySuccessModel))
-  val businessAndPropertyAlignedWithDeadlines = ObligationsModel(Seq(obligationsDataSuccessModel, nextUpdatesDataPropertySuccessModel))
+  val propertyIncomeOnlyWithDeadlines   = ObligationsModel(Seq(nextUpdatesDataPropertySuccessModel))
+  val businessAndPropertyAlignedWithDeadlines = ObligationsModel(
+    Seq(obligationsDataSuccessModel, nextUpdatesDataPropertySuccessModel)
+  )
   val noIncomeDetailsWithNoDeadlines = ObligationsModel(Seq.empty)
 }

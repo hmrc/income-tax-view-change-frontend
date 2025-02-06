@@ -51,35 +51,42 @@ class RetrieveClientDataSpec extends AuthActionsSpecHelper with MockClientDetail
   }
 
   def defaultAsyncBody(
-                        requestTestCase: AuthorisedAgentWithClientDetailsRequest[_] => Assertion
-                      ): AuthorisedAgentWithClientDetailsRequest[_] => Future[Result] = testRequest => {
-    requestTestCase(testRequest)
-    Future.successful(Results.Ok("Successful"))
-  }
+      requestTestCase: AuthorisedAgentWithClientDetailsRequest[_] => Assertion
+    ): AuthorisedAgentWithClientDetailsRequest[_] => Future[Result] =
+    testRequest => {
+      requestTestCase(testRequest)
+      Future.successful(Results.Ok("Successful"))
+    }
 
-  def defaultAsync: AuthorisedAgentWithClientDetailsRequest[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
+  def defaultAsync: AuthorisedAgentWithClientDetailsRequest[_] => Future[Result] =
+    (_) => Future.successful(Results.Ok("Successful"))
 
   lazy val action = app.injector.instanceOf[RetrieveClientData]
 
   "refine" when {
     "the session data service returns client details" should {
-      "return the expected ClientDataRequest"  in {
-          val fakeRequestWithSession = defaultAuthorisedRequest(MTDPrimaryAgent,
-            fakeRequestWithClientDetails.addingToSession(SessionKeys.confirmedClient -> "false"))
-          when(mockSessionDataService.getSessionData(any())(any(), any()))
-            .thenReturn(Future.successful(Right(sessionGetSuccessResponse)))
-          setupMockGetClientDetailsSuccess()
+      "return the expected ClientDataRequest" in {
+        val fakeRequestWithSession = defaultAuthorisedRequest(
+          MTDPrimaryAgent,
+          fakeRequestWithClientDetails.addingToSession(SessionKeys.confirmedClient -> "false")
+        )
+        when(mockSessionDataService.getSessionData(any())(any(), any()))
+          .thenReturn(Future.successful(Right(sessionGetSuccessResponse)))
+        setupMockGetClientDetailsSuccess()
 
-          val result = action.authorise().invokeBlock(
+        val result = action
+          .authorise()
+          .invokeBlock(
             fakeRequestWithSession,
             defaultAsyncBody { res =>
               res.clientDetails.confirmed shouldBe appConfig.isSessionDataStorageEnabled
-            })
+            }
+          )
 
-          status(result) shouldBe OK
-          contentAsString(result) shouldBe "Successful"
-        }
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe "Successful"
       }
+    }
 
     "there is no sessionData returned from session data service" should {
       "redirect to the enter clients utr page" in {
@@ -87,9 +94,7 @@ class RetrieveClientDataSpec extends AuthActionsSpecHelper with MockClientDetail
         when(mockSessionDataService.getSessionData(any())(any(), any()))
           .thenReturn(Future.successful(Left(SessionDataNotFound("no data"))))
 
-        val result = action.authorise().invokeBlock(
-          fakeRequestWithSession,
-          defaultAsync)
+        val result = action.authorise().invokeBlock(fakeRequestWithSession, defaultAsync)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/agents/client-utr")
@@ -106,9 +111,7 @@ class RetrieveClientDataSpec extends AuthActionsSpecHelper with MockClientDetail
         when(mockAgentErrorHandler.showInternalServerError()(any()))
           .thenReturn(InternalServerError("ERROR PAGE"))
 
-        val result = action.authorise().invokeBlock(
-          fakeRequestWithSession,
-          defaultAsync)
+        val result = action.authorise().invokeBlock(fakeRequestWithSession, defaultAsync)
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
         contentAsString(result) shouldBe "ERROR PAGE"

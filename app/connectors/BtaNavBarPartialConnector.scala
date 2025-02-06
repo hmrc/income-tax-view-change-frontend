@@ -27,18 +27,17 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpReadsInstances, HttpRespo
 import java.net.{URI, URL}
 import scala.concurrent.{ExecutionContext, Future}
 
-
 @Singleton
-class BtaNavBarPartialConnector @Inject()(val http: HttpClientV2,
-                                          val config: FrontendAppConfig) extends HttpReadsInstances {
+class BtaNavBarPartialConnector @Inject() (val http: HttpClientV2, val config: FrontendAppConfig)
+    extends HttpReadsInstances {
 
   private lazy val btaNavLinksUrl: URL = new URI(config.btaService + "/business-account/partial/nav-links").toURL
 
   val logger: Logger = Logger(this.getClass)
 
   implicit val hr: HttpReads.Implicits.type = HttpReads.Implicits
-  implicit val legacyRawReads: HttpReads[HttpResponse] = HttpReads.Implicits.throwOnFailure(HttpReads.Implicits.readEitherOf(HttpReads.Implicits.readRaw))
-
+  implicit val legacyRawReads: HttpReads[HttpResponse] =
+    HttpReads.Implicits.throwOnFailure(HttpReads.Implicits.readEitherOf(HttpReads.Implicits.readRaw))
 
   def getNavLinks()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[NavContent]] = {
     http

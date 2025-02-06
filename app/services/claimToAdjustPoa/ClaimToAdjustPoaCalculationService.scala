@@ -27,14 +27,19 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ClaimToAdjustPoaCalculationService @Inject()(
-                                                    claimToAdjustPoaConnector: ClaimToAdjustPoaConnector)
-                                                  (implicit ec: ExecutionContext) {
+class ClaimToAdjustPoaCalculationService @Inject() (
+    claimToAdjustPoaConnector: ClaimToAdjustPoaConnector
+  )(
+    implicit ec: ExecutionContext) {
 
-
-  def recalculate(nino: Nino, taxYear: TaxYear,
-                  amount: BigDecimal, poaAdjustmentReason: SelectYourReason)
-                 (implicit hc: HeaderCarrier): Future[Either[Throwable, Unit]] = {
+  def recalculate(
+      nino:                Nino,
+      taxYear:             TaxYear,
+      amount:              BigDecimal,
+      poaAdjustmentReason: SelectYourReason
+    )(
+      implicit hc: HeaderCarrier
+    ): Future[Either[Throwable, Unit]] = {
 
     val request: ClaimToAdjustPoaRequest = ClaimToAdjustPoaRequest(
       nino = nino.value,
@@ -42,24 +47,23 @@ class ClaimToAdjustPoaCalculationService @Inject()(
       amount = amount,
       poaAdjustmentReason = poaAdjustmentReason
     )
-      for {
-        response <- claimToAdjustPoaConnector.postClaimToAdjustPoa(request)
-      } yield response match {
-        case Left(ClaimToAdjustPoaError(message)) =>
-          Logger("application").error(s"POA recalculation failure: $message")
-          Left(new Exception(message))
-        case Left(ClaimToAdjustPoaInvalidJson) =>
-          Logger("application").error(s"POA recalculation failure / json error: ${ClaimToAdjustPoaInvalidJson.message}")
-          Left(new Exception(ClaimToAdjustPoaInvalidJson.message))
-        case Left(UnexpectedError) =>
-          Logger("application").error(s"POA recalculation failure / unexpected error: ${UnexpectedError.message}")
-          Left(new Exception(UnexpectedError.message))
-        case Right(ClaimToAdjustPoaSuccess(_)) =>
-          Logger("application").info(s"POA recalculation success")
-          Right((): Unit)
-      }
+    for {
+      response <- claimToAdjustPoaConnector.postClaimToAdjustPoa(request)
+    } yield response match {
+      case Left(ClaimToAdjustPoaError(message)) =>
+        Logger("application").error(s"POA recalculation failure: $message")
+        Left(new Exception(message))
+      case Left(ClaimToAdjustPoaInvalidJson) =>
+        Logger("application").error(s"POA recalculation failure / json error: ${ClaimToAdjustPoaInvalidJson.message}")
+        Left(new Exception(ClaimToAdjustPoaInvalidJson.message))
+      case Left(UnexpectedError) =>
+        Logger("application").error(s"POA recalculation failure / unexpected error: ${UnexpectedError.message}")
+        Left(new Exception(UnexpectedError.message))
+      case Right(ClaimToAdjustPoaSuccess(_)) =>
+        Logger("application").info(s"POA recalculation success")
+        Right((): Unit)
+    }
 
   }
-
 
 }

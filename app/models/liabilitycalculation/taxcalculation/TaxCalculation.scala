@@ -19,17 +19,16 @@ package models.liabilitycalculation.taxcalculation
 import play.api.libs.json._
 
 case class TaxCalculation(
-                           incomeTax: IncomeTax,
-                           nics: Option[Nics] = None,
-                           capitalGainsTax: Option[CapitalGainsTax] = None,
-                           totalStudentLoansRepaymentAmount: Option[BigDecimal] = None,
-                           saUnderpaymentsCodedOut: Option[BigDecimal] = None,
-                           totalIncomeTaxAndNicsDue: BigDecimal,
-                           totalTaxDeducted: Option[BigDecimal] = None,
-                           totalIncomeTaxAndNicsAndCgt:Option[BigDecimal] = None,
-                           totalAnnuityPaymentsTaxCharged: Option[BigDecimal] = None,
-                           totalRoyaltyPaymentsTaxCharged: Option[BigDecimal] = None
-                         )
+    incomeTax:                        IncomeTax,
+    nics:                             Option[Nics] = None,
+    capitalGainsTax:                  Option[CapitalGainsTax] = None,
+    totalStudentLoansRepaymentAmount: Option[BigDecimal] = None,
+    saUnderpaymentsCodedOut:          Option[BigDecimal] = None,
+    totalIncomeTaxAndNicsDue:         BigDecimal,
+    totalTaxDeducted:                 Option[BigDecimal] = None,
+    totalIncomeTaxAndNicsAndCgt:      Option[BigDecimal] = None,
+    totalAnnuityPaymentsTaxCharged:   Option[BigDecimal] = None,
+    totalRoyaltyPaymentsTaxCharged:   Option[BigDecimal] = None)
 
 object TaxCalculation {
   implicit val format: OFormat[TaxCalculation] = Json.format[TaxCalculation]

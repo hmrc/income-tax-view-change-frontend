@@ -24,12 +24,15 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.errorPages.CustomNotFoundError
 
 @Singleton
-class AgentNotFoundDocumentIDLookupController @Inject()(val authActions: AuthActions,
-                                                        customNotFoundError: CustomNotFoundError)
-                                                       (implicit mcc: MessagesControllerComponents
-                                                        ) extends FrontendController(mcc) with I18nSupport {
+class AgentNotFoundDocumentIDLookupController @Inject() (
+    val authActions:     AuthActions,
+    customNotFoundError: CustomNotFoundError
+  )(
+    implicit mcc: MessagesControllerComponents)
+    extends FrontendController(mcc)
+    with I18nSupport {
 
-  val show: Action[AnyContent] = authActions.asAgent(false) {implicit user =>
-      Ok(customNotFoundError(isAgent = true))
+  val show: Action[AnyContent] = authActions.asAgent(false) { implicit user =>
+    Ok(customNotFoundError(isAgent = true))
   }
 }

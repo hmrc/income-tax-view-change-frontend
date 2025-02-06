@@ -33,37 +33,41 @@ import views.html.CreditAndRefunds
 
 import java.time.LocalDate
 
-
 class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {
 
-  lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-  val creditAndRefundView: CreditAndRefunds = app.injector.instanceOf[CreditAndRefunds]
-  val creditAndRefundHeading: String = messages("credit-and-refund.heading")
+  lazy val mockAppConfig:     FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  val creditAndRefundView:    CreditAndRefunds  = app.injector.instanceOf[CreditAndRefunds]
+  val creditAndRefundHeading: String            = messages("credit-and-refund.heading")
 
-  val paymentText: String = messages("credit-and-refund.payment")
-  val claimBtn: String = messages("credit-and-refund.claim-refund-btn")
+  val paymentText:                                     String = messages("credit-and-refund.payment")
+  val claimBtn:                                        String = messages("credit-and-refund.claim-refund-btn")
   val creditAndRefundHeadingWithTitleServiceNameGovUk: String = messages("htmlTitle", creditAndRefundHeading)
-  val creditAndRefundHeadingAgentWithTitleServiceNameGovUkAgent: String = messages("htmlTitle.agent", creditAndRefundHeading)
+  val creditAndRefundHeadingAgentWithTitleServiceNameGovUkAgent: String =
+    messages("htmlTitle.agent", creditAndRefundHeading)
   val creditAndRefundFromHMRCTitlePart1: String = messages("credit-and-refund.credit-from-adjustment-prt-1")
   val creditAndRefundFromHMRCTitlePart2: String = messages("credit-and-refund.credit-from-hmrc-title")
-  val creditAndRefundPaymentFromEarlierYearLinkText: String = messages("credit-and-refund.credit-from-earlie r-tax-year")
-  val creditAndRefundAgentNoCredit: String = messages("credit-and-refund.agent.no-credit")
+  val creditAndRefundPaymentFromEarlierYearLinkText: String = messages(
+    "credit-and-refund.credit-from-earlie r-tax-year"
+  )
+  val creditAndRefundAgentNoCredit:  String = messages("credit-and-refund.agent.no-credit")
   val creditAndRefundsPaymentToHMRC: String = messages("credit-and-refund.payment")
   val creditAndRefundFromAdjustment: String = messages("credit-and-refund.credit-from-adjustment-prt-1")
 
-  val linkPaymentMadeToHmrc = "/report-quarterly/income-and-expenses/view/payment-made-to-hmrc?documentNumber=1040000123"
-  val linkCreditsSummaryPage = "/report-quarterly/income-and-expenses/view/credits-from-hmrc/2018"
+  val linkPaymentMadeToHmrc =
+    "/report-quarterly/income-and-expenses/view/payment-made-to-hmrc?documentNumber=1040000123"
+  val linkCreditsSummaryPage                = "/report-quarterly/income-and-expenses/view/credits-from-hmrc/2018"
   val linkCreditsSummaryPageMFAPreviousYear = "/report-quarterly/income-and-expenses/view/credits-from-hmrc/2017"
-  val linkAgentCreditsSummaryPage = "/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/2018"
-  val linkAgentPaymentMadeToHmrc = "/report-quarterly/income-and-expenses/view/agents/payment-made-to-hmrc?documentNumber=1040000123"
+  val linkAgentCreditsSummaryPage           = "/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/2018"
+  val linkAgentPaymentMadeToHmrc =
+    "/report-quarterly/income-and-expenses/view/agents/payment-made-to-hmrc?documentNumber=1040000123"
 
   class TestSetup(
-                   creditAndRefundModel: CreditsModel,
-                   isAgent: Boolean = false,
-                   backUrl: String = "testString",
-                   welshLang: Boolean  = false) {
+      creditAndRefundModel: CreditsModel,
+      isAgent:              Boolean = false,
+      backUrl:              String = "testString",
+      welshLang:            Boolean = false) {
 
-    val testMessages: Messages = if(welshLang) {
+    val testMessages: Messages = if (welshLang) {
       app.injector.instanceOf[MessagesApi].preferred(FakeRequest().withHeaders(HeaderNames.ACCEPT_LANGUAGE -> "cy"))
     } else { messages }
 
@@ -75,8 +79,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         isAgent = isAgent,
         backUrl
       )(FakeRequest(), implicitly, testMessages)
-    lazy val document: Document = Jsoup.parse(contentAsString(page))
-    lazy val layoutContent: Element = document.selectHead("#main-content")
+    lazy val document:      Document = Jsoup.parse(contentAsString(page))
+    lazy val layoutContent: Element  = document.selectHead("#main-content")
   }
 
   "displaying individual credit and refund page" should {
@@ -88,7 +92,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           .withAvailableCredit(2800.0)
           .withMfaCredit(LocalDate.of(2019, 5, 15), -1400.0)
           .withPayment(LocalDate.of(2019, 5, 15), -1400.0)
-          .get()) {
+          .get()
+      ) {
         document.select("ul#credits-list").isDefined shouldBe true
       }
 
@@ -97,7 +102,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           .withAvailableCredit(700.0)
           .withFirstRefund(700.0)
           .withSecondRefund(700.0)
-          .get()) {
+          .get()
+      ) {
         document.select("ul#credits-list").isDefined shouldBe true
       }
 
@@ -106,7 +112,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           .withAvailableCredit(700.0)
           .withPayment(LocalDate.of(2019, 5, 15), 1400.0)
           .withFirstRefund(700.0)
-          .get()) {
+          .get()
+      ) {
         document.select("ul#credits-list").isDefined shouldBe true
       }
     }
@@ -117,7 +124,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         creditAndRefundModel = ANewCreditAndRefundModel()
           .withAvailableCredit(2800.0)
           .withMfaCredit(LocalDate.of(2019, 5, 15), 1400.0)
-          .get()) {
+          .get()
+      ) {
         document.select("ul#credits-list").isEmpty shouldBe true
       }
 
@@ -125,7 +133,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         creditAndRefundModel = ANewCreditAndRefundModel()
           .withAvailableCredit(700.0)
           .withPayment(LocalDate.of(2019, 5, 15), 1400.0)
-          .get()) {
+          .get()
+      ) {
         document.select("ul#credits-list").isEmpty shouldBe true
       }
 
@@ -133,7 +142,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         creditAndRefundModel = ANewCreditAndRefundModel()
           .withAvailableCredit(700.0)
           .withFirstRefund(700.0)
-          .get()) {
+          .get()
+      ) {
         document.select("ul#credits-list").isEmpty shouldBe true
       }
     }
@@ -159,7 +169,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
       "there is no available credit or refunds" in
         new TestSetup(
-          creditAndRefundModel = ANewCreditAndRefundModel().get(),
+          creditAndRefundModel = ANewCreditAndRefundModel().get()
         ) {
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
@@ -169,7 +179,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
       "there is available credit but no allocated credit" in new TestSetup(
         creditAndRefundModel = ANewCreditAndRefundModel()
           .withAvailableCredit(500.0)
-          .get()) {
+          .get()
+      ) {
         document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
         layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
         layoutContent.selectFirst("p").text shouldBe "£500.00 available to claim"
@@ -202,7 +213,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           creditAndRefundModel = ANewCreditAndRefundModel()
             .withAvailableCredit(500.0)
             .withAllocatedCredit(100.0)
-            .get()) {
+            .get()
+        ) {
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           layoutContent.selectFirst("p").text shouldBe "£500.00 available to claim"
@@ -250,23 +262,23 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         }
 
       "there are multiple refunds claimed for full amount" in new TestSetup(
-          creditAndRefundModel = ANewCreditAndRefundModel()
-            .withFirstRefund(4.50)
-            .withPayment(dueDate = LocalDate.of(2019, 5, 15), 1400.0)
-            .withPayment(dueDate = LocalDate.of(2019, 5, 15), 1000.0)
-            .withAvailableCredit(0.0)
-            .get()
-        ) {
+        creditAndRefundModel = ANewCreditAndRefundModel()
+          .withFirstRefund(4.50)
+          .withPayment(dueDate = LocalDate.of(2019, 5, 15), 1400.0)
+          .withPayment(dueDate = LocalDate.of(2019, 5, 15), 1000.0)
+          .withAvailableCredit(0.0)
+          .get()
+      ) {
 
-          document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
-          layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
-          layoutContent.selectFirst("p").text shouldBe "£0.00 available to claim"
-          layoutContent.select("p").get(1).select("p:nth-child(1)").first().text() shouldBe
-            s"£1,400.00 $paymentText 15 May 2019"
-          layoutContent.select("p").get(2).select("p:nth-child(1)").first().text() shouldBe
-            s"£1,000.00 $paymentText 15 May 2019"
-          document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
-        }
+        document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
+        layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
+        layoutContent.selectFirst("p").text shouldBe "£0.00 available to claim"
+        layoutContent.select("p").get(1).select("p:nth-child(1)").first().text() shouldBe
+          s"£1,400.00 $paymentText 15 May 2019"
+        layoutContent.select("p").get(2).select("p:nth-child(1)").first().text() shouldBe
+          s"£1,000.00 $paymentText 15 May 2019"
+        document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
+      }
     }
 
     "display correct credit labels" when {

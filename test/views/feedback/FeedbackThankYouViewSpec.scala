@@ -27,13 +27,13 @@ import views.html.feedback.FeedbackThankYou
 class FeedbackThankYouViewSpec extends TestSupport {
 
   val feedbackThankYouView: FeedbackThankYou = app.injector.instanceOf[FeedbackThankYou]
-  lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
-  implicit val lang: Lang = Lang("GB")
+  lazy val msgs:            MessagesApi      = app.injector.instanceOf[MessagesApi]
+  implicit val lang:        Lang             = Lang("GB")
 
   val testBackUrl: String = "/testBackUrl"
 
   class Setup(isAgent: Boolean = false) {
-    val view: Html = feedbackThankYouView(backUrl = testBackUrl, isAgent = isAgent)
+    val view:     Html     = feedbackThankYouView(backUrl = testBackUrl, isAgent = isAgent)
     val document: Document = Jsoup.parse(view.toString())
   }
 
@@ -60,6 +60,6 @@ class FeedbackThankYouViewSpec extends TestSupport {
       }
     }
 
-    }
+  }
 
 }

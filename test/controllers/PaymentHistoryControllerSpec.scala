@@ -34,83 +34,103 @@ import services.{PaymentHistoryService, RepaymentService}
 
 import scala.concurrent.Future
 
-class PaymentHistoryControllerSpec extends MockAuthActions
-  with ImplicitDateFormatter {
+class PaymentHistoryControllerSpec extends MockAuthActions with ImplicitDateFormatter {
 
   lazy val paymentHistoryService: PaymentHistoryService = mock(classOf[PaymentHistoryService])
-  lazy val mockRepaymentService: RepaymentService = mock(classOf[RepaymentService])
+  lazy val mockRepaymentService:  RepaymentService      = mock(classOf[RepaymentService])
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[PaymentHistoryService].toInstance(paymentHistoryService),
       api.inject.bind[RepaymentService].toInstance(mockRepaymentService)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[PaymentHistoryController]
 
-
   val testPayments: List[Payment] = List(
-    Payment(Some("AAAAA"), Some(10000), None, Some("Payment"), None, Some("lot"), Some("lotitem"), Some("2019-12-25"),
-      "2019-12-25", Some("DOCID01")),
-    Payment(Some("BBBBB"), Some(5000), None, Some("tnemyap"), None, Some("lot"), Some("lotitem"), Some("2007-03-23"),
-      "2007-03-23", Some("DOCID02"))
+    Payment(
+      Some("AAAAA"),
+      Some(10000),
+      None,
+      Some("Payment"),
+      None,
+      Some("lot"),
+      Some("lotitem"),
+      Some("2019-12-25"),
+      "2019-12-25",
+      Some("DOCID01")
+    ),
+    Payment(
+      Some("BBBBB"),
+      Some(5000),
+      None,
+      Some("tnemyap"),
+      None,
+      Some("lot"),
+      Some("lotitem"),
+      Some("2007-03-23"),
+      "2007-03-23",
+      Some("DOCID02")
+    )
   )
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    val isAgent = mtdUserRole != MTDIndividual
-    val action = if (isAgent) testController.showAgent() else testController.show()
-    val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
-    s"show${if (isAgent) "Agent"}" when {
-      s"the $mtdUserRole is authenticated" should {
-        if (mtdUserRole == MTDSupportingAgent) {
-          testSupportingAgentDeniedAccess(action)(fakeRequest)
-        } else {
-          "render the payment history page" when {
-            "the user has payment history but no repayment history" in {
-              setupMockSuccess(mtdUserRole)
-              mockSingleBusinessIncomeSource()
-              when(paymentHistoryService.getPaymentHistory(any(), any()))
-                .thenReturn(Future.successful(Right(testPayments)))
-              when(paymentHistoryService.getRepaymentHistory(any())(any(), any()))
-                .thenReturn(Future.successful(Right(List.empty[RepaymentHistory])))
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      val isAgent     = mtdUserRole != MTDIndividual
+      val action      = if (isAgent) testController.showAgent() else testController.show()
+      val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
+      s"show${if (isAgent) "Agent"}" when {
+        s"the $mtdUserRole is authenticated" should {
+          if (mtdUserRole == MTDSupportingAgent) {
+            testSupportingAgentDeniedAccess(action)(fakeRequest)
+          } else {
+            "render the payment history page" when {
+              "the user has payment history but no repayment history" in {
+                setupMockSuccess(mtdUserRole)
+                mockSingleBusinessIncomeSource()
+                when(paymentHistoryService.getPaymentHistory(any(), any()))
+                  .thenReturn(Future.successful(Right(testPayments)))
+                when(paymentHistoryService.getRepaymentHistory(any())(any(), any()))
+                  .thenReturn(Future.successful(Right(List.empty[RepaymentHistory])))
 
-              val result = action(fakeRequest)
-              status(result) shouldBe Status.OK
-              result.futureValue.session.get(gatewayPage) shouldBe Some("paymentHistory")
-            }
-          }
-
-          "render the error page" when {
-            "payment history returns an error" in {
-              setupMockSuccess(mtdUserRole)
-              mockSingleBusinessIncomeSource()
-              when(paymentHistoryService.getPaymentHistory(any(), any()))
-                .thenReturn(Future.successful(Right(testPayments)))
-
-              when(paymentHistoryService.getRepaymentHistory(any())(any(), any()))
-                .thenReturn(Future.successful(Left(RepaymentHistoryErrorModel)))
-
-              val result = action(fakeRequest)
-              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+                val result = action(fakeRequest)
+                status(result) shouldBe Status.OK
+                result.futureValue.session.get(gatewayPage) shouldBe Some("paymentHistory")
+              }
             }
 
-            "repayment history returns an error" in {
-              setupMockSuccess(mtdUserRole)
-              mockSingleBusinessIncomeSource()
-              when(paymentHistoryService.getPaymentHistory(any(), any()))
-                .thenReturn(Future.successful(Left(PaymentHistoryError)))
+            "render the error page" when {
+              "payment history returns an error" in {
+                setupMockSuccess(mtdUserRole)
+                mockSingleBusinessIncomeSource()
+                when(paymentHistoryService.getPaymentHistory(any(), any()))
+                  .thenReturn(Future.successful(Right(testPayments)))
 
-              when(paymentHistoryService.getRepaymentHistory(any())(any(), any()))
-                .thenReturn(Future.successful(Right(List.empty[RepaymentHistory])))
+                when(paymentHistoryService.getRepaymentHistory(any())(any(), any()))
+                  .thenReturn(Future.successful(Left(RepaymentHistoryErrorModel)))
 
-              val result = action(fakeRequest)
-              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+                val result = action(fakeRequest)
+                status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+              }
+
+              "repayment history returns an error" in {
+                setupMockSuccess(mtdUserRole)
+                mockSingleBusinessIncomeSource()
+                when(paymentHistoryService.getPaymentHistory(any(), any()))
+                  .thenReturn(Future.successful(Left(PaymentHistoryError)))
+
+                when(paymentHistoryService.getRepaymentHistory(any())(any(), any()))
+                  .thenReturn(Future.successful(Right(List.empty[RepaymentHistory])))
+
+                val result = action(fakeRequest)
+                status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+              }
             }
           }
         }
+        testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
       }
-      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
-    }
   }
 
   s"refundStatus" when {
@@ -137,7 +157,8 @@ class PaymentHistoryControllerSpec extends MockAuthActions
           mockSingleBISWithCurrentYearAsMigrationYear()
           val result = testController.refundStatus(fakeRequestWithActiveSession)
           status(result) shouldBe Status.OK
-          JsoupParse(result).toHtmlDocument.title() shouldBe s"There is a problem - Manage your Income Tax updates - GOV.UK"
+          JsoupParse(result).toHtmlDocument
+            .title() shouldBe s"There is a problem - Manage your Income Tax updates - GOV.UK"
         }
       }
 

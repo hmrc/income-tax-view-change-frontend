@@ -26,9 +26,9 @@ import views.html.timeout.Timeout
 class SessionTimeoutViewSpec extends TestSupport {
 
   lazy val mockAppConfig = app.injector.instanceOf[FrontendAppConfig]
-  lazy val timeoutView = app.injector.instanceOf[Timeout]
+  lazy val timeoutView   = app.injector.instanceOf[Timeout]
 
-  lazy val page = timeoutView()(FakeRequest(), implicitly)
+  lazy val page     = timeoutView()(FakeRequest(), implicitly)
   lazy val document = Jsoup.parse(contentAsString(page))
 
   "The Session timeout view" should {
@@ -44,7 +44,9 @@ class SessionTimeoutViewSpec extends TestSupport {
     s"have a paragraph" which {
 
       "has the text" in {
-        document.getElementById("sign-in").text() shouldBe s"${messages("timeout.signIn.1")} ${messages("timeout.signIn.2")} ${messages("timeout.signIn.3")}"
+        document
+          .getElementById("sign-in")
+          .text() shouldBe s"${messages("timeout.signIn.1")} ${messages("timeout.signIn.2")} ${messages("timeout.signIn.3")}"
       }
 
       "has a link to sign-in page" in {

@@ -33,18 +33,21 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: AuthorisedFunctions,
-                                             val appConfig: FrontendAppConfig,
-                                                  mcc: MessagesControllerComponents,
-                                             errorHandler: AgentItvcErrorHandler)
-  extends FeatureSwitching
+class AuthoriseAndRetrieveMtdAgent @Inject() (
+    authorisedFunctions: AuthorisedFunctions,
+    val appConfig:       FrontendAppConfig,
+    mcc:                 MessagesControllerComponents,
+    errorHandler:        AgentItvcErrorHandler)
+    extends FeatureSwitching
     with ActionRefiner[AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest] {
 
   lazy val logger: Logger = Logger(getClass)
 
   implicit val executionContext: ExecutionContext = mcc.executionContext
 
-  override protected def refine[A](request: AuthorisedAgentWithClientDetailsRequest[A]): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
+  override protected def refine[A](
+      request: AuthorisedAgentWithClientDetailsRequest[A]
+    ): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter
       .fromRequestAndSession(request, request.session)
@@ -58,33 +61,44 @@ class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: AuthorisedFunc
       delegatedAuthRule = Some(primaryAgentAuthRule)
     )
 
-    authorisedFunctions.authorised(primaryAgentDelegatedEnrolment) {
-      constructAuthorisedAndEnrolledUser(clientMtdItId, MTDPrimaryAgent)
-    }.recoverWith {
-      case _ =>
-        checkIfUserhasSupportingDelegatedEnrolmentPartialFunction(clientMtdItId)
-    }
+    authorisedFunctions
+      .authorised(primaryAgentDelegatedEnrolment) {
+        constructAuthorisedAndEnrolledUser(clientMtdItId, MTDPrimaryAgent)
+      }
+      .recoverWith {
+        case _ =>
+          checkIfUserhasSupportingDelegatedEnrolmentPartialFunction(clientMtdItId)
+      }
 
   }
 
-  private def checkIfUserhasSupportingDelegatedEnrolmentPartialFunction[A](clientMtdItId: String)
-                                                                          (implicit hc: HeaderCarrier,
-                                                                           request: AuthorisedAgentWithClientDetailsRequest[A]): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
+  private def checkIfUserhasSupportingDelegatedEnrolmentPartialFunction[A](
+      clientMtdItId: String
+    )(
+      implicit hc: HeaderCarrier,
+      request:     AuthorisedAgentWithClientDetailsRequest[A]
+    ): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
     lazy val supportingAgentDelegatedEnrolment = Enrolment(
       key = secondaryAgentEnrolmentName,
       identifiers = Seq(EnrolmentIdentifier(agentIdentifier, clientMtdItId)),
       state = "Activated",
       delegatedAuthRule = Some(secondaryAgentAuthRule)
     )
-    authorisedFunctions.authorised(supportingAgentDelegatedEnrolment) {
-       constructAuthorisedAndEnrolledUser(clientMtdItId, MTDSupportingAgent)
-      }.recoverWith {
+    authorisedFunctions
+      .authorised(supportingAgentDelegatedEnrolment) {
+        constructAuthorisedAndEnrolledUser(clientMtdItId, MTDSupportingAgent)
+      }
+      .recoverWith {
         case ex => handleAuthFailure(ex)
       }
   }
 
-  private def constructAuthorisedAndEnrolledUser[A](clientMtdItId: String, mtdUserRole: MTDUserRole)(
-    implicit request: AuthorisedAgentWithClientDetailsRequest[A]): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
+  private def constructAuthorisedAndEnrolledUser[A](
+      clientMtdItId: String,
+      mtdUserRole:   MTDUserRole
+    )(
+      implicit request: AuthorisedAgentWithClientDetailsRequest[A]
+    ): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
     Future.successful(
       Right(
         AuthorisedAndEnrolledRequest(
@@ -97,7 +111,11 @@ class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: AuthorisedFunc
     )
   }
 
-  def handleAuthFailure[A](throwable: Throwable)(implicit request: Request[_]): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
+  def handleAuthFailure[A](
+      throwable: Throwable
+    )(
+      implicit request: Request[_]
+    ): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
     throwable match {
       case _: BearerTokenExpired =>
         logger.warn("Bearer Token Timed Out.")
@@ -114,4 +132,3 @@ class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: AuthorisedFunc
     }
   }
 }
-

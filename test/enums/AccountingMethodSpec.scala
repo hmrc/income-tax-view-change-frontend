@@ -22,13 +22,11 @@ import org.scalatest.wordspec.AnyWordSpec
 
 class AccountingMethodSpec extends AnyWordSpec {
 
-    "fromApiField call" when {
-      "conversion from Api field" in {
-        fromApiField(cashOrAccrualsField = true) shouldBe AccrualsAsAccountingMethod
-        fromApiField(cashOrAccrualsField = false) shouldBe CashAsAccountingMethod
-      }
+  "fromApiField call" when {
+    "conversion from Api field" in {
+      fromApiField(cashOrAccrualsField = true) shouldBe AccrualsAsAccountingMethod
+      fromApiField(cashOrAccrualsField = false) shouldBe CashAsAccountingMethod
+    }
   }
 
 }
-
-

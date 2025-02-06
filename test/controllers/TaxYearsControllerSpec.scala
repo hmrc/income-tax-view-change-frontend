@@ -31,45 +31,46 @@ class TaxYearsControllerSpec extends MockAuthActions with ImplicitDateFormatter 
 
   lazy val testController = app.injector.instanceOf[TaxYearsController]
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    val isAgent = mtdUserRole != MTDIndividual
-    val action = if (isAgent) testController.showAgentTaxYears() else testController.showTaxYears()
-    val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
-    s"show${if (isAgent) "Agent"}TaxYears" when {
-      s"the $mtdUserRole is authenticated" should {
-        if (mtdUserRole == MTDSupportingAgent) {
-          testSupportingAgentDeniedAccess(action)(fakeRequest)
-        } else {
-          "render the Tax years page" when {
-            "income source details contains a business firstAccountingPeriodEndDate" in {
-              setupMockSuccess(mtdUserRole)
-              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      val isAgent     = mtdUserRole != MTDIndividual
+      val action      = if (isAgent) testController.showAgentTaxYears() else testController.showTaxYears()
+      val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
+      s"show${if (isAgent) "Agent"}TaxYears" when {
+        s"the $mtdUserRole is authenticated" should {
+          if (mtdUserRole == MTDSupportingAgent) {
+            testSupportingAgentDeniedAccess(action)(fakeRequest)
+          } else {
+            "render the Tax years page" when {
+              "income source details contains a business firstAccountingPeriodEndDate" in {
+                setupMockSuccess(mtdUserRole)
+                setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-              val result = action(fakeRequest)
-              status(result) shouldBe Status.OK
-            }
-          }
-
-          "render the error page" when {
-            "there is no firstAccountingPeriodEndDate for business or property in incomeSources" in {
-              setupMockSuccess(mtdUserRole)
-              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
-
-              val result = action(fakeRequest)
-              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+                val result = action(fakeRequest)
+                status(result) shouldBe Status.OK
+              }
             }
 
-            "income source retrieval returns an error" in {
-              setupMockSuccess(mtdUserRole)
-              mockErrorIncomeSource()
+            "render the error page" when {
+              "there is no firstAccountingPeriodEndDate for business or property in incomeSources" in {
+                setupMockSuccess(mtdUserRole)
+                setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
 
-              val result = action(fakeRequest)
-              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+                val result = action(fakeRequest)
+                status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+              }
+
+              "income source retrieval returns an error" in {
+                setupMockSuccess(mtdUserRole)
+                mockErrorIncomeSource()
+
+                val result = action(fakeRequest)
+                status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+              }
             }
           }
         }
+        testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
       }
-      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
-    }
   }
 }

@@ -28,10 +28,13 @@ import scala.concurrent.Future
 
 class PayApiConnectorSpec extends BaseConnectorSpec {
 
-  val successResponse = HttpResponse(status = Status.CREATED,
-    json = Json.toJson(PaymentJourneyModel("journeyId", "http://www.redirect-url.com")), headers = Map.empty)
+  val successResponse = HttpResponse(
+    status = Status.CREATED,
+    json = Json.toJson(PaymentJourneyModel("journeyId", "http://www.redirect-url.com")),
+    headers = Map.empty
+  )
   val successResponseBadJson = HttpResponse(status = Status.CREATED, json = Json.parse("{}"), headers = Map.empty)
-  val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
+  val badResponse            = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
   lazy val mockAuditingService: AuditingService = mock(classOf[AuditingService])
 
   object TestPayApiConnector extends PayApiConnector(mockHttpClientV2, mockAuditingService, appConfig)

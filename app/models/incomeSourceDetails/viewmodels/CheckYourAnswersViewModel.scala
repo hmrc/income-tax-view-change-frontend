@@ -20,7 +20,8 @@ import enums.IncomeSourceJourney.IncomeSourceType
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.TaxYear
 
-case class CheckYourAnswersViewModel(incomeSourceId: IncomeSourceId,
-                                     reportingMethod: String,
-                                     taxYear: TaxYear,
-                                     incomeSourceType: IncomeSourceType)
+case class CheckYourAnswersViewModel(
+    incomeSourceId:   IncomeSourceId,
+    reportingMethod:  String,
+    taxYear:          TaxYear,
+    incomeSourceType: IncomeSourceType)

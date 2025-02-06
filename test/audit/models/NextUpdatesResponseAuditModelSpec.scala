@@ -26,7 +26,7 @@ import testUtils.TestSupport
 class NextUpdatesResponseAuditModelSpec extends TestSupport {
 
   val transactionName: String = enums.TransactionName.ViewObligationsResponse
-  val auditEvent: String = enums.AuditType.ViewObligationsResponse
+  val auditEvent:      String = enums.AuditType.ViewObligationsResponse
 
   "The NextUpdatesResponseAuditModel" when {
 
@@ -49,34 +49,34 @@ class NextUpdatesResponseAuditModelSpec extends TestSupport {
 
       "Have the correct details for the audit event" in {
         testNextUpdatesResponseAuditModel.detail shouldBe Json.obj(
-          "mtditid" -> testMtditid,
-          "nino" -> testNino,
-          "incomeSourceId" -> testSelfEmploymentId,
-          "saUtr" -> testSaUtr,
-          "credId" -> testCredId,
-          "userType" -> "Agent",
+          "mtditid"              -> testMtditid,
+          "nino"                 -> testNino,
+          "incomeSourceId"       -> testSelfEmploymentId,
+          "saUtr"                -> testSaUtr,
+          "credId"               -> testCredId,
+          "userType"             -> "Agent",
           "agentReferenceNumber" -> testArn,
           "reportDeadlines" -> Json.arr(
             Json.obj(
-              "startDate" -> "2017-07-01",
-              "endDate" -> "2017-09-30",
-              "dueDate" -> "2017-10-31",
+              "startDate"      -> "2017-07-01",
+              "endDate"        -> "2017-09-30",
+              "dueDate"        -> "2017-10-31",
               "obligationType" -> "Quarterly",
-              "periodKey" -> "#003"
+              "periodKey"      -> "#003"
             ),
             Json.obj(
-              "startDate" -> "2017-07-01",
-              "endDate" -> "2017-09-30",
-              "dueDate" -> "2017-10-31",
+              "startDate"      -> "2017-07-01",
+              "endDate"        -> "2017-09-30",
+              "dueDate"        -> "2017-10-31",
               "obligationType" -> "Quarterly",
-              "periodKey" -> "#003"
+              "periodKey"      -> "#003"
             ),
             Json.obj(
-              "startDate" -> "2017-07-01",
-              "endDate" -> "2017-09-30",
-              "dueDate" -> "2017-10-30",
+              "startDate"      -> "2017-07-01",
+              "endDate"        -> "2017-09-30",
+              "dueDate"        -> "2017-10-30",
               "obligationType" -> "Quarterly",
-              "periodKey" -> "#002"
+              "periodKey"      -> "#002"
             )
           )
         )
@@ -101,20 +101,20 @@ class NextUpdatesResponseAuditModelSpec extends TestSupport {
 
       "Have the correct details for the audit event" in {
         testNextUpdatesResponseAuditModel.detail shouldBe Json.obj(
-          "mtditid" -> testMtditid,
-          "nino" -> testNino,
-          "incomeSourceId" -> testSelfEmploymentId,
-          "saUtr" -> testSaUtr,
-          "credId" -> testCredId,
-          "userType" -> "Agent",
+          "mtditid"              -> testMtditid,
+          "nino"                 -> testNino,
+          "incomeSourceId"       -> testSelfEmploymentId,
+          "saUtr"                -> testSaUtr,
+          "credId"               -> testCredId,
+          "userType"             -> "Agent",
           "agentReferenceNumber" -> testArn,
           "reportDeadlines" -> Json.arr(
             Json.obj(
-              "startDate" -> "2017-07-01",
-              "endDate" -> "2017-09-30",
-              "dueDate" -> "2017-10-31",
+              "startDate"      -> "2017-07-01",
+              "endDate"        -> "2017-09-30",
+              "dueDate"        -> "2017-10-31",
               "obligationType" -> "Quarterly",
-              "periodKey" -> "#003"
+              "periodKey"      -> "#003"
             )
           )
         )
@@ -124,7 +124,7 @@ class NextUpdatesResponseAuditModelSpec extends TestSupport {
     "Supplied with no Obligations and optional fields" should {
 
       val testNextUpdatesResponseAuditModel = NextUpdatesResponseAuditModel(
-        getMinimalMTDITUser(None, IncomeSourceDetailsModel(testNino ,testMtditid, None, Nil, Nil)),
+        getMinimalMTDITUser(None, IncomeSourceDetailsModel(testNino, testMtditid, None, Nil, Nil)),
         testSelfEmploymentId,
         List()
       )
@@ -139,9 +139,9 @@ class NextUpdatesResponseAuditModelSpec extends TestSupport {
 
       "Have the correct details for the audit event" in {
         testNextUpdatesResponseAuditModel.detail shouldBe Json.obj(
-          "mtditid" -> testMtditid,
-          "nino" -> testNino,
-          "incomeSourceId" -> testSelfEmploymentId,
+          "mtditid"         -> testMtditid,
+          "nino"            -> testNino,
+          "incomeSourceId"  -> testSelfEmploymentId,
           "reportDeadlines" -> Json.arr()
         )
       }

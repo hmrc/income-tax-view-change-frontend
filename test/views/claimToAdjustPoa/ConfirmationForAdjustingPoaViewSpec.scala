@@ -26,19 +26,21 @@ import play.twirl.api.Html
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.ConfirmationForAdjustingPoa
 
-class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
+class ConfirmationForAdjustingPoaViewSpec extends TestSupport {
 
-  val confirmationForAdjustingPoaView: ConfirmationForAdjustingPoa = app.injector.instanceOf[ConfirmationForAdjustingPoa]
-  lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
-  implicit val lang: Lang = Lang("GB")
+  val confirmationForAdjustingPoaView: ConfirmationForAdjustingPoa =
+    app.injector.instanceOf[ConfirmationForAdjustingPoa]
+  lazy val msgs:     MessagesApi = app.injector.instanceOf[MessagesApi]
+  implicit val lang: Lang        = Lang("GB")
 
-  val testCancelUrl: String = "/report-quarterly/income-and-expenses/view"
+  val testCancelUrl:      String = "/report-quarterly/income-and-expenses/view"
   val testCancelUrlAgent: String = "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
 
   class Setup(isAgent: Boolean, isAmountZero: Boolean) {
-    val viewModel = ConfirmationForAdjustingPoaViewModel(TaxYear(fixedDate.getYear, fixedDate.getYear + 1), isAmountZero)
-    val view: Html = confirmationForAdjustingPoaView(isAgent = isAgent, viewModel)
-    val document: Document = Jsoup.parse(view.toString())
+    val viewModel =
+      ConfirmationForAdjustingPoaViewModel(TaxYear(fixedDate.getYear, fixedDate.getYear + 1), isAmountZero)
+    val view:        Html     = confirmationForAdjustingPoaView(isAgent = isAgent, viewModel)
+    val document:    Document = Jsoup.parse(view.toString())
     val groupButton: Elements = document.select("div.govuk-button-group")
     val elements = groupButton.first().children()
   }
@@ -50,7 +52,11 @@ class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
       }
 
       "render the caption" in new Setup(isAgent = false, isAmountZero = true) {
-        document.getElementById("caption").text shouldBe msgs("claimToAdjustPoa.confirmation.caption", fixedDate.getYear.toString, (fixedDate.getYear + 1).toString)
+        document.getElementById("caption").text shouldBe msgs(
+          "claimToAdjustPoa.confirmation.caption",
+          fixedDate.getYear.toString,
+          (fixedDate.getYear + 1).toString
+        )
       }
 
       "render the  heading" in new Setup(isAgent = false, isAmountZero = true) {
@@ -74,7 +80,11 @@ class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
       }
 
       "render the caption" in new Setup(isAgent = false, isAmountZero = false) {
-        document.getElementById("caption").text shouldBe msgs("claimToAdjustPoa.confirmation.caption", fixedDate.getYear.toString, (fixedDate.getYear + 1).toString)
+        document.getElementById("caption").text shouldBe msgs(
+          "claimToAdjustPoa.confirmation.caption",
+          fixedDate.getYear.toString,
+          (fixedDate.getYear + 1).toString
+        )
       }
 
       "render the  heading" in new Setup(isAgent = false, isAmountZero = false) {
@@ -98,7 +108,11 @@ class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
       }
 
       "render the caption" in new Setup(isAgent = true, isAmountZero = false) {
-        document.getElementById("caption").text shouldBe msgs("claimToAdjustPoa.confirmation.caption", fixedDate.getYear.toString, (fixedDate.getYear + 1).toString)
+        document.getElementById("caption").text shouldBe msgs(
+          "claimToAdjustPoa.confirmation.caption",
+          fixedDate.getYear.toString,
+          (fixedDate.getYear + 1).toString
+        )
       }
 
       "render the  heading" in new Setup(isAgent = true, isAmountZero = false) {
@@ -122,7 +136,11 @@ class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
       }
 
       "render the caption" in new Setup(isAgent = true, isAmountZero = true) {
-        document.getElementById("caption").text shouldBe msgs("claimToAdjustPoa.confirmation.caption", fixedDate.getYear.toString, (fixedDate.getYear + 1).toString)
+        document.getElementById("caption").text shouldBe msgs(
+          "claimToAdjustPoa.confirmation.caption",
+          fixedDate.getYear.toString,
+          (fixedDate.getYear + 1).toString
+        )
       }
 
       "render the  heading" in new Setup(isAgent = true, isAmountZero = true) {

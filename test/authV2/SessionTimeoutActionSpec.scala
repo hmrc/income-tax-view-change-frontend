@@ -36,11 +36,12 @@ class SessionTimeoutActionSpec extends AuthActionsSpecHelper {
   }
 
   def defaultAsyncBody(
-                        requestTestCase: Request[_] => Assertion
-                      ): Request[_] => Future[Result] = testRequest => {
-    requestTestCase(testRequest)
-    Future.successful(Results.Ok("Successful"))
-  }
+      requestTestCase: Request[_] => Assertion
+    ): Request[_] => Future[Result] =
+    testRequest => {
+      requestTestCase(testRequest)
+      Future.successful(Results.Ok("Successful"))
+    }
 
   def defaultAsync: Request[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
 
@@ -48,9 +49,9 @@ class SessionTimeoutActionSpec extends AuthActionsSpecHelper {
 
   val fakeRequest = FakeRequest()
     .withHeaders(
-    HeaderNames.REFERER -> "/test/url",
-    "X-Session-ID" -> "123456789"
-  )
+      HeaderNames.REFERER -> "/test/url",
+      "X-Session-ID"      -> "123456789"
+    )
   "refine" should {
     "return the request with additional headers" when {
       "the request is a Gov-test-Scenario" that {
@@ -60,14 +61,12 @@ class SessionTimeoutActionSpec extends AuthActionsSpecHelper {
           )
         "contains an auth token and lastRequestTimestamp" in {
           val request = fakeGovTestRequest.withSession(
-            SessionKeys.authToken -> "Bearer Token",
+            SessionKeys.authToken            -> "Bearer Token",
             SessionKeys.lastRequestTimestamp -> "1498236506662"
           )
 
-          val result = action.invokeBlock(
-            request,
-            defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe Some("testData")
-            ))
+          val result =
+            action.invokeBlock(request, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe Some("testData")))
 
           status(result) shouldBe OK
           contentAsString(result) shouldBe "Successful"
@@ -78,10 +77,8 @@ class SessionTimeoutActionSpec extends AuthActionsSpecHelper {
             SessionKeys.authToken -> "Bearer Token"
           )
 
-          val result = action.invokeBlock(
-            request,
-            defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe Some("testData")
-            ))
+          val result =
+            action.invokeBlock(request, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe Some("testData")))
 
           status(result) shouldBe OK
           contentAsString(result) shouldBe "Successful"
@@ -90,8 +87,8 @@ class SessionTimeoutActionSpec extends AuthActionsSpecHelper {
         "does not contain an auth token or lastRequestTimestamp" in {
           val result = action.invokeBlock(
             fakeGovTestRequest,
-            defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe Some("testData")
-            ))
+            defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe Some("testData"))
+          )
 
           status(result) shouldBe OK
           contentAsString(result) shouldBe "Successful"
@@ -103,14 +100,12 @@ class SessionTimeoutActionSpec extends AuthActionsSpecHelper {
           .withHeaders("Gov-Test-Scenario" -> "testData")
         "contains an auth token and lastRequestTimestamp" in {
           val request = fakeGovTestRequest.withSession(
-            SessionKeys.authToken -> "Bearer Token",
+            SessionKeys.authToken            -> "Bearer Token",
             SessionKeys.lastRequestTimestamp -> "1498236506662"
           )
 
-          val result = action.invokeBlock(
-            request,
-            defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe Some("testData")
-            ))
+          val result =
+            action.invokeBlock(request, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe Some("testData")))
 
           status(result) shouldBe OK
           contentAsString(result) shouldBe "Successful"
@@ -121,10 +116,8 @@ class SessionTimeoutActionSpec extends AuthActionsSpecHelper {
             SessionKeys.authToken -> "Bearer Token"
           )
 
-          val result = action.invokeBlock(
-            request,
-            defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe Some("testData")
-            ))
+          val result =
+            action.invokeBlock(request, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe Some("testData")))
 
           status(result) shouldBe OK
           contentAsString(result) shouldBe "Successful"
@@ -133,8 +126,8 @@ class SessionTimeoutActionSpec extends AuthActionsSpecHelper {
         "does not contain an auth token or lastRequestTimestamp" in {
           val result = action.invokeBlock(
             fakeGovTestRequest,
-            defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe Some("testData")
-            ))
+            defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe Some("testData"))
+          )
 
           status(result) shouldBe OK
           contentAsString(result) shouldBe "Successful"
@@ -153,9 +146,7 @@ class SessionTimeoutActionSpec extends AuthActionsSpecHelper {
             SessionKeys.lastRequestTimestamp -> "1498236506662"
           )
 
-          val result = action.invokeBlock(
-            request,
-            defaultAsync)
+          val result = action.invokeBlock(request, defaultAsync)
 
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) should contain("/report-quarterly/income-and-expenses/view/session-timeout")

@@ -42,35 +42,46 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PaymentHistoryController @Inject()(authActions: AuthActions,
-                                         auditingService: AuditingService,
-                                         itvcErrorHandler: ItvcErrorHandler,
-                                         itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                         paymentHistoryService: PaymentHistoryService,
-                                         val repaymentService: RepaymentService,
-                                         paymentHistoryView: PaymentHistory,
-                                         val customNotFoundErrorView: CustomNotFoundError
-                                        )(implicit val appConfig: FrontendAppConfig,
-                                          dateService: DateServiceInterface,
-                                          val languageUtils: LanguageUtils,
-                                          mcc: MessagesControllerComponents,
-                                          val ec: ExecutionContext) extends FrontendController(mcc)
-  with I18nSupport with FeatureSwitching with ImplicitDateFormatter {
+class PaymentHistoryController @Inject() (
+    authActions:                 AuthActions,
+    auditingService:             AuditingService,
+    itvcErrorHandler:            ItvcErrorHandler,
+    itvcErrorHandlerAgent:       AgentItvcErrorHandler,
+    paymentHistoryService:       PaymentHistoryService,
+    val repaymentService:        RepaymentService,
+    paymentHistoryView:          PaymentHistory,
+    val customNotFoundErrorView: CustomNotFoundError
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    dateService:            DateServiceInterface,
+    val languageUtils:      LanguageUtils,
+    mcc:                    MessagesControllerComponents,
+    val ec:                 ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with FeatureSwitching
+    with ImplicitDateFormatter {
 
-  def handleRequest(backUrl: String,
-                    origin: Option[String] = None,
-                    isAgent: Boolean)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] =
+  def handleRequest(
+      backUrl: String,
+      origin:  Option[String] = None,
+      isAgent: Boolean
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier
+    ): Future[Result] =
     for {
-      payments                       <- paymentHistoryService.getPaymentHistory
-      repayments                     <- paymentHistoryService.getRepaymentHistory(isEnabled(PaymentHistoryRefunds))
+      payments   <- paymentHistoryService.getPaymentHistory
+      repayments <- paymentHistoryService.getRepaymentHistory(isEnabled(PaymentHistoryRefunds))
     } yield (payments, repayments) match {
 
       case (Right(payments), Right(repayments)) =>
-        auditingService.extendedAudit(PaymentHistoryResponseAuditModel(
-          mtdItUser = user,
-          payments = payments
-        ))
+        auditingService.extendedAudit(
+          PaymentHistoryResponseAuditModel(
+            mtdItUser = user,
+            payments = payments
+          )
+        )
 
         val paymentHistoryEntries = RepaymentHistoryUtils.getGroupedPaymentHistoryData(
           isAgent = isAgent,
@@ -80,55 +91,57 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
           reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa)
         )
 
-        val viewModel = PaymentCreditAndRefundHistoryViewModel(isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds))
+        val viewModel =
+          PaymentCreditAndRefundHistoryViewModel(isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds))
 
-        Ok(paymentHistoryView(
-          backUrl = backUrl,
-          isAgent = isAgent,
-          saUtr = user.saUtr,
-          viewModel = viewModel,
-          btaNavPartial = user.btaNavPartial,
-          groupedPayments = paymentHistoryEntries,
-          paymentHistoryAndRefundsEnabled = isEnabled(PaymentHistoryRefunds)
-        ))
+        Ok(
+          paymentHistoryView(
+            backUrl = backUrl,
+            isAgent = isAgent,
+            saUtr = user.saUtr,
+            viewModel = viewModel,
+            btaNavPartial = user.btaNavPartial,
+            groupedPayments = paymentHistoryEntries,
+            paymentHistoryAndRefundsEnabled = isEnabled(PaymentHistoryRefunds)
+          )
+        )
           .addingToSession(gatewayPage -> PaymentHistoryPage.name)
 
       case _ => logAndHandleError("failed to get payments and/or repayments")
     }
 
-  def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
+  def show(origin: Option[String] = None): Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit user =>
       handleRequest(
         isAgent = false,
         origin = origin,
         backUrl = controllers.routes.HomeController.show(origin).url
       )
-  }
+    }
 
-  def showAgent(): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
-    implicit mtdItUser =>
+  def showAgent(): Action[AnyContent] =
+    authActions.asMTDPrimaryAgent.async { implicit mtdItUser =>
       handleRequest(
         isAgent = true,
         backUrl = controllers.routes.HomeController.showAgent.url
       )
-  }
+    }
 
   def refundStatus: Action[AnyContent] =
     authActions.asMTDIndividual.async { implicit user =>
       if (isEnabled(PaymentHistoryRefunds)) {
         repaymentService.view(user.nino).map {
           case Right(nextUrl) => Redirect(nextUrl)
-          case Left(ex) => logAndHandleError(ex.getMessage)
+          case Left(ex)       => logAndHandleError(ex.getMessage)
         }
       } else {
         Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
       }
     }
 
-  def logAndHandleError(message: String)
-                       (implicit mtdItUser: MtdItUser[_]): Result = {
+  def logAndHandleError(message: String)(implicit mtdItUser: MtdItUser[_]): Result = {
     Logger("application").error(message)
-    val errorHandler = if(mtdItUser.isAgent()) itvcErrorHandlerAgent else itvcErrorHandler
+    val errorHandler = if (mtdItUser.isAgent()) itvcErrorHandlerAgent else itvcErrorHandler
     errorHandler.showInternalServerError()
   }
 }

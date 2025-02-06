@@ -29,21 +29,23 @@ import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 
 import scala.concurrent.Future
 
-class WhatYouNeedToKnowControllerSpec extends MockAuthActions
-  with MockClaimToAdjustService
-  with MockCalculationListService
-  with MockPaymentOnAccountSessionService {
+class WhatYouNeedToKnowControllerSpec
+    extends MockAuthActions
+    with MockClaimToAdjustService
+    with MockCalculationListService
+    with MockPaymentOnAccountSessionService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
       api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[WhatYouNeedToKnowController]
 
   mtdAllRoles.foreach { mtdRole =>
-    val isAgent = mtdRole != MTDIndividual
+    val isAgent     = mtdRole != MTDIndividual
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
     s"show(isAgent = $isAgent)" when {
       val action = testController.show(isAgent)
@@ -98,12 +100,16 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthActions
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPaymentsOnAccount()
               setupMockTaxYearNotCrystallised()
-              setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
+              setupMockPaymentOnAccountSessionService(
+                Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true))))
+              )
 
               setupMockSuccess(mtdRole)
               val result = action(fakeRequest)
               status(result) shouldBe SEE_OTHER
-              redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(isAgent).url)
+              redirectLocation(result) shouldBe Some(
+                controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(isAgent).url
+              )
             }
           }
           "return an error 500" when {

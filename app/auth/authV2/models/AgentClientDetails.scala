@@ -18,13 +18,13 @@ package auth.authV2.models
 
 import uk.gov.hmrc.auth.core.retrieve.Name
 
-case class AgentClientDetails(mtdItId: String,
-                              firstName: Option[String],
-                              lastName: Option[String],
-                              nino: String,
-                              utr: String,
-                              confirmed: Boolean
-                        ) {
+case class AgentClientDetails(
+    mtdItId:   String,
+    firstName: Option[String],
+    lastName:  Option[String],
+    nino:      String,
+    utr:       String,
+    confirmed: Boolean) {
   val clientName: Option[Name] = {
     if (firstName.isDefined && lastName.isDefined) {
       Some(Name(firstName, lastName))

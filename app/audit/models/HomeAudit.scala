@@ -24,18 +24,20 @@ import utils.Utilities.JsonUtil
 
 import java.time.LocalDate
 
-case class HomeAudit(mtdItUser: MtdItUser[_],
-                     nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]],
-                     nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int]) extends ExtendedAuditModel {
+case class HomeAudit(
+    mtdItUser:            MtdItUser[_],
+    nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]],
+    nextUpdateOrOverdue:  Either[(LocalDate, Boolean), Int])
+    extends ExtendedAuditModel {
 
   private val paymentsInformation: JsObject = nextPaymentOrOverdue match {
-    case Some(Right(count)) => Json.obj("overduePayments" -> count)
+    case Some(Right(count))    => Json.obj("overduePayments" -> count)
     case Some(Left((date, _))) => Json.obj("nextPaymentDeadline" -> date.toString)
-    case None => Json.obj()
+    case None                  => Json.obj()
   }
 
   private val updatesInformation: JsObject = nextUpdateOrOverdue match {
-    case Right(count) => Json.obj("overdueUpdates" -> count)
+    case Right(count)    => Json.obj("overdueUpdates" -> count)
     case Left((date, _)) => Json.obj("nextUpdateDeadline" -> date.toString)
   }
 
@@ -43,7 +45,7 @@ case class HomeAudit(mtdItUser: MtdItUser[_],
 
   override val detail: JsValue = Json.obj(
     "mtditid" -> mtdItUser.mtditid,
-    "nino" -> mtdItUser.nino
+    "nino"    -> mtdItUser.nino
   ) ++ userType(mtdItUser.userType) ++ paymentsInformation ++ updatesInformation ++
     ("saUtr", mtdItUser.saUtr) ++
     ("credId", mtdItUser.credId) ++
@@ -54,13 +56,15 @@ case class HomeAudit(mtdItUser: MtdItUser[_],
 }
 
 object HomeAudit {
-  def apply(mtdItUser: MtdItUser[_],
-            nextPaymentDueDate: Option[LocalDate],
-            overduePaymentsCount: Int,
-            nextUpdatesTileViewModel: NextUpdatesTileViewModel): HomeAudit = {
+  def apply(
+      mtdItUser:                MtdItUser[_],
+      nextPaymentDueDate:       Option[LocalDate],
+      overduePaymentsCount:     Int,
+      nextUpdatesTileViewModel: NextUpdatesTileViewModel
+    ): HomeAudit = {
 
-    val overdueUpdatesCount: Int = nextUpdatesTileViewModel.getNumberOfOverdueObligations
-    val nextUpdateDueDate: Option[LocalDate] = nextUpdatesTileViewModel.getNextDeadline
+    val overdueUpdatesCount: Int               = nextUpdatesTileViewModel.getNumberOfOverdueObligations
+    val nextUpdateDueDate:   Option[LocalDate] = nextUpdatesTileViewModel.getNextDeadline
 
     val nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]] = nextPaymentDueDate.map { date =>
       if (overduePaymentsCount == 0) Left(date -> false)
@@ -72,7 +76,7 @@ object HomeAudit {
       (overdueUpdatesCount, nextUpdateDueDate) match {
         case (0, Some(dueDate)) => Left(dueDate -> false)
         case (1, Some(dueDate)) => Left(dueDate -> true)
-        case (_, _) => Right(overdueUpdatesCount)
+        case (_, _)             => Right(overdueUpdatesCount)
       }
     }
 

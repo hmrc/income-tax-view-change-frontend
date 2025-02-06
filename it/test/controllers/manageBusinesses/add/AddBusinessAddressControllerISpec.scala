@@ -27,13 +27,13 @@ import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 class AddBusinessAddressControllerISpec extends ControllerISpecHelper {
 
   def getPath(mtdRole: MTDUserRole, isChange: Boolean): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
-    val pathEnd = if(isChange) "/change-business-address-lookup" else "/business-address"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
+    val pathEnd   = if (isChange) "/change-business-address-lookup" else "/business-address"
     pathStart + "/manage-your-businesses/add-sole-trader" + pathEnd
   }
 
   mtdAllRoles.foreach { mtdUserRole =>
-    val path = getPath(mtdUserRole, isChange = false)
+    val path              = getPath(mtdUserRole, isChange = false)
     val additionalCookies = getAdditionalCookies(mtdUserRole)
     s"GET $path" when {
       s"a user is a $mtdUserRole" that {

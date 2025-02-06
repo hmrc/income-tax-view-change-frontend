@@ -28,26 +28,27 @@ import testUtils.UnitSpec
 
 import java.time.LocalDate
 
-class ChargeItemSpec extends UnitSpec with ChargeConstants  {
+class ChargeItemSpec extends UnitSpec with ChargeConstants {
 
   val dueDate = LocalDate.of(2024, 1, 1)
-  val originalAmount: BigDecimal = 100.0
-  val outstandingAmount: BigDecimal = 50.0
+  val originalAmount:            BigDecimal         = 100.0
+  val outstandingAmount:         BigDecimal         = 50.0
   val interestOutstandingAmount: Option[BigDecimal] = Some(40.0)
   val latePaymentInterestAmount: Option[BigDecimal] = Some(30.0)
-  val lpiWithDunningLock: Option[BigDecimal] = Some(20.0)
-  val amountCodedOut: Option[BigDecimal] = Some(150.0)
+  val lpiWithDunningLock:        Option[BigDecimal] = Some(20.0)
+  val amountCodedOut:            Option[BigDecimal] = Some(150.0)
 
-
-  val defaultDocDetails = documentDetailModel(documentDueDate = Some(dueDate),
+  val defaultDocDetails = documentDetailModel(
+    documentDueDate = Some(dueDate),
     originalAmount = originalAmount,
     outstandingAmount = outstandingAmount,
     interestOutstandingAmount = interestOutstandingAmount,
     latePaymentInterestAmount = latePaymentInterestAmount,
-    lpiWithDunningLock = lpiWithDunningLock)
+    lpiWithDunningLock = lpiWithDunningLock
+  )
 
   val docDetailsNoOutstandingAmout = defaultDocDetails.copy(outstandingAmount = 0)
-  val docDetailsAmountCodedOut = defaultDocDetails.copy(amountCodedOut = amountCodedOut)
+  val docDetailsAmountCodedOut     = defaultDocDetails.copy(amountCodedOut = amountCodedOut)
 
   val poa1FinancialDetails = financialDetail()
   val poa2FinancialDetails = financialDetail(mainTransaction = "4930")
@@ -55,22 +56,22 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
   val poaOneReconciliationDebitDetails = financialDetail(mainTransaction = "4911")
   val PoaTwoReconciliationDebitDetails = financialDetail(mainTransaction = "4913")
 
-  val balancingNics2DocumentDetails = defaultDocDetails.copy(documentText = Some(CODING_OUT_CLASS2_NICS.name))
+  val balancingNics2DocumentDetails  = defaultDocDetails.copy(documentText = Some(CODING_OUT_CLASS2_NICS.name))
   val balancingNics2FinancialDetails = financialDetail(mainTransaction = "4910")
 
-  val balancingAcceptedDocumentDetails = defaultDocDetails.copy(documentText = Some(CODING_OUT_ACCEPTED.name))
+  val balancingAcceptedDocumentDetails  = defaultDocDetails.copy(documentText = Some(CODING_OUT_ACCEPTED.name))
   val balancingAcceptedFinancialDetails = financialDetail(mainTransaction = "4910")
 
-  val balancingCancelledDocumentDetails = defaultDocDetails.copy(documentText = Some(CODING_OUT_CANCELLED.name))
+  val balancingCancelledDocumentDetails  = defaultDocDetails.copy(documentText = Some(CODING_OUT_CANCELLED.name))
   val balancingCancelledFinancialDetails = financialDetail(mainTransaction = "4910")
 
   val mfaFinancialDetails = financialDetail(mainTransaction = "4003")
 
-
   implicit val dateService: DateServiceInterface = dateService(LocalDate.of(2000, 1, 1))
-  def dateService(currentDate: LocalDate): DateService = new DateService()(app.injector.instanceOf[FrontendAppConfig]){
-    override def getCurrentDate: LocalDate = currentDate
-  }
+  def dateService(currentDate: LocalDate): DateService =
+    new DateService()(app.injector.instanceOf[FrontendAppConfig]) {
+      override def getCurrentDate: LocalDate = currentDate
+    }
 
   "ChargeItem" when {
 
@@ -81,8 +82,8 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(poaOneReconciliationDebitDetails))
-
+          financialDetails = List(poaOneReconciliationDebitDetails)
+        )
 
         chargeItem.isNotPaidAndNotOverduePoaReconciliationDebit()(dateServiceBeforeDueDate) shouldBe true
       }
@@ -92,7 +93,8 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(PoaTwoReconciliationDebitDetails))
+          financialDetails = List(PoaTwoReconciliationDebitDetails)
+        )
 
         chargeItem.isNotPaidAndNotOverduePoaReconciliationDebit()(dateServiceBeforeDueDate) shouldBe true
       }
@@ -102,7 +104,8 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(balancingNics2FinancialDetails))
+          financialDetails = List(balancingNics2FinancialDetails)
+        )
 
         chargeItem.isNotPaidAndNotOverduePoaReconciliationDebit()(dateServiceAfterDueDate) shouldBe false
       }
@@ -112,7 +115,8 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(poaOneReconciliationDebitDetails))
+          financialDetails = List(poaOneReconciliationDebitDetails)
+        )
 
         chargeItem.isNotPaidAndNotOverduePoaReconciliationDebit()(dateServiceAfterDueDate) shouldBe false
       }
@@ -122,7 +126,8 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = docDetailsNoOutstandingAmout,
-          financialDetails = List(poaOneReconciliationDebitDetails))
+          financialDetails = List(poaOneReconciliationDebitDetails)
+        )
 
         chargeItem.isNotPaidAndNotOverduePoaReconciliationDebit()(dateServiceBeforeDueDate) shouldBe false
       }
@@ -135,7 +140,8 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(poaOneReconciliationDebitDetails))
+          financialDetails = List(poaOneReconciliationDebitDetails)
+        )
 
         chargeItem.getDueDate shouldBe LocalDate.of(2024, 1, 1)
 
@@ -143,15 +149,17 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
       "throws MissingFieldException when due date is not found" in {
 
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(poaOneReconciliationDebitDetails)).copy(dueDate = None)
+        val chargeItem = ChargeItem
+          .fromDocumentPair(
+            documentDetail = defaultDocDetails,
+            financialDetails = List(poaOneReconciliationDebitDetails)
+          )
+          .copy(dueDate = None)
 
         val exception = intercept[MissingFieldException] {
           chargeItem.getDueDate
         }
         exception shouldBe MissingFieldException("documentDueDate")
-
 
       }
 
@@ -163,7 +171,8 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(poaOneReconciliationDebitDetails))
+          financialDetails = List(poaOneReconciliationDebitDetails)
+        )
 
         chargeItem.getInterestFromDate shouldBe LocalDate.of(2018, 3, 29)
 
@@ -171,15 +180,17 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
       "throws MissingFieldException when interestFromDate is not found" in {
 
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(poaOneReconciliationDebitDetails)).copy(interestFromDate = None)
+        val chargeItem = ChargeItem
+          .fromDocumentPair(
+            documentDetail = defaultDocDetails,
+            financialDetails = List(poaOneReconciliationDebitDetails)
+          )
+          .copy(interestFromDate = None)
 
         val exception = intercept[MissingFieldException] {
           chargeItem.getInterestFromDate
         }
         exception shouldBe MissingFieldException("documentInterestFromDate")
-
 
       }
     }
@@ -190,7 +201,8 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(poaOneReconciliationDebitDetails))
+          financialDetails = List(poaOneReconciliationDebitDetails)
+        )
 
         chargeItem.getInterestEndDate shouldBe LocalDate.of(2018, 6, 15)
 
@@ -198,15 +210,17 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
       "throws MissingFieldException when interestEndDate is not found" in {
 
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(poaOneReconciliationDebitDetails)).copy(interestEndDate = None)
+        val chargeItem = ChargeItem
+          .fromDocumentPair(
+            documentDetail = defaultDocDetails,
+            financialDetails = List(poaOneReconciliationDebitDetails)
+          )
+          .copy(interestEndDate = None)
 
         val exception = intercept[MissingFieldException] {
           chargeItem.getInterestEndDate
         }
         exception shouldBe MissingFieldException("documentInterestEndDate")
-
 
       }
     }
@@ -217,7 +231,8 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(poaOneReconciliationDebitDetails))
+          financialDetails = List(poaOneReconciliationDebitDetails)
+        )
 
         chargeItem.getInterestRate shouldBe 100
 
@@ -225,9 +240,12 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
       "throws MissingFieldException when interestRate is not found" in {
 
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(poaOneReconciliationDebitDetails)).copy(interestRate = None)
+        val chargeItem = ChargeItem
+          .fromDocumentPair(
+            documentDetail = defaultDocDetails,
+            financialDetails = List(poaOneReconciliationDebitDetails)
+          )
+          .copy(interestRate = None)
 
         val exception = intercept[MissingFieldException] {
           chargeItem.getInterestRate
@@ -243,7 +261,8 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(poaOneReconciliationDebitDetails))
+          financialDetails = List(poaOneReconciliationDebitDetails)
+        )
 
         chargeItem.getInterestOutstandingAmount shouldBe 40
 
@@ -251,9 +270,12 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
       "throws MissingFieldException when interestRate is not found" in {
 
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(poaOneReconciliationDebitDetails)).copy(interestOutstandingAmount = None)
+        val chargeItem = ChargeItem
+          .fromDocumentPair(
+            documentDetail = defaultDocDetails,
+            financialDetails = List(poaOneReconciliationDebitDetails)
+          )
+          .copy(interestOutstandingAmount = None)
 
         val exception = intercept[MissingFieldException] {
           chargeItem.getInterestOutstandingAmount
@@ -269,7 +291,8 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = docDetailsAmountCodedOut,
-          financialDetails = List(poaOneReconciliationDebitDetails))
+          financialDetails = List(poaOneReconciliationDebitDetails)
+        )
 
         chargeItem.getAmountCodedOut shouldBe 150
 
@@ -279,7 +302,8 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(poaOneReconciliationDebitDetails))
+          financialDetails = List(poaOneReconciliationDebitDetails)
+        )
 
         val exception = intercept[MissingFieldException] {
           chargeItem.getAmountCodedOut
@@ -292,9 +316,12 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
     "interestIsPaid" when {
 
       "interest outstanding amount is 0 returns true" in {
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(poaOneReconciliationDebitDetails)).copy(interestOutstandingAmount = Some(BigDecimal(0)))
+        val chargeItem = ChargeItem
+          .fromDocumentPair(
+            documentDetail = defaultDocDetails,
+            financialDetails = List(poaOneReconciliationDebitDetails)
+          )
+          .copy(interestOutstandingAmount = Some(BigDecimal(0)))
 
         chargeItem.interestIsPaid shouldBe true
       }
@@ -302,7 +329,8 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
       "interest outstanding amount is not 0 returns false" in {
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(poaOneReconciliationDebitDetails))
+          financialDetails = List(poaOneReconciliationDebitDetails)
+        )
 
         chargeItem.interestIsPaid shouldBe false
       }
@@ -311,9 +339,12 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
     "getInterestPaidStatus" when {
 
       "interest is 0, return paid" in {
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(poaOneReconciliationDebitDetails)).copy(interestOutstandingAmount = Some(BigDecimal(0)))
+        val chargeItem = ChargeItem
+          .fromDocumentPair(
+            documentDetail = defaultDocDetails,
+            financialDetails = List(poaOneReconciliationDebitDetails)
+          )
+          .copy(interestOutstandingAmount = Some(BigDecimal(0)))
 
         chargeItem.getInterestPaidStatus shouldBe "paid"
       }
@@ -321,15 +352,19 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
       "interest is part paid, return part-paid" in {
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(poaOneReconciliationDebitDetails))
+          financialDetails = List(poaOneReconciliationDebitDetails)
+        )
 
         chargeItem.getInterestPaidStatus shouldBe "part-paid"
       }
 
       "interest is not paid, return unpaid" in {
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(poaOneReconciliationDebitDetails)).copy(interestOutstandingAmount = Some(BigDecimal(30)))
+        val chargeItem = ChargeItem
+          .fromDocumentPair(
+            documentDetail = defaultDocDetails,
+            financialDetails = List(poaOneReconciliationDebitDetails)
+          )
+          .copy(interestOutstandingAmount = Some(BigDecimal(30)))
 
         chargeItem.getInterestPaidStatus shouldBe "unpaid"
       }
@@ -338,9 +373,12 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
     "getChargePaidStatus" when {
 
       "outstanding amount is 0, return paid" in {
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(poaOneReconciliationDebitDetails)).copy(outstandingAmount = BigDecimal(0))
+        val chargeItem = ChargeItem
+          .fromDocumentPair(
+            documentDetail = defaultDocDetails,
+            financialDetails = List(poaOneReconciliationDebitDetails)
+          )
+          .copy(outstandingAmount = BigDecimal(0))
 
         chargeItem.getChargePaidStatus shouldBe "paid"
       }
@@ -348,15 +386,19 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
       "interest is part paid, return part-paid" in {
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(poaOneReconciliationDebitDetails))
+          financialDetails = List(poaOneReconciliationDebitDetails)
+        )
 
         chargeItem.getChargePaidStatus shouldBe "part-paid"
       }
 
       "interest not paid, return unpaid" in {
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(poaOneReconciliationDebitDetails)).copy(outstandingAmount = BigDecimal(100))
+        val chargeItem = ChargeItem
+          .fromDocumentPair(
+            documentDetail = defaultDocDetails,
+            financialDetails = List(poaOneReconciliationDebitDetails)
+          )
+          .copy(outstandingAmount = BigDecimal(100))
 
         chargeItem.getChargePaidStatus shouldBe "unpaid"
       }
@@ -365,64 +407,64 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
   "fromDocumentPair" when {
 
-      "from Payment on Account 1" in {
+    "from Payment on Account 1" in {
 
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(poa1FinancialDetails))
+      val chargeItem =
+        ChargeItem.fromDocumentPair(documentDetail = defaultDocDetails, financialDetails = List(poa1FinancialDetails))
 
-        chargeItem.transactionType shouldBe PoaOneDebit
-        chargeItem.subTransactionType shouldBe None
-      }
+      chargeItem.transactionType shouldBe PoaOneDebit
+      chargeItem.subTransactionType shouldBe None
+    }
 
-      "from Payment on Account 2" in {
+    "from Payment on Account 2" in {
 
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(poa2FinancialDetails))
+      val chargeItem =
+        ChargeItem.fromDocumentPair(documentDetail = defaultDocDetails, financialDetails = List(poa2FinancialDetails))
 
-        chargeItem.transactionType shouldBe PoaTwoDebit
-        chargeItem.subTransactionType shouldBe None
-      }
+      chargeItem.transactionType shouldBe PoaTwoDebit
+      chargeItem.subTransactionType shouldBe None
+    }
 
-      "from Balancing Payment Nics2" in {
+    "from Balancing Payment Nics2" in {
 
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = balancingNics2DocumentDetails,
-          financialDetails = List(balancingNics2FinancialDetails))
+      val chargeItem = ChargeItem.fromDocumentPair(
+        documentDetail = balancingNics2DocumentDetails,
+        financialDetails = List(balancingNics2FinancialDetails)
+      )
 
-        chargeItem.transactionType shouldBe BalancingCharge
-        chargeItem.subTransactionType shouldBe Some(Nics2)
-      }
+      chargeItem.transactionType shouldBe BalancingCharge
+      chargeItem.subTransactionType shouldBe Some(Nics2)
+    }
 
-      "from Balancing Payment Accepted" in {
+    "from Balancing Payment Accepted" in {
 
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = balancingAcceptedDocumentDetails,
-          financialDetails = List(balancingAcceptedFinancialDetails))
+      val chargeItem = ChargeItem.fromDocumentPair(
+        documentDetail = balancingAcceptedDocumentDetails,
+        financialDetails = List(balancingAcceptedFinancialDetails)
+      )
 
-        chargeItem.transactionType shouldBe BalancingCharge
-        chargeItem.subTransactionType shouldBe Some(Accepted)
-      }
+      chargeItem.transactionType shouldBe BalancingCharge
+      chargeItem.subTransactionType shouldBe Some(Accepted)
+    }
 
-      "from Balancing Payment Cancelled" in {
+    "from Balancing Payment Cancelled" in {
 
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = balancingCancelledDocumentDetails,
-          financialDetails = List(balancingCancelledFinancialDetails))
+      val chargeItem = ChargeItem.fromDocumentPair(
+        documentDetail = balancingCancelledDocumentDetails,
+        financialDetails = List(balancingCancelledFinancialDetails)
+      )
 
-        chargeItem.transactionType shouldBe BalancingCharge
-        chargeItem.subTransactionType shouldBe Some(Cancelled)
-      }
+      chargeItem.transactionType shouldBe BalancingCharge
+      chargeItem.subTransactionType shouldBe Some(Cancelled)
+    }
 
-      "from MFA" in {
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(mfaFinancialDetails))
+    "from MFA" in {
+      val chargeItem =
+        ChargeItem.fromDocumentPair(documentDetail = defaultDocDetails, financialDetails = List(mfaFinancialDetails))
 
-        chargeItem.transactionType shouldBe MfaDebitCharge
-        chargeItem.subTransactionType shouldBe None
-      }
+      chargeItem.transactionType shouldBe MfaDebitCharge
+      chargeItem.subTransactionType shouldBe None
+    }
 
     "isOverdue calculated correctly" when {
 
@@ -430,9 +472,8 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val dateServiceBeforeDueDate = dateService(dueDate.minusDays(1))
 
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(poa1FinancialDetails))
+        val chargeItem =
+          ChargeItem.fromDocumentPair(documentDetail = defaultDocDetails, financialDetails = List(poa1FinancialDetails))
 
         chargeItem.isOverdue()(dateServiceBeforeDueDate) shouldBe false
       }
@@ -441,9 +482,8 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val dateServiceOnDueDate = dateService(dueDate)
 
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(poa1FinancialDetails))
+        val chargeItem =
+          ChargeItem.fromDocumentPair(documentDetail = defaultDocDetails, financialDetails = List(poa1FinancialDetails))
 
         chargeItem.isOverdue()(dateServiceOnDueDate) shouldBe false
       }
@@ -452,59 +492,57 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         val dateServiceAfterDueDate = dateService(dueDate.plusDays(1))
 
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
-          financialDetails = List(poa1FinancialDetails))
+        val chargeItem =
+          ChargeItem.fromDocumentPair(documentDetail = defaultDocDetails, financialDetails = List(poa1FinancialDetails))
 
         chargeItem.isOverdue()(dateServiceAfterDueDate) shouldBe true
       }
     }
   }
 
-    "getChargeKey" when {
+  "getChargeKey" when {
 
-        "charge is a POA 1" in {
-          val poa1 = chargeItemModel(transactionType = PoaOneDebit, subTransactionType = None)
-          val key = poa1.getChargeTypeKey()
-          key shouldBe "paymentOnAccount1.text"
-        }
+    "charge is a POA 1" in {
+      val poa1 = chargeItemModel(transactionType = PoaOneDebit, subTransactionType = None)
+      val key  = poa1.getChargeTypeKey()
+      key shouldBe "paymentOnAccount1.text"
+    }
 
-        "charge is a POA 2" in {
-          val poa1 = chargeItemModel(transactionType = PoaTwoDebit, subTransactionType = None)
-          val key = poa1.getChargeTypeKey()
-          key shouldBe "paymentOnAccount2.text"
-        }
+    "charge is a POA 2" in {
+      val poa1 = chargeItemModel(transactionType = PoaTwoDebit, subTransactionType = None)
+      val key  = poa1.getChargeTypeKey()
+      key shouldBe "paymentOnAccount2.text"
+    }
 
+    "charge is a HMRC adjustment" in {
+      val poa1 = chargeItemModel(transactionType = MfaDebitCharge, subTransactionType = None)
+      val key  = poa1.getChargeTypeKey()
+      key shouldBe "hmrcAdjustment.text"
+    }
 
-        "charge is a HMRC adjustment" in {
-          val poa1 = chargeItemModel(transactionType = MfaDebitCharge, subTransactionType = None)
-          val key = poa1.getChargeTypeKey()
-          key shouldBe "hmrcAdjustment.text"
-        }
+    "charge is a Class 2 National Insurance Balancing Charge" in {
+      val poa1 = chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Nics2))
+      val key  = poa1.getChargeTypeKey()
+      key shouldBe "class2Nic.text"
+    }
 
-        "charge is a Class 2 National Insurance Balancing Charge" in {
-          val poa1 = chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Nics2))
-          val key = poa1.getChargeTypeKey()
-          key shouldBe "class2Nic.text"
-        }
+    "charge is a PAYE payment" in {
+      val poa1 = chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Accepted))
+      val key  = poa1.getChargeTypeKey()
+      key shouldBe "codingOut.text"
+    }
 
-        "charge is a PAYE payment" in {
-          val poa1 = chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Accepted))
-          val key = poa1.getChargeTypeKey()
-          key shouldBe "codingOut.text"
-        }
+    "charge is a cancelled PAYE SA payment" in {
+      val poa1 = chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Cancelled))
+      val key  = poa1.getChargeTypeKey()
+      key shouldBe "cancelledPayeSelfAssessment.text"
+    }
 
-        "charge is a cancelled PAYE SA payment" in {
-          val poa1 = chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Cancelled))
-          val key = poa1.getChargeTypeKey()
-          key shouldBe "cancelledPayeSelfAssessment.text"
-        }
-
-        "charge is a balancing charge" in {
-          val poa1 = chargeItemModel(transactionType = BalancingCharge, subTransactionType = None)
-          val key = poa1.getChargeTypeKey()
-          key shouldBe "balancingCharge.text"
-        }
+    "charge is a balancing charge" in {
+      val poa1 = chargeItemModel(transactionType = BalancingCharge, subTransactionType = None)
+      val key  = poa1.getChargeTypeKey()
+      key shouldBe "balancingCharge.text"
+    }
   }
 
   "filterAllowedCharges" should {
@@ -516,7 +554,8 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
           chargeItemModel(transactionType = PoaTwoDebit),
           chargeItemModel(transactionType = PoaTwoReconciliationDebit)
         )
-        val filtered = chargesListWithRandR.map(filterAllowedCharges(false, PoaOneReconciliationDebit, PoaTwoReconciliationDebit))
+        val filtered =
+          chargesListWithRandR.map(filterAllowedCharges(false, PoaOneReconciliationDebit, PoaTwoReconciliationDebit))
         filtered shouldBe List(true, false, true, false)
       }
     }
@@ -528,14 +567,15 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
           chargeItemModel(transactionType = PoaTwoDebit),
           chargeItemModel(transactionType = PoaTwoReconciliationDebit)
         )
-        val filtered = chargesListWithRandR.map(filterAllowedCharges(true, PoaOneReconciliationDebit, PoaTwoReconciliationDebit))
+        val filtered =
+          chargesListWithRandR.map(filterAllowedCharges(true, PoaOneReconciliationDebit, PoaTwoReconciliationDebit))
         filtered shouldBe List(true, true, true, true)
       }
     }
     "return empty list" when {
       "fed an empty list" in {
         val chargesList = List()
-        val filtered = chargesList.map(filterAllowedCharges(true, PoaOneReconciliationDebit, PoaTwoReconciliationDebit))
+        val filtered    = chargesList.map(filterAllowedCharges(true, PoaOneReconciliationDebit, PoaTwoReconciliationDebit))
         filtered shouldBe List()
       }
     }

@@ -19,7 +19,7 @@ package models.financialDetails
 import enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED, CODING_OUT_CLASS2_NICS}
 import play.api.libs.json._
 
-sealed trait SubTransactionType  {
+sealed trait SubTransactionType {
   val key: String
 }
 
@@ -53,13 +53,14 @@ object SubTransactionType {
     JsString(transactionType.key)
   }
 
-  val read: Reads[SubTransactionType] = (JsPath).read[String].collect(JsonValidationError("Could not parse transactionType")) {
-    case CODING_OUT_CLASS2_NICS.name => Nics2
-    case CODING_OUT_ACCEPTED.name => Accepted
-    case CODING_OUT_CANCELLED.name => Cancelled
+  val read: Reads[SubTransactionType] =
+    (JsPath).read[String].collect(JsonValidationError("Could not parse transactionType")) {
+      case CODING_OUT_CLASS2_NICS.name => Nics2
+      case CODING_OUT_ACCEPTED.name    => Accepted
+      case CODING_OUT_CANCELLED.name   => Cancelled
 
-  }
+    }
 
-  implicit val format: Format[SubTransactionType] = Format( read, write)
+  implicit val format: Format[SubTransactionType] = Format(read, write)
 
 }

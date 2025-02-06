@@ -43,9 +43,11 @@ import views.html.ReportingFrequencyView
 
 import scala.concurrent.Future
 
-
-class ReportingFrequencyPageControllerSpec extends MockAuthActions
-  with MockOptOutService with MockOptInService with MockitoSugar {
+class ReportingFrequencyPageControllerSpec
+    extends MockAuthActions
+    with MockOptOutService
+    with MockOptInService
+    with MockitoSugar {
 
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
@@ -54,15 +56,16 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
       api.inject.bind[OptOutService].toInstance(mockOptOutService),
       api.inject.bind[OptInService].toInstance(mockOptInService),
       api.inject.bind[DateService].toInstance(dateService)
-    ).configure(Map("feature-switches.read-from-mongo" -> "false"))
+    )
+    .configure(Map("feature-switches.read-from-mongo" -> "false"))
     .build()
 
-  lazy val testController = app.injector.instanceOf[ReportingFrequencyPageController]
+  lazy val testController         = app.injector.instanceOf[ReportingFrequencyPageController]
   lazy val reportingFrequencyView = app.injector.instanceOf[ReportingFrequencyView]
 
   mtdAllRoles.foreach { mtdRole =>
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
-    val isAgent = mtdRole != MTDIndividual
+    val isAgent     = mtdRole != MTDIndividual
 
     s"show(isAgent = $isAgent)" when {
       val action = testController.show(isAgent)
@@ -71,7 +74,8 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
           "the reporting frequency feature switch is enabled" in {
             enable(ReportingFrequencyPage)
             setupMockSuccess(mtdRole)
-            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
+            val singleBusinessIncome =
+              IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
             val optOutProposition: OptOutProposition = OptOutProposition.createOptOutProposition(
               currentYear = TaxYear(2024, 2025),
               previousYearCrystallised = false,
@@ -100,12 +104,11 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
                   optOutJourneyUrl = Some(controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url),
                   optOutTaxYears = Seq(TaxYear(2024, 2025)),
                   optInTaxYears = Seq(TaxYear(2024, 2025)),
-                  itsaStatusTable =
-                    Seq(
-                      "2023 to 2024" -> Some("Quarterly (mandatory)"),
-                      "2024 to 2025" -> Some("Quarterly"),
-                      "2025 to 2026" -> Some("Quarterly (mandatory)"),
-                    ),
+                  itsaStatusTable = Seq(
+                    "2023 to 2024" -> Some("Quarterly (mandatory)"),
+                    "2024 to 2025" -> Some("Quarterly"),
+                    "2025 to 2026" -> Some("Quarterly (mandatory)")
+                  ),
                   isAnyOfBusinessLatent = true,
                   displayCeasedBusinessWarning = false
                 )
@@ -117,7 +120,8 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
           "the reporting frequency feature switch is disabled" in {
             disable(ReportingFrequencyPage)
             setupMockSuccess(mtdRole)
-            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
+            val singleBusinessIncome =
+              IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
             val optOutProposition: OptOutProposition = OptOutProposition.createOptOutProposition(
               currentYear = TaxYear(2024, 2025),
               previousYearCrystallised = false,

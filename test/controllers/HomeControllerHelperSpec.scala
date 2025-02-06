@@ -37,13 +37,14 @@ import services.{DateService, FinancialDetailsService, ITSAStatusService, NextUp
 import java.time.{LocalDate, Month}
 import scala.concurrent.Future
 
-trait HomeControllerHelperSpec extends MockAuthActions
-  with MockNextUpdatesService
-  with MockFinancialDetailsService
-  with MockWhatYouOweService
-  with MockClientDetailsService
-  with MockDateService
-  with MockITSAStatusService {
+trait HomeControllerHelperSpec
+    extends MockAuthActions
+    with MockNextUpdatesService
+    with MockFinancialDetailsService
+    with MockWhatYouOweService
+    with MockClientDetailsService
+    with MockDateService
+    with MockITSAStatusService {
 
   val agentTitle = s"${messages("htmlTitle.agent", messages("home.agent.heading"))}"
 
@@ -54,45 +55,68 @@ trait HomeControllerHelperSpec extends MockAuthActions
       api.inject.bind[WhatYouOweService].toInstance(mockWhatYouOweService),
       api.inject.bind[DateService].toInstance(mockDateService),
       api.inject.bind[ITSAStatusService].toInstance(mockITSAStatusService)
-    ).build()
+    )
+    .build()
 
-  val updateYear: String = "2018"
-  val nextPaymentYear: String = "2019"
-  val nextPaymentYear2: String = "2018"
-  val futureDueDates: Seq[LocalDate] = Seq(LocalDate.of(2100, 1, 1))
-  val overdueDueDates: Seq[LocalDate] = Seq(LocalDate.of(2018, 1, 1))
-  val updateDateAndOverdueObligations: (LocalDate, Seq[LocalDate]) = (LocalDate.of(updateYear.toInt, Month.JANUARY, 1), futureDueDates)
-  val nextPaymentDate: LocalDate = LocalDate.of(nextPaymentYear.toInt, Month.JANUARY, 31)
+  val updateYear:       String         = "2018"
+  val nextPaymentYear:  String         = "2019"
+  val nextPaymentYear2: String         = "2018"
+  val futureDueDates:   Seq[LocalDate] = Seq(LocalDate.of(2100, 1, 1))
+  val overdueDueDates:  Seq[LocalDate] = Seq(LocalDate.of(2018, 1, 1))
+  val updateDateAndOverdueObligations: (LocalDate, Seq[LocalDate]) =
+    (LocalDate.of(updateYear.toInt, Month.JANUARY, 1), futureDueDates)
+  val nextPaymentDate:  LocalDate = LocalDate.of(nextPaymentYear.toInt, Month.JANUARY, 31)
   val nextPaymentDate2: LocalDate = LocalDate.of(nextPaymentYear2.toInt, Month.JANUARY, 31)
-  val baseStatusDetail: StatusDetail = StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.Annual, "Sign up - return available", Some(8000.25))
+  val baseStatusDetail: StatusDetail =
+    StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.Annual, "Sign up - return available", Some(8000.25))
   val staticTaxYear: TaxYear = TaxYear(fixedDate.getYear - 1, fixedDate.getYear)
 
   def setupNextUpdatesTests(dueDates: Seq[LocalDate], mtdUserRole: MTDUserRole = MTDIndividual): Unit = {
     mtdUserRole match {
-      case MTDIndividual => setupMockUserAuth
+      case MTDIndividual   => setupMockUserAuth
       case MTDPrimaryAgent => setupMockAgentWithClientAuth(false)
-      case _ => setupMockAgentWithClientAuth(true)
+      case _               => setupMockAgentWithClientAuth(true)
     }
     mockGetDueDates(Right(dueDates))
     mockSingleBusinessIncomeSource()
     when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
-      .thenReturn(Future.successful(List(FinancialDetailsModel(
-        balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-        documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", None, None, 1000.00, 0, LocalDate.of(2018, 3, 29))),
-        financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
-          items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
-      ))))
+      .thenReturn(
+        Future.successful(
+          List(
+            FinancialDetailsModel(
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+              documentDetails = List(
+                DocumentDetail(nextPaymentYear.toInt, "testId", None, None, 1000.00, 0, LocalDate.of(2018, 3, 29))
+              ),
+              financialDetails = List(
+                FinancialDetail(
+                  nextPaymentYear,
+                  transactionId = Some("testId"),
+                  items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))
+                )
+              )
+            )
+          )
+        )
+      )
     setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
   }
 
-  def testMTDObligationsDueFailures(action: Action[AnyContent], mtdUserRole: MTDUserRole = MTDIndividual)(fakeRequest: FakeRequest[AnyContentAsEmpty.type]): Unit = {
+  def testMTDObligationsDueFailures(
+      action:      Action[AnyContent],
+      mtdUserRole: MTDUserRole = MTDIndividual
+    )(
+      fakeRequest: FakeRequest[AnyContentAsEmpty.type]
+    ): Unit = {
     s"the ${mtdUserRole.toString} is authenticated but the call to get obligations fails" should {
       "render the internal error page" in {
         mtdUserRole match {
           case MTDIndividual => setupMockUserAuth
-          case MTDPrimaryAgent => setupMockGetSessionDataSuccess()
+          case MTDPrimaryAgent =>
+            setupMockGetSessionDataSuccess()
             setupMockAgentWithClientAuth(false)
-          case _ => setupMockGetSessionDataSuccess()
+          case _ =>
+            setupMockGetSessionDataSuccess()
             setupMockAgentWithClientAuth(true)
         }
         when(mockDateService.getCurrentDate).thenReturn(fixedDate)

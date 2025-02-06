@@ -41,11 +41,12 @@ class DeclareIncomeSourceCeasedControllerISpec extends ControllerISpecHelper {
   }
 
   def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     incomeSourceType match {
-      case SelfEmployment => pathStart + s"/manage-your-businesses/cease/business-confirm-cease?id=$testSelfEmploymentIdHashed"
+      case SelfEmployment =>
+        pathStart + s"/manage-your-businesses/cease/business-confirm-cease?id=$testSelfEmploymentIdHashed"
       case UkProperty => pathStart + "/manage-your-businesses/cease/uk-property-confirm-cease"
-      case _ => pathStart + "/manage-your-businesses/cease/foreign-property-confirm-cease"
+      case _          => pathStart + "/manage-your-businesses/cease/foreign-property-confirm-cease"
     }
   }
 
@@ -53,7 +54,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ControllerISpecHelper {
 
   mtdAllRoles.foreach { mtdUserRole =>
     incomeSourceTypes.foreach { incomeSourceType =>
-      val path = getPath(mtdUserRole, incomeSourceType)
+      val path              = getPath(mtdUserRole, incomeSourceType)
       val additionalCookies = getAdditionalCookies(mtdUserRole)
       s"GET $path" when {
         s"a user is a $mtdUserRole" that {
@@ -62,7 +63,10 @@ class DeclareIncomeSourceCeasedControllerISpec extends ControllerISpecHelper {
               stubAuthorised(mtdUserRole)
               disable(NavBarFs)
               enable(IncomeSourcesFs)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                OK,
+                multipleBusinessesAndPropertyResponse
+              )
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
               IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
@@ -81,7 +85,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ControllerISpecHelper {
       }
 
       s"POST $path" when {
-        val optIdHash = if(incomeSourceType == SelfEmployment) Some(testSelfEmploymentIdHashed) else None
+        val optIdHash = if (incomeSourceType == SelfEmployment) Some(testSelfEmploymentIdHashed) else None
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
             "redirect to IncomeSourceEndDateControllerUrl" when {
@@ -89,20 +93,27 @@ class DeclareIncomeSourceCeasedControllerISpec extends ControllerISpecHelper {
                 stubAuthorised(mtdUserRole)
                 disable(NavBarFs)
                 enable(IncomeSourcesFs)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"CEASE-${incomeSourceType.key}")))
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  multipleBusinessesAndPropertyResponse
+                )
+                await(
+                  sessionService.setMongoData(UIJourneySessionData(testSessionId, s"CEASE-${incomeSourceType.key}"))
+                )
 
-                val result = buildPOSTMTDPostClient(path,
-                  additionalCookies, body = Map()).futureValue
+                val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map()).futureValue
 
-                val expectedRedirectUrl = controllers.manageBusinesses.cease.routes
-                  .IncomeSourceEndDateController.show(optIdHash, incomeSourceType, mtdUserRole != MTDIndividual, false).url
+                val expectedRedirectUrl = controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController
+                  .show(optIdHash, incomeSourceType, mtdUserRole != MTDIndividual, false)
+                  .url
 
                 result should have(
                   httpStatus(SEE_OTHER),
                   redirectURI(expectedRedirectUrl)
                 )
-                sessionService.getMongoKey(ceaseIncomeSourceDeclare, IncomeSourceJourneyType(Cease, incomeSourceType)).futureValue shouldBe Right(Some(stringTrue))
+                sessionService
+                  .getMongoKey(ceaseIncomeSourceDeclare, IncomeSourceJourneyType(Cease, incomeSourceType))
+                  .futureValue shouldBe Right(Some(stringTrue))
 
               }
             }

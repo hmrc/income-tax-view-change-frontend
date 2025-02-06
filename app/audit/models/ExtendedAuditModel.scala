@@ -20,6 +20,6 @@ import play.api.libs.json.JsValue
 
 trait ExtendedAuditModel {
   val transactionName: String
-  val auditType: String
-  val detail: JsValue
+  val auditType:       String
+  val detail:          JsValue
 }

@@ -19,7 +19,14 @@ package audit.models
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities.JsonUtil
 
-case class EnterClientUTRAuditModel(isSuccessful: Boolean, nino: String, mtditid: String, arn: Option[String], saUtr: String, credId: Option[String]) extends ExtendedAuditModel {
+case class EnterClientUTRAuditModel(
+    isSuccessful: Boolean,
+    nino:         String,
+    mtditid:      String,
+    arn:          Option[String],
+    saUtr:        String,
+    credId:       Option[String])
+    extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.EnterClientUTR
 
@@ -32,21 +39,18 @@ case class EnterClientUTRAuditModel(isSuccessful: Boolean, nino: String, mtditid
   private val failureOutcome: JsObject = Json.obj(
     "outcome" ->
       Json.obj(
-        "isSuccessful" -> isSuccessful,
+        "isSuccessful"    -> isSuccessful,
         "failureCategory" -> "API_FAILURE",
-        "failureReason" -> "API returned error - unable to login agent"
+        "failureReason"   -> "API returned error - unable to login agent"
       )
   )
 
   private val outcome: JsObject = if (isSuccessful) successOutcome else failureOutcome
 
-  private val userDetailsJson: JsObject = Json.obj(
-    "nino" -> nino,
-    "mtditid" -> mtditid,
-    "saUtr" -> saUtr,
-    "userType" -> "Agent") ++
-    ("credId", credId) ++
-    ("agentReferenceNumber", arn)
+  private val userDetailsJson: JsObject =
+    Json.obj("nino" -> nino, "mtditid" -> mtditid, "saUtr" -> saUtr, "userType" -> "Agent") ++
+      ("credId", credId) ++
+      ("agentReferenceNumber", arn)
 
   override val detail: JsValue = userDetailsJson ++ outcome
 

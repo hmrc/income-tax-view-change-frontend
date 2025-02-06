@@ -21,23 +21,22 @@ import helpers.ComponentSpecBase
 object TaxYearSummaryMessages extends ComponentSpecBase {
 
   val noCalcHeading: String = messagesAPI("tax-year-summary.tax-calculation.no-calc")
-  val noCalcNote: String = messagesAPI("tax-year-summary.tax-calculation.no-calc.note")
+  val noCalcNote:    String = messagesAPI("tax-year-summary.tax-calculation.no-calc.note")
 
-  val underReview: String = messagesAPI("tax-year-summary.payments.paymentUnderReview")
-  val overdue: String = messagesAPI("tax-year-summary.payments.overdue")
-  val poa1Lpi: String = messagesAPI("tax-year-summary.payments.lpi.paymentOnAccount1.text")
-  val poa1: String = messagesAPI("tax-year-summary.payments.paymentOnAccount1.text")
-  val poa2: String = messagesAPI("tax-year-summary.payments.paymentOnAccount2.text")
+  val underReview:      String = messagesAPI("tax-year-summary.payments.paymentUnderReview")
+  val overdue:          String = messagesAPI("tax-year-summary.payments.overdue")
+  val poa1Lpi:          String = messagesAPI("tax-year-summary.payments.lpi.paymentOnAccount1.text")
+  val poa1:             String = messagesAPI("tax-year-summary.payments.paymentOnAccount1.text")
+  val poa2:             String = messagesAPI("tax-year-summary.payments.paymentOnAccount2.text")
   val balancingPayment: String = messagesAPI("tax-year-summary.payments.balancingCharge.text")
-  val class2Nic: String = messagesAPI("tax-year-summary.payments.class2Nic.text")
-  val cancelledPayeSA: String = messagesAPI("tax-year-summary.payments.cancelledPayeSelfAssessment.text")
-  val noPaymentsDue: String = messagesAPI("tax-year-summary.payments.no-payments")
-  val hmrcAdjustment: String = messagesAPI("tax-year-summary.payments.hmrcAdjustment.text")
+  val class2Nic:        String = messagesAPI("tax-year-summary.payments.class2Nic.text")
+  val cancelledPayeSA:  String = messagesAPI("tax-year-summary.payments.cancelledPayeSelfAssessment.text")
+  val noPaymentsDue:    String = messagesAPI("tax-year-summary.payments.no-payments")
+  val hmrcAdjustment:   String = messagesAPI("tax-year-summary.payments.hmrcAdjustment.text")
 
   def updateTabDue(dueDate: String): String = messagesAPI("updateTab.due", dueDate)
-  val quarterlyUpdate: String = messagesAPI("updateTab.updateType.quarterly")
-  val propertyIncome: String = messagesAPI("updateTab.obligationType.property")
+  val quarterlyUpdate:       String = messagesAPI("updateTab.updateType.quarterly")
+  val propertyIncome:        String = messagesAPI("updateTab.obligationType.property")
   val paymentHistoryHeading: String = messagesAPI("Payment refund and history")
-
 
 }

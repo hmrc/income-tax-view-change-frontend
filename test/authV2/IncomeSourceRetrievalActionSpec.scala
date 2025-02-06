@@ -47,11 +47,12 @@ class IncomeSourceRetrievalActionSpec extends AuthActionsSpecHelper {
   }
 
   def defaultAsyncBody(
-                        requestTestCase: MtdItUser[_] => Assertion
-                      ): MtdItUser[_] => Future[Result] = testRequest => {
-    requestTestCase(testRequest)
-    Future.successful(Results.Ok("Successful"))
-  }
+      requestTestCase: MtdItUser[_] => Assertion
+    ): MtdItUser[_] => Future[Result] =
+    testRequest => {
+      requestTestCase(testRequest)
+      Future.successful(Results.Ok("Successful"))
+    }
 
   def defaultAsync: MtdItUser[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
 
@@ -60,7 +61,8 @@ class IncomeSourceRetrievalActionSpec extends AuthActionsSpecHelper {
   "refine" when {
     "Return the income source details" should {
       "return the expected IncomeSourceDetails" in {
-        val authorisedAndEnrolledRequest = defaultAuthorisedAndEnrolledRequest(MTDPrimaryAgent, fakeRequestWithActiveSession)
+        val authorisedAndEnrolledRequest =
+          defaultAuthorisedAndEnrolledRequest(MTDPrimaryAgent, fakeRequestWithActiveSession)
         when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
           .thenReturn(Future.successful(defaultIncomeSourcesData))
 
@@ -69,13 +71,14 @@ class IncomeSourceRetrievalActionSpec extends AuthActionsSpecHelper {
           defaultAsyncBody(_.incomeSources shouldBe defaultIncomeSourcesData)
         )
 
-          status(result) shouldBe OK
-          contentAsString(result) shouldBe "Successful"
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe "Successful"
       }
     }
     "Income source details are not returned" should {
       "Show internal server error for individual" in {
-        val authorisedAndEnrolledRequest = defaultAuthorisedAndEnrolledRequest(MTDIndividual, fakeRequestWithActiveSession)
+        val authorisedAndEnrolledRequest =
+          defaultAuthorisedAndEnrolledRequest(MTDIndividual, fakeRequestWithActiveSession)
         when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
           .thenReturn(Future.successful(invalidIncomeSourceData))
 
@@ -87,11 +90,12 @@ class IncomeSourceRetrievalActionSpec extends AuthActionsSpecHelper {
           defaultAsync
         )
 
-          status(result) shouldBe INTERNAL_SERVER_ERROR
-          contentAsString(result) shouldBe "ERROR PAGE"
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        contentAsString(result) shouldBe "ERROR PAGE"
       }
       "Show internal server error for agent" in {
-        val authorisedAndEnrolledRequest = defaultAuthorisedAndEnrolledRequest(MTDPrimaryAgent, fakeRequestWithActiveSession)
+        val authorisedAndEnrolledRequest =
+          defaultAuthorisedAndEnrolledRequest(MTDPrimaryAgent, fakeRequestWithActiveSession)
         when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
           .thenReturn(Future.successful(invalidIncomeSourceData))
 
@@ -102,8 +106,8 @@ class IncomeSourceRetrievalActionSpec extends AuthActionsSpecHelper {
           authorisedAndEnrolledRequest,
           defaultAsync
         )
-            status(result) shouldBe INTERNAL_SERVER_ERROR
-            contentAsString(result) shouldBe "ERROR PAGE"
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        contentAsString(result) shouldBe "ERROR PAGE"
 
       }
     }

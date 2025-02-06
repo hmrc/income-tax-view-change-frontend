@@ -22,10 +22,10 @@ import play.api.libs.json._
 import scala.math.BigDecimal.RoundingMode
 
 case class ClaimToAdjustPoaRequest(
-  nino: String,
-  taxYear: String,
-  amount: BigDecimal,
-  poaAdjustmentReason: SelectYourReason)
+    nino:                String,
+    taxYear:             String,
+    amount:              BigDecimal,
+    poaAdjustmentReason: SelectYourReason)
 
 object ClaimToAdjustPoaRequest {
 
@@ -40,5 +40,5 @@ object ClaimToAdjustPoaRequest {
       (__ \ "taxYear").write[String] and
       (__ \ "amount").write[BigDecimal](currencyWrites) and
       (__ \ "poaAdjustmentReason").write[SelectYourReason]
-    )(unlift(ClaimToAdjustPoaRequest.unapply))
+  )(unlift(ClaimToAdjustPoaRequest.unapply))
 }

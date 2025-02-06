@@ -31,43 +31,47 @@ import views.html.incomeSources.YouCannotGoBackError
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReportingMethodSetBackErrorController @Inject()(val authActions: AuthActions,
-                                                      val cannotGoBackError: YouCannotGoBackError,
-                                                      val itvcErrorHandler: ItvcErrorHandler,
-                                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                                     (implicit val appConfig: FrontendAppConfig,
-                                                      mcc: MessagesControllerComponents,
-                                                      val ec: ExecutionContext,
-                                                      val sessionService: SessionService) extends FrontendController(mcc) with I18nSupport with JourneyChecker {
+class ReportingMethodSetBackErrorController @Inject() (
+    val authActions:           AuthActions,
+    val cannotGoBackError:     YouCannotGoBackError,
+    val itvcErrorHandler:      ItvcErrorHandler,
+    val itvcErrorHandlerAgent: AgentItvcErrorHandler
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    mcc:                    MessagesControllerComponents,
+    val ec:                 ExecutionContext,
+    val sessionService:     SessionService)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with JourneyChecker {
 
-
-  def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = CannotGoBackPage) { _ =>
-    val subheadingContent = getSubheadingContent(incomeSourceType)
-    Future.successful(Ok(cannotGoBackError(isAgent, subheadingContent)))
-  }
+  def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] =
+    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = CannotGoBackPage) { _ =>
+      val subheadingContent = getSubheadingContent(incomeSourceType)
+      Future.successful(Ok(cannotGoBackError(isAgent, subheadingContent)))
+    }
 
   def getSubheadingContent(incomeSourceType: IncomeSourceType)(implicit request: Request[_]): String = {
     incomeSourceType match {
-      case SelfEmployment => messagesApi.preferred(request)("cannotGoBack.soleTraderAdded")
-      case UkProperty => messagesApi.preferred(request)("cannotGoBack.ukPropertyAdded")
+      case SelfEmployment  => messagesApi.preferred(request)("cannotGoBack.soleTraderAdded")
+      case UkProperty      => messagesApi.preferred(request)("cannotGoBack.ukPropertyAdded")
       case ForeignProperty => messagesApi.preferred(request)("cannotGoBack.foreignPropertyAdded")
     }
   }
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit user =>
       handleRequest(
         isAgent = false,
         incomeSourceType = incomeSourceType
       )
-  }
+    }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
-    implicit mtdItUser =>
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    authActions.asMTDAgentWithConfirmedClient.async { implicit mtdItUser =>
       handleRequest(
         isAgent = true,
         incomeSourceType = incomeSourceType
       )
-  }
+    }
 }

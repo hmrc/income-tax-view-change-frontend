@@ -33,19 +33,29 @@ import views.html.optIn.OptInCompletedView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class OptInCompletedController @Inject()(val view: OptInCompletedView,
-                                         val optInService: OptInService,
-                                         val authActions: AuthActions,
-                                         val itvcErrorHandler: ItvcErrorHandler,
-                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                        (implicit val appConfig: FrontendAppConfig,
-                                         mcc: MessagesControllerComponents,
-                                         val ec: ExecutionContext)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+class OptInCompletedController @Inject() (
+    val view:                  OptInCompletedView,
+    val optInService:          OptInService,
+    val authActions:           AuthActions,
+    val itvcErrorHandler:      ItvcErrorHandler,
+    val itvcErrorHandlerAgent: AgentItvcErrorHandler
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    mcc:                    MessagesControllerComponents,
+    val ec:                 ExecutionContext)
+    extends FrontendController(mcc)
+    with FeatureSwitching
+    with I18nSupport {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+  private def withRecover(
+      isAgent: Boolean
+    )(
+      code: => Future[Result]
+    )(
+      implicit mtdItUser: MtdItUser[_]
+    ): Future[Result] = {
     code.recover {
       case ex: Exception =>
         Logger("application").error(s"request failed :: $ex")
@@ -54,14 +64,14 @@ class OptInCompletedController @Inject()(val view: OptInCompletedView,
   }
 
   def show(isAgent: Boolean = false): Action[AnyContent] =
-    authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-      implicit user =>
-        withRecover(isAgent) {
-          for {
-            proposition: OptInProposition <- optInService.fetchOptInProposition()
-            intent <- optInService.fetchSavedChosenTaxYear()
-          } yield {
-            intent.map { optInTaxYear =>
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+      withRecover(isAgent) {
+        for {
+          proposition: OptInProposition <- optInService.fetchOptInProposition()
+          intent <- optInService.fetchSavedChosenTaxYear()
+        } yield {
+          intent
+            .map { optInTaxYear =>
               val model =
                 OptInCompletedViewModel(
                   isAgent = isAgent,
@@ -72,9 +82,10 @@ class OptInCompletedController @Inject()(val view: OptInCompletedView,
                   annualWithFollowingYearMandated = proposition.annualWithFollowingYearMandated()
                 )
               Ok(view(model))
-            }.getOrElse(errorHandler(isAgent).showInternalServerError())
-          }
+            }
+            .getOrElse(errorHandler(isAgent).showInternalServerError())
         }
+      }
     }
 
 }

@@ -30,17 +30,21 @@ import java.time.LocalDate
 
 class HomeAuditSpec extends AnyWordSpecLike with Matchers {
 
-  val transactionName: String = "itsa-home-page"
-  val auditType: String = "ItsaHomePage"
-  lazy val fixedDate : LocalDate = LocalDate.of(2022, 1, 7)
+  val transactionName: String    = "itsa-home-page"
+  val auditType:       String    = "ItsaHomePage"
+  lazy val fixedDate:  LocalDate = LocalDate.of(2022, 1, 7)
 
-  def homeAuditFull(userType: Option[AffinityGroup] = Some(Agent), agentReferenceNumber: Option[String] = Some("agentReferenceNumber"),
-                    nextPaymentOrOverdue: Either[(LocalDate, Boolean), Int],
-                    nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int]): HomeAudit = HomeAudit(
-    defaultMTDITUser(userType, IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil)),
-    nextPaymentOrOverdue = Some(nextPaymentOrOverdue),
-    nextUpdateOrOverdue = nextUpdateOrOverdue
-  )
+  def homeAuditFull(
+      userType:             Option[AffinityGroup] = Some(Agent),
+      agentReferenceNumber: Option[String] = Some("agentReferenceNumber"),
+      nextPaymentOrOverdue: Either[(LocalDate, Boolean), Int],
+      nextUpdateOrOverdue:  Either[(LocalDate, Boolean), Int]
+    ): HomeAudit =
+    HomeAudit(
+      defaultMTDITUser(userType, IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil)),
+      nextPaymentOrOverdue = Some(nextPaymentOrOverdue),
+      nextUpdateOrOverdue = nextUpdateOrOverdue
+    )
 
   val homeAuditMin: HomeAudit = HomeAudit(
     getMinimalMTDITUser(None, IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil)),
@@ -73,7 +77,7 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
             nextUpdateOrOverdue = Right(2)
           ).detail mustBe commonAuditDetails(Agent) ++ Json.obj(
             "overduePayments" -> 2,
-            "overdueUpdates" -> 2
+            "overdueUpdates"  -> 2
           )
         }
         "there is are payments and updates due which are not overdue" in {
@@ -83,14 +87,14 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
             nextUpdateOrOverdue = Left(fixedDate -> false)
           ).detail mustBe commonAuditDetails(Individual) ++ Json.obj(
             "nextPaymentDeadline" -> fixedDate.toString,
-            "nextUpdateDeadline" -> fixedDate.toString
+            "nextUpdateDeadline"  -> fixedDate.toString
           )
         }
       }
       "the home audit has minimal details" in {
         homeAuditMin.detail mustBe Json.obj(
-          "nino" -> testNino,
-          "mtditid" -> testMtditid,
+          "nino"           -> testNino,
+          "mtditid"        -> testMtditid,
           "overdueUpdates" -> 2
         )
       }

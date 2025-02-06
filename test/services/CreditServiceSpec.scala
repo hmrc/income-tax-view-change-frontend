@@ -34,11 +34,14 @@ import scala.concurrent.Future
 
 class CreditServiceSpec extends TestSupport {
 
-  implicit val mtdItUser: MtdItUser[_] = defaultMTDITUser(Some(Individual), businessesAndPropertyIncome.copy(yearOfMigration = Some(s"${dateService.getCurrentTaxYearEnd - 1 }")))
+  implicit val mtdItUser: MtdItUser[_] = defaultMTDITUser(
+    Some(Individual),
+    businessesAndPropertyIncome.copy(yearOfMigration = Some(s"${dateService.getCurrentTaxYearEnd - 1}"))
+  )
 
   val mockFinancialDetailsConnector = mock(classOf[FinancialDetailsConnector])
 
- class TestCreditService extends CreditService(mockFinancialDetailsConnector, dateService)
+  class TestCreditService extends CreditService(mockFinancialDetailsConnector, dateService)
 
   //Remove once deprecated method removed
   "CreditService.getAllCredits method" should {
@@ -46,21 +49,37 @@ class CreditServiceSpec extends TestSupport {
 
       "a successful response is received in all tax year calls" in {
 
-        when(mockFinancialDetailsConnector.getCreditsAndRefund(ArgumentMatchers.eq(TaxYear.forYearEnd(2023)), any())(any(), any()))
-          .thenReturn(Future.successful(Right(
-            ANewCreditAndRefundModel()
-              .withFirstRefund(10)
-              .withSecondRefund(20)
-              .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
-              .get())))
+        when(
+          mockFinancialDetailsConnector
+            .getCreditsAndRefund(ArgumentMatchers.eq(TaxYear.forYearEnd(2023)), any())(any(), any())
+        )
+          .thenReturn(
+            Future.successful(
+              Right(
+                ANewCreditAndRefundModel()
+                  .withFirstRefund(10)
+                  .withSecondRefund(20)
+                  .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
+                  .get()
+              )
+            )
+          )
 
-        when(mockFinancialDetailsConnector.getCreditsAndRefund(ArgumentMatchers.eq(TaxYear.forYearEnd(2024)), any())(any(), any()))
-          .thenReturn(Future.successful(Right(
-            ANewCreditAndRefundModel()
-              .withFirstRefund(10)
-              .withSecondRefund(20)
-              .withBalancingChargeCredit(LocalDate.parse("2023-08-16"), 200.0)
-              .get())))
+        when(
+          mockFinancialDetailsConnector
+            .getCreditsAndRefund(ArgumentMatchers.eq(TaxYear.forYearEnd(2024)), any())(any(), any())
+        )
+          .thenReturn(
+            Future.successful(
+              Right(
+                ANewCreditAndRefundModel()
+                  .withFirstRefund(10)
+                  .withSecondRefund(20)
+                  .withBalancingChargeCredit(LocalDate.parse("2023-08-16"), 200.0)
+                  .get()
+              )
+            )
+          )
 
         new TestCreditService().getAllCredits(mtdItUser, headerCarrier).futureValue shouldBe ANewCreditAndRefundModel()
           .withFirstRefund(10)
@@ -89,16 +108,29 @@ class CreditServiceSpec extends TestSupport {
 
       "a successful response is received in all tax year calls" in {
 
-        when(mockFinancialDetailsConnector.getCreditsAndRefund(ArgumentMatchers.eq(TaxYear.forYearEnd(2023)), ArgumentMatchers.eq(TaxYear.forYearEnd(2024)), any())(any(), any()))
-          .thenReturn(Future.successful(Right(
-            ANewCreditAndRefundModel()
-              .withFirstRefund(10)
-              .withSecondRefund(20)
-              .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
-              .withBalancingChargeCredit(LocalDate.parse("2023-08-16"), 200.0)
-              .get())))
+        when(
+          mockFinancialDetailsConnector.getCreditsAndRefund(
+            ArgumentMatchers.eq(TaxYear.forYearEnd(2023)),
+            ArgumentMatchers.eq(TaxYear.forYearEnd(2024)),
+            any()
+          )(any(), any())
+        )
+          .thenReturn(
+            Future.successful(
+              Right(
+                ANewCreditAndRefundModel()
+                  .withFirstRefund(10)
+                  .withSecondRefund(20)
+                  .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
+                  .withBalancingChargeCredit(LocalDate.parse("2023-08-16"), 200.0)
+                  .get()
+              )
+            )
+          )
 
-        new TestCreditService().getAllCreditsV2(mtdItUser, headerCarrier).futureValue shouldBe ANewCreditAndRefundModel()
+        new TestCreditService()
+          .getAllCreditsV2(mtdItUser, headerCarrier)
+          .futureValue shouldBe ANewCreditAndRefundModel()
           .withFirstRefund(10)
           .withSecondRefund(20)
           .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)

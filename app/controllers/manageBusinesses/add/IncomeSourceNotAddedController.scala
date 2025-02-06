@@ -30,47 +30,53 @@ import views.html.manageBusinesses.add.IncomeSourceNotAddedError
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceNotAddedController @Inject()(val authActions: AuthActions,
-                                               val businessDetailsService: CreateBusinessDetailsService,
-                                               val incomeSourceNotAddedError: IncomeSourceNotAddedError,
-                                               val itvcErrorHandler: ItvcErrorHandler,
-                                               val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                              (implicit val appConfig: FrontendAppConfig,
-                                               mcc: MessagesControllerComponents,
-                                               val ec: ExecutionContext) extends FrontendController(mcc)
-  with IncomeSourcesUtils with I18nSupport{
+class IncomeSourceNotAddedController @Inject() (
+    val authActions:               AuthActions,
+    val businessDetailsService:    CreateBusinessDetailsService,
+    val incomeSourceNotAddedError: IncomeSourceNotAddedError,
+    val itvcErrorHandler:          ItvcErrorHandler,
+    val itvcErrorHandlerAgent:     AgentItvcErrorHandler
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    mcc:                    MessagesControllerComponents,
+    val ec:                 ExecutionContext)
+    extends FrontendController(mcc)
+    with IncomeSourcesUtils
+    with I18nSupport {
 
+  def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] =
+    withIncomeSourcesFS {
 
-  def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
+      val incomeSourceRedirect: Call =
+        if (isAgent)
+          controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent()
+        else
+          controllers.manageBusinesses.add.routes.AddIncomeSourceController.show()
 
-    val incomeSourceRedirect: Call =
-      if (isAgent)
-        controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent()
-      else
-        controllers.manageBusinesses.add.routes.AddIncomeSourceController.show()
+      Future.successful(
+        Ok(
+          incomeSourceNotAddedError(
+            isAgent,
+            incomeSourceType = incomeSourceType,
+            continueAction = incomeSourceRedirect
+          )
+        )
+      )
+    }
 
-    Future.successful(Ok(incomeSourceNotAddedError(
-      isAgent,
-      incomeSourceType = incomeSourceType,
-      continueAction = incomeSourceRedirect
-    )))
-  }
-
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit user =>
       handleRequest(
         isAgent = false,
         incomeSourceType = incomeSourceType
       )
-  }
+    }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
-    implicit mtdItUser =>
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    authActions.asMTDAgentWithConfirmedClient.async { implicit mtdItUser =>
       handleRequest(
         isAgent = true,
         incomeSourceType = incomeSourceType
       )
-  }
+    }
 }
-

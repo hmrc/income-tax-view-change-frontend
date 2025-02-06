@@ -44,89 +44,107 @@ class BeforeYouStartControllerISpec extends ControllerISpecHelper {
   }
 
   def getPath(mtdRole: MTDUserRole): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     pathStart + "/opt-in/start"
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    val isAgent = mtdUserRole != MTDIndividual
-    val path = getPath(mtdUserRole)
-    val additionalCookies = getAdditionalCookies(mtdUserRole)
-    s"GET $path" when {
-      s"a user is a $mtdUserRole" that {
-        "is authenticated, with a valid enrolment" should {
-          "render the before you start page with a button" that {
-            "Redirects to choose tax year page" in {
-              disable(NavBarFs)
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      val isAgent           = mtdUserRole != MTDIndividual
+      val path              = getPath(mtdUserRole)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            "render the before you start page with a button" that {
+              "Redirects to choose tax year page" in {
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-              setupOptInSessionData(currentTaxYear, ITSAStatus.Annual, ITSAStatus.Annual)
+                setupOptInSessionData(currentTaxYear, ITSAStatus.Annual, ITSAStatus.Annual)
 
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-              result should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, "optIn.beforeYouStart.heading"),
-                elementTextByID("heading")(headingText),
-                elementTextByID("desc1")(desc1),
-                elementTextByID("desc2")(desc2),
-                elementTextByID("reportQuarterly")(reportQuarterlyText),
-                elementTextByID("voluntaryStatus")(voluntaryStatus),
-                elementTextByID("voluntaryStatus-text")(voluntaryStatusText),
-                elementAttributeBySelector("#start-button", "href")(routes.ChooseYearController.show(isAgent).url)
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "optIn.beforeYouStart.heading"),
+                  elementTextByID("heading")(headingText),
+                  elementTextByID("desc1")(desc1),
+                  elementTextByID("desc2")(desc2),
+                  elementTextByID("reportQuarterly")(reportQuarterlyText),
+                  elementTextByID("voluntaryStatus")(voluntaryStatus),
+                  elementTextByID("voluntaryStatus-text")(voluntaryStatusText),
+                  elementAttributeBySelector("#start-button", "href")(routes.ChooseYearController.show(isAgent).url)
+                )
+              }
 
-              )
-            }
+              "Redirects to confirm tax year page" in {
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-            "Redirects to confirm tax year page" in {
-              disable(NavBarFs)
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+                setupOptInSessionData(currentTaxYear, ITSAStatus.Annual, ITSAStatus.Voluntary)
 
-              setupOptInSessionData(currentTaxYear, ITSAStatus.Annual, ITSAStatus.Voluntary)
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-              result should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, "optIn.beforeYouStart.heading"),
-                elementTextByID("heading")(headingText),
-                elementTextByID("desc1")(desc1),
-                elementTextByID("desc2")(desc2),
-                elementTextByID("reportQuarterly")(reportQuarterlyText),
-                elementTextByID("voluntaryStatus")(voluntaryStatus),
-                elementTextByID("voluntaryStatus-text")(voluntaryStatusText),
-                elementAttributeBySelector("#start-button", "href")(routes.SingleTaxYearOptInWarningController.show(isAgent).url)
-              )
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "optIn.beforeYouStart.heading"),
+                  elementTextByID("heading")(headingText),
+                  elementTextByID("desc1")(desc1),
+                  elementTextByID("desc2")(desc2),
+                  elementTextByID("reportQuarterly")(reportQuarterlyText),
+                  elementTextByID("voluntaryStatus")(voluntaryStatus),
+                  elementTextByID("voluntaryStatus-text")(voluntaryStatusText),
+                  elementAttributeBySelector("#start-button", "href")(
+                    routes.SingleTaxYearOptInWarningController.show(isAgent).url
+                  )
+                )
+              }
             }
           }
+          testAuthFailures(path, mtdUserRole)
         }
-        testAuthFailures(path, mtdUserRole)
       }
-    }
   }
 
-
-
-  private def setupOptInSessionData(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value, nextYearStatus: ITSAStatus.Value): Unit = {
+  private def setupOptInSessionData(
+      currentTaxYear:    TaxYear,
+      currentYearStatus: ITSAStatus.Value,
+      nextYearStatus:    ITSAStatus.Value
+    ): Unit = {
     repository.set(
-      UIJourneySessionData(testSessionId,
+      UIJourneySessionData(
+        testSessionId,
         Opt(OptInJourney).toString,
-        optInSessionData =
-          Some(OptInSessionData(
-            Some(OptInContextData(
-              currentTaxYear.toString, statusToString(currentYearStatus), statusToString(nextYearStatus))), None))))
+        optInSessionData = Some(
+          OptInSessionData(
+            Some(
+              OptInContextData(
+                currentTaxYear.toString,
+                statusToString(currentYearStatus),
+                statusToString(nextYearStatus)
+              )
+            ),
+            None
+          )
+        )
+      )
+    )
   }
 }
 
 object BeforeYouStartControllerISpec {
   val headingText = "Before you start"
-  val desc1 = "Reporting quarterly allows HMRC to give you a more precise forecast of how much tax you owe to help you budget more accurately."
-  val desc2 = "To report quarterly you will need compatible software. There are both paid and free options for you or your agent to choose from."
+  val desc1 =
+    "Reporting quarterly allows HMRC to give you a more precise forecast of how much tax you owe to help you budget more accurately."
+  val desc2 =
+    "To report quarterly you will need compatible software. There are both paid and free options for you or your agent to choose from."
   val reportQuarterlyText = "Reporting quarterly"
-  val voluntaryStatus = "Your voluntary status"
-  val voluntaryStatusText = "As you would be voluntarily opting in to reporting quarterly, you can decide to opt out and return to reporting annually at any time."
+  val voluntaryStatus     = "Your voluntary status"
+  val voluntaryStatusText =
+    "As you would be voluntarily opting in to reporting quarterly, you can decide to opt out and return to reporting annually at any time."
 }

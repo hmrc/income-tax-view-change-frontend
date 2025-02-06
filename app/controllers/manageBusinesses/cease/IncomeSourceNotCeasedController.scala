@@ -28,24 +28,33 @@ import views.html.errorPages.templates.ErrorTemplateWithLink
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceNotCeasedController @Inject()(val authActions: AuthActions,
-                                                val errorTemplate: ErrorTemplateWithLink)
-                                               (implicit val appConfig: FrontendAppConfig,
-                                                val mcc: MessagesControllerComponents,
-                                                val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport  {
+class IncomeSourceNotCeasedController @Inject() (
+    val authActions:   AuthActions,
+    val errorTemplate: ErrorTemplateWithLink
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    val mcc:                MessagesControllerComponents,
+    val ec:                 ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport {
 
-  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
+  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
       handleRequest(isAgent, incomeSourceType)
-  }
+    }
 
-  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
+  private def handleRequest(
+      isAgent:          Boolean,
+      incomeSourceType: IncomeSourceType
+    )(
+      implicit user: MtdItUser[_]
+    ): Future[Result] = {
     val pageTitle = messagesApi.preferred(user)("standardError.heading")
-    val heading = messagesApi.preferred(user)("standardError.heading")
-    val message = messagesApi.preferred(user)(s"incomeSources.cease.error.${incomeSourceType.key}.notCeased.text")
-    val linkText = messagesApi.preferred(user)("incomeSources.cease.error.notCeased.link.text")
-    val linkUrl = if (isAgent) routes.CeaseIncomeSourceController.showAgent().url else routes.CeaseIncomeSourceController.show().url
+    val heading   = messagesApi.preferred(user)("standardError.heading")
+    val message   = messagesApi.preferred(user)(s"incomeSources.cease.error.${incomeSourceType.key}.notCeased.text")
+    val linkText  = messagesApi.preferred(user)("incomeSources.cease.error.notCeased.link.text")
+    val linkUrl =
+      if (isAgent) routes.CeaseIncomeSourceController.showAgent().url else routes.CeaseIncomeSourceController.show().url
     val linkPrefix = Some(messagesApi.preferred(user)("incomeSources.cease.error.notCeased.link.prefix"))
 
     Future.successful {

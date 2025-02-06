@@ -43,17 +43,17 @@ class SingleTaxYearWarningViewSpec extends TestSupport {
   def bullet(i: Int): String = s"#dropdown-inset-text-bullet-$i"
 
   object Selectors {
-    val title = "single-tax-year-warning-heading"
-    val h1 = "single-tax-year-warning-heading"
-    val p1 = "single-tax-year-warning-paragraph"
-    val h2VolSubheading = "voluntary-reporting-subheading"
-    val volInsetParagraph = "voluntary-reporting-inset"
-    val volDescParagraph = "voluntary-reporting-description"
-    val dropDown = "#main-content > div > div > div > details > summary > span"
+    val title              = "single-tax-year-warning-heading"
+    val h1                 = "single-tax-year-warning-heading"
+    val p1                 = "single-tax-year-warning-paragraph"
+    val h2VolSubheading    = "voluntary-reporting-subheading"
+    val volInsetParagraph  = "voluntary-reporting-inset"
+    val volDescParagraph   = "voluntary-reporting-description"
+    val dropDown           = "#main-content > div > div > div > details > summary > span"
     val dropDownParagraph1 = "dropdown-inset-text-first-paragraph"
     val dropDownParagraph2 = "dropdown-inset-text-second-paragraph"
-    val yesHint = "still-opt-in-radio-button-yes-item-hint"
-    val noHint = "still-opt-in-radio-button-no-item-hint"
+    val yesHint            = "still-opt-in-radio-button-yes-item-hint"
+    val noHint             = "still-opt-in-radio-button-no-item-hint"
   }
 
   "SingleTaxYearWarningView" when {
@@ -86,15 +86,15 @@ class SingleTaxYearWarningViewSpec extends TestSupport {
 
         val expectedContent: Seq[(String, String)] =
           Seq(
-            Selectors.h1 -> h1Content,
-            Selectors.p1 -> p1Content,
-            Selectors.h2VolSubheading -> h2VolSubheadingContent,
-            Selectors.volInsetParagraph -> volInsetParagraphContent,
-            Selectors.volDescParagraph -> volDescParagraphContent,
+            Selectors.h1                 -> h1Content,
+            Selectors.p1                 -> p1Content,
+            Selectors.h2VolSubheading    -> h2VolSubheadingContent,
+            Selectors.volInsetParagraph  -> volInsetParagraphContent,
+            Selectors.volDescParagraph   -> volDescParagraphContent,
             Selectors.dropDownParagraph1 -> dropDownParagraph1,
             Selectors.dropDownParagraph2 -> dropDownParagraph2,
-            Selectors.yesHint -> yesHintContent,
-            Selectors.noHint -> noHintContent
+            Selectors.yesHint            -> yesHintContent,
+            Selectors.noHint             -> noHintContent
           )
 
         pageDocument.title() shouldBe titleContentAgent
@@ -136,15 +136,15 @@ class SingleTaxYearWarningViewSpec extends TestSupport {
 
         val expectedContent: Seq[(String, String)] =
           Seq(
-            Selectors.h1 -> h1Content,
-            Selectors.p1 -> p1Content,
-            Selectors.h2VolSubheading -> h2VolSubheadingContent,
-            Selectors.volInsetParagraph -> volInsetParagraphContent,
-            Selectors.volDescParagraph -> volDescParagraphContent,
+            Selectors.h1                 -> h1Content,
+            Selectors.p1                 -> p1Content,
+            Selectors.h2VolSubheading    -> h2VolSubheadingContent,
+            Selectors.volInsetParagraph  -> volInsetParagraphContent,
+            Selectors.volDescParagraph   -> volDescParagraphContent,
             Selectors.dropDownParagraph1 -> dropDownParagraph1,
             Selectors.dropDownParagraph2 -> dropDownParagraph2,
-            Selectors.yesHint -> yesHintContent,
-            Selectors.noHint -> noHintContent
+            Selectors.yesHint            -> yesHintContent,
+            Selectors.noHint             -> noHintContent
           )
 
         pageDocument.title() shouldBe titleContent

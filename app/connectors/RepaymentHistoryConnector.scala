@@ -28,9 +28,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RepaymentHistoryConnector @Inject()(val http: HttpClientV2,
-                                          val appConfig: FrontendAppConfig
-                                           )(implicit val ec: ExecutionContext) extends RawResponseReads {
+class RepaymentHistoryConnector @Inject() (
+    val http:      HttpClientV2,
+    val appConfig: FrontendAppConfig
+  )(
+    implicit val ec: ExecutionContext)
+    extends RawResponseReads {
 
   def getAllRepaymentHistoryUrl(nino: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/repayments/$nino"
@@ -40,20 +43,27 @@ class RepaymentHistoryConnector @Inject()(val http: HttpClientV2,
     s"${appConfig.itvcProtectedService}/income-tax-view-change/repayments/$nino/repaymentId/$repaymentId"
   }
 
-  def getRepaymentHistoryByRepaymentId(nino: Nino, repaymentId: String)
-                                      (implicit headerCarrier: HeaderCarrier): Future[RepaymentHistoryResponseModel] = {
-    http.get(url"${getRepaymentHistoryByIdUrl(nino.value, repaymentId)}")
+  def getRepaymentHistoryByRepaymentId(
+      nino:        Nino,
+      repaymentId: String
+    )(
+      implicit headerCarrier: HeaderCarrier
+    ): Future[RepaymentHistoryResponseModel] = {
+    http
+      .get(url"${getRepaymentHistoryByIdUrl(nino.value, repaymentId)}")
       .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
       .execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
-          response.json.validate[RepaymentHistoryModel].fold(
-            invalid => {
-              Logger("application").error(s"Json validation error parsing repayment response, error $invalid")
-              RepaymentHistoryErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing repayment response")
-            },
-            valid => valid
-          )
+          response.json
+            .validate[RepaymentHistoryModel]
+            .fold(
+              invalid => {
+                Logger("application").error(s"Json validation error parsing repayment response, error $invalid")
+                RepaymentHistoryErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing repayment response")
+              },
+              valid => valid
+            )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
             Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
@@ -65,22 +75,27 @@ class RepaymentHistoryConnector @Inject()(val http: HttpClientV2,
     }
   }
 
-  def getRepaymentHistoryByNino(nino: Nino)
-                               (implicit headerCarrier: HeaderCarrier): Future[RepaymentHistoryResponseModel] = {
+  def getRepaymentHistoryByNino(
+      nino: Nino
+    )(
+      implicit headerCarrier: HeaderCarrier
+    ): Future[RepaymentHistoryResponseModel] = {
 
-
-    http.get(url"${getAllRepaymentHistoryUrl(nino.value)}")
+    http
+      .get(url"${getAllRepaymentHistoryUrl(nino.value)}")
       .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
       .execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
-          response.json.validate[RepaymentHistoryModel].fold(
-            invalid => {
-              Logger("application").error(s"Json validation error parsing repayment response, error $invalid")
-              RepaymentHistoryErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing repayment response")
-            },
-            valid => valid
-          )
+          response.json
+            .validate[RepaymentHistoryModel]
+            .fold(
+              invalid => {
+                Logger("application").error(s"Json validation error parsing repayment response, error $invalid")
+                RepaymentHistoryErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing repayment response")
+              },
+              valid => valid
+            )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
             Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")

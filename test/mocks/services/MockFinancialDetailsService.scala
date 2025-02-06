@@ -34,22 +34,37 @@ trait MockFinancialDetailsService extends UnitSpec with BeforeAndAfterEach {
 
   lazy val mockFinancialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
 
-
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockFinancialDetailsService)
   }
 
   def setupMockGetFinancialDetails(taxYear: Int)(response: FinancialDetailsResponseModel): Unit =
-    when(mockFinancialDetailsService.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(testNino))
-    (any(), any())).thenReturn(Future.successful(response))
+    when(
+      mockFinancialDetailsService.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(testNino))(
+        any(),
+        any()
+      )
+    ).thenReturn(Future.successful(response))
 
-  def setupMockGetFinancialDetailsWithTaxYearAndNino(taxYear: Int, nino: String)(response: FinancialDetailsResponseModel): Unit = {
-    when(mockFinancialDetailsService.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(nino))
-    (any(), any())).thenReturn(Future.successful(response))
+  def setupMockGetFinancialDetailsWithTaxYearAndNino(
+      taxYear: Int,
+      nino:    String
+    )(
+      response: FinancialDetailsResponseModel
+    ): Unit = {
+    when(
+      mockFinancialDetailsService.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(nino))(
+        any(),
+        any()
+      )
+    ).thenReturn(Future.successful(response))
   }
 
-  def mockFinancialDetailsSuccess(financialDetailsModelResponse: FinancialDetailsModel = financialDetailsModel(), taxYear: Int = testTaxYear): Unit =
+  def mockFinancialDetailsSuccess(
+      financialDetailsModelResponse: FinancialDetailsModel = financialDetailsModel(),
+      taxYear:                       Int = testTaxYear
+    ): Unit =
     setupMockGetFinancialDetails(taxYear)(financialDetailsModelResponse)
 
   def mockFinancialDetailsFailed(): Unit =
@@ -59,11 +74,19 @@ trait MockFinancialDetailsService extends UnitSpec with BeforeAndAfterEach {
     setupMockGetFinancialDetails(testTaxYear)(testFinancialDetailsNotFoundErrorModel)
 
   def mockGetAllFinancialDetails(response: List[(Int, FinancialDetailsResponseModel)]): Unit = {
-    when(mockFinancialDetailsService.getAllFinancialDetails(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
+    when(
+      mockFinancialDetailsService.getAllFinancialDetails(
+        ArgumentMatchers.any(),
+        ArgumentMatchers.any(),
+        ArgumentMatchers.any()
+      )
+    )
       .thenReturn(Future.successful(response))
   }
 
-  def mockGetAllUnpaidFinancialDetails(response: FinancialDetailsModel = financialDetailsDueInMoreThan30Days()): Unit = {
+  def mockGetAllUnpaidFinancialDetails(
+      response: FinancialDetailsModel = financialDetailsDueInMoreThan30Days()
+    ): Unit = {
     when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
       .thenReturn(Future.successful(List(response)))
   }

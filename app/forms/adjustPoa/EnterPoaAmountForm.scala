@@ -22,16 +22,15 @@ import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.i18n.Messages
 
-
 case class EnterPoaAmountForm(amount: BigDecimal)
 
 object EnterPoaAmountForm extends Mappings {
 
   val amount: String = "poa-amount"
 
-  private val emptyErrorMessageKey = "claimToAdjustPoa.enterPoaAmount.emptyError"
-  private val sameErrorMessageKey = "claimToAdjustPoa.enterPoaAmount.sameError"
-  private val higherErrorMessageKey = "claimToAdjustPoa.enterPoaAmount.higherError"
+  private val emptyErrorMessageKey   = "claimToAdjustPoa.enterPoaAmount.emptyError"
+  private val sameErrorMessageKey    = "claimToAdjustPoa.enterPoaAmount.sameError"
+  private val higherErrorMessageKey  = "claimToAdjustPoa.enterPoaAmount.higherError"
   private val invalidErrorMessageKey = "claimToAdjustPoa.enterPoaAmount.invalidError"
 
   val form: Form[EnterPoaAmountForm] = Form(
@@ -40,14 +39,18 @@ object EnterPoaAmountForm extends Mappings {
     )(EnterPoaAmountForm.apply)(EnterPoaAmountForm.unapply)
   )
 
-
-  def checkValueConstraints(form: Form[EnterPoaAmountForm], totalAmount: BigDecimal, relevantAmount: BigDecimal)
-                           (implicit messages: Messages): Form[EnterPoaAmountForm] = {
-    if (form.hasErrors) form else {
+  def checkValueConstraints(
+      form:           Form[EnterPoaAmountForm],
+      totalAmount:    BigDecimal,
+      relevantAmount: BigDecimal
+    )(
+      implicit messages: Messages
+    ): Form[EnterPoaAmountForm] = {
+    if (form.hasErrors) form
+    else {
       if (form.get.amount == totalAmount) {
         form.withError(EnterPoaAmountForm.amount, messages(sameErrorMessageKey, totalAmount.toCurrencyString))
-      }
-      else if (form.get.amount >= relevantAmount) {
+      } else if (form.get.amount >= relevantAmount) {
         form.withError(EnterPoaAmountForm.amount, messages(higherErrorMessageKey, relevantAmount.toCurrencyString))
       } else form
     }

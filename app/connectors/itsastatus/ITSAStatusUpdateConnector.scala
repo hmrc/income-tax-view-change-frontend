@@ -30,26 +30,42 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ITSAStatusUpdateConnector @Inject()(val httpClient: HttpClientV2, val appConfig: FrontendAppConfig)
-                                         (implicit val ec: ExecutionContext) extends RawResponseReads {
+class ITSAStatusUpdateConnector @Inject() (
+    val httpClient: HttpClientV2,
+    val appConfig:  FrontendAppConfig
+  )(
+    implicit val ec: ExecutionContext)
+    extends RawResponseReads {
 
   private val log = Logger("application")
 
-  def optOut(taxYear: TaxYear, taxableEntityId: String)
-            (implicit headerCarrier: HeaderCarrier): Future[ITSAStatusUpdateResponse] = {
+  def optOut(
+      taxYear:         TaxYear,
+      taxableEntityId: String
+    )(
+      implicit headerCarrier: HeaderCarrier
+    ): Future[ITSAStatusUpdateResponse] = {
     makeITSAStatusUpdate(taxYear, taxableEntityId, optOutUpdateReason)
   }
 
-  def optIn(taxYear: TaxYear, taxableEntityId: String)
-           (implicit headerCarrier: HeaderCarrier): Future[ITSAStatusUpdateResponse] = {
+  def optIn(
+      taxYear:         TaxYear,
+      taxableEntityId: String
+    )(
+      implicit headerCarrier: HeaderCarrier
+    ): Future[ITSAStatusUpdateResponse] = {
     makeITSAStatusUpdate(taxYear, taxableEntityId, optInUpdateReason)
   }
 
   private def buildRequestUrlWith(taxableEntityId: String): String =
     s"${appConfig.itvcProtectedService}/income-tax-view-change/itsa-status/update/$taxableEntityId"
 
-  private[connectors] def updateITSAStatus(taxableEntityId: String, requestBody: ITSAStatusUpdateRequest)
-                                          (implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
+  private[connectors] def updateITSAStatus(
+      taxableEntityId: String,
+      requestBody:     ITSAStatusUpdateRequest
+    )(
+      implicit headerCarrier: HeaderCarrier
+    ): Future[HttpResponse] = {
 
     httpClient
       .put(url"${buildRequestUrlWith(taxableEntityId)}")
@@ -57,8 +73,13 @@ class ITSAStatusUpdateConnector @Inject()(val httpClient: HttpClientV2, val appC
       .execute[HttpResponse]
   }
 
-  def makeITSAStatusUpdate(taxYear: TaxYear, taxableEntityId: String, updateReason: String)
-                          (implicit headerCarrier: HeaderCarrier): Future[ITSAStatusUpdateResponse] = {
+  def makeITSAStatusUpdate(
+      taxYear:         TaxYear,
+      taxableEntityId: String,
+      updateReason:    String
+    )(
+      implicit headerCarrier: HeaderCarrier
+    ): Future[ITSAStatusUpdateResponse] = {
 
     val body = ITSAStatusUpdateRequest(taxYear = taxYear.shortenTaxYearEnd, updateReason = updateReason)
 
@@ -67,21 +88,23 @@ class ITSAStatusUpdateConnector @Inject()(val httpClient: HttpClientV2, val appC
         response.status match {
           case Status.NO_CONTENT => ITSAStatusUpdateResponseSuccess()
           case _ =>
-            response.json.validate[ITSAStatusUpdateResponseFailure].fold(
-              invalid => {
-                log.error(s"Json validation error parsing itsa-status update response, error $invalid")
-                ITSAStatusUpdateResponseFailure.defaultFailure(s"json response: $invalid")
-              },
-              valid => {
-                val message =
-                  valid.failures.headOption
-                    .map(failure => s"code: ${failure.code}, reason: ${failure.reason}")
-                    .getOrElse("unknown reason")
+            response.json
+              .validate[ITSAStatusUpdateResponseFailure]
+              .fold(
+                invalid => {
+                  log.error(s"Json validation error parsing itsa-status update response, error $invalid")
+                  ITSAStatusUpdateResponseFailure.defaultFailure(s"json response: $invalid")
+                },
+                valid => {
+                  val message =
+                    valid.failures.headOption
+                      .map(failure => s"code: ${failure.code}, reason: ${failure.reason}")
+                      .getOrElse("unknown reason")
 
-                log.error(s"response status: ${response.status}, message: $message")
-                valid
-              }
-            )
+                  log.error(s"response status: ${response.status}, message: $message")
+                  valid
+                }
+              )
         }
       }
   }

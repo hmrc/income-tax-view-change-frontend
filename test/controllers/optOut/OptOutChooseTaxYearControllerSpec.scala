@@ -37,36 +37,43 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAn
 
 import scala.concurrent.Future
 
-class OptOutChooseTaxYearControllerSpec extends MockAuthActions
-  with MockOptOutService with MockOptOutSessionDataRepository {
+class OptOutChooseTaxYearControllerSpec
+    extends MockAuthActions
+    with MockOptOutService
+    with MockOptOutSessionDataRepository {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[OptOutService].toInstance(mockOptOutService),
       api.inject.bind[OptOutSessionDataRepository].toInstance(mockOptOutSessionDataRepository)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[OptOutChooseTaxYearController]
-
 
   val optOutProposition: OptOutProposition = OptOutTestSupport.buildThreeYearOptOutProposition()
 
   val yearEnd = optOutProposition.availableTaxYearsForOptOut(1).endYear
-  val currentTaxYear: TaxYear = TaxYear.forYearEnd(yearEnd)
-  val nextTaxYear: TaxYear = currentTaxYear.nextYear
+  val currentTaxYear:  TaxYear = TaxYear.forYearEnd(yearEnd)
+  val nextTaxYear:     TaxYear = currentTaxYear.nextYear
   val previousTaxYear: TaxYear = currentTaxYear.previousYear
 
   val optOutTaxYear: CurrentOptOutTaxYear = CurrentOptOutTaxYear(ITSAStatus.Voluntary, currentTaxYear)
-  val eligibleTaxYearResponse: Future[Some[OptOutMultiYearViewModel]] = Future.successful(Some(OptOutMultiYearViewModel()))
-  val noEligibleTaxYearResponse: Future[None.type] = Future.successful(None)
-  val optOutYearsOffered: Seq[TaxYear] = Seq(previousTaxYear, currentTaxYear, nextTaxYear)
-  val optOutYearsOfferedFuture: Future[Seq[TaxYear]] = Future.successful(optOutYearsOffered)
+  val eligibleTaxYearResponse: Future[Some[OptOutMultiYearViewModel]] =
+    Future.successful(Some(OptOutMultiYearViewModel()))
+  val noEligibleTaxYearResponse: Future[None.type]    = Future.successful(None)
+  val optOutYearsOffered:        Seq[TaxYear]         = Seq(previousTaxYear, currentTaxYear, nextTaxYear)
+  val optOutYearsOfferedFuture:  Future[Seq[TaxYear]] = Future.successful(optOutYearsOffered)
 
-  val counts: Future[QuarterlyUpdatesCountForTaxYearModel] = Future.successful(QuarterlyUpdatesCountForTaxYearModel(Seq(
-    QuarterlyUpdatesCountForTaxYear(optOutProposition.availableTaxYearsForOptOut.head, 1),
-    QuarterlyUpdatesCountForTaxYear(optOutProposition.availableTaxYearsForOptOut(1), 1),
-    QuarterlyUpdatesCountForTaxYear(optOutProposition.availableTaxYearsForOptOut.last, 0)
-  )))
+  val counts: Future[QuarterlyUpdatesCountForTaxYearModel] = Future.successful(
+    QuarterlyUpdatesCountForTaxYearModel(
+      Seq(
+        QuarterlyUpdatesCountForTaxYear(optOutProposition.availableTaxYearsForOptOut.head, 1),
+        QuarterlyUpdatesCountForTaxYear(optOutProposition.availableTaxYearsForOptOut(1), 1),
+        QuarterlyUpdatesCountForTaxYear(optOutProposition.availableTaxYearsForOptOut.last, 0)
+      )
+    )
+  )
 
   val taxYears: Seq[TaxYear] =
     Seq(TaxYear.forYearEnd(2023), TaxYear.forYearEnd(2024), TaxYear.forYearEnd(2025))
@@ -78,7 +85,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
     val isAgent = mtdRole != MTDIndividual
 
     s"show(isAgent = $isAgent)" when {
-      val action = testController.show(isAgent)
+      val action      = testController.show(isAgent)
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         s"render the choose tax year page" that {
@@ -115,7 +122,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
     }
 
     s"submit(isAgent = $isAgent)" when {
-      val action = testController.submit(isAgent)
+      val action      = testController.submit(isAgent)
       val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         "redirect to review and confirm page" when {
@@ -130,16 +137,20 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
 
             val formData = Map(
               ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> currentTaxYear.toString,
-              ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> ""
+              ConfirmOptOutMultiTaxYearChoiceForm.csrfToken   -> ""
             )
 
-            val result = action(fakeRequest.withFormUrlEncodedBody(
-              formData.toSeq: _*
-            ))
+            val result = action(
+              fakeRequest.withFormUrlEncodedBody(
+                formData.toSeq: _*
+              )
+            )
 
             status(result) shouldBe Status.SEE_OTHER
             val agentPath = if (isAgent) "/agents" else ""
-            redirectLocation(result) shouldBe Some(s"/report-quarterly/income-and-expenses/view${agentPath}/optout/review-confirm-taxyear")
+            redirectLocation(result) shouldBe Some(
+              s"/report-quarterly/income-and-expenses/view${agentPath}/optout/review-confirm-taxyear"
+            )
           }
 
           "previous tax is chosen" in {
@@ -150,16 +161,22 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
             mockSaveIntent(previousTaxYear, Future.successful(true))
             mockRecallOptOutProposition(Future.successful(optOutProposition))
 
-            val formData = Map(ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> previousTaxYear.toString,
-              ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> "")
+            val formData = Map(
+              ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> previousTaxYear.toString,
+              ConfirmOptOutMultiTaxYearChoiceForm.csrfToken   -> ""
+            )
 
-            val result = action(fakeRequest.withFormUrlEncodedBody(
-              formData.toSeq: _*
-            ))
+            val result = action(
+              fakeRequest.withFormUrlEncodedBody(
+                formData.toSeq: _*
+              )
+            )
 
             status(result) shouldBe Status.SEE_OTHER
             val agentPath = if (isAgent) "/agents" else ""
-            redirectLocation(result) shouldBe Some(s"/report-quarterly/income-and-expenses/view${agentPath}/optout/review-confirm-taxyear")
+            redirectLocation(result) shouldBe Some(
+              s"/report-quarterly/income-and-expenses/view${agentPath}/optout/review-confirm-taxyear"
+            )
           }
 
           "next tax is chosen" in {
@@ -170,16 +187,22 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
             mockSaveIntent(nextTaxYear, Future.successful(true))
             mockRecallOptOutProposition(Future.successful(optOutProposition))
 
-            val formData = Map(ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> nextTaxYear.toString,
-              ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> "")
+            val formData = Map(
+              ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> nextTaxYear.toString,
+              ConfirmOptOutMultiTaxYearChoiceForm.csrfToken   -> ""
+            )
 
-            val result = action(fakeRequest.withFormUrlEncodedBody(
-              formData.toSeq: _*
-            ))
+            val result = action(
+              fakeRequest.withFormUrlEncodedBody(
+                formData.toSeq: _*
+              )
+            )
 
             status(result) shouldBe Status.SEE_OTHER
             val agentPath = if (isAgent) "/agents" else ""
-            redirectLocation(result) shouldBe Some(s"/report-quarterly/income-and-expenses/view${agentPath}/optout/review-confirm-taxyear")
+            redirectLocation(result) shouldBe Some(
+              s"/report-quarterly/income-and-expenses/view${agentPath}/optout/review-confirm-taxyear"
+            )
           }
         }
 
@@ -192,12 +215,16 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
             mockSaveIntent(nextTaxYear, Future.successful(true))
             mockRecallOptOutProposition(Future.successful(optOutProposition))
 
-            val formData = Map(ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> "", //missing
-              ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> "")
+            val formData = Map(
+              ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> "", //missing
+              ConfirmOptOutMultiTaxYearChoiceForm.csrfToken   -> ""
+            )
 
-            val result = action(fakeRequest.withFormUrlEncodedBody(
-              formData.toSeq: _*
-            ))
+            val result = action(
+              fakeRequest.withFormUrlEncodedBody(
+                formData.toSeq: _*
+              )
+            )
 
             status(result) shouldBe Status.BAD_REQUEST
           }
@@ -212,12 +239,16 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
             mockSaveIntent(currentTaxYear, Future.successful(false))
             mockRecallOptOutProposition(Future.successful(optOutProposition))
 
-            val formData = Map(ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> currentTaxYear.toString,
-              ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> "")
+            val formData = Map(
+              ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> currentTaxYear.toString,
+              ConfirmOptOutMultiTaxYearChoiceForm.csrfToken   -> ""
+            )
 
-            val result = action(fakeRequest.withFormUrlEncodedBody(
-              formData.toSeq: _*
-            ))
+            val result = action(
+              fakeRequest.withFormUrlEncodedBody(
+                formData.toSeq: _*
+              )
+            )
 
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
           }

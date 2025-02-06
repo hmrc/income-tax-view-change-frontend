@@ -22,12 +22,11 @@ import play.api.data.{Form, FormError}
 import play.api.i18n.Messages
 import testUtils.UnitSpec
 
-
 class SingleTaxYearOptInWarningFormSpec extends UnitSpec {
 
   val taxYear = TaxYear(2025, 2026)
 
-  val errorMessage: String = "Select yes to opt out for the 2025 to 2026 tax year"
+  val errorMessage:          String   = "Select yes to opt out for the 2025 to 2026 tax year"
   implicit val mockMessages: Messages = mock(classOf[play.api.i18n.Messages])
 
   def validFormData(yesNo: Boolean): Map[String, String] =
@@ -37,9 +36,14 @@ class SingleTaxYearOptInWarningFormSpec extends UnitSpec {
     SingleTaxYearOptInWarningForm.choiceField -> ""
   )
 
-  when(mockMessages(SingleTaxYearOptInWarningForm.noResponseErrorMessageKey, taxYear.startYear.toString, taxYear.endYear.toString))
+  when(
+    mockMessages(
+      SingleTaxYearOptInWarningForm.noResponseErrorMessageKey,
+      taxYear.startYear.toString,
+      taxYear.endYear.toString
+    )
+  )
     .thenReturn(errorMessage)
-
 
   "SingleTaxYearOptInWarningForm" when {
 

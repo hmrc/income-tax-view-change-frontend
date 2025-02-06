@@ -26,16 +26,17 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FeatureSwitchService @Inject()(val featureSwitchRepository: FeatureSwitchRepository,
-                                      val appConfig: FrontendAppConfig)
-                                    (implicit val ec: ExecutionContext)
-  extends FeatureSwitching {
+class FeatureSwitchService @Inject() (
+    val featureSwitchRepository: FeatureSwitchRepository,
+    val appConfig:               FrontendAppConfig
+  )(
+    implicit val ec: ExecutionContext)
+    extends FeatureSwitching {
 
   def get(featureSwitchName: FeatureSwitchName): Future[FeatureSwitch] =
     featureSwitchRepository
       .getFeatureSwitch(featureSwitchName)
       .map(_.getOrElse(FeatureSwitch(featureSwitchName, false)))
-
 
   def getAll: Future[List[FeatureSwitch]] = {
 
@@ -72,8 +73,9 @@ class FeatureSwitchService @Inject()(val featureSwitchRepository: FeatureSwitchR
     if (appConfig.readFeatureSwitchesFromMongo) {
       featureSwitchRepository.setFeatureSwitches(featureSwitches)
     } else {
-      featureSwitches.foreach { case (featureSwitchName, state) =>
-        setFS(featureSwitchName, state)
+      featureSwitches.foreach {
+        case (featureSwitchName, state) =>
+          setFS(featureSwitchName, state)
       }
       Future.successful((): Unit)
     }

@@ -21,10 +21,9 @@ import play.api.data.Forms._
 
 object AddProprertyForm {
 
-  val responseUK: String = "uk-property"
+  val responseUK:      String = "uk-property"
   val responseForeign: String = "foreign-property"
-  val response: String = "type-of-business"
-
+  val response:        String = "type-of-business"
 
   def apply: Form[AddProprertyForm] = {
 
@@ -33,14 +32,18 @@ object AddProprertyForm {
     Form[AddProprertyForm](
       mapping(
         response -> optional(text)
-          .verifying(radiosEmptyError, value => value.nonEmpty && (value.contains(responseUK) || value.contains(responseForeign)))
+          .verifying(
+            radiosEmptyError,
+            value => value.nonEmpty && (value.contains(responseUK) || value.contains(responseForeign))
+          )
       )(AddProprertyForm.apply)(AddProprertyForm.unapply)
     )
   }
 }
 
 case class AddProprertyForm(response: Option[String]) {
-  def toFormMap: Map[String, Seq[String]] = Map(
-    AddProprertyForm.response -> Seq(response.getOrElse("N/A"))
-  )
+  def toFormMap: Map[String, Seq[String]] =
+    Map(
+      AddProprertyForm.response -> Seq(response.getOrElse("N/A"))
+    )
 }

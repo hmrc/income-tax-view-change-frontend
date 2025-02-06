@@ -36,38 +36,39 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SensitiveUIJourneySessionDataRepository @Inject()(
-                                                mongoComponent: MongoComponent,
-                                                appConfig: FrontendAppConfig,
-                                                config: Configuration,
-                                                clock: Clock
-                                              )(implicit ec: ExecutionContext)
-  extends PlayMongoRepository[SensitiveUIJourneySessionData](
-    collectionName = "ui-journey-session-data",
-    mongoComponent = mongoComponent,
-    domainFormat = SensitiveUIJourneySessionData.format(
-      SymmetricCryptoFactory.aesCryptoFromConfig("encryption", config.underlying)
-    ),
-    indexes = Seq(
-      IndexModel(
-        Indexes.ascending("sessionId"),
-        IndexOptions()
-          .name("sessionIdIdx")
+class SensitiveUIJourneySessionDataRepository @Inject() (
+    mongoComponent: MongoComponent,
+    appConfig:      FrontendAppConfig,
+    config:         Configuration,
+    clock:          Clock
+  )(
+    implicit ec: ExecutionContext)
+    extends PlayMongoRepository[SensitiveUIJourneySessionData](
+      collectionName = "ui-journey-session-data",
+      mongoComponent = mongoComponent,
+      domainFormat = SensitiveUIJourneySessionData.format(
+        SymmetricCryptoFactory.aesCryptoFromConfig("encryption", config.underlying)
       ),
-      IndexModel(
-        Indexes.ascending("journeyType"),
-        IndexOptions()
-          .name("journeyTypeIdx")
+      indexes = Seq(
+        IndexModel(
+          Indexes.ascending("sessionId"),
+          IndexOptions()
+            .name("sessionIdIdx")
+        ),
+        IndexModel(
+          Indexes.ascending("journeyType"),
+          IndexOptions()
+            .name("journeyTypeIdx")
+        ),
+        IndexModel(
+          Indexes.ascending("lastUpdated"),
+          IndexOptions()
+            .name("lastUpdatedIdx")
+            .expireAfter(appConfig.cacheTtl, TimeUnit.SECONDS)
+        )
       ),
-      IndexModel(
-        Indexes.ascending("lastUpdated"),
-        IndexOptions()
-          .name("lastUpdatedIdx")
-          .expireAfter(appConfig.cacheTtl, TimeUnit.SECONDS)
-      )
-    ),
-    replaceIndexes = true
-  ) {
+      replaceIndexes = true
+    ) {
 
   implicit val instantFormat: Format[Instant] = MongoJavatimeFormats.instantFormat
 
@@ -92,12 +93,11 @@ class SensitiveUIJourneySessionDataRepository @Inject()(
 
   def get(sessionId: String, journeyType: JourneyType): Future[Option[UIJourneySessionData]] = {
     val data = SensitiveUIJourneySessionData(sessionId, journeyType.toString)
-    keepAlive(data).flatMap {
-      _ =>
-        collection
-          .find(dataFilter(data))
-          .map(_.decrypted)
-          .headOption()
+    keepAlive(data).flatMap { _ =>
+      collection
+        .find(dataFilter(data))
+        .map(_.decrypted)
+        .headOption()
     }
   }
 
@@ -116,10 +116,12 @@ class SensitiveUIJourneySessionDataRepository @Inject()(
   }
 
   def updateData(data: UIJourneySessionData, key: String, value: String): Future[UpdateResult] = {
-    collection.updateOne(
-      filter = dataFilter(data.encrypted),
-      update = Document("$set" -> Document(key -> value))
-    ).toFuture()
+    collection
+      .updateOne(
+        filter = dataFilter(data.encrypted),
+        update = Document("$set" -> Document(key -> value))
+      )
+      .toFuture()
   }
 
   def deleteOne(data: UIJourneySessionData): Future[Boolean] =

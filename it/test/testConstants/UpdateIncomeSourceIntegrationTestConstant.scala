@@ -25,8 +25,8 @@ import uk.gov.hmrc.http.HttpResponse
 import java.time.LocalDate
 
 object UpdateIncomeSourceIntegrationTestConstant {
-  val incomeSourceId = "11111111111"
-  val cessationDate = "2023-04-01"
+  val incomeSourceId  = "11111111111"
+  val cessationDate   = "2023-04-01"
   val taxYearSpecific = TaxYearSpecific("2022", true)
   val request: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
@@ -41,26 +41,26 @@ object UpdateIncomeSourceIntegrationTestConstant {
   )
 
   val requestTaxYearSpecificJson: JsValue = Json.obj(
-    "nino" -> testNino,
-    "incomeSourceID" -> incomeSourceId,
+    "nino"            -> testNino,
+    "incomeSourceID"  -> incomeSourceId,
     "taxYearSpecific" -> Json.obj("taxYear" -> "2022", "latencyIndicator" -> true)
   )
 
   val requestJson: JsValue = Json.obj(
-    "nino" -> testNino,
+    "nino"           -> testNino,
     "incomeSourceID" -> incomeSourceId,
-    "cessation" -> Json.obj("cessationIndicator" -> true, "cessationDate" -> cessationDate)
+    "cessation"      -> Json.obj("cessationIndicator" -> true, "cessationDate" -> cessationDate)
   )
-  val badRequest = request.copy(cessation = None)
+  val badRequest       = request.copy(cessation = None)
   val errorBadResponse = UpdateIncomeSourceResponseError("BAD_REQUEST", "Dummy Message")
-  val failureResponse = UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Error message")
-  val badJsonResponse = UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Json validation error parsing response")
-  val successResponse = UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")
+  val failureResponse  = UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Error message")
+  val badJsonResponse =
+    UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Json validation error parsing response")
+  val successResponse     = UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")
   val successResponseJson = Json.obj("processingDate" -> "2022-01-31T09:26:17Z")
 
-  val successHttpResponse = HttpResponse(Status.OK, Json.toJson(successResponse), Map.empty)
+  val successHttpResponse        = HttpResponse(Status.OK, Json.toJson(successResponse), Map.empty)
   val successInvalidJsonResponse = HttpResponse(Status.OK, Json.toJson(""), Map.empty)
-  val badHttpResponse = HttpResponse(Status.BAD_REQUEST, "Dummy Message", Map.empty)
-
+  val badHttpResponse            = HttpResponse(Status.BAD_REQUEST, "Dummy Message", Map.empty)
 
 }

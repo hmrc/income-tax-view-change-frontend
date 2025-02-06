@@ -36,40 +36,48 @@ import views.html.incomeSources.manage.{ManageIncomeSources, ReportingMethodChan
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: ManageIncomeSources,
-                                                     val authActions: AuthActions,
-                                                     val updateIncomeSourceService: UpdateIncomeSourceService,
-                                                     val reportingMethodChangeError: ReportingMethodChangeError,
-                                                     val sessionService: SessionService,
-                                                     val itvcErrorHandler: ItvcErrorHandler,
-                                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                                    (implicit val ec: ExecutionContext,
-                                                     val mcc: MessagesControllerComponents,
-                                                     implicit val appConfig: FrontendAppConfig) extends FrontendController(mcc)
-  with I18nSupport with IncomeSourcesUtils {
+class ReportingMethodChangeErrorController @Inject() (
+    val manageIncomeSources:        ManageIncomeSources,
+    val authActions:                AuthActions,
+    val updateIncomeSourceService:  UpdateIncomeSourceService,
+    val reportingMethodChangeError: ReportingMethodChangeError,
+    val sessionService:             SessionService,
+    val itvcErrorHandler:           ItvcErrorHandler,
+    val itvcErrorHandlerAgent:      AgentItvcErrorHandler
+  )(
+    implicit val ec:        ExecutionContext,
+    val mcc:                MessagesControllerComponents,
+    implicit val appConfig: FrontendAppConfig)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with IncomeSourcesUtils {
 
-  def show(isAgent: Boolean,
-           incomeSourceType: IncomeSourceType
-          ): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
-    withIncomeSourcesFS {
-      if (incomeSourceType == SelfEmployment) {
-        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, IncomeSourceJourneyType(Manage, incomeSourceType)).flatMap {
-          case Right(Some(incomeSourceId)) => handleShowRequest(Some(mkIncomeSourceId(incomeSourceId)), incomeSourceType, isAgent)
-          case _ => Future.failed(MissingSessionKey(ManageIncomeSourceData.incomeSourceIdField))
-        }
+  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+      withIncomeSourcesFS {
+        if (incomeSourceType == SelfEmployment) {
+          sessionService
+            .getMongoKey(ManageIncomeSourceData.incomeSourceIdField, IncomeSourceJourneyType(Manage, incomeSourceType))
+            .flatMap {
+              case Right(Some(incomeSourceId)) =>
+                handleShowRequest(Some(mkIncomeSourceId(incomeSourceId)), incomeSourceType, isAgent)
+              case _ => Future.failed(MissingSessionKey(ManageIncomeSourceData.incomeSourceIdField))
+            }
+        } else handleShowRequest(None, incomeSourceType, isAgent)
+      }.recover {
+        case ex =>
+          Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+          showInternalServerError(isAgent)
       }
-      else handleShowRequest(None, incomeSourceType, isAgent)
-    }.recover {
-      case ex =>
-        Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
-        showInternalServerError(isAgent)
     }
-  }
 
-  private def handleShowRequest(soleTraderBusinessId: Option[IncomeSourceId],
-                                incomeSourceType: IncomeSourceType,
-                                isAgent: Boolean
-                               )(implicit user: MtdItUser[_]): Future[Result] = {
+  private def handleShowRequest(
+      soleTraderBusinessId: Option[IncomeSourceId],
+      incomeSourceType:     IncomeSourceType,
+      isAgent:              Boolean
+    )(
+      implicit user: MtdItUser[_]
+    ): Future[Result] = {
     Future.successful(
       user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId.map(m => m.value)) match {
         case Some(id) =>
@@ -82,18 +90,26 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
             )
           )
         case None =>
-          Logger("error").info("" +
-            s"could not find incomeSourceId for $incomeSourceType")
+          Logger("error").info(
+            "" +
+              s"could not find incomeSourceId for $incomeSourceType"
+          )
           showInternalServerError(isAgent)
       }
     )
   }
 
-  private def getManageIncomeSourcesUrl(isAgent: Boolean): String = routes.ManageIncomeSourceController.show(isAgent).url
+  private def getManageIncomeSourcesUrl(isAgent: Boolean): String =
+    routes.ManageIncomeSourceController.show(isAgent).url
 
-  private def getManageIncomeSourceDetailsUrl(incomeSourceId: IncomeSourceId, isAgent: Boolean, incomeSourceType: IncomeSourceType): String = {
+  private def getManageIncomeSourceDetailsUrl(
+      incomeSourceId:   IncomeSourceId,
+      isAgent:          Boolean,
+      incomeSourceType: IncomeSourceType
+    ): String = {
     (incomeSourceType match {
-      case SelfEmployment => routes.ManageIncomeSourceDetailsController.show(isAgent, incomeSourceType, Some(incomeSourceId.value))
+      case SelfEmployment =>
+        routes.ManageIncomeSourceDetailsController.show(isAgent, incomeSourceType, Some(incomeSourceId.value))
       case _ => routes.ManageIncomeSourceDetailsController.show(isAgent, incomeSourceType, None)
     }).url
   }

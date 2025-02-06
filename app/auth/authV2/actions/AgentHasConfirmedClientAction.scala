@@ -26,11 +26,13 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AgentHasConfirmedClientAction @Inject()(implicit val executionContext: ExecutionContext)
-  extends ActionRefiner[AuthorisedAndEnrolledRequest, AuthorisedAndEnrolledRequest] {
+class AgentHasConfirmedClientAction @Inject() (implicit val executionContext: ExecutionContext)
+    extends ActionRefiner[AuthorisedAndEnrolledRequest, AuthorisedAndEnrolledRequest] {
 
-  override protected def refine[A](request: AuthorisedAndEnrolledRequest[A]): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
-    if(request.clientDetails.exists(_.confirmed)) {
+  override protected def refine[A](
+      request: AuthorisedAndEnrolledRequest[A]
+    ): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
+    if (request.clientDetails.exists(_.confirmed)) {
       Future.successful(Right(request))
     } else {
       Future.successful(Left(Redirect(routes.ConfirmClientUTRController.show)))

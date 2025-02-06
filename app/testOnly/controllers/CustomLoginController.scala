@@ -37,86 +37,96 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
-                                      val testOnlyAppConfig: TestOnlyAppConfig,
-                                      implicit val mcc: MessagesControllerComponents,
-                                      implicit val executionContext: ExecutionContext,
-                                      userRepository: UserRepository,
-                                      loginPage: LoginPage,
-                                      val dynamicStubConnector: DynamicStubConnector,
-                                      val optOutCustomDataService: OptOutCustomDataService,
-                                      val customAuthConnector: CustomAuthConnector,
-                                      val calculationListService: CalculationListService,
-                                      val dynamicStubService: DynamicStubService,
-                                      val ITSAStatusService: ITSAStatusService,
-                                      val itvcErrorHandler: ItvcErrorHandler,
-                                      implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                      dateService: DateServiceInterface
-                                     ) extends BaseController with I18nSupport with FeatureSwitching {
+class CustomLoginController @Inject() (
+    implicit val appConfig:             FrontendAppConfig,
+    val testOnlyAppConfig:              TestOnlyAppConfig,
+    implicit val mcc:                   MessagesControllerComponents,
+    implicit val executionContext:      ExecutionContext,
+    userRepository:                     UserRepository,
+    loginPage:                          LoginPage,
+    val dynamicStubConnector:           DynamicStubConnector,
+    val optOutCustomDataService:        OptOutCustomDataService,
+    val customAuthConnector:            CustomAuthConnector,
+    val calculationListService:         CalculationListService,
+    val dynamicStubService:             DynamicStubService,
+    val ITSAStatusService:              ITSAStatusService,
+    val itvcErrorHandler:               ItvcErrorHandler,
+    implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+    dateService:                        DateServiceInterface)
+    extends BaseController
+    with I18nSupport
+    with FeatureSwitching {
 
   // Logging page functionality
   val showLogin: Action[AnyContent] = Action.async { implicit request =>
-    userRepository.findAll().map(userRecords =>
-      Ok(loginPage(routes.CustomLoginController.postLogin, userRecords, testOnlyAppConfig.optOutUserPrefixes))
-    )
+    userRepository
+      .findAll()
+      .map(userRecords =>
+        Ok(loginPage(routes.CustomLoginController.postLogin, userRecords, testOnlyAppConfig.optOutUserPrefixes))
+      )
   }
 
   val postLogin: Action[AnyContent] = Action.async { implicit request =>
-    PostedUser.form.bindFromRequest().fold(
-      formWithErrors =>
-        Future.successful(BadRequest(s"Invalid form submission: $formWithErrors")),
-      (postedUser: PostedUser) => {
+    PostedUser.form
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(s"Invalid form submission: $formWithErrors")),
+        (postedUser: PostedUser) => {
 
-        userRepository.findUser(postedUser.nino).flatMap(
-          user =>
-            customAuthConnector.login(Nino(user.nino), postedUser.isAgent, postedUser.isSupporting).flatMap {
-              case (authExchange, _) =>
-                val (bearer, auth) = (authExchange.bearerToken, authExchange.sessionAuthorityUri)
-                val redirectURL = if (postedUser.isAgent)
-                  s"report-quarterly/income-and-expenses/view/test-only/stub-client/nino/${user.nino}/utr/" + user.utr
-                else
-                  "report-quarterly/income-and-expenses/view?origin=BTA"
-                val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
+          userRepository
+            .findUser(postedUser.nino)
+            .flatMap(user =>
+              customAuthConnector.login(Nino(user.nino), postedUser.isAgent, postedUser.isSupporting).flatMap {
+                case (authExchange, _) =>
+                  val (bearer, auth) = (authExchange.bearerToken, authExchange.sessionAuthorityUri)
+                  val redirectURL = if (postedUser.isAgent)
+                    s"report-quarterly/income-and-expenses/view/test-only/stub-client/nino/${user.nino}/utr/" + user.utr
+                  else
+                    "report-quarterly/income-and-expenses/view?origin=BTA"
+                  val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
 
-                if (postedUser.isOptOutWhitelisted(testOnlyAppConfig.optOutUserPrefixes)) {
-                  updateTestDataForOptOut(
-                    nino = user.nino,
-                    crystallisationStatus = postedUser.cyMinusOneCrystallisationStatus.get,
-                    cyMinusOneItsaStatus = postedUser.cyMinusOneItsaStatus.get,
-                    cyItsaStatus = postedUser.cyItsaStatus.get,
-                    cyPlusOneItsaStatus = postedUser.cyPlusOneItsaStatus.get
-                  ).map {
-                    _ =>
+                  if (postedUser.isOptOutWhitelisted(testOnlyAppConfig.optOutUserPrefixes)) {
+                    updateTestDataForOptOut(
+                      nino = user.nino,
+                      crystallisationStatus = postedUser.cyMinusOneCrystallisationStatus.get,
+                      cyMinusOneItsaStatus = postedUser.cyMinusOneItsaStatus.get,
+                      cyItsaStatus = postedUser.cyItsaStatus.get,
+                      cyPlusOneItsaStatus = postedUser.cyPlusOneItsaStatus.get
+                    ).map { _ =>
                       successRedirect(bearer, auth, homePage)
-                  }.recover {
-                    case ex =>
-                      val errorHandler = if (postedUser.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-                      Logger("application")
-                        .error(s"Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} - ")
-                      errorHandler.showInternalServerError()
+                    }.recover {
+                      case ex =>
+                        val errorHandler = if (postedUser.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+                        Logger("application")
+                          .error(s"Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} - ")
+                        errorHandler.showInternalServerError()
+                    }
+                  } else {
+                    Future.successful(successRedirect(bearer, auth, homePage))
                   }
-                } else {
-                  Future.successful(successRedirect(bearer, auth, homePage))
-                }
 
-              case code =>
-                Future.successful(InternalServerError("something went wrong.." + code))
-            }
-        )
-      }
-    )
+                case code =>
+                  Future.successful(InternalServerError("something went wrong.." + code))
+              }
+            )
+        }
+      )
   }
 
   private def successRedirect(bearer: String, auth: String, homePage: String): Result = {
     Redirect(homePage)
-      .withSession(
-        SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer,
-          sessionAuthorityUri = auth)))
+      .withSession(SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer, sessionAuthorityUri = auth)))
   }
 
-  private def updateTestDataForOptOut(nino: String, crystallisationStatus: String, cyMinusOneItsaStatus: String,
-                                      cyItsaStatus: String, cyPlusOneItsaStatus: String)(implicit hc: HeaderCarrier)
-  : Future[Unit] = {
+  private def updateTestDataForOptOut(
+      nino:                  String,
+      crystallisationStatus: String,
+      cyMinusOneItsaStatus:  String,
+      cyItsaStatus:          String,
+      cyPlusOneItsaStatus:   String
+    )(
+      implicit hc: HeaderCarrier
+    ): Future[Unit] = {
 
     // TODO: maybe make crystallisationStatus and itsaStatus value classes, using Scala Request Binders or Scala Actions composition perhaps
 
@@ -126,11 +136,30 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
       dateService.getCurrentTaxYearEnd
     )
 
-    val crystallisationStatusResult: Future[Unit] = optOutCustomDataService.uploadCalculationListData(nino = ninoObj, taxYear = taxYear.addYears(-1), status = crystallisationStatus)
-    val itsaStatusCyMinusOneResult: Future[Unit] = optOutCustomDataService.uploadITSAStatusData(nino = ninoObj, taxYear = taxYear.addYears(-1), status = cyMinusOneItsaStatus)
-    val itsaStatusCyResult: Future[Unit] = optOutCustomDataService.uploadITSAStatusData(nino = ninoObj, taxYear = taxYear, status = cyItsaStatus)
-    val itsaStatusCyPlusOneResult: Future[Unit] = optOutCustomDataService.uploadITSAStatusData(nino = ninoObj, taxYear = taxYear.addYears(1), status = cyPlusOneItsaStatus)
-    val combinedItsaStatusFutureYear = optOutCustomDataService.stubITSAStatusFutureYearData(nino, taxYear, cyMinusOneItsaStatus, cyItsaStatus, cyPlusOneItsaStatus)
+    val crystallisationStatusResult: Future[Unit] = optOutCustomDataService.uploadCalculationListData(
+      nino = ninoObj,
+      taxYear = taxYear.addYears(-1),
+      status = crystallisationStatus
+    )
+    val itsaStatusCyMinusOneResult: Future[Unit] = optOutCustomDataService.uploadITSAStatusData(
+      nino = ninoObj,
+      taxYear = taxYear.addYears(-1),
+      status = cyMinusOneItsaStatus
+    )
+    val itsaStatusCyResult: Future[Unit] =
+      optOutCustomDataService.uploadITSAStatusData(nino = ninoObj, taxYear = taxYear, status = cyItsaStatus)
+    val itsaStatusCyPlusOneResult: Future[Unit] = optOutCustomDataService.uploadITSAStatusData(
+      nino = ninoObj,
+      taxYear = taxYear.addYears(1),
+      status = cyPlusOneItsaStatus
+    )
+    val combinedItsaStatusFutureYear = optOutCustomDataService.stubITSAStatusFutureYearData(
+      nino,
+      taxYear,
+      cyMinusOneItsaStatus,
+      cyItsaStatus,
+      cyPlusOneItsaStatus
+    )
 
     for {
       _ <- crystallisationStatusResult

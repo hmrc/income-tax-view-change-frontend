@@ -28,5 +28,5 @@ class TestHeaderExtractor extends HeaderExtractor {
       .fromRequestAndSession(request, request.session)
       .copy(authorization = Some(Authorization("Bearer")))
   }
-  
+
 }

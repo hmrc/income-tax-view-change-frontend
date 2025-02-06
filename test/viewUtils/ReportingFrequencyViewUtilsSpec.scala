@@ -32,10 +32,14 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import java.time.LocalDate
 import scala.concurrent.ExecutionContext
 
-class ReportingFrequencyViewUtilsSpec extends UnitSpec with FeatureSwitching with ImplicitDateFormatter with GuiceOneAppPerSuite {
+class ReportingFrequencyViewUtilsSpec
+    extends UnitSpec
+    with FeatureSwitching
+    with ImplicitDateFormatter
+    with GuiceOneAppPerSuite {
 
-  override implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-  override implicit val languageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
+  override implicit val appConfig:     FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  override implicit val languageUtils: LanguageUtils     = app.injector.instanceOf[LanguageUtils]
 
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
@@ -66,7 +70,7 @@ class ReportingFrequencyViewUtilsSpec extends UnitSpec with FeatureSwitching wit
 
         "return 'Quarterly (mandatory)'" in {
 
-          val actual = reportingFrequencyViewUtils.itsaStatusString(Mandated)
+          val actual   = reportingFrequencyViewUtils.itsaStatusString(Mandated)
           val expected = Some("Quarterly (mandatory)")
           actual shouldBe expected
         }
@@ -76,7 +80,7 @@ class ReportingFrequencyViewUtilsSpec extends UnitSpec with FeatureSwitching wit
 
         "return 'Quarterly'" in {
 
-          val actual = reportingFrequencyViewUtils.itsaStatusString(Voluntary)
+          val actual   = reportingFrequencyViewUtils.itsaStatusString(Voluntary)
           val expected = Some("Quarterly")
           actual shouldBe expected
         }
@@ -86,7 +90,7 @@ class ReportingFrequencyViewUtilsSpec extends UnitSpec with FeatureSwitching wit
 
         "return 'Annual'" in {
 
-          val actual = reportingFrequencyViewUtils.itsaStatusString(Annual)
+          val actual   = reportingFrequencyViewUtils.itsaStatusString(Annual)
           val expected = Some("Annual")
           actual shouldBe expected
         }

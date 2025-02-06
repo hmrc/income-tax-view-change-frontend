@@ -26,49 +26,51 @@ import play.api.http.Status
 import play.api.test.Helpers._
 import services.PaymentHistoryService
 
-class NotMigratedUserControllerSpec extends MockAuthActions
-  with ImplicitDateFormatter {
+class NotMigratedUserControllerSpec extends MockAuthActions with ImplicitDateFormatter {
 
   lazy val mockPaymentHistoryService: PaymentHistoryService = mock(classOf[PaymentHistoryService])
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[PaymentHistoryService].toInstance(mockPaymentHistoryService),
-    ).build()
+      api.inject.bind[PaymentHistoryService].toInstance(mockPaymentHistoryService)
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[NotMigratedUserController]
 
-  mtdAllRoles.foreach{ case mtdUserRole =>
-    val isAgent = mtdUserRole != MTDIndividual
-    val action = if (isAgent) testController.showAgent() else testController.show()
-    val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
-    s"show${if (isAgent) "Agent"}" when {
-      s"the $mtdUserRole is authenticated" should {
-        if (mtdUserRole == MTDSupportingAgent) {
-          testSupportingAgentDeniedAccess(action)(fakeRequest)
-        } else {
-          "render the not migrated page" when {
-            "the user has not migrated to ETMP" in {
-              setupMockSuccess(mtdUserRole)
-              mockSingleBusinessIncomeSource(userMigrated = false)
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      val isAgent     = mtdUserRole != MTDIndividual
+      val action      = if (isAgent) testController.showAgent() else testController.show()
+      val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
+      s"show${if (isAgent) "Agent"}" when {
+        s"the $mtdUserRole is authenticated" should {
+          if (mtdUserRole == MTDSupportingAgent) {
+            testSupportingAgentDeniedAccess(action)(fakeRequest)
+          } else {
+            "render the not migrated page" when {
+              "the user has not migrated to ETMP" in {
+                setupMockSuccess(mtdUserRole)
+                mockSingleBusinessIncomeSource(userMigrated = false)
 
-              val result = action(fakeRequest)
-              status(result) shouldBe Status.OK
-              JsoupParse(result).toHtmlDocument.title() shouldBe s"How to claim a refund - Manage your ${if(isAgent) "client’s " else ""}Income Tax updates - GOV.UK"
+                val result = action(fakeRequest)
+                status(result) shouldBe Status.OK
+                JsoupParse(result).toHtmlDocument
+                  .title() shouldBe s"How to claim a refund - Manage your ${if (isAgent) "client’s " else ""}Income Tax updates - GOV.UK"
+              }
             }
-          }
-          "render the error page" when {
-            "the user has already migrated to ETMP" in {
-              setupMockSuccess(mtdUserRole)
-              mockSingleBusinessIncomeSource()
+            "render the error page" when {
+              "the user has already migrated to ETMP" in {
+                setupMockSuccess(mtdUserRole)
+                mockSingleBusinessIncomeSource()
 
-              val result = action(fakeRequest)
-              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+                val result = action(fakeRequest)
+                status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+              }
             }
           }
         }
+        testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
       }
-      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
-    }
   }
 }

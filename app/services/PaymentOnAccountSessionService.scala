@@ -23,10 +23,10 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class PaymentOnAccountSessionService @Inject()(poaAmendmentDataRepository: PoaAmendmentDataRepository) {
+class PaymentOnAccountSessionService @Inject() (poaAmendmentDataRepository: PoaAmendmentDataRepository) {
 
   def createSession(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Unit]] = {
-    setMongoData(Some(PoaAmendmentData())).flatMap{ res =>
+    setMongoData(Some(PoaAmendmentData())).flatMap { res =>
       if (res)
         Future.successful(Right(()))
       else
@@ -34,7 +34,10 @@ class PaymentOnAccountSessionService @Inject()(poaAmendmentDataRepository: PoaAm
     }
   }
 
-  def getMongo(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[PoaAmendmentData]]] = {
+  def getMongo(
+      implicit hc: HeaderCarrier,
+      ec:          ExecutionContext
+    ): Future[Either[Throwable, Option[PoaAmendmentData]]] = {
     poaAmendmentDataRepository.get(hc.sessionId.get.value) map {
       case Some(data: PoaSessionData) =>
         Right(data.poaAmendmentData)
@@ -46,7 +49,12 @@ class PaymentOnAccountSessionService @Inject()(poaAmendmentDataRepository: PoaAm
     poaAmendmentDataRepository.set(PoaSessionData(hc.sessionId.get.value, poaAmendmentData))
   }
 
-  def setAdjustmentReason(poaAdjustmentReason: SelectYourReason)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Unit]] = {
+  def setAdjustmentReason(
+      poaAdjustmentReason: SelectYourReason
+    )(
+      implicit hc: HeaderCarrier,
+      ec:          ExecutionContext
+    ): Future[Either[Throwable, Unit]] = {
     poaAmendmentDataRepository.get(hc.sessionId.get.value).flatMap {
       case Some(data: PoaSessionData) =>
         val newData: PoaAmendmentData = data.poaAmendmentData match {
@@ -68,7 +76,12 @@ class PaymentOnAccountSessionService @Inject()(poaAmendmentDataRepository: PoaAm
     }
   }
 
-  def setNewPoaAmount(newPoaAmount: BigDecimal)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Unit]] = {
+  def setNewPoaAmount(
+      newPoaAmount: BigDecimal
+    )(
+      implicit hc: HeaderCarrier,
+      ec:          ExecutionContext
+    ): Future[Either[Throwable, Unit]] = {
     poaAmendmentDataRepository.get(hc.sessionId.get.value).flatMap {
       case Some(data: PoaSessionData) =>
         val newData: PoaAmendmentData = data.poaAmendmentData match {

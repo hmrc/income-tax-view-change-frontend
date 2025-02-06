@@ -28,11 +28,12 @@ class SessionDataServiceSpec extends TestSupport with MockSessionDataConnector {
   "SessionDataService.getSessionData(useCookie = true)" should {
     "return a SessionGetSuccessResponse" when {
       "the cookie contains the mtdId, utr and nino" in {
-        val response: SessionGetResponse = Right(SessionDataGetSuccess(mtditid = "one", nino = "two", utr = "three", sessionId = "not required"))
+        val response: SessionGetResponse =
+          Right(SessionDataGetSuccess(mtditid = "one", nino = "two", utr = "three", sessionId = "not required"))
         val request = fakeRequestWithActiveSession.withSession(
-          sessionUtils.SessionKeys.clientUTR -> "three",
+          sessionUtils.SessionKeys.clientUTR   -> "three",
           sessionUtils.SessionKeys.clientMTDID -> "one",
-          sessionUtils.SessionKeys.clientNino -> "two"
+          sessionUtils.SessionKeys.clientNino  -> "two"
         )
 
         TestSessionDataService.getSessionData(true)(request, headerCarrier).futureValue shouldBe response
@@ -42,7 +43,7 @@ class SessionDataServiceSpec extends TestSupport with MockSessionDataConnector {
     "return a SessionGetSuccessResponse" when {
       "the cookie does not contain mtditid" in {
         val request = fakeRequestWithActiveSession.withSession(
-          sessionUtils.SessionKeys.clientUTR -> "three",
+          sessionUtils.SessionKeys.clientUTR  -> "three",
           sessionUtils.SessionKeys.clientNino -> "two"
         )
         val res = TestSessionDataService.getSessionData(true)(request, headerCarrier).futureValue
@@ -54,7 +55,7 @@ class SessionDataServiceSpec extends TestSupport with MockSessionDataConnector {
       "the cookie does not contain utr" in {
         val request = fakeRequestWithActiveSession.withSession(
           sessionUtils.SessionKeys.clientMTDID -> "one",
-          sessionUtils.SessionKeys.clientNino -> "two"
+          sessionUtils.SessionKeys.clientNino  -> "two"
         )
 
         val res = TestSessionDataService.getSessionData(true)(request, headerCarrier).futureValue
@@ -66,7 +67,7 @@ class SessionDataServiceSpec extends TestSupport with MockSessionDataConnector {
       "the cookie does not contain nino" in {
         val request = fakeRequestWithActiveSession.withSession(
           sessionUtils.SessionKeys.clientMTDID -> "one",
-          sessionUtils.SessionKeys.clientUTR -> "two"
+          sessionUtils.SessionKeys.clientUTR   -> "two"
         )
 
         val res = TestSessionDataService.getSessionData(true)(request, headerCarrier).futureValue
@@ -88,7 +89,8 @@ class SessionDataServiceSpec extends TestSupport with MockSessionDataConnector {
     val request = fakeRequestWithActiveSession
     "the connector returns a success response" should {
       "return the same success response" in {
-        val response: SessionGetResponse = Right(SessionDataGetSuccess(mtditid = "one", nino = "two", utr = "three", sessionId = "four"))
+        val response: SessionGetResponse =
+          Right(SessionDataGetSuccess(mtditid = "one", nino = "two", utr = "three", sessionId = "four"))
         setupMockGetSessionData(response)
 
         TestSessionDataService.getSessionData()(request, headerCarrier).futureValue shouldBe response

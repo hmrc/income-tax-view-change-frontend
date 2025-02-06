@@ -25,14 +25,14 @@ trait PoaGenerator {
   val poaViewModelGen: Gen[PaymentOnAccountViewModel] = for {
     poaOneTransactionId <- Gen.alphaNumStr
     poaTwoTransactionId <- Gen.alphaNumStr
-    taxYear <- Gen.const(TaxYear.makeTaxYearWithEndYear(2024))
-    totalAmountOne <- Gen.choose(1000, 5000)
-    totalAmountTwo <- Gen.choose(1000, 5000)
-    relevantAmountOne <- Gen.choose(500, totalAmountOne)
-    relevantAmountTwo <- Gen.choose(500, totalAmountTwo)
-    previouslyAdjusted <- Gen.option(Gen.oneOf(true, false))
-    partiallyPaid <- Gen.oneOf(true, false)
-    fullyPaid <- Gen.oneOf(true, false)
+    taxYear             <- Gen.const(TaxYear.makeTaxYearWithEndYear(2024))
+    totalAmountOne      <- Gen.choose(1000, 5000)
+    totalAmountTwo      <- Gen.choose(1000, 5000)
+    relevantAmountOne   <- Gen.choose(500, totalAmountOne)
+    relevantAmountTwo   <- Gen.choose(500, totalAmountTwo)
+    previouslyAdjusted  <- Gen.option(Gen.oneOf(true, false))
+    partiallyPaid       <- Gen.oneOf(true, false)
+    fullyPaid           <- Gen.oneOf(true, false)
   } yield PaymentOnAccountViewModel(
     poaOneTransactionId,
     poaTwoTransactionId,

@@ -34,35 +34,45 @@ import views.html.incomeSources.add.IncomeSourceAddedObligations
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceAddedController @Inject()(val authActions: AuthActions,
-                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                            val itvcErrorHandler: ItvcErrorHandler,
-                                            val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                            val obligationsView: IncomeSourceAddedObligations,
-                                            nextUpdatesService: NextUpdatesService,
-                                            val sessionService: SessionService,
-                                            dateService: DateServiceInterface)
-                                           (implicit val appConfig: FrontendAppConfig,
-                                            val mcc: MessagesControllerComponents,
-                                            val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with JourneyChecker {
+class IncomeSourceAddedController @Inject() (
+    val authActions:                AuthActions,
+    val itvcErrorHandlerAgent:      AgentItvcErrorHandler,
+    val itvcErrorHandler:           ItvcErrorHandler,
+    val incomeSourceDetailsService: IncomeSourceDetailsService,
+    val obligationsView:            IncomeSourceAddedObligations,
+    nextUpdatesService:             NextUpdatesService,
+    val sessionService:             SessionService,
+    dateService:                    DateServiceInterface
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    val mcc:                MessagesControllerComponents,
+    val ec:                 ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with JourneyChecker {
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit user =>
       handleRequest(isAgent = false, incomeSourceType)(implicitly, itvcErrorHandler)
-  }
+    }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
-    implicit mtdItUser =>
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    authActions.asMTDAgentWithConfirmedClient.async { implicit mtdItUser =>
       handleRequest(isAgent = true, incomeSourceType)(implicitly, itvcErrorHandlerAgent)
-  }
+    }
 
-  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                           (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
+  private def handleRequest(
+      isAgent:          Boolean,
+      incomeSourceType: IncomeSourceType
+    )(
+      implicit user: MtdItUser[_],
+      errorHandler:  ShowInternalServerError
+    ): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
       (for {
         incomeSourceIdModel <- sessionData.addIncomeSourceData.flatMap(_.incomeSourceId.map(IncomeSourceId(_)))
-        (startDate, businessName) <- incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceIdModel)
+        (startDate, businessName) <-
+          incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceIdModel)
       } yield {
         handleSuccess(
           isAgent = isAgent,
@@ -73,60 +83,82 @@ class IncomeSourceAddedController @Inject()(val authActions: AuthActions,
         )
       }) getOrElse {
         Logger("application").error(
-          s"${if (isAgent) "[Agent]" else ""}" + s"could not find incomeSource for IncomeSourceType: $incomeSourceType")
+          s"${if (isAgent) "[Agent]" else ""}" + s"could not find incomeSource for IncomeSourceType: $incomeSourceType"
+        )
         Future.successful {
           errorHandler.showInternalServerError()
         }
       }
     } recover {
       case ex: Exception =>
-        Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" +
-          s"Error getting IncomeSourceAdded page: - ${ex.getMessage} - ${ex.getCause}, IncomeSourceType: $incomeSourceType")
+        Logger("application").error(
+          s"${if (isAgent) "[Agent]" else ""}" +
+            s"Error getting IncomeSourceAdded page: - ${ex.getMessage} - ${ex.getCause}, IncomeSourceType: $incomeSourceType"
+        )
         errorHandler.showInternalServerError()
     }
   }
 
-  def handleSuccess(incomeSourceId: IncomeSourceId, incomeSourceType: IncomeSourceType, businessName: Option[String],
-                    showPreviousTaxYears: Boolean, isAgent: Boolean)(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
+  def handleSuccess(
+      incomeSourceId:       IncomeSourceId,
+      incomeSourceType:     IncomeSourceType,
+      businessName:         Option[String],
+      showPreviousTaxYears: Boolean,
+      isAgent:              Boolean
+    )(
+      implicit user: MtdItUser[_],
+      errorHandler:  ShowInternalServerError
+    ): Future[Result] = {
     sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType)).flatMap {
       case Right(Some(sessionData)) =>
-        val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
+        val oldAddIncomeSourceSessionData     = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
         val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(journeyIsComplete = Some(true))
-        val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
+        val uiJourneySessionData: UIJourneySessionData =
+          sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
         sessionService.setMongoData(uiJourneySessionData).flatMap { _ =>
           incomeSourceType match {
             case SelfEmployment =>
               nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
-                Ok(obligationsView(businessName = businessName, sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
+                Ok(
+                  obligationsView(
+                    businessName = businessName,
+                    sources = viewModel,
+                    isAgent = isAgent,
+                    incomeSourceType = SelfEmployment
+                  )
+                )
               }
-            case _ => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
-              Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = incomeSourceType))
-            }
+            case _ =>
+              nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
+                Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = incomeSourceType))
+              }
           }
         }
       case _ =>
         val agentPrefix = if (isAgent) "[Agent]" else ""
-        Logger("application").error(agentPrefix +
-          s"Unable to retrieve Mongo session data for $incomeSourceType")
+        Logger("application").error(
+          agentPrefix +
+            s"Unable to retrieve Mongo session data for $incomeSourceType"
+        )
         Future.successful {
           errorHandler.showInternalServerError()
         }
     }
   }
 
-
   private def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    val redirectUrl = if (isAgent) routes.AddIncomeSourceController.showAgent().url else routes.AddIncomeSourceController.show().url
+    val redirectUrl =
+      if (isAgent) routes.AddIncomeSourceController.showAgent().url else routes.AddIncomeSourceController.show().url
     Future.successful(Redirect(redirectUrl))
   }
 
-  def submit: Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
+  def submit: Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit user =>
       handleSubmitRequest(false)
-  }
+    }
 
-  def agentSubmit: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
-    implicit user =>
+  def agentSubmit: Action[AnyContent] =
+    authActions.asMTDAgentWithConfirmedClient.async { implicit user =>
       handleSubmitRequest(true)
-  }
+    }
 }

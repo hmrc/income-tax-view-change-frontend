@@ -26,34 +26,32 @@ import services.optout.OptOutProposition
 import uk.gov.hmrc.auth.core.AffinityGroup
 
 case class Outcome(
-                    isSuccessful: Boolean,
-                    failureCategory: Option[String],
-                    failureReason: Option[String]
-                  )
-
+    isSuccessful:    Boolean,
+    failureCategory: Option[String],
+    failureReason:   Option[String])
 
 object Outcome {
   implicit val format: OFormat[Outcome] = Json.format[Outcome]
 }
 
 case class OptOutAuditModel(
-                             saUtr: Option[String],
-                             credId: Option[String],
-                             userType: Option[AffinityGroup],
-                             agentReferenceNumber: Option[String],
-                             mtditid: String,
-                             nino: String,
-                             outcome: Outcome,
-                             optOutRequestedFromTaxYear: String,
-                             currentYear: String,
-                             `beforeITSAStatusCurrentYear-1`: ITSAStatus,
-                             beforeITSAStatusCurrentYear: ITSAStatus,
-                             `beforeITSAStatusCurrentYear+1`: ITSAStatus,
-                             `afterAssumedITSAStatusCurrentYear-1`: ITSAStatus,
-                             afterAssumedITSAStatusCurrentYear: ITSAStatus,
-                             `afterAssumedITSAStatusCurrentYear+1`: ITSAStatus,
-                             `currentYear-1Crystallised`: Boolean
-                           ) extends ExtendedAuditModel {
+    saUtr:                                 Option[String],
+    credId:                                Option[String],
+    userType:                              Option[AffinityGroup],
+    agentReferenceNumber:                  Option[String],
+    mtditid:                               String,
+    nino:                                  String,
+    outcome:                               Outcome,
+    optOutRequestedFromTaxYear:            String,
+    currentYear:                           String,
+    `beforeITSAStatusCurrentYear-1`:       ITSAStatus,
+    beforeITSAStatusCurrentYear:           ITSAStatus,
+    `beforeITSAStatusCurrentYear+1`:       ITSAStatus,
+    `afterAssumedITSAStatusCurrentYear-1`: ITSAStatus,
+    afterAssumedITSAStatusCurrentYear:     ITSAStatus,
+    `afterAssumedITSAStatusCurrentYear+1`: ITSAStatus,
+    `currentYear-1Crystallised`:           Boolean)
+    extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.OptOutQuarterlyReportingRequest
 
@@ -62,15 +60,17 @@ case class OptOutAuditModel(
   override val detail: JsValue = Json.toJson(this)
 }
 
-
 object OptOutAuditModel {
 
-    implicit val format: OFormat[OptOutAuditModel] = Json.format[OptOutAuditModel]
+  implicit val format: OFormat[OptOutAuditModel] = Json.format[OptOutAuditModel]
 
-  def generateOptOutAudit(optOutProposition: OptOutProposition,
-                          intentTaxYear: TaxYear,
-                          resolvedOutcome: ITSAStatusUpdateResponse
-                         )(implicit user: MtdItUser[_]): OptOutAuditModel = {
+  def generateOptOutAudit(
+      optOutProposition: OptOutProposition,
+      intentTaxYear:     TaxYear,
+      resolvedOutcome:   ITSAStatusUpdateResponse
+    )(
+      implicit user: MtdItUser[_]
+    ): OptOutAuditModel = {
     OptOutAuditModel(
       saUtr = user.saUtr,
       credId = user.credId,
@@ -94,13 +94,20 @@ object OptOutAuditModel {
   private def createOutcome(resolvedResponse: ITSAStatusUpdateResponse): Outcome = {
     resolvedResponse match {
       case response: ITSAStatusUpdateResponseFailure =>
-        Outcome(isSuccessful = false, failureCategory = Some(response.failures.head.code), failureReason = Some(response.failures.head.reason))
+        Outcome(
+          isSuccessful = false,
+          failureCategory = Some(response.failures.head.code),
+          failureReason = Some(response.failures.head.reason)
+        )
       case _: ITSAStatusUpdateResponseSuccess =>
         Outcome(isSuccessful = true, failureCategory = None, failureReason = None)
       case _ =>
-        Outcome(isSuccessful = false, failureCategory = Some("Unknown failure reason"), failureReason = Some("Unknown failure category"))
+        Outcome(
+          isSuccessful = false,
+          failureCategory = Some("Unknown failure reason"),
+          failureReason = Some("Unknown failure category")
+        )
     }
   }
-
 
 }

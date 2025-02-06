@@ -23,25 +23,36 @@ import models.obligations.NextUpdatesTileViewModel
 
 import java.time.LocalDate
 
-case class HomePageViewModel(utr: Option[String],
-                             nextPaymentsTileViewModel: NextPaymentsTileViewModel,
-                             returnsTileViewModel: ReturnsTileViewModel,
-                             nextUpdatesTileViewModel: NextUpdatesTileViewModel,
-                             paymentCreditAndRefundHistoryTileViewModel: PaymentCreditAndRefundHistoryTileViewModel,
-                             yourBusinessesTileViewModel: YourBusinessesTileViewModel,
-                             accountSettingsTileViewModel: AccountSettingsTileViewModel,
-                             penaltiesAndAppealsTileViewModel: PenaltiesAndAppealsTileViewModel,
-                             dunningLockExists: Boolean = false,
-                             origin: Option[String] = None)
+case class HomePageViewModel(
+    utr:                                        Option[String],
+    nextPaymentsTileViewModel:                  NextPaymentsTileViewModel,
+    returnsTileViewModel:                       ReturnsTileViewModel,
+    nextUpdatesTileViewModel:                   NextUpdatesTileViewModel,
+    paymentCreditAndRefundHistoryTileViewModel: PaymentCreditAndRefundHistoryTileViewModel,
+    yourBusinessesTileViewModel:                YourBusinessesTileViewModel,
+    accountSettingsTileViewModel:               AccountSettingsTileViewModel,
+    penaltiesAndAppealsTileViewModel:           PenaltiesAndAppealsTileViewModel,
+    dunningLockExists:                          Boolean = false,
+    origin:                                     Option[String] = None)
 
-case class NextPaymentsTileViewModel(nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Int,
-                                     paymentsAccruingInterestCount: Int, reviewAndReconcileEnabled: Boolean) {
+case class NextPaymentsTileViewModel(
+    nextPaymentDueDate:            Option[LocalDate],
+    overDuePaymentsCount:          Int,
+    paymentsAccruingInterestCount: Int,
+    reviewAndReconcileEnabled:     Boolean) {
 
   def verify: Either[Throwable, NextPaymentsTileViewModel] = {
     if (!(overDuePaymentsCount == 0) && nextPaymentDueDate.isEmpty) {
       Left(new Exception("Error, overDuePaymentsCount was non-0 while nextPaymentDueDate was empty"))
     } else {
-      Right(NextPaymentsTileViewModel(nextPaymentDueDate, overDuePaymentsCount, paymentsAccruingInterestCount, reviewAndReconcileEnabled))
+      Right(
+        NextPaymentsTileViewModel(
+          nextPaymentDueDate,
+          overDuePaymentsCount,
+          paymentsAccruingInterestCount,
+          reviewAndReconcileEnabled
+        )
+      )
     }
   }
 
@@ -54,27 +65,37 @@ object NextPaymentsTileViewModel {
       case fdm: FinancialDetailsModel => fdm
     }
 
-    val docDetailsNotDueWithInterest: List[DocumentDetail] = financialDetailsModels.flatMap(_.docDetailsNotDueWithInterest(currentDate))
+    val docDetailsNotDueWithInterest: List[DocumentDetail] =
+      financialDetailsModels.flatMap(_.docDetailsNotDueWithInterest(currentDate))
     docDetailsNotDueWithInterest.length
   }
 }
 
 case class ReturnsTileViewModel(currentTaxYear: TaxYear, iTSASubmissionIntegrationEnabled: Boolean)
 
-case class YourBusinessesTileViewModel(displayCeaseAnIncome: Boolean, incomeSourcesEnabled: Boolean,
-                                       incomeSourcesNewJourneyEnabled: Boolean)
+case class YourBusinessesTileViewModel(
+    displayCeaseAnIncome:           Boolean,
+    incomeSourcesEnabled:           Boolean,
+    incomeSourcesNewJourneyEnabled: Boolean)
 
-case class AccountSettingsTileViewModel(currentTaxYear: TaxYear, reportingFrequencyEnabled: Boolean, currentYearITSAStatus: ITSAStatus)
+case class AccountSettingsTileViewModel(
+    currentTaxYear:            TaxYear,
+    reportingFrequencyEnabled: Boolean,
+    currentYearITSAStatus:     ITSAStatus)
 
-case class PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled: Boolean, submissionFrequency: String, penaltyPoints: Int) {
+case class PenaltiesAndAppealsTileViewModel(
+    penaltiesAndAppealsIsEnabled: Boolean,
+    submissionFrequency:          String,
+    penaltyPoints:                Int) {
 
   private val annualPenaltyThreshold = 2
 
   private val quarterlyPenaltyThreshold = 4
 
   val penaltiesTagMessageKey: Option[String] = (submissionFrequency, penaltyPoints) match {
-    case ("Annual",    points) if points >= annualPenaltyThreshold    => Some("home.penaltiesAndAppeals.twoPenaltiesTag")
-    case ("Quarterly", points) if points >= quarterlyPenaltyThreshold => Some("home.penaltiesAndAppeals.fourPenaltiesTag")
-    case _                                                            => None
+    case ("Annual", points) if points >= annualPenaltyThreshold => Some("home.penaltiesAndAppeals.twoPenaltiesTag")
+    case ("Quarterly", points) if points >= quarterlyPenaltyThreshold =>
+      Some("home.penaltiesAndAppeals.fourPenaltiesTag")
+    case _ => None
   }
 }

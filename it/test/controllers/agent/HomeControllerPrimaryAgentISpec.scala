@@ -43,23 +43,25 @@ import java.time.LocalDate
 class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
 
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
-  implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
+  implicit val messages:     Messages              = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
   val incomeSourceDetailsModel: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     nino = testNino,
     mtdbsa = testMtditid,
     yearOfMigration = Some(getCurrentTaxYearEnd.getYear.toString),
-    businesses = List(BusinessDetailsModel(
-      "testId",
-      incomeSource = Some(testIncomeSource),
-      Some(AccountingPeriodModel(currentDate, currentDate.plusYears(1))),
-      None,
-      Some(getCurrentTaxYearEnd),
-      Some(b2TradingStart),
-      Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason))),
-      address = Some(address),
-      cashOrAccruals = false
-    )),
+    businesses = List(
+      BusinessDetailsModel(
+        "testId",
+        incomeSource = Some(testIncomeSource),
+        Some(AccountingPeriodModel(currentDate, currentDate.plusYears(1))),
+        None,
+        Some(getCurrentTaxYearEnd),
+        Some(b2TradingStart),
+        Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason))),
+        address = Some(address),
+        cashOrAccruals = false
+      )
+    ),
     properties = Nil
   )
 
@@ -71,39 +73,51 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
 
   "GET /" when {
     val additionalCookies = getAgentClientDetailsForCookie(false, true)
-    val mtdUserRole = MTDPrimaryAgent
-      s"there is a primary agent" that {
-        s"is a authenticated for a client" should {
-          "render the home page" which {
-            "displays the next upcoming payment and charge" when {
-              "there are payments upcoming and nothing is overdue" in {
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  status = OK,
-                  response = incomeSourceDetailsModel
-                )
-                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
-                val currentObligations: ObligationsModel = ObligationsModel(Seq(
+    val mtdUserRole       = MTDPrimaryAgent
+    s"there is a primary agent" that {
+      s"is a authenticated for a client" should {
+        "render the home page" which {
+          "displays the next upcoming payment and charge" when {
+            "there are payments upcoming and nothing is overdue" in {
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                status = OK,
+                response = incomeSourceDetailsModel
+              )
+              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
+              val currentObligations: ObligationsModel = ObligationsModel(
+                Seq(
                   GroupedObligationsModel(
                     identification = "testId",
                     obligations = List(
-                      SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                    ))
-                ))
-
-                IncomeTaxViewChangeStub.stubGetNextUpdates(
-                  nino = testNino,
-                  deadlines = currentObligations
+                      SingleObligationModel(
+                        currentDate,
+                        currentDate.plusDays(1),
+                        currentDate,
+                        "Quarterly",
+                        None,
+                        "testPeriodKey",
+                        StatusFulfilled
+                      )
+                    )
+                  )
                 )
+              )
 
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
-                  nino = testNino,
-                  from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-                  to = getCurrentTaxYearEnd.toString
-                )(
-                  status = OK,
-                  response = Json.toJson(FinancialDetailsModel(
+              IncomeTaxViewChangeStub.stubGetNextUpdates(
+                nino = testNino,
+                deadlines = currentObligations
+              )
+
+              IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                nino = testNino,
+                from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+                to = getCurrentTaxYearEnd.toString
+              )(
+                status = OK,
+                response = Json.toJson(
+                  FinancialDetailsModel(
                     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
                     documentDetails = List(
                       DocumentDetail(
@@ -126,56 +140,80 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                         items = Some(Seq(SubItem(Some(currentDate))))
                       )
                     )
-                  ))
+                  )
                 )
+              )
 
-                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-                  "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+              IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                "utr",
+                testSaUtr.toLong,
+                (getCurrentTaxYearEnd.minusYears(1).getYear).toString
+              )(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-                result should have(
-                  httpStatus(OK),
-                  pageTitle(mtdUserRole, "home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
-                  elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate)
-                )
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "home.agent.heading"),
+                elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+                elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate)
+              )
 
-                verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(currentDate -> false)), Left(currentDate -> false)).detail)
-                verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
-              }
+              verifyAuditContainsDetail(
+                HomeAudit(testUser, Some(Left(currentDate -> false)), Left(currentDate -> false)).detail
+              )
+              verifyAuditContainsDetail(
+                NextUpdatesResponseAuditModel(
+                  testUser,
+                  "testId",
+                  currentObligations.obligations.flatMap(_.obligations)
+                ).detail
+              )
             }
+          }
 
-            "displays no upcoming payment" when {
-              "there are no upcoming payments" in {
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  status = OK,
-                  response = incomeSourceDetailsModel
-                )
-                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
+          "displays no upcoming payment" when {
+            "there are no upcoming payments" in {
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                status = OK,
+                response = incomeSourceDetailsModel
+              )
+              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
 
-                val currentObligations: ObligationsModel = ObligationsModel(Seq(
+              val currentObligations: ObligationsModel = ObligationsModel(
+                Seq(
                   GroupedObligationsModel(
                     identification = "testId",
                     obligations = List(
-                      SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                    ))
-                ))
-
-                IncomeTaxViewChangeStub.stubGetNextUpdates(
-                  nino = testNino,
-                  deadlines = currentObligations
+                      SingleObligationModel(
+                        currentDate,
+                        currentDate.plusDays(1),
+                        currentDate,
+                        "Quarterly",
+                        None,
+                        "testPeriodKey",
+                        StatusFulfilled
+                      )
+                    )
+                  )
                 )
+              )
 
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
-                  nino = testNino,
-                  from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-                  to = getCurrentTaxYearEnd.toString
-                )(
-                  status = OK,
-                  response = Json.toJson(FinancialDetailsModel(
+              IncomeTaxViewChangeStub.stubGetNextUpdates(
+                nino = testNino,
+                deadlines = currentObligations
+              )
+
+              IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                nino = testNino,
+                from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+                to = getCurrentTaxYearEnd.toString
+              )(
+                status = OK,
+                response = Json.toJson(
+                  FinancialDetailsModel(
                     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
                     documentDetails = List(
                       DocumentDetail(
@@ -196,56 +234,78 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                         items = Some(Seq(SubItem(Some(currentDate))))
                       )
                     )
-                  ))
+                  )
                 )
+              )
 
-                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-                  "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+              IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                "utr",
+                testSaUtr.toLong,
+                (getCurrentTaxYearEnd.minusYears(1).getYear).toString
+              )(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-                result should have(
-                  httpStatus(OK),
-                  pageTitle(mtdUserRole, "home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
-                  elementTextBySelector("#payments-tile p:nth-child(2)")(noPaymentsDue)
-                )
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "home.agent.heading"),
+                elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+                elementTextBySelector("#payments-tile p:nth-child(2)")(noPaymentsDue)
+              )
 
-                verifyAuditContainsDetail(HomeAudit(testUser, None, Left(currentDate -> false)).detail)
-                verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
-              }
+              verifyAuditContainsDetail(HomeAudit(testUser, None, Left(currentDate -> false)).detail)
+              verifyAuditContainsDetail(
+                NextUpdatesResponseAuditModel(
+                  testUser,
+                  "testId",
+                  currentObligations.obligations.flatMap(_.obligations)
+                ).detail
+              )
             }
+          }
 
-            "displays an overdue payment and an overdue obligation" when {
-              "there is a single payment overdue and a single obligation overdue" in {
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  status = OK,
-                  response = incomeSourceDetailsModel
-                )
-                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
+          "displays an overdue payment and an overdue obligation" when {
+            "there is a single payment overdue and a single obligation overdue" in {
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                status = OK,
+                response = incomeSourceDetailsModel
+              )
+              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
 
-                val currentObligations: ObligationsModel = ObligationsModel(Seq(
+              val currentObligations: ObligationsModel = ObligationsModel(
+                Seq(
                   GroupedObligationsModel(
                     identification = "testId",
                     obligations = List(
-                      SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                    ))
-                ))
-
-                IncomeTaxViewChangeStub.stubGetNextUpdates(
-                  nino = testNino,
-                  deadlines = currentObligations
+                      SingleObligationModel(
+                        currentDate,
+                        currentDate.plusDays(1),
+                        currentDate.minusDays(1),
+                        "Quarterly",
+                        None,
+                        "testPeriodKey",
+                        StatusFulfilled
+                      )
+                    )
+                  )
                 )
+              )
 
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
-                  nino = testNino,
-                  from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-                  to = getCurrentTaxYearEnd.toString
-                )(
-                  status = OK,
-                  response = Json.toJson(FinancialDetailsModel(
+              IncomeTaxViewChangeStub.stubGetNextUpdates(
+                nino = testNino,
+                deadlines = currentObligations
+              )
+
+              IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                nino = testNino,
+                from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+                to = getCurrentTaxYearEnd.toString
+              )(
+                status = OK,
+                response = Json.toJson(
+                  FinancialDetailsModel(
                     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
                     documentDetails = List(
                       DocumentDetail(
@@ -268,54 +328,86 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                         items = Some(Seq(SubItem(Some(currentDate.minusDays(1)))))
                       )
                     )
-                  ))
+                  )
                 )
+              )
 
-                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-                  "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+              IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                "utr",
+                testSaUtr.toLong,
+                (getCurrentTaxYearEnd.minusYears(1).getYear).toString
+              )(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-                result should have(
-                  httpStatus(OK),
-                  pageTitle(mtdUserRole, "home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}"),
-                  elementTextBySelector("#payments-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}")
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "home.agent.heading"),
+                elementTextBySelector("#updates-tile p:nth-child(2)")(
+                  s"$overdue ${currentDate.minusDays(1).toLongDate}"
+                ),
+                elementTextBySelector("#payments-tile p:nth-child(2)")(
+                  s"$overdue ${currentDate.minusDays(1).toLongDate}"
                 )
+              )
 
-                verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(currentDate.minusDays(1) -> true)), Left(currentDate.minusDays(1) -> true)).detail)
-                verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
-              }
+              verifyAuditContainsDetail(
+                HomeAudit(
+                  testUser,
+                  Some(Left(currentDate.minusDays(1) -> true)),
+                  Left(currentDate.minusDays(1) -> true)
+                ).detail
+              )
+              verifyAuditContainsDetail(
+                NextUpdatesResponseAuditModel(
+                  testUser,
+                  "testId",
+                  currentObligations.obligations.flatMap(_.obligations)
+                ).detail
+              )
+            }
 
-              "there is a single payment overdue and a single obligation overdue and one overdue CESA " in {
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  status = OK,
-                  response = incomeSourceDetailsModel
-                )
-                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
+            "there is a single payment overdue and a single obligation overdue and one overdue CESA " in {
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                status = OK,
+                response = incomeSourceDetailsModel
+              )
+              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
 
-                val currentObligations: ObligationsModel = ObligationsModel(Seq(
+              val currentObligations: ObligationsModel = ObligationsModel(
+                Seq(
                   GroupedObligationsModel(
                     identification = "testId",
                     obligations = List(
-                      SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                    ))
-                ))
-
-                IncomeTaxViewChangeStub.stubGetNextUpdates(
-                  nino = testNino,
-                  deadlines = currentObligations
+                      SingleObligationModel(
+                        currentDate,
+                        currentDate.plusDays(1),
+                        currentDate.minusDays(1),
+                        "Quarterly",
+                        None,
+                        "testPeriodKey",
+                        StatusFulfilled
+                      )
+                    )
+                  )
                 )
+              )
 
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
-                  nino = testNino,
-                  from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-                  to = getCurrentTaxYearEnd.toString
-                )(
-                  status = OK,
-                  response = Json.toJson(FinancialDetailsModel(
+              IncomeTaxViewChangeStub.stubGetNextUpdates(
+                nino = testNino,
+                deadlines = currentObligations
+              )
+
+              IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                nino = testNino,
+                from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+                to = getCurrentTaxYearEnd.toString
+              )(
+                status = OK,
+                response = Json.toJson(
+                  FinancialDetailsModel(
                     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
                     documentDetails = List(
                       DocumentDetail(
@@ -338,58 +430,91 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                         items = Some(Seq(SubItem(Some(currentDate.minusDays(1)))))
                       )
                     )
-                  ))
+                  )
                 )
+              )
 
-                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-                  "utr", testSaUtr.toLong, getCurrentTaxYearEnd.minusYears(1).getYear.toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
+              IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                "utr",
+                testSaUtr.toLong,
+                getCurrentTaxYearEnd.minusYears(1).getYear.toString
+              )(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-                result should have(
-                  httpStatus(OK),
-                  pageTitle(mtdUserRole, "home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}"),
-                  elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments(numberOverdue = "2"))
-                )
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "home.agent.heading"),
+                elementTextBySelector("#updates-tile p:nth-child(2)")(
+                  s"$overdue ${currentDate.minusDays(1).toLongDate}"
+                ),
+                elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments(numberOverdue = "2"))
+              )
 
-                verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(2)), Left(currentDate.minusDays(1) -> true)).detail)
-                verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
-              }
+              verifyAuditContainsDetail(
+                HomeAudit(testUser, Some(Right(2)), Left(currentDate.minusDays(1) -> true)).detail
+              )
+              verifyAuditContainsDetail(
+                NextUpdatesResponseAuditModel(
+                  testUser,
+                  "testId",
+                  currentObligations.obligations.flatMap(_.obligations)
+                ).detail
+              )
             }
-            "display a count of the overdue payments a count of overdue obligations" when {
-              "there is more than one payment overdue and more than one obligation overdue" in {
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  status = OK,
-                  response = incomeSourceDetailsModel
+          }
+          "display a count of the overdue payments a count of overdue obligations" when {
+            "there is more than one payment overdue and more than one obligation overdue" in {
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                status = OK,
+                response = incomeSourceDetailsModel
+              )
+
+              val currentObligations: ObligationsModel =
+                ObligationsModel(
+                  Seq(
+                    GroupedObligationsModel(
+                      identification = "testId",
+                      obligations = List(
+                        SingleObligationModel(
+                          currentDate,
+                          currentDate.plusDays(1),
+                          currentDate.minusDays(1),
+                          "Quarterly",
+                          None,
+                          "testPeriodKey",
+                          StatusFulfilled
+                        ),
+                        SingleObligationModel(
+                          currentDate,
+                          currentDate.plusDays(1),
+                          currentDate.minusDays(2),
+                          "Quarterly",
+                          None,
+                          "testPeriodKey",
+                          StatusFulfilled
+                        )
+                      )
+                    )
+                  )
                 )
 
-                val currentObligations: ObligationsModel =
-                  ObligationsModel(
-                    Seq(
-                      GroupedObligationsModel(
-                        identification = "testId",
-                        obligations = List(
-                          SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey", StatusFulfilled),
-                          SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(2), "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                        ))
-                    ))
+              IncomeTaxViewChangeStub.stubGetNextUpdates(
+                nino = testNino,
+                deadlines = currentObligations
+              )
 
-                IncomeTaxViewChangeStub.stubGetNextUpdates(
-                  nino = testNino,
-                  deadlines = currentObligations
-                )
-
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
-                  nino = testNino,
-                  from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-                  to = getCurrentTaxYearEnd.toString
-                )(
-                  status = OK,
-                  response = Json.toJson(FinancialDetailsModel(
+              IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                nino = testNino,
+                from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+                to = getCurrentTaxYearEnd.toString
+              )(
+                status = OK,
+                response = Json.toJson(
+                  FinancialDetailsModel(
                     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
                     documentDetails = List(
                       DocumentDetail(
@@ -401,7 +526,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                         originalAmount = 1000.00,
                         documentDate = LocalDate.of(2018, 3, 29),
                         effectiveDateOfPayment = Some(currentDate.minusDays(1)),
-                        documentDueDate = Some(currentDate.minusDays(1)),
+                        documentDueDate = Some(currentDate.minusDays(1))
                       ),
                       DocumentDetail(
                         taxYear = getCurrentTaxYearEnd.getYear,
@@ -429,188 +554,64 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                         items = Some(Seq(SubItem(Some(currentDate.minusDays(2)))))
                       )
                     )
-                  ))
+                  )
                 )
+              )
 
-                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-                  "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+              IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                "utr",
+                testSaUtr.toLong,
+                (getCurrentTaxYearEnd.minusYears(1).getYear).toString
+              )(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-                result should have(
-                  httpStatus(OK),
-                  pageTitle(mtdUserRole, "home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(overdueUpdates(numberOverdue = "2")),
-                  elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments(numberOverdue = "2"))
-                )
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "home.agent.heading"),
+                elementTextBySelector("#updates-tile p:nth-child(2)")(overdueUpdates(numberOverdue = "2")),
+                elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments(numberOverdue = "2"))
+              )
 
-                verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(2)), Right(2)).detail)
-                verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
-              }
-            }
-            "display Income Sources tile" when {
-              "IncomeSources feature switch is enabled" in {
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                enable(IncomeSourcesFs)
-                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  status = OK,
-                  response = incomeSourceDetailsModel
-                )
-
-                val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                  GroupedObligationsModel(
-                    identification = "testId",
-                    obligations = List(
-                      SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                    ))
-                ))
-
-                IncomeTaxViewChangeStub.stubGetNextUpdates(
-                  nino = testNino,
-                  deadlines = currentObligations
-                )
-
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
-                  nino = testNino,
-                  from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-                  to = getCurrentTaxYearEnd.toString
-                )(
-                  status = OK,
-                  response = Json.toJson(FinancialDetailsModel(
-                    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-                    documentDetails = List(
-                      DocumentDetail(
-                        taxYear = getCurrentTaxYearEnd.getYear,
-                        transactionId = "testTransactionId",
-                        documentDescription = Some("ITSA- POA 1"),
-                        documentText = Some("documentText"),
-                        outstandingAmount = 500.00,
-                        originalAmount = 1000.00,
-                        documentDate = LocalDate.of(2018, 3, 29),
-                        effectiveDateOfPayment = Some(currentDate),
-                        documentDueDate = Some(currentDate)
-                      )
-                    ),
-                    financialDetails = List(
-                      FinancialDetail(
-                        taxYear = getCurrentTaxYearEnd.getYear.toString,
-                        mainType = Some("SA Payment on Account 1"),
-                        transactionId = Some("testTransactionId"),
-                        items = Some(Seq(SubItem(Some(currentDate))))
-                      )
-                    )
-                  ))
-                )
-
-                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-                  "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-                result should have(
-                  httpStatus(OK),
-                  pageTitle(mtdUserRole, "home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
-                  elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate),
-                  elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Income Sources")
-                )
-              }
-            }
-            "display Your Businesses tile" when {
-              "IncomeSources and IncomeSourcesNewJourney feature switches are enabled" in {
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                enable(IncomeSourcesFs)
-                enable(IncomeSourcesNewJourney)
-
-                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  status = OK,
-                  response = incomeSourceDetailsModel
-                )
-
-                val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                  GroupedObligationsModel(
-                    identification = "testId",
-                    obligations = List(
-                      SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                    ))
-                ))
-
-                IncomeTaxViewChangeStub.stubGetNextUpdates(
-                  nino = testNino,
-                  deadlines = currentObligations
-                )
-
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
-                  nino = testNino,
-                  from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-                  to = getCurrentTaxYearEnd.toString
-                )(
-                  status = OK,
-                  response = Json.toJson(FinancialDetailsModel(
-                    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-                    documentDetails = List(
-                      DocumentDetail(
-                        taxYear = getCurrentTaxYearEnd.getYear,
-                        transactionId = "testTransactionId",
-                        documentDescription = Some("ITSA- POA 1"),
-                        documentText = Some("documentText"),
-                        outstandingAmount = 500.00,
-                        originalAmount = 1000.00,
-                        documentDate = LocalDate.of(2018, 3, 29),
-                        effectiveDateOfPayment = Some(currentDate),
-                        documentDueDate = Some(currentDate)
-                      )
-                    ),
-                    financialDetails = List(
-                      FinancialDetail(
-                        taxYear = getCurrentTaxYearEnd.getYear.toString,
-                        mainType = Some("SA Payment on Account 1"),
-                        transactionId = Some("testTransactionId"),
-                        items = Some(Seq(SubItem(Some(currentDate))))
-                      )
-                    )
-                  ))
-                )
-
-                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-                  "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-                result should have(
-                  httpStatus(OK),
-                  pageTitle(mtdUserRole, "home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
-                  elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate),
-                  elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Your businesses")
-                )
-              }
+              verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(2)), Right(2)).detail)
+              verifyAuditContainsDetail(
+                NextUpdatesResponseAuditModel(
+                  testUser,
+                  "testId",
+                  currentObligations.obligations.flatMap(_.obligations)
+                ).detail
+              )
             }
           }
-
-          "display the account settings tile" when {
-            "Reporting Frequency feature switches are enabled" in {
+          "display Income Sources tile" when {
+            "IncomeSources feature switch is enabled" in {
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
+              enable(IncomeSourcesFs)
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
-              enable(ReportingFrequencyPage)
-
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                 status = OK,
                 response = incomeSourceDetailsModel
               )
 
-              val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                GroupedObligationsModel(
-                  identification = "testId",
-                  obligations = List(
-                    SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                  ))
-              ))
+              val currentObligations: ObligationsModel = ObligationsModel(
+                Seq(
+                  GroupedObligationsModel(
+                    identification = "testId",
+                    obligations = List(
+                      SingleObligationModel(
+                        currentDate,
+                        currentDate.plusDays(1),
+                        currentDate,
+                        "Quarterly",
+                        None,
+                        "testPeriodKey",
+                        StatusFulfilled
+                      )
+                    )
+                  )
+                )
+              )
 
               IncomeTaxViewChangeStub.stubGetNextUpdates(
                 nino = testNino,
@@ -623,7 +624,185 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                 to = getCurrentTaxYearEnd.toString
               )(
                 status = OK,
-                response = Json.toJson(FinancialDetailsModel(
+                response = Json.toJson(
+                  FinancialDetailsModel(
+                    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+                    documentDetails = List(
+                      DocumentDetail(
+                        taxYear = getCurrentTaxYearEnd.getYear,
+                        transactionId = "testTransactionId",
+                        documentDescription = Some("ITSA- POA 1"),
+                        documentText = Some("documentText"),
+                        outstandingAmount = 500.00,
+                        originalAmount = 1000.00,
+                        documentDate = LocalDate.of(2018, 3, 29),
+                        effectiveDateOfPayment = Some(currentDate),
+                        documentDueDate = Some(currentDate)
+                      )
+                    ),
+                    financialDetails = List(
+                      FinancialDetail(
+                        taxYear = getCurrentTaxYearEnd.getYear.toString,
+                        mainType = Some("SA Payment on Account 1"),
+                        transactionId = Some("testTransactionId"),
+                        items = Some(Seq(SubItem(Some(currentDate))))
+                      )
+                    )
+                  )
+                )
+              )
+
+              IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                "utr",
+                testSaUtr.toLong,
+                (getCurrentTaxYearEnd.minusYears(1).getYear).toString
+              )(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "home.agent.heading"),
+                elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+                elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate),
+                elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Income Sources")
+              )
+            }
+          }
+          "display Your Businesses tile" when {
+            "IncomeSources and IncomeSourcesNewJourney feature switches are enabled" in {
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
+
+              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                status = OK,
+                response = incomeSourceDetailsModel
+              )
+
+              val currentObligations: ObligationsModel = ObligationsModel(
+                Seq(
+                  GroupedObligationsModel(
+                    identification = "testId",
+                    obligations = List(
+                      SingleObligationModel(
+                        currentDate,
+                        currentDate.plusDays(1),
+                        currentDate,
+                        "Quarterly",
+                        None,
+                        "testPeriodKey",
+                        StatusFulfilled
+                      )
+                    )
+                  )
+                )
+              )
+
+              IncomeTaxViewChangeStub.stubGetNextUpdates(
+                nino = testNino,
+                deadlines = currentObligations
+              )
+
+              IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                nino = testNino,
+                from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+                to = getCurrentTaxYearEnd.toString
+              )(
+                status = OK,
+                response = Json.toJson(
+                  FinancialDetailsModel(
+                    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+                    documentDetails = List(
+                      DocumentDetail(
+                        taxYear = getCurrentTaxYearEnd.getYear,
+                        transactionId = "testTransactionId",
+                        documentDescription = Some("ITSA- POA 1"),
+                        documentText = Some("documentText"),
+                        outstandingAmount = 500.00,
+                        originalAmount = 1000.00,
+                        documentDate = LocalDate.of(2018, 3, 29),
+                        effectiveDateOfPayment = Some(currentDate),
+                        documentDueDate = Some(currentDate)
+                      )
+                    ),
+                    financialDetails = List(
+                      FinancialDetail(
+                        taxYear = getCurrentTaxYearEnd.getYear.toString,
+                        mainType = Some("SA Payment on Account 1"),
+                        transactionId = Some("testTransactionId"),
+                        items = Some(Seq(SubItem(Some(currentDate))))
+                      )
+                    )
+                  )
+                )
+              )
+
+              IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                "utr",
+                testSaUtr.toLong,
+                (getCurrentTaxYearEnd.minusYears(1).getYear).toString
+              )(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "home.agent.heading"),
+                elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+                elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate),
+                elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Your businesses")
+              )
+            }
+          }
+        }
+
+        "display the account settings tile" when {
+          "Reporting Frequency feature switches are enabled" in {
+            disable(NavBarFs)
+            stubAuthorised(mtdUserRole)
+            ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
+            enable(ReportingFrequencyPage)
+
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              status = OK,
+              response = incomeSourceDetailsModel
+            )
+
+            val currentObligations: ObligationsModel = ObligationsModel(
+              Seq(
+                GroupedObligationsModel(
+                  identification = "testId",
+                  obligations = List(
+                    SingleObligationModel(
+                      currentDate,
+                      currentDate.plusDays(1),
+                      currentDate,
+                      "Quarterly",
+                      None,
+                      "testPeriodKey",
+                      StatusFulfilled
+                    )
+                  )
+                )
+              )
+            )
+
+            IncomeTaxViewChangeStub.stubGetNextUpdates(
+              nino = testNino,
+              deadlines = currentObligations
+            )
+
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+              nino = testNino,
+              from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+              to = getCurrentTaxYearEnd.toString
+            )(
+              status = OK,
+              response = Json.toJson(
+                FinancialDetailsModel(
                   balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
                   documentDetails = List(
                     DocumentDetail(
@@ -646,67 +825,32 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                       items = Some(Seq(SubItem(Some(currentDate))))
                     )
                   )
-                ))
+                )
               )
+            )
 
-              IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-                "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+            IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+              "utr",
+              testSaUtr.toLong,
+              (getCurrentTaxYearEnd.minusYears(1).getYear).toString
+            )(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
+            val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-              result should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, "home.agent.heading"),
-                elementTextBySelector("#account-settings-tile p:nth-child(2)")("Reporting quarterly for 2022 to 2023 tax year"),
-                elementTextBySelector("#account-settings-tile h2:nth-child(1)")("Your account settings")
-              )
-            }
+            result should have(
+              httpStatus(OK),
+              pageTitle(mtdUserRole, "home.agent.heading"),
+              elementTextBySelector("#account-settings-tile p:nth-child(2)")(
+                "Reporting quarterly for 2022 to 2023 tax year"
+              ),
+              elementTextBySelector("#account-settings-tile h2:nth-child(1)")("Your account settings")
+            )
           }
+        }
 
-          "render the error page" when {
+        "render the error page" when {
 
-            "retrieving the charges was unsuccessful" in {
-              disable(NavBarFs)
-              stubAuthorised(mtdUserRole)
-
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                status = OK,
-                response = incomeSourceDetailsModel
-              )
-
-              val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                GroupedObligationsModel(
-                  identification = "testId",
-                  obligations = List(
-                    SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                  ))
-              ))
-
-              IncomeTaxViewChangeStub.stubGetNextUpdates(
-                nino = testNino,
-                deadlines = currentObligations
-              )
-
-              IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
-                nino = testNino,
-                from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-                to = getCurrentTaxYearEnd.toString
-              )(
-                status = INTERNAL_SERVER_ERROR,
-                response = Json.obj()
-              )
-
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-              result should have(
-                httpStatus(INTERNAL_SERVER_ERROR),
-                pageTitle(mtdUserRole, titleInternalServer, isErrorPage = true)
-              )
-
-              verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
-            }
-          }
-          "retrieving the obligations was unsuccessful" in {
+          "retrieving the charges was unsuccessful" in {
             disable(NavBarFs)
             stubAuthorised(mtdUserRole)
 
@@ -715,7 +859,38 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
               response = incomeSourceDetailsModel
             )
 
-            IncomeTaxViewChangeStub.stubGetNextUpdatesError(testNino)
+            val currentObligations: ObligationsModel = ObligationsModel(
+              Seq(
+                GroupedObligationsModel(
+                  identification = "testId",
+                  obligations = List(
+                    SingleObligationModel(
+                      currentDate,
+                      currentDate.plusDays(1),
+                      currentDate,
+                      "Quarterly",
+                      None,
+                      "testPeriodKey",
+                      StatusFulfilled
+                    )
+                  )
+                )
+              )
+            )
+
+            IncomeTaxViewChangeStub.stubGetNextUpdates(
+              nino = testNino,
+              deadlines = currentObligations
+            )
+
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+              nino = testNino,
+              from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+              to = getCurrentTaxYearEnd.toString
+            )(
+              status = INTERNAL_SERVER_ERROR,
+              response = Json.obj()
+            )
 
             val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -723,26 +898,52 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
               httpStatus(INTERNAL_SERVER_ERROR),
               pageTitle(mtdUserRole, titleInternalServer, isErrorPage = true)
             )
-          }
-          "retrieving the income sources was unsuccessful" in {
-            disable(NavBarFs)
-            enable(IncomeSourcesFs)
-            stubAuthorised(mtdUserRole)
 
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsErrorResponse(testMtditid)(
-              status = INTERNAL_SERVER_ERROR)
-
-            val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-            result should have(
-              httpStatus(INTERNAL_SERVER_ERROR),
-              pageTitleAgentLogin(titleInternalServer, isErrorPage = true)
+            verifyAuditContainsDetail(
+              NextUpdatesResponseAuditModel(
+                testUser,
+                "testId",
+                currentObligations.obligations.flatMap(_.obligations)
+              ).detail
             )
           }
         }
+        "retrieving the obligations was unsuccessful" in {
+          disable(NavBarFs)
+          stubAuthorised(mtdUserRole)
 
-        testAuthFailures(path, mtdUserRole)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            status = OK,
+            response = incomeSourceDetailsModel
+          )
+
+          IncomeTaxViewChangeStub.stubGetNextUpdatesError(testNino)
+
+          val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+          result should have(
+            httpStatus(INTERNAL_SERVER_ERROR),
+            pageTitle(mtdUserRole, titleInternalServer, isErrorPage = true)
+          )
+        }
+        "retrieving the income sources was unsuccessful" in {
+          disable(NavBarFs)
+          enable(IncomeSourcesFs)
+          stubAuthorised(mtdUserRole)
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsErrorResponse(testMtditid)(status = INTERNAL_SERVER_ERROR)
+
+          val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+          result should have(
+            httpStatus(INTERNAL_SERVER_ERROR),
+            pageTitleAgentLogin(titleInternalServer, isErrorPage = true)
+          )
+        }
       }
+
+      testAuthFailures(path, mtdUserRole)
+    }
     testNoClientDataFailure(path)
   }
 

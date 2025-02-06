@@ -47,21 +47,22 @@ class CreditSummaryAuditingSpec extends TestSupport {
   )
 
   val creditDetailsModelPartiallyPaid = creditDetailsModelPaid
-    .copy(documentDetail = creditDetailsModelPaid.documentDetail
-      .copy(outstandingAmount = BigDecimal("-150.00")),
+    .copy(
+      documentDetail = creditDetailsModelPaid.documentDetail
+        .copy(outstandingAmount = BigDecimal("-150.00")),
       date = LocalDate.of(2019, 11, 12)
     )
 
   val creditDetailsModelUnPaid = creditDetailsModelPaid
-    .copy(documentDetail = creditDetailsModelPaid.documentDetail
-      .copy(
-        originalAmount = BigDecimal("1.5"),
-        outstandingAmount = BigDecimal("1.5")
-      ),
+    .copy(
+      documentDetail = creditDetailsModelPaid.documentDetail
+        .copy(
+          originalAmount = BigDecimal("1.5"),
+          outstandingAmount = BigDecimal("1.5")
+        ),
       creditType = CutOverCreditType,
       date = LocalDate.of(2021, 3, 7)
     )
-
 
   "CreditSummaryDetails conversion" should {
     "- paid credit" in {
@@ -86,7 +87,8 @@ class CreditSummaryAuditingSpec extends TestSupport {
     }
 
     "- convert list of charges" in {
-      val creditSummaryDetails: Seq[CreditSummaryDetails] = List(creditDetailsModelPaid, creditDetailsModelUnPaid, creditDetailsModelPartiallyPaid)
+      val creditSummaryDetails: Seq[CreditSummaryDetails] =
+        List(creditDetailsModelPaid, creditDetailsModelUnPaid, creditDetailsModelPartiallyPaid)
       creditSummaryDetails.map(_.status) shouldBe Seq("Fully allocated", "Not allocated", "Partially allocated")
     }
 
@@ -124,14 +126,14 @@ class CreditSummaryAuditingSpec extends TestSupport {
       )
 
       testCreditSummaryModel.detail shouldBe Json.obj(
-        "saUtr" -> testSaUtr,
-          "nino" -> testNino,
-          "userType" -> testUserTypeIndividual.toString,
-          "credId" -> testCredId,
-          "mtditid" -> testMtditid,
-          "creditOnAccount" -> "5",
-          "creditDetails" -> testCreditSummaryModel.getCreditDetails
-        )
+        "saUtr"           -> testSaUtr,
+        "nino"            -> testNino,
+        "userType"        -> testUserTypeIndividual.toString,
+        "credId"          -> testCredId,
+        "mtditid"         -> testMtditid,
+        "creditOnAccount" -> "5",
+        "creditDetails"   -> testCreditSummaryModel.getCreditDetails
+      )
     }
   }
 

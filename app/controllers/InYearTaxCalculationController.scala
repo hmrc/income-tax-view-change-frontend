@@ -38,32 +38,39 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class InYearTaxCalculationController @Inject()(authActions: AuthActions,
-                                               view: InYearTaxCalculationView,
-                                               calcService: CalculationService,
-                                               dateService: DateServiceInterface,
-                                               auditingService: AuditingService,
-                                               itvcErrorHandler: ItvcErrorHandler,
-                                               itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                              (implicit val mcc: MessagesControllerComponents,
-                                               val appConfig: FrontendAppConfig,
-                                               val languageUtils: LanguageUtils,
-                                               val ec: ExecutionContext) extends FrontendController(mcc)
-  with I18nSupport with ImplicitDateFormatter {
+class InYearTaxCalculationController @Inject() (
+    authActions:           AuthActions,
+    view:                  InYearTaxCalculationView,
+    calcService:           CalculationService,
+    dateService:           DateServiceInterface,
+    auditingService:       AuditingService,
+    itvcErrorHandler:      ItvcErrorHandler,
+    itvcErrorHandlerAgent: AgentItvcErrorHandler
+  )(
+    implicit val mcc:  MessagesControllerComponents,
+    val appConfig:     FrontendAppConfig,
+    val languageUtils: LanguageUtils,
+    val ec:            ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with ImplicitDateFormatter {
 
-
-  def handleRequest(isAgent: Boolean, currentDate: LocalDate, timeStamp: String, origin: Option[String] = None)
-                   (implicit user: MtdItUser[_],
-                    hc: HeaderCarrier,
-                    errorHandler: ShowInternalServerError): Future[Result] = {
+  def handleRequest(
+      isAgent:     Boolean,
+      currentDate: LocalDate,
+      timeStamp:   String,
+      origin:      Option[String] = None
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier,
+      errorHandler:  ShowInternalServerError
+    ): Future[Result] = {
 
     val taxYear = if (currentDate.isAfter(toTaxYearEndDate(currentDate.getYear))) {
       currentDate.getYear + 1
-    }
-    else currentDate.getYear
+    } else currentDate.getYear
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calculationResponse: LiabilityCalculationResponse =>
-
         val taxCalc: CalculationSummary = CalculationSummary(calculationResponse)
 
         val auditModel = ViewInYearTaxEstimateAuditModel(
@@ -88,8 +95,8 @@ class InYearTaxCalculationController @Inject()(authActions: AuthActions,
     }
   }
 
-  def show(origin: Option[String]): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
+  def show(origin: Option[String]): Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit user =>
       val currentDate = dateService.getCurrentDate
       handleRequest(
         isAgent = false,
@@ -97,16 +104,16 @@ class InYearTaxCalculationController @Inject()(authActions: AuthActions,
         currentDate.toLongDate,
         origin = origin
       )(implicitly, implicitly, itvcErrorHandler)
-  }
+    }
 
-  def showAgent: Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
-    implicit mtdItUser =>
+  def showAgent: Action[AnyContent] =
+    authActions.asMTDPrimaryAgent.async { implicit mtdItUser =>
       val currentDate = dateService.getCurrentDate
       handleRequest(
         isAgent = true,
         currentDate,
         currentDate.toLongDate
       )(implicitly, implicitly, itvcErrorHandlerAgent)
-  }
+    }
 
 }

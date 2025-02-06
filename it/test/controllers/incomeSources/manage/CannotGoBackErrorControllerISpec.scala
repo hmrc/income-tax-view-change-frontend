@@ -29,7 +29,7 @@ import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, completedUIJourneySessionData, emptyUIJourneySessionData}
 
 class CannotGoBackErrorControllerISpec extends ControllerISpecHelper {
-  val title: String = messagesAPI("cannotGoBack.heading")
+  val title:          String         = messagesAPI("cannotGoBack.heading")
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   val url: IncomeSourceType => String = (incomeSourceType: IncomeSourceType) =>
     routes.CannotGoBackErrorController.show(isAgent = false, incomeSourceType).url
@@ -43,72 +43,80 @@ class CannotGoBackErrorControllerISpec extends ControllerISpecHelper {
     val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     val pathEnd = incomeSourceType match {
       case SelfEmployment => "/manage-business-cannot-go-back"
-      case UkProperty => "/manage-uk-property-cannot-go-back"
-      case _ => "/manage-foreign-property-cannot-go-back"
+      case UkProperty     => "/manage-uk-property-cannot-go-back"
+      case _              => "/manage-foreign-property-cannot-go-back"
     }
     pathStart + "/income-sources/manage" + pathEnd
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
-      val path = getPath(mtdUserRole, incomeSourceType)
-      val additionalCookies = getAdditionalCookies(mtdUserRole)
-      s"GET $path" when {
-        s"a user is a $mtdUserRole" that {
-          "is authenticated, with a valid enrolment" should {
-            "render the cannot go back error page" when {
-              "the journey is completed" in {
-                enable(IncomeSourcesFs)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-                await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))))
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
+        val path              = getPath(mtdUserRole, incomeSourceType)
+        val additionalCookies = getAdditionalCookies(mtdUserRole)
+        s"GET $path" when {
+          s"a user is a $mtdUserRole" that {
+            "is authenticated, with a valid enrolment" should {
+              "render the cannot go back error page" when {
+                "the journey is completed" in {
+                  enable(IncomeSourcesFs)
+                  disable(NavBarFs)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+                  await(
+                    sessionService.setMongoData(
+                      completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))
+                    )
+                  )
 
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                result should have(
-                  httpStatus(OK),
-                  pageTitle(mtdUserRole, "cannotGoBack.heading")
-                )
+                  val result = buildGETMTDClient(path, additionalCookies).futureValue
+                  result should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, "cannotGoBack.heading")
+                  )
+                }
+              }
+
+              "redirect to the home page" when {
+                "the income sources feature switch is disabled" in {
+                  disable(IncomeSourcesFs)
+                  disable(NavBarFs)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+                  val result = buildGETMTDClient(path, additionalCookies).futureValue
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+                  result should have(
+                    httpStatus(SEE_OTHER),
+                    redirectURI(homeUrl(mtdUserRole))
+                  )
+                }
+              }
+
+              "render the error page" when {
+                "mongo is empty" in {
+                  enable(IncomeSourcesFs)
+                  disable(NavBarFs)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+                  await(
+                    sessionService.setMongoData(
+                      emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))
+                    )
+                  )
+                  val result = buildGETMTDClient(path, additionalCookies).futureValue
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+                  result should have(
+                    httpStatus(INTERNAL_SERVER_ERROR)
+                  )
+                }
               }
             }
-
-            "redirect to the home page" when {
-              "the income sources feature switch is disabled" in {
-                disable(IncomeSourcesFs)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
-                )
-              }
-            }
-
-            "render the error page" when {
-              "mongo is empty" in {
-                enable(IncomeSourcesFs)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-                await(sessionService.setMongoData(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))))
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-                result should have(
-                  httpStatus(INTERNAL_SERVER_ERROR)
-                )
-              }
-            }
+            testAuthFailures(path, mtdUserRole)
           }
-          testAuthFailures(path, mtdUserRole)
         }
       }
-    }
   }
 }
-

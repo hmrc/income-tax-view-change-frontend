@@ -28,12 +28,13 @@ import scala.concurrent.Future
 
 class RepaymentConnectorSpec extends BaseConnectorSpec {
 
-  val nino = "AA010101Q"
+  val nino       = "AA010101Q"
   val fullAmount = BigDecimal("303.00")
-  val port = 9172
-  val host = "http://localhost"
+  val port       = 9172
+  val host       = "http://localhost"
 
-  def expectedNextUrl(amount: BigDecimal): String = s"$host:$port/self-assessment-repayment-frontend/$amount/select-amount"
+  def expectedNextUrl(amount: BigDecimal): String =
+    s"$host:$port/self-assessment-repayment-frontend/$amount/select-amount"
 
   val successResponse =
     HttpResponse(

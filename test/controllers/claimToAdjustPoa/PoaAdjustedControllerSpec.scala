@@ -32,26 +32,28 @@ import services.{ClaimToAdjustService, DateService, PaymentOnAccountSessionServi
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class PoaAdjustedControllerSpec extends MockAuthActions
-  with MockClaimToAdjustService
-  with MockCalculationListService
-  with MockPaymentOnAccountSessionService
-  with MockDateService {
+class PoaAdjustedControllerSpec
+    extends MockAuthActions
+    with MockClaimToAdjustService
+    with MockCalculationListService
+    with MockPaymentOnAccountSessionService
+    with MockDateService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
       api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService),
       api.inject.bind[DateService].toInstance(mockDateService)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[PoaAdjustedController]
 
   val startOfTaxYear: LocalDate = LocalDate.of(2023, 4, 7)
-  val endOfTaxYear: LocalDate = LocalDate.of(2024, 4, 4)
+  val endOfTaxYear:   LocalDate = LocalDate.of(2024, 4, 4)
 
   mtdAllRoles.foreach { mtdRole =>
-    val isAgent = mtdRole != MTDIndividual
+    val isAgent     = mtdRole != MTDIndividual
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
     s"show(isAgent = $isAgent)" when {
       val action = testController.show(isAgent)
@@ -66,7 +68,8 @@ class PoaAdjustedControllerSpec extends MockAuthActions
 
               when(mockDateService.getCurrentDate).thenReturn(startOfTaxYear)
               when(mockPaymentOnAccountSessionService.setCompletedJourney(any(), any())).thenReturn(Future(Right(())))
-              when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoaAmendmentData(newPoaAmount = Some(1200))))))
+              when(mockPaymentOnAccountSessionService.getMongo(any(), any()))
+                .thenReturn(Future(Right(Some(PoaAmendmentData(newPoaAmount = Some(1200))))))
 
               setupMockGetPaymentsOnAccount()
               setupMockTaxYearNotCrystallised()
@@ -81,7 +84,9 @@ class PoaAdjustedControllerSpec extends MockAuthActions
 
               when(mockDateService.getCurrentDate).thenReturn(endOfTaxYear)
               when(mockPaymentOnAccountSessionService.setCompletedJourney(any(), any())).thenReturn(Future(Right(())))
-              when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoaAmendmentData(None, newPoaAmount = Some(5000), journeyCompleted = true)))))
+              when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(
+                Future(Right(Some(PoaAmendmentData(None, newPoaAmount = Some(5000), journeyCompleted = true))))
+              )
 
               setupMockGetPaymentsOnAccount()
               setupMockTaxYearNotCrystallised()
@@ -97,7 +102,8 @@ class PoaAdjustedControllerSpec extends MockAuthActions
               mockSingleBISWithCurrentYearAsMigrationYear()
 
               when(mockPaymentOnAccountSessionService.setCompletedJourney(any(), any())).thenReturn(Future(Right(())))
-              when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoaAmendmentData(newPoaAmount = Some(1200))))))
+              when(mockPaymentOnAccountSessionService.getMongo(any(), any()))
+                .thenReturn(Future(Right(Some(PoaAmendmentData(newPoaAmount = Some(1200))))))
 
               setupMockGetPaymentsOnAccount()
               setupMockTaxYearNotCrystallised()
@@ -117,8 +123,10 @@ class PoaAdjustedControllerSpec extends MockAuthActions
             "Error setting journey completed flag in mongo session" in {
               enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
-              when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoaAmendmentData(newPoaAmount = Some(1200))))))
-              when(mockPaymentOnAccountSessionService.setCompletedJourney(any(), any())).thenReturn(Future(Left(new Error(""))))
+              when(mockPaymentOnAccountSessionService.getMongo(any(), any()))
+                .thenReturn(Future(Right(Some(PoaAmendmentData(newPoaAmount = Some(1200))))))
+              when(mockPaymentOnAccountSessionService.setCompletedJourney(any(), any()))
+                .thenReturn(Future(Left(new Error(""))))
 
               setupMockGetPaymentsOnAccount()
               setupMockTaxYearNotCrystallised()
@@ -131,7 +139,8 @@ class PoaAdjustedControllerSpec extends MockAuthActions
             "PaymentOnAccount model is not built successfully" in {
               enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
-              when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoaAmendmentData(newPoaAmount = Some(1200))))))
+              when(mockPaymentOnAccountSessionService.getMongo(any(), any()))
+                .thenReturn(Future(Right(Some(PoaAmendmentData(newPoaAmount = Some(1200))))))
               setupMockGetPaymentsOnAccountBuildFailure()
 
               setupMockSuccess(mtdRole)
@@ -142,7 +151,8 @@ class PoaAdjustedControllerSpec extends MockAuthActions
             "an Exception is returned from ClaimToAdjustService" in {
               enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
-              when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoaAmendmentData(newPoaAmount = Some(1200))))))
+              when(mockPaymentOnAccountSessionService.getMongo(any(), any()))
+                .thenReturn(Future(Right(Some(PoaAmendmentData(newPoaAmount = Some(1200))))))
               setupMockGetAmendablePoaViewModelFailure()
 
               setupMockSuccess(mtdRole)

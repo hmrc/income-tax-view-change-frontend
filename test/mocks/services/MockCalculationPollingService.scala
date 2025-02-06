@@ -33,25 +33,36 @@ trait MockCalculationPollingService extends UnitSpec with BeforeAndAfterEach {
 
   lazy val mockCalculationPollingService: CalculationPollingService = mock(classOf[CalculationPollingService])
 
-
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockCalculationPollingService)
   }
 
-  def setupMockInitiateCalculationPolling(calcId: String, nino: String, mtditid: String, taxYear: Int)(response: Int): Unit =
-    when(mockCalculationPollingService
-      .initiateCalculationPollingSchedulerWithMongoLock(
-        ArgumentMatchers.eq(calcId),
-        ArgumentMatchers.eq(nino),
-        ArgumentMatchers.eq(taxYear),
-        ArgumentMatchers.eq(mtditid),
-      )(ArgumentMatchers.any()))
+  def setupMockInitiateCalculationPolling(
+      calcId:  String,
+      nino:    String,
+      mtditid: String,
+      taxYear: Int
+    )(
+      response: Int
+    ): Unit =
+    when(
+      mockCalculationPollingService
+        .initiateCalculationPollingSchedulerWithMongoLock(
+          ArgumentMatchers.eq(calcId),
+          ArgumentMatchers.eq(nino),
+          ArgumentMatchers.eq(taxYear),
+          ArgumentMatchers.eq(mtditid)
+        )(ArgumentMatchers.any())
+    )
       .thenReturn(Future.successful(response))
 
-  def mockCalculationPollingSuccess(): Unit = setupMockInitiateCalculationPolling(testCalcId, testNino, testMtditid, testTaxYear)(Status.OK)
+  def mockCalculationPollingSuccess(): Unit =
+    setupMockInitiateCalculationPolling(testCalcId, testNino, testMtditid, testTaxYear)(Status.OK)
 
-  def mockCalculationPollingRetryableError(): Unit = setupMockInitiateCalculationPolling(testCalcId, testNino, testMtditid, testTaxYear)(Status.NO_CONTENT)
+  def mockCalculationPollingRetryableError(): Unit =
+    setupMockInitiateCalculationPolling(testCalcId, testNino, testMtditid, testTaxYear)(Status.NO_CONTENT)
 
-  def mockCalculationPollingNonRetryableError(): Unit = setupMockInitiateCalculationPolling(testCalcId, testNino, testMtditid, testTaxYear)(Status.INTERNAL_SERVER_ERROR)
+  def mockCalculationPollingNonRetryableError(): Unit =
+    setupMockInitiateCalculationPolling(testCalcId, testNino, testMtditid, testTaxYear)(Status.INTERNAL_SERVER_ERROR)
 }

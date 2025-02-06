@@ -31,7 +31,9 @@ class PaymentsAllocationChargesModelSpec extends UnitSpec with Matchers {
   "PaymentDetails" should {
 
     "be formatted to JSON correctly" in {
-      Json.toJson[FinancialDetailsWithDocumentDetailsModel](paymentAllocationChargesModel) shouldBe validWrittenPaymentAllocationChargesJson
+      Json.toJson[FinancialDetailsWithDocumentDetailsModel](
+        paymentAllocationChargesModel
+      ) shouldBe validWrittenPaymentAllocationChargesJson
     }
 
     "find a correspond document detail amount to financial detail" in {
@@ -48,7 +50,9 @@ class PaymentsAllocationChargesModelSpec extends UnitSpec with Matchers {
     }
 
     "be able to parse a JSON into the Model" in {
-      Json.fromJson[FinancialDetailsWithDocumentDetailsModel](validPaymentAllocationChargesJson) shouldBe JsSuccess(paymentAllocationChargesModel)
+      Json.fromJson[FinancialDetailsWithDocumentDetailsModel](validPaymentAllocationChargesJson) shouldBe JsSuccess(
+        paymentAllocationChargesModel
+      )
     }
   }
 }

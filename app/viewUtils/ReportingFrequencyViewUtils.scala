@@ -26,33 +26,57 @@ import services.optout.OptOutProposition
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class ReportingFrequencyViewUtils @Inject()()(
-  implicit val appConfig: FrontendAppConfig,
-  val dateService: DateServiceInterface,
-  val ec: ExecutionContext
-) extends FeatureSwitching {
-
+class ReportingFrequencyViewUtils @Inject() (
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    val dateService:        DateServiceInterface,
+    val ec:                 ExecutionContext)
+    extends FeatureSwitching {
 
   def itsaStatusString(itsaStatus: ITSAStatus)(implicit messages: Messages): Option[String] = {
     itsaStatus match {
-      case Mandated => Some(messages("reporting.frequency.table.mandated"))
+      case Mandated  => Some(messages("reporting.frequency.table.mandated"))
       case Voluntary => Some(messages("reporting.frequency.table.voluntary"))
-      case Annual => Some(messages("reporting.frequency.table.annual"))
-      case _ => None
+      case Annual    => Some(messages("reporting.frequency.table.annual"))
+      case _         => None
     }
   }
 
-  def itsaStatusTable(optOutProposition: OptOutProposition)(implicit messages: Messages): Seq[(String, Option[String])] = {
+  def itsaStatusTable(
+      optOutProposition: OptOutProposition
+    )(
+      implicit messages: Messages
+    ): Seq[(String, Option[String])] = {
     if (optOutProposition.previousTaxYear.crystallised) {
       Seq(
-        messages("reporting.frequency.table.taxYear", optOutProposition.currentTaxYear.taxYear.startYear.toString, optOutProposition.currentTaxYear.taxYear.endYear.toString) -> itsaStatusString(optOutProposition.currentTaxYear.status),
-        messages("reporting.frequency.table.taxYear", optOutProposition.nextTaxYear.taxYear.startYear.toString, optOutProposition.nextTaxYear.taxYear.endYear.toString) -> itsaStatusString(optOutProposition.nextTaxYear.status)
+        messages(
+          "reporting.frequency.table.taxYear",
+          optOutProposition.currentTaxYear.taxYear.startYear.toString,
+          optOutProposition.currentTaxYear.taxYear.endYear.toString
+        ) -> itsaStatusString(optOutProposition.currentTaxYear.status),
+        messages(
+          "reporting.frequency.table.taxYear",
+          optOutProposition.nextTaxYear.taxYear.startYear.toString,
+          optOutProposition.nextTaxYear.taxYear.endYear.toString
+        ) -> itsaStatusString(optOutProposition.nextTaxYear.status)
       ).filter(_._2.nonEmpty)
     } else {
       Seq(
-        messages("reporting.frequency.table.taxYear", optOutProposition.previousTaxYear.taxYear.startYear.toString, optOutProposition.previousTaxYear.taxYear.endYear.toString) -> itsaStatusString(optOutProposition.previousTaxYear.status),
-        messages("reporting.frequency.table.taxYear", optOutProposition.currentTaxYear.taxYear.startYear.toString, optOutProposition.currentTaxYear.taxYear.endYear.toString) -> itsaStatusString(optOutProposition.currentTaxYear.status),
-        messages("reporting.frequency.table.taxYear", optOutProposition.nextTaxYear.taxYear.startYear.toString, optOutProposition.nextTaxYear.taxYear.endYear.toString) -> itsaStatusString(optOutProposition.nextTaxYear.status)
+        messages(
+          "reporting.frequency.table.taxYear",
+          optOutProposition.previousTaxYear.taxYear.startYear.toString,
+          optOutProposition.previousTaxYear.taxYear.endYear.toString
+        ) -> itsaStatusString(optOutProposition.previousTaxYear.status),
+        messages(
+          "reporting.frequency.table.taxYear",
+          optOutProposition.currentTaxYear.taxYear.startYear.toString,
+          optOutProposition.currentTaxYear.taxYear.endYear.toString
+        ) -> itsaStatusString(optOutProposition.currentTaxYear.status),
+        messages(
+          "reporting.frequency.table.taxYear",
+          optOutProposition.nextTaxYear.taxYear.startYear.toString,
+          optOutProposition.nextTaxYear.taxYear.endYear.toString
+        ) -> itsaStatusString(optOutProposition.nextTaxYear.status)
       ).filter(_._2.nonEmpty)
     }
   }

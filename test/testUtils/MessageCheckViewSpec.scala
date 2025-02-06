@@ -26,28 +26,35 @@ import scala.language.reflectiveCalls
 
 class MessageCheckViewSpec extends TestSupport {
   val messageCheckView: MessageCheckView = app.injector.instanceOf[MessageCheckView]
-  lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
-  implicit val lang: Lang = Lang("cy")
+  lazy val msgs:        MessagesApi      = app.injector.instanceOf[MessagesApi]
+  implicit val lang:    Lang             = Lang("cy")
 
-  def languageSetupTest(language: String) = new {
-    val messageKeys: List[String] = messagesApi.messages.collect {
-      case (key, values) if key == language => values.keys
-    }.flatten(_.toList).toList
+  def languageSetupTest(language: String) =
+    new {
+      val messageKeys: List[String] = messagesApi.messages
+        .collect {
+          case (key, values) if key == language => values.keys
+        }
+        .flatten(_.toList)
+        .toList
 
-    val messagesMap = messagesApi.messages.collect {
-      case (key, values) if key == language => values
-    }.flatten(_.toMap).toMap
+      val messagesMap = messagesApi.messages
+        .collect {
+          case (key, values) if key == language => values
+        }
+        .flatten(_.toMap)
+        .toMap
 
-    val view: Html = messageCheckView(messageKeys)
-    val document: Document = Jsoup.parse(view.body)
-  }
+      val view:     Html     = messageCheckView(messageKeys)
+      val document: Document = Jsoup.parse(view.body)
+    }
 
   "Render Message in correct format" when {
     "message key is given" should {
       "return correct English format" in {
         val languageTest = languageSetupTest("default")
         languageTest.document.select(".messageRow").forEach { element =>
-          val messageKey = element.select(".messageKey").text()
+          val messageKey   = element.select(".messageKey").text()
           val messageValue = element.select(".messageValue").text()
           Some(messageValue) shouldBe languageTest.messagesMap.get(messageKey)
         }

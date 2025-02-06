@@ -28,15 +28,17 @@ import testOnly.utils.UserRepository
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class StubUsersController @Inject()(implicit val appConfig: FrontendAppConfig,
-                                    implicit val mcc: MessagesControllerComponents,
-                                    implicit val executionContext: ExecutionContext,
-                                    userRepository: UserRepository
-                                   ) extends BaseController with I18nSupport {
+class StubUsersController @Inject() (
+    implicit val appConfig:        FrontendAppConfig,
+    implicit val mcc:              MessagesControllerComponents,
+    implicit val executionContext: ExecutionContext,
+    userRepository:                UserRepository)
+    extends BaseController
+    with I18nSupport {
 
-  def stubUsers: Action[JsValue] = Action.async(parse.json) { implicit request =>
-    withJsonBody[UserRecord](
-      userRecord => {
+  def stubUsers: Action[JsValue] =
+    Action.async(parse.json) { implicit request =>
+      withJsonBody[UserRecord](userRecord => {
         Logger("application").info("userRecord:" + userRecord)
         userRepository.addUser(userRecord).map { result =>
           if (result.wasAcknowledged()) {
@@ -45,14 +47,11 @@ class StubUsersController @Inject()(implicit val appConfig: FrontendAppConfig,
             InternalServerError("Unable to upload user to database")
           }
         }
-      }
-    )
-  }
+      })
+    }
 
   val deleteUsers: Action[AnyContent] = Action.async { implicit request =>
-    userRepository.removeAll().flatMap(_ =>
-      Future.successful(Ok("\nDeleted all mongo data from FE user collection"))
-    )
+    userRepository.removeAll().flatMap(_ => Future.successful(Ok("\nDeleted all mongo data from FE user collection")))
   }
 
 }

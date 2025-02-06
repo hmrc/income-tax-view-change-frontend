@@ -19,7 +19,6 @@ package forms.validation
 import forms.validation.models.{FieldError, SummaryError}
 import play.api.data.{Field, Form, FormError}
 
-
 object ErrorMessageHelper {
 
   import ErrorMessageFactory.SummaryErrorLoc
@@ -42,7 +41,7 @@ object ErrorMessageHelper {
   def getFieldError(field: Field, parentForm: Option[Form[_]] = None): Option[FieldError] =
     parentForm match {
       case Some(form) => getFieldError(field, form)
-      case _ => getFieldError(field)
+      case _          => getFieldError(field)
     }
 
   def getSummaryErrors(form: Form[_]): Seq[(String, SummaryError)] =

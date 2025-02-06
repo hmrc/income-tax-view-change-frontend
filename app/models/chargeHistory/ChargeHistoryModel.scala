@@ -23,24 +23,24 @@ import services.claimToAdjustPoa.ClaimToAdjustHelper.isPoaDocumentDescription
 
 import java.time.LocalDate
 
-
-case class ChargeHistoryModel(taxYear: String,
-                              documentId: String,
-                              documentDate: LocalDate,
-                              documentDescription: String,
-                              totalAmount: BigDecimal,
-                              reversalDate: LocalDate,
-                              reversalReason: String,
-                              poaAdjustmentReason: Option[String]) {
+case class ChargeHistoryModel(
+    taxYear:             String,
+    documentId:          String,
+    documentDate:        LocalDate,
+    documentDescription: String,
+    totalAmount:         BigDecimal,
+    reversalDate:        LocalDate,
+    reversalReason:      String,
+    poaAdjustmentReason: Option[String]) {
 
   val reasonCode: Either[Throwable, ReversalReason] = {
     if (poaAdjustmentReason.isDefined)
       Right(AdjustmentReversalReason)
     else
       reversalReason match {
-        case "amended return" => Right(AmendedReturnReversalReason)
+        case "amended return"   => Right(AmendedReturnReversalReason)
         case "Customer Request" => Right(CustomerRequestReason)
-        case _ => Left(new Exception("Unable to resolve reversal reason"))
+        case _                  => Left(new Exception("Unable to resolve reversal reason"))
       }
   }
 

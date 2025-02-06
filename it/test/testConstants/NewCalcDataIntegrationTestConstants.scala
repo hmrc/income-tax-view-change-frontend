@@ -29,8 +29,7 @@ object NewCalcDataIntegrationTestConstants {
     }
   }
 
-  val liabilityCalculationMinimal = getLiabilityCalcResponse(
-    """
+  val liabilityCalculationMinimal = getLiabilityCalcResponse("""
       |{
       |  "inputs": {
       |    "personalInformation": {
@@ -46,8 +45,7 @@ object NewCalcDataIntegrationTestConstants {
       |}
       |""".stripMargin)
 
-  val liabilityCalculationGiftAid = getLiabilityCalcResponse(
-    """
+  val liabilityCalculationGiftAid = getLiabilityCalcResponse("""
       |{
       |  "inputs": {
       |    "personalInformation": {
@@ -67,8 +65,7 @@ object NewCalcDataIntegrationTestConstants {
       |}
       |""".stripMargin)
 
-  val liabilityCalculationPensionLumpSums = getLiabilityCalcResponse(
-    """
+  val liabilityCalculationPensionLumpSums = getLiabilityCalcResponse("""
       |{
       |  "inputs": {
       |    "personalInformation": {
@@ -93,8 +90,7 @@ object NewCalcDataIntegrationTestConstants {
       |}
       |""".stripMargin)
 
-  val liabilityCalculationPensionSavings = getLiabilityCalcResponse(
-    """
+  val liabilityCalculationPensionSavings = getLiabilityCalcResponse("""
       |{
       |  "inputs": {
       |    "personalInformation": {
@@ -125,8 +121,7 @@ object NewCalcDataIntegrationTestConstants {
       |}
       |""".stripMargin)
 
-  val liabilityCalculationPensionSavingsTaxCharges = getLiabilityCalcResponse(
-    """
+  val liabilityCalculationPensionSavingsTaxCharges = getLiabilityCalcResponse("""
       |{
       |  "inputs": {
       |    "personalInformation": {
@@ -157,8 +152,7 @@ object NewCalcDataIntegrationTestConstants {
       |}
       |""".stripMargin)
 
-  val liabilityCalculationVoluntaryClass2Nic = getLiabilityCalcResponse(
-    """
+  val liabilityCalculationVoluntaryClass2Nic = getLiabilityCalcResponse("""
       |{
       |  "inputs": {
       |    "personalInformation": {
@@ -188,8 +182,7 @@ object NewCalcDataIntegrationTestConstants {
       |}
       |""".stripMargin)
 
-  val liabilityCalculationNonVoluntaryClass2Nic = getLiabilityCalcResponse(
-    """
+  val liabilityCalculationNonVoluntaryClass2Nic = getLiabilityCalcResponse("""
       |{
       |  "inputs": {
       |    "personalInformation": {

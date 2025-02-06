@@ -24,24 +24,27 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import javax.inject.Singleton
 
 @Singleton
-class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config: Configuration) {
+class FrontendAppConfig @Inject() (val servicesConfig: ServicesConfig, val config: Configuration) {
 
-  lazy val hasEnabledTestOnlyRoutes: Boolean = config.get[String]("play.http.router") == "testOnlyDoNotUseInAppConf.Routes"
+  lazy val hasEnabledTestOnlyRoutes: Boolean =
+    config.get[String]("play.http.router") == "testOnlyDoNotUseInAppConf.Routes"
 
   //App
-  lazy val baseUrl: String = "report-quarterly/income-and-expenses/view"
-  lazy val agentBaseUrl: String = s"$baseUrl/agents"
+  lazy val baseUrl:                 String = "report-quarterly/income-and-expenses/view"
+  lazy val agentBaseUrl:            String = s"$baseUrl/agents"
   lazy val itvcFrontendEnvironment: String = servicesConfig.getString("base.url")
-  lazy val appName: String = servicesConfig.getString("appName")
+  lazy val appName:                 String = servicesConfig.getString("appName")
 
   //Feedback Config
-  private lazy val contactHost: String = servicesConfig.getString("contact-frontend.host")
+  private lazy val contactHost:            String = servicesConfig.getString("contact-frontend.host")
   private lazy val contactFrontendService: String = servicesConfig.baseUrl("contact-frontend")
-  lazy val contactFormServiceIdentifier: String = "ITVC"
-  lazy val contactFrontendBaseUrl: String = s"$contactFrontendService"
-  lazy val reportAProblemPartialUrl: String = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
-  lazy val reportAProblemNonJSUrl: String = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
-  lazy val betaFeedbackUrl = s"/$baseUrl/feedback"
+  lazy val contactFormServiceIdentifier:   String = "ITVC"
+  lazy val contactFrontendBaseUrl:         String = s"$contactFrontendService"
+  lazy val reportAProblemPartialUrl: String =
+    s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
+  lazy val reportAProblemNonJSUrl: String =
+    s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
+  lazy val betaFeedbackUrl      = s"/$baseUrl/feedback"
   lazy val agentBetaFeedbackUrl = s"/$agentBaseUrl/feedback"
 
   //ITVC Protected Service
@@ -54,49 +57,52 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val addressLookupService: String = servicesConfig.baseUrl("address-lookup-frontend")
 
   //View L&P
-  def saViewLandPService(utr: String): String = servicesConfig.getString("old-sa-viewer-frontend.host") + s"/$utr/account"
+  def saViewLandPService(utr: String): String =
+    servicesConfig.getString("old-sa-viewer-frontend.host") + s"/$utr/account"
 
   //SA for Agents Online Service
   lazy val saForAgents: String = "https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
 
   //GG Sign In via BAS Gateway
-  lazy val signInUrl: String = servicesConfig.getString("base.sign-in")
+  lazy val signInUrl:   String = servicesConfig.getString("base.sign-in")
   lazy val ggSignInUrl: String = servicesConfig.getString("government-gateway.sign-in.url")
   lazy val homePageUrl: String = servicesConfig.getString("base.fullUrl")
 
   //Exit Survey
-  lazy val exitSurveyBaseUrl: String = servicesConfig.getString("feedback-frontend.host") + servicesConfig.getString("feedback-frontend.url")
+  lazy val exitSurveyBaseUrl: String =
+    servicesConfig.getString("feedback-frontend.host") + servicesConfig.getString("feedback-frontend.url")
 
   def exitSurveyUrl(identifier: String): String = s"$exitSurveyBaseUrl/$identifier"
 
   //Sign out
   lazy val ggUrl: String = servicesConfig.getString("government-gateway.url")
 
-  def ggSignOutUrl(identifier: String): String = s"$ggUrl/bas-gateway/sign-out-without-state?continue=${exitSurveyUrl(identifier)}"
+  def ggSignOutUrl(identifier: String): String =
+    s"$ggUrl/bas-gateway/sign-out-without-state?continue=${exitSurveyUrl(identifier)}"
 
   //MTD Income Tax Enrolment
-  lazy val mtdItEnrolmentKey: String = servicesConfig.getString("enrolments.mtd.key")
+  lazy val mtdItEnrolmentKey:  String = servicesConfig.getString("enrolments.mtd.key")
   lazy val mtdItIdentifierKey: String = servicesConfig.getString("enrolments.mtd.identifier")
 
   //ARN Enrolment
-  lazy val arnEnrolmentKey: String = servicesConfig.getString("enrolments.arn.key")
+  lazy val arnEnrolmentKey:  String = servicesConfig.getString("enrolments.arn.key")
   lazy val arnIdentifierKey: String = servicesConfig.getString("enrolments.arn.identifier")
 
   //NINO Enrolment
-  lazy val ninoEnrolmentKey: String = servicesConfig.getString("enrolments.nino.key")
+  lazy val ninoEnrolmentKey:  String = servicesConfig.getString("enrolments.nino.key")
   lazy val ninoIdentifierKey: String = servicesConfig.getString("enrolments.nino.identifier")
 
   //SA Enrolment
-  lazy val saEnrolmentKey: String = servicesConfig.getString("enrolments.sa.key")
+  lazy val saEnrolmentKey:  String = servicesConfig.getString("enrolments.sa.key")
   lazy val saIdentifierKey: String = servicesConfig.getString("enrolments.sa.identifier")
 
   //Business Tax Account
-  lazy val btaService: String = servicesConfig.baseUrl("business-account")
-  lazy val businessTaxAccount: String = servicesConfig.getString("business-tax-account.url")
-  lazy val personalTaxAccount: String = servicesConfig.getString("personal-tax-account.url")
+  lazy val btaService:          String = servicesConfig.baseUrl("business-account")
+  lazy val businessTaxAccount:  String = servicesConfig.getString("business-tax-account.url")
+  lazy val personalTaxAccount:  String = servicesConfig.getString("personal-tax-account.url")
   lazy val btaManageAccountUrl: String = s"$businessTaxAccount/manage-account"
-  lazy val btaMessagesUrl: String = s"$businessTaxAccount/messages"
-  lazy val selfAssessmentUrl: String = s"$businessTaxAccount/self-assessment"
+  lazy val btaMessagesUrl:      String = s"$businessTaxAccount/messages"
+  lazy val selfAssessmentUrl:   String = s"$businessTaxAccount/self-assessment"
 
   //Agent Services Account
   lazy val setUpAgentServicesAccountUrl: String = servicesConfig.getString("set-up-agent-services-account.url")
@@ -124,25 +130,33 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //Accounting software guidance
   lazy val accountingSoftwareLinkUrl: String = "https://www.gov.uk/guidance/use-software-to-send-income-tax-updates"
 
-  lazy val clientAuthorisationGuidance: String = "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax-as-an-agent-step-by-step"
+  lazy val clientAuthorisationGuidance: String =
+    "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax-as-an-agent-step-by-step"
 
   //Calculation Polling config
   lazy val calcPollSchedulerInterval: Int = servicesConfig.getInt("calculation-polling.interval")
-  lazy val calcPollSchedulerTimeout: Int = servicesConfig.getInt("calculation-polling.timeout")
-  lazy val calcPollNumberOfAttempts: Int = servicesConfig.getInt("calculation-polling.attempts")
-  lazy val calcPollDelayBetweenAttempts: Int = servicesConfig.getInt("calculation-polling.delayBetweenAttemptInMilliseconds")
+  lazy val calcPollSchedulerTimeout:  Int = servicesConfig.getInt("calculation-polling.timeout")
+  lazy val calcPollNumberOfAttempts:  Int = servicesConfig.getInt("calculation-polling.attempts")
+  lazy val calcPollDelayBetweenAttempts: Int =
+    servicesConfig.getInt("calculation-polling.delayBetweenAttemptInMilliseconds")
 
   // Submission service
   // This URL has a set year and environment. Please use submissionFrontendTaxOverviewUrl instead.
   lazy val submissionFrontendUrl: String = servicesConfig.getString("income-tax-submission-frontend.url")
   lazy val submissionFrontendTaxOverviewUrl: Int => String = taxYear =>
-    servicesConfig.getString("income-tax-submission-frontend.host") + s"/update-and-submit-income-tax-return/$taxYear/view"
+    servicesConfig.getString(
+      "income-tax-submission-frontend.host"
+    ) + s"/update-and-submit-income-tax-return/$taxYear/view"
 
   lazy val submissionFrontendFinalDeclarationUrl: Int => String = taxYear =>
-    servicesConfig.getString("income-tax-submission-frontend.host") + s"/update-and-submit-income-tax-return/$taxYear/declaration"
+    servicesConfig.getString(
+      "income-tax-submission-frontend.host"
+    ) + s"/update-and-submit-income-tax-return/$taxYear/declaration"
 
   lazy val submissionFrontendTaxYearsPage: Int => String = taxYear =>
-    servicesConfig.getString("income-tax-submission-frontend.host") + s"/update-and-submit-income-tax-return/$taxYear/start"
+    servicesConfig.getString(
+      "income-tax-submission-frontend.host"
+    ) + s"/update-and-submit-income-tax-return/$taxYear/start"
 
   // Disagree with a tax decision
   lazy val taxAppealsUrl: String = servicesConfig.getString("tax-appeals.url")
@@ -161,15 +175,16 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val enrolmentStoreProxyUrl: String = servicesConfig.baseUrl("enrolment-store-proxy")
 
   //Translation
-  def languageMap: Map[String, Lang] = Map(
-    "english" -> Lang("en"),
-    "cymraeg" -> Lang("cy")
-  )
+  def languageMap: Map[String, Lang] =
+    Map(
+      "english" -> Lang("en"),
+      "cymraeg" -> Lang("cy")
+    )
 
   //Auth variables
   lazy val requiredConfidenceLevel: Int = servicesConfig.getInt("auth.confidenceLevel")
 
-  lazy val ivUrl = servicesConfig.getString("identity-verification-frontend.host")
+  lazy val ivUrl                  = servicesConfig.getString("identity-verification-frontend.host")
   lazy val relativeIVUpliftParams = servicesConfig.getBoolean("identity-verification-frontend.use-relative-params")
 
   def incomeSourceOverrides(): Option[Seq[String]] = config.getOptional[Seq[String]]("afterIncomeSourceCreated")
@@ -183,12 +198,13 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val readFeatureSwitchesFromMongo: Boolean = servicesConfig.getBoolean("feature-switches.read-from-mongo")
 
   lazy val isTimeMachineEnabled: Boolean = servicesConfig.getBoolean("feature-switch.enable-time-machine")
-  lazy val timeMachineAddYears: Int = servicesConfig.getInt("time-machine.add-years")
-  lazy val timeMachineAddDays: Int = servicesConfig.getInt("time-machine.add-days")
+  lazy val timeMachineAddYears:  Int     = servicesConfig.getInt("time-machine.add-years")
+  lazy val timeMachineAddDays:   Int     = servicesConfig.getInt("time-machine.add-days")
 
-  lazy val isSessionDataStorageEnabled: Boolean = servicesConfig.getBoolean("feature-switch.enable-session-data-storage")
+  lazy val isSessionDataStorageEnabled: Boolean =
+    servicesConfig.getBoolean("feature-switch.enable-session-data-storage")
 
   val selfAssessmentTaxReturn = servicesConfig.getString("external-urls.self-assessment-tax-return-link")
-  val compatibleSoftwareLink = servicesConfig.getString("external-urls.compatible-software-link")
+  val compatibleSoftwareLink  = servicesConfig.getString("external-urls.compatible-software-link")
 
 }

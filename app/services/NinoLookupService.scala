@@ -25,7 +25,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class NinoLookupService @Inject()(val businessDetailsConnector: BusinessDetailsConnector) {
+class NinoLookupService @Inject() (val businessDetailsConnector: BusinessDetailsConnector) {
 
   def getNino(mtdRef: String)(implicit hc: HeaderCarrier): Future[NinoResponse] = {
     Logger("application").debug(s"Requesting NINO from connector for user with MtdRef: $mtdRef")

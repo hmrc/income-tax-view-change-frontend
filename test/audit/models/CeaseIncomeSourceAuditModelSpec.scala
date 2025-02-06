@@ -28,31 +28,50 @@ import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 class CeaseIncomeSourceAuditModelSpec extends TestSupport {
 
   val transactionName = enums.TransactionName.CeaseIncomeSource.name
-  val auditType = enums.AuditType.CeaseIncomeSource.name
-  val cessationDate = "2022-08-01"
-  val hcWithDeviceID = headerCarrier.copy(deviceID = Some("some device id"))
+  val auditType       = enums.AuditType.CeaseIncomeSource.name
+  val cessationDate   = "2022-08-01"
+  val hcWithDeviceID  = headerCarrier.copy(deviceID = Some("some device id"))
 
-  def getCeaseIncomeSourceAuditModel(incomeSourceType: IncomeSourceType, isAgent: Boolean, isError: Boolean): CeaseIncomeSourceAuditModel = {
+  def getCeaseIncomeSourceAuditModel(
+      incomeSourceType: IncomeSourceType,
+      isAgent:          Boolean,
+      isError:          Boolean
+    ): CeaseIncomeSourceAuditModel = {
     (incomeSourceType, isAgent, isError) match {
-      case (SelfEmployment, false, true) => CeaseIncomeSourceAuditModel(incomeSourceType, cessationDate, mkIncomeSourceId(testSelfEmploymentId), Some(failureResponse))
-      case (SelfEmployment, false, false) => CeaseIncomeSourceAuditModel(incomeSourceType, cessationDate, mkIncomeSourceId(testSelfEmploymentId), None)
-      case (SelfEmployment, true, false) => CeaseIncomeSourceAuditModel(incomeSourceType, cessationDate, mkIncomeSourceId(testSelfEmploymentId), None)(agentUserConfirmedClient(), headerCarrier)
-      case _ => CeaseIncomeSourceAuditModel(incomeSourceType, cessationDate, mkIncomeSourceId(testPropertyIncomeId), None)
+      case (SelfEmployment, false, true) =>
+        CeaseIncomeSourceAuditModel(
+          incomeSourceType,
+          cessationDate,
+          mkIncomeSourceId(testSelfEmploymentId),
+          Some(failureResponse)
+        )
+      case (SelfEmployment, false, false) =>
+        CeaseIncomeSourceAuditModel(incomeSourceType, cessationDate, mkIncomeSourceId(testSelfEmploymentId), None)
+      case (SelfEmployment, true, false) =>
+        CeaseIncomeSourceAuditModel(incomeSourceType, cessationDate, mkIncomeSourceId(testSelfEmploymentId), None)(
+          agentUserConfirmedClient(),
+          headerCarrier
+        )
+      case _ =>
+        CeaseIncomeSourceAuditModel(incomeSourceType, cessationDate, mkIncomeSourceId(testPropertyIncomeId), None)
     }
   }
 
   lazy val detailsAuditDataSuccess: (AffinityGroup, IncomeSourceType) => JsValue = (af, incomeSourceType) => {
-    val journeyDetails = if(incomeSourceType == SelfEmployment) Json.obj(
-      "journeyType" -> "SE",
-      "incomeSourceID" -> "XA00001234",
-      "businessName" -> "nextUpdates.business"
-      )
-    else Json.obj(
-      "journeyType" -> "UKPROPERTY",
-      "incomeSourceID" -> "1234"
-    )
+    val journeyDetails =
+      if (incomeSourceType == SelfEmployment)
+        Json.obj(
+          "journeyType"    -> "SE",
+          "incomeSourceID" -> "XA00001234",
+          "businessName"   -> "nextUpdates.business"
+        )
+      else
+        Json.obj(
+          "journeyType"    -> "UKPROPERTY",
+          "incomeSourceID" -> "1234"
+        )
     commonAuditDetails(af) ++ Json.obj(
-      "outcome" -> Json.obj("isSuccessful" -> true),
+      "outcome"             -> Json.obj("isSuccessful" -> true),
       "dateBusinessStopped" -> "2022-08-01"
     ) ++ journeyDetails
   }
@@ -60,19 +79,23 @@ class CeaseIncomeSourceAuditModelSpec extends TestSupport {
   lazy val detailsAuditDataFailure: AffinityGroup => JsValue = af =>
     commonAuditDetails(af) ++ Json.obj(
       "outcome" -> Json.obj(
-        "isSuccessful" -> false,
+        "isSuccessful"    -> false,
         "failureCategory" -> "API_FAILURE",
-        "failureReason" -> "Error message"
+        "failureReason"   -> "Error message"
       ),
-      "journeyType" -> "SE",
+      "journeyType"         -> "SE",
       "dateBusinessStopped" -> "2022-08-01",
-      "incomeSourceID" -> "XA00001234",
-      "businessName" -> "nextUpdates.business"
+      "incomeSourceID"      -> "XA00001234",
+      "businessName"        -> "nextUpdates.business"
     )
 
   "CeaseIncomeSourceAuditModel" should {
     s"have the correct transaction name of '$transactionName'" in {
-      getCeaseIncomeSourceAuditModel(SelfEmployment, isAgent = false, isError = false).transactionName shouldBe transactionName
+      getCeaseIncomeSourceAuditModel(
+        SelfEmployment,
+        isAgent = false,
+        isError = false
+      ).transactionName shouldBe transactionName
     }
   }
 
@@ -82,19 +105,35 @@ class CeaseIncomeSourceAuditModelSpec extends TestSupport {
 
   "have the correct detail for the audit event" when {
     "user is an Individual and when income source type is Self Employment" in {
-      getCeaseIncomeSourceAuditModel(SelfEmployment, isAgent = false, isError = false).detail shouldBe detailsAuditDataSuccess(Individual, SelfEmployment)
+      getCeaseIncomeSourceAuditModel(
+        SelfEmployment,
+        isAgent = false,
+        isError = false
+      ).detail shouldBe detailsAuditDataSuccess(Individual, SelfEmployment)
     }
 
     "user is an Agent and when income source type is Self Employment" in {
-      getCeaseIncomeSourceAuditModel(SelfEmployment, isAgent = true, isError = false).detail shouldBe detailsAuditDataSuccess(Agent, SelfEmployment)
+      getCeaseIncomeSourceAuditModel(
+        SelfEmployment,
+        isAgent = true,
+        isError = false
+      ).detail shouldBe detailsAuditDataSuccess(Agent, SelfEmployment)
     }
 
     "error while updating income source" in {
-      getCeaseIncomeSourceAuditModel(SelfEmployment, isAgent = false, isError = true).detail shouldBe detailsAuditDataFailure(Individual)
+      getCeaseIncomeSourceAuditModel(
+        SelfEmployment,
+        isAgent = false,
+        isError = true
+      ).detail shouldBe detailsAuditDataFailure(Individual)
     }
 
     "user is an Individual and when income source type is Property" in {
-      getCeaseIncomeSourceAuditModel(UkProperty, isAgent = false, isError = false).detail shouldBe detailsAuditDataSuccess(Individual, UkProperty)
+      getCeaseIncomeSourceAuditModel(
+        UkProperty,
+        isAgent = false,
+        isError = false
+      ).detail shouldBe detailsAuditDataSuccess(Individual, UkProperty)
     }
   }
 }

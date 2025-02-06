@@ -33,27 +33,41 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CalculationPollingController @Inject()(val authActions: AuthActions,
-                                             pollCalculationService: CalculationPollingService,
-                                             val itvcErrorHandler: ItvcErrorHandler,
-                                             val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                            (implicit val appConfig: FrontendAppConfig,
-                                             val mcc: MessagesControllerComponents,
-                                             val ec: ExecutionContext,
-                                             val languageUtils: LanguageUtils)
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+class CalculationPollingController @Inject() (
+    val authActions:           AuthActions,
+    pollCalculationService:    CalculationPollingService,
+    val itvcErrorHandler:      ItvcErrorHandler,
+    val itvcErrorHandlerAgent: AgentItvcErrorHandler
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    val mcc:                MessagesControllerComponents,
+    val ec:                 ExecutionContext,
+    val languageUtils:      LanguageUtils)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with FeatureSwitching {
 
-  def handleRequest(origin: Option[String] = None,
-                    itcvErrorHandler: ShowInternalServerError,
-                    taxYear: Int,
-                    isAgent: Boolean,
-                    successfulPollRedirect: Call,
-                    calculationId: Option[String])
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+  def handleRequest(
+      origin:                 Option[String] = None,
+      itcvErrorHandler:       ShowInternalServerError,
+      taxYear:                Int,
+      isAgent:                Boolean,
+      successfulPollRedirect: Call,
+      calculationId:          Option[String]
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier,
+      ec:            ExecutionContext
+    ): Future[Result] = {
     (calculationId, user.nino, user.mtditid) match {
       case (Some(calculationId), nino, mtditid) =>
         Logger("application").info(s"Polling started for $calculationId")
-        pollCalculationService.initiateCalculationPollingSchedulerWithMongoLock(calculationId, nino, taxYear, mtditid) flatMap {
+        pollCalculationService.initiateCalculationPollingSchedulerWithMongoLock(
+          calculationId,
+          nino,
+          taxYear,
+          mtditid
+        ) flatMap {
           case OK =>
             Logger("application").info(s"Received OK response for calcId: $calculationId")
             Future.successful(Redirect(successfulPollRedirect))
@@ -73,27 +87,25 @@ class CalculationPollingController @Inject()(val authActions: AuthActions,
   }
 
   def calculationPoller(taxYear: Int, isFinalCalc: Boolean, origin: Option[String] = None): Action[AnyContent] =
-    authActions.asMTDIndividual.async {
-      implicit user =>
-        lazy val successfulPollRedirect: Call = if (isFinalCalc) {
-          controllers.routes.FinalTaxCalculationController.show(taxYear, origin)
-        } else {
-          controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin)
-        }
+    authActions.asMTDIndividual.async { implicit user =>
+      lazy val successfulPollRedirect: Call = if (isFinalCalc) {
+        controllers.routes.FinalTaxCalculationController.show(taxYear, origin)
+      } else {
+        controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin)
+      }
 
-        handleRequest(
-          origin = origin,
-          itcvErrorHandler = itvcErrorHandler,
-          taxYear = taxYear,
-          isAgent = false,
-          successfulPollRedirect = successfulPollRedirect,
-          calculationId = user.session.get(SessionKeys.calculationId)
-        )
+      handleRequest(
+        origin = origin,
+        itcvErrorHandler = itvcErrorHandler,
+        taxYear = taxYear,
+        isAgent = false,
+        successfulPollRedirect = successfulPollRedirect,
+        calculationId = user.session.get(SessionKeys.calculationId)
+      )
     }
 
   def calculationPollerAgent(taxYear: Int, isFinalCalc: Boolean, origin: Option[String] = None): Action[AnyContent] = {
     authActions.asMTDPrimaryAgent.async { implicit user =>
-
       lazy val successfulPollRedirect: Call = if (isFinalCalc) {
         controllers.routes.FinalTaxCalculationController.showAgent(taxYear)
       } else {

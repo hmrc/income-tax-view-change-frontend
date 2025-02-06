@@ -36,11 +36,11 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
-  val hintText: String = messagesAPI("dateForm.hint")
+  val hintText:           String = messagesAPI("dateForm.hint")
   val continueButtonText: String = messagesAPI("base.continue")
-  val testChangeDay: String = "10"
-  val testChangeMonth: String = "10"
-  val testChangeYear: String = "2022"
+  val testChangeDay:      String = "10"
+  val testChangeMonth:    String = "10"
+  val testChangeYear:     String = "2022"
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -48,35 +48,50 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
   }
 
   def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType, isChange: Boolean): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "/income-sources/cease" else "/agents/income-sources/cease"
-    val changeIfReq = if(isChange) "/change-" else "/"
+    val pathStart   = if (mtdRole == MTDIndividual) "/income-sources/cease" else "/agents/income-sources/cease"
+    val changeIfReq = if (isChange) "/change-" else "/"
     val endPath = incomeSourceType match {
       case SelfEmployment => s"business-end-date?id=$testSelfEmploymentIdHashed"
-      case UkProperty =>  "uk-property-end-date"
-      case _ => "foreign-property-end-date"
+      case UkProperty     => "uk-property-end-date"
+      case _              => "foreign-property-end-date"
     }
     pathStart + changeIfReq + endPath
   }
 
-  def getIncomeSourceResponse(incomeSourceType: IncomeSourceType) = incomeSourceType match {
-    case SelfEmployment => businessOnlyResponse
-    case UkProperty => ukPropertyOnlyResponse
-    case ForeignProperty => foreignPropertyOnlyResponse
-  }
+  def getIncomeSourceResponse(incomeSourceType: IncomeSourceType) =
+    incomeSourceType match {
+      case SelfEmployment  => businessOnlyResponse
+      case UkProperty      => ukPropertyOnlyResponse
+      case ForeignProperty => foreignPropertyOnlyResponse
+    }
 
   def setupTestMongoData(incomeSourceType: IncomeSourceType) = {
     val incomeSourceId = incomeSourceType match {
       case SelfEmployment => testSelfEmploymentId
-      case _ => testPropertyIncomeId
+      case _              => testPropertyIncomeId
     }
-    await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"CEASE-${incomeSourceType.key}", ceaseIncomeSourceData =
-      Some(CeaseIncomeSourceData(incomeSourceId = Some(incomeSourceId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
+    await(
+      sessionService.setMongoData(
+        UIJourneySessionData(
+          testSessionId,
+          s"CEASE-${incomeSourceType.key}",
+          ceaseIncomeSourceData = Some(
+            CeaseIncomeSourceData(
+              incomeSourceId = Some(incomeSourceId),
+              endDate = Some(LocalDate.parse(testEndDate2022)),
+              ceaseIncomeSourceDeclare = Some(stringTrue),
+              journeyIsComplete = Some(false)
+            )
+          )
+        )
+      )
+    )
   }
 
   mtdAllRoles.foreach { mtdUserRole =>
     List(false, true).foreach { isChange =>
       List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
-        val path = getPath(mtdUserRole, incomeSourceType, isChange)
+        val path              = getPath(mtdUserRole, incomeSourceType, isChange)
         val additionalCookies = getAdditionalCookies(mtdUserRole)
         s"GET $path" when {
           s"a user is a $mtdUserRole" that {
@@ -86,9 +101,12 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
                 disable(NavBarFs)
                 enable(IncomeSourcesFs)
 
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  getIncomeSourceResponse(incomeSourceType)
+                )
 
-                if(isChange) {
+                if (isChange) {
                   setupTestMongoData(incomeSourceType)
                 }
 
@@ -125,25 +143,36 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
                   stubAuthorised(mtdUserRole)
                   disable(NavBarFs)
                   enable(IncomeSourcesFs)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    getIncomeSourceResponse(incomeSourceType)
+                  )
 
                   setupTestMongoData(incomeSourceType)
 
                   val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue
 
                   val expectedUrl = if (mtdUserRole == MTDIndividual) {
-                    controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType).url
+                    controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController
+                      .show(incomeSourceType)
+                      .url
                   } else {
-                    controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType).url
+                    controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController
+                      .showAgent(incomeSourceType)
+                      .url
                   }
 
                   result should have(
                     httpStatus(SEE_OTHER),
                     redirectURI(expectedUrl)
                   )
-                  sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, incomeSourceType)).futureValue shouldBe Right(Some(LocalDate.parse(testEndDate2022)))
+                  sessionService
+                    .getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, incomeSourceType))
+                    .futureValue shouldBe Right(Some(LocalDate.parse(testEndDate2022)))
                   if (incomeSourceType == SelfEmployment) {
-                    sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Cease, incomeSourceType)).futureValue shouldBe Right(Some(testSelfEmploymentId))
+                    sessionService
+                      .getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Cease, incomeSourceType))
+                      .futureValue shouldBe Right(Some(testSelfEmploymentId))
                   }
                 }
               }
@@ -156,18 +185,27 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
                   stubAuthorised(mtdUserRole)
                   disable(NavBarFs)
                   enable(IncomeSourcesFs)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                    OK,
+                    getIncomeSourceResponse(incomeSourceType)
+                  )
 
                   val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue
 
                   result should have(
                     httpStatus(BAD_REQUEST),
-                    elementTextByID("value-error")(messagesAPI("base.error-prefix") + ": " +
-                      messagesAPI(s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.error.invalid"))
+                    elementTextByID("value-error")(
+                      messagesAPI("base.error-prefix") + ": " +
+                        messagesAPI(s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.error.invalid")
+                    )
                   )
 
-                  sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, incomeSourceType)).futureValue shouldBe Right(None)
-                  sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Cease, incomeSourceType)).futureValue shouldBe Right(None)
+                  sessionService
+                    .getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, incomeSourceType))
+                    .futureValue shouldBe Right(None)
+                  sessionService
+                    .getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Cease, incomeSourceType))
+                    .futureValue shouldBe Right(None)
 
                 }
               }
@@ -179,4 +217,3 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
     }
   }
 }
-

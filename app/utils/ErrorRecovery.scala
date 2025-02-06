@@ -25,7 +25,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 trait ErrorRecovery {
 
   val individualErrorHandler: ItvcErrorHandler
-  val agentErrorHandler: AgentItvcErrorHandler
+  val agentErrorHandler:      AgentItvcErrorHandler
 
   def logAndRedirect[A](logMsg: String)(implicit user: MtdItUser[A]): Result = {
     logWithUserType(logMsg)

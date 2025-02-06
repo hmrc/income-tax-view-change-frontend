@@ -20,27 +20,26 @@ import models.liabilitycalculation.taxcalculation.TaxCalculation
 import play.api.libs.json.{Json, OFormat}
 
 case class Calculation(
-                        allowancesAndDeductions: Option[AllowancesAndDeductions] = None,
-                        reliefs: Option[Reliefs] = None,
-                        taxDeductedAtSource: Option[TaxDeductedAtSource] = None,
-                        giftAid: Option[GiftAid] = None,
-                        marriageAllowanceTransferredIn: Option[MarriageAllowanceTransferredIn] = None,
-                        studentLoans: Option[Seq[StudentLoan]] = None,
-                        employmentAndPensionsIncome: Option[EmploymentAndPensionsIncome] = None,
-                        employmentExpenses: Option[EmploymentExpenses] = None,
-                        stateBenefitsIncome: Option[StateBenefitsIncome] = None,
-                        shareSchemesIncome: Option[ShareSchemesIncome] = None,
-                        foreignIncome: Option[ForeignIncome] = None,
-                        chargeableEventGainsIncome: Option[ChargeableEventGainsIncome] = None,
-                        savingsAndGainsIncome: Option[SavingsAndGainsIncome] = None,
-                        dividendsIncome: Option[DividendsIncome] = None,
-                        otherIncome: Option[OtherIncome] = None,
-                        incomeSummaryTotals: Option[IncomeSummaryTotals] = None,
-                        taxCalculation: Option[TaxCalculation] = None,
-                        endOfYearEstimate: Option[EndOfYearEstimate] = None,
-                        pensionSavingsTaxCharges: Option[PensionSavingsTaxCharges] = None,
-                        transitionProfit: Option[TransitionProfit] = None
-                      )
+    allowancesAndDeductions:        Option[AllowancesAndDeductions] = None,
+    reliefs:                        Option[Reliefs] = None,
+    taxDeductedAtSource:            Option[TaxDeductedAtSource] = None,
+    giftAid:                        Option[GiftAid] = None,
+    marriageAllowanceTransferredIn: Option[MarriageAllowanceTransferredIn] = None,
+    studentLoans:                   Option[Seq[StudentLoan]] = None,
+    employmentAndPensionsIncome:    Option[EmploymentAndPensionsIncome] = None,
+    employmentExpenses:             Option[EmploymentExpenses] = None,
+    stateBenefitsIncome:            Option[StateBenefitsIncome] = None,
+    shareSchemesIncome:             Option[ShareSchemesIncome] = None,
+    foreignIncome:                  Option[ForeignIncome] = None,
+    chargeableEventGainsIncome:     Option[ChargeableEventGainsIncome] = None,
+    savingsAndGainsIncome:          Option[SavingsAndGainsIncome] = None,
+    dividendsIncome:                Option[DividendsIncome] = None,
+    otherIncome:                    Option[OtherIncome] = None,
+    incomeSummaryTotals:            Option[IncomeSummaryTotals] = None,
+    taxCalculation:                 Option[TaxCalculation] = None,
+    endOfYearEstimate:              Option[EndOfYearEstimate] = None,
+    pensionSavingsTaxCharges:       Option[PensionSavingsTaxCharges] = None,
+    transitionProfit:               Option[TransitionProfit] = None)
 
 object Calculation {
   implicit val format: OFormat[Calculation] = Json.format[Calculation]
@@ -59,10 +58,9 @@ object DividendsIncome {
 }
 
 case class EmploymentAndPensionsIncome(
-                                        totalPayeEmploymentAndLumpSumIncome: Option[BigDecimal] = None,
-                                        totalOccupationalPensionIncome: Option[BigDecimal] = None,
-                                        totalBenefitsInKind: Option[BigDecimal] = None
-                                      )
+    totalPayeEmploymentAndLumpSumIncome: Option[BigDecimal] = None,
+    totalOccupationalPensionIncome:      Option[BigDecimal] = None,
+    totalBenefitsInKind:                 Option[BigDecimal] = None)
 
 object EmploymentAndPensionsIncome {
   implicit val format: OFormat[EmploymentAndPensionsIncome] = Json.format[EmploymentAndPensionsIncome]
@@ -75,11 +73,10 @@ object EmploymentExpenses {
 }
 
 case class ForeignIncome(
-                          chargeableOverseasPensionsStateBenefitsRoyalties: Option[BigDecimal] = None,
-                          chargeableAllOtherIncomeReceivedWhilstAbroad: Option[BigDecimal] = None,
-                          overseasIncomeAndGains: Option[OverseasIncomeAndGains],
-                          totalForeignBenefitsAndGifts: Option[BigDecimal] = None
-                        )
+    chargeableOverseasPensionsStateBenefitsRoyalties: Option[BigDecimal] = None,
+    chargeableAllOtherIncomeReceivedWhilstAbroad:     Option[BigDecimal] = None,
+    overseasIncomeAndGains:                           Option[OverseasIncomeAndGains],
+    totalForeignBenefitsAndGifts:                     Option[BigDecimal] = None)
 
 object ForeignIncome {
   implicit val format: OFormat[ForeignIncome] = Json.format[ForeignIncome]
@@ -98,29 +95,26 @@ object OverseasIncomeAndGains {
 }
 
 case class GiftAid(
-                    grossGiftAidPayments: Int,
-                    giftAidTax: BigDecimal
-                  )
+    grossGiftAidPayments: Int,
+    giftAidTax:           BigDecimal)
 
 object GiftAid {
   implicit val format: OFormat[GiftAid] = Json.format[GiftAid]
 }
 
 case class IncomeSummaryTotals(
-                                totalSelfEmploymentProfit: Option[Int] = None,
-                                totalPropertyProfit: Option[Int] = None,
-                                totalFHLPropertyProfit: Option[Int] = None,
-                                totalForeignPropertyProfit: Option[Int] = None,
-                                totalEeaFhlProfit: Option[Int] = None
-                              )
+    totalSelfEmploymentProfit:  Option[Int] = None,
+    totalPropertyProfit:        Option[Int] = None,
+    totalFHLPropertyProfit:     Option[Int] = None,
+    totalForeignPropertyProfit: Option[Int] = None,
+    totalEeaFhlProfit:          Option[Int] = None)
 
 object IncomeSummaryTotals {
   implicit val writes: OFormat[IncomeSummaryTotals] = Json.format[IncomeSummaryTotals]
 }
 
 case class MarriageAllowanceTransferredIn(
-                                           amount: Option[BigDecimal] = None
-                                         )
+    amount: Option[BigDecimal] = None)
 
 object MarriageAllowanceTransferredIn {
   implicit val format: OFormat[MarriageAllowanceTransferredIn] = Json.format[MarriageAllowanceTransferredIn]
@@ -138,29 +132,31 @@ object ShareSchemesIncome {
   implicit val format: OFormat[ShareSchemesIncome] = Json.format[ShareSchemesIncome]
 }
 
-case class StateBenefitsIncome(totalStateBenefitsIncome: Option[BigDecimal] = None,
-                               totalStateBenefitsIncomeExcStatePensionLumpSum: Option[BigDecimal] = None)
+case class StateBenefitsIncome(
+    totalStateBenefitsIncome:                       Option[BigDecimal] = None,
+    totalStateBenefitsIncomeExcStatePensionLumpSum: Option[BigDecimal] = None)
 
 object StateBenefitsIncome {
   implicit val format: OFormat[StateBenefitsIncome] = Json.format[StateBenefitsIncome]
 }
 
-case class StudentLoan(planType: Option[String] = None,
-                       studentLoanTotalIncomeAmount: Option[BigDecimal] = None,
-                       studentLoanChargeableIncomeAmount: Option[BigDecimal] = None,
-                       studentLoanRepaymentAmount: Option[BigDecimal] = None,
-                       studentLoanRepaymentAmountNetOfDeductions: Option[BigDecimal] = None,
-                       studentLoanApportionedIncomeThreshold: Option[BigDecimal] = None,
-                       studentLoanRate: Option[BigDecimal] = None
-                      )
+case class StudentLoan(
+    planType:                                  Option[String] = None,
+    studentLoanTotalIncomeAmount:              Option[BigDecimal] = None,
+    studentLoanChargeableIncomeAmount:         Option[BigDecimal] = None,
+    studentLoanRepaymentAmount:                Option[BigDecimal] = None,
+    studentLoanRepaymentAmountNetOfDeductions: Option[BigDecimal] = None,
+    studentLoanApportionedIncomeThreshold:     Option[BigDecimal] = None,
+    studentLoanRate:                           Option[BigDecimal] = None)
 
 object StudentLoan {
   implicit val format: OFormat[StudentLoan] = Json.format[StudentLoan]
 }
 
-case class PensionSavingsTaxCharges(totalPensionCharges: Option[BigDecimal] = None,
-                                    totalTaxPaid: Option[BigDecimal] = None,
-                                    totalPensionChargesDue: Option[BigDecimal] = None)
+case class PensionSavingsTaxCharges(
+    totalPensionCharges:    Option[BigDecimal] = None,
+    totalTaxPaid:           Option[BigDecimal] = None,
+    totalPensionChargesDue: Option[BigDecimal] = None)
 
 object PensionSavingsTaxCharges {
   implicit val format: OFormat[PensionSavingsTaxCharges] = Json.format[PensionSavingsTaxCharges]
@@ -171,4 +167,3 @@ case class TransitionProfit(totalTaxableTransitionProfit: Option[BigDecimal] = N
 object TransitionProfit {
   implicit val format: OFormat[TransitionProfit] = Json.format[TransitionProfit]
 }
-

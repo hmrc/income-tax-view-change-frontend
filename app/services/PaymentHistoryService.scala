@@ -31,37 +31,52 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-
-class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistoryConnector,
-                                      financialDetailsConnector: FinancialDetailsConnector,
-                                      implicit val dateService: DateServiceInterface,
-                                      val appConfig: FrontendAppConfig)
-                                     (implicit ec: ExecutionContext) {
+class PaymentHistoryService @Inject() (
+    repaymentHistoryConnector: RepaymentHistoryConnector,
+    financialDetailsConnector: FinancialDetailsConnector,
+    implicit val dateService:  DateServiceInterface,
+    val appConfig:             FrontendAppConfig
+  )(
+    implicit ec: ExecutionContext) {
 
   @deprecated("Use getPaymentHistoryV2 instead", "MISUV-8845")
-  def getPaymentHistory(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentHistoryError.type, List[Payment]]] = {
+  def getPaymentHistory(
+      implicit hc: HeaderCarrier,
+      user:        MtdItUser[_]
+    ): Future[Either[PaymentHistoryError.type, List[Payment]]] = {
 
-    val orderedTaxYears: List[Int] = user.incomeSources.orderedTaxYearsByYearOfMigration.reverse.take(appConfig.paymentHistoryLimit)
+    val orderedTaxYears: List[Int] =
+      user.incomeSources.orderedTaxYearsByYearOfMigration.reverse.take(appConfig.paymentHistoryLimit)
 
-    Future.sequence(orderedTaxYears.map(year => financialDetailsConnector.getPayments(TaxYear(year-1, year)))) map { paymentResponses =>
-      val paymentsContainsFailure: Boolean = paymentResponses.exists {
-        case Payments(_) => false
-        case PaymentsError(status, _) if status == NOT_FOUND => false
-        case PaymentsError(_, _) => true
-      }
-      if (paymentsContainsFailure) {
-        Left(PaymentHistoryError)
-      } else {
-        Right(paymentResponses.collect {
-          case Payments(payments) => payments
-        }.flatten.distinct)
-      }
+    Future.sequence(orderedTaxYears.map(year => financialDetailsConnector.getPayments(TaxYear(year - 1, year)))) map {
+      paymentResponses =>
+        val paymentsContainsFailure: Boolean = paymentResponses.exists {
+          case Payments(_)                                     => false
+          case PaymentsError(status, _) if status == NOT_FOUND => false
+          case PaymentsError(_, _)                             => true
+        }
+        if (paymentsContainsFailure) {
+          Left(PaymentHistoryError)
+        } else {
+          Right(
+            paymentResponses
+              .collect {
+                case Payments(payments) => payments
+              }
+              .flatten
+              .distinct
+          )
+        }
     }
   }
 
-  def getPaymentHistoryV2(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentHistoryError.type, Seq[Payment]]] = {
+  def getPaymentHistoryV2(
+      implicit hc: HeaderCarrier,
+      user:        MtdItUser[_]
+    ): Future[Either[PaymentHistoryError.type, Seq[Payment]]] = {
 
-    val orderedTaxYears: List[Int] = user.incomeSources.orderedTaxYearsByYearOfMigration.reverse.take(appConfig.paymentHistoryLimit)
+    val orderedTaxYears: List[Int] =
+      user.incomeSources.orderedTaxYearsByYearOfMigration.reverse.take(appConfig.paymentHistoryLimit)
 
     val (from, to) = (orderedTaxYears.min, orderedTaxYears.max)
     Logger("application").debug(s"Getting payment history for TaxYears: ${from} - ${to}")
@@ -69,19 +84,23 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
     for {
       response <- financialDetailsConnector.getPayments(TaxYear.forYearEnd(from), TaxYear.forYearEnd(to))
     } yield response match {
-      case Payments(payments) => Right(payments.distinct)
+      case Payments(payments)  => Right(payments.distinct)
       case PaymentsError(_, _) => Left(PaymentHistoryError)
     }
   }
 
-  def getRepaymentHistory(paymentHistoryAndRefundsEnabled: Boolean)
-                         (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[RepaymentHistoryErrorModel.type, List[RepaymentHistory]]] = {
+  def getRepaymentHistory(
+      paymentHistoryAndRefundsEnabled: Boolean
+    )(
+      implicit hc: HeaderCarrier,
+      user:        MtdItUser[_]
+    ): Future[Either[RepaymentHistoryErrorModel.type, List[RepaymentHistory]]] = {
 
     if (paymentHistoryAndRefundsEnabled)
       repaymentHistoryConnector.getRepaymentHistoryByNino(Nino(user.nino)).map {
-        case RepaymentHistoryModel(repaymentsViewerDetails) => Right(repaymentsViewerDetails)
+        case RepaymentHistoryModel(repaymentsViewerDetails)         => Right(repaymentsViewerDetails)
         case RepaymentHistoryErrorModel(status, _) if status == 404 => Right(List())
-        case RepaymentHistoryErrorModel(_, _) => Left(RepaymentHistoryErrorModel)
+        case RepaymentHistoryErrorModel(_, _)                       => Left(RepaymentHistoryErrorModel)
       }
     else Future(Right(Nil))
   }

@@ -25,17 +25,19 @@ import testOnly.models.SchemaModel
 
 object StubSchemaForm {
 
-  val id = "_id"
-  val url = "url"
-  val method = "method"
+  val id             = "_id"
+  val url            = "url"
+  val method         = "method"
   val responseSchema = "responseSchema"
 
   val stubSchemaForm = Form(
     mapping(
-      id -> text.verifying(nonEmpty("Schema Name is Mandatory")),
-      url -> text.verifying(nonEmpty("URL Regex is Mandatory")),
+      id     -> text.verifying(nonEmpty("Schema Name is Mandatory")),
+      url    -> text.verifying(nonEmpty("URL Regex is Mandatory")),
       method -> text.verifying(nonEmpty("Method is Mandatory")),
-      responseSchema -> text.verifying(nonEmpty("Schema Definition is Mandatory") andThen validJson).transform[JsValue](s => Json.parse(s), j => j.toString())
+      responseSchema -> text
+        .verifying(nonEmpty("Schema Definition is Mandatory") andThen validJson)
+        .transform[JsValue](s => Json.parse(s), j => j.toString())
     )(SchemaModel.apply)(SchemaModel.unapply)
   )
 }

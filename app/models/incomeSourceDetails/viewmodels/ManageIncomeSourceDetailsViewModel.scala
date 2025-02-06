@@ -22,18 +22,18 @@ import models.incomeSourceDetails.{LatencyDetails, LatencyYearsCrystallised, Lat
 
 import java.time.LocalDate
 
-case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
-                                              incomeSource: Option[String],
-                                              tradingName: Option[String],
-                                              tradingStartDate: Option[LocalDate],
-                                              address: Option[AddressModel],
-                                              isTraditionalAccountingMethod: Boolean,
-                                              latencyYearsQuarterly: LatencyYearsQuarterly,
-                                              latencyYearsCrystallised: LatencyYearsCrystallised,
-                                              latencyDetails: Option[LatencyDetails],
-                                              incomeSourceType: IncomeSourceType,
-                                              quarterReportingType: Option[QuarterReportingType]
-                                             ) {
+case class ManageIncomeSourceDetailsViewModel(
+    incomeSourceId:                IncomeSourceId,
+    incomeSource:                  Option[String],
+    tradingName:                   Option[String],
+    tradingStartDate:              Option[LocalDate],
+    address:                       Option[AddressModel],
+    isTraditionalAccountingMethod: Boolean,
+    latencyYearsQuarterly:         LatencyYearsQuarterly,
+    latencyYearsCrystallised:      LatencyYearsCrystallised,
+    latencyDetails:                Option[LatencyDetails],
+    incomeSourceType:              IncomeSourceType,
+    quarterReportingType:          Option[QuarterReportingType]) {
 
   def latencyValueAsKey(latencyIndicator: String): String = {
     latencyIndicator match {
@@ -59,6 +59,3 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
   }
 
 }
-
-
-

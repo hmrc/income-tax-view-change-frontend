@@ -50,7 +50,7 @@ class ClaimToAdjustPoaRequestSpec extends UnitSpec {
 
       "write increase adjustment reason as code" in {
         val increaseRequest = request.copy(poaAdjustmentReason = Increase)
-        val increaseJson = Json.toJson(increaseRequest)
+        val increaseJson    = Json.toJson(increaseRequest)
         (__ \ "poaAdjustmentReason")(increaseJson) shouldBe Seq(JsString("005"))
       }
     }

@@ -34,34 +34,38 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAn
 
 import scala.concurrent.Future
 
-class ConfirmOptOutControllerSpec extends MockAuthActions
-  with MockOptOutService with MockSessionService {
+class ConfirmOptOutControllerSpec extends MockAuthActions with MockOptOutService with MockSessionService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[OptOutService].toInstance(mockOptOutService),
       api.inject.bind[SessionService].toInstance(mockSessionService)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[ConfirmOptOutController]
 
   val yearEnd = 2024
-  val taxYear: TaxYear = TaxYear.forYearEnd(yearEnd)
+  val taxYear:       TaxYear              = TaxYear.forYearEnd(yearEnd)
   val optOutTaxYear: CurrentOptOutTaxYear = CurrentOptOutTaxYear(ITSAStatus.Voluntary, taxYear)
   val oneYearViewModelResponse: Future[Some[OptOutCheckpointViewModel]] =
-    Future.successful(Some(OneYearOptOutCheckpointViewModel(optOutTaxYear.taxYear, Some(OneYearOptOutFollowedByAnnual))))
+    Future.successful(
+      Some(OneYearOptOutCheckpointViewModel(optOutTaxYear.taxYear, Some(OneYearOptOutFollowedByAnnual)))
+    )
   val multiYearViewModelResponse: Future[Some[OptOutCheckpointViewModel]] =
     Future.successful(Some(MultiYearOptOutCheckpointViewModel(optOutTaxYear.taxYear)))
   val noEligibleTaxYearResponse: Future[None.type] = Future.successful(None)
-  val failedResponse: Future[Nothing] = Future.failed(new Exception("some error"))
+  val failedResponse:            Future[Nothing]   = Future.failed(new Exception("some error"))
 
-  val optOutUpdateResponseSuccess: Future[ITSAStatusUpdateResponse] = Future.successful(ITSAStatusUpdateResponseSuccess())
-  val optOutUpdateResponseFailure: Future[ITSAStatusUpdateResponse] = Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
+  val optOutUpdateResponseSuccess: Future[ITSAStatusUpdateResponse] =
+    Future.successful(ITSAStatusUpdateResponseSuccess())
+  val optOutUpdateResponseFailure: Future[ITSAStatusUpdateResponse] =
+    Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
 
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual
     s"show(isAgent = $isAgent)" when {
-      val action = testController.show(isAgent)
+      val action      = testController.show(isAgent)
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         s"render the confirm opt out page" that {
@@ -113,7 +117,7 @@ class ConfirmOptOutControllerSpec extends MockAuthActions
     }
 
     s"post(isAgent = $isAgent)" when {
-      val action = testController.submit(isAgent)
+      val action      = testController.submit(isAgent)
       val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         "redirect to confirmed opt out controller" in {

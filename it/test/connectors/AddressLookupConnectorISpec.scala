@@ -123,8 +123,7 @@ class AddressLookupConnectorISpec extends AnyWordSpec with ComponentSpecBase wit
       }
 
       "sending a request (Agent)" should {
-        val requestBody = Json.parse(
-          """
+        val requestBody = Json.parse("""
             |{
             |  "version": 2,
             |  "options": {
@@ -227,7 +226,9 @@ class AddressLookupConnectorISpec extends AnyWordSpec with ComponentSpecBase wit
 
           val result = connector.getAddressDetails(id)(hc).futureValue
 
-          result shouldBe Right(Some(BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA")))))
+          result shouldBe Right(
+            Some(BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA"))))
+          )
           WiremockHelper.verifyGet(s"/api/v2/confirmed?id=$id")
         }
         "return an error when getting address details fails" in {

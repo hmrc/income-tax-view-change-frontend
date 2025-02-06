@@ -47,21 +47,23 @@ class CheckYourAnswersViewSpec extends TestSupport {
   }
 
   object optInChooseTaxYear {
-    val title: String = "Check your answers - Manage your Income Tax updates - GOV.UK"
+    val title:   String = "Check your answers - Manage your Income Tax updates - GOV.UK"
     val heading: String = messages("optin.checkAnswers.heading")
 
     val optin: String = messages("optin.checkAnswers.optin")
 
-    def taxYears(intent: TaxYear): String = messages("optin.checkAnswers.taxYears", intent.startYear.toString, intent.endYear.toString)
+    def taxYears(intent: TaxYear): String =
+      messages("optin.checkAnswers.taxYears", intent.startYear.toString, intent.endYear.toString)
 
     val change: String = messages("optin.checkAnswers.change")
 
     val optInSummaryCy: String = messages("optin.checkAnswers.cy")
 
-    def optInSummaryNy(intent: TaxYear): String = messages("optin.checkAnswers.ny", intent.startYear.toString, intent.endYear.toString)
+    def optInSummaryNy(intent: TaxYear): String =
+      messages("optin.checkAnswers.ny", intent.startYear.toString, intent.endYear.toString)
 
     val confirmButton: String = messages("optin.checkAnswers.confirm")
-    val cancelButton: String = messages("optin.checkAnswers.cancel")
+    val cancelButton:  String = messages("optin.checkAnswers.cancel")
   }
 
   def runTest(intent: TaxYear, intentIsNextYear: Boolean): Unit = {
@@ -79,8 +81,9 @@ class CheckYourAnswersViewSpec extends TestSupport {
       pageDocument.getElementsByClass("govuk-summary-list__value").text() shouldBe optInChooseTaxYear.taxYears(intent)
       pageDocument.getElementById("change").text() shouldBe optInChooseTaxYear.change
 
-      private val expectedSummary = if (intentIsNextYear) optInChooseTaxYear.optInSummaryNy(intent)
-      else optInChooseTaxYear.optInSummaryCy
+      private val expectedSummary =
+        if (intentIsNextYear) optInChooseTaxYear.optInSummaryNy(intent)
+        else optInChooseTaxYear.optInSummaryCy
       pageDocument.getElementById("optIn-summary").text() shouldBe expectedSummary
       pageDocument.getElementById("confirm-button").text() shouldBe optInChooseTaxYear.confirmButton
       pageDocument.getElementById("cancel-button").text() shouldBe optInChooseTaxYear.cancelButton
@@ -91,8 +94,9 @@ class CheckYourAnswersViewSpec extends TestSupport {
       pageDocument.getElementsByClass("govuk-summary-list__value").text() shouldBe optInChooseTaxYear.taxYears(intent)
       pageDocument.getElementById("change").text() shouldBe optInChooseTaxYear.change
 
-      private val expectedSummary = if (intentIsNextYear) optInChooseTaxYear.optInSummaryNy(intent)
-      else optInChooseTaxYear.optInSummaryCy
+      private val expectedSummary =
+        if (intentIsNextYear) optInChooseTaxYear.optInSummaryNy(intent)
+        else optInChooseTaxYear.optInSummaryCy
       pageDocument.getElementById("optIn-summary").text() shouldBe expectedSummary
       pageDocument.getElementById("confirm-button").text() shouldBe optInChooseTaxYear.confirmButton
       pageDocument.getElementById("cancel-button").text() shouldBe optInChooseTaxYear.cancelButton

@@ -26,11 +26,22 @@ object BusinessDetailsStub {
 
   def businessDetailsUrl(nino: String): String = s"/income-tax-view-change/get-business-details/nino/$nino"
 
-  def stubGetBusinessDetails(nino: String = testNino)(status: Int = OK, response: JsValue = businessResponse(nino).toJson): Unit = {
+  def stubGetBusinessDetails(
+      nino: String = testNino
+    )(
+      status:   Int = OK,
+      response: JsValue = businessResponse(nino).toJson
+    ): Unit = {
     WiremockHelper.stubGet(businessDetailsUrl(testNino), status, response.toString())
   }
 
   def businessResponse(nino: String): IncomeSourceDetailsModel =
-    IncomeSourceDetailsModel(nino = nino, mtdbsa = testMtditid, yearOfMigration = None, businesses = List(), properties = List())
+    IncomeSourceDetailsModel(
+      nino = nino,
+      mtdbsa = testMtditid,
+      yearOfMigration = None,
+      businesses = List(),
+      properties = List()
+    )
 
 }

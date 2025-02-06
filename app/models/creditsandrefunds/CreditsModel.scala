@@ -23,10 +23,8 @@ import play.api.libs.json._
 
 import java.time.LocalDate
 
-
-case class CreditsModel(availableCredit: BigDecimal,
-                        allocatedCredit: BigDecimal,
-                        transactions: List[Transaction] ) extends SuccessModel
+case class CreditsModel(availableCredit: BigDecimal, allocatedCredit: BigDecimal, transactions: List[Transaction])
+    extends SuccessModel
 
 object CreditsModel {
 
@@ -38,14 +36,12 @@ object CreditsModel {
   }
 }
 
-case class Transaction(transactionType: CreditType,
-                       amount: BigDecimal,
-                       taxYear: Option[TaxYear],
-                       dueDate: Option[LocalDate])
+case class Transaction(
+    transactionType: CreditType,
+    amount:          BigDecimal,
+    taxYear:         Option[TaxYear],
+    dueDate:         Option[LocalDate])
 
 object Transaction {
   implicit val format: OFormat[Transaction] = Json.format[Transaction]
 }
-
-
-

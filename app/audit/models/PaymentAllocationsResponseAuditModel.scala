@@ -27,14 +27,11 @@ import utils.Utilities.JsonUtil
 
 import java.time.LocalDate
 
-
-case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUser[_],
-                                                paymentAllocations: PaymentAllocationViewModel
-                                                )
-  extends ExtendedAuditModel {
+case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUser[_], paymentAllocations: PaymentAllocationViewModel)
+    extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.PaymentAllocations
-  override val auditType: String = enums.AuditType.PaymentAllocations
+  override val auditType:       String = enums.AuditType.PaymentAllocations
 
   private def getTaxYearString(periodTo: LocalDate): String = {
     val taxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(periodTo)
@@ -46,68 +43,81 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUser[_],
   }
 
   private def getCreditOnAccount: Option[BigDecimal] = {
-    val outstandingAmount = paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.outstandingAmount
-      if (outstandingAmount != 0) Option(outstandingAmount.abs) else None
-    }
-
-  private def getAllocationDescriptionFromKey(key: String): String = key match {
-    case "paymentAllocation.paymentAllocations.poa1.incomeTax" => "Income Tax for first payment on account"
-    case "paymentAllocation.paymentAllocations.poa1.nic4" => "Class 4 National Insurance contributions for first payment on account"
-    case "paymentAllocation.paymentAllocations.poa2.incomeTax" => "Income Tax for second payment on account"
-    case "paymentAllocation.paymentAllocations.poa2.nic4" => "Class 4 National Insurance contributions for second payment on account"
-    case "paymentAllocation.paymentAllocations.bcd.incomeTax" => "Income Tax for remaining balance"
-    case "paymentAllocation.paymentAllocations.bcd.nic2" => "Class 2 National Insurance for remaining balance"
-    case "paymentAllocation.paymentAllocations.bcd.vcnic2" => "Voluntary Class 2 National Insurance for remaining balance"
-    case "paymentAllocation.paymentAllocations.bcd.nic4" => "Class 4 National Insurance for remaining balance"
-    case "paymentAllocation.paymentAllocations.bcd.sl" => "Student Loans for remaining balance"
-    case "paymentAllocation.paymentAllocations.bcd.cgt" => "Capital Gains Tax for remaining balance"
-    case "paymentAllocation.paymentAllocations.hmrcAdjustment.text" => "HMRC adjustment"
-    case "paymentOnAccount1.text" => "Late payment interest for payment on account 1 of 2"
-    case "paymentOnAccount2.text" => "Late payment interest for payment on account 2 of 2"
-    case "balancingCharge.text" => "Late payment interest for remaining balance"
-    case other =>
-      Logger("application").warn("key not found: " + other)
-      "allocation"
+    val outstandingAmount =
+      paymentAllocations.paymentAllocationChargeModel.filteredDocumentDetails.head.outstandingAmount
+    if (outstandingAmount != 0) Option(outstandingAmount.abs) else None
   }
 
-  private def paymentAllocationDetail(): JsObject = Json.obj() ++
-    ("paymentMadeDate", paymentAllocations.paymentAllocationChargeModel.financialDetails.head.items.flatMap(_.head.dueDate)) ++
-    ("paymentMadeAmount", getPaymentMadeAmount) ++
-    paymentAllocationType() ++
-    paymentAllocationsAudit() ++
-    ("creditOnAccount", getCreditOnAccount)
+  private def getAllocationDescriptionFromKey(key: String): String =
+    key match {
+      case "paymentAllocation.paymentAllocations.poa1.incomeTax" => "Income Tax for first payment on account"
+      case "paymentAllocation.paymentAllocations.poa1.nic4" =>
+        "Class 4 National Insurance contributions for first payment on account"
+      case "paymentAllocation.paymentAllocations.poa2.incomeTax" => "Income Tax for second payment on account"
+      case "paymentAllocation.paymentAllocations.poa2.nic4" =>
+        "Class 4 National Insurance contributions for second payment on account"
+      case "paymentAllocation.paymentAllocations.bcd.incomeTax" => "Income Tax for remaining balance"
+      case "paymentAllocation.paymentAllocations.bcd.nic2"      => "Class 2 National Insurance for remaining balance"
+      case "paymentAllocation.paymentAllocations.bcd.vcnic2" =>
+        "Voluntary Class 2 National Insurance for remaining balance"
+      case "paymentAllocation.paymentAllocations.bcd.nic4"            => "Class 4 National Insurance for remaining balance"
+      case "paymentAllocation.paymentAllocations.bcd.sl"              => "Student Loans for remaining balance"
+      case "paymentAllocation.paymentAllocations.bcd.cgt"             => "Capital Gains Tax for remaining balance"
+      case "paymentAllocation.paymentAllocations.hmrcAdjustment.text" => "HMRC adjustment"
+      case "paymentOnAccount1.text"                                   => "Late payment interest for payment on account 1 of 2"
+      case "paymentOnAccount2.text"                                   => "Late payment interest for payment on account 2 of 2"
+      case "balancingCharge.text"                                     => "Late payment interest for remaining balance"
+      case other =>
+        Logger("application").warn("key not found: " + other)
+        "allocation"
+    }
+
+  private def paymentAllocationDetail(): JsObject =
+    Json.obj() ++
+      ("paymentMadeDate", paymentAllocations.paymentAllocationChargeModel.financialDetails.head.items
+        .flatMap(_.head.dueDate)) ++
+      ("paymentMadeAmount", getPaymentMadeAmount) ++
+      paymentAllocationType() ++
+      paymentAllocationsAudit() ++
+      ("creditOnAccount", getCreditOnAccount)
 
   private def paymentAllocationsAudit(): JsObject = {
     if (paymentAllocations.isLpiPayment) {
-      Json.obj("paymentAllocations" -> Json.arr(
-        paymentAllocations.latePaymentInterestPaymentAllocationDetails.map { lpiad =>
-          Json.obj() ++
-            ("paymentAllocationDescription", Some(getAllocationDescriptionFromKey(lpiad.documentDetail.getChargeTypeKey))) ++
-            ("amount", Some(lpiad.amount)) ++
-            ("taxYear", Some(getTaxYearString(LocalDate.parse(s"${lpiad.documentDetail.taxYear}-04-05"))))
-        }
-      ))
+      Json.obj(
+        "paymentAllocations" -> Json.arr(
+          paymentAllocations.latePaymentInterestPaymentAllocationDetails.map { lpiad =>
+            Json.obj() ++
+              ("paymentAllocationDescription", Some(
+                getAllocationDescriptionFromKey(lpiad.documentDetail.getChargeTypeKey)
+              )) ++
+              ("amount", Some(lpiad.amount)) ++
+              ("taxYear", Some(getTaxYearString(LocalDate.parse(s"${lpiad.documentDetail.taxYear}-04-05"))))
+          }
+        )
+      )
     } else {
       Json.obj("paymentAllocations" -> paymentAllocations.originalPaymentAllocationWithClearingDate.map {
         case AllocationDetailWithClearingDate(allocationDetail: Option[AllocationDetail], dateAllocated) =>
           Json.obj() ++
             ("paymentAllocationDescription", allocationDetail.map(ad =>
-              getAllocationDescriptionFromKey(ad.getPaymentAllocationKeyInPaymentAllocations))) ++
+              getAllocationDescriptionFromKey(ad.getPaymentAllocationKeyInPaymentAllocations)
+            )) ++
             ("dateAllocated", dateAllocated) ++
             ("amount", allocationDetail.flatMap {
               _.amount
             }) ++
-            ("taxYear", allocationDetail.flatMap {
-              _.to
-            }.map(getTaxYearString))
+            ("taxYear", allocationDetail
+              .flatMap {
+                _.to
+              }
+              .map(getTaxYearString))
       })
     }
   }
   private def paymentAllocationType(): JsObject = {
     if (paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
       Json.obj("paymentType" -> "Payment made from earlier tax year")
-    }
-    else {
+    } else {
       Json.obj("paymentType" -> "Payment made to HMRC")
     }
   }

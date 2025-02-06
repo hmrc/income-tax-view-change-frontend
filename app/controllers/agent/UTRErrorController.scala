@@ -30,24 +30,34 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UTRErrorController @Inject()(utrError: UTRError,
-                                   val authActions: AuthActions)
-                                  (implicit mcc: MessagesControllerComponents,
-                                   val appConfig: FrontendAppConfig,
-                                   val itvcErrorHandler: AgentItvcErrorHandler,
-                                   val ec: ExecutionContext)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+class UTRErrorController @Inject() (
+    utrError:        UTRError,
+    val authActions: AuthActions
+  )(
+    implicit mcc:         MessagesControllerComponents,
+    val appConfig:        FrontendAppConfig,
+    val itvcErrorHandler: AgentItvcErrorHandler,
+    val ec:               ExecutionContext)
+    extends FrontendController(mcc)
+    with FeatureSwitching
+    with I18nSupport {
 
-  def show: Action[AnyContent] = authActions.asAgent().async { implicit user =>
-    Future.successful(Ok(utrError(
-        postAction = controllers.agent.routes.UTRErrorController.submit
-      )))
-  }
+  def show: Action[AnyContent] =
+    authActions.asAgent().async { implicit user =>
+      Future.successful(
+        Ok(
+          utrError(
+            postAction = controllers.agent.routes.UTRErrorController.submit
+          )
+        )
+      )
+    }
 
-  def submit: Action[AnyContent] = authActions.asAgent().async { implicit user =>
-    Future.successful(
+  def submit: Action[AnyContent] =
+    authActions.asAgent().async { implicit user =>
+      Future.successful(
         Redirect(routes.EnterClientsUTRController.show.url).removingFromSession(SessionKeys.clientUTR)
       )
-  }
+    }
 
 }

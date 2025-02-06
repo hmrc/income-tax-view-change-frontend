@@ -48,17 +48,20 @@ trait AuthoriseHelper extends FeatureSwitching {
     // See investigation: https://github.com/hmrc/income-tax-view-change-frontend/pull/2432
   }
 
-
-  def redirectIfAgent[A]()(
-    implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
+  def redirectIfAgent[A](
+    )(
+      implicit request: Request[A]
+    ): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
     case _ ~ _ ~ _ ~ Some(Agent) ~ _ =>
       logger.error(s"Agent on endpoint for individuals")
       Future.successful(Left(Redirect(controllers.agent.routes.EnterClientsUTRController.show)))
   }
 
-  def redirectIfNotAgent[A]()(
-    implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
-    case _ ~ _ ~ _ ~ Some(ag@(Organisation | Individual)) ~ _ =>
+  def redirectIfNotAgent[A](
+    )(
+      implicit request: Request[A]
+    ): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
+    case _ ~ _ ~ _ ~ Some(ag @ (Organisation | Individual)) ~ _ =>
       logger.error(s"$ag on endpoint for agents")
       Future.successful(Left(Redirect(controllers.routes.HomeController.show())))
   }

@@ -28,7 +28,7 @@ trait MockChargeSummary extends BeforeAndAfterEach {
   self: Suite =>
 
   val chargeSummary: ChargeSummary = mock(classOf[ChargeSummary])
-  val viewModel: ChargeSummaryViewModel
+  val viewModel:      ChargeSummaryViewModel
   val whatYouOweLink: String
 
   override def beforeEach(): Unit = {

@@ -21,7 +21,7 @@ import play.api.data.Form
 import play.api.data.Forms._
 
 object DeclareIncomeSourceCeasedForm {
-  val declaration: String = "cease-income-source-declaration"
+  val declaration:    String = "cease-income-source-declaration"
   val ceaseCsrfToken: String = "csrfToken"
 
   def form(incomeSourceType: IncomeSourceType): Form[DeclareIncomeSourceCeasedForm] = {
@@ -30,17 +30,20 @@ object DeclareIncomeSourceCeasedForm {
     Form[DeclareIncomeSourceCeasedForm](
       mapping(
         declaration -> optional(text)
-          .verifying(declarationUnselectedError, declaration => declaration.isDefined && declaration.contains("true") && declaration.get.trim.nonEmpty),
+          .verifying(
+            declarationUnselectedError,
+            declaration => declaration.isDefined && declaration.contains("true") && declaration.get.trim.nonEmpty
+          ),
         ceaseCsrfToken -> text
       )(DeclareIncomeSourceCeasedForm.apply)(DeclareIncomeSourceCeasedForm.unapply)
     )
   }
 }
 
-case class DeclareIncomeSourceCeasedForm(declaration: Option[String],
-                                         csrfToken: String) {
+case class DeclareIncomeSourceCeasedForm(declaration: Option[String], csrfToken: String) {
   def toFormMap: Map[String, Seq[String]] =
-    Map(DeclareIncomeSourceCeasedForm.declaration -> Seq(declaration.getOrElse("false")),
+    Map(
+      DeclareIncomeSourceCeasedForm.declaration    -> Seq(declaration.getOrElse("false")),
       DeclareIncomeSourceCeasedForm.ceaseCsrfToken -> Seq(csrfToken)
     )
 }

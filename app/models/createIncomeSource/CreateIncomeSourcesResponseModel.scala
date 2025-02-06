@@ -18,7 +18,6 @@ package models.createIncomeSource
 
 import play.api.libs.json.{Format, Json}
 
-
 case class CreateIncomeSourceResponse(incomeSourceId: String)
 
 object CreateIncomeSourceResponse {

@@ -30,16 +30,15 @@ import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, Enrolment, InsufficientEnrolments}
 import views.html.agent.errorPages.UTRError
 
-class UTRErrorControllerSpec extends MockAuthActions
-  with MockUTRError {
+class UTRErrorControllerSpec extends MockAuthActions with MockUTRError {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[UTRError].toInstance(utrError),
-    ).build()
+      api.inject.bind[UTRError].toInstance(utrError)
+    )
+    .build()
 
   lazy val testUTRErrorController = app.injector.instanceOf[UTRErrorController]
-
 
   "show" when {
     "the user is not authenticated" should {

@@ -21,7 +21,7 @@ import helpers.ComponentSpecBase
 object HomeMessages extends ComponentSpecBase {
 
   val noPaymentsDue: String = messagesAPI("home.payments.no-payments-due")
-  val overdue: String = messagesAPI("home.overdue.date")
+  val overdue:       String = messagesAPI("home.overdue.date")
   def overduePayments(numberOverdue: String): String = messagesAPI("home.overdue.date.payment.count", numberOverdue)
 
   def overdueUpdates(numberOverdue: String): String = messagesAPI("home.overdue.date.update.count", numberOverdue)

@@ -33,31 +33,37 @@ import views.html.optOut.SingleYearOptOutWarning
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SingleYearOptOutWarningController @Inject()(auth: AuthActions,
-                                                  view: SingleYearOptOutWarning,
-                                                  optOutService: OptOutService)
-                                                 (implicit val appConfig: FrontendAppConfig,
-                                                  val ec: ExecutionContext,
-                                                  val itvcErrorHandler: ItvcErrorHandler,
-                                                  val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                                  val mcc: MessagesControllerComponents)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+class SingleYearOptOutWarningController @Inject() (
+    auth:          AuthActions,
+    view:          SingleYearOptOutWarning,
+    optOutService: OptOutService
+  )(
+    implicit val appConfig:    FrontendAppConfig,
+    val ec:                    ExecutionContext,
+    val itvcErrorHandler:      ItvcErrorHandler,
+    val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+    val mcc:                   MessagesControllerComponents)
+    extends FrontendController(mcc)
+    with FeatureSwitching
+    with I18nSupport {
 
   val logger = Logger(getClass)
 
-
-  private val submitAction = (isAgent: Boolean) => controllers.optOut.routes.SingleYearOptOutWarningController.submit(isAgent)
+  private val submitAction = (isAgent: Boolean) =>
+    controllers.optOut.routes.SingleYearOptOutWarningController.submit(isAgent)
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
   private val nextUpdatesUrl = (isAgent: Boolean) =>
     if (isAgent) controllers.routes.NextUpdatesController.showAgent else controllers.routes.NextUpdatesController.show()
 
-  def show(isAgent: Boolean): Action[AnyContent] = withAuth(isAgent) { implicit user =>
-    withRecover(isAgent)(handleRequest(isAgent))
-  }
+  def show(isAgent: Boolean): Action[AnyContent] =
+    withAuth(isAgent) { implicit user =>
+      withRecover(isAgent)(handleRequest(isAgent))
+    }
 
-  def submit(isAgent: Boolean): Action[AnyContent] = withAuth(isAgent) { implicit user =>
-    withRecover(isAgent)(handleSubmitRequest(isAgent))
-  }
+  def submit(isAgent: Boolean): Action[AnyContent] =
+    withAuth(isAgent) { implicit user =>
+      withRecover(isAgent)(handleSubmitRequest(isAgent))
+    }
 
   private def withAuth(isAgent: Boolean)(code: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
     val userAuthAction = if (isAgent) auth.asMTDAgentWithConfirmedClient else auth.asMTDIndividual
@@ -66,27 +72,32 @@ class SingleYearOptOutWarningController @Inject()(auth: AuthActions,
 
   private def handleRequest(isAgent: Boolean)(implicit mtdItUser: MtdItUser[_]): Future[Result] =
     withOptOutQualifiedTaxYear(isAgent) { taxYear =>
-        Ok(view(
+      Ok(
+        view(
           taxYear = taxYear,
           form = ConfirmOptOutSingleTaxYearForm(taxYear),
           submitAction = submitAction(isAgent),
           isAgent = isAgent,
-          backUrl = nextUpdatesUrl(isAgent).url)
+          backUrl = nextUpdatesUrl(isAgent).url
         )
+      )
     }
 
   private def handleSubmitRequest(isAgent: Boolean)(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
-    withOptOutQualifiedTaxYear(isAgent) {
-      taxYear =>
-        ConfirmOptOutSingleTaxYearForm(taxYear).bindFromRequest().fold(
+    withOptOutQualifiedTaxYear(isAgent) { taxYear =>
+      ConfirmOptOutSingleTaxYearForm(taxYear)
+        .bindFromRequest()
+        .fold(
           formWithError => {
-            BadRequest(view(
-              taxYear = taxYear,
-              form = formWithError,
-              submitAction = submitAction(isAgent),
-              backUrl = nextUpdatesUrl(isAgent).url,
-              isAgent = isAgent
-            ))
+            BadRequest(
+              view(
+                taxYear = taxYear,
+                form = formWithError,
+                submitAction = submitAction(isAgent),
+                backUrl = nextUpdatesUrl(isAgent).url,
+                isAgent = isAgent
+              )
+            )
           },
           {
             case ConfirmOptOutSingleTaxYearForm(Some(true), _) =>
@@ -105,12 +116,19 @@ class SingleYearOptOutWarningController @Inject()(auth: AuthActions,
             case _ =>
               logger.error("bad request")
               errorHandler(isAgent).showInternalServerError()
-          })
+          }
+        )
 
     }
   }
 
-  private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+  private def withRecover(
+      isAgent: Boolean
+    )(
+      code: => Future[Result]
+    )(
+      implicit mtdItUser: MtdItUser[_]
+    ): Future[Result] = {
     code.recover {
       case ex: Exception =>
         logger.error(s"request failed :: $ex")
@@ -118,8 +136,13 @@ class SingleYearOptOutWarningController @Inject()(auth: AuthActions,
     }
   }
 
-  private def withOptOutQualifiedTaxYear(isAgent: Boolean)(code: TaxYear => Result)
-                                        (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+  private def withOptOutQualifiedTaxYear(
+      isAgent: Boolean
+    )(
+      code: TaxYear => Result
+    )(
+      implicit mtdItUser: MtdItUser[_]
+    ): Future[Result] = {
 
     optOutService.recallNextUpdatesPageOptOutViewModel().map {
       case Some(OptOutOneYearViewModel(taxYear, _)) => code(taxYear)

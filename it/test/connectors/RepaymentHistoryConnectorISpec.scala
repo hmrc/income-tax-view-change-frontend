@@ -31,7 +31,7 @@ class RepaymentHistoryConnectorISpec extends AnyWordSpec with ComponentSpecBase 
 
   lazy val connector: RepaymentHistoryConnector = app.injector.instanceOf[RepaymentHistoryConnector]
 
-  val nino = "AA123456A"
+  val nino        = "AA123456A"
   val repaymentId = "ID"
 
   override def beforeEach(): Unit = {
@@ -75,7 +75,8 @@ class RepaymentHistoryConnectorISpec extends AnyWordSpec with ComponentSpecBase 
               |""".stripMargin
 
           val responseModel = RepaymentHistoryModel(
-            List(RepaymentHistory(
+            List(
+              RepaymentHistory(
                 Some(100.0),
                 200.0,
                 Some("BACD"),
@@ -83,12 +84,18 @@ class RepaymentHistoryConnectorISpec extends AnyWordSpec with ComponentSpecBase 
                 Some(
                   List(
                     RepaymentItem(
-                      List(RepaymentSupplementItem(
+                      List(
+                        RepaymentSupplementItem(
                           Some("002420002231"),
                           Some(400.0),
                           Some(LocalDate.parse("2021-07-23")),
                           Some(LocalDate.parse("2021-08-23")),
-                          Some(12.12)))))),
+                          Some(12.12)
+                        )
+                      )
+                    )
+                  )
+                ),
                 Some(LocalDate.parse("2021-08-21")),
                 Some(LocalDate.parse("2021-07-21")),
                 "000000003135",
@@ -105,7 +112,11 @@ class RepaymentHistoryConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           WiremockHelper.verifyGet(s"/income-tax-view-change/repayments/$nino/repaymentId/$repaymentId")
         }
         "return an error when the request fails" in {
-          WiremockHelper.stubGet(s"/income-tax-view-change/repayments/$nino/repaymentId/$repaymentId", INTERNAL_SERVER_ERROR, "{}")
+          WiremockHelper.stubGet(
+            s"/income-tax-view-change/repayments/$nino/repaymentId/$repaymentId",
+            INTERNAL_SERVER_ERROR,
+            "{}"
+          )
 
           val result = connector.getRepaymentHistoryByRepaymentId(Nino(nino), repaymentId).futureValue
 
@@ -149,25 +160,32 @@ class RepaymentHistoryConnectorISpec extends AnyWordSpec with ComponentSpecBase 
               |""".stripMargin
 
           val responseModel = RepaymentHistoryModel(
-            List(RepaymentHistory(
-              Some(100.0),
-              200.0,
-              Some("BACD"),
-              Some(300.0),
-              Some(
-                List(
-                  RepaymentItem(
-                    List(RepaymentSupplementItem(
-                      Some("002420002231"),
-                      Some(400.0),
-                      Some(LocalDate.parse("2021-07-23")),
-                      Some(LocalDate.parse("2021-08-23")),
-                      Some(12.12)))))),
-              Some(LocalDate.parse("2021-08-21")),
-              Some(LocalDate.parse("2021-07-21")),
-              "000000003135",
-              RepaymentHistoryStatus("A")
-            )
+            List(
+              RepaymentHistory(
+                Some(100.0),
+                200.0,
+                Some("BACD"),
+                Some(300.0),
+                Some(
+                  List(
+                    RepaymentItem(
+                      List(
+                        RepaymentSupplementItem(
+                          Some("002420002231"),
+                          Some(400.0),
+                          Some(LocalDate.parse("2021-07-23")),
+                          Some(LocalDate.parse("2021-08-23")),
+                          Some(12.12)
+                        )
+                      )
+                    )
+                  )
+                ),
+                Some(LocalDate.parse("2021-08-21")),
+                Some(LocalDate.parse("2021-07-21")),
+                "000000003135",
+                RepaymentHistoryStatus("A")
+              )
             )
           )
 

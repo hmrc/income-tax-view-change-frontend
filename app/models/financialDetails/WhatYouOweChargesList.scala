@@ -22,37 +22,52 @@ import services.DateServiceInterface
 
 import java.time.LocalDate
 
-case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: List[ChargeItem] = List(),
-                                 outstandingChargesModel: Option[OutstandingChargesModel] = None,
-                                 codedOutDocumentDetail: Option[ChargeItem] = None)(implicit val dateService: DateServiceInterface) {
+case class WhatYouOweChargesList(
+    balanceDetails:          BalanceDetails,
+    chargesList:             List[ChargeItem] = List(),
+    outstandingChargesModel: Option[OutstandingChargesModel] = None,
+    codedOutDocumentDetail:  Option[ChargeItem] = None
+  )(
+    implicit val dateService: DateServiceInterface) {
 
   private lazy val overdueChargeList: List[ChargeItem] = chargesList.filter(_.isOverdue())
 
-  val availableCredit: Option[BigDecimal] = this.balanceDetails.availableCredit.flatMap(v => if (v > 0) Some(v) else None)
+  val availableCredit: Option[BigDecimal] =
+    this.balanceDetails.availableCredit.flatMap(v => if (v > 0) Some(v) else None)
 
-  def sortedChargesList: List[ChargeItem] = chargesList.sortWith((charge1, charge2) =>
-    charge1.dueDate.exists(date1 => charge2.dueDate.exists(_.isAfter(date1))))
+  def sortedChargesList: List[ChargeItem] =
+    chargesList.sortWith((charge1, charge2) =>
+      charge1.dueDate.exists(date1 => charge2.dueDate.exists(_.isAfter(date1)))
+    )
 
   def bcdChargeTypeDefinedAndGreaterThanZero: Boolean =
-    if (outstandingChargesModel.isDefined && outstandingChargesModel.get.bcdChargeType.isDefined
-      && outstandingChargesModel.get.bcdChargeType.get.chargeAmount > 0) true
+    if (
+      outstandingChargesModel.isDefined && outstandingChargesModel.get.bcdChargeType.isDefined
+      && outstandingChargesModel.get.bcdChargeType.get.chargeAmount > 0
+    ) true
     else false
 
   def isChargesListEmpty: Boolean = chargesList.isEmpty && !bcdChargeTypeDefinedAndGreaterThanZero
 
-  def hasUnpaidPOAs: Boolean = chargesList.exists(chargeItem =>
-    Seq(PoaOneDebit, PoaTwoDebit).contains(chargeItem.transactionType) && chargeItem.outstandingAmount > 0.0)
+  def hasUnpaidPOAs: Boolean =
+    chargesList.exists(chargeItem =>
+      Seq(PoaOneDebit, PoaTwoDebit).contains(chargeItem.transactionType) && chargeItem.outstandingAmount > 0.0
+    )
 
   def hasDunningLock: Boolean = chargesList.exists(charge => charge.dunningLock)
 
   def hasLpiWithDunningLock: Boolean =
-    if (overdueChargeList.exists(_.lpiWithDunningLock.isDefined)
-      && overdueChargeList.exists(_.lpiWithDunningLock.getOrElse[BigDecimal](0) > 0)) true
+    if (
+      overdueChargeList.exists(_.lpiWithDunningLock.isDefined)
+      && overdueChargeList.exists(_.lpiWithDunningLock.getOrElse[BigDecimal](0) > 0)
+    ) true
     else false
 
   def interestOnOverdueCharges: Boolean =
-    if (overdueChargeList.exists(_.interestOutstandingAmount.isDefined)
-      && overdueChargeList.exists(_.latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0)) true
+    if (
+      overdueChargeList.exists(_.interestOutstandingAmount.isDefined)
+      && overdueChargeList.exists(_.latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0)
+    ) true
     else false
 
   def getRelevantDueDate: LocalDate = {
@@ -80,20 +95,27 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
 
     val sortedListOfCharges: Option[ChargeItem] = chargesList.sortBy(charge => charge.dueDate.get).headOption
 
-    if (outstandingChargesModel.isDefined && outstandingChargesModel.get.bcdChargeType.isDefined && sortedListOfCharges.isDefined) {
+    if (
+      outstandingChargesModel.isDefined && outstandingChargesModel.get.bcdChargeType.isDefined && sortedListOfCharges.isDefined
+    ) {
       val bcdDueDate: LocalDate = outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.get
       if (bcdDueDate.isBefore(sortedListOfCharges.get.dueDate.get)) {
         Some((bcdDueDate.getYear, outstandingChargesModel.get.bcdChargeType.get.chargeAmount))
       } else if (sortedListOfCharges.isDefined) {
-          Some((sortedListOfCharges.get.dueDate.get.getYear, sortedListOfCharges.get.remainingToPayByChargeOrInterest))
+        Some((sortedListOfCharges.get.dueDate.get.getYear, sortedListOfCharges.get.remainingToPayByChargeOrInterest))
       } else {
         None
       }
     } else {
       if (outstandingChargesModel.isDefined && outstandingChargesModel.get.bcdChargeType.isDefined) {
-        Some((outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.get.getYear, outstandingChargesModel.get.bcdChargeType.get.chargeAmount))
+        Some(
+          (
+            outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.get.getYear,
+            outstandingChargesModel.get.bcdChargeType.get.chargeAmount
+          )
+        )
       } else if (sortedListOfCharges.isDefined) {
-          Some((sortedListOfCharges.get.dueDate.get.getYear, sortedListOfCharges.get.remainingToPayByChargeOrInterest))
+        Some((sortedListOfCharges.get.dueDate.get.getYear, sortedListOfCharges.get.remainingToPayByChargeOrInterest))
       } else {
         None
       }

@@ -25,26 +25,23 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class SessionStorageController @Inject()
-                              (implicit mcc: MessagesControllerComponents,
-                               val appConfig: FrontendAppConfig)
-  extends FrontendController(mcc)  with I18nSupport {
-
+class SessionStorageController @Inject() (implicit mcc: MessagesControllerComponents, val appConfig: FrontendAppConfig)
+    extends FrontendController(mcc)
+    with I18nSupport {
 
   val show: Action[AnyContent] = Action.async { implicit request =>
     // we really don't need to show these
     val filterOutKeys = Seq("sessionId", "authToken", "csrfToken", "origin")
-    val sessionDataStr: String = request.session
-      .data
-      .filter( kv => !filterOutKeys.contains(kv._1))
+    val sessionDataStr: String = request.session.data
+      .filter(kv => !filterOutKeys.contains(kv._1))
       .mkString("\n")
     Future.successful(Ok(sessionDataStr))
   }
 
-  def upsert(keyOpt: Option[String], valueOpt: Option[String]): Action[AnyContent] = Action.async {
-    implicit request =>
+  def upsert(keyOpt: Option[String], valueOpt: Option[String]): Action[AnyContent] =
+    Action.async { implicit request =>
       val res = for {
-        key <- keyOpt
+        key   <- keyOpt
         value <- valueOpt
       } yield (key, value)
       res match {
@@ -55,8 +52,8 @@ class SessionStorageController @Inject()
           )
         case None =>
           Future.successful(Ok("Unable to add data to session storage"))
-    }
+      }
 
-  }
+    }
 
 }

@@ -34,13 +34,13 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import java.time.{LocalDate, Month}
 import scala.concurrent.{ExecutionContext, Future}
 
-
 trait ClaimToAdjustHelper {
 
   private val LAST_DAY_OF_JANUARY: Int = 31
 
   private val getTaxReturnDeadline: LocalDate => LocalDate = date =>
-    LocalDate.of(date.getYear, Month.JANUARY, LAST_DAY_OF_JANUARY)
+    LocalDate
+      .of(date.getYear, Month.JANUARY, LAST_DAY_OF_JANUARY)
       .plusYears(1)
 
   val sortByTaxYear: List[DocumentDetail] => List[DocumentDetail] =
@@ -49,20 +49,24 @@ trait ClaimToAdjustHelper {
   val sortByTaxYearC: List[ChargeItem] => List[ChargeItem] =
     _.sortBy(_.taxYear.startYear).reverse
 
-  protected case class FinancialDetailsAndPoaModel(financialDetails: Option[FinancialDetailsModel],
-                                                   poaModel: Option[PaymentOnAccountViewModel])
+  protected case class FinancialDetailsAndPoaModel(
+      financialDetails: Option[FinancialDetailsModel],
+      poaModel:         Option[PaymentOnAccountViewModel])
 
-  protected case class FinancialDetailAndChargeRefMaybe(documentDetails: List[DocumentDetail],
-                                                        chargeReference: Option[String])
+  protected case class FinancialDetailAndChargeRefMaybe(
+      documentDetails: List[DocumentDetail],
+      chargeReference: Option[String])
 
-  def getPaymentOnAccountModel(charges: List[ChargeItem],
-                               poaPreviouslyAdjusted: Option[Boolean] = None): Either[Throwable, Option[PaymentOnAccountViewModel]] = {
+  def getPaymentOnAccountModel(
+      charges:               List[ChargeItem],
+      poaPreviouslyAdjusted: Option[Boolean] = None
+    ): Either[Throwable, Option[PaymentOnAccountViewModel]] = {
     {
       for {
         poaOneDocDetail <- charges.find(_.transactionType == PoaOneDebit)
         poaTwoDocDetail <- charges.find(_.transactionType == PoaTwoDebit)
-        latestDocumentDetail = poaTwoDocDetail
-        taxReturnDeadline = getTaxReturnDeadline(poaTwoDocDetail.documentDate)
+        latestDocumentDetail  = poaTwoDocDetail
+        taxReturnDeadline     = getTaxReturnDeadline(poaTwoDocDetail.documentDate)
         poasAreBeforeDeadline = poaTwoDocDetail.documentDate isBefore taxReturnDeadline
         if poasAreBeforeDeadline
       } yield {
@@ -93,51 +97,74 @@ trait ClaimToAdjustHelper {
       }
     } match {
       case Some(res) => res
-      case None => Right(None)
+      case None      => Right(None)
     }
   }
 
-  protected def getChargeHistory(chargeHistoryConnector: ChargeHistoryConnector, chargeReference: Option[String])
-                                (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[ChargeHistoryModel]]] = {
+  protected def getChargeHistory(
+      chargeHistoryConnector: ChargeHistoryConnector,
+      chargeReference:        Option[String]
+    )(
+      implicit hc: HeaderCarrier,
+      user:        MtdItUser[_],
+      ec:          ExecutionContext
+    ): Future[Either[Throwable, Option[ChargeHistoryModel]]] = {
     chargeHistoryConnector.getChargeHistory(user.nino, chargeReference).map {
-      case ChargesHistoryModel(_, _, _, chargeHistoryDetails) => chargeHistoryDetails match {
-        case Some(detailsList) => Right(extractPoaChargeHistory(detailsList))
-        case None => Right(None)
-      }
+      case ChargesHistoryModel(_, _, _, chargeHistoryDetails) =>
+        chargeHistoryDetails match {
+          case Some(detailsList) => Right(extractPoaChargeHistory(detailsList))
+          case None              => Right(None)
+        }
       case ChargesHistoryErrorModel(code, message) =>
         Logger("application").error("chargeHistoryConnector.getChargeHistory returned a non-valid response")
         Left(new Exception(s"Error retrieving charge history code: $code message: $message"))
     }
   }
 
-  protected def isTaxYearNonCrystallised(taxYear: TaxYear, nino: Nino)
-                                        (implicit hc: HeaderCarrier, dateService: DateServiceInterface,
-                                         calculationListConnector: CalculationListConnector, ec: ExecutionContext): Future[Boolean] = {
+  protected def isTaxYearNonCrystallised(
+      taxYear: TaxYear,
+      nino:    Nino
+    )(
+      implicit hc:              HeaderCarrier,
+      dateService:              DateServiceInterface,
+      calculationListConnector: CalculationListConnector,
+      ec:                       ExecutionContext
+    ): Future[Boolean] = {
     if (taxYear.isFutureTaxYear(dateService)) {
       Future.successful(true)
     } else {
-      calculationListConnector.getCalculationList(nino, taxYear.formatTaxYearRange).flatMap {
-        case res: CalculationListModel => Future.successful(res.crystallised.getOrElse(false))
-        case err: CalculationListErrorModel if err.code == 404 =>
-          Logger("application").info("User had no calculations for this tax year, therefore is non-crystallised")
-          Future.successful(false)
-        case err: CalculationListErrorModel =>
-          Logger("application").error("getCalculationList returned a non-valid response")
-          Future.failed(new InternalServerException(err.message))
-      }.map(!_)
+      calculationListConnector
+        .getCalculationList(nino, taxYear.formatTaxYearRange)
+        .flatMap {
+          case res: CalculationListModel => Future.successful(res.crystallised.getOrElse(false))
+          case err: CalculationListErrorModel if err.code == 404 =>
+            Logger("application").info("User had no calculations for this tax year, therefore is non-crystallised")
+            Future.successful(false)
+          case err: CalculationListErrorModel =>
+            Logger("application").error("getCalculationList returned a non-valid response")
+            Future.failed(new InternalServerException(err.message))
+        }
+        .map(!_)
     }
   }
 
-  protected def checkCrystallisation(nino: Nino, taxYearList: List[TaxYear])
-                                    (implicit hc: HeaderCarrier, dateService: DateServiceInterface,
-                                     calculationListConnector: CalculationListConnector, ec: ExecutionContext): Future[Option[TaxYear]] = {
+  protected def checkCrystallisation(
+      nino:        Nino,
+      taxYearList: List[TaxYear]
+    )(
+      implicit hc:              HeaderCarrier,
+      dateService:              DateServiceInterface,
+      calculationListConnector: CalculationListConnector,
+      ec:                       ExecutionContext
+    ): Future[Option[TaxYear]] = {
     taxYearList.foldLeft(Future.successful(Option.empty[TaxYear])) { (acc, item) =>
       acc.flatMap {
         case Some(_) => acc
-        case None => isTaxYearNonCrystallised(item, nino)(hc, dateService, calculationListConnector, ec) map {
-          case true => Some(item)
-          case false => None
-        }
+        case None =>
+          isTaxYearNonCrystallised(item, nino)(hc, dateService, calculationListConnector, ec) map {
+            case true  => Some(item)
+            case false => None
+          }
       }
     }
   }
@@ -155,17 +182,19 @@ trait ClaimToAdjustHelper {
     }
   }
 
-  def getAmendablePoaViewModel(documentDetails: List[DocumentDetail],
-                               poasHaveBeenAdjustedPreviously: Boolean): Either[Throwable, PaymentOnAccountViewModel] = {
-    val res  = for {
+  def getAmendablePoaViewModel(
+      documentDetails:                List[DocumentDetail],
+      poasHaveBeenAdjustedPreviously: Boolean
+    ): Either[Throwable, PaymentOnAccountViewModel] = {
+    val res = for {
       poaOneDocDetail <- documentDetails.find(isPoaOne)
       poaTwoDocDetail <- documentDetails.find(isPoaTwo)
       latestDocumentDetail = poaTwoDocDetail
       poaTwoDueDate <- poaTwoDocDetail.documentDueDate
-      taxReturnDeadline = getTaxReturnDeadline(poaTwoDueDate)
+      taxReturnDeadline     = getTaxReturnDeadline(poaTwoDueDate)
       poasAreBeforeDeadline = poaTwoDueDate isBefore taxReturnDeadline
       if poasAreBeforeDeadline
-  } yield {
+    } yield {
       if (poaOneDocDetail.poaRelevantAmount.isDefined && poaTwoDocDetail.poaRelevantAmount.isDefined) {
         Right(
           PaymentOnAccountViewModel(
@@ -191,14 +220,22 @@ trait ClaimToAdjustHelper {
     }
     res match {
       case Some(e) => e
-      case _ => Left(new Exception("Unable to construct PaymentOnAccountViewModel"))
+      case _       => Left(new Exception("Unable to construct PaymentOnAccountViewModel"))
     }
   }
 
-  protected def isSubsequentAdjustment(chargeHistoryConnector: ChargeHistoryConnector, chargeReference: Option[String])
-                                      (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
+  protected def isSubsequentAdjustment(
+      chargeHistoryConnector: ChargeHistoryConnector,
+      chargeReference:        Option[String]
+    )(
+      implicit hc: HeaderCarrier,
+      user:        MtdItUser[_],
+      ec:          ExecutionContext
+    ): Future[Either[Throwable, Boolean]] = {
     chargeHistoryConnector.getChargeHistory(user.nino, chargeReference) map {
-      case ChargesHistoryModel(_, _, _, Some(charges)) if charges.filter(_.isPoa).exists(_.poaAdjustmentReason.isDefined) => Right(true)
+      case ChargesHistoryModel(_, _, _, Some(charges))
+          if charges.filter(_.isPoa).exists(_.poaAdjustmentReason.isDefined) =>
+        Right(true)
       case ChargesHistoryModel(_, _, _, _) => Right(false)
       case ChargesHistoryErrorModel(code, message) =>
         Logger("application").error("getChargeHistory returned a non-valid response")
@@ -212,22 +249,31 @@ trait ClaimToAdjustHelper {
   }
 
   // TODO: re-write with the use of EitherT
-  protected def toFinancialDetail(financialPoaDetails: Either[Throwable, FinancialDetailsAndPoaModel]): Either[Throwable, Option[FinancialDetail]] = {
+  protected def toFinancialDetail(
+      financialPoaDetails: Either[Throwable, FinancialDetailsAndPoaModel]
+    ): Either[Throwable, Option[FinancialDetail]] = {
     financialPoaDetails match {
       case Right(FinancialDetailsAndPoaModel(Some(finDetails), _)) =>
         finDetails.financialDetails.headOption match {
           case Some(detail) => Right(Some(detail))
-          case None => Left(new Exception("No financial details found for this charge"))
+          case None         => Left(new Exception("No financial details found for this charge"))
         }
       case Right(_) => Right(None)
       case Left(ex) => Left(ex)
     }
   }
 
-  protected def getFinancialDetailAndChargeRefModel(financialDetailModel: Option[FinancialDetailsModel]): Either[Throwable, FinancialDetailAndChargeRefMaybe] = {
+  protected def getFinancialDetailAndChargeRefModel(
+      financialDetailModel: Option[FinancialDetailsModel]
+    ): Either[Throwable, FinancialDetailAndChargeRefMaybe] = {
     financialDetailModel match {
       case Some(
-      FinancialDetailsModel(_, documentDetails, FinancialDetail(_, _, _, _, _, chargeReference, _, _, _, _, _, _, _, _) :: _)) =>
+            FinancialDetailsModel(
+              _,
+              documentDetails,
+              FinancialDetail(_, _, _, _, _, chargeReference, _, _, _, _, _, _, _, _) :: _
+            )
+          ) =>
         Right(FinancialDetailAndChargeRefMaybe(documentDetails, chargeReference))
       case _ =>
         Left(new Exception("Failed to retrieve non-crystallised financial details"))

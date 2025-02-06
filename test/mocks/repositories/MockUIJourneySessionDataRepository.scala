@@ -34,7 +34,9 @@ trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEac
 
   val mockUIJourneySessionDataRepository: UIJourneySessionDataRepository = mock(classOf[UIJourneySessionDataRepository])
 
-  val mockSensitiveUIJourneySessionDataRepository: SensitiveUIJourneySessionDataRepository = mock(classOf[SensitiveUIJourneySessionDataRepository])
+  val mockSensitiveUIJourneySessionDataRepository: SensitiveUIJourneySessionDataRepository = mock(
+    classOf[SensitiveUIJourneySessionDataRepository]
+  )
 
   val mockFrontendAppConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])
 
@@ -48,10 +50,9 @@ trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEac
     if (isSensitive) {
       when(mockSensitiveUIJourneySessionDataRepository.get(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(response))
-    }
-    else
-    when(mockUIJourneySessionDataRepository.get(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
-      .thenReturn(Future.successful(response))
+    } else
+      when(mockUIJourneySessionDataRepository.get(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
+        .thenReturn(Future.successful(response))
   }
   def mockRepositorySet(response: Boolean, withFailureResult: Boolean = false, isSensitive: Boolean = false): Unit = {
     val repository = if (isSensitive) {
@@ -70,7 +71,13 @@ trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEac
   }
 
   def mockRepositoryUpdateData(): Unit = {
-    when(mockUIJourneySessionDataRepository.updateData(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
+    when(
+      mockUIJourneySessionDataRepository.updateData(
+        ArgumentMatchers.any(),
+        ArgumentMatchers.any(),
+        ArgumentMatchers.any()
+      )
+    )
       .thenReturn(Future.successful(new org.mongodb.scala.result.UpdateResult {
         override def wasAcknowledged(): Boolean = true
 
@@ -106,20 +113,22 @@ trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEac
 
   def mockDeleteOne(isSensitive: Boolean = false): Unit = {
     if (isSensitive) {
-      when(mockSensitiveUIJourneySessionDataRepository.deleteOne(any[UIJourneySessionData]())).thenReturn(Future.successful(true))
-    }
-    else {
-      when(mockUIJourneySessionDataRepository.deleteOne(any[UIJourneySessionData]())).thenReturn(Future.successful(true))
+      when(mockSensitiveUIJourneySessionDataRepository.deleteOne(any[UIJourneySessionData]()))
+        .thenReturn(Future.successful(true))
+    } else {
+      when(mockUIJourneySessionDataRepository.deleteOne(any[UIJourneySessionData]()))
+        .thenReturn(Future.successful(true))
     }
 
   }
 
   def mockDeleteSession(isSensitive: Boolean = false): Unit = {
     if (isSensitive) {
-      when(mockSensitiveUIJourneySessionDataRepository.deleteJourneySession(anyString(), any[Operation]())).thenReturn(Future.successful(true))
-    }
-    else {
-      when(mockUIJourneySessionDataRepository.deleteJourneySession(anyString(), any[Operation]())).thenReturn(Future.successful(true))
+      when(mockSensitiveUIJourneySessionDataRepository.deleteJourneySession(anyString(), any[Operation]()))
+        .thenReturn(Future.successful(true))
+    } else {
+      when(mockUIJourneySessionDataRepository.deleteJourneySession(anyString(), any[Operation]()))
+        .thenReturn(Future.successful(true))
     }
   }
 

@@ -34,57 +34,63 @@ import views.html.incomeSources.add.AddBusinessTrade
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-
 @Singleton
-class AddBusinessTradeController @Inject()(val authActions: AuthActions,
-                                           val addBusinessTradeView: AddBusinessTrade,
-                                           val sessionService: SessionService)
-                                          (implicit val appConfig: FrontendAppConfig,
-                                           val itvcErrorHandler: ItvcErrorHandler,
-                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                           val mcc: MessagesControllerComponents,
-                                           val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
+class AddBusinessTradeController @Inject() (
+    val authActions:          AuthActions,
+    val addBusinessTradeView: AddBusinessTrade,
+    val sessionService:       SessionService
+  )(
+    implicit val appConfig:    FrontendAppConfig,
+    val itvcErrorHandler:      ItvcErrorHandler,
+    val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+    val mcc:                   MessagesControllerComponents,
+    val ec:                    ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with FeatureSwitching
+    with IncomeSourcesUtils
+    with JourneyChecker {
 
   private def getBackURL(isAgent: Boolean, isChange: Boolean): String = {
     ((isAgent, isChange) match {
       case (_, false) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange = false, SelfEmployment)
       case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+      case (_, _)     => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     }).url
   }
 
-  def getPostAction(isAgent: Boolean, isChange: Boolean) = if(isAgent) {
-    controllers.incomeSources.add.routes.AddBusinessTradeController.submitAgent(isChange)
-  } else {
-    controllers.incomeSources.add.routes.AddBusinessTradeController.submit(isChange)
-  }
+  def getPostAction(isAgent: Boolean, isChange: Boolean) =
+    if (isAgent) {
+      controllers.incomeSources.add.routes.AddBusinessTradeController.submitAgent(isChange)
+    } else {
+      controllers.incomeSources.add.routes.AddBusinessTradeController.submit(isChange)
+    }
 
   private def getSuccessURL(isAgent: Boolean, isChange: Boolean): String = {
     ((isAgent, isChange) match {
       case (false, false) => routes.AddBusinessAddressController.show(isChange)
-      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_, false) => routes.AddBusinessAddressController.showAgent(isChange)
-      case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+      case (false, _)     => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
+      case (_, false)     => routes.AddBusinessAddressController.showAgent(isChange)
+      case (_, _)         => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     }).url
   }
 
-  def show(isChange: Boolean): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
+  def show(isChange: Boolean): Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit user =>
       handleRequest(false, isChange)
-  }
+    }
 
-  def showAgent(isChange: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
-    implicit user =>
+  def showAgent(isChange: Boolean): Action[AnyContent] =
+    authActions.asMTDAgentWithConfirmedClient.async { implicit user =>
       handleRequest(true, isChange)
-  }
+    }
 
-  def handleRequest(isAgent: Boolean,
-                    isChange: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+  def handleRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
       val businessTradeOpt = sessionData.addIncomeSourceData.flatMap(_.businessTrade)
       val filledForm = businessTradeOpt.fold(BusinessTradeForm.form)(businessTrade =>
-        BusinessTradeForm.form.fill(BusinessTradeForm(businessTrade)))
+        BusinessTradeForm.form.fill(BusinessTradeForm(businessTrade))
+      )
       val backURL = getBackURL(isAgent, isChange)
 
       Future.successful {
@@ -98,23 +104,29 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
       errorHandler.showInternalServerError()
   }
 
-  def submit(isChange: Boolean): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit request =>
+  def submit(isChange: Boolean): Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit request =>
       handleSubmitRequest(false, isChange)(implicitly, itvcErrorHandler)
-  }
+    }
 
-  def submitAgent(isChange: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
-    implicit request =>
+  def submitAgent(isChange: Boolean): Action[AnyContent] =
+    authActions.asMTDAgentWithConfirmedClient.async { implicit request =>
       handleSubmitRequest(true, isChange)(implicitly, itvcErrorHandlerAgent)
-  }
+    }
 
-  def handleSubmitRequest(isAgent: Boolean, isChange: Boolean)
-                         (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
+  def handleSubmitRequest(
+      isAgent:  Boolean,
+      isChange: Boolean
+    )(
+      implicit user: MtdItUser[_],
+      errorHandler:  ShowInternalServerError
+    ): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
       val businessNameOpt = sessionData.addIncomeSourceData.flatMap(_.businessName)
 
       BusinessTradeForm
-        .checkBusinessTradeWithBusinessName(BusinessTradeForm.form.bindFromRequest(), businessNameOpt).fold(
+        .checkBusinessTradeWithBusinessName(BusinessTradeForm.form.bindFromRequest(), businessNameOpt)
+        .fold(
           formWithErrors =>
             Future.successful {
               BadRequest(
@@ -129,12 +141,11 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
           validForm =>
             sessionService.setMongoData(
               sessionData.copy(
-                addIncomeSourceData =
-                  sessionData.addIncomeSourceData.map(
-                    _.copy(
-                      businessTrade = Some(validForm.trade)
-                    )
+                addIncomeSourceData = sessionData.addIncomeSourceData.map(
+                  _.copy(
+                    businessTrade = Some(validForm.trade)
                   )
+                )
               )
             ) flatMap {
               case true  => Future.successful(Redirect(getSuccessURL(isAgent, isChange)))

@@ -28,9 +28,12 @@ import scala.concurrent.Future
 
 trait SaveOriginAndRedirect extends I18nSupport with FeatureSwitching {
 
-  def saveOriginAndReturnToHomeWithoutQueryParams[A](request: Request[A], navBarFsDisabled: Boolean = true): Future[Result] = {
-    val originStringOpt: Option[String] = request.getQueryString(SessionKeys.origin)
-    val redirectToOriginalCall: Result = Redirect(request.path)
+  def saveOriginAndReturnToHomeWithoutQueryParams[A](
+      request:          Request[A],
+      navBarFsDisabled: Boolean = true
+    ): Future[Result] = {
+    val originStringOpt:        Option[String] = request.getQueryString(SessionKeys.origin)
+    val redirectToOriginalCall: Result         = Redirect(request.path)
 
     if (navBarFsDisabled) {
       Future.successful(redirectToOriginalCall)
@@ -39,7 +42,9 @@ trait SaveOriginAndRedirect extends I18nSupport with FeatureSwitching {
         (OriginEnum(originString), request.session.get(SessionKeys.origin)) match {
           case (Some(originStringEnum), Some(sessionOrigin)) if originStringEnum.toString != sessionOrigin =>
             Future.successful(
-              redirectToOriginalCall.removingFromSession("origin")(request).addingToSession(("origin", originStringEnum.toString))(request)
+              redirectToOriginalCall
+                .removingFromSession("origin")(request)
+                .addingToSession(("origin", originStringEnum.toString))(request)
             )
           case (Some(originStringEnum), None) =>
             Future.successful(redirectToOriginalCall.addingToSession(("origin", originStringEnum.toString))(request))

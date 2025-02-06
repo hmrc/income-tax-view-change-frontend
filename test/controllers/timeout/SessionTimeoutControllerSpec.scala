@@ -25,15 +25,15 @@ import testUtils.TestSupport
 
 class SessionTimeoutControllerSpec extends TestSupport {
 
-  object TestSessionTimeoutController extends SessionTimeoutController(
-    app.injector.instanceOf[views.html.timeout.Timeout])(
-    app.injector.instanceOf[FrontendAppConfig],
-    app.injector.instanceOf[MessagesControllerComponents]
-  )
+  object TestSessionTimeoutController
+      extends SessionTimeoutController(app.injector.instanceOf[views.html.timeout.Timeout])(
+        app.injector.instanceOf[FrontendAppConfig],
+        app.injector.instanceOf[MessagesControllerComponents]
+      )
 
   "Calling the timeout action of the SessionTimeoutController" should {
 
-    lazy val result = TestSessionTimeoutController.timeout(fakeRequestNoSession)
+    lazy val result   = TestSessionTimeoutController.timeout(fakeRequestNoSession)
     lazy val document = Jsoup.parse(contentAsString(result))
 
     "return OK (200)" in {

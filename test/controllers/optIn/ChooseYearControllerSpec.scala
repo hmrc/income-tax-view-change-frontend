@@ -28,23 +28,23 @@ import play.api.test.Helpers._
 import services.optIn.OptInService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
-class ChooseYearControllerSpec extends MockAuthActions
-  with MockOptInService {
+class ChooseYearControllerSpec extends MockAuthActions with MockOptInService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[OptInService].toInstance(mockOptInService)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[ChooseYearController]
 
-  val endTaxYear = 2023
+  val endTaxYear  = 2023
   val taxYear2023 = TaxYear.forYearEnd(endTaxYear)
 
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual
     s"show(isAgent = $isAgent)" when {
-      val action = testController.show(isAgent)
+      val action      = testController.show(isAgent)
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         "render the check your answers page" in {
@@ -61,7 +61,7 @@ class ChooseYearControllerSpec extends MockAuthActions
     }
 
     s"submit(isAgent = $isAgent)" when {
-      val action = testController.submit(isAgent)
+      val action      = testController.submit(isAgent)
       val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         "redirect to Check Your Answers" in {
@@ -69,9 +69,11 @@ class ChooseYearControllerSpec extends MockAuthActions
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
           mockSaveIntent(taxYear2023)
-          val result = action(fakeRequest.withFormUrlEncodedBody(
-            ChooseTaxYearForm.choiceField -> taxYear2023.toString
-          ))
+          val result = action(
+            fakeRequest.withFormUrlEncodedBody(
+              ChooseTaxYearForm.choiceField -> taxYear2023.toString
+            )
+          )
 
           status(result) shouldBe Status.SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.optIn.routes.CheckYourAnswersController.show(isAgent).url)
@@ -83,9 +85,11 @@ class ChooseYearControllerSpec extends MockAuthActions
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
             mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
             mockSaveIntent(taxYear2023)
-            val result = action(fakeRequest.withFormUrlEncodedBody(
-              ChooseTaxYearForm.choiceField -> ""
-            ))
+            val result = action(
+              fakeRequest.withFormUrlEncodedBody(
+                ChooseTaxYearForm.choiceField -> ""
+              )
+            )
 
             status(result) shouldBe Status.BAD_REQUEST
           }
@@ -98,9 +102,11 @@ class ChooseYearControllerSpec extends MockAuthActions
             mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
             mockSaveIntent(taxYear2023, isSuccessful = false)
 
-            val result = action(fakeRequest.withFormUrlEncodedBody(
-              ChooseTaxYearForm.choiceField -> taxYear2023.toString
-            ))
+            val result = action(
+              fakeRequest.withFormUrlEncodedBody(
+                ChooseTaxYearForm.choiceField -> taxYear2023.toString
+              )
+            )
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
           }
         }

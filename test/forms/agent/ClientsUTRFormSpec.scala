@@ -22,9 +22,10 @@ import play.api.data.{Form, FormError}
 
 class ClientsUTRFormSpec extends AnyWordSpec with Matchers {
 
-  def form(optValue: Option[String]): Form[String] = ClientsUTRForm.form.bind(
-    optValue.fold[Map[String, String]](Map.empty)(value => Map(ClientsUTRForm.utr -> value))
-  )
+  def form(optValue: Option[String]): Form[String] =
+    ClientsUTRForm.form.bind(
+      optValue.fold[Map[String, String]](Map.empty)(value => Map(ClientsUTRForm.utr -> value))
+    )
 
   "ClientsUTRForm" must {
 
@@ -49,11 +50,12 @@ class ClientsUTRFormSpec extends AnyWordSpec with Matchers {
     "return an error that the utr is not the correct length" when {
       List(
         "the input contains more than 10 digits" -> "12345678901",
-        "the input contains less than 10 digits" -> "123456789",
+        "the input contains less than 10 digits" -> "123456789"
       ) foreach {
-        case (test, value) => test in {
-          form(Some(value)).errors mustBe Seq(FormError(ClientsUTRForm.utr, ClientsUTRForm.utrLengthIncorrect))
-        }
+        case (test, value) =>
+          test in {
+            form(Some(value)).errors mustBe Seq(FormError(ClientsUTRForm.utr, ClientsUTRForm.utrLengthIncorrect))
+          }
       }
     }
 

@@ -35,31 +35,32 @@ import views.html.errorPages.templates.ErrorTemplate
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class ReportingFrequencyPageController @Inject()(
-                                                  optOutService: OptOutService,
-                                                  optInService: OptInService,
-                                                  val auth: AuthActions,
-                                                  errorTemplate: ErrorTemplate,
-                                                  reportingFrequencyViewUtils: ReportingFrequencyViewUtils,
-                                                  view: ReportingFrequencyView
-                                                )(
-                                                  implicit val appConfig: FrontendAppConfig,
-                                                  val dateService: DateServiceInterface,
-                                                  mcc: MessagesControllerComponents,
-                                                  val ec: ExecutionContext
-                                                )
-
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+class ReportingFrequencyPageController @Inject() (
+    optOutService:               OptOutService,
+    optInService:                OptInService,
+    val auth:                    AuthActions,
+    errorTemplate:               ErrorTemplate,
+    reportingFrequencyViewUtils: ReportingFrequencyViewUtils,
+    view:                        ReportingFrequencyView
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    val dateService:        DateServiceInterface,
+    mcc:                    MessagesControllerComponents,
+    val ec:                 ExecutionContext)
+    extends FrontendController(mcc)
+    with FeatureSwitching
+    with I18nSupport {
 
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
-
       for {
         (optOutProposition, optOutJourneyType) <- optOutService.reportingFrequencyViewModels()
-        optInTaxYears <- optInService.availableOptInTaxYear()
+        optInTaxYears                          <- optInService.availableOptInTaxYear()
 
       } yield {
-        if (isEnabled(ReportingFrequencyPage) && reportingFrequencyViewUtils.itsaStatusTable(optOutProposition).nonEmpty) {
+        if (
+          isEnabled(ReportingFrequencyPage) && reportingFrequencyViewUtils.itsaStatusTable(optOutProposition).nonEmpty
+        ) {
 
           val optOutUrl: Option[String] = {
             optOutJourneyType.map {
@@ -69,18 +70,21 @@ class ReportingFrequencyPageController @Inject()(
                 controllers.optOut.routes.OptOutChooseTaxYearController.show(user.isAgent()).url
             }
           }
-          Ok(view(
-            ReportingFrequencyViewModel(
-              isAgent = user.isAgent(),
-              optOutJourneyUrl = optOutUrl,
-              optOutTaxYears = optOutProposition.availableTaxYearsForOptOut,
-              optInTaxYears = optInTaxYears,
-              itsaStatusTable = reportingFrequencyViewUtils.itsaStatusTable(optOutProposition),
-              displayCeasedBusinessWarning = user.incomeSources.areAllBusinessesCeased,
-              isAnyOfBusinessLatent = user.incomeSources.isAnyOfActiveBusinessesLatent,
-              displayManageYourRfSection = !(optOutProposition.areAllTaxYearsMandated || user.incomeSources.areAllBusinessesCeased)
+          Ok(
+            view(
+              ReportingFrequencyViewModel(
+                isAgent = user.isAgent(),
+                optOutJourneyUrl = optOutUrl,
+                optOutTaxYears = optOutProposition.availableTaxYearsForOptOut,
+                optInTaxYears = optInTaxYears,
+                itsaStatusTable = reportingFrequencyViewUtils.itsaStatusTable(optOutProposition),
+                displayCeasedBusinessWarning = user.incomeSources.areAllBusinessesCeased,
+                isAnyOfBusinessLatent = user.incomeSources.isAnyOfActiveBusinessesLatent,
+                displayManageYourRfSection =
+                  !(optOutProposition.areAllTaxYearsMandated || user.incomeSources.areAllBusinessesCeased)
+              )
             )
-          ))
+          )
         } else {
           InternalServerError(
             errorTemplate(

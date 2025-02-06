@@ -34,14 +34,13 @@ import testConstants.BaseTestConstants.{agentAuthRetrievalSuccess, testArn, test
 import uk.gov.hmrc.auth.core.{Enrolment, InsufficientEnrolments}
 import views.html.agent.EnterClientsUTR
 
-class EnterClientsUTRControllerSpec extends MockAuthActions
-  with MockEnterClientsUTR
-  with MockClientDetailsService {
+class EnterClientsUTRControllerSpec extends MockAuthActions with MockEnterClientsUTR with MockClientDetailsService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[EnterClientsUTR].toInstance(enterClientsUTR)
-    ).build()
+    )
+    .build()
 
   lazy val testEnterClientsUTRController = app.injector.instanceOf[EnterClientsUTRController]
 
@@ -127,12 +126,23 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
 
           setupMockPrimaryAgentAuthRetrievalSuccess(testMtditid)
 
-          val result = testEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
-            ClientsUTRForm.utr -> validUTR
-          ))
+          val result = testEnterClientsUTRController.submit()(
+            fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+              ClientsUTRForm.utr -> validUTR
+            )
+          )
 
           status(result) shouldBe SEE_OTHER
-          verifyExtendedAudit(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(testCredId)))
+          verifyExtendedAudit(
+            EnterClientUTRAuditModel(
+              isSuccessful = true,
+              nino = testNino,
+              mtditid = testMtditid,
+              arn = Some(testArn),
+              saUtr = validUTR,
+              credId = Some(testCredId)
+            )
+          )
           redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show.url)
           result.futureValue.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
           result.futureValue.session.get(SessionKeys.clientLastName) shouldBe Some("Doe")
@@ -140,7 +150,9 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
           result.futureValue.session.get(SessionKeys.clientNino) shouldBe Some(testNino)
           result.futureValue.session.get(SessionKeys.clientMTDID) shouldBe Some(testMtditid)
           verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(authPredicateForAgent))
-          verify(mockAuthService, times(1)).authorised(Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", testMtditid).withDelegatedAuthRule("mtd-it-auth"))
+          verify(mockAuthService, times(1)).authorised(
+            Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", testMtditid).withDelegatedAuthRule("mtd-it-auth")
+          )
         }
 
         "the utr entered is valid, there is a client/secondary agent relationship and the POST request to session data service is successful" in {
@@ -155,12 +167,23 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
 
           setupMockSecondaryAgentAuthRetrievalSuccess(testMtditid)
 
-          val result = testEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
-            ClientsUTRForm.utr -> validUTR
-          ))
+          val result = testEnterClientsUTRController.submit()(
+            fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+              ClientsUTRForm.utr -> validUTR
+            )
+          )
 
           status(result) shouldBe SEE_OTHER
-          verifyExtendedAudit(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(testCredId)))
+          verifyExtendedAudit(
+            EnterClientUTRAuditModel(
+              isSuccessful = true,
+              nino = testNino,
+              mtditid = testMtditid,
+              arn = Some(testArn),
+              saUtr = validUTR,
+              credId = Some(testCredId)
+            )
+          )
           redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show.url)
           result.futureValue.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
           result.futureValue.session.get(SessionKeys.clientLastName) shouldBe Some("Doe")
@@ -168,11 +191,17 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
           result.futureValue.session.get(SessionKeys.clientNino) shouldBe Some(testNino)
           result.futureValue.session.get(SessionKeys.clientMTDID) shouldBe Some(testMtditid)
           verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(authPredicateForAgent))
-          verify(mockAuthService, times(1)).authorised(Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", testMtditid).withDelegatedAuthRule("mtd-it-auth"))
-          verify(mockAuthService, times(1)).authorised(Enrolment("HMRC-MTD-IT-SUPP").withIdentifier("MTDITID", testMtditid).withDelegatedAuthRule("mtd-it-auth-supp"))
+          verify(mockAuthService, times(1)).authorised(
+            Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", testMtditid).withDelegatedAuthRule("mtd-it-auth")
+          )
+          verify(mockAuthService, times(1)).authorised(
+            Enrolment("HMRC-MTD-IT-SUPP")
+              .withIdentifier("MTDITID", testMtditid)
+              .withDelegatedAuthRule("mtd-it-auth-supp")
+          )
         }
         "the utr contains has spaces, there is a client/primary agent relationship, is valid and  the POST request to session data service is successful" in {
-          val validUTR: String = "1234567890"
+          val validUTR:      String = "1234567890"
           val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
 
           setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
@@ -183,13 +212,23 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
 
           setupMockPrimaryAgentAuthRetrievalSuccess(testMtditid)
 
-          val result = testEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
-            ClientsUTRForm.utr -> utrWithSpaces
-          ))
-
+          val result = testEnterClientsUTRController.submit()(
+            fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+              ClientsUTRForm.utr -> utrWithSpaces
+            )
+          )
 
           status(result) shouldBe SEE_OTHER
-          verifyExtendedAudit(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(testCredId)))
+          verifyExtendedAudit(
+            EnterClientUTRAuditModel(
+              isSuccessful = true,
+              nino = testNino,
+              mtditid = testMtditid,
+              arn = Some(testArn),
+              saUtr = validUTR,
+              credId = Some(testCredId)
+            )
+          )
           redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show.url)
 
           result.futureValue.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
@@ -198,10 +237,12 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
           result.futureValue.session.get(SessionKeys.clientNino) shouldBe Some(testNino)
           result.futureValue.session.get(SessionKeys.clientMTDID) shouldBe Some(testMtditid)
           verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(authPredicateForAgent))
-          verify(mockAuthService, times(1)).authorised(Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", testMtditid).withDelegatedAuthRule("mtd-it-auth"))
+          verify(mockAuthService, times(1)).authorised(
+            Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", testMtditid).withDelegatedAuthRule("mtd-it-auth")
+          )
         }
         "the utr entered has spaces, there is a client/secondary agent relationship, is valid and the POST request to session data service is successful" in {
-          val validUTR: String = "1234567890"
+          val validUTR:      String = "1234567890"
           val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
 
           setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
@@ -214,13 +255,23 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
 
           setupMockSecondaryAgentAuthRetrievalSuccess(testMtditid)
 
-          val result = testEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
-            ClientsUTRForm.utr -> utrWithSpaces
-          ))
-
+          val result = testEnterClientsUTRController.submit()(
+            fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+              ClientsUTRForm.utr -> utrWithSpaces
+            )
+          )
 
           status(result) shouldBe SEE_OTHER
-          verifyExtendedAudit(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(testCredId)))
+          verifyExtendedAudit(
+            EnterClientUTRAuditModel(
+              isSuccessful = true,
+              nino = testNino,
+              mtditid = testMtditid,
+              arn = Some(testArn),
+              saUtr = validUTR,
+              credId = Some(testCredId)
+            )
+          )
           redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show.url)
 
           result.futureValue.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
@@ -229,8 +280,14 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
           result.futureValue.session.get(SessionKeys.clientNino) shouldBe Some(testNino)
           result.futureValue.session.get(SessionKeys.clientMTDID) shouldBe Some(testMtditid)
           verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(authPredicateForAgent))
-          verify(mockAuthService, times(1)).authorised(Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", testMtditid).withDelegatedAuthRule("mtd-it-auth"))
-          verify(mockAuthService, times(1)).authorised(Enrolment("HMRC-MTD-IT-SUPP").withIdentifier("MTDITID", testMtditid).withDelegatedAuthRule("mtd-it-auth-supp"))
+          verify(mockAuthService, times(1)).authorised(
+            Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", testMtditid).withDelegatedAuthRule("mtd-it-auth")
+          )
+          verify(mockAuthService, times(1)).authorised(
+            Enrolment("HMRC-MTD-IT-SUPP")
+              .withIdentifier("MTDITID", testMtditid)
+              .withDelegatedAuthRule("mtd-it-auth-supp")
+          )
 
         }
       }
@@ -240,9 +297,11 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
           setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
           mockEnterClientsUTR(HtmlFormat.empty)
 
-          val result = testEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
-            ClientsUTRForm.utr -> "invalid"
-          ))
+          val result = testEnterClientsUTRController.submit()(
+            fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+              ClientsUTRForm.utr -> "invalid"
+            )
+          )
 
           status(result) shouldBe BAD_REQUEST
           contentType(result) shouldBe Some(HTML)
@@ -258,9 +317,11 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
             response = Left(CitizenDetailsNotFound)
           )
 
-          val result = testEnterClientsUTRController.submit(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
-            ClientsUTRForm.utr -> validUTR
-          ))
+          val result = testEnterClientsUTRController.submit(
+            fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+              ClientsUTRForm.utr -> validUTR
+            )
+          )
 
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.agent.routes.UTRErrorController.show.url)
@@ -274,9 +335,11 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
             response = Left(BusinessDetailsNotFound)
           )
 
-          val result = testEnterClientsUTRController.submit(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
-            ClientsUTRForm.utr -> validUTR
-          ))
+          val result = testEnterClientsUTRController.submit(
+            fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+              ClientsUTRForm.utr -> validUTR
+            )
+          )
 
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.agent.routes.UTRErrorController.show.url)
@@ -294,12 +357,23 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
           setupMockNoPrimaryDelegatedEnrolmentForMTDItId(testMtditid)
           setupMockNoSecondaryDelegatedEnrolmentForMTDItId(testMtditid)
 
-          val result = testEnterClientsUTRController.submit(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
-            ClientsUTRForm.utr -> validUTR
-          ))
+          val result = testEnterClientsUTRController.submit(
+            fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+              ClientsUTRForm.utr -> validUTR
+            )
+          )
 
           status(result) shouldBe SEE_OTHER
-          verifyExtendedAudit(EnterClientUTRAuditModel(isSuccessful = false, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(testCredId)))
+          verifyExtendedAudit(
+            EnterClientUTRAuditModel(
+              isSuccessful = false,
+              nino = testNino,
+              mtditid = testMtditid,
+              arn = Some(testArn),
+              saUtr = validUTR,
+              credId = Some(testCredId)
+            )
+          )
           redirectLocation(result) shouldBe Some(controllers.agent.routes.UTRErrorController.show.url)
         }
       }
@@ -313,13 +387,14 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
             response = Left(APIError)
           )
 
-          val result = testEnterClientsUTRController.submit(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
-            ClientsUTRForm.utr -> validUTR
-          ))
+          val result = testEnterClientsUTRController.submit(
+            fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+              ClientsUTRForm.utr -> validUTR
+            )
+          )
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
       }
     }
   }
 }
-

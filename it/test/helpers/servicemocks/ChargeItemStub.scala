@@ -23,67 +23,74 @@ import testConstants.BaseIntegrationTestConstants.testTaxYear
 import java.time.LocalDate
 
 object ChargeItemStub {
-  def docDetail(chargeType: ChargeType): ChargeItem = ChargeItem(
-    transactionId = "1040000124",
-    taxYear = TaxYear.forYearEnd(testTaxYear),
-    transactionType = chargeType,
-    subTransactionType = None,
-    documentDate = LocalDate.of(2018, 3, 29),
-    dueDate = Some(LocalDate.parse("2018-02-14")),
-    originalAmount = 10.34,
-    outstandingAmount = 1.2,
-    interestOutstandingAmount = None,
-    latePaymentInterestAmount = None,
-    interestFromDate = None,
-    interestEndDate = None,
-    interestRate = None,
-    lpiWithDunningLock = None,
-    amountCodedOut = Some(2500),
-    dunningLock = false,
-    poaRelevantAmount = None
-  )
+  def docDetail(chargeType: ChargeType): ChargeItem =
+    ChargeItem(
+      transactionId = "1040000124",
+      taxYear = TaxYear.forYearEnd(testTaxYear),
+      transactionType = chargeType,
+      subTransactionType = None,
+      documentDate = LocalDate.of(2018, 3, 29),
+      dueDate = Some(LocalDate.parse("2018-02-14")),
+      originalAmount = 10.34,
+      outstandingAmount = 1.2,
+      interestOutstandingAmount = None,
+      latePaymentInterestAmount = None,
+      interestFromDate = None,
+      interestEndDate = None,
+      interestRate = None,
+      lpiWithDunningLock = None,
+      amountCodedOut = Some(2500),
+      dunningLock = false,
+      poaRelevantAmount = None
+    )
 
-  def chargeItemWithInterest(chargeType: ChargeType = PoaOneDebit,
-                             subTransactionType: Option[SubTransactionType] = None): ChargeItem = ChargeItem(
-    transactionId = "1040000124",
-    taxYear = TaxYear.forYearEnd(testTaxYear),
-    transactionType = chargeType,
-    subTransactionType = subTransactionType,
-    documentDate = LocalDate.of(2018, 3, 29),
-    dueDate = Some(LocalDate.of(2023, 7, 1)),
-    originalAmount = 123.45,
-    outstandingAmount = 1.2,
-    interestOutstandingAmount = Some(42.50),
-    latePaymentInterestAmount = Some(54.32),
-    interestFromDate = Some(LocalDate.of(2018, 4, 14)),
-    interestEndDate = Some(LocalDate.of(2019, 1, 1)),
-    interestRate = None,
-    lpiWithDunningLock = None,
-    amountCodedOut = Some(2500),
-    dunningLock = false,
-    poaRelevantAmount = None
-  )
+  def chargeItemWithInterest(
+      chargeType:         ChargeType = PoaOneDebit,
+      subTransactionType: Option[SubTransactionType] = None
+    ): ChargeItem =
+    ChargeItem(
+      transactionId = "1040000124",
+      taxYear = TaxYear.forYearEnd(testTaxYear),
+      transactionType = chargeType,
+      subTransactionType = subTransactionType,
+      documentDate = LocalDate.of(2018, 3, 29),
+      dueDate = Some(LocalDate.of(2023, 7, 1)),
+      originalAmount = 123.45,
+      outstandingAmount = 1.2,
+      interestOutstandingAmount = Some(42.50),
+      latePaymentInterestAmount = Some(54.32),
+      interestFromDate = Some(LocalDate.of(2018, 4, 14)),
+      interestEndDate = Some(LocalDate.of(2019, 1, 1)),
+      interestRate = None,
+      lpiWithDunningLock = None,
+      amountCodedOut = Some(2500),
+      dunningLock = false,
+      poaRelevantAmount = None
+    )
 
-  def chargeItemWithInterestAndOverdue(chargeType: ChargeType = PoaOneDebit,
-                                       subTransactionType: Option[SubTransactionType] = None,
-                                       dueDate: Option[LocalDate] = Some(LocalDate.of(2017, 7, 1))): ChargeItem = ChargeItem(
-    transactionId = "1040000124",
-    taxYear = TaxYear.forYearEnd(testTaxYear),
-    transactionType = chargeType,
-    subTransactionType = subTransactionType,
-    documentDate = LocalDate.of(2018, 3, 29),
-    dueDate = dueDate,
-    originalAmount = 123.45,
-    outstandingAmount = 1.2,
-    latePaymentInterestAmount = Some(54.32),
-    interestOutstandingAmount = Some(42.50),
-    interestFromDate = Some(LocalDate.of(2018, 4, 14)),
-    interestEndDate = Some(LocalDate.of(2019, 1, 1)),
-    interestRate = None,
-    lpiWithDunningLock = None,
-    amountCodedOut = Some(2500),
-    dunningLock = false,
-    poaRelevantAmount = None
-  )
+  def chargeItemWithInterestAndOverdue(
+      chargeType:         ChargeType = PoaOneDebit,
+      subTransactionType: Option[SubTransactionType] = None,
+      dueDate:            Option[LocalDate] = Some(LocalDate.of(2017, 7, 1))
+    ): ChargeItem =
+    ChargeItem(
+      transactionId = "1040000124",
+      taxYear = TaxYear.forYearEnd(testTaxYear),
+      transactionType = chargeType,
+      subTransactionType = subTransactionType,
+      documentDate = LocalDate.of(2018, 3, 29),
+      dueDate = dueDate,
+      originalAmount = 123.45,
+      outstandingAmount = 1.2,
+      latePaymentInterestAmount = Some(54.32),
+      interestOutstandingAmount = Some(42.50),
+      interestFromDate = Some(LocalDate.of(2018, 4, 14)),
+      interestEndDate = Some(LocalDate.of(2019, 1, 1)),
+      interestRate = None,
+      lpiWithDunningLock = None,
+      amountCodedOut = Some(2500),
+      dunningLock = false,
+      poaRelevantAmount = None
+    )
 
 }

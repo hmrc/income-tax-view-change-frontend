@@ -27,9 +27,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class MatchingStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
-                                      val http: HttpClientV2
-                                     )(implicit ec: ExecutionContext) extends RawResponseReads {
+class MatchingStubConnector @Inject() (
+    val appConfig: TestOnlyAppConfig,
+    val http:      HttpClientV2
+  )(
+    implicit ec: ExecutionContext)
+    extends RawResponseReads {
 
   def stubClient(clientDetails: StubClientDetailsModel)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     lazy val url = s"${appConfig.matchingStubUrl}/dynamic-cid"
@@ -51,13 +54,14 @@ class MatchingStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
           "value" -> "01011980"
         )
       ),
-      "testId" -> "ITVC",
-      "name" -> "CID",
-      "service" -> "find",
+      "testId"     -> "ITVC",
+      "name"       -> "CID",
+      "service"    -> "find",
       "resultCode" -> clientDetails.status,
       "timeToLive" -> 43200000
     )
-    http.post(url"$url")
+    http
+      .post(url"$url")
       .withBody(json)
       .execute[HttpResponse]
   }

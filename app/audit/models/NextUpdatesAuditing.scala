@@ -27,20 +27,20 @@ object NextUpdatesAuditing {
   private val nextUpdateAuditType: String = enums.AuditType.ObligationsPageView
 
   case class NextUpdatesAuditModel[A](user: MtdItUser[A]) extends ExtendedAuditModel {
-    override val transactionName: String = nextUpdateTransactionName
-    val business: Option[BusinessDetailsModel] = user.incomeSources.businesses.headOption
+    override val transactionName: String                       = nextUpdateTransactionName
+    val business:                 Option[BusinessDetailsModel] = user.incomeSources.businesses.headOption
 
     val property: Option[PropertyDetailsModel] = user.incomeSources.properties.headOption
 
     override val detail: JsValue =
       userAuditDetails(user) ++
         Json.obj(
-          "hasBusiness" -> user.incomeSources.hasBusinessIncome.toString,
-          "hasProperty" -> user.incomeSources.hasPropertyIncome.toString,
-          "bizAccPeriodStart" -> business.fold("-")(x => s"${x.accountingPeriod.map(ac => ac.start)}"),
-          "bizAccPeriodEnd" -> business.fold("-")(x => s"${x.accountingPeriod.map(ac => ac.end)}"),
+          "hasBusiness"        -> user.incomeSources.hasBusinessIncome.toString,
+          "hasProperty"        -> user.incomeSources.hasPropertyIncome.toString,
+          "bizAccPeriodStart"  -> business.fold("-")(x => s"${x.accountingPeriod.map(ac => ac.start)}"),
+          "bizAccPeriodEnd"    -> business.fold("-")(x => s"${x.accountingPeriod.map(ac => ac.end)}"),
           "propAccPeriodStart" -> property.fold("-")(x => s"${x.accountingPeriod.map(ac => ac.start)}"),
-          "propAccPeriodEnd" -> property.fold("-")(x => s"${x.accountingPeriod.map(ac => ac.end)}")
+          "propAccPeriodEnd"   -> property.fold("-")(x => s"${x.accountingPeriod.map(ac => ac.end)}")
         )
     override val auditType: String = nextUpdateAuditType
   }

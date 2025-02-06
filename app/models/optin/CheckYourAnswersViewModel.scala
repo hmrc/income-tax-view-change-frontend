@@ -19,18 +19,19 @@ package models.optin
 import models.incomeSourceDetails.TaxYear
 
 sealed trait CheckYourAnswersViewModel {
-  val startYear: String
-  val endYear: String
-  val isAgent: Boolean
-  val cancelURL: String
+  val startYear:        String
+  val endYear:          String
+  val isAgent:          Boolean
+  val cancelURL:        String
   val intentIsNextYear: Boolean
 }
 
-case class MultiYearCheckYourAnswersViewModel(intentTaxYear: TaxYear,
-                                              isAgent: Boolean,
-                                              cancelURL: String,
-                                              intentIsNextYear: Boolean = false)
-  extends CheckYourAnswersViewModel {
+case class MultiYearCheckYourAnswersViewModel(
+    intentTaxYear:    TaxYear,
+    isAgent:          Boolean,
+    cancelURL:        String,
+    intentIsNextYear: Boolean = false)
+    extends CheckYourAnswersViewModel {
   val startYear: String = intentTaxYear.startYear.toString
-  val endYear: String = intentTaxYear.endYear.toString
+  val endYear:   String = intentTaxYear.endYear.toString
 }

@@ -35,16 +35,16 @@ object AccountingMethod {
   def fromApiField(cashOrAccrualsField: Boolean): AccountingMethod = {
     if (cashOrAccrualsField) {
       AccrualsAsAccountingMethod
-    }
-    else {
+    } else {
       CashAsAccountingMethod
     }
   }
 
-  implicit def fromAccountingMethodToString(in: AccountingMethod) : String = in match {
-    case AccrualsAsAccountingMethod =>
-      AccrualsAsAccountingMethod.name
-    case CashAsAccountingMethod =>
-      CashAsAccountingMethod.name
-  }
+  implicit def fromAccountingMethodToString(in: AccountingMethod): String =
+    in match {
+      case AccrualsAsAccountingMethod =>
+        AccrualsAsAccountingMethod.name
+      case CashAsAccountingMethod =>
+        CashAsAccountingMethod.name
+    }
 }

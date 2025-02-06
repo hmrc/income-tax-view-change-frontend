@@ -28,28 +28,31 @@ import views.html.optIn.ChooseTaxYearView
 
 class ChooseTaxYearViewSpec extends TestSupport {
 
-  lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  lazy val mockAppConfig:     FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val optInChooseTaxYearView: ChooseTaxYearView = app.injector.instanceOf[ChooseTaxYearView]
 
   val forYearEnd = 2023
-  val taxYear: TaxYear = TaxYear.forYearEnd(forYearEnd)
-  val availableOptOutTaxYear: List[TaxYear] = List(taxYear, taxYear.nextYear)
-  val availableOptOutTaxYearsList: List[String] = availableOptOutTaxYear.map(_.toString)
+  val taxYear:                     TaxYear       = TaxYear.forYearEnd(forYearEnd)
+  val availableOptOutTaxYear:      List[TaxYear] = List(taxYear, taxYear.nextYear)
+  val availableOptOutTaxYearsList: List[String]  = availableOptOutTaxYear.map(_.toString)
 
   class Setup(isAgent: Boolean = true) {
-    val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
+    val cancelURL =
+      if (isAgent) controllers.routes.NextUpdatesController.showAgent.url
+      else controllers.routes.NextUpdatesController.show().url
     val model = ChooseTaxYearViewModel(availableOptOutTaxYear, cancelURL = cancelURL, isAgent = isAgent)
-    val pageDocument: Document = Jsoup.parse(contentAsString(optInChooseTaxYearView(ChooseTaxYearForm(availableOptOutTaxYearsList), model)))
+    val pageDocument: Document =
+      Jsoup.parse(contentAsString(optInChooseTaxYearView(ChooseTaxYearForm(availableOptOutTaxYearsList), model)))
   }
 
   object optInChooseTaxYear {
-    val heading: String = messages("optin.chooseOptInTaxYear.heading")
-    val title: String = messages("htmlTitle", heading)
-    val desc1: String = messages("optin.chooseOptInTaxYear.desc1")
-    val whichTaxYear: String = messages("optin.chooseOptInTaxYear.whichTaxYear")
-    val continueButton: String = messages("optout.chooseOptOutTaxYear.continue")
-    val cancelButton: String = messages("optin.confirmOptIn.cancel")
-    val cancelButtonHref: String = controllers.routes.NextUpdatesController.show().url
+    val heading:               String = messages("optin.chooseOptInTaxYear.heading")
+    val title:                 String = messages("htmlTitle", heading)
+    val desc1:                 String = messages("optin.chooseOptInTaxYear.desc1")
+    val whichTaxYear:          String = messages("optin.chooseOptInTaxYear.whichTaxYear")
+    val continueButton:        String = messages("optout.chooseOptOutTaxYear.continue")
+    val cancelButton:          String = messages("optin.confirmOptIn.cancel")
+    val cancelButtonHref:      String = controllers.routes.NextUpdatesController.show().url
     val agentCancelButtonHref: String = controllers.routes.NextUpdatesController.showAgent.url
   }
 

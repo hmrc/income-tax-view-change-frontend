@@ -32,7 +32,7 @@ class ReportingMethodSetBackErrorControllerISpec extends ControllerISpecHelper {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
-  val title = messagesAPI("cannotGoBack.heading")
+  val title     = messagesAPI("cannotGoBack.heading")
   val headingSE = messagesAPI("cannotGoBack.soleTraderAdded")
   val headingUk = messagesAPI("cannotGoBack.ukPropertyAdded")
   val headingFP = messagesAPI("cannotGoBack.foreignPropertyAdded")
@@ -43,58 +43,63 @@ class ReportingMethodSetBackErrorControllerISpec extends ControllerISpecHelper {
   }
 
   def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "/income-sources/add" else "/agents/income-sources/add"
+    val pathStart = if (mtdRole == MTDIndividual) "/income-sources/add" else "/agents/income-sources/add"
     incomeSourceType match {
-      case SelfEmployment => s"$pathStart/add-business-cannot-go-back"
-      case UkProperty => s"$pathStart/add-uk-property-cannot-go-back"
+      case SelfEmployment  => s"$pathStart/add-business-cannot-go-back"
+      case UkProperty      => s"$pathStart/add-uk-property-cannot-go-back"
       case ForeignProperty => s"$pathStart/add-foreign-property-cannot-go-back"
     }
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
-      val path = getPath(mtdUserRole, incomeSourceType)
-      val additionalCookies = getAdditionalCookies(mtdUserRole)
-      s"GET $path" when {
-        s"a user is a $mtdUserRole" that {
-          "is authenticated, with a valid enrolment" should {
-            "render the Business Accounting Method page" in {
-              enable(IncomeSourcesFs)
-              disable(NavBarFs)
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-              await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType))))
-
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-              result should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, s"$title")
-              )
-            }
-
-            "redirect to home page" when {
-              "Income Sources FS is disabled" in {
-                disable(IncomeSourcesFs)
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
+        val path              = getPath(mtdUserRole, incomeSourceType)
+        val additionalCookies = getAdditionalCookies(mtdUserRole)
+        s"GET $path" when {
+          s"a user is a $mtdUserRole" that {
+            "is authenticated, with a valid enrolment" should {
+              "render the Business Accounting Method page" in {
+                enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+                await(
+                  sessionService.setMongoData(
+                    completedUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType))
+                  )
+                )
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, s"$title")
                 )
               }
+
+              "redirect to home page" when {
+                "Income Sources FS is disabled" in {
+                  disable(IncomeSourcesFs)
+                  disable(NavBarFs)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+                  val result = buildGETMTDClient(path, additionalCookies).futureValue
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+                  result should have(
+                    httpStatus(SEE_OTHER),
+                    redirectURI(homeUrl(mtdUserRole))
+                  )
+                }
+              }
             }
+            testAuthFailures(path, mtdUserRole)
           }
-          testAuthFailures(path, mtdUserRole)
         }
       }
-    }
   }
 }

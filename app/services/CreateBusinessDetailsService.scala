@@ -16,7 +16,6 @@
 
 package services
 
-
 import auth.MtdItUser
 import connectors.CreateIncomeSourceConnector
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
@@ -32,24 +31,47 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: CreateIncomeSourceConnector) {
+class CreateBusinessDetailsService @Inject() (val createIncomeSourceConnector: CreateIncomeSourceConnector) {
 
-  private def createBusiness(requestObject: CreateBusinessIncomeSourceRequest)
-                            (implicit ec: ExecutionContext, user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
-    createIncomeSourceConnector.createBusiness(user.mtditid, requestObject).flatMap(response => handleResponse(response))
+  private def createBusiness(
+      requestObject: CreateBusinessIncomeSourceRequest
+    )(
+      implicit ec: ExecutionContext,
+      user:        MtdItUser[_],
+      hc:          HeaderCarrier
+    ): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
+    createIncomeSourceConnector
+      .createBusiness(user.mtditid, requestObject)
+      .flatMap(response => handleResponse(response))
   }
 
-  private def createUKProperty(requestObject: CreateUKPropertyIncomeSourceRequest)
-                              (implicit ec: ExecutionContext, user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
-    createIncomeSourceConnector.createUKProperty(user.mtditid, requestObject).flatMap(response => handleResponse(response))
+  private def createUKProperty(
+      requestObject: CreateUKPropertyIncomeSourceRequest
+    )(
+      implicit ec: ExecutionContext,
+      user:        MtdItUser[_],
+      hc:          HeaderCarrier
+    ): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
+    createIncomeSourceConnector
+      .createUKProperty(user.mtditid, requestObject)
+      .flatMap(response => handleResponse(response))
   }
 
-  private def createForeignProperty(requestObject: CreateForeignPropertyIncomeSourceRequest)
-                                   (implicit ec: ExecutionContext, user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
-    createIncomeSourceConnector.createForeignProperty(user.mtditid, requestObject).flatMap(response => handleResponse(response))
+  private def createForeignProperty(
+      requestObject: CreateForeignPropertyIncomeSourceRequest
+    )(
+      implicit ec: ExecutionContext,
+      user:        MtdItUser[_],
+      hc:          HeaderCarrier
+    ): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
+    createIncomeSourceConnector
+      .createForeignProperty(user.mtditid, requestObject)
+      .flatMap(response => handleResponse(response))
   }
 
-  def handleResponse(response: Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]): Future[Either[Error, CreateIncomeSourceResponse]] = {
+  def handleResponse(
+      response: Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]
+    ): Future[Either[Error, CreateIncomeSourceResponse]] = {
     response match {
       case Right(List(incomeSourceId)) =>
         Logger("application").info(s"New income source created successfully: $incomeSourceId")
@@ -59,20 +81,28 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
         Future.successful(Left(new Error("Failed to create incomeSources")))
       case Left(incomeSourceError) =>
         Logger("application").error("failed to create")
-        Future.successful(Left(new Error(s"Failed to create incomeSources: ${incomeSourceError}")))}
-  }
-
-  def createRequest(viewModel: CheckDetailsViewModel)(implicit
-                                                      ec: ExecutionContext,
-                                                      user: MtdItUser[_],
-                                                      hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
-    viewModel match {
-      case model: CheckBusinessDetailsViewModel => createBusiness(model)
-      case model: CheckPropertyViewModel => if (model.incomeSourceType == UkProperty) createUKProperty(model) else createForeignProperty(model)
+        Future.successful(Left(new Error(s"Failed to create incomeSources: ${incomeSourceError}")))
     }
   }
 
-  def convertToCreateBusinessIncomeSourceRequest(viewModel: CheckBusinessDetailsViewModel): Either[Throwable, CreateBusinessIncomeSourceRequest] = {
+  def createRequest(
+      viewModel: CheckDetailsViewModel
+    )(
+      implicit
+      ec:   ExecutionContext,
+      user: MtdItUser[_],
+      hc:   HeaderCarrier
+    ): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
+    viewModel match {
+      case model: CheckBusinessDetailsViewModel => createBusiness(model)
+      case model: CheckPropertyViewModel =>
+        if (model.incomeSourceType == UkProperty) createUKProperty(model) else createForeignProperty(model)
+    }
+  }
+
+  def convertToCreateBusinessIncomeSourceRequest(
+      viewModel: CheckBusinessDetailsViewModel
+    ): Either[Throwable, CreateBusinessIncomeSourceRequest] = {
     Try {
       CreateBusinessIncomeSourceRequest(
         List(
@@ -99,10 +129,14 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     }.toEither
   }
 
-  def createBusiness(viewModel: CheckBusinessDetailsViewModel)(implicit
-                                                       ec: ExecutionContext,
-                                                       user: MtdItUser[_],
-                                                       hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
+  def createBusiness(
+      viewModel: CheckBusinessDetailsViewModel
+    )(
+      implicit
+      ec:   ExecutionContext,
+      user: MtdItUser[_],
+      hc:   HeaderCarrier
+    ): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
     convertToCreateBusinessIncomeSourceRequest(viewModel) match {
       case Right(requestObject) =>
         createBusiness(requestObject)
@@ -112,7 +146,9 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     }
   }
 
-  private def createForeignPropertyIncomeSourceRequest(viewModel: CheckPropertyViewModel): Either[Throwable, CreateForeignPropertyIncomeSourceRequest] = {
+  private def createForeignPropertyIncomeSourceRequest(
+      viewModel: CheckPropertyViewModel
+    ): Either[Throwable, CreateForeignPropertyIncomeSourceRequest] = {
     Try(
       CreateForeignPropertyIncomeSourceRequest(
         PropertyDetails(
@@ -124,10 +160,14 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     ).toEither
   }
 
-  def createForeignProperty(viewModel: CheckPropertyViewModel)(implicit
-                                                              ec: ExecutionContext,
-                                                              user: MtdItUser[_],
-                                                              hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
+  def createForeignProperty(
+      viewModel: CheckPropertyViewModel
+    )(
+      implicit
+      ec:   ExecutionContext,
+      user: MtdItUser[_],
+      hc:   HeaderCarrier
+    ): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
     createForeignPropertyIncomeSourceRequest(viewModel) match {
       case Right(requestObject) =>
         createForeignProperty(requestObject)
@@ -137,7 +177,9 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     }
   }
 
-  private def createUKPropertyIncomeSourceRequest(viewModel: CheckPropertyViewModel): Either[Throwable, CreateUKPropertyIncomeSourceRequest] = {
+  private def createUKPropertyIncomeSourceRequest(
+      viewModel: CheckPropertyViewModel
+    ): Either[Throwable, CreateUKPropertyIncomeSourceRequest] = {
     Try(
       CreateUKPropertyIncomeSourceRequest(
         PropertyDetails(
@@ -149,11 +191,14 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     ).toEither
   }
 
-  def createUKProperty(viewModel: CheckPropertyViewModel)
-                      (implicit
-                       ec: ExecutionContext,
-                       user: MtdItUser[_],
-                       hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
+  def createUKProperty(
+      viewModel: CheckPropertyViewModel
+    )(
+      implicit
+      ec:   ExecutionContext,
+      user: MtdItUser[_],
+      hc:   HeaderCarrier
+    ): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
     createUKPropertyIncomeSourceRequest(viewModel) match {
       case Right(requestObject) =>
         createUKProperty(requestObject)

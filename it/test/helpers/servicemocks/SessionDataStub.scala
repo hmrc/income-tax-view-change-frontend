@@ -38,11 +38,13 @@ object SessionDataStub {
   def stubGetSessionDataResponseNotFound(): Unit =
     WiremockHelper.stubGet("/income-tax-session-data/", Status.NOT_FOUND, "")
 
-  val testSessionResponse: String = Json.stringify(Json.obj(
-    "mtditid" -> testMtditid,
-    "nino" -> testNino,
-    "utr" -> testSaUtr,
-    "sessionId" -> "sessionId"
-  ))
+  val testSessionResponse: String = Json.stringify(
+    Json.obj(
+      "mtditid"   -> testMtditid,
+      "nino"      -> testNino,
+      "utr"       -> testSaUtr,
+      "sessionId" -> "sessionId"
+    )
+  )
 
 }

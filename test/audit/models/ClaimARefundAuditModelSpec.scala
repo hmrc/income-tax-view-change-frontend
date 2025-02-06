@@ -31,22 +31,81 @@ import java.time.LocalDate
 class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
 
   val transactionName: String = "claim-a-refund"
-  val auditType: String = "ClaimARefundResponse"
-  val balanceDetailsFull: BalanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 0,
-    availableCredit = Some(-7600.00), allocatedCredit = Some(0), firstPendingAmountRequested = Some(-100.00), secondPendingAmountRequested = Some(-150.00), None)
-  val balanceDetailsMin: BalanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 0,
-    availableCredit = None, allocatedCredit = None, firstPendingAmountRequested = None, secondPendingAmountRequested = None, None)
+  val auditType:       String = "ClaimARefundResponse"
+  val balanceDetailsFull: BalanceDetails = BalanceDetails(
+    balanceDueWithin30Days = 0,
+    overDueAmount = 0,
+    totalBalance = 0,
+    availableCredit = Some(-7600.00),
+    allocatedCredit = Some(0),
+    firstPendingAmountRequested = Some(-100.00),
+    secondPendingAmountRequested = Some(-150.00),
+    None
+  )
+  val balanceDetailsMin: BalanceDetails = BalanceDetails(
+    balanceDueWithin30Days = 0,
+    overDueAmount = 0,
+    totalBalance = 0,
+    availableCredit = None,
+    allocatedCredit = None,
+    firstPendingAmountRequested = None,
+    secondPendingAmountRequested = None,
+    None
+  )
 
   val creditDocuments: List[(DocumentDetailWithDueDate, FinancialDetail)] = List(
-    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = BigDecimal(-100), originalAmount = BigDecimal(-100), mainType = "SA Balancing Charge Credit", mainTransaction = "4905"),
-    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = BigDecimal(-1000), originalAmount = BigDecimal(-1000), mainType = "ITSA Infml Dschrg Cntrct Sett", mainTransaction = "4018"),
-    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = BigDecimal(-1100), originalAmount = BigDecimal(-1100), mainType = "ITSA NPS Overpayment", mainTransaction = "4012"),
-    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = BigDecimal(-1200), originalAmount = BigDecimal(-1200), mainType = "ITSA Cutover Credits", mainTransaction = "6110"),
-    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = BigDecimal(-1300), originalAmount = BigDecimal(-1300), mainType = "ITSA Cutover Credits", mainTransaction = "6110"),
-    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = BigDecimal(-1350), originalAmount = BigDecimal(-1350), mainType = "SA Repayment Supplement Credit", mainTransaction = "6020"),
-    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = BigDecimal(-1375), originalAmount = BigDecimal(-1375), mainType = "SA Repayment Supplement Credit", mainTransaction = "6020"),
-    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = BigDecimal(-1400), originalAmount = BigDecimal(-1400), paymentLot = Some("paymentLot")),
-    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = BigDecimal(-1500), originalAmount = BigDecimal(-1500), paymentLot = Some("paymentLot"))
+    documentDetailWithDueDateFinancialDetailListModel(
+      outstandingAmount = BigDecimal(-100),
+      originalAmount = BigDecimal(-100),
+      mainType = "SA Balancing Charge Credit",
+      mainTransaction = "4905"
+    ),
+    documentDetailWithDueDateFinancialDetailListModel(
+      outstandingAmount = BigDecimal(-1000),
+      originalAmount = BigDecimal(-1000),
+      mainType = "ITSA Infml Dschrg Cntrct Sett",
+      mainTransaction = "4018"
+    ),
+    documentDetailWithDueDateFinancialDetailListModel(
+      outstandingAmount = BigDecimal(-1100),
+      originalAmount = BigDecimal(-1100),
+      mainType = "ITSA NPS Overpayment",
+      mainTransaction = "4012"
+    ),
+    documentDetailWithDueDateFinancialDetailListModel(
+      outstandingAmount = BigDecimal(-1200),
+      originalAmount = BigDecimal(-1200),
+      mainType = "ITSA Cutover Credits",
+      mainTransaction = "6110"
+    ),
+    documentDetailWithDueDateFinancialDetailListModel(
+      outstandingAmount = BigDecimal(-1300),
+      originalAmount = BigDecimal(-1300),
+      mainType = "ITSA Cutover Credits",
+      mainTransaction = "6110"
+    ),
+    documentDetailWithDueDateFinancialDetailListModel(
+      outstandingAmount = BigDecimal(-1350),
+      originalAmount = BigDecimal(-1350),
+      mainType = "SA Repayment Supplement Credit",
+      mainTransaction = "6020"
+    ),
+    documentDetailWithDueDateFinancialDetailListModel(
+      outstandingAmount = BigDecimal(-1375),
+      originalAmount = BigDecimal(-1375),
+      mainType = "SA Repayment Supplement Credit",
+      mainTransaction = "6020"
+    ),
+    documentDetailWithDueDateFinancialDetailListModel(
+      outstandingAmount = BigDecimal(-1400),
+      originalAmount = BigDecimal(-1400),
+      paymentLot = Some("paymentLot")
+    ),
+    documentDetailWithDueDateFinancialDetailListModel(
+      outstandingAmount = BigDecimal(-1500),
+      originalAmount = BigDecimal(-1500),
+      paymentLot = Some("paymentLot")
+    )
   )
 
   val model = ANewCreditAndRefundModel()
@@ -82,21 +141,22 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
         "creditOnAccount" -> 7600,
         "creditDocuments" ->
           Json.arr(
-            Json.obj("description" -> "Balancing charge credit", "amount" -> 100),
-            Json.obj("description" -> "Credit from HMRC adjustment", "amount" -> 1000),
-            Json.obj("description" -> "Credit from HMRC adjustment", "amount" -> 1100),
-            Json.obj("description" -> "Credit from an earlier tax year", "amount" -> 1200),
-            Json.obj("description" -> "Credit from an earlier tax year", "amount" -> 1300),
+            Json.obj("description" -> "Balancing charge credit", "amount"                                -> 100),
+            Json.obj("description" -> "Credit from HMRC adjustment", "amount"                            -> 1000),
+            Json.obj("description" -> "Credit from HMRC adjustment", "amount"                            -> 1100),
+            Json.obj("description" -> "Credit from an earlier tax year", "amount"                        -> 1200),
+            Json.obj("description" -> "Credit from an earlier tax year", "amount"                        -> 1300),
             Json.obj("description" -> "Credit from repayment interest - 2019 to 2020 tax year", "amount" -> 1350),
             Json.obj("description" -> "Credit from repayment interest - 2019 to 2020 tax year", "amount" -> 1375),
-            Json.obj("description" -> "Payment made on 15 May 2019", "amount" -> 1400),
-            Json.obj("description" -> "Payment made on 15 May 2019", "amount" -> 1500),
+            Json.obj("description" -> "Payment made on 15 May 2019", "amount"                            -> 1400),
+            Json.obj("description" -> "Payment made on 15 May 2019", "amount"                            -> 1500)
           ),
         "refundDocuments" ->
           Json.arr(
             Json.obj("description" -> "Refund in progress", "amount" -> 100),
-            Json.obj("description" -> "Refund in progress", "amount" -> 150),
-          ))
+            Json.obj("description" -> "Refund in progress", "amount" -> 150)
+          )
+      )
     }
     "return a minimal audit event correctly" in {
       claimARefundAuditMin().detail shouldBe commonAuditDetails(Individual) ++ Json.obj(
@@ -104,28 +164,30 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
         "creditDocuments" ->
           Json.arr(),
         "refundDocuments" ->
-          Json.arr())
+          Json.arr()
+      )
     }
     s"return a full audit event for an agent user correctly with MFA Credits, Cutover Credits, Payments and Refunds & Repayment Supplement Credit" in {
       claimARefundAuditFull(testMtdItAgentUser).detail shouldBe commonAuditDetails(Agent) ++ Json.obj(
         "creditOnAccount" -> 7600,
         "creditDocuments" ->
           Json.arr(
-            Json.obj("description" -> "Balancing charge credit", "amount" -> 100),
-            Json.obj("description" -> "Credit from HMRC adjustment", "amount" -> 1000),
-            Json.obj("description" -> "Credit from HMRC adjustment", "amount" -> 1100),
-            Json.obj("description" -> "Credit from an earlier tax year", "amount" -> 1200),
-            Json.obj("description" -> "Credit from an earlier tax year", "amount" -> 1300),
+            Json.obj("description" -> "Balancing charge credit", "amount"                                -> 100),
+            Json.obj("description" -> "Credit from HMRC adjustment", "amount"                            -> 1000),
+            Json.obj("description" -> "Credit from HMRC adjustment", "amount"                            -> 1100),
+            Json.obj("description" -> "Credit from an earlier tax year", "amount"                        -> 1200),
+            Json.obj("description" -> "Credit from an earlier tax year", "amount"                        -> 1300),
             Json.obj("description" -> "Credit from repayment interest - 2019 to 2020 tax year", "amount" -> 1350),
             Json.obj("description" -> "Credit from repayment interest - 2019 to 2020 tax year", "amount" -> 1375),
-            Json.obj("description" -> "Payment made on 15 May 2019", "amount" -> 1400),
-            Json.obj("description" -> "Payment made on 15 May 2019", "amount" -> 1500),
+            Json.obj("description" -> "Payment made on 15 May 2019", "amount"                            -> 1400),
+            Json.obj("description" -> "Payment made on 15 May 2019", "amount"                            -> 1500)
           ),
         "refundDocuments" ->
           Json.arr(
             Json.obj("description" -> "Refund in progress", "amount" -> 100),
-            Json.obj("description" -> "Refund in progress", "amount" -> 150),
-          ))
+            Json.obj("description" -> "Refund in progress", "amount" -> 150)
+          )
+      )
     }
     "return a minimal audit event for an agent user correctly" in {
       claimARefundAuditMin(testMtdItAgentUser).detail shouldBe commonAuditDetails(Agent) ++ Json.obj(
@@ -133,7 +195,8 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
         "creditDocuments" ->
           Json.arr(),
         "refundDocuments" ->
-          Json.arr())
+          Json.arr()
+      )
     }
   }
 }

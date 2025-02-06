@@ -39,7 +39,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   val repository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
-  val prefix: String = "business-ceased.obligation"
+  val prefix:             String = "business-ceased.obligation"
   val continueButtonText: String = messagesAPI(s"$prefix.income-sources-button")
   val htmlTitle = " - Manage your Income Tax updates - GOV.UK"
   val day: LocalDate = LocalDate.of(2023, 1, 1)
@@ -50,31 +50,38 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
   }
 
   def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     incomeSourceType match {
       case SelfEmployment => pathStart + "/income-sources/cease/cease-business-success"
-      case UkProperty => pathStart + "/income-sources/cease/cease-uk-property-success"
-      case _ => pathStart + "/income-sources/cease/cease-foreign-property-success"
+      case UkProperty     => pathStart + "/income-sources/cease/cease-uk-property-success"
+      case _              => pathStart + "/income-sources/cease/cease-foreign-property-success"
     }
   }
 
-  def getIncomeSourceResponse(incomeSourceType: IncomeSourceType) = incomeSourceType match {
-    case SelfEmployment => businessOnlyResponse
-    case UkProperty => ukPropertyOnlyResponse
-    case ForeignProperty => foreignPropertyOnlyResponse
-  }
+  def getIncomeSourceResponse(incomeSourceType: IncomeSourceType) =
+    incomeSourceType match {
+      case SelfEmployment  => businessOnlyResponse
+      case UkProperty      => ukPropertyOnlyResponse
+      case ForeignProperty => foreignPropertyOnlyResponse
+    }
 
   def getExpectedTitle(incomeSourceType: IncomeSourceType): String = {
     incomeSourceType match {
       case SelfEmployment => b1TradingName + " " + messagesAPI(s"$prefix.heading1.base")
-      case UkProperty => messagesAPI("business-ceased.obligation.heading1.uk-property.part2") + " " + messagesAPI("business-ceased.obligation.heading1.base")
-      case ForeignProperty => messagesAPI("business-ceased.obligation.heading1.foreign-property.part2") + " " + messagesAPI("business-ceased.obligation.heading1.base")
+      case UkProperty =>
+        messagesAPI("business-ceased.obligation.heading1.uk-property.part2") + " " + messagesAPI(
+          "business-ceased.obligation.heading1.base"
+        )
+      case ForeignProperty =>
+        messagesAPI("business-ceased.obligation.heading1.foreign-property.part2") + " " + messagesAPI(
+          "business-ceased.obligation.heading1.base"
+        )
     }
   }
 
   mtdAllRoles.foreach { mtdUserRole =>
     List(UkProperty, ForeignProperty).foreach { incomeSourceType =>
-      val path = getPath(mtdUserRole, incomeSourceType)
+      val path              = getPath(mtdUserRole, incomeSourceType)
       val additionalCookies = getAdditionalCookies(mtdUserRole)
       s"GET $path" when {
         s"a user is a $mtdUserRole" that {
@@ -83,11 +90,28 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
               stubAuthorised(mtdUserRole)
               disable(NavBarFs)
               enable(IncomeSourcesFs)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                OK,
+                getIncomeSourceResponse(incomeSourceType)
+              )
               IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
               if (incomeSourceType == SelfEmployment) {
-                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"CEASE-${incomeSourceType.key}", ceaseIncomeSourceData =
-                  Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(true))))))
+                await(
+                  sessionService.setMongoData(
+                    UIJourneySessionData(
+                      testSessionId,
+                      s"CEASE-${incomeSourceType.key}",
+                      ceaseIncomeSourceData = Some(
+                        CeaseIncomeSourceData(
+                          incomeSourceId = Some(testSelfEmploymentId),
+                          endDate = Some(LocalDate.parse(testEndDate2022)),
+                          ceaseIncomeSourceDeclare = None,
+                          journeyIsComplete = Some(true)
+                        )
+                      )
+                    )
+                  )
+                )
               }
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue

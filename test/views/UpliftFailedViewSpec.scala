@@ -21,14 +21,15 @@ import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
 import testUtils.ViewSpec
 import views.html.errorPages.UpliftFailed
 
-
 class UpliftFailedViewSpec extends ViewSpec {
 
   def upliftFailedView: Html = app.injector.instanceOf[UpliftFailed].apply()
 
   "The Uplift Failed Error page" should {
 
-    s"have the title: ${messages("htmlTitle.errorPage", messages("upliftFailure.title"))}" in new Setup(upliftFailedView) {
+    s"have the title: ${messages("htmlTitle.errorPage", messages("upliftFailure.title"))}" in new Setup(
+      upliftFailedView
+    ) {
 
       document.title() shouldBe messages("htmlTitle.errorPage", messages("upliftFailure.title"))
     }
@@ -55,7 +56,7 @@ class UpliftFailedViewSpec extends ViewSpec {
       document.select("li").get(4).text() shouldBe messages("upliftFailure.bullet.3")
     }
 
-    s"have the link ${messages("Return to Sign in")}" in new Setup(upliftFailedView){
+    s"have the link ${messages("Return to Sign in")}" in new Setup(upliftFailedView) {
 
       document.select("a").eachText().toList.contains(messages("Return to Sign in"))
     }

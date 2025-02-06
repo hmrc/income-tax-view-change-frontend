@@ -36,74 +36,92 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
     reset(mockSessionService)
   }
 
-
   def setupMockCreateSession(result: Boolean): Unit =
-    when(
-      mockSessionService.createSession(ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
+    when(mockSessionService.createSession(ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(result))
 
   def setupMockGetSessionKeyMongo(result: Either[Throwable, Option[String]]): Unit = {
     when(
-      mockSessionService.getMongoKey(ArgumentMatchers.anyString(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())
+      mockSessionService.getMongoKey(ArgumentMatchers.anyString(), ArgumentMatchers.any())(
+        ArgumentMatchers.any(),
+        ArgumentMatchers.any()
+      )
     ).thenReturn(Future.successful(result))
   }
 
   def setupMockGetSessionKeyMongoTyped[A](result: Either[Throwable, Option[A]]): Unit = {
     when(
-      mockSessionService.getMongoKeyTyped[A](ArgumentMatchers.anyString(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())
+      mockSessionService.getMongoKeyTyped[A](ArgumentMatchers.anyString(), ArgumentMatchers.any())(
+        ArgumentMatchers.any(),
+        ArgumentMatchers.any()
+      )
     ).thenReturn(Future.successful(result))
   }
 
-  def setupMockGetSessionKeyMongoTyped[A](key: String, journeyType: IncomeSourceJourneyType, result: Either[Throwable, Option[A]]): Unit = {
+  def setupMockGetSessionKeyMongoTyped[A](
+      key:         String,
+      journeyType: IncomeSourceJourneyType,
+      result:      Either[Throwable, Option[A]]
+    ): Unit = {
     when(
-      mockSessionService.getMongoKeyTyped[A](ArgumentMatchers.eq(key), ArgumentMatchers.eq(journeyType))(ArgumentMatchers.any(), ArgumentMatchers.any())
+      mockSessionService.getMongoKeyTyped[A](ArgumentMatchers.eq(key), ArgumentMatchers.eq(journeyType))(
+        ArgumentMatchers.any(),
+        ArgumentMatchers.any()
+      )
     ).thenReturn(Future.successful(result))
   }
 
   def setupMockSetSessionKeyMongo(result: Either[Throwable, Boolean]): Unit = {
     when(
-      mockSessionService.setMongoKey(ArgumentMatchers.anyString(), ArgumentMatchers.any(), ArgumentMatchers.any())
-      (ArgumentMatchers.any(), ArgumentMatchers.any())
+      mockSessionService.setMongoKey(ArgumentMatchers.anyString(), ArgumentMatchers.any(), ArgumentMatchers.any())(
+        ArgumentMatchers.any(),
+        ArgumentMatchers.any()
+      )
     ).thenReturn(Future.successful(result))
   }
 
   def setupMockSetMultipleMongoData(key: Map[String, String])(result: Either[Throwable, Boolean]): Unit = {
     when(
-      mockSessionService.setMultipleMongoData(ArgumentMatchers.eq(key), ArgumentMatchers.any())
-      (ArgumentMatchers.any(), ArgumentMatchers.any())
+      mockSessionService.setMultipleMongoData(ArgumentMatchers.eq(key), ArgumentMatchers.any())(
+        ArgumentMatchers.any(),
+        ArgumentMatchers.any()
+      )
     ).thenReturn(Future.successful(result))
   }
 
   def setupMockSetMultipleMongoData(result: Either[Throwable, Boolean]): Unit = {
     when(
-      mockSessionService.setMultipleMongoData(ArgumentMatchers.any(), ArgumentMatchers.any())
-      (ArgumentMatchers.any(), ArgumentMatchers.any())
+      mockSessionService.setMultipleMongoData(ArgumentMatchers.any(), ArgumentMatchers.any())(
+        ArgumentMatchers.any(),
+        ArgumentMatchers.any()
+      )
     ).thenReturn(Future.successful(result))
   }
 
   def setupMockGetMongo(result: Either[Throwable, Option[UIJourneySessionData]]): Unit = {
     when(
-      mockSessionService.getMongo(ArgumentMatchers.any())
-      (ArgumentMatchers.any(), ArgumentMatchers.any())
+      mockSessionService.getMongo(ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())
     ).thenReturn(Future.successful(result))
   }
 
   def setupMockSetMongoData(result: Boolean): Unit = {
     when(
-      mockSessionService.setMongoData(ArgumentMatchers.any())
-      (ArgumentMatchers.any(), ArgumentMatchers.any())
+      mockSessionService.setMongoData(ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())
     ).thenReturn(Future.successful(result))
   }
 
-  def setupMockSetSessionKeyMongo(expectedKey: String,
-                                  expectedValue: String,
-                                  expectedJourneyType: IncomeSourceJourneyType,
-                                  result: Either[Throwable, Boolean]): Unit = {
-    when(mockSessionService.setMongoKey(
-      ArgumentMatchers.eq(expectedKey),
-      ArgumentMatchers.eq(expectedValue),
-      ArgumentMatchers.eq(expectedJourneyType)
-    )(any(), any())
+  def setupMockSetSessionKeyMongo(
+      expectedKey:         String,
+      expectedValue:       String,
+      expectedJourneyType: IncomeSourceJourneyType,
+      result:              Either[Throwable, Boolean]
+    ): Unit = {
+    when(
+      mockSessionService.setMongoKey(
+        ArgumentMatchers.eq(expectedKey),
+        ArgumentMatchers.eq(expectedValue),
+        ArgumentMatchers.eq(expectedJourneyType)
+      )(any(), any())
     ).thenReturn(Future.successful(result))
   }
 
@@ -114,26 +132,38 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
   }
 
   def setupMockClearSession(result: Boolean): Unit = {
-    when(
-      mockSessionService.clearSession(any())(any())).thenReturn(Future.successful(()))
+    when(mockSessionService.clearSession(any())(any())).thenReturn(Future.successful(()))
   }
 
   def setupMockSetSessionKeyMongo(key: String)(result: Either[Throwable, Boolean]): Unit = {
     when(
-      mockSessionService.setMongoKey(ArgumentMatchers.eq(key), ArgumentMatchers.any(), ArgumentMatchers.any())
-      (ArgumentMatchers.any(), ArgumentMatchers.any())
+      mockSessionService.setMongoKey(ArgumentMatchers.eq(key), ArgumentMatchers.any(), ArgumentMatchers.any())(
+        ArgumentMatchers.any(),
+        ArgumentMatchers.any()
+      )
     ).thenReturn(Future.successful(result))
   }
 
   def verifyMockGetMongoKeyResponse(noOfCalls: Int) =
-    verify(mockSessionService, times(noOfCalls)).getMongoKey(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())
+    verify(mockSessionService, times(noOfCalls))
+      .getMongoKey(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())
 
   def verifyMockGetMongoKeyTypedResponse[A](noOfCalls: Int) =
-    verify(mockSessionService, times(noOfCalls)).getMongoKeyTyped[A](ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())
+    verify(mockSessionService, times(noOfCalls)).getMongoKeyTyped[A](ArgumentMatchers.any(), ArgumentMatchers.any())(
+      ArgumentMatchers.any(),
+      ArgumentMatchers.any()
+    )
 
   def verifyMockSetMongoKeyResponse(noOfCalls: Int) =
-    verify(mockSessionService, times(noOfCalls)).setMongoKey(ArgumentMatchers.anyString(), ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())
+    verify(mockSessionService, times(noOfCalls)).setMongoKey(
+      ArgumentMatchers.anyString(),
+      ArgumentMatchers.any(),
+      ArgumentMatchers.any()
+    )(ArgumentMatchers.any(), ArgumentMatchers.any())
 
   def verifyMockSetMultipleMongoDataResponse(noOfCalls: Int) =
-    verify(mockSessionService, times(noOfCalls)).setMultipleMongoData(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())
+    verify(mockSessionService, times(noOfCalls)).setMultipleMongoData(ArgumentMatchers.any(), ArgumentMatchers.any())(
+      ArgumentMatchers.any(),
+      ArgumentMatchers.any()
+    )
 }

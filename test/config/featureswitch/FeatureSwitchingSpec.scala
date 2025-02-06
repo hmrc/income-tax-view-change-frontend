@@ -113,7 +113,6 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
     }
   }
 
-
   "Mock FeatureSwitching" when {
 
     "use MongoDB feature switch status if MongoDB is enabled in config" in {
@@ -124,7 +123,9 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
 
       val userFeatureSwitches = List(FeatureSwitch(featureSwitchName, isEnabled = true))
 
-      MockFeatureSwitching.isEnabled(featureSwitchName)(mtdItUser.copy(featureSwitches = userFeatureSwitches)) shouldBe true
+      MockFeatureSwitching.isEnabled(featureSwitchName)(
+        mtdItUser.copy(featureSwitches = userFeatureSwitches)
+      ) shouldBe true
     }
 
     "fall back to system properties if MongoDB is disabled in config" in {

@@ -24,7 +24,7 @@ object NinoLookupAuditing {
     override val transactionName: String = enums.TransactionName.NinoLookup
     override val detail: Seq[(String, String)] = Seq(
       "mtdid" -> mtdRef,
-      "nino" -> nino.nino
+      "nino"  -> nino.nino
     )
     override val auditType: String = enums.AuditType.NinoLookup
   }
@@ -32,7 +32,7 @@ object NinoLookupAuditing {
   case class NinoLookupErrorAuditModel(ninoError: NinoResponseError, mtdRef: String) extends AuditModel {
     override val transactionName: String = enums.TransactionName.NinoLookupError
     override val detail: Seq[(String, String)] = Seq(
-      "mtdid" -> mtdRef,
+      "mtdid"  -> mtdRef,
       "status" -> ninoError.status.toString,
       "reason" -> ninoError.reason
     )

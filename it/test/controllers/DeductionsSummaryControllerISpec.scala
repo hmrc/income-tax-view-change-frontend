@@ -26,41 +26,45 @@ import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSu
 class DeductionsSummaryControllerISpec extends ControllerISpecHelper {
 
   def getPath(mtdRole: MTDUserRole): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     pathStart + s"/$testYear/allowances-and-deductions"
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    val path = getPath(mtdUserRole)
-    val additionalCookies = getAdditionalCookies(mtdUserRole)
-    s"GET $path" when {
-      s"a user is a $mtdUserRole" that {
-        "is authenticated, with a valid enrolment" should {
-          if (mtdUserRole == MTDSupportingAgent) {
-            testSupportingAgentAccessDenied(path, additionalCookies)
-          } else {
-            "render the deduction summary page" in {
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-              IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
-                status = OK,
-                body = liabilityCalculationModelSuccessful
-              )
-              val res = buildGETMTDClient(path, additionalCookies).futureValue
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      val path              = getPath(mtdUserRole)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            if (mtdUserRole == MTDSupportingAgent) {
+              testSupportingAgentAccessDenied(path, additionalCookies)
+            } else {
+              "render the deduction summary page" in {
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  businessAndPropertyResponseWoMigration
+                )
+                IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+                  status = OK,
+                  body = liabilityCalculationModelSuccessful
+                )
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-              IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+                IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
 
-              res should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, "deduction_breakdown.heading"),
-              )
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "deduction_breakdown.heading")
+                )
 
+              }
             }
           }
+          testAuthFailures(path, mtdUserRole)
         }
-        testAuthFailures(path, mtdUserRole)
       }
-    }
   }
 }

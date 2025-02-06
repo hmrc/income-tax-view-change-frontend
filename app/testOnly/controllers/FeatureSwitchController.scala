@@ -31,97 +31,110 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
-                                        featureSwitchService: FeatureSwitchService)
-                                       (implicit mcc: MessagesControllerComponents,
-                                        val appConfig: FrontendAppConfig,
-                                        ec: ExecutionContext)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+class FeatureSwitchController @Inject() (
+    featureSwitchView:    FeatureSwitchView,
+    featureSwitchService: FeatureSwitchService
+  )(
+    implicit mcc:  MessagesControllerComponents,
+    val appConfig: FrontendAppConfig,
+    ec:            ExecutionContext)
+    extends FrontendController(mcc)
+    with FeatureSwitching
+    with I18nSupport {
 
-  val ENABLE_ALL_FEATURES: String = "feature-switch.enable-all-switches"
+  val ENABLE_ALL_FEATURES:  String = "feature-switch.enable-all-switches"
   val DISABLE_ALL_FEATURES: String = "feature-switch.disable-all-switches"
 
-  def setSwitch(featureFlagName: FeatureSwitchName, isEnabled: Boolean): Action[AnyContent] = Action.async { _ =>
-    featureSwitchService.set(featureFlagName, isEnabled).map {
-      case true =>
-        Logger("application").info(s"Set FSS - $FeatureSwitchName - $isEnabled: result success")
-        Ok(s"Flag $featureFlagName set to $isEnabled")
-      case false =>
-        Logger("application").info(s"Set FSS - $FeatureSwitchName - $isEnabled: result failure")
-        InternalServerError(s"Error while setting flag $featureFlagName to $isEnabled")
+  def setSwitch(featureFlagName: FeatureSwitchName, isEnabled: Boolean): Action[AnyContent] =
+    Action.async { _ =>
+      featureSwitchService.set(featureFlagName, isEnabled).map {
+        case true =>
+          Logger("application").info(s"Set FSS - $FeatureSwitchName - $isEnabled: result success")
+          Ok(s"Flag $featureFlagName set to $isEnabled")
+        case false =>
+          Logger("application").info(s"Set FSS - $FeatureSwitchName - $isEnabled: result failure")
+          InternalServerError(s"Error while setting flag $featureFlagName to $isEnabled")
+      }
     }
-  }
 
-  def show(): Action[AnyContent] = Action.async { implicit user =>
-    featureSwitchService.getAll.flatMap { featureSwitches =>
-      val fss = featureSwitches.filter(_.name.name != InvalidFS.name).map(x => {
-        (FeatureSwitchName.allFeatureSwitches.find(_.name == x.name.name).get -> x.isEnabled)
-      }).toMap
-      Future.successful(
-        Ok(
-          featureSwitchView(
-            switchNames = fss,
-            testOnly.controllers.routes.FeatureSwitchController.submit
+  def show(): Action[AnyContent] =
+    Action.async { implicit user =>
+      featureSwitchService.getAll.flatMap { featureSwitches =>
+        val fss = featureSwitches
+          .filter(_.name.name != InvalidFS.name)
+          .map(x => {
+            (FeatureSwitchName.allFeatureSwitches.find(_.name == x.name.name).get -> x.isEnabled)
+          })
+          .toMap
+        Future.successful(
+          Ok(
+            featureSwitchView(
+              switchNames = fss,
+              testOnly.controllers.routes.FeatureSwitchController.submit
+            )
           )
         )
-      )
+      }
     }
-  }
 
   // TODO: refactor next method
-  def submit(): Action[AnyContent] = Action.async { implicit request =>
-
-    val submittedData: Set[String] = request.body.asFormUrlEncoded match {
-      case None => Set.empty
-      case Some(data) => data.keySet
-    }
-    val disableAll: Boolean = submittedData.contains(DISABLE_ALL_FEATURES)
-    val enableAll: Boolean = submittedData.contains(ENABLE_ALL_FEATURES)
-
-    def getEnabledFeatureSwitches: Map[FeatureSwitchName, Boolean] =
-      if (disableAll) Map.empty else {
-        if (enableAll) allFeatureSwitches.map(_.name) else submittedData
-      }.map(x => allFeatureSwitches.find(e => e.name == x)).collect {
-        case Some(fs) => fs
-      }.map(x => x -> true).toMap
-
-    def getDisabledFeatureSwitches: Map[FeatureSwitchName, Boolean] = {
-      if (disableAll) {
-        allFeatureSwitches.map(_.name)
-      } else {
-        allFeatureSwitches.map(_.name) diff submittedData
+  def submit(): Action[AnyContent] =
+    Action.async { implicit request =>
+      val submittedData: Set[String] = request.body.asFormUrlEncoded match {
+        case None       => Set.empty
+        case Some(data) => data.keySet
       }
-    }.map(x => allFeatureSwitches.find(e => e.name == x)).collect {
-      case Some(fs) => fs
-    }.map(x => x -> false).toMap
+      val disableAll: Boolean = submittedData.contains(DISABLE_ALL_FEATURES)
+      val enableAll:  Boolean = submittedData.contains(ENABLE_ALL_FEATURES)
 
+      def getEnabledFeatureSwitches: Map[FeatureSwitchName, Boolean] =
+        if (disableAll) Map.empty
+        else {
+          if (enableAll) allFeatureSwitches.map(_.name) else submittedData
+        }.map(x => allFeatureSwitches.find(e => e.name == x))
+          .collect {
+            case Some(fs) => fs
+          }
+          .map(x => x -> true)
+          .toMap
 
-    val disabledFeatureSwitchers: Map[FeatureSwitchName, Boolean] = getDisabledFeatureSwitches
-    val enabledFeatureSwitchers: Map[FeatureSwitchName, Boolean] = getEnabledFeatureSwitches
+      def getDisabledFeatureSwitches: Map[FeatureSwitchName, Boolean] = {
+        if (disableAll) {
+          allFeatureSwitches.map(_.name)
+        } else {
+          allFeatureSwitches.map(_.name) diff submittedData
+        }
+      }.map(x => allFeatureSwitches.find(e => e.name == x))
+        .collect {
+          case Some(fs) => fs
+        }
+        .map(x => x -> false)
+        .toMap
 
+      val disabledFeatureSwitchers: Map[FeatureSwitchName, Boolean] = getDisabledFeatureSwitches
+      val enabledFeatureSwitchers:  Map[FeatureSwitchName, Boolean] = getEnabledFeatureSwitches
 
-    // TODO: might worth to use setAll method from relevant repo (transactional approach?)
-    for {
-      _ <- Future.sequence(
-        for {
-          (fs, enableState) <- (disabledFeatureSwitchers ++ enabledFeatureSwitchers)
-        } yield featureSwitchService.set(fs, enableState)
-      )
-    } yield Redirect(testOnly.controllers.routes.FeatureSwitchController.show)
-
-  }
-
-  def enableAll(): Action[AnyContent] = Action.async { implicit user =>
-    for {
-      featureSwitches <- featureSwitchService.getAll
-      _ <- Future.sequence(
-        featureSwitches.map(featureSwitch =>
-          featureSwitchService.set(featureSwitch.name, enabled = true)
+      // TODO: might worth to use setAll method from relevant repo (transactional approach?)
+      for {
+        _ <- Future.sequence(
+          for {
+            (fs, enableState) <- (disabledFeatureSwitchers ++ enabledFeatureSwitchers)
+          } yield featureSwitchService.set(fs, enableState)
         )
-      )
-    } yield {
-      Logger("application").info(s"Enabled all FSS")
-      Redirect(testOnly.controllers.routes.FeatureSwitchController.show)
+      } yield Redirect(testOnly.controllers.routes.FeatureSwitchController.show)
+
     }
-  }
+
+  def enableAll(): Action[AnyContent] =
+    Action.async { implicit user =>
+      for {
+        featureSwitches <- featureSwitchService.getAll
+        _ <- Future.sequence(
+          featureSwitches.map(featureSwitch => featureSwitchService.set(featureSwitch.name, enabled = true))
+        )
+      } yield {
+        Logger("application").info(s"Enabled all FSS")
+        Redirect(testOnly.controllers.routes.FeatureSwitchController.show)
+      }
+    }
 }

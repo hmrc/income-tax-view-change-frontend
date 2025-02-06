@@ -23,25 +23,26 @@ import play.api.libs.json.{Json, OWrites, Reads, __}
 
 sealed trait FinancialDetailsWithDocumentDetailsResponse
 
-
 case class FinancialDetailsWithDocumentDetailsModel(
-                                                     documentDetails: List[DocumentDetail],
-                                                     financialDetails: List[FinancialDetail]
-                                                   ) extends FinancialDetailsWithDocumentDetailsResponse {
+    documentDetails:  List[DocumentDetail],
+    financialDetails: List[FinancialDetail])
+    extends FinancialDetailsWithDocumentDetailsResponse {
 
-  val filteredDocumentDetails = documentDetails.filter(_.paymentLot == financialDetails.head.items.get.head.paymentLot)
+  val filteredDocumentDetails = documentDetails
+    .filter(_.paymentLot == financialDetails.head.items.get.head.paymentLot)
     .filter(_.paymentLotItem == financialDetails.head.items.get.head.paymentLotItem)
 
 }
 
-
 object FinancialDetailsWithDocumentDetailsModel {
-  implicit val writes: OWrites[FinancialDetailsWithDocumentDetailsModel] = Json.writes[FinancialDetailsWithDocumentDetailsModel]
+  implicit val writes: OWrites[FinancialDetailsWithDocumentDetailsModel] =
+    Json.writes[FinancialDetailsWithDocumentDetailsModel]
 
   implicit val reads: Reads[FinancialDetailsWithDocumentDetailsModel] = (
     readNullableList[DocumentDetail](__ \ "documentDetails") and
       readNullableList[FinancialDetail](__ \ "financialDetails")
-    )(FinancialDetailsWithDocumentDetailsModel.apply _)
+  )(FinancialDetailsWithDocumentDetailsModel.apply _)
 }
 
-case class FinancialDetailsWithDocumentDetailsErrorModel(code: Int, message: String) extends FinancialDetailsWithDocumentDetailsResponse
+case class FinancialDetailsWithDocumentDetailsErrorModel(code: Int, message: String)
+    extends FinancialDetailsWithDocumentDetailsResponse

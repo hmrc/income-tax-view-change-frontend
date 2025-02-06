@@ -23,12 +23,12 @@ import testUtils.TestSupport
 class InitiatePayNowAuditModelISpec extends TestSupport {
 
   val transactionName = "initiate-pay-now"
-  val auditEvent = "InitiatePayNow"
+  val auditEvent      = "InitiatePayNow"
 
   "The InitiatePayNowAuditModel" should {
 
-    lazy val testInitiatePayNowAuditModel = InitiatePayNowAuditModel(testMtditid, testNino,
-      Some(testSaUtr), Some(testCredId), Some(testUserType))
+    lazy val testInitiatePayNowAuditModel =
+      InitiatePayNowAuditModel(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType))
 
     s"Have the correct transaction name of '$transactionName'" in {
       testInitiatePayNowAuditModel.transactionName shouldBe transactionName
@@ -40,10 +40,10 @@ class InitiatePayNowAuditModelISpec extends TestSupport {
 
     "Have the correct details for the audit event" in {
       testInitiatePayNowAuditModel.detail shouldBe Json.obj(
-        "mtditid" -> testMtditid,
-        "nino" -> testNino,
-        "saUtr" -> testSaUtr,
-        "credId" -> testCredId,
+        "mtditid"  -> testMtditid,
+        "nino"     -> testNino,
+        "saUtr"    -> testSaUtr,
+        "credId"   -> testCredId,
         "userType" -> testUserType
       )
     }

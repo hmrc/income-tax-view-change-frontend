@@ -32,10 +32,16 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils with ErrorRecovery 
   self =>
 
   val poaSessionService: PaymentOnAccountSessionService
-  implicit val ec: ExecutionContext
+  implicit val ec:       ExecutionContext
 
-  def withSessionData(journeyState: JourneyState = BeforeSubmissionPage)(codeBlock: PoaAmendmentData => Future[Result])
-                     (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  def withSessionData(
+      journeyState: JourneyState = BeforeSubmissionPage
+    )(
+      codeBlock: PoaAmendmentData => Future[Result]
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier
+    ): Future[Result] = {
     ifAdjustPoaIsEnabled(user.isAgent()) {
       if (journeyState == InitialPage) {
         handleSession(codeBlock)
@@ -49,7 +55,10 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils with ErrorRecovery 
             Future.successful(logAndRedirect(s"Necessary session data was empty in mongo"))
           case Left(ex: Throwable) =>
             Future.successful(
-              logAndRedirect(s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >"))
+              logAndRedirect(
+                s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >"
+              )
+            )
         }
       }
     }
@@ -64,33 +73,48 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils with ErrorRecovery 
     (journeyCompleted, isOnCannotGoBackOrSuccessPage) match {
       case (_, true) => false
       case (true, _) => true
-      case _ => false
+      case _         => false
     }
   }
 
-  private def handleSession(codeBlock: PoaAmendmentData => Future[Result])(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Result] = {
+  private def handleSession(
+      codeBlock: PoaAmendmentData => Future[Result]
+    )(
+      implicit hc: HeaderCarrier,
+      user:        MtdItUser[_]
+    ): Future[Result] = {
     poaSessionService.getMongo flatMap {
       case Right(Some(poaData: PoaAmendmentData)) =>
         if (poaData.journeyCompleted) {
-          Logger("application").info(s"The current active mongo Claim to Adjust POA session has been completed by the user, so a new session will be created")
+          Logger("application").info(
+            s"The current active mongo Claim to Adjust POA session has been completed by the user, so a new session will be created"
+          )
           poaSessionService.createSession.flatMap {
             case Right(_) => codeBlock(poaData)
             case Left(ex: Throwable) =>
-              Future.successful(logAndRedirect(
-                s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >"))
+              Future.successful(
+                logAndRedirect(
+                  s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >"
+                )
+              )
           }
         } else {
-          Logger("application").info(s"The current active mongo Claim to Adjust POA session has not been completed by the user")
+          Logger("application").info(
+            s"The current active mongo Claim to Adjust POA session has not been completed by the user"
+          )
           codeBlock(poaData)
         }
       case Right(None) =>
-        Logger("application").info(s"There is no active mongo Claim to Adjust POA session, so a new one will be created")
-        poaSessionService.createSession.flatMap(
-          _ => codeBlock(PoaAmendmentData())
+        Logger("application").info(
+          s"There is no active mongo Claim to Adjust POA session, so a new one will be created"
         )
+        poaSessionService.createSession.flatMap(_ => codeBlock(PoaAmendmentData()))
       case Left(ex) =>
-        Future.successful(logAndRedirect(
-          s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >"))
+        Future.successful(
+          logAndRedirect(
+            s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >"
+          )
+        )
     }
   }
 

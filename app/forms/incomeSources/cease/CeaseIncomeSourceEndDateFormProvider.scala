@@ -29,12 +29,22 @@ import java.time.LocalDate
 
 class CeaseIncomeSourceEndDateFormProvider extends Mappings {
 
-  def apply(incomeSourceType: IncomeSourceType, id: Option[String] = None, newIncomeSourceJourney: Boolean)(implicit messages: Messages, user: MtdItUser[_], dateService: DateServiceInterface): Form[LocalDate] = {
+  def apply(
+      incomeSourceType:       IncomeSourceType,
+      id:                     Option[String] = None,
+      newIncomeSourceJourney: Boolean
+    )(
+      implicit messages: Messages,
+      user:              MtdItUser[_],
+      dateService:       DateServiceInterface
+    ): Form[LocalDate] = {
 
-    val messagePrefix = incomeSourceType.endDateMessagePrefix
+    val messagePrefix  = incomeSourceType.endDateMessagePrefix
     val dateFormPrefix = "dateForm.error"
-    val invalidMessage = if (newIncomeSourceJourney) "dateForm.error.invalid" else
-      s"$messagePrefix.error.invalid"
+    val invalidMessage =
+      if (newIncomeSourceJourney) "dateForm.error.invalid"
+      else
+        s"$messagePrefix.error.invalid"
 
     def dateMustBeAfterBusinessStartDate(incomeSourceType: IncomeSourceType): String =
       s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.beforeStartDate"
@@ -42,27 +52,39 @@ class CeaseIncomeSourceEndDateFormProvider extends Mappings {
     def dateMustNotBeBefore6April2015(incomeSourceType: IncomeSourceType): String =
       s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.beforeEarliestDate"
 
-    def dateMustNotBeInFuture(incomeSourceType: IncomeSourceType): String = s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.future"
+    def dateMustNotBeInFuture(incomeSourceType: IncomeSourceType): String =
+      s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.future"
 
     val checkMinDateIfSE: Constraint[LocalDate] = {
-      if (incomeSourceType == SelfEmployment) minDate(LocalDate.of(2015, 4, 6), dateMustNotBeBefore6April2015(SelfEmployment))
-      else Constraint{_ => Valid}
+      if (incomeSourceType == SelfEmployment)
+        minDate(LocalDate.of(2015, 4, 6), dateMustNotBeBefore6April2015(SelfEmployment))
+      else Constraint { _ => Valid }
     }
 
     val minimumDate: Constraint[LocalDate] = incomeSourceType match {
       case UkProperty =>
-        val ukStartDate = user.incomeSources.properties.filter(_.isUkProperty).filter(!_.isCeased).flatMap(_.tradingStartDate)
-          .headOption.getOrElse(LocalDate.MIN)
+        val ukStartDate = user.incomeSources.properties
+          .filter(_.isUkProperty)
+          .filter(!_.isCeased)
+          .flatMap(_.tradingStartDate)
+          .headOption
+          .getOrElse(LocalDate.MIN)
         minDate(ukStartDate, dateMustBeAfterBusinessStartDate(UkProperty))
       case ForeignProperty =>
-        val foreignStartDate = user.incomeSources.properties.filter(_.isForeignProperty).filter(!_.isCeased).flatMap(_.tradingStartDate)
-          .headOption.getOrElse(LocalDate.MIN)
+        val foreignStartDate = user.incomeSources.properties
+          .filter(_.isForeignProperty)
+          .filter(!_.isCeased)
+          .flatMap(_.tradingStartDate)
+          .headOption
+          .getOrElse(LocalDate.MIN)
         minDate(foreignStartDate, dateMustBeAfterBusinessStartDate(ForeignProperty))
       case SelfEmployment =>
         val errorMessage: String = "missing income source ID"
         val incomeSourceId = id.getOrElse(throw new Exception(errorMessage))
         val businessStartDate = user.incomeSources.businesses
-          .find(_.incomeSourceId == incomeSourceId).flatMap(_.tradingStartDate).getOrElse(LocalDate.MIN)
+          .find(_.incomeSourceId == incomeSourceId)
+          .flatMap(_.tradingStartDate)
+          .getOrElse(LocalDate.MIN)
         minDate(businessStartDate, dateMustBeAfterBusinessStartDate(SelfEmployment))
     }
 
@@ -74,11 +96,13 @@ class CeaseIncomeSourceEndDateFormProvider extends Mappings {
         allRequiredKey = s"$dateFormPrefix.dayMonthAndYear.required.${incomeSourceType.key.toLowerCase}",
         twoRequiredKey = s"$dateFormPrefix.required.two",
         requiredKey = s"$dateFormPrefix.required"
-      ).verifying(firstError(
-        minimumDate,
-        checkMinDateIfSE,
-        fourDigitValidYear(invalidMessage),
-        maxDate(currentDate, dateMustNotBeInFuture(incomeSourceType)))
+      ).verifying(
+        firstError(
+          minimumDate,
+          checkMinDateIfSE,
+          fourDigitValidYear(invalidMessage),
+          maxDate(currentDate, dateMustNotBeInFuture(incomeSourceType))
+        )
       )
     )
   }

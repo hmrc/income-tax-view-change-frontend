@@ -29,13 +29,22 @@ import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PayApiConnector @Inject()(http: HttpClientV2,
-                                auditingService: AuditingService,
-                                config: FrontendAppConfig)(implicit ec: ExecutionContext) {
+class PayApiConnector @Inject() (
+    http:            HttpClientV2,
+    auditingService: AuditingService,
+    config:          FrontendAppConfig
+  )(
+    implicit ec: ExecutionContext) {
 
   val journeyStartUrl: String = config.paymentsUrl + "/pay-api/mtd-income-tax/sa/journey/start"
 
-  def startPaymentJourney(saUtr: String, amountInPence: BigDecimal, isAgent: Boolean)(implicit headerCarrier: HeaderCarrier): Future[PaymentJourneyResponse] = {
+  def startPaymentJourney(
+      saUtr:         String,
+      amountInPence: BigDecimal,
+      isAgent:       Boolean
+    )(
+      implicit headerCarrier: HeaderCarrier
+    ): Future[PaymentJourneyResponse] = {
 
     val paymentRedirectUrl: String = if (isAgent) config.agentPaymentRedirectUrl else config.paymentRedirectUrl
 
@@ -56,19 +65,26 @@ class PayApiConnector @Inject()(http: HttpClientV2,
       .execute[HttpResponse]
       .map {
         case response if response.status == CREATED =>
-          response.json.validate[PaymentJourneyModel].fold(
-            invalid => {
-              Logger("application").error(s"Invalid Json with $invalid")
-              PaymentJourneyErrorResponse(response.status, "Invalid Json")
-            },
-            valid => valid
-          )
-        case response => if (response.status >= 500) {
-            Logger("application").error(s"Payment journey start error with response code: ${response.status} and body: ${response.body}")
+          response.json
+            .validate[PaymentJourneyModel]
+            .fold(
+              invalid => {
+                Logger("application").error(s"Invalid Json with $invalid")
+                PaymentJourneyErrorResponse(response.status, "Invalid Json")
+              },
+              valid => valid
+            )
+        case response =>
+          if (response.status >= 500) {
+            Logger("application").error(
+              s"Payment journey start error with response code: ${response.status} and body: ${response.body}"
+            )
           } else {
-            Logger("application").warn(s"Payment journey start error with response code: ${response.status} and body: ${response.body}")
+            Logger("application").warn(
+              s"Payment journey start error with response code: ${response.status} and body: ${response.body}"
+            )
           }
           PaymentJourneyErrorResponse(response.status, response.body)
-    }
+      }
   }
 }

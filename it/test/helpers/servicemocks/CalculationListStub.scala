@@ -21,10 +21,11 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 
 object CalculationListStub {
 
-  def legacyUrl(nino: String, taxYearEnd: String): String = s"""/income-tax-view-change/list-of-calculation-results/$nino/$taxYearEnd"""
+  def legacyUrl(nino: String, taxYearEnd: String): String =
+    s"""/income-tax-view-change/list-of-calculation-results/$nino/$taxYearEnd"""
 
-  def url(nino: String, taxYearRange: String): String = s"""/income-tax-view-change/calculation-list/$nino/$taxYearRange"""
-
+  def url(nino: String, taxYearRange: String): String =
+    s"""/income-tax-view-change/calculation-list/$nino/$taxYearRange"""
 
   def stubGetLegacyCalculationList(nino: String, taxYearEnd: String)(jsonResponse: String): Unit = {
     WiremockHelper.stubGet(legacyUrl(nino, taxYearEnd), OK, jsonResponse)
@@ -35,11 +36,19 @@ object CalculationListStub {
   }
 
   def stubGetLegacyCalculationListError(nino: String, taxYear: String): Unit = {
-    WiremockHelper.stubGet(legacyUrl(nino, taxYear), INTERNAL_SERVER_ERROR,"DES is currently experiencing problems that require live service intervention.")
+    WiremockHelper.stubGet(
+      legacyUrl(nino, taxYear),
+      INTERNAL_SERVER_ERROR,
+      "DES is currently experiencing problems that require live service intervention."
+    )
   }
 
   def stubGetCalculationListError(nino: String, taxYearRange: String): Unit = {
-    WiremockHelper.stubGet(url(nino, taxYearRange), INTERNAL_SERVER_ERROR, "IF is currently experiencing problems that require live service intervention.")
+    WiremockHelper.stubGet(
+      url(nino, taxYearRange),
+      INTERNAL_SERVER_ERROR,
+      "IF is currently experiencing problems that require live service intervention."
+    )
   }
 
   def verifyGetLegacyCalculationList(nino: String, taxYear: String): Unit =
@@ -48,4 +57,3 @@ object CalculationListStub {
   def verifyGetCalculationList(nino: String, taxYearRange: String): Unit =
     WiremockHelper.verifyGet(url(nino, taxYearRange))
 }
-

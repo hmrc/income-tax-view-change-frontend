@@ -49,13 +49,13 @@ class OptOutCancelledViewSpec extends TestSupport {
   def bullet(i: Int): String = s"#main-content > div > div > div > ul > li:nth-child($i) > a"
 
   object Selectors {
-    val title = "reporting-frequency-heading"
-    val h1 = "opt-out-cancelled"
-    val p1 = "continue-to-report-quarterly"
-    val h2 = "reporting-annually"
-    val p2 = "can-choose-to-report-annually"
+    val title  = "reporting-frequency-heading"
+    val h1     = "opt-out-cancelled"
+    val p1     = "continue-to-report-quarterly"
+    val h2     = "reporting-annually"
+    val p2     = "can-choose-to-report-annually"
     val p3Link = "#manage-your-businesses"
-    val p3 = "change-how-often"
+    val p3     = "change-how-often"
   }
 
   "OptOutCancelledView" when {
@@ -113,7 +113,7 @@ class OptOutCancelledViewSpec extends TestSupport {
       "return the correct content" in {
 
         disableAllSwitches()
-        
+
         val isAgentFlag = false
 
         val pageDocument: Document =
@@ -138,7 +138,7 @@ class OptOutCancelledViewSpec extends TestSupport {
             Selectors.p1 -> p1Content,
             Selectors.h2 -> h2Content,
             Selectors.p2 -> p2Content,
-            Selectors.p3 -> p3Content,
+            Selectors.p3 -> p3Content
           )
 
         pageDocument.title() shouldBe titleIndividualContent

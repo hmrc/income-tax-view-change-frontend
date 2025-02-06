@@ -25,27 +25,39 @@ import scala.util.Try
 class CreateIncomeSourcesRequestModelSpec extends TestSupport with IncomeSourcesDataHelper {
   "CreateBusinessIncomeSourceRequest" should {
     "read from Json" in {
-      Json.fromJson(createBusinessDetailsRequestObjectJson)(CreateBusinessIncomeSourceRequest.format) shouldBe JsSuccess(createBusinessDetailsRequestObject)
+      Json.fromJson(createBusinessDetailsRequestObjectJson)(
+        CreateBusinessIncomeSourceRequest.format
+      ) shouldBe JsSuccess(createBusinessDetailsRequestObject)
     }
     "write to Json" in {
       Json.toJson(createBusinessDetailsRequestObject) shouldBe createBusinessDetailsRequestObjectJson
     }
     "check require field" in {
-      Try(CreateBusinessIncomeSourceRequest(businessDetails = List())).failed.get.getMessage shouldBe "requirement failed: Only single business can be created at a time"
+      Try(
+        CreateBusinessIncomeSourceRequest(businessDetails = List())
+      ).failed.get.getMessage shouldBe "requirement failed: Only single business can be created at a time"
     }
   }
 
   "PropertyDetails" should {
     "check require fields" in {
-      Try(PropertyDetails("", "CASH", "")).failed.get.getMessage shouldBe "requirement failed: Trading start date must be provided"
-      Try(PropertyDetails("2022-01-01", "", "2022-01-01")).failed.get.getMessage shouldBe "requirement failed: Accounting method must be provided"
-      Try(PropertyDetails("2022-01-02", "CASH", "2022-01-01")).failed.get.getMessage shouldBe "requirement failed: Trading start date and start date must be the same"
+      Try(
+        PropertyDetails("", "CASH", "")
+      ).failed.get.getMessage shouldBe "requirement failed: Trading start date must be provided"
+      Try(
+        PropertyDetails("2022-01-01", "", "2022-01-01")
+      ).failed.get.getMessage shouldBe "requirement failed: Accounting method must be provided"
+      Try(
+        PropertyDetails("2022-01-02", "CASH", "2022-01-01")
+      ).failed.get.getMessage shouldBe "requirement failed: Trading start date and start date must be the same"
     }
   }
 
   "CreateForeignPropertyIncomeSource" should {
     "read from Json" in {
-      Json.fromJson(createForeignPropertyRequestObjectJson)(CreateForeignPropertyIncomeSourceRequest.format) shouldBe JsSuccess(createForeignPropertyRequestObject)
+      Json.fromJson(createForeignPropertyRequestObjectJson)(
+        CreateForeignPropertyIncomeSourceRequest.format
+      ) shouldBe JsSuccess(createForeignPropertyRequestObject)
     }
     "write to Json" in {
 
@@ -55,7 +67,9 @@ class CreateIncomeSourcesRequestModelSpec extends TestSupport with IncomeSources
 
   "CreateUKPropertyIncomeSource" should {
     "read from Json" in {
-      Json.fromJson(createUKPropertyRequestObjectJson)(CreateUKPropertyIncomeSourceRequest.format) shouldBe JsSuccess(createUKPropertyRequestObject)
+      Json.fromJson(createUKPropertyRequestObjectJson)(CreateUKPropertyIncomeSourceRequest.format) shouldBe JsSuccess(
+        createUKPropertyRequestObject
+      )
     }
     "write to Json" in {
       Json.toJson(createUKPropertyRequestObject) shouldBe createUKPropertyRequestObjectJson

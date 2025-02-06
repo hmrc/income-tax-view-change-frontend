@@ -31,20 +31,21 @@ class OptOutErrorViewSpec extends TestSupport {
   }
 
   object optOutErrorPageMessages {
-    val heading: String = messages("optout.optOutError.heading")
-    val options: String = messages("optout.optOutError.options")
-    val optOutNextUpdatesBullet1: String = messages("optout.optOutError.nextUpdates-bullet-1")
+    val heading:                     String = messages("optout.optOutError.heading")
+    val options:                     String = messages("optout.optOutError.options")
+    val optOutNextUpdatesBullet1:    String = messages("optout.optOutError.nextUpdates-bullet-1")
     val optOutNextUpdatesBulletLink: String = messages("optout.optOutError.nextUpdates-link")
-    val optOutNextUpdatesBullet2: String = messages("optout.optOutError.nextUpdates-bullet-2")
-    val optOutNextUpdatesTotal: String = optOutNextUpdatesBullet1 ++ " " ++ optOutNextUpdatesBulletLink ++ " " ++ optOutNextUpdatesBullet2
+    val optOutNextUpdatesBullet2:    String = messages("optout.optOutError.nextUpdates-bullet-2")
+    val optOutNextUpdatesTotal: String =
+      optOutNextUpdatesBullet1 ++ " " ++ optOutNextUpdatesBulletLink ++ " " ++ optOutNextUpdatesBullet2
     val optOutHomeBullet1: String = messages("optout.optOutError.home-bullet-1")
     val optOutHomeBullet2: String = messages("optout.optOutError.home-bullet-2")
-    val optOutHomeTotal: String = optOutHomeBullet1 ++ " " ++ optOutHomeBullet2
+    val optOutHomeTotal:   String = optOutHomeBullet1 ++ " " ++ optOutHomeBullet2
 
-    val nextUpdatesLink: String = controllers.routes.NextUpdatesController.show().url
+    val nextUpdatesLink:      String = controllers.routes.NextUpdatesController.show().url
     val nextUpdatesLinkAgent: String = controllers.routes.NextUpdatesController.showAgent.url
-    val homePageLink: String = controllers.routes.HomeController.show().url
-    val homePageLinkAgent: String = controllers.routes.HomeController.showAgent.url
+    val homePageLink:         String = controllers.routes.HomeController.show().url
+    val homePageLinkAgent:    String = controllers.routes.HomeController.showAgent.url
 
   }
 
@@ -86,7 +87,9 @@ class OptOutErrorViewSpec extends TestSupport {
 
     "render the navigation options" in new Setup(true) {
       pageDocument.getElementById("nextUpdatesBullet").text() shouldBe optOutErrorPageMessages.optOutNextUpdatesTotal
-      pageDocument.getElementById("next-updates-link").attr("href") shouldBe optOutErrorPageMessages.nextUpdatesLinkAgent
+      pageDocument
+        .getElementById("next-updates-link")
+        .attr("href") shouldBe optOutErrorPageMessages.nextUpdatesLinkAgent
       pageDocument.getElementById("homepageBullet").text() shouldBe optOutErrorPageMessages.optOutHomeTotal
       pageDocument.getElementById("home-link").attr("href") shouldBe optOutErrorPageMessages.homePageLinkAgent
     }

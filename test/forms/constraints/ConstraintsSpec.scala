@@ -23,7 +23,7 @@ import testUtils.TestSupport
 class ConstraintsSpec extends CustomConstraints with TestSupport {
 
   val maxLength = 2
-  val errMsg = "Too Long"
+  val errMsg    = "Too Long"
 
   "The Constraints.optMaxLength method" when {
 

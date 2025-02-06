@@ -26,36 +26,46 @@ import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Utilities.JsonUtil
 
-case class CeaseIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
-                                       cessationDate: String,
-                                       incomeSourceId: IncomeSourceId,
-                                       updateIncomeSourceErrorResponse: Option[UpdateIncomeSourceResponseError])(implicit user: MtdItUser[_], hc: HeaderCarrier)
-  extends ExtendedAuditModel with ImplicitDateParser {
+case class CeaseIncomeSourceAuditModel(
+    incomeSourceType:                IncomeSourceType,
+    cessationDate:                   String,
+    incomeSourceId:                  IncomeSourceId,
+    updateIncomeSourceErrorResponse: Option[UpdateIncomeSourceResponseError]
+  )(
+    implicit user: MtdItUser[_],
+    hc:            HeaderCarrier)
+    extends ExtendedAuditModel
+    with ImplicitDateParser {
 
   private val isSuccessful = updateIncomeSourceErrorResponse.isEmpty
   private val outcome: JsObject = {
     val outcome: JsObject = Json.obj("isSuccessful" -> isSuccessful)
 
     if (isSuccessful) outcome
-    else outcome ++ Json.obj(
-      "isSuccessful" -> isSuccessful,
-      "failureCategory" -> "API_FAILURE",
-      "failureReason" -> updateIncomeSourceErrorResponse.get.reason)
+    else
+      outcome ++ Json.obj(
+        "isSuccessful"    -> isSuccessful,
+        "failureCategory" -> "API_FAILURE",
+        "failureReason"   -> updateIncomeSourceErrorResponse.get.reason
+      )
   }
 
   override val transactionName: String = enums.TransactionName.CeaseIncomeSource
-  override val auditType: String = enums.AuditType.CeaseIncomeSource
+  override val auditType:       String = enums.AuditType.CeaseIncomeSource
   override val detail: JsValue = {
     val details = userAuditDetails(user) ++
-      Json.obj("outcome" -> outcome,
-        "journeyType" -> incomeSourceType.journeyType,
+      Json.obj(
+        "outcome"             -> outcome,
+        "journeyType"         -> incomeSourceType.journeyType,
         "dateBusinessStopped" -> cessationDate,
-        "incomeSourceID" -> incomeSourceId.value)
+        "incomeSourceID"      -> incomeSourceId.value
+      )
 
     incomeSourceType match {
       case SelfEmployment =>
         val businessName = user.incomeSources
-          .getSoleTraderBusiness(incomeSourceId.value).flatMap(_.tradingName)
+          .getSoleTraderBusiness(incomeSourceId.value)
+          .flatMap(_.tradingName)
         details ++ ("businessName", businessName)
       case _ =>
         details

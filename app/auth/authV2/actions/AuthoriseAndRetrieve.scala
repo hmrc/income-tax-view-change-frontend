@@ -35,12 +35,14 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
-                                     val appConfig: FrontendAppConfig,
-                                     mcc: MessagesControllerComponents)
-  extends FeatureSwitching with ActionRefiner[Request, AuthorisedUserRequest] {
+class AuthoriseAndRetrieve @Inject() (
+    val authorisedFunctions: FrontendAuthorisedFunctions,
+    val appConfig:           FrontendAppConfig,
+    mcc:                     MessagesControllerComponents)
+    extends FeatureSwitching
+    with ActionRefiner[Request, AuthorisedUserRequest] {
 
-  lazy val logger: Logger = Logger(getClass)
+  lazy val logger:               Logger           = Logger(getClass)
   implicit val executionContext: ExecutionContext = mcc.executionContext
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, AuthorisedUserRequest[A]]] = {
@@ -50,7 +52,8 @@ class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorised
 
     implicit val req: Request[A] = request
 
-    authorisedFunctions.authorised(EmptyPredicate)
+    authorisedFunctions
+      .authorised(EmptyPredicate)
       .retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
         constructAuthorisedUser()
       }(hc, executionContext) recoverWith logAndRedirect
@@ -73,9 +76,10 @@ class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorised
   type AuthRetrievals =
     Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel
 
-
-  private def constructAuthorisedUser[A]()(
-    implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedUserRequest[A]]]] = {
+  private def constructAuthorisedUser[A](
+    )(
+      implicit request: Request[A]
+    ): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedUserRequest[A]]]] = {
     case enrolments ~ name ~ credentials ~ affinityGroup ~ confidenceLevel =>
       val authUserDetails = AuthUserDetails(
         enrolments = enrolments,

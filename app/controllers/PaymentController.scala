@@ -32,49 +32,64 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PaymentController @Inject()(val authActions: AuthActions,
-                                  payApiConnector: PayApiConnector,
-                                  val auditingService: AuditingService,
-                                  val itvcErrorHandler: ItvcErrorHandler,
-                                  val itvcAgentErrorHandler: AgentItvcErrorHandler
-                                 )(implicit val appConfig: FrontendAppConfig,
-                                   mcc: MessagesControllerComponents,
-                                   implicit val ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+class PaymentController @Inject() (
+    val authActions:           AuthActions,
+    payApiConnector:           PayApiConnector,
+    val auditingService:       AuditingService,
+    val itvcErrorHandler:      ItvcErrorHandler,
+    val itvcAgentErrorHandler: AgentItvcErrorHandler
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    mcc:                    MessagesControllerComponents,
+    implicit val ec:        ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport {
 
-  def handleHandoff(paymentAmountInPence: Long, origin: Option[String] = None)
-                   (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+  def handleHandoff(
+      paymentAmountInPence: Long,
+      origin:               Option[String] = None
+    )(
+      implicit mtdItUser: MtdItUser[_]
+    ): Future[Result] = {
     auditingService.extendedAudit(
       InitiatePayNowAuditModel(mtdItUser.mtditid, mtdItUser.nino, mtdItUser.saUtr, mtdItUser.credId, mtdItUser.userType)
     )
     mtdItUser.saUtr match {
       case Some(utr) =>
-        payApiConnector.startPaymentJourney(utr, paymentAmountInPence, mtdItUser.isAgent()).map {
-          case model: PaymentJourneyModel => Redirect(model.nextUrl)
-          case PaymentJourneyErrorResponse(status, message) => logAndHandleError(s"Failed to start payments journey due to downstream response, status: $status, message: $message")
-          case _: PaymentJourneyResponse => logAndHandleError("Failed to start payments journey due to downstream response")
-        }.recover{
-          case ex => logAndHandleError(ex.getMessage)
-        }
-      case _ => Future.successful(
-        logAndHandleError("Failed to start payments journey due to missing UTR")
-      )
+        payApiConnector
+          .startPaymentJourney(utr, paymentAmountInPence, mtdItUser.isAgent())
+          .map {
+            case model: PaymentJourneyModel => Redirect(model.nextUrl)
+            case PaymentJourneyErrorResponse(status, message) =>
+              logAndHandleError(
+                s"Failed to start payments journey due to downstream response, status: $status, message: $message"
+              )
+            case _: PaymentJourneyResponse =>
+              logAndHandleError("Failed to start payments journey due to downstream response")
+          }
+          .recover {
+            case ex => logAndHandleError(ex.getMessage)
+          }
+      case _ =>
+        Future.successful(
+          logAndHandleError("Failed to start payments journey due to missing UTR")
+        )
     }
   }
 
-  def paymentHandoff(amountInPence: Long, origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
+  def paymentHandoff(amountInPence: Long, origin: Option[String] = None): Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit user =>
       handleHandoff(amountInPence, origin = origin)
-  }
+    }
 
-  val agentPaymentHandoff: Long => Action[AnyContent] = paymentAmountInPence => authActions.asMTDPrimaryAgent.async {
-    implicit user =>
+  val agentPaymentHandoff: Long => Action[AnyContent] = paymentAmountInPence =>
+    authActions.asMTDPrimaryAgent.async { implicit user =>
       handleHandoff(paymentAmountInPence)
-  }
+    }
 
-  def logAndHandleError(message: String)
-                       (implicit mtdItUser: MtdItUser[_]): Result = {
+  def logAndHandleError(message: String)(implicit mtdItUser: MtdItUser[_]): Result = {
     Logger("application").error(message)
-    val errorHandler = if(mtdItUser.isAgent()) itvcAgentErrorHandler else itvcErrorHandler
+    val errorHandler = if (mtdItUser.isAgent()) itvcAgentErrorHandler else itvcErrorHandler
     errorHandler.showInternalServerError()
   }
 

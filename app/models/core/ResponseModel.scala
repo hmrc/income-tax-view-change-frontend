@@ -23,14 +23,13 @@ import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 import scala.util.Try
 
-
 object ResponseModel {
 
   trait SuccessModel
 
-  object InvalidJson extends ErrorModel(INTERNAL_SERVER_ERROR, "Invalid JSON" )
+  object InvalidJson extends ErrorModel(INTERNAL_SERVER_ERROR, "Invalid JSON")
 
-  object NotFound extends ErrorModel(NOT_FOUND, "Not found" )
+  object NotFound extends ErrorModel(NOT_FOUND, "Not found")
 
   object UnexpectedError extends ErrorModel(INTERNAL_SERVER_ERROR, "Unexpected error")
 

@@ -33,7 +33,6 @@ import scala.concurrent.Future
 
 class ChargeHistoryConnectorSpec extends TestSupport with MockHttpV2 with MockAuditingService {
 
-
   trait Setup {
     val baseUrl = "http://localhost:9999"
 
@@ -45,21 +44,40 @@ class ChargeHistoryConnectorSpec extends TestSupport with MockHttpV2 with MockAu
     val connector = new ChargeHistoryConnector(mockHttpClientV2, getAppConfig())
   }
 
-
   "getChargeHistoryUrl" should {
     "return the correct url" in new Setup {
-      connector.getChargeHistoryUrl(testMtditid, chargeReference) shouldBe s"$baseUrl/income-tax-view-change/charge-history/$testMtditid/chargeReference/$chargeReference"
+      connector.getChargeHistoryUrl(
+        testMtditid,
+        chargeReference
+      ) shouldBe s"$baseUrl/income-tax-view-change/charge-history/$testMtditid/chargeReference/$chargeReference"
     }
   }
 
   "getChargeHistory" should {
 
-    val testChargeHistoryModelSuccess = ChargeHistoryModel(taxYear = "2017", documentId = "123456789", documentDate = LocalDate.of(2020, 1, 29), documentDescription = "Balancing Charge", totalAmount = 123456789012345.67, reversalDate = LocalDate.of(2020, 2, 24), reversalReason = "amended return", poaAdjustmentReason = Some("005"))
+    val testChargeHistoryModelSuccess = ChargeHistoryModel(
+      taxYear = "2017",
+      documentId = "123456789",
+      documentDate = LocalDate.of(2020, 1, 29),
+      documentDescription = "Balancing Charge",
+      totalAmount = 123456789012345.67,
+      reversalDate = LocalDate.of(2020, 2, 24),
+      reversalReason = "amended return",
+      poaAdjustmentReason = Some("005")
+    )
 
     val successResponseModel: ChargeHistoryResponseModel =
-      ChargesHistoryModel(idType = "NINO", idValue = "AB123456C", regimeType = "ITSA", chargeHistoryDetails = Some(List(testChargeHistoryModelSuccess)))
+      ChargesHistoryModel(
+        idType = "NINO",
+        idValue = "AB123456C",
+        regimeType = "ITSA",
+        chargeHistoryDetails = Some(List(testChargeHistoryModelSuccess))
+      )
     val successResponseBadJsonModel: ChargeHistoryResponseModel =
-      ChargesHistoryErrorModel(code = Status.INTERNAL_SERVER_ERROR, message = "Json Validation Error. Parsing ChargeHistory Data Response")
+      ChargesHistoryErrorModel(
+        code = Status.INTERNAL_SERVER_ERROR,
+        message = "Json Validation Error. Parsing ChargeHistory Data Response"
+      )
     val badResponseModel = ChargesHistoryErrorModel(code = Status.BAD_REQUEST, message = "Error Message")
 
     val getChargeHistoryUrlTestUrl =
@@ -77,9 +95,11 @@ class ChargeHistoryConnectorSpec extends TestSupport with MockHttpV2 with MockAu
       setupMockFailedHttpV2Get[ChargesHistoryResponse](getChargeHistoryUrlTestUrl)
 
       val result: Future[ChargeHistoryResponseModel] = connector.getChargeHistory(testMtditid, Some(chargeReference))
-      result.futureValue shouldBe ChargesHistoryErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
+      result.futureValue shouldBe ChargesHistoryErrorModel(
+        Status.INTERNAL_SERVER_ERROR,
+        s"Unexpected failure, unknown error"
+      )
     }
-
 
     "return ChargeHistoryErrorResponse model in case of failure" in new Setup {
       setupMockHttpV2Get[ChargesHistoryResponse](getChargeHistoryUrlTestUrl)(badResponseModel)

@@ -29,24 +29,33 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.{Duration, DurationInt, MILLISECONDS}
 import scala.concurrent.{ExecutionContext, Future}
 
-
 @Singleton
-class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConfig,
-                                          val mongoLockRepository: MongoLockRepository,
-                                          val calculationService: CalculationService,
-                                          system: ActorSystem)
-                                         (implicit ec: ExecutionContext) {
+class CalculationPollingService @Inject() (
+    val frontendAppConfig:   FrontendAppConfig,
+    val mongoLockRepository: MongoLockRepository,
+    val calculationService:  CalculationService,
+    system:                  ActorSystem
+  )(
+    implicit ec: ExecutionContext) {
 
   private implicit val scheduler: Scheduler = system.scheduler
 
   lazy val lockService: LockService = LockService(
-    mongoLockRepository, lockId = "calc-poller",
-    ttl = Duration.create(frontendAppConfig.calcPollSchedulerTimeout, MILLISECONDS))
+    mongoLockRepository,
+    lockId = "calc-poller",
+    ttl = Duration.create(frontendAppConfig.calcPollSchedulerTimeout, MILLISECONDS)
+  )
 
   private lazy val retryableStatusCodes: List[Int] = List(Status.BAD_GATEWAY, Status.NO_CONTENT)
 
-  def initiateCalculationPollingSchedulerWithMongoLock(calcId: String, nino: String, taxYear: Int, mtditid: String)
-                                                      (implicit headerCarrier: HeaderCarrier): Future[Any] = {
+  def initiateCalculationPollingSchedulerWithMongoLock(
+      calcId:  String,
+      nino:    String,
+      taxYear: Int,
+      mtditid: String
+    )(
+      implicit headerCarrier: HeaderCarrier
+    ): Future[Any] = {
     val endTimeInMillis: Long = System.currentTimeMillis() + frontendAppConfig.calcPollSchedulerTimeout
     //Acquire Mongo lock and call Calculation service
     //To avoid wait time for first call, calling getCalculationResponse with end time as current time
@@ -54,7 +63,9 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
       getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino, taxYear, mtditid)
     } flatMap {
       case Some(statusCode) =>
-        Logger("application").debug(s"[CalculationPollingService] - Response received from Calculation service: $statusCode")
+        Logger("application").debug(
+          s"[CalculationPollingService] - Response received from Calculation service: $statusCode"
+        )
         if (!retryableStatusCodes.contains(statusCode)) Future.successful(statusCode)
         else {
           // V0: Original version
@@ -62,10 +73,11 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
 
           // Ref: https://pekko.apache.org/docs/pekko/current/futures.html
           // V1: apply retry with a fixed delay between calls
-          retry(() =>
-            attemptToPollCalc(calcId, nino, taxYear, mtditid, endTimeInMillis),
+          retry(
+            () => attemptToPollCalc(calcId, nino, taxYear, mtditid, endTimeInMillis),
             attempts = frontendAppConfig.calcPollNumberOfAttempts,
-            delay = frontendAppConfig.calcPollDelayBetweenAttempts.millisecond)
+            delay = frontendAppConfig.calcPollDelayBetweenAttempts.millisecond
+          )
 
           // V2: apply retry with with backOff strategy
           //retry(() => futureToAttempt(), attempts = 10, minBackoff = 1.second,  maxBackoff = 10.seconds, randomFactor = 0.5)
@@ -76,33 +88,38 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
     }
   }
 
-  private def getCalculationResponse(endTimeForEachInterval: Long,
-                                     endTimeInMillis: Long,
-                                     calcId: String,
-                                     nino: String,
-                                     taxYear: Int,
-                                     mtditid: String
-                                    )
-                                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Int] = {
+  private def getCalculationResponse(
+      endTimeForEachInterval: Long,
+      endTimeInMillis:        Long,
+      calcId:                 String,
+      nino:                   String,
+      taxYear:                Int,
+      mtditid:                String
+    )(
+      implicit hc: HeaderCarrier,
+      ec:          ExecutionContext
+    ): Future[Int] = {
     Logger("application").debug(s"Starting polling for calcId: $calcId and nino: $nino")
     for {
-      result <-
-        calculationService.getLatestCalculation(mtditid, nino, calcId, taxYear).map {
-          case _: LiabilityCalculationResponse => Status.OK
-          case error: LiabilityCalculationError =>
-            // TODO: remove next line in the future, atm this cause tests to fail
-            if (System.currentTimeMillis() > endTimeInMillis) Status.INTERNAL_SERVER_ERROR
-            else error.status
-        }
+      result <- calculationService.getLatestCalculation(mtditid, nino, calcId, taxYear).map {
+        case _:     LiabilityCalculationResponse => Status.OK
+        case error: LiabilityCalculationError    =>
+          // TODO: remove next line in the future, atm this cause tests to fail
+          if (System.currentTimeMillis() > endTimeInMillis) Status.INTERNAL_SERVER_ERROR
+          else error.status
+      }
     } yield result
   }
 
-  private def attemptToPollCalc(calcId: String,
-                                  nino: String,
-                                  taxYear: Int,
-                                  mtditid: String,
-                                  endTimeInMillis: Long)
-                                 (implicit hc: HeaderCarrier): Future[Int] = {
+  private def attemptToPollCalc(
+      calcId:          String,
+      nino:            String,
+      taxYear:         Int,
+      mtditid:         String,
+      endTimeInMillis: Long
+    )(
+      implicit hc: HeaderCarrier
+    ): Future[Int] = {
     for {
       statusCode <- getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino, taxYear, mtditid)
       resultFuture <- {

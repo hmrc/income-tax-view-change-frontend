@@ -20,9 +20,9 @@ import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 
 import java.time.LocalDate
 
-sealed trait CheckDetailsViewModel{
-  val cashOrAccruals: String
-  val incomeSourceType: IncomeSourceType
+sealed trait CheckDetailsViewModel {
+  val cashOrAccruals:         String
+  val incomeSourceType:       IncomeSourceType
   val showedAccountingMethod: Boolean
 
   def getAccountingMethodMessageKey: String = {
@@ -36,30 +36,35 @@ sealed trait CheckDetailsViewModel{
   }
 }
 
-case class CheckBusinessDetailsViewModel(businessName: Option[String],
-                                         businessStartDate: Option[LocalDate],
-                                         accountingPeriodEndDate: LocalDate,
-                                         businessTrade: String,
-                                         businessAddressLine1: String,
-                                         businessAddressLine2: Option[String],
-                                         businessAddressLine3: Option[String],
-                                         businessAddressLine4: Option[String],
-                                         businessPostalCode: Option[String],
-                                         businessCountryCode: Option[String],
-                                         incomeSourcesAccountingMethod: Option[String],
-                                         cashOrAccrualsFlag: String,
-                                         showedAccountingMethod: Boolean) extends CheckDetailsViewModel {
+case class CheckBusinessDetailsViewModel(
+    businessName:                  Option[String],
+    businessStartDate:             Option[LocalDate],
+    accountingPeriodEndDate:       LocalDate,
+    businessTrade:                 String,
+    businessAddressLine1:          String,
+    businessAddressLine2:          Option[String],
+    businessAddressLine3:          Option[String],
+    businessAddressLine4:          Option[String],
+    businessPostalCode:            Option[String],
+    businessCountryCode:           Option[String],
+    incomeSourcesAccountingMethod: Option[String],
+    cashOrAccrualsFlag:            String,
+    showedAccountingMethod:        Boolean)
+    extends CheckDetailsViewModel {
 
-  override val cashOrAccruals: String = cashOrAccrualsFlag
+  override val cashOrAccruals:   String           = cashOrAccrualsFlag
   override val incomeSourceType: IncomeSourceType = SelfEmployment
 
   def countryName: Option[String] = Some("United Kingdom")
 
 }
 
-case class CheckPropertyViewModel(tradingStartDate: LocalDate, cashOrAccrualsFlag: String, incomeSourceType: IncomeSourceType)
-  extends CheckDetailsViewModel {
+case class CheckPropertyViewModel(
+    tradingStartDate:   LocalDate,
+    cashOrAccrualsFlag: String,
+    incomeSourceType:   IncomeSourceType)
+    extends CheckDetailsViewModel {
 
-  override val cashOrAccruals: String = cashOrAccrualsFlag
+  override val cashOrAccruals:         String  = cashOrAccrualsFlag
   override val showedAccountingMethod: Boolean = true
 }

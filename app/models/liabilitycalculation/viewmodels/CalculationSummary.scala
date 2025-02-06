@@ -21,41 +21,44 @@ import models.liabilitycalculation.{LiabilityCalculationResponse, Messages}
 
 import java.time.LocalDate
 
-case class CalculationSummary(timestamp: Option[LocalDate],
-                              crystallised: Option[Boolean],
-                              unattendedCalc: Boolean,
-                              taxDue: BigDecimal,
-                              income: Int,
-                              deductions: BigDecimal,
-                              totalTaxableIncome: Int,
-                              forecastIncome: Option[Int] = None,
-                              forecastIncomeTaxAndNics: Option[BigDecimal] = None,
-                              forecastAllowancesAndDeductions: Option[BigDecimal] = None,
-                              forecastTotalTaxableIncome: Option[Int] = None,
-                              periodFrom: Option[LocalDate] = None,
-                              periodTo: Option[LocalDate] = None,
-                              messages: Option[Messages] = None) {
-
-}
+case class CalculationSummary(
+    timestamp:                       Option[LocalDate],
+    crystallised:                    Option[Boolean],
+    unattendedCalc:                  Boolean,
+    taxDue:                          BigDecimal,
+    income:                          Int,
+    deductions:                      BigDecimal,
+    totalTaxableIncome:              Int,
+    forecastIncome:                  Option[Int] = None,
+    forecastIncomeTaxAndNics:        Option[BigDecimal] = None,
+    forecastAllowancesAndDeductions: Option[BigDecimal] = None,
+    forecastTotalTaxableIncome:      Option[Int] = None,
+    periodFrom:                      Option[LocalDate] = None,
+    periodTo:                        Option[LocalDate] = None,
+    messages:                        Option[Messages] = None) {}
 
 object CalculationSummary extends ImplicitDateParser {
   private def getEstimatedTotalTax(calc: LiabilityCalculationResponse): Option[BigDecimal] = {
-    val incomeTaxNicAndCgtAmount: Option[BigDecimal] = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.incomeTaxNicAndCgtAmount))
-    val incomeTaxNicAmount: Option[BigDecimal] = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.incomeTaxNicAmount))
+    val incomeTaxNicAndCgtAmount: Option[BigDecimal] =
+      calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.incomeTaxNicAndCgtAmount))
+    val incomeTaxNicAmount: Option[BigDecimal] =
+      calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.incomeTaxNicAmount))
     incomeTaxNicAndCgtAmount match {
       case Some(x) => Some(x)
-      case None => incomeTaxNicAmount
+      case None    => incomeTaxNicAmount
     }
   }
 
-  private def isUnattendedCalc(calculationReason: Option[String]): Boolean = calculationReason match {
-    case Some("unattendedCalculation") => true
-    case _ => false
-  }
+  private def isUnattendedCalc(calculationReason: Option[String]): Boolean =
+    calculationReason match {
+      case Some("unattendedCalculation") => true
+      case _                             => false
+    }
 
   def getTaxDue(calc: LiabilityCalculationResponse): BigDecimal = {
     val totalIncomeTaxAndNicsDue = calc.calculation.flatMap(c => c.taxCalculation.map(_.totalIncomeTaxAndNicsDue))
-    val totalIncomeTaxAndNicsAndCgt = calc.calculation.flatMap(c => c.taxCalculation.flatMap(_.totalIncomeTaxAndNicsAndCgt))
+    val totalIncomeTaxAndNicsAndCgt =
+      calc.calculation.flatMap(c => c.taxCalculation.flatMap(_.totalIncomeTaxAndNicsAndCgt))
     totalIncomeTaxAndNicsAndCgt.getOrElse(totalIncomeTaxAndNicsDue.getOrElse(BigDecimal(0)))
   }
 
@@ -66,12 +69,17 @@ object CalculationSummary extends ImplicitDateParser {
       crystallised = calc.metadata.crystallised,
       unattendedCalc = isUnattendedCalc(calc.metadata.calculationReason),
       taxDue = getTaxDue(calc),
-      income = calc.calculation.flatMap(c => c.taxCalculation.map(_.incomeTax.totalIncomeReceivedFromAllSources)).getOrElse(0),
-      deductions = calc.calculation.flatMap(c => c.taxCalculation.map(tc => tc.incomeTax.totalAllowancesAndDeductions)).getOrElse[Int](0),
-      totalTaxableIncome = calc.calculation.flatMap(c => c.taxCalculation.map(_.incomeTax.totalTaxableIncome)).getOrElse(0),
+      income =
+        calc.calculation.flatMap(c => c.taxCalculation.map(_.incomeTax.totalIncomeReceivedFromAllSources)).getOrElse(0),
+      deductions = calc.calculation
+        .flatMap(c => c.taxCalculation.map(tc => tc.incomeTax.totalAllowancesAndDeductions))
+        .getOrElse[Int](0),
+      totalTaxableIncome =
+        calc.calculation.flatMap(c => c.taxCalculation.map(_.incomeTax.totalTaxableIncome)).getOrElse(0),
       forecastIncome = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.totalEstimatedIncome)),
       forecastIncomeTaxAndNics = getEstimatedTotalTax(calc),
-      forecastAllowancesAndDeductions = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.totalAllowancesAndDeductions)),
+      forecastAllowancesAndDeductions =
+        calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.totalAllowancesAndDeductions)),
       forecastTotalTaxableIncome = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.totalTaxableIncome)),
       periodFrom = calc.metadata.periodFrom,
       periodTo = calc.metadata.periodTo,

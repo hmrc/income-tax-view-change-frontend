@@ -36,19 +36,27 @@ trait MockBusinessDetailsConnector extends UnitSpec with BeforeAndAfterEach {
     reset(mockBusinessDetailsConnector)
   }
 
-  def setupMockIncomeSourceDetailsResponse(mtditid: String, nino: String,
-                                           saUtr: Option[String], credId: Option[String],
-                                           userType: Option[AffinityGroup])(response: IncomeSourceDetailsResponse): Unit =
+  def setupMockIncomeSourceDetailsResponse(
+      mtditid:  String,
+      nino:     String,
+      saUtr:    Option[String],
+      credId:   Option[String],
+      userType: Option[AffinityGroup]
+    )(
+      response: IncomeSourceDetailsResponse
+    ): Unit =
     when(mockBusinessDetailsConnector.getIncomeSources()(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
 
   def verifyMockIncomeSourceDetailsResponse(noOfCalls: Int): Future[IncomeSourceDetailsResponse] =
-    verify(mockBusinessDetailsConnector, times(noOfCalls)).getIncomeSources()(ArgumentMatchers.any(), ArgumentMatchers.any())
+    verify(mockBusinessDetailsConnector, times(noOfCalls))
+      .getIncomeSources()(ArgumentMatchers.any(), ArgumentMatchers.any())
 
   def setupNinoLookupResponse(mtdRef: String)(response: NinoResponse): Unit =
-    when(mockBusinessDetailsConnector
-      .getNino(
-        ArgumentMatchers.eq(mtdRef))(ArgumentMatchers.any()))
+    when(
+      mockBusinessDetailsConnector
+        .getNino(ArgumentMatchers.eq(mtdRef))(ArgumentMatchers.any())
+    )
       .thenReturn(Future.successful(response))
 
   def setupBusinessDetails(nino: String)(response: Future[IncomeSourceDetailsResponse]): Unit = {

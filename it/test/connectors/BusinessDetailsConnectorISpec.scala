@@ -41,7 +41,7 @@ class BusinessDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
         "return a successful response with the correct business details for the given nino" in {
 
-          val nino = "AB123456A"
+          val nino        = "AB123456A"
           val testMtditid = "XAITSA123456"
 
           val url = s"/income-tax-view-change/get-business-details/nino/$nino"
@@ -56,19 +56,32 @@ class BusinessDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
               tradingStartDate = Some(LocalDate.of(2022, 1, 1)),
               cessation = None,
               cashOrAccruals = true,
-              address = Some(AddressModel("8 Test", Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), "United Kingdom")),
+              address = Some(
+                AddressModel(
+                  "8 Test",
+                  Some("New Court"),
+                  Some("New Town"),
+                  Some("New City"),
+                  Some("NE12 6CI"),
+                  "United Kingdom"
+                )
+              ),
               latencyDetails = Some(LatencyDetails(LocalDate.of(2019, 1, 1), "2018", "A", "2019", "Q")),
               quarterTypeElection = None
             )
 
           val requestBody =
-            Json.toJson(IncomeSourceDetailsModel(
-              nino = nino,
-              mtdbsa = testMtditid,
-              yearOfMigration = Some("2017"),
-              businesses = List(business),
-              properties = Nil)
-            ).toString()
+            Json
+              .toJson(
+                IncomeSourceDetailsModel(
+                  nino = nino,
+                  mtdbsa = testMtditid,
+                  yearOfMigration = Some("2017"),
+                  businesses = List(business),
+                  properties = Nil
+                )
+              )
+              .toString()
 
           val expectedResponse: IncomeSourceDetailsResponse =
             IncomeSourceDetailsModel(
@@ -96,7 +109,7 @@ class BusinessDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
         "return IncomeSourceDetailsError with some response body" in {
 
           val nino = "AB123456A"
-          val url = s"/income-tax-view-change/get-business-details/nino/$nino"
+          val url  = s"/income-tax-view-change/get-business-details/nino/$nino"
 
           val responseBody =
             """{
@@ -122,7 +135,7 @@ class BusinessDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
         "return a successful response with the correct business details for the given nino" in {
 
-          val nino = "AB123456A"
+          val nino        = "AB123456A"
           val testMtditid = "XAITSA123456"
 
           val url = s"/income-tax-view-change/income-sources/$testMtditid"
@@ -137,19 +150,32 @@ class BusinessDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
               tradingStartDate = Some(LocalDate.of(2022, 1, 1)),
               cessation = None,
               cashOrAccruals = true,
-              address = Some(AddressModel("8 Test", Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), "United Kingdom")),
+              address = Some(
+                AddressModel(
+                  "8 Test",
+                  Some("New Court"),
+                  Some("New Town"),
+                  Some("New City"),
+                  Some("NE12 6CI"),
+                  "United Kingdom"
+                )
+              ),
               latencyDetails = Some(LatencyDetails(LocalDate.of(2019, 1, 1), "2018", "A", "2019", "Q")),
               quarterTypeElection = None
             )
 
           val requestBody =
-            Json.toJson(IncomeSourceDetailsModel(
-              nino = nino,
-              mtdbsa = testMtditid,
-              yearOfMigration = Some("2017"),
-              businesses = List(business),
-              properties = Nil)
-            ).toString()
+            Json
+              .toJson(
+                IncomeSourceDetailsModel(
+                  nino = nino,
+                  mtdbsa = testMtditid,
+                  yearOfMigration = Some("2017"),
+                  businesses = List(business),
+                  properties = Nil
+                )
+              )
+              .toString()
 
           val expectedResponse: IncomeSourceDetailsResponse =
             IncomeSourceDetailsModel(
@@ -216,7 +242,7 @@ class BusinessDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
         "return a successful response with the correct Nino response for the given mtdRef" in {
 
           val fakeNino = "AB123456A"
-          val mtdRef = "XAITSA123456"
+          val mtdRef   = "XAITSA123456"
 
           val url = s"/income-tax-view-change/nino-lookup/$mtdRef"
 

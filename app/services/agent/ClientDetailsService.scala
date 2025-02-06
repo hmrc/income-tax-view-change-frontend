@@ -29,24 +29,28 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ClientDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConnector,
-                                     businessDetailsConnector: BusinessDetailsConnector)
-                                    (implicit ec: ExecutionContext) {
+class ClientDetailsService @Inject() (
+    citizenDetailsConnector:  CitizenDetailsConnector,
+    businessDetailsConnector: BusinessDetailsConnector
+  )(
+    implicit ec: ExecutionContext) {
 
   def checkClientDetails(utr: String)(implicit hc: HeaderCarrier): Future[Either[ClientDetailsFailure, ClientDetails]] =
     citizenDetailsConnector.getCitizenDetailsBySaUtr(utr) flatMap {
       case CitizenDetailsModel(optionalFirstName, optionalLastName, Some(nino)) =>
         businessDetailsConnector.getBusinessDetails(nino) flatMap {
           case IncomeSourceDetailsModel(_, mtdbsa, _, _, _) =>
-            Future.successful(Right(ClientDetailsService.ClientDetails(optionalFirstName, optionalLastName, nino, mtdbsa)))
+            Future.successful(
+              Right(ClientDetailsService.ClientDetails(optionalFirstName, optionalLastName, nino, mtdbsa))
+            )
           case IncomeSourceDetailsError(NOT_FOUND, _) => Future.successful(Left(BusinessDetailsNotFound))
           case _ =>
             Logger("application").error(s"error response from Income Source Details")
             Future.successful(Left(APIError))
         }
-      case CitizenDetailsModel(_, _, None) => Future.successful(Left(CitizenDetailsNotFound))
+      case CitizenDetailsModel(_, _, None)        => Future.successful(Left(CitizenDetailsNotFound))
       case CitizenDetailsErrorModel(NOT_FOUND, _) => Future.successful(Left(CitizenDetailsNotFound))
-      case _=>
+      case _ =>
         Logger("application").error("error response from Citizen Details")
         Future.successful(Left(APIError))
     }
@@ -62,6 +66,10 @@ object ClientDetailsService {
 
   final case object APIError extends ClientDetailsFailure
 
-  final case class ClientDetails(firstName: Option[String], lastName: Option[String], nino: String, mtdItId: String)
+  final case class ClientDetails(
+      firstName: Option[String],
+      lastName:  Option[String],
+      nino:      String,
+      mtdItId:   String)
 
 }

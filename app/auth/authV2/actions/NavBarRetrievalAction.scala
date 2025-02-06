@@ -35,28 +35,37 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class NavBarRetrievalAction @Inject()(val btaNavBarController: BtaNavBarController,
-                                      val ptaPartial: PtaPartial,
-                                      val itvcErrorHandler: ItvcErrorHandler)
-                                     (implicit val appConfig: FrontendAppConfig,
-                                      val executionContext: ExecutionContext,
-                                      val messagesApi: MessagesApi
-                                     ) extends ActionRefiner[MtdItUser, MtdItUser] with SaveOriginAndRedirect {
+class NavBarRetrievalAction @Inject() (
+    val btaNavBarController: BtaNavBarController,
+    val ptaPartial:          PtaPartial,
+    val itvcErrorHandler:    ItvcErrorHandler
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    val executionContext:   ExecutionContext,
+    val messagesApi:        MessagesApi)
+    extends ActionRefiner[MtdItUser, MtdItUser]
+    with SaveOriginAndRedirect {
 
   override def refine[A](request: MtdItUser[A]): Future[Either[Result, MtdItUser[A]]] = {
-    val header: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    val header:      HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     implicit val hc: HeaderCarrier = header.copy(extraHeaders = header.headers(Seq(play.api.http.HeaderNames.COOKIE)))
     lazy val navigationBarDisabled = !isEnabled(NavBarFs)(request)
     if (request.userType.contains(Agent) || navigationBarDisabled) {
       Future.successful(Right(request))
     } else {
-      request.getQueryString(SessionKeys.origin).fold[Future[Either[Result, MtdItUser[A]]]](ifEmpty = retrieveCacheAndHandleNavBar(request))(_ => {
-        saveOriginAndReturnToHomeWithoutQueryParams(request, navigationBarDisabled).map(Left(_))
-      })
+      request
+        .getQueryString(SessionKeys.origin)
+        .fold[Future[Either[Result, MtdItUser[A]]]](ifEmpty = retrieveCacheAndHandleNavBar(request))(_ => {
+          saveOriginAndReturnToHomeWithoutQueryParams(request, navigationBarDisabled).map(Left(_))
+        })
     }
   }
 
-  def retrieveCacheAndHandleNavBar[A](request: MtdItUser[A])(implicit hc: HeaderCarrier): Future[Either[Result, MtdItUser[A]]] = {
+  def retrieveCacheAndHandleNavBar[A](
+      request: MtdItUser[A]
+    )(
+      implicit hc: HeaderCarrier
+    ): Future[Either[Result, MtdItUser[A]]] = {
     request.session.get(SessionKeys.origin) match {
       case Some(origin) if OriginEnum(origin).contains(PTA) =>
         Future.successful(Right(request.addNavBar(ptaPartial()(request, request.messages, appConfig))))

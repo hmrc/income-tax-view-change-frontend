@@ -24,13 +24,12 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.optout.OptOutProposition.createOptOutProposition
 
-
 class OptOutSessionDataRepositoryISpec extends ComponentSpecBase with ScalaFutures {
 
   private val journeyRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
-  private val repository = app.injector.instanceOf[OptOutSessionDataRepository]
+  private val repository        = app.injector.instanceOf[OptOutSessionDataRepository]
 
-  private val taxYearEnd = 2024
+  private val taxYearEnd       = 2024
   private val taxYear2023_2024 = TaxYear.forYearEnd(taxYearEnd)
   private val taxYear2024_2025 = taxYear2023_2024.nextYear
 

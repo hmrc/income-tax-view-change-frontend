@@ -61,17 +61,19 @@ class ITSAStatusConnectorSpec extends TestSupport with MockHttpV2 with MockAudit
     val connector = new ITSAStatusConnector(mockHttpClientV2, getAppConfig)
 
     def transformMock(): OngoingStubbing[RequestBuilder] = {
-      when(mockRequestBuilder
-        .transform(ArgumentMatchers.any()))
+      when(
+        mockRequestBuilder
+          .transform(ArgumentMatchers.any())
+      )
         .thenReturn(mockRequestBuilder)
     }
   }
 
   "getITSAStatusDetail" should {
     import testConstants.ITSAStatusTestConstants.{badJsonHttpResponse, successHttpResponse, successITSAStatusResponseModel}
-    val successResponse = successHttpResponse
+    val successResponse        = successHttpResponse
     val successResponseBadJson = badJsonHttpResponse
-    val argument = (testNino, "2020", true, true)
+    val argument               = (testNino, "2020", true, true)
 
     "return a List[ITSAStatusResponseModel] model when successful JSON is received" in new Setup {
       val url: String = connector.getITSAStatusDetailUrl(argument._1, argument._2, argument._3, argument._4)
@@ -85,7 +87,9 @@ class ITSAStatusConnectorSpec extends TestSupport with MockHttpV2 with MockAudit
     }
 
     "return ITSAStatusResponseError model in case of bad/malformed JSON response" in new Setup {
-      setupMockHttpV2Get(connector.getITSAStatusDetailUrl(argument._1, argument._2, argument._3, argument._4))(successResponseBadJson)
+      setupMockHttpV2Get(connector.getITSAStatusDetailUrl(argument._1, argument._2, argument._3, argument._4))(
+        successResponseBadJson
+      )
 
       transformMock()
 

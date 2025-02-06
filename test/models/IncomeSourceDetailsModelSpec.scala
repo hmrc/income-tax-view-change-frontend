@@ -34,13 +34,13 @@ import java.time.LocalDate
 
 class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
 
-  val testQueryString: String = mkIncomeSourceId("XA00001234").toHash.hash
-  val testSelfEmploymentIdHash: Either[Throwable, IncomeSourceIdHash] = mkFromQueryString(testQueryString)
-  val testSelfEmploymentIdMaybe: Option[IncomeSourceId] = Option(mkIncomeSourceId("XA00001234"))
-  val testSelfEmploymentIdHashValueMaybe: Option[String] = Option(testQueryString)
-  val emptyIncomeSourceIdHash: IncomeSourceIdHash = mkIncomeSourceId("").toHash
+  val testQueryString:                    String                                = mkIncomeSourceId("XA00001234").toHash.hash
+  val testSelfEmploymentIdHash:           Either[Throwable, IncomeSourceIdHash] = mkFromQueryString(testQueryString)
+  val testSelfEmploymentIdMaybe:          Option[IncomeSourceId]                = Option(mkIncomeSourceId("XA00001234"))
+  val testSelfEmploymentIdHashValueMaybe: Option[String]                        = Option(testQueryString)
+  val emptyIncomeSourceIdHash:            IncomeSourceIdHash                    = mkIncomeSourceId("").toHash
 
-  lazy val fixedDate : LocalDate = LocalDate.of(2023, 12, 4)
+  lazy val fixedDate: LocalDate = LocalDate.of(2023, 12, 4)
 
   "The IncomeSourceDetailsModel" when {
 
@@ -146,16 +146,18 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
               cashOrAccruals = true
             )
           ),
-          List(PropertyDetailsModel(
-            incomeSourceId = "",
-            accountingPeriod = None,
-            firstAccountingPeriodEndDate = None,
-            incomeSourceType = Some("property-unspecified"),
-            tradingStartDate = Some(LocalDate.parse("2022-01-01")),
-            None,
-            cashOrAccruals = true
+          List(
+            PropertyDetailsModel(
+              incomeSourceId = "",
+              accountingPeriod = None,
+              firstAccountingPeriodEndDate = None,
+              incomeSourceType = Some("property-unspecified"),
+              tradingStartDate = Some(LocalDate.parse("2022-01-01")),
+              None,
+              cashOrAccruals = true
+            )
           )
-          ))
+        )
         preSanitised.sanitise shouldBe expected
       }
     }
@@ -164,27 +166,35 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
   ".compareHashToQueryString method" when {
     "user has income incomeSourceIdHashes matching the url incomeSourceIdHash" should {
       "return the matching incomeSourceId inside an Option" in {
-        implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, singleBusinessIncome)
+        implicit val user: MtdItUser[_] =
+          getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, singleBusinessIncome)
 
-        val result = user.incomeSources.compareHashToQueryString(incomeSourceIdHash = testSelfEmploymentIdHash.toOption.get)
+        val result =
+          user.incomeSources.compareHashToQueryString(incomeSourceIdHash = testSelfEmploymentIdHash.toOption.get)
 
         result shouldBe Right(testSelfEmploymentIdMaybe.get)
       }
     }
     "user has multiple incomeSourceIdHashes matching the url incomeSourceIdHash" should {
       "return the matching incomeSourceId inside an Option" in {
-        implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, dualBusinessIncome)
+        implicit val user: MtdItUser[_] =
+          getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, dualBusinessIncome)
 
-        val listOfIncomeSourceIds: List[String] = user.incomeSources.businesses.filterNot(_.isCeased).map(_.incomeSourceId)
+        val listOfIncomeSourceIds: List[String] =
+          user.incomeSources.businesses.filterNot(_.isCeased).map(_.incomeSourceId)
 
-        val result = user.incomeSources.compareHashToQueryString(incomeSourceIdHash = testSelfEmploymentIdHash.toOption.get)
+        val result =
+          user.incomeSources.compareHashToQueryString(incomeSourceIdHash = testSelfEmploymentIdHash.toOption.get)
 
-        result shouldBe Left(MultipleIncomeSourcesFound(testSelfEmploymentIdHash.toOption.get.hash, listOfIncomeSourceIds))
+        result shouldBe Left(
+          MultipleIncomeSourcesFound(testSelfEmploymentIdHash.toOption.get.hash, listOfIncomeSourceIds)
+        )
       }
     }
     "user has no incomeSourceIdHashes matching the url incomeSourceIdHash" should {
       "return an exception" in {
-        implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, singleBusinessIncome2023)
+        implicit val user: MtdItUser[_] =
+          getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, singleBusinessIncome2023)
 
         val result = user.incomeSources.compareHashToQueryString(incomeSourceIdHash = emptyIncomeSourceIdHash)
 
@@ -193,9 +203,11 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
     }
     "user has no incomeSources" should {
       "return None" in {
-        implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, noIncomeDetails)
+        implicit val user: MtdItUser[_] =
+          getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, noIncomeDetails)
 
-        val result = user.incomeSources.compareHashToQueryString(incomeSourceIdHash = testSelfEmploymentIdHash.toOption.get)
+        val result =
+          user.incomeSources.compareHashToQueryString(incomeSourceIdHash = testSelfEmploymentIdHash.toOption.get)
 
         result shouldBe Left(NoIncomeSourceFound(testSelfEmploymentIdHash.toOption.get.hash))
       }
@@ -205,7 +217,10 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
   "getCashOrAccruals method" when {
     "return list of cashOrAccrual flags from all active businesses" should {
       "return " in {
-        implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, ukPropertyAndSoleTraderBusinessIncomeNoTradingName)
+        implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(
+          fakeRequestWithActiveSession,
+          ukPropertyAndSoleTraderBusinessIncomeNoTradingName
+        )
 
         val result = user.incomeSources.getBusinessCashOrAccruals()
 

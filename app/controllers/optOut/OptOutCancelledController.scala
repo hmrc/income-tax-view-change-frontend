@@ -30,27 +30,32 @@ import views.html.optOut.OptOutCancelledView
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class OptOutCancelledController @Inject()(val authActions: AuthActions,
-                                          optOutService: OptOutService,
-                                          view: OptOutCancelledView,
-                                          errorTemplate: ErrorTemplate
-                                         )(
-                                           implicit val appConfig: FrontendAppConfig,
-                                           mcc: MessagesControllerComponents,
-                                           val ec: ExecutionContext
-                                         )
-
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+class OptOutCancelledController @Inject() (
+    val authActions: AuthActions,
+    optOutService:   OptOutService,
+    view:            OptOutCancelledView,
+    errorTemplate:   ErrorTemplate
+  )(
+    implicit val appConfig: FrontendAppConfig,
+    mcc:                    MessagesControllerComponents,
+    val ec:                 ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with FeatureSwitching {
 
   def show(): Action[AnyContent] =
     authActions.asMTDIndividual.async { implicit user =>
-      optOutService.getTaxYearForOptOutCancelled()
+      optOutService
+        .getTaxYearForOptOutCancelled()
         .map { taxYear: Option[TaxYear] =>
-          Ok(view(
-            isAgent = false,
-            taxYear
-          ))
-        }.recover {
+          Ok(
+            view(
+              isAgent = false,
+              taxYear
+            )
+          )
+        }
+        .recover {
           case _ =>
             InternalServerError(
               errorTemplate(
@@ -65,13 +70,17 @@ class OptOutCancelledController @Inject()(val authActions: AuthActions,
 
   def showAgent(): Action[AnyContent] =
     authActions.asMTDAgentWithConfirmedClient.async { implicit user =>
-      optOutService.getTaxYearForOptOutCancelled()
+      optOutService
+        .getTaxYearForOptOutCancelled()
         .map { taxYear: Option[TaxYear] =>
-          Ok(view(
-            isAgent = true,
-            taxYear
-          ))
-        }.recover {
+          Ok(
+            view(
+              isAgent = true,
+              taxYear
+            )
+          )
+        }
+        .recover {
           case _ =>
             InternalServerError(
               errorTemplate(

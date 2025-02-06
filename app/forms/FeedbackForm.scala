@@ -24,26 +24,26 @@ import scala.util.matching.Regex
 
 object FeedbackForm {
 
-  val feedbackRating: String = "feedback-rating"
-  val feedbackName: String = "feedback-name"
-  val feedbackEmail: String = "feedback-email"
-  val feedbackComments: String = "feedback-comments"
+  val feedbackRating:    String = "feedback-rating"
+  val feedbackName:      String = "feedback-name"
+  val feedbackEmail:     String = "feedback-email"
+  val feedbackComments:  String = "feedback-comments"
   val feedbackCsrfToken: String = "csrfToken"
-  val feedbackReferrer: String = "referrer"
+  val feedbackReferrer:  String = "referrer"
 
-  val radiosEmptyError: String = "feedback.radiosError"
-  val nameEmptyError: String = "feedback.fullName.error.empty"
-  val nameLengthError: String = "feedback.fullName.error.length"
-  val nameInvalidError: String = "feedback.fullName.error.invalid"
-  val emailInvalidError: String = "feedback.email.error"
-  val emailLengthError: String = "feedback.email.error.length"
-  val commentsEmptyError: String = "feedback.comments.error.empty"
+  val radiosEmptyError:    String = "feedback.radiosError"
+  val nameEmptyError:      String = "feedback.fullName.error.empty"
+  val nameLengthError:     String = "feedback.fullName.error.length"
+  val nameInvalidError:    String = "feedback.fullName.error.invalid"
+  val emailInvalidError:   String = "feedback.email.error"
+  val emailLengthError:    String = "feedback.email.error.length"
+  val commentsEmptyError:  String = "feedback.comments.error.empty"
   val commentsEmptyLength: String = "feedback.comments.error.length"
 
   def validate(email: String): Boolean =
     email.split("@").toList match {
       case name :: domain :: Nil => validateName(name) && (validateDomain(domain) || validateIp(domain))
-      case _ => false
+      case _                     => false
     }
 
   private def validateName(name: String): Boolean = {
@@ -79,8 +79,8 @@ object FeedbackForm {
         override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
           data.get(key) match {
             case Some(value) if value.trim.nonEmpty => Right(value.trim)
-            case Some(_) => Left(Seq(FormError(key, commentsEmptyError, Nil)))
-            case None => Left(Seq(FormError(key, commentsEmptyError, Nil)))
+            case Some(_)                            => Left(Seq(FormError(key, commentsEmptyError, Nil)))
+            case None                               => Left(Seq(FormError(key, commentsEmptyError, Nil)))
           }
         }
 
@@ -92,18 +92,18 @@ object FeedbackForm {
 }
 
 case class FeedbackForm(
-                         experienceRating: Option[String],
-                         name: String,
-                         email: String,
-                         comments: String,
-                         csrfToken: String
-                       ) {
+    experienceRating: Option[String],
+    name:             String,
+    email:            String,
+    comments:         String,
+    csrfToken:        String) {
   def toFormMap(referrer: String): Map[String, Seq[String]] =
-    Map(FeedbackForm.feedbackRating -> Seq(experienceRating.getOrElse("N/A")),
-      FeedbackForm.feedbackName -> Seq(name),
-      FeedbackForm.feedbackEmail -> Seq(email),
-      FeedbackForm.feedbackComments -> Seq(comments),
+    Map(
+      FeedbackForm.feedbackRating    -> Seq(experienceRating.getOrElse("N/A")),
+      FeedbackForm.feedbackName      -> Seq(name),
+      FeedbackForm.feedbackEmail     -> Seq(email),
+      FeedbackForm.feedbackComments  -> Seq(comments),
       FeedbackForm.feedbackCsrfToken -> Seq(csrfToken),
-      FeedbackForm.feedbackReferrer -> Seq(referrer)
+      FeedbackForm.feedbackReferrer  -> Seq(referrer)
     )
 }

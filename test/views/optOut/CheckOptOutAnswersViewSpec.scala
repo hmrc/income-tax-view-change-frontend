@@ -28,38 +28,44 @@ import views.html.optOut.CheckOptOutAnswers
 
 class CheckOptOutAnswersViewSpec extends TestSupport {
 
-  lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  lazy val mockAppConfig: FrontendAppConfig  = app.injector.instanceOf[FrontendAppConfig]
   val optOutCheckAnswers: CheckOptOutAnswers = app.injector.instanceOf[CheckOptOutAnswers]
 
-  val checkAnswersViewModel: MultiYearOptOutCheckpointViewModel = MultiYearOptOutCheckpointViewModel(TaxYear.forYearEnd(taxYear))
+  val checkAnswersViewModel: MultiYearOptOutCheckpointViewModel = MultiYearOptOutCheckpointViewModel(
+    TaxYear.forYearEnd(taxYear)
+  )
   val intentStartTaxYear: String = checkAnswersViewModel.startYear
-  val intentEndTaxYear: String = checkAnswersViewModel.endYear
+  val intentEndTaxYear:   String = checkAnswersViewModel.endYear
 
   class Setup(isAgent: Boolean = true) {
-    val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
-    val pageDocument: Document = Jsoup.parse(contentAsString(optOutCheckAnswers(checkAnswersViewModel, isAgent, cancelURL)))
+    val cancelURL =
+      if (isAgent) controllers.routes.NextUpdatesController.showAgent.url
+      else controllers.routes.NextUpdatesController.show().url
+    val pageDocument: Document =
+      Jsoup.parse(contentAsString(optOutCheckAnswers(checkAnswersViewModel, isAgent, cancelURL)))
   }
 
   object checkOptOutAnswers {
-    val heading: String = "Check your answers"
-    val title: String = s"$heading - Manage your Income Tax updates - GOV.UK"
-    val optOutTable: String = "Opt out from"
+    val heading:             String = "Check your answers"
+    val title:               String = s"$heading - Manage your Income Tax updates - GOV.UK"
+    val optOutTable:         String = "Opt out from"
     val optOutTableTaxYears: String = "2019 to 2020 tax year onwards"
-    val optOutTableChange: String = "Change"
-    val paragraph1: String = "If you opt out, you can submit your tax return through your HMRC online account or compatible software."
-    val paragraph2: String = "In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know."
-    val confirmButton: String = "Confirm and save"
-    val cancelButton: String = "Cancel"
-    val cancelButtonHref: String = controllers.routes.NextUpdatesController.show().url
+    val optOutTableChange:   String = "Change"
+    val paragraph1: String =
+      "If you opt out, you can submit your tax return through your HMRC online account or compatible software."
+    val paragraph2: String =
+      "In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know."
+    val confirmButton:         String = "Confirm and save"
+    val cancelButton:          String = "Cancel"
+    val cancelButtonHref:      String = controllers.routes.NextUpdatesController.show().url
     val cancelButtonAgentHref: String = controllers.routes.NextUpdatesController.showAgent.url
 
-    val changeOptOut: String = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent = false).url
+    val changeOptOut:      String = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent = false).url
     val changeOptOutAgent: String = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent = true).url
 
-    val confirmOptOutURL: String = controllers.optOut.routes.ConfirmedOptOutController.show(isAgent = false).url
+    val confirmOptOutURL:      String = controllers.optOut.routes.ConfirmedOptOutController.show(isAgent = false).url
     val confirmOptOutURLAgent: String = controllers.optOut.routes.ConfirmedOptOutController.show(isAgent = true).url
   }
-
 
   "Opt-out confirm page" should {
 
@@ -73,8 +79,14 @@ class CheckOptOutAnswersViewSpec extends TestSupport {
 
     "render the summary list of opt out years" in new Setup(false) {
       pageDocument.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe checkOptOutAnswers.optOutTable
-      pageDocument.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe checkOptOutAnswers.optOutTableTaxYears
-      pageDocument.getElementsByClass("govuk-summary-list__actions").eq(0).text() shouldBe checkOptOutAnswers.optOutTableChange
+      pageDocument
+        .getElementsByClass("govuk-summary-list__value")
+        .eq(0)
+        .text() shouldBe checkOptOutAnswers.optOutTableTaxYears
+      pageDocument
+        .getElementsByClass("govuk-summary-list__actions")
+        .eq(0)
+        .text() shouldBe checkOptOutAnswers.optOutTableChange
       pageDocument.getElementById("change").attr("href") shouldBe checkOptOutAnswers.changeOptOut
 
     }

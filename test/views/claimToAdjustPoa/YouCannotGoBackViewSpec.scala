@@ -58,7 +58,9 @@ class YouCannotGoBackViewSpec extends TestSupport {
   def executeTest(isAgent: Boolean): Unit = {
     s"${if (isAgent) "Agent" else "Individual"}: CheckYourAnswersView" should {
       "render the heading" in new Setup(isAgent) {
-        document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages("claimToAdjustPoa.youCannotGoBack.heading")
+        document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages(
+          "claimToAdjustPoa.youCannotGoBack.heading"
+        )
       }
       "render the first paragraph" in new Setup(isAgent) {
         document.getElementById("paragraph-text-1").text() shouldBe
@@ -70,18 +72,24 @@ class YouCannotGoBackViewSpec extends TestSupport {
       }
       "render the first bullet point with the correct link" in new Setup(isAgent) {
         document.getElementsByClass("govuk-!-margin-bottom-4").get(0).text() shouldBe
-          messages("claimToAdjustPoa.youCannotGoBack.bullet1Text") + " " + messages("claimToAdjustPoa.youCannotGoBack.bullet1Link")
+          messages("claimToAdjustPoa.youCannotGoBack.bullet1Text") + " " + messages(
+            "claimToAdjustPoa.youCannotGoBack.bullet1Link"
+          )
         document.getElementById("link-1").attr("href") shouldBe getTaxYearSummaryControllerLink(isAgent)
       }
       "render the second bullet point with the correct link" in new Setup(isAgent) {
         document.getElementsByClass("govuk-!-margin-bottom-4").get(1).text() shouldBe
-          messages("claimToAdjustPoa.youCannotGoBack.bullet2Text") + " " + messages("claimToAdjustPoa.youCannotGoBack.bullet2Link")
+          messages("claimToAdjustPoa.youCannotGoBack.bullet2Text") + " " + messages(
+            "claimToAdjustPoa.youCannotGoBack.bullet2Link"
+          )
         document.getElementById("link-2").attr("href") shouldBe
           getWhatYouOweControllerLink(isAgent)
       }
       "render the third bullet point with the correct link" in new Setup(isAgent) {
         document.getElementsByClass("govuk-!-margin-bottom-4").get(2).text() shouldBe
-          messages("claimToAdjustPoa.youCannotGoBack.bullet3Text") + " " + messages("claimToAdjustPoa.youCannotGoBack.bullet3Link")
+          messages("claimToAdjustPoa.youCannotGoBack.bullet3Text") + " " + messages(
+            "claimToAdjustPoa.youCannotGoBack.bullet3Link"
+          )
         document.getElementById("link-3").attr("href") shouldBe
           getHomeControllerLink(isAgent)
       }

@@ -19,7 +19,8 @@ package models.obligations
 import play.api.libs.json.{Format, Json}
 
 case class GroupedObligationsModel(identification: String, obligations: List[SingleObligationModel]) {
-  val currentCrystDeadlines: List[SingleObligationModel] = obligations.filter(_.obligationType == "Crystallised")
+  val currentCrystDeadlines: List[SingleObligationModel] = obligations
+    .filter(_.obligationType == "Crystallised")
     .sortBy(_.start.toEpochDay)
 }
 

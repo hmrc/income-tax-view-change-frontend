@@ -25,17 +25,33 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CalculationService @Inject()(incomeTaxCalculationConnector: IncomeTaxCalculationConnector)(implicit ec: ExecutionContext) {
+class CalculationService @Inject() (
+    incomeTaxCalculationConnector: IncomeTaxCalculationConnector
+  )(
+    implicit ec: ExecutionContext) {
 
-  def getLatestCalculation(mtditid: String, nino: String, calcId: String, taxYear: Int)
-                          (implicit headerCarrier: HeaderCarrier): Future[LiabilityCalculationResponseModel] = {
-    Logger("application").debug("" +
-      s"Requesting calc data from the backend by calc id and taxYear: $calcId - $taxYear")
+  def getLatestCalculation(
+      mtditid: String,
+      nino:    String,
+      calcId:  String,
+      taxYear: Int
+    )(
+      implicit headerCarrier: HeaderCarrier
+    ): Future[LiabilityCalculationResponseModel] = {
+    Logger("application").debug(
+      "" +
+        s"Requesting calc data from the backend by calc id and taxYear: $calcId - $taxYear"
+    )
     incomeTaxCalculationConnector.getCalculationResponseByCalcId(mtditid, nino, calcId, taxYear)
   }
 
-  def getLiabilityCalculationDetail(mtditid: String, nino: String, taxYear: Int)
-                                   (implicit headerCarrier: HeaderCarrier): Future[LiabilityCalculationResponseModel] = {
+  def getLiabilityCalculationDetail(
+      mtditid: String,
+      nino:    String,
+      taxYear: Int
+    )(
+      implicit headerCarrier: HeaderCarrier
+    ): Future[LiabilityCalculationResponseModel] = {
     incomeTaxCalculationConnector.getCalculationResponse(mtditid, nino, taxYear.toString)
   }
 }

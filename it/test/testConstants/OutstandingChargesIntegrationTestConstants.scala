@@ -23,10 +23,9 @@ import play.api.libs.json.{JsValue, Json}
 object OutstandingChargesIntegrationTestConstants {
 
   val currentDate = LocalDate.of(2023, 4, 5)
-  val dueDate = currentDate.minusYears(1).minusMonths(1).toString
+  val dueDate     = currentDate.minusYears(1).minusMonths(1).toString
 
-  val validOutStandingChargeResponseJsonWithAciAndBcdCharges: JsValue = Json.parse(
-    s"""
+  val validOutStandingChargeResponseJsonWithAciAndBcdCharges: JsValue = Json.parse(s"""
        |{
        |  "outstandingCharges": [{
        |         "chargeName": "BCD",
@@ -44,8 +43,7 @@ object OutstandingChargesIntegrationTestConstants {
        |}
        |""".stripMargin)
 
-  val validOutStandingChargeResponseJsonWithoutAciAndBcdCharges: JsValue = Json.parse(
-    s"""
+  val validOutStandingChargeResponseJsonWithoutAciAndBcdCharges: JsValue = Json.parse(s"""
        |{
        |  "outstandingCharges": [{
        |         "chargeName": "LATE",
@@ -58,7 +56,7 @@ object OutstandingChargesIntegrationTestConstants {
        |""".stripMargin)
 
   val testOutstandingChargesErrorModelJson: JsValue = Json.obj(
-    "code" -> 500,
+    "code"    -> 500,
     "message" -> "test error"
   )
 

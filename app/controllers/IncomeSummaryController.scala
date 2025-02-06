@@ -38,32 +38,53 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
-                                        val authActions: AuthActions,
-                                        val calculationService: CalculationService,
-                                        val auditingService: AuditingService,
-                                        val itvcErrorHandler: ItvcErrorHandler,
-                                        val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                       (implicit val ec: ExecutionContext,
-                                        val languageUtils: LanguageUtils,
-                                        val appConfig: FrontendAppConfig,
-                                        val mcc: MessagesControllerComponents)
-  extends FrontendController(mcc) with I18nSupport with ImplicitDateFormatter with TaxCalcFallBackBackLink {
+class IncomeSummaryController @Inject() (
+    val incomeBreakdown:       IncomeBreakdown,
+    val authActions:           AuthActions,
+    val calculationService:    CalculationService,
+    val auditingService:       AuditingService,
+    val itvcErrorHandler:      ItvcErrorHandler,
+    val itvcErrorHandlerAgent: AgentItvcErrorHandler
+  )(
+    implicit val ec:   ExecutionContext,
+    val languageUtils: LanguageUtils,
+    val appConfig:     FrontendAppConfig,
+    val mcc:           MessagesControllerComponents)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with ImplicitDateFormatter
+    with TaxCalcFallBackBackLink {
 
-
-  def handleRequest(origin: Option[String] = None,
-                    itcvErrorHandler: ShowInternalServerError,
-                    taxYear: Int,
-                    isAgent: Boolean)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  def handleRequest(
+      origin:           Option[String] = None,
+      itcvErrorHandler: ShowInternalServerError,
+      taxYear:          Int,
+      isAgent:          Boolean
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier
+    ): Future[Result] = {
     calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case liabilityCalc: LiabilityCalculationResponse =>
         val viewModel = IncomeBreakdownViewModel(liabilityCalc.calculation)
-        val fallbackBackUrl = getFallbackUrl(user.session.get(calcPagesBackPage), isAgent,
-          liabilityCalc.metadata.crystallised.getOrElse(false), taxYear, origin)
+        val fallbackBackUrl = getFallbackUrl(
+          user.session.get(calcPagesBackPage),
+          isAgent,
+          liabilityCalc.metadata.crystallised.getOrElse(false),
+          taxYear,
+          origin
+        )
         viewModel match {
-          case Some(model) => Ok(incomeBreakdown(model, taxYear, backUrl = fallbackBackUrl, isAgent = isAgent,
-            btaNavPartial = user.btaNavPartial))
+          case Some(model) =>
+            Ok(
+              incomeBreakdown(
+                model,
+                taxYear,
+                backUrl = fallbackBackUrl,
+                isAgent = isAgent,
+                btaNavPartial = user.btaNavPartial
+              )
+            )
           case _ =>
             Logger("application").warn(s"[$taxYear] No income data could be retrieved. Not found")
             itvcErrorHandler.showInternalServerError()
@@ -72,28 +93,27 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
         Logger("application").info(s"[$taxYear] No income data found.")
         itvcErrorHandler.showInternalServerError()
       case _: LiabilityCalculationError =>
-        Logger("application").error(
-          s"[$taxYear] No new calc income data error found. Downstream error")
+        Logger("application").error(s"[$taxYear] No new calc income data error found. Downstream error")
         itvcErrorHandler.showInternalServerError()
     }
   }
 
-  def showIncomeSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
+  def showIncomeSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit user =>
       handleRequest(
         origin = origin,
         itcvErrorHandler = itvcErrorHandler,
         taxYear = taxYear,
         isAgent = false
       )
-  }
+    }
 
-  def showIncomeSummaryAgent(taxYear: Int): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
-    implicit mtdItUser =>
+  def showIncomeSummaryAgent(taxYear: Int): Action[AnyContent] =
+    authActions.asMTDPrimaryAgent.async { implicit mtdItUser =>
       handleRequest(
         itcvErrorHandler = itvcErrorHandlerAgent,
         taxYear = taxYear,
         isAgent = true
       )
-  }
+    }
 }

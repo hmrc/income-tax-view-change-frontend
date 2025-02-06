@@ -25,7 +25,7 @@ case class SingleTaxYearOptInWarningForm(choice: Option[Boolean])
 
 object SingleTaxYearOptInWarningForm {
 
-  val choiceField: String = "choice"
+  val choiceField:               String = "choice"
   val noResponseErrorMessageKey: String = "optIn.singleTaxYearWarning.form.error"
 
   def apply(taxYear: TaxYear)(implicit messages: Messages): Form[SingleTaxYearOptInWarningForm] = {

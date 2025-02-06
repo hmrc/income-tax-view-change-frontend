@@ -28,18 +28,25 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ClientRelationshipFailureController @Inject()(clientRelationshipFailure: ClientRelationshipFailure,
-                                                    val authActions: AuthActions)
-                                                   (implicit mcc: MessagesControllerComponents,
-                                                    val appConfig: FrontendAppConfig,
-                                                    val itvcErrorHandler: AgentItvcErrorHandler,
-                                                    val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+class ClientRelationshipFailureController @Inject() (
+    clientRelationshipFailure: ClientRelationshipFailure,
+    val authActions:           AuthActions
+  )(
+    implicit mcc:         MessagesControllerComponents,
+    val appConfig:        FrontendAppConfig,
+    val itvcErrorHandler: AgentItvcErrorHandler,
+    val ec:               ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with FeatureSwitching {
 
-  def show: Action[AnyContent] = authActions.asAgent() { implicit user =>
-      Ok(clientRelationshipFailure(
-        postAction = routes.EnterClientsUTRController.show
-      ))
-  }
+  def show: Action[AnyContent] =
+    authActions.asAgent() { implicit user =>
+      Ok(
+        clientRelationshipFailure(
+          postAction = routes.EnterClientsUTRController.show
+        )
+      )
+    }
 
 }

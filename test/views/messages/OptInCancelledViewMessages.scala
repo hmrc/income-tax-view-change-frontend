@@ -19,10 +19,10 @@ package views.messages
 object OptInCancelledViewMessages {
 
   val titleIndividualContent = "Opt in cancelled - Manage your Income Tax updates - GOV.UK"
-  val titleAgentContent = "Opt in cancelled - Manage your client’s Income Tax updates - GOV.UK"
-  
-  val h1Content = "Opt in cancelled"
-  val p1Content = "You will continue to report annually for the 2023 to 2024 tax year."
+  val titleAgentContent      = "Opt in cancelled - Manage your client’s Income Tax updates - GOV.UK"
+
+  val h1Content          = "Opt in cancelled"
+  val p1Content          = "You will continue to report annually for the 2023 to 2024 tax year."
   val bullet1LinkContent = "View your upcoming updates"
   val bullet2LinkContent = "Go to home page"
 

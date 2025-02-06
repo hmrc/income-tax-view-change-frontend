@@ -46,7 +46,9 @@ class ApiFailureSubmittingPoaViewSpec extends TestSupport {
   def executeTest(isAgent: Boolean): Unit = {
     s"${if (isAgent) "Agent" else "Individual"}: CheckYourAnswersView" should {
       "render the heading" in new Setup(isAgent) {
-        document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages("claimToAdjustPoa.apiFailure.heading")
+        document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages(
+          "claimToAdjustPoa.apiFailure.heading"
+        )
       }
       "render the first paragraph" in new Setup(isAgent) {
         document.getElementById("paragraph-text-1").text() shouldBe
@@ -58,13 +60,17 @@ class ApiFailureSubmittingPoaViewSpec extends TestSupport {
       }
       "render the first bullet point with the correct link" in new Setup(isAgent) {
         document.getElementsByClass("govuk-!-margin-bottom-4").get(0).text() shouldBe
-          messages("claimToAdjustPoa.apiFailure.bullet1Text") + " " + messages("claimToAdjustPoa.apiFailure.bullet1Link")
+          messages("claimToAdjustPoa.apiFailure.bullet1Text") + " " + messages(
+            "claimToAdjustPoa.apiFailure.bullet1Link"
+          )
         document.getElementById("link-1").attr("href") shouldBe
           controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent).url
       }
       "render the second bullet point with the correct link" in new Setup(isAgent) {
         document.getElementsByClass("govuk-!-margin-bottom-4").get(1).text() shouldBe
-          messages("claimToAdjustPoa.apiFailure.bullet2Text") + " " + messages("claimToAdjustPoa.apiFailure.bullet2Link")
+          messages("claimToAdjustPoa.apiFailure.bullet2Text") + " " + messages(
+            "claimToAdjustPoa.apiFailure.bullet2Link"
+          )
         document.getElementById("link-2").attr("href") shouldBe
           getHomeControllerLink(isAgent)
       }

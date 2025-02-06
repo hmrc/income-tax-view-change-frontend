@@ -23,7 +23,7 @@ class WelshMessagesSpec extends ComponentSpecBase {
   val realMessages: Map[String, Map[String, String]] = messagesAPI.messages
 
   val englishMessages: Map[String, String] = realMessages("default")
-  val welshMessages: Map[String, String] = realMessages("cy")
+  val welshMessages:   Map[String, String] = realMessages("cy")
 
   "all English messages should have a Welsh translation" in {
     val missingWelshKeys = englishMessages.keySet.diff(welshMessages.keySet)
@@ -41,12 +41,12 @@ class WelshMessagesSpec extends ComponentSpecBase {
     val missingEnglishKeys = welshMessages.keySet.diff(englishMessages.keySet)
 
     if (missingEnglishKeys.nonEmpty) {
-      val failureText = missingEnglishKeys.foldLeft(s"There are ${missingEnglishKeys.size} missing English translations:") {
-        case (failureString, key) =>
-          failureString + s"\n$key:${welshMessages(key)}"
-      }
+      val failureText =
+        missingEnglishKeys.foldLeft(s"There are ${missingEnglishKeys.size} missing English translations:") {
+          case (failureString, key) =>
+            failureString + s"\n$key:${welshMessages(key)}"
+        }
       fail(failureText)
     }
   }
 }
-

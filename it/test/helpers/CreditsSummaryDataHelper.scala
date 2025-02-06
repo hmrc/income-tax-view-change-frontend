@@ -23,7 +23,7 @@ import models.financialDetails.{BalancingChargeCreditType, CutOverCreditType, Mf
 import java.time.LocalDate
 
 trait CreditsSummaryDataHelper {
-  lazy val fixedDate : LocalDate = LocalDate.of(2022, 1, 7)
+  lazy val fixedDate: LocalDate = LocalDate.of(2022, 1, 7)
   val chargesList: Seq[CreditDetailModel] = Seq(
     CreditDetailModel(
       date = LocalDate.of(2018, 3, 29),

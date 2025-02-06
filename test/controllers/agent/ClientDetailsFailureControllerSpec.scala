@@ -26,15 +26,13 @@ import testConstants.BaseTestConstants.agentAuthRetrievalSuccess
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import views.html.agent.errorPages.ClientRelationshipFailure
 
-class ClientDetailsFailureControllerSpec extends MockAuthActions
-  with MockClientRelationshipFailure
-   {
+class ClientDetailsFailureControllerSpec extends MockAuthActions with MockClientRelationshipFailure {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ClientRelationshipFailure].toInstance(clientRelationshipFailure)
     )
-     .build()
+    .build()
 
   lazy val testController = app.injector.instanceOf[ClientRelationshipFailureController]
 

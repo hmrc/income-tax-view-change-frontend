@@ -27,9 +27,12 @@ import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SessionDataConnector @Inject()(val appConfig: FrontendAppConfig,
-                                     val http: HttpClientV2
-                                    )(implicit ec: ExecutionContext) extends RawResponseReads {
+class SessionDataConnector @Inject() (
+    val appConfig: FrontendAppConfig,
+    val http:      HttpClientV2
+  )(
+    implicit ec: ExecutionContext)
+    extends RawResponseReads {
 
   def getSessionData()(implicit hc: HeaderCarrier): Future[SessionGetResponse] = {
     lazy val url = s"${appConfig.incomeTaxSessionDataUrl}/income-tax-session-data/"
@@ -40,7 +43,11 @@ class SessionDataConnector @Inject()(val appConfig: FrontendAppConfig,
 
   }
 
-  def postSessionData(sessionDataModel: SessionDataModel)(implicit hc: HeaderCarrier): Future[SessionDataPostResponse] = {
+  def postSessionData(
+      sessionDataModel: SessionDataModel
+    )(
+      implicit hc: HeaderCarrier
+    ): Future[SessionDataPostResponse] = {
     lazy val url = s"${appConfig.incomeTaxSessionDataUrl}/income-tax-session-data/"
 
     val body = Json.toJson[SessionDataModel](sessionDataModel)

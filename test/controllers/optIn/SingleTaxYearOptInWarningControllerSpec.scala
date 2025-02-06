@@ -41,20 +41,21 @@ import scala.concurrent.Future
 
 class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockOptInService with MockitoSugar {
 
-  def config: Map[String, Object] = Map(
-    "feature-switches.read-from-mongo" -> "false"
-  )
+  def config: Map[String, Object] =
+    Map(
+      "feature-switches.read-from-mongo" -> "false"
+    )
 
   override lazy val app: Application =
     applicationBuilderWithAuthBindings
       .overrides(
-        api.
-          inject.bind[OptInService].toInstance(mockOptInService)
+        api.inject.bind[OptInService].toInstance(mockOptInService)
       )
       .configure(config)
       .build()
 
-  lazy val testController: SingleTaxYearOptInWarningController = app.injector.instanceOf[SingleTaxYearOptInWarningController]
+  lazy val testController: SingleTaxYearOptInWarningController =
+    app.injector.instanceOf[SingleTaxYearOptInWarningController]
   lazy val singleTaxYearWarningView: SingleTaxYearWarningView = app.injector.instanceOf[SingleTaxYearWarningView]
 
   val taxYear = TaxYear(2024, 2025)
@@ -72,13 +73,13 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
           "render the SingleTaxYearWarningView" in {
 
-            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
+            val singleBusinessIncome =
+              IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
             setupMockSuccess(mtdRole)
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
             ).thenReturn(Future(singleBusinessIncome))
-
 
             setupMockSuccess(mtdRole)
 
@@ -87,9 +88,9 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
                 Future(List(TaxYear(2025, 2026)))
               )
 
-            val action = testController.show(isAgent)
+            val action      = testController.show(isAgent)
             val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
-            val result = action(fakeRequest)
+            val result      = action(fakeRequest)
 
             status(result) shouldBe OK
             contentAsString(result) shouldBe
@@ -106,13 +107,13 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
           "redirect to ChooseYear page - SEE_OTHER" in {
 
-            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
+            val singleBusinessIncome =
+              IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
             setupMockSuccess(mtdRole)
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
             ).thenReturn(Future(singleBusinessIncome))
-
 
             setupMockSuccess(mtdRole)
 
@@ -121,9 +122,9 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
                 Future(List())
               )
 
-            val action = testController.show(isAgent)
+            val action      = testController.show(isAgent)
             val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
-            val result = action(fakeRequest)
+            val result      = action(fakeRequest)
 
             status(result) shouldBe SEE_OTHER
             redirectLocation(result) shouldBe Some(controllers.optIn.routes.ChooseYearController.show(isAgent).url)
@@ -136,13 +137,13 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
             "recover and return error template Internal Server Error - 500" in {
 
-              val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
+              val singleBusinessIncome =
+                IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
               setupMockSuccess(mtdRole)
 
               when(
                 mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
               ).thenReturn(Future(singleBusinessIncome))
-
 
               setupMockSuccess(mtdRole)
 
@@ -151,9 +152,9 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
                   Future(throw new Exception("some fake error"))
                 )
 
-              val action = testController.show(isAgent)
+              val action      = testController.show(isAgent)
               val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
-              val result = action(fakeRequest)
+              val result      = action(fakeRequest)
 
               status(result) shouldBe INTERNAL_SERVER_ERROR
               contentAsString(result).contains("Sorry, there is a problem with the service") shouldBe true
@@ -162,7 +163,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
         }
       }
 
-      val action = testController.show(isAgent)
+      val action      = testController.show(isAgent)
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
@@ -177,7 +178,8 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
             "handle the submit request and redirect to the ConfirmTaxYear page" in {
 
-              val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
+              val singleBusinessIncome =
+                IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
               setupMockSuccess(mtdRole)
 
@@ -204,15 +206,18 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
               val result = testController.submit(isAgent)(request)
 
               status(result) shouldBe SEE_OTHER
-              redirectLocation(result) shouldBe Some(controllers.optIn.routes.ConfirmTaxYearController.show(isAgent).url)
+              redirectLocation(result) shouldBe Some(
+                controllers.optIn.routes.ConfirmTaxYearController.show(isAgent).url
+              )
             }
           }
 
           "user answers No - false" should {
 
-            "handle the submit request and redirect to the Opt In Cancelled page"  in {
+            "handle the submit request and redirect to the Opt In Cancelled page" in {
 
-              val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
+              val singleBusinessIncome =
+                IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
               setupMockSuccess(mtdRole)
 
@@ -251,7 +256,8 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
             "handle the submit request and return the page with an error summary" in {
 
-              val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
+              val singleBusinessIncome =
+                IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
               setupMockSuccess(mtdRole)
 
@@ -285,13 +291,13 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
           "redirect to ChooseYear page - OK SEE_OTHER" in {
 
-            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
+            val singleBusinessIncome =
+              IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
             setupMockSuccess(mtdRole)
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
             ).thenReturn(Future(singleBusinessIncome))
-
 
             setupMockSuccess(mtdRole)
 
@@ -300,7 +306,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
                 Future(List())
               )
 
-            val action = testController.submit(isAgent)
+            val action      = testController.submit(isAgent)
             val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
 
             val result = action(fakeRequest)
@@ -316,13 +322,13 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
             "recover and return error template Internal Server Error - 500" in {
 
-              val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
+              val singleBusinessIncome =
+                IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
               setupMockSuccess(mtdRole)
 
               when(
                 mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
               ).thenReturn(Future(singleBusinessIncome))
-
 
               setupMockSuccess(mtdRole)
 
@@ -331,7 +337,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
                   Future(throw new Exception("some fake error"))
                 )
 
-              val action = testController.submit(isAgent)
+              val action      = testController.submit(isAgent)
               val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
 
               val result = action(fakeRequest)
@@ -343,7 +349,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
         }
       }
 
-      val action = testController.submit(isAgent)
+      val action      = testController.submit(isAgent)
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }

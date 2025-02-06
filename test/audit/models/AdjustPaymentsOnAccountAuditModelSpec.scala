@@ -25,75 +25,80 @@ import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 class AdjustPaymentsOnAccountAuditModelSpec extends TestSupport {
 
   val transactionName: String = enums.TransactionName.AdjustPaymentsOnAccount.name
-  val auditType: String = enums.AuditType.AdjustPaymentsOnAccount.name
+  val auditType:       String = enums.AuditType.AdjustPaymentsOnAccount.name
 
-  def getAdjustPaymentsOnAccountAuditModel(isSuccessful: Boolean,isAgent: Boolean): AdjustPaymentsOnAccountAuditModel = {
-    val typeOfUser = if(isAgent) getAgentUser(FakeRequest()) else getIndividualUser(FakeRequest())
-    AdjustPaymentsOnAccountAuditModel(isSuccessful = isSuccessful,
+  def getAdjustPaymentsOnAccountAuditModel(
+      isSuccessful: Boolean,
+      isAgent:      Boolean
+    ): AdjustPaymentsOnAccountAuditModel = {
+    val typeOfUser = if (isAgent) getAgentUser(FakeRequest()) else getIndividualUser(FakeRequest())
+    AdjustPaymentsOnAccountAuditModel(
+      isSuccessful = isSuccessful,
       previousPaymentOnAccountAmount = 3000.00,
       requestedPaymentOnAccountAmount = 2500.00,
       adjustmentReasonCode = "001",
       adjustmentReasonDescription = "My main income will be lower",
-      isDecreased = true)(typeOfUser)
+      isDecreased = true
+    )(typeOfUser)
   }
 
   lazy val detailsAuditDataSuccess: AffinityGroup => JsValue = af =>
     commonAuditDetails(af) ++ Json.obj(
-      "outcome" -> Json.obj("isSuccessful" -> true),
-      "previousPaymentOnAccountAmount" -> 3000.00,
+      "outcome"                         -> Json.obj("isSuccessful" -> true),
+      "previousPaymentOnAccountAmount"  -> 3000.00,
       "requestedPaymentOnAccountAmount" -> 2500.00,
-      "adjustmentReasonCode" -> "001",
-      "adjustmentReasonDescription" -> "My main income will be lower",
-      "isDecreased" -> true
+      "adjustmentReasonCode"            -> "001",
+      "adjustmentReasonDescription"     -> "My main income will be lower",
+      "isDecreased"                     -> true
     )
 
   lazy val detailsAuditDataFailure: AffinityGroup => JsValue = af =>
     commonAuditDetails(af) ++ Json.obj(
       "outcome" -> Json.obj(
-        "isSuccessful" -> false,
+        "isSuccessful"    -> false,
         "failureCategory" -> "API_FAILURE",
-        "failureReason" -> "API 1773 returned errors - not able to update payments on account"
+        "failureReason"   -> "API 1773 returned errors - not able to update payments on account"
       ),
-      "previousPaymentOnAccountAmount" -> 3000.00,
+      "previousPaymentOnAccountAmount"  -> 3000.00,
       "requestedPaymentOnAccountAmount" -> 2500.00,
-      "adjustmentReasonCode" -> "001",
-      "adjustmentReasonDescription" -> "My main income will be lower",
-      "isDecreased" -> true
+      "adjustmentReasonCode"            -> "001",
+      "adjustmentReasonDescription"     -> "My main income will be lower",
+      "isDecreased"                     -> true
     )
 
   "AdjustPaymentsOnAccountAuditModel for a successful API post" should {
     s"have the correct transaction name of - $transactionName" in {
-      getAdjustPaymentsOnAccountAuditModel(true,isAgent = false).transactionName shouldBe transactionName
+      getAdjustPaymentsOnAccountAuditModel(true, isAgent = false).transactionName shouldBe transactionName
     }
 
     s"have the correct audit event type of - $auditType" in {
-      getAdjustPaymentsOnAccountAuditModel(true,isAgent = false).auditType shouldBe auditType
+      getAdjustPaymentsOnAccountAuditModel(true, isAgent = false).auditType shouldBe auditType
     }
 
     "have the correct detail for the audit event" in {
-      getAdjustPaymentsOnAccountAuditModel(true,isAgent = false).detail shouldBe detailsAuditDataSuccess(Individual)
+      getAdjustPaymentsOnAccountAuditModel(true, isAgent = false).detail shouldBe detailsAuditDataSuccess(Individual)
     }
 
     "have the correct agent detail for the audit event" in {
-      getAdjustPaymentsOnAccountAuditModel(true,isAgent = true).detail shouldBe detailsAuditDataSuccess(Agent)
+      getAdjustPaymentsOnAccountAuditModel(true, isAgent = true).detail shouldBe detailsAuditDataSuccess(Agent)
     }
   }
 
   "AdjustPaymentsOnAccountAuditModel for an unsuccessful API post" should {
     s"have the correct transaction name of - $transactionName" in {
-      getAdjustPaymentsOnAccountAuditModel(false,isAgent = false).transactionName shouldBe transactionName
+      getAdjustPaymentsOnAccountAuditModel(false, isAgent = false).transactionName shouldBe transactionName
     }
 
     s"have the correct audit event type of - $auditType" in {
-      getAdjustPaymentsOnAccountAuditModel(false,isAgent = false).auditType shouldBe auditType
+      getAdjustPaymentsOnAccountAuditModel(false, isAgent = false).auditType shouldBe auditType
     }
 
     "have the correct detail for the audit event" in {
-      getAdjustPaymentsOnAccountAuditModel(false,isAgent = false).detail shouldBe detailsAuditDataFailure(Individual)
+      getAdjustPaymentsOnAccountAuditModel(false, isAgent = false).detail shouldBe detailsAuditDataFailure(Individual)
     }
 
     "have the correct detail for the agent audit event" in {
-      getAdjustPaymentsOnAccountAuditModel(false,isAgent = true).detail shouldBe detailsAuditDataFailure(Agent)
+      getAdjustPaymentsOnAccountAuditModel(false, isAgent = true).detail shouldBe detailsAuditDataFailure(Agent)
     }
   }
 }

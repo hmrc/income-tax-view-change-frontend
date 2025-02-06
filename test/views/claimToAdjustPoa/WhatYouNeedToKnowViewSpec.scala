@@ -32,83 +32,96 @@ import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.whatYouNeedT
 class WhatYouNeedToKnowViewSpec extends TestSupport {
 
   val whatYouNeedToKnowView: WhatYouNeedToKnow = app.injector.instanceOf[WhatYouNeedToKnow]
-  lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
-  implicit val lang: Lang = Lang("GB")
+  lazy val msgs:             MessagesApi       = app.injector.instanceOf[MessagesApi]
+  implicit val lang:         Lang              = Lang("GB")
 
   val testCancelUrl: String = "/report-quarterly/income-and-expenses/view"
   val testOpenUrlInNewTab: String =
     "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates"
 
   class Setup(isAgent: Boolean = false, showIncreaseAfterPaymentContent: Boolean = false) {
-    val view: Html = whatYouNeedToKnowView(isAgent, whatYouNeedToKnowViewModel(isAgent, showIncreaseAfterPaymentContent))
-    val document: Document = Jsoup.parse(view.toString())
+    val view: Html =
+      whatYouNeedToKnowView(isAgent, whatYouNeedToKnowViewModel(isAgent, showIncreaseAfterPaymentContent))
+    val document:    Document = Jsoup.parse(view.toString())
     val groupButton: Elements = document.select("div.govuk-button-group")
     val elements = groupButton.first().children()
   }
 
   "The WhatYouNeedToKnow page" should {
-      "render the page heading" in new Setup {
-        document.title shouldBe msgs("htmlTitle", msgs("claimToAdjustPoa.whatYouNeedToKnow.heading"))
-      }
+    "render the page heading" in new Setup {
+      document.title shouldBe msgs("htmlTitle", msgs("claimToAdjustPoa.whatYouNeedToKnow.heading"))
+    }
 
-      "render the caption" in new Setup {
-        document.getElementById("caption").text shouldBe
-          msgs("claimToAdjustPoa.whatYouNeedToKnow.caption", fixedDate.getYear.toString, (fixedDate.getYear + 1).toString)
-      }
+    "render the caption" in new Setup {
+      document.getElementById("caption").text shouldBe
+        msgs("claimToAdjustPoa.whatYouNeedToKnow.caption", fixedDate.getYear.toString, (fixedDate.getYear + 1).toString)
+    }
 
-      "render the main heading" in new Setup {
-        document.getElementById("h1").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.h1")
-      }
+    "render the main heading" in new Setup {
+      document.getElementById("h1").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.h1")
+    }
 
-      "render the first paragraph" in new Setup {
-        document.getElementById("p1").text shouldBe
-          msgs("claimToAdjustPoa.whatYouNeedToKnow.p1", fixedDate.getYear.toString, (fixedDate.getYear + 1).toString) + " " +
-            msgs("claimToAdjustPoa.whatYouNeedToKnow.bold", (fixedDate.getYear + 2).toString) + msgs("claimToAdjustPoa.whatYouNeedToKnow.onlyForWelsh")
-      }
+    "render the first paragraph" in new Setup {
+      document.getElementById("p1").text shouldBe
+        msgs(
+          "claimToAdjustPoa.whatYouNeedToKnow.p1",
+          fixedDate.getYear.toString,
+          (fixedDate.getYear + 1).toString
+        ) + " " +
+          msgs("claimToAdjustPoa.whatYouNeedToKnow.bold", (fixedDate.getYear + 2).toString) + msgs(
+          "claimToAdjustPoa.whatYouNeedToKnow.onlyForWelsh"
+        )
+    }
 
-      "render the warning text" in new Setup {
-        document.getElementById("warning-text").text shouldBe s"! Warning ${msgs("claimToAdjustPoa.whatYouNeedToKnow.warning-text")}"
-      }
+    "render the warning text" in new Setup {
+      document
+        .getElementById("warning-text")
+        .text shouldBe s"! Warning ${msgs("claimToAdjustPoa.whatYouNeedToKnow.warning-text")}"
+    }
 
-      "render the second paragraph" in new Setup {
-        document.getElementById("p2").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.p2")
-      }
+    "render the second paragraph" in new Setup {
+      document.getElementById("p2").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.p2")
+    }
 
-      "render the subheading" in new Setup {
-        document.select("h2").get(1).text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.h2")
-      }
+    "render the subheading" in new Setup {
+      document.select("h2").get(1).text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.h2")
+    }
 
-      "render the third paragraph" in new Setup {
-        document.getElementById("p3").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.p3")
-      }
+    "render the third paragraph" in new Setup {
+      document.getElementById("p3").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.p3")
+    }
 
-      "render the fourth paragraph" in new Setup {
-        document.getElementById("p4").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.p4")
-      }
+    "render the fourth paragraph" in new Setup {
+      document.getElementById("p4").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.p4")
+    }
 
-      "render the fifth paragraph" in new Setup {
-        document.getElementById("p5").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.p5")
-      }
+    "render the fifth paragraph" in new Setup {
+      document.getElementById("p5").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.p5")
+    }
 
-      "render the newTabLinkHTML with href" in new Setup {
-        document.select("a.govuk-link").get(4).text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.link")
-        document.select("a.govuk-link").get(4).attr("href") shouldBe testOpenUrlInNewTab
-      }
+    "render the newTabLinkHTML with href" in new Setup {
+      document.select("a.govuk-link").get(4).text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.link")
+      document.select("a.govuk-link").get(4).attr("href") shouldBe testOpenUrlInNewTab
+    }
 
-      "have a 'Continue' button" in new Setup {
-        elements.get(0).text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.continue-button")
-      }
+    "have a 'Continue' button" in new Setup {
+      elements.get(0).text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.continue-button")
+    }
 
-      "have a 'Cancel' button with backUrl" in new Setup {
-        elements.get(1).text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.cancel")
-        document.getElementById("cancel").attr("href") shouldBe testCancelUrl
-      }
+    "have a 'Cancel' button with backUrl" in new Setup {
+      elements.get(1).text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.cancel")
+      document.getElementById("cancel").attr("href") shouldBe testCancelUrl
+    }
 
-      "render warning text when showIncreaseAfterPaymentContent is true" in new Setup(showIncreaseAfterPaymentContent = true) {
-        document.getElementById("p6").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.increase-after-payment.p1")
-      }
+    "render warning text when showIncreaseAfterPaymentContent is true" in new Setup(
+      showIncreaseAfterPaymentContent = true
+    ) {
+      document.getElementById("p6").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.increase-after-payment.p1")
+    }
 
-    "not render warning text when showIncreaseAfterPaymentContent is false" in new Setup(showIncreaseAfterPaymentContent = false) {
+    "not render warning text when showIncreaseAfterPaymentContent is false" in new Setup(
+      showIncreaseAfterPaymentContent = false
+    ) {
       Option(document.getElementById("p6")) shouldBe None
     }
   }

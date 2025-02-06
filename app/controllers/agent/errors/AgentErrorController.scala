@@ -24,11 +24,15 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.agent.errorPages.AgentError
 
 @Singleton
-class AgentErrorController @Inject()(val authActions: AuthActions,
-                                     agentErrorView: AgentError)
-                                    (implicit mcc: MessagesControllerComponents) extends FrontendController(mcc) with I18nSupport {
+class AgentErrorController @Inject() (
+    val authActions: AuthActions,
+    agentErrorView:  AgentError
+  )(
+    implicit mcc: MessagesControllerComponents)
+    extends FrontendController(mcc)
+    with I18nSupport {
 
   val show: Action[AnyContent] = authActions.asAgent(false) { implicit user =>
-      Ok(agentErrorView())
+    Ok(agentErrorView())
   }
 }

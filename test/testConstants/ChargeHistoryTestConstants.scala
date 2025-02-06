@@ -24,9 +24,7 @@ import java.time.LocalDate
 
 object ChargeHistoryTestConstants {
 
-
-  val testValidChargeHistoryModelJson: JsValue = Json.parse(
-    """
+  val testValidChargeHistoryModelJson: JsValue = Json.parse("""
       |   {
       |  "chargeHistoryDetails": [ {
       |  "taxYear": "2019",
@@ -41,9 +39,7 @@ object ChargeHistoryTestConstants {
       |  }
       |""".stripMargin)
 
-
-  val testInValidChargeHistoryModelJson: JsValue = Json.parse(
-    """
+  val testInValidChargeHistoryModelJson: JsValue = Json.parse("""
       |   {
       |  "chargeHistoryDetails": [ {
       |  "taxYear": "2019",
@@ -57,49 +53,64 @@ object ChargeHistoryTestConstants {
       |  }
       |""".stripMargin)
 
-
   val testValidChargeHistoryModel: ChargesHistoryModel = ChargesHistoryModel(
     idType = "NINO",
     idValue = testNino,
     regimeType = "ITSA",
-    chargeHistoryDetails = Some(List(
-      ChargeHistoryModel("2017", "123456789", LocalDate.parse("2020-01-29"), "Balancing Charge", 123456789012345.67, LocalDate.of(2020, 2, 24), "amended return", Some("005")))))
+    chargeHistoryDetails = Some(
+      List(
+        ChargeHistoryModel(
+          "2017",
+          "123456789",
+          LocalDate.parse("2020-01-29"),
+          "Balancing Charge",
+          123456789012345.67,
+          LocalDate.of(2020, 2, 24),
+          "amended return",
+          Some("005")
+        )
+      )
+    )
+  )
 
-  val testChargeHistoryErrorModelParsing: ChargesHistoryErrorModel = ChargesHistoryErrorModel(
-    testErrorStatus, "Json Validation Error. Parsing ChargeHistory Data Response")
+  val testChargeHistoryErrorModelParsing: ChargesHistoryErrorModel =
+    ChargesHistoryErrorModel(testErrorStatus, "Json Validation Error. Parsing ChargeHistory Data Response")
 
-  val testChargeHistoryErrorModel: ChargesHistoryErrorModel = ChargesHistoryErrorModel(testErrorStatus, testErrorMessage)
+  val testChargeHistoryErrorModel: ChargesHistoryErrorModel =
+    ChargesHistoryErrorModel(testErrorStatus, testErrorMessage)
 
   val testChargeHistoryErrorResponseJson: JsValue = Json.obj(
-    "code" -> testErrorStatus,
+    "code"   -> testErrorStatus,
     "reason" -> testErrorMessage
   )
 
   val testValidChargeHistoryDetailsModelJson: JsValue = Json.obj(
-    "idType" -> "NINO",
-    "idValue" -> "AB123456C",
+    "idType"     -> "NINO",
+    "idValue"    -> "AB123456C",
     "regimeType" -> "ITSA",
     "chargeHistoryDetails" -> Json.arr(
       Json.obj(
-        "taxYear" -> "2017",
-        "documentId" -> "123456789",
-        "documentDate" -> "2020-01-29",
+        "taxYear"             -> "2017",
+        "documentId"          -> "123456789",
+        "documentDate"        -> "2020-01-29",
         "documentDescription" -> "Balancing Charge",
-        "totalAmount" -> 123456789012345.67,
-        "reversalDate" -> "2020-02-24",
-        "reversalReason" -> "amended return",
+        "totalAmount"         -> 123456789012345.67,
+        "reversalDate"        -> "2020-02-24",
+        "reversalReason"      -> "amended return",
         "poaAdjustmentReason" -> "005"
-      )))
+      )
+    )
+  )
 
   val testInvalidChargeHistoryDetailsModelJson: JsValue = Json.obj(
     "chargeHistoryDetails" -> Json.arr(
       Json.obj(
-        "taxYear" -> "2019",
-        "documentId" -> "123456789",
-        "documentDate" -> "2020-01-29",
+        "taxYear"             -> "2019",
+        "documentId"          -> "123456789",
+        "documentDate"        -> "2020-01-29",
         "documentDescription" -> "Balancing Charge",
-        "totalAmount" -> 10.33,
-        "reversalDate" -> "2020-02-24"
+        "totalAmount"         -> 10.33,
+        "reversalDate"        -> "2020-02-24"
       )
     )
   )

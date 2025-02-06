@@ -19,9 +19,8 @@ package models.incomeSourceDetails
 import play.api.libs.json.{Json, OFormat}
 
 case class BusinessAddressModel(
-                                 auditRef: String,
-                                 address: Address
-                               )
+    auditRef: String,
+    address:  Address)
 
 object BusinessAddressModel {
   implicit val format: OFormat[BusinessAddressModel] = Json.format[BusinessAddressModel]

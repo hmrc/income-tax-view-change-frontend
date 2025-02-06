@@ -27,7 +27,7 @@ class CalculationListConnectorISpec extends AnyWordSpec with ComponentSpecBase w
 
   lazy val connector: CalculationListConnector = app.injector.instanceOf[CalculationListConnector]
 
-  val nino = "AA123456A"
+  val nino       = "AA123456A"
   val taxYearEnd = "2024"
 
   "CalculationListConnector" when {
@@ -44,7 +44,11 @@ class CalculationListConnectorISpec extends AnyWordSpec with ComponentSpecBase w
               |}
               |""".stripMargin
 
-          WiremockHelper.stubGet(s"/income-tax-view-change/list-of-calculation-results/$nino/$taxYearEnd", OK, responseBody)
+          WiremockHelper.stubGet(
+            s"/income-tax-view-change/list-of-calculation-results/$nino/$taxYearEnd",
+            OK,
+            responseBody
+          )
 
           val result = connector.getLegacyCalculationList(Nino(nino), taxYearEnd).futureValue
 
@@ -54,7 +58,11 @@ class CalculationListConnectorISpec extends AnyWordSpec with ComponentSpecBase w
         "return an error when the request fails" in {
           val responseBody = "{}"
 
-          WiremockHelper.stubGet(s"/income-tax-view-change/list-of-calculation-results/$nino/$taxYearEnd", INTERNAL_SERVER_ERROR, responseBody)
+          WiremockHelper.stubGet(
+            s"/income-tax-view-change/list-of-calculation-results/$nino/$taxYearEnd",
+            INTERNAL_SERVER_ERROR,
+            responseBody
+          )
 
           val result = connector.getLegacyCalculationList(Nino(nino), taxYearEnd).futureValue
 
@@ -86,7 +94,11 @@ class CalculationListConnectorISpec extends AnyWordSpec with ComponentSpecBase w
         "return an error when the request fails" in {
           val responseBody = "{}"
 
-          WiremockHelper.stubGet(s"/income-tax-view-change/calculation-list/$nino/$taxYearEnd", INTERNAL_SERVER_ERROR, responseBody)
+          WiremockHelper.stubGet(
+            s"/income-tax-view-change/calculation-list/$nino/$taxYearEnd",
+            INTERNAL_SERVER_ERROR,
+            responseBody
+          )
 
           val result = connector.getCalculationList(Nino(nino), taxYearEnd).futureValue
 

@@ -30,10 +30,10 @@ class UpdateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
 
   lazy val connector: UpdateIncomeSourceConnector = app.injector.instanceOf[UpdateIncomeSourceConnector]
 
-  val nino = "AA123456A"
+  val nino           = "AA123456A"
   val incomeSourceId = "X123"
-  val cessationDate: Option[LocalDate] = None
-  val taxYearSpecific: TaxYearSpecific = TaxYearSpecific("2024", latencyIndicator = false)
+  val cessationDate:   Option[LocalDate] = None
+  val taxYearSpecific: TaxYearSpecific   = TaxYearSpecific("2024", latencyIndicator = false)
 
   override def beforeEach(): Unit = {
     WireMock.reset()
@@ -70,11 +70,19 @@ class UpdateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
           WiremockHelper.verifyPut("/income-tax-view-change/update-income-source")
         }
         "return an error when the request fails" in {
-          WiremockHelper.stubPut("/income-tax-view-change/update-income-source", INTERNAL_SERVER_ERROR, requestBody, "{}")
+          WiremockHelper.stubPut(
+            "/income-tax-view-change/update-income-source",
+            INTERNAL_SERVER_ERROR,
+            requestBody,
+            "{}"
+          )
 
           val result = connector.updateCessationDate(nino, incomeSourceId, cessationDate).futureValue
 
-          result shouldBe UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Json validation error parsing response")
+          result shouldBe UpdateIncomeSourceResponseError(
+            "INTERNAL_SERVER_ERROR",
+            "Json validation error parsing response"
+          )
           WiremockHelper.verifyPut("/income-tax-view-change/update-income-source")
         }
       }
@@ -109,11 +117,19 @@ class UpdateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
           WiremockHelper.verifyPut("/income-tax-view-change/update-income-source")
         }
         "return an error when the request fails" in {
-          WiremockHelper.stubPut("/income-tax-view-change/update-income-source", INTERNAL_SERVER_ERROR, requestBody, "{}")
+          WiremockHelper.stubPut(
+            "/income-tax-view-change/update-income-source",
+            INTERNAL_SERVER_ERROR,
+            requestBody,
+            "{}"
+          )
 
           val result = connector.updateIncomeSourceTaxYearSpecific(nino, incomeSourceId, taxYearSpecific).futureValue
 
-          result shouldBe UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Json validation error parsing response")
+          result shouldBe UpdateIncomeSourceResponseError(
+            "INTERNAL_SERVER_ERROR",
+            "Json validation error parsing response"
+          )
           WiremockHelper.verifyPut("/income-tax-view-change/update-income-source")
         }
       }

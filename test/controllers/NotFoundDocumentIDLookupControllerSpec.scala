@@ -26,14 +26,14 @@ import views.html.errorPages.CustomNotFoundError
 
 class NotFoundDocumentIDLookupControllerSpec extends TestSupport {
 
-  object NotFoundDocumentIDLookupController extends NotFoundDocumentIDLookupController(
-    app.injector.instanceOf[CustomNotFoundError])(
-    app.injector.instanceOf[MessagesControllerComponents]
-  )
+  object NotFoundDocumentIDLookupController
+      extends NotFoundDocumentIDLookupController(app.injector.instanceOf[CustomNotFoundError])(
+        app.injector.instanceOf[MessagesControllerComponents]
+      )
 
   "the NotFoundDocumentIDLookupController.show() action" should {
 
-    lazy val result = NotFoundDocumentIDLookupController.show(fakeRequestNoSession)
+    lazy val result   = NotFoundDocumentIDLookupController.show(fakeRequestNoSession)
     lazy val document = Jsoup.parse(contentAsString(result))
 
     "return OK (200)" in {

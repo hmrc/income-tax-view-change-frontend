@@ -46,7 +46,11 @@ object TaxYearSummaryChargeItem {
     )
   }
 
-  def fromChargeItem(chargeItem: ChargeItem, dueDate: Option[LocalDate], isLatePaymentInterest: Boolean = false): TaxYearSummaryChargeItem = {
+  def fromChargeItem(
+      chargeItem:            ChargeItem,
+      dueDate:               Option[LocalDate],
+      isLatePaymentInterest: Boolean = false
+    ): TaxYearSummaryChargeItem = {
     TaxYearSummaryChargeItem(
       transactionId = chargeItem.transactionId,
       taxYear = chargeItem.taxYear,
@@ -71,25 +75,27 @@ object TaxYearSummaryChargeItem {
 }
 
 case class TaxYearSummaryChargeItem(
-                                     transactionId: String,
-                                     taxYear: TaxYear,
-                                     transactionType: TransactionType,
-                                     subTransactionType: Option[SubTransactionType],
-                                     documentDate: LocalDate,
-                                     dueDate: Option[LocalDate],
-                                     originalAmount: BigDecimal,
-                                     outstandingAmount: BigDecimal,
-                                     interestOutstandingAmount: Option[BigDecimal],
-                                     latePaymentInterestAmount: Option[BigDecimal],
-                                     interestFromDate: Option[LocalDate],
-                                     interestEndDate: Option[LocalDate],
-                                     interestRate: Option[BigDecimal],
-                                     lpiWithDunningLock: Option[BigDecimal],
-                                     amountCodedOut: Option[BigDecimal],
-                                     isLatePaymentInterest: Boolean = false,
-                                     dunningLock: Boolean) extends TransactionItem {
+    transactionId:             String,
+    taxYear:                   TaxYear,
+    transactionType:           TransactionType,
+    subTransactionType:        Option[SubTransactionType],
+    documentDate:              LocalDate,
+    dueDate:                   Option[LocalDate],
+    originalAmount:            BigDecimal,
+    outstandingAmount:         BigDecimal,
+    interestOutstandingAmount: Option[BigDecimal],
+    latePaymentInterestAmount: Option[BigDecimal],
+    interestFromDate:          Option[LocalDate],
+    interestEndDate:           Option[LocalDate],
+    interestRate:              Option[BigDecimal],
+    lpiWithDunningLock:        Option[BigDecimal],
+    amountCodedOut:            Option[BigDecimal],
+    isLatePaymentInterest:     Boolean = false,
+    dunningLock:               Boolean)
+    extends TransactionItem {
 
-  def isOverdue()(implicit dateService: DateServiceInterface): Boolean = dueDate.exists(_ isBefore dateService.getCurrentDate)
+  def isOverdue()(implicit dateService: DateServiceInterface): Boolean =
+    dueDate.exists(_ isBefore dateService.getCurrentDate)
 
   val hasLpiWithDunningLock: Boolean =
     lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
@@ -109,20 +115,22 @@ case class TaxYearSummaryChargeItem(
     }
   }
 
-  def isPaid: Boolean = outstandingAmount match {
-    case amount if amount == 0 => true
-    case _ => false
-  }
+  def isPaid: Boolean =
+    outstandingAmount match {
+      case amount if amount == 0 => true
+      case _                     => false
+    }
 
   def isCodingOut: Boolean = {
     val codingOutSubTypes = Seq(Nics2, Accepted, Cancelled)
     subTransactionType.exists(subType => codingOutSubTypes.contains(subType))
   }
 
-  def interestIsPaid: Boolean = interestOutstandingAmount match {
-    case Some(amount) if amount == 0 => true
-    case _ => false
-  }
+  def interestIsPaid: Boolean =
+    interestOutstandingAmount match {
+      case Some(amount) if amount == 0 => true
+      case _                           => false
+    }
 
   def remainingToPay: BigDecimal = {
     if (isPaid) BigDecimal(0)
@@ -131,7 +139,8 @@ case class TaxYearSummaryChargeItem(
 
   val isPartPaid: Boolean = outstandingAmount != originalAmount
 
-  val interestIsPartPaid: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != latePaymentInterestAmount.getOrElse[BigDecimal](0)
+  val interestIsPartPaid: Boolean =
+    interestOutstandingAmount.getOrElse[BigDecimal](0) != latePaymentInterestAmount.getOrElse[BigDecimal](0)
 
   def getInterestPaidStatus: String = {
     if (interestIsPaid) "paid"
@@ -154,6 +163,5 @@ case class TaxYearSummaryChargeItem(
     if (interestIsPaid) BigDecimal(0)
     else interestOutstandingAmount.getOrElse(latePaymentInterestAmount.get)
   }
-
 
 }

@@ -31,22 +31,26 @@ object BusinessNameForm extends CustomConstraints {
 
   val permittedChars: Regex = "^[A-Za-z0-9 ,.&'\\\\/-]+$".r
 
-  val businessNameEmptyError: String = "add-business-name.form.error.required"
+  val businessNameEmptyError:      String = "add-business-name.form.error.required"
   val businessNameLengthIncorrect: String = "add-business-name.form.error.maxLength"
-  val businessNameInvalidChar: String = "add-business-name.form.error.invalidNameFormat"
-  val businessNameInvalid: String = "add-business-name.form.error.invalidName"
+  val businessNameInvalidChar:     String = "add-business-name.form.error.invalidNameFormat"
+  val businessNameInvalid:         String = "add-business-name.form.error.invalidName"
 
-  private val isValidChars: Constraint[String] = pattern(regex = permittedChars, error = businessNameInvalidChar)
-  private val isNotTooLong: Constraint[String] = maxLength(MAX_LENGTH, businessNameLengthIncorrect)
+  private val isValidChars:         Constraint[String] = pattern(regex = permittedChars, error = businessNameInvalidChar)
+  private val isNotTooLong:         Constraint[String] = maxLength(MAX_LENGTH, businessNameLengthIncorrect)
   private val nonEmptyBusinessName: Constraint[String] = nonEmpty(errorMessage = businessNameEmptyError)
 
-  val form: Form[BusinessNameForm] = Form(mapping(
-    businessName.trim() -> text
-      .verifying(firstError(nonEmptyBusinessName, isValidChars, isNotTooLong))
-  )(BusinessNameForm.apply)(BusinessNameForm.unapply)
+  val form: Form[BusinessNameForm] = Form(
+    mapping(
+      businessName.trim() -> text
+        .verifying(firstError(nonEmptyBusinessName, isValidChars, isNotTooLong))
+    )(BusinessNameForm.apply)(BusinessNameForm.unapply)
   )
 
-  def checkBusinessNameWithTradeName(form: Form[BusinessNameForm], businessTradeName: Option[String]): Form[BusinessNameForm] = {
+  def checkBusinessNameWithTradeName(
+      form:              Form[BusinessNameForm],
+      businessTradeName: Option[String]
+    ): Form[BusinessNameForm] = {
     businessTradeName match {
       case Some(tradeName) if !form.hasErrors && form.get.name.trim.toLowerCase.equals(tradeName.trim.toLowerCase) =>
         form.withError(businessName, businessNameInvalid)

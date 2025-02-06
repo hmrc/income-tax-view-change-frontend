@@ -18,7 +18,7 @@ package testConstants.messages
 
 import helpers.ComponentSpecBase
 
-object TaxYearsMessages  extends ComponentSpecBase {
+object TaxYearsMessages extends ComponentSpecBase {
 
   val viewSummary: String = messagesAPI("taxYears.viewSummary")
 

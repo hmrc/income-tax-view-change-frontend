@@ -26,14 +26,16 @@ class FinancialDetailSpec extends UnitSpec {
   "FinancialDetail" when {
 
     "working with Dunning Locks" when {
-      val supportedLock = SubItem(dunningLock = Some("Stand over order"), amount = Some(123.45))
+      val supportedLock   = SubItem(dunningLock = Some("Stand over order"), amount = Some(123.45))
       val unsupportedLock = SubItem(dunningLock = Some("Disputed debt"), amount = Some(98.76))
 
       def financialDetailWithoutLocks: FinancialDetail = financialDetail()
 
-      def financialDetailWithAllLocks: FinancialDetail = financialDetailWithoutLocks.copy(items = Some(Seq(supportedLock, unsupportedLock)))
+      def financialDetailWithAllLocks: FinancialDetail =
+        financialDetailWithoutLocks.copy(items = Some(Seq(supportedLock, unsupportedLock)))
 
-      def financialDetailWithUnsupportedLocks: FinancialDetail = financialDetailWithoutLocks.copy(items = Some(Seq(unsupportedLock)))
+      def financialDetailWithUnsupportedLocks: FinancialDetail =
+        financialDetailWithoutLocks.copy(items = Some(Seq(unsupportedLock)))
 
       "calling a predicate for Dunning Locks" should {
         "return true when there are sub items with supported Dunning Lock" in {
@@ -71,9 +73,10 @@ class FinancialDetailSpec extends UnitSpec {
     "working with Interest Locks" when {
       def financialDetailWithoutLocks: FinancialDetail = financialDetail()
 
-      def financialDetailWithLocks(lock: String): FinancialDetail = financialDetailWithoutLocks.copy(
-        items = Some(Seq(interestLockSubItem(lock)))
-      )
+      def financialDetailWithLocks(lock: String): FinancialDetail =
+        financialDetailWithoutLocks.copy(
+          items = Some(Seq(interestLockSubItem(lock)))
+        )
 
       def interestLockSubItem(lock: String) = SubItem(interestLock = Some(lock), amount = Some(123.45))
 
@@ -82,7 +85,8 @@ class FinancialDetailSpec extends UnitSpec {
         "Manual Interest Calculated",
         "C18 Appeal in Progress",
         "Manual RPI Signal",
-        "Breathing Space Moratorium Act")
+        "Breathing Space Moratorium Act"
+      )
 
       "calling a predicate for Interest Locks" should {
         for (supportedLock <- supportedLocks) {
@@ -104,7 +108,6 @@ class FinancialDetailSpec extends UnitSpec {
         financialDetail(accruedInterest = Some(3)).hasAccruedInterest shouldBe true
       }
 
-
       "should return false" in {
         financialDetail().hasAccruedInterest shouldBe false
       }
@@ -112,12 +115,18 @@ class FinancialDetailSpec extends UnitSpec {
 
     "checking credit types" should {
       "return correct credit type" in {
-        financialDetail(mainType = "ITSA Misc Credit", mainTransaction = "4023").getCreditType shouldBe Some(MfaCreditType)
-        financialDetail(mainType = "ITSA Cutover Credits", mainTransaction = "6110").getCreditType shouldBe Some(CutOverCreditType)
-        financialDetail(mainType = "SA Balancing Charge Credit", mainTransaction = "4905").getCreditType shouldBe Some(BalancingChargeCreditType)
+        financialDetail(mainType = "ITSA Misc Credit", mainTransaction = "4023").getCreditType shouldBe Some(
+          MfaCreditType
+        )
+        financialDetail(mainType = "ITSA Cutover Credits", mainTransaction = "6110").getCreditType shouldBe Some(
+          CutOverCreditType
+        )
+        financialDetail(mainType = "SA Balancing Charge Credit", mainTransaction = "4905").getCreditType shouldBe Some(
+          BalancingChargeCreditType
+        )
         financialDetail(mainType = "Not a valid type", mainTransaction = "9999").getCreditType shouldBe None
 
-        val emptyMainTypeDetail =  FinancialDetail.apply(taxYear = "2022", mainType = None, items = None)
+        val emptyMainTypeDetail = FinancialDetail.apply(taxYear = "2022", mainType = None, items = None)
         emptyMainTypeDetail.getCreditType shouldBe None
       }
     }
@@ -189,7 +198,6 @@ class FinancialDetailSpec extends UnitSpec {
         getMessageKeyByTypes(Some("ITSA Manual Penalty Pre CY-4"), Some("test")) shouldBe Some("hmrcAdjustment.text")
         getMessageKeyByTypes(Some("ITSA Misc Charge"), Some("test")) shouldBe Some("hmrcAdjustment.text")
       }
-
 
       "return None for a combination of unsupported or absent mainType and chargeType" in {
         getMessageKeyByTypes(Some("SA Payment on Account 1"), Some(NIC2_GB)) shouldBe None

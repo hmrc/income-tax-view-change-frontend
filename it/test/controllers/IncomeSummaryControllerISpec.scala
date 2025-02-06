@@ -26,41 +26,45 @@ import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSu
 class IncomeSummaryControllerISpec extends ControllerISpecHelper {
 
   def getPath(mtdRole: MTDUserRole): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     pathStart + s"/$testYear/income"
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    val path = getPath(mtdUserRole)
-    val additionalCookies = getAdditionalCookies(mtdUserRole)
-    s"GET $path" when {
-      s"a user is a $mtdUserRole" that {
-        "is authenticated, with a valid enrolment" should {
-          if (mtdUserRole == MTDSupportingAgent) {
-            testSupportingAgentAccessDenied(path, additionalCookies)
-          } else {
-            "render the income summary page" in {
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-              IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018")(
-                status = OK,
-                body = liabilityCalculationModelSuccessful
-              )
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      val path              = getPath(mtdUserRole)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            if (mtdUserRole == MTDSupportingAgent) {
+              testSupportingAgentAccessDenied(path, additionalCookies)
+            } else {
+              "render the income summary page" in {
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  businessAndPropertyResponseWoMigration
+                )
+                IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018")(
+                  status = OK,
+                  body = liabilityCalculationModelSuccessful
+                )
 
-              val res = buildGETMTDClient(path, additionalCookies).futureValue
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid, 1)
-              IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, "2018")
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid, 1)
+                IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, "2018")
 
-              res should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, "income_breakdown.heading")
-              )
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "income_breakdown.heading")
+                )
+              }
             }
           }
+          testAuthFailures(path, mtdUserRole)
         }
-        testAuthFailures(path, mtdUserRole)
       }
-    }
   }
 }

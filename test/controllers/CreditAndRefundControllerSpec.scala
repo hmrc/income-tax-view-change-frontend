@@ -43,7 +43,8 @@ class CreditAndRefundControllerSpec extends MockAuthActions with MockCreditServi
     .overrides(
       api.inject.bind[CreditService].toInstance(mockCreditService),
       api.inject.bind[RepaymentService].toInstance(mockRepaymentService)
-    ).build()
+    )
+    .build()
 
   lazy val testController = app.injector.instanceOf[CreditAndRefundController]
 
@@ -52,7 +53,7 @@ class CreditAndRefundControllerSpec extends MockAuthActions with MockCreditServi
   mtdAllRoles.foreach { mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
     s"show${if (isAgent) "Agent"}" when {
-      val action = if (isAgent) testController.showAgent() else testController.show()
+      val action      = if (isAgent) testController.showAgent() else testController.show()
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
       s"the $mtdUserRole is authenticated" should {
         if (mtdUserRole == MTDSupportingAgent) {
@@ -64,10 +65,13 @@ class CreditAndRefundControllerSpec extends MockAuthActions with MockCreditServi
               enable(CreditsRefundsRepay)
               setupMockSuccess(mtdUserRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
-              when(mockCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(
-                ANewCreditAndRefundModel()
-                  .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
-                  .get()))
+              when(mockCreditService.getAllCredits(any(), any())).thenReturn(
+                Future.successful(
+                  ANewCreditAndRefundModel()
+                    .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
+                    .get()
+                )
+              )
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK
@@ -80,10 +84,13 @@ class CreditAndRefundControllerSpec extends MockAuthActions with MockCreditServi
               setupMockSuccess(mtdUserRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
 
-              when(mockCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(
-                ANewCreditAndRefundModel()
-                  .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
-                  .get()))
+              when(mockCreditService.getAllCredits(any(), any())).thenReturn(
+                Future.successful(
+                  ANewCreditAndRefundModel()
+                    .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
+                    .get()
+                )
+              )
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK
@@ -94,55 +101,125 @@ class CreditAndRefundControllerSpec extends MockAuthActions with MockCreditServi
               setupMockSuccess(mtdUserRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
 
-              when(mockCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(
-                ANewCreditAndRefundModel()
-                  .withBalancingChargeCredit(LocalDate.of(2019, 5, 15), 250.0)
-                  .withBalancingChargeCredit(LocalDate.of(2019, 5, 15), 125.0)
-                  .withPayment(LocalDate.parse("2022-08-16"), 100.0)
-                  .withPayment(LocalDate.parse("2022-08-16"), 500.0)
-                  .withPayment(LocalDate.parse("2022-08-16"), 300.0)
-                  .withMfaCredit(LocalDate.of(2019, 5, 15), 100.0)
-                  .withMfaCredit(LocalDate.of(2019, 5, 15), 1000.0)
-                  .withMfaCredit(LocalDate.of(2019, 5, 15), 800.0)
-                  .withCutoverCredit(LocalDate.of(2019, 5, 15), 200.0)
-                  .withCutoverCredit(LocalDate.of(2019, 5, 15), 2000.0)
-                  .withCutoverCredit(LocalDate.of(2019, 5, 15), 700.0)
-                  .withFirstRefund(4.0)
-                  .withSecondRefund(2.0)
-                  .get()))
+              when(mockCreditService.getAllCredits(any(), any())).thenReturn(
+                Future.successful(
+                  ANewCreditAndRefundModel()
+                    .withBalancingChargeCredit(LocalDate.of(2019, 5, 15), 250.0)
+                    .withBalancingChargeCredit(LocalDate.of(2019, 5, 15), 125.0)
+                    .withPayment(LocalDate.parse("2022-08-16"), 100.0)
+                    .withPayment(LocalDate.parse("2022-08-16"), 500.0)
+                    .withPayment(LocalDate.parse("2022-08-16"), 300.0)
+                    .withMfaCredit(LocalDate.of(2019, 5, 15), 100.0)
+                    .withMfaCredit(LocalDate.of(2019, 5, 15), 1000.0)
+                    .withMfaCredit(LocalDate.of(2019, 5, 15), 800.0)
+                    .withCutoverCredit(LocalDate.of(2019, 5, 15), 200.0)
+                    .withCutoverCredit(LocalDate.of(2019, 5, 15), 2000.0)
+                    .withCutoverCredit(LocalDate.of(2019, 5, 15), 700.0)
+                    .withFirstRefund(4.0)
+                    .withSecondRefund(2.0)
+                    .get()
+                )
+              )
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK
 
               val doc: Document = Jsoup.parse(contentAsString(result))
-              doc.select("#main-content").select("li:nth-child(1)")
-                .select("p").first().text().contains(messages("credit-and-refund.payment") + " 15 June 2018")
-              doc.select("#main-content").select("li:nth-child(2)")
-                .select("p").first().text().contains(messages("credit-and-refund.payment") + " 15 June 2018")
-              doc.select("#main-content").select("li:nth-child(3)")
-                .select("p").first().text().contains(messages("credit-and-refund.payment") + " 15 June 2018")
-              doc.select("#main-content").select("li:nth-child(4)")
-                .select("p").first().text().contains(messages("credit-and-refund.credit-from-earlier-tax-year") + " " + s"$testTaxYearTo")
-              doc.select("#main-content").select("li:nth-child(5)")
-                .select("p").first().text().contains(messages("credit-and-refund.credit-from-adjustment-prt-1") + " " + s"$testTaxYearTo")
-              doc.select("#main-content").select("li:nth-child(6)")
-                .select("p").first().text().contains(messages("credit-and-refund.credit-from-earlier-tax-year") + " " + s"$testTaxYearTo")
-              doc.select("#main-content").select("li:nth-child(7)")
-                .select("p").first().text().contains(messages("credit-and-refund.credit-from-earlier-tax-year") + " " + s"$testTaxYearTo")
-              doc.select("#main-content").select("li:nth-child(8)")
-                .select("p").first().text().contains(messages("credit-and-refund.credit-from-adjustment-prt-1") + " " + s"$testTaxYearTo")
-              doc.select("#main-content").select("li:nth-child(9)")
-                .select("p").first().text().contains(messages("credit-and-refund.credit-from-balancing-charge-prt-1") + " " +
-                  messages("credit-and-refund.credit-from-balancing-charge-prt-2") + s"$testTaxYearTo")
-              doc.select("#main-content").select("li:nth-child(10)")
-                .select("p").first().text().contains(messages("credit-and-refund.credit-from-balancing-charge-prt-1") + " " +
-                  messages("credit-and-refund.credit-from-balancing-charge-prt-2") + s"$testTaxYearTo")
-              doc.select("#main-content").select("li:nth-child(11)")
-                .select("p").first().text().contains(messages("credit-and-refund.credit-from-adjustment-prt-1") + " " + s"$testTaxYearTo")
-              doc.select("#main-content").select("li:nth-child(12)")
-                .select("p").first().text() shouldBe "£4.00 " + messages("credit-and-refund.refundProgress-prt-2")
-              doc.select("#main-content").select("li:nth-child(13)")
-                .select("p").first().text() shouldBe "£2.00 " + messages("credit-and-refund.refundProgress-prt-2")
+              doc
+                .select("#main-content")
+                .select("li:nth-child(1)")
+                .select("p")
+                .first()
+                .text()
+                .contains(messages("credit-and-refund.payment") + " 15 June 2018")
+              doc
+                .select("#main-content")
+                .select("li:nth-child(2)")
+                .select("p")
+                .first()
+                .text()
+                .contains(messages("credit-and-refund.payment") + " 15 June 2018")
+              doc
+                .select("#main-content")
+                .select("li:nth-child(3)")
+                .select("p")
+                .first()
+                .text()
+                .contains(messages("credit-and-refund.payment") + " 15 June 2018")
+              doc
+                .select("#main-content")
+                .select("li:nth-child(4)")
+                .select("p")
+                .first()
+                .text()
+                .contains(messages("credit-and-refund.credit-from-earlier-tax-year") + " " + s"$testTaxYearTo")
+              doc
+                .select("#main-content")
+                .select("li:nth-child(5)")
+                .select("p")
+                .first()
+                .text()
+                .contains(messages("credit-and-refund.credit-from-adjustment-prt-1") + " " + s"$testTaxYearTo")
+              doc
+                .select("#main-content")
+                .select("li:nth-child(6)")
+                .select("p")
+                .first()
+                .text()
+                .contains(messages("credit-and-refund.credit-from-earlier-tax-year") + " " + s"$testTaxYearTo")
+              doc
+                .select("#main-content")
+                .select("li:nth-child(7)")
+                .select("p")
+                .first()
+                .text()
+                .contains(messages("credit-and-refund.credit-from-earlier-tax-year") + " " + s"$testTaxYearTo")
+              doc
+                .select("#main-content")
+                .select("li:nth-child(8)")
+                .select("p")
+                .first()
+                .text()
+                .contains(messages("credit-and-refund.credit-from-adjustment-prt-1") + " " + s"$testTaxYearTo")
+              doc
+                .select("#main-content")
+                .select("li:nth-child(9)")
+                .select("p")
+                .first()
+                .text()
+                .contains(
+                  messages("credit-and-refund.credit-from-balancing-charge-prt-1") + " " +
+                    messages("credit-and-refund.credit-from-balancing-charge-prt-2") + s"$testTaxYearTo"
+                )
+              doc
+                .select("#main-content")
+                .select("li:nth-child(10)")
+                .select("p")
+                .first()
+                .text()
+                .contains(
+                  messages("credit-and-refund.credit-from-balancing-charge-prt-1") + " " +
+                    messages("credit-and-refund.credit-from-balancing-charge-prt-2") + s"$testTaxYearTo"
+                )
+              doc
+                .select("#main-content")
+                .select("li:nth-child(11)")
+                .select("p")
+                .first()
+                .text()
+                .contains(messages("credit-and-refund.credit-from-adjustment-prt-1") + " " + s"$testTaxYearTo")
+              doc
+                .select("#main-content")
+                .select("li:nth-child(12)")
+                .select("p")
+                .first()
+                .text() shouldBe "£4.00 " + messages("credit-and-refund.refundProgress-prt-2")
+              doc
+                .select("#main-content")
+                .select("li:nth-child(13)")
+                .select("p")
+                .first()
+                .text() shouldBe "£2.00 " + messages("credit-and-refund.refundProgress-prt-2")
             }
           }
 
@@ -152,10 +229,13 @@ class CreditAndRefundControllerSpec extends MockAuthActions with MockCreditServi
               setupMockSuccess(mtdUserRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
 
-              when(mockCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(
-                ANewCreditAndRefundModel()
-                  .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
-                  .get()))
+              when(mockCreditService.getAllCredits(any(), any())).thenReturn(
+                Future.successful(
+                  ANewCreditAndRefundModel()
+                    .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
+                    .get()
+                )
+              )
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK
@@ -169,10 +249,9 @@ class CreditAndRefundControllerSpec extends MockAuthActions with MockCreditServi
       testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
     }
 
-
     if (mtdUserRole == MTDIndividual) {
       s"startRefund" when {
-        val action = testController.startRefund()
+        val action      = testController.startRefund()
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
         s"the $mtdUserRole is authenticated" should {
           "render the start refund process" when {
@@ -182,10 +261,13 @@ class CreditAndRefundControllerSpec extends MockAuthActions with MockCreditServi
               setupMockSuccess(mtdUserRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
 
-              when(mockCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(
-                ANewCreditAndRefundModel()
-                  .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
-                  .get()))
+              when(mockCreditService.getAllCredits(any(), any())).thenReturn(
+                Future.successful(
+                  ANewCreditAndRefundModel()
+                    .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
+                    .get()
+                )
+              )
 
               when(mockRepaymentService.start(any(), any())(any()))
                 .thenReturn(Future.successful(Right("/test/url")))
@@ -201,10 +283,13 @@ class CreditAndRefundControllerSpec extends MockAuthActions with MockCreditServi
               enable(CreditsRefundsRepay)
               setupMockSuccess(mtdUserRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
-              when(mockCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(
-                ANewCreditAndRefundModel()
-                  .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
-                  .get()))
+              when(mockCreditService.getAllCredits(any(), any())).thenReturn(
+                Future.successful(
+                  ANewCreditAndRefundModel()
+                    .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
+                    .get()
+                )
+              )
               when(mockRepaymentService.start(any(), any())(any()))
                 .thenReturn(Future.successful(Left(new InternalError)))
 

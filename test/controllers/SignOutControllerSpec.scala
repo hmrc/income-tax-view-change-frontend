@@ -37,11 +37,12 @@ class SignOutControllerSpec extends TestSupport {
     when(mockAuthConnector.authorise(any(), any[Retrieval[Option[AffinityGroup]]]())(any(), any()))
       .thenReturn(authResult)
 
-  object TestSignOutController extends SignOutController(
-    app.injector.instanceOf[FrontendAppConfig],
-    new FrontendAuthorisedFunctions(mockAuthConnector),
-    app.injector.instanceOf[MessagesControllerComponents]
-  )
+  object TestSignOutController
+      extends SignOutController(
+        app.injector.instanceOf[FrontendAppConfig],
+        new FrontendAuthorisedFunctions(mockAuthConnector),
+        app.injector.instanceOf[MessagesControllerComponents]
+      )
 
   "navigating to signout page" when {
 

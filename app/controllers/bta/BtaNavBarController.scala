@@ -30,10 +30,13 @@ import views.html.navBar.BtaNavBar
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class BtaNavBarController @Inject()(BtaNavBarPartialConnector: BtaNavBarPartialConnector,
-                                    navBar: BtaNavBar,
-                                    mcc: MessagesControllerComponents,
-                                    navBarService: BtaNavBarService) extends FrontendController(mcc) with Logging {
+class BtaNavBarController @Inject() (
+    BtaNavBarPartialConnector: BtaNavBarPartialConnector,
+    navBar:                    BtaNavBar,
+    mcc:                       MessagesControllerComponents,
+    navBarService:             BtaNavBarService)
+    extends FrontendController(mcc)
+    with Logging {
 
   def btaNavBarPartial[A](request: Request[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Html] = {
     val maybeNavLinks = BtaNavBarPartialConnector.getNavLinks()

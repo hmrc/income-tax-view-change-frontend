@@ -30,19 +30,31 @@ trait ShowInternalServerError {
   def showInternalServerError()(implicit request: Request[_]): Result
 }
 
-class ItvcErrorHandler @Inject()(val errorTemplate: ErrorTemplate,
-                                 val config: FrontendAppConfig,
-                                 val messagesApi: MessagesApi) extends LegacyFrontendErrorHandler with I18nSupport with ShowInternalServerError {
+class ItvcErrorHandler @Inject() (
+    val errorTemplate: ErrorTemplate,
+    val config:        FrontendAppConfig,
+    val messagesApi:   MessagesApi)
+    extends LegacyFrontendErrorHandler
+    with I18nSupport
+    with ShowInternalServerError {
 
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit r: Request[_]): Html = {
+  override def standardErrorTemplate(
+      pageTitle: String,
+      heading:   String,
+      message:   String
+    )(
+      implicit r: Request[_]
+    ): Html = {
     errorTemplate(pageTitle, heading, message, isAgent = false)
   }
 
   def showInternalServerError()(implicit request: Request[_]): Result =
-    InternalServerError(standardErrorTemplate(
-      messagesApi.preferred(request)("standardError.heading"),
-      messagesApi.preferred(request)("standardError.heading"),
-      messagesApi.preferred(request)("standardError.message")
-    ))
+    InternalServerError(
+      standardErrorTemplate(
+        messagesApi.preferred(request)("standardError.heading"),
+        messagesApi.preferred(request)("standardError.heading"),
+        messagesApi.preferred(request)("standardError.message")
+      )
+    )
 
 }

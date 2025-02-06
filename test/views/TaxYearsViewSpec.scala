@@ -28,27 +28,35 @@ import views.html.TaxYears
 
 class TaxYearsViewSpec extends ViewSpec {
 
-  val taxYearsView: TaxYears = app.injector.instanceOf[TaxYears]
-  lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-  val taxYearsViewSummary: String = messages("taxYears.viewSummary")
+  val taxYearsView:        TaxYears          = app.injector.instanceOf[TaxYears]
+  lazy val mockAppConfig:  FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  val taxYearsViewSummary: String            = messages("taxYears.viewSummary")
   val taxYearsOldSaLink = s"${messages("taxYears.oldSa.content.link")} ${messages("pagehelp.opensInNewTabText")}"
-  val saNote = s"${messages("taxYears.oldSa.content.text")} $taxYearsOldSaLink."
-  val saLinkAgent = s"${messages("taxYears.oldSa.agent.content.2")} ${messages("pagehelp.opensInNewTabText")}"
-  val taxYear: (String, String) => String = (year, yearPlusOne) => s"${messages("taxYears.taxYears", year, yearPlusOne)}"
+  val saNote            = s"${messages("taxYears.oldSa.content.text")} $taxYearsOldSaLink."
+  val saLinkAgent       = s"${messages("taxYears.oldSa.agent.content.2")} ${messages("pagehelp.opensInNewTabText")}"
+  val taxYear: (String, String) => String = (year, yearPlusOne) =>
+    s"${messages("taxYears.taxYears", year, yearPlusOne)}"
 
-  class TestSetup(calcs: List[Int],
-              itsaSubmissionFeatureSwitch: Boolean = false,
-              utr: Option[String] = None, isAgent: Boolean = false) {
+  class TestSetup(
+      calcs:                       List[Int],
+      itsaSubmissionFeatureSwitch: Boolean = false,
+      utr:                         Option[String] = None,
+      isAgent:                     Boolean = false) {
     lazy val page: HtmlFormat.Appendable =
-      taxYearsView(calcs, "testBackURL", utr, itsaSubmissionFeatureSwitch, 2023, isAgent = isAgent)(FakeRequest(), implicitly)
-    lazy val document: Document = Jsoup.parse(contentAsString(page))
-    lazy val layoutContent: Element = document.selectHead("#main-content")
+      taxYearsView(calcs, "testBackURL", utr, itsaSubmissionFeatureSwitch, 2023, isAgent = isAgent)(
+        FakeRequest(),
+        implicitly
+      )
+    lazy val document:      Document = Jsoup.parse(contentAsString(page))
+    lazy val layoutContent: Element  = document.selectHead("#main-content")
   }
 
   "individual" when {
     "The TaxYears view with itsaSubmissionFeatureSwitch FS disabled" when {
       "the view is displayed" should {
-        s"have the title '${messages("htmlTitle", messages("taxYears.heading"))}'" in new TestSetup(List(testYearPlusOne, testTaxYear)) {
+        s"have the title '${messages("htmlTitle", messages("taxYears.heading"))}'" in new TestSetup(
+          List(testYearPlusOne, testTaxYear)
+        ) {
           document.title() shouldBe messages("htmlTitle", messages("taxYears.heading"))
         }
 
@@ -59,8 +67,14 @@ class TaxYearsViewSpec extends ViewSpec {
 
       "the user has two tax years" should {
         "display two tax years" in new TestSetup(List(testYearPlusOne, testTaxYear)) {
-          document.selectHead("dl div:nth-child(1) dt").text() shouldBe taxYear(testTaxYear.toString, testYearPlusOne.toString)
-          document.selectHead("dl div:nth-child(2) dt").text() shouldBe taxYear((testTaxYear - 1).toString, testTaxYear.toString)
+          document.selectHead("dl div:nth-child(1) dt").text() shouldBe taxYear(
+            testTaxYear.toString,
+            testYearPlusOne.toString
+          )
+          document.selectHead("dl div:nth-child(2) dt").text() shouldBe taxYear(
+            (testTaxYear - 1).toString,
+            testTaxYear.toString
+          )
         }
 
         "display two view return links for the correct tax year" in new TestSetup(List(testYearPlusOne, testTaxYear)) {
@@ -78,12 +92,23 @@ class TaxYearsViewSpec extends ViewSpec {
 
       "the user has three tax years records" should {
         "display three tax years" in new TestSetup(List(testYearPlusTwo, testYearPlusOne, testTaxYear)) {
-          document.selectHead("dl div:nth-child(1) dt").text() shouldBe taxYear(testYearPlusOne.toString, testYearPlusTwo.toString)
-          document.selectHead("dl div:nth-child(2) dt").text() shouldBe taxYear(testTaxYear.toString, testYearPlusOne.toString)
-          document.selectHead("dl div:nth-child(3) dt").text() shouldBe taxYear((testTaxYear - 1).toString, testTaxYear.toString)
+          document.selectHead("dl div:nth-child(1) dt").text() shouldBe taxYear(
+            testYearPlusOne.toString,
+            testYearPlusTwo.toString
+          )
+          document.selectHead("dl div:nth-child(2) dt").text() shouldBe taxYear(
+            testTaxYear.toString,
+            testYearPlusOne.toString
+          )
+          document.selectHead("dl div:nth-child(3) dt").text() shouldBe taxYear(
+            (testTaxYear - 1).toString,
+            testTaxYear.toString
+          )
         }
 
-        "display three view return links for the correct tax year" in new TestSetup(List(testYearPlusTwo, testYearPlusOne, testTaxYear)) {
+        "display three view return links for the correct tax year" in new TestSetup(
+          List(testYearPlusTwo, testYearPlusOne, testTaxYear)
+        ) {
           document.getElementById("viewSummary-link-2018").text() shouldBe
             s"$taxYearsViewSummary ${taxYear((testTaxYear - 1).toString, testTaxYear.toString)}"
           document.getElementById("viewSummary-link-2019").text() shouldBe
@@ -108,7 +133,9 @@ class TaxYearsViewSpec extends ViewSpec {
       "the paragraph explaining about previous Self Assessments" should {
         "appear if the user has a UTR" in new TestSetup(List(testYearPlusOne, testTaxYear), utr = Some("1234567890")) {
           layoutContent.select("#oldSa-para").text shouldBe saNote
-          layoutContent.selectFirst("#oldSa-para").hasCorrectLinkWithNewTab(taxYearsOldSaLink, appConfig.saViewLandPService("1234567890"))
+          layoutContent
+            .selectFirst("#oldSa-para")
+            .hasCorrectLinkWithNewTab(taxYearsOldSaLink, appConfig.saViewLandPService("1234567890"))
         }
 
         "not appear if the user does not have a UTR" in new TestSetup(List(testYearPlusOne, testTaxYear)) {
@@ -120,11 +147,20 @@ class TaxYearsViewSpec extends ViewSpec {
     "The TaxYears view with itsaSubmissionFeatureSwitch FS enabled" when {
       "the user has two tax years" should {
         "display two tax years" in new TestSetup(List(testYearPlusOne, testTaxYear), true) {
-          document.selectHead("dl div:nth-child(1) dt").text() shouldBe taxYear(testTaxYear.toString, testYearPlusOne.toString)
-          document.selectHead("dl div:nth-child(2) dt").text() shouldBe taxYear((testTaxYear - 1).toString, testTaxYear.toString)
+          document.selectHead("dl div:nth-child(1) dt").text() shouldBe taxYear(
+            testTaxYear.toString,
+            testYearPlusOne.toString
+          )
+          document.selectHead("dl div:nth-child(2) dt").text() shouldBe taxYear(
+            (testTaxYear - 1).toString,
+            testTaxYear.toString
+          )
         }
 
-        "display two view return links for the correct tax year" in new TestSetup(List(testYearPlusOne, testTaxYear), true) {
+        "display two view return links for the correct tax year" in new TestSetup(
+          List(testYearPlusOne, testTaxYear),
+          true
+        ) {
 
           document.getElementById(s"viewSummary-link-$testTaxYear").attr("href") shouldBe
             controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear).url
@@ -137,7 +173,10 @@ class TaxYearsViewSpec extends ViewSpec {
             s"$taxYearsViewSummary ${taxYear(testTaxYear.toString, testYearPlusOne.toString)}"
         }
 
-        "display two update return links for the correct tax year" in new TestSetup(List(testYearPlusSix, testYearPlusFive), true) {
+        "display two update return links for the correct tax year" in new TestSetup(
+          List(testYearPlusSix, testYearPlusFive),
+          true
+        ) {
           document.getElementById("updateReturn-link-2023").text() shouldBe
             s"${messages("taxYears.updateReturn")} ${taxYear((testYearPlusFive - 1).toString, testYearPlusFive.toString)}"
           document.getElementById("updateReturn-link-2024").text() shouldBe
@@ -145,8 +184,11 @@ class TaxYearsViewSpec extends ViewSpec {
         }
 
         s"display the update return link for the $testYearPlusThree tax year and go to correct link" in new TestSetup(
-          List(testYearPlusSix, testYearPlusFive), true) {
-          document.getElementById(s"updateReturn-link-$testYearPlusFive").attr("href") shouldBe mockAppConfig.submissionFrontendTaxYearsPage(testYearPlusFive)
+          List(testYearPlusSix, testYearPlusFive),
+          true
+        ) {
+          document.getElementById(s"updateReturn-link-$testYearPlusFive").attr("href") shouldBe mockAppConfig
+            .submissionFrontendTaxYearsPage(testYearPlusFive)
         }
       }
     }
@@ -158,7 +200,9 @@ class TaxYearsViewSpec extends ViewSpec {
         controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(testYearPlusOne).url
     }
     "the paragraph explaining about previous Self Assessments" in new TestSetup(List(testYearPlusOne), isAgent = true) {
-      layoutContent.select("#oldSa-para-agent").text shouldBe s"${messages("taxYears.oldSa.agent.content.1")} $saLinkAgent. ${messages("taxYears.oldSa.agent.content.3")}"
+      layoutContent
+        .select("#oldSa-para-agent")
+        .text shouldBe s"${messages("taxYears.oldSa.agent.content.1")} $saLinkAgent. ${messages("taxYears.oldSa.agent.content.3")}"
       layoutContent.selectFirst("#oldSa-para-agent").hasCorrectLinkWithNewTab(saLinkAgent, appConfig.saForAgents)
     }
   }

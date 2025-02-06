@@ -19,11 +19,10 @@ package models.incomeSourceDetails
 import play.api.libs.json.{Json, OFormat}
 
 case class ManageIncomeSourceData(
-                                   incomeSourceId:    Option[String]  = None,
-                                   reportingMethod:   Option[String]  = None,
-                                   taxYear:           Option[Int]     = None,
-                                   journeyIsComplete: Option[Boolean] = None
-                                 )
+    incomeSourceId:    Option[String] = None,
+    reportingMethod:   Option[String] = None,
+    taxYear:           Option[Int] = None,
+    journeyIsComplete: Option[Boolean] = None)
 
 object ManageIncomeSourceData {
 

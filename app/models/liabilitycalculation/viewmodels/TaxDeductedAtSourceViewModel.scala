@@ -19,27 +19,26 @@ package models.liabilitycalculation.viewmodels
 import models.liabilitycalculation.TaxDeductedAtSource
 
 case class TaxDeductedAtSourceViewModel(
-                                         payeEmployments: Option[BigDecimal] = None,
-                                         ukPensions: Option[BigDecimal] = None,
-                                         stateBenefits: Option[BigDecimal] = None,
-                                         cis: Option[BigDecimal] = None,
-                                         ukLandAndProperty: Option[BigDecimal] = None,
-                                         specialWithholdingTax: Option[BigDecimal] = None,
-                                         voidISAs: Option[BigDecimal] = None,
-                                         savings: Option[BigDecimal] = None,
-                                         inYearAdjustmentCodedInLaterTaxYear: Option[BigDecimal] = None,
-                                         taxTakenOffTradingIncome: Option[BigDecimal] = None
-                                       ) {
+    payeEmployments:                     Option[BigDecimal] = None,
+    ukPensions:                          Option[BigDecimal] = None,
+    stateBenefits:                       Option[BigDecimal] = None,
+    cis:                                 Option[BigDecimal] = None,
+    ukLandAndProperty:                   Option[BigDecimal] = None,
+    specialWithholdingTax:               Option[BigDecimal] = None,
+    voidISAs:                            Option[BigDecimal] = None,
+    savings:                             Option[BigDecimal] = None,
+    inYearAdjustmentCodedInLaterTaxYear: Option[BigDecimal] = None,
+    taxTakenOffTradingIncome:            Option[BigDecimal] = None) {
   val allFields: Seq[(String, BigDecimal)] = Seq(
-    "inYearAdjustment" -> inYearAdjustmentCodedInLaterTaxYear,
-    "payeEmployments" -> payeEmployments,
-    "ukPensions" -> ukPensions,
-    "stateBenefits" -> stateBenefits,
-    "cis" -> cis,
-    "ukLandAndProperty" -> ukLandAndProperty,
-    "specialWithholdingTax" -> specialWithholdingTax,
-    "voidISAs" -> voidISAs,
-    "savings" -> savings,
+    "inYearAdjustment"         -> inYearAdjustmentCodedInLaterTaxYear,
+    "payeEmployments"          -> payeEmployments,
+    "ukPensions"               -> ukPensions,
+    "stateBenefits"            -> stateBenefits,
+    "cis"                      -> cis,
+    "ukLandAndProperty"        -> ukLandAndProperty,
+    "specialWithholdingTax"    -> specialWithholdingTax,
+    "voidISAs"                 -> voidISAs,
+    "savings"                  -> savings,
     "taxTakenOffTradingIncome" -> taxTakenOffTradingIncome
   ).collect {
     case (key, Some(amount)) => key -> amount

@@ -39,93 +39,109 @@ class OptOutCancelledControllerISpec extends ControllerISpecHelper with FeatureS
     pathStart + "/optout/cancelled"
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    val path = getPath(mtdUserRole)
-    val additionalCookies = getAdditionalCookies(mtdUserRole)
+  mtdAllRoles.foreach {
+    case mtdUserRole =>
+      val path              = getPath(mtdUserRole)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
 
-    s"GET $path" when {
+      s"GET $path" when {
 
-      s"a user is a $mtdUserRole" that {
+        s"a user is a $mtdUserRole" that {
 
-        "is authenticated, with a valid enrolment" should {
+          "is authenticated, with a valid enrolment" should {
 
-          "render the choose tax year page" when {
+            "render the choose tax year page" when {
 
-            "only single tax year is voluntary, CY-1 = Mandated, CY = Voluntary, CY+1 = Mandated" in {
+              "only single tax year is voluntary, CY-1 = Mandated, CY = Voluntary, CY+1 = Mandated" in {
 
-              val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
-              stubAuthorised(mtdUserRole)
+                val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
+                stubAuthorised(mtdUserRole)
 
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  businessAndPropertyResponseWoMigration
+                )
 
-              CalculationListStub.stubGetLegacyCalculationList(testNino, previousTaxYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+                CalculationListStub.stubGetLegacyCalculationList(testNino, previousTaxYear.toString)(
+                  CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString()
+                )
 
-              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
-                taxYear = dateService.getCurrentTaxYear,
-                `itsaStatusCY-1` = ITSAStatus.Mandated,
-                itsaStatusCY = ITSAStatus.Voluntary,
-                `itsaStatusCY+1` = ITSAStatus.Mandated
-              )
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+                  taxYear = dateService.getCurrentTaxYear,
+                  `itsaStatusCY-1` = ITSAStatus.Mandated,
+                  itsaStatusCY = ITSAStatus.Voluntary,
+                  `itsaStatusCY+1` = ITSAStatus.Mandated
+                )
 
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-              result should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, "optout.cancelled.title")
-              )
-            }
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "optout.cancelled.title")
+                )
+              }
 
-            "no tax year is voluntary, CY-1 = Mandated, CY = Mandated, CY+1 = Mandated" in {
+              "no tax year is voluntary, CY-1 = Mandated, CY = Mandated, CY+1 = Mandated" in {
 
-              val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
+                val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
 
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  businessAndPropertyResponseWoMigration
+                )
 
-              CalculationListStub.stubGetLegacyCalculationList(testNino, previousTaxYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+                CalculationListStub.stubGetLegacyCalculationList(testNino, previousTaxYear.toString)(
+                  CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString()
+                )
 
-              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
-                taxYear = dateService.getCurrentTaxYear,
-                `itsaStatusCY-1` = ITSAStatus.Mandated,
-                itsaStatusCY = ITSAStatus.Mandated,
-                `itsaStatusCY+1` = ITSAStatus.Mandated
-              )
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+                  taxYear = dateService.getCurrentTaxYear,
+                  `itsaStatusCY-1` = ITSAStatus.Mandated,
+                  itsaStatusCY = ITSAStatus.Mandated,
+                  `itsaStatusCY+1` = ITSAStatus.Mandated
+                )
 
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-              result should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, "optout.cancelled.title")
-              )
-            }
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "optout.cancelled.title")
+                )
+              }
 
-            "multiple tax years are voluntary, CY-1 = Mandated, CY = Voluntary, CY+1 = Voluntary" in {
+              "multiple tax years are voluntary, CY-1 = Mandated, CY = Voluntary, CY+1 = Voluntary" in {
 
-              val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
+                val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
 
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  businessAndPropertyResponseWoMigration
+                )
 
-              CalculationListStub.stubGetLegacyCalculationList(testNino, previousTaxYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+                CalculationListStub.stubGetLegacyCalculationList(testNino, previousTaxYear.toString)(
+                  CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString()
+                )
 
-              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
-                taxYear = dateService.getCurrentTaxYear,
-                `itsaStatusCY-1` = ITSAStatus.Mandated,
-                itsaStatusCY = ITSAStatus.Voluntary,
-                `itsaStatusCY+1` = ITSAStatus.Voluntary
-              )
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+                  taxYear = dateService.getCurrentTaxYear,
+                  `itsaStatusCY-1` = ITSAStatus.Mandated,
+                  itsaStatusCY = ITSAStatus.Voluntary,
+                  `itsaStatusCY+1` = ITSAStatus.Voluntary
+                )
 
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-              result should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, "optout.cancelled.title")
-              )
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "optout.cancelled.title")
+                )
+              }
             }
           }
+          testAuthFailures(path, mtdUserRole)
         }
-        testAuthFailures(path, mtdUserRole)
       }
-    }
   }
 }

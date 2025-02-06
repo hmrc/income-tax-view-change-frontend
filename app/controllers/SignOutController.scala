@@ -27,18 +27,21 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SignOutController @Inject()(config: FrontendAppConfig,
-                                  authFunctions: FrontendAuthorisedFunctions,
-                                  mcc: MessagesControllerComponents
-                                 ) extends FrontendController(mcc) {
+class SignOutController @Inject() (
+    config:        FrontendAppConfig,
+    authFunctions: FrontendAuthorisedFunctions,
+    mcc:           MessagesControllerComponents)
+    extends FrontendController(mcc) {
 
   implicit val ec: ExecutionContext = mcc.executionContext
 
   val signOut: Action[AnyContent] = Action.async { implicit request =>
-    authFunctions.authorised().retrieve(Retrievals.affinityGroup) {
-      case Some(AffinityGroup.Agent) => Future.successful(s"${config.contactFormServiceIdentifier}A")
-      case _ => Future.successful(config.contactFormServiceIdentifier)
-    }
+    authFunctions
+      .authorised()
+      .retrieve(Retrievals.affinityGroup) {
+        case Some(AffinityGroup.Agent) => Future.successful(s"${config.contactFormServiceIdentifier}A")
+        case _                         => Future.successful(config.contactFormServiceIdentifier)
+      }
       .map(contactFormIdentifier => Redirect(config.ggSignOutUrl(contactFormIdentifier)))
       .recover {
         case _: AuthorisationException => Redirect(config.signInUrl)

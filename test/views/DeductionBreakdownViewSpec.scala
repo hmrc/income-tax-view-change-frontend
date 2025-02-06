@@ -26,12 +26,12 @@ import views.html.DeductionBreakdown
 class DeductionBreakdownViewSpec extends ViewSpec {
 
   val backUrl = "/report-quarterly/income-and-expenses/view/calculation/2021"
-  val deductions: String = messages("deduction_breakdown.heading")
+  val deductions:        String = messages("deduction_breakdown.heading")
   val personalAllowance: String = messages("deduction_breakdown.table.personal_allowance")
 
   def deductionBreakdownView: DeductionBreakdown = app.injector.instanceOf[DeductionBreakdown]
 
-  def subHeading(taxYear: Int): String =  messages("deduction_breakdown.dates", s"${taxYear - 1}", s"$taxYear")
+  def subHeading(taxYear: Int): String = messages("deduction_breakdown.dates", s"${taxYear - 1}", s"$taxYear")
 
   def heading(taxYear: Int): String = s"${subHeading(taxYear)} ${messages("deduction_breakdown.heading")}"
 
@@ -39,7 +39,8 @@ class DeductionBreakdownViewSpec extends ViewSpec {
 
     "provided with a btaNavPartial" should {
       val taxYear = 2017
-      lazy val view = deductionBreakdownView(AllowancesAndDeductionsViewModel(), taxYear, backUrl, btaNavPartial = Some(testNavHtml))
+      lazy val view =
+        deductionBreakdownView(AllowancesAndDeductionsViewModel(), taxYear, backUrl, btaNavPartial = Some(testNavHtml))
 
       "render the btaNavPartial" in new Setup(view) {
         document.getElementById(s"nav-bar-link-testEnHome").text shouldBe "testEnHome"
@@ -76,7 +77,7 @@ class DeductionBreakdownViewSpec extends ViewSpec {
       "have an deduction table" which {
 
         "has only two table row" in new Setup(view) {
-          layoutContent hasTableWithCorrectSize(1, 2)
+          layoutContent hasTableWithCorrectSize (1, 2)
         }
 
         "has a table header and amount section" in new Setup(view) {
@@ -148,7 +149,7 @@ class DeductionBreakdownViewSpec extends ViewSpec {
         )
 
         "has all eleven table rows, including a header row" in new Setup(view) {
-          layoutContent hasTableWithCorrectSize(1, 11)
+          layoutContent hasTableWithCorrectSize (1, 11)
         }
 
         "has a table header and amount section" in new Setup(view) {
@@ -158,7 +159,6 @@ class DeductionBreakdownViewSpec extends ViewSpec {
         }
 
         forAll(expectedBreakdownTableDataRows) { (rowIndex: Int, deductionType: String, formattedAmount: String) =>
-
           s"has the row $rowIndex for $deductionType line with the correct amount value" in new Setup(view) {
             val row: Element = layoutContent.table().select("tr").get(rowIndex)
             row.select("td").first().text() shouldBe deductionType
@@ -172,27 +172,31 @@ class DeductionBreakdownViewSpec extends ViewSpec {
     "presenting personal allowances" should {
       val taxYear2018 = 2018
 
-      class DeductionBreakdownSetupVariedAllowances(personalAllowanceBeforeTransferOut: Option[BigDecimal] = None,
-                                                    reducedPersonalAllowance: Option[BigDecimal] = None,
-                                                    personalAllowance: Option[BigDecimal] = Some(11500.00)) extends Setup(
-        deductionBreakdownView(
-          AllowancesAndDeductionsViewModel(
-            personalAllowance = personalAllowance,
-            reducedPersonalAllowance = reducedPersonalAllowance,
-            personalAllowanceBeforeTransferOut = personalAllowanceBeforeTransferOut,
-            transferredOutAmount = Some(1234.56),
-            pensionContributions = Some(1234.56),
-            lossesAppliedToGeneralIncome = Some(1234.56),
-            giftOfInvestmentsAndPropertyToCharity = Some(1234.56),
-            grossAnnuityPayments = Some(1234.56),
-            qualifyingLoanInterestFromInvestments = Some(1234.56),
-            postCessationTradeReceipts = Some(1234.56),
-            paymentsToTradeUnionsForDeathBenefits = Some(1234.56),
-            totalAllowancesAndDeductions = Some(1234.56),
-            totalReliefs = Some(1234.56)
-          ),
-          taxYear2018, "testBackURL")
-      )
+      class DeductionBreakdownSetupVariedAllowances(
+          personalAllowanceBeforeTransferOut: Option[BigDecimal] = None,
+          reducedPersonalAllowance:           Option[BigDecimal] = None,
+          personalAllowance:                  Option[BigDecimal] = Some(11500.00))
+          extends Setup(
+            deductionBreakdownView(
+              AllowancesAndDeductionsViewModel(
+                personalAllowance = personalAllowance,
+                reducedPersonalAllowance = reducedPersonalAllowance,
+                personalAllowanceBeforeTransferOut = personalAllowanceBeforeTransferOut,
+                transferredOutAmount = Some(1234.56),
+                pensionContributions = Some(1234.56),
+                lossesAppliedToGeneralIncome = Some(1234.56),
+                giftOfInvestmentsAndPropertyToCharity = Some(1234.56),
+                grossAnnuityPayments = Some(1234.56),
+                qualifyingLoanInterestFromInvestments = Some(1234.56),
+                postCessationTradeReceipts = Some(1234.56),
+                paymentsToTradeUnionsForDeathBenefits = Some(1234.56),
+                totalAllowancesAndDeductions = Some(1234.56),
+                totalReliefs = Some(1234.56)
+              ),
+              taxYear2018,
+              "testBackURL"
+            )
+          )
 
       "only show one of the following: personalAllowanceBeforeTransferOut reducedPersonalAllowance personalAllowance" when {
 

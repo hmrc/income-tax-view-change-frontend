@@ -20,21 +20,19 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
 
-case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
-                             currentTaxYear: CurrentOptOutTaxYear,
-                             nextTaxYear: NextOptOutTaxYear) {
+case class OptOutProposition(
+    previousTaxYear: PreviousOptOutTaxYear,
+    currentTaxYear:  CurrentOptOutTaxYear,
+    nextTaxYear:     NextOptOutTaxYear) {
 
-  private val optOutYears: Seq[OptOutTaxYear] = Seq[OptOutTaxYear](
-    previousTaxYear,
-    currentTaxYear,
-    nextTaxYear)
+  private val optOutYears: Seq[OptOutTaxYear] = Seq[OptOutTaxYear](previousTaxYear, currentTaxYear, nextTaxYear)
 
   val availableTaxYearsForOptOut: Seq[TaxYear] = availableOptOutYears.map(_.taxYear)
 
   lazy val availableOptOutYears: Seq[OptOutTaxYear] = optOutYears.filter(_.canOptOut)
 
-  val isOneYearOptOut: Boolean = availableOptOutYears.size == 1
-  val isMultiYearOptOut: Boolean = availableOptOutYears.size > 1
+  val isOneYearOptOut:     Boolean = availableOptOutYears.size == 1
+  val isMultiYearOptOut:   Boolean = availableOptOutYears.size > 1
   val isNoOptOutAvailable: Boolean = availableOptOutYears.isEmpty
 
   def optOutYearsToUpdate(intent: TaxYear): Seq[TaxYear] = {
@@ -45,7 +43,7 @@ case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
     (isOneYearOptOut, isMultiYearOptOut) match {
       case (true, false) => Some(OneYearOptOutProposition(this))
       case (false, true) => Some(MultiYearOptOutProposition(this))
-      case _ => None
+      case _             => None
     }
   }
 
@@ -53,7 +51,8 @@ case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
     Seq(
       previousTaxYear.expectedItsaStatusAfter(customerIntent),
       currentTaxYear.expectedItsaStatusAfter(customerIntent),
-      nextTaxYear.expectedItsaStatusAfter(customerIntent))
+      nextTaxYear.expectedItsaStatusAfter(customerIntent)
+    )
   }
 
   def areAllTaxYearsMandated: Boolean =
@@ -62,11 +61,13 @@ case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
 
 object OptOutProposition {
 
-  def createOptOutProposition(currentYear: TaxYear,
-                              previousYearCrystallised: Boolean,
-                              previousYearItsaStatus: ITSAStatus,
-                              currentYearItsaStatus: ITSAStatus,
-                              nextYearItsaStatus: ITSAStatus): OptOutProposition = {
+  def createOptOutProposition(
+      currentYear:              TaxYear,
+      previousYearCrystallised: Boolean,
+      previousYearItsaStatus:   ITSAStatus,
+      currentYearItsaStatus:    ITSAStatus,
+      nextYearItsaStatus:       ITSAStatus
+    ): OptOutProposition = {
 
     val previousYearOptOut = PreviousOptOutTaxYear(
       status = previousYearItsaStatus,

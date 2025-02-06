@@ -21,7 +21,6 @@ import java.util.regex.Pattern._
 
 import scala.annotation.tailrec
 
-
 /*
  *  XSS Filter Guidance Taken from:
  *  -------------------------------
@@ -44,11 +43,12 @@ trait XssFilter {
 
   def filter(input: String): String = {
     @tailrec
-    def applyFilters(filters: Seq[Pattern], sanitizedOuput: String): String = filters match {
-      case Nil => sanitizedOuput
-      case filter :: tail => applyFilters(tail, filter.matcher(sanitizedOuput).replaceAll(""))
-      case _ => sanitizedOuput
-    }
+    def applyFilters(filters: Seq[Pattern], sanitizedOuput: String): String =
+      filters match {
+        case Nil            => sanitizedOuput
+        case filter :: tail => applyFilters(tail, filter.matcher(sanitizedOuput).replaceAll(""))
+        case _              => sanitizedOuput
+      }
 
     applyFilters(filters, input)
   }

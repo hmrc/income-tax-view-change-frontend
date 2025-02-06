@@ -19,26 +19,26 @@ package models.liabilitycalculation.taxcalculation
 import play.api.libs.json.{Json, OFormat}
 
 case class IncomeTax(
-                      totalIncomeReceivedFromAllSources: Int,
-                      totalAllowancesAndDeductions: Int,
-                      totalTaxableIncome: Int,
-                      payPensionsProfit: Option[PayPensionsProfit] = None,
-                      savingsAndGains: Option[SavingsAndGains] = None,
-                      dividends: Option[Dividends] = None,
-                      lumpSums: Option[LumpSums] = None,
-                      gainsOnLifePolicies: Option[GainsOnLifePolicies] = None,
-                      totalReliefs: Option[BigDecimal] = None,
-                      totalNotionalTax: Option[BigDecimal] = None,
-                      incomeTaxDueAfterTaxReductions: Option[BigDecimal] = None,
-                      totalPensionSavingsTaxCharges: Option[BigDecimal] = None,
-                      statePensionLumpSumCharges: Option[BigDecimal] = None,
-                      payeUnderpaymentsCodedOut: Option[BigDecimal] = None,
-                      totalAnnuityPaymentsTaxCharged: Option[BigDecimal] = None,
-                      totalRoyaltyPaymentsTaxCharged: Option[BigDecimal] = None,
-                      giftAidTaxChargeWhereBasicRateDiffers: Option[BigDecimal] = None,
-                      incomeTaxChargedOnTransitionProfits: Option[BigDecimal] = None
-                    ) {
-  val totalAllowancesDeductionsReliefs: BigDecimal = BigDecimal.valueOf(totalAllowancesAndDeductions) + totalReliefs.getOrElse(0.00)
+    totalIncomeReceivedFromAllSources:     Int,
+    totalAllowancesAndDeductions:          Int,
+    totalTaxableIncome:                    Int,
+    payPensionsProfit:                     Option[PayPensionsProfit] = None,
+    savingsAndGains:                       Option[SavingsAndGains] = None,
+    dividends:                             Option[Dividends] = None,
+    lumpSums:                              Option[LumpSums] = None,
+    gainsOnLifePolicies:                   Option[GainsOnLifePolicies] = None,
+    totalReliefs:                          Option[BigDecimal] = None,
+    totalNotionalTax:                      Option[BigDecimal] = None,
+    incomeTaxDueAfterTaxReductions:        Option[BigDecimal] = None,
+    totalPensionSavingsTaxCharges:         Option[BigDecimal] = None,
+    statePensionLumpSumCharges:            Option[BigDecimal] = None,
+    payeUnderpaymentsCodedOut:             Option[BigDecimal] = None,
+    totalAnnuityPaymentsTaxCharged:        Option[BigDecimal] = None,
+    totalRoyaltyPaymentsTaxCharged:        Option[BigDecimal] = None,
+    giftAidTaxChargeWhereBasicRateDiffers: Option[BigDecimal] = None,
+    incomeTaxChargedOnTransitionProfits:   Option[BigDecimal] = None) {
+  val totalAllowancesDeductionsReliefs: BigDecimal =
+    BigDecimal.valueOf(totalAllowancesAndDeductions) + totalReliefs.getOrElse(0.00)
 }
 
 object IncomeTax {
@@ -46,13 +46,12 @@ object IncomeTax {
 }
 
 case class TaxBands(
-                     name: String,
-                     rate: BigDecimal,
-                     bandLimit: Int,
-                     apportionedBandLimit: Int,
-                     income: Int,
-                     taxAmount: BigDecimal
-                   )
+    name:                 String,
+    rate:                 BigDecimal,
+    bandLimit:            Int,
+    apportionedBandLimit: Int,
+    income:               Int,
+    taxAmount:            BigDecimal)
 
 object TaxBands {
   implicit val format: OFormat[TaxBands] = Json.format[TaxBands]

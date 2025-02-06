@@ -26,11 +26,15 @@ import testUtils.TestSupport
 class ITSAStatusResponseSpec extends TestSupport with Matchers {
   "The ITSAStatusResponseModel" should {
     "read response to model " in {
-      Json.fromJson(successITSAStatusResponseJson)(ITSAStatusResponseModel.format) shouldBe JsSuccess(successITSAStatusResponseModel)
+      Json.fromJson(successITSAStatusResponseJson)(ITSAStatusResponseModel.format) shouldBe JsSuccess(
+        successITSAStatusResponseModel
+      )
     }
 
     "read minimal response to model" in {
-      Json.fromJson(successITSAStatusResponseModelMinimalJson)(ITSAStatusResponseModel.format) shouldBe JsSuccess(successITSAStatusResponseModelMinimal)
+      Json.fromJson(successITSAStatusResponseModelMinimalJson)(ITSAStatusResponseModel.format) shouldBe JsSuccess(
+        successITSAStatusResponseModelMinimal
+      )
     }
 
     "read StatusDetailMinimal response to model" in {

@@ -25,33 +25,37 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class FeatureSwitchesAdminController @Inject() (
-                                                 featureSwitchService: FeatureSwitchService,
-                                                 cc: ControllerComponents
-                                               )(implicit ec: ExecutionContext)
-  extends AbstractController(cc) {
+    featureSwitchService: FeatureSwitchService,
+    cc:                   ControllerComponents
+  )(
+    implicit ec: ExecutionContext)
+    extends AbstractController(cc) {
 
-  def get: Action[AnyContent] = Action.async {
-    featureSwitchService.getAll
-      .map(switches => Ok(Json.toJson(switches)))
-  }
-
-  def put(featureSwitchName: FeatureSwitchName): Action[AnyContent] = Action.async { request =>
-    request.body.asJson match {
-      case Some(JsBoolean(enabled)) =>
-        featureSwitchService
-          .set(featureSwitchName, enabled)
-          .map(_ => NoContent)
-      case _                        =>
-        Future.successful(BadRequest)
+  def get: Action[AnyContent] =
+    Action.async {
+      featureSwitchService.getAll
+        .map(switches => Ok(Json.toJson(switches)))
     }
-  }
 
-  def putAll: Action[AnyContent] = Action.async { request =>
-    val switches = request.body.asJson
-      .map(_.as[Seq[FeatureSwitch]])
-      .getOrElse(Seq.empty)
-      .map(switch => (switch.name -> switch.isEnabled))
-      .toMap
-    featureSwitchService.setAll(switches).map(_ => NoContent)
-  }
+  def put(featureSwitchName: FeatureSwitchName): Action[AnyContent] =
+    Action.async { request =>
+      request.body.asJson match {
+        case Some(JsBoolean(enabled)) =>
+          featureSwitchService
+            .set(featureSwitchName, enabled)
+            .map(_ => NoContent)
+        case _ =>
+          Future.successful(BadRequest)
+      }
+    }
+
+  def putAll: Action[AnyContent] =
+    Action.async { request =>
+      val switches = request.body.asJson
+        .map(_.as[Seq[FeatureSwitch]])
+        .getOrElse(Seq.empty)
+        .map(switch => (switch.name -> switch.isEnabled))
+        .toMap
+      featureSwitchService.setAll(switches).map(_ => NoContent)
+    }
 }

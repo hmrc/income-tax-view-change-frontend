@@ -39,45 +39,67 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
   private lazy val isAgent: MtdItUser[_] => Boolean = (user: MtdItUser[_]) => user.userType.contains(Agent)
 
   private lazy val redirectUrl: (IncomeSourceJourneyType, Boolean) => MtdItUser[_] => Future[Result] =
-    (incomeSources: IncomeSourceJourneyType, useDefault: Boolean) => user => {
-      (incomeSources.operation, isAgent(user), useDefault) match {
-        case (Add, true, true) =>
-          Future.successful {
-            Redirect(controllers.manageBusinesses.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSources.businessType))
-          }
-        case (Add, true, false) =>
-          Future.successful {
-            Redirect(controllers.manageBusinesses.add.routes.IncomeSourceAddedBackErrorController.showAgent(incomeSources.businessType))
-          }
-        case (Add, false, true) =>
-          Future.successful {
-            Redirect(controllers.manageBusinesses.add.routes.ReportingMethodSetBackErrorController.show(incomeSources.businessType))
-          }
-        case (Add, false, false) =>
-          Future.successful {
-            Redirect(controllers.manageBusinesses.add.routes.IncomeSourceAddedBackErrorController.show(incomeSources.businessType))
-          }
-        case (Manage, _, _) =>
-          Future.successful {
-            Redirect(controllers.manageBusinesses.manage.routes.CannotGoBackErrorController.show(isAgent(user), incomeSources.businessType))
-          }
-        case (Cease, true, _) =>
-          Future.successful {
-            Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceCeasedBackErrorController.showAgent(incomeSources.businessType))
-          }
-        case (Cease, false, _) =>
-          Future.successful {
-            Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceCeasedBackErrorController.show(incomeSources.businessType))
-          }
-        case (e, _, _) =>
-          throw new Exception(s"Invalid operation found: ${e.operationType}")
+    (incomeSources: IncomeSourceJourneyType, useDefault: Boolean) =>
+      user => {
+        (incomeSources.operation, isAgent(user), useDefault) match {
+          case (Add, true, true) =>
+            Future.successful {
+              Redirect(
+                controllers.manageBusinesses.add.routes.ReportingMethodSetBackErrorController
+                  .showAgent(incomeSources.businessType)
+              )
+            }
+          case (Add, true, false) =>
+            Future.successful {
+              Redirect(
+                controllers.manageBusinesses.add.routes.IncomeSourceAddedBackErrorController
+                  .showAgent(incomeSources.businessType)
+              )
+            }
+          case (Add, false, true) =>
+            Future.successful {
+              Redirect(
+                controllers.manageBusinesses.add.routes.ReportingMethodSetBackErrorController
+                  .show(incomeSources.businessType)
+              )
+            }
+          case (Add, false, false) =>
+            Future.successful {
+              Redirect(
+                controllers.manageBusinesses.add.routes.IncomeSourceAddedBackErrorController
+                  .show(incomeSources.businessType)
+              )
+            }
+          case (Manage, _, _) =>
+            Future.successful {
+              Redirect(
+                controllers.manageBusinesses.manage.routes.CannotGoBackErrorController
+                  .show(isAgent(user), incomeSources.businessType)
+              )
+            }
+          case (Cease, true, _) =>
+            Future.successful {
+              Redirect(
+                controllers.manageBusinesses.cease.routes.IncomeSourceCeasedBackErrorController
+                  .showAgent(incomeSources.businessType)
+              )
+            }
+          case (Cease, false, _) =>
+            Future.successful {
+              Redirect(
+                controllers.manageBusinesses.cease.routes.IncomeSourceCeasedBackErrorController
+                  .show(incomeSources.businessType)
+              )
+            }
+          case (e, _, _) =>
+            throw new Exception(s"Invalid operation found: ${e.operationType}")
+        }
       }
-    }
 
   private lazy val journeyRestartUrl: MtdItUser[_] => Future[Result] =
     user => {
       Future.successful {
-        val manageBusinessesCall = if(isAgent(user)) {
+        val manageBusinessesCall = if (isAgent(user)) {
           controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent()
         } else {
           controllers.manageBusinesses.routes.ManageYourBusinessesController.show()
@@ -86,15 +108,29 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
       }
     }
 
-  private def useDefaultRedirect(data: UIJourneySessionData, incomeSources: IncomeSourceJourneyType, journeyState: JourneyState): Boolean = {
+  private def useDefaultRedirect(
+      data:          UIJourneySessionData,
+      incomeSources: IncomeSourceJourneyType,
+      journeyState:  JourneyState
+    ): Boolean = {
     incomeSources.operation match {
-      case Add => !((journeyState == BeforeSubmissionPage || journeyState == InitialPage) && data.addIncomeSourceData.flatMap(_.incomeSourceAdded).getOrElse(false))
+      case Add =>
+        !((journeyState == BeforeSubmissionPage || journeyState == InitialPage) && data.addIncomeSourceData
+          .flatMap(_.incomeSourceAdded)
+          .getOrElse(false))
       case _ => true
     }
   }
 
-  def withSessionData(incomeSources: IncomeSourceJourneyType, journeyState: JourneyState)(codeBlock: UIJourneySessionData => Future[Result])
-                     (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  def withSessionData(
+      incomeSources: IncomeSourceJourneyType,
+      journeyState:  JourneyState
+    )(
+      codeBlock: UIJourneySessionData => Future[Result]
+    )(
+      implicit user: MtdItUser[_],
+      hc:            HeaderCarrier
+    ): Future[Result] = {
     withIncomeSourcesFS {
       sessionService.getMongo(incomeSources).flatMap {
         case Right(Some(data: UIJourneySessionData)) if showCannotGoBackErrorPage(data, incomeSources, journeyState) =>
@@ -107,18 +143,24 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
               val data = UIJourneySessionData(hc.sessionId.get.value, incomeSources.toString)
               codeBlock(data)
             }
-          }
-          else journeyRestartUrl(user)
+          } else journeyRestartUrl(user)
         case Left(ex) =>
           val agentPrefix = if (isAgent(user)) "[Agent]" else ""
-          Logger("application").error(s"$agentPrefix" +
-            s"Unable to retrieve Mongo data for journey type ${incomeSources.toString}", ex)
+          Logger("application").error(
+            s"$agentPrefix" +
+              s"Unable to retrieve Mongo data for journey type ${incomeSources.toString}",
+            ex
+          )
           journeyRestartUrl(user)
       }
     }
   }
 
-  private def showCannotGoBackErrorPage(data: UIJourneySessionData, incomeSources: IncomeSourceJourneyType, journeyState: JourneyState): Boolean = {
+  private def showCannotGoBackErrorPage(
+      data:          UIJourneySessionData,
+      incomeSources: IncomeSourceJourneyType,
+      journeyState:  JourneyState
+    ): Boolean = {
     (incomeSources.operation, journeyState) match {
       case (_, CannotGoBackPage) => false
       case (Add, BeforeSubmissionPage) | (Add, InitialPage) =>

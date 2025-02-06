@@ -33,85 +33,137 @@ class IncomeTaxCalculationConnectorSpec extends TestSupport with MockHttpV2 {
     setupMockHttpV2Get(s"${connector.getCalculationResponseUrl(nino)}?taxYear=$taxYear")(response)
   }
 
-  class GetCalculationResponseByCalcIdTest(nino: String, calcId: String, response: HttpResponse, taxYear: Int) {
+  class GetCalculationResponseByCalcIdTest(
+      nino:     String,
+      calcId:   String,
+      response: HttpResponse,
+      taxYear:  Int) {
     val connector = new IncomeTaxCalculationConnector(mockHttpClientV2, appConfig)
 
-    setupMockHttpV2Get(s"${connector.getCalculationResponseByCalcIdUrl(nino, calcId)}?taxYear=${taxYear.toString}")(response)
+    setupMockHttpV2Get(s"${connector.getCalculationResponseByCalcIdUrl(nino, calcId)}?taxYear=${taxYear.toString}")(
+      response
+    )
   }
 
   val mtditid = "XAIT0000123456"
-  val nino: String = "AA123456A"
-  val taxYear: String = "2019"
-  val taxYearAsInt: Int = taxYear.toInt
+  val nino:         String = "AA123456A"
+  val taxYear:      String = "2019"
+  val taxYearAsInt: Int    = taxYear.toInt
   val calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2"
 
   val calculation: LiabilityCalculationResponse = LiabilityCalculationResponse(
     inputs = Inputs(PersonalInformation(taxRegime = "UK", class2VoluntaryContributions = None)),
     messages = None,
     metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), Some(false), Some("customerRequest")),
-    calculation = None)
-  val calculationJson: JsObject = Json.obj("inputs" -> Json.obj("personalInformation" ->
-    Json.obj("taxRegime" -> "UK")),
-    "metadata" -> Json.obj("calculationTimestamp" -> "2019-02-15T09:35:15.094Z", "crystallised" -> false,
-    "calculationReason" -> "customerRequest"))
+    calculation = None
+  )
+  val calculationJson: JsObject = Json.obj(
+    "inputs" -> Json.obj(
+      "personalInformation" ->
+        Json.obj("taxRegime" -> "UK")
+    ),
+    "metadata" -> Json.obj(
+      "calculationTimestamp" -> "2019-02-15T09:35:15.094Z",
+      "crystallised"         -> false,
+      "calculationReason"    -> "customerRequest"
+    )
+  )
 
   "IncomeTaxCalculationConnector.getCalculationResponse" should {
     "return a calculation" when {
-      "receiving an OK with valid Calculation json" in new GetCalculationResponseTest(nino, taxYear, HttpResponse(status = OK,
-        json = calculationJson, headers = Map.empty)) {
+      "receiving an OK with valid Calculation json" in new GetCalculationResponseTest(
+        nino,
+        taxYear,
+        HttpResponse(status = OK, json = calculationJson, headers = Map.empty)
+      ) {
         val result: Future[LiabilityCalculationResponseModel] = connector.getCalculationResponse(mtditid, nino, taxYear)
 
         result.futureValue shouldBe calculation
       }
     }
     "return an error" when {
-      "receiving a 500+ response" in new GetCalculationResponseTest(nino, taxYear, HttpResponse(
-        status = INTERNAL_SERVER_ERROR, json = Json.toJson("Error message"), headers = Map.empty)) {
+      "receiving a 500+ response" in new GetCalculationResponseTest(
+        nino,
+        taxYear,
+        HttpResponse(status = INTERNAL_SERVER_ERROR, json = Json.toJson("Error message"), headers = Map.empty)
+      ) {
         val result: Future[LiabilityCalculationResponseModel] = connector.getCalculationResponse(mtditid, nino, taxYear)
 
         result.futureValue shouldBe LiabilityCalculationError(INTERNAL_SERVER_ERROR, """"Error message"""")
       }
-      "receiving a 499- response" in new GetCalculationResponseTest(nino, taxYear, HttpResponse(
-        status = 499, json = Json.toJson("Error message"), headers = Map.empty)) {
+      "receiving a 499- response" in new GetCalculationResponseTest(
+        nino,
+        taxYear,
+        HttpResponse(status = 499, json = Json.toJson("Error message"), headers = Map.empty)
+      ) {
         val result: Future[LiabilityCalculationResponseModel] = connector.getCalculationResponse(mtditid, nino, taxYear)
 
         result.futureValue shouldBe LiabilityCalculationError(499, """"Error message"""")
       }
       "receiving OK with invalid json" in new GetCalculationResponseTest(
-        nino, taxYear, HttpResponse(status = OK, json = Json.toJson(""), headers = Map.empty)) {
+        nino,
+        taxYear,
+        HttpResponse(status = OK, json = Json.toJson(""), headers = Map.empty)
+      ) {
         val result: Future[LiabilityCalculationResponseModel] = connector.getCalculationResponse(mtditid, nino, taxYear)
 
-        result.futureValue shouldBe LiabilityCalculationError(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
+        result.futureValue shouldBe LiabilityCalculationError(
+          INTERNAL_SERVER_ERROR,
+          "Json validation error parsing calculation response"
+        )
       }
     }
   }
   "IncomeTaxCalculationConnector.getCalculationResponseByCalcId" should {
     "return a calculation" when {
-      "receiving an OK with valid Calculation json" in new GetCalculationResponseByCalcIdTest(nino, calculationId, HttpResponse(status = OK,
-        json = calculationJson, headers = Map.empty), taxYearAsInt) {
-        val result: Future[LiabilityCalculationResponseModel] = connector.getCalculationResponseByCalcId(mtditid, nino, calculationId, taxYearAsInt)
+      "receiving an OK with valid Calculation json" in new GetCalculationResponseByCalcIdTest(
+        nino,
+        calculationId,
+        HttpResponse(status = OK, json = calculationJson, headers = Map.empty),
+        taxYearAsInt
+      ) {
+        val result: Future[LiabilityCalculationResponseModel] =
+          connector.getCalculationResponseByCalcId(mtditid, nino, calculationId, taxYearAsInt)
 
         result.futureValue shouldBe calculation
       }
     }
     "return an error" when {
-      "receiving a 500+ response" in new GetCalculationResponseByCalcIdTest(nino, calculationId, HttpResponse(
-        status = INTERNAL_SERVER_ERROR, json = Json.toJson("Error message"), headers = Map.empty), taxYearAsInt) {
-        val result: Future[LiabilityCalculationResponseModel] = connector.getCalculationResponseByCalcId(mtditid, nino, calculationId, taxYearAsInt)
+      "receiving a 500+ response" in new GetCalculationResponseByCalcIdTest(
+        nino,
+        calculationId,
+        HttpResponse(status = INTERNAL_SERVER_ERROR, json = Json.toJson("Error message"), headers = Map.empty),
+        taxYearAsInt
+      ) {
+        val result: Future[LiabilityCalculationResponseModel] =
+          connector.getCalculationResponseByCalcId(mtditid, nino, calculationId, taxYearAsInt)
 
         result.futureValue shouldBe LiabilityCalculationError(INTERNAL_SERVER_ERROR, """"Error message"""")
       }
-      "receiving a 499- response" in new GetCalculationResponseByCalcIdTest(nino, calculationId, HttpResponse(
-        status = 499, json = Json.toJson("Error message"), headers = Map.empty), taxYearAsInt) {
-        val result: Future[LiabilityCalculationResponseModel] = connector.getCalculationResponseByCalcId(mtditid, nino, calculationId, taxYearAsInt)
+      "receiving a 499- response" in new GetCalculationResponseByCalcIdTest(
+        nino,
+        calculationId,
+        HttpResponse(status = 499, json = Json.toJson("Error message"), headers = Map.empty),
+        taxYearAsInt
+      ) {
+        val result: Future[LiabilityCalculationResponseModel] =
+          connector.getCalculationResponseByCalcId(mtditid, nino, calculationId, taxYearAsInt)
 
         result.futureValue shouldBe LiabilityCalculationError(499, """"Error message"""")
       }
       "receiving OK with invalid json" in new GetCalculationResponseByCalcIdTest(
-        nino, calculationId, HttpResponse(status = OK, json = Json.toJson(""), headers = Map.empty), taxYearAsInt) {
-        val result: Future[LiabilityCalculationResponseModel] = connector.getCalculationResponseByCalcId(mtditid, nino, calculationId, taxYearAsInt)
+        nino,
+        calculationId,
+        HttpResponse(status = OK, json = Json.toJson(""), headers = Map.empty),
+        taxYearAsInt
+      ) {
+        val result: Future[LiabilityCalculationResponseModel] =
+          connector.getCalculationResponseByCalcId(mtditid, nino, calculationId, taxYearAsInt)
 
-        result.futureValue shouldBe LiabilityCalculationError(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
+        result.futureValue shouldBe LiabilityCalculationError(
+          INTERNAL_SERVER_ERROR,
+          "Json validation error parsing calculation response"
+        )
       }
     }
   }

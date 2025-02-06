@@ -37,10 +37,11 @@ class ITSAStatusConnectorISpec extends AnyWordSpec with ComponentSpecBase {
         "return a successful response" in {
 
           val responseBody = Json.arr(successITSAStatusResponseJson)
-          val year = "2020"
-          val futureYears = true
-          val history = true
-          val url = s"/income-tax-view-change/itsa-status/status/$taxableEntityId/$year?futureYears=${futureYears.toString}&history=${history.toString}"
+          val year         = "2020"
+          val futureYears  = true
+          val history      = true
+          val url =
+            s"/income-tax-view-change/itsa-status/status/$taxableEntityId/$year?futureYears=${futureYears.toString}&history=${history.toString}"
 
           WiremockHelper.stubGet(url, OK, responseBody.toString())
 
@@ -57,10 +58,11 @@ class ITSAStatusConnectorISpec extends AnyWordSpec with ComponentSpecBase {
       "unhappy path" when {
 
         "return a fail response" in {
-          val year = "2020"
+          val year        = "2020"
           val futureYears = true
-          val history = true
-          val url = s"/income-tax-view-change/itsa-status/status/$taxableEntityId/$year?futureYears=${futureYears.toString}&history=${history.toString}"
+          val history     = true
+          val url =
+            s"/income-tax-view-change/itsa-status/status/$taxableEntityId/$year?futureYears=${futureYears.toString}&history=${history.toString}"
 
           WiremockHelper.stubGet(url, INTERNAL_SERVER_ERROR, "")
 

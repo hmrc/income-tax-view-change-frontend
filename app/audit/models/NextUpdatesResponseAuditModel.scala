@@ -22,27 +22,30 @@ import models.obligations.SingleObligationModel
 import play.api.libs.json._
 import utils.Utilities.JsonUtil
 
-case class NextUpdatesResponseAuditModel(mtdItUser: MtdItUser[_],
-                                         incomeSourceId: String,
-                                         nextUpdates: Seq[SingleObligationModel]) extends ExtendedAuditModel {
+case class NextUpdatesResponseAuditModel(
+    mtdItUser:      MtdItUser[_],
+    incomeSourceId: String,
+    nextUpdates:    Seq[SingleObligationModel])
+    extends ExtendedAuditModel {
 
   override val transactionName: String = "view-obligations-response"
-  override val auditType: String = ViewObligationsResponse
+  override val auditType:       String = ViewObligationsResponse
 
-  private def nextUpdateJson(nextUpdate: SingleObligationModel): JsObject = Json.obj(
-    "startDate" -> nextUpdate.start,
-    "endDate" -> nextUpdate.end,
-    "dueDate" -> nextUpdate.due,
-    "obligationType" -> nextUpdate.obligationType,
-    "periodKey" -> nextUpdate.periodKey
-  ) ++ ("dateReceived", nextUpdate.dateReceived)
+  private def nextUpdateJson(nextUpdate: SingleObligationModel): JsObject =
+    Json.obj(
+      "startDate"      -> nextUpdate.start,
+      "endDate"        -> nextUpdate.end,
+      "dueDate"        -> nextUpdate.due,
+      "obligationType" -> nextUpdate.obligationType,
+      "periodKey"      -> nextUpdate.periodKey
+    ) ++ ("dateReceived", nextUpdate.dateReceived)
 
   private val nextUpdatesJson: Seq[JsObject] = nextUpdates.map(nextUpdateJson)
 
   override val detail: JsValue = Json.obj(
-    "mtditid" -> mtdItUser.mtditid,
-    "nino" -> mtdItUser.nino,
-    "incomeSourceId" -> incomeSourceId,
+    "mtditid"         -> mtdItUser.mtditid,
+    "nino"            -> mtdItUser.nino,
+    "incomeSourceId"  -> incomeSourceId,
     "reportDeadlines" -> nextUpdatesJson
   ) ++
     ("saUtr", mtdItUser.saUtr) ++

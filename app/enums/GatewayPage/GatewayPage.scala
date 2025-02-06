@@ -23,10 +23,10 @@ sealed trait GatewayPage {
 object GatewayPage {
   def apply(page: String): GatewayPage = {
     page match {
-      case WhatYouOwePage.name => WhatYouOwePage
+      case WhatYouOwePage.name     => WhatYouOwePage
       case PaymentHistoryPage.name => PaymentHistoryPage
       case TaxYearSummaryPage.name => TaxYearSummaryPage
-      case _ => NoMatch
+      case _                       => NoMatch
     }
   }
 }

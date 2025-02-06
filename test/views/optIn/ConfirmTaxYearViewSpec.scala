@@ -49,35 +49,40 @@ class ConfirmTaxYearViewSpec extends TestSupport {
   }
 
   object optInConfirmCurrentTaxYear {
-    val heading: String = messages("optIn.confirmTaxYear.heading", "2024", "2025")
-    val title: String = messages("htmlTitle", heading)
-    val titleAgent: String = messages("htmlTitle.agent", heading)
-    val desc: String = messages("optIn.confirmTaxYear.desc")
-    val text: String = messages("optIn.confirmTaxYear.text")
+    val heading:       String = messages("optIn.confirmTaxYear.heading", "2024", "2025")
+    val title:         String = messages("htmlTitle", heading)
+    val titleAgent:    String = messages("htmlTitle.agent", heading)
+    val desc:          String = messages("optIn.confirmTaxYear.desc")
+    val text:          String = messages("optIn.confirmTaxYear.text")
     val confirmButton: String = messages("optIn.confirmTaxYear.confirmSaveBtn")
-    val cancelButton: String = messages("optIn.confirmTaxYear.cancel")
+    val cancelButton:  String = messages("optIn.confirmTaxYear.cancel")
   }
 
   object optInConfirmNextTaxYear {
-    val heading: String = messages("optIn.confirmNextTaxYear.heading", "2025", "2026")
-    val title: String = messages("htmlTitle", heading)
-    val titleAgent: String = messages("htmlTitle.agent", heading)
-    val desc: String = messages("optIn.confirmNextTaxYear.desc", "6 April " + forCurrentYearEnd)
+    val heading:       String = messages("optIn.confirmNextTaxYear.heading", "2025", "2026")
+    val title:         String = messages("htmlTitle", heading)
+    val titleAgent:    String = messages("htmlTitle.agent", heading)
+    val desc:          String = messages("optIn.confirmNextTaxYear.desc", "6 April " + forCurrentYearEnd)
     val confirmButton: String = messages("optIn.confirmTaxYear.confirmSaveBtn")
-    val cancelButton: String = messages("optIn.confirmTaxYear.cancel")
+    val cancelButton:  String = messages("optIn.confirmTaxYear.cancel")
   }
 
   def runCurrentYearTest(availableOptInTaxYear: TaxYear, isAgent: Boolean): Unit = {
 
     "have the correct title" in new Setup(isAgent, availableOptInTaxYear, isNextTaxYear = false) {
-      if (isAgent) pageDocument.title() shouldBe optInConfirmCurrentTaxYear.titleAgent else pageDocument.title() shouldBe optInConfirmCurrentTaxYear.title
+      if (isAgent) pageDocument.title() shouldBe optInConfirmCurrentTaxYear.titleAgent
+      else pageDocument.title() shouldBe optInConfirmCurrentTaxYear.title
     }
 
     "have the correct heading" in new Setup(isAgent, availableOptInTaxYear, isNextTaxYear = false) {
       pageDocument.select("h1").text() shouldBe optInConfirmCurrentTaxYear.heading
     }
 
-    "have the correct summary heading and page contents" in new Setup(isAgent, availableOptInTaxYear, isNextTaxYear = false) {
+    "have the correct summary heading and page contents" in new Setup(
+      isAgent,
+      availableOptInTaxYear,
+      isNextTaxYear = false
+    ) {
       pageDocument.getElementById("confirm-tax-year-desc").text() shouldBe optInConfirmCurrentTaxYear.desc
       pageDocument.getElementById("insetText_confirmYear").text() shouldBe optInConfirmCurrentTaxYear.text
 
@@ -90,14 +95,19 @@ class ConfirmTaxYearViewSpec extends TestSupport {
   def runNextYearTest(availableOptInTaxYear: TaxYear, isAgent: Boolean): Unit = {
 
     "have the correct title for next tax year" in new Setup(isAgent, availableOptInTaxYear, isNextTaxYear = true) {
-      if (isAgent) pageDocument.title() shouldBe optInConfirmNextTaxYear.titleAgent else pageDocument.title() shouldBe optInConfirmNextTaxYear.title
+      if (isAgent) pageDocument.title() shouldBe optInConfirmNextTaxYear.titleAgent
+      else pageDocument.title() shouldBe optInConfirmNextTaxYear.title
     }
 
     "have the correct heading for next tax year" in new Setup(isAgent, availableOptInTaxYear, isNextTaxYear = true) {
       pageDocument.select("h1").text() shouldBe optInConfirmNextTaxYear.heading
     }
 
-    "have the correct summary heading and page contents for next tax year" in new Setup(isAgent, availableOptInTaxYear, isNextTaxYear = true) {
+    "have the correct summary heading and page contents for next tax year" in new Setup(
+      isAgent,
+      availableOptInTaxYear,
+      isNextTaxYear = true
+    ) {
       pageDocument.getElementById("confirm-tax-year-desc").text() shouldBe optInConfirmNextTaxYear.desc
 
       pageDocument.getElementById("confirm-button").text() shouldBe optInConfirmNextTaxYear.confirmButton

@@ -20,7 +20,6 @@ import play.api.libs.json.{Format, Json}
 
 import java.time.LocalDate
 
-
 case class AccountingPeriodModel(start: LocalDate, end: LocalDate) {
   val determineTaxYear: Int = AccountingPeriodModel.determineTaxYearFromPeriodEnd(end)
 }

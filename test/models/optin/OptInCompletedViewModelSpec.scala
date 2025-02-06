@@ -126,7 +126,7 @@ class OptInCompletedViewModelSpec extends UnitSpec {
           isCurrentYear = true,
           showAnnualReportingAdvice = false,
           optInIncludedNextYear = false,
-          annualWithFollowingYearMandated = true,
+          annualWithFollowingYearMandated = true
         )
 
       model.nextUpdatesLink shouldBe controllers.routes.NextUpdatesController.showAgent.url
@@ -141,7 +141,7 @@ class OptInCompletedViewModelSpec extends UnitSpec {
           isCurrentYear = true,
           showAnnualReportingAdvice = false,
           optInIncludedNextYear = false,
-          annualWithFollowingYearMandated = true,
+          annualWithFollowingYearMandated = true
         )
 
       model.nextUpdatesLink shouldBe controllers.routes.NextUpdatesController.show().url

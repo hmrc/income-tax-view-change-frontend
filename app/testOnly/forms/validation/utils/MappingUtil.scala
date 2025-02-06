@@ -30,13 +30,14 @@ object MappingUtil {
         x => Some(x)
       )
 
-    def toBoolean: Mapping[Boolean] = mapping.transform(
-      {
-        case Some("true") => true
-        case _ => false
-      },
-      x => Some(x.toString)
-    )
+    def toBoolean: Mapping[Boolean] =
+      mapping.transform(
+        {
+          case Some("true") => true
+          case _            => false
+        },
+        x => Some(x.toString)
+      )
   }
 
 }

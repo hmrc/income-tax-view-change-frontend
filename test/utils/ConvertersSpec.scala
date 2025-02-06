@@ -27,7 +27,7 @@ class ConvertersSpec extends TestSupport {
         Some("").trim() shouldBe None
       }
       "Some('anyString') return Some(_)" in {
-        val underTest = Gen.oneOf( ('A' to 'Z') ++ ('a' to 'z') ).sample.get.toString
+        val underTest = Gen.oneOf(('A' to 'Z') ++ ('a' to 'z')).sample.get.toString
         Some(underTest).trim().isDefined shouldBe true
       }
     }

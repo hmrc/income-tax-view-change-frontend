@@ -19,17 +19,21 @@ package testConstants.messages
 import helpers.ComponentSpecBase
 object ChargeSummaryMessages extends ComponentSpecBase {
 
-  val paymentBreakdownHeading: String = messagesAPI("chargeSummary.paymentBreakdown.heading")
-  val underReview: String = messagesAPI("chargeSummary.paymentBreakdown.dunningLocks.underReview")
+  val paymentBreakdownHeading:      String = messagesAPI("chargeSummary.paymentBreakdown.heading")
+  val underReview:                  String = messagesAPI("chargeSummary.paymentBreakdown.dunningLocks.underReview")
   val notCurrentlyChargingInterest: String = messagesAPI("chargeSummary.paymentBreakdown.interestLocks.notCharging")
 
   val lpiCreated: String = messagesAPI("chargeSummary.lpi.chargeHistory.created.balancingCharge.text")
 
-  val codingOutInsetPara: String = s"${messagesAPI("chargeSummary.codingOutInset-1")} ${messagesAPI("chargeSummary.codingOutInset-2")}" +
-    s" ${messagesAPI("pagehelp.opensInNewTabText")} ${messagesAPI("chargeSummary.codingOutInset-3")}"
-  def codingOutMessage(from: Int, to: Int): String = messagesAPI("chargeSummary.codingOutMessage", from, to)
-  def codingOutMessageWithStringMessagesArgument(from: Int, to: Int): String = messagesAPI("chargeSummary.codingOutMessage", from.toString, to.toString)
+  val codingOutInsetPara: String =
+    s"${messagesAPI("chargeSummary.codingOutInset-1")} ${messagesAPI("chargeSummary.codingOutInset-2")}" +
+      s" ${messagesAPI("pagehelp.opensInNewTabText")} ${messagesAPI("chargeSummary.codingOutInset-3")}"
+  def codingOutMessage(from:                           Int, to: Int): String = messagesAPI("chargeSummary.codingOutMessage", from, to)
+  def codingOutMessageWithStringMessagesArgument(from: Int, to: Int): String =
+    messagesAPI("chargeSummary.codingOutMessage", from.toString, to.toString)
 
-  val paymentprocessingbullet1: String = s"${messagesAPI("chargeSummary.payments-bullet1-1")} ${messagesAPI("chargeSummary.payments-bullet1-2")} ${messagesAPI("pagehelp.opensInNewTabText")} ${messagesAPI("chargeSummary.payments-bullet2")}"
-  val paymentprocessingbullet1Agent: String = s"${messagesAPI("chargeSummary.payments-bullet1-1")} ${messagesAPI("chargeSummary.payments-bullet1-2-agent")} ${messagesAPI("pagehelp.opensInNewTabText")} ${messagesAPI("chargeSummary.payments-bullet2-agent")}"
+  val paymentprocessingbullet1: String =
+    s"${messagesAPI("chargeSummary.payments-bullet1-1")} ${messagesAPI("chargeSummary.payments-bullet1-2")} ${messagesAPI("pagehelp.opensInNewTabText")} ${messagesAPI("chargeSummary.payments-bullet2")}"
+  val paymentprocessingbullet1Agent: String =
+    s"${messagesAPI("chargeSummary.payments-bullet1-1")} ${messagesAPI("chargeSummary.payments-bullet1-2-agent")} ${messagesAPI("pagehelp.opensInNewTabText")} ${messagesAPI("chargeSummary.payments-bullet2-agent")}"
 }

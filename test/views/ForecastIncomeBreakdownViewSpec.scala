@@ -29,133 +29,135 @@ class ForecastIncomeBreakdownViewSpec extends ViewSpec {
   val forecastIncomeTemplate: ForecastIncomeSummary = app.injector.instanceOf[ForecastIncomeSummary]
 
   val viewModelFull = EndOfYearEstimate(
-    incomeSource = Some(List(
-      IncomeSource(
-        incomeSourceType = "01",
-        incomeSourceName = Some("self-employment1"),
-        taxableIncome = 2500
-      ),
-      IncomeSource(
-        incomeSourceType = "01",
-        incomeSourceName = Some("self-employment2"),
-        taxableIncome = 12500
-      ),
-      IncomeSource(
-        incomeSourceType = "02",
-        incomeSourceName = None,
-        taxableIncome = 12500
-      ),
-      IncomeSource(
-        incomeSourceType = "03",
-        incomeSourceName = None,
-        taxableIncome = 12500
-      ),
-      IncomeSource(
-        incomeSourceType = "04",
-        incomeSourceName = None,
-        taxableIncome = 12500
-      ),
-      IncomeSource(
-        incomeSourceType = "05",
-        incomeSourceName = Some("employment1"),
-        taxableIncome = 12500
-      ),
-      IncomeSource(
-        incomeSourceType = "05",
-        incomeSourceName = Some("employment2"),
-        taxableIncome = 12500
-      ),
-      IncomeSource(
-        incomeSourceType = "06",
-        incomeSourceName = None,
-        taxableIncome = 12500
-      ),
-      IncomeSource(
-        incomeSourceType = "07",
-        incomeSourceName = None,
-        taxableIncome = 12500
-      ),
-      IncomeSource(
-        incomeSourceType = "08",
-        incomeSourceName = None,
-        taxableIncome = 12500
-      ),
-      IncomeSource(
-        incomeSourceType = "09",
-        incomeSourceName = None,
-        taxableIncome = 12500
-      ),
-      IncomeSource(
-        incomeSourceType = "10",
-        incomeSourceName = None,
-        taxableIncome = 12500
-      ),
-      IncomeSource(
-        incomeSourceType = "11",
-        incomeSourceName = None,
-        taxableIncome = 12500
-      ),
-      IncomeSource(
-        incomeSourceType = "12",
-        incomeSourceName = None,
-        taxableIncome = 12500
-      ),
-      IncomeSource(
-        incomeSourceType = "13",
-        incomeSourceName = None,
-        taxableIncome = 12500
-      ),
-      IncomeSource(
-        incomeSourceType = "14",
-        incomeSourceName = None,
-        taxableIncome = 12500
-      ),
-      IncomeSource(
-        incomeSourceType = "15",
-        incomeSourceName = None,
-        taxableIncome = 12500
-      ),
-      IncomeSource(
-        incomeSourceType = "16",
-        incomeSourceName = None,
-        taxableIncome = 12500
-      ),
-      IncomeSource(
-        incomeSourceType = "17",
-        incomeSourceName = None,
-        taxableIncome = 12500
-      ),
-      IncomeSource(
-        incomeSourceType = "18",
-        incomeSourceName = None,
-        taxableIncome = 12500
-      ),
-      IncomeSource(
-        incomeSourceType = "19",
-        incomeSourceName = None,
-        taxableIncome = 12500
-      ),
-      IncomeSource(
-        incomeSourceType = "20",
-        incomeSourceName = None,
-        taxableIncome = 12500
-      ),
-      IncomeSource(
-        incomeSourceType = "21",
-        incomeSourceName = None,
-        taxableIncome = 12500
-      ),
-      IncomeSource(
-        incomeSourceType = "22",
-        incomeSourceName = None,
-        taxableIncome = 12500
-      ),
-      IncomeSource(
-        incomeSourceType = "98",
-        incomeSourceName = None,
-        taxableIncome = 12500
+    incomeSource = Some(
+      List(
+        IncomeSource(
+          incomeSourceType = "01",
+          incomeSourceName = Some("self-employment1"),
+          taxableIncome = 2500
+        ),
+        IncomeSource(
+          incomeSourceType = "01",
+          incomeSourceName = Some("self-employment2"),
+          taxableIncome = 12500
+        ),
+        IncomeSource(
+          incomeSourceType = "02",
+          incomeSourceName = None,
+          taxableIncome = 12500
+        ),
+        IncomeSource(
+          incomeSourceType = "03",
+          incomeSourceName = None,
+          taxableIncome = 12500
+        ),
+        IncomeSource(
+          incomeSourceType = "04",
+          incomeSourceName = None,
+          taxableIncome = 12500
+        ),
+        IncomeSource(
+          incomeSourceType = "05",
+          incomeSourceName = Some("employment1"),
+          taxableIncome = 12500
+        ),
+        IncomeSource(
+          incomeSourceType = "05",
+          incomeSourceName = Some("employment2"),
+          taxableIncome = 12500
+        ),
+        IncomeSource(
+          incomeSourceType = "06",
+          incomeSourceName = None,
+          taxableIncome = 12500
+        ),
+        IncomeSource(
+          incomeSourceType = "07",
+          incomeSourceName = None,
+          taxableIncome = 12500
+        ),
+        IncomeSource(
+          incomeSourceType = "08",
+          incomeSourceName = None,
+          taxableIncome = 12500
+        ),
+        IncomeSource(
+          incomeSourceType = "09",
+          incomeSourceName = None,
+          taxableIncome = 12500
+        ),
+        IncomeSource(
+          incomeSourceType = "10",
+          incomeSourceName = None,
+          taxableIncome = 12500
+        ),
+        IncomeSource(
+          incomeSourceType = "11",
+          incomeSourceName = None,
+          taxableIncome = 12500
+        ),
+        IncomeSource(
+          incomeSourceType = "12",
+          incomeSourceName = None,
+          taxableIncome = 12500
+        ),
+        IncomeSource(
+          incomeSourceType = "13",
+          incomeSourceName = None,
+          taxableIncome = 12500
+        ),
+        IncomeSource(
+          incomeSourceType = "14",
+          incomeSourceName = None,
+          taxableIncome = 12500
+        ),
+        IncomeSource(
+          incomeSourceType = "15",
+          incomeSourceName = None,
+          taxableIncome = 12500
+        ),
+        IncomeSource(
+          incomeSourceType = "16",
+          incomeSourceName = None,
+          taxableIncome = 12500
+        ),
+        IncomeSource(
+          incomeSourceType = "17",
+          incomeSourceName = None,
+          taxableIncome = 12500
+        ),
+        IncomeSource(
+          incomeSourceType = "18",
+          incomeSourceName = None,
+          taxableIncome = 12500
+        ),
+        IncomeSource(
+          incomeSourceType = "19",
+          incomeSourceName = None,
+          taxableIncome = 12500
+        ),
+        IncomeSource(
+          incomeSourceType = "20",
+          incomeSourceName = None,
+          taxableIncome = 12500
+        ),
+        IncomeSource(
+          incomeSourceType = "21",
+          incomeSourceName = None,
+          taxableIncome = 12500
+        ),
+        IncomeSource(
+          incomeSourceType = "22",
+          incomeSourceName = None,
+          taxableIncome = 12500
+        ),
+        IncomeSource(
+          incomeSourceType = "98",
+          incomeSourceName = None,
+          taxableIncome = 12500
+        )
       )
-    )),
+    ),
     totalEstimatedIncome = Some(12500),
     totalTaxableIncome = Some(12500),
     incomeTaxAmount = Some(5000.99),
@@ -173,7 +175,6 @@ class ForecastIncomeBreakdownViewSpec extends ViewSpec {
     incomeTaxNicAndCgtAmount = Some(5000.99)
   )
 
-
   "The forecast income summary view" when {
 
     "provided with a calculation without taxable incomes for the 2017 tax year" should {
@@ -182,7 +183,7 @@ class ForecastIncomeBreakdownViewSpec extends ViewSpec {
       lazy val view = forecastIncomeTemplate(viewModelFull, taxYear, backUrl)
 
       "have the correct title" in new Setup(view) {
-        document.title() shouldBe  messages("htmlTitle", messages("forecast_income.heading"))
+        document.title() shouldBe messages("htmlTitle", messages("forecast_income.heading"))
       }
 
       "have the correct heading" in new Setup(view) {
@@ -225,7 +226,6 @@ class ForecastIncomeBreakdownViewSpec extends ViewSpec {
           (26, messages("forecast_income.total"), "£12,500.00")
         )
         forAll(expectedTableDataRows) { (rowIndex: Int, deductionType: String, formattedAmount: String) =>
-
           s"has the row $rowIndex for $deductionType line with the correct amount value" in new Setup(view) {
             val row: Element = layoutContent.table().select("tr").get(rowIndex)
             row.select("td").first().text() shouldBe deductionType

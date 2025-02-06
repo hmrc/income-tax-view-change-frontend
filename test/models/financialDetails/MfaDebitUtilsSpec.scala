@@ -21,13 +21,13 @@ import org.scalacheck.Prop.forAll
 import org.scalacheck._
 import testConstants.FinancialDetailsTestConstants.MFADebitsDocumentDetailsWithDueDates
 
+object MfaDebitUtilsSpec extends Properties("MFADebitType") {
 
-object MfaDebitUtilsSpec extends Properties("MFADebitType"){
-
-    val MFADebitType: Gen[String] = Gen.oneOf("ITSA PAYE Charge", "ITSA Calc Error Correction", "ITSA Manual Penalty Pre CY-4", "ITSA Misc Charge")
-    property("validMFADebitMainType") = forAll(MFADebitType) { mainType =>
-        filterMFADebits(MFADebitsEnabled = false, MFADebitsDocumentDetailsWithDueDates.head) &&
-          !filterMFADebits(MFADebitsEnabled = true, MFADebitsDocumentDetailsWithDueDates.head) &&
-        isMFADebitMainType(Some(mainType))
-    }
+  val MFADebitType: Gen[String] =
+    Gen.oneOf("ITSA PAYE Charge", "ITSA Calc Error Correction", "ITSA Manual Penalty Pre CY-4", "ITSA Misc Charge")
+  property("validMFADebitMainType") = forAll(MFADebitType) { mainType =>
+    filterMFADebits(MFADebitsEnabled = false, MFADebitsDocumentDetailsWithDueDates.head) &&
+    !filterMFADebits(MFADebitsEnabled = true, MFADebitsDocumentDetailsWithDueDates.head) &&
+    isMFADebitMainType(Some(mainType))
+  }
 }

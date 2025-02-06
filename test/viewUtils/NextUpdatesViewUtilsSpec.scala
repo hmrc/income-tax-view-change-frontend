@@ -34,17 +34,22 @@ import testUtils.UnitSpec
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.components.link
 
-class NextUpdatesViewUtilsSpec extends UnitSpec with FeatureSwitching with ImplicitDateFormatter with GuiceOneAppPerSuite {
+class NextUpdatesViewUtilsSpec
+    extends UnitSpec
+    with FeatureSwitching
+    with ImplicitDateFormatter
+    with GuiceOneAppPerSuite {
 
-  override implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-  override implicit val languageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
-  val linkComponent: link = app.injector.instanceOf[link]
+  override implicit val appConfig:     FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  override implicit val languageUtils: LanguageUtils     = app.injector.instanceOf[LanguageUtils]
+  val linkComponent:                   link              = app.injector.instanceOf[link]
 
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
-  implicit val tsTestUser: MtdItUser[_] = defaultMTDITUser(Some(testUserTypeIndividual),
-    IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
-
+  implicit val tsTestUser: MtdItUser[_] = defaultMTDITUser(
+    Some(testUserTypeIndividual),
+    IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty)
+  )
 
   val nextUpdatesViewUtils = new NextUpdatesViewUtils(linkComponent)
 
@@ -62,7 +67,10 @@ class NextUpdatesViewUtilsSpec extends UnitSpec with FeatureSwitching with Impli
 
             val isAgent = false
 
-            val optOutSingleYear = OptOutOneYearViewModel(oneYearOptOutTaxYear = TaxYear(2025, 2026), state = Some(OneYearOptOutFollowedByAnnual))
+            val optOutSingleYear = OptOutOneYearViewModel(
+              oneYearOptOutTaxYear = TaxYear(2025, 2026),
+              state = Some(OneYearOptOutFollowedByAnnual)
+            )
 
             val reportingFrequencyLink = controllers.routes.ReportingFrequencyPageController.show(isAgent).url
 
@@ -126,13 +134,20 @@ class NextUpdatesViewUtilsSpec extends UnitSpec with FeatureSwitching with Impli
 
             val taxYear = TaxYear(2025, 2026)
 
-            val optOutSingleYear = OptOutOneYearViewModel(oneYearOptOutTaxYear = taxYear, state = Some(OneYearOptOutFollowedByMandated))
+            val optOutSingleYear =
+              OptOutOneYearViewModel(oneYearOptOutTaxYear = taxYear, state = Some(OneYearOptOutFollowedByMandated))
 
             val actual = nextUpdatesViewUtils.whatTheUserCanDo(Some(optOutSingleYear), isAgent)
             val expected =
               HtmlFormat.fill(
                 Seq(
-                  Html(messages("nextUpdates.optOutOneYear.p.message", taxYear.startYear.toString, taxYear.endYear.toString)),
+                  Html(
+                    messages(
+                      "nextUpdates.optOutOneYear.p.message",
+                      taxYear.startYear.toString,
+                      taxYear.endYear.toString
+                    )
+                  ),
                   linkComponent(
                     id = Some("single-year-opt-out-warning-link"),
                     link = controllers.optOut.routes.SingleYearOptOutWarningController.show(isAgent).url,
@@ -155,13 +170,20 @@ class NextUpdatesViewUtilsSpec extends UnitSpec with FeatureSwitching with Impli
 
             val taxYear = TaxYear(2025, 2026)
 
-            val optOutSingleYear = OptOutOneYearViewModel(oneYearOptOutTaxYear = taxYear, state = Some(OneYearOptOutFollowedByAnnual))
+            val optOutSingleYear =
+              OptOutOneYearViewModel(oneYearOptOutTaxYear = taxYear, state = Some(OneYearOptOutFollowedByAnnual))
 
             val actual = nextUpdatesViewUtils.whatTheUserCanDo(Some(optOutSingleYear), isAgent)
             val expected =
               HtmlFormat.fill(
                 Seq(
-                  Html(messages("nextUpdates.optOutOneYear.p.message", taxYear.startYear.toString, taxYear.endYear.toString)),
+                  Html(
+                    messages(
+                      "nextUpdates.optOutOneYear.p.message",
+                      taxYear.startYear.toString,
+                      taxYear.endYear.toString
+                    )
+                  ),
                   linkComponent(
                     id = Some("confirm-opt-out-link"),
                     link = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url,
@@ -200,7 +222,6 @@ class NextUpdatesViewUtilsSpec extends UnitSpec with FeatureSwitching with Impli
             actual shouldBe Some(expected)
           }
         }
-
 
       }
 

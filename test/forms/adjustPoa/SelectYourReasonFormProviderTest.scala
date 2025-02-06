@@ -20,9 +20,7 @@ import models.claimToAdjustPoa.{Increase, MainIncomeLower, SelectYourReason}
 import play.api.data.{Form, FormError}
 import testUtils.TestSupport
 
-
 class SelectYourReasonFormProviderTest extends TestSupport {
-
 
   lazy val form: Form[SelectYourReason] = new SelectYourReasonFormProvider().apply()
   "Select Your Reason form" should {
@@ -44,13 +42,15 @@ class SelectYourReasonFormProviderTest extends TestSupport {
       "with no response" in {
         val completedForm = form.bind(Map.empty[String, String])
         completedForm.value shouldBe None
-        completedForm.errors shouldBe List(FormError("value", List("claimToAdjustPoa.selectYourReason.error.required"), List()))
+        completedForm.errors shouldBe List(
+          FormError("value", List("claimToAdjustPoa.selectYourReason.error.required"), List())
+        )
       }
     }
 
     "fill" when {
       "with a valid response" in {
-        val formData = MainIncomeLower
+        val formData      = MainIncomeLower
         val completedForm = form.fill(formData)
         completedForm.value shouldBe Some(MainIncomeLower)
         completedForm.errors shouldBe List.empty
@@ -58,7 +58,7 @@ class SelectYourReasonFormProviderTest extends TestSupport {
       }
 
       "with a valid response not on form" in {
-        val formData = Increase
+        val formData      = Increase
         val completedForm = form.fill(formData)
         completedForm.value shouldBe Some(Increase)
         completedForm.errors shouldBe List.empty

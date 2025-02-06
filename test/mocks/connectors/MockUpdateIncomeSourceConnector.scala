@@ -35,8 +35,20 @@ trait MockUpdateIncomeSourceConnector extends UnitSpec with BeforeAndAfterEach {
     reset(mockUpdateIncomeSourceConnector)
   }
 
-  def setupUpdateIncomeSourceTaxYearSpecific(nino: String, incomeSourceId: String, taxYearSpecific: TaxYearSpecific)(response: UpdateIncomeSourceResponse): Unit = {
-    when(mockUpdateIncomeSourceConnector.updateIncomeSourceTaxYearSpecific(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(incomeSourceId), ArgumentMatchers.eq(taxYearSpecific))(any()))
+  def setupUpdateIncomeSourceTaxYearSpecific(
+      nino:            String,
+      incomeSourceId:  String,
+      taxYearSpecific: TaxYearSpecific
+    )(
+      response: UpdateIncomeSourceResponse
+    ): Unit = {
+    when(
+      mockUpdateIncomeSourceConnector.updateIncomeSourceTaxYearSpecific(
+        ArgumentMatchers.eq(nino),
+        ArgumentMatchers.eq(incomeSourceId),
+        ArgumentMatchers.eq(taxYearSpecific)
+      )(any())
+    )
       .thenReturn(Future.successful(response))
   }
 }

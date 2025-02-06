@@ -39,9 +39,10 @@ class OptOutAuditModelSpec extends TestSupport {
 
       "generated OptOutAuditModel should contain all the correct data" in {
 
-        val intentTextYear: TaxYear = TaxYear(22, 23)
+        val intentTextYear:   TaxYear                  = TaxYear(22, 23)
         val resolvedResponse: ITSAStatusUpdateResponse = ITSAStatusUpdateResponseSuccess(OK)
-        val auditModel: OptOutAuditModel = OptOutAuditModel.generateOptOutAudit(optOutProposition, intentTextYear, resolvedResponse)
+        val auditModel: OptOutAuditModel =
+          OptOutAuditModel.generateOptOutAudit(optOutProposition, intentTextYear, resolvedResponse)
         val expectedOutcome: Outcome = Outcome(isSuccessful = true, None, None)
 
         auditModel.nino shouldEqual user.nino
@@ -54,10 +55,12 @@ class OptOutAuditModelSpec extends TestSupport {
 
       "createOutcome builds an appropriate Outcome" in {
 
-        val intentTextYear: TaxYear = TaxYear(22, 23)
+        val intentTextYear:   TaxYear                  = TaxYear(22, 23)
         val resolvedResponse: ITSAStatusUpdateResponse = ITSAStatusUpdateResponseFailure.defaultFailure()
-        val auditModel: OptOutAuditModel = OptOutAuditModel.generateOptOutAudit(optOutProposition, intentTextYear, resolvedResponse)
-        val expectedOutcome: Outcome = Outcome(isSuccessful = false, Some("INTERNAL_SERVER_ERROR"), Some("Request failed due to unknown reason"))
+        val auditModel: OptOutAuditModel =
+          OptOutAuditModel.generateOptOutAudit(optOutProposition, intentTextYear, resolvedResponse)
+        val expectedOutcome: Outcome =
+          Outcome(isSuccessful = false, Some("INTERNAL_SERVER_ERROR"), Some("Request failed due to unknown reason"))
 
         auditModel.outcome shouldEqual expectedOutcome
       }
@@ -100,16 +103,16 @@ class OptOutAuditModelSpec extends TestSupport {
 
         val expectedJson = commonAuditDetails(Individual) ++
           Json.obj(
-            "outcome" -> Json.obj("isSuccessful" -> true),
-            "optOutRequestedFromTaxYear" -> "21-22",
-            "currentYear" -> "22-23",
-            "beforeITSAStatusCurrentYear-1" -> "MTD Voluntary",
-            "beforeITSAStatusCurrentYear" -> "No Status",
-            "beforeITSAStatusCurrentYear+1" -> "No Status",
+            "outcome"                             -> Json.obj("isSuccessful" -> true),
+            "optOutRequestedFromTaxYear"          -> "21-22",
+            "currentYear"                         -> "22-23",
+            "beforeITSAStatusCurrentYear-1"       -> "MTD Voluntary",
+            "beforeITSAStatusCurrentYear"         -> "No Status",
+            "beforeITSAStatusCurrentYear+1"       -> "No Status",
             "afterAssumedITSAStatusCurrentYear-1" -> "Annual",
-            "afterAssumedITSAStatusCurrentYear" -> "No Status",
+            "afterAssumedITSAStatusCurrentYear"   -> "No Status",
             "afterAssumedITSAStatusCurrentYear+1" -> "Annual",
-            "currentYear-1Crystallised" -> false
+            "currentYear-1Crystallised"           -> false
           )
 
         actual shouldBe expectedJson
@@ -121,19 +124,20 @@ class OptOutAuditModelSpec extends TestSupport {
 
         val expectedOutcome: Outcome = Outcome(isSuccessful = true, None, None)
 
-        val actual =
-          {commonAuditDetails(Individual) ++ Json.obj(
-            "outcome" -> Json.obj("isSuccessful" -> true),
-            "optOutRequestedFromTaxYear" -> "21-22",
-            "currentYear" -> "22-23",
-            "beforeITSAStatusCurrentYear-1" -> "MTD Voluntary",
-            "beforeITSAStatusCurrentYear" -> "No Status",
-            "beforeITSAStatusCurrentYear+1" -> "No Status",
+        val actual = {
+          commonAuditDetails(Individual) ++ Json.obj(
+            "outcome"                             -> Json.obj("isSuccessful" -> true),
+            "optOutRequestedFromTaxYear"          -> "21-22",
+            "currentYear"                         -> "22-23",
+            "beforeITSAStatusCurrentYear-1"       -> "MTD Voluntary",
+            "beforeITSAStatusCurrentYear"         -> "No Status",
+            "beforeITSAStatusCurrentYear+1"       -> "No Status",
             "afterAssumedITSAStatusCurrentYear-1" -> "Annual",
-            "afterAssumedITSAStatusCurrentYear" -> "No Status",
+            "afterAssumedITSAStatusCurrentYear"   -> "No Status",
             "afterAssumedITSAStatusCurrentYear+1" -> "Annual",
-            "currentYear-1Crystallised" -> false
-          )}.as[OptOutAuditModel]
+            "currentYear-1Crystallised"           -> false
+          )
+        }.as[OptOutAuditModel]
 
         val expectedModel =
           OptOutAuditModel(

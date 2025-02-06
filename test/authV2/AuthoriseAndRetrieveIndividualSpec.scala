@@ -44,19 +44,21 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
     new GuiceApplicationBuilder()
       .overrides(
         api.inject.bind[FrontendAuthorisedFunctions].toInstance(frontendAuthFunctions),
-        api.inject.bind[AuditingService].toInstance(mockAuditingService),
+        api.inject.bind[AuditingService].toInstance(mockAuditingService)
       )
       .build()
   }
 
   def defaultAsyncBody(
-                        requestTestCase: AuthorisedAndEnrolledRequest[_] => Assertion
-                      ): AuthorisedAndEnrolledRequest[_] => Future[Result] = testRequest => {
-    requestTestCase(testRequest)
-    Future.successful(Results.Ok("Successful"))
-  }
+      requestTestCase: AuthorisedAndEnrolledRequest[_] => Assertion
+    ): AuthorisedAndEnrolledRequest[_] => Future[Result] =
+    testRequest => {
+      requestTestCase(testRequest)
+      Future.successful(Results.Ok("Successful"))
+    }
 
-  def defaultAsync: AuthorisedAndEnrolledRequest[_] => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
+  def defaultAsync: AuthorisedAndEnrolledRequest[_] => Future[Result] =
+    (_) => Future.successful(Results.Ok("Successful"))
 
   lazy val authAction = app.injector.instanceOf[AuthoriseAndRetrieveIndividual]
 
@@ -68,13 +70,15 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
 
             when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
               Future.successful[AuthRetrievals](
-                getAllEnrolmentsIndividual(true, true) ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(affinityGroup) ~ acceptedConfidenceLevel
+                getAllEnrolmentsIndividual(true, true) ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(
+                  affinityGroup
+                ) ~ acceptedConfidenceLevel
               )
             )
 
             val result = authAction.invokeBlock(
               fakeRequestWithActiveSession,
-              defaultAsyncBody{res =>
+              defaultAsyncBody { res =>
                 res.authUserDetails.affinityGroup shouldBe Some(affinityGroup)
                 res.authUserDetails.optNino shouldBe Some(testNino)
                 res.authUserDetails.saUtr shouldBe Some(testSaUtr)
@@ -90,18 +94,21 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
 
             when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
               Future.successful[AuthRetrievals](
-                getAllEnrolmentsIndividual(false, false) ~ None ~ Some(testCredentials) ~ Some(affinityGroup) ~ acceptedConfidenceLevel
+                getAllEnrolmentsIndividual(false, false) ~ None ~ Some(testCredentials) ~ Some(
+                  affinityGroup
+                ) ~ acceptedConfidenceLevel
               )
             )
 
             val result = authAction.invokeBlock(
               fakeRequestWithActiveSession,
-              defaultAsyncBody{res =>
+              defaultAsyncBody { res =>
                 res.authUserDetails.affinityGroup shouldBe Some(affinityGroup)
                 res.authUserDetails.optNino shouldBe None
                 res.authUserDetails.saUtr shouldBe None
                 res.authUserDetails.name shouldBe None
-              })
+              }
+            )
 
             status(result) shouldBe OK
             contentAsString(result) shouldBe "Successful"
@@ -114,13 +121,13 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
 
               when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
                 Future.successful[AuthRetrievals](
-                  getAllEnrolmentsIndividual(true, true) ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(affinityGroup) ~ notAcceptedConfidenceLevel
+                  getAllEnrolmentsIndividual(true, true) ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(
+                    affinityGroup
+                  ) ~ notAcceptedConfidenceLevel
                 )
               )
 
-              val result = authAction.invokeBlock(
-                fakeRequestWithActiveSession,
-                defaultAsync)
+              val result = authAction.invokeBlock(fakeRequestWithActiveSession, defaultAsync)
 
               status(result) shouldBe SEE_OTHER
               redirectLocation(result).get should include("/iv-stub/uplift")
@@ -131,13 +138,13 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
 
               when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
                 Future.successful[AuthRetrievals](
-                  getAllEnrolmentsIndividual(false, false) ~ None ~ Some(testCredentials) ~ Some(affinityGroup) ~ notAcceptedConfidenceLevel
+                  getAllEnrolmentsIndividual(false, false) ~ None ~ Some(testCredentials) ~ Some(
+                    affinityGroup
+                  ) ~ notAcceptedConfidenceLevel
                 )
               )
 
-              val result = authAction.invokeBlock(
-                fakeRequestWithActiveSession,
-                defaultAsync)
+              val result = authAction.invokeBlock(fakeRequestWithActiveSession, defaultAsync)
 
               status(result) shouldBe SEE_OTHER
               redirectLocation(result).get should include("/iv-stub/uplift")
@@ -153,12 +160,12 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
               Future.failed[AuthRetrievals](InsufficientEnrolments())
             )
 
-            val result = authAction.invokeBlock(
-              fakeRequestWithActiveSession,
-              defaultAsync)
+            val result = authAction.invokeBlock(fakeRequestWithActiveSession, defaultAsync)
 
             status(result) shouldBe SEE_OTHER
-            redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/cannot-access-service")
+            redirectLocation(result).get should include(
+              "/report-quarterly/income-and-expenses/view/cannot-access-service"
+            )
           }
         }
       }
@@ -168,13 +175,13 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
       "the user is an Agent" in {
         when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())).thenReturn(
           Future.successful[AuthRetrievals](
-            getAllEnrolmentsIndividual(true, true) ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(Agent) ~ notAcceptedConfidenceLevel
+            getAllEnrolmentsIndividual(true, true) ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(
+              Agent
+            ) ~ notAcceptedConfidenceLevel
           )
         )
 
-        val result = authAction.invokeBlock(
-          fakeRequestWithActiveSession,
-          defaultAsync)
+        val result = authAction.invokeBlock(fakeRequestWithActiveSession, defaultAsync)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/agents/client-utr")
@@ -188,9 +195,7 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
           Future.failed[AuthRetrievals](BearerTokenExpired())
         )
 
-        val result = authAction.invokeBlock(
-          fakeRequestWithActiveSession,
-          defaultAsync)
+        val result = authAction.invokeBlock(fakeRequestWithActiveSession, defaultAsync)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/session-timeout")
@@ -204,9 +209,7 @@ class AuthoriseAndRetrieveIndividualSpec extends AuthActionsSpecHelper {
           Future.failed[AuthRetrievals](MissingBearerToken())
         )
 
-        val result = authAction.invokeBlock(
-          fakeRequestWithActiveSession,
-          defaultAsync)
+        val result = authAction.invokeBlock(fakeRequestWithActiveSession, defaultAsync)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/sign-in")

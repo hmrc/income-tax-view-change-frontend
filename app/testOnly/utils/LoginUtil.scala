@@ -34,34 +34,39 @@ object LoginUtil {
   implicit val kvPairWrites: Writes[KVPair] = (
     (JsPath \ "key").write[String] and
       (JsPath \ "value").write[String]
-    ) (unlift(KVPair.unapply))
+  )(unlift(KVPair.unapply))
 
   implicit val enrolmentWrites: Writes[Enrolment] = (
     (JsPath \ "key").write[String] and
       (JsPath \ "identifiers").write[Seq[KVPair]] and
       (JsPath \ "state").write[String]
-    ) (unlift(Enrolment.unapply))
+  )(unlift(Enrolment.unapply))
 
   implicit val delegatedEnrolmentWrites: Writes[DelegatedEnrolment] = (
     (JsPath \ "key").write[String] and
       (JsPath \ "identifiers").write[Seq[KVPair]] and
       (JsPath \ "delegatedAuthRule").write[String]
-    ) (unlift(DelegatedEnrolment.unapply))
+  )(unlift(DelegatedEnrolment.unapply))
 
   def getEnrolmentData(isAgent: Boolean, enrolment: EnrolmentValues): JsValue = {
     val es = if (isAgent) {
       val enrolmentKey = "HMRC-AS-AGENT"
       Seq(
-        Enrolment(key = enrolmentKey, identifiers =
-          Seq(KVPair(key = "AgentReferenceNumber", value = "1")), state = "Activated")
+        Enrolment(
+          key = enrolmentKey,
+          identifiers = Seq(KVPair(key = "AgentReferenceNumber", value = "1")),
+          state = "Activated"
+        )
       )
     } else {
       val enrolmentKey = "HMRC-MTD-IT"
       Seq(
-        Enrolment(key = enrolmentKey, identifiers =
-          Seq(KVPair(key = "MTDITID", value = enrolment.mtditid)), state = "Activated"),
-        Enrolment(key = "IR-SA", identifiers =
-          Seq(KVPair(key = "UTR", value = enrolment.utr)), state = "Activated")
+        Enrolment(
+          key = enrolmentKey,
+          identifiers = Seq(KVPair(key = "MTDITID", value = enrolment.mtditid)),
+          state = "Activated"
+        ),
+        Enrolment(key = "IR-SA", identifiers = Seq(KVPair(key = "UTR", value = enrolment.utr)), state = "Activated")
       )
     }
     Json.toJson[Seq[Enrolment]](es)
@@ -69,20 +74,26 @@ object LoginUtil {
 
   def getDelegatedEnrolmentData(isAgent: Boolean, isSupporting: Boolean, enrolment: EnrolmentValues): JsValue = {
     val es = if (isAgent) {
-      if(isSupporting) Seq(
-        DelegatedEnrolment(key = "HMRC-MTD-IT-SUPP", identifiers =
-          Seq(KVPair(key = "MTDITID", value = enrolment.mtditid)), delegatedAuthRule = "mtd-it-auth-supp")
-      )
-      else Seq(
-        DelegatedEnrolment(key = "HMRC-MTD-IT", identifiers =
-          Seq(KVPair(key = "MTDITID", value = enrolment.mtditid)), delegatedAuthRule = "mtd-it-auth")
-
-      )
+      if (isSupporting)
+        Seq(
+          DelegatedEnrolment(
+            key = "HMRC-MTD-IT-SUPP",
+            identifiers = Seq(KVPair(key = "MTDITID", value = enrolment.mtditid)),
+            delegatedAuthRule = "mtd-it-auth-supp"
+          )
+        )
+      else
+        Seq(
+          DelegatedEnrolment(
+            key = "HMRC-MTD-IT",
+            identifiers = Seq(KVPair(key = "MTDITID", value = enrolment.mtditid)),
+            delegatedAuthRule = "mtd-it-auth"
+          )
+        )
     } else {
       Nil
     }
     Json.toJson[Seq[DelegatedEnrolment]](es)
   }
-
 
 }

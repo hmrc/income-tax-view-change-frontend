@@ -21,12 +21,12 @@ import play.api.data.validation.Invalid
 
 object ErrorMessageFactory {
 
-  val FieldErrorLoc = 0
+  val FieldErrorLoc   = 0
   val SummaryErrorLoc = 1
-  val TargetIdsLoc = 2
+  val TargetIdsLoc    = 2
 
   def error(errKey: String, errArgs: String*): Invalid = {
-    val fieldError = FieldError(errKey, errArgs)
+    val fieldError   = FieldError(errKey, errArgs)
     val summaryError = SummaryError(errKey, errArgs)
     error(fieldError, summaryError)
   }

@@ -31,20 +31,21 @@ class OptInErrorViewSpec extends TestSupport {
   }
 
   object optInErrorPageMessages {
-    val heading: String = messages("optin.optInError.heading")
-    val options: String = messages("optin.optInError.options")
-    val optInNextUpdatesBullet1: String = messages("optin.optInError.nextUpdates-bullet-1")
+    val heading:                    String = messages("optin.optInError.heading")
+    val options:                    String = messages("optin.optInError.options")
+    val optInNextUpdatesBullet1:    String = messages("optin.optInError.nextUpdates-bullet-1")
     val optInNextUpdatesBulletLink: String = messages("optin.optInError.nextUpdates-link")
-    val optInNextUpdatesBullet2: String = messages("optin.optInError.nextUpdates-bullet-2")
-    val optInNextUpdatesTotal: String = optInNextUpdatesBullet1 ++ " " ++ optInNextUpdatesBulletLink ++ " " ++ optInNextUpdatesBullet2
+    val optInNextUpdatesBullet2:    String = messages("optin.optInError.nextUpdates-bullet-2")
+    val optInNextUpdatesTotal: String =
+      optInNextUpdatesBullet1 ++ " " ++ optInNextUpdatesBulletLink ++ " " ++ optInNextUpdatesBullet2
     val optInHomeBullet1: String = messages("optin.optInError.home-bullet-1")
     val optInHomeBullet2: String = messages("optin.optInError.home-bullet-2")
-    val optInHomeTotal: String = optInHomeBullet1 ++ " " ++ optInHomeBullet2
+    val optInHomeTotal:   String = optInHomeBullet1 ++ " " ++ optInHomeBullet2
 
-    val nextUpdatesLink: String = controllers.routes.NextUpdatesController.show().url
+    val nextUpdatesLink:      String = controllers.routes.NextUpdatesController.show().url
     val nextUpdatesLinkAgent: String = controllers.routes.NextUpdatesController.showAgent.url
-    val homePageLink: String = controllers.routes.HomeController.show().url
-    val homePageLinkAgent: String = controllers.routes.HomeController.showAgent.url
+    val homePageLink:         String = controllers.routes.HomeController.show().url
+    val homePageLinkAgent:    String = controllers.routes.HomeController.showAgent.url
 
   }
 

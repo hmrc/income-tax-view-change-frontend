@@ -92,8 +92,10 @@ class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
 
   lazy val forecastTaxCalcView: ForecastTaxCalcSummary = app.injector.instanceOf[ForecastTaxCalcSummary]
 
-  val view: HtmlFormat.Appendable = forecastTaxCalcView(endOfYearEstimateModel, testTaxYear, backUrl, btaNavPartial = Some(testNavHtml))
-  val viewModel2: HtmlFormat.Appendable = forecastTaxCalcView(endOfYearEstimateModel2, testTaxYear, backUrl, btaNavPartial = Some(testNavHtml))
+  val view: HtmlFormat.Appendable =
+    forecastTaxCalcView(endOfYearEstimateModel, testTaxYear, backUrl, btaNavPartial = Some(testNavHtml))
+  val viewModel2: HtmlFormat.Appendable =
+    forecastTaxCalcView(endOfYearEstimateModel2, testTaxYear, backUrl, btaNavPartial = Some(testNavHtml))
 
   "The Forecast Tax Calc Summary View" when {
     "provided with a btaNavPartial" should {
@@ -109,7 +111,7 @@ class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
 
       "have the correct heading" in new Setup(view) {
         val pageSubHeading: String = messages("forecast_taxCalc.dates", s"${testTaxYear - 1}", s"$testTaxYear")
-        val pageHeading: String = s"$pageSubHeading ${messages("forecast_taxCalc.heading")}"
+        val pageHeading:    String = s"$pageSubHeading ${messages("forecast_taxCalc.heading")}"
         layoutContent.hasPageHeading(pageHeading)
       }
 
@@ -135,7 +137,6 @@ class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
         )
 
         forAll(expectedDataItems) { (paraNo: Int, dataItem: String, formattedAmount: String) =>
-
           s"has the dataItem: '$dataItem' with the correct amount value: $formattedAmount" in new Setup(view) {
             val para: Elements = layoutContent.select(s"#main-content p:nth-child($paraNo)")
             para.text shouldBe s"$dataItem $formattedAmount"
@@ -164,7 +165,6 @@ class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
           (20, messages("forecast_taxCalc.incomeTaxNicsCgtDue"), "£130.00")
         )
         forAll(expectedDataItems2) { (paraNo: Int, dataItem: String, formattedAmount: String) =>
-
           s"has the dataItem: '$dataItem' with the correct amount value: $formattedAmount" in new Setup(viewModel2) {
             val para: Elements = layoutContent.select(s"#main-content p:nth-child($paraNo)")
             para.text shouldBe s"$dataItem $formattedAmount"
