@@ -16,6 +16,7 @@
 
 package models.financialDetails
 
+import exceptions.MissingFieldException
 import play.api.libs.json.{Json, Reads, Writes}
 
 import scala.math.abs
@@ -33,6 +34,10 @@ case class BalanceDetails(balanceDueWithin30Days: BigDecimal,
   val refundInProgress: Boolean = firstPendingAmountRequested.isDefined || secondPendingAmountRequested.isDefined
   val total: Option[BigDecimal] = availableCredit.map{ total =>
     total - firstPendingAmountRequested.getOrElse(0) - secondPendingAmountRequested.getOrElse(0)
+  }
+
+  def getAvailableCredit: BigDecimal = {
+    availableCredit.getOrElse(throw MissingFieldException("BalanceDetailsAvailableCredit"))
   }
 
   def getAbsoluteUnAllocatedCreditAmount: Option[BigDecimal] = {

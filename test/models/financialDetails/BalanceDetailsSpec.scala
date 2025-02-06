@@ -16,6 +16,7 @@
 
 package models.financialDetails
 
+import exceptions.MissingFieldException
 import play.api.libs.json.{JsValue, Json}
 import testUtils.UnitSpec
 
@@ -105,6 +106,21 @@ class BalanceDetailsSpec extends UnitSpec {
 
       "-ve unallocated credit is passed" in {
         balanceDetailsModel(unallocatedCredit = Some(-1000.toDouble)).getAbsoluteUnAllocatedCreditAmount shouldBe  Some(1000.toDouble)
+      }
+    }
+
+    "return available credit" when {
+      "getAvailableCredit is called, successfully get availableCredit" in {
+        val balanceDetailsWithAvailableCredit = balanceDetailsModel(availableCredit = Some(100))
+
+        balanceDetailsWithAvailableCredit.getAvailableCredit shouldBe 100
+      }
+      "throw MissingFieldException if not found" in {
+        val exception = intercept[MissingFieldException] {
+          balanceDetailsModel().getAvailableCredit
+        }
+
+        exception shouldBe MissingFieldException("BalanceDetailsAvailableCredit")
       }
     }
   }
