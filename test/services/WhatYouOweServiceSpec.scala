@@ -148,7 +148,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
             .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days())))
 
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(ReviewAndReconcilePoa), isEnabled(FilterCodedOutPoas)).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(0.00, 2.00, 2.00, None, None, None, None, Some(100)),
+            balanceDetails = BalanceDetails(0.00, 2.00, 2.00, Some(100), None, None, None, Some(100)),
             chargesList = financialDetailsDueInMoreThan30DaysCi()
           )
         }

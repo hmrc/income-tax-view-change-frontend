@@ -719,7 +719,7 @@ trait ChargeConstants {
 
 
   def whatYouOweDataWithDataDueInMoreThan30Days(dunningLocks: List[Option[String]] = noDunningLocks, dueDates: List[Option[LocalDate]] = dueDateMoreThan30Days): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(0.00, 2.00, 2.00, None, None, None, None, Some(BigDecimal(100.00))),
+    balanceDetails = BalanceDetails(0.00, 2.00, 2.00, Some(BigDecimal(100.00)), None, None, None, Some(BigDecimal(100.00))),
     chargesList = testFinancialDetailsChargeItems(
       dueDate = dueDates,
       dunningLock = dunningLocks,
