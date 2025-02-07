@@ -436,7 +436,7 @@
         @if(!whatYouOweChargesList.isChargesListEmpty) {
             @saNoteParagraph
         }
-        @whatYouOweChargesList.balanceDetails.availableCredit.map { availableCreditAmt =>
+        @whatYouOweChargesList.availableCredit.map { availableCreditAmt =>
             @if(availableCreditAmt > 0) {
                 @unallocatedCreditParagraphContent(availableCreditAmt.toCurrencyString)
             }
