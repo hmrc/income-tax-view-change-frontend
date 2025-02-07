@@ -436,11 +436,10 @@
         @if(!whatYouOweChargesList.isChargesListEmpty) {
             @saNoteParagraph
         }
-        @whatYouOweChargesList.balanceDetails.getAbsoluteUnAllocatedCreditAmount.map { unallocatedCreditAmt =>
-            @if(unallocatedCreditAmt > 0) {
-                @unallocatedCreditParagraphContent(unallocatedCreditAmt.toCurrencyString)
-            }
+        @whatYouOweChargesList.availableCredit.map { availableCreditAmt =>
+            @unallocatedCreditParagraphContent(availableCreditAmt.toCurrencyString)
         }
+
         @if(utr.isDefined && !isAgent && whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.isDefined) {
             <div id="payment-button">
             @link(link = controllers.routes.PaymentController.paymentHandoff(whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.get._2.toPence, origin).url,
