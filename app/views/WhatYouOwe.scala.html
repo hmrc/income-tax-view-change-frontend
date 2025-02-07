@@ -437,10 +437,9 @@
             @saNoteParagraph
         }
         @whatYouOweChargesList.availableCredit.map { availableCreditAmt =>
-            @if(availableCreditAmt > 0) {
-                @unallocatedCreditParagraphContent(availableCreditAmt.toCurrencyString)
-            }
+            @unallocatedCreditParagraphContent(availableCreditAmt.toCurrencyString)
         }
+
         @if(utr.isDefined && !isAgent && whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.isDefined) {
             <div id="payment-button">
             @link(link = controllers.routes.PaymentController.paymentHandoff(whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.get._2.toPence, origin).url,
