@@ -24,8 +24,8 @@ import java.time.LocalDate
 
 case class LPPDetails(
                        principalChargeReference: String,
-                       penaltyCategory: LPPPenaltyCategoryEnum.Value,
-                       penaltyStatus: LPPPenaltyStatusEnum.Value,
+                       penaltyCategory: LPPPenaltyCategoryEnum,
+                       penaltyStatus: LPPPenaltyStatusEnum,
                        penaltyAmountAccruing: BigDecimal,
                        penaltyAmountPosted: BigDecimal,
                        penaltyAmountPaid: Option[BigDecimal],
@@ -42,7 +42,7 @@ case class LPPDetails(
                        communicationsDate: Option[LocalDate],
                        penaltyChargeReference: Option[String],
                        penaltyChargeDueDate: Option[LocalDate],
-                       appealInformation: Option[Seq[AppealInformationType]],
+                       appealInformation: Seq[AppealInformationType],
                        principalChargeDocNumber: String,
                        principalChargeMainTransaction: String,
                        principalChargeSubTransaction: String,
@@ -50,7 +50,7 @@ case class LPPDetails(
                        principalChargeBillingTo: LocalDate,
                        principalChargeDueDate: LocalDate,
                        principalChargeLatestClearing: Option[LocalDate],
-                       timeToPay: Option[Seq[TimeToPay]]
+                       timeToPay: Seq[TimeToPay]
                      )
 
 object LPPDetails extends JsonUtils {
@@ -58,8 +58,8 @@ object LPPDetails extends JsonUtils {
     override def reads(json: JsValue): JsResult[LPPDetails] = {
       for {
         principleChargeReference <- (json \ "principalChargeReference").validate[String]
-        penaltyCategory <- (json \ "penaltyCategory").validate[LPPPenaltyCategoryEnum.Value]
-        penaltyStatus <- (json \ "penaltyStatus").validate[LPPPenaltyStatusEnum.Value]
+        penaltyCategory <- (json \ "penaltyCategory").validate[LPPPenaltyCategoryEnum](LPPPenaltyCategoryEnum.reads)
+        penaltyStatus <- (json \ "penaltyStatus").validate[LPPPenaltyStatusEnum](LPPPenaltyStatusEnum.format)
         penaltyAmountAccruing <- (json \ "penaltyAmountAccruing").validate[BigDecimal]
         penaltyAmountPosted <- (json \ "penaltyAmountPosted").validate[BigDecimal]
         penaltyAmountPaid <- (json \ "penaltyAmountPaid").validateOpt[BigDecimal]
@@ -76,7 +76,7 @@ object LPPDetails extends JsonUtils {
         communicationsDate <- (json \ "communicationsDate").validateOpt[LocalDate]
         penaltyChargeReference <- (json \ "penaltyChargeReference").validateOpt[String]
         penaltyChargeDueDate <- (json \ "penaltyChargeDueDate").validateOpt[LocalDate]
-        appealInformation <- (json \ "appealInformation").validateOpt[Seq[AppealInformationType]]
+        appealInformation <- (json \ "appealInformation").validate[Seq[AppealInformationType]]
         principalChargeDocNumber <- (json \ "principalChargeDocNumber").validate[String]
         principalChargeMainTransaction <- (json \ "principalChargeMainTransaction").validate[String]
         principalChargeSubTransaction <- (json \ "principalChargeSubTransaction").validate[String]
@@ -84,7 +84,7 @@ object LPPDetails extends JsonUtils {
         principalChargeBillingTo <- (json \ "principalChargeBillingTo").validate[LocalDate]
         principalChargeDueDate <- (json \ "principalChargeDueDate").validate[LocalDate]
         principalChargeLatestClearing <- (json \ "principalChargeLatestClearing").validateOpt[LocalDate]
-        timeToPay <- (json \ "timeToPay").validateOpt[Seq[TimeToPay]]
+        timeToPay <- (json \ "timeToPay").validate[Seq[TimeToPay]]
       } yield LPPDetails(principleChargeReference, penaltyCategory, penaltyStatus, penaltyAmountAccruing, penaltyAmountPosted,
         penaltyAmountPaid, penaltyAmountOutstanding, lpp1LRCalculationAmount, lpp1LRDays, lpp1LRPercentage, lpp1HRCalculationAmount,
         lpp1HRDays, lpp1HRPercentage, lpp2Days, lpp2Percentage, penaltyChargeCreationDate, communicationsDate, penaltyChargeReference,

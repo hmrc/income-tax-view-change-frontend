@@ -18,23 +18,51 @@ package models.penalties.appealInformation
 
 import play.api.libs.json._
 
-object AppealStatusEnum extends Enumeration {
+sealed trait AppealStatusEnum {
+  val value: String
+  override def toString: String = value
+}
 
-  val Under_Appeal: AppealStatusEnum.Value = Value("A")
-  val Upheld: AppealStatusEnum.Value = Value("B")
-  val Rejected: AppealStatusEnum.Value = Value("C")
-  val Unappealable: AppealStatusEnum.Value = Value("99")
-  val AppealRejectedChargeAlreadyReversed: AppealStatusEnum.Value = Value("91")
-  val AppealUpheldPointAlreadyRemoved: AppealStatusEnum.Value = Value("92")
-  val AppealUpheldChargeAlreadyReversed: AppealStatusEnum.Value = Value("93")
-  val AppealRejectedPointAlreadyRemoved: AppealStatusEnum.Value = Value("94")
+case object UnderAppeal extends AppealStatusEnum {
+  override val value: String = "A"
+}
+case object Upheld extends AppealStatusEnum {
+  override val value: String = "B"
+}
+case object Rejected extends AppealStatusEnum {
+  override val value: String = "C"
+}
+case object Unappealable extends AppealStatusEnum {
+  override val value: String = "99"
+}
+case object AppealRejectedChargeAlreadyReversed extends AppealStatusEnum {
+  override val value: String = "91"
+}
+case object AppealUpheldPointAlreadyRemoved extends AppealStatusEnum {
+  override val value: String = "92"
+}
+case object AppealUpheldChargeAlreadyReversed extends AppealStatusEnum {
+  override val value: String = "93"
+}
+case object AppealRejectedPointAlreadyRemoved extends AppealStatusEnum {
+  override val value: String = "94"
+}
 
-  implicit val format: Format[AppealStatusEnum.Value] = new Format[AppealStatusEnum.Value] {
+object AppealStatusEnum {
+  implicit val writes: Writes[AppealStatusEnum] = Writes {
+    case UnderAppeal => JsString(UnderAppeal.value)
+    case Upheld => JsString(Upheld.value)
+    case Rejected => JsString(Rejected.value)
+    case Unappealable => JsString(Unappealable.value)
+    case AppealRejectedChargeAlreadyReversed => JsString(AppealRejectedChargeAlreadyReversed.value)
+    case AppealUpheldPointAlreadyRemoved => JsString(AppealUpheldPointAlreadyRemoved.value)
+    case AppealUpheldChargeAlreadyReversed => JsString(AppealUpheldChargeAlreadyReversed.value)
+    case AppealRejectedPointAlreadyRemoved => JsString(AppealRejectedPointAlreadyRemoved.value)
+  }
 
-    override def writes(o: AppealStatusEnum.Value): JsValue = JsString(o.toString)
-
-    override def reads(json: JsValue): JsResult[AppealStatusEnum.Value] = json.as[String].toUpperCase match {
-      case "A" => JsSuccess(Under_Appeal)
+  implicit val reads: Reads[AppealStatusEnum] = Reads {
+    case JsString(value) => value.toUpperCase match {
+      case "A" => JsSuccess(UnderAppeal)
       case "B" => JsSuccess(Upheld)
       case "C" => JsSuccess(Rejected)
       case "99" => JsSuccess(Unappealable)
@@ -42,8 +70,10 @@ object AppealStatusEnum extends Enumeration {
       case "92" => JsSuccess(AppealUpheldPointAlreadyRemoved)
       case "93" => JsSuccess(AppealUpheldChargeAlreadyReversed)
       case "94" => JsSuccess(AppealRejectedPointAlreadyRemoved)
-      case e => JsError(s"$e not recognised")
+      case e => JsError(s"$e not recognised as appeal status value")
     }
+    case _ => JsError("Invalid JSON value")
   }
 
+  implicit val format: Format[AppealStatusEnum] = Format(reads, writes)
 }

@@ -18,20 +18,33 @@ package models.penalties.appealInformation
 
 import play.api.libs.json._
 
-object AppealLevelEnum extends Enumeration {
+sealed trait AppealLevelEnum {
+  val value: String
+  override def toString: String = value
+}
 
-  val HMRC: AppealLevelEnum.Value = Value("01")
-  val Tribunal: AppealLevelEnum.Value = Value("02")
+case object HMRC extends AppealLevelEnum {
+  override val value: String = "01"
+}
 
-  implicit val format: Format[AppealLevelEnum.Value] = new Format[AppealLevelEnum.Value] {
+case object Tribunal extends AppealLevelEnum {
+  override val value: String = "02"
+}
 
-    override def writes(o: AppealLevelEnum.Value): JsValue = JsString(o.toString)
-
-    override def reads(json: JsValue): JsResult[AppealLevelEnum.Value] = json.as[String].toUpperCase match {
-      case "01" => JsSuccess(HMRC)
-      case "02" => JsSuccess(Tribunal)
-      case e => JsError(s"$e not recognised")
-    }
+object AppealLevelEnum {
+  implicit val writes: Writes[AppealLevelEnum] = Writes {
+    case HMRC => JsString(HMRC.value)
+    case Tribunal => JsString(Tribunal.value)
   }
 
+  implicit val reads: Reads[AppealLevelEnum] = Reads {
+    case JsString(value) => value.toUpperCase match {
+      case "01" => JsSuccess(HMRC)
+      case "02" => JsSuccess(Tribunal)
+      case e => JsError(s"$e not recognised as appeal level value")
+    }
+    case _ => JsError("Invalid JSON value")
+  }
+
+  implicit val format: Format[AppealLevelEnum] = Format(reads, writes)
 }

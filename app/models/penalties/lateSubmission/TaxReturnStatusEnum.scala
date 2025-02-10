@@ -18,21 +18,29 @@ package models.penalties.lateSubmission
 
 import play.api.libs.json._
 
-object TaxReturnStatusEnum extends Enumeration {
+sealed trait TaxReturnStatusEnum
 
-  val Open: TaxReturnStatusEnum.Value = Value
-  val Fulfilled: TaxReturnStatusEnum.Value = Value
-  val Reversed: TaxReturnStatusEnum.Value = Value
+case object Open extends TaxReturnStatusEnum
+case object Fulfilled extends TaxReturnStatusEnum
+case object Reversed extends TaxReturnStatusEnum
 
-  implicit val format: Format[TaxReturnStatusEnum.Value] = new Format[TaxReturnStatusEnum.Value] {
-    override def reads(json: JsValue): JsResult[TaxReturnStatusEnum.Value] = json.as[String].toUpperCase match {
+object TaxReturnStatusEnum {
+  implicit val writes: Writes[TaxReturnStatusEnum] = Writes {
+    case Open => JsString("Open")
+    case Fulfilled => JsString("Fulfilled")
+    case Reversed => JsString("Reversed")
+  }
+
+  implicit val reads: Reads[TaxReturnStatusEnum] = Reads {
+    case JsString(value) => value.toUpperCase match {
       case "OPEN" => JsSuccess(Open)
       case "FULFILLED" => JsSuccess(Fulfilled)
       case "REVERSED" => JsSuccess(Reversed)
-      case e => JsError(s"$e not recognised")
+      case e => JsError(s"$e not recognised as a tax return status")
     }
-
-    override def writes(o: TaxReturnStatusEnum.Value): JsValue = JsString(o.toString)
+    case _ => JsError("Invalid JSON value")
   }
 
+  implicit val format: Format[TaxReturnStatusEnum] = Format(reads, writes)
 }
+

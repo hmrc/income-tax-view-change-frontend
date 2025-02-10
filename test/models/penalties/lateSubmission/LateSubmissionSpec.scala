@@ -36,12 +36,12 @@ class LateSubmissionSpec extends TestSupport {
   "LateSubmission" should {
 
     "write to JSON" in {
-      val result = Json.toJson(lateSubmission)(LateSubmission.writes)
+      val result = Json.toJson(lateSubmission)(LateSubmission.format)
       result shouldBe lateSubmissionJson
     }
 
     "read from JSON" in {
-      val result = lateSubmissionJson.as[LateSubmission](LateSubmission.reads)
+      val result = lateSubmissionJson.as[LateSubmission](LateSubmission.format)
       result shouldBe lateSubmission
     }
   }

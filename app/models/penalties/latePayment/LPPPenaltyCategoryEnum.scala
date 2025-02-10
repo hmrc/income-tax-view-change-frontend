@@ -18,23 +18,32 @@ package models.penalties.latePayment
 
 import play.api.libs.json._
 
-object LPPPenaltyCategoryEnum extends Enumeration {
+sealed trait LPPPenaltyCategoryEnum {
+  val value: String
+  override def toString: String = value
+}
 
-  val FirstPenalty: LPPPenaltyCategoryEnum.Value = Value("LPP1")
-  val SecondPenalty: LPPPenaltyCategoryEnum.Value = Value("LPP2")
+case object FirstPenalty extends LPPPenaltyCategoryEnum {
+  override val value: String = "LPP1"
+}
+case object SecondPenalty extends LPPPenaltyCategoryEnum {
+  override val value: String = "LPP2"
+}
 
-  implicit val format: Format[LPPPenaltyCategoryEnum.Value] = new Format[LPPPenaltyCategoryEnum.Value] {
-    override def writes(o: LPPPenaltyCategoryEnum.Value): JsValue = {
-      JsString(o.toString.toUpperCase)
-    }
-
-    override def reads(json: JsValue): JsResult[LPPPenaltyCategoryEnum.Value] = {
-      json.as[String].toUpperCase match {
-        case "LPP1" => JsSuccess(FirstPenalty)
-        case "LPP2" => JsSuccess(SecondPenalty)
-        case e => JsError(s"$e not recognised")
-      }
-    }
+object LPPPenaltyCategoryEnum {
+  implicit val writes: Writes[LPPPenaltyCategoryEnum] = Writes {
+    case FirstPenalty => JsString(FirstPenalty.value)
+    case SecondPenalty => JsString(SecondPenalty.value)
   }
 
+  implicit val reads: Reads[LPPPenaltyCategoryEnum] = Reads {
+    case JsString(value) => value.toUpperCase match {
+      case "LPP1" => JsSuccess(FirstPenalty)
+      case "LPP2" => JsSuccess(SecondPenalty)
+      case e => JsError(s"$e not recognised as a LPP category")
+    }
+    case _ => JsError("Invalid JSON value")
+  }
+
+  implicit val format: Format[LPPPenaltyCategoryEnum] = Format(reads, writes)
 }

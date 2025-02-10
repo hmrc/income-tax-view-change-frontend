@@ -19,8 +19,8 @@ package models.penalties.appealInformation
 import play.api.libs.json._
 
 case class AppealInformationType(
-                                  appealStatus: Option[AppealStatusEnum.Value],
-                                  appealLevel: Option[AppealLevelEnum.Value],
+                                  appealStatus: Option[AppealStatusEnum],
+                                  appealLevel: Option[AppealLevelEnum],
                                   appealDescription: Option[String]
                                 )
 
@@ -29,7 +29,7 @@ object AppealInformationType {
 
   implicit val writes: Writes[AppealInformationType] = new Writes[AppealInformationType] {
     override def writes(appealInformation: AppealInformationType): JsValue = {
-      val newAppealLevel: Option[AppealLevelEnum.Value] = parseAppealLevel(appealInformation)
+      val newAppealLevel: Option[AppealLevelEnum] = parseAppealLevel(appealInformation)
       Json.obj(
         "appealStatus" -> appealInformation.appealStatus,
         "appealLevel" -> newAppealLevel,
@@ -38,10 +38,10 @@ object AppealInformationType {
     }
   }
 
-  private def parseAppealLevel(appealInformation: AppealInformationType): Option[AppealLevelEnum.Value] = {
+  private def parseAppealLevel(appealInformation: AppealInformationType): Option[AppealLevelEnum] = {
     if (appealInformation.appealLevel.isEmpty
-      && appealInformation.appealStatus.contains(AppealStatusEnum.Unappealable)) {
-      Some(AppealLevelEnum.HMRC)
+      && appealInformation.appealStatus.contains(Unappealable)) {
+      Some(HMRC)
     } else {
       appealInformation.appealLevel
     }

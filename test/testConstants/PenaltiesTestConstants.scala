@@ -16,11 +16,11 @@
 
 package testConstants
 
-import models.penalties.{GetPenaltyDetails, Totalisations}
-import models.penalties.appealInformation.{AppealInformationType, AppealLevelEnum, AppealStatusEnum}
+import models.penalties.appealInformation._
 import models.penalties.breathingSpace.BreathingSpace
-import models.penalties.latePayment.{LPPDetails, LPPPenaltyCategoryEnum, LPPPenaltyStatusEnum, LatePaymentPenalty, TimeToPay}
+import models.penalties.latePayment._
 import models.penalties.lateSubmission._
+import models.penalties.{GetPenaltyDetails, Totalisations}
 import play.api.libs.json.{JsObject, Json}
 import testUtils.TestSupport
 
@@ -29,8 +29,8 @@ import java.time.LocalDate
 object PenaltiesTestConstants extends TestSupport {
 
   val appealInformation: AppealInformationType = AppealInformationType(
-    appealStatus = Some(AppealStatusEnum.Unappealable),
-    appealLevel = Some(AppealLevelEnum.HMRC),
+    appealStatus = Some(Unappealable),
+    appealLevel = Some(HMRC),
     appealDescription = Some("Late")
   )
 
@@ -41,8 +41,8 @@ object PenaltiesTestConstants extends TestSupport {
 
   val lppDetailsFull: LPPDetails = LPPDetails(
     principalChargeReference = "12345678901234",
-    penaltyCategory = LPPPenaltyCategoryEnum.FirstPenalty,
-    penaltyStatus = LPPPenaltyStatusEnum.Posted,
+    penaltyCategory = FirstPenalty,
+    penaltyStatus = Posted,
     penaltyAmountAccruing = 99.99,
     penaltyAmountPosted = 1001.45,
     penaltyAmountPaid = Some(1001.45),
@@ -59,7 +59,7 @@ object PenaltiesTestConstants extends TestSupport {
     communicationsDate = Some(LocalDate.of(2069, 10, 30)),
     penaltyChargeReference = Some("1234567890"),
     penaltyChargeDueDate = Some(LocalDate.of(2069, 10, 30)),
-    appealInformation = Some(Seq(appealInformation)),
+    appealInformation = Seq(appealInformation),
     principalChargeDocNumber = "123456789012",
     principalChargeMainTransaction = "4700",
     principalChargeSubTransaction = "1174",
@@ -67,7 +67,7 @@ object PenaltiesTestConstants extends TestSupport {
     principalChargeBillingTo = LocalDate.of(2069, 10, 30),
     principalChargeDueDate = LocalDate.of(2069, 10, 30),
     principalChargeLatestClearing = None,
-    timeToPay = Some(Seq(timeToPay))
+    timeToPay = Seq(timeToPay)
   )
 
   val lppDetailsJson: JsObject = Json.obj(
@@ -122,7 +122,7 @@ object PenaltiesTestConstants extends TestSupport {
   val lateSubmission: LateSubmission = LateSubmission(
     lateSubmissionID = "001",
     taxPeriod = Some("23AA"),
-    taxReturnStatus = Some(TaxReturnStatusEnum.Fulfilled),
+    taxReturnStatus = Some(Fulfilled),
     taxPeriodStartDate = Some(LocalDate.of(2022, 1, 1)),
     taxPeriodEndDate = Some(LocalDate.of(2022, 12, 31)),
     taxPeriodDueDate = Some(LocalDate.of(2023, 2, 1)),
@@ -132,8 +132,8 @@ object PenaltiesTestConstants extends TestSupport {
   val lspDetails: LSPDetails = LSPDetails(
     penaltyNumber = "12345678901234",
     penaltyOrder = Some("01"),
-    penaltyCategory = Some(LSPPenaltyCategoryEnum.Point),
-    penaltyStatus = LSPPenaltyStatusEnum.Active,
+    penaltyCategory = Some(Point),
+    penaltyStatus = Active,
     FAPIndicator = Some("X"),
     penaltyCreationDate = LocalDate.of(2022, 10, 30),
     triggeringProcess = "P123",

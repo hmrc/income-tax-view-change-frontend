@@ -15,26 +15,29 @@
  */
 
 package models.penalties.lateSubmission
-
 import play.api.libs.json._
 
-object LSPPenaltyStatusEnum extends Enumeration {
+sealed trait LSPPenaltyStatusEnum
 
-  val Active: LSPPenaltyStatusEnum.Value = Value("ACTIVE")
-  val Inactive: LSPPenaltyStatusEnum.Value = Value("INACTIVE")
+case object Active extends LSPPenaltyStatusEnum
+case object Inactive extends LSPPenaltyStatusEnum
 
-  implicit val format: Format[LSPPenaltyStatusEnum.Value] = new Format[LSPPenaltyStatusEnum.Value] {
-    override def writes(o: LSPPenaltyStatusEnum.Value): JsValue = {
-      JsString(o.toString)
-    }
+object LSPPenaltyStatusEnum {
 
-    override def reads(json: JsValue): JsResult[LSPPenaltyStatusEnum.Value] = {
-      json.as[String].toUpperCase match {
-        case "ACTIVE" => JsSuccess(Active)
-        case "INACTIVE" => JsSuccess(Inactive)
-        case e => JsError(s"$e not recognised")
-      }
-    }
+  implicit val writes: Writes[LSPPenaltyStatusEnum] = Writes {
+    case Active => JsString("ACTIVE")
+    case Inactive => JsString("INACTIVE")
   }
+
+  implicit val reads: Reads[LSPPenaltyStatusEnum] = Reads {
+    case JsString(value) => value.toUpperCase match {
+      case "ACTIVE" => JsSuccess(Active)
+      case "INACTIVE" => JsSuccess(Inactive)
+      case e => JsError(s"$e not recognised as a LSP penalty status")
+    }
+    case _ => JsError("Invalid JSON value")
+  }
+
+  implicit val format: Format[LSPPenaltyStatusEnum] = Format(reads, writes)
 
 }

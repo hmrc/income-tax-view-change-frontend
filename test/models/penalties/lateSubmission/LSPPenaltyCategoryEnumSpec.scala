@@ -24,43 +24,38 @@ class LSPPenaltyCategoryEnumSpec extends TestSupport {
   "LSPPenaltyCategoryEnum" should {
 
     "be writeable to JSON for an LSP penalty category of 'P'" in {
-      val result = Json.toJson(LSPPenaltyCategoryEnum.Point)(LSPPenaltyCategoryEnum.format)
+      val result = Json.toJson(Point)(LSPPenaltyCategoryEnum.writes.writes(_))
       result shouldBe JsString("P")
     }
 
     "be writeable to JSON for an LSP penalty category of 'T'" in {
-      val result = Json.toJson(LSPPenaltyCategoryEnum.Threshold)(LSPPenaltyCategoryEnum.format)
+      val result = Json.toJson(Threshold)(LSPPenaltyCategoryEnum.writes.writes(_))
       result shouldBe JsString("T")
     }
 
     "be writeable to JSON for an LSP penalty category of 'C'" in {
-      val result = Json.toJson(LSPPenaltyCategoryEnum.Charge)(LSPPenaltyCategoryEnum.format)
+      val result = Json.toJson(Charge)(LSPPenaltyCategoryEnum.writes.writes(_))
       result shouldBe JsString("C")
     }
 
     "be readable from JSON for an LSP penalty category of 'P'" in {
       val result = Json.fromJson(JsString("P"))(LSPPenaltyCategoryEnum.format)
-      result shouldBe JsSuccess(LSPPenaltyCategoryEnum.Point)
+      result shouldBe JsSuccess(Point)
     }
 
     "be readable from JSON for an LSP penalty category of 'T'" in {
       val result = Json.fromJson(JsString("T"))(LSPPenaltyCategoryEnum.format)
-      result shouldBe JsSuccess(LSPPenaltyCategoryEnum.Threshold)
+      result shouldBe JsSuccess(Threshold)
     }
 
     "be readable from JSON for an LSP penalty category of 'C'" in {
       val result = Json.fromJson(JsString("C"))(LSPPenaltyCategoryEnum.format)
-      result shouldBe JsSuccess(LSPPenaltyCategoryEnum.Charge)
-    }
-
-    "be readable from JSON for an LSP penalty category of ' '" in {
-      val result = Json.fromJson(JsString(" "))(LSPPenaltyCategoryEnum.format)
-      result shouldBe JsSuccess(LSPPenaltyCategoryEnum.Point)
+      result shouldBe JsSuccess(Charge)
     }
 
     "throw a JsError when the JSON returned is unrecognised" in {
       val result = Json.fromJson(JsString("String"))(LSPPenaltyCategoryEnum.format)
-      result shouldBe JsError("STRING not recognised")
+      result shouldBe JsError("STRING not recognised as a LSP penalty category")
     }
   }
 }

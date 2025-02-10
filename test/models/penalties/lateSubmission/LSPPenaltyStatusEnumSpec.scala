@@ -21,27 +21,27 @@ import testUtils.TestSupport
 
 class LSPPenaltyStatusEnumSpec extends TestSupport {
   "be writable to JSON for 'ACTIVE'" in {
-    val result = Json.toJson(LSPPenaltyStatusEnum.Active)
+    val result = Json.toJson(Active)(LSPPenaltyStatusEnum.writes.writes(_))
     result shouldBe JsString("ACTIVE")
   }
 
   "be writable to JSON for 'INACTIVE'" in {
-    val result = Json.toJson(LSPPenaltyStatusEnum.Inactive)
+    val result = Json.toJson(Inactive)(LSPPenaltyStatusEnum.writes.writes(_))
     result shouldBe JsString("INACTIVE")
   }
 
   "be readable from JSON for 'ACTIVE'" in {
-    val result = Json.fromJson(JsString("ACTIVE"))(LSPPenaltyStatusEnum.format)
-    result.get shouldBe LSPPenaltyStatusEnum.Active
+    val result = Json.fromJson(JsString("ACTIVE"))(LSPPenaltyStatusEnum.reads)
+    result.get shouldBe Active
   }
 
   "be readable from JSON for 'INACTIVE'" in {
-    val result = Json.fromJson(JsString("INACTIVE"))(LSPPenaltyStatusEnum.format)
-    result.get shouldBe LSPPenaltyStatusEnum.Inactive
+    val result = Json.fromJson(JsString("INACTIVE"))(LSPPenaltyStatusEnum.reads)
+    result.get shouldBe Inactive
   }
 
   "return JsError when the enum is not readable" in {
-    val result = Json.fromJson(JsString("unknown"))(LSPPenaltyStatusEnum.format)
+    val result = Json.fromJson(JsString("unknown"))(LSPPenaltyStatusEnum.reads)
     result.isError shouldBe true
   }
 

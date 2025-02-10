@@ -21,7 +21,7 @@ import models.penalties.latePayment.LatePaymentPenalty
 import models.penalties.lateSubmission.LateSubmissionPenalty
 import play.api.http.Status._
 import play.api.libs.Files.logger
-import play.api.libs.json.{Format, JsError, JsSuccess, Json}
+import play.api.libs.json._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 case class GetPenaltyDetails(totalisations: Option[Totalisations],

@@ -24,38 +24,38 @@ class TaxReturnStatusEnumSpec extends TestSupport {
   "TaxReturnStatusEnum" should {
 
     "be writeable to JSON for a tax return status of 'Open'" in {
-      val result = Json.toJson(TaxReturnStatusEnum.Open)(TaxReturnStatusEnum.format)
+      val result = Json.toJson(Open)(TaxReturnStatusEnum.writes.writes(_))
       result shouldBe JsString("Open")
     }
 
     "be writeable to JSON for a tax return status of 'Fulfilled'" in {
-      val result = Json.toJson(TaxReturnStatusEnum.Fulfilled)(TaxReturnStatusEnum.format)
+      val result = Json.toJson(Fulfilled)(TaxReturnStatusEnum.writes.writes(_))
       result shouldBe JsString("Fulfilled")
     }
 
     "be writeable to JSON for a tax return status of 'Reversed'" in {
-      val result = Json.toJson(TaxReturnStatusEnum.Reversed)(TaxReturnStatusEnum.format)
+      val result = Json.toJson(Reversed)(TaxReturnStatusEnum.writes.writes(_))
       result shouldBe JsString("Reversed")
     }
 
     "be readable from JSON for a tax return status of 'Open'" in {
       val result = Json.fromJson(JsString("Open"))(TaxReturnStatusEnum.format)
-      result shouldBe JsSuccess(TaxReturnStatusEnum.Open)
+      result shouldBe JsSuccess(Open)
     }
 
     "be readable from JSON for a tax return status of 'Fulfilled'" in {
       val result = Json.fromJson(JsString("Fulfilled"))(TaxReturnStatusEnum.format)
-      result shouldBe JsSuccess(TaxReturnStatusEnum.Fulfilled)
+      result shouldBe JsSuccess(Fulfilled)
     }
 
     "be readable from JSON for a tax return status of 'Reversed'" in {
       val result = Json.fromJson(JsString("Reversed"))(TaxReturnStatusEnum.format)
-      result shouldBe JsSuccess(TaxReturnStatusEnum.Reversed)
+      result shouldBe JsSuccess(Reversed)
     }
 
     "throw a JsError when the JSON returned is unrecognised" in {
       val result = Json.fromJson(JsString("String"))(TaxReturnStatusEnum.format)
-      result shouldBe JsError("STRING not recognised")
+      result shouldBe JsError("STRING not recognised as a tax return status")
     }
   }
 }

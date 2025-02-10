@@ -18,23 +18,33 @@ package models.penalties.latePayment
 
 import play.api.libs.json._
 
-object LPPPenaltyStatusEnum extends Enumeration {
+sealed trait LPPPenaltyStatusEnum {
+  val value: String
+  override def toString: String = value
+}
 
-  val Accruing: LPPPenaltyStatusEnum.Value = Value("A")
-  val Posted: LPPPenaltyStatusEnum.Value = Value("P")
+case object Accruing extends LPPPenaltyStatusEnum {
+  override val value: String = "A"
+}
 
-  implicit val format: Format[LPPPenaltyStatusEnum.Value] = new Format[LPPPenaltyStatusEnum.Value] {
-    override def writes(o: LPPPenaltyStatusEnum.Value): JsValue = {
-      JsString(o.toString.toUpperCase)
+case object Posted extends LPPPenaltyStatusEnum {
+  override val value: String = "P"
+}
+
+object LPPPenaltyStatusEnum {
+  implicit val reads: Reads[LPPPenaltyStatusEnum] = Reads {
+    case JsString(value) => value.toUpperCase match {
+      case "A" => JsSuccess(Accruing)
+      case "P" => JsSuccess(Posted)
+      case e => JsError(s"$e not recognised as a LPP penalty status")
     }
-
-    override def reads(json: JsValue): JsResult[LPPPenaltyStatusEnum.Value] = {
-      json.as[String].toUpperCase match {
-        case "A" => JsSuccess(Accruing)
-        case "P" => JsSuccess(Posted)
-        case e => JsError(s"$e not recognised")
-      }
-    }
+    case _ => JsError("Invalid JSON value")
   }
 
+  implicit val writes: Writes[LPPPenaltyStatusEnum] = Writes {
+    case Accruing => JsString(Accruing.value)
+    case Posted => JsString(Posted.value)
+  }
+
+  implicit val format: Format[LPPPenaltyStatusEnum] = Format(reads, writes)
 }
