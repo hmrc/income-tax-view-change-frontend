@@ -23,27 +23,27 @@ sealed trait LPPPenaltyStatusEnum {
   override def toString: String = value
 }
 
-case object Accruing extends LPPPenaltyStatusEnum {
+case object AccruingLPPPenaltyStatus extends LPPPenaltyStatusEnum {
   override val value: String = "A"
 }
 
-case object Posted extends LPPPenaltyStatusEnum {
+case object PostedLPPPenaltyStatus extends LPPPenaltyStatusEnum {
   override val value: String = "P"
 }
 
 object LPPPenaltyStatusEnum {
   implicit val reads: Reads[LPPPenaltyStatusEnum] = Reads {
     case JsString(value) => value.toUpperCase match {
-      case "A" => JsSuccess(Accruing)
-      case "P" => JsSuccess(Posted)
+      case "A" => JsSuccess(AccruingLPPPenaltyStatus)
+      case "P" => JsSuccess(PostedLPPPenaltyStatus)
       case e => JsError(s"$e not recognised as a LPP penalty status")
     }
     case _ => JsError("Invalid JSON value")
   }
 
   implicit val writes: Writes[LPPPenaltyStatusEnum] = Writes {
-    case Accruing => JsString(Accruing.value)
-    case Posted => JsString(Posted.value)
+    case AccruingLPPPenaltyStatus => JsString(AccruingLPPPenaltyStatus.value)
+    case PostedLPPPenaltyStatus => JsString(PostedLPPPenaltyStatus.value)
   }
 
   implicit val format: Format[LPPPenaltyStatusEnum] = Format(reads, writes)

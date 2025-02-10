@@ -24,23 +24,23 @@ class AppealLevelEnumSpec extends TestSupport {
   "AppealLevelEnum" should {
 
     "be writeable to JSON for appeal level '01'" in {
-      val result = Json.toJson(HMRC)(AppealLevelEnum.writes.writes(_))
+      val result = Json.toJson(HmrcAppealLevel)(AppealLevelEnum.writes.writes(_))
       result shouldBe JsString("01")
     }
 
     "be writeable to JSON for appeal level '02'" in {
-      val result = Json.toJson(Tribunal)(AppealLevelEnum.writes.writes(_))
+      val result = Json.toJson(TribunalAppealLevel)(AppealLevelEnum.writes.writes(_))
       result shouldBe JsString("02")
     }
 
     "be readable from JSON for appeal level '01'" in {
       val result = Json.fromJson(JsString("01"))(AppealLevelEnum.format)
-      result shouldBe JsSuccess(HMRC)
+      result shouldBe JsSuccess(HmrcAppealLevel)
     }
 
     "be readable from JSON for appeal level '02'" in {
       val result = Json.fromJson(JsString("02"))(AppealLevelEnum.format)
-      result shouldBe JsSuccess(Tribunal)
+      result shouldBe JsSuccess(TribunalAppealLevel)
     }
 
     "throw a JsError when unable to read the JSON returned" in {

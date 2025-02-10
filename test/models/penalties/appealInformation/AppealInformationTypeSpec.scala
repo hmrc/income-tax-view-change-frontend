@@ -22,13 +22,13 @@ import testUtils.TestSupport
 class AppealInformationTypeSpec extends TestSupport {
 
   val appealInfoAsModel: AppealInformationType = AppealInformationType(
-    appealStatus = Some(UnderAppeal),
-    appealLevel = Some(HMRC),
+    appealStatus = Some(UnderAppealStatus),
+    appealLevel = Some(HmrcAppealLevel),
     appealDescription = Some("Some value")
   )
 
   val appealInfoAsModelWithDefaultedAppealLevel: AppealInformationType = AppealInformationType(
-    appealStatus = Some(Unappealable),
+    appealStatus = Some(UnappealableStatus),
     appealLevel = None,
     appealDescription = Some("Some value")
   )

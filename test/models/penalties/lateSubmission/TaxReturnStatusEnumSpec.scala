@@ -24,33 +24,33 @@ class TaxReturnStatusEnumSpec extends TestSupport {
   "TaxReturnStatusEnum" should {
 
     "be writeable to JSON for a tax return status of 'Open'" in {
-      val result = Json.toJson(Open)(TaxReturnStatusEnum.writes.writes(_))
+      val result = Json.toJson(OpenTaxReturnStatus)(TaxReturnStatusEnum.writes.writes(_))
       result shouldBe JsString("Open")
     }
 
     "be writeable to JSON for a tax return status of 'Fulfilled'" in {
-      val result = Json.toJson(Fulfilled)(TaxReturnStatusEnum.writes.writes(_))
+      val result = Json.toJson(FulfilledTaxReturnStatus)(TaxReturnStatusEnum.writes.writes(_))
       result shouldBe JsString("Fulfilled")
     }
 
     "be writeable to JSON for a tax return status of 'Reversed'" in {
-      val result = Json.toJson(Reversed)(TaxReturnStatusEnum.writes.writes(_))
+      val result = Json.toJson(ReversedTaxReturnStatus)(TaxReturnStatusEnum.writes.writes(_))
       result shouldBe JsString("Reversed")
     }
 
     "be readable from JSON for a tax return status of 'Open'" in {
       val result = Json.fromJson(JsString("Open"))(TaxReturnStatusEnum.format)
-      result shouldBe JsSuccess(Open)
+      result shouldBe JsSuccess(OpenTaxReturnStatus)
     }
 
     "be readable from JSON for a tax return status of 'Fulfilled'" in {
       val result = Json.fromJson(JsString("Fulfilled"))(TaxReturnStatusEnum.format)
-      result shouldBe JsSuccess(Fulfilled)
+      result shouldBe JsSuccess(FulfilledTaxReturnStatus)
     }
 
     "be readable from JSON for a tax return status of 'Reversed'" in {
       val result = Json.fromJson(JsString("Reversed"))(TaxReturnStatusEnum.format)
-      result shouldBe JsSuccess(Reversed)
+      result shouldBe JsSuccess(ReversedTaxReturnStatus)
     }
 
     "throw a JsError when the JSON returned is unrecognised" in {

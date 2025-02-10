@@ -29,8 +29,8 @@ import java.time.LocalDate
 object PenaltiesTestConstants extends TestSupport {
 
   val appealInformation: AppealInformationType = AppealInformationType(
-    appealStatus = Some(Unappealable),
-    appealLevel = Some(HMRC),
+    appealStatus = Some(UnappealableStatus),
+    appealLevel = Some(HmrcAppealLevel),
     appealDescription = Some("Late")
   )
 
@@ -41,8 +41,8 @@ object PenaltiesTestConstants extends TestSupport {
 
   val lppDetailsFull: LPPDetails = LPPDetails(
     principalChargeReference = "12345678901234",
-    penaltyCategory = FirstPenalty,
-    penaltyStatus = Posted,
+    penaltyCategory = FirstPenaltyLPPPenaltyCategory,
+    penaltyStatus = PostedLPPPenaltyStatus,
     penaltyAmountAccruing = 99.99,
     penaltyAmountPosted = 1001.45,
     penaltyAmountPaid = Some(1001.45),
@@ -122,7 +122,7 @@ object PenaltiesTestConstants extends TestSupport {
   val lateSubmission: LateSubmission = LateSubmission(
     lateSubmissionID = "001",
     taxPeriod = Some("23AA"),
-    taxReturnStatus = Some(Fulfilled),
+    taxReturnStatus = Some(FulfilledTaxReturnStatus),
     taxPeriodStartDate = Some(LocalDate.of(2022, 1, 1)),
     taxPeriodEndDate = Some(LocalDate.of(2022, 12, 31)),
     taxPeriodDueDate = Some(LocalDate.of(2023, 2, 1)),
@@ -132,8 +132,8 @@ object PenaltiesTestConstants extends TestSupport {
   val lspDetails: LSPDetails = LSPDetails(
     penaltyNumber = "12345678901234",
     penaltyOrder = Some("01"),
-    penaltyCategory = Some(Point),
-    penaltyStatus = Active,
+    penaltyCategory = Some(PointLSPPenaltyCategory),
+    penaltyStatus = ActiveLSPPenaltyStatus,
     FAPIndicator = Some("X"),
     penaltyCreationDate = LocalDate.of(2022, 10, 30),
     triggeringProcess = "P123",

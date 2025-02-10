@@ -23,24 +23,24 @@ sealed trait AppealLevelEnum {
   override def toString: String = value
 }
 
-case object HMRC extends AppealLevelEnum {
+case object HmrcAppealLevel extends AppealLevelEnum {
   override val value: String = "01"
 }
 
-case object Tribunal extends AppealLevelEnum {
+case object TribunalAppealLevel extends AppealLevelEnum {
   override val value: String = "02"
 }
 
 object AppealLevelEnum {
   implicit val writes: Writes[AppealLevelEnum] = Writes {
-    case HMRC => JsString(HMRC.value)
-    case Tribunal => JsString(Tribunal.value)
+    case HmrcAppealLevel => JsString(HmrcAppealLevel.value)
+    case TribunalAppealLevel => JsString(TribunalAppealLevel.value)
   }
 
   implicit val reads: Reads[AppealLevelEnum] = Reads {
     case JsString(value) => value.toUpperCase match {
-      case "01" => JsSuccess(HMRC)
-      case "02" => JsSuccess(Tribunal)
+      case "01" => JsSuccess(HmrcAppealLevel)
+      case "02" => JsSuccess(TribunalAppealLevel)
       case e => JsError(s"$e not recognised as appeal level value")
     }
     case _ => JsError("Invalid JSON value")

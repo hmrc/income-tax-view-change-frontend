@@ -37,19 +37,19 @@ class AppealStatusEnumSpec extends TestSupport {
       }
     }
 
-    writeableTest(UnderAppeal, "A")
-    writeableTest(Upheld, "B")
-    writeableTest(Rejected, "C")
-    writeableTest(Unappealable, "99")
+    writeableTest(UnderAppealStatus, "A")
+    writeableTest(UpheldStatus, "B")
+    writeableTest(RejectedStatus, "C")
+    writeableTest(UnappealableStatus, "99")
     writeableTest(AppealRejectedChargeAlreadyReversed, "91")
     writeableTest(AppealUpheldPointAlreadyRemoved, "92")
     writeableTest(AppealUpheldChargeAlreadyReversed, "93")
     writeableTest(AppealRejectedPointAlreadyRemoved, "94")
 
-    readableTest("A", UnderAppeal)
-    readableTest("B", Upheld)
-    readableTest("C", Rejected)
-    readableTest("99", Unappealable)
+    readableTest("A", UnderAppealStatus)
+    readableTest("B", UpheldStatus)
+    readableTest("C", RejectedStatus)
+    readableTest("99", UnappealableStatus)
     readableTest("91", AppealRejectedChargeAlreadyReversed)
     readableTest("92", AppealUpheldPointAlreadyRemoved)
     readableTest("93", AppealUpheldChargeAlreadyReversed)

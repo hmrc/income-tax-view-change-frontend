@@ -24,33 +24,33 @@ class LSPPenaltyCategoryEnumSpec extends TestSupport {
   "LSPPenaltyCategoryEnum" should {
 
     "be writeable to JSON for an LSP penalty category of 'P'" in {
-      val result = Json.toJson(Point)(LSPPenaltyCategoryEnum.writes.writes(_))
+      val result = Json.toJson(PointLSPPenaltyCategory)(LSPPenaltyCategoryEnum.writes.writes(_))
       result shouldBe JsString("P")
     }
 
     "be writeable to JSON for an LSP penalty category of 'T'" in {
-      val result = Json.toJson(Threshold)(LSPPenaltyCategoryEnum.writes.writes(_))
+      val result = Json.toJson(ThresholdLSPPenaltyCategory)(LSPPenaltyCategoryEnum.writes.writes(_))
       result shouldBe JsString("T")
     }
 
     "be writeable to JSON for an LSP penalty category of 'C'" in {
-      val result = Json.toJson(Charge)(LSPPenaltyCategoryEnum.writes.writes(_))
+      val result = Json.toJson(ChargeLSPPenaltyCategory)(LSPPenaltyCategoryEnum.writes.writes(_))
       result shouldBe JsString("C")
     }
 
     "be readable from JSON for an LSP penalty category of 'P'" in {
       val result = Json.fromJson(JsString("P"))(LSPPenaltyCategoryEnum.format)
-      result shouldBe JsSuccess(Point)
+      result shouldBe JsSuccess(PointLSPPenaltyCategory)
     }
 
     "be readable from JSON for an LSP penalty category of 'T'" in {
       val result = Json.fromJson(JsString("T"))(LSPPenaltyCategoryEnum.format)
-      result shouldBe JsSuccess(Threshold)
+      result shouldBe JsSuccess(ThresholdLSPPenaltyCategory)
     }
 
     "be readable from JSON for an LSP penalty category of 'C'" in {
       val result = Json.fromJson(JsString("C"))(LSPPenaltyCategoryEnum.format)
-      result shouldBe JsSuccess(Charge)
+      result shouldBe JsSuccess(ChargeLSPPenaltyCategory)
     }
 
     "throw a JsError when the JSON returned is unrecognised" in {

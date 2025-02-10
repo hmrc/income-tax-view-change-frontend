@@ -19,20 +19,20 @@ import play.api.libs.json._
 
 sealed trait LSPPenaltyStatusEnum
 
-case object Active extends LSPPenaltyStatusEnum
-case object Inactive extends LSPPenaltyStatusEnum
+case object ActiveLSPPenaltyStatus extends LSPPenaltyStatusEnum
+case object InactiveLSPPenaltyStatus extends LSPPenaltyStatusEnum
 
 object LSPPenaltyStatusEnum {
 
   implicit val writes: Writes[LSPPenaltyStatusEnum] = Writes {
-    case Active => JsString("ACTIVE")
-    case Inactive => JsString("INACTIVE")
+    case ActiveLSPPenaltyStatus => JsString("ACTIVE")
+    case InactiveLSPPenaltyStatus => JsString("INACTIVE")
   }
 
   implicit val reads: Reads[LSPPenaltyStatusEnum] = Reads {
     case JsString(value) => value.toUpperCase match {
-      case "ACTIVE" => JsSuccess(Active)
-      case "INACTIVE" => JsSuccess(Inactive)
+      case "ACTIVE" => JsSuccess(ActiveLSPPenaltyStatus)
+      case "INACTIVE" => JsSuccess(InactiveLSPPenaltyStatus)
       case e => JsError(s"$e not recognised as a LSP penalty status")
     }
     case _ => JsError("Invalid JSON value")

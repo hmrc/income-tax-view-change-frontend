@@ -23,16 +23,16 @@ sealed trait AppealStatusEnum {
   override def toString: String = value
 }
 
-case object UnderAppeal extends AppealStatusEnum {
+case object UnderAppealStatus extends AppealStatusEnum {
   override val value: String = "A"
 }
-case object Upheld extends AppealStatusEnum {
+case object UpheldStatus extends AppealStatusEnum {
   override val value: String = "B"
 }
-case object Rejected extends AppealStatusEnum {
+case object RejectedStatus extends AppealStatusEnum {
   override val value: String = "C"
 }
-case object Unappealable extends AppealStatusEnum {
+case object UnappealableStatus extends AppealStatusEnum {
   override val value: String = "99"
 }
 case object AppealRejectedChargeAlreadyReversed extends AppealStatusEnum {
@@ -50,10 +50,10 @@ case object AppealRejectedPointAlreadyRemoved extends AppealStatusEnum {
 
 object AppealStatusEnum {
   implicit val writes: Writes[AppealStatusEnum] = Writes {
-    case UnderAppeal => JsString(UnderAppeal.value)
-    case Upheld => JsString(Upheld.value)
-    case Rejected => JsString(Rejected.value)
-    case Unappealable => JsString(Unappealable.value)
+    case UnderAppealStatus => JsString(UnderAppealStatus.value)
+    case UpheldStatus => JsString(UpheldStatus.value)
+    case RejectedStatus => JsString(RejectedStatus.value)
+    case UnappealableStatus => JsString(UnappealableStatus.value)
     case AppealRejectedChargeAlreadyReversed => JsString(AppealRejectedChargeAlreadyReversed.value)
     case AppealUpheldPointAlreadyRemoved => JsString(AppealUpheldPointAlreadyRemoved.value)
     case AppealUpheldChargeAlreadyReversed => JsString(AppealUpheldChargeAlreadyReversed.value)
@@ -62,10 +62,10 @@ object AppealStatusEnum {
 
   implicit val reads: Reads[AppealStatusEnum] = Reads {
     case JsString(value) => value.toUpperCase match {
-      case "A" => JsSuccess(UnderAppeal)
-      case "B" => JsSuccess(Upheld)
-      case "C" => JsSuccess(Rejected)
-      case "99" => JsSuccess(Unappealable)
+      case "A" => JsSuccess(UnderAppealStatus)
+      case "B" => JsSuccess(UpheldStatus)
+      case "C" => JsSuccess(RejectedStatus)
+      case "99" => JsSuccess(UnappealableStatus)
       case "91" => JsSuccess(AppealRejectedChargeAlreadyReversed)
       case "92" => JsSuccess(AppealUpheldPointAlreadyRemoved)
       case "93" => JsSuccess(AppealUpheldChargeAlreadyReversed)

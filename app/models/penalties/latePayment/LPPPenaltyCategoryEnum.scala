@@ -23,23 +23,23 @@ sealed trait LPPPenaltyCategoryEnum {
   override def toString: String = value
 }
 
-case object FirstPenalty extends LPPPenaltyCategoryEnum {
+case object FirstPenaltyLPPPenaltyCategory extends LPPPenaltyCategoryEnum {
   override val value: String = "LPP1"
 }
-case object SecondPenalty extends LPPPenaltyCategoryEnum {
+case object SecondPenaltyLPPPenaltyCategory extends LPPPenaltyCategoryEnum {
   override val value: String = "LPP2"
 }
 
 object LPPPenaltyCategoryEnum {
   implicit val writes: Writes[LPPPenaltyCategoryEnum] = Writes {
-    case FirstPenalty => JsString(FirstPenalty.value)
-    case SecondPenalty => JsString(SecondPenalty.value)
+    case FirstPenaltyLPPPenaltyCategory => JsString(FirstPenaltyLPPPenaltyCategory.value)
+    case SecondPenaltyLPPPenaltyCategory => JsString(SecondPenaltyLPPPenaltyCategory.value)
   }
 
   implicit val reads: Reads[LPPPenaltyCategoryEnum] = Reads {
     case JsString(value) => value.toUpperCase match {
-      case "LPP1" => JsSuccess(FirstPenalty)
-      case "LPP2" => JsSuccess(SecondPenalty)
+      case "LPP1" => JsSuccess(FirstPenaltyLPPPenaltyCategory)
+      case "LPP2" => JsSuccess(SecondPenaltyLPPPenaltyCategory)
       case e => JsError(s"$e not recognised as a LPP category")
     }
     case _ => JsError("Invalid JSON value")

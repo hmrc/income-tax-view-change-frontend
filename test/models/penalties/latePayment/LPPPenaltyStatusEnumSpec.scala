@@ -24,23 +24,23 @@ class LPPPenaltyStatusEnumSpec extends TestSupport {
   "LPPPenaltyStatusEnum" should {
 
     "be writeable to JSON for LPP penalty status 'A'" in {
-      val result = Json.toJson(Accruing)(LPPPenaltyStatusEnum.writes.writes(_))
+      val result = Json.toJson(AccruingLPPPenaltyStatus)(LPPPenaltyStatusEnum.writes.writes(_))
       result shouldBe JsString("A")
     }
 
     "be writeable to JSON for LPP penalty status 'P'" in {
-      val result = Json.toJson(Posted)(LPPPenaltyStatusEnum.writes.writes(_))
+      val result = Json.toJson(PostedLPPPenaltyStatus)(LPPPenaltyStatusEnum.writes.writes(_))
       result shouldBe JsString("P")
     }
 
     "be readable from JSON for LPP penalty status 'A'" in {
       val result = Json.fromJson(JsString("A"))(LPPPenaltyStatusEnum.format)
-      result shouldBe JsSuccess(Accruing)
+      result shouldBe JsSuccess(AccruingLPPPenaltyStatus)
     }
 
     "be readable from JSON for LPP penalty status 'P'" in {
       val result = Json.fromJson(JsString("P"))(LPPPenaltyStatusEnum.format)
-      result shouldBe JsSuccess(Posted)
+      result shouldBe JsSuccess(PostedLPPPenaltyStatus)
     }
 
     "throw an error when the LPP penalty status is unrecognised" in {

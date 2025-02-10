@@ -24,23 +24,23 @@ class LPPPenaltyCategoryEnumSpec extends TestSupport {
   "LPPPenaltyCategoryEnum" should {
 
     "be writeable to JSON for LPP category level 'LPP1'" in {
-      val result = Json.toJson(FirstPenalty)(LPPPenaltyCategoryEnum.writes.writes(_))
+      val result = Json.toJson(FirstPenaltyLPPPenaltyCategory)(LPPPenaltyCategoryEnum.writes.writes(_))
       result shouldBe JsString("LPP1")
     }
 
     "be writeable to JSON for LPP category level 'LPP2'" in {
-      val result = Json.toJson(SecondPenalty)(LPPPenaltyCategoryEnum.writes.writes(_))
+      val result = Json.toJson(SecondPenaltyLPPPenaltyCategory)(LPPPenaltyCategoryEnum.writes.writes(_))
       result shouldBe JsString("LPP2")
     }
 
     "be readable from JSON for LPP category level 'LPP1'" in {
       val result = Json.fromJson(JsString("LPP1"))(LPPPenaltyCategoryEnum.format)
-      result shouldBe JsSuccess(FirstPenalty)
+      result shouldBe JsSuccess(FirstPenaltyLPPPenaltyCategory)
     }
 
     "be readable from JSON for LPP category level 'LPP2'" in {
       val result = Json.fromJson(JsString("LPP2"))(LPPPenaltyCategoryEnum.format)
-      result shouldBe JsSuccess(SecondPenalty)
+      result shouldBe JsSuccess(SecondPenaltyLPPPenaltyCategory)
     }
 
     "throw a JsError when the JSON returned is unrecognised" in {
