@@ -28,6 +28,10 @@ class GetPenaltyDetailsConnector @Inject() (val httpClientV2: HttpClientV2,
                                             val appConfig: FrontendAppConfig
                                            )(implicit val executionContext: ExecutionContext) {
 
+  /*
+    Connector to be updated in future to use NINO identifier instead of vrn
+   */
+
   def getPenaltyDetails(vrn: String)(implicit headerCarrier: HeaderCarrier): Future[GetPenaltyDetailsResponse] = {
     val url = appConfig.penaltyDetailsUrl + vrn
 
