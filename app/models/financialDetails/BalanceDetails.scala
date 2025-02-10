@@ -36,10 +36,6 @@ case class BalanceDetails(balanceDueWithin30Days: BigDecimal,
     total - firstPendingAmountRequested.getOrElse(0) - secondPendingAmountRequested.getOrElse(0)
   }
 
-  def getAvailableCredit: BigDecimal = {
-    availableCredit.getOrElse(throw MissingFieldException("BalanceDetailsAvailableCredit"))
-  }
-
   def getAbsoluteUnAllocatedCreditAmount: Option[BigDecimal] = {
     unallocatedCredit.map (credit => math.abs(credit.toDouble))
   }
