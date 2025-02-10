@@ -16,7 +16,6 @@
 
 package models.financialDetails
 
-import exceptions.MissingFieldException
 import play.api.libs.json.{Json, Reads, Writes}
 
 import scala.math.abs

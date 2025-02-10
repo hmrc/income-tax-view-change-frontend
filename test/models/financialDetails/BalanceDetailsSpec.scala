@@ -16,7 +16,6 @@
 
 package models.financialDetails
 
-import exceptions.MissingFieldException
 import play.api.libs.json.{JsValue, Json}
 import testUtils.UnitSpec
 
