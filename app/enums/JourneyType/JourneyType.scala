@@ -17,6 +17,7 @@
 package enums.JourneyType
 
 import enums.IncomeSourceJourney.IncomeSourceType
+import models.incomeSourceDetails.TaxYear
 
 sealed trait JourneyType
 
@@ -40,6 +41,10 @@ case object Cease extends Operation {
   override val operationType = "CEASE"
 }
 
+case class IncomeSourceReportingFrequencyJourney() extends JourneyType {
+  override def toString: String = "IncomeSourceReportingFrequencyJourney"
+}
+
 case class Opt(optJourney: OptJourney) extends JourneyType {
   override def toString: String = optJourney.toString
 }
@@ -53,3 +58,6 @@ case object OptInJourney extends OptJourney {
 case object OptOutJourney extends OptJourney {
   override val toString = "OPTOUT"
 }
+
+
+
