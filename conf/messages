@@ -1282,6 +1282,14 @@ incomeSources.add.addIncomeSources.tableHead.dateStarted            = Date start
 incomeSources.add.addIncomeSources.tableHead.dateEnded              = Date ended
 incomeSources.add.addIncomeSources.unknown                          = Unknown
 
+incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.heading           = Which tax year do you want to report quarterly for?
+incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.subHeading        = Sole Trader
+incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text         = Select all that apply.
+incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox     = {0} to {1}
+incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.button            = Continue
+incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header      = There is a problem
+incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description = Select the tax years you want to report quarterly
+
 incomeSources.add.error.standardError                            = Sorry, there is a problem with the service
 incomeSources.add.error.incomeSourceNotSaved.p1                  = Your {0} business could not be added. We have not saved your answers. Please try again later.
 incomeSources.add.error.incomeSourceNotSaved.se                  = sole trader
