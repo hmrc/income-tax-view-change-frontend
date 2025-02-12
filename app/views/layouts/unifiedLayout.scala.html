@@ -58,7 +58,7 @@
     showServiceName: Boolean = true,
     isErrorPage: Boolean = false,
     gatewayPage: Option[GatewayPage] = None
-)(contentBlock: Html)(implicit request : Request[_], messages: Messages)
+)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
 
 @siteHeader = @{
     val serviceName = if (isAgent) Some(messages("agent.header.serviceName"))
