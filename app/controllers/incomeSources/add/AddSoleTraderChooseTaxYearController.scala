@@ -96,9 +96,6 @@ class AddSoleTraderChooseTaxYearController @Inject()(authActions: AuthActions,
             case Right(Some(sessionData)) =>
               val updatedSessionData = IncomeSourceReportingFrequencySourceData(form.currentTaxYear, form.nextTaxYear)
 
-              println(Console.YELLOW + sessionData + Console.RESET)
-              println(Console.MAGENTA + updatedSessionData + Console.RESET)
-
               sessionService.setMongoData(sessionData.copy(incomeSourceReportingFrequencyData = Some(updatedSessionData)))
 
               Future.successful(Ok(addSoleTraderChooseTaxYear(
@@ -113,7 +110,6 @@ class AddSoleTraderChooseTaxYearController @Inject()(authActions: AuthActions,
       )
     }.recover {
       case ex =>
-        println(Console.RED + ex + Console.RESET)
         Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
         errorHandler(isAgent).showInternalServerError()
     }
