@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AgentItvcErrorHandler @Inject()(val errorTemplate: ErrorTemplate,
                                       val messagesApi: MessagesApi,
                                       unauthorisedAgentView: UnauthorisedAgentView)
-                                     (implicit val ec: ExecutionContext)extends FrontendErrorHandler with I18nSupport with ShowInternalServerError {
+                                     (implicit val ec: ExecutionContext) extends FrontendErrorHandler with I18nSupport with ShowInternalServerError {
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: RequestHeader): Future[Html] =
     Future.successful(errorTemplate(pageTitle, heading, message, isAgent = true))
