@@ -20,6 +20,7 @@ GET          /income-sources/add/change-business-address-lookup           contro
 GET          /agents/income-sources/add/change-business-address-lookup    controllers.incomeSources.add.AddBusinessAddressController.showAgent(mode: Mode = CheckMode)
 GET          /income-sources/add/change-business-address/id/              controllers.incomeSources.add.AddBusinessAddressController.submit(id: Option[String], isChange: Boolean = true)
 GET          /agents/income-sources/add/change-business-address/id/       controllers.incomeSources.add.AddBusinessAddressController.agentSubmit(id: Option[String], isChange: Boolean = true)
+GET          /income-sources/add/change-business-trade                    controllers.incomeSources.add.AddBusinessTradeController.show(mode: Mode = NormalMode)
 GET          /agents/income-sources/add/business-trade                    controllers.incomeSources.add.AddBusinessTradeController.showAgent(mode: Mode = NormalMode)
 POST         /income-sources/add/business-trade                           controllers.incomeSources.add.AddBusinessTradeController.submit(mode: Mode = NormalMode)
 POST         /agents/income-sources/add/business-trade                    controllers.incomeSources.add.AddBusinessTradeController.submitAgent(mode: Mode = NormalMode)
