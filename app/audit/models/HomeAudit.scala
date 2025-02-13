@@ -44,7 +44,7 @@ case class HomeAudit(mtdItUser: MtdItUser[_],
   override val detail: JsValue = Json.obj(
     "mtditid" -> mtdItUser.mtditid,
     "nino" -> mtdItUser.nino
-  ) ++ userType(mtdItUser.userType) ++ paymentsInformation ++ updatesInformation ++
+  ) ++ userType(mtdItUser.userType, mtdItUser.isSupportingAgent) ++ paymentsInformation ++ updatesInformation ++
     ("saUtr", mtdItUser.saUtr) ++
     ("credId", mtdItUser.credId) ++
     ("agentReferenceNumber", mtdItUser.arn)
@@ -79,6 +79,24 @@ object HomeAudit {
     HomeAudit(
       mtdItUser,
       nextPaymentOrOverdue = nextPaymentOrOverdue,
+      nextUpdateOrOverdue = nextUpdateOrOverdue
+    )
+  }
+
+  def applySupportingAgent(mtdItUser: MtdItUser[_],
+                           nextUpdatesTileViewModel: NextUpdatesTileViewModel): HomeAudit = {
+    val overdueUpdatesCount: Int = nextUpdatesTileViewModel.getNumberOfOverdueObligations
+    val nextUpdateDueDate: Option[LocalDate] = nextUpdatesTileViewModel.getNextDeadline
+    val nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int] = {
+      (overdueUpdatesCount, nextUpdateDueDate) match {
+        case (0, Some(dueDate)) => Left(dueDate -> false)
+        case (1, Some(dueDate)) => Left(dueDate -> true)
+        case (_, _) => Right(overdueUpdatesCount)
+      }
+    }
+    HomeAudit(
+      mtdItUser,
+      nextPaymentOrOverdue = None,
       nextUpdateOrOverdue = nextUpdateOrOverdue
     )
   }

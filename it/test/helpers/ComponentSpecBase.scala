@@ -16,6 +16,7 @@
 
 package helpers
 
+import auth.authV2.models.AuthorisedAndEnrolledRequest
 import auth.{HeaderExtractor, MtdItUser}
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
@@ -132,6 +133,15 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       defaultAuthUserDetails(mtdUserRole),
       if(mtdUserRole == MTDIndividual) None else Some(defaultClientDetails),
       incomeSources
+    )(FakeRequest())
+  }
+
+  def getAuthorisedAndEnrolledUser(mtdUserRole: MTDUserRole): AuthorisedAndEnrolledRequest[_] = {
+    AuthorisedAndEnrolledRequest(
+      testMtditid,
+      mtdUserRole,
+      defaultAuthUserDetails(mtdUserRole),
+      if(mtdUserRole == MTDIndividual) None else Some(defaultClientDetails)
     )(FakeRequest())
   }
 

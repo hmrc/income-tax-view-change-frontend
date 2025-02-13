@@ -164,7 +164,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
         val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(validUTR))).futureValue
         
-        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId)))
+        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId), Some(false)))
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -191,7 +191,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
         val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(validUTR))).futureValue
 
-        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId)))
+        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId), Some(true)))
 
         Then("The enter clients utr page is returned with an error")
         result should have(
@@ -221,7 +221,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
         val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(utrWithSpaces))).futureValue
 
-        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId)))
+        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId), Some(false)))
 
         Then("The enter clients utr page is returned with an error")
         result should have(
@@ -251,7 +251,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
         val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(utrWithSpaces))).futureValue
 
-        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId)))
+        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId), Some(true)))
 
         result should have(
           httpStatus(SEE_OTHER),

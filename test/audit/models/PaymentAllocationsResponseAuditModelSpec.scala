@@ -108,12 +108,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
     "Have the correct details for the audit event with Credit" when {
       "the audit is full" when {
         "the user is an individual" in {
-          paymentAllocationsAuditFullCredit(userType = Some(Individual)).detail shouldBe Json.obj(
-            "mtditid" -> testMtditid,
-            "nino" -> testNino,
-            "saUtr" -> testSaUtr,
-            "credId" -> testCredId,
-            "userType" -> "Individual",
+          val expectedAudit = commonAuditDetails(Individual) ++ Json.obj(
             "paymentMadeDate" -> LocalDate.parse("2017-02-28"),
             "paymentMadeAmount" -> 23456.78,
             "paymentType" -> "Payment made from earlier tax year",
@@ -127,15 +122,10 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             ),
             "creditOnAccount" -> 543.32
           )
+          paymentAllocationsAuditFullCredit(userType = Some(Individual)).detail shouldBe expectedAudit
         }
         "the user is an agent" in {
-          paymentAllocationsAuditFullCredit(userType = Some(Agent)).detail shouldBe Json.obj(
-            "mtditid" -> testMtditid,
-            "nino" -> testNino,
-            "saUtr" -> testSaUtr,
-            "credId" -> testCredId,
-            "userType" -> "Agent",
-            "agentReferenceNumber" -> testArn,
+          val expectedAudit = commonAuditDetails(Agent) ++ Json.obj(
             "paymentMadeDate" -> LocalDate.parse("2017-02-28"),
             "paymentMadeAmount" -> 23456.78,
             "paymentType" -> "Payment made from earlier tax year",
@@ -149,6 +139,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             ),
             "creditOnAccount" -> 543.32
           )
+          paymentAllocationsAuditFullCredit(userType = Some(Agent)).detail shouldBe expectedAudit
         }
       }
     }
@@ -167,13 +158,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
     "Have the correct details for the audit event" when {
       "the audit is full" when {
         "the user is an individual" in {
-          paymentAllocationsAuditFull(userType = Some(Individual)).detail shouldBe Json.obj(
-            "mtditid" -> testMtditid,
-            "nino" -> testNino,
-            "saUtr" -> testSaUtr,
-            "credId" -> testCredId,
-            "userType" -> "Individual",
-            "paymentMadeDate" -> LocalDate.parse("2017-02-28"),
+          val expectedAudit = commonAuditDetails(Individual) ++ Json.obj("paymentMadeDate" -> LocalDate.parse("2017-02-28"),
             "paymentMadeAmount" -> 23456.78,
             "paymentType" -> "Payment made to HMRC",
             "paymentAllocations" -> Json.arr(
@@ -186,15 +171,10 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             ),
             "creditOnAccount" -> 543.32
           )
+          paymentAllocationsAuditFull(userType = Some(Individual)).detail shouldBe expectedAudit
         }
         "the user is an agent" in {
-          paymentAllocationsAuditFull(userType = Some(Agent)).detail shouldBe Json.obj(
-            "mtditid" -> testMtditid,
-            "nino" -> testNino,
-            "saUtr" -> testSaUtr,
-            "credId" -> testCredId,
-            "userType" -> "Agent",
-            "agentReferenceNumber" -> testArn,
+          val expectedAudit = commonAuditDetails(Agent) ++ Json.obj(
             "paymentMadeDate" -> LocalDate.parse("2017-02-28"),
             "paymentMadeAmount" -> 23456.78,
             "paymentType" -> "Payment made to HMRC",
@@ -208,6 +188,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             ),
             "creditOnAccount" -> 543.32
           )
+          paymentAllocationsAuditFull(userType = Some(Agent)).detail shouldBe expectedAudit
         }
       }
     }
@@ -226,12 +207,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
     "Have the correct details for the audit event with Credit" when {
       "the audit is full" when {
         "the user is an individual" in {
-          paymentAllocationsAuditFullCredit(userType = Some(Individual)).detail shouldBe Json.obj(
-            "mtditid" -> testMtditid,
-            "nino" -> testNino,
-            "saUtr" -> testSaUtr,
-            "credId" -> testCredId,
-            "userType" -> "Individual",
+          val expectedAudit = commonAuditDetails(Individual) ++ Json.obj(
             "paymentMadeDate" -> LocalDate.parse("2017-02-28"),
             "paymentMadeAmount" -> 23456.78,
             "paymentType" -> "Payment made from earlier tax year",
@@ -245,15 +221,10 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             ),
             "creditOnAccount" -> 543.32
           )
+          paymentAllocationsAuditFullCredit(userType = Some(Individual)).detail shouldBe expectedAudit
         }
         "the user is an agent" in {
-          paymentAllocationsAuditFullCredit(userType = Some(Agent)).detail shouldBe Json.obj(
-            "mtditid" -> testMtditid,
-            "nino" -> testNino,
-            "saUtr" -> testSaUtr,
-            "credId" -> testCredId,
-            "userType" -> "Agent",
-            "agentReferenceNumber" -> testArn,
+          val expectedAudit = commonAuditDetails(Agent) ++ Json.obj(
             "paymentMadeDate" -> LocalDate.parse("2017-02-28"),
             "paymentMadeAmount" -> 23456.78,
             "paymentType" -> "Payment made from earlier tax year",
@@ -267,6 +238,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             ),
             "creditOnAccount" -> 543.32
           )
+          paymentAllocationsAuditFullCredit(userType = Some(Agent)).detail shouldBe expectedAudit
         }
       }
     }

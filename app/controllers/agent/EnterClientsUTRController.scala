@@ -82,13 +82,13 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
           case Right(clientDetails) =>
             checkAgentAuthorisedAndGetRole(clientDetails.mtdItId).flatMap { userRole =>
               val sessionCookies: Seq[(String, String)] = SessionCookieData(clientDetails, validUTR, userRole == MTDSupportingAgent).toSessionCookieSeq
-              sendAudit(true, user, validUTR, clientDetails.nino, clientDetails.mtdItId)
+              sendAudit(true, user, validUTR, clientDetails.nino, clientDetails.mtdItId, Some(userRole == MTDSupportingAgent))
               Future.successful(Redirect(routes.ConfirmClientUTRController.show).addingToSession(sessionCookies: _*))
             }.recover {
               case ex =>
                 Logger("application")
                   .error(s"[EnterClientsUTRController] - ${ex.getMessage} - ${ex.getCause}")
-                sendAudit(false, user, validUTR, clientDetails.nino, clientDetails.mtdItId)
+                sendAudit(false, user, validUTR, clientDetails.nino, clientDetails.mtdItId, None)
                 Redirect(controllers.agent.routes.UTRErrorController.show)
             }
 
@@ -119,14 +119,16 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
       }
   }
 
-  private def sendAudit[A](isSuccessful: Boolean, user: AuthorisedUserRequest[A], validUTR: String, nino: String, mtdItId: String)(implicit request: Request[_]): Unit = {
+  private def sendAudit[A](isSuccessful: Boolean, user: AuthorisedUserRequest[A],
+                           validUTR: String, nino: String, mtdItId: String, isSupportingAgent: Option[Boolean])(implicit request: Request[_]): Unit = {
     auditingService.extendedAudit(EnterClientUTRAuditModel(
       isSuccessful = isSuccessful,
       nino = nino,
       mtditid = mtdItId,
       arn = user.authUserDetails.agentReferenceNumber,
       saUtr = validUTR,
-      credId = user.authUserDetails.credId
+      credId = user.authUserDetails.credId,
+      isSupportingAgent = isSupportingAgent
     )
     )
   }

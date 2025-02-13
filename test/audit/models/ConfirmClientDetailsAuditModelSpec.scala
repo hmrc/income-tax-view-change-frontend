@@ -16,6 +16,7 @@
 
 package audit.models
 
+import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import play.api.libs.json.Json
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditidAgent, testNinoAgent, testSaUtr}
 import testUtils.TestSupport
@@ -25,36 +26,41 @@ class ConfirmClientDetailsAuditModelSpec extends TestSupport {
   val transactionName = enums.TransactionName.ClientDetailsConfirmed.name
   val auditType = enums.AuditType.ClientDetailsConfirmed.name
 
-  def getConfirmClientDetailsAuditModel(): ConfirmClientDetailsAuditModel = {
-    ConfirmClientDetailsAuditModel(clientName = "Test User", nino = testNinoAgent, mtditid = testMtditidAgent, arn = testArn, saUtr = testSaUtr, credId = Some(testCredId))
+  def getConfirmClientDetailsAuditModel(isSupportingAgent: Boolean): ConfirmClientDetailsAuditModel = {
+    ConfirmClientDetailsAuditModel(clientName = "Test User", nino = testNinoAgent,
+      mtditid = testMtditidAgent, arn = testArn, saUtr = testSaUtr, isSupportingAgent = isSupportingAgent, credId = Some(testCredId))
   }
 
 
-  val detailsAuditData = Json.parse(
-    """{
-      |    "nino": "AA111111A",
-      |    "mtditid": "XAIT00000000015",
-      |    "agentReferenceNumber": "XAIT0000123456",
-      |    "saUtr": "1234567890",
-      |    "credId": "testCredId",
-      |    "userType": "Agent",
-      |    "clientName": "Test User"
-      |}""".stripMargin)
+  def detailsAuditData(isSupportingAgent: Boolean) = Json.parse(
+    s"""{
+       |    "nino": "AA111111A",
+       |    "mtditid": "XAIT00000000015",
+       |    "agentReferenceNumber": "XAIT0000123456",
+       |    "saUtr": "1234567890",
+       |    "credId": "testCredId",
+       |    "userType": "Agent",
+       |    "isSupportingAgent": $isSupportingAgent,
+       |    "clientName": "Test User"
+       |}""".stripMargin)
 
 
-  "ConfirmClientDetailsAuditModel" should {
-    s"have the correct transaction name of - $transactionName" in {
-      getConfirmClientDetailsAuditModel().transactionName shouldBe transactionName
-    }
+  "ConfirmClientDetailsAuditModel" when {
+    List(MTDPrimaryAgent, MTDSupportingAgent).foreach { role =>
+      val isSupportingAgent = role == MTDSupportingAgent
+      s"the user is a $role" should {
+        s"have the correct transaction name of - $transactionName" in {
+          getConfirmClientDetailsAuditModel(isSupportingAgent).transactionName shouldBe transactionName
+        }
 
-    s"have the correct audit event type of - $auditType" in {
-      getConfirmClientDetailsAuditModel().auditType shouldBe auditType
-    }
-  }
+        s"have the correct audit event type of - $auditType" in {
+          getConfirmClientDetailsAuditModel(isSupportingAgent).auditType shouldBe auditType
+        }
 
-  "have the correct detail for the audit event" when {
-    "user is an agent" in {
-      getConfirmClientDetailsAuditModel().detail shouldBe detailsAuditData
+      "have the correct detail for the audit event" in {
+          getConfirmClientDetailsAuditModel(isSupportingAgent).detail shouldBe detailsAuditData(isSupportingAgent)
+        }
+      }
     }
   }
 }

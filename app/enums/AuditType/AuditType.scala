@@ -149,3 +149,7 @@ case object OptOutQuarterlyReportingRequest extends AuditType {
 case object OptInQuarterlyReportingRequest extends AuditType {
   override val name: String = "OptInQuarterlyReportingRequest"
 }
+
+case object AccessDeniedForSupportingAgent extends AuditType {
+  val name = "AccessDeniedForSupportingAgent"
+}

@@ -99,6 +99,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
         isEnabled(IncomeSourcesNewJourney))
       val accountSettingsTileViewModel = AccountSettingsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
 
+      auditingService.extendedAudit(HomeAudit.applySupportingAgent(user, nextUpdatesTileViewModel))
       Ok(
         supportingAgentHomeView(
           yourBusinessesTileViewModel,

@@ -16,21 +16,30 @@
 
 package auth.authV2.actions
 
+import audit.AuditingService
+import audit.models.AccessDeniedForSupportingAgentAuditModel
 import auth.authV2.models.AuthorisedAndEnrolledRequest
 import com.google.inject.Singleton
 import config.AgentItvcErrorHandler
 import enums.MTDSupportingAgent
-import play.api.mvc.{ActionRefiner, Result}
+import play.api.mvc.{ActionRefiner, Request, Result}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AgentIsPrimaryAction @Inject()(agentItvcErrorHandler: AgentItvcErrorHandler)(implicit val executionContext: ExecutionContext)
+class AgentIsPrimaryAction @Inject()(agentItvcErrorHandler: AgentItvcErrorHandler,
+                                     auditingService: AuditingService)(implicit val executionContext: ExecutionContext)
 extends ActionRefiner[AuthorisedAndEnrolledRequest, AuthorisedAndEnrolledRequest] {
 
   override protected def refine[A](request: AuthorisedAndEnrolledRequest[A]): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter
+      .fromRequestAndSession(request, request.session)
+    implicit val req: Request[A] = request
     if(request.mtdUserRole == MTDSupportingAgent) {
+      auditingService.extendedAudit(AccessDeniedForSupportingAgentAuditModel(request))
       Future.successful(Left(agentItvcErrorHandler.supportingAgentUnauthorised()(request)))
     } else {
       Future.successful(Right(request))
