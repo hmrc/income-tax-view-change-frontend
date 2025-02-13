@@ -18,6 +18,7 @@ package audit.models
 
 import enums.FailureCategory.ApiFailure
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckPropertyViewModel}
 import play.api.libs.json.{JsObject, Json}
@@ -62,11 +63,11 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
     cashOrAccrualsFlag = "CASH",
     incomeSourceType = UkProperty)
 
-  def getCreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType, isAgent: Boolean, isError: Boolean): CreateIncomeSourceAuditModel = {
-    (incomeSourceType, isAgent, isError) match {
-      case (SelfEmployment, false, true) => CreateIncomeSourceAuditModel(incomeSourceType, createBusinessViewModel, Some(failureCategory), Some(failureReason), None)
-      case (SelfEmployment, false, false) => CreateIncomeSourceAuditModel(incomeSourceType, createBusinessViewModel, None, None, Some(CreateIncomeSourceResponse(incomeSourceId)))
-      case (SelfEmployment, true, false) => CreateIncomeSourceAuditModel(incomeSourceType, createBusinessViewModel, None, None, Some(CreateIncomeSourceResponse(incomeSourceId)))(agentUserConfirmedClient())
+  def getCreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType, mtdUserRole: MTDUserRole, isError: Boolean): CreateIncomeSourceAuditModel = {
+    (incomeSourceType, mtdUserRole, isError) match {
+      case (SelfEmployment, MTDIndividual, true) => CreateIncomeSourceAuditModel(incomeSourceType, createBusinessViewModel, Some(failureCategory), Some(failureReason), None)
+      case (SelfEmployment, MTDIndividual, false) => CreateIncomeSourceAuditModel(incomeSourceType, createBusinessViewModel, None, None, Some(CreateIncomeSourceResponse(incomeSourceId)))
+      case (SelfEmployment, ur, false) => CreateIncomeSourceAuditModel(incomeSourceType, createBusinessViewModel, None, None, Some(CreateIncomeSourceResponse(incomeSourceId)))(agentUserConfirmedClient(ur == MTDSupportingAgent))
       case _ => CreateIncomeSourceAuditModel(incomeSourceType, createForeignPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(incomeSourceId)))
     }
   }
@@ -98,11 +99,9 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
     ) ++ {if(isSuccess) Json.obj("addedIncomeSourceID" -> "XA00001234") else Json.obj()}
   }
 
-
   val detailIndividualSE = commonAuditDetails(Individual) ++ seAuditDetails(true)
 
-  val detailAgentSE = commonAuditDetails(Agent) ++ seAuditDetails(true)
-
+  val detailAgentSE: Boolean => JsObject = isSupportingAgent => commonAuditDetails(Agent, isSupportingAgent) ++ seAuditDetails(true)
 
   val detailOutcomeError = commonAuditDetails(Individual) ++ seAuditDetails(false)
 
@@ -116,29 +115,33 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
 
   "CeaseIncomeSourceAuditModel" should {
     s"have the correct transaction name of - $transactionName" in {
-      getCreateIncomeSourceAuditModel(SelfEmployment, isAgent = false, isError = false).transactionName shouldBe transactionName
+      getCreateIncomeSourceAuditModel(SelfEmployment, MTDIndividual, isError = false).transactionName shouldBe transactionName
     }
   }
 
   s"have the correct audit event type of - $auditType" in {
-    getCreateIncomeSourceAuditModel(SelfEmployment, isAgent = false, isError = false).auditType shouldBe auditType
+    getCreateIncomeSourceAuditModel(SelfEmployment, MTDIndividual, isError = false).auditType shouldBe auditType
   }
 
   "have the correct detail for the audit event" when {
     "user is an Individual and when income source type is Self Employment" in {
-      getCreateIncomeSourceAuditModel(SelfEmployment, isAgent = false, isError = false).detail shouldBe detailIndividualSE
+      getCreateIncomeSourceAuditModel(SelfEmployment, MTDIndividual, isError = false).detail shouldBe detailIndividualSE
     }
 
-    "user is an Agent and when income source type is Self Employment" in {
-      getCreateIncomeSourceAuditModel(SelfEmployment, isAgent = true, isError = false).detail shouldBe detailAgentSE
+    "user is an primary Agent and when income source type is Self Employment" in {
+      getCreateIncomeSourceAuditModel(SelfEmployment, MTDPrimaryAgent, isError = false).detail shouldBe detailAgentSE(false)
+    }
+
+    "user is an supporting Agent and when income source type is Self Employment" in {
+      getCreateIncomeSourceAuditModel(SelfEmployment, MTDSupportingAgent, isError = false).detail shouldBe detailAgentSE(true)
     }
 
     "error while updating income source" in {
-      getCreateIncomeSourceAuditModel(SelfEmployment, isAgent = false, isError = true).detail shouldBe detailOutcomeError
+      getCreateIncomeSourceAuditModel(SelfEmployment, MTDIndividual, isError = true).detail shouldBe detailOutcomeError
     }
 
     "user is an Individual and when income source type is Property" in {
-      getCreateIncomeSourceAuditModel(UkProperty, isAgent = false, isError = false).detail shouldBe detailProperty
+      getCreateIncomeSourceAuditModel(UkProperty, MTDIndividual, isError = false).detail shouldBe detailProperty
     }
   }
 }

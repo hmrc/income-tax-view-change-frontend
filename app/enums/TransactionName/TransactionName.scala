@@ -149,3 +149,7 @@ case object OptOutQuarterlyReportingRequest extends TransactionName {
 case object OptInQuarterlyReportingRequest extends TransactionName {
   val name = "opt-in-quarterly-reporting-request"
 }
+
+case object AccessDeniedForSupportingAgent extends  TransactionName {
+  val name = "access-denied-for-supporting-agent"
+}

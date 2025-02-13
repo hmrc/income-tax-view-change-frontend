@@ -16,7 +16,7 @@
 
 package audit.models
 
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditidAgent, testNinoAgent, testSaUtr}
 import testUtils.TestSupport
 
@@ -25,13 +25,14 @@ class EnterClientUTRAuditModelSpec extends TestSupport {
   val transactionName = enums.TransactionName.EnterClientUTR.name
   val auditType = enums.AuditType.EnterClientUTR.name
 
-  def getEnterClientUTRAuditModel(isSuccessful: Boolean): EnterClientUTRAuditModel = {
-    EnterClientUTRAuditModel(isSuccessful = isSuccessful, nino = testNinoAgent, mtditid = testMtditidAgent, arn = Some(testArn), saUtr = testSaUtr, credId = Some(testCredId))
+  def getEnterClientUTRAuditModel(isSuccessful: Boolean, isSupportingAgent: Option[Boolean]): EnterClientUTRAuditModel = {
+    EnterClientUTRAuditModel(isSuccessful = isSuccessful, nino = testNinoAgent, mtditid = testMtditidAgent,
+      arn = Some(testArn), saUtr = testSaUtr, credId = Some(testCredId), isSupportingAgent = isSupportingAgent)
   }
 
 
-  val detailsAuditDataSuccess = Json.parse(
-    """{
+  val detailsAuditDataSuccess: Boolean => JsValue = isSupportingAgent => Json.parse(
+    s"""{
       |    "nino": "AA111111A",
       |    "mtditid": "XAIT00000000015",
       |    "agentReferenceNumber": "XAIT0000123456",
@@ -40,7 +41,8 @@ class EnterClientUTRAuditModelSpec extends TestSupport {
       |    "outcome": {
       |        "isSuccessful": true
       |    },
-      |    "userType": "Agent"
+      |    "userType": "Agent",
+      |    "isSupportingAgent": ${isSupportingAgent.toString}
       |}""".stripMargin)
 
   val detailsAuditDataFailure = Json.parse(
@@ -61,30 +63,34 @@ class EnterClientUTRAuditModelSpec extends TestSupport {
 
   "EnterClientUTRAuditModel" should {
     s"have the correct transaction name of - $transactionName on successful" in {
-      getEnterClientUTRAuditModel(true).transactionName shouldBe transactionName
+      getEnterClientUTRAuditModel(true, Some(false)).transactionName shouldBe transactionName
     }
 
     s"have the correct transaction name of - $transactionName on failure" in {
-      getEnterClientUTRAuditModel(false).transactionName shouldBe transactionName
+      getEnterClientUTRAuditModel(false, Some(false)).transactionName shouldBe transactionName
     }
 
     s"have the correct audit event type of - $auditType on successful" in {
-      getEnterClientUTRAuditModel(true).auditType shouldBe auditType
+      getEnterClientUTRAuditModel(true, Some(false)).auditType shouldBe auditType
     }
 
     s"have the correct audit event type of - $auditType on failure" in {
-      getEnterClientUTRAuditModel(false).auditType shouldBe auditType
+      getEnterClientUTRAuditModel(false, Some(false)).auditType shouldBe auditType
     }
 
   }
 
   "have the correct detail for the audit event" when {
-    "user is an agent and api returns success" in {
-      getEnterClientUTRAuditModel(true).detail shouldBe detailsAuditDataSuccess
+    "user is an primary agent and api returns success" in {
+      getEnterClientUTRAuditModel(true, Some(false)).detail shouldBe detailsAuditDataSuccess(false)
+    }
+
+    "user is an supporting agent and api returns success" in {
+      getEnterClientUTRAuditModel(true, Some(true)).detail shouldBe detailsAuditDataSuccess(true)
     }
 
     "user is an agent and api returns failure" in {
-      getEnterClientUTRAuditModel(false).detail shouldBe detailsAuditDataFailure
+      getEnterClientUTRAuditModel(false, None).detail shouldBe detailsAuditDataFailure
     }
   }
 }

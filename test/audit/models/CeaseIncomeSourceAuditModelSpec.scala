@@ -17,12 +17,12 @@
 package audit.models
 
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
+import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import play.api.libs.json.{JsValue, Json}
 import testConstants.BaseTestConstants._
 import testConstants.UpdateIncomeSourceTestConstants.failureResponse
 import testUtils.TestSupport
-import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 class CeaseIncomeSourceAuditModelSpec extends TestSupport {
@@ -32,16 +32,16 @@ class CeaseIncomeSourceAuditModelSpec extends TestSupport {
   val cessationDate = "2022-08-01"
   val hcWithDeviceID = headerCarrier.copy(deviceID = Some("some device id"))
 
-  def getCeaseIncomeSourceAuditModel(incomeSourceType: IncomeSourceType, isAgent: Boolean, isError: Boolean): CeaseIncomeSourceAuditModel = {
-    (incomeSourceType, isAgent, isError) match {
-      case (SelfEmployment, false, true) => CeaseIncomeSourceAuditModel(incomeSourceType, cessationDate, mkIncomeSourceId(testSelfEmploymentId), Some(failureResponse))
-      case (SelfEmployment, false, false) => CeaseIncomeSourceAuditModel(incomeSourceType, cessationDate, mkIncomeSourceId(testSelfEmploymentId), None)
-      case (SelfEmployment, true, false) => CeaseIncomeSourceAuditModel(incomeSourceType, cessationDate, mkIncomeSourceId(testSelfEmploymentId), None)(agentUserConfirmedClient(), headerCarrier)
+  def getCeaseIncomeSourceAuditModel(incomeSourceType: IncomeSourceType, mtdUserRole: MTDUserRole, isError: Boolean): CeaseIncomeSourceAuditModel = {
+    (incomeSourceType, mtdUserRole, isError) match {
+      case (SelfEmployment, MTDIndividual, true) => CeaseIncomeSourceAuditModel(incomeSourceType, cessationDate, mkIncomeSourceId(testSelfEmploymentId), Some(failureResponse))
+      case (SelfEmployment, MTDIndividual, false) => CeaseIncomeSourceAuditModel(incomeSourceType, cessationDate, mkIncomeSourceId(testSelfEmploymentId), None)
+      case (SelfEmployment, ur, false) => CeaseIncomeSourceAuditModel(incomeSourceType, cessationDate, mkIncomeSourceId(testSelfEmploymentId), None)(agentUserConfirmedClient(ur == MTDSupportingAgent), headerCarrier)
       case _ => CeaseIncomeSourceAuditModel(incomeSourceType, cessationDate, mkIncomeSourceId(testPropertyIncomeId), None)
     }
   }
 
-  lazy val detailsAuditDataSuccess: (AffinityGroup, IncomeSourceType) => JsValue = (af, incomeSourceType) => {
+  lazy val detailsAuditDataSuccess: (MTDUserRole, IncomeSourceType) => JsValue = (mtdUserRole, incomeSourceType) => {
     val journeyDetails = if(incomeSourceType == SelfEmployment) Json.obj(
       "journeyType" -> "SE",
       "incomeSourceID" -> "XA00001234",
@@ -51,14 +51,22 @@ class CeaseIncomeSourceAuditModelSpec extends TestSupport {
       "journeyType" -> "UKPROPERTY",
       "incomeSourceID" -> "1234"
     )
-    commonAuditDetails(af) ++ Json.obj(
+    val (af, isSupportingAgent) = mtdUserRole match {
+      case MTDIndividual => (Individual, false)
+      case ur => (Agent, ur == MTDSupportingAgent)
+    }
+    commonAuditDetails(af, isSupportingAgent) ++ Json.obj(
       "outcome" -> Json.obj("isSuccessful" -> true),
       "dateBusinessStopped" -> "2022-08-01"
     ) ++ journeyDetails
   }
 
-  lazy val detailsAuditDataFailure: AffinityGroup => JsValue = af =>
-    commonAuditDetails(af) ++ Json.obj(
+  lazy val detailsAuditDataFailure: MTDUserRole => JsValue = mtdUserRole => {
+    val (af, isSupportingAgent) = mtdUserRole match {
+      case MTDIndividual => (Individual, false)
+      case ur => (Agent, ur == MTDSupportingAgent)
+    }
+    commonAuditDetails(af, isSupportingAgent) ++ Json.obj(
       "outcome" -> Json.obj(
         "isSuccessful" -> false,
         "failureCategory" -> "API_FAILURE",
@@ -69,32 +77,37 @@ class CeaseIncomeSourceAuditModelSpec extends TestSupport {
       "incomeSourceID" -> "XA00001234",
       "businessName" -> "nextUpdates.business"
     )
+  }
 
   "CeaseIncomeSourceAuditModel" should {
     s"have the correct transaction name of '$transactionName'" in {
-      getCeaseIncomeSourceAuditModel(SelfEmployment, isAgent = false, isError = false).transactionName shouldBe transactionName
+      getCeaseIncomeSourceAuditModel(SelfEmployment, MTDIndividual, isError = false).transactionName shouldBe transactionName
     }
   }
 
   s"have the correct audit event type of '$auditType'" in {
-    getCeaseIncomeSourceAuditModel(SelfEmployment, isAgent = false, isError = false).auditType shouldBe auditType
+    getCeaseIncomeSourceAuditModel(SelfEmployment, MTDIndividual, isError = false).auditType shouldBe auditType
   }
 
   "have the correct detail for the audit event" when {
     "user is an Individual and when income source type is Self Employment" in {
-      getCeaseIncomeSourceAuditModel(SelfEmployment, isAgent = false, isError = false).detail shouldBe detailsAuditDataSuccess(Individual, SelfEmployment)
+      getCeaseIncomeSourceAuditModel(SelfEmployment, MTDIndividual, isError = false).detail shouldBe detailsAuditDataSuccess(MTDIndividual, SelfEmployment)
     }
 
-    "user is an Agent and when income source type is Self Employment" in {
-      getCeaseIncomeSourceAuditModel(SelfEmployment, isAgent = true, isError = false).detail shouldBe detailsAuditDataSuccess(Agent, SelfEmployment)
+    "user is an primary Agent and when income source type is Self Employment" in {
+      getCeaseIncomeSourceAuditModel(SelfEmployment, MTDPrimaryAgent, isError = false).detail shouldBe detailsAuditDataSuccess(MTDPrimaryAgent, SelfEmployment)
+    }
+
+    "user is an supporting Agent and when income source type is Self Employment" in {
+      getCeaseIncomeSourceAuditModel(SelfEmployment, MTDSupportingAgent, isError = false).detail shouldBe detailsAuditDataSuccess(MTDSupportingAgent, SelfEmployment)
     }
 
     "error while updating income source" in {
-      getCeaseIncomeSourceAuditModel(SelfEmployment, isAgent = false, isError = true).detail shouldBe detailsAuditDataFailure(Individual)
+      getCeaseIncomeSourceAuditModel(SelfEmployment, MTDIndividual, isError = true).detail shouldBe detailsAuditDataFailure(MTDIndividual)
     }
 
     "user is an Individual and when income source type is Property" in {
-      getCeaseIncomeSourceAuditModel(UkProperty, isAgent = false, isError = false).detail shouldBe detailsAuditDataSuccess(Individual, UkProperty)
+      getCeaseIncomeSourceAuditModel(UkProperty, MTDIndividual, isError = false).detail shouldBe detailsAuditDataSuccess(MTDIndividual, UkProperty)
     }
   }
 }

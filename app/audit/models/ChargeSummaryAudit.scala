@@ -16,6 +16,7 @@
 
 package audit.models
 
+import audit.Utilities.userAuditDetails
 import auth.MtdItUser
 import enums.AuditType.ChargeSummary
 import models.chargeHistory.ChargeHistoryModel
@@ -23,7 +24,6 @@ import models.chargeSummary.PaymentHistoryAllocations
 import models.financialDetails._
 import play.api.libs.json.{JsObject, JsValue, Json}
 import services.DateServiceInterface
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import utils.Utilities._
 
 
@@ -36,13 +36,6 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
                               isMFADebit: Boolean = false,
                               taxYear: Int
                              )(implicit val dateService: DateServiceInterface) extends ExtendedAuditModel with PaymentSharedFunctions {
-
-  private val userType: JsObject =
-    mtdItUser.userType match {
-      case Some(Agent) => Json.obj("userType" -> "Agent")
-      case Some(_) => Json.obj("userType" -> "Individual")
-      case None => Json.obj()
-    }
 
   private def getAllocationDescriptionFromKey(key: Option[String]): String = {
     key match {
@@ -166,12 +159,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
 
   override val transactionName: String = enums.TransactionName.ChargeSummary
   override val detail: JsValue = {
-    Json.obj("nino" -> mtdItUser.nino,
-      "mtditid" -> mtdItUser.mtditid) ++
-      userType ++
-      ("agentReferenceNumber", mtdItUser.arn) ++
-      ("saUtr", mtdItUser.saUtr) ++
-      ("credId", mtdItUser.credId) ++
+    userAuditDetails(mtdItUser) ++
       Json.obj("charge" -> chargeDetails) ++
       release6Update
   }
