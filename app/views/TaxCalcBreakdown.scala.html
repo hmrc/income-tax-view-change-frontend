@@ -29,9 +29,9 @@
     capitalGainsTaxTable: CapitalGainsTaxTableNew,
     govukInsetText: GovukInsetText
 )
-@(viewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String, isAgent: Boolean = false, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
+@(viewModel: TaxDueSummaryViewModel, taxYear: Int, startAVRTYear: Int, backUrl: String, isAgent: Boolean = false, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 
-@taxBandTableRow(band: TaxBands, scottishRegime: Boolean = false, startAVRTYear: Int = 2024 ) = {
+@taxBandTableRow(band: TaxBands, scottishRegime: Boolean = false, startAVRTYear: Int) = {
     <tr class="govuk-table__row">
         <td class="govuk-table__cell">
         @messages(
@@ -145,7 +145,7 @@
 
             <tbody class="govuk-table__body">
             @for(band <- viewModel.payPensionsProfitBands.getOrElse(Seq()).filter(_.income > 0).sortBy(_.rate)) {
-                @taxBandTableRow(band, viewModel.taxRegime.contains("Scotland"))
+                @taxBandTableRow(band, viewModel.taxRegime.contains("Scotland"), startAVRTYear)
             }
             @transitionalProfitTaxBandTableRow
             </tbody>
@@ -168,7 +168,7 @@
                     .sortBy(_.name == "SSR").sortBy(_.name == "ZRTBR").sortBy(_.name == "BRT").sortBy(_.name == "ZRTHR")
                     .sortBy(_.name == "HRT").sortBy(_.name == "ART")
             ) {
-                @taxBandTableRow(band)
+                @taxBandTableRow(band, startAVRTYear = startAVRTYear)
             }
             </tbody>
         </table>
@@ -190,7 +190,7 @@
                     .sortBy(_.name == "ZRTBR").sortBy(_.name == "BRT").sortBy(_.name == "ZRTHR").sortBy(_.name == "HRT")
                     .sortBy(_.name == "ZRTAR").sortBy(_.name == "ART")
             ) {
-                @taxBandTableRow(band)
+                @taxBandTableRow(band, startAVRTYear = startAVRTYear)
             }
             </tbody>
         </table>
@@ -209,7 +209,7 @@
 
             <tbody class="govuk-table__body">
             @for(band <- viewModel.lumpSumsBands.getOrElse(Seq()).filter(_.income > 0).sortBy(_.rate)) {
-                @taxBandTableRow(band, viewModel.taxRegime.contains("Scotland"))
+                @taxBandTableRow(band, viewModel.taxRegime.contains("Scotland"), startAVRTYear)
             }
             </tbody>
         </table>
@@ -228,7 +228,7 @@
 
             <tbody class="govuk-table__body">
             @for(band <- viewModel.gainsOnLifePoliciesBands.getOrElse(Seq()).filter(_.income > 0).sortBy(_.rate)) {
-                @taxBandTableRow(band, viewModel.taxRegime.contains("Scotland"))
+                @taxBandTableRow(band, viewModel.taxRegime.contains("Scotland"), startAVRTYear)
             }
             </tbody>
         </table>

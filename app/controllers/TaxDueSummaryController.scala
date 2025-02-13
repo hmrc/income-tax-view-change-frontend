@@ -66,7 +66,8 @@ class TaxDueSummaryController @Inject()(val authActions: AuthActions,
         auditingService.extendedAudit(TaxDueResponseAuditModel(user, viewModel, taxYear))
         val fallbackBackUrl = getFallbackUrl(user.session.get(calcPagesBackPage),
           isAgent, liabilityCalc.metadata.crystallised.getOrElse(false), taxYear, origin)
-        Ok(taxCalcBreakdown(viewModel, taxYear, backUrl = fallbackBackUrl, isAgent = isAgent, btaNavPartial = user.btaNavPartial))
+        val startAVRTYear = 2024
+        Ok(taxCalcBreakdown(viewModel, taxYear, startAVRTYear, backUrl = fallbackBackUrl, isAgent = isAgent, btaNavPartial = user.btaNavPartial))
       case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NO_CONTENT =>
         Logger("application").info("No calculation data returned from downstream. Not Found.")
         itvcErrorHandler.showInternalServerError()
