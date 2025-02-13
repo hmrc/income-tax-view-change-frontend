@@ -347,7 +347,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
     }
   }
 
-  "getNextDeadlineDueDateAndOverdueObligations" should {
+  "getDueDates" should {
     "return the next report deadline due date" when {
       "there are income sources from property, business with crystallisation" in new Setup {
         setupMockNextUpdates(obligationsAllDeadlinesSuccessModel)
@@ -372,6 +372,14 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
         result.isRight shouldBe true
         result shouldBe Right(Seq.empty)
       }
+
+      "the ObligationsModel contains only empty obligations (EOPS filtered out)" in new Setup {
+        setupMockNextUpdates(obligationsSuccessModelFiltered)
+        val result: Either[Exception, Seq[LocalDate]] = getDueDates().futureValue
+        result.isRight shouldBe true
+        result shouldBe Right(Seq.empty)
+      }
+
 
       "the Next Updates returned back an error model" in new Setup {
         setupMockNextUpdates(obligationsDataErrorModel)
