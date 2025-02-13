@@ -257,6 +257,7 @@ object NextUpdatesTestConstants {
   val obligationsCrystallisedOnlySuccessModel: ObligationsModel = ObligationsModel(Seq(obligationsCrystallisedSuccessModel))
 
   val emptyObligationsSuccessModel: ObligationsModel = ObligationsModel(Seq())
+  val obligationsSuccessModelFiltered: ObligationsModel = ObligationsModel(Seq(GroupedObligationsModel("ident", List.empty)))
 
   val twoObligationsSuccessModel: GroupedObligationsModel = GroupedObligationsModel(testPropertyIncomeId, List(overdueObligation, openQuarterlyObligation))
 
