@@ -26,7 +26,7 @@
         link: link
 )
 
-@()(implicit request : Request[_], messages: Messages)
+@()(implicit request: RequestHeader, messages: Messages)
 
 @mainTemplate(
     pageTitle = messages("agent-unauthorised.heading"),

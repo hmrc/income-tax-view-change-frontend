@@ -16,6 +16,7 @@
 
 package controllers
 
+import audit.models.AccessDeniedForSupportingAgentAuditModel
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.BusinessDetailsStub.stubGetBusinessDetails
@@ -241,6 +242,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
         httpStatus(UNAUTHORIZED),
         pageTitle(MTDSupportingAgent, "agent-unauthorised.heading", isErrorPage = true)
       )
+      AuditStub.verifyAuditEvent(AccessDeniedForSupportingAgentAuditModel(getAuthorisedAndEnrolledUser(MTDSupportingAgent)))
     }
   }
 }

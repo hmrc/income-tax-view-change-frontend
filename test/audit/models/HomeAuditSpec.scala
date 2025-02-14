@@ -19,6 +19,7 @@ package audit.models
 import authV2.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import forms.IncomeSourcesFormsSpec.commonAuditDetails
 import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.obligations.NextUpdatesTileViewModel
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.Json
@@ -91,6 +92,43 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
         homeAuditMin.detail mustBe Json.obj(
           "nino" -> testNino,
           "mtditid" -> testMtditid,
+          "overdueUpdates" -> 2
+        )
+      }
+    }
+  }
+
+  "applySupportingAgent" should {
+    "render the expected audit event" when {
+      val user = defaultMTDITUser(Some(Agent), IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil), isSupportingAgent = true)
+      "there are updates due" that {
+        "are not overdue" in {
+          val nextDetailsTile = NextUpdatesTileViewModel(
+            List(fixedDate),
+            fixedDate.minusDays(5), true
+          )
+          HomeAudit.applySupportingAgent(user, nextDetailsTile).detail shouldBe commonAuditDetails(Agent, true) ++ Json.obj(
+            "nextUpdateDeadline" -> fixedDate.toString
+          )
+        }
+
+        "are overdue" in {
+          val nextDetailsTile = NextUpdatesTileViewModel(
+            List(fixedDate),
+            fixedDate.plusDays(5), true
+          )
+          HomeAudit.applySupportingAgent(user, nextDetailsTile).detail shouldBe commonAuditDetails(Agent, true) ++ Json.obj(
+            "nextUpdateDeadline" -> fixedDate.toString
+          )
+        }
+      }
+
+      "there are multiple overdue updates" in {
+        val nextDetailsTile = NextUpdatesTileViewModel(
+          List(fixedDate.minusDays(5), fixedDate.minusDays(10)),
+          fixedDate, true
+        )
+        HomeAudit.applySupportingAgent(user, nextDetailsTile).detail shouldBe commonAuditDetails(Agent, true) ++ Json.obj(
           "overdueUpdates" -> 2
         )
       }

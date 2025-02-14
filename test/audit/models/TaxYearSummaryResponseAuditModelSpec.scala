@@ -157,13 +157,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     Message("C159028", "the total tax taken off your client’s employment must be less than the total taxable pay including: tips, other payments, lump sums")
   ))))
 
-  val jsonAuditAgentResponse = Json.obj(
-    "nino" -> testNino,
-    "mtditid" -> testMtditid,
-    "saUtr" -> testSaUtr,
-    "credId" -> testCredId,
-    "userType" -> "Agent",
-    "agentReferenceNumber" -> testArn,
+  val jsonAuditAgentResponse = commonAuditDetails(Agent) ++ Json.obj(
     "taxYearOverview" -> Json.obj(
       "calculationDate" -> "2017-07-06",
       "calculationAmount" -> 2010,
@@ -203,12 +197,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     ))
   )
 
-  val jsonAuditIndividualResponse = Json.obj(
-    "nino" -> testNino,
-    "mtditid" -> testMtditid,
-    "saUtr" -> testSaUtr,
-    "credId" -> testCredId,
-    "userType" -> "Individual",
+  val jsonAuditIndividualResponse = commonAuditDetails(Individual) ++ Json.obj(
     "taxYearOverview" -> Json.obj(
       "calculationDate" -> "2017-07-06",
       "calculationAmount" -> 2010,

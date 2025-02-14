@@ -132,7 +132,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
           ))
 
           status(result) shouldBe SEE_OTHER
-          verifyExtendedAudit(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(testCredId)))
+          verifyExtendedAudit(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(testCredId), Some(false)))
           redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show.url)
           result.futureValue.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
           result.futureValue.session.get(SessionKeys.clientLastName) shouldBe Some("Doe")
@@ -160,7 +160,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
           ))
 
           status(result) shouldBe SEE_OTHER
-          verifyExtendedAudit(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(testCredId)))
+          verifyExtendedAudit(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(testCredId), Some(true)))
           redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show.url)
           result.futureValue.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
           result.futureValue.session.get(SessionKeys.clientLastName) shouldBe Some("Doe")
@@ -189,7 +189,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
 
 
           status(result) shouldBe SEE_OTHER
-          verifyExtendedAudit(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(testCredId)))
+          verifyExtendedAudit(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(testCredId), Some(false)))
           redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show.url)
 
           result.futureValue.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
@@ -220,7 +220,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
 
 
           status(result) shouldBe SEE_OTHER
-          verifyExtendedAudit(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(testCredId)))
+          verifyExtendedAudit(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(testCredId), Some(true)))
           redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show.url)
 
           result.futureValue.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
@@ -299,7 +299,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
           ))
 
           status(result) shouldBe SEE_OTHER
-          verifyExtendedAudit(EnterClientUTRAuditModel(isSuccessful = false, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(testCredId)))
+          verifyExtendedAudit(EnterClientUTRAuditModel(isSuccessful = false, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(testCredId), None))
           redirectLocation(result) shouldBe Some(controllers.agent.routes.UTRErrorController.show.url)
         }
       }

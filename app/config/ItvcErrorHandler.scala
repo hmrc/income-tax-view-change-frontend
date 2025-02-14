@@ -18,31 +18,33 @@ package config
 
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.InternalServerError
-import play.api.mvc.{Request, Result}
+import play.api.mvc.{RequestHeader, Result}
 import play.twirl.api.Html
-import uk.gov.hmrc.play.bootstrap.frontend.http.LegacyFrontendErrorHandler
+import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import views.html.errorPages.templates.ErrorTemplate
 
 import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 trait ShowInternalServerError {
 
-  def showInternalServerError()(implicit request: Request[_]): Result
+  def showInternalServerError()(implicit request: RequestHeader): Result
 }
 
-class ItvcErrorHandler @Inject()(val errorTemplate: ErrorTemplate,
+class ItvcErrorHandler @Inject()(errorTemplate: ErrorTemplate,
                                  val config: FrontendAppConfig,
-                                 val messagesApi: MessagesApi) extends LegacyFrontendErrorHandler with I18nSupport with ShowInternalServerError {
+                                 val messagesApi: MessagesApi)
+                                (implicit val ec: ExecutionContext) extends FrontendErrorHandler with I18nSupport with ShowInternalServerError {
 
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit r: Request[_]): Html = {
-    errorTemplate(pageTitle, heading, message, isAgent = false)
+  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: RequestHeader): Future[Html] = {
+    Future.successful(errorTemplate(pageTitle, heading, message, isAgent = false))
   }
 
-  def showInternalServerError()(implicit request: Request[_]): Result =
-    InternalServerError(standardErrorTemplate(
+  def showInternalServerError()(implicit request: RequestHeader): Result =
+    InternalServerError(errorTemplate(
       messagesApi.preferred(request)("standardError.heading"),
       messagesApi.preferred(request)("standardError.heading"),
-      messagesApi.preferred(request)("standardError.message")
+      messagesApi.preferred(request)("standardError.message"),
+      isAgent = false
     ))
-
 }
