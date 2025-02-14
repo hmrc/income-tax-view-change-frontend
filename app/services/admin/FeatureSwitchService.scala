@@ -57,8 +57,6 @@ class FeatureSwitchService @Inject()(val featureSwitchRepository: FeatureSwitchR
     }
   }
 
-  def getAllProdConfig: Future[List[FeatureSwitch]] = Future.successful(getProdFSList)
-
   def set(featureSwitchName: FeatureSwitchName, enabled: Boolean): Future[Boolean] = {
     Logger("application").info(s"Setting feature switch ${featureSwitchName.name} to ${enabled.toString}")
     if (appConfig.readFeatureSwitchesFromMongo) {
