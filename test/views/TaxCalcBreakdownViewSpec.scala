@@ -33,8 +33,10 @@ class TaxCalcBreakdownViewSpec extends TaxCalcBreakdownViewBehaviour {
 
   override val backUrl = "testUrl"
 
-  override def taxCalcBreakdown(taxDueSummaryViewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String, isAgent: Boolean): Html =
-    app.injector.instanceOf[TaxCalcBreakdown].apply(taxDueSummaryViewModel, taxYear, backUrl, isAgent)
+  override def taxCalcBreakdown(taxDueSummaryViewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String, isAgent: Boolean): Html = {
+    val startAVRTYear = 2024
+    app.injector.instanceOf[TaxCalcBreakdown].apply(taxDueSummaryViewModel, taxYear, startAVRTYear, backUrl, isAgent)
+  }
 
   override val expectedPageTitle: String = messages("htmlTitle", messages("taxCal_breakdown.heading"))
 
