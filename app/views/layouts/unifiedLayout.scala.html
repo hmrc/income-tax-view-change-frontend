@@ -17,8 +17,9 @@
 @import views.helpers.CurrentLanguage
 @import views.helpers.HtmlTitle
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.{Header => HmrcHeaderArgs}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.Header
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.userresearchbanner.UserResearchBanner
 @import views.html.layouts.common.Scripts
 @import config.FrontendAppConfig
@@ -30,7 +31,7 @@
     govukBackLink: GovukBackLink,
     govukLayout: GovukLayout,
     hmrcHeader:  HmrcHeader,
-    phaseBanner: components.phaseBanner,
+    govukPhaseBanner: GovukPhaseBanner,
     footerLinks: HmrcStandardFooter,
     hmrcTimeoutDialog: HmrcTimeoutDialog,
     hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
@@ -38,7 +39,8 @@
     backLinkFallback: BackLinkWithFallback,
     languageSelection: components.languageSelection,
     mainContentLayout: mainContentLayout,
-    scripts: Scripts
+    scripts: Scripts,
+    a: link
 )
 
 @(pageTitle: String,
@@ -60,20 +62,43 @@
     gatewayPage: Option[GatewayPage] = None
 )(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
 
+
+@feedbackUrl = @{
+    if(isAgent) appConfig.agentBetaFeedbackUrl
+    else appConfig.betaFeedbackUrl
+}
+
+@feedbackBanner = {
+    @messages("betaBanner.newService")
+    @messages("betaBanner.your")
+    @a(link=feedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback",
+    id=Some("feedback-url"))
+    @messages("betaBanner.improve")
+}
+
 @siteHeader = @{
+
     val serviceName = if (isAgent) Some(messages("agent.header.serviceName"))
         else Some(messages("header.serviceName"))
 
     val serviceUrl = if (isAgent) controllers.routes.HomeController.showAgent.url
         else controllers.routes.HomeController.show().url
 
-    hmrcHeader(HmrcHeaderArgs(
+    hmrcHeader(Header(
         homepageUrl = "https://www.gov.uk",
         serviceName = if(showServiceName) serviceName else None,
         serviceUrl = serviceUrl,
         language = CurrentLanguage(),
         signOutHref = Some(controllers.routes.SignOutController.signOut.url),
-        userResearchBanner =  Some(UserResearchBanner(url = appConfig.enterSurveyUrl))
+        userResearchBanner =  Some(UserResearchBanner(url = appConfig.enterSurveyUrl)),
+        displayHmrcBanner = false,
+        phaseBanner = Some(
+            PhaseBanner(
+                tag = Some(Tag(content = Text("Beta"))),
+                content = HtmlContent(feedbackBanner)
+            )
+        ),
+        additionalBannersBlock = None
     ))
 }
 
@@ -96,7 +121,6 @@
 }
 
 @beforeContentBlock = {
-    @phaseBanner("Beta", isAgent)
     @{btaNavPartial.getOrElse(())}
         @languageSelection()
         @if(useFallbackBackLink) {
