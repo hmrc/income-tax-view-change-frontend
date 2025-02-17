@@ -24,8 +24,8 @@ import testConstants.PenaltiesIntegrationTestConstants._
 class GetPenaltyDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
   val connector: GetPenaltyDetailsConnector = app.injector.instanceOf[GetPenaltyDetailsConnector]
-  val url: String = "/penalty/details/VATC/VRN/123456789"
-  val vrn: String = "123456789"
+  val url: String = "/ITSA/etmp/penalties/MTDITID/123456789"
+  val mtditid: String = "123456789"
 
 
 
@@ -34,27 +34,27 @@ class GetPenaltyDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase
     "return a successful OK response when called" in {
 
       WiremockHelper.stubGet(url, OK, getPenaltyDetailsJson.toString())
-      val result: GetPenaltyDetailsResponse = connector.getPenaltyDetails(vrn).futureValue
+      val result: GetPenaltyDetailsResponse = connector.getPenaltyDetails(mtditid).futureValue
       result.isRight shouldBe true
     }
 
     "return an OK but with a GetPenaltyDetailsMalformed response when the JSON returned is malformed" in {
       WiremockHelper.stubGet(url, OK, malformedBodyJson.toString())
-      val result: GetPenaltyDetailsResponse = connector.getPenaltyDetails(vrn).futureValue
+      val result: GetPenaltyDetailsResponse = connector.getPenaltyDetails(mtditid).futureValue
       result.isLeft shouldBe true
       result shouldBe Left(GetPenaltyDetailsMalformed)
     }
 
     "return a NotFound response when no data was found" in {
       WiremockHelper.stubGet(url, NOT_FOUND, "{}")
-      val result: GetPenaltyDetailsResponse = connector.getPenaltyDetails(vrn).futureValue
+      val result: GetPenaltyDetailsResponse = connector.getPenaltyDetails(mtditid).futureValue
       result.isLeft shouldBe true
       result shouldBe Left(GetPenaltyDetailsFailureResponse(NOT_FOUND))
     }
 
     "return an InternalServerError response when an unexpected error has occurred" in {
       WiremockHelper.stubGet(url, INTERNAL_SERVER_ERROR, "{}")
-      val result: GetPenaltyDetailsResponse = connector.getPenaltyDetails(vrn).futureValue
+      val result: GetPenaltyDetailsResponse = connector.getPenaltyDetails(mtditid).futureValue
       result.isLeft shouldBe true
       result shouldBe Left(GetPenaltyDetailsFailureResponse(INTERNAL_SERVER_ERROR))
     }

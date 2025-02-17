@@ -154,8 +154,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val incomeTaxSessionDataUrl: String = servicesConfig.baseUrl("income-tax-session-data")
 
   // penalties stub url
-  lazy val penaltiesStubBase: String = servicesConfig.baseUrl("penalties-stub")
-  lazy val penaltyDetailsUrl: String = penaltiesStubBase + "/penalty/details/VATC/VRN/"
+  lazy val incomeTaxPenaltiesStubBase: String = servicesConfig.baseUrl("income-tax-penalties-stub")
 
   // API timeout
 
