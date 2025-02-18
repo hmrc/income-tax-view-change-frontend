@@ -19,7 +19,7 @@ package connectors
 import config.FrontendAppConfig
 import models.itsaStatus.{ITSAStatusResponse, ITSAStatusResponseError, ITSAStatusResponseModel}
 import play.api.Logger
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, StringContextOps}
 
@@ -51,6 +51,7 @@ class ITSAStatusConnector @Inject()(val http: HttpClientV2,
               },
               valid => Right(valid)
             )
+          case NOT_FOUND => Right(List())
           case status =>
             if (status >= INTERNAL_SERVER_ERROR) {
               Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
