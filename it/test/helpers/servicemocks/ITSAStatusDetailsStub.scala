@@ -21,7 +21,7 @@ import helpers.{ComponentSpecBase, WiremockHelper}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, NOT_FOUND}
 import play.api.libs.json.{JsArray, Json}
 import testConstants.BaseIntegrationTestConstants.testNino
 
@@ -46,6 +46,16 @@ object ITSAStatusDetailsStub extends ComponentSpecBase {
           |    ]
           |  }
           |]""".stripMargin
+    )
+  }
+
+  def stubNotFoundForGetITSAStatusDetails(taxYearRange: String = "2024-25"): StubMapping = {
+    WiremockHelper.stubGet(getUrl(taxYearRange.takeRight(5)), NOT_FOUND,
+      s"""{
+         |"code": "NOT_FOUND",
+         |"reason":"The remote endpoint has indicated that the requested resource could not be found."
+         |}
+         |""".stripMargin
     )
   }
 

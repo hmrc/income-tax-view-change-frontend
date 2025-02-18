@@ -49,9 +49,14 @@ class ITSAStatusConnector @Inject()(val http: HttpClientV2,
                 Logger("application").error(s"Json validation error parsing itsa-status response, error $invalid")
                 Left(ITSAStatusResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing itsa-status response"))
               },
-              valid => Right(valid)
+              valid => {
+                Logger("application").debug(s"Get ITSA Status returned OK with valid response ${valid.toString}")
+                Right(valid)
+              }
             )
-          case NOT_FOUND => Right(List())
+          case NOT_FOUND =>
+            Logger("application").debug(s"Get ITSA Status returned NOT_FOUND")
+            Right(List())
           case status =>
             if (status >= INTERNAL_SERVER_ERROR) {
               Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
