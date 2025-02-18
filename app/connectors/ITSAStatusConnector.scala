@@ -19,7 +19,7 @@ package connectors
 import config.FrontendAppConfig
 import models.itsaStatus.{ITSAStatusResponse, ITSAStatusResponseError, ITSAStatusResponseModel}
 import play.api.Logger
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, StringContextOps}
 
@@ -49,8 +49,14 @@ class ITSAStatusConnector @Inject()(val http: HttpClientV2,
                 Logger("application").error(s"Json validation error parsing itsa-status response, error $invalid")
                 Left(ITSAStatusResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing itsa-status response"))
               },
-              valid => Right(valid)
+              valid => {
+                Logger("application").debug(s"Get ITSA Status returned OK with valid response ${valid.toString}")
+                Right(valid)
+              }
             )
+          case NOT_FOUND =>
+            Logger("application").debug(s"Get ITSA Status returned NOT_FOUND")
+            Right(List())
           case status =>
             if (status >= INTERNAL_SERVER_ERROR) {
               Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")

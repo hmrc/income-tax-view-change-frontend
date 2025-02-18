@@ -42,7 +42,7 @@ import org.mockito.stubbing.OngoingStubbing
 import play.api.Configuration
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import testConstants.BaseTestConstants._
-import testConstants.ITSAStatusTestConstants.badJsonErrorITSAStatusError
+import testConstants.ITSAStatusTestConstants.{badJsonErrorITSAStatusError, notFoundHttpResponse}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.client.RequestBuilder
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -71,6 +71,8 @@ class ITSAStatusConnectorSpec extends TestSupport with MockHttpV2 with MockAudit
     import testConstants.ITSAStatusTestConstants.{badJsonHttpResponse, successHttpResponse, successITSAStatusResponseModel}
     val successResponse = successHttpResponse
     val successResponseBadJson = badJsonHttpResponse
+    val notFoundResponse = notFoundHttpResponse
+
     val argument = (testNino, "2020", true, true)
 
     "return a List[ITSAStatusResponseModel] model when successful JSON is received" in new Setup {
@@ -82,6 +84,17 @@ class ITSAStatusConnectorSpec extends TestSupport with MockHttpV2 with MockAudit
       val result: Future[Either[ITSAStatusResponse, List[ITSAStatusResponseModel]]] =
         (connector.getITSAStatusDetail _).tupled(argument)
       result.futureValue shouldBe Right(List(successITSAStatusResponseModel))
+    }
+
+    "return a Empty List[] model when NOT_FOUND is received" in new Setup {
+      val url: String = connector.getITSAStatusDetailUrl(argument._1, argument._2, argument._3, argument._4)
+      setupMockHttpV2Get(url)(notFoundResponse)
+
+      transformMock()
+
+      val result: Future[Either[ITSAStatusResponse, List[ITSAStatusResponseModel]]] =
+        (connector.getITSAStatusDetail _).tupled(argument)
+      result.futureValue shouldBe Right(List())
     }
 
     "return ITSAStatusResponseError model in case of bad/malformed JSON response" in new Setup {

@@ -46,6 +46,11 @@ class ITSAStatusServiceSpec extends TestSupport with MockITSAStatusConnector {
         setupGetITSAStatusDetail(testNino, yearRange, false, false)(Right(List(successITSAStatusResponseMTDMandatedModel)))
         TestITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(testMtdItUser, headerCarrier, ec).futureValue shouldBe true
       }
+      "return False if the its NOT_FOUND " in {
+        when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
+        setupGetITSAStatusDetail(testNino, yearRange, false, false)(Right(List()))
+        TestITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(testMtdItUser, headerCarrier, ec).futureValue shouldBe false
+      }
       "return false" in {
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
         setupGetITSAStatusDetail(testNino, yearRange, false, false)(Right(List(successITSAStatusResponseModel)))
