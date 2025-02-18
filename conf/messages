@@ -2050,6 +2050,7 @@ paymentOnAccount.class4NationalInsurance.link        = https://www.gov.uk/self-e
 paymentOnAccount.p2                                  = to be lower than the previous tax year.
 paymentOnAccount.heading.example                     = Example
 paymentOnAccount.hint                                = For example, if your tax bill was £4,000 last year, but you think you should only pay £3,000 this year, you can reduce both payments on account to £1,500 each.
+paymentOnAccount.table-heading-charge-type           = Type of Charge
 paymentOnAccount.table-heading-1                     = First payment on account
 paymentOnAccount.table-heading-created-amount.key    = Amount based on previous tax bill
 paymentOnAccount.table-heading-adjusted-amount.key   = Adjusted amount
@@ -2071,6 +2072,7 @@ claimToAdjustPoa.checkYourAnswers.confirm-and-save           = Confirm and save
 # Enter POA Amount
 claimToAdjustPoa.enterPoaAmount.caption                               = {0} to {1} tax year
 claimToAdjustPoa.enterPoaAmount.heading                               = Enter a new amount
+claimToAdjustPoa.enterPoaAmount.chargeHeading                         = Type of charge
 claimToAdjustPoa.enterPoaAmount.p1                                    = Each payment on account should be half the amount of your expected tax bill, which includes:
 claimToAdjustPoa.enterPoaAmount.bullet1                               = Income Tax
 claimToAdjustPoa.enterPoaAmount.bullet2                               = Class 4 National Insurance contributions (opens in new tab)
