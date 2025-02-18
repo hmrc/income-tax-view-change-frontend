@@ -23,13 +23,14 @@
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.insettext.InsetText
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukRadios
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.errorsummary.ErrorSummary
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 @import forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
+@import views.html.helpers.injected.ErrorSummary
+
 
 @this(
     mainTemplate: unifiedLayout,
@@ -44,7 +45,6 @@
     govukRadios: GovukRadios,
     errorSummary: ErrorSummary,
 )
-
 
 @(isAgent: Boolean = false, continueAction: Call, form: Form[IncomeSourceReportingFrequencyForm])(implicit user: auth.MtdItUser[_], messages: Messages)
 
