@@ -101,10 +101,10 @@ govukInsetText : GovukInsetText
 
 @getReservedContent = {
     @p(){
-        @if(viewModel.allocatedCredit != viewModel.availableCredit) {
-            @messages("credit-and-refund.upcoming-allocated-credit-1", viewModel.allocatedCredit.toCurrencyString)
+        @if(viewModel.balanceDueWithin30Days != viewModel.availableCredit) {
+            @messages("credit-and-refund.upcoming-allocated-credit-1", viewModel.balanceDueWithin30Days.toCurrencyString)
         } else {
-            @messages("credit-and-refund.upcoming-allocated-credit-1-all", viewModel.allocatedCredit.toCurrencyString)
+            @messages("credit-and-refund.upcoming-allocated-credit-1-all", viewModel.balanceDueWithin30Days.toCurrencyString)
         }
         @link(
             link = getWhatYouOwe(isAgent),
@@ -122,14 +122,14 @@ govukInsetText : GovukInsetText
         @messages("credit-and-refund.does-not-include-refunds")
     }
 
-    @if(viewModel.allocatedCredit != 0) {
-        @if(viewModel.allocatedCredit >= viewModel.availableCredit) {
+    @if(viewModel.balanceDueWithin30Days != 0) {
+        @if(viewModel.balanceDueWithin30Days >= viewModel.availableCredit) {
             @govukInsetText(InsetText(
                 content = Text(messages("credit-and-refund.if-you-claim-back-any"))
             ))
         } else {
             @govukInsetText(InsetText(
-                content = Text(messages("credit-and-refund.if-you-claim-back-more", (viewModel.availableCredit - viewModel.allocatedCredit).toCurrencyString))
+                content = Text(messages("credit-and-refund.if-you-claim-back-more", (viewModel.availableCredit - viewModel.balanceDueWithin30Days).toCurrencyString))
             ))
         }
     }
@@ -156,7 +156,7 @@ govukInsetText : GovukInsetText
 
         @if(viewModel.availableCredit != 0){
 
-            @if(viewModel.allocatedCredit != 0) {
+            @if(viewModel.balanceDueWithin30Days != 0) {
                 @getReservedContent
             }
 

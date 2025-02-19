@@ -51,14 +51,19 @@ class CreditService @Inject()(val financialDetailsConnector: FinancialDetailsCon
             taxYear <- Future.fromTry(Try(TaxYear.forYearEnd(taxYearInt)))
             response <- financialDetailsConnector.getCreditsAndRefund(taxYear, user.nino)
           } yield response match {
-            case Right(financialDetails: CreditsModel) => Some(financialDetails)
+            case Right(financialDetails: CreditsModel) =>
+              println("BEEP + " + response)
+              Some(financialDetails)
             case Left(error: ErrorModel) if error.code != NOT_FOUND =>
+              println("BEEP + " + response)
               throw new Exception("Error response while getting Unpaid financial details")
-            case _ => None
+            case _ =>
+              println("BEEP + " + response)
+              None
           }
         })
       .map(_.flatten)
-      .map(_.reduceOption(mergeCreditAndRefundModels).getOrElse(CreditsModel(0, 0, Nil)))
+      .map(_.reduceOption(mergeCreditAndRefundModels).getOrElse(CreditsModel(0, 0, 0, Nil)))
   }
 
   def getAllCreditsV2(implicit user: MtdItUser[_],
@@ -78,7 +83,7 @@ class CreditService @Inject()(val financialDetailsConnector: FinancialDetailsCon
       case Right(financialDetails: CreditsModel) => financialDetails
       case Left(error: ErrorModel) if error.code != NOT_FOUND =>
         throw new Exception("Error response while getting Unpaid financial details")
-      case _ => CreditsModel(0, 0, Nil)
+      case _ => CreditsModel(0, 0, 0, Nil)
     }
   }
 }

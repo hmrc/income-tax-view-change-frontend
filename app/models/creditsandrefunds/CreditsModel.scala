@@ -25,7 +25,8 @@ import java.time.LocalDate
 
 
 case class CreditsModel(availableCredit: BigDecimal,
-                        allocatedCredit: BigDecimal,
+                        balanceDueWithin30Days: BigDecimal,
+                        unallocatedCredit: BigDecimal,
                         transactions: List[Transaction] ) extends SuccessModel
 
 object CreditsModel {
