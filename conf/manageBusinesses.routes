@@ -348,6 +348,13 @@ POST          /agents/manage-your-businesses/manage/uk-property-check-your-answe
 POST          /manage-your-businesses/manage/foreign-property-check-your-answers               controllers.manageBusinesses.manage.CheckYourAnswersController.submit(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = ForeignProperty)
 POST          /agents/manage-your-businesses/manage/foreign-property-check-your-answers        controllers.manageBusinesses.manage.CheckYourAnswersController.submit(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = ForeignProperty)
 
+# Income Sources - Add Sole Trader
+
+GET          /manage-your-businesses/add/sole-trader/choose-taxyear                                                  controllers.manageBusinesses.add.AddSoleTraderChooseTaxYearController.show(isAgent: Boolean = false)
+GET          /agents/manage-your-businesses/add/sole-trader/choose-taxyear                                           controllers.manageBusinesses.add.AddSoleTraderChooseTaxYearController.show(isAgent: Boolean = true)
+POST         /manage-your-businesses/add/sole-trader/choose-taxyear                                                  controllers.manageBusinesses.add.AddSoleTraderChooseTaxYearController.submit(isAgent: Boolean = false)
+POST         /agents/manage-your-businesses/add/sole-trader/choose-taxyear                                           controllers.manageBusinesses.add.AddSoleTraderChooseTaxYearController.submit(isAgent: Boolean = true)
+
 # Income Sources - TO BE IMPLEMENTED
 GET          /manage-your-businesses/add/foreign-property-accounting-method                 controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: IncomeSourceType = ForeignProperty, isAgent: Boolean = false)
 GET          /agents/manage-your-businesses/add/foreign-property-accounting-method          controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: IncomeSourceType = ForeignProperty, isAgent: Boolean = true)
