@@ -77,10 +77,10 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
   val updateDate: LocalDate = LocalDate.of(2100, 1, 1)
   val updateDateLongDate = "1 January 2100"
-  val multipleOverdueUpdates = "3 OVERDUE UPDATES"
+  val multipleOverdueUpdates = "3 Overdue updates"
   val nextPaymentDueDate: LocalDate = LocalDate.of(2019, 1, 31)
   val paymentDateLongDate = "31 January 2019"
-  val multipleOverdueCharges = "3 OVERDUE CHARGES"
+  val multipleOverdueCharges = "3 Overdue charges"
   val overdueMessage = "! Warning You have overdue charges. You may be charged interest on these until they are paid in full."
   val overdueMessageForDunningLocks = "! Warning You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full."
   val currentDate = dateService.getCurrentDate
@@ -93,7 +93,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
   val paymentTileOverdueDate: LocalDate = LocalDate.of(2020, 4, 6)
   val paymentTileFutureDate: LocalDate = LocalDate.of(2100, 4, 6)
   val paymentTileFutureDateLongFormat: String = paymentTileFutureDate.format(DateTimeFormatter.ofPattern("d MMMM YYYY"))
-  val paymentTileOverdueDateLongFormat: String = s"OVERDUE ${paymentTileOverdueDate.format(DateTimeFormatter.ofPattern("d MMMM YYYY"))}"
+  val paymentTileOverdueDateLongFormat: String = s"Overdue ${paymentTileOverdueDate.format(DateTimeFormatter.ofPattern("d MMMM YYYY"))}"
 
 
   class Setup(paymentDueDate: LocalDate = nextPaymentDueDate, overDuePaymentsCount: Int = 0, paymentsAccruingInterestCount: Int = 0, reviewAndReconcileEnabled: Boolean = false,
@@ -204,7 +204,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(updateDateLongDate)
       }
       "display an overdue tag when a single update is overdue" in new Setup(nextUpdatesTileViewModel = viewModelOneOverdue) {
-        getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some("OVERDUE " + "1 January 2018")
+        getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some("Overdue " + "1 January 2018")
       }
       "has the correct number of overdue updates when three updates are overdue" in new Setup(nextUpdatesTileViewModel = viewModelThreeOverdue) {
         getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(multipleOverdueUpdates)
@@ -252,7 +252,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       }
 
       "display an overdue tag when a single update is overdue" in new Setup(overDuePaymentsCount = 1) {
-        getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some("OVERDUE " + paymentDateLongDate)
+        getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some("Overdue " + paymentDateLongDate)
       }
 
       "display only the date when there are payments due but none being overdue" in new Setup(paymentDueDate = paymentTileFutureDate, overDuePaymentsCount = 0) {
