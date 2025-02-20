@@ -17,6 +17,7 @@
 package helpers.servicemocks
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import config.FrontendAppConfig
 import helpers.WiremockHelper
 import models.core.{Nino, NinoResponseError, NinoResponseSuccess}
 import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
@@ -148,17 +149,29 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
 
   //FinancialDetails Stubs
   def financialDetailsUrl(nino: String, from: String, to: String): String = s"/income-tax-view-change/$nino/financial-details/charges/from/$from/to/$to"
+
   def financialDetailsCreditsUrl(nino: String, from: String, to: String): String = s"/income-tax-view-change/$nino/financial-details/credits/from/$from/to/$to"
 
   def getFinancialsByDocumentIdUrl(nino: String, documentNumber: String) = s"/income-tax-view-change/$nino/financial-details/charges/documentId/$documentNumber"
 
-  def stubGetFinancialDetailsByDateRange(nino: String, from: String = "2017-04-06", to: String = "2018-04-05")
-                                        (status: Int, response: JsValue): StubMapping = {
-    WiremockHelper.stubGet(financialDetailsUrl(nino, from, to), status, response.toString())
+  def stubGetFinancialDetailsByDateRange(nino: String, from: String = "2017-04-06", to: String = "2023-04-05")
+                                        (status: Int, response: JsValue)(implicit appConfig: FrontendAppConfig): Unit = {
+    val localFrom: LocalDate = LocalDate.parse(from)
+    val localTo: LocalDate = LocalDate.parse(to)
+    val maxYears = appConfig.api1553MaxYears
+
+    val allYears = List.range(localFrom.getYear + 1, localTo.getYear + 1).reverse
+    val firstRange = allYears.grouped(maxYears).toList.head
+    //return intended response on first mock
+    WiremockHelper.stubGet(financialDetailsUrl(nino, s"${firstRange.min - 1}-04-06", s"${firstRange.max}-04-05"), status, response.toString())
+    for (years <- allYears.grouped(maxYears).toList.tail) {
+      //return nothing on any other mocks
+      WiremockHelper.stubGet(financialDetailsUrl(nino, s"${years.min - 1}-04-06", s"${years.max}-04-05"), 404, "")
+    }
   }
 
-  def stubGetFinancialDetailsCreditsByDateRange(nino: String, from: String = "2017-04-06", to: String = "2018-04-05")
-                                        (status: Int, response: JsValue): StubMapping = {
+  def stubGetFinancialDetailsCreditsByDateRange(nino: String, from: String = "2017-04-06", to: String = "2023-04-05")
+                                               (status: Int, response: JsValue): StubMapping = {
     WiremockHelper.stubGet(financialDetailsCreditsUrl(nino, from, to), status, response.toString())
   }
 
@@ -166,7 +179,7 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
     WiremockHelper.verifyGet(financialDetailsUrl(nino, from, to), noOffcalls)
   }
 
-  def verifyGetFinancialDetailsCreditsByDateRange(nino: String, from: String = "2017-04-06", to: String = "2018-04-05", noOffcalls: Int = 1): Unit = {
+  def verifyGetFinancialDetailsCreditsByDateRange(nino: String, from: String = "2017-04-06", to: String = "2023-04-05", noOffcalls: Int = 1): Unit = {
     WiremockHelper.verifyGet(financialDetailsCreditsUrl(nino, from, to), noOffcalls)
   }
 

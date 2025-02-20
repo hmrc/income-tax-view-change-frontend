@@ -99,7 +99,7 @@ trait ChargeSummaryControllerHelper  extends MockAuthActions
   class Setup(financialDetails: FinancialDetailsResponseModel,
               chargeHistoryHasError: Boolean = false
               ) {
-    mockGetAllFinancialDetails(List((2018, financialDetails)))
+    mockGetAllFinancialDetails(Some(financialDetails))
 
     if(chargeHistoryHasError) {
       setupMockChargeHistoryFailureResp(ChargesHistoryErrorModel(INTERNAL_SERVER_ERROR, "Failure"))

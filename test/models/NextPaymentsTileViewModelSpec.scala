@@ -32,68 +32,59 @@ class NextPaymentsTileViewModelSpec extends UnitSpec with Matchers{
   val pastDate: LocalDate = LocalDate.of(2000,1,1)
   val currentDate: LocalDate = LocalDate.of(2024, 9, 20)
 
-  val chargesListValid: List[FinancialDetailsModel] = List(
-    FinancialDetailsModel(
+  val chargesListValid: FinancialDetailsModel = FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
       documentDetails = List(DocumentDetail(pastDate.getYear, "testId2", Some("SA POA 1 Reconciliation Debit"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
-        documentDueDate = Some(futureDate), interestOutstandingAmount = Some(400))),
+        documentDueDate = Some(futureDate), interestOutstandingAmount = Some(400)),
+        DocumentDetail(pastDate.getYear, "testId3", Some("SA POA 2 Reconciliation Debit"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
+          documentDueDate = Some(futureDate), interestOutstandingAmount = Some(400))),
       financialDetails = List(FinancialDetail(taxYear = pastDate.getYear.toString, mainType = Some("SA POA 1 Reconciliation Debit"), transactionId = Some("testId2"),
-        items = Some(Seq(SubItem(dueDate = Some(futureDate))))))),
-    FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-      documentDetails = List(DocumentDetail(pastDate.getYear, "testId3", Some("SA POA 2 Reconciliation Debit"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
-        documentDueDate = Some(futureDate), interestOutstandingAmount = Some(400))),
-      financialDetails = List(FinancialDetail(pastDate.getYear.toString, mainType = Some("SA POA 2 Reconciliation Debit"),
-        transactionId = Some("testId3"),
-        items = Some(Seq(SubItem(dueDate = Some(futureDate)))))))
+        items = Some(Seq(SubItem(dueDate = Some(futureDate))))),
+        FinancialDetail(pastDate.getYear.toString, mainType = Some("SA POA 2 Reconciliation Debit"),
+          transactionId = Some("testId3"),
+          items = Some(Seq(SubItem(dueDate = Some(futureDate))))))
   )
 
-  val chargesListOverdue: List[FinancialDetailsModel] = List(
+  val chargesListOverdue: Option[FinancialDetailsModel] = Some(
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
       documentDetails = List(DocumentDetail(pastDate.getYear, "testId2", Some("SA POA 1 Reconciliation Debit"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
-        documentDueDate = Some(pastDate), interestOutstandingAmount = Some(400))),
+        documentDueDate = Some(pastDate), interestOutstandingAmount = Some(400)),
+        DocumentDetail(pastDate.getYear, "testId3", Some("SA POA 2 Reconciliation Debit"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
+          documentDueDate = Some(pastDate), interestOutstandingAmount = Some(400))),
       financialDetails = List(FinancialDetail(taxYear = pastDate.getYear.toString, mainType = Some("SA POA 1 Reconciliation Debit"), transactionId = Some("testId2"),
-        items = Some(Seq(SubItem(dueDate = Some(pastDate))))))),
-    FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-      documentDetails = List(DocumentDetail(pastDate.getYear, "testId3", Some("SA POA 2 Reconciliation Debit"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
-        documentDueDate = Some(pastDate), interestOutstandingAmount = Some(400))),
-      financialDetails = List(FinancialDetail(pastDate.getYear.toString, mainType = Some("SA POA 2 Reconciliation Debit"),
+        items = Some(Seq(SubItem(dueDate = Some(pastDate))))),
+      FinancialDetail(pastDate.getYear.toString, mainType = Some("SA POA 2 Reconciliation Debit"),
         transactionId = Some("testId3"),
         items = Some(Seq(SubItem(dueDate = Some(pastDate)))))))
   )
 
-  val chargesListPaid: List[FinancialDetailsModel] = List(
+  val chargesListPaid: Option[FinancialDetailsModel] = Some(
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
       documentDetails = List(DocumentDetail(pastDate.getYear, "testId2", Some("SA POA 1 Reconciliation Debit"), Some("documentText"), 0, 0, LocalDate.of(2018, 3, 29),
-        documentDueDate = Some(futureDate), interestOutstandingAmount = Some(400))),
+        documentDueDate = Some(futureDate), interestOutstandingAmount = Some(400)),
+        DocumentDetail(pastDate.getYear, "testId3", Some("SA POA 2 Reconciliation Debit"), Some("documentText"), 0, 0, LocalDate.of(2018, 3, 29),
+          documentDueDate = Some(futureDate), interestOutstandingAmount = Some(400))),
       financialDetails = List(FinancialDetail(taxYear = pastDate.getYear.toString, mainType = Some("SA POA 1 Reconciliation Debit"), transactionId = Some("testId2"),
-        items = Some(Seq(SubItem(dueDate = Some(futureDate))))))),
-    FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-      documentDetails = List(DocumentDetail(pastDate.getYear, "testId3", Some("SA POA 2 Reconciliation Debit"), Some("documentText"), 0, 0, LocalDate.of(2018, 3, 29),
-        documentDueDate = Some(futureDate), interestOutstandingAmount = Some(400))),
-      financialDetails = List(FinancialDetail(pastDate.getYear.toString, mainType = Some("SA POA 2 Reconciliation Debit"),
-        transactionId = Some("testId3"),
-        items = Some(Seq(SubItem(dueDate = Some(futureDate)))))))
+        items = Some(Seq(SubItem(dueDate = Some(futureDate))))),
+        FinancialDetail(pastDate.getYear.toString, mainType = Some("SA POA 2 Reconciliation Debit"),
+          transactionId = Some("testId3"),
+          items = Some(Seq(SubItem(dueDate = Some(futureDate)))))))
   )
 
-  val chargesListInterest: List[FinancialDetailsModel] = List(
+  val chargesListNoInterest: Option[FinancialDetailsModel] = Some(
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
       documentDetails = List(DocumentDetail(pastDate.getYear, "testId2", Some("SA POA 1 Reconciliation Debit"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
-        documentDueDate = Some(futureDate), interestOutstandingAmount = None)),
+        documentDueDate = Some(futureDate), interestOutstandingAmount = None),
+        DocumentDetail(pastDate.getYear, "testId3", Some("SA POA 2 Reconciliation Debit"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
+          documentDueDate = Some(futureDate), interestOutstandingAmount = None)),
       financialDetails = List(FinancialDetail(taxYear = pastDate.getYear.toString, mainType = Some("SA POA 1 Reconciliation Debit"), transactionId = Some("testId2"),
-        items = Some(Seq(SubItem(dueDate = Some(futureDate))))))),
-    FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-      documentDetails = List(DocumentDetail(pastDate.getYear, "testId3", Some("SA POA 2 Reconciliation Debit"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
-        documentDueDate = Some(futureDate), interestOutstandingAmount = None)),
-      financialDetails = List(FinancialDetail(pastDate.getYear.toString, mainType = Some("SA POA 2 Reconciliation Debit"),
-        transactionId = Some("testId3"),
-        items = Some(Seq(SubItem(dueDate = Some(futureDate)))))))
+        items = Some(Seq(SubItem(dueDate = Some(futureDate))))),
+        FinancialDetail(pastDate.getYear.toString, mainType = Some("SA POA 2 Reconciliation Debit"),
+          transactionId = Some("testId3"),
+          items = Some(Seq(SubItem(dueDate = Some(futureDate)))))))
   )
 
   "The verify method" when {
@@ -113,7 +104,7 @@ class NextPaymentsTileViewModelSpec extends UnitSpec with Matchers{
   "The paymentsAccruingInterestCount method" when {
     "given payments that are not yet due, have interest, and aren't paid" should {
       "return the number of such payments" in {
-        val res = NextPaymentsTileViewModel.paymentsAccruingInterestCount(chargesListValid, currentDate)
+        val res = NextPaymentsTileViewModel.paymentsAccruingInterestCount(Some(chargesListValid), currentDate)
         res shouldBe 2
       }
     }
@@ -123,7 +114,7 @@ class NextPaymentsTileViewModelSpec extends UnitSpec with Matchers{
         res shouldBe 0
       }
       "return zero when payments have no interest" in {
-        val res = NextPaymentsTileViewModel.paymentsAccruingInterestCount(chargesListInterest, currentDate)
+        val res = NextPaymentsTileViewModel.paymentsAccruingInterestCount(chargesListNoInterest, currentDate)
         res shouldBe 0
       }
       "return zero when payments are paid" in {

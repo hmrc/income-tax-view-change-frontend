@@ -64,7 +64,7 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
                 IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
                   testNino,
                   s"${testTaxYear - 1}-04-06",
-                  s"$testTaxYear-04-05")(
+                  s"${testTaxYear + 1}-04-05")(
                   OK,
                   testValidFinancialDetailsModelCreditAndRefundsJson(
                     -1400,
@@ -76,7 +76,7 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid, 1)
-                IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"${testTaxYear + 1}-04-05")
 
                 AuditStub.verifyAuditContainsDetail(
                   IncomeSourceDetailsResponseAuditModel(
@@ -116,7 +116,7 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
                 IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
                   testNino,
                   s"${testTaxYear - 1}-04-06",
-                  s"$testTaxYear-04-05")(
+                  s"${testTaxYear + 1}-04-05")(
                   OK,
                   testValidFinancialDetailsModelCreditAndRefundsJsonV2(
                     -1400,
@@ -128,7 +128,7 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid, 1)
-                IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"${testTaxYear + 1}-04-05")
 
                 AuditStub.verifyAuditContainsDetail(
                   IncomeSourceDetailsResponseAuditModel(

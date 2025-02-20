@@ -644,12 +644,13 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   status = OK,
                   body = liabilityCalculationModelSuccessful
                 )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06",
+                  s"$testTaxYear-04-05")(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
 
                 val res = buildGETMTDClient(getPath(mtdUserRole, testYear), additionalCookies).futureValue
 
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino)
+                IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
 
                 res should have(
                   httpStatus(INTERNAL_SERVER_ERROR)

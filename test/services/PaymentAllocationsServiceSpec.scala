@@ -52,7 +52,7 @@ class PaymentAllocationsServiceSpec extends TestSupport with MockFinancialDetail
       "all fields are present" in {
         setupGetPaymentAllocationCharges(testNino, docNumber)(lpiPaymentAllocationParentChargesModel)
         setupGetPaymentAllocation(testNino, "paymentLot", "paymentLotItem")(testValidLpiPaymentAllocationsModel)
-        mockGetAllFinancialDetails(List((2020, lpiFinancialDetailsModel)))
+        mockGetAllFinancialDetails(Some(lpiFinancialDetailsModel))
 
         val result = TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue
 

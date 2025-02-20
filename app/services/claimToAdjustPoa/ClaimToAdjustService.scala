@@ -115,7 +115,8 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
                                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[FinancialDetailsModel]]] = {
     checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, calculationListConnector, ec).flatMap {
       case None => Future.successful(Right(None))
-      case Some(taxYear: TaxYear) => financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
+      case Some(taxYear: TaxYear) =>
+        financialDetailsConnector.getFinancialDetailsSingleYear(taxYear.endYear, nino.value).map {
         case financialDetails: FinancialDetailsModel => Right(Some(financialDetails))
         case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Left(new Exception("There was an error whilst fetching financial details data"))
         case _ => Right(None)
@@ -128,7 +129,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, calculationListConnector, ec).flatMap {
       case None => Future.successful(Right(FinancialDetailsAndPoaModel(None, None)))
       case Some(taxYear: TaxYear) =>
-        financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
+        financialDetailsConnector.getFinancialDetailsSingleYear(taxYear.endYear, nino.value).map {
           case financialDetails: FinancialDetailsModel =>
             val charges = sortByTaxYearC(financialDetails.toChargeItem())
             getPaymentOnAccountModel(charges) match {

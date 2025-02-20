@@ -50,7 +50,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
                    (implicit user: MtdItUser[_]): Future[Result] = {
     Try {
       taxYearsView(
-        taxYears = user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse,
+        taxYears = extractRelevantTaxYears,
         backUrl,
         isAgent = isAgent,
         utr = user.saUtr,
@@ -66,6 +66,10 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
         val errorHandler = if(isAgent) agentItvcErrorHandler else itvcErrorHandler
         Future.successful(errorHandler.showInternalServerError())
     }
+  }
+
+  private def extractRelevantTaxYears(implicit user: MtdItUser[_]): List[Int]  = {
+    user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse.take(appConfig.api1553MaxYears)
   }
 
   def showTaxYears(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {

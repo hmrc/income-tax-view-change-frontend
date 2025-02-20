@@ -193,7 +193,7 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
         when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
           .thenReturn(Future(successResponse))
 
-        val result: Future[FinancialDetailsResponseModel] = connector.getFinancialDetails(testYear2017, testNino)
+        val result: Future[FinancialDetailsResponseModel] = connector.getFinancialDetailsSingleYear(testYear2017, testNino)
         result.futureValue shouldBe testValidFinancialDetailsModel
       }
 
@@ -210,7 +210,7 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
         when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
           .thenReturn(Future(successResponseBadJson))
 
-        val result: Future[FinancialDetailsResponseModel] = connector.getFinancialDetails(testYear2017, testNino)
+        val result: Future[FinancialDetailsResponseModel] = connector.getFinancialDetailsSingleYear(testYear2017, testNino)
         result.futureValue shouldBe testFinancialDetailsErrorModelParsing
       }
 
@@ -227,7 +227,7 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
         when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
           .thenReturn(Future(badResponse))
 
-        val result: Future[FinancialDetailsResponseModel] = connector.getFinancialDetails(testYear2017, testNino)
+        val result: Future[FinancialDetailsResponseModel] = connector.getFinancialDetailsSingleYear(testYear2017, testNino)
         result.futureValue shouldBe FinancialDetailsErrorModel(Status.BAD_REQUEST, "Error Message")
       }
 
@@ -244,7 +244,7 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
         when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
           .thenReturn(Future.failed(new Exception("unknown error")))
 
-        val result: Future[FinancialDetailsResponseModel] = connector.getFinancialDetails(testYear2017, testNino)
+        val result: Future[FinancialDetailsResponseModel] = connector.getFinancialDetailsSingleYear(testYear2017, testNino)
         result.futureValue shouldBe FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
       }
 

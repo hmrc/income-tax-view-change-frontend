@@ -17,7 +17,6 @@
 package controllers.claimToAdjustPoa
 
 import audit.models.AdjustPaymentsOnAccountAuditModel
-import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import controllers.ControllerISpecHelper
 import controllers.claimToAdjustPoa.routes.{ApiFailureSubmittingPoaController, PoaAdjustedController}
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
@@ -92,7 +91,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
     )
   }
 
-  def setupGetFinancialDetails(): StubMapping = {
+  def setupGetFinancialDetails(): Unit = {
     And("Financial details for multiple years with POAs")
     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
       OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))

@@ -22,6 +22,7 @@ import config.featureswitch.FeatureSwitching
 import connectors.{FinancialDetailsConnector, OutstandingChargesConnector}
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
+import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
@@ -56,33 +57,40 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     }.flatten
   }
 
-  def getWhatYouOweChargesList(unpaidCharges: List[FinancialDetailsResponseModel],
+  def getWhatYouOweChargesList(unpaidCharges: Option[FinancialDetailsResponseModel],
                                isReviewAndReconciledEnabled: Boolean,
                                isFilterCodedOutPoasEnabled: Boolean)
                               (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
 
     unpaidCharges match {
-      case financialDetails: List[FinancialDetailsResponseModel] if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
-        throw new Exception("Error response while getting Unpaid financial details")
-      case financialDetails =>
-        val financialDetailsModelList = financialDetails.asInstanceOf[List[FinancialDetailsModel]]
-        val balanceDetails = financialDetailsModelList.headOption
-          .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
+      case Some(fds: FinancialDetailsModel) =>
+        val balanceDetails = fds.balanceDetails
         val codedOutChargeItem = {
-          financialDetailsModelList.flatMap(_.toChargeItem())
+          fds.toChargeItem()
             .filter(_.subTransactionType.contains(Accepted))
             .find(_.taxYear.endYear == (dateService.getCurrentTaxYearEnd - 1))
         }
 
         val whatYouOweChargesList = WhatYouOweChargesList(
           balanceDetails = balanceDetails,
-          chargesList = getFilteredChargesList(financialDetailsModelList, isReviewAndReconciledEnabled, isFilterCodedOutPoasEnabled),
+          chargesList = getFilteredChargesList(fds, isReviewAndReconciledEnabled, isFilterCodedOutPoasEnabled),
           codedOutDocumentDetail = codedOutChargeItem)
 
         callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, dateService.getCurrentTaxYearEnd).map {
           case Some(outstandingChargesModel) => whatYouOweChargesList.copy(outstandingChargesModel = Some(outstandingChargesModel))
           case _ => whatYouOweChargesList
         }
+      case Some(errorModel: FinancialDetailsErrorModel) =>
+        Logger("application").error(s"error model in unpaid charges - code: ${errorModel.code}, message: ${errorModel.message}")
+        throw new Exception("Error response while getting Unpaid financial details")
+      case None =>
+        val whatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
+        callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, dateService.getCurrentTaxYearEnd).map {
+          case Some(outstandingChargesModel) => whatYouOweChargesList.copy(outstandingChargesModel = Some(outstandingChargesModel))
+          case _ => whatYouOweChargesList
+        }
+      case _ =>
+        throw new Exception("Error response while getting Unpaid financial details")
     }
   }
 
@@ -100,7 +108,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     }
   }
 
-  private def getFilteredChargesList(financialDetailsList: List[FinancialDetailsModel],
+  private def getFilteredChargesList(financialDetails: FinancialDetailsModel,
                                      isReviewAndReconcileEnabled: Boolean,
                                      isFilterCodedOutPoasEnabled: Boolean)
                                     (implicit user: MtdItUser[_]): List[ChargeItem] = {
@@ -108,11 +116,9 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     def getChargeItem(financialDetails: List[FinancialDetail]): DocumentDetail => Option[ChargeItem] =
       getChargeItemOpt(financialDetails)
 
-    financialDetailsList
-      .flatMap(financialDetails =>  {
-        financialDetails
-          .getAllDocumentDetailsWithDueDates()
-          .flatMap(dd => getChargeItem(financialDetails.financialDetails)(dd.documentDetail))})
+    financialDetails
+      .getAllDocumentDetailsWithDueDates()
+      .flatMap(dd => getChargeItem(financialDetails.financialDetails)(dd.documentDetail))
       .filter(validChargeTypeCondition)
       .filterNot(_.subTransactionType.contains(Accepted))
       .filterNot(_.isReviewAndReconcileCharge && !isReviewAndReconcileEnabled)

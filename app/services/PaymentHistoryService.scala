@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.{FinancialDetailsConnector, RepaymentHistoryConnector}
 import models.core.Nino
-import models.financialDetails.{Payment, Payments, PaymentsError}
+import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel, Payment, Payments, PaymentsError}
 import models.incomeSourceDetails.TaxYear
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel, RepaymentHistoryModel}
 import play.api.Logger
@@ -35,43 +35,28 @@ import scala.concurrent.{ExecutionContext, Future}
 class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistoryConnector,
                                       financialDetailsConnector: FinancialDetailsConnector,
                                       implicit val dateService: DateServiceInterface,
-                                      val appConfig: FrontendAppConfig)
+                                      implicit val appConfig: FrontendAppConfig)
                                      (implicit ec: ExecutionContext) {
 
-  @deprecated("Use getPaymentHistoryV2 instead", "MISUV-8845")
-  def getPaymentHistory(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentHistoryError.type, List[Payment]]] = {
+  def getPaymentHistory(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentHistoryError.type, Seq[Payment]]] = {
 
-    val orderedTaxYears: List[Int] = user.incomeSources.orderedTaxYearsByYearOfMigration.reverse.take(appConfig.paymentHistoryLimit)
+    val listOfCalls = user.incomeSources.orderedTaxYearsInWindows
 
-    Future.sequence(orderedTaxYears.map(year => financialDetailsConnector.getPayments(TaxYear(year-1, year)))) map { paymentResponses =>
-      val paymentsContainsFailure: Boolean = paymentResponses.exists {
-        case Payments(_) => false
-        case PaymentsError(status, _) if status == NOT_FOUND => false
-        case PaymentsError(_, _) => true
+    Future.sequence(listOfCalls.map { years =>
+      val (from, to) = (years.min, years.max)
+      Logger("application").debug(s"Getting payment history for TaxYears: ${from} - ${to}")
+
+      for {
+        response <- financialDetailsConnector.getPayments(TaxYear.forYearEnd(from), TaxYear.forYearEnd(to))
+      } yield response match {
+        case Payments(payments) => Right(payments.distinct)
+        case PaymentsError(_, _) => Left(PaymentHistoryError)
       }
-      if (paymentsContainsFailure) {
-        Left(PaymentHistoryError)
-      } else {
-        Right(paymentResponses.collect {
-          case Payments(payments) => payments
-        }.flatten.distinct)
+    }).map(x => {
+      x.foldLeft[Either[PaymentHistoryError.type, Seq[Payment]]](Left(PaymentHistoryError)){(acc, next) =>
+        combineTwoResponses(acc, next)
       }
-    }
-  }
-
-  def getPaymentHistoryV2(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentHistoryError.type, Seq[Payment]]] = {
-
-    val orderedTaxYears: List[Int] = user.incomeSources.orderedTaxYearsByYearOfMigration.reverse.take(appConfig.paymentHistoryLimit)
-
-    val (from, to) = (orderedTaxYears.min, orderedTaxYears.max)
-    Logger("application").debug(s"Getting payment history for TaxYears: ${from} - ${to}")
-
-    for {
-      response <- financialDetailsConnector.getPayments(TaxYear.forYearEnd(from), TaxYear.forYearEnd(to))
-    } yield response match {
-      case Payments(payments) => Right(payments.distinct)
-      case PaymentsError(_, _) => Left(PaymentHistoryError)
-    }
+    })
   }
 
   def getRepaymentHistory(paymentHistoryAndRefundsEnabled: Boolean)
@@ -84,6 +69,16 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
         case RepaymentHistoryErrorModel(_, _) => Left(RepaymentHistoryErrorModel)
       }
     else Future(Right(Nil))
+  }
+
+  def combineTwoResponses(response1: Either[PaymentHistoryError.type, Seq[Payment]],
+                          response2: Either[PaymentHistoryError.type, Seq[Payment]]): Either[PaymentHistoryError.type, Seq[Payment]] = {
+    (response1, response2) match {
+      case (Right(model1: Seq[Payment]), Right(model2: Seq[Payment])) => Right(model1 ++ model2)
+      case (Right(model: Seq[Payment]), _) => Right(model)
+      case (_, Right(model: Seq[Payment])) => Right(model)
+      case _ => Left(PaymentHistoryError)
+    }
   }
 }
 
