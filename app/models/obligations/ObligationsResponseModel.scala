@@ -47,7 +47,7 @@ case class ObligationsModel(obligations: Seq[GroupedObligationsModel]) extends O
             deadline =>
               Some(ObligationWithIncomeType(mtdItUser.incomeSources.businesses.find(_.incomeSourceId == groupedObligationsModel.identification)
                 .get.tradingName.getOrElse("nextUpdates.business"), deadline))
-          } else if (groupedObligationsModel.obligations.forall(ob => ob.obligationType == "Crystallised"))
+          } else if (groupedObligationsModel.obligations.forall(ob => ob.obligationType == "Crystallisation"))
             groupedObligationsModel.obligations.map {
               deadline => Some(ObligationWithIncomeType("nextUpdates.crystallisedAll", deadline))
             } else None
@@ -64,7 +64,7 @@ case class ObligationsModel(obligations: Seq[GroupedObligationsModel]) extends O
     allDeadlinesWithSource()(mtdItUser).filter(_.obligation.obligationType == "Quarterly")
 
   def allCrystallised(implicit mtdItUser: MtdItUser[_]): Seq[ObligationWithIncomeType] =
-    allDeadlinesWithSource()(mtdItUser).filter(_.obligation.obligationType == "Crystallised")
+    allDeadlinesWithSource()(mtdItUser).filter(_.obligation.obligationType == "Crystallisation")
 
   def obligationsByDate(implicit mtdItUser: MtdItUser[_]): Seq[(LocalDate, Seq[ObligationWithIncomeType])] =
     allDeadlinesWithSource().groupBy(_.obligation.due).toList.sortWith((x, y) => x._1.isBefore(y._1))

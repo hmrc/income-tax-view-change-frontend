@@ -46,7 +46,7 @@ object PreviousObligationsIntegrationTestConstants {
     testMtditid,
     List(
       SingleObligationModel(
-        date.plusMonths(4), date.plusMonths(5), date.plusMonths(6), "Crystallised", Some(date.plusMonths(5)), "Crystallised", status = StatusFulfilled
+        date.plusMonths(4), date.plusMonths(5), date.plusMonths(6), "Crystallisation", Some(date.plusMonths(5)), "Crystallisation", status = StatusFulfilled
       )
     )
   )
