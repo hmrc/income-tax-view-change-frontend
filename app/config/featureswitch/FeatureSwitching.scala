@@ -72,11 +72,11 @@ trait FeatureSwitching {
     }
   }
 
-  def getProdFSList: List[FeatureSwitch] = {
-    FeatureSwitchName.allFeatureSwitches.toList.map { currentFS =>
+  def getFSListFromConfig: List[FeatureSwitch] = {
+    FeatureSwitchName.allFeatureSwitches.toList.map { fs =>
       FeatureSwitch(
-        currentFS,
-        isEnabled = appConfig.config.getOptional[Boolean](s"prod-feature-switch.enable-${currentFS.name}").getOrElse(false)
+        fs,
+        isEnabled = appConfig.config.getOptional[Boolean](s"feature-switch.enable-${fs.name}").getOrElse(false)
       )
     }
   }

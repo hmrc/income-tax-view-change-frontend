@@ -77,7 +77,8 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
       case Some(data) => data.keySet
     }
 
-    val prodEnabledFsList: Set[String] = featureSwitchService.getProdFSList.filter(_.isEnabled).map(_.name.name).toSet
+    //Team is in agreement that environments in app configs will be exactly as in prod, and we use test-only/feature-switch to change FS.
+    val prodEnabledFsList: Set[String] = featureSwitchService.getFSListFromConfig.filter(_.isEnabled).map(_.name.name).toSet
 
     def getEnabledFeatureSwitches: Map[FeatureSwitchName, Boolean] = {
       val subData: Set[String] =
