@@ -93,7 +93,7 @@ class EnterPoaAmountViewSpec extends TestSupport{
       document.getElementById("cancel").attr("href") shouldBe cancelUrl
     }
     "render the table with only Initial Amount for user on first visit" in new Setup(viewModel = poAAmountViewModel()) {
-      document.getElementsByClass("govuk-table__head").text() shouldBe msg("amountPreviousHeading")
+      document.getElementsByClass("govuk-table__head").text() shouldBe {msg("chargeHeading") + " " + msg("amountPreviousHeading")}
       val tableBody = document.getElementsByClass("govuk-table__body")
       tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__header:nth-of-type(1)").text shouldBe msg("firstPayment")
       tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__cell:nth-of-type(1)").text shouldBe poAAmountViewModel().relevantAmountOne.toCurrencyString
@@ -101,7 +101,7 @@ class EnterPoaAmountViewSpec extends TestSupport{
       tableBody.select(".govuk-table__row:nth-of-type(2)").select(".govuk-table__cell:nth-of-type(1)").text shouldBe poAAmountViewModel().relevantAmountTwo.toCurrencyString
     }
     "render the table with Initial and Adjusted amount for user who has decrease previously" in new Setup(viewModel = poAAmountViewModel(poaPreviouslyAdjusted = Some(true))) {
-      document.getElementsByClass("govuk-table__head").text() shouldBe {msg("amountPreviousHeading") + " " + msg("adjustedAmount")}
+      document.getElementsByClass("govuk-table__head").text() shouldBe {msg("chargeHeading") + " " + msg("amountPreviousHeading") + " " + msg("adjustedAmount")}
       val tableBody = document.getElementsByClass("govuk-table__body")
       tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__header:nth-of-type(1)").text shouldBe msg("firstPayment")
       tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__cell:nth-of-type(1)").text shouldBe poAAmountViewModel(poaPreviouslyAdjusted = Some(true)).relevantAmountOne.toCurrencyString

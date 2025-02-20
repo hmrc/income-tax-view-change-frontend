@@ -2050,6 +2050,7 @@ paymentOnAccount.class4NationalInsurance.link        = https://www.gov.uk/self-e
 paymentOnAccount.p2                                  = i fod yn is na’r flwyddyn dreth flaenorol.
 paymentOnAccount.heading.example                     = Enghraifft
 paymentOnAccount.hint                                = Er enghraifft, os oedd eich bil treth y llynedd yn £4,000, ac rydych o’r farn y dylech dalu dim ond £3,000 eleni, gallwch ostwng y ddau daliad gan £1,500 yr un, ar gyfrif.
+paymentOnAccount.table-heading-charge-type           = Math o dâl
 paymentOnAccount.table-heading-1                     = Taliad cyntaf ar gyfrif
 paymentOnAccount.table-heading-created-amount.key    = Swm yn seiliedig ar fil treth blaenorol
 paymentOnAccount.table-heading-adjusted-amount.key   = Swm wedi’i addasu
@@ -2071,6 +2072,7 @@ claimToAdjustPoa.checkYourAnswers.confirm-and-save           = Cadarnhau a chadw
 # Enter POA Amount
 claimToAdjustPoa.enterPoaAmount.caption                                 = Blwyddyn dreth {0} i {1}
 claimToAdjustPoa.enterPoaAmount.heading                                 = Nodwch swm newydd
+claimToAdjustPoa.enterPoaAmount.chargeHeading                           = Math o dâl
 claimToAdjustPoa.enterPoaAmount.p1                                      = Dylai pob taliad ar gyfrif fod yn hanner swm eich bil treth disgwyliedig, sy’n cynnwys:
 claimToAdjustPoa.enterPoaAmount.bullet1                                 = Treth Incwm
 claimToAdjustPoa.enterPoaAmount.bullet2                                 = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)

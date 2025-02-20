@@ -63,6 +63,7 @@
     if(viewModel.hasBeenPreviouslyAdjusted) {
         Some(Seq(
             HeadCell(
+                content = Text(getMessage("table-heading-charge-type"))
             ),
             HeadCell(
                 content = Text(getMessage("table-heading-created-amount.key")),
@@ -77,6 +78,7 @@
     else {
         Some(Seq(
             HeadCell(
+                content = Text(getMessage("table-heading-charge-type"))
             ),
             HeadCell(
                 content = Text(getMessage("table-heading-created-amount.key")),
