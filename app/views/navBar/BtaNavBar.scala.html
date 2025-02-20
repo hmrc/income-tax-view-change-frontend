@@ -21,7 +21,7 @@
 @this(hmrcNotificationBadge : HmrcNotificationBadge)
 
 @(navLinks: Seq[ListLinks])(implicit messages: Messages)
-<nav id="secondary-nav" class="hmrc-account-menu bta-nav-no-border">
+<nav id="secondary-nav" class="hmrc-account-menu bta-nav-no-border" aria-label="Business Tax Account Navigation Bar">
     <ul class="hmrc-account-menu__main govuk-grid-column-full" style="padding: 0;">
         @for( nav <- navLinks) {
         @if(nav.showBoolean.contains(false)){} else {
