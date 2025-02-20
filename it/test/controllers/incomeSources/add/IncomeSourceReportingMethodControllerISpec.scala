@@ -72,8 +72,11 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
   val taxYear2: Int = currentTaxYear + 1
   val taxYear1YYtoYY: String = s"${(taxYear1 - 1).toString.takeRight(2)}-${taxYear1.toString.takeRight(2)}"
   val taxYear1YYtoYYForTimeMachineRemoval: String = s"${(taxYear1).toString.takeRight(2)}-${(taxYear1 + 1).toString.takeRight(2)}"
+  val currentTaxYear1YY: String = s"${(taxYear1 - 1).toString.takeRight(2)}-${(taxYear1).toString.takeRight(2)}"
   val taxYear1YYYYtoYY: String = "20" + taxYear1YYtoYY
   val taxYear1YYYYtoYYForTimeMachineRemoval: String = "20" + taxYear1YYtoYYForTimeMachineRemoval
+  val currentTaxYearRange: String = "20" + currentTaxYear1YY
+  val legacyTaxYearRange: String = s"${(taxYear1 - 2).toString.takeRight(2)}-${(taxYear1 - 1).toString.takeRight(2)}"
   val taxYearYYYYtoYYYY = s"${taxYear1 - 1}-$taxYear1"
   val lastDayOfCurrentTaxYear: LocalDate = LocalDate.of(currentTaxYear, APRIL, 5)
   val latencyDetails: LatencyDetails =
@@ -82,6 +85,22 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
       taxYear1 = taxYear1.toString,
       latencyIndicator1 = quarterlyIndicator,
       taxYear2 = taxYear2.toString,
+      latencyIndicator2 = annuallyIndicator
+    )
+  val latencyDetails2: LatencyDetails =
+    LatencyDetails(
+      latencyEndDate = lastDayOfCurrentTaxYear,
+      taxYear1 = (taxYear1 - 1).toString,
+      latencyIndicator1 = quarterlyIndicator,
+      taxYear2 = (taxYear2 - 1).toString,
+      latencyIndicator2 = annuallyIndicator
+    )
+  val legacyLatencyDetails: LatencyDetails =
+    LatencyDetails(
+      latencyEndDate = lastDayOfCurrentTaxYear,
+      taxYear1 = (taxYear1 - 2).toString,
+      latencyIndicator1 = quarterlyIndicator,
+      taxYear2 = (taxYear2 -1 ).toString,
       latencyIndicator2 = annuallyIndicator
     )
   val businessName: IncomeSourceType => String = {
@@ -213,6 +232,24 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
                 )
                 sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
               }
+              "user is within latency period (before 23/24) - tax year 1 crystallised and ITSA Status is empty for current year" in {
+                enable(IncomeSourcesFs)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
+                await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
+                ITSAStatusDetailsStub.stubNotFoundForGetITSAStatusDetails(taxYear1YYYYtoYY)
+                ITSAStatusDetailsStub.stubNotFoundForGetITSAStatusDetails(currentTaxYearRange)
+                CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants
+                  .successResponseCrystallised.toString())
+
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(redirectUrl(incomeSourceType, mtdUserRole))
+                )
+              }
             }
 
             s"redirect to the ${incomeSourceType.journeyType} Obligations page" when {
@@ -265,10 +302,11 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
                 enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, allBusinessesAndPropertiesInLatencyPeriod(latencyDetails))
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, allBusinessesAndPropertiesInLatencyPeriod(legacyLatencyDetails))
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
                 ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYear1YYYYtoYYForTimeMachineRemoval)
-                CalculationListStub.stubGetLegacyCalculationListError(testNino, (taxYear1 + 1).toString)
+                ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", currentTaxYearRange)
+                CalculationListStub.stubGetLegacyCalculationListError(testNino, ((taxYear1 - 2).toString))
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -280,7 +318,7 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, allBusinessesAndPropertiesInLatencyPeriod(latencyDetails))
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
-                stubGetITSAStatusDetailsError()
+                stubGetITSAStatusDetailsError(currentTaxYear1YY)
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -290,10 +328,11 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
                 enable(IncomeSourcesFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, allBusinessesAndPropertiesInLatencyPeriod(latencyDetails))
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, allBusinessesAndPropertiesInLatencyPeriod(latencyDetails2))
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
                 ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYear1YYYYtoYYForTimeMachineRemoval)
-                CalculationListStub.stubGetCalculationListError(testNino, taxYear1YYtoYYForTimeMachineRemoval)
+                ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", currentTaxYearRange)
+                CalculationListStub.stubGetCalculationListError(testNino, legacyTaxYearRange)
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(httpStatus(INTERNAL_SERVER_ERROR))
@@ -337,6 +376,7 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, allBusinessesAndPropertiesInLatencyPeriod(latencyDetails))
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
                 ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYear1YYYYtoYYForTimeMachineRemoval)
+                ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", currentTaxYearRange)
                 IncomeTaxViewChangeStub.stubUpdateIncomeSourceError()
 
                 val result = buildPOSTMTDPostClient(path, additionalCookies, validFormData).futureValue

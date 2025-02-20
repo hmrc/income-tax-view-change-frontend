@@ -16,12 +16,18 @@
 
 package services
 
+import config.FrontendAppConfig
+import connectors.GetPenaltyDetailsConnector
 import models.homePage.PenaltiesAndAppealsTileViewModel
+import models.penalties.GetPenaltyDetailsParser.GetPenaltyDetailsResponse
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
+import scala.concurrent.Future
 import scala.util.Random
 
-class PenaltyDetailsService @Inject()() {
+class PenaltyDetailsService @Inject()(getPenaltyDetailsConnector: GetPenaltyDetailsConnector,
+                                      val appConfig: FrontendAppConfig) {
 
   val dummySubmissionFrequency: String =
     Random.shuffle(Seq("Annual", "Quarterly")).head
@@ -29,8 +35,11 @@ class PenaltyDetailsService @Inject()() {
   val dummyPenaltyPoints: Int =
     Random.nextInt(5) + 1
 
-  def getPenaltyPenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled: Boolean): PenaltiesAndAppealsTileViewModel = {
+  def getPenaltyDetails(mtdItId: String)(implicit hc: HeaderCarrier): Future[GetPenaltyDetailsResponse] = {
+    getPenaltyDetailsConnector.getPenaltyDetails(mtdItId)
+  }
 
+  def getPenaltyPenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled: Boolean): PenaltiesAndAppealsTileViewModel = {
     PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled, dummySubmissionFrequency, dummyPenaltyPoints)
   }
 }

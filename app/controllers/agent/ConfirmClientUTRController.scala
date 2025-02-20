@@ -66,6 +66,7 @@ class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
         mtditid = user.mtditid,
         arn = user.arn.getOrElse(""),
         saUtr = user.saUtr.getOrElse(""),
+        isSupportingAgent = user.isSupportingAgent,
         credId = user.credId
       ))
 

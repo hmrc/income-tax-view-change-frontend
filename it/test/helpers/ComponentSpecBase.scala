@@ -16,6 +16,7 @@
 
 package helpers
 
+import auth.authV2.models.AuthorisedAndEnrolledRequest
 import auth.{HeaderExtractor, MtdItUser}
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
@@ -135,6 +136,15 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     )(FakeRequest())
   }
 
+  def getAuthorisedAndEnrolledUser(mtdUserRole: MTDUserRole): AuthorisedAndEnrolledRequest[_] = {
+    AuthorisedAndEnrolledRequest(
+      testMtditid,
+      mtdUserRole,
+      defaultAuthUserDetails(mtdUserRole),
+      if(mtdUserRole == MTDIndividual) None else Some(defaultClientDetails)
+    )(FakeRequest())
+  }
+
   def config: Map[String, Object] = Map(
     "play.filters.disabled" -> Seq("uk.gov.hmrc.play.bootstrap.frontend.filters.SessionIdFilter"),
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
@@ -155,8 +165,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.pay-api.port" -> mockPort,
     "microservice.services.income-tax-calculation.host" -> mockHost,
     "microservice.services.income-tax-calculation.port" -> mockPort,
-    "microservice.services.penalties-stub.host" -> mockHost,
-    "microservice.services.penalties-stub.port" -> mockPort,
+    "microservice.services.income-tax-penalties-stub.host" -> mockHost,
+    "microservice.services.income-tax-penalties-stub.port" -> mockPort,
     "calculation-polling.interval" -> "500",
     "calculation-polling.timeout" -> "3000",
     "calculation-polling.attempts" -> "10",
