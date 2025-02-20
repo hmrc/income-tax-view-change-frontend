@@ -27,6 +27,7 @@ import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.IncomeSourcesUtils
+import views.html.ReportingFrequencyView
 import views.html.manageBusinesses.add.{IncomeSourceReportingFrequency, IncomeSourceReportingMethodNotSaved}
 
 import javax.inject.{Inject, Singleton}
