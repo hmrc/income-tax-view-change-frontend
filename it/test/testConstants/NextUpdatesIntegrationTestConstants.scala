@@ -121,7 +121,7 @@ object NextUpdatesIntegrationTestConstants {
     SingleObligationModel(
       start = singleObligationStart,
       end = singleObligationEndQuarter,
-      obligationType = "Crystallised",
+      obligationType = "Crystallisation",
       due = veryOverdueDate,
       dateReceived = None,
       periodKey = "periodKey", status = StatusFulfilled
@@ -203,23 +203,23 @@ object NextUpdatesIntegrationTestConstants {
     )
   ))
 
-  val crystallisedEOPSModel = GroupedObligationsModel(testMtditid, List(
+  val CrystallisationEOPSModel = GroupedObligationsModel(testMtditid, List(
     SingleObligationModel(
       start = LocalDate.of(2017, 4, 6),
       end = LocalDate.of(2018, 4, 5),
       due = LocalDate.of(2019, 1, 31),
-      "Crystallised",
+      "Crystallisation",
       dateReceived = None,
       periodKey = "#003", status = StatusFulfilled
     )
   ))
 
-  val crystallisedEOPSModelMulti = GroupedObligationsModel(testMtditid, List(
+  val CrystallisationEOPSModelMulti = GroupedObligationsModel(testMtditid, List(
     SingleObligationModel(
       start = LocalDate.of(2018, 4, 6),
       end = LocalDate.of(2019, 4, 5),
       due = LocalDate.of(2020, 1, 31),
-      "Crystallised",
+      "Crystallisation",
       dateReceived = None,
       periodKey = "#003", status = StatusFulfilled
     ),
@@ -227,7 +227,7 @@ object NextUpdatesIntegrationTestConstants {
       start = LocalDate.of(2017, 4, 6),
       end = LocalDate.of(2018, 4, 5),
       due = LocalDate.of(2019, 1, 31),
-      "Crystallised",
+      "Crystallisation",
       dateReceived = None,
       periodKey = "#003", status = StatusFulfilled
     )
