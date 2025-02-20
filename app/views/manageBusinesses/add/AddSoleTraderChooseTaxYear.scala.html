@@ -18,7 +18,7 @@
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.helpers.injected.ErrorSummary
-@import forms.incomeSources.add.IncomeSourceReportingFrequencyForm
+@import forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
 @import models.incomeSourceDetails.TaxYear
 
 @this(
@@ -32,7 +32,7 @@
 @(form: Form[IncomeSourceReportingFrequencyForm], isAgent: Boolean, postAction: Call, currentTaxYear: TaxYear, nextTaxYear: TaxYear)(implicit user: auth.MtdItUser[_], messages: Messages)
 
 @mainTemplate(
-    pageTitle = messages("incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.heading"),
+    pageTitle = messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading"),
     isAgent = isAgent,
     backUrl = Some("#"),
     btaNavPartial = user.btaNavPartial) {
@@ -41,12 +41,12 @@
         <div class="govuk-error-summary" data-module="govuk-error-summary">
             <div role="alert">
                 <h2 id="error-summary-title" class="govuk-error-summary__title">
-                    @messages("incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header")
+                    @messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header")
                 </h2>
                 <div class="govuk-error-summary__body">
                     <ul class="govuk-list govuk-error-summary__list">
                         <li>
-                            <a id="error-summary-link" href="#current-year-checkbox">@messages("incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description")</a>
+                            <a id="error-summary-link" href="#current-year-checkbox">@messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description")</a>
                         </li>
                     </ul>
                 </div>
@@ -58,20 +58,20 @@
 
     <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
         <h1 id="choose-tax-year-heading" class="govuk-heading-l">
-            <span id="choose-tax-year-subheading" class="govuk-caption-l">@messages("incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.subHeading")</span>
-            @messages("incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.heading")
+            <span id="choose-tax-year-subheading" class="govuk-caption-l">@messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.subHeading")</span>
+            @messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading")
         </h1>
     </legend>
 
     @govukCheckboxes(Checkboxes(
         name = "choose-tax-year",
-        hint = Some(Hint(content = Text(messages("incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text")))),
+        hint = Some(Hint(content = Text(messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text")))),
         items = Seq(
             CheckboxItem(
                 id = Some("current-year-checkbox"),
                 name = Some("current-year-checkbox"),
                 content = Text(
-                    value = messages("incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox", currentTaxYear.startYear.toString, currentTaxYear.endYear.toString)
+                    value = messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox", currentTaxYear.startYear.toString, currentTaxYear.endYear.toString)
                 ),
                 value = "true",
                 checked = false
@@ -80,7 +80,7 @@
                 id = Some("next-year-checkbox"),
                 name = Some("next-year-checkbox"),
                 content = Text(
-                    value = messages("incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox", nextTaxYear.startYear.toString, nextTaxYear.endYear.toString)
+                    value = messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox", nextTaxYear.startYear.toString, nextTaxYear.endYear.toString)
                 ),
                 value = "true",
                 checked = false
@@ -90,7 +90,7 @@
     ).withFormField(form(IncomeSourceReportingFrequencyForm.chooseTaxYearsCheckbox))
 )
     @govukButton(Button(
-        content = Text(messages("incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.button")),
+        content = Text(messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button")),
         attributes = Map("id" -> "continue-button")
     ))
     }

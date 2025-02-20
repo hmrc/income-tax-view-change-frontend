@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package forms.incomeSources.add
+package forms.manageBusinesses.add
 
 import play.api.data.Form
-import play.api.data.Forms.{boolean, mapping, optional, text}
+import play.api.data.Forms.{boolean, mapping}
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 
 case class IncomeSourceReportingFrequencyForm(currentTaxYear: Boolean, nextTaxYear: Boolean)
 
 object IncomeSourceReportingFrequencyForm {
   val chooseTaxYearsCheckbox = "choose-tax-year"
-  val noResponseErrorMessageKey: String = "incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description"
+  val noResponseErrorMessageKey: String = "manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description"
 
   def apply(): Form[IncomeSourceReportingFrequencyForm] = {
     Form[IncomeSourceReportingFrequencyForm](

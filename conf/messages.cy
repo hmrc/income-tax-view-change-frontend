@@ -1282,14 +1282,6 @@ incomeSources.add.addIncomeSources.tableHead.dateStarted            = Dyddiad cy
 incomeSources.add.addIncomeSources.tableHead.dateEnded              = Y dyddiad dod i ben
 incomeSources.add.addIncomeSources.unknown                          = Anhysbys
 
-incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.heading           = Pa flwyddyn dreth ydych chi am gyflwyno’n chwarterol ar ei chyfer?
-incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.subHeading        = Unig fasnachwr
-incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text         = Dewiswch bob un sy’n berthnasol.
-incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox     = {0} i {1}
-incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.button            = Parhau
-incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header      = Mae problem
-incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description = Dewiswch y blynyddoedd treth yr hoffech gyflwyno’n chwarterol ar eu cyfer
-
 incomeSources.add.error.standardError                            = Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
 incomeSources.add.error.incomeSourceNotSaved.p1                  = Nid oedd modd ychwanegu eich busnes {0}. Nid ydym wedi cadw’ch atebion. Rhowch gynnig arall arni yn nes ymlaen.
 incomeSources.add.error.incomeSourceNotSaved.se                  = unig fasnachwr
@@ -1983,6 +1975,16 @@ manageBusinesses.check-answers.reporting.quarterly                       = Bob c
 manageBusinesses.check-answers.reporting.annually                        = Bob blwyddyn
 manageBusinesses.check-answers.confirm                                   = Cadarnhau ac yn eich blaen
 manageBusinesses.check-answers.change                                    = Newid
+
+# manage business sole trader reporting frequency
+
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading           = Pa flwyddyn dreth ydych chi am gyflwyno’n chwarterol ar ei chyfer?
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.subHeading        = Unig fasnachwr
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text         = Dewiswch bob un sy’n berthnasol.
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox     = {0} i {1}
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button            = Parhau
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header      = Mae problem
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description = Dewiswch y blynyddoedd treth yr hoffech gyflwyno’n chwarterol ar eu cyfer
 
 #######################################################################################################################
 ## Claim to Adjust POA - Add ##

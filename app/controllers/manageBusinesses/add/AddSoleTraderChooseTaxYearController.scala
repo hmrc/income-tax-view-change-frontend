@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package controllers.incomeSources.add
+package controllers.manageBusinesses.add
 
+import auth.MtdItUser
 import auth.authV2.AuthActions
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import config.featureswitch.FeatureSwitching
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import controllers.manageBusinesses.add.routes
 import enums.JourneyType.IncomeSourceReportingFrequencyJourney
-import forms.incomeSources.add.IncomeSourceReportingFrequencyForm
+import forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
 import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.IncomeSourceReportingFrequencySourceData
 import play.api.Logger
@@ -28,7 +30,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import services.{DateService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.incomeSources.add.AddSoleTraderChooseTaxYear
+import views.html.manageBusinesses.add.AddSoleTraderChooseTaxYear
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -56,26 +58,30 @@ class AddSoleTraderChooseTaxYearController @Inject()(authActions: AuthActions,
 
   def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user => {
-
-      (isEnabled(IncomeSourcesNewJourney), isAgent) match {
-        case (false, false) => Future.successful(Redirect(homePageCall))
-        case (false, true)  => Future.successful(Redirect(homePageCallAgent))
-        case _              =>
-          sessionService.createSession(IncomeSourceReportingFrequencyJourney())
-          Future.successful(Ok(addSoleTraderChooseTaxYear(
-            IncomeSourceReportingFrequencyForm(),
-            isAgent,
-            routes.AddSoleTraderChooseTaxYearController.submit(isAgent),
-            dateService.getCurrentTaxYear,
-            dateService.getCurrentTaxYear.nextYear))
-          )
-      }
-    }.recover {
-      case ex =>
-        Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
-        errorHandler(isAgent).showInternalServerError()
+      handleRequest(isAgent)
     }
   }
+
+  def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_]) = {
+    (isEnabled(IncomeSourcesNewJourney), isAgent) match {
+      case (false, false) => Future.successful(Redirect(homePageCall))
+      case (false, true) => Future.successful(Redirect(homePageCallAgent))
+      case _ =>
+        sessionService.createSession(IncomeSourceReportingFrequencyJourney())
+        Future.successful(Ok(addSoleTraderChooseTaxYear(
+          IncomeSourceReportingFrequencyForm(),
+          isAgent,
+          routes.AddSoleTraderChooseTaxYearController.submit(isAgent),
+          dateService.getCurrentTaxYear,
+          dateService.getCurrentTaxYear.nextYear))
+        )
+    }
+  }.recover {
+    case ex =>
+      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+      errorHandler(isAgent).showInternalServerError()
+  }
+  
 
   def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user => {

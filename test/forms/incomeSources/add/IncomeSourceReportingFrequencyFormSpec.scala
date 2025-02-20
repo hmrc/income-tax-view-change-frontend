@@ -16,6 +16,7 @@
 
 package forms.incomeSources.add
 
+import forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.{Form, FormError}
@@ -63,7 +64,7 @@ class IncomeSourceReportingFrequencyFormSpec extends AnyWordSpec with Matchers {
         invalidForm.hasErrors shouldBe true
         invalidForm.data.contains("current-year-checkbox") shouldBe false
         invalidForm.data.contains("next-year-checkbox") shouldBe false
-        invalidForm.errors shouldBe List(FormError("", List("incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description"), List()))
+        invalidForm.errors shouldBe List(FormError("", List("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description"), List()))
       }
     }
   }

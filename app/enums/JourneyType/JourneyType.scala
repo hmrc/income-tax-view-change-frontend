@@ -17,7 +17,6 @@
 package enums.JourneyType
 
 import enums.IncomeSourceJourney.IncomeSourceType
-import models.incomeSourceDetails.TaxYear
 
 sealed trait JourneyType
 
