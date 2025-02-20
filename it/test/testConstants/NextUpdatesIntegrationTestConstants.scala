@@ -203,7 +203,7 @@ object NextUpdatesIntegrationTestConstants {
     )
   ))
 
-  val CrystallisationEOPSModel = GroupedObligationsModel(testMtditid, List(
+  val crystallisedEOPSModel = GroupedObligationsModel(testMtditid, List(
     SingleObligationModel(
       start = LocalDate.of(2017, 4, 6),
       end = LocalDate.of(2018, 4, 5),
