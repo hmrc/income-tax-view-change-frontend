@@ -1282,14 +1282,6 @@ incomeSources.add.addIncomeSources.tableHead.dateStarted            = Date start
 incomeSources.add.addIncomeSources.tableHead.dateEnded              = Date ended
 incomeSources.add.addIncomeSources.unknown                          = Unknown
 
-incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.heading           = Which tax year do you want to report quarterly for?
-incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.subHeading        = Sole Trader
-incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text         = Select all that apply.
-incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox     = {0} to {1}
-incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.button            = Continue
-incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header      = There is a problem
-incomeSources.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description = Select the tax years you want to report quarterly
-
 incomeSources.add.error.standardError                            = Sorry, there is a problem with the service
 incomeSources.add.error.incomeSourceNotSaved.p1                  = Your {0} business could not be added. We have not saved your answers. Please try again later.
 incomeSources.add.error.incomeSourceNotSaved.se                  = sole trader
@@ -1983,6 +1975,17 @@ manageBusinesses.check-answers.reporting.quarterly                       = Quart
 manageBusinesses.check-answers.reporting.annually                        = Annually
 manageBusinesses.check-answers.confirm                                   = Confirm and continue
 manageBusinesses.check-answers.change                                    = Change
+
+# manage business sole trader reporting frequency
+
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading           = Which tax year do you want to report quarterly for?
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.subHeading        = Sole Trader
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text         = Select all that apply.
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox     = {0} to {1}
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button            = Continue
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header      = There is a problem
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description = Select the tax years you want to report quarterly
+
 
 #######################################################################################################################
 ## Claim to Adjust POA - Add ##

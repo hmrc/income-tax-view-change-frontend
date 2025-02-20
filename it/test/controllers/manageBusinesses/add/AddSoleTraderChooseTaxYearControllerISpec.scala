@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.incomeSources.add
+package controllers.manageBusinesses.add
 
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
@@ -27,14 +27,14 @@ import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
-class AddSoleTraderChooseTaxYearISpec extends ControllerISpecHelper {
+class AddSoleTraderChooseTaxYearControllerISpec extends ControllerISpecHelper {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
   def getPath(mtdRole: MTDUserRole): String = {
     val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
-    pathStart + "/add/sole-trader/choose-taxyear"
+    pathStart + "/manage-your-businesses/add/sole-trader/choose-taxyear"
   }
 
   override def beforeEach(): Unit = {

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package views.incomeSources.add
+package views.manageBusinesses.add
 
-import forms.incomeSources.add.IncomeSourceReportingFrequencyForm
+import forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -24,14 +24,14 @@ import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
-import views.html.incomeSources.add.AddSoleTraderChooseTaxYear
+import views.html.manageBusinesses.add.AddSoleTraderChooseTaxYear
 
 class AddSoleTraderChooseTaxYearViewSpec extends TestSupport {
 
   val view: AddSoleTraderChooseTaxYear = app.injector.instanceOf[AddSoleTraderChooseTaxYear]
 
   class Setup(form: Form[IncomeSourceReportingFrequencyForm] = IncomeSourceReportingFrequencyForm()) {
-    val postAction: Call = controllers.incomeSources.add.routes.AddSoleTraderChooseTaxYearController.submit(false)
+    val postAction: Call = controllers.manageBusinesses.add.routes.AddSoleTraderChooseTaxYearController.submit(false)
     val pageDocument: Document = Jsoup.parse(contentAsString(view(form, isAgent = false, postAction, TaxYear(2023, 2024), TaxYear(2024, 2025))))
   }
 

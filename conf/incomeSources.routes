@@ -313,13 +313,6 @@ GET          /agents/income-sources/add/foreign-property-reporting-method       
 POST         /income-sources/add/foreign-property-reporting-method                               controllers.incomeSources.add.IncomeSourceReportingMethodController.submit(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = ForeignProperty)
 POST         /agents/income-sources/add/foreign-property-reporting-method                        controllers.incomeSources.add.IncomeSourceReportingMethodController.submit(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = ForeignProperty)
 
-# Income Sources - Add Sole Trader
-
-GET          /add/sole-trader/choose-taxyear                                                  controllers.incomeSources.add.AddSoleTraderChooseTaxYearController.show(isAgent: Boolean = false)
-GET          /agents/add/sole-trader/choose-taxyear                                           controllers.incomeSources.add.AddSoleTraderChooseTaxYearController.show(isAgent: Boolean = true)
-POST         /add/sole-trader/choose-taxyear                                                  controllers.incomeSources.add.AddSoleTraderChooseTaxYearController.submit(isAgent: Boolean = false)
-POST         /agents/add/sole-trader/choose-taxyear                                           controllers.incomeSources.add.AddSoleTraderChooseTaxYearController.submit(isAgent: Boolean = true)
-
 # Income Sources - TO BE IMPLEMENTED
 GET          /income-sources/add/foreign-property-accounting-method                 controllers.incomeSources.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: IncomeSourceType = ForeignProperty, isAgent: Boolean = false)
 GET          /agents/income-sources/add/foreign-property-accounting-method          controllers.incomeSources.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: IncomeSourceType = ForeignProperty, isAgent: Boolean = true)

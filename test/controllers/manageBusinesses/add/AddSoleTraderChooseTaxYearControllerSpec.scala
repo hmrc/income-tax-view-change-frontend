@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.incomeSources.add
+package controllers.manageBusinesses.add
 
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
