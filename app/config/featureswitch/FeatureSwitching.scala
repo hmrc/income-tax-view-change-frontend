@@ -71,4 +71,13 @@ trait FeatureSwitching {
       FeatureSwitch(currentFS, isEnabled = isEnabledFromConfig(currentFS))
     }
   }
+
+  def getFSListFromConfig: List[FeatureSwitch] = {
+    FeatureSwitchName.allFeatureSwitches.toList.map { fs =>
+      FeatureSwitch(
+        fs,
+        isEnabled = appConfig.config.getOptional[Boolean](s"feature-switch.enable-${fs.name}").getOrElse(false)
+      )
+    }
+  }
 }
