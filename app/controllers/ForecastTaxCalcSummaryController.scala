@@ -21,6 +21,7 @@ import audit.models.ForecastTaxCalculationAuditModel
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import exceptions.MissingFieldException
 import implicits.ImplicitDateFormatter
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
@@ -61,8 +62,12 @@ class ForecastTaxCalcSummaryController @Inject()(val authActions: AuthActions,
         val viewModel = liabilityCalc.calculation.flatMap(calc => calc.endOfYearEstimate)
         viewModel match {
           case Some(model) =>
-            auditingService.extendedAudit(ForecastTaxCalculationAuditModel(user, model))
-            Ok(forecastTaxCalcSummaryView(model, taxYear, backUrl(isAgent, taxYear, origin), isAgent, user.btaNavPartial))
+            if (model.incomeTaxNicAmount.isEmpty && model.incomeTaxNicAndCgtAmount.isEmpty) {
+              throw MissingFieldException("incomeTaxNicAmount and incomeTaxNicAndCgtAmount missing from response")
+            } else {
+              auditingService.extendedAudit(ForecastTaxCalculationAuditModel(user, model))
+              Ok(forecastTaxCalcSummaryView(model, taxYear, backUrl(isAgent, taxYear, origin), isAgent, user.btaNavPartial))
+            }
           case _ => onError("No tax calculation data could be retrieved. Not found", isAgent, taxYear)
         }
       case error: LiabilityCalculationError if error.status == NO_CONTENT =>
