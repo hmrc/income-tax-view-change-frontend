@@ -356,7 +356,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       incomeType match {
         case "Property" => messages("updateTab.obligationType.property")
         case "Business" => messages("updateTab.obligationType.business")
-        case "Crystallised" => messages("updateTab.obligationType.crystallised")
+        case "Crystallisation" => messages("updateTab.obligationType.crystallised")
         case other => other
       }
     }
@@ -364,7 +364,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     def updateType(updateType: String): String = {
       updateType match {
         case "Quarterly" => messages("updateTab.updateType.quarterly")
-        case "Crystallised" => messages("updateTab.updateType.crystallised")
+        case "Crystallisation" => messages("updateTab.updateType.crystallised")
         case _ => updateType
       }
     }
