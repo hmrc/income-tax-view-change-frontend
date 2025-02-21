@@ -912,7 +912,7 @@ chargeSummary.paymentAmount   									   = Amount
 chargeSummary.paymentAmountCodingOut							   = Payment amount
 chargeSummary.paidToDate    									   = Paid to date
 chargeSummary.remainingDue   									   = Still to pay
-chargeSummary.overdue                                              = OVERDUE
+chargeSummary.overdue                                              = Overdue
 chargeSummary.na                                                   = N/A
 
 chargeSummary.allocation                                           = Allocation
