@@ -258,7 +258,7 @@
     obligationType match {
         case "Property" => messages("updateTab.obligationType.property")
         case "Business" => messages("updateTab.obligationType.business")
-        case "Crystallised" => messages("updateTab.obligationType.crystallised")
+        case "Crystallisation" => messages("updateTab.obligationType.crystallised")
         case _ => obligationType
     }
 }
@@ -266,7 +266,7 @@
 @updateTypeHelper(updateType: String) = @{
     updateType match {
         case "Quarterly" => messages("updateTab.updateType.quarterly")
-        case "Crystallised" => messages("updateTab.updateType.crystallised")
+        case "Crystallisation" => messages("updateTab.updateType.crystallised")
         case _ => updateType
     }
 }

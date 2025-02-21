@@ -29,7 +29,7 @@ class ObligationsViewModelSpec extends UnitSpec {
     inboundCorrespondenceDue = crystallisedDeadlineTaxYear2022_2023,
     periodKey = "C",
     isFinalDec = true,
-    obligationType = "Crystallised"
+    obligationType = "Crystallisation"
   )
 
   val taxYear2023_2024FinalDeclaration: DatesModel = DatesModel(
@@ -38,7 +38,7 @@ class ObligationsViewModelSpec extends UnitSpec {
     inboundCorrespondenceDue = crystallisedDeadlineTaxYear2023_2024,
     periodKey = "C",
     isFinalDec = true,
-    obligationType = "Crystallised"
+    obligationType = "Crystallisation"
   )
 
   val taxYear2024_2025FinalDeclaration: DatesModel = DatesModel(

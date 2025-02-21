@@ -75,7 +75,7 @@ object NextUpdatesTestConstants {
     start = LocalDate.of(2017, 10, 1),
     end = LocalDate.of(2018, 10, 30),
     due = mockedCurrentTime20171031,
-    obligationType = "Crystallised",
+    obligationType = "Crystallisation",
     dateReceived = None,
     periodKey = "",
     StatusFulfilled
@@ -85,7 +85,7 @@ object NextUpdatesTestConstants {
     start = LocalDate.of(2018, 10, 1),
     end = LocalDate.of(2019, 10, 30),
     due = LocalDate.of(2020, 10, 31),
-    obligationType = "Crystallised",
+    obligationType = "Crystallisation",
     dateReceived = None,
     periodKey = "",
     StatusFulfilled
@@ -147,9 +147,9 @@ object NextUpdatesTestConstants {
     LocalDate.of(2019, 1, 1),
     LocalDate.of(2019, 1, 1),
     LocalDate.of(2019, 1, 31),
-    "Crystallised",
+    "Crystallisation",
     Some(LocalDate.of(2018, 1, 31)),
-    "Crystallised",
+    "Crystallisation",
     status = StatusFulfilled
   )
 
@@ -219,7 +219,7 @@ object NextUpdatesTestConstants {
     start = LocalDate.of(2017, 4, 6),
     end = LocalDate.of(2018, 4, 5),
     due = LocalDate.of(2019, 10, 31),
-    obligationType = "Crystallised",
+    obligationType = "Crystallisation",
     dateReceived = None,
     periodKey = "",
     status = StatusFulfilled
