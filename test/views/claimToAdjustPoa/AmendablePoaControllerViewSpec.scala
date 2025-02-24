@@ -73,7 +73,8 @@ class AmendablePoaControllerViewSpec extends TestSupport {
         document.getElementsByClass("govuk-body").first().getElementsByTag("a").attr("href") shouldBe messages("paymentOnAccount.class4NationalInsurance.link")
       }
       "render the Payment On Account Table" in new Setup(isAgent) {
-        document.getElementsByClass("govuk-table__head").text() shouldBe messages("paymentOnAccount.table-heading-created-amount.key")
+        document.getElementsByClass("govuk-table__head").text() shouldBe messages("paymentOnAccount.table-heading-charge-type") +
+          " " + messages("paymentOnAccount.table-heading-created-amount.key")
         val tableBody = document.getElementsByClass("govuk-table__body")
         tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__header:nth-of-type(1)").text shouldBe messages("paymentOnAccount.table-heading-1")
         tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__cell:nth-of-type(1)").text shouldBe "£3,000.45"
@@ -81,7 +82,8 @@ class AmendablePoaControllerViewSpec extends TestSupport {
         tableBody.select(".govuk-table__row:nth-of-type(2)").select(".govuk-table__cell:nth-of-type(1)").text shouldBe "£3,000.45"
       }
       "render the Payment On Account Table with relevant amount when POA previously adjusted" in new Setup(isAgent, poasHaveBeenAdjustedPreviously = Some(true)) {
-        document.getElementsByClass("govuk-table__head").text() shouldBe messages("paymentOnAccount.table-heading-created-amount.key") +
+        document.getElementsByClass("govuk-table__head").text() shouldBe messages("paymentOnAccount.table-heading-charge-type") +
+          " " + messages("paymentOnAccount.table-heading-created-amount.key") +
           " " + messages("paymentOnAccount.table-heading-adjusted-amount.key")
         val tableBody = document.getElementsByClass("govuk-table__body")
         tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__header:nth-of-type(1)").text shouldBe messages("paymentOnAccount.table-heading-1")
