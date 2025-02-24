@@ -264,7 +264,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       }
 
       "display daily interest tag when there are payments accruing interest" in new Setup(paymentsAccruingInterestCount = 2, reviewAndReconcileEnabled = true) {
-        getElementById("accrues-interest-tag").map(_.text()) shouldBe Some(s"DAILY INTEREST CHARGES")
+        getElementById("accrues-interest-tag").map(_.text()) shouldBe Some(s"Daily interest charges")
       }
 
       "has the correct number of overdue updates when three updates are overdue" in new Setup(overDuePaymentsCount = 3) {
