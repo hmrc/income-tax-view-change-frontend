@@ -178,7 +178,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
             getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"Overdue 31 January $year2019")
           }
           "has payments accruing interest" in new TestSetup(nextPaymentDueDate = Some(nextPaymentDue), paymentsAccruingInterestCount = 2, reviewAndReconcileEnabled = true) {
-            getElementById("accrues-interest-tag").map(_.text()) shouldBe Some(s"DAILY INTEREST CHARGES")
+            getElementById("accrues-interest-tag").map(_.text()) shouldBe Some(s"Daily interest charges")
           }
           "is not overdue" in new TestSetup(nextPaymentDueDate = Some(nextPaymentDue)) {
             getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"31 January $year2019")
