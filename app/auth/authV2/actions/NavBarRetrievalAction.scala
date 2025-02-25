@@ -47,12 +47,10 @@ class NavBarRetrievalAction @Inject()(val btaNavBarController: BtaNavBarControll
     val header: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     implicit val hc: HeaderCarrier = header.copy(extraHeaders = header.headers(Seq(play.api.http.HeaderNames.COOKIE)))
     lazy val navigationBarDisabled = !isEnabled(NavBarFs)(request)
-    if (request.userType.contains(Agent) || navigationBarDisabled) {
-      Future.successful(Right(request))
-    } else {
-      request.getQueryString(SessionKeys.origin).fold[Future[Either[Result, MtdItUser[A]]]](ifEmpty = retrieveCacheAndHandleNavBar(request))(_ => {
-        saveOriginAndReturnToHomeWithoutQueryParams(request, navigationBarDisabled).map(Left(_))
-      })
+    request.getQueryString(SessionKeys.origin) match {
+      case Some(_) => saveOriginAndReturnToHomeWithoutQueryParams(request, navigationBarDisabled).map(Left(_))
+      case None if navigationBarDisabled => Future.successful(Right(request))
+      case None => retrieveCacheAndHandleNavBar(request)
     }
   }
 

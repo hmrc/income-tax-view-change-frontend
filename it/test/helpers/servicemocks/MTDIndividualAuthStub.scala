@@ -30,7 +30,7 @@ object MTDIndividualAuthStub extends MTDAuthStub {
     lazy val hasEnrolment = Enrolment("HMRC-MTD-IT")
 
     val predicateJson = {
-      val predicate = (hasEnrolment and isNotAgentPredicate) or isAgentPredicate
+      val predicate =  isAgentPredicate or (hasEnrolment and isNotAgentPredicate)
       Json.arr(predicate.toJson)
     }
 

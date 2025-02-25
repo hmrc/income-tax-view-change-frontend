@@ -64,7 +64,7 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
       Enrolment(mtdEnrolmentName) and
         (AffinityGroup.Organisation or AffinityGroup.Individual)
 
-    authorisedFunctions.authorised(predicate or AffinityGroup.Agent)
+    authorisedFunctions.authorised(AffinityGroup.Agent or predicate)
       .retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
         redirectIfAgent() orElse
         redirectIfInsufficientConfidence() orElse constructAuthorisedAndEnrolledUser()

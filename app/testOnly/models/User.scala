@@ -48,6 +48,7 @@ object UserRecord {
 
 case class PostedUser(nino: String,
                       agentType: Option[String],
+                      usePTANavBar: Boolean = false,
                       cyMinusOneCrystallisationStatus: Option[String],
                       cyMinusOneItsaStatus: Option[String],
                       cyItsaStatus: Option[String],
@@ -69,6 +70,7 @@ object PostedUser {
         mapping(
           "nino" -> text,
           "AgentType" -> optional(text),
+          "usePTANavBar" -> boolean,
           "cyMinusOneCrystallisationStatus" -> optional(text),
           "cyMinusOneItsaStatus" -> optional(text),
           "cyItsaStatus" -> optional(text),
