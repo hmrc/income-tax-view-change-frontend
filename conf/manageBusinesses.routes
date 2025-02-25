@@ -38,6 +38,11 @@ GET          /agents/manage-your-businesses/add-sole-trader/change-business-trad
 POST         /manage-your-businesses/add-sole-trader/change-business-trade              controllers.manageBusinesses.add.AddBusinessTradeController.submit(isChange: Boolean = true)
 POST         /agents/manage-your-businesses/add-sole-trader/change-business-trade       controllers.manageBusinesses.add.AddBusinessTradeController.submitAgent(isChange: Boolean = true)
 
+GET          /manage-your-businesses/add/sole-trader/reporting-frequency                        controllers.manageBusinesses.add.IncomeSourceReportingMethodController.showNewJourney(isAgent: Boolean = false)
+GET          /agents/manage-your-businesses/add/sole-trader/reporting-frequency                 controllers.manageBusinesses.add.IncomeSourceReportingMethodController.showNewJourney(isAgent: Boolean = true)
+POST         /manage-your-businesses/add/sole-trader/reporting-frequency                        controllers.manageBusinesses.add.IncomeSourceReportingMethodController.newJourneySubmit(isAgent: Boolean = false)
+POST         /agents/manage-your-businesses/add/sole-trader/reporting-frequency                 controllers.manageBusinesses.add.IncomeSourceReportingMethodController.newJourneySubmit(isAgent: Boolean = true)
+
 GET          /manage-your-businesses/add-sole-trader/business-start-date                       controllers.manageBusinesses.add.AddIncomeSourceStartDateController.show(isAgent:   Boolean = false, isChange: Boolean = false, incomeSourceType: IncomeSourceType = SelfEmployment)
 GET          /agents/manage-your-businesses/add-sole-trader/business-start-date                controllers.manageBusinesses.add.AddIncomeSourceStartDateController.show(isAgent:   Boolean = true,  isChange: Boolean = false, incomeSourceType: IncomeSourceType = SelfEmployment)
 POST         /manage-your-businesses/add-sole-trader/business-start-date                       controllers.manageBusinesses.add.AddIncomeSourceStartDateController.submit(isAgent: Boolean = false, isChange: Boolean = false, incomeSourceType: IncomeSourceType = SelfEmployment)

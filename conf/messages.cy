@@ -1298,6 +1298,17 @@ incomeSources.add.error.reportingMethodNotSaved.se.caption                      
 incomeSources.add.error.reportingMethodNotSaved.uk.caption                      = Eiddo yn y DU
 incomeSources.add.error.reportingMethodNotSaved.fp.caption                      = Eiddo tramor
 
+incomeSources.add.reportingFrequency.h1                             = Mae’ch busnes newydd wedi’i drefnu i gyflwyno’n flynyddol.
+incomeSources.add.reportingFrequency.p1                             = Gan mai busnes newydd yw hwn, gallwch gyflwyno ei incwm a’i dreuliau unwaith y flwyddyn yn eich Ffurflen Dreth, am hyd at 2 flwyddyn dreth, hyd yn oed os yw’r canlynol yn wir:
+incomeSources.add.reportingFrequency.p2                             = Gallwch ddewis i gyflwyno’n chwarterol, sy’n golygu cyflwyno diweddariad bob 3 mis yn ogystal â chyflwyno’ch Ffurflen Dreth.
+incomeSources.add.reportingFrequency.inset                          = O Ebrill 2026 ymlaen, pan ddaw’r cyfnod treth hwn o 2 flynedd i ben, efallai y bydd angen i chi cyflwyno’n chwarterol.
+incomeSources.add.reportingFrequency.h1                             = A ydych am newid i gyflwyno’n chwarterol?
+incomeSources.add.reportingFrequency.li1                            = rydych wedi’ch optio i mewn yn wirfoddol, neu mae’n ofynnol i chi gyflwyno’n chwarterol ar gyfer eich busnesau eraill
+incomeSources.add.reportingFrequency.li2                            = mae’ch incwm o hunangyflogaeth neu’ch incwm o eiddo, neu’r ddau ohonynt, yn mynd dros y trothwy incwm
+incomeSources.add.reportingFrequency.form.no-select.error           = Dewiswch ‘Iawn’ os hoffech chi gyflwyno’n chwarterol neu dewiswch ‘Na’ os hoffech chi gyflwyno’n flynyddol
+incomeSources.add.reportingFrequency.table.c1                       = Amlder cyflwyno {0} i {1}
+incomeSources.add.reportingFrequency.table.c2                       = Blynyddol
+
 #######################################################################################################################
 ## Income Sources - Cease ##
 #######################################################################################################################

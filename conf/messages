@@ -1282,6 +1282,18 @@ incomeSources.add.addIncomeSources.tableHead.dateStarted            = Date start
 incomeSources.add.addIncomeSources.tableHead.dateEnded              = Date ended
 incomeSources.add.addIncomeSources.unknown                          = Unknown
 
+incomeSources.add.reportingFrequency.h1                             = Your new business is set to report annually.
+incomeSources.add.reportingFrequency.p1                             = Because this is a new business, for up to 2 tax years you can submit its income and expenses once a year in your tax return, even if:
+incomeSources.add.reportingFrequency.p2                             = You can choose to report quarterly, which means submitting an update every 3 months in addition to your tax return
+incomeSources.add.reportingFrequency.inset                          = From April {0} when this 2-year tax period ends, you could be required to report quarterly.
+incomeSources.add.reportingFrequency.h1                             = Do you want to change to report quarterly?
+incomeSources.add.reportingFrequency.li1                            = you are voluntarily opted in or required to report quarterly for your other businesses
+incomeSources.add.reportingFrequency.li2                            = your income from self-employment or property, or both, exceed the income threshold
+incomeSources.add.reportingFrequency.form.no-select.error           = Select yes if you want to report quarterly or select no if you want to report annually
+incomeSources.add.reportingFrequency.table.c1                       = Reporting frequency {0} to {1}
+incomeSources.add.reportingFrequency.table.c2                       = Annual
+
+
 incomeSources.add.error.standardError                            = Sorry, there is a problem with the service
 incomeSources.add.error.incomeSourceNotSaved.p1                  = Your {0} business could not be added. We have not saved your answers. Please try again later.
 incomeSources.add.error.incomeSourceNotSaved.se                  = sole trader
