@@ -24,19 +24,28 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.incomeSources.add.IncomeSourceReportingMethodForm
+import forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
+import models.ReportingFrequencyViewModel
+import models.admin.{IncomeSourcesNewJourney, ReportingFrequencyPage}
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.viewmodels.IncomeSourceReportingMethodViewModel
 import models.incomeSourceDetails.{AddIncomeSourceData, LatencyDetails, LatencyYear, UIJourneySessionData}
+import models.optout.{OptOutMultiYearViewModel, OptOutOneYearViewModel}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services._
+import services.optIn.OptInService
+import services.optout.OptOutService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
-import views.html.manageBusinesses.add.IncomeSourceReportingMethod
+import viewUtils.ReportingFrequencyViewUtils
+import views.html.ReportingFrequencyView
+import views.html.errorPages.templates.ErrorTemplate
+import views.html.manageBusinesses.add.{IncomeSourceReportingFrequency, IncomeSourceReportingMethod}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,14 +53,19 @@ import scala.concurrent.{ExecutionContext, Future}
 class IncomeSourceReportingMethodController @Inject()(val authActions: AuthActions,
                                                       val updateIncomeSourceService: UpdateIncomeSourceService,
                                                       val itsaStatusService: ITSAStatusService,
-                                                      val dateService: DateService,
                                                       val calculationListService: CalculationListService,
                                                       val auditingService: AuditingService,
                                                       val view: IncomeSourceReportingMethod,
+                                                      val newView: IncomeSourceReportingFrequency,
                                                       val sessionService: SessionService,
                                                       val itvcErrorHandler: ItvcErrorHandler,
-                                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                                      val errorTemplate: ErrorTemplate,
+                                                      val optOutService: OptOutService,
+                                                      val optInService: OptInService,
+                                                      val reportingFrequencyViewUtils: ReportingFrequencyViewUtils)
                                                      (implicit val appConfig: FrontendAppConfig,
+                                                      val dateService: DateServiceInterface,
                                                       mcc: MessagesControllerComponents,
                                                       val ec: ExecutionContext
                                                      ) extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses {
@@ -76,10 +90,75 @@ class IncomeSourceReportingMethodController @Inject()(val authActions: AuthActio
   lazy val submitUrl: (Boolean, IncomeSourceType) => Call = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
     routes.IncomeSourceReportingMethodController.submit(isAgent, incomeSourceType)
 
+  lazy val newSubmitUrl: (Boolean) => Call = (isAgent: Boolean) =>
+    controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodController.newJourneySubmit(isAgent)
+
+  lazy val newJourneyIncomeSourceType: IncomeSourceType = SelfEmployment //this is temporary until we add new routes as play won't allow params in routes if they are all the same value
 
   def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       handleRequest(isAgent = isAgent, incomeSourceType)
+  }
+
+  def showNewJourney(isAgent: Boolean): Action[AnyContent] =
+   authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+     val result = if (isEnabled(IncomeSourcesNewJourney)) {
+       val thisAction = newSubmitUrl(isAgent)
+       Ok(
+         newView(
+           continueAction = thisAction,
+           isAgent = isAgent,
+           form = IncomeSourceReportingFrequencyForm(),
+           incomeSourceType = newJourneyIncomeSourceType,
+           taxDateService = dateService
+         )
+       )
+     }
+     else {
+       InternalServerError(
+         errorTemplate(
+           pageTitle = "standardError.heading",
+           heading = "standardError.heading",
+           message = "standardError.message",
+           isAgent = isAgent
+         )
+       )
+     }
+     Future.successful(result)
+  }
+
+  def newJourneySubmit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+    implicit user =>
+      handleNewJourneySubmitRequest(isAgent)
+  }
+
+  def handleNewJourneySubmitRequest(isAgent: Boolean)(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+
+      IncomeSourceReportingFrequencyForm().bindFromRequest().fold(
+        formWithError => {
+          val thisAction = newSubmitUrl(isAgent)
+          Future(BadRequest(newView(
+            continueAction = thisAction,
+            isAgent = isAgent,
+            form = formWithError,
+            incomeSourceType = newJourneyIncomeSourceType,
+            taxDateService = dateService)
+          ))
+        }, {
+          val thisAction = newSubmitUrl(isAgent)
+          _ =>
+            Future.successful(
+              Ok(newView(
+                continueAction = thisAction,
+                isAgent = isAgent,
+                form = IncomeSourceReportingFrequencyForm(),
+                incomeSourceType = newJourneyIncomeSourceType,
+                taxDateService = dateService
+              ))
+            )
+        }
+      )
+
   }
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
