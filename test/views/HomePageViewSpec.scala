@@ -414,10 +414,10 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
           getElementById("sa-penalties-and-appeals-link").map(_.attr("href")) shouldBe Some("")
         }
         "has a two-points penalty tag" in new Setup(submissionFrequency = "Annual", penaltyPoints = 3) {
-          getElementById("penalty-points-tag").map(_.text()) shouldBe Some("2 PENALTY POINTS")
+          getElementById("penalty-points-tag").map(_.text()) shouldBe Some("2 Penalty points")
         }
         "has a four-points penalty tag" in new Setup(submissionFrequency = "Quarterly", penaltyPoints = 4) {
-          getElementById("penalty-points-tag").map(_.text()) shouldBe Some("4 PENALTY POINTS")
+          getElementById("penalty-points-tag").map(_.text()) shouldBe Some("4 Penalty points")
         }
         "has no penalty tag if 2 points reached but User is reporting Quarterly" in new Setup(submissionFrequency = "Quarterly", penaltyPoints = 2) {
           getElementById("penalty-points-tag").map(_.text()).isDefined shouldBe false
