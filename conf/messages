@@ -179,8 +179,8 @@ home.agent.supporting.readMore                                  = Read more abou
 
 home.penaltiesAndAppeals.heading                                = Penalties and appeals
 home.penaltiesAndAppeals.view                                   = Check Self Assessment penalties and appeals
-home.penaltiesAndAppeals.twoPenaltiesTag                        = 2 PENALTY POINTS
-home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 PENALTY POINTS
+home.penaltiesAndAppeals.twoPenaltiesTag                        = 2 Penalty points
+home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Penalty points
 
 ## Custom Error Page ##
 error.custom.heading                                            = There is a problem
