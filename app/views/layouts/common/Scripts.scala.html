@@ -14,13 +14,15 @@
  * limitations under the License.
  *@
 
+@import views.html.helper.CSPNonce
+
 @this()
 
-@()(implicit messages: Messages)
+@()(implicit request: RequestHeader, messages:Messages)
 
-<script src='@controllers.routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")'></script>
+<script @CSPNonce.attr src='@controllers.routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")'></script>
 
-<script type="module">
+<script @CSPNonce.attr type="module">
  import { initAll } from '@routes.Assets.versioned("lib/govuk-frontend/dist/govuk/govuk-frontend.min.js")'
    initAll()
 window.HMRCFrontend.initAll();
@@ -45,7 +47,7 @@ if (window.history && window.history.replaceState && typeof window.history.repla
 
 </script>
 <link rel="stylesheet" type="text/css" href='@routes.Assets.versioned("stylesheets/itvc_custom.css")'>
-<script type="module">
+<script @CSPNonce.attr type="module">
     const showAllSpan = document.getElementsByClassName('govuk-accordion__show-all-text')[0]
     const showAllButton = document.querySelector('.govuk-accordion__controls button')
     const accordionSections = document.getElementsByClassName('govuk-accordion__section')
