@@ -57,13 +57,46 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
 
   }
 
-  val testRepaymentHistoryModel: RepaymentHistoryModel = RepaymentHistoryModel(
-    List(RepaymentHistory(
-      Some(705.2),
-      705.2,
-      Some(RefundToTaxPayerMessages.tableValueMethodTypeBacs),
-      Some(12345),
-      Some(Vector(
+  val testRepaymentHistoryModel: RepaymentHistory = RepaymentHistory(
+    Some(705.2),
+    705.2,
+    Some(RefundToTaxPayerMessages.tableValueMethodTypeBacs),
+    Some(12345),
+    Some(Vector(
+      RepaymentItem(
+        Vector(
+          RepaymentSupplementItem(
+            Some("002420002231"),
+            Some(3.78),
+            Some(LocalDate.of(2021, 7, 31)),
+            Some(LocalDate.of(2021, 9, 15)),
+            Some(2.01)
+          ),
+          RepaymentSupplementItem(
+            Some("002420002231"),
+            Some(2.63),
+            Some(LocalDate.of(2021, 9, 15)),
+            Some(LocalDate.of(2021, 10, 24)),
+            Some(1.76)
+          ),
+          RepaymentSupplementItem(
+            Some("002420002231"),
+            Some(3.26),
+            Some(LocalDate.of(2021, 10, 24)),
+            Some(LocalDate.of(2021, 11, 30)),
+            Some(2.01))
+        )
+      )
+    )), Some(LocalDate.of(2021, 7, 23)), Some(LocalDate.of(2021, 7, 21)), "000000003135",
+    status = RepaymentHistoryStatus("A")
+  )
+
+  val testRepaymentHistoryModelOneItem: RepaymentHistory =
+    testRepaymentHistoryModel.copy(
+      amountApprovedforRepayment = Some(800.12),
+      amountRequested = 345.5,
+      repaymentMethod = Some(RefundToTaxPayerMessages.tableValueMethodTypeCard),
+      repaymentItems = Some(Vector(
         RepaymentItem(
           Vector(
             RepaymentSupplementItem(
@@ -72,56 +105,13 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
               Some(LocalDate.of(2021, 7, 31)),
               Some(LocalDate.of(2021, 9, 15)),
               Some(2.01)
-            ),
-            RepaymentSupplementItem(
-              Some("002420002231"),
-              Some(2.63),
-              Some(LocalDate.of(2021, 9, 15)),
-              Some(LocalDate.of(2021, 10, 24)),
-              Some(1.76)
-            ),
-            RepaymentSupplementItem(
-              Some("002420002231"),
-              Some(3.26),
-              Some(LocalDate.of(2021, 10, 24)),
-              Some(LocalDate.of(2021, 11, 30)),
-              Some(2.01))
-          )
-        )
-      )), Some(LocalDate.of(2021, 7, 23)), Some(LocalDate.of(2021, 7, 21)), "000000003135",
-      status = RepaymentHistoryStatus("A"))
-    )
-  )
-
-  val testRepaymentHistoryModelOneItem: RepaymentHistoryModel =
-    testRepaymentHistoryModel.copy(
-      List(
-        testRepaymentHistoryModel.repaymentsViewerDetails.map(_.copy(
-          amountApprovedforRepayment = Some(800.12),
-          amountRequested = 345.5,
-          repaymentMethod = Some(RefundToTaxPayerMessages.tableValueMethodTypeCard),
-          repaymentItems = Some(Vector(
-            RepaymentItem(
-              Vector(
-                RepaymentSupplementItem(
-                  Some("002420002231"),
-                  Some(3.78),
-                  Some(LocalDate.of(2021, 7, 31)),
-                  Some(LocalDate.of(2021, 9, 15)),
-                  Some(2.01)
-                )
-              )
             )
           )
-        ))
-        )
-      ).flatten
+        )))
     )
 
-  val testRepaymentHistoryModelTwoItems: RepaymentHistoryModel =
+  val testRepaymentHistoryModelTwoItems: RepaymentHistory =
     testRepaymentHistoryModel.copy(
-      List(
-        testRepaymentHistoryModel.repaymentsViewerDetails.map(_.copy(
           amountApprovedforRepayment = Some(800.12),
           amountRequested = 345.5,
           repaymentMethod = Some(RefundToTaxPayerMessages.tableValueMethodTypeCard),
@@ -145,49 +135,32 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
               )
             )
           )
-          ))
-        )
-      ).flatten
+          )
     )
 
-  val testRepaymentHistoryModelWithoutRepaymentSupplementItems: RepaymentHistoryModel =
+  val testRepaymentHistoryModelWithoutRepaymentSupplementItems: RepaymentHistory =
     testRepaymentHistoryModel.copy(
-      List(
-        testRepaymentHistoryModel.repaymentsViewerDetails.map(_.copy(
           amountApprovedforRepayment = Some(800.12),
           amountRequested = 345.5,
           repaymentMethod = Some(RefundToTaxPayerMessages.tableValueMethodTypeCard),
           repaymentItems = Some(Vector.empty)
-        )
-        )
-      ).flatten
     )
 
-  val testRepaymentHistoryModelRequestedAmountDiffersToRefundAmount: RepaymentHistoryModel =
+  val testRepaymentHistoryModelRequestedAmountDiffersToRefundAmount: RepaymentHistory =
     testRepaymentHistoryModel.copy(
-      List(
-        testRepaymentHistoryModel.repaymentsViewerDetails.map(_.copy(
           amountApprovedforRepayment = Some(800.12),
           amountRequested = 345.5,
           repaymentMethod = Some(RefundToTaxPayerMessages.tableValueMethodTypeCard)
-        )
-        )
-      ).flatten
     )
 
-  val testRepaymentHistoryModelRequestedMissingRefundAmount: RepaymentHistoryModel =
+  val testRepaymentHistoryModelRequestedMissingRefundAmount: RepaymentHistory =
     testRepaymentHistoryModel.copy(
-      List(
-        testRepaymentHistoryModel.repaymentsViewerDetails.headOption.map(_.copy(
           amountApprovedforRepayment = None,
           amountRequested = 345.5,
           repaymentMethod = Some(RefundToTaxPayerMessages.tableValueMethodTypePostalOrder)
-        )
-        )
-      ).flatten
     )
 
-  class RefundToTaxPayerViewSetup(testRepaymentHistoryModel: RepaymentHistoryModel, saUtr: Option[String] = Some("AY888881A"), isAgent: Boolean = false) extends Setup(
+  class RefundToTaxPayerViewSetup(testRepaymentHistoryModel: RepaymentHistory, saUtr: Option[String] = Some("AY888881A"), isAgent: Boolean = false) extends Setup(
     refundToTaxPayerView(testRepaymentHistoryModel, paymentHistoryRefundsEnabled = false, "testBackURL", saUtr, isAgent = isAgent)(FakeRequest(), implicitly)
   )
 

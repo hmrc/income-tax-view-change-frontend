@@ -55,11 +55,11 @@ case class TotalInterest(fromDate: LocalDate, fromRate: BigDecimal,
 
 case class RepaymentHistory(amountApprovedforRepayment: Option[BigDecimal],
                             amountRequested: BigDecimal,
-                            repaymentMethod: Option[String],
-                            totalRepaymentAmount: Option[BigDecimal],
-                            repaymentItems: Option[Seq[RepaymentItem]],
-                            estimatedRepaymentDate: Option[LocalDate],
-                            creationDate: Option[LocalDate],
+                            repaymentMethod: String,
+                            totalRepaymentAmount: BigDecimal,
+                            repaymentItems: Seq[RepaymentItem],
+                            estimatedRepaymentDate: LocalDate,
+                            creationDate: LocalDate,
                             repaymentRequestNumber: String,
                             status: RepaymentHistoryStatus
                            ) {
@@ -130,20 +130,18 @@ case class RepaymentHistory(amountApprovedforRepayment: Option[BigDecimal],
   }
 
   def aggregate: Option[TotalInterest] = {
-    repaymentItems.flatMap { repaymentItems =>
-      for {
-        fromDate <- fromDateOpt(repaymentItems)
-        fromRate <- fromRateOpt(repaymentItems)
-        toDate <- toDateOpt(repaymentItems)
-        toRate <- toRateOpt(repaymentItems)
-        totalAmount <- totalOpt(repaymentItems)
-      } yield TotalInterest(
-        fromDate = fromDate,
-        fromRate = fromRate,
-        toDate = toDate,
-        toRate = toRate,
-        total = totalAmount)
-    }
+    for {
+      fromDate <- fromDateOpt(repaymentItems)
+      fromRate <- fromRateOpt(repaymentItems)
+      toDate <- toDateOpt(repaymentItems)
+      toRate <- toRateOpt(repaymentItems)
+      totalAmount <- totalOpt(repaymentItems)
+    } yield TotalInterest(
+      fromDate = fromDate,
+      fromRate = fromRate,
+      toDate = toDate,
+      toRate = toRate,
+      total = totalAmount)
   }
 }
 

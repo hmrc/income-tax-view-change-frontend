@@ -147,9 +147,9 @@ object RepaymentHistoryUtils {
 
   private def filterRepayment(repayment: RepaymentHistory)(implicit messages: Messages, languageUtils: LanguageUtils, dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
     PaymentHistoryEntry(
-      date = LocalDate.parse(languageUtils.Dates.shortDate(repayment.estimatedRepaymentDate.getOrElse(throw MissingFieldException("Estimated Repayment Date")))(messages)),
+      date = LocalDate.parse(languageUtils.Dates.shortDate(repayment.estimatedRepaymentDate)(messages)),
       creditType = Repayment,
-      amount = repayment.totalRepaymentAmount,
+      amount = Some(repayment.totalRepaymentAmount),
       linkUrl = s"refund-to-taxpayer/${repayment.repaymentRequestNumber}",
       visuallyHiddenText = s"${repayment.repaymentRequestNumber}"
     )
