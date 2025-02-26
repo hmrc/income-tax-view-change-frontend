@@ -64,7 +64,7 @@ class IncomeSourceReportingMethodController @Inject()(val authActions: AuthActio
                                                       val optInService: OptInService,
                                                       val reportingFrequencyViewUtils: ReportingFrequencyViewUtils)
                                                      (implicit val appConfig: FrontendAppConfig,
-                                                      val dateService: DateServiceInterface,
+                                                      val dateService: DateService,
                                                       mcc: MessagesControllerComponents,
                                                       val ec: ExecutionContext
                                                      ) extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses {

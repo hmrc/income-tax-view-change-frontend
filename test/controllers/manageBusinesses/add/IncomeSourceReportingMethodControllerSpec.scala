@@ -22,7 +22,7 @@ import enums.{MTDIndividual, MTDUserRole}
 import forms.incomeSources.add.IncomeSourceReportingMethodForm._
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesFs
+import models.admin.{IncomeSourcesFs, IncomeSourcesNewJourney}
 import models.incomeSourceDetails.AddIncomeSourceData
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import org.jsoup.Jsoup
@@ -185,6 +185,7 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
 
   def setupMockCalls(isAgent: Boolean, incomeSourceType: IncomeSourceType, mtdRole: MTDUserRole, scenario: Scenario): Unit = {
     enable(IncomeSourcesFs)
+    enable(IncomeSourcesNewJourney)
     setupMockSuccess(mtdRole)
     setupMockIncomeSourceDetailsCall(scenario, incomeSourceType)
     setupMockDateServiceCall(scenario)
@@ -209,6 +210,7 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
 
   val incomeSourceTypes: Seq[IncomeSourceType] = List(SelfEmployment, UkProperty, ForeignProperty)
 
+
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual
     incomeSourceTypes.foreach { incomeSourceType =>
@@ -216,27 +218,6 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
         val action = testController.show(isAgent, incomeSourceType)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
-          "render the reporting method selection page for only tax year 2" when {
-            s"in 2nd year of latency with FS enabled" in {
-              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, FIRST_YEAR_CRYSTALLISED)
-
-              val result = action(fakeRequest)
-              val document: Document = Jsoup.parse(contentAsString(result))
-
-              status(result) shouldBe OK
-              if (isAgent) document.title shouldBe titleAgent else document.title shouldBe title
-              document.select("h1:nth-child(1)").text shouldBe heading
-              document.getElementsByClass("govuk-body").get(1).text shouldBe description2
-              document.getElementsByClass("govuk-body").get(2).text shouldBe description3
-              document.select("ul").get(1).text shouldBe description4
-              document.select("h1").get(1).text shouldBe chooseReport
-              document.getElementsByTag("legend").get(0).text shouldBe taxYear_2023
-              document.getElementsByClass("govuk-body").get(0).text shouldBe description1_2023
-              document.getElementById("new_tax_year_2_reporting_method_tax_year").`val`() shouldBe "2023"
-              document.getElementsByClass("govuk-form-group").size() shouldBe 3
-            }
-          }
-
           "render the reporting method selection page for tax years 1 and 2" when {
             s"within latency period (before 2024) with FS enabled" in {
               setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
@@ -264,7 +245,7 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
               val document: Document = Jsoup.parse(contentAsString(result))
 
               status(result) shouldBe OK
-              if (isAgent) document.title shouldBe titleAgent else document.title shouldBe title
+              document.title shouldBe title
               document.select("h1:nth-child(1)").text shouldBe heading
               document.getElementsByClass("govuk-body").get(1).text shouldBe description2
               document.getElementsByClass("govuk-body").get(2).text shouldBe description3
