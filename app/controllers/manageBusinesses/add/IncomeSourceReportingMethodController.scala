@@ -135,11 +135,12 @@ class IncomeSourceReportingMethodController @Inject()(val authActions: AuthActio
             getViewModel(incomeSourceType, IncomeSourceId(id)).map {
               case Some(viewModel) =>
                 Ok(view(
-                  incomeSourceType,
-                  incomeSourceReportingMethodForm = IncomeSourceReportingMethodForm.form,
-                  incomeSourceReportingViewModel = viewModel,
-                  postAction = submitUrl(isAgent, incomeSourceType),
-                  isAgent = isAgent))
+                  continueAction = submitUrl(isAgent, incomeSourceType),
+                  isAgent = isAgent,
+                  form = IncomeSourceReportingFrequencyForm(),
+                  incomeSourceType = incomeSourceType,
+                  taxDateService = dateService
+                ))
               case None =>
                 Redirect(redirectUrl(isAgent, incomeSourceType))
             }

@@ -98,7 +98,7 @@
             value = Some(""),
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
-                    content = Text(messages("incomeSources.add.reportingFrequency.h1")),
+                    content = Text(messages("incomeSources.add.reportingFrequency.form.h1")),
                     classes = "govuk-fieldset__legend--m"
                 ))
             )),
@@ -138,7 +138,7 @@
         @messages("incomeSources.add.reportingFrequency.p1", getMessage("incomeSource"))
     }
 
-    @p(id = Some("paragraph-2")) {
+    @p(id = Some("reporting-frequency-ul")) {
         <ul class="govuk-list govuk-list--bullet">
             <li id="dropdown-inset-text-bullet-1">
             @messages("incomeSources.add.reportingFrequency.li1")
@@ -151,7 +151,7 @@
 
     @reportingFrequencyTable()
 
-    @p(id = Some("paragraph-3")){
+    @p(id = Some("paragraph-2")){
         @messages("incomeSources.add.reportingFrequency.p2", getMessage("incomeSource"))
     }
 

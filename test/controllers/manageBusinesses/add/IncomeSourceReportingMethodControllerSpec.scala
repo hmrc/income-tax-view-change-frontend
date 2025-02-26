@@ -39,6 +39,7 @@ import services._
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, notCompletedUIJourneySessionData}
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with MockSessionService {
@@ -59,9 +60,9 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
 
   lazy val testController = app.injector.instanceOf[IncomeSourceReportingMethodController]
 
-  val TAX_YEAR_2024 = 2024
-  val TAX_YEAR_2023 = 2023
-  val TAX_YEAR_2022 = 2022
+  val TAX_YEAR_2024: LocalDate = LocalDate.of(2024, 4, 6)
+  val TAX_YEAR_2023: LocalDate = LocalDate.of(2023, 4, 6)
+  val TAX_YEAR_2022: LocalDate = LocalDate.of(2022, 4, 6)
 
   val formData: Map[String, String] = Map(
     newTaxYear1ReportingMethod -> "Q",
@@ -99,9 +100,9 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
 
   import Scenario._
 
-  def setupMockDateServiceCall(scenario: Scenario): OngoingStubbing[Int] = scenario match {
-    case LATENCY_PERIOD_EXPIRED | CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS => when(mockDateService.getCurrentTaxYearEnd).thenReturn(TAX_YEAR_2024)
-    case _ => when(mockDateService.getCurrentTaxYearEnd).thenReturn(TAX_YEAR_2023)
+  def setupMockDateServiceCall(scenario: Scenario): OngoingStubbing[LocalDate] = scenario match {
+    case LATENCY_PERIOD_EXPIRED | CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS => when(mockDateService.getCurrentTaxYearStart).thenReturn(TAX_YEAR_2024)
+    case _ => when(mockDateService.getCurrentTaxYearStart).thenReturn(TAX_YEAR_2023)
   }
 
   def setupMockIncomeSourceDetailsCall(scenario: Scenario, incomeSourceType: IncomeSourceType): Unit = (scenario, incomeSourceType) match {
@@ -130,13 +131,13 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
 
   def setupMockIsTaxYearCrystallisedCall(scenario: Scenario): OngoingStubbing[Future[Boolean]] = scenario match {
     case FIRST_YEAR_CRYSTALLISED =>
-      when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2022))(any, any)).thenReturn(Future(true))
+      when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2022.getYear))(any, any)).thenReturn(Future(true))
     case CURRENT_TAX_YEAR_IN_LATENCY_YEARS =>
-      when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2022))(any, any)).thenReturn(Future(false))
+      when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2022.getYear))(any, any)).thenReturn(Future(false))
     case CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS =>
-      when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2023))(any, any)).thenReturn(Future(false))
+      when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2023.getYear))(any, any)).thenReturn(Future(false))
     case _ =>
-      when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2023))(any, any)).thenReturn(Future(false))
+      when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2023.getYear))(any, any)).thenReturn(Future(false))
   }
 
   def setupMockUpdateIncomeSourceCall(numberOfSuccessResponses: Int): Unit = {
