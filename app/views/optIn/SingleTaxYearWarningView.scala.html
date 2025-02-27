@@ -42,15 +42,27 @@
 
 @(form: Form[_], submitAction: Call, isAgent: Boolean, taxYear: TaxYear)(implicit messages: Messages, user: auth.MtdItUser[_])
 
-@headingSection = @{
-    <h1 id="single-tax-year-warning-heading" class="govuk-heading-l">{messages("optIn.singleTaxYearWarning.heading")}</h1>
-    <p id="single-tax-year-warning-paragraph" class="govuk-body-m govuk-!-margin-bottom-8">{messages("optIn.singleTaxYearWarning.desc1")}</p>
+@headingSection = {
+    <h1 id="single-tax-year-warning-heading" class="govuk-heading-l">@messages("optIn.singleTaxYearWarning.heading")</h1>
+@*//    <p id="single-tax-year-warning-paragraph" class="govuk-body-m govuk-!-margin-bottom-8">{messages("optIn.singleTaxYearWarning.desc1")}</p>*@
+    @p(id = Some("single-tax-year-warning-paragraph"), classes ="govuk-body-m govuk-!-margin-bottom-8"){
+        @messages("optIn.singleTaxYearWarning.desc1")
+    }
 }
 
-@volReportingAndQuarterlyUpdatesSection = @{
-    <p id="voluntary-reporting-subheading" class="govuk-body-m govuk-!-font-weight-bold">{messages("optIn.singleTaxYearWarning.inset.subHeading")}</p>
-    <p id="voluntary-reporting-inset" class="govuk-inset-text">{messages("optIn.singleTaxYearWarning.inset.text")}</p>
-    <p id="voluntary-reporting-description" class="govuk-body-m">{messages("optIn.singleTaxYearWarning.desc2")}</p>
+@volReportingAndQuarterlyUpdatesSection = {
+@*    <p id="voluntary-reporting-subheading" class="govuk-body-m govuk-!-font-weight-bold">{messages("optIn.singleTaxYearWarning.inset.subHeading")}</p>*@
+    @p(id = Some("voluntary-reporting-subheading"), classes = "govuk-body-m govuk-!-font-weight-bold"){
+        @messages("optIn.singleTaxYearWarning.inset.subHeading")
+    }
+@*    <p id="voluntary-reporting-inset" class="govuk-inset-text">{messages("optIn.singleTaxYearWarning.inset.text")}</p>*@
+    @p(id = Some("voluntary-reporting-inset"), classes = "govuk-inset-text"){
+        @messages("optIn.singleTaxYearWarning.inset.text")
+    }
+@*    <p id="voluntary-reporting-description" class="govuk-body-m">{messages("optIn.singleTaxYearWarning.desc2")}</p>*@
+    @p(id = Some("voluntary-reporting-description"), classes = "govuk-body-m"){
+        @messages("optIn.singleTaxYearWarning.desc2")
+    }
 }
 
 @howToSubmitOverdueDropDown = {

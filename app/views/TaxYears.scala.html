@@ -81,7 +81,9 @@
     @h1(msg = "taxYears.heading", id = Some("heading"))
 
     @if(taxYears.isEmpty) {
-        <p class="govuk-body" id="no-taxYears">@messages("taxYears.noEstimates")</p>
+        @p(classes = "govuk-body", id = Some("no-taxYears")) {
+            @messages("taxYears.noEstimates")
+        }
     } else {
         <dl class="govuk-summary-list">
         @taxYears.map(taxYearRow)

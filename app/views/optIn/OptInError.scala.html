@@ -44,7 +44,9 @@
 
 @errorContent = {
 
-    <p class="govuk-body" id="options">@messages("optin.optInError.options")</p>
+    @p(id = Some("options")){
+        @messages("optin.optInError.options")
+    }
     <ul class="govuk-list govuk-list--bullet">
         <li id="nextUpdatesBullet">
             @messages("optin.optInError.nextUpdates-bullet-1")
