@@ -197,7 +197,7 @@ object PropertyDetailsTestConstants {
     due = LocalDate.of(2017, 10, 31),
     periodKey = "#003",
     dateReceived = None,
-    obligationType = "Crystallised",
+    obligationType = "Crystallisation",
     status = StatusFulfilled
   ))
 

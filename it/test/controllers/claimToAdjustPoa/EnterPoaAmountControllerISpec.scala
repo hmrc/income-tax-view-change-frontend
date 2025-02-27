@@ -86,7 +86,7 @@ class EnterPoaAmountControllerISpec extends ControllerISpecHelper {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
                   httpStatus(OK),
-                  elementTextByClass("govuk-table__head")(msg("amountPreviousHeading"))
+                  elementTextByClass("govuk-table__head")(msg("chargeHeading") + " " + msg("amountPreviousHeading"))
                 )
               }
               "User is authorised and has not previously adjusted their PoA but PoA amount is populated in session data" in {
@@ -106,7 +106,7 @@ class EnterPoaAmountControllerISpec extends ControllerISpecHelper {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
                   httpStatus(OK),
-                  elementTextByClass("govuk-table__head")(msg("amountPreviousHeading"))
+                  elementTextByClass("govuk-table__head")(msg("chargeHeading") + " " + msg("amountPreviousHeading"))
                 )
               }
               "User has previously adjusted their PoA" in {
@@ -124,7 +124,7 @@ class EnterPoaAmountControllerISpec extends ControllerISpecHelper {
                 IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testMtditid, "1040000124", 1500))
                 await(sessionService.setMongoData(Some(PoaAmendmentData())))
 
-                val expectedMsg = msg("amountPreviousHeading") + " " + msg("adjustedAmount")
+                val expectedMsg = msg("chargeHeading") + " " + msg("amountPreviousHeading") + " " + msg("adjustedAmount")
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
                   httpStatus(OK),
@@ -363,7 +363,7 @@ class EnterPoaAmountControllerISpec extends ControllerISpecHelper {
 
                 result should have(
                   httpStatus(OK),
-                  elementTextByClass("govuk-table__head")(msg("amountPreviousHeading")),
+                  elementTextByClass("govuk-table__head")(msg("chargeHeading") + " " + msg("amountPreviousHeading")),
                   elementAttributeByClass("govuk-input", "value")("100")
                 )
               }
