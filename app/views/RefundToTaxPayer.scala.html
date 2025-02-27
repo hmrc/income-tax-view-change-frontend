@@ -22,6 +22,7 @@
 @import models.repaymentHistory.RepaymentHistoryModel
 @import models.repaymentHistory.RepaymentHistory
 @import models.repaymentHistory.TotalInterest
+@import models.creditsandrefunds.RefundToTaxPayerViewModel
 @import exceptions.MissingFieldException
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
@@ -40,15 +41,15 @@
         govukSummaryList: GovukSummaryList
 )
 
-@(repaymentHistoryItem: RepaymentHistory, paymentHistoryRefundsEnabled: Boolean, backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
+@(repaymentHistoryItem: RefundToTaxPayerViewModel, paymentHistoryRefundsEnabled: Boolean, backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
         btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
-@getInterestContent(repaymentHistoryItem: RepaymentHistory) = @{
+@getInterestContent(repaymentHistoryItem: RefundToTaxPayerViewModel) = @{
     repaymentHistoryItem.aggregate.getOrElse(throw MissingFieldException("Total Interest Item"))
 }
 
-@getRepaymentSupplementItemSize(repaymentHistoryItem: RepaymentHistory) = @{
+@getRepaymentSupplementItemSize(repaymentHistoryItem: RefundToTaxPayerViewModel) = @{
     repaymentHistoryItem.repaymentItems.headOption match {
         case Some(value) => value.repaymentSupplementItem.size
         case None => 0
@@ -107,7 +108,7 @@
                         repaymentHistoryItem.repaymentRequestNumber
                     }</dd>
                 </div>
-                @if(repaymentHistoryItem.amountApprovedforRepayment.isEmpty || repaymentHistoryItem.amountRequested.toCurrencyString != repaymentHistoryItem.amountApprovedforRepayment.getOrElse(throw MissingFieldException("Requested Amount Item")).toCurrencyString) {
+                @if(repaymentHistoryItem.amountApprovedForRepayment.isEmpty || repaymentHistoryItem.amountRequested.toCurrencyString != repaymentHistoryItem.amountApprovedForRepayment.getOrElse(throw MissingFieldException("Requested Amount Item")).toCurrencyString) {
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.requested-amount")</dt>
                         <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">@{
@@ -115,11 +116,11 @@
                         }</dd>
                     </div>
                 }
-                @if(repaymentHistoryItem.amountApprovedforRepayment.isDefined) {
+                @if(repaymentHistoryItem.amountApprovedForRepayment.isDefined) {
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.refund-amount")</dt>
                         <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">@{
-                            repaymentHistoryItem.amountApprovedforRepayment.getOrElse(throw MissingFieldException("Refund Amount Item")).toCurrencyString
+                            repaymentHistoryItem.amountApprovedForRepayment.getOrElse(throw MissingFieldException("Refund Amount Item")).toCurrencyString
                         }</dd>
                     </div>
                 }
