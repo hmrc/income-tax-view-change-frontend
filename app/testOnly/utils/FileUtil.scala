@@ -36,7 +36,7 @@ object FileUtil {
       case record: UserRecord =>
         UserCredentials(credId = UserCredentials.credId,
           affinityGroup = "Individual",
-          confidenceLevel = 250,
+          confidenceLevel = if(record.description.contains("IV Uplift required")) 50 else 250,
           credentialStrength = "strong",
           Role = "User",
           enrolmentData = EnrolmentValues(record.mtditid, record.utr),
