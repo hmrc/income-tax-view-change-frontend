@@ -123,8 +123,7 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
         )
       )
     ), LocalDate.of(2021, 7, 23), LocalDate.of(2021, 7, 21), "000000003135",
-    status = RepaymentHistoryStatus("A"),
-    testRepaymentHistoryModel.aggregate
+    status = RepaymentHistoryStatus("A")
   )
 
   val testRefundViewModelOneItem: RefundToTaxPayerViewModel =

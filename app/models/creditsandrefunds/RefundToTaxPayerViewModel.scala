@@ -31,8 +31,7 @@ case class RefundToTaxPayerViewModel(
                                       estimatedRepaymentDate: LocalDate,
                                       creationDate: LocalDate,
                                       repaymentRequestNumber: String,
-                                      status: RepaymentHistoryStatus,
-                                      aggregate: Option[TotalInterest]
+                                      status: RepaymentHistoryStatus
                                     ) {
   def getInterestContent: TotalInterest = {
     aggregate.getOrElse(TotalInterest(LocalDate.MIN, 0.00, LocalDate.MAX, 0.00, 0.00))
@@ -41,6 +40,15 @@ case class RefundToTaxPayerViewModel(
   def getApprovedAmount: BigDecimal = {
     amountApprovedForRepayment.getOrElse(0.00)
   }
+
+  val aggregate: Option[TotalInterest] = RepaymentHistory(
+    None,
+    amountRequested = amountRequested,
+    None, None, repaymentItems = Some(repaymentItems),
+    None, None,
+    repaymentRequestNumber = repaymentRequestNumber,
+    status = status
+  ).aggregate
 }
 
 object RefundToTaxPayerViewModel {
@@ -55,8 +63,7 @@ object RefundToTaxPayerViewModel {
         estimatedRepaymentDate = item.estimatedRepaymentDate.get,
         creationDate = item.creationDate.get,
         repaymentRequestNumber = item.repaymentRequestNumber,
-        status = item.status,
-        aggregate = item.aggregate
+        status = item.status
       )
     }.toOption match {
       case Some(viewModel) => Right(viewModel)

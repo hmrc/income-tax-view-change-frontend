@@ -120,7 +120,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthActions
         )
       )
     ), LocalDate.of(2021, 7, 23), LocalDate.of(2021, 7, 21), "000000003135",
-    status = RepaymentHistoryStatus("A"), testRepaymentHistory.aggregate
+    status = RepaymentHistoryStatus("A")
   )
 
   val testRepaymentHistoryModel: RepaymentHistoryModel = RepaymentHistoryModel(

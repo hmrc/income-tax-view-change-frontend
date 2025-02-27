@@ -66,7 +66,7 @@
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key dt-cell-width">@messages("refund-to-taxpayer.tableHead.estimated-date")</dt>
             <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right govuk-!-margin-0">@{
-                viewModel.estimatedRepaymentDate
+                viewModel.estimatedRepaymentDate.toLongDate
             }</dd>
         </div>
         <div class="govuk-summary-list__row">
@@ -80,7 +80,7 @@
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.total-refund")</dt>
             <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">@{
-                viewModel.totalRepaymentAmount
+                viewModel.totalRepaymentAmount.toCurrencyString
             }</dd>
         </div>
     </dl>
@@ -95,7 +95,7 @@
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key dt-cell-width">@messages("refund-to-taxpayer.tableHead.requested-on")</dt>
                     <dd class="govuk-summary-list__value govuk-!-text-align-right">@{
-                        viewModel.creationDate
+                        viewModel.creationDate.toLongDate
                     }</dd>
                 </div>
                 <div class="govuk-summary-list__row">
