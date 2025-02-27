@@ -525,7 +525,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
         )
         ),
         GroupedObligationsModel("123", List(
-          SingleObligationModel(day, day.plusDays(1), day.plusDays(2), "Crystallised", None, "C", StatusFulfilled)
+          SingleObligationModel(day, day.plusDays(1), day.plusDays(2), "Crystallisation", None, "C", StatusFulfilled)
         ))
       ))
       when(mockObligationsConnector.getOpenObligations()(any(), any())).
@@ -539,7 +539,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
             DatesModel(day, day.plusDays(1), day.plusDays(2), "#001", isFinalDec = false, obligationType = "Quarterly")
           )
         ),
-        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")),
+        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallisation")),
         dateService.getCurrentTaxYearEnd,
         showPrevTaxYears = true
       )
@@ -555,7 +555,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       val day = LocalDate.of(2023, 1, 1)
       val nextModel: ObligationsModel = ObligationsModel(Seq(
         GroupedObligationsModel("123", List(
-          SingleObligationModel(day, day.plusDays(1), day.plusDays(2), "Crystallised", None, "C", StatusFulfilled)
+          SingleObligationModel(day, day.plusDays(1), day.plusDays(2), "Crystallisation", None, "C", StatusFulfilled)
         ))
       ))
       when(mockObligationsConnector.getOpenObligations()(any(), any())).
@@ -563,7 +563,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
 
       val expectedResult = ObligationsViewModel(
         Seq.empty,
-        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")),
+        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallisation")),
         dateService.getCurrentTaxYearEnd,
         showPrevTaxYears = true
       )
@@ -578,7 +578,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       val day = LocalDate.of(2023, 1, 1)
       val nextModel: ObligationsModel = ObligationsModel(Seq(
         GroupedObligationsModel("123", List(
-          SingleObligationModel(day, day.plusDays(1), day.plusDays(2), "Crystallised", None, "C", StatusFulfilled)
+          SingleObligationModel(day, day.plusDays(1), day.plusDays(2), "Crystallisation", None, "C", StatusFulfilled)
         ))
       ))
       when(mockObligationsConnector.getOpenObligations()(any(), any())).
@@ -588,7 +588,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
 
       result.futureValue shouldBe ObligationsViewModel(
         Seq.empty,
-        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")),
+        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallisation")),
         dateService.getCurrentTaxYearEnd,
         showPrevTaxYears = true
       )

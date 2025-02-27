@@ -70,7 +70,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
   val dayJustBeforeTaxYearEnd2023_2024: LocalDate = LocalDate.of(2024, 4, 4)
 
-  val finalDeclarationDates: DatesModel = DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")
+  val finalDeclarationDates: DatesModel = DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallisation")
 
   val viewModelWithAllData: ObligationsViewModel = ObligationsViewModel(
     quarterlyObligationDatesFull,

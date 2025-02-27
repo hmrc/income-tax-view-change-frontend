@@ -40,6 +40,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
 
   val ENABLE_ALL_FEATURES: String = "feature-switch.enable-all-switches"
   val DISABLE_ALL_FEATURES: String = "feature-switch.disable-all-switches"
+  val PROD_FEATURES: String = "feature-switch.prod-switches"
 
   def setSwitch(featureFlagName: FeatureSwitchName, isEnabled: Boolean): Action[AnyContent] = Action.async { _ =>
     featureSwitchService.set(featureFlagName, isEnabled).map {
@@ -75,36 +76,42 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
       case None => Set.empty
       case Some(data) => data.keySet
     }
-    val disableAll: Boolean = submittedData.contains(DISABLE_ALL_FEATURES)
-    val enableAll: Boolean = submittedData.contains(ENABLE_ALL_FEATURES)
 
-    def getEnabledFeatureSwitches: Map[FeatureSwitchName, Boolean] =
-      if (disableAll) Map.empty else {
-        if (enableAll) allFeatureSwitches.map(_.name) else submittedData
-      }.map(x => allFeatureSwitches.find(e => e.name == x)).collect {
+    //Team is in agreement that environments in app configs will be exactly as in prod, and we use test-only/feature-switch to change FS.
+    val prodEnabledFsList: Set[String] = featureSwitchService.getFSListFromConfig.filter(_.isEnabled).map(_.name.name).toSet
+
+    def getEnabledFeatureSwitches: Map[FeatureSwitchName, Boolean] = {
+      val subData: Set[String] =
+        submittedData match {
+        case _ if submittedData.contains(DISABLE_ALL_FEATURES) => Set.empty
+        case _ if submittedData.contains(ENABLE_ALL_FEATURES) => allFeatureSwitches.map(_.name)
+        case _ if submittedData.contains(PROD_FEATURES) => prodEnabledFsList
+        case _ => submittedData
+      }
+      subData.map(x => allFeatureSwitches.find(e => e.name == x)).collect {
         case Some(fs) => fs
       }.map(x => x -> true).toMap
+    }
 
     def getDisabledFeatureSwitches: Map[FeatureSwitchName, Boolean] = {
-      if (disableAll) {
-        allFeatureSwitches.map(_.name)
-      } else {
-        allFeatureSwitches.map(_.name) diff submittedData
-      }
-    }.map(x => allFeatureSwitches.find(e => e.name == x)).collect {
-      case Some(fs) => fs
-    }.map(x => x -> false).toMap
+      val subData: Set[String] =
+        submittedData match {
+          case _ if submittedData.contains(ENABLE_ALL_FEATURES) => Set.empty
+          case _ if submittedData.contains(DISABLE_ALL_FEATURES) => allFeatureSwitches.map(_.name)
+          case _ if submittedData.contains(PROD_FEATURES) => allFeatureSwitches.map(_.name) diff prodEnabledFsList
+          case _ => allFeatureSwitches.map(_.name) diff submittedData
+        }
 
-
-    val disabledFeatureSwitchers: Map[FeatureSwitchName, Boolean] = getDisabledFeatureSwitches
-    val enabledFeatureSwitchers: Map[FeatureSwitchName, Boolean] = getEnabledFeatureSwitches
-
+      subData.map(x => allFeatureSwitches.find(e => e.name == x)).collect {
+        case Some(fs) => fs
+      }.map(x => x -> false).toMap
+    }
 
     // TODO: might worth to use setAll method from relevant repo (transactional approach?)
     for {
       _ <- Future.sequence(
         for {
-          (fs, enableState) <- (disabledFeatureSwitchers ++ enabledFeatureSwitchers)
+          (fs, enableState) <- (getEnabledFeatureSwitches ++ getDisabledFeatureSwitches)
         } yield featureSwitchService.set(fs, enableState)
       )
     } yield Redirect(testOnly.controllers.routes.FeatureSwitchController.show)

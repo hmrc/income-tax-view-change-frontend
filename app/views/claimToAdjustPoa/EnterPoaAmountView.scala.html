@@ -57,6 +57,7 @@
     if(viewModel.hasBeenPreviouslyAdjusted) {
         Some(Seq(
             HeadCell(
+                content = Text(getMessage("chargeHeading"))
             ),
             HeadCell(
                 content = Text(getMessage("amountPreviousHeading")),
@@ -71,6 +72,7 @@
     else {
         Some(Seq(
             HeadCell(
+                content = Text(getMessage("chargeHeading"))
             ),
             HeadCell(
                 content = Text(getMessage("amountPreviousHeading")),

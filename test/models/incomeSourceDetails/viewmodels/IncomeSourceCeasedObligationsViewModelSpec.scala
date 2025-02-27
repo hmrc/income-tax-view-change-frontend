@@ -32,8 +32,8 @@ class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
   val taxYearEnd: Int = day.getYear
 
   val currentDate: LocalDate = day
-  val finalDeclarationDates: DatesModel = DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")
-  val finalDeclarationDatesOverDue: DatesModel = DatesModel(day, day.minusDays(1), day.minusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")
+  val finalDeclarationDates: DatesModel = DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallisation")
+  val finalDeclarationDatesOverDue: DatesModel = DatesModel(day, day.minusDays(1), day.minusDays(2), "C", isFinalDec = true, obligationType = "Crystallisation")
   val finalDeclarationDatesSeq: Seq[DatesModel] = Seq(finalDeclarationDates, finalDeclarationDates, finalDeclarationDates, finalDeclarationDates)
 
   val viewModelWithAllData: ObligationsViewModel = ObligationsViewModel(
