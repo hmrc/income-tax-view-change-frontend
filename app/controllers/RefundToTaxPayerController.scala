@@ -23,11 +23,10 @@ import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import connectors.RepaymentHistoryConnector
-import exceptions.MissingFieldException
 import models.admin.PaymentHistoryRefunds
 import models.core.Nino
 import models.creditsandrefunds.RefundToTaxPayerViewModel
-import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel, RepaymentHistoryModel}
+import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -37,7 +36,6 @@ import views.html.RefundToTaxPayer
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 @Singleton
 class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTaxPayer,
