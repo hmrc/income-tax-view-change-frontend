@@ -81,7 +81,7 @@
     @h1(msg = "taxYears.heading", id = Some("heading"))
 
     @if(taxYears.isEmpty) {
-        @p(classes = "govuk-body", id = Some("no-taxYears")) {
+        @p(id = Some("no-taxYears")) {
             @messages("taxYears.noEstimates")
         }
     } else {

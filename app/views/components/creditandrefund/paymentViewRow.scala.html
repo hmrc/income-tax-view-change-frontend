@@ -19,15 +19,18 @@
 @import _root_.implicits.ImplicitCurrencyFormatter._
 @import java.time.LocalDate
 
-@this(implicitDateFormatter: ImplicitDateFormatterImpl)
+@this(
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        p: p
+)
 
 @(amount: BigDecimal, date: LocalDate)(implicit messages: Messages)
 
 @import implicitDateFormatter.longDate
 
-<p class="govuk-heading-s">
- @amount.toCurrencyString
- <span class="govuk-body">@messages("credit-and-refund.payment")
+ @p(classes="govuk-heading-s"){
+     @amount.toCurrencyString
+     <span class="govuk-body">@messages("credit-and-refund.payment")
      @date.toLongDate
- </span>
-</p>
+     </span>
+ }

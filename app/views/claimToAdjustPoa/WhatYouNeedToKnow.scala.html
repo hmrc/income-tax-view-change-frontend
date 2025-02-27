@@ -48,9 +48,9 @@
 }
 
 @newTabLinkHTML(link: String, linkText: String) = {
-    <p class="govuk-body">
+    @p(){
         @linkText <a href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates" class="govuk-link" rel="noreferrer noopener" target="_blank">@link</a>.
-    </p>
+    }
 }
 
 @mainTemplate(pageTitle = getMessage("heading"),
@@ -64,10 +64,10 @@
     @h1(msg = getMessage("h1"),
      id = Some("h1"))
 
-    <p class="govuk-body" id="p1" >
+    @p(id=Some("p1")){
         @getMessage("p1", viewModel.poaTaxYear.startYear.toString, viewModel.poaTaxYear.endYear.toString)
         <b>@getMessage("bold", (viewModel.poaTaxYear.endYear + 1).toString)</b>@getMessage("onlyForWelsh", " ")
-    </p>
+    }
 
     @govukWarningText(WarningText(
         iconFallbackText = Some("Warning"),
