@@ -34,6 +34,13 @@ case class RefundToTaxPayerViewModel(
                                       status: RepaymentHistoryStatus,
                                       aggregate: Option[TotalInterest]
                                     ) {
+  def getInterestContent: TotalInterest = {
+    aggregate.getOrElse(TotalInterest(LocalDate.MIN, 0.00, LocalDate.MAX, 0.00, 0.00))
+  }
+
+  def getApprovedAmount: BigDecimal = {
+    amountApprovedForRepayment.getOrElse(0.00)
+  }
 }
 
 object RefundToTaxPayerViewModel {
