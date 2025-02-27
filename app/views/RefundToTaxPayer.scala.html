@@ -14,18 +14,13 @@
  * limitations under the License.
  *@
 
-@import models.financialDetails.Payment
-@import java.time.LocalDate
 @import _root_.implicits.ImplicitCurrencyFormatter._
-@import _root_.implicits.ImplicitDateFormatter
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import models.repaymentHistory.RepaymentHistoryModel
-@import models.repaymentHistory.TotalInterest
 @import exceptions.MissingFieldException
+@import models.repaymentHistory.RepaymentHistoryModel
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-
-@import views.html.layouts.unifiedLayout
 @import views.html.components._
+@import views.html.layouts.unifiedLayout
 
 @this(
         mainTemplate: unifiedLayout,
