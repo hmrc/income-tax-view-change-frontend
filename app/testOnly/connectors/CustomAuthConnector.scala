@@ -56,8 +56,14 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
   override val serviceUrl: String = servicesConfig.baseUrl("auth-login")
   override def httpClientV2: HttpClientV2 = http
 
-  def login(nino: Nino, isAgent: Boolean, isSupporting: Boolean)(implicit hc: HeaderCarrier): Future[(AuthExchange, GovernmentGatewayToken)] = {
-    createPayload(nino, isAgent, isSupporting) flatMap {
+  def login(nino: String, isAgent: Boolean, isSupporting: Boolean)(implicit hc: HeaderCarrier): Future[(AuthExchange, GovernmentGatewayToken)] = {
+    val createdPayload = if(nino.contains("No Nino")) {
+      createPayloadNoNino(nino)
+    } else {
+      createPayload(Nino(nino), isAgent, isSupporting)
+    }
+
+    createdPayload flatMap {
       payload =>
         loginRequest(payload)
     }
@@ -95,6 +101,31 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
         Future.failed(new RuntimeException(s"response from $serviceUrl/government-gateway/session/login was ${response.status}. Body ${response.body}"))
     }
   }
+
+
+  private def createPayloadNoNino(nino: String): Future[JsValue] = {
+    getUserCredentials(nino, userRepository) map {
+      userCredentials =>
+        Json.obj(
+          "credId" -> userCredentials.credId,
+          "affinityGroup" -> {"Individual"},
+          "confidenceLevel" -> userCredentials.confidenceLevel,
+          "credentialStrength" -> userCredentials.credentialStrength,
+          "credentialRole" -> userCredentials.Role,
+          "usersName" -> "usersName",
+          "enrolments" -> getEnrolmentData(false, userCredentials.enrolmentData)
+        ) ++ {
+            removeEmptyValues(
+              "groupIdentifier" -> Some("groupIdentifier"),
+              "gatewayToken" -> Some("gatewayToken"),
+              "agentId" -> Some("agentId"),
+              "agentCode" -> Some("agentCode"),
+              "agentFriendlyName" -> Some("agentFriendlyName"),
+              "email" -> Some("email")
+            )
+          }
+        }
+    }
 
   private def createPayload(nino: Nino, isAgent: Boolean, isSupporting: Boolean): Future[JsValue] = {
     getUserCredentials(nino.nino, userRepository) map {

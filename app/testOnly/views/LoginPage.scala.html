@@ -40,6 +40,23 @@
     }.toSeq
 }
 
+@displayPTANavBar = @{
+    govukCheckboxes(
+        Checkboxes(
+            fieldset = Some(Fieldset(
+            legend = None
+            )),
+            name = "usePTANavBar",
+            items = Seq(
+                CheckboxItem(
+                    content = Text("Use PTA Nav bar"),
+                    value = "true"
+                )
+            ),
+        )
+    )
+}
+
 @layout(pageTitle = "Login - Manage your Income Tax updates - GOV.UK") {
     <link href='/report-quarterly/income-and-expenses/view/assets/stylesheets/application.css' media="screen" rel="stylesheet" type="text/css" />
     <script src="@testOnly.controllers.routes.TestOnlyAssetsController.at("optOutCustomData.js")"></script>
@@ -73,7 +90,8 @@
                 RadioItem(
                     content = Text("Individual"),
                     value = Some("individual"),
-                    checked = true
+                    checked = true,
+                    conditionalHtml = Some(displayPTANavBar)
                 ),
                 RadioItem(
                     content = Text("Primary Agent"),

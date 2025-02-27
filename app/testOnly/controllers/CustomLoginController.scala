@@ -69,13 +69,15 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
 
         userRepository.findUser(postedUser.nino).flatMap(
           user =>
-            customAuthConnector.login(Nino(user.nino), postedUser.isAgent, postedUser.isSupporting).flatMap {
+            customAuthConnector.login(user.nino, postedUser.isAgent, postedUser.isSupporting).flatMap {
               case (authExchange, _) =>
                 val (bearer, auth) = (authExchange.bearerToken, authExchange.sessionAuthorityUri)
                 val redirectURL = if (postedUser.isAgent)
                   s"report-quarterly/income-and-expenses/view/test-only/stub-client/nino/${user.nino}/utr/" + user.utr
-                else
-                  "report-quarterly/income-and-expenses/view?origin=BTA"
+                else {
+                  val origin = if(postedUser.usePTANavBar) "PTA" else "BTA"
+                  s"report-quarterly/income-and-expenses/view?origin=$origin"
+                }
                 val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
 
                 if (postedUser.isOptOutWhitelisted(testOnlyAppConfig.optOutUserPrefixes)) {
