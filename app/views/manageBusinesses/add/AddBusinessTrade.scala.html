@@ -57,8 +57,12 @@
 }
 
 @hintContent = {
-    <p class="govuk-hint">@messages("add-trade.trade-info-1")</p>
-    <p class="govuk-hint">@messages("add-trade.trade-info-2")</p>
+    @p(classes="govuk-hint"){
+        @messages("add-trade.trade-info-1")
+    }
+    @p(classes="govuk-hint"){
+        @messages("add-trade.trade-info-2")
+    }
 }
 
 @mainTemplate(pageTitle = messages("add-business-trade.heading"),
