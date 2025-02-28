@@ -79,18 +79,14 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
 
   def handleRequest(taxYear: Int, id: String, isInterestCharge: Boolean = false, isAgent: Boolean, origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-    //TODO: Remove multi-year call
     financialDetailsService.getAllFinancialDetails.flatMap { financialResponses =>
       Logger("application").debug(s"- financialResponses = $financialResponses")
 
       val paymentsFromAllYears = financialResponses.collect {
-        case (_, model: FinancialDetailsModel) => model.filterPayments()
+        case model: FinancialDetailsModel => model.filterPayments()
       }.foldLeft(FinancialDetailsModel(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None), List(), List()))((merged, next) => merged.mergeLists(next))
 
-      val matchingYear: List[FinancialDetailsResponseModel] = financialResponses.collect {
-        case (year, response) if year == taxYear => response
-      }
-      matchingYear.headOption match {
+      financialResponses match {
         case Some(fdmForTaxYear: FinancialDetailsModel) if fdmForTaxYear.documentDetailsExist(id) =>
           doShowChargeSummary(taxYear, id, isInterestCharge, fdmForTaxYear, paymentsFromAllYears, isAgent, origin, isMFADebit(fdmForTaxYear, id))
         case Some(_: FinancialDetailsModel) =>

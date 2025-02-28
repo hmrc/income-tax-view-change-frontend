@@ -16,15 +16,15 @@
 
 package mocks.services
 
-import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
+import models.incomeSourceDetails.TaxYear
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.mockito.Mockito.mock
 import services.FinancialDetailsService
-import testConstants.BaseTestConstants.{testNino, testTaxYear}
+import testConstants.BaseTestConstants.{testNino, testTaxYear, testTaxYear2018}
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.UnitSpec
 
@@ -40,31 +40,34 @@ trait MockFinancialDetailsService extends UnitSpec with BeforeAndAfterEach {
     reset(mockFinancialDetailsService)
   }
 
-  def setupMockGetFinancialDetails(taxYear: Int)(response: FinancialDetailsResponseModel): Unit =
-    when(mockFinancialDetailsService.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(testNino))
+  def setupMockGetFinancialDetails(taxYear: TaxYear)(response: FinancialDetailsResponseModel): Unit = {
+    when(mockFinancialDetailsService.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.any(), ArgumentMatchers.eq(testNino))
     (any(), any())).thenReturn(Future.successful(response))
-
-  def setupMockGetFinancialDetailsWithTaxYearAndNino(taxYear: Int, nino: String)(response: FinancialDetailsResponseModel): Unit = {
-    when(mockFinancialDetailsService.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(nino))
+    when(mockFinancialDetailsService.getFinancialDetailsSingleYear(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(testNino))
     (any(), any())).thenReturn(Future.successful(response))
   }
 
-  def mockFinancialDetailsSuccess(financialDetailsModelResponse: FinancialDetailsModel = financialDetailsModel(), taxYear: Int = testTaxYear): Unit =
+  def setupMockGetFinancialDetailsWithTaxYearAndNino(taxYear: TaxYear, nino: String)(response: FinancialDetailsResponseModel): Unit = {
+    when(mockFinancialDetailsService.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.any(), ArgumentMatchers.eq(nino))
+    (any(), any())).thenReturn(Future.successful(response))
+  }
+
+  def mockFinancialDetailsSuccess(financialDetailsModelResponse: FinancialDetailsModel = financialDetailsModel(), taxYear: TaxYear = testTaxYear2018): Unit =
     setupMockGetFinancialDetails(taxYear)(financialDetailsModelResponse)
 
   def mockFinancialDetailsFailed(): Unit =
-    setupMockGetFinancialDetails(testTaxYear)(testFinancialDetailsErrorModel)
+    setupMockGetFinancialDetails(testTaxYear2018)(testFinancialDetailsErrorModel)
 
   def mockFinancialDetailsNotFound(): Unit =
-    setupMockGetFinancialDetails(testTaxYear)(testFinancialDetailsNotFoundErrorModel)
+    setupMockGetFinancialDetails(testTaxYear2018)(testFinancialDetailsNotFoundErrorModel)
 
-  def mockGetAllFinancialDetails(response: List[(Int, FinancialDetailsResponseModel)]): Unit = {
+  def mockGetAllFinancialDetails(response: Option[FinancialDetailsResponseModel]): Unit = {
     when(mockFinancialDetailsService.getAllFinancialDetails(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 
   def mockGetAllUnpaidFinancialDetails(response: FinancialDetailsModel = financialDetailsDueInMoreThan30Days()): Unit = {
     when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
-      .thenReturn(Future.successful(List(response)))
+      .thenReturn(Future.successful(Some(response)))
   }
 }

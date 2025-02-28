@@ -19,7 +19,7 @@ package models.homePage
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
 import play.api.i18n.Messages
 
-case class PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges: List[FinancialDetailsResponseModel],
+case class PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges: Option[FinancialDetailsResponseModel],
                                                       creditsRefundsRepayEnabled: Boolean, paymentHistoryRefundsEnabled: Boolean,
                                                       isUserMigrated: Boolean = false) {
   val availableCredit: Option[BigDecimal] =

@@ -64,6 +64,7 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testUserTypeAgent = AffinityGroup.Agent
   val testUserType: AffinityGroup = testUserTypeIndividual
   val testTaxYear = 2018
+  val testTaxYear2018: TaxYear = TaxYear(2017, 2018)
   val testTaxYearRange = "23-24"
   val testTaxYearTo = "2017 to 2018 tax year"
   val calendarYear2018 = 2018

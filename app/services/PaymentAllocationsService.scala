@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.FinancialDetailsConnector
 import models.core.Nino
-import models.financialDetails.FinancialDetailsModel
+import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.paymentAllocationCharges._
 import models.paymentAllocations.PaymentAllocations
 import play.api.Logger
@@ -84,16 +84,19 @@ class PaymentAllocationsService @Inject()(financialDetailsConnector: FinancialDe
   private def createPaymentAllocationForLpi(paymentCharge: PaymentAllocations,
                                             documentDetailsWithFinancialDetails: FinancialDetailsWithDocumentDetailsModel)
                                            (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Option[LatePaymentInterestPaymentAllocationDetails]] = {
-    financialDetailsService.getAllFinancialDetails.map { financialDetailsWithTaxYear =>
-      financialDetailsWithTaxYear.flatMap {
-        case (_, financialDetails: FinancialDetailsModel) =>
-          financialDetails.documentDetailsWithLpiId(paymentCharge.allocations.head.chargeReference).map {
-            documentDetailsWithLpiId =>
-              LatePaymentInterestPaymentAllocationDetails(documentDetailsWithLpiId,
-                documentDetailsWithFinancialDetails.documentDetails.head.originalAmount)
-          }
-        case _ => None
-      }.headOption
+    financialDetailsService.getAllFinancialDetails.map {
+      case Some(financialDetails: FinancialDetailsModel) =>
+        financialDetails.documentDetailsWithLpiId(paymentCharge.allocations.head.chargeReference).map {
+          documentDetailsWithLpiId =>
+            LatePaymentInterestPaymentAllocationDetails(documentDetailsWithLpiId,
+              documentDetailsWithFinancialDetails.documentDetails.head.originalAmount)
+        }
+      case Some(errorModel: FinancialDetailsErrorModel) =>
+        Logger("application").error(s"error when getting financial details - code: ${errorModel.code}, message: ${errorModel.message}")
+        None
+      case None =>
+        Logger("application").error(s"No response returned when getting financial details")
+        None
     }
   }
 }

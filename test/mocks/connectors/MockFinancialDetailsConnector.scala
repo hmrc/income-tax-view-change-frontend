@@ -39,18 +39,18 @@ trait MockFinancialDetailsConnector extends UnitSpec with BeforeAndAfterEach {
     reset(mockFinancialDetailsConnector)
   }
 
-  def setupMockGetFinancialDetails(taxYear: Int, nino: String)(response: FinancialDetailsResponseModel): Unit = {
-    when(mockFinancialDetailsConnector.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(nino))(any(),any()))
+  def setupMockGetFinancialDetailsSingleYear(taxYear: Int, nino: String)(response: FinancialDetailsResponseModel): Unit = {
+    when(mockFinancialDetailsConnector.getFinancialDetailsSingleYear(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(nino))(any(),any()))
       .thenReturn(Future.successful(response))
   }
-  def setupMockGetFinancialDetails(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)(response: FinancialDetailsResponseModel): Unit = {
+  def setupMockGetFinancialDetailsSingleYear(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)(response: FinancialDetailsResponseModel): Unit = {
     when(mockFinancialDetailsConnector.getFinancialDetails(ArgumentMatchers.eq(taxYearFrom), any(),
       ArgumentMatchers.eq(nino))(any(),any()))
       .thenReturn(Future.successful(response))
   }
 
-  def setupMockGetFinancialDetailsError(taxYear: Int, nino: String)(response: FinancialDetailsErrorModel): Unit = {
-    when(mockFinancialDetailsConnector.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(nino))(any(),any()))
+  def setupMockGetFinancialDetailsSingleYearError(taxYear: Int, nino: String)(response: FinancialDetailsErrorModel): Unit = {
+    when(mockFinancialDetailsConnector.getFinancialDetailsSingleYear(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(nino))(any(),any()))
       .thenReturn(Future.successful(response))
   }
 

@@ -49,12 +49,12 @@ case class NextPaymentsTileViewModel(nextPaymentDueDate: Option[LocalDate], over
 
 object NextPaymentsTileViewModel {
 
-  def paymentsAccruingInterestCount(unpaidCharges: List[FinancialDetailsResponseModel], currentDate: LocalDate): Int = {
+  def paymentsAccruingInterestCount(unpaidCharges: Option[FinancialDetailsResponseModel], currentDate: LocalDate): Int = {
     val financialDetailsModels = unpaidCharges collect {
       case fdm: FinancialDetailsModel => fdm
     }
 
-    val docDetailsNotDueWithInterest: List[DocumentDetail] = financialDetailsModels.flatMap(_.docDetailsNotDueWithInterest(currentDate))
+    val docDetailsNotDueWithInterest: List[DocumentDetail] = financialDetailsModels.toList.flatMap(_.docDetailsNotDueWithInterest(currentDate))
     docDetailsNotDueWithInterest.length
   }
 }

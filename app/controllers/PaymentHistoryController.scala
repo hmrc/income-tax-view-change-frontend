@@ -74,7 +74,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
 
         val paymentHistoryEntries = RepaymentHistoryUtils.getGroupedPaymentHistoryData(
           isAgent = isAgent,
-          payments = payments,
+          payments = payments.toList,
           repayments = repayments,
           languageUtils = languageUtils,
           reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa)

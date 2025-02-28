@@ -22,7 +22,7 @@ import connectors.FinancialDetailsConnector
 import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
-import play.api.http.Status.NOT_FOUND
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
@@ -34,13 +34,14 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
                                         implicit val dateService: DateServiceInterface)
                                        (implicit val appConfig: FrontendAppConfig, ec: ExecutionContext) {
 
-  @deprecated("Use getFinancialDetailsV2 instead", "MISUV-8845")
-  def getFinancialDetails(taxYear: Int, nino: String)(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
-    financialDetailsConnector.getFinancialDetails(taxYear, nino)
+  def getFinancialDetails(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)
+                         (implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
+    financialDetailsConnector.getFinancialDetails(taxYearFrom, taxYearTo, nino)
   }
 
-  def getFinancialDetailsV2(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
-    financialDetailsConnector.getFinancialDetails(taxYearFrom, taxYearTo, nino)
+  def getFinancialDetailsSingleYear(taxYear: TaxYear, nino: String)
+                                   (implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
+    financialDetailsConnector.getFinancialDetails(taxYear, taxYear, nino)
   }
 
   def getChargeDueDates(financialDetails: List[FinancialDetailsResponseModel]): Option[Either[(LocalDate, Boolean), Int]] = {
@@ -60,63 +61,55 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
     }
   }
 
-  @deprecated("Use getAllFinancialDetailsV2 instead", "MISUV-8845")
   def getAllFinancialDetails(implicit user: MtdItUser[_],
-                             hc: HeaderCarrier, ec: ExecutionContext): Future[List[(Int, FinancialDetailsResponseModel)]] = {
+                             hc: HeaderCarrier, ec: ExecutionContext): Future[Option[FinancialDetailsResponseModel]] = {
     Logger("application").debug(
       s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
 
-    Future.sequence(user.incomeSources.orderedTaxYearsByYearOfMigration.map {
-      taxYear =>
-        Logger("application").debug(s"Getting financial details for TaxYear: ${taxYear}")
-        financialDetailsConnector.getFinancialDetails(taxYear, user.nino).map {
-          case financialDetails: FinancialDetailsModel => Some((taxYear, financialDetails))
-          case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Some((taxYear, error))
-          case _ => None
-        }
-    }).map(_.flatten)
-  }
+    val listOfCalls = user.incomeSources.orderedTaxYearsInWindows
 
-  def getAllFinancialDetailsV2(implicit user: MtdItUser[_],
-                               hc: HeaderCarrier, ec: ExecutionContext): Future[Option[FinancialDetailsResponseModel]] = {
-    Logger("application").debug(
-      s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
-
-    val yearsOfMigration = user.incomeSources.orderedTaxYearsByYearOfMigration
-    if (yearsOfMigration.isEmpty)
+    if (listOfCalls.isEmpty)
       Future.successful(None)
     else {
-      val (from, to) = (yearsOfMigration.min, yearsOfMigration.max)
-      Logger("application").debug(s"Getting financial details for TaxYears: ${from} - ${to}")
+      Future.sequence(listOfCalls.map { years =>
+        val (from, to) = (years.min, years.max)
+        Logger("application").debug(s"Getting financial details for TaxYears: ${from} - ${to}")
 
-      for {
-        response <- financialDetailsConnector.getFinancialDetails(TaxYear.forYearEnd(from), TaxYear.forYearEnd(to), user.nino)
-      } yield response match {
-        case financialDetails: FinancialDetailsModel => Some(financialDetails)
-        case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Some(error)
-        case _ => None
-      }
+        for {
+          response <- financialDetailsConnector.getFinancialDetails(TaxYear.forYearEnd(from), TaxYear.forYearEnd(to), user.nino)
+        } yield response match {
+          case financialDetails: FinancialDetailsModel => Some(financialDetails)
+          case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Some(error)
+          case _ => None
+        }
+      }).map(x => {
+        x.foldLeft[Option[FinancialDetailsResponseModel]](None) { (acc, next) =>
+          combineTwoResponses(acc, next)
+        }
+      })
     }
   }
 
-  @deprecated("Use getUnpaidFinancialDetailsV2 instead", "MISUV-8845")
-  def getAllUnpaidFinancialDetails()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[List[FinancialDetailsResponseModel]] = {
-    getAllFinancialDetails.map { chargesWithYears =>
-      chargesWithYears.flatMap {
-        case (_, errorModel: FinancialDetailsErrorModel) => Some(errorModel)
-        case (_, financialDetails: FinancialDetailsModel) =>
-          val unpaidDocDetails: List[DocumentDetail] = financialDetails.unpaidDocumentDetails()
-          if (unpaidDocDetails.nonEmpty) Some(financialDetails.copy(documentDetails = unpaidDocDetails)) else None
-      }
-    }
-  }
-
-  def getAllUnpaidFinancialDetailsV2()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[FinancialDetailsResponseModel]] = {
-    getAllFinancialDetailsV2.map {
+  def getAllUnpaidFinancialDetails()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[FinancialDetailsResponseModel]] = {
+    getAllFinancialDetails.map {
       case Some(errorModel: FinancialDetailsErrorModel) => Some(errorModel)
       case Some(financialDetails: FinancialDetailsModel) =>
         val unpaidDocDetails: List[DocumentDetail] = financialDetails.unpaidDocumentDetails()
         if (unpaidDocDetails.nonEmpty) Some(financialDetails.copy(documentDetails = unpaidDocDetails)) else None
+      case _ => None
+    }
+  }
+
+  def combineTwoResponses(response1: Option[FinancialDetailsResponseModel],
+                                  response2: Option[FinancialDetailsResponseModel]): Option[FinancialDetailsResponseModel] = {
+    (response1, response2) match {
+      case (Some(validModel1: FinancialDetailsModel), Some(validModel2: FinancialDetailsModel)) => Some(validModel1.mergeLists(validModel2))
+      case (Some(validModel: FinancialDetailsModel), _) => Some(validModel)
+      case (_, Some(validModel: FinancialDetailsModel)) => Some(validModel)
+      case (Some(errorModel1: FinancialDetailsErrorModel), Some(errorModel2: FinancialDetailsErrorModel)) =>
+        Some(FinancialDetailsErrorModel(errorModel1.code, s"Multiple errors returned when retrieving financial details: $errorModel1 + $errorModel2"))
+      case (Some(errorModel: FinancialDetailsErrorModel), _) if errorModel.code != NOT_FOUND => Some(errorModel)
+      case (_, Some(errorModel: FinancialDetailsErrorModel)) if errorModel.code != NOT_FOUND => Some(errorModel)
       case _ => None
     }
   }
