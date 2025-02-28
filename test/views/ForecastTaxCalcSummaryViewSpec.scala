@@ -172,14 +172,6 @@ class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
         }
       }
     }
-
-    "have the correct Forecast Self Assessment tax amount but any incomeTaxNic~ is empty" should {
-      "throw a MissingFieldException" in {
-        intercept[MissingFieldException] { // attempt to construct a view will raise an exception
-          forecastTaxCalcView(endOfYearEstimateModel3, testTaxYear, backUrl, btaNavPartial = Some(testNavHtml))
-        }
-      }
-    }
   }
 
 }

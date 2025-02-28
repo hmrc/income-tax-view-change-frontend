@@ -19,7 +19,6 @@ package models.repaymentHistory
 import exceptions.MissingFieldException
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import models.financialDetails._
-import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.i18n.Messages
 import play.api.libs.json.Json
