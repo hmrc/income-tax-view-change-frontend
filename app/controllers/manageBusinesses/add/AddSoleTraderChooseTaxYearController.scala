@@ -21,7 +21,7 @@ import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.JourneyType.IncomeSourceReportingFrequencyJourney
-import forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
+import forms.manageBusinesses.add.AddSoleTraderChooseTaxYearForm
 import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.IncomeSourceReportingFrequencySourceData
 import play.api.Logger
@@ -67,7 +67,7 @@ class AddSoleTraderChooseTaxYearController @Inject()(authActions: AuthActions,
       case (false, true) => Future.successful(Redirect(homePageCallAgent))
       case _ =>
         Future.successful(Ok(addSoleTraderChooseTaxYear(
-          IncomeSourceReportingFrequencyForm(),
+          AddSoleTraderChooseTaxYearForm(),
           isAgent,
           routes.AddSoleTraderChooseTaxYearController.submit(isAgent),
           dateService.getCurrentTaxYear,
@@ -83,7 +83,7 @@ class AddSoleTraderChooseTaxYearController @Inject()(authActions: AuthActions,
 
   def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user => {
-      IncomeSourceReportingFrequencyForm().bindFromRequest.fold(
+      AddSoleTraderChooseTaxYearForm().bindFromRequest.fold(
         formWithError => {
           Future.successful(BadRequest(addSoleTraderChooseTaxYear(
             formWithError,
@@ -96,7 +96,7 @@ class AddSoleTraderChooseTaxYearController @Inject()(authActions: AuthActions,
         _ => {
 
           Future.successful(Ok(addSoleTraderChooseTaxYear(
-            IncomeSourceReportingFrequencyForm(),
+            AddSoleTraderChooseTaxYearForm(),
             isAgent,
             routes.AddSoleTraderChooseTaxYearController.submit(isAgent),
             dateService.getCurrentTaxYear,

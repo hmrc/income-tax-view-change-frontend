@@ -16,7 +16,7 @@
 
 package views.manageBusinesses.add
 
-import forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
+import forms.manageBusinesses.add.AddSoleTraderChooseTaxYearForm
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -30,7 +30,7 @@ class AddSoleTraderChooseTaxYearViewSpec extends TestSupport {
 
   val view: AddSoleTraderChooseTaxYear = app.injector.instanceOf[AddSoleTraderChooseTaxYear]
 
-  class Setup(form: Form[IncomeSourceReportingFrequencyForm] = IncomeSourceReportingFrequencyForm()) {
+  class Setup(form: Form[AddSoleTraderChooseTaxYearForm] = AddSoleTraderChooseTaxYearForm()) {
     val postAction: Call = controllers.manageBusinesses.add.routes.AddSoleTraderChooseTaxYearController.submit(false)
     val pageDocument: Document = Jsoup.parse(contentAsString(view(form, isAgent = false, postAction, TaxYear(2023, 2024), TaxYear(2024, 2025))))
   }
@@ -58,7 +58,7 @@ class AddSoleTraderChooseTaxYearViewSpec extends TestSupport {
       pageDocument.getElementById("continue-button").attr("href") shouldBe ""
     }
 
-    "have the correct error summary" in new Setup(IncomeSourceReportingFrequencyForm().bind(Map("Invalid" -> "Invalid"))) {
+    "have the correct error summary" in new Setup(AddSoleTraderChooseTaxYearForm().bind(Map("Invalid" -> "Invalid"))) {
       pageDocument.getElementById("error-summary-title").text() shouldBe "There is a problem"
       pageDocument.getElementById("error-summary-link").text() shouldBe "Select the tax years you want to report quarterly"
       pageDocument.getElementById("error-summary-link").attr("href") shouldBe "#current-year-checkbox"

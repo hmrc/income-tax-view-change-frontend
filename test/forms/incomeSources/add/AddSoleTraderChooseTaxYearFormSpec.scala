@@ -16,14 +16,14 @@
 
 package forms.incomeSources.add
 
-import forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
+import forms.manageBusinesses.add.AddSoleTraderChooseTaxYearForm
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.{Form, FormError}
 
-class IncomeSourceReportingFrequencyFormSpec extends AnyWordSpec with Matchers {
+class AddSoleTraderChooseTaxYearFormSpec extends AnyWordSpec with Matchers {
 
-  def form(currentYear: String, nextYear: String) = IncomeSourceReportingFrequencyForm().bind(Map(
+  def form(currentYear: String, nextYear: String) = AddSoleTraderChooseTaxYearForm().bind(Map(
     "current-year-checkbox" -> currentYear,
     "next-year-checkbox" -> nextYear)
   )
@@ -31,21 +31,21 @@ class IncomeSourceReportingFrequencyFormSpec extends AnyWordSpec with Matchers {
   "IncomeSourceReportingFrequencyForm" must {
     "return a valid form" when {
       "the current year checkbox is checked" in {
-        val validForm = IncomeSourceReportingFrequencyForm().bind(Map("current-year-checkbox" -> "true"))
+        val validForm = AddSoleTraderChooseTaxYearForm().bind(Map("current-year-checkbox" -> "true"))
 
         validForm.hasErrors shouldBe false
         validForm.data.get("current-year-checkbox") shouldBe Some("true")
         validForm.data.contains("next-year-checkbox") shouldBe false
       }
       "the next year checkbox is checked" in {
-        val validForm = IncomeSourceReportingFrequencyForm().bind(Map("next-year-checkbox" -> "true"))
+        val validForm = AddSoleTraderChooseTaxYearForm().bind(Map("next-year-checkbox" -> "true"))
 
         validForm.hasErrors shouldBe false
         validForm.data.get("next-year-checkbox") shouldBe Some("true")
         validForm.data.contains("current-year-checkbox") shouldBe false
       }
       "both checkboxes are checked" in {
-        val validForm = IncomeSourceReportingFrequencyForm().bind(Map(
+        val validForm = AddSoleTraderChooseTaxYearForm().bind(Map(
           "current-year-checkbox" -> "true",
           "next-year-checkbox" -> "true"
         ))
@@ -57,7 +57,7 @@ class IncomeSourceReportingFrequencyFormSpec extends AnyWordSpec with Matchers {
     }
     "return an error" when {
       "none of the checkboxes are checked/defined" in {
-        val invalidForm = IncomeSourceReportingFrequencyForm().bind(Map(
+        val invalidForm = AddSoleTraderChooseTaxYearForm().bind(Map(
           "Invalid" -> "Invalid"
         ))
 
