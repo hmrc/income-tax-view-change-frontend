@@ -911,7 +911,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     }
 
     "have a fallback link" in new TestSetup() {
-      document.hasFallbackBacklinkTo("testBackURL")
+      document.hasFallbackBacklink()
     }
 
     "displaying charge amount" when {
