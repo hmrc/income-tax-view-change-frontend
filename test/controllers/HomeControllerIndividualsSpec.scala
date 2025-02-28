@@ -348,7 +348,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           status(result) shouldBe Status.OK
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#updates-tile p:nth-child(2)").text() shouldBe "OVERDUE 1 January 2018"
+          document.select("#updates-tile p:nth-child(2)").text() shouldBe "Overdue 1 January 2018"
         }
 
         "there are no updates to display" in new Setup {

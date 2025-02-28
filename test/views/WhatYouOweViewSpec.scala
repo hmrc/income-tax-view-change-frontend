@@ -409,14 +409,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           val poa1Table: Element = pageDocument.select("tr").get(2)
           poa1Table.select("td").first().text() shouldBe fixedDate.minusDays(10).toLongDateShort
-          poa1Table.select("td").get(1).text() shouldBe "OVERDUE " + poa1Text + s" 1"
+          poa1Table.select("td").get(1).text() shouldBe "Overdue " + poa1Text + s" 1"
           poa1Table.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
 
           poa1Table.select("td").last().text() shouldBe "£50.00"
 
           val poa2Table: Element = pageDocument.select("tr").get(3)
           poa2Table.select("td").first().text() shouldBe fixedDate.minusDays(1).toLongDateShort
-          poa2Table.select("td").get(1).text() shouldBe "OVERDUE " + poa2Text + s" 2"
+          poa2Table.select("td").get(1).text() shouldBe "Overdue " + poa2Text + s" 2"
           poa2Table.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
 
           poa2Table.select("td").last().text() shouldBe "£75.00"
@@ -427,14 +427,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           reviewAndReconcileEnabled  = true) {
           val poaExtra1Table: Element = pageDocument.getElementById("due-0")
           poaExtra1Table.select("td").first().text() shouldBe fixedDate.plusYears(100).minusDays(1).toLongDateShort
-          poaExtra1Table.select("td").get(1).text() shouldBe "ACCRUES INTEREST " + poaExtra1Text + " 1"
+          poaExtra1Table.select("td").get(1).text() shouldBe "Accrues interest " + poaExtra1Text + " 1"
           poaExtra1Table.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
 
           poaExtra1Table.select("td").last().text() shouldBe "£50.00"
 
           val poa2ExtraTable: Element = pageDocument.getElementById("due-1")
           poa2ExtraTable.select("td").first().text() shouldBe fixedDate.plusYears(100).plusDays(30).toLongDateShort
-          poa2ExtraTable.select("td").get(1).text() shouldBe "ACCRUES INTEREST " + poaExtra2Text + " 2"
+          poa2ExtraTable.select("td").get(1).text() shouldBe "Accrues interest " + poaExtra2Text + " 2"
           poa2ExtraTable.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
 
           poa2ExtraTable.select("td").last().text() shouldBe "£75.00"

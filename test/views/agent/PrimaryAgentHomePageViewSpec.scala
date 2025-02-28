@@ -175,16 +175,16 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
         }
         "has content of the next payment due" which {
           "is overdue" in new TestSetup(nextPaymentDueDate = Some(nextPaymentDue), overDuePaymentsCount = 1) {
-            getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"OVERDUE 31 January $year2019")
+            getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"Overdue 31 January $year2019")
           }
           "has payments accruing interest" in new TestSetup(nextPaymentDueDate = Some(nextPaymentDue), paymentsAccruingInterestCount = 2, reviewAndReconcileEnabled = true) {
-            getElementById("accrues-interest-tag").map(_.text()) shouldBe Some(s"DAILY INTEREST CHARGES")
+            getElementById("accrues-interest-tag").map(_.text()) shouldBe Some(s"Daily interest charges")
           }
           "is not overdue" in new TestSetup(nextPaymentDueDate = Some(nextPaymentDue)) {
             getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"31 January $year2019")
           }
           "is a count of overdue payments" in new TestSetup(nextPaymentDueDate = Some(nextPaymentDue), overDuePaymentsCount = 2) {
-            getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"2 OVERDUE CHARGES")
+            getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"2 Overdue charges")
           }
           "has no next payment" in new TestSetup(nextPaymentDueDate = None) {
             getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"No payments due")
@@ -227,13 +227,13 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
         }
         "has content of the next update due" which {
           "is overdue" in new TestSetup(nextUpdatesTileViewModel = viewModelOneOverdue) {
-            getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"OVERDUE 1 January $year2018")
+            getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"Overdue 1 January $year2018")
           }
           "is not overdue" in new TestSetup(nextPaymentDueDate = Some(nextUpdateDue)) {
             getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"1 January 2100")
           }
           "is a count of overdue updates" in new TestSetup(nextUpdatesTileViewModel = viewModelTwoOverdue) {
-            getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"2 OVERDUE UPDATES")
+            getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"2 Overdue updates")
           }
         }
         "has a link to view updates" in new TestSetup {
@@ -435,10 +435,10 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
             getElementById("sa-penalties-and-appeals-link").map(_.attr("href")) shouldBe Some("")
           }
           "has a two-points penalty tag" in new TestSetup(submissionFrequency = "Annual", penaltyPoints = 3) {
-            getElementById("penalty-points-tag").map(_.text()) shouldBe Some("2 PENALTY POINTS")
+            getElementById("penalty-points-tag").map(_.text()) shouldBe Some("2 Penalty points")
           }
           "has a four-points penalty tag" in new TestSetup(submissionFrequency = "Quarterly", penaltyPoints = 4) {
-            getElementById("penalty-points-tag").map(_.text()) shouldBe Some("4 PENALTY POINTS")
+            getElementById("penalty-points-tag").map(_.text()) shouldBe Some("4 Penalty points")
           }
           "has no penalty tag if 2 points reached but User is reporting Quarterly" in new TestSetup(submissionFrequency = "Quarterly", penaltyPoints = 2) {
             getElementById("penalty-points-tag").map(_.text()).isDefined shouldBe false
