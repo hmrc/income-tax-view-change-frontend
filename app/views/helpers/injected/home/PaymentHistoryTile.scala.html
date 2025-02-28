@@ -75,14 +75,14 @@
 
 @home_tile("payment-history-tile", viewModel.paymentCreditAndRefundHistoryTileViewModel.title()) {
     @viewModel.paymentCreditAndRefundHistoryTileViewModel.availableCredit.map { amount =>
-        <p class="govuk-body" id="available-credit">
-            @messages("home.paymentHistoryRefund.availableCredit", amount.toCurrencyString)
-        </p>
+            @p(id = Some("available-credit")){
+                @messages("home.paymentHistoryRefund.availableCredit", amount.toCurrencyString)
+            }
     }
 
-    <p class="govuk-!-margin-bottom-4">
+    @p(classes = "govuk-!-margin-bottom-4"){
         @paymentHistoryLink
-    </p>
+    }
 
     @if(viewModel.paymentCreditAndRefundHistoryTileViewModel.creditsRefundsRepayEnabled) {
         @if(viewModel.paymentCreditAndRefundHistoryTileViewModel.isUserMigrated) {

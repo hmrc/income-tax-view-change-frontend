@@ -122,7 +122,9 @@
         id = Some("h1"))
 
     <div id="bulletPoints">
-        <p class="govuk-body" id="p1">@getMessage("p1")</p>
+        @p(id=Some("p1")){
+            @getMessage("p1")
+        }
         <ul class="govuk-list govuk-list--bullet">
             <li>@getMessage("bullet1")</li>
             <li><a href="https://www.gov.uk/self-employed-national-insurance-rates" class="govuk-link" rel="noreferrer noopener" target="_blank">@getMessage("bullet2")</a></li>

@@ -76,7 +76,10 @@
             content = content ))
     }
 
-    <p class="govuk-body">@messages("optout.confirmedOptOut.reportQuarterly.reason-list")</p>
+    @p(){
+        @messages("optout.confirmedOptOut.reportQuarterly.reason-list")
+    }
+
     <ul class="govuk-list govuk-list--bullet">
         <li>@messages("optout.confirmedOptOut.reportQuarterly.reason1")</li>
         <li>@messages("optout.confirmedOptOut.reportQuarterly.reason2")</li>
@@ -99,18 +102,18 @@
     <div id="revised-deadlines" class="govuk-!-margin-bottom-7 govuk-!-margin-top-8">
         <h2 id="revised-deadlines-heading" class="govuk-heading-m" >@messages("optout.confirmedOptOut.yourRevisedDeadlines.h2")</h2>
         <p id="revised-deadlines-p1" class="govuk-body">@Html(messages("optout.confirmedOptOut.yourRevisedDeadlines.desc1", viewModel.startYear, viewModel.endYear, viewModel.nextYear))</p>
-        <p id="view-upcoming-updates">
+        @p(id = Some("view-upcoming-updates")) {
             @link(
                 id = Some("view-upcoming-updates-link"),
                 link = if(isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url,
                 messageKey = "optout.confirmedOptOut.viewUpcomingDeadlines.text"
             )
-        </p>
-        <p id="your-reporting-frequency-block" class="govuk-body">
+        }
+        @p(id = Some("your-reporting-frequency-block")) {
             @if(showReportingFrequencyContent) {
                 @yourReportingFrequencyBlock
             }
-        </p>
+        }
     </div>
 }
 
@@ -130,15 +133,19 @@
             @optOutYearFollowedByMandatedContent
         } else {
             <h2 class="govuk-heading-m" >@messages("optout.confirmedOptOut.reportQuarterly")</h2>
-            <p class="govuk-body">@messages("optout.confirmedOptOut.reportQuarterly.desc1")</p>
+            @p(){
+                @messages("optout.confirmedOptOut.reportQuarterly.desc1")
+            }
             <ul class="govuk-list govuk-list--bullet">
                 <li>@messages("optout.confirmedOptOut.reportQuarterly.p1")</li>
                 <li>@messages("optout.confirmedOptOut.reportQuarterly.p2")</li>
             </ul>
             <div class="govuk-inset-text">@messages("optout.confirmedOptOut.reportQuarterly.example", viewModel.startYear, viewModel.endYear, viewModel.nextYear)</div>
-            <p class="govuk-body">@messages("optout.confirmedOptOut.reportQuarterly.desc2")</p>
+            @p(){
+                @messages("optout.confirmedOptOut.reportQuarterly.desc2")
+            }
         }
-        <p class="govuk-body">
+        @p(){
             @{
                 val externalRefLink = messages("optout.confirmedOptOut.reportQuarterly.desc3.anchor-link")
                 val anchor = link(
@@ -150,7 +157,7 @@
 
                 Html(messages("optout.confirmedOptOut.reportQuarterly.desc3", anchor.toString()))
             }
-        </p>
+        }
     </div>
 }
 

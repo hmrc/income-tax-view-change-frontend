@@ -57,7 +57,9 @@
 
     @h2(msg = getCeasedMessage, classes = "govuk-heading-m", optId = Some("heading"))
 
-    <p class="govuk-body">@messages("cannotGoBack.youCan")</p>
+    @p(){
+        @messages("cannotGoBack.youCan")
+    }
 
     <ul class="govuk-list govuk-list--bullet">
         <li>@p(classes = "govuk-!-margin-bottom-4") {

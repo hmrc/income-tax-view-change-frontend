@@ -51,7 +51,9 @@
 
     @h2(msg = subheadingContent, classes = "govuk-heading-m", optId = Some("subheading"))
 
-    <p class="govuk-body">@messages("cannotGoBack.youCan")</p>
+    @p(){
+        @messages("cannotGoBack.youCan")
+    }
 
     <ul class="govuk-list govuk-list--bullet">
         <li>@p(classes = "govuk-!-margin-bottom-4") {
