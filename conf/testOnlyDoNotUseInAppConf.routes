@@ -92,6 +92,3 @@ PUT        /report-quarterly/income-and-expenses/view/test-only/featureSwitch/:f
 GET        /report-quarterly/income-and-expenses/view/test-only/showOptOutSession                          testOnly.controllers.OptOutMongoTestJourneyController.show
 
 GET       /report-quarterly/income-and-expenses/view/test-only/upsertOptOutSession                         testOnly.controllers.OptOutMongoTestJourneyController.upsert(key: Option[String], value: Option[String])
-
-
-GET       /report-quarterly/income-and-expenses/view/test-only/list-agent-utrs                             testOnly.controllers.UTRListController.listUTRs
