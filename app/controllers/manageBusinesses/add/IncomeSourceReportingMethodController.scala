@@ -24,19 +24,28 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.incomeSources.add.IncomeSourceReportingMethodForm
+import forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
+import models.ReportingFrequencyViewModel
+import models.admin.{IncomeSourcesNewJourney, ReportingFrequencyPage}
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.viewmodels.IncomeSourceReportingMethodViewModel
 import models.incomeSourceDetails.{AddIncomeSourceData, LatencyDetails, LatencyYear, UIJourneySessionData}
+import models.optout.{OptOutMultiYearViewModel, OptOutOneYearViewModel}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services._
+import services.optIn.OptInService
+import services.optout.OptOutService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
-import views.html.manageBusinesses.add.IncomeSourceReportingMethod
+import viewUtils.ReportingFrequencyViewUtils
+import views.html.ReportingFrequencyView
+import views.html.errorPages.templates.ErrorTemplate
+import views.html.manageBusinesses.add.{IncomeSourceReportingFrequency, IncomeSourceReportingMethod}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,14 +53,18 @@ import scala.concurrent.{ExecutionContext, Future}
 class IncomeSourceReportingMethodController @Inject()(val authActions: AuthActions,
                                                       val updateIncomeSourceService: UpdateIncomeSourceService,
                                                       val itsaStatusService: ITSAStatusService,
-                                                      val dateService: DateService,
                                                       val calculationListService: CalculationListService,
                                                       val auditingService: AuditingService,
-                                                      val view: IncomeSourceReportingMethod,
+                                                      val view: IncomeSourceReportingFrequency,
                                                       val sessionService: SessionService,
                                                       val itvcErrorHandler: ItvcErrorHandler,
-                                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                                      val errorTemplate: ErrorTemplate,
+                                                      val optOutService: OptOutService,
+                                                      val optInService: OptInService,
+                                                      val reportingFrequencyViewUtils: ReportingFrequencyViewUtils)
                                                      (implicit val appConfig: FrontendAppConfig,
+                                                      val dateService: DateService,
                                                       mcc: MessagesControllerComponents,
                                                       val ec: ExecutionContext
                                                      ) extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses {
@@ -74,34 +87,36 @@ class IncomeSourceReportingMethodController @Inject()(val authActions: AuthActio
     else routes.IncomeSourceAddedController.show(incomeSourceType).url
 
   lazy val submitUrl: (Boolean, IncomeSourceType) => Call = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
-    routes.IncomeSourceReportingMethodController.submit(isAgent, incomeSourceType)
-
-
+    controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodController.submit(isAgent, incomeSourceType)
+  
   def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       handleRequest(isAgent = isAgent, incomeSourceType)
   }
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
-    withSessionData(IncomeSourceJourneyType (Add, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
+    withNewIncomeSourcesFS{
+      withSessionData(IncomeSourceJourneyType (Add, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
 
-      sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
-        case Some(id) => handleIncomeSourceIdRetrievalSuccess(incomeSourceType, id, sessionData, isAgent = isAgent)
-        case None =>
-          val agentPrefix = if (isAgent) "[Agent]" else ""
-          Logger("application").error(agentPrefix +
-            s"Unable to retrieve incomeSourceId from session data for for $incomeSourceType")
-          Future.successful {
-            errorHandler(isAgent).showInternalServerError()
-          }
+        sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
+          case Some(id) => handleIncomeSourceIdRetrievalSuccess(incomeSourceType, id, sessionData, isAgent = isAgent)
+          case None =>
+            val agentPrefix = if (isAgent) "[Agent]" else ""
+            Logger("application").error(agentPrefix +
+              s"Unable to retrieve incomeSourceId from session data for for $incomeSourceType")
+            Future.successful {
+              errorHandler(isAgent).showInternalServerError()
+            }
+        }
+      }.recover {
+        case ex: Exception =>
+          Logger("application").error(
+            "" +
+              s"Unable to display IncomeSourceReportingMethod page for $incomeSourceType: ${ex.getMessage} ${ex.getCause}")
+          errorHandler(isAgent).showInternalServerError()
       }
-    }.recover {
-      case ex: Exception =>
-        Logger("application").error(
-          "" +
-            s"Unable to display IncomeSourceReportingMethod page for $incomeSourceType: ${ex.getMessage} ${ex.getCause}")
-        errorHandler(isAgent).showInternalServerError()
     }
+
   }
 
 
@@ -120,11 +135,12 @@ class IncomeSourceReportingMethodController @Inject()(val authActions: AuthActio
             getViewModel(incomeSourceType, IncomeSourceId(id)).map {
               case Some(viewModel) =>
                 Ok(view(
-                  incomeSourceType,
-                  incomeSourceReportingMethodForm = IncomeSourceReportingMethodForm.form,
-                  incomeSourceReportingViewModel = viewModel,
-                  postAction = submitUrl(isAgent, incomeSourceType),
-                  isAgent = isAgent))
+                  continueAction = submitUrl(isAgent, incomeSourceType),
+                  isAgent = isAgent,
+                  form = IncomeSourceReportingFrequencyForm(),
+                  incomeSourceType = incomeSourceType,
+                  taxDateService = dateService
+                ))
               case None =>
                 Redirect(redirectUrl(isAgent, incomeSourceType))
             }
@@ -195,7 +211,7 @@ class IncomeSourceReportingMethodController @Inject()(val authActions: AuthActio
     withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
       sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
         case Some(id) => IncomeSourceReportingMethodForm.form.bindFromRequest().fold(
-          invalid => handleInvalidForm(invalid, incomeSourceType, IncomeSourceId(id), isAgent),
+          invalid => handleInvalidForm(isAgent, incomeSourceType),
           valid => handleValidForm(valid, incomeSourceType, IncomeSourceId(id), isAgent, sessionData))
         case None =>
           val agentPrefix = if (isAgent) "[Agent]" else ""
@@ -208,22 +224,32 @@ class IncomeSourceReportingMethodController @Inject()(val authActions: AuthActio
     }
   }
 
-  private def handleInvalidForm(form: Form[IncomeSourceReportingMethodForm], incomeSourceType: IncomeSourceType, id: IncomeSourceId, isAgent: Boolean)
+  private def handleInvalidForm(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                                (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
 
-    val updatedForm = IncomeSourceReportingMethodForm.updateErrorMessagesWithValues(form)
 
-    getViewModel(incomeSourceType, id).map {
-      case Some(viewModel) =>
-        BadRequest(view(
-          incomeSourceType,
-          incomeSourceReportingMethodForm = updatedForm,
-          incomeSourceReportingViewModel = viewModel,
-          postAction = submitUrl(isAgent, incomeSourceType),
-          isAgent = isAgent))
-      case None =>
-        Redirect(errorRedirectUrl(isAgent, incomeSourceType))
-    }
+    IncomeSourceReportingFrequencyForm().bindFromRequest().fold(
+      formWithError => {
+        Future(BadRequest(view(
+          continueAction = submitUrl(isAgent, incomeSourceType),
+          isAgent = isAgent,
+          form = formWithError,
+          incomeSourceType = incomeSourceType,
+          taxDateService = dateService)
+        ))
+      }, {
+        _ =>
+          Future.successful(
+            Ok(view(
+              continueAction = submitUrl(isAgent, incomeSourceType),
+              isAgent = isAgent,
+              form = IncomeSourceReportingFrequencyForm(),
+              incomeSourceType = incomeSourceType,
+              taxDateService = dateService
+            ))
+          )
+      }
+    )
   }
 
   private def handleValidForm(form: IncomeSourceReportingMethodForm, incomeSourceType: IncomeSourceType, id: IncomeSourceId,

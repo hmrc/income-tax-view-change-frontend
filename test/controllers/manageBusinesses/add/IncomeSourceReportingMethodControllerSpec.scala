@@ -22,7 +22,7 @@ import enums.{MTDIndividual, MTDUserRole}
 import forms.incomeSources.add.IncomeSourceReportingMethodForm._
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesFs
+import models.admin.{IncomeSourcesFs, IncomeSourcesNewJourney}
 import models.incomeSourceDetails.AddIncomeSourceData
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import org.jsoup.Jsoup
@@ -39,6 +39,7 @@ import services._
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, notCompletedUIJourneySessionData}
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with MockSessionService {
@@ -59,9 +60,9 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
 
   lazy val testController = app.injector.instanceOf[IncomeSourceReportingMethodController]
 
-  val TAX_YEAR_2024 = 2024
-  val TAX_YEAR_2023 = 2023
-  val TAX_YEAR_2022 = 2022
+  val TAX_YEAR_2024: LocalDate = LocalDate.of(2024, 4, 6)
+  val TAX_YEAR_2023: LocalDate = LocalDate.of(2023, 4, 6)
+  val TAX_YEAR_2022: LocalDate = LocalDate.of(2022, 4, 6)
 
   val formData: Map[String, String] = Map(
     newTaxYear1ReportingMethod -> "Q",
@@ -72,24 +73,25 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
     taxYear2ReportingMethod -> "Q"
   )
 
-  val title: String = s"${messages("htmlTitle", messages("incomeSources.add.incomeSourceReportingMethod.heading"))}"
-  val titleAgent: String = s"${messages("htmlTitle.agent", messages("incomeSources.add.incomeSourceReportingMethod.heading"))}"
-  val heading: String = messages("incomeSources.add.incomeSourceReportingMethod.heading")
-  val description1_2022: String = messages("incomeSources.add.incomeSourceReportingMethod.description1", "2022")
-  val description1_2023: String = messages("incomeSources.add.incomeSourceReportingMethod.description1", "2023")
-  val description1_2024: String = messages("incomeSources.add.incomeSourceReportingMethod.description1", "2024")
-  val description2: String = messages("incomeSources.add.incomeSourceReportingMethod.description2")
-  val description3: String = messages("incomeSources.add.incomeSourceReportingMethod.description3")
-  val description4: String = messages("incomeSources.add.incomeSourceReportingMethod.description4.bullet1") + " " +
-    messages("incomeSources.add.incomeSourceReportingMethod.description4.bullet2") + " " +
-    messages("incomeSources.add.incomeSourceReportingMethod.description4.bullet3")
-  val chooseReport: String = messages("incomeSources.add.incomeSourceReportingMethod.chooseReport")
-  val taxYear_2021: String = messages("incomeSources.add.incomeSourceReportingMethod.taxYear", "2020", "2021")
-  val taxYear_2022: String = messages("incomeSources.add.incomeSourceReportingMethod.taxYear", "2021", "2022")
-  val taxYear_2023: String = messages("incomeSources.add.incomeSourceReportingMethod.taxYear", "2022", "2023")
-  val taxYear_2024: String = messages("incomeSources.add.incomeSourceReportingMethod.taxYear", "2023", "2024")
-  val chooseAnnualReport: String = messages("incomeSources.add.incomeSourceReportingMethod.chooseAnnualReport")
-  val chooseQuarterlyReport: String = messages("incomeSources.add.incomeSourceReportingMethod.chooseQuarterlyReport")
+  val title: String = "Is this date correct? - Manage your Income Tax updates - GOV.UK"
+  val titleAgent: String = "Is this date correct? - Manage your client’s Income Tax updates - GOV.UK"
+  val heading: String = "Your new business is set to report annually."
+  val paragraph1: String = "Because this is a new business, for up to 2 tax years you can submit its income and expenses once a year in your tax return, even if:"
+  val reportingFrequencyUlLi1: String = "you are voluntarily opted in or required to report quarterly for your other businesses"
+  val reportingFrequencyUlLi2: String = "your income from self-employment or property, or both, exceed the income threshold"
+  val paragraph2: String = "You can choose to report quarterly, which means submitting an update every 3 months in addition to your tax return"
+  val reportingFrequencyFormH1: String = "Do you want to change to report quarterly?"
+  val reportingFrequencyFormNoSelectionError: String = "Select yes if you want to report quarterly or select no if you want to report annually"
+  val continueButtonText: String = "Continue"
+
+  def getReportingFrequencyTableMessages(currentTaxYear: Int): (String, String) = {
+    (s"Reporting frequency ${currentTaxYear} to ${currentTaxYear+1}", "Annual")
+  }
+
+  def getWarningInsetTextMessage(currentTaxYear: Int): String = {
+    s"From April ${currentTaxYear} when this 2-year tax period ends, you could be required to report quarterly."
+  }
+
 
   object Scenario extends Enumeration {
     type Scenario = Value
@@ -99,9 +101,15 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
 
   import Scenario._
 
-  def setupMockDateServiceCall(scenario: Scenario): OngoingStubbing[Int] = scenario match {
-    case LATENCY_PERIOD_EXPIRED | CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS => when(mockDateService.getCurrentTaxYearEnd).thenReturn(TAX_YEAR_2024)
-    case _ => when(mockDateService.getCurrentTaxYearEnd).thenReturn(TAX_YEAR_2023)
+  def setupMockDateServiceCall(scenario: Scenario): OngoingStubbing[LocalDate] = scenario match {
+    case LATENCY_PERIOD_EXPIRED | CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS => {
+      when(mockDateService.getCurrentTaxYearEnd).thenReturn(TAX_YEAR_2024.getYear)
+      when(mockDateService.getCurrentTaxYearStart).thenReturn(TAX_YEAR_2023)
+    }
+    case _ => {
+      when(mockDateService.getCurrentTaxYearEnd).thenReturn(TAX_YEAR_2024.getYear)
+      when(mockDateService.getCurrentTaxYearStart).thenReturn(TAX_YEAR_2023)
+    }
   }
 
   def setupMockIncomeSourceDetailsCall(scenario: Scenario, incomeSourceType: IncomeSourceType): Unit = (scenario, incomeSourceType) match {
@@ -130,13 +138,13 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
 
   def setupMockIsTaxYearCrystallisedCall(scenario: Scenario): OngoingStubbing[Future[Boolean]] = scenario match {
     case FIRST_YEAR_CRYSTALLISED =>
-      when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2022))(any, any)).thenReturn(Future(true))
+      when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2022.getYear))(any, any)).thenReturn(Future(true))
     case CURRENT_TAX_YEAR_IN_LATENCY_YEARS =>
-      when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2022))(any, any)).thenReturn(Future(false))
+      when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2022.getYear))(any, any)).thenReturn(Future(false))
     case CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS =>
-      when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2023))(any, any)).thenReturn(Future(false))
+      when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2023.getYear))(any, any)).thenReturn(Future(false))
     case _ =>
-      when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2023))(any, any)).thenReturn(Future(false))
+      when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2023.getYear))(any, any)).thenReturn(Future(false))
   }
 
   def setupMockUpdateIncomeSourceCall(numberOfSuccessResponses: Int): Unit = {
@@ -185,6 +193,7 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
 
   def setupMockCalls(isAgent: Boolean, incomeSourceType: IncomeSourceType, mtdRole: MTDUserRole, scenario: Scenario): Unit = {
     enable(IncomeSourcesFs)
+    enable(IncomeSourcesNewJourney)
     setupMockSuccess(mtdRole)
     setupMockIncomeSourceDetailsCall(scenario, incomeSourceType)
     setupMockDateServiceCall(scenario)
@@ -209,6 +218,7 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
 
   val incomeSourceTypes: Seq[IncomeSourceType] = List(SelfEmployment, UkProperty, ForeignProperty)
 
+
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual
     incomeSourceTypes.foreach { incomeSourceType =>
@@ -216,101 +226,72 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
         val action = testController.show(isAgent, incomeSourceType)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
-          "render the reporting method selection page for only tax year 2" when {
-            s"in 2nd year of latency with FS enabled" in {
-              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, FIRST_YEAR_CRYSTALLISED)
-
-              val result = action(fakeRequest)
-              val document: Document = Jsoup.parse(contentAsString(result))
-
-              status(result) shouldBe OK
-              if (isAgent) document.title shouldBe titleAgent else document.title shouldBe title
-              document.select("h1:nth-child(1)").text shouldBe heading
-              document.getElementsByClass("govuk-body").get(1).text shouldBe description2
-              document.getElementsByClass("govuk-body").get(2).text shouldBe description3
-              document.select("ul").get(1).text shouldBe description4
-              document.select("h1").get(1).text shouldBe chooseReport
-              document.getElementsByTag("legend").get(0).text shouldBe taxYear_2023
-              document.getElementsByClass("govuk-body").get(0).text shouldBe description1_2023
-              document.getElementById("new_tax_year_2_reporting_method_tax_year").`val`() shouldBe "2023"
-              document.getElementsByClass("govuk-form-group").size() shouldBe 3
-            }
-          }
-
-          "render the reporting method selection page for tax years 1 and 2" when {
+          "render the reporting frequency page" when {
             s"within latency period (before 2024) with FS enabled" in {
               setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
+              val thisTaxYear: Int = TAX_YEAR_2023.getYear
               val result = action(fakeRequest)
               val document: Document = Jsoup.parse(contentAsString(result))
 
+              print(s"!!!!!!!!!!!!!!!!!!!!!! $document")
+
+              val tableMessages: (String, String) = getReportingFrequencyTableMessages(currentTaxYear = thisTaxYear)
+              val warningInsetTextMessages: String = getWarningInsetTextMessage(currentTaxYear = thisTaxYear)
+
+              val documentTableC1 = document.getElementsByTag("th")
+              val documentTableC2 = document.getElementsByTag("td")
+              val documentTableR1C1: String = documentTableC1.get(0).text
+              val documentTableR1C2: String = documentTableC2.get(0).text
+              val documentTableR2C1: String = documentTableC1.get(1).text
+              val documentTableR2C2: String = documentTableC2.get(1).text
+
               status(result) shouldBe OK
               if (isAgent) document.title shouldBe titleAgent else document.title shouldBe title
-              document.select("h1:nth-child(1)").text shouldBe heading
-              document.getElementsByClass("govuk-body").get(1).text shouldBe description2
-              document.getElementsByClass("govuk-body").get(2).text shouldBe description3
-              document.select("ul").get(1).text shouldBe description4
-              document.select("h1").get(1).text shouldBe chooseReport
-              document.getElementsByTag("legend").get(0).text shouldBe taxYear_2022
-              document.getElementsByClass("govuk-body").get(0).text shouldBe description1_2023
-              document.getElementById("new_tax_year_1_reporting_method_tax_year").`val`() shouldBe "2022"
-              document.getElementsByTag("legend").get(1).text shouldBe taxYear_2023
-              document.getElementById("new_tax_year_2_reporting_method_tax_year").`val`() shouldBe "2023"
-              document.getElementsByClass("govuk-form-group").size() shouldBe 7
+              document.getElementsByClass("govuk-heading-l margin-bottom-100").get(0).text shouldBe heading
+              document.getElementById("paragraph-1").text shouldBe paragraph1
+              document.getElementById("inset-text-bullet-1").text shouldBe reportingFrequencyUlLi1
+              document.getElementById("inset-text-bullet-2").text shouldBe reportingFrequencyUlLi2
+              documentTableR1C1 shouldBe tableMessages._1
+              documentTableR1C2 shouldBe tableMessages._2
+              documentTableR2C1 shouldBe tableMessages._1
+              documentTableR2C2 shouldBe tableMessages._2
+              document.getElementById("paragraph-2").text shouldBe paragraph2
+              document.getElementById("warning-inset").text shouldBe warningInsetTextMessages
+              document.getElementById("reporting-quarterly-form").getElementsByClass("govuk-fieldset__legend--m").get(1).text shouldBe reportingFrequencyFormH1
+              document.getElementById("reporting-quarterly-form-continue-button").text shouldBe continueButtonText
+
             }
 
             s"within latency period (after 2024) with FS enabled" in {
               setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
+              val thisTaxYear: Int = TAX_YEAR_2024.getYear
               val result = action(fakeRequest)
               val document: Document = Jsoup.parse(contentAsString(result))
 
+              val tableMessages: (String, String) = getReportingFrequencyTableMessages(currentTaxYear = thisTaxYear)
+              val warningInsetTextMessages: String = getWarningInsetTextMessage(currentTaxYear = thisTaxYear)
+
+              val documentTable = document.getElementsByClass("govuk-summary-list").get(0)
+              val documentTableR1C1: String = documentTable.getAllElements.get(0).text
+              val documentTableR1C2: String = documentTable.getAllElements.get(1).text
+              val documentTableR2C1: String = documentTable.getAllElements.get(2).text
+              val documentTableR2C2: String = documentTable.getAllElements.get(3).text
+
               status(result) shouldBe OK
               if (isAgent) document.title shouldBe titleAgent else document.title shouldBe title
-              document.select("h1:nth-child(1)").text shouldBe heading
-              document.getElementsByClass("govuk-body").get(1).text shouldBe description2
-              document.getElementsByClass("govuk-body").get(2).text shouldBe description3
-              document.select("ul").get(1).text shouldBe description4
-              document.select("h1").get(1).text shouldBe chooseReport
-              document.getElementsByTag("legend").get(0).text shouldBe taxYear_2023
-              document.getElementsByClass("govuk-body").get(0).text shouldBe description1_2024
-              document.getElementById("new_tax_year_1_reporting_method_tax_year").`val`() shouldBe "2023"
-              document.getElementsByTag("legend").get(1).text shouldBe taxYear_2024
-              document.getElementById("new_tax_year_2_reporting_method_tax_year").`val`() shouldBe "2024"
-              document.getElementsByClass("govuk-form-group").size() shouldBe 7
-            }
-          }
+              document.getElementsByClass("govuk-heading-l margin-bottom-100").get(0).text shouldBe heading
+              document.getElementById("paragraph-1").text shouldBe paragraph1
+              document.getElementById("inset-text-bullet-1").text shouldBe reportingFrequencyUlLi1
+              document.getElementById("inset-text-bullet-2").text shouldBe reportingFrequencyUlLi2
+              documentTableR1C1 shouldBe tableMessages._1
+              documentTableR1C2 shouldBe tableMessages._2
+              documentTableR2C1 shouldBe tableMessages._1
+              documentTableR2C2 shouldBe tableMessages._2
+              document.getElementById("paragraph-2").text shouldBe paragraph2
+              document.getElementById("warning-inset").text shouldBe warningInsetTextMessages
+              document.getElementById("reporting-quarterly-form").getElementsByClass("govuk-fieldset__legend--m").get(1).text shouldBe reportingFrequencyFormH1
+              document.getElementById("reporting-quarterly-form-continue-button").text shouldBe continueButtonText
 
-          "redirect to Obligations page" when {
-            s"expired latency period and FS enabled" in {
-              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, LATENCY_PERIOD_EXPIRED)
-
-              val expectedRedirectUrl = if (isAgent) controllers.manageBusinesses.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType).url
-              else controllers.manageBusinesses.add.routes.IncomeSourceAddedController.show(incomeSourceType).url
-
-              val result = action(fakeRequest)
-              status(result) shouldBe SEE_OTHER
-              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-            }
-
-            s"no latency period and FS enabled" in {
-              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, NO_LATENCY)
-
-              val expectedRedirectUrl = if (isAgent) controllers.manageBusinesses.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType).url
-              else controllers.manageBusinesses.add.routes.IncomeSourceAddedController.show(incomeSourceType).url
-
-              val result = action(fakeRequest)
-              status(result) shouldBe SEE_OTHER
-              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-            }
-
-            s"non-mandated/voluntary ITSA status and FS enabled" in {
-              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, NON_ELIGIBLE_ITSA_STATUS)
-
-              val expectedRedirectUrl = if (isAgent) controllers.manageBusinesses.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType).url
-              else controllers.manageBusinesses.add.routes.IncomeSourceAddedController.show(incomeSourceType).url
-
-              val result = action(fakeRequest)
-              status(result) shouldBe SEE_OTHER
-              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
             }
           }
 
