@@ -132,18 +132,13 @@ class IncomeSourceReportingMethodController @Inject()(val authActions: AuthActio
       case true =>
         itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
           case true =>
-            getViewModel(incomeSourceType, IncomeSourceId(id)).map {
-              case Some(viewModel) =>
-                Ok(view(
-                  continueAction = submitUrl(isAgent, incomeSourceType),
-                  isAgent = isAgent,
-                  form = IncomeSourceReportingFrequencyForm(),
-                  incomeSourceType = incomeSourceType,
-                  taxDateService = dateService
-                ))
-              case None =>
-                Redirect(redirectUrl(isAgent, incomeSourceType))
-            }
+            Future.successful(Ok(view(
+              continueAction = submitUrl(isAgent, incomeSourceType),
+              isAgent = isAgent,
+              form = IncomeSourceReportingFrequencyForm(),
+              incomeSourceType = incomeSourceType,
+              taxDateService = dateService
+            )))
           case false =>
             Future.successful {
               Redirect(redirectUrl(isAgent, incomeSourceType))
@@ -175,32 +170,6 @@ class IncomeSourceReportingMethodController @Inject()(val authActions: AuthActio
     user.incomeSources.getLatencyDetails(incomeSourceType, incomeSourceId)
   }
 
-  private def getViewModel(incomeSourceType: IncomeSourceType, incomeSourceId: IncomeSourceId)
-                          (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[IncomeSourceReportingMethodViewModel]] = {
-    val currentTaxYear = dateService.getCurrentTaxYearEnd
-    val latencyDetails = getLatencyDetails(incomeSourceType, incomeSourceId.value)
-
-
-    latencyDetails match {
-      case Some(LatencyDetails(_, _, _, taxYear2, _)) if taxYear2.toInt < currentTaxYear =>
-        Future.successful(None)
-      case Some(LatencyDetails(_, taxYear1, taxYear1LatencyIndicator, taxYear2, taxYear2LatencyIndicator)) =>
-        calculationListService.determineTaxYearCrystallised(taxYear1.toInt).flatMap {
-          case true =>
-            Future.successful {
-              Some(IncomeSourceReportingMethodViewModel(latencyYear1 = None, latencyYear2 = Some(LatencyYear(taxYear2, taxYear2LatencyIndicator))))
-            }
-          case false =>
-            Future.successful {
-              Some(IncomeSourceReportingMethodViewModel(latencyYear1 = Some(LatencyYear(taxYear1, taxYear1LatencyIndicator)), latencyYear2 = Some(LatencyYear(taxYear2, taxYear2LatencyIndicator))))
-            }
-        }
-      case _ =>
-        Logger("application").info("Latency details not available")
-        Future.successful(None)
-    }
-  }
-
   def submit(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       handleSubmit(isAgent, incomeSourceType)
@@ -230,13 +199,15 @@ class IncomeSourceReportingMethodController @Inject()(val authActions: AuthActio
 
     IncomeSourceReportingFrequencyForm().bindFromRequest().fold(
       formWithError => {
-        Future(BadRequest(view(
-          continueAction = submitUrl(isAgent, incomeSourceType),
-          isAgent = isAgent,
-          form = formWithError,
-          incomeSourceType = incomeSourceType,
-          taxDateService = dateService)
-        ))
+        Future(
+          BadRequest(view(
+            continueAction = submitUrl(isAgent, incomeSourceType),
+            isAgent = isAgent,
+            form = formWithError,
+            incomeSourceType = incomeSourceType,
+            taxDateService = dateService
+          ))
+        )
       }, {
         _ =>
           Future.successful(

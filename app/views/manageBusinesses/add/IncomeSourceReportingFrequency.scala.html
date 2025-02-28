@@ -19,11 +19,8 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.insettext.InsetText
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukRadios
-@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage
@@ -119,13 +116,19 @@
         ).withFormField(form(IncomeSourceReportingFrequencyForm.reportQuarterlyField)))
 
         @govukButton(Button(
-            content = Text(messages("base.continue")),
-            attributes = Map("id" -> "continue-button")
+            id = Some("continue-button"),
+            content = Text(messages("base.continue"))
         ))
     }
 }
 
-@mainTemplate(pageTitle = messages("dateForm.check.heading"), isAgent = isAgent, backUrl = None, btaNavPartial = user.btaNavPartial) {
+@mainTemplate(
+        pageTitle = messages("dateForm.check.heading"),
+        isAgent = isAgent,
+        form = Some(form),
+        backUrl = None,
+        btaNavPartial = user.btaNavPartial
+    ) {
 
     @hmrcPageHeading(PageHeading(
         text = messages("incomeSources.add.reportingFrequency.h1"),
@@ -140,10 +143,10 @@
 
     @p(id = Some("reporting-frequency-ul")) {
         <ul class="govuk-list govuk-list--bullet">
-            <li id="dropdown-inset-text-bullet-1">
+            <li id="inset-text-bullet-1">
             @messages("incomeSources.add.reportingFrequency.li1")
             </li>
-            <li id="dropdown-inset-text-bullet-2">
+            <li id="inset-text-bullet-2">
             @messages("incomeSources.add.reportingFrequency.li2")
             </li>
         </ul>

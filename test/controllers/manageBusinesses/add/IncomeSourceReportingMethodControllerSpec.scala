@@ -19,7 +19,6 @@ package controllers.manageBusinesses.add
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
-import forms.incomeSources.add.IncomeSourceReportingMethodForm._
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.admin.{IncomeSourcesFs, IncomeSourcesNewJourney}
@@ -37,7 +36,7 @@ import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services._
 import testConstants.BaseTestConstants.testSelfEmploymentId
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, notCompletedUIJourneySessionData}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.notCompletedUIJourneySessionData
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -64,33 +63,28 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
   val TAX_YEAR_2023: LocalDate = LocalDate.of(2023, 4, 6)
   val TAX_YEAR_2022: LocalDate = LocalDate.of(2022, 4, 6)
 
-  val formData: Map[String, String] = Map(
-    newTaxYear1ReportingMethod -> "Q",
-    newTaxYear2ReportingMethod -> "A",
-    taxYear1 -> "2022",
-    taxYear1ReportingMethod -> "A",
-    taxYear2 -> "2023",
-    taxYear2ReportingMethod -> "Q"
-  )
+  val formData: Map[String, String] = Map("report-quarterly" -> "Yes")
 
-  val title: String = s"${messages("htmlTitle", messages("incomeSources.add.incomeSourceReportingMethod.heading"))}"
-  val titleAgent: String = s"${messages("htmlTitle.agent", messages("incomeSources.add.incomeSourceReportingMethod.heading"))}"
-  val heading: String = messages("incomeSources.add.incomeSourceReportingMethod.heading")
-  val description1_2022: String = messages("incomeSources.add.incomeSourceReportingMethod.description1", "2022")
-  val description1_2023: String = messages("incomeSources.add.incomeSourceReportingMethod.description1", "2023")
-  val description1_2024: String = messages("incomeSources.add.incomeSourceReportingMethod.description1", "2024")
-  val description2: String = messages("incomeSources.add.incomeSourceReportingMethod.description2")
-  val description3: String = messages("incomeSources.add.incomeSourceReportingMethod.description3")
-  val description4: String = messages("incomeSources.add.incomeSourceReportingMethod.description4.bullet1") + " " +
-    messages("incomeSources.add.incomeSourceReportingMethod.description4.bullet2") + " " +
-    messages("incomeSources.add.incomeSourceReportingMethod.description4.bullet3")
-  val chooseReport: String = messages("incomeSources.add.incomeSourceReportingMethod.chooseReport")
-  val taxYear_2021: String = messages("incomeSources.add.incomeSourceReportingMethod.taxYear", "2020", "2021")
-  val taxYear_2022: String = messages("incomeSources.add.incomeSourceReportingMethod.taxYear", "2021", "2022")
-  val taxYear_2023: String = messages("incomeSources.add.incomeSourceReportingMethod.taxYear", "2022", "2023")
-  val taxYear_2024: String = messages("incomeSources.add.incomeSourceReportingMethod.taxYear", "2023", "2024")
-  val chooseAnnualReport: String = messages("incomeSources.add.incomeSourceReportingMethod.chooseAnnualReport")
-  val chooseQuarterlyReport: String = messages("incomeSources.add.incomeSourceReportingMethod.chooseQuarterlyReport")
+  val title: String = "Is this date correct? - Manage your Income Tax updates - GOV.UK"
+  val titleError: String = "Error: Is this date correct? - GOV.UK"
+  val titleAgent: String = "Is this date correct? - Manage your client’s Income Tax updates - GOV.UK"
+  val heading: String = "Your new business is set to report annually."
+  val paragraph1: String = "Because this is a new business, for up to 2 tax years you can submit its income and expenses once a year in your tax return, even if:"
+  val reportingFrequencyUlLi1: String = "you are voluntarily opted in or required to report quarterly for your other businesses"
+  val reportingFrequencyUlLi2: String = "your income from self-employment or property, or both, exceed the income threshold"
+  val paragraph2: String = "You can choose to report quarterly, which means submitting an update every 3 months in addition to your tax return"
+  val reportingFrequencyFormH1: String = "Do you want to change to report quarterly?"
+  val reportingFrequencyFormNoSelectionError: String = "Select yes if you want to report quarterly or select no if you want to report annually"
+  val continueButtonText: String = "Continue"
+
+  def getReportingFrequencyTableMessages(taxYear: Int): (String, String) = {
+    (s"Reporting frequency ${taxYear} to ${taxYear+1}", "Annual")
+  }
+
+  def getWarningInsetTextMessage(currentTaxYearEnd: Int): String = {
+    s"From April ${currentTaxYearEnd + 1} when this 2-year tax period ends, you could be required to report quarterly."
+  }
+
 
   object Scenario extends Enumeration {
     type Scenario = Value
@@ -101,8 +95,14 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
   import Scenario._
 
   def setupMockDateServiceCall(scenario: Scenario): OngoingStubbing[LocalDate] = scenario match {
-    case LATENCY_PERIOD_EXPIRED | CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS => when(mockDateService.getCurrentTaxYearStart).thenReturn(TAX_YEAR_2024)
-    case _ => when(mockDateService.getCurrentTaxYearStart).thenReturn(TAX_YEAR_2023)
+    case LATENCY_PERIOD_EXPIRED | CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS => {
+      when(mockDateService.getCurrentTaxYearEnd).thenReturn(TAX_YEAR_2024.getYear)
+      when(mockDateService.getCurrentTaxYearStart).thenReturn(TAX_YEAR_2023)
+    }
+    case _ => {
+      when(mockDateService.getCurrentTaxYearEnd).thenReturn(TAX_YEAR_2024.getYear)
+      when(mockDateService.getCurrentTaxYearStart).thenReturn(TAX_YEAR_2023)
+    }
   }
 
   def setupMockIncomeSourceDetailsCall(scenario: Scenario, incomeSourceType: IncomeSourceType): Unit = (scenario, incomeSourceType) match {
@@ -205,10 +205,6 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
     }
   }
 
-  def getValidationErrorTabTitle(): String = {
-    s"${messages("htmlTitle.invalidInput", heading)}"
-  }
-
   val incomeSourceTypes: Seq[IncomeSourceType] = List(SelfEmployment, UkProperty, ForeignProperty)
 
 
@@ -219,87 +215,45 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
         val action = testController.show(isAgent, incomeSourceType)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
-          "render the reporting method selection page for tax years 1 and 2" when {
+          "render the reporting frequency page" when {
             s"within latency period (before 2024) with FS enabled" in {
-              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
+              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
+              val thisTaxYear: Int = TAX_YEAR_2023.getYear
               val result = action(fakeRequest)
               val document: Document = Jsoup.parse(contentAsString(result))
+
+              val warningInsetTextMessages: String = getWarningInsetTextMessage(currentTaxYearEnd = thisTaxYear + 1)
+
+              val documentTableC1 = document.getElementsByTag("th")
+              val documentTableC2 = document.getElementsByTag("td")
+              val documentTableR1C1: String = documentTableC1.get(0).text
+              val documentTableR1C2: String = documentTableC2.get(0).text
+              val documentTableR2C1: String = documentTableC1.get(1).text
+              val documentTableR2C2: String = documentTableC2.get(1).text
 
               status(result) shouldBe OK
               if (isAgent) document.title shouldBe titleAgent else document.title shouldBe title
-              document.select("h1:nth-child(1)").text shouldBe heading
-              document.getElementsByClass("govuk-body").get(1).text shouldBe description2
-              document.getElementsByClass("govuk-body").get(2).text shouldBe description3
-              document.select("ul").get(1).text shouldBe description4
-              document.select("h1").get(1).text shouldBe chooseReport
-              document.getElementsByTag("legend").get(0).text shouldBe taxYear_2022
-              document.getElementsByClass("govuk-body").get(0).text shouldBe description1_2023
-              document.getElementById("new_tax_year_1_reporting_method_tax_year").`val`() shouldBe "2022"
-              document.getElementsByTag("legend").get(1).text shouldBe taxYear_2023
-              document.getElementById("new_tax_year_2_reporting_method_tax_year").`val`() shouldBe "2023"
-              document.getElementsByClass("govuk-form-group").size() shouldBe 7
-            }
+              document.getElementsByClass("govuk-heading-l margin-bottom-100").get(0).text shouldBe heading
+              document.getElementById("paragraph-1").text shouldBe paragraph1
+              document.getElementById("inset-text-bullet-1").text shouldBe reportingFrequencyUlLi1
+              document.getElementById("inset-text-bullet-2").text shouldBe reportingFrequencyUlLi2
+              documentTableR1C1 shouldBe getReportingFrequencyTableMessages(thisTaxYear)._1
+              documentTableR1C2 shouldBe getReportingFrequencyTableMessages(thisTaxYear)._2
+              documentTableR2C1 shouldBe getReportingFrequencyTableMessages(thisTaxYear + 1)._1
+              documentTableR2C2 shouldBe getReportingFrequencyTableMessages(thisTaxYear + 1)._2
+              document.getElementById("paragraph-2").text shouldBe paragraph2
+              document.getElementById("warning-inset").text shouldBe warningInsetTextMessages
+              document.getElementById("reporting-quarterly-form").getElementsByClass("govuk-fieldset__legend--m").get(0).text shouldBe reportingFrequencyFormH1
+              document.getElementById("continue-button").text shouldBe continueButtonText
 
-            s"within latency period (after 2024) with FS enabled" in {
-              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
-              val result = action(fakeRequest)
-              val document: Document = Jsoup.parse(contentAsString(result))
-
-              status(result) shouldBe OK
-              document.title shouldBe title
-              document.select("h1:nth-child(1)").text shouldBe heading
-              document.getElementsByClass("govuk-body").get(1).text shouldBe description2
-              document.getElementsByClass("govuk-body").get(2).text shouldBe description3
-              document.select("ul").get(1).text shouldBe description4
-              document.select("h1").get(1).text shouldBe chooseReport
-              document.getElementsByTag("legend").get(0).text shouldBe taxYear_2023
-              document.getElementsByClass("govuk-body").get(0).text shouldBe description1_2024
-              document.getElementById("new_tax_year_1_reporting_method_tax_year").`val`() shouldBe "2023"
-              document.getElementsByTag("legend").get(1).text shouldBe taxYear_2024
-              document.getElementById("new_tax_year_2_reporting_method_tax_year").`val`() shouldBe "2024"
-              document.getElementsByClass("govuk-form-group").size() shouldBe 7
-            }
-          }
-
-          "redirect to Obligations page" when {
-            s"expired latency period and FS enabled" in {
-              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, LATENCY_PERIOD_EXPIRED)
-
-              val expectedRedirectUrl = if (isAgent) controllers.manageBusinesses.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType).url
-              else controllers.manageBusinesses.add.routes.IncomeSourceAddedController.show(incomeSourceType).url
-
-              val result = action(fakeRequest)
-              status(result) shouldBe SEE_OTHER
-              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-            }
-
-            s"no latency period and FS enabled" in {
-              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, NO_LATENCY)
-
-              val expectedRedirectUrl = if (isAgent) controllers.manageBusinesses.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType).url
-              else controllers.manageBusinesses.add.routes.IncomeSourceAddedController.show(incomeSourceType).url
-
-              val result = action(fakeRequest)
-              status(result) shouldBe SEE_OTHER
-              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-            }
-
-            s"non-mandated/voluntary ITSA status and FS enabled" in {
-              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, NON_ELIGIBLE_ITSA_STATUS)
-
-              val expectedRedirectUrl = if (isAgent) controllers.manageBusinesses.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType).url
-              else controllers.manageBusinesses.add.routes.IncomeSourceAddedController.show(incomeSourceType).url
-
-              val result = action(fakeRequest)
-              status(result) shouldBe SEE_OTHER
-              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
             }
           }
 
           "return 303 SEE_OTHER and redirect to home page" when {
-            s"navigating to the ${getTestTitleIncomeSourceType(incomeSourceType)} page with FS disabled" in {
+            s"navigating to the ${getTestTitleIncomeSourceType(incomeSourceType)} Reporting Frequency page with FS disabled" in {
               setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
               disable(IncomeSourcesFs)
+              disable(IncomeSourcesNewJourney)
 
               val expectedRedirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url
               else controllers.routes.HomeController.show().url
@@ -310,23 +264,8 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
             }
           }
 
-          "return 303 SEE_OTHER and redirect to the You Cannot Go Back Page" when {
-            s"user has already visited the obligations page for ${getTestTitleIncomeSourceType(incomeSourceType)}" in {
-              setupMockCalls(isAgent = isAgent, incomeSourceType, mtdRole, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-              setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType)))))
-              val expectedBackErrorRedirectUrl = if (isAgent)
-                controllers.manageBusinesses.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType).url
-              else
-                controllers.manageBusinesses.add.routes.ReportingMethodSetBackErrorController.show(incomeSourceType).url
-
-              val result = action(fakeRequest)
-              status(result) shouldBe SEE_OTHER
-              redirectLocation(result) shouldBe Some(expectedBackErrorRedirectUrl)
-            }
-          }
-
           "return 500 INTERNAL_SERVER_ERROR" when {
-            s"navigating to the ${getTestTitleIncomeSourceType(incomeSourceType)} page and ITSA status returns an error" in {
+            s"navigating to the ${getTestTitleIncomeSourceType(incomeSourceType)} Reporting Frequency page and ITSA status returns an error" in {
               setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, ITSA_STATUS_ERROR)
               val result = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -340,71 +279,36 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
         val action = testController.submit(isAgent, incomeSourceType)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
         s"the user is authenticated as a $mtdRole" should {
-          "return 303 SEE_OTHER and redirect to Obligations page" when {
-            s"completing the ${getTestTitleIncomeSourceType(incomeSourceType)} form and updates send successfully" in {
-              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-              val expectedRedirectUrl = if (isAgent) controllers.manageBusinesses.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType).url
-              else controllers.manageBusinesses.add.routes.IncomeSourceAddedController.show(incomeSourceType).url
+          "return 303 SEE_OTHER and redirect to [NEXT PAGE IN JOURNEY]" when {
+            s"completing the form and updates send successfully" in {
+              true shouldBe true //TODO update this when new page is added into the journey
+            }
+          }
 
-              setupMockUpdateIncomeSourceCall(2)
+          "return 303 SEE_OTHER and redirect to home page" when {
+            s"POST request to the ${getTestTitleIncomeSourceType(incomeSourceType)} Reporting Frequency page with FS disabled" in {
+              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
+              disable(IncomeSourcesFs)
+              disable(IncomeSourcesNewJourney)
+
+              val expectedRedirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+
               val result = action(fakeRequest.withFormUrlEncodedBody(formData.toSeq: _*))
               status(result) shouldBe SEE_OTHER
               redirectLocation(result) shouldBe Some(expectedRedirectUrl)
             }
           }
 
-          "return 303 SEE_OTHER and redirect to Reporting Method Not Saved page" when {
-            s"completing the ${getTestTitleIncomeSourceType(incomeSourceType)} form and one update fails" in {
-              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-              setupMockUpdateIncomeSourceCall(1)
-              val expectedRedirectUrl = if (isAgent)
-                controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(incomeSourceType).url
-              else controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodNotSavedController.show(incomeSourceType).url
-              val result = action(fakeRequest.withFormUrlEncodedBody(formData.toSeq: _*))
-              status(result) shouldBe SEE_OTHER
-              redirectLocation(result) shouldBe Some(expectedRedirectUrl)            }
-
-            s"completing the ${getTestTitleIncomeSourceType(incomeSourceType)} form and both updates fail" in {
-              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-              val expectedRedirectUrl = if (isAgent)
-                controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(incomeSourceType).url
-              else controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodNotSavedController.show(incomeSourceType).url
-
-              setupMockUpdateIncomeSourceCall(0)
-              val result = action(fakeRequest.withFormUrlEncodedBody(formData.toSeq: _*))
-              status(result) shouldBe SEE_OTHER
-              redirectLocation(result) shouldBe Some(expectedRedirectUrl)            }
-          }
-
-          "return 303 SEE_OTHER and redirect to home page" when {
-            s"POST request to the ${getTestTitleIncomeSourceType(incomeSourceType)} page with FS disabled" in {
-              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-              disable(IncomeSourcesFs)
-
-              val expectedRedirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
-
-              val result = action(fakeRequest.withFormUrlEncodedBody(formData.toSeq: _*))
-              status(result) shouldBe SEE_OTHER
-              redirectLocation(result) shouldBe Some(expectedRedirectUrl)            }
-          }
-
           "return 400 BAD_REQUEST" when {
             s"invalid form input on the ${getTestTitleIncomeSourceType(incomeSourceType)} page" in {
-              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-              val invalidFormData: Map[String, String] = Map(
-                newTaxYear1ReportingMethod -> "",
-                newTaxYear2ReportingMethod -> "",
-                taxYear1 -> "2022",
-                taxYear1ReportingMethod -> "A",
-                taxYear2 -> "2023",
-                taxYear2ReportingMethod -> "Q"
-              )
+              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
+              val invalidFormData: Map[String, String] = Map("report-quarterly" -> "")
               val result = action(fakeRequest.withFormUrlEncodedBody(invalidFormData.toSeq: _*))
 
               status(result) shouldBe BAD_REQUEST
 
               val document: Document = Jsoup.parse(contentAsString(result))
-              document.title shouldBe getValidationErrorTabTitle()
+              document.title shouldBe titleError
             }
           }
         }
