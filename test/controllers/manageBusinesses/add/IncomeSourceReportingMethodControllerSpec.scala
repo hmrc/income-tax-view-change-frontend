@@ -102,8 +102,14 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
   import Scenario._
 
   def setupMockDateServiceCall(scenario: Scenario): OngoingStubbing[LocalDate] = scenario match {
-    case LATENCY_PERIOD_EXPIRED | CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS => when(mockDateService.getCurrentTaxYearStart).thenReturn(TAX_YEAR_2024)
-    case _ => when(mockDateService.getCurrentTaxYearStart).thenReturn(TAX_YEAR_2023)
+    case LATENCY_PERIOD_EXPIRED | CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS => {
+      when(mockDateService.getCurrentTaxYearEnd).thenReturn(TAX_YEAR_2024.getYear)
+      when(mockDateService.getCurrentTaxYearStart).thenReturn(TAX_YEAR_2023)
+    }
+    case _ => {
+      when(mockDateService.getCurrentTaxYearEnd).thenReturn(TAX_YEAR_2024.getYear)
+      when(mockDateService.getCurrentTaxYearStart).thenReturn(TAX_YEAR_2023)
+    }
   }
 
   def setupMockIncomeSourceDetailsCall(scenario: Scenario, incomeSourceType: IncomeSourceType): Unit = (scenario, incomeSourceType) match {
@@ -226,6 +232,8 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
               val thisTaxYear: Int = TAX_YEAR_2023.getYear
               val result = action(fakeRequest)
               val document: Document = Jsoup.parse(contentAsString(result))
+
+              print(s"!!!!!!!!!!!!!!!!!!!!!! $document")
 
               val tableMessages: (String, String) = getReportingFrequencyTableMessages(currentTaxYear = thisTaxYear)
               val warningInsetTextMessages: String = getWarningInsetTextMessage(currentTaxYear = thisTaxYear)
