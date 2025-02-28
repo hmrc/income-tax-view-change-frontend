@@ -119,6 +119,7 @@
         ).withFormField(form(IncomeSourceReportingFrequencyForm.reportQuarterlyField)))
 
         @govukButton(Button(
+            id = Some("reporting-quarterly-form-continue-button"),
             content = Text(messages("base.continue")),
             attributes = Map("id" -> "continue-button")
         ))
@@ -140,10 +141,10 @@
 
     @p(id = Some("reporting-frequency-ul")) {
         <ul class="govuk-list govuk-list--bullet">
-            <li id="dropdown-inset-text-bullet-1">
+            <li id="inset-text-bullet-1">
             @messages("incomeSources.add.reportingFrequency.li1")
             </li>
-            <li id="dropdown-inset-text-bullet-2">
+            <li id="inset-text-bullet-2">
             @messages("incomeSources.add.reportingFrequency.li2")
             </li>
         </ul>
