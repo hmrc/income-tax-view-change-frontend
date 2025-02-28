@@ -22,6 +22,7 @@ import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.connectors.MockRepaymentHistoryConnector
 import models.admin.PaymentHistoryRefunds
+import models.creditsandrefunds.RefundToTaxPayerViewModel
 import models.repaymentHistory._
 import play.api
 import play.api.Application
@@ -55,39 +56,76 @@ class RefundToTaxPayerControllerSpec extends MockAuthActions
 
   lazy val refundToTaxPayerView: RefundToTaxPayer = app.injector.instanceOf[RefundToTaxPayer]
 
-  val testRepaymentHistoryModel: RepaymentHistoryModel = RepaymentHistoryModel(
-    List(RepaymentHistory(
-      Some(705.2),
-      705.2,
-      Some("BACS"),
-      Some(12345),
-      Some(Vector(
-        RepaymentItem(
-          Vector(
-            RepaymentSupplementItem(
-              Some("002420002231"),
-              Some(3.78),
-              Some(LocalDate.of(2021, 7, 31)),
-              Some(LocalDate.of(2021, 9, 15)),
-              Some(2.01)
-            ),
-            RepaymentSupplementItem(
-              Some("002420002231"),
-              Some(2.63),
-              Some(LocalDate.of(2021, 9, 15)),
-              Some(LocalDate.of(2021, 10, 24)),
-              Some(1.76)
-            ),
-            RepaymentSupplementItem(
-              Some("002420002231"),
-              Some(3.26),
-              Some(LocalDate.of(2021, 10, 24)),
-              Some(LocalDate.of(2021, 11, 30)),
-              Some(2.01))
-          )
+  val testRepaymentHistory: RepaymentHistory = RepaymentHistory(
+    Some(705.2),
+    705.2,
+    Some("BACS"),
+    Some(12345),
+    Some(Vector(
+      RepaymentItem(
+        Vector(
+          RepaymentSupplementItem(
+            Some("002420002231"),
+            Some(3.78),
+            Some(LocalDate.of(2021, 7, 31)),
+            Some(LocalDate.of(2021, 9, 15)),
+            Some(2.01)
+          ),
+          RepaymentSupplementItem(
+            Some("002420002231"),
+            Some(2.63),
+            Some(LocalDate.of(2021, 9, 15)),
+            Some(LocalDate.of(2021, 10, 24)),
+            Some(1.76)
+          ),
+          RepaymentSupplementItem(
+            Some("002420002231"),
+            Some(3.26),
+            Some(LocalDate.of(2021, 10, 24)),
+            Some(LocalDate.of(2021, 11, 30)),
+            Some(2.01))
         )
-      )), Some(LocalDate.of(2021, 7, 23)), Some(LocalDate.of(2021, 7, 21)), "000000003135",
-      status = RepaymentHistoryStatus("A"))
+      )
+    )), Some(LocalDate.of(2021, 7, 23)), Some(LocalDate.of(2021, 7, 21)), "000000003135",
+    status = RepaymentHistoryStatus("A"))
+
+  val testRefundViewModel: RefundToTaxPayerViewModel = RefundToTaxPayerViewModel(
+    Some(705.2),
+    705.2,
+    "BACS",
+    12345,
+    Vector(
+      RepaymentItem(
+        Vector(
+          RepaymentSupplementItem(
+            Some("002420002231"),
+            Some(3.78),
+            Some(LocalDate.of(2021, 7, 31)),
+            Some(LocalDate.of(2021, 9, 15)),
+            Some(2.01)
+          ),
+          RepaymentSupplementItem(
+            Some("002420002231"),
+            Some(2.63),
+            Some(LocalDate.of(2021, 9, 15)),
+            Some(LocalDate.of(2021, 10, 24)),
+            Some(1.76)
+          ),
+          RepaymentSupplementItem(
+            Some("002420002231"),
+            Some(3.26),
+            Some(LocalDate.of(2021, 10, 24)),
+            Some(LocalDate.of(2021, 11, 30)),
+            Some(2.01))
+        )
+      )
+    ), LocalDate.of(2021, 7, 23), LocalDate.of(2021, 7, 21), "000000003135",
+    status = RepaymentHistoryStatus("A")
+  )
+
+  val testRepaymentHistoryModel: RepaymentHistoryModel = RepaymentHistoryModel(
+    List(
+      testRepaymentHistory
     )
   )
 
@@ -109,7 +147,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthActions
 
               val expectedContent: String = refundToTaxPayerView(
                 backUrl = paymentRefundHistoryBackLink(isAgent),
-                repaymentHistoryModel = testRepaymentHistoryModel,
+                viewModel = testRefundViewModel,
                 saUtr = Some(testMtditid),
                 paymentHistoryRefundsEnabled = true,
                 isAgent = isAgent

@@ -25,6 +25,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import connectors.RepaymentHistoryConnector
 import models.admin.PaymentHistoryRefunds
 import models.core.Nino
+import models.creditsandrefunds.RefundToTaxPayerViewModel
 import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -56,14 +57,28 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
     if (isEnabled(PaymentHistoryRefunds)) {
       repaymentHistoryConnector.getRepaymentHistoryByRepaymentId(Nino(user.nino), repaymentRequestNumber).map {
         case repaymentHistoryModel: RepaymentHistoryModel =>
-          auditingService.extendedAudit(RefundToTaxPayerResponseAuditModel(repaymentHistoryModel))
-          Ok(
-            refundToTaxPayerView(
-              repaymentHistoryModel,
-              paymentHistoryRefundsEnabled = true,
-              backUrl, user.saUtr,
-              btaNavPartial = user.btaNavPartial,
-              isAgent = user.isAgent()))
+          repaymentHistoryModel.repaymentsViewerDetails.headOption match {
+            case Some(repaymentHistory) =>
+              auditingService.extendedAudit(RefundToTaxPayerResponseAuditModel(repaymentHistoryModel))
+              val viewModelMaybe = RefundToTaxPayerViewModel.createViewModel(repaymentHistory)
+              viewModelMaybe match {
+                case Left(error) =>
+                  Logger("application").error(s"error constructing view model: ${error.getMessage}")
+                  itvcErrorHandler.showInternalServerError()
+                case Right(viewModel: RefundToTaxPayerViewModel) =>
+                  Ok(
+                    refundToTaxPayerView(
+                      viewModel,
+                      paymentHistoryRefundsEnabled = true,
+                      backUrl, user.saUtr,
+                      btaNavPartial = user.btaNavPartial,
+                      isAgent = user.isAgent()))
+              }
+            case None => {
+              Logger("application").error(s"No repayment details returned")
+              itvcErrorHandler.showInternalServerError()
+            }
+          }
         case error: RepaymentHistoryErrorModel =>
           Logger("application")
             .error(s"${if (user.isAgent()) "[Agent] "}Could not retrieve repayment history" +
@@ -95,7 +110,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
       )
   }
 
-  lazy val homeUrl: Boolean => String = isAgent => if(isAgent) {
+  lazy val homeUrl: Boolean => String = isAgent => if (isAgent) {
     controllers.routes.HomeController.showAgent.url
   } else {
     controllers.routes.HomeController.show().url
