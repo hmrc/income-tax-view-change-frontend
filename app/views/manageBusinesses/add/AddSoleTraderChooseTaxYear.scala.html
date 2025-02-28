@@ -18,7 +18,7 @@
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.helpers.injected.ErrorSummary
-@import forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
+@import forms.manageBusinesses.add.AddSoleTraderChooseTaxYearForm
 @import models.incomeSourceDetails.TaxYear
 
 @this(
@@ -29,7 +29,7 @@
         govukCheckboxes: GovukCheckboxes
 )
 
-@(form: Form[IncomeSourceReportingFrequencyForm], isAgent: Boolean, postAction: Call, currentTaxYear: TaxYear, nextTaxYear: TaxYear)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(form: Form[AddSoleTraderChooseTaxYearForm], isAgent: Boolean, postAction: Call, currentTaxYear: TaxYear, nextTaxYear: TaxYear)(implicit user: auth.MtdItUser[_], messages: Messages)
 
 @mainTemplate(
     pageTitle = messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading"),
@@ -87,7 +87,7 @@
             )
         ),
         errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
-    ).withFormField(form(IncomeSourceReportingFrequencyForm.chooseTaxYearsCheckbox))
+    ).withFormField(form(AddSoleTraderChooseTaxYearForm.chooseTaxYearsCheckbox))
 )
     @govukButton(Button(
         content = Text(messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button")),

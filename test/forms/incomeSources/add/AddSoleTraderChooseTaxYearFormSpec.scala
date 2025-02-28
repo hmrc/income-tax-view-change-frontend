@@ -28,7 +28,7 @@ class AddSoleTraderChooseTaxYearFormSpec extends AnyWordSpec with Matchers {
     "next-year-checkbox" -> nextYear)
   )
 
-  "IncomeSourceReportingFrequencyForm" must {
+  "AddSoleTraderChooseTaxYearForm" must {
     "return a valid form" when {
       "the current year checkbox is checked" in {
         val validForm = AddSoleTraderChooseTaxYearForm().bind(Map("current-year-checkbox" -> "true"))
