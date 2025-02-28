@@ -38,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddSoleTraderChooseTaxYearController @Inject()(authActions: AuthActions,
                                                      addSoleTraderChooseTaxYear: AddSoleTraderChooseTaxYear,
                                                      dateService: DateService,
-                                                     sessionService: SessionService,
+                                                     sessionService: SessionService, // To be included once they are linked up
                                                      val itvcErrorHandler: ItvcErrorHandler,
                                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                                     (implicit val mcc: MessagesControllerComponents,
@@ -61,12 +61,11 @@ class AddSoleTraderChooseTaxYearController @Inject()(authActions: AuthActions,
     }
   }
 
-  def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+  private def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     (isEnabled(IncomeSourcesNewJourney), isAgent) match {
       case (false, false) => Future.successful(Redirect(homePageCall))
       case (false, true) => Future.successful(Redirect(homePageCallAgent))
       case _ =>
-        sessionService.createSession(IncomeSourceReportingFrequencyJourney())
         Future.successful(Ok(addSoleTraderChooseTaxYear(
           IncomeSourceReportingFrequencyForm(),
           isAgent,
@@ -94,24 +93,15 @@ class AddSoleTraderChooseTaxYearController @Inject()(authActions: AuthActions,
             dateService.getCurrentTaxYear.nextYear))
           )
         },
-        form => {
-          val journeyType = IncomeSourceReportingFrequencyJourney()
+        _ => {
 
-          sessionService.getMongo(IncomeSourceReportingFrequencyJourney()).flatMap {
-            case Right(Some(sessionData)) =>
-              val updatedSessionData = IncomeSourceReportingFrequencySourceData(form.currentTaxYear, form.nextTaxYear)
-
-              sessionService.setMongoData(sessionData.copy(incomeSourceReportingFrequencyData = Some(updatedSessionData)))
-
-              Future.successful(Ok(addSoleTraderChooseTaxYear(
-                IncomeSourceReportingFrequencyForm(),
-                isAgent,
-                routes.AddSoleTraderChooseTaxYearController.submit(isAgent),
-                dateService.getCurrentTaxYear,
-                dateService.getCurrentTaxYear.nextYear)))
-            case _ => Future.failed(new Exception(s"failed to retrieve session data for ${journeyType.toString}"))
+          Future.successful(Ok(addSoleTraderChooseTaxYear(
+            IncomeSourceReportingFrequencyForm(),
+            isAgent,
+            routes.AddSoleTraderChooseTaxYearController.submit(isAgent),
+            dateService.getCurrentTaxYear,
+            dateService.getCurrentTaxYear.nextYear)))
           }
-        }
       )
     }.recover {
       case ex =>

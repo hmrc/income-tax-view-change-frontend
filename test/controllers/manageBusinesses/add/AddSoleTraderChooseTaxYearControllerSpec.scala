@@ -52,7 +52,7 @@ class AddSoleTraderChooseTaxYearControllerSpec extends MockAuthActions with Mock
             setupMockGetCurrentTaxYear(TaxYear(2024, 2025))
             enable(IncomeSourcesNewJourney)
 
-            val result: Future[Result] = controller.show(isAgent)(fakeRequestWithActiveSession)
+            val result: Future[Result] = controller.show(isAgent)(fakeGetRequestBasedOnMTDUserType(mtdRole))
 
             status(result) shouldBe OK
           }
@@ -64,7 +64,7 @@ class AddSoleTraderChooseTaxYearControllerSpec extends MockAuthActions with Mock
             setupMockGetCurrentTaxYear(TaxYear(2024, 2025))
             disable(IncomeSourcesNewJourney)
 
-            val result: Future[Result] = controller.show(isAgent)(fakeRequestWithActiveSession)
+            val result: Future[Result] = controller.show(isAgent)(fakeGetRequestBasedOnMTDUserType(mtdRole))
 
             val homeUrl = if (mtdRole == MTDIndividual) {
               controllers.routes.HomeController.show().url
@@ -82,7 +82,7 @@ class AddSoleTraderChooseTaxYearControllerSpec extends MockAuthActions with Mock
             mockSingleBusinessIncomeSourceError()
             enable(IncomeSourcesNewJourney)
 
-            val result: Future[Result] = controller.show(isAgent)(fakeRequestWithActiveSession)
+            val result: Future[Result] = controller.show(isAgent)(fakeGetRequestBasedOnMTDUserType(mtdRole))
 
             status(result) shouldBe INTERNAL_SERVER_ERROR
           }
@@ -123,7 +123,7 @@ class AddSoleTraderChooseTaxYearControllerSpec extends MockAuthActions with Mock
             setupMockGetMongo(Right(Some(UIJourneySessionData(sessionId, journeyType))))
             setupMockSetMongoData(true)
 
-            val result: Future[Result] = controller.submit(isAgent)(fakeRequestWithActiveSession)
+            val result: Future[Result] = controller.submit(isAgent)(fakeGetRequestBasedOnMTDUserType(mtdRole))
 
             status(result) shouldBe BAD_REQUEST
           }
@@ -139,7 +139,7 @@ class AddSoleTraderChooseTaxYearControllerSpec extends MockAuthActions with Mock
             setupMockGetMongo(Right(Some(UIJourneySessionData(sessionId, journeyType))))
             setupMockSetMongoData(true)
 
-            val result: Future[Result] = controller.submit(isAgent)(fakeRequestWithActiveSession)
+            val result: Future[Result] = controller.submit(isAgent)(fakeGetRequestBasedOnMTDUserType(mtdRole))
 
             status(result) shouldBe INTERNAL_SERVER_ERROR
           }
