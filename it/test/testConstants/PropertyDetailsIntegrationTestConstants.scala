@@ -16,10 +16,11 @@
 
 package testConstants
 
-import models.core.AccountingPeriodModel
+import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.PropertyDetailsModel
 import play.api.libs.json.{JsValue, Json}
 import testConstants.BaseIntegrationTestConstants.{getCurrentTaxYearEnd, testLatencyDetails3, testPropertyIncomeId}
+import testConstants.BusinessDetailsIntegrationTestConstants.endYear
 
 import java.time.LocalDate
 
@@ -163,6 +164,20 @@ object PropertyDetailsIntegrationTestConstants {
     incomeSourceType = foreignPropertyIncomeType,
     tradingStartDate = propertyTradingStartDate,
     cessation = None,
+    cashOrAccruals = false,
+    latencyDetails = Some(testLatencyDetails3)
+  )
+
+  val ceasedForeignProperty: PropertyDetailsModel = PropertyDetailsModel(
+    incomeSourceId = testPropertyIncomeId,
+    accountingPeriod = Some(AccountingPeriodModel(
+      start = propertyAccountingStartLocalDate,
+      end = propertyAccounringEndLocalDate
+    )),
+    firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
+    incomeSourceType = foreignPropertyIncomeType,
+    tradingStartDate = propertyTradingStartDate,
+    cessation = Some(CessationModel(Some(LocalDate.of(endYear, 12, 31)), Some("Ceased Reason"))),
     cashOrAccruals = false,
     latencyDetails = Some(testLatencyDetails3)
   )

@@ -112,9 +112,11 @@ case class IncomeSourceDetailsModel(nino: String,
       .map(_.cashOrAccruals)
   }
 
-  def areAllBusinessesCeased: Boolean = businesses.forall(_.isCeased)
+  def areAllBusinessesCeased: Boolean = businesses.forall(_.isCeased) && properties.forall(_.isCeased)
 
-  def isAnyOfActiveBusinessesLatent: Boolean = businesses.filterNot(_.isCeased).exists(_.latencyDetails.nonEmpty)
+  def isAnyOfActiveBusinessesLatent: Boolean = businesses.filterNot(_.isCeased).exists(_.latencyDetails.nonEmpty) ||
+      properties.filterNot(_.isCeased).exists(_.latencyDetails.nonEmpty)
+
 }
 
 case class IncomeSourceDetailsError(status: Int, reason: String) extends IncomeSourceDetailsResponse {
