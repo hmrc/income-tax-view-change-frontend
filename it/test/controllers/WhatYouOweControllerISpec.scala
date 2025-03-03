@@ -101,7 +101,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
 
   def getPath(mtdRole: MTDUserRole): String = {
     if(mtdRole == MTDIndividual) {
-      "/what-you-owe?origin=PTA"
+      "/what-you-owe"
     } else {
       "/agents/what-your-client-owes"
     }
