@@ -349,7 +349,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                 val res = buildGETMTDClient(path +"?id=1040000123", additionalCookies).futureValue
 
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                val summaryListText = "Due date OVERDUE 30 March 2018 Amount £1,200.00 Still to pay £1,200.00"
+                val summaryListText = "Due date Overdue 30 March 2018 Amount £1,200.00 Still to pay £1,200.00"
                 val hmrcCreated = messagesAPI("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
                 val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,200.00"
 
