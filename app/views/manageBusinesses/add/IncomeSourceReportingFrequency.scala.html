@@ -66,19 +66,23 @@
             rows = Seq(
                 Seq(
                     TableRow(
+                        attributes = Map("id" -> "reporting-frequency-table-row-1"),
                         content = Text(messages("incomeSources.add.reportingFrequency.table.c1", taxDateService.getCurrentTaxYearStart.getYear.toString, taxDateService.getCurrentTaxYearEnd.toString)),
                         classes = "govuk-summary-list__key govuk-!-width-one-half"
                     ),
                     TableRow(
+                        attributes = Map("id" -> "reporting-frequency-table-row-2"),
                         content = Text(messages("incomeSources.add.reportingFrequency.table.c2"))
                     )
                 ),
                 Seq(
                     TableRow(
+                        attributes = Map("id" -> "reporting-frequency-table-row-3"),
                         content = Text(messages("incomeSources.add.reportingFrequency.table.c1", (taxDateService.getCurrentTaxYearStart.getYear + 1).toString, (taxDateService.getCurrentTaxYearEnd + 1).toString)),
                         classes = "govuk-summary-list__key govuk-!-width-one-half"
                     ),
                     TableRow(
+                        attributes = Map("id" -> "reporting-frequency-table-row-4"),
                         content = Text(messages("incomeSources.add.reportingFrequency.table.c2"))
                     )
                 )
@@ -133,7 +137,7 @@
     @hmrcPageHeading(PageHeading(
         text = messages("incomeSources.add.reportingFrequency.h1"),
         headingClasses = Some("govuk-heading-l margin-bottom-100"),
-        section = Some(incomeSourceType.messagesSuffix.replace("-", " ").capitalize),
+        section = Some(messages("incomeSources.cease.sole-trader")),
         captionClasses = Some("govuk-caption-l")
     ))
 
