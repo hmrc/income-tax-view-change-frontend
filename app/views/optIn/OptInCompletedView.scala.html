@@ -54,14 +54,16 @@
 @submitUpdatesInSoftware = {
     <div id="optin-completed-view" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
         <h2 id="optin-completed-view-heading" class="govuk-heading-m" >@messages("optin.completedOptIn.submitUpdates")</h2>
-        <p id="optin-completed-view-p3" class="govuk-body" >
+        @p(id = Some("optin-completed-view-p3")){
             @messages("optin.completedOptIn.submitUpdates.desc1.a")
             <a href="@makingTaxDigitalUrl" class="govuk-link govuk-body" target="_blank" rel="noopener noreferrer">
-                @messages("optin.completedOptIn.submitUpdates.desc1.b")
+            @messages("optin.completedOptIn.submitUpdates.desc1.b")
             </a>
-        </p>
+        }
         @if(model.showAnnualReportingAdvice) {
-            <p id="optin-completed-view-p4" class="govuk-body" >@messages("optin.completedOptIn.submitUpdates.annualReportingAdvice")</p>
+            @p(id=Some("optin-completed-view-p4")){
+                @messages("optin.completedOptIn.submitUpdates.annualReportingAdvice")
+            }
         }
     </div>
 }
@@ -70,39 +72,43 @@
     <div id="optin-completed-view" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
         @if(!model.annualWithFollowingYearMandated) {
             <h2 class="govuk-heading-m" >@messages("optin.completedOptIn.futureReporting")</h2>
-            <p id="optin-completed-view-p5" class="govuk-body">
-            @if(model.isCurrentYear) {
-                @messages("optin.completedOptIn.cy.futureReporting.desc1", model.startYear, model.endYear)
-            } else {
-                @messages("optin.completedOptIn.ny.futureReporting.desc1", model.startYear, model.endYear)
+            @p(id=Some("optin-completed-view-p5")){
+                @if(model.isCurrentYear) {
+                    @messages("optin.completedOptIn.cy.futureReporting.desc1", model.startYear, model.endYear)
+                } else {
+                    @messages("optin.completedOptIn.ny.futureReporting.desc1", model.startYear, model.endYear)
+                }
             }
-            </p>
             <ul class="govuk-list govuk-list--bullet">
                 <li>@messages("optin.completedOptIn.futureReporting.p1")</li>
                 <li>@messages("optin.completedOptIn.futureReporting.p2")</li>
             </ul>
 
             @exampleScenarioInset
-            <p class="govuk-body">@messages("optin.completedOptIn.futureReporting.desc2")</p>
+            @p(){
+                @messages("optin.completedOptIn.futureReporting.desc2")
+            }
         } else {
             <h2 class="govuk-heading-m" >@messages("optin.completedOptIn.nymandated.futureReporting")</h2>
-            <p id="optin-completed-view-p5" class="govuk-body">
+            @p(id=Some("optin-completed-view-p5")){
                 @messages("optin.completedOptIn.nymandated.futureReporting.desc1", model.startYear, model.endYear)
-            </p>
+            }
             @annualFollowingInset
-            <p class="govuk-body">@messages("optin.completedOptIn.nymandated.futureReporting.desc2")</p>
+            @p(){
+                @messages("optin.completedOptIn.nymandated.futureReporting.desc2")
+            }
             <ul class="govuk-list govuk-list--bullet">
                 <li>@messages("optin.completedOptIn.nymandated.futureReporting.bullet.p1")</li>
                 <li>@messages("optin.completedOptIn.nymandated.futureReporting.bullet.p2")</li>
             </ul>
         }
 
-        <p id="optin-completed-view-p6" class="govuk-body">
+        @p(id=Some("optin-completed-view-p6")){
             @messages("optin.completedOptIn.incomeThreshold.desc.a")
             <a href="@incomeThresholdUrl" class="govuk-link govuk-body" target="_blank" rel="noopener noreferrer">
             @messages("optin.completedOptIn.incomeThreshold.desc.b")
             </a>
-        </p>
+        }
     </div>
 }
 
