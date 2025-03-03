@@ -22,13 +22,13 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.JourneyType.IncomeSourceReportingFrequencyJourney
 import forms.manageBusinesses.add.AddSoleTraderChooseTaxYearForm
-import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.IncomeSourceReportingFrequencySourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{DateService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.IncomeSourcesUtils
 import views.html.manageBusinesses.add.AddSoleTraderChooseTaxYear
 
 import javax.inject.{Inject, Singleton}
@@ -38,16 +38,13 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddSoleTraderChooseTaxYearController @Inject()(authActions: AuthActions,
                                                      addSoleTraderChooseTaxYear: AddSoleTraderChooseTaxYear,
                                                      dateService: DateService,
-                                                     sessionService: SessionService, // To be included once they are linked up
+                                                     sessionService: SessionService,
                                                      val itvcErrorHandler: ItvcErrorHandler,
                                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                                     (implicit val mcc: MessagesControllerComponents,
                                                      val ec: ExecutionContext,
                                                      val appConfig: FrontendAppConfig)
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
-
-  private lazy val homePageCall: Call = controllers.routes.HomeController.show()
-  private lazy val homePageCallAgent: Call = controllers.routes.HomeController.showAgent
+  extends FrontendController(mcc) with I18nSupport with IncomeSourcesUtils {
 
   private def errorHandler(isAgent: Boolean) = if (isAgent) {
     itvcErrorHandlerAgent
@@ -62,24 +59,23 @@ class AddSoleTraderChooseTaxYearController @Inject()(authActions: AuthActions,
   }
 
   private def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    (isEnabled(IncomeSourcesNewJourney), isAgent) match {
-      case (false, false) => Future.successful(Redirect(homePageCall))
-      case (false, true) => Future.successful(Redirect(homePageCallAgent))
-      case _ =>
-        Future.successful(Ok(addSoleTraderChooseTaxYear(
-          AddSoleTraderChooseTaxYearForm(),
-          isAgent,
-          routes.AddSoleTraderChooseTaxYearController.submit(isAgent),
-          dateService.getCurrentTaxYear,
-          dateService.getCurrentTaxYear.nextYear))
-        )
+    withNewIncomeSourcesFS {
+      sessionService.createSession(IncomeSourceReportingFrequencyJourney())
+
+      Future.successful(Ok(addSoleTraderChooseTaxYear(
+        AddSoleTraderChooseTaxYearForm(),
+        isAgent,
+        routes.AddSoleTraderChooseTaxYearController.submit(isAgent),
+        dateService.getCurrentTaxYear,
+        dateService.getCurrentTaxYear.nextYear))
+      )
     }
   }.recover {
     case ex =>
       Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
       errorHandler(isAgent).showInternalServerError()
   }
-  
+
 
   def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user => {
@@ -93,15 +89,24 @@ class AddSoleTraderChooseTaxYearController @Inject()(authActions: AuthActions,
             dateService.getCurrentTaxYear.nextYear))
           )
         },
-        _ => {
+        form => {
+          val journeyType = IncomeSourceReportingFrequencyJourney()
 
-          Future.successful(Ok(addSoleTraderChooseTaxYear(
-            AddSoleTraderChooseTaxYearForm(),
-            isAgent,
-            routes.AddSoleTraderChooseTaxYearController.submit(isAgent),
-            dateService.getCurrentTaxYear,
-            dateService.getCurrentTaxYear.nextYear)))
+          sessionService.getMongo(journeyType).flatMap {
+            case Right(Some(sessionData)) =>
+              val updatedSessionData = IncomeSourceReportingFrequencySourceData(form.currentTaxYear, form.nextTaxYear)
+
+              sessionService.setMongoData(sessionData.copy(incomeSourceReportingFrequencyData = Some(updatedSessionData)))
+              Future.successful(Ok(addSoleTraderChooseTaxYear(
+                AddSoleTraderChooseTaxYearForm(),
+                isAgent,
+                routes.AddSoleTraderChooseTaxYearController.submit(isAgent),
+                dateService.getCurrentTaxYear,
+                dateService.getCurrentTaxYear.nextYear)))
+
+            case _ => Future.failed(new Exception(s"failed to retrieve session data for journey ${journeyType.toString}"))
           }
+        }
       )
     }.recover {
       case ex =>
