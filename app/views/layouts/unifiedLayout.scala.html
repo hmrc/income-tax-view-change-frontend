@@ -37,7 +37,7 @@
     hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
     backLink: components.back_link,
     backLinkFallback: BackLinkWithFallback,
-    languageSelection: components.languageSelection,
+    languageSwitch: HmrcLanguageSelect,
     mainContentLayout: mainContentLayout,
     scripts: Scripts,
     a: link
@@ -122,7 +122,15 @@
 
 @beforeContentBlock = {
     @{btaNavPartial.getOrElse(())}
-        @languageSelection()
+
+        <div id="language-switch">
+            @languageSwitch(LanguageSelect(
+                if (messages.lang.code == "cy") Cy else En,
+                (En, controllers.routes.LocalLanguageController.switchToLanguage("english").url),
+                (Cy, controllers.routes.LocalLanguageController.switchToLanguage("cymraeg").url)
+            ))
+        </div>
+
         @if(useFallbackBackLink) {
             @backUrl.map(backLinkFallback(_, gatewayPage))
         } else {
