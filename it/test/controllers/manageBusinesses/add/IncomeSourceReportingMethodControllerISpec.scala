@@ -16,18 +16,14 @@
 
 package controllers.manageBusinesses.add
 
-import audit.models.IncomeSourceReportingMethodAuditModel
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
-import helpers.servicemocks.ITSAStatusDetailsStub.stubGetITSAStatusDetailsError
-import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import models.admin.{IncomeSourcesFs, NavBarFs}
+import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import models.admin.{IncomeSourcesFs, IncomeSourcesNewJourney, NavBarFs}
 import models.incomeSourceDetails._
-import models.updateIncomeSource.UpdateIncomeSourceResponseModel
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import play.api.libs.json.Json
+import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.{DateService, SessionService}
 import testConstants.BaseIntegrationTestConstants._
@@ -149,13 +145,14 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
             s"render the ${incomeSourceType.journeyType} Reporting Method page" when {
-              val currentTaxYear = dateService.getCurrentTaxYearEnd
-              val taxYear1: Int = currentTaxYear
-              val taxYear2: Int = currentTaxYear + 1
-              val taxYear1TYS: String = s"${taxYear1 - 1}-$taxYear1"
-              val taxYear2TYS: String = s"${taxYear2 - 1}-$taxYear2"
+              val currentTaxYear = dateService.getCurrentTaxYearStart
+              val taxYear1: Int = currentTaxYear.getYear
+              val taxYear2: Int = taxYear1 + 1
+              val taxYear1TYS: String = s"Reporting frequency $taxYear1 to $taxYear2"
+              val taxYear2TYS: String = s"Reporting frequency $taxYear2 to ${taxYear2+1}"
               "user is within latency period (before 23/24) - tax year 1 not crystallised" in {
                 enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
@@ -167,15 +164,16 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, "incomeSources.add.incomeSourceReportingMethod.heading"),
-                  elementTextBySelectorList("#add-uk-property-reporting-method-form", "div:nth-of-type(3)", "legend")(s"Tax year $taxYear1TYS"),
-                  elementTextBySelectorList("#add-uk-property-reporting-method-form", "div:nth-of-type(7)", "legend")(s"Tax year $taxYear2TYS")
+                  pageTitle(mtdUserRole, "dateForm.check.heading"),
+                  elementTextByID("reporting-frequency-table-row-1")(taxYear1TYS),
+                  elementTextByID("reporting-frequency-table-row-3")(taxYear2TYS)
                 )
 
                 sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
               }
               "user is within latency period (before 23/24) - tax year 1 crystallised" in {
                 enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
@@ -188,14 +186,15 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
 
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, "incomeSources.add.incomeSourceReportingMethod.heading"),
-                  elementCountBySelector("#add-uk-property-reporting-method-form > legend:nth-of-type(2)")(0),
-                  elementTextBySelectorList("#add-uk-property-reporting-method-form", "legend:nth-of-type(1)")(s"Tax year 2024-2025")
+                  pageTitle(mtdUserRole, "dateForm.check.heading"),
+                  elementTextByID("reporting-frequency-table-row-1")(taxYear1TYS),
+                  elementTextByID("reporting-frequency-table-row-3")(taxYear2TYS)
                 )
                 sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
               }
               "user is within latency period (after 23/24) - tax year 1 not crystallised" in {
                 enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
@@ -206,14 +205,15 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, "incomeSources.add.incomeSourceReportingMethod.heading"),
-                  elementTextBySelectorList("#add-uk-property-reporting-method-form", "div:nth-of-type(3)", "legend")(s"Tax year $taxYear1TYS"),
-                  elementTextBySelectorList("#add-uk-property-reporting-method-form", "div:nth-of-type(7)", "legend")(s"Tax year $taxYear2TYS")
+                  pageTitle(mtdUserRole, "dateForm.check.heading"),
+                  elementTextByID("reporting-frequency-table-row-1")(taxYear1TYS),
+                  elementTextByID("reporting-frequency-table-row-3")(taxYear2TYS)
                 )
                 sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
               }
               "user is within latency period (after 23/24) - tax year 1 crystallised" in {
                 enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
@@ -225,194 +225,14 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
 
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, "incomeSources.add.incomeSourceReportingMethod.heading"),
-                  elementCountBySelector("#add-uk-property-reporting-method-form > legend:nth-of-type(2)")(0),
-                  elementTextBySelectorList("#add-uk-property-reporting-method-form", "legend:nth-of-type(1)")(s"Tax year $taxYear1TYS")
+                  pageTitle(mtdUserRole, "dateForm.check.heading"),
+                  elementTextByID("reporting-frequency-table-row-1")(taxYear1TYS),
+                  elementTextByID("reporting-frequency-table-row-3")(taxYear2TYS)
                 )
                 sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
               }
-            }
-
-            s"redirect to the ${incomeSourceType.journeyType} Obligations page" when {
-              "user is out of latency period (before 23/24)" in {
-                enable(IncomeSourcesFs)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, false))
-                await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
-                ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYear1YYYYtoYY)
-                CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants
-                  .successResponseNonCrystallised.toString())
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(redirectUrl(incomeSourceType, mtdUserRole))
-                )
-              }
-              "user is out of latency period (after 23/24)" in {
-                enable(IncomeSourcesFs)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, false))
-                await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
-                ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYear1YYYYtoYY)
-                CalculationListStub.stubGetCalculationList(testNino, taxYear1YYtoYY)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(redirectUrl(incomeSourceType, mtdUserRole))
-                )
-              }
-              "user is out of latency period (after 23/24) and Get ITSA Status is NOT_FOUND" in {
-                enable(IncomeSourcesFs)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, false))
-                await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
-                ITSAStatusDetailsStub.stubNotFoundForGetITSAStatusDetails(taxYear1YYYYtoYY)
-                CalculationListStub.stubGetCalculationList(testNino, taxYear1YYtoYY)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(redirectUrl(incomeSourceType, mtdUserRole))
-                )
-              }
-            }
-            "500 INTERNAL_SERVER_ERROR" when {
-              "API 1171 returns an error" in {
-                enable(IncomeSourcesFs)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(INTERNAL_SERVER_ERROR, IncomeSourceDetailsError(INTERNAL_SERVER_ERROR, "ISE"))
-                await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-                result should have(httpStatus(INTERNAL_SERVER_ERROR))
-              }
-              "API 1404 returns an error" in {
-                enable(IncomeSourcesFs)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, allBusinessesAndPropertiesInLatencyPeriod(legacyLatencyDetails))
-                await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
-                ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYear1YYYYtoYYForTimeMachineRemoval)
-                ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", currentTaxYearRange)
-                CalculationListStub.stubGetLegacyCalculationListError(testNino, ((taxYear1 - 2).toString))
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-                result should have(httpStatus(INTERNAL_SERVER_ERROR))
-              }
-              "API 1878 returns an error" in {
-                enable(IncomeSourcesFs)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, allBusinessesAndPropertiesInLatencyPeriod(latencyDetails))
-                await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
-                stubGetITSAStatusDetailsError(currentTaxYear1YY)
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-                result should have(httpStatus(INTERNAL_SERVER_ERROR))
-              }
-              "API 1896 returns an error" in {
-                enable(IncomeSourcesFs)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, allBusinessesAndPropertiesInLatencyPeriod(latencyDetails2))
-                await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
-                ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYear1YYYYtoYYForTimeMachineRemoval)
-                ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", currentTaxYearRange)
-                CalculationListStub.stubGetCalculationListError(testNino, legacyTaxYearRange)
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                result should have(httpStatus(INTERNAL_SERVER_ERROR))
-              }
-            }
-          }
+            }}
           testAuthFailures(path, mtdUserRole)
-        }
-      }
-
-      s"POST $path" when {
-        s"a user is a $mtdUserRole" that {
-          "is authenticated, with a valid enrolment" should {
-            s"303 SEE_OTHER - redirect to ${redirectUrl(incomeSourceType, mtdUserRole)}" when {
-              "user completes the form and API 1776 updateIncomeSource returns a success response - UK Property" in {
-                enable(IncomeSourcesFs)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
-                await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
-                CalculationListStub.stubGetCalculationList(testNino, taxYear1YYtoYY)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-                IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel("2024-01-31T09:26:17Z")))
-
-                val result = buildPOSTMTDPostClient(path, additionalCookies, validFormData).futureValue
-                AuditStub.verifyAuditContainsDetail(
-                  IncomeSourceReportingMethodAuditModel(isSuccessful = true, incomeSourceType.journeyType, "ADD",
-                    "Annually", taxYearYYYYtoYYYY, businessName(incomeSourceType))(getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail
-                )
-
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(redirectUrl(incomeSourceType, mtdUserRole))
-                )
-              }
-            }
-            s"303 SEE_OTHER - redirect to ${errorRedirectUrl(incomeSourceType, mtdUserRole)}" when {
-              "API 1776 updateIncomeSource returns a failure response" in {
-                enable(IncomeSourcesFs)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, allBusinessesAndPropertiesInLatencyPeriod(latencyDetails))
-                await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
-                ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYear1YYYYtoYYForTimeMachineRemoval)
-                IncomeTaxViewChangeStub.stubUpdateIncomeSourceError()
-
-                val result = buildPOSTMTDPostClient(path, additionalCookies, validFormData).futureValue
-
-                AuditStub.verifyAuditContainsDetail(
-                  IncomeSourceReportingMethodAuditModel(isSuccessful = false, incomeSourceType.journeyType, "ADD",
-                    "Annually", taxYearYYYYtoYYYY, businessName(incomeSourceType))(getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail
-                )
-
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(errorRedirectUrl(incomeSourceType, mtdUserRole))
-                )
-              }
-            }
-            "400 BAD_REQUEST" when {
-              "user does not complete the form - UK Property" in {
-                enable(IncomeSourcesFs)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
-                await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
-                CalculationListStub.stubGetCalculationList(testNino, taxYear1YYtoYY)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-                val invalidFormData: Map[String, Seq[String]] = Map(
-                  "new_tax_year_1_reporting_method" -> Seq(),
-                  "new_tax_year_2_reporting_method" -> Seq(),
-                  "new_tax_year_1_reporting_method_tax_year" -> Seq(),
-                  "tax_year_1_reporting_method" -> Seq("Q"),
-                  "new_tax_year_2_reporting_method_tax_year" -> Seq(),
-                  "tax_year_2_reporting_method" -> Seq("Q")
-                )
-
-                val result = buildPOSTMTDPostClient(path, additionalCookies, invalidFormData).futureValue
-                result should have(
-                  httpStatus(BAD_REQUEST)
-                )
-              }
-            }
-          }
-          testAuthFailures(path, mtdUserRole, optBody = Some(validFormData))
         }
       }
     }
