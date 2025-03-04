@@ -21,12 +21,12 @@ import enums.{MTDIndividual, MTDUserRole}
 import helpers.WiremockHelper
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.admin.{OptOutFs, ReportingFrequencyPage}
-import models.itsaStatus.ITSAStatus.{Annual, Mandated, Voluntary, NoStatus}
+import models.itsaStatus.ITSAStatus.{Annual, Mandated, NoStatus, Voluntary}
 import org.jsoup.Jsoup
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import testConstants.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponseWoMigration, businessWithLatency, foreignPropertyAndCeasedBusiness}
+import testConstants.IncomeSourceIntegrationTestConstants._
 
 class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 
@@ -92,7 +92,8 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   elementTextBySelector(optInOptOutLinks(1))("Opt out of quarterly reporting and report annually")
                 )
                 result shouldNot have(
-                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency")
+                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency"),
+                    elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
                 )
               }
             }
@@ -119,7 +120,8 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   elementTextBySelector(optInOptOutLinks(1))("Opt in to quarterly reporting")
                 )
                 result shouldNot have(
-                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency")
+                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency"),
+                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
                 )
               }
             }
@@ -147,7 +149,8 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   elementTextBySelector(optInOptOutLinks(2))(s"Opt in to quarterly reporting from the $nextStartYear to $nextEndYear tax year onwards")
                 )
                 result shouldNot have(
-                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency")
+                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency"),
+                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
                 )
               }
             }
@@ -176,7 +179,8 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   elementTextBySelector(optInOptOutLinks(2))(s"Opt out of quarterly reporting and report annually from the $nextStartYear to $nextEndYear tax year onwards")
                 )
                 result shouldNot have(
-                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency")
+                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency"),
+                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
                 )
               }
             }
@@ -203,7 +207,8 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   elementTextBySelector(optInOptOutLinks(1))(s"Opt in to quarterly reporting for the $currentStartYear to $currentEndYear tax year")
                 )
                 result shouldNot have(
-                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency")
+                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency"),
+                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
                 )
               }
 
@@ -228,7 +233,8 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   elementTextBySelector(optInOptOutLinks(1))(s"Opt in to quarterly reporting from the $nextStartYear to $nextEndYear tax year onwards")
                 )
                 result shouldNot have(
-                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency")
+                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency"),
+                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
                 )
               }
             }
@@ -256,7 +262,8 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   elementTextBySelector(optInOptOutLinks(1))(s"Opt out of quarterly reporting and report annually from the $nextStartYear to $nextEndYear tax year onwards")
                 )
                 result shouldNot have(
-                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency")
+                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency"),
+                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
                 )
               }
             }
@@ -285,7 +292,8 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   elementTextBySelector(optInOptOutLinks(2))(s"Opt in to quarterly reporting from the $nextStartYear to $nextEndYear tax year onwards")
                 )
                 result shouldNot have(
-                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency")
+                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency"),
+                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
                 )
               }
             }
@@ -314,7 +322,8 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   elementTextBySelector(optInOptOutLinks(2))(s"Opt in to quarterly reporting")
                 )
                 result shouldNot have(
-                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency")
+                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency"),
+                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
                 )
               }
             }
@@ -324,7 +333,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 enable(ReportingFrequencyPage)
                 enable(OptOutFs)
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignAndSoleTraderCeasedBusiness)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                   dateService.getCurrentTaxYear,
                   Voluntary,
@@ -401,12 +410,12 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 )
               }
             }
-            "have latency related information section" when {
-              "any of the business is latent" in {
+            "has a ceased business warning" when {
+              "all businesses have ceased" in {
                 enable(ReportingFrequencyPage)
                 enable(OptOutFs)
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessWithLatency)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignAndSoleTraderCeasedBusiness)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                   dateService.getCurrentTaxYear,
                   Voluntary,
@@ -420,26 +429,52 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "reporting.frequency.title"),
-                  elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency"),
-                  elementTextByID("rf-latency-para1")("For tax years you report quarterly, you can separately choose to report annually for any new sole trader or property income source:"),
-                  elementTextByID("rf-latency-para1-bullet1")("started less than 2 years ago"),
-                  elementTextByID("rf-latency-para1-bullet2")("that you start in future"),
-                  elementTextByID("rf-latency-para2")("This option is available to new businesses:"),
-                  elementTextByID("rf-latency-para2-bullet1")("for up to 2 tax years"),
-                  elementTextByID("rf-latency-para2-bullet2")("only when you report quarterly for your other businesses"),
-                  elementTextByID("rf-latency-para2-bullet3")("even if your income from self-employment or property, or both, exceeds the income threshold"),
-                  elementTextByID("rf-latency-small-heading")("How to change a new income source’s reporting frequency"),
-                  elementTextByID("rf-latency-para3-text")("You can do this at any time in the all businesses section")
+                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
                 )
+              }
+            }
 
-                if(mtdUserRole == MTDIndividual) {
-                  result should have(
-                    elementAttributeBySelector(latencyDetailsLink, "href")("/report-quarterly/income-and-expenses/view/manage-your-businesses")
+            "have latency related information section" when {
+              Seq(("sole trader", businessWithLatency), ("property", propertyWithLatency), ("all", allBusinessesWithLatency)).foreach { response =>
+                s"${response._1} business is latent" in {
+                  enable(ReportingFrequencyPage)
+                  enable(OptOutFs)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, response._2)
+                  ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+                    dateService.getCurrentTaxYear,
+                    Voluntary,
+                    Annual,
+                    Annual
                   )
-                } else {
+
+                  stubCalculationListResponseBody("2022")
+
+                  val result = buildGETMTDClient(path, additionalCookies).futureValue
                   result should have(
-                    elementAttributeBySelector(latencyDetailsLink, "href")("/report-quarterly/income-and-expenses/view/agents/manage-your-businesses")
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, "reporting.frequency.title"),
+                    elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency"),
+                    elementTextByID("rf-latency-para1")("For tax years you report quarterly, you can separately choose to report annually for any new sole trader or property income source:"),
+                    elementTextByID("rf-latency-para1-bullet1")("started less than 2 years ago"),
+                    elementTextByID("rf-latency-para1-bullet2")("that you start in future"),
+                    elementTextByID("rf-latency-para2")("This option is available to new businesses:"),
+                    elementTextByID("rf-latency-para2-bullet1")("for up to 2 tax years"),
+                    elementTextByID("rf-latency-para2-bullet2")("only when you report quarterly for your other businesses"),
+                    elementTextByID("rf-latency-para2-bullet3")("even if your income from self-employment or property, or both, exceeds the income threshold"),
+                    elementTextByID("rf-latency-small-heading")("How to change a new income source’s reporting frequency"),
+                    elementTextByID("rf-latency-para3-text")("You can do this at any time in the all businesses section")
                   )
+
+                  if (mtdUserRole == MTDIndividual) {
+                    result should have(
+                      elementAttributeBySelector(latencyDetailsLink, "href")("/report-quarterly/income-and-expenses/view/manage-your-businesses")
+                    )
+                  } else {
+                    result should have(
+                      elementAttributeBySelector(latencyDetailsLink, "href")("/report-quarterly/income-and-expenses/view/agents/manage-your-businesses")
+                    )
+                  }
                 }
               }
             }
