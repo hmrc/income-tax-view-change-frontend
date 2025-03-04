@@ -129,7 +129,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
       s"POST $path" when {
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
-            "redirect to IncomeSourceReportingMethodController" when {
+            "redirect to IncomeSourceReportingFrequencyController" when {
               "user selects 'confirm and continue'" in {
                 enable(IncomeSourcesFs)
                 enable(IncomeSourcesNewJourney)
@@ -157,7 +157,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
                 result should have(
                   httpStatus(SEE_OTHER),
-                  redirectURI(controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodController.show(isAgent = mtdUserRole != MTDIndividual, incomeSourceType).url)
+                  redirectURI(controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.show(isAgent = mtdUserRole != MTDIndividual, incomeSourceType).url)
                 )
               }
             }

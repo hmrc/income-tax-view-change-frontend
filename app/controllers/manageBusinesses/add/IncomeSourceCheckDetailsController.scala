@@ -172,7 +172,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
 
       val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>{
         if(isEnabled(IncomeSourcesNewJourney)){
-          controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url
+          controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.show(isAgent, incomeSourceType).url
         }else{
           if(isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
         }

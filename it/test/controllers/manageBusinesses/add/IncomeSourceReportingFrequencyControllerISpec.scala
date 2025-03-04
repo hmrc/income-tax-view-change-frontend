@@ -34,7 +34,7 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 import java.time.LocalDate
 import java.time.Month.APRIL
 
-class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
+class IncomeSourceReportingFrequencyControllerISpec extends ControllerISpecHelper {
   override val dateService: DateService = app.injector.instanceOf[DateService] //overridden for TYS as implemented with 2023 elsewhere
 
   def redirectUrl(incomeSourceType: IncomeSourceType, mtdRole: MTDUserRole): String = {
@@ -128,15 +128,6 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
     }
   }
 
-  val validFormData: Map[String, Seq[String]] = Map(
-    "new_tax_year_1_reporting_method" -> Seq("A"),
-    "new_tax_year_2_reporting_method" -> Seq("A"),
-    "new_tax_year_1_reporting_method_tax_year" -> Seq(taxYear1.toString),
-    "tax_year_1_reporting_method" -> Seq("Q"),
-    "new_tax_year_2_reporting_method_tax_year" -> Seq(taxYear2.toString),
-    "tax_year_2_reporting_method" -> Seq("Q")
-  )
-
   List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
     mtdAllRoles.foreach { mtdUserRole =>
       val path = getPath(mtdUserRole, incomeSourceType)
@@ -164,7 +155,7 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, "dateForm.check.heading"),
+                  pageTitle(mtdUserRole, "incomeSources.add.reportingFrequency.h1"),
                   elementTextByID("reporting-frequency-table-row-1")(taxYear1TYS),
                   elementTextByID("reporting-frequency-table-row-3")(taxYear2TYS)
                 )
@@ -186,7 +177,7 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
 
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, "dateForm.check.heading"),
+                  pageTitle(mtdUserRole, "incomeSources.add.reportingFrequency.h1"),
                   elementTextByID("reporting-frequency-table-row-1")(taxYear1TYS),
                   elementTextByID("reporting-frequency-table-row-3")(taxYear2TYS)
                 )
@@ -205,7 +196,7 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, "dateForm.check.heading"),
+                  pageTitle(mtdUserRole, "incomeSources.add.reportingFrequency.h1"),
                   elementTextByID("reporting-frequency-table-row-1")(taxYear1TYS),
                   elementTextByID("reporting-frequency-table-row-3")(taxYear2TYS)
                 )
@@ -225,7 +216,7 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
 
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, "dateForm.check.heading"),
+                  pageTitle(mtdUserRole, "incomeSources.add.reportingFrequency.h1"),
                   elementTextByID("reporting-frequency-table-row-1")(taxYear1TYS),
                   elementTextByID("reporting-frequency-table-row-3")(taxYear2TYS)
                 )

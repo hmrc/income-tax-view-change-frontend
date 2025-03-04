@@ -17,7 +17,6 @@
 package controllers.manageBusinesses.add
 
 import audit.AuditingService
-import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
@@ -25,15 +24,8 @@ import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType, SelfEmp
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.incomeSources.add.IncomeSourceReportingMethodForm
 import forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
-import models.ReportingFrequencyViewModel
-import models.admin.{IncomeSourcesNewJourney, ReportingFrequencyPage}
-import models.core.IncomeSourceId
-import models.incomeSourceDetails.viewmodels.IncomeSourceReportingMethodViewModel
-import models.incomeSourceDetails.{AddIncomeSourceData, LatencyDetails, LatencyYear, UIJourneySessionData}
-import models.optout.{OptOutMultiYearViewModel, OptOutOneYearViewModel}
-import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
-import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services._
@@ -43,27 +35,26 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
 import viewUtils.ReportingFrequencyViewUtils
-import views.html.ReportingFrequencyView
 import views.html.errorPages.templates.ErrorTemplate
-import views.html.manageBusinesses.add.{IncomeSourceReportingFrequency, IncomeSourceReportingMethod}
+import views.html.manageBusinesses.add.IncomeSourceReportingFrequency
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceReportingMethodController @Inject()(val authActions: AuthActions,
-                                                      val updateIncomeSourceService: UpdateIncomeSourceService,
-                                                      val itsaStatusService: ITSAStatusService,
-                                                      val calculationListService: CalculationListService,
-                                                      val auditingService: AuditingService,
-                                                      val view: IncomeSourceReportingFrequency,
-                                                      val sessionService: SessionService,
-                                                      val itvcErrorHandler: ItvcErrorHandler,
-                                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                                      val errorTemplate: ErrorTemplate,
-                                                      val optOutService: OptOutService,
-                                                      val optInService: OptInService,
-                                                      val reportingFrequencyViewUtils: ReportingFrequencyViewUtils)
-                                                     (implicit val appConfig: FrontendAppConfig,
+class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthActions,
+                                                         val updateIncomeSourceService: UpdateIncomeSourceService,
+                                                         val itsaStatusService: ITSAStatusService,
+                                                         val calculationListService: CalculationListService,
+                                                         val auditingService: AuditingService,
+                                                         val view: IncomeSourceReportingFrequency,
+                                                         val sessionService: SessionService,
+                                                         val itvcErrorHandler: ItvcErrorHandler,
+                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                                         val errorTemplate: ErrorTemplate,
+                                                         val optOutService: OptOutService,
+                                                         val optInService: OptInService,
+                                                         val reportingFrequencyViewUtils: ReportingFrequencyViewUtils)
+                                                        (implicit val appConfig: FrontendAppConfig,
                                                       val dateService: DateService,
                                                       mcc: MessagesControllerComponents,
                                                       val ec: ExecutionContext
@@ -87,7 +78,7 @@ class IncomeSourceReportingMethodController @Inject()(val authActions: AuthActio
     else routes.IncomeSourceAddedController.show(incomeSourceType).url
 
   lazy val submitUrl: (Boolean, IncomeSourceType) => Call = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
-    controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodController.submit(isAgent, incomeSourceType)
+    controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.submit(isAgent, incomeSourceType)
   
   def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>

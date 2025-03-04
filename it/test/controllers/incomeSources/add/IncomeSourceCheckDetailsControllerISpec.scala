@@ -129,7 +129,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
       s"POST $path" when {
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
-            "redirect to IncomeSourceReportingMethodController" when {
+            "redirect to IncomeSourceReportingFrequencyController" when {
               "user selects 'confirm and continue'" in {
                 enable(IncomeSourcesFs)
                 disable(NavBarFs)

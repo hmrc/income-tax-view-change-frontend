@@ -1282,7 +1282,12 @@ incomeSources.add.addIncomeSources.tableHead.dateStarted            = Date start
 incomeSources.add.addIncomeSources.tableHead.dateEnded              = Date ended
 incomeSources.add.addIncomeSources.unknown                          = Unknown
 
-incomeSources.add.reportingFrequency.h1                             = Your new business is set to report annually.
+incomeSources.add.reportingFrequency.sole-trader                    = Sole trader
+incomeSources.add.reportingFrequency.uk-property                    = UK property
+incomeSources.add.reportingFrequency.foreign-property               = Foreign property
+incomeSources.add.reportingFrequency.title                          = Your new business is set to report annually
+incomeSources.add.reportingFrequency.h1                             = Your new business is set to report annually
+incomeSources.add.reportingFrequency.h1                             = Your new business is set to report annually
 incomeSources.add.reportingFrequency.p1                             = Because this is a new business, for up to 2 tax years you can submit its income and expenses once a year in your tax return, even if:
 incomeSources.add.reportingFrequency.p2                             = You can choose to report quarterly, which means submitting an update every 3 months in addition to your tax return
 incomeSources.add.reportingFrequency.inset                          = From April {0} when this 2-year tax period ends, you could be required to report quarterly.
