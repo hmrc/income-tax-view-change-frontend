@@ -17,6 +17,7 @@
 package controllers.manageBusinesses.add
 
 import controllers.ControllerISpecHelper
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.IncomeSourcesNewJourney
@@ -27,14 +28,18 @@ import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
-class AddSoleTraderChooseTaxYearControllerISpec extends ControllerISpecHelper {
+class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
-  def getPath(mtdRole: MTDUserRole): String = {
-    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
-    pathStart + "/manage-your-businesses/add/sole-trader/choose-taxyear"
+  def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "/manage-your-businesses" else "/agents/manage-your-businesses"
+    incomeSourceType match {
+      case SelfEmployment => s"$pathStart/add-sole-trader/choose-taxyear"
+      case UkProperty => s"$pathStart/add-uk-property/choose-taxyear"
+      case ForeignProperty => s"$pathStart/add-foreign-property/choose-taxyear"
+    }
   }
 
   override def beforeEach(): Unit = {
@@ -51,8 +56,9 @@ class AddSoleTraderChooseTaxYearControllerISpec extends ControllerISpecHelper {
     repository.clearSession(testSessionId).futureValue shouldBe true
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-      val path = getPath(mtdUserRole)
+  List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
+    mtdAllRoles.foreach { case mtdUserRole =>
+      val path = getPath(mtdUserRole, incomeSourceType)
       val additionalCookies = getAdditionalCookies(mtdUserRole)
       s"GET $path" when {
         s"a user is a $mtdUserRole" that {
@@ -87,7 +93,7 @@ class AddSoleTraderChooseTaxYearControllerISpec extends ControllerISpecHelper {
 
               result should have(
                 httpStatus(SEE_OTHER),
-                if(mtdUserRole == MTDIndividual) redirectURI("/report-quarterly/income-and-expenses/view") else redirectURI("/report-quarterly/income-and-expenses/view/agents/client-income-tax")
+                if (mtdUserRole == MTDIndividual) redirectURI("/report-quarterly/income-and-expenses/view") else redirectURI("/report-quarterly/income-and-expenses/view/agents/client-income-tax")
               )
             }
           }
@@ -96,46 +102,47 @@ class AddSoleTraderChooseTaxYearControllerISpec extends ControllerISpecHelper {
           "current-year-checkbox" -> Seq("Test")
         )))
       }
-    s"POST $path" when {
-      s"a user is a $mtdUserRole" that {
-        "is authenticated" should {
-          "submit the reporting frequency for the income source" in {
-            stubAuthorised(mtdUserRole)
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+      s"POST $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated" should {
+            "submit the reporting frequency for the income source" in {
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-            val result = buildPOSTMTDPostClient(path, additionalCookies, Map("current-year-checkbox" -> Seq("true"), "next-year-checkbox" -> Seq("true"))).futureValue
+              val result = buildPOSTMTDPostClient(path, additionalCookies, Map("current-year-checkbox" -> Seq("true"), "next-year-checkbox" -> Seq("true"))).futureValue
 
-            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-            result should have(
-              httpStatus(OK)
-            )
-          }
+              result should have(
+                httpStatus(OK)
+              )
+            }
 
-          "return an error if the form is invalid" in {
-            stubAuthorised(mtdUserRole)
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+            "return an error if the form is invalid" in {
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-            val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map("Invalid" -> Seq("Invalid"))).futureValue
+              val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map("Invalid" -> Seq("Invalid"))).futureValue
 
-            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-            result should have(
-              httpStatus(BAD_REQUEST),
-              elementTextByID("choose-tax-year-heading")("Sole Trader Which tax year do you want to report quarterly for?"),
-              elementTextByID("choose-tax-year-subheading")("Sole Trader"),
-              elementTextBySelector("[for='current-year-checkbox']")("2024 to 2025"),
-              elementTextBySelector("[for='next-year-checkbox']")("2025 to 2026"),
-              elementTextByID("continue-button")("Continue"),
-              elementTextByID("error-summary-title")("There is a problem"),
-              elementTextByID("error-summary-link")("Select the tax years you want to report quarterly")
-            )
+              result should have(
+                httpStatus(BAD_REQUEST),
+                elementTextByID("choose-tax-year-heading")("Sole Trader Which tax year do you want to report quarterly for?"),
+                elementTextByID("choose-tax-year-subheading")("Sole Trader"),
+                elementTextBySelector("[for='current-year-checkbox']")("2024 to 2025"),
+                elementTextBySelector("[for='next-year-checkbox']")("2025 to 2026"),
+                elementTextByID("continue-button")("Continue"),
+                elementTextByID("error-summary-title")("There is a problem"),
+                elementTextByID("error-summary-link")("Select the tax years you want to report quarterly")
+              )
+            }
           }
         }
+        testAuthFailures(path, mtdUserRole, Some(Map(
+          "current-year-checkbox" -> Seq("Test")
+        )))
       }
-      testAuthFailures(path, mtdUserRole, Some(Map(
-        "current-year-checkbox" -> Seq("Test")
-      )))
     }
   }
 }

@@ -40,6 +40,7 @@ case object Cease extends Operation {
   override val operationType = "CEASE"
 }
 
+//This is dummy at the moment but will be used when we link all these stories in CYA page
 case class IncomeSourceReportingFrequencyJourney() extends JourneyType {
   override def toString: String = "IncomeSourceReportingFrequencyJourney"
 }

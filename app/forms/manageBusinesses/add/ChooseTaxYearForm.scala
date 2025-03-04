@@ -20,23 +20,23 @@ import play.api.data.Form
 import play.api.data.Forms.{boolean, mapping}
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 
-case class AddSoleTraderChooseTaxYearForm(currentTaxYear: Boolean, nextTaxYear: Boolean)
+case class ChooseTaxYearForm(currentTaxYear: Boolean, nextTaxYear: Boolean)
 
-object AddSoleTraderChooseTaxYearForm {
+object ChooseTaxYearForm {
   val chooseTaxYearsCheckbox = "choose-tax-year"
   val noResponseErrorMessageKey: String = "manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description"
 
-  def apply(): Form[AddSoleTraderChooseTaxYearForm] = {
-    Form[AddSoleTraderChooseTaxYearForm](
+  def apply(): Form[ChooseTaxYearForm] = {
+    Form[ChooseTaxYearForm](
       mapping(
         "current-year-checkbox" -> boolean,
         "next-year-checkbox" -> boolean
-      )(AddSoleTraderChooseTaxYearForm.apply)(AddSoleTraderChooseTaxYearForm.unapply)
+      )(ChooseTaxYearForm.apply)(ChooseTaxYearForm.unapply)
         .verifying(atLeastOneChecked)
     )
   }
 
-  private val atLeastOneChecked: Constraint[AddSoleTraderChooseTaxYearForm] =
+  private val atLeastOneChecked: Constraint[ChooseTaxYearForm] =
     Constraint("constraints.atLeastOneChecked") {
       data =>
         if (data.currentTaxYear || data.nextTaxYear) {

@@ -18,10 +18,10 @@ package controllers.manageBusinesses.add
 
 import auth.MtdItUser
 import auth.authV2.AuthActions
-import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import enums.IncomeSourceJourney.IncomeSourceType
 import enums.JourneyType.IncomeSourceReportingFrequencyJourney
-import forms.manageBusinesses.add.AddSoleTraderChooseTaxYearForm
+import forms.manageBusinesses.add.ChooseTaxYearForm
 import models.incomeSourceDetails.IncomeSourceReportingFrequencySourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -29,19 +29,19 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{DateService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.IncomeSourcesUtils
-import views.html.manageBusinesses.add.AddSoleTraderChooseTaxYear
+import views.html.manageBusinesses.add.ChooseTaxYear
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AddSoleTraderChooseTaxYearController @Inject()(authActions: AuthActions,
-                                                     addSoleTraderChooseTaxYear: AddSoleTraderChooseTaxYear,
-                                                     dateService: DateService,
-                                                     sessionService: SessionService,
-                                                     val itvcErrorHandler: ItvcErrorHandler,
-                                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                                    (implicit val mcc: MessagesControllerComponents,
+class ChooseTaxYearController @Inject()(authActions: AuthActions,
+                                        chooseTaxYear: ChooseTaxYear,
+                                        dateService: DateService,
+                                        sessionService: SessionService,
+                                        val itvcErrorHandler: ItvcErrorHandler,
+                                        val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                       (implicit val mcc: MessagesControllerComponents,
                                                      val ec: ExecutionContext,
                                                      val appConfig: FrontendAppConfig)
   extends FrontendController(mcc) with I18nSupport with IncomeSourcesUtils {
@@ -52,20 +52,21 @@ class AddSoleTraderChooseTaxYearController @Inject()(authActions: AuthActions,
     itvcErrorHandler
   }
 
-  def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user => {
-      handleRequest(isAgent)
+      handleRequest(isAgent, incomeSourceType)
     }
   }
 
-  private def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
     withNewIncomeSourcesFS {
+      //This is dummy at the moment but will be used when we link all these stories in CYA page
       sessionService.createSession(IncomeSourceReportingFrequencyJourney())
 
-      Future.successful(Ok(addSoleTraderChooseTaxYear(
-        AddSoleTraderChooseTaxYearForm(),
+      Future.successful(Ok(chooseTaxYear(
+        ChooseTaxYearForm(),
         isAgent,
-        routes.AddSoleTraderChooseTaxYearController.submit(isAgent),
+        routes.ChooseTaxYearController.submit(isAgent, incomeSourceType),
         dateService.getCurrentTaxYear,
         dateService.getCurrentTaxYear.nextYear))
       )
@@ -77,14 +78,14 @@ class AddSoleTraderChooseTaxYearController @Inject()(authActions: AuthActions,
   }
 
 
-  def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+  def submit(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user => {
-      AddSoleTraderChooseTaxYearForm().bindFromRequest.fold(
+      ChooseTaxYearForm().bindFromRequest.fold(
         formWithError => {
-          Future.successful(BadRequest(addSoleTraderChooseTaxYear(
+          Future.successful(BadRequest(chooseTaxYear(
             formWithError,
             isAgent,
-            routes.AddSoleTraderChooseTaxYearController.submit(isAgent),
+            routes.ChooseTaxYearController.submit(isAgent, incomeSourceType),
             dateService.getCurrentTaxYear,
             dateService.getCurrentTaxYear.nextYear))
           )
@@ -97,10 +98,10 @@ class AddSoleTraderChooseTaxYearController @Inject()(authActions: AuthActions,
               val updatedSessionData = IncomeSourceReportingFrequencySourceData(form.currentTaxYear, form.nextTaxYear)
 
               sessionService.setMongoData(sessionData.copy(incomeSourceReportingFrequencyData = Some(updatedSessionData)))
-              Future.successful(Ok(addSoleTraderChooseTaxYear(
-                AddSoleTraderChooseTaxYearForm(),
+              Future.successful(Ok(chooseTaxYear(
+                ChooseTaxYearForm(),
                 isAgent,
-                routes.AddSoleTraderChooseTaxYearController.submit(isAgent),
+                routes.ChooseTaxYearController.submit(isAgent, incomeSourceType),
                 dateService.getCurrentTaxYear,
                 dateService.getCurrentTaxYear.nextYear)))
 
