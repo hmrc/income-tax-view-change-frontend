@@ -33,6 +33,7 @@ case class UIJourneySessionData(
                                  ceaseIncomeSourceData: Option[CeaseIncomeSourceData] = None,
                                  optOutSessionData: Option[OptOutSessionData] = None,
                                  optInSessionData: Option[OptInSessionData] = None,
+                                 incomeSourceReportingFrequencyData: Option[IncomeSourceReportingFrequencySourceData] = None,
                                  lastUpdated: Instant = Instant.now
                                ) {
 
@@ -45,6 +46,7 @@ case class UIJourneySessionData(
       ceaseIncomeSourceData,
       optOutSessionData,
       optInSessionData,
+      incomeSourceReportingFrequencyData,
       lastUpdated
     )
 }
@@ -60,6 +62,7 @@ object UIJourneySessionData {
       ~ (__ \ "ceaseIncomeSourceData").formatNullable[CeaseIncomeSourceData]
       ~ (__ \ "optOutSessionData").formatNullable[OptOutSessionData]
       ~ (__ \ "optInSessionData").formatNullable[OptInSessionData]
+      ~ (__ \ "incomeSourceReportingFrequencyData").formatNullable[IncomeSourceReportingFrequencySourceData]
       ~ (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat)
       )(UIJourneySessionData.apply, unlift(UIJourneySessionData.unapply)
     )
@@ -74,6 +77,7 @@ case class SensitiveUIJourneySessionData(
                                           ceaseIncomeSourceData: Option[CeaseIncomeSourceData] = None,
                                           optOutSessionData: Option[OptOutSessionData] = None,
                                           optInSessionData: Option[OptInSessionData] = None,
+                                          incomeSourceReportingFrequencyData: Option[IncomeSourceReportingFrequencySourceData] = None,
                                           lastUpdated: Instant = Instant.now
                                         ) {
 
@@ -86,6 +90,7 @@ case class SensitiveUIJourneySessionData(
       ceaseIncomeSourceData,
       optOutSessionData,
       optInSessionData,
+      incomeSourceReportingFrequencyData,
       lastUpdated
     )
 }
@@ -101,6 +106,7 @@ object SensitiveUIJourneySessionData {
       ~ (__ \ "ceaseIncomeSourceData").formatNullable[CeaseIncomeSourceData]
       ~ (__ \ "optOutSessionData").formatNullable[OptOutSessionData]
       ~ (__ \ "optInSessionData").formatNullable[OptInSessionData]
+      ~ (__ \ "incomeSourceReportingFrequencyData").formatNullable[IncomeSourceReportingFrequencySourceData]
       ~ (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat)
       )(SensitiveUIJourneySessionData.apply, unlift(SensitiveUIJourneySessionData.unapply)
     )

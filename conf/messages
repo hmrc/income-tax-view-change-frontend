@@ -1976,6 +1976,17 @@ manageBusinesses.check-answers.reporting.annually                        = Annua
 manageBusinesses.check-answers.confirm                                   = Confirm and continue
 manageBusinesses.check-answers.change                                    = Change
 
+# manage business sole trader reporting frequency
+
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading           = Which tax year do you want to report quarterly for?
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.subHeading        = Sole Trader
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text         = Select all that apply.
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox     = {0} to {1}
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button            = Continue
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header      = There is a problem
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description = Select the tax years you want to report quarterly
+
+
 #######################################################################################################################
 ## Claim to Adjust POA - Add ##
 #######################################################################################################################
