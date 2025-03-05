@@ -104,7 +104,7 @@
 
     @getExplanationContent(viewModel)
 
-    @if(viewModel.chargeItem.subTransactionType.contains(Accepted)){
+    @if(viewModel.chargeItem.subTransactionType.contains(Accepted)) {
         @checkPayeCodePara(viewModel)
         @govukInsetText(InsetText(
             id = Some("coding-out-wrapper"),
@@ -113,7 +113,7 @@
         @codingOutMessage(viewModel)
     }
 
-    @if(viewModel.chargeItem.subTransactionType.contains(Cancelled)){
+    @if(viewModel.chargeItem.subTransactionType.contains(Cancelled)) {
         @checkPayeCodePara(viewModel)
         @govukInsetText(InsetText(
             id = Some("cancelled-coding-out"),
@@ -122,7 +122,7 @@
         @codingOutMessage(viewModel)
     }
 
-    @if(viewModel.codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment){
+    @if(viewModel.codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment) {
         @p(id = Some("nic2TaxYear")){
             @messages("chargeSummary.nic2TaxYear", viewModel.taxYearFrom, viewModel.taxYearTo)
         }
