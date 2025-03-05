@@ -222,14 +222,8 @@
     @if(viewModel.chargeItem.isPoaReconciliationCredit) {
         @chargeSummaryPaymentAllocationTable(
             viewModel.chargeItem,
-            {
-                if (viewModel.chargeItem.transactionType == PoaOneReconciliationCredit) viewModel.poaOneChargeUrl
-                else viewModel.poaTwoChargeUrl
-            },
-            {
-                if (viewModel.chargeItem.transactionType == PoaOneReconciliationCredit) messages("chargeSummary.paymentOnAccount1.text")
-                else messages("chargeSummary.paymentOnAccount2.text")
-            }
+            viewModel.poaChargeUrl,
+            viewModel.poaChargeLinkTextMessageKey
         )
     }
 }

@@ -86,6 +86,14 @@ case class ChargeSummaryViewModel(
 
   val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !chargeItem.subTransactionType.contains(Accepted)
 
+  val poaChargeUrl: String =
+    if (chargeItem.transactionType.equals(PoaOneReconciliationCredit)) poaOneChargeUrl
+    else                                                               poaTwoChargeUrl
+
+  val poaChargeLinkTextMessageKey: String =
+    if (chargeItem.transactionType.equals(PoaOneReconciliationCredit)) "chargeSummary.paymentOnAccount1.text"
+    else                                                               "chargeSummary.paymentOnAccount2.text"
+
 }
 
 
