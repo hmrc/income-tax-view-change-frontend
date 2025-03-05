@@ -46,82 +46,66 @@
 
 @import implicitDateFormatter.longDate
 
-@dateRow = @{
-    Seq(
-        TableRow(content = Text(messages(s"chargeSummary.${if(chargeItem.isCredit) "date" else "dueDate"}"))),
-        TableRow(
-            classes = "govuk-!-text-align-right",
-            content = HtmlContent({
-                if(chargeItem.isOverdue() && !chargeItem.checkIsPaid(interestCharge)) {
-                    govukTag(Tag(
-                        content = Text(messages("chargeSummary.overdue")),
-                        classes = "govuk-tag--red"
-                    ))
-                }
-                (interestCharge match {
-                    case true                                            => chargeItem.getInterestFromDate.toLongDate
-                    case _ if chargeItem.isBalancingChargeWithoutSubType => chargeItem.getDueDateForNonZeroBalancingCharge.fold(messages("tax-year-summary.na"))(_.toLongDate)
-                    case _ if chargeItem.isCredit                        => chargeItem.dueDate.fold(messages("chargeSummary.na"))(_.toLongDateShort)
-                    case _                                               => chargeItem.dueDate.fold(messages("chargeSummary.na"))(_.toLongDate)
-                }).toNonBreaking}
-            )
-        )
-    )
-}
-
-@lpiChargeRow = @{
-    if(interestCharge) {
-        Seq(
-            TableRow(content = Text(messages("chargeSummary.lpi.interestPeriod"))),
-            TableRow(
-                format = Some("numeric"),
-                content = HtmlContent(messages(
-                    "chargeSummary.lpi.interestPeriod.dates",
-                    chargeItem.getInterestFromDate.toLongDateShort,
-                    chargeItem.getInterestEndDate.toLongDateShort
-                ).toNonBreaking)
-            )
-        )
-    } else Nil
-}
-
-@paymentAmountRow = @{
-    Seq(
-        TableRow(content = Text(messages(s"chargeSummary.${if(chargeItem.subTransactionType.isDefined) "paymentAmountCodingOut" else "paymentAmount"}"))),
-        TableRow(
-            format = Some("numeric"),
-            content = HtmlContent({
-                if(interestCharge) chargeItem.getLatePaymentInterestAmount.toCurrency
-                else               chargeItem.originalAmount.abs.toCurrency
-            })
-        )
-    )
-}
-
-@remainingAmountRow = @{
-    if(!chargeItem.isCredit) {
-        Seq(
-            TableRow(content = Text(messages("chargeSummary.remainingDue"))),
-            TableRow(
-                format = Some("numeric"),
-                content = HtmlContent(
-                    chargeItem.subTransactionType.contains(Accepted) match {
-                        case true                => Html(messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut))
-                        case _ if interestCharge => chargeItem.interestRemainingToPay.toCurrency
-                        case _                   => chargeItem.remainingToPay.toCurrency
-                    }
-                )
-            )
-        )
-    } else Nil
-}
-
 @govukTable(Table(
     rows = Seq(
-        dateRow,
-        lpiChargeRow,
-        paymentAmountRow,
-        remainingAmountRow
+        Seq(
+            TableRow(content = Text(messages(s"chargeSummary.${if(chargeItem.isCredit) "date" else "dueDate"}"))),
+            TableRow(
+                classes = "govuk-!-text-align-right",
+                content = HtmlContent({
+                    if(chargeItem.isOverdue() && !chargeItem.checkIsPaid(interestCharge)) {
+                        govukTag(Tag(
+                            content = Text(messages("chargeSummary.overdue")),
+                            classes = "govuk-tag--red"
+                        ))
+                    }
+                    (interestCharge match {
+                        case true                                            => chargeItem.getInterestFromDate.toLongDate
+                        case _ if chargeItem.isBalancingChargeWithoutSubType => chargeItem.getDueDateForNonZeroBalancingCharge.fold(messages("tax-year-summary.na"))(_.toLongDate)
+                        case _ if chargeItem.isCredit                        => chargeItem.dueDate.fold(messages("chargeSummary.na"))(_.toLongDateShort)
+                        case _                                               => chargeItem.dueDate.fold(messages("chargeSummary.na"))(_.toLongDate)
+                    }).toNonBreaking}
+                )
+            )
+        ),
+        if(interestCharge) {
+            Seq(
+                TableRow(content = Text(messages("chargeSummary.lpi.interestPeriod"))),
+                TableRow(
+                    format = Some("numeric"),
+                    content = HtmlContent(messages(
+                        "chargeSummary.lpi.interestPeriod.dates",
+                        chargeItem.getInterestFromDate.toLongDateShort,
+                        chargeItem.getInterestEndDate.toLongDateShort
+                    ).toNonBreaking)
+                )
+            )
+        } else Nil,
+        Seq(
+            TableRow(content = Text(messages(s"chargeSummary.${if(chargeItem.subTransactionType.isDefined) "paymentAmountCodingOut" else "paymentAmount"}"))),
+            TableRow(
+                format = Some("numeric"),
+                content = HtmlContent({
+                    if(interestCharge) chargeItem.getLatePaymentInterestAmount.toCurrency
+                    else               chargeItem.originalAmount.abs.toCurrency
+                })
+            )
+        ),
+        if(!chargeItem.isCredit) {
+            Seq(
+                TableRow(content = Text(messages("chargeSummary.remainingDue"))),
+                TableRow(
+                    format = Some("numeric"),
+                    content = HtmlContent(
+                        chargeItem.subTransactionType.contains(Accepted) match {
+                            case true                => Html(messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut))
+                            case _ if interestCharge => chargeItem.interestRemainingToPay.toCurrency
+                            case _                   => chargeItem.remainingToPay.toCurrency
+                        }
+                    )
+                )
+            )
+        } else Nil
     ),
     firstCellIsHeader = true
 ))

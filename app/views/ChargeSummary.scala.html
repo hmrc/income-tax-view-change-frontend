@@ -208,11 +208,10 @@
                         payment    <- allocation.allocations
                         if !viewModel.latePaymentInterestCharge
                     } yield { Seq(
-                    TableRow(HtmlContent(payment.dueDate.getOrElse(throw MissingFieldException("Payment Date")).toLongDateShort.toNonBreaking)),
-                    TableRow(HtmlContent(latePaymentInterestChargeMessage(viewModel, allocation, payment).toString)),
-                    TableRow(HtmlContent(payment.amount.getOrElse(throw MissingFieldException("Payment Amount")).abs.toCurrency), format = Some("numeric"))
-                )
-            }),
+                        TableRow(HtmlContent(payment.dueDate.getOrElse(throw MissingFieldException("Payment Date")).toLongDateShort.toNonBreaking)),
+                        TableRow(HtmlContent(latePaymentInterestChargeMessage(viewModel, allocation, payment).toString)),
+                        TableRow(HtmlContent(payment.amount.getOrElse(throw MissingFieldException("Payment Amount")).abs.toCurrency), format = Some("numeric"))
+                    )}),
             caption = Some(chargeHistoryHeading(viewModel).toString),
             attributes = Map("id" -> "payment-history-table"),
             captionClasses = "govuk-table__caption--m",
