@@ -24,5 +24,5 @@
 @(viewModel: ChargeSummaryViewModel)(implicit messages: Messages)
 
 @p(id=Some("coding-out-message")){
-    @messages("chargeSummary.codingOutMessage", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
+    @messages("chargeSummary.codingOutMessage", viewModel.taxYearFrom, viewModel.taxYearTo)
 }

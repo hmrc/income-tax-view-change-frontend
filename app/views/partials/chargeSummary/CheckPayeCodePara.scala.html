@@ -27,5 +27,5 @@
     @messages("chargeSummary.check-paye-tax-code-1")
     <a class="govuk-link" id="paye-tax-code-link" href="https://www.tax.service.gov.uk/check-income-tax/tax-codes/@viewModel.currentTaxYearEnd">
     @messages("chargeSummary.check-paye-tax-code-2")</a>
-    @messages("chargeSummary.check-paye-tax-code-3", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
+    @messages("chargeSummary.check-paye-tax-code-3", viewModel.taxYearFrom, viewModel.taxYearTo)
 }

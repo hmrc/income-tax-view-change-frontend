@@ -92,7 +92,7 @@
     @hmrcPageHeading(PageHeading(
         text = messages(viewModel.pageTitle),
         headingClasses = Some("govuk-heading-xl"),
-        section = Some(messages("paymentDue.tax-year", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)),
+        section = Some(messages("paymentDue.tax-year", viewModel.taxYearFrom, viewModel.taxYearTo)),
         captionClasses = Some("govuk-caption-xl")
     ))
 
@@ -124,7 +124,7 @@
 
     @if(viewModel.codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment){
         @p(id = Some("nic2TaxYear")){
-            @messages("chargeSummary.nic2TaxYear", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
+            @messages("chargeSummary.nic2TaxYear", viewModel.taxYearFrom, viewModel.taxYearTo)
         }
     }
 

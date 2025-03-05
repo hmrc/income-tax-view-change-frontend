@@ -61,8 +61,8 @@ case class ChargeSummaryViewModel(
     chargeItem.hasLpiWithDunningLock || (paymentBreakdown.nonEmpty && hasDunningLocks) || (paymentBreakdown.nonEmpty && hasInterestLocks)
   }
 
-  val taxYearFrom = chargeItem.taxYear.startYear
-  val taxYearTo = chargeItem.taxYear.endYear
+  val taxYearFrom = chargeItem.taxYear.startYear.toString
+  val taxYearTo = chargeItem.taxYear.endYear.toString
 
   val taxYearFromCodingOut = s"${chargeItem.taxYear.endYear + 1}"
   val taxYearToCodingOut = s"${chargeItem.taxYear.endYear + 2}"
