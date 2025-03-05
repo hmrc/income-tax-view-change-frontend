@@ -53,7 +53,8 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
     ReviewAndReconcilePoa,
     ReportingFrequencyPage,
     DisplayBusinessStartDate,
-    PenaltiesAndAppeals
+    PenaltiesAndAppeals,
+    YourSelfAssessmentCharges
   )
 
   "FeatureSwitchName" when {
