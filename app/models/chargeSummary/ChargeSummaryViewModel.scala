@@ -26,6 +26,7 @@ import java.time.LocalDate
 case class ChargeSummaryViewModel(
                                    currentDate: LocalDate,
                                    chargeItem: ChargeItem,
+                                   whatYouOweUrl: String,
                                    backUrl: String,
                                    paymentBreakdown: List[FinancialDetail],
                                    paymentAllocations: List[PaymentHistoryAllocations],
@@ -60,8 +61,8 @@ case class ChargeSummaryViewModel(
     chargeItem.hasLpiWithDunningLock || (paymentBreakdown.nonEmpty && hasDunningLocks) || (paymentBreakdown.nonEmpty && hasInterestLocks)
   }
 
-  val taxYearFrom = chargeItem.taxYear.startYear
-  val taxYearTo = chargeItem.taxYear.endYear
+  val taxYearFrom = chargeItem.taxYear.startYear.toString
+  val taxYearTo = chargeItem.taxYear.endYear.toString
 
   val taxYearFromCodingOut = s"${chargeItem.taxYear.endYear + 1}"
   val taxYearToCodingOut = s"${chargeItem.taxYear.endYear + 2}"
@@ -84,6 +85,14 @@ case class ChargeSummaryViewModel(
     (chargeHistoryEnabled || paymentAllocations.nonEmpty) && !isBalancingChargeZero && !isCredit
 
   val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !chargeItem.subTransactionType.contains(Accepted)
+
+  val poaChargeUrl: String =
+    if (chargeItem.transactionType.equals(PoaOneReconciliationCredit)) poaOneChargeUrl
+    else                                                               poaTwoChargeUrl
+
+  val poaChargeLinkTextMessageKey: String =
+    if (chargeItem.transactionType.equals(PoaOneReconciliationCredit)) "chargeSummary.paymentOnAccount1.text"
+    else                                                               "chargeSummary.paymentOnAccount2.text"
 
 }
 

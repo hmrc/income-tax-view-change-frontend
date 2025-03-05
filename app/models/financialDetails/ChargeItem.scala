@@ -67,6 +67,8 @@ case class ChargeItem (
     }
   }
 
+  def isBalancingChargeWithoutSubType: Boolean = transactionType == BalancingCharge && subTransactionType.isEmpty
+
   def getDueDate: LocalDate = dueDate.getOrElse(throw MissingFieldException("documentDueDate"))
 
   def getInterestFromDate: LocalDate = interestFromDate.getOrElse(throw MissingFieldException("documentInterestFromDate"))
@@ -89,6 +91,9 @@ case class ChargeItem (
     case Some(_) => true
     case _ => false
   }
+
+  def getLatePaymentInterestAmount: BigDecimal =
+    latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount"))
 
   def isOnlyInterest(implicit dateService: DateServiceInterface): Boolean = {(isOverdue() && isLatePaymentInterest) || (interestRemainingToPay > 0 && isPaid)}
 

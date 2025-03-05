@@ -20,8 +20,18 @@
 
 @import java.time.LocalDate
 @import exceptions.MissingFieldException
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukNotificationBanner
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.notificationbanner.NotificationBanner
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 
-@this(p: p, link: link, implicitDateFormatter: ImplicitDateFormatterImpl)
+
+@this(
+        p: p,
+        link: link,
+        govukNotificationBanner : GovukNotificationBanner,
+        implicitDateFormatter: ImplicitDateFormatterImpl
+)
 
 @(
     chargeItem: models.financialDetails.ChargeItem,
@@ -32,35 +42,23 @@
 
 @import implicitDateFormatter.longDate
 
-<div id="dunningLocksBanner" class="govuk-!-margin-top-8 govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
-    <div class="govuk-notification-banner__header">
-        <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">@messages("chargeSummary.dunning.locks.banner.title")</h2>
-    </div>
-    <div class="govuk-notification-banner__content">
+@html = {
     @p(){
         <b>
-        @if(latePaymentInterestCharge){
             @link(
-                classes="govuk-notification-banner__link govuk-notification-banner__heading",
-                link=appConfig.taxAppealsUrl,
-                rel=Some("noreferrer noopener"),
-                target = Some("_blank"),
-                messageKey = "chargeSummary.dunning.locks.banner.linkText"
-
-            )
-        } else {
-            @link(
-                classes="govuk-notification-banner__link",
+                classes=s"govuk-notification-banner__link ${if(latePaymentInterestCharge) "govuk-notification-banner__heading" else ""}",
                 link=appConfig.taxAppealsUrl,
                 rel=Some("noreferrer noopener"),
                 target = Some("_blank"),
                 messageKey = "chargeSummary.dunning.locks.banner.linkText",
-                additionalOpenTabMessage = Some(".")
-
+                additionalOpenTabMessage = if(latePaymentInterestCharge) Some(".") else None
             )
             @messages("chargeSummary.dunning.locks.banner.note", chargeItem.remainingToPay.toCurrencyString, dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate)
-        }
         </b>
     }
-    </div>
-</div>
+}
+
+@govukNotificationBanner(NotificationBanner(
+    title = Text(messages("chargeSummary.dunning.locks.banner.title")),
+    content = HtmlContent(html)
+))

@@ -16,9 +16,8 @@
 
 @import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import models.financialDetails.ChargeType
 @import models.chargeSummary.ChargeSummaryViewModel
-@import models.financialDetails.{Accepted, BalancingCharge, Cancelled, MfaDebitCharge, PoaOneDebit, PoaOneReconciliationDebit, PoaOneReconciliationCredit, PoaTwoDebit, PoaTwoReconciliationDebit, PoaTwoReconciliationCredit, TransactionType}
+@import models.financialDetails.{Accepted, Cancelled, PoaOneReconciliationCredit}
 @import services.DateServiceInterface
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
@@ -27,8 +26,13 @@
 @import views.html.partials.chargeSummary._
 @import models.repaymentHistory.RepaymentHistoryUtils
 @import _root_.implicits.HtmlFormatter.NbspString
-
 @import java.time.LocalDate
+@import models.chargeSummary.PaymentHistoryAllocations
+@import models.financialDetails.FinancialDetailsModel
+@import exceptions.MissingFieldException
+@import models.financialDetails.MfaDebitCharge
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 
 @this(
     mainTemplate: unifiedLayout,
@@ -44,253 +48,83 @@
     chargeSummaryHasDunningLocksOrLpiWithDunningLock: ChargeSummaryHasDunningLocksOrLpiWithDunningLock,
     chargeSummaryNotCodingOutAndNotPayeSelfAssessment: ChargeSummaryNotCodingOutAndNotPayeSelfAssessment,
     chargeSummaryPaymentAllocationTable: ChargeSummaryPaymentAllocationTable,
+    getInterestRatesLink: GetInterestRatesLink,
+    getExplanationContent: GetExplanationContent,
+    checkPayeCodePara: CheckPayeCodePara,
+    codingOutMessage: CodingOutMessage,
+    codingOutMessageInset: CodingOutMessageInset,
+    codingOutCancelledMessageInset: CodingOutCancelledMessageInset,
+    viewWhatYouOweText: ViewWhatYouOweText,
+    hmrcPageHeading: HmrcPageHeading,
+    paymentHistoryTable: PaymentHistoryTable,
+    poaExtraAmountExplanation: PoaExtraAmountExplanation,
     govukInsetText : GovukInsetText
 )
 
-@(viewModel: ChargeSummaryViewModel, whatYouOweUrl: String)(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig, dateService: DateServiceInterface)
+@(
+    viewModel: ChargeSummaryViewModel
+)(
+    implicit request : Request[_],
+    messages: Messages,
+    appConfig: config.FrontendAppConfig,
+    dateService: DateServiceInterface
+)
 
 @import implicitDateFormatter.longDate
 
-@paymentOnAccountExplanation = {
-    <div id="charge-explanation">
-        @p(){
-            @messages("chargeSummary.paymentsOnAccount")
-        }
-        <ul class="govuk-list govuk-list--bullet">
-            <li>@messages("chargeSummary.paymentsOnAccount.bullet1")</li>
-            <li><a href="https://www.gov.uk/self-employed-national-insurance-rates" class="govuk-link" rel="noreferrer noopener" target="_blank">@messages("chargeSummary.paymentsOnAccount.bullet2")</a></li>
-        </ul>
-        @p(){
-            @messages("chargeSummary.paymentsOnAccount.p2")
-        }
-    </div>
-}
-
-
-@getLpiPoaExplanationContent = {
-    <div>
-        @if(viewModel.chargeItem.transactionType == PoaOneDebit && !viewModel.latePaymentInterestCharge) {
-            @p(id = Some("lpi-poa1")){@messages("chargeSummary.paymentsOnAccount")}
-        } else if (viewModel.chargeItem.transactionType == PoaOneDebit && viewModel.latePaymentInterestCharge) {
-            @p(id = Some("lpi-poa2")){@messages("chargeSummary.lpi.paymentsOnAccount.poa1")}
-        } else if(viewModel.chargeItem.transactionType == PoaTwoDebit && !viewModel.latePaymentInterestCharge) {
-            @p(id = Some("lpi-poa3")){@messages("chargeSummary.paymentsOnAccount")}
-        } else if(viewModel.chargeItem.transactionType == PoaTwoDebit && viewModel.latePaymentInterestCharge) {
-            @p(id = Some("lpi-poa4")){@messages("chargeSummary.lpi.paymentsOnAccount.poa2")}
-        }
-        @if((viewModel.chargeItem.transactionType == PoaOneDebit | viewModel.chargeItem.transactionType == PoaTwoDebit) && viewModel.latePaymentInterestCharge) {
-            @p(id = Some("lpi-poa5")) {
-                @messages("chargeSummary.lpi.paymentsOnAccount.textOne")
-                <a class="govuk-link" href="https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate">@messages("chargeSummary.lpi.paymentsOnAccount.linkText")</a>
-                @messages("chargeSummary.lpi.paymentsOnAccount.textTwo")
-            }
-            @p(id = Some("lpi-poa6")) {
-                @messages("chargeSummary.lpi.paymentsOnAccount.p3")
-                <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.lpi.paymentsOnAccount.p3LinkText")</a><br><br>
-            }
-        }
-    </div>
-}
-
-@balancingChargeExplanation = {
-    <div id="charge-explanation">
-        @p(){@messages("chargeSummary.definition.balancingcharge.p1")}
-        <ul class="govuk-list govuk-list--bullet">
-            <li>@messages("chargeSummary.definition.balancingcharge.bullet1")</li>
-            <li>@messages("chargeSummary.definition.balancingcharge.bullet2")</li>
-        </ul>
-        @p(){@messages("chargeSummary.definition.balancingcharge.p2")}
-    </div>
-}
-
-@hmrcAdjustmentExplanation = {
-    <div id="charge-explanation">
-        @p(){@messages("chargeSummary.definition.hmrcadjustment")}
-    </div>
-}
-
-@getPoa1ExtraChargeInterestExplanationContent = {
-    <div>
-        @p(id = Some("poa1-extra-charge-p1")){@messages("chargeSummary.poa1ExtraAmountInterest.p1")}
-        @p(id = Some("poa1-extra-charge-p2")){@messages("chargeSummary.poa1ExtraAmountInterest.p2")}
-        @p(id = Some("poa1-extra-charge-p3")){
-            @messages("chargeSummary.poa1ExtraAmountInterest.p3")
-            <a class="govuk-link" rel="noreferrer noopener" target="_blank"  href="https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate">@messages("chargeSummary.poa1ExtraAmountInterest.p3LinkText")</a>
-            @messages("chargeSummary.poa1ExtraAmountInterest.p3AfterLink")
-        }
-    </div>
-}
-
-@getPoa2ExtraChargeInterestExplanationContent = {
-    <div>
-        @p(id = Some("poa2-extra-charge-p1")){@messages("chargeSummary.poa2ExtraAmountInterest.p1")}
-        @p(id = Some("poa2-extra-charge-p2")){@messages("chargeSummary.poa2ExtraAmountInterest.p2")}
-        @p(id = Some("poa2-extra-charge-p3")){
-            @messages("chargeSummary.poa2ExtraAmountInterest.p3")
-            <a class="govuk-link" rel="noreferrer noopener" target="_blank"  href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.poa2ExtraAmountInterest.p3LinkText")</a>
-            @messages("chargeSummary.poa2ExtraAmountInterest.p3AfterLink")
-        }
-    </div>
-}
-
-@getInterestRatesLink = {
-    @p(id = Some("interest-link")) {
-        @messages("chargeSummary.lpi.poaExtraCharge.link")
-        <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.lpi.poaExtraCharge.linkText")</a>
-        }
-}
-
-@getBalancingPaymentsExplanationContent = {
-    <div>
-        @p(id = Some("lpi-bcd1")){@messages("chargeSummary.lpi.balancingCharge.p1")}
-        @p(id = Some("lpi-bcd2")) {
-            @messages("chargeSummary.lpi.balancingCharge.textOne")
-            <a class="govuk-link" href="https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate">@messages("chargeSummary.lpi.balancingCharge.linkText")</a>
-            @messages("chargeSummary.lpi.balancingCharge.textTwo")
-        }
-        @p(id = Some("lpi-bcd3")) {
-            @messages("chargeSummary.lpi.balancingCharge.p3")
-            <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.lpi.balancingCharge.p3LinkText")</a><br><br>
-        }
-    </div>
-}
-
-@reviewAndReconcilePoaOneDebitExplanation = {
-    @p(id = Some("rar-poa1-explanation")) {
-        @messages("chargeSummary.reviewAndReconcilePoa.p1")
-        @link(id = Some("poa1-link"), link = viewModel.poaOneChargeUrl, messageKey = "chargeSummary.reviewAndReconcilePoa1.linkText", outerMessage = messages("chargeSummary.reviewAndReconcilePoa.comma"))
-        @messages("chargeSummary.reviewAndReconcilePoa.p2")
-    }
-}
-
-@reviewAndReconcilePoaTwoDebitExplanation = {
-    @p(id = Some("rar-poa2-explanation")) {
-        @messages("chargeSummary.reviewAndReconcilePoa.p1")
-        @link(id = Some("poa2-link"), link = viewModel.poaTwoChargeUrl, messageKey = "chargeSummary.reviewAndReconcilePoa2.linkText", outerMessage = messages("chargeSummary.reviewAndReconcilePoa.comma"))
-        @messages("chargeSummary.reviewAndReconcilePoa.p2")
-    }
-}
-
-@reviewAndReconcilePoaCreditExplanation(oneOrTwo: ChargeType) = {
-    @p(id = Some("rar-credit-explanation")) {
-        @messages(s"chargeSummary.${oneOrTwo.key}Credit.p1")
-    }
-}
-
-@getExplanationContent = @{(viewModel.chargeItem.transactionType, viewModel.chargeItem.subTransactionType) match {
-    case (MfaDebitCharge, _)                                                                                => hmrcAdjustmentExplanation
-    case (PoaOneReconciliationDebit, _)  if !viewModel.latePaymentInterestCharge           => reviewAndReconcilePoaOneDebitExplanation
-    case (PoaTwoReconciliationDebit, _)  if !viewModel.latePaymentInterestCharge           => reviewAndReconcilePoaTwoDebitExplanation
-    case (PoaOneReconciliationDebit, _)                                                    => getPoa1ExtraChargeInterestExplanationContent
-    case (PoaTwoReconciliationDebit, _)                                                    => getPoa2ExtraChargeInterestExplanationContent
-    case (PoaOneDebit | PoaTwoDebit, _) if !viewModel.latePaymentInterestCharge             => paymentOnAccountExplanation
-    case (PoaOneDebit | PoaTwoDebit, _)                                                     => getLpiPoaExplanationContent
-    case (PoaOneReconciliationCredit, _)                                                   => reviewAndReconcilePoaCreditExplanation(PoaOneDebit)
-    case (PoaTwoReconciliationCredit, _)                                                   => reviewAndReconcilePoaCreditExplanation(PoaTwoDebit)
-    case (BalancingCharge, None) if !viewModel.latePaymentInterestCharge                                    => balancingChargeExplanation
-    case (BalancingCharge, None)                                                                            => getBalancingPaymentsExplanationContent
-    case _                                                                                                  =>
-}
-}
-
-@checkPayeCodePara = {
-    @p(id = Some("check-paye-para")){
-        @messages("chargeSummary.check-paye-tax-code-1")
-        <a class="govuk-link" id="paye-tax-code-link" href="https://www.tax.service.gov.uk/check-income-tax/tax-codes/@viewModel.currentTaxYearEnd">
-            @messages("chargeSummary.check-paye-tax-code-2")</a>
-        @messages("chargeSummary.check-paye-tax-code-3", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
-    }
-}
-
-@codingOutMessage = {
-    @p(id=Some("coding-out-message")){
-        @messages("chargeSummary.codingOutMessage", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
-    }
-}
-
-@codingOutMessageInset = {
-    @p(id = Some("coding-out-notice")) {
-        @messages("chargeSummary.codingOutInset-1")
-        @link(
-            id = Some("coding-out-notice-link"),
-            link="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code",
-            target = Some("_blank"),
-            rel= Some("noreferrer noopener"),
-            messageKey = "chargeSummary.codingOutInset-2"
-        )
-        @messages("chargeSummary.codingOutInset-3")
-    }
-}
-
-@codingOutCancelledMessageInset = {
-    @p(id = Some("cancelled-coding-out-notice")) {
-        @messages("chargeSummary.cancelledPayeInset-1")
-        @link(
-            id = Some("cancelled-coding-out-notice-link"),
-            link="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code",
-            target = Some("_blank"),
-            rel= Some("noreferrer noopener"),
-            messageKey = "chargeSummary.cancelledPayeInset-2",
-            additionalOpenTabMessage = Some(".")
-        )
-        @messages("chargeSummary.cancelledPayeInset-3")
-    }
-}
-
-@chargeHistoryHeading = @{
-    viewModel.chargeItem.transactionType match {
-        case _ if viewModel.latePaymentInterestCharge => messages("chargeSummary.chargeHistory.lateInterestPayment")
-        case PoaOneDebit => messages("chargeSummary.chargeHistory.Poa1heading")
-        case PoaTwoDebit => messages("chargeSummary.chargeHistory.Poa2heading")
-        case _ => messages("chargeSummary.chargeHistory.heading")
-    }
-}
-
-@getCreationDate(date: Option[LocalDate]) = @{
-    date match {
-        case Some(value) => value.toLongDateShort.toNonBreaking
-        case None => messages("incomeSources.generic.unknown")
-    }
-}
-
-@mainTemplate(pageTitle = messages(viewModel.pageTitle), backUrl = Some(viewModel.backUrl), isAgent = viewModel.isAgent, btaNavPartial = viewModel.btaNavPartial,
-    useFallbackBackLink = true, gatewayPage = viewModel.gatewayPage) {
+@mainTemplate(
+    pageTitle = messages(viewModel.pageTitle),
+    backUrl = Some(viewModel.backUrl),
+    isAgent = viewModel.isAgent,
+    btaNavPartial = viewModel.btaNavPartial,
+    gatewayPage = viewModel.gatewayPage
+) {
 
     @if(viewModel.hasDunningLocks || viewModel.chargeItem.hasLpiWithDunningLock) {
-        @chargeSummaryHasDunningLocksOrLpiWithDunningLock(viewModel.chargeItem, viewModel.dueDate, viewModel.latePaymentInterestCharge, appConfig)
+        @chargeSummaryHasDunningLocksOrLpiWithDunningLock(
+            viewModel.chargeItem,
+            viewModel.dueDate,
+            viewModel.latePaymentInterestCharge,
+            appConfig
+        )
     }
 
-    <h1 class="govuk-heading-xl">
-        <span class="govuk-caption-xl"> @messages("paymentDue.tax-year", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString) </span>
-        @{ messages(viewModel.pageTitle) }
-    </h1>
+    @hmrcPageHeading(PageHeading(
+        text = messages(viewModel.pageTitle),
+        headingClasses = Some("govuk-heading-xl"),
+        section = Some(messages("paymentDue.tax-year", viewModel.taxYearFrom, viewModel.taxYearTo)),
+        captionClasses = Some("govuk-caption-xl")
+    ))
 
-
-    @if(Seq(PoaOneReconciliationDebit, PoaTwoReconciliationDebit).contains(viewModel.chargeItem.transactionType) && !viewModel.latePaymentInterestCharge) {
-        @govukWarningText(WarningText(content = Text(messages("chargeSummary.reviewAndReconcilePoa.warning"))))
+    @if(viewModel.chargeItem.isPoaReconciliationDebit && !viewModel.latePaymentInterestCharge) {
+        @govukWarningText(WarningText(
+            content = Text(messages("chargeSummary.reviewAndReconcilePoa.warning"))
+        ))
     }
 
-    @getExplanationContent
+    @getExplanationContent(viewModel)
 
-    @if(viewModel.chargeItem.subTransactionType == Some(Accepted)){
-        @checkPayeCodePara
-        <div id="coding-out-wrapper">
-            @govukInsetText(InsetText(content = HtmlContent(codingOutMessageInset)))
-        </div>
-        @codingOutMessage
+    @if(viewModel.chargeItem.subTransactionType.contains(Accepted)) {
+        @checkPayeCodePara(viewModel.currentTaxYearEnd, viewModel.taxYearFrom, viewModel.taxYearTo)
+        @govukInsetText(InsetText(
+            id = Some("coding-out-wrapper"),
+            content = HtmlContent(codingOutMessageInset())
+        ))
+        @codingOutMessage(viewModel.taxYearFrom, viewModel.taxYearTo)
     }
 
-    @if(viewModel.chargeItem.subTransactionType == Some(Cancelled)){
-        @checkPayeCodePara
-        <div id="cancelled-coding-out-wrapper">
-            @govukInsetText(InsetText(content = HtmlContent(codingOutCancelledMessageInset)))
-        </div>
-        @codingOutMessage
+    @if(viewModel.chargeItem.subTransactionType.contains(Cancelled)) {
+        @checkPayeCodePara(viewModel.currentTaxYearEnd, viewModel.taxYearFrom, viewModel.taxYearTo)
+        @govukInsetText(InsetText(
+            id = Some("cancelled-coding-out"),
+            content = HtmlContent(codingOutCancelledMessageInset())
+        ))
+        @codingOutMessage(viewModel.taxYearFrom, viewModel.taxYearTo)
     }
 
-    @if(viewModel.codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment){
+    @if(viewModel.codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment) {
         @p(id = Some("nic2TaxYear")){
-            @messages("chargeSummary.nic2TaxYear", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
+            @messages("chargeSummary.nic2TaxYear", viewModel.taxYearFrom, viewModel.taxYearTo)
         }
     }
 
@@ -322,137 +156,32 @@
         )
     }
 
-    @if(viewModel.poaExtraChargeLink.isDefined){
-        @p(id = Some("poa-extra-charge-content")) {
-            @messages("chargeSummary.extraCharge.text1")
-            @link(id = Some("poa-extra-charge-link"), link = viewModel.poaExtraChargeLink.getOrElse(""), messageKey = "chargeSummary.extraCharge.linkText")
-            @messages("chargeSummary.extraCharge.text2")
-        }
+    @if(viewModel.poaExtraChargeLink.isDefined) {
+        @poaExtraAmountExplanation(viewModel.poaExtraChargeLink)
     }
 
-    @if(viewModel.latePaymentInterestCharge) @{
-        getInterestRatesLink
+    @if(viewModel.latePaymentInterestCharge) {
+        @getInterestRatesLink()
     }
 
     @if(!viewModel.isCredit) {
-        @if(viewModel.hasInterestLocks && viewModel.hasAccruedInterest) {
-            @p(id = Some("p-interest-locks-msg")) {
-                @if(viewModel.isAgent) {
-                    @messages("chargeSummary.whatYouOwe.textOne-agent")
-                    @link(id = Some("what-you-owe-interest-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
-                    @messages("chargeSummary.interestLocks.text-agent")
-                } else {
-                    @messages("chargeSummary.whatYouOwe.textOne")
-                    @link(id = Some("what-you-owe-interest-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
-                    @messages("chargeSummary.interestLocks.text")
-                }
-
-            }
-        } else {
-            @p() {
-                @if(viewModel.isAgent) {
-                    @messages("chargeSummary.whatYouOwe.textOne-agent"),
-                    @link(id = Some("what-you-owe-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
-                    @messages("chargeSummary.whatYouOwe.textTwo-agent")
-                } else {
-                    @messages("chargeSummary.whatYouOwe.textOne")
-                    @link(id = Some("what-you-owe-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
-                    @messages("chargeSummary.whatYouOwe.textTwo")
-                }
-            }
-        }
+        @viewWhatYouOweText(
+            viewModel.isAgent,
+            viewModel.hasInterestLocks,
+            viewModel.hasAccruedInterest,
+            viewModel.whatYouOweUrl
+        )
     }
 
-
-    @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit){
-        @if(viewModel.hasPaymentBreakdown && viewModel.chargeItem.subTransactionType == None) {
-            <h3 id="charge-history-h3" class="govuk-heading-m">@chargeHistoryHeading</h3>
-        } else {
-            <h2 id="charge-history-h2" class="govuk-heading-m">@chargeHistoryHeading</h2>
-        }
-
-        <table class="govuk-table" id="payment-history-table">
-
-            <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-                <th scope="col" class="govuk-table__header">@messages("chargeSummary.chargeHistory.date")</th>
-                <th scope="col" class="govuk-table__header">@messages("chargeSummary.chargeHistory.description")</th>
-                <th scope="col" class="govuk-table__header govuk-table__header--numeric">@messages("chargeSummary.chargeHistory.amount")</th>
-            </tr>
-            </thead>
-
-            <tbody class = "govuk-table__body">
-            @if(viewModel.chargeHistoryEnabled){
-                @if(viewModel.noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment) {
-                    <tr>
-                        <td class="govuk-table__cell">@{
-                            getCreationDate(viewModel.adjustmentHistory.creationEvent.adjustmentDate)
-                        }</td>
-                        <td class="govuk-table__cell">@{
-                            messages(s"chargeSummary.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}")
-                        }
-                        </td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@{
-                            viewModel.adjustmentHistory.creationEvent.amount.toCurrency
-                        }</td>
-                    </tr>
-                }
-
-                @if(viewModel.latePaymentInterestCharge){
-                    <tr>
-                        <td class="govuk-table__cell">@{viewModel.chargeItem.interestEndDate.get.toLongDateShort.toNonBreaking}</td>
-                        <td class="govuk-table__cell">@messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}")</td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@{viewModel.chargeItem.latePaymentInterestAmount.get.toCurrency}</td>
-                    </tr>
-                }
-
-                @if(viewModel.chargeItem.subTransactionType == Some(Accepted)) {
-                    <tr>
-                        <td class="govuk-table__cell">@{viewModel.chargeItem.documentDate.toLongDateShort.toNonBreaking}</td>
-                        <td class="govuk-table__cell">@messages("chargeSummary.codingOutPayHistoryAmount", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)</td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@{viewModel.chargeItem.originalAmount.toCurrency}</td>
-                    </tr>
-                }
-
-                @viewModel.reviewAndReconcileCredit.map { charge =>
-                    <tr>
-                        <td class="govuk-table__cell" id="rar-due-date">@{charge.getDueDate.toLongDateShort.toNonBreaking}</td>
-                        <td class="govuk-table__cell">
-                            <a class="govuk-link" id="rar-charge-link" href="@RepaymentHistoryUtils.getPoaChargeLinkUrl(viewModel.isAgent, charge.taxYear.endYear, charge.transactionId)">
-                                @messages(s"chargeSummary.chargeHistory.${charge.transactionType.key}")
-                            </a>
-                        </td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric" id="rar-total-amount">@{charge.originalAmount.abs.toCurrency}</td>
-                    </tr>
-                }
-
-                @for(charge <- viewModel.adjustmentHistory.adjustments) {
-                    <tr>
-                        <td class="govuk-table__cell">@{charge.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDateShort.toNonBreaking}</td>
-                        <td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}")</td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@{charge.amount.toCurrency}</td>
-                    </tr>
-                }
-            }
-
-            @if(!viewModel.latePaymentInterestCharge) {
-                @chargeSummaryPaymentAllocation(viewModel.paymentAllocations, viewModel.payments, viewModel.chargeItem, viewModel.isAgent, None, viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
-            }
-            </tbody>
-        </table>
+    @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit) {
+        @paymentHistoryTable(viewModel)
     }
 
     @if(viewModel.chargeItem.isPoaReconciliationCredit) {
         @chargeSummaryPaymentAllocationTable(
             viewModel.chargeItem,
-            {
-                if (viewModel.chargeItem.transactionType == PoaOneReconciliationCredit) viewModel.poaOneChargeUrl
-                else viewModel.poaTwoChargeUrl
-            },
-            {
-                if (viewModel.chargeItem.transactionType == PoaOneReconciliationCredit) messages("chargeSummary.paymentOnAccount1.text")
-                else messages("chargeSummary.paymentOnAccount2.text")
-            }
+            viewModel.poaChargeUrl,
+            messages(viewModel.poaChargeLinkTextMessageKey)
         )
     }
 }
