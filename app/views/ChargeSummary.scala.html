@@ -75,49 +75,6 @@
 
 @import implicitDateFormatter.longDate
 
-@paymentAllocationRow(viewModel: ChargeSummaryViewModel) = @{
-    for {
-        allocation <- viewModel.paymentAllocations
-        payment    <- allocation.allocations
-        if !viewModel.latePaymentInterestCharge
-    } yield {
-        Seq(
-            TableRow(HtmlContent(payment.dueDate.getOrElse(throw MissingFieldException("Payment Date")).toLongDateShort.toNonBreaking)),
-            TableRow({
-                val matchingPayment = payment.clearingId
-
-                if(matchingPayment.isDefined) {
-                    val link = if(viewModel.isAgent) {
-                        controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(matchingPayment.get).url
-                    } else {
-                        controllers.routes.PaymentAllocationsController.viewPaymentAllocation(matchingPayment.get, None).url
-                    }
-                    val linkText = if(viewModel.chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit") else
-                        allocation.getPaymentAllocationTextInChargeSummary.map(msg => {
-                            messages(msg, viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
-                        }).getOrElse(
-                            throw MissingFieldException("Allocation link text missing")
-                        )
-                    HtmlContent(
-                        s"""
-                      |<a class="govuk-link" href="$link">
-                      | $linkText
-                      | <span class="govuk-visually-hidden">${viewModel.chargeItem.taxYear.endYear}</span>
-                      |</a>
-                      |""".stripMargin
-                    )
-                } else {
-                    HtmlContent(allocation.getPaymentAllocationTextInChargeSummary.map(msg => messages(msg, viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)).get)
-                }
-            }),
-            TableRow(
-                format = Some("numeric"),
-                content = HtmlContent(payment.amount.getOrElse(throw MissingFieldException("Payment Amount")).abs.toCurrency)
-            )
-        )
-    }
-}
-
 @mainTemplate(
     pageTitle = messages(viewModel.pageTitle),
     backUrl = Some(viewModel.backUrl),
@@ -246,8 +203,16 @@
                     TableRow(HtmlContent(charge.amount.toCurrency), format = Some("numeric"))
                 )}
 
-                ++ paymentAllocationRow(viewModel),
-
+                ++ (for {
+                        allocation <- viewModel.paymentAllocations
+                        payment    <- allocation.allocations
+                        if !viewModel.latePaymentInterestCharge
+                    } yield { Seq(
+                    TableRow(HtmlContent(payment.dueDate.getOrElse(throw MissingFieldException("Payment Date")).toLongDateShort.toNonBreaking)),
+                    TableRow(HtmlContent(latePaymentInterestChargeMessage(viewModel, allocation, payment).toString)),
+                    TableRow(HtmlContent(payment.amount.getOrElse(throw MissingFieldException("Payment Amount")).abs.toCurrency), format = Some("numeric"))
+                )
+            }),
             caption = Some(chargeHistoryHeading(viewModel).toString),
             attributes = Map("id" -> "payment-history-table"),
             captionClasses = "govuk-table__caption--m",
