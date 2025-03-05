@@ -41,7 +41,7 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.notCompleted
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with MockSessionService {
+class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with MockSessionService {
 
   lazy val mockITSAStatusService: ITSAStatusService = mock(classOf[ITSAStatusService])
   lazy val mockUpdateIncomeSourceService: UpdateIncomeSourceService = mock(classOf[UpdateIncomeSourceService])
@@ -57,7 +57,7 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
       api.inject.bind[DateService].toInstance(mockDateService)
     ).build()
 
-  lazy val testController = app.injector.instanceOf[IncomeSourceReportingMethodController]
+  lazy val testController = app.injector.instanceOf[IncomeSourceReportingFrequencyController]
 
   val TAX_YEAR_2024: LocalDate = LocalDate.of(2024, 4, 6)
   val TAX_YEAR_2023: LocalDate = LocalDate.of(2023, 4, 6)
@@ -65,10 +65,10 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
 
   val formData: Map[String, String] = Map("report-quarterly" -> "Yes")
 
-  val title: String = "Is this date correct? - Manage your Income Tax updates - GOV.UK"
-  val titleError: String = "Error: Is this date correct? - GOV.UK"
-  val titleAgent: String = "Is this date correct? - Manage your client’s Income Tax updates - GOV.UK"
-  val heading: String = "Your new business is set to report annually."
+  val title: String = "Your new business is set to report annually - Manage your Income Tax updates - GOV.UK"
+  val titleError: String = "Error: Your new business is set to report annually - GOV.UK"
+  val titleAgent: String = "Your new business is set to report annually - Manage your client’s Income Tax updates - GOV.UK"
+  val heading: String = "Your new business is set to report annually"
   val paragraph1: String = "Because this is a new business, for up to 2 tax years you can submit its income and expenses once a year in your tax return, even if:"
   val reportingFrequencyUlLi1: String = "you are voluntarily opted in or required to report quarterly for your other businesses"
   val reportingFrequencyUlLi2: String = "your income from self-employment or property, or both, exceed the income threshold"
@@ -76,6 +76,13 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
   val reportingFrequencyFormH1: String = "Do you want to change to report quarterly?"
   val reportingFrequencyFormNoSelectionError: String = "Select yes if you want to report quarterly or select no if you want to report annually"
   val continueButtonText: String = "Continue"
+
+  def getCaption(incomeSourceType: IncomeSourceType): String =
+    incomeSourceType match {
+      case SelfEmployment => "Sole trader"
+      case UkProperty => "UK property"
+      case ForeignProperty => "Foreign property"
+    }
 
   def getReportingFrequencyTableMessages(taxYear: Int): (String, String) = {
     (s"Reporting frequency ${taxYear} to ${taxYear+1}", "Annual")
@@ -216,7 +223,7 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
           "render the reporting frequency page" when {
-            s"within latency period (before 2024) with FS enabled" in {
+            s"with New Incomesource FS enabled" in {
               setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
               val thisTaxYear: Int = TAX_YEAR_2023.getYear
               val result = action(fakeRequest)
@@ -233,6 +240,7 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions with Moc
 
               status(result) shouldBe OK
               if (isAgent) document.title shouldBe titleAgent else document.title shouldBe title
+              document.getElementsByClass("govuk-caption-l").textNodes().get(0).text shouldBe getCaption(incomeSourceType)
               document.getElementsByClass("govuk-heading-l margin-bottom-100").get(0).text shouldBe heading
               document.getElementById("paragraph-1").text shouldBe paragraph1
               document.getElementById("inset-text-bullet-1").text shouldBe reportingFrequencyUlLi1

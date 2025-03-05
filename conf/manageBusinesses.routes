@@ -310,20 +310,20 @@ POST          /manage-your-businesses/manage/foreign-property-will-report       
 POST          /agents/manage-your-businesses/manage/foreign-property-will-report        controllers.manageBusinesses.manage.ManageObligationsController.submit(isAgent: Boolean = true)
 
 # Income Sources - Reporting Method
-GET          /manage-your-businesses/add-sole-trader/reporting-frequency               controllers.manageBusinesses.add.IncomeSourceReportingMethodController.show(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = SelfEmployment)
-GET          /agents/manage-your-businesses/add-sole-trader/reporting-frequency         controllers.manageBusinesses.add.IncomeSourceReportingMethodController.show(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = SelfEmployment)
-POST         /manage-your-businesses/add-sole-trader/reporting-frequency                controllers.manageBusinesses.add.IncomeSourceReportingMethodController.submit(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = SelfEmployment)
-POST         /agents/manage-your-businesses/add-sole-trader/reporting-frequency         controllers.manageBusinesses.add.IncomeSourceReportingMethodController.submit(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = SelfEmployment)
+GET          /manage-your-businesses/add-sole-trader/reporting-frequency               controllers.manageBusinesses.add.IncomeSourceReportingFrequencyController.show(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = SelfEmployment)
+GET          /agents/manage-your-businesses/add-sole-trader/reporting-frequency         controllers.manageBusinesses.add.IncomeSourceReportingFrequencyController.show(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = SelfEmployment)
+POST         /manage-your-businesses/add-sole-trader/reporting-frequency                controllers.manageBusinesses.add.IncomeSourceReportingFrequencyController.submit(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = SelfEmployment)
+POST         /agents/manage-your-businesses/add-sole-trader/reporting-frequency         controllers.manageBusinesses.add.IncomeSourceReportingFrequencyController.submit(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = SelfEmployment)
 
-GET          /manage-your-businesses/add-uk-property/reporting-frequency                              controllers.manageBusinesses.add.IncomeSourceReportingMethodController.show(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = UkProperty)
-GET          /agents/manage-your-businesses/add-uk-property/reporting-frequency                    controllers.manageBusinesses.add.IncomeSourceReportingMethodController.show(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = UkProperty)
-POST         /manage-your-businesses/add-uk-property/reporting-frequency                             controllers.manageBusinesses.add.IncomeSourceReportingMethodController.submit(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = UkProperty)
-POST         /agents/manage-your-businesses/add-uk-property/reporting-frequency                      controllers.manageBusinesses.add.IncomeSourceReportingMethodController.submit(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = UkProperty)
+GET          /manage-your-businesses/add-uk-property/reporting-frequency                              controllers.manageBusinesses.add.IncomeSourceReportingFrequencyController.show(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = UkProperty)
+GET          /agents/manage-your-businesses/add-uk-property/reporting-frequency                    controllers.manageBusinesses.add.IncomeSourceReportingFrequencyController.show(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = UkProperty)
+POST         /manage-your-businesses/add-uk-property/reporting-frequency                             controllers.manageBusinesses.add.IncomeSourceReportingFrequencyController.submit(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = UkProperty)
+POST         /agents/manage-your-businesses/add-uk-property/reporting-frequency                      controllers.manageBusinesses.add.IncomeSourceReportingFrequencyController.submit(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = UkProperty)
 
-GET          /manage-your-businesses/add-foreign-property/reporting-frequency                               controllers.manageBusinesses.add.IncomeSourceReportingMethodController.show(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = ForeignProperty)
-GET          /agents/manage-your-businesses/add-foreign-property/reporting-frequency                        controllers.manageBusinesses.add.IncomeSourceReportingMethodController.show(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = ForeignProperty)
-POST         /manage-your-businesses/add-foreign-property/reporting-frequency                               controllers.manageBusinesses.add.IncomeSourceReportingMethodController.submit(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = ForeignProperty)
-POST         /agents/manage-your-businesses/add-foreign-property/reporting-frequency                        controllers.manageBusinesses.add.IncomeSourceReportingMethodController.submit(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = ForeignProperty)
+GET          /manage-your-businesses/add-foreign-property/reporting-frequency                               controllers.manageBusinesses.add.IncomeSourceReportingFrequencyController.show(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = ForeignProperty)
+GET          /agents/manage-your-businesses/add-foreign-property/reporting-frequency                        controllers.manageBusinesses.add.IncomeSourceReportingFrequencyController.show(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = ForeignProperty)
+POST         /manage-your-businesses/add-foreign-property/reporting-frequency                               controllers.manageBusinesses.add.IncomeSourceReportingFrequencyController.submit(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = ForeignProperty)
+POST         /agents/manage-your-businesses/add-foreign-property/reporting-frequency                        controllers.manageBusinesses.add.IncomeSourceReportingFrequencyController.submit(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = ForeignProperty)
 
 
 # Manage Income Sources - Check your answers

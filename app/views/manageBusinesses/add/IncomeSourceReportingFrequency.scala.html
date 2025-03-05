@@ -49,8 +49,12 @@
 
 @(isAgent: Boolean = false, continueAction: Call, form: Form[IncomeSourceReportingFrequencyForm], incomeSourceType: IncomeSourceType, taxDateService: DateServiceInterface)(implicit user: auth.MtdItUser[_], messages: Messages)
 
-@getMessage(key: String, args: String*) = @{
-    messages(s"incomeSources.add.reportingFrequency.$key", args: _*)
+@getCaptionMessage = @{
+    incomeSourceType match {
+        case SelfEmployment => messages(s"incomeSources.add.reportingFrequency.sole-trader")
+        case UkProperty => messages(s"incomeSources.add.reportingFrequency.uk-property")
+        case ForeignProperty => messages(s"incomeSources.add.reportingFrequency.foreign-property")
+    }
 }
 
 @quarterlyUpdatesWarningBlock() = {
@@ -127,7 +131,7 @@
 }
 
 @mainTemplate(
-        pageTitle = messages("dateForm.check.heading"),
+        pageTitle = messages("incomeSources.add.reportingFrequency.title"),
         isAgent = isAgent,
         form = Some(form),
         backUrl = None,
@@ -137,12 +141,12 @@
     @hmrcPageHeading(PageHeading(
         text = messages("incomeSources.add.reportingFrequency.h1"),
         headingClasses = Some("govuk-heading-l margin-bottom-100"),
-        section = Some(messages("incomeSources.cease.sole-trader")),
+        section = Some(getCaptionMessage),
         captionClasses = Some("govuk-caption-l")
     ))
 
     @p(id = Some("paragraph-1")){
-        @messages("incomeSources.add.reportingFrequency.p1", getMessage("incomeSource"))
+        @messages("incomeSources.add.reportingFrequency.p1")
     }
 
     @p(id = Some("reporting-frequency-ul")) {
@@ -159,7 +163,7 @@
     @reportingFrequencyTable()
 
     @p(id = Some("paragraph-2")){
-        @messages("incomeSources.add.reportingFrequency.p2", getMessage("incomeSource"))
+        @messages("incomeSources.add.reportingFrequency.p2")
     }
 
     @quarterlyUpdatesWarningBlock()

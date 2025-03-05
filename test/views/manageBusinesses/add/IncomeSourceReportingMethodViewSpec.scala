@@ -63,7 +63,7 @@ class IncomeSourceReportingMethodViewSpec extends TestSupport {
     val viewModelTwoLatencyYears: IncomeSourceReportingMethodViewModel = IncomeSourceReportingMethodViewModel(Some(latencyYear1), Some(latencyYear2))
     val viewModelOneLatencyYear: IncomeSourceReportingMethodViewModel = IncomeSourceReportingMethodViewModel(None, Some(latencyYear2))
 
-    val postAction: Call = controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodController.submit(isAgent, incomeSourceType)
+    val postAction: Call = controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.submit(isAgent, incomeSourceType)
 
     lazy val viewTwoLatencyYears: HtmlFormat.Appendable = IncomeSourceReportingMethodView(incomeSourceType ,form, viewModelTwoLatencyYears, postAction, isAgent)
     lazy val viewOneLatencyYear: HtmlFormat.Appendable = IncomeSourceReportingMethodView(incomeSourceType, form, viewModelOneLatencyYear, postAction, isAgent)
