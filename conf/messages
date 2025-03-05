@@ -662,7 +662,7 @@ forecast_taxCalc.royaltyPayments                                = Tax due on roy
 forecast_taxCalc.totalTaxDeducted                               = Total tax deducted:
 forecast_taxCalc.incomeTaxAndNicsDue                            = Income Tax and National Insurance contributions due:
 forecast_taxCalc.capitalGainsTax                                = Capital Gains Tax:
-forecast_taxCalc.incomeTaxNicsCgtDue                            = Forecast Self Assessment tax amount:
+forecast_taxCalc.incomeTaxNicsCgtDue                            = Forecast Self Assessment tax amountf:
 forecast_taxCalc.noForecast.heading                             = No forecast yet
 forecast_taxCalc.noForecast.text                                = You will be able to see your forecast for the whole year once you have sent an update.
 
@@ -892,6 +892,12 @@ whatYouOwe.adjust-poa.paid-3                                       = at any poin
 whatYouOwe.adjust-poa.paid-4                                       = 31 January {0}.
 whatYouOwe.adjust-poa.paid-5                                       =
 whatYouOwe.interestChargesWarning                                  = Interest charges will keep increasing every day until the charges they relate to are paid in full.
+
+## Your Self Assessment Charges
+
+selfAssessmentCharges.heading                                      = Your Self Assessment charges
+
+
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = First payment on account
