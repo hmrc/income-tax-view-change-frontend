@@ -20,10 +20,12 @@
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import _root_.implicits.HtmlFormatter.NbspString
 @import views.html.components.h2
+@import views.html.partials.chargeSummary.ChargeSummaryPaymentAllocationTableMessage
 
 @this(
     govukTable: GovukTable,
     implicitDateFormatter: ImplicitDateFormatterImpl,
+    chargeSummaryPaymentAllocationTableMessage: ChargeSummaryPaymentAllocationTableMessage,
     h2: h2
 )
 
@@ -32,41 +34,15 @@
 @import implicitDateFormatter.longDate
 
 @govukTable(Table(
-    rows = Seq(
-        Seq(
-            TableRow(
-                content = HtmlContent(
-                    s"""
-                        <a class="govuk-link" id="poa-allocation-link" href="$link">
-                           $linkText
-                        </a>
-                        <br>
-                        <span class="govuk-body-s govuk-!-margin-bottom-1 govuk-!-margin-top-1">
-                            ${messages("chargeSummary.taxYear", chargeItem.taxYear.startYear.toString, chargeItem.taxYear.endYear.toString)}
-                        </span>
-                    """
-                )
-            ),
-            TableRow(
-                content = HtmlContent(chargeItem.dueDate.getOrElse(chargeItem.documentDate).toLongDateShort.toNonBreaking)
-            ),
-            TableRow(
-                content = HtmlContent(chargeItem.originalAmount.abs.toCurrencyString),
-                format = Some("numeric")
-            )
-        )
-    ),
+    rows = Seq(Seq(
+        TableRow(HtmlContent(chargeSummaryPaymentAllocationTableMessage(chargeItem, link, linkText))),
+        TableRow(HtmlContent(chargeItem.dueDate.getOrElse(chargeItem.documentDate).toLongDateShort.toNonBreaking)),
+        TableRow(HtmlContent(chargeItem.originalAmount.abs.toCurrencyString), Some("numeric"))
+    )),
     head = Some(Seq(
-        HeadCell(
-            content = Text(messages("chargeSummary.whereMoneyWent"))
-        ),
-        HeadCell(
-            content = Text(messages("chargeSummary.date"))
-        ),
-        HeadCell(
-            content = Text(messages("chargeSummary.paymentAmount")),
-            format = Some("numeric")
-        )
+        HeadCell(Text(messages("chargeSummary.whereMoneyWent"))),
+        HeadCell(Text(messages("chargeSummary.date"))),
+        HeadCell(Text(messages("chargeSummary.paymentAmount")), Some("numeric"))
     )),
     caption = Some(messages("chargeSummary.allocation")),
     captionClasses = "govuk-heading-l",
