@@ -105,21 +105,21 @@
     @getExplanationContent(viewModel)
 
     @if(viewModel.chargeItem.subTransactionType.contains(Accepted)) {
-        @checkPayeCodePara(viewModel)
+        @checkPayeCodePara(viewModel.currentTaxYearEnd, viewModel.taxYearFrom, viewModel.taxYearTo)
         @govukInsetText(InsetText(
             id = Some("coding-out-wrapper"),
             content = HtmlContent(codingOutMessageInset())
         ))
-        @codingOutMessage(viewModel)
+        @codingOutMessage(viewModel.taxYearFrom, viewModel.taxYearTo)
     }
 
     @if(viewModel.chargeItem.subTransactionType.contains(Cancelled)) {
-        @checkPayeCodePara(viewModel)
+        @checkPayeCodePara(viewModel.currentTaxYearEnd, viewModel.taxYearFrom, viewModel.taxYearTo)
         @govukInsetText(InsetText(
             id = Some("cancelled-coding-out"),
-            content = HtmlContent(codingOutCancelledMessageInset(viewModel))
+            content = HtmlContent(codingOutCancelledMessageInset())
         ))
-        @codingOutMessage(viewModel)
+        @codingOutMessage(viewModel.taxYearFrom, viewModel.taxYearTo)
     }
 
     @if(viewModel.codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment) {

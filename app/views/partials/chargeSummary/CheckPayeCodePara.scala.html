@@ -21,11 +21,11 @@
     p: p
 )
 
-@(viewModel: ChargeSummaryViewModel)(implicit messages: Messages)
+@(currentTaxYearEnd: Int, taxYearFrom: String, taxYearTo: String)(implicit messages: Messages)
 
 @p(id = Some("check-paye-para")){
     @messages("chargeSummary.check-paye-tax-code-1")
-    <a class="govuk-link" id="paye-tax-code-link" href="https://www.tax.service.gov.uk/check-income-tax/tax-codes/@viewModel.currentTaxYearEnd">
+    <a class="govuk-link" id="paye-tax-code-link" href="https://www.tax.service.gov.uk/check-income-tax/tax-codes/@currentTaxYearEnd">
     @messages("chargeSummary.check-paye-tax-code-2")</a>
-    @messages("chargeSummary.check-paye-tax-code-3", viewModel.taxYearFrom, viewModel.taxYearTo)
+    @messages("chargeSummary.check-paye-tax-code-3", taxYearFrom, taxYearTo)
 }

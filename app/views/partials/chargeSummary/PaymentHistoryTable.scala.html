@@ -72,27 +72,27 @@
                 TableRow(HtmlContent(viewModel.chargeItem.originalAmount.toCurrency), format = Some("numeric"))
             ) else Nil
         )
-                ++ viewModel.reviewAndReconcileCredit.toSeq.map { charge => Seq(
-            TableRow(HtmlContent(reviewAndReconcileCreditMessage(viewModel.isAgent, charge.taxYear.endYear, charge.transactionId, charge.transactionType.key)), attributes = Map("id" -> "rar-due-date")),
-            TableRow(Text(messages("chargeSummary.codingOutPayHistoryAmount", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut))),
-            TableRow(HtmlContent(charge.originalAmount.abs.toCurrency), attributes = Map("id" -> "rar-total-amount"), format = Some("numeric"))
-        )}
+            ++ viewModel.reviewAndReconcileCredit.toSeq.map { charge => Seq(
+                TableRow(HtmlContent(reviewAndReconcileCreditMessage(viewModel.isAgent, charge.taxYear.endYear, charge.transactionId, charge.transactionType.key)), attributes = Map("id" -> "rar-due-date")),
+                TableRow(Text(messages("chargeSummary.codingOutPayHistoryAmount", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut))),
+                TableRow(HtmlContent(charge.originalAmount.abs.toCurrency), attributes = Map("id" -> "rar-total-amount"), format = Some("numeric"))
+            )}
 
-                ++ viewModel.adjustmentHistory.adjustments.map { charge => Seq(
-            TableRow(HtmlContent(charge.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDateShort.toNonBreaking)),
-            TableRow(Text(messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}"))),
-            TableRow(HtmlContent(charge.amount.toCurrency), format = Some("numeric"))
-        )}
+            ++ viewModel.adjustmentHistory.adjustments.map { charge => Seq(
+                TableRow(HtmlContent(charge.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDateShort.toNonBreaking)),
+                TableRow(Text(messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}"))),
+                TableRow(HtmlContent(charge.amount.toCurrency), format = Some("numeric"))
+            )}
 
-                ++ (for {
-            allocation <- viewModel.paymentAllocations
-                    payment    <- allocation.allocations
-                    if !viewModel.latePaymentInterestCharge
-        } yield { Seq(
-            TableRow(HtmlContent(payment.dueDate.getOrElse(throw MissingFieldException("Payment Date")).toLongDateShort.toNonBreaking)),
-            TableRow(HtmlContent(latePaymentInterestChargeMessage(viewModel, allocation, payment).toString)),
-            TableRow(HtmlContent(payment.amount.getOrElse(throw MissingFieldException("Payment Amount")).abs.toCurrency), format = Some("numeric"))
-        )}),
+            ++ (for {
+                allocation <- viewModel.paymentAllocations
+                payment    <- allocation.allocations
+                if !viewModel.latePaymentInterestCharge
+            } yield { Seq(
+                TableRow(HtmlContent(payment.dueDate.getOrElse(throw MissingFieldException("Payment Date")).toLongDateShort.toNonBreaking)),
+                TableRow(HtmlContent(latePaymentInterestChargeMessage(viewModel, allocation, payment).toString)),
+                TableRow(HtmlContent(payment.amount.getOrElse(throw MissingFieldException("Payment Amount")).abs.toCurrency), format = Some("numeric"))
+            )}),
         caption = Some(chargeHistoryHeading(viewModel).toString),
         attributes = Map("id" -> "payment-history-table"),
         captionClasses = "govuk-table__caption--m",
