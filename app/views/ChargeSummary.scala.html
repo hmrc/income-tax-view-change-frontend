@@ -78,10 +78,6 @@
 @paymentAllocationRow(viewModel: ChargeSummaryViewModel) = @{
 
     if(!viewModel.latePaymentInterestCharge) {
-
-    }
-
-    if(!viewModel.latePaymentInterestCharge) {
         (for {
             allocation <- viewModel.paymentAllocations
             payment    <- allocation.allocations
