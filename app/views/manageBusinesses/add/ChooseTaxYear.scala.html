@@ -1,0 +1,97 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.layouts.unifiedLayout
+@import views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.helpers.injected.ErrorSummary
+@import forms.manageBusinesses.add.ChooseTaxYearForm
+@import models.incomeSourceDetails.TaxYear
+
+@this(
+        mainTemplate: unifiedLayout,
+        formWithCSRF: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        govukButton: GovukButton,
+        govukCheckboxes: GovukCheckboxes
+)
+
+@(form: Form[ChooseTaxYearForm], isAgent: Boolean, postAction: Call, currentTaxYear: TaxYear, nextTaxYear: TaxYear)(implicit user: auth.MtdItUser[_], messages: Messages)
+
+@mainTemplate(
+    pageTitle = messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading"),
+    isAgent = isAgent,
+    backUrl = Some("#"),
+    btaNavPartial = user.btaNavPartial) {
+
+    @if(form.errors.nonEmpty) {
+        <div class="govuk-error-summary" data-module="govuk-error-summary">
+            <div role="alert">
+                <h2 id="error-summary-title" class="govuk-error-summary__title">
+                    @messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header")
+                </h2>
+                <div class="govuk-error-summary__body">
+                    <ul class="govuk-list govuk-error-summary__list">
+                        <li>
+                            <a id="error-summary-link" href="#current-year-checkbox">@messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description")</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    }
+
+    @formWithCSRF(action = postAction) {
+
+    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+        <h1 id="choose-tax-year-heading" class="govuk-heading-l">
+            <span id="choose-tax-year-subheading" class="govuk-caption-l">@messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.subHeading")</span>
+            @messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading")
+        </h1>
+    </legend>
+
+    @govukCheckboxes(Checkboxes(
+        name = "choose-tax-year",
+        hint = Some(Hint(content = Text(messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text")))),
+        items = Seq(
+            CheckboxItem(
+                id = Some("current-year-checkbox"),
+                name = Some("current-year-checkbox"),
+                content = Text(
+                    value = messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox", currentTaxYear.startYear.toString, currentTaxYear.endYear.toString)
+                ),
+                value = "true",
+                checked = false
+            ),
+            CheckboxItem(
+                id = Some("next-year-checkbox"),
+                name = Some("next-year-checkbox"),
+                content = Text(
+                    value = messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox", nextTaxYear.startYear.toString, nextTaxYear.endYear.toString)
+                ),
+                value = "true",
+                checked = false
+            )
+        ),
+        errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
+    ).withFormField(form(ChooseTaxYearForm.chooseTaxYearsCheckbox))
+)
+    @govukButton(Button(
+        content = Text(messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button")),
+        attributes = Map("id" -> "continue-button")
+    ))
+    }
+}

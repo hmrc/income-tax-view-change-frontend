@@ -23,6 +23,7 @@ import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
+import models.admin.IncomeSourcesNewJourney
 import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, UIJourneySessionData}
@@ -169,8 +170,13 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
 
-      val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
-        routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url
+      val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>{
+        if(isEnabled(IncomeSourcesNewJourney)){
+          controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.show(isAgent, incomeSourceType).url
+        }else{
+          if(isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+        }
+      }
 
       val viewModel = getViewModel(incomeSourceType, sessionData)
 

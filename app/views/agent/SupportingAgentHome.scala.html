@@ -89,7 +89,9 @@
     </div>
     @tiles()
     <h3 class="govuk-heading-m">@messages("home.agent.supporting.paymentAndReturns")</h3>
-    <p class="govuk-body">@messages("home.agent.supporting.cannotAccess")</p>
+    @p(){
+        @messages("home.agent.supporting.cannotAccess")
+    }
     @bulletList(
         "home.agent.supporting.cannotAccess.payments",
         "home.agent.supporting.cannotAccess.returns",

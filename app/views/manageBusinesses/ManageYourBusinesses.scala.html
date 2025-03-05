@@ -126,7 +126,9 @@
 
         @h2(msg = getMessage("self-employed-h2"), optId = Some("self-employed-h1"))
 
-        <p class="govuk-body">@getMessage("self-employed-desc")</p>
+        @p(){
+            @getMessage("self-employed-desc")
+        }
 
         @if(soleTraderBusinesses.nonEmpty) {
 
@@ -181,7 +183,9 @@
 
         @h2(msg = getMessage("property-h2"), optId = Some("property-h2"))
 
-        <p class="govuk-body">@getMessage("property-desc")</p>
+        @p(){
+            @getMessage("property-desc")
+        }
 
         @if(ukProperty.nonEmpty) {
 
@@ -264,13 +268,15 @@
             @h2(msg = getMessage("ceasedBusinesses.heading"), optId = Some("ceasedBusinesses-heading"))
 
             @if(sources.viewCeasedBusinesses.length == 1) {
-                <p class="govuk-body" id="single-ceased-business">@getMessage("ceasedBusinesses.single")</p>
+                @p(id=Some("single-ceased-business")){
+                    @getMessage("ceasedBusinesses.single")
+                }
             } else {
-                <p class="govuk-body" id="multiple-ceased-business">@getMessage("ceasedBusinesses.multiple", sources.viewCeasedBusinesses.length.toString)</p>
+                @p(id=Some("multiple-ceased-business")){
+                    @getMessage("ceasedBusinesses.multiple", sources.viewCeasedBusinesses.length.toString)
+                }
             }
             @link(link = viewAllCeasedBusinessesControllerURL, messageKey = getMessage("ceasedBusinesses.viewall"), id = Some("ceasedBusinesses-viewall"))
         }
     </div>
-
-
 }

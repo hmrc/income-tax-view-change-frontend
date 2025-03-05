@@ -573,7 +573,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       document.selectById("poa1-extra-charge-p2").text() shouldBe poa1ReconciliationInterestP2
       document.selectById("poa1-extra-charge-p3").text() shouldBe poa1ReconciliationInterestP3
 
-      verifySummaryListRowNumeric(1, dueDate, "OVERDUE 15 June 2018")
+      verifySummaryListRowNumeric(1, dueDate, "Overdue 15 June 2018")
       verifySummaryListRowNumeric(2, interestPeriod, "29 Mar 2018 to 15 Jun 2018")
       verifySummaryListRowNumeric(3, amount, "£100.00")
       verifySummaryListRowNumeric(4, remainingToPay, "£80.00")
@@ -590,7 +590,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       document.selectById("poa2-extra-charge-p2").text() shouldBe poa2ReconciliationInterestP2
       document.selectById("poa2-extra-charge-p3").text() shouldBe poa2ReconciliationInterestP3
 
-      verifySummaryListRowNumeric(1, dueDate, "OVERDUE 15 June 2018")
+      verifySummaryListRowNumeric(1, dueDate, "Overdue 15 June 2018")
       verifySummaryListRowNumeric(2, interestPeriod, "29 Mar 2018 to 15 Jun 2018")
       verifySummaryListRowNumeric(3, amount, "£100.00")
       verifySummaryListRowNumeric(4, remainingToPay, "£80.00")
@@ -704,7 +704,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
               originalAmount = 2500.00)
           ) {
             document.select("h1").text() shouldBe s"2018 to 2019 tax year $balancingCharge"
-            verifySummaryListRowNumeric(1, dueDate, "OVERDUE 15 May 2019")
+            verifySummaryListRowNumeric(1, dueDate, "Overdue 15 May 2019")
             verifySummaryListRowNumeric(2, fullPaymentAmount, "£2,500.00")
             verifySummaryListRowNumeric(3, remainingToPay, "£2,500.00")
             document.select("#coding-out-notice").text() shouldBe ""
@@ -823,7 +823,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       "Display an unpaid MFA Credit" in new TestSetup(
         chargeItem = mfaChargeItem.copy(taxYear = TaxYear.forYearEnd(2019))
       ) {
-        val summaryListText = "Due date OVERDUE 15 May 2019 Amount £1,400.00 Still to pay £1,400.00 "
+        val summaryListText = "Due date Overdue 15 May 2019 Amount £1,400.00 Still to pay £1,400.00 "
         val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
         val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
         // heading should be hmrc adjustment
@@ -934,7 +934,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     "displaying due date" when {
 
       "when no interest charge, display due date" in new TestSetup(dueDate = Option(LocalDate.of(2019, 5, 15))) {
-        verifySummaryListRowNumeric(1, dueDate, "OVERDUE 15 May 2019")
+        verifySummaryListRowNumeric(1, dueDate, "Overdue 15 May 2019")
       }
 
       "no due date, display as N/A" in new TestSetup(
@@ -949,7 +949,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         dueDate = Option(LocalDate.of(2019, 5, 15)),
         latePaymentInterestCharge = true
       ){
-        verifySummaryListRowNumeric(1, dueDate, "OVERDUE 15 June 2018")
+        verifySummaryListRowNumeric(1, dueDate, "Overdue 15 June 2018")
       }
     }
 
@@ -1307,7 +1307,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       "Display an unpaid MFA Credit" in new TestSetup(
         chargeItem = mfaChargeItem.copy(taxYear = TaxYear.forYearEnd(2019)),
         isAgent = true) {
-        val summaryListText = "Due date OVERDUE 15 May 2019 Amount £1,400.00 Still to pay £1,400.00 "
+        val summaryListText = "Due date Overdue 15 May 2019 Amount £1,400.00 Still to pay £1,400.00 "
         val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
         val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
         // heading should be hmrc adjustment

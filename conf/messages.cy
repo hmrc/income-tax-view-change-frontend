@@ -124,12 +124,12 @@ home.agent.your-returns.updatesLink                             = Diweddaru a ch
 home.unique.taxpayer.reference                                  = Cyfeirnod Unigryw y Trethdalwr (UTR): {0}
 home.utr                                                        = UTR: {0}
 home.payments.heading                                           = Taliadau nesaf yn ddyledus
-home.payments.daily-interest-charges                            = TALIADAU LLOG DYDDIOL
+home.payments.daily-interest-charges                            = Taliadau llog dyddiol
 home.payments.no-payments-due                                   = Dim taliadau’n ddyledus
 home.payments.view                                              = Gwirio’r hyn sydd arnoch
-home.overdue.date.update.count                                  = {0} YN HWYR DIWEDDARIADAU
-home.overdue.date.payment.count                                 = {0} TALIAD AM FOD YN HWYR
-home.overdue.date                                               = YN HWYR
+home.overdue.date.update.count                                  = {0} Ddiweddariadau yn hwyr
+home.overdue.date.payment.count                                 = {0} Daliadau am fod yn hwyr
+home.overdue.date                                               = Yn hwyr
 home.updates.heading                                            = Diweddariad nesaf i’w gyflwyno erbyn
 home.updates.view                                               = Bwrw golwg dros ddyddiadau cau diweddariadau
 home.updates.view.opt-out                                       = Bwrw golwg dros ddyddiadau cau a rheoli sut rydych yn adrodd
@@ -167,8 +167,8 @@ home.overdue.message.dunningLock.true                           = Mae gennych da
 home.overdue.message.dunningLock.false                          = Mae arnoch daliadau am fod yn hwyr. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
 home.interest-accruing                                          = Mae gennych daliadau gyda llog ychwanegol. Bydd y taliadau hyn yn cronni llog nes eu bod yn cael eu talu’n llawn.
 
-home.updates.overdue.charges                                    = {0} TALIAD AM FOD YN HWYR
-home.updates.overdue.updates                                    = {0} YN HWYR Diweddariadau
+home.updates.overdue.charges                                    = {0} Daliadau am fod yn hwyr
+home.updates.overdue.updates                                    = {0} Ddiweddariadau yn hwyr
 
 home.agent.supporting.paymentAndReturns                         = Taliadau a Ffurflenni Treth
 home.agent.supporting.cannotAccess                              = Ni all asiantau ategol gael mynediad at gofnodion sy’n dangos:
@@ -179,8 +179,8 @@ home.agent.supporting.readMore                                  = Darllenwch rag
 
 home.penaltiesAndAppeals.heading                                = Cosbau ac apeliadau
 home.penaltiesAndAppeals.view                                   = Gwirio cosbau ac apeliadau Hunanasesiad
-home.penaltiesAndAppeals.twoPenaltiesTag                        = 2 BWYNT COSB
-home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 PWYNT COSB
+home.penaltiesAndAppeals.twoPenaltiesTag                        = 2 Bwynt cosb
+home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Pwynt cosb
 
 ## Custom Error Page ##
 error.custom.heading                                           = Mae problem wedi codi
@@ -194,10 +194,10 @@ taxYears.updateReturn                                          = Diweddariad ffu
 taxYears.taxYears                                              = 6 Ebrill {0} hyd at 5 Ebrill {1}
 taxYears.table.taxYear.heading                                 = Blwyddyn dreth
 taxYears.table.options.heading                                 = Opsiynau
-taxYears.ongoing                                               = AR Y GWEILL
-taxYears.complete                                              = WEDI CWBLHAU
-taxYears.accruesInterest                                       = LLOG YN CAEL EI GRONNI
-taxYears.overdue                                               = YN HWYR
+taxYears.ongoing                                               = Ar y gweill
+taxYears.complete                                              = Wedi cwblhau
+taxYears.accruesInterest                                       = Llog yn cael ei gronni
+taxYears.overdue                                               = Yn hwyr
 taxYears.noEstimates                                           = Nid oes gennych amcangyfrif ar hyn o bryd. Byddwn yn dangos eich amcangyfrif Treth Incwm nesaf pan fyddwch yn cyflwyno adroddiad gan ddefnyddio meddalwedd.
 taxYears.oldSa.content.text                                    = Er mwyn bwrw golwg dros eich blynyddoedd treth o’r adeg cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fynd i’ch
 taxYears.oldSa.content.link                                    = cyfrif Hunanasesiad ar-lein blaenorol
@@ -844,7 +844,7 @@ whatYouOwe.payments-made-bullet-1.2                             = dull talu rydy
 whatYouOwe.payments-made-bullet-agent-1.2                       = dull talu mae’n ei ddefnyddio
 whatYouOwe.payments-made-bullet-2                               = mae’n rhaid i daliadau ein cyrraedd erbyn y dyddiad cau – os bydd y taliad yn hwyr, codir llog arnoch ac efallai y bydd yn rhaid i chi dalu cosb
 whatYouOwe.payments-made-bullet-agent-2                         = mae’n rhaid i daliadau ein cyrraedd erbyn y dyddiad cau – os bydd y taliad yn hwyr, codir llog ar eich cleient ac efallai y bydd yn rhaid iddo dalu cosb
-whatYouOwe.over-due                                             = YN HWYR
+whatYouOwe.over-due                                             = Yn hwyr
 whatYouOwe.due-in-thirty-days-payments                          = Yn ddyledus cyn pen 30 diwrnod
 whatYouOwe.future-payments                                      = Taliadau yn y dyfodol
 whatYouOwe.payment-type.taxYear                                 = Blwyddyn dreth {0} i {1}
@@ -912,7 +912,7 @@ chargeSummary.paymentAmount                                     = Swm
 chargeSummary.paymentAmountCodingOut                            = Swm y taliad
 chargeSummary.paidToDate                                        = wedi’i dalu hyd yma
 chargeSummary.remainingDue                                      = I’w dalu o hyd
-chargeSummary.overdue                                           = YN HWYR
+chargeSummary.overdue                                           = Yn hwyr
 chargeSummary.na                                                = Amh
 
 chargeSummary.allocation                                           = Dyraniad
@@ -1297,6 +1297,21 @@ incomeSources.add.error.reportingMethodNotSaved.fp.incomeSource                 
 incomeSources.add.error.reportingMethodNotSaved.se.caption                      = Unig fasnachwr
 incomeSources.add.error.reportingMethodNotSaved.uk.caption                      = Eiddo yn y DU
 incomeSources.add.error.reportingMethodNotSaved.fp.caption                      = Eiddo tramor
+
+incomeSources.add.reportingFrequency.sole-trader                    = Unig fasnachwr
+incomeSources.add.reportingFrequency.uk-property                    = Eiddo yn y DU
+incomeSources.add.reportingFrequency.foreign-property               = Eiddo tramor
+incomeSources.add.reportingFrequency.title                          = Mae’ch busnes newydd wedi’i drefnu i gyflwyno’n flynyddol
+incomeSources.add.reportingFrequency.h1                             = Mae’ch busnes newydd wedi’i drefnu i gyflwyno’n flynyddol
+incomeSources.add.reportingFrequency.p1                             = Gan mai busnes newydd yw hwn, gallwch gyflwyno ei incwm a’i dreuliau unwaith y flwyddyn yn eich Ffurflen Dreth, am hyd at 2 flwyddyn dreth, hyd yn oed os yw’r canlynol yn wir:
+incomeSources.add.reportingFrequency.p2                             = Gallwch ddewis i gyflwyno’n chwarterol, sy’n golygu cyflwyno diweddariad bob 3 mis yn ogystal â chyflwyno’ch Ffurflen Dreth.
+incomeSources.add.reportingFrequency.inset                          = O Ebrill 2026 ymlaen, pan ddaw’r cyfnod treth hwn o 2 flynedd i ben, efallai y bydd angen i chi cyflwyno’n chwarterol.
+incomeSources.add.reportingFrequency.form.h1                        = A ydych am newid i gyflwyno’n chwarterol?
+incomeSources.add.reportingFrequency.li1                            = rydych wedi’ch optio i mewn yn wirfoddol, neu mae’n ofynnol i chi gyflwyno’n chwarterol ar gyfer eich busnesau eraill
+incomeSources.add.reportingFrequency.li2                            = mae’ch incwm o hunangyflogaeth neu’ch incwm o eiddo, neu’r ddau ohonynt, yn mynd dros y trothwy incwm
+incomeSources.add.reportingFrequency.form.no-select.error           = Dewiswch ‘Iawn’ os hoffech chi gyflwyno’n chwarterol neu dewiswch ‘Na’ os hoffech chi gyflwyno’n flynyddol
+incomeSources.add.reportingFrequency.table.c1                       = Amlder cyflwyno {0} i {1}
+incomeSources.add.reportingFrequency.table.c2                       = Blynyddol
 
 #######################################################################################################################
 ## Income Sources - Cease ##
@@ -1975,6 +1990,16 @@ manageBusinesses.check-answers.reporting.quarterly                       = Bob c
 manageBusinesses.check-answers.reporting.annually                        = Bob blwyddyn
 manageBusinesses.check-answers.confirm                                   = Cadarnhau ac yn eich blaen
 manageBusinesses.check-answers.change                                    = Newid
+
+# manage business sole trader reporting frequency
+
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading           = Pa flwyddyn dreth ydych chi am gyflwyno’n chwarterol ar ei chyfer?
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.subHeading        = Unig fasnachwr
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text         = Dewiswch bob un sy’n berthnasol.
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox     = {0} i {1}
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button            = Parhau
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header      = Mae problem
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description = Dewiswch y blynyddoedd treth yr hoffech gyflwyno’n chwarterol ar eu cyfer
 
 #######################################################################################################################
 ## Claim to Adjust POA - Add ##

@@ -121,7 +121,9 @@
                 @getMessage("capital-gain-tax.text")
             </label>
         </h3>
-        <p id="capital-gain-content" class="govuk-body">@getMessage("capital-gain-tax.info1.text")</p>
+        @p(id=Some("capital-gain-content")){
+            @getMessage("capital-gain-tax.info1.text")
+        }
         <p>@link(id = Some("capital-gain-more-info-link"), link = "https://www.gov.uk/capital-gains-tax/what-you-pay-it-on", messageKey = "business-ceased.obligation.capital-gain-tax.info2.text", target = Some("_blank"))</p>
     </div>
   }
@@ -144,7 +146,9 @@
                 </label>
             </h3>
             @if(source.firstQuarterlyUpdate.isEmpty && source.finalDeclarationUpdate.size == 1){
-                <p id="final-declaration-update" class="govuk-body">@getNextFinalDeclarationUpdate()</p>
+                @p(id=Some("final-declaration-update")){
+                    @getNextFinalDeclarationUpdate()
+                }
             } else {
                 <ul id="quarterly-and-final-update-list" class="govuk-list govuk-list--bullet">
                     @getNextFirstQuarterlyUpdate

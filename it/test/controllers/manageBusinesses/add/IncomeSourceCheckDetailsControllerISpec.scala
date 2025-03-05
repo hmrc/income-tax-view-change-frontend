@@ -22,7 +22,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.admin.{IncomeSourcesFs, NavBarFs}
+import models.admin.{IncomeSourcesFs, IncomeSourcesNewJourney, NavBarFs}
 import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import models.incomeSourceDetails.UIJourneySessionData
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -76,6 +76,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
             "render the Check Business details page with accounting method" when {
               "the user has no existing businesses" in {
                 enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -128,9 +129,10 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
       s"POST $path" when {
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
-            "redirect to IncomeSourceReportingMethodController" when {
+            "redirect to IncomeSourceReportingFrequencyController" when {
               "user selects 'confirm and continue'" in {
                 enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
@@ -155,7 +157,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
                 result should have(
                   httpStatus(SEE_OTHER),
-                  redirectURI(controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodController.show(isAgent = mtdUserRole != MTDIndividual, incomeSourceType).url)
+                  redirectURI(controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.show(isAgent = mtdUserRole != MTDIndividual, incomeSourceType).url)
                 )
               }
             }
@@ -163,6 +165,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
             "render the error page" when {
               "error in response from API" in {
                 enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 val response = List(CreateIncomeSourceErrorResponse(500, "INTERNAL_SERVER_ERROR"))
@@ -194,6 +197,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
               "user session has no details" in {
                 enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)

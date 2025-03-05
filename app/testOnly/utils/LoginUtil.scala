@@ -57,18 +57,22 @@ object LoginUtil {
       )
     } else {
       val enrolmentKey = "HMRC-MTD-IT"
-      Seq(
-        Enrolment(key = enrolmentKey, identifiers =
+      val saEnrolment = Enrolment(key = "IR-SA", identifiers =
+        Seq(KVPair(key = "UTR", value = enrolment.utr)), state = "Activated")
+      if(enrolment.mtditid.contains("Not Enrolled")) {
+        Seq(saEnrolment)
+      } else {
+        Seq(Enrolment(key = enrolmentKey, identifiers =
           Seq(KVPair(key = "MTDITID", value = enrolment.mtditid)), state = "Activated"),
-        Enrolment(key = "IR-SA", identifiers =
-          Seq(KVPair(key = "UTR", value = enrolment.utr)), state = "Activated")
-      )
+          saEnrolment
+        )
+      }
     }
     Json.toJson[Seq[Enrolment]](es)
   }
 
   def getDelegatedEnrolmentData(isAgent: Boolean, isSupporting: Boolean, enrolment: EnrolmentValues): JsValue = {
-    val es = if (isAgent) {
+    val es = if (isAgent && !enrolment.mtditid.contains("Not Enrolled")) {
       if(isSupporting) Seq(
         DelegatedEnrolment(key = "HMRC-MTD-IT-SUPP", identifiers =
           Seq(KVPair(key = "MTDITID", value = enrolment.mtditid)), delegatedAuthRule = "mtd-it-auth-supp")

@@ -109,7 +109,9 @@ btaNavPartial = user.btaNavPartial) {
         @if(sources.quarterlyObligationsDates.nonEmpty) {
             <div class="box-simple" id="quarterly">
                 <div class="page_headers govuk-heading-m"> @getMessage("quarterly-heading") </div>
-                <p class="govuk-body"> @getMessage("quarterly-p1") </p>
+                @p(){
+                    @getMessage("quarterly-p1")
+                }
 
                 @for(quarterlyPeriods <- sources.quarterlyObligationsDates) {
                     @govukTable(Table(
@@ -140,7 +142,9 @@ btaNavPartial = user.btaNavPartial) {
 
         <div class="box-simple" id="finalDec">
             <div class="page_headers govuk-heading-m"> @getMessage("final-declaration-heading") </div>
-            <p class="govuk-body"> @getMessage("final-declaration-text") </p>
+            @p(){
+                @getMessage("final-declaration-text")
+            }
 
             @govukTable(Table(
                 rows = sources.finalDeclarationDates.map { finalDecDate =>

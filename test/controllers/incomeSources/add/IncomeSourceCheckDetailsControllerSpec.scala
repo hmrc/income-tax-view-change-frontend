@@ -176,7 +176,7 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
         val action = if (mtdRole == MTDIndividual) testCheckDetailsController.submit(incomeSourceType) else testCheckDetailsController.submitAgent(incomeSourceType)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
         s"the user is authenticated as a $mtdRole" should {
-          "redirect to IncomeSourceReportingMethodController" when {
+          "redirect to IncomeSourceReportingFrequencyController" when {
             "data is correct and redirect next page" in {
               setupMockSuccess(mtdRole)
               enable(IncomeSourcesFs)

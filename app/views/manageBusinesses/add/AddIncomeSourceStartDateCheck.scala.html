@@ -20,13 +20,15 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import views.html.helpers.injected.ErrorSummary
+@import views.html.components.p
 
 @this(
         mainTemplate: unifiedLayout,
         formWithCSRF: FormWithCSRF,
         govukRadios: GovukRadios,
         errorSummary: ErrorSummary,
-        govukButton: GovukButton
+        govukButton: GovukButton,
+        p: p
 )
 
 @(
@@ -67,7 +69,9 @@
         }
 
         <h1 class="govuk-heading-l" id="start-date-heading">@messages("radioForm.checkDate.heading")</h1>
-        <p class="govuk-body" id="start-date-value">@incomeSourceStartDate</p>
+        @p(id=Some("start-date-value")){
+            @incomeSourceStartDate
+        }
 
         @govukRadios(Radios(
             items = Seq(

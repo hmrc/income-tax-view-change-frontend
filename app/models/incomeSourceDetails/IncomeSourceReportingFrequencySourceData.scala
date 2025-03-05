@@ -1,5 +1,5 @@
-@*
- * Copyright 2024 HM Revenue & Customs
+/*
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,17 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import views.html.components._
-@import _root_.implicits.ImplicitCurrencyFormatter._
+package models.incomeSourceDetails
 
-@this(p:p)
+import play.api.libs.json.{Json, OFormat}
 
-@(amount: BigDecimal)(implicit messages: Messages)
+case class IncomeSourceReportingFrequencySourceData(isReportingQuarterlyCurrentYear: Boolean, isReportingQuarterlyForNextYear: Boolean)
 
-@p(id = Some("govuk-heading-s")){
- <span class="govuk-body">@messages("credit-and-refund.refundProgress-prt-1")</span>
- @amount.toCurrencyString
- <span class="govuk-body">@messages("credit-and-refund.refundProgress-prt-2")</span>
+object IncomeSourceReportingFrequencySourceData {
+  implicit val format: OFormat[IncomeSourceReportingFrequencySourceData] = Json.format[IncomeSourceReportingFrequencySourceData]
 }

@@ -55,8 +55,12 @@
 }
 
 @hintContent = {
-        <p class="govuk-hint">@messages("add-business-name.p1")</p>
-        <p class="govuk-hint">@messages("add-business-name.p2")</p>
+    @p(classes = "govuk-hint"){
+        @messages("add-business-name.p1")
+    }
+    @p(classes = "govuk-hint"){
+        @messages("add-business-name.p2")
+    }
 }
 
 @mainTemplate(
