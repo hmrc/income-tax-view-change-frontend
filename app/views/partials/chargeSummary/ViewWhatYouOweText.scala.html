@@ -1,0 +1,54 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import models.chargeSummary.ChargeSummaryViewModel
+
+@this(
+    p: p,
+    link: link
+)
+
+@(viewModel: ChargeSummaryViewModel)(implicit messages: Messages)
+
+@if(!viewModel.isCredit) {
+    @if(viewModel.hasInterestLocks && viewModel.hasAccruedInterest) {
+        @p(id = Some("p-interest-locks-msg")) {
+            @if(viewModel.isAgent) {
+                @messages("chargeSummary.whatYouOwe.textOne-agent")
+                @link(id = Some("what-you-owe-interest-link-agent"), link = viewModel.whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+                @messages("chargeSummary.interestLocks.text-agent")
+            } else {
+                @messages("chargeSummary.whatYouOwe.textOne")
+                @link(id = Some("what-you-owe-interest-link"), link = viewModel.whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
+                @messages("chargeSummary.interestLocks.text")
+            }
+        }
+    } else {
+        @p() {
+            @if(viewModel.isAgent) {
+                @messages("chargeSummary.whatYouOwe.textOne-agent"),
+                @link(id = Some("what-you-owe-link-agent"), link = viewModel.whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+                @messages("chargeSummary.whatYouOwe.textTwo-agent")
+            } else {
+                @messages("chargeSummary.whatYouOwe.textOne")
+                @link(id = Some("what-you-owe-link"), link = viewModel.whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
+                @messages("chargeSummary.whatYouOwe.textTwo")
+            }
+        }
+    }
+
+}

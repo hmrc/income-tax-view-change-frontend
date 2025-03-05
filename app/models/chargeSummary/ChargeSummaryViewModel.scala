@@ -26,6 +26,7 @@ import java.time.LocalDate
 case class ChargeSummaryViewModel(
                                    currentDate: LocalDate,
                                    chargeItem: ChargeItem,
+                                   whatYouOweUrl: String,
                                    backUrl: String,
                                    paymentBreakdown: List[FinancialDetail],
                                    paymentAllocations: List[PaymentHistoryAllocations],
