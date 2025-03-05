@@ -19,9 +19,13 @@
 @import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import _root_.implicits.HtmlFormatter.NbspString
+@import views.html.components.h2
 
-@this(govukTable: GovukTable,
-        implicitDateFormatter: ImplicitDateFormatterImpl)
+@this(
+    govukTable: GovukTable,
+    implicitDateFormatter: ImplicitDateFormatterImpl,
+    h2: h2
+)
 
 @(chargeItem: ChargeItem, link: String, linkText: String)(implicit messages: Messages)
 
@@ -29,10 +33,12 @@
 
 <h2 class="govuk-heading-l" id="allocation"> @messages("chargeSummary.allocation")</h2>
 
+@h2(messages("chargeSummary.allocation"), "govuk-heading-l", Some("allocation"))
+
 <table class="govuk-table" id="allocation-table">
     <thead class="govuk-table__head">
         <tr class="govuk-table__row" id="heading-row">
-            <th scope="col" class="govuk-table__header">@messages("chargeSummary.whereMoneyWent")</th>
+            <th scope="col" class="govuk-table__header">@messages("chargeSummary.wheredfsdfMoneyWent")</th>
             <th scope="col" class="govuk-table__header">@messages("chargeSummary.date")</th>
             <th scope="col" class="govuk-table__header govuk-table__header--numeric">@messages("chargeSummary.paymentAmount")</th>
         </tr>
