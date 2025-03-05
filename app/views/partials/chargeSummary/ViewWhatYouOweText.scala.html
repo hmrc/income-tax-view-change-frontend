@@ -22,24 +22,22 @@
     link: link
 )
 
-@(viewModel: ChargeSummaryViewModel)(implicit messages: Messages)
+@(isAgent: Boolean, hasInterestLocks: Boolean, hasAccruedInterest: Boolean, whatYouOweUrl: String)(implicit messages: Messages)
 
 @getAgentSuffix = @{
-    if (viewModel.isAgent) "-agent" else ""
+    if (isAgent) "-agent" else ""
 }
 
-@if(!viewModel.isCredit) {
-    @if(viewModel.hasInterestLocks && viewModel.hasAccruedInterest) {
-        @p(id = Some("p-interest-locks-msg")) {
-            @messages(s"chargeSummary.whatYouOwe.textOne$getAgentSuffix")
-            @link(id = Some(s"what-you-owe-interest-link$getAgentSuffix"), link = viewModel.whatYouOweUrl, messageKey = s"chargeSummary.whatYouOwe.linkText$getAgentSuffix")
-            @messages(s"chargeSummary.interestLocks.text$getAgentSuffix")
-        }
-    } else {
-        @p() {
-            @messages(s"chargeSummary.whatYouOwe.textOne$getAgentSuffix"),
-            @link(id = Some(s"what-you-owe-link$getAgentSuffix"), link = viewModel.whatYouOweUrl, messageKey = s"chargeSummary.whatYouOwe.linkText$getAgentSuffix")
-            @messages(s"chargeSummary.whatYouOwe.textTwo$getAgentSuffix")
-        }
+@if(hasInterestLocks && hasAccruedInterest) {
+    @p(id = Some("p-interest-locks-msg")) {
+        @messages(s"chargeSummary.whatYouOwe.textOne$getAgentSuffix")
+        @link(id = Some(s"what-you-owe-interest-link$getAgentSuffix"), link = whatYouOweUrl, messageKey = s"chargeSummary.whatYouOwe.linkText$getAgentSuffix")
+        @messages(s"chargeSummary.interestLocks.text$getAgentSuffix")
+    }
+} else {
+    @p() {
+        @messages(s"chargeSummary.whatYouOwe.textOne$getAgentSuffix"),
+        @link(id = Some(s"what-you-owe-link$getAgentSuffix"), link = whatYouOweUrl, messageKey = s"chargeSummary.whatYouOwe.linkText$getAgentSuffix")
+        @messages(s"chargeSummary.whatYouOwe.textTwo$getAgentSuffix")
     }
 }

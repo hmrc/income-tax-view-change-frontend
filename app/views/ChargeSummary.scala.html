@@ -41,7 +41,6 @@
     p: p,
     link: link,
     govukWarningText : GovukWarningText,
-    govukTable: GovukTable,
     chargeSummaryLpiCharge: ChargeSummaryLpiCharge,
     chargeSummaryPaymentAllocation: ChargeSummaryPaymentAllocation,
     chargeSummaryHasPaymentBreakdown: ChargeSummaryHasPaymentBreakdown,
@@ -58,6 +57,7 @@
     viewWhatYouOweText: ViewWhatYouOweText,
     hmrcPageHeading: HmrcPageHeading,
     paymentHistoryTable: PaymentHistoryTable,
+    poaExtraAmountExplanation: PoaExtraAmountExplanation,
     govukInsetText : GovukInsetText
 )
 
@@ -97,20 +97,28 @@
     ))
 
     @if(viewModel.chargeItem.isPoaReconciliationDebit && !viewModel.latePaymentInterestCharge) {
-        @govukWarningText(WarningText(content = Text(messages("chargeSummary.reviewAndReconcilePoa.warning"))))
+        @govukWarningText(WarningText(
+            content = Text(messages("chargeSummary.reviewAndReconcilePoa.warning"))
+        ))
     }
 
     @getExplanationContent(viewModel)
 
     @if(viewModel.chargeItem.subTransactionType.contains(Accepted)){
         @checkPayeCodePara(viewModel)
-        @govukInsetText(InsetText(id = Some("coding-out-wrapper"), content = HtmlContent(codingOutMessageInset())))
+        @govukInsetText(InsetText(
+            id = Some("coding-out-wrapper"),
+            content = HtmlContent(codingOutMessageInset())
+        ))
         @codingOutMessage(viewModel)
     }
 
     @if(viewModel.chargeItem.subTransactionType.contains(Cancelled)){
         @checkPayeCodePara(viewModel)
-        @govukInsetText(InsetText(id = Some("cancelled-coding-out"), content = HtmlContent(codingOutCancelledMessageInset(viewModel))))
+        @govukInsetText(InsetText(
+            id = Some("cancelled-coding-out"),
+            content = HtmlContent(codingOutCancelledMessageInset(viewModel))
+        ))
         @codingOutMessage(viewModel)
     }
 
@@ -148,19 +156,22 @@
         )
     }
 
-    @if(viewModel.poaExtraChargeLink.isDefined){
-        @p(id = Some("poa-extra-charge-content")) {
-            @messages("chargeSummary.extraCharge.text1")
-            @link(id = Some("poa-extra-charge-link"), link = viewModel.poaExtraChargeLink.getOrElse(""), messageKey = "chargeSummary.extraCharge.linkText")
-            @messages("chargeSummary.extraCharge.text2")
-        }
+    @if(viewModel.poaExtraChargeLink.isDefined) {
+        @poaExtraAmountExplanation(viewModel.poaExtraChargeLink)
     }
 
     @if(viewModel.latePaymentInterestCharge) {
         @getInterestRatesLink()
     }
 
-    @viewWhatYouOweText(viewModel)
+    @if(!viewModel.isCredit) {
+        @viewWhatYouOweText(
+            viewModel.isAgent,
+            viewModel.hasInterestLocks,
+            viewModel.hasAccruedInterest,
+            viewModel.whatYouOweUrl
+        )
+    }
 
     @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit) {
         @paymentHistoryTable(viewModel)
