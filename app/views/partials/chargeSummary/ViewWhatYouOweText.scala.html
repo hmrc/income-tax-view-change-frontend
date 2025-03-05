@@ -24,31 +24,22 @@
 
 @(viewModel: ChargeSummaryViewModel)(implicit messages: Messages)
 
+@getAgentSuffix = @{
+    if (viewModel.isAgent) "-agent" else ""
+}
+
 @if(!viewModel.isCredit) {
     @if(viewModel.hasInterestLocks && viewModel.hasAccruedInterest) {
         @p(id = Some("p-interest-locks-msg")) {
-            @if(viewModel.isAgent) {
-                @messages("chargeSummary.whatYouOwe.textOne-agent")
-                @link(id = Some("what-you-owe-interest-link-agent"), link = viewModel.whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
-                @messages("chargeSummary.interestLocks.text-agent")
-            } else {
-                @messages("chargeSummary.whatYouOwe.textOne")
-                @link(id = Some("what-you-owe-interest-link"), link = viewModel.whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
-                @messages("chargeSummary.interestLocks.text")
-            }
+            @messages(s"chargeSummary.whatYouOwe.textOne$getAgentSuffix")
+            @link(id = Some(s"what-you-owe-interest-link$getAgentSuffix"), link = viewModel.whatYouOweUrl, messageKey = s"chargeSummary.whatYouOwe.linkText$getAgentSuffix")
+            @messages(s"chargeSummary.interestLocks.text$getAgentSuffix")
         }
     } else {
         @p() {
-            @if(viewModel.isAgent) {
-                @messages("chargeSummary.whatYouOwe.textOne-agent"),
-                @link(id = Some("what-you-owe-link-agent"), link = viewModel.whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
-                @messages("chargeSummary.whatYouOwe.textTwo-agent")
-            } else {
-                @messages("chargeSummary.whatYouOwe.textOne")
-                @link(id = Some("what-you-owe-link"), link = viewModel.whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
-                @messages("chargeSummary.whatYouOwe.textTwo")
-            }
+            @messages(s"chargeSummary.whatYouOwe.textOne$getAgentSuffix"),
+            @link(id = Some(s"what-you-owe-link$getAgentSuffix"), link = viewModel.whatYouOweUrl, messageKey = s"chargeSummary.whatYouOwe.linkText$getAgentSuffix")
+            @messages(s"chargeSummary.whatYouOwe.textTwo$getAgentSuffix")
         }
     }
-
 }
