@@ -84,7 +84,13 @@ object RepaymentHistoryUtils {
                                         languageUtils: LanguageUtils
                                        )(implicit messages: Messages, dateServiceInterface: DateServiceInterface): List[PaymentHistoryEntry] = {
 
-    val filteredPayments = payments.flatMap(payment => filterPayment(payment, isAgent, reviewAndReconcileEnabled))
+    val filteredPayments = payments.flatMap { payment => filterPayment(payment, isAgent, reviewAndReconcileEnabled) match {
+        case Right(entry) => Some(entry)
+        case Left(error) =>
+          Logger("application").error(s"Error processing payment: ${error.getMessage}")
+          None
+      }
+    }
 
     val filteredRepayments = repayments.filter(_.status.isInstanceOf[Approved]).map(repayment => filterRepayment(repayment)(messages, languageUtils, dateServiceInterface))
 
@@ -94,20 +100,20 @@ object RepaymentHistoryUtils {
   private def filterPayment(payment: Payment,
                             isAgent: Boolean,
                             reviewAndReconcileEnabled: Boolean
-                           )(implicit messages: Messages, dateservice: DateServiceInterface): Option[PaymentHistoryEntry] = {
+                           )(implicit messages: Messages, dateservice: DateServiceInterface): Either[Throwable, PaymentHistoryEntry] = {
 
     val hasCredit = payment.credit.isDefined
     val hasLot = payment.lot.isDefined && payment.lotItem.isDefined
 
     (hasCredit,  reviewAndReconcileEnabled, hasLot, payment.creditType) match {
-      case (true, _, _, Some(MfaCreditType))                                   => Some(mfaCreditEntry(payment, isAgent))
-      case (true, _, _, Some(CutOverCreditType))                               => creditEntry(payment, isAgent).toOption
-      case (true, true, _, Some(PoaOneReconciliationCredit))  => creditEntry(payment, isAgent, true).toOption
-      case (true, true, _, Some(PoaTwoReconciliationCredit))  => creditEntry(payment, isAgent, true).toOption
-      case (true, _, _, Some(BalancingChargeCreditType))                       => creditEntry(payment, isAgent).toOption
-      case (true, _, _, Some(RepaymentInterest))                               => creditEntry(payment, isAgent).toOption
-      case (false, _, true, Some(PaymentType))                                 => Some(paymentToHMRCEntry(payment, isAgent))
-      case (_, _, _, _)                                                        => None
+      case (true, _, _, Some(MfaCreditType))                                   => Right(mfaCreditEntry(payment, isAgent))
+      case (true, _, _, Some(CutOverCreditType))                               => creditEntry(payment, isAgent)
+      case (true, true, _, Some(PoaOneReconciliationCredit))  => creditEntry(payment, isAgent, true)
+      case (true, true, _, Some(PoaTwoReconciliationCredit))  => creditEntry(payment, isAgent, true)
+      case (true, _, _, Some(BalancingChargeCreditType))                       => creditEntry(payment, isAgent)
+      case (true, _, _, Some(RepaymentInterest))                               => creditEntry(payment, isAgent)
+      case (false, _, true, Some(PaymentType))                                 => Right(paymentToHMRCEntry(payment, isAgent))
+      case (_, _, _, _)                                                        => Left(MissingFieldException("Invalid Payment Data"))
     }
   }
 
