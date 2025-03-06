@@ -1831,16 +1831,17 @@ incomeSources.add.incomeSourceReportingMethod.se.caption                =   Sole
 incomeSources.add.incomeSourceReportingMethod.uk.caption                =   UK property
 incomeSources.add.incomeSourceReportingMethod.fp.caption                =   Foreign property
 
-# manage income sources reporting method
-incomeSources.manage.propertyReportingMethod.heading.annual             = Change to annual reporting for {0} to {1} tax year
-incomeSources.manage.propertyReportingMethod.heading.quarterly          = Change to quarterly reporting for {0} to {1} tax year
-incomeSources.manage.propertyReportingMethod.subHeading.UkProperty      = UK property
-incomeSources.manage.propertyReportingMethod.subHeading.ForeignProperty = Foreign property
-incomeSources.manage.propertyReportingMethod.subHeading.SelfEmployment  = Sole trader
-incomeSources.manage.propertyReportingMethod.description.annual         = If you change to annual reporting, you can submit your tax return through your HMRC online account or compatible software.
-incomeSources.manage.propertyReportingMethod.description.quarterly      = Changing to quarterly reporting will mean you need to submit your quarterly updates through compatible software.
-incomeSources.manage.propertyReportingMethod.inset.quarterly            = If you have submitted any income and expenses for this tax year to HMRC, this will be deleted from our records. So make sure you keep hold of this information because you will need to include it in your quarterly updates.
-incomeSources.manage.propertyReportingMethod.confirm                    = Confirm and save
+# manage uk property reporting method
+incomeSources.manage.propertyReportingMethod.heading.annual         = Confirm you want to report annually for the tax year {0} to {1}
+incomeSources.manage.propertyReportingMethod.heading.quarterly      = Confirm you want to report quarterly for the tax year {0} to {1}
+incomeSources.manage.propertyReportingMethod.checkbox.annual        = Yes, I want to switch to annual reporting
+incomeSources.manage.propertyReportingMethod.checkbox.quarterly     = Yes, I want to switch to quarterly reporting
+incomeSources.manage.propertyReportingMethod.error.quarterly        = Select that you want to switch to quarterly reporting
+incomeSources.manage.propertyReportingMethod.error.annual           = Select that you want to switch to annual reporting
+incomeSources.manage.propertyReportingMethod.changingToAnnualWarning.individual         = HMRC will remove any income updates you’ve already submitted for this tax year. You’ll need to include any previously submitted income in your annual tax return.
+incomeSources.manage.propertyReportingMethod.changingToAnnualWarning.agent              = HMRC will remove any income updates your client has already submitted for this tax year. Any previously submitted income will need to be included in your client’s annual tax return.
+incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.individual      = HMRC will remove any income updates you’ve already submitted for this tax year. You’ll need to include any previously submitted income in your quarterly tax return.
+incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.agent           = HMRC will remove any income updates your client has already submitted for this tax year. Any previously submitted income will need to be included in your client’s quarterly tax return.
 
 # manage obligations page
 incomeSources.add.manageObligations.h1                                =
@@ -1969,6 +1970,17 @@ manageBusinesses.type-of-property.h2                                     = What 
 manageBusinesses.type-of-property.uk                                     = UK property business
 manageBusinesses.type-of-property.foreign                                = Foreign property business
 manageBusinesses.type-of-property.error                                  = Select an option
+
+# manage income sources reporting method
+manageBusinesses.manage.propertyReportingMethod.heading.annual             = Change to annual reporting for {0} to {1} tax year
+manageBusinesses.manage.propertyReportingMethod.heading.quarterly          = Change to quarterly reporting for {0} to {1} tax year
+manageBusinesses.manage.propertyReportingMethod.subHeading.UkProperty      = UK property
+manageBusinesses.manage.propertyReportingMethod.subHeading.ForeignProperty = Foreign property
+manageBusinesses.manage.propertyReportingMethod.subHeading.SelfEmployment  = Sole trader
+manageBusinesses.manage.propertyReportingMethod.description.annual         = If you change to annual reporting, you can submit your tax return through your HMRC online account or compatible software.
+manageBusinesses.manage.propertyReportingMethod.description.quarterly      = Changing to quarterly reporting will mean you need to submit your quarterly updates through compatible software.
+manageBusinesses.manage.propertyReportingMethod.inset.quarterly            = If you have submitted any income and expenses for this tax year to HMRC, this will be deleted from our records. So make sure you keep hold of this information because you will need to include it in your quarterly updates.
+manageBusinesses.manage.propertyReportingMethod.confirm                    = Confirm and save
 
 
 # credits

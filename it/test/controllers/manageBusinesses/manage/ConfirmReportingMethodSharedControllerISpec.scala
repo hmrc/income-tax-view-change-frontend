@@ -69,7 +69,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
   private lazy val checkYourAnswersController = controllers.manageBusinesses.manage.routes
     .CheckYourAnswersController
 
-  val prefix: String = "incomeSources.manage.propertyReportingMethod"
+  val prefix: String = "manageBusinesses.manage.propertyReportingMethod"
 
   val continueButtonText: String = "Confirm and save"
 

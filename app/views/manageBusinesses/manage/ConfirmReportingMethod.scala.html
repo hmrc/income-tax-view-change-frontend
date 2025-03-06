@@ -41,7 +41,7 @@
     isCurrentTaxYear: Boolean,
     incomeSourceType: IncomeSourceType)(implicit messages: Messages, user: auth.MtdItUser[_])
 
-@prefix = @{ "incomeSources.manage.propertyReportingMethod" }
+@prefix = @{ "manageBusinesses.manage.propertyReportingMethod" }
 
 @getMessage(key: String, args: String*) = @{
     messages(s"$prefix.$key", args: _*)
@@ -65,11 +65,11 @@
         @p(id = Some("change-reporting-method-description")){@getMessage(s"description.$newReportingMethod")}
 
         @if(newReportingMethod == "quarterly") {
-            @govukInsetText(InsetText(id=Some("change-reporting-method-inset"), content = HtmlContent(messages("incomeSources.manage.propertyReportingMethod.inset.quarterly"))))
+            @govukInsetText(InsetText(id=Some("change-reporting-method-inset"), content = HtmlContent(messages("manageBusinesses.manage.propertyReportingMethod.inset.quarterly"))))
         }
 
         @govukButton(Button(
-            content = Text(messages("incomeSources.manage.propertyReportingMethod.confirm")),
+            content = Text(messages("manageBusinesses.manage.propertyReportingMethod.confirm")),
             attributes = Map("id" -> "confirm-button")
         ))
     }

@@ -1830,16 +1830,17 @@ incomeSources.add.incomeSourceReportingMethod.se.caption                =   Unig
 incomeSources.add.incomeSourceReportingMethod.uk.caption                =   Eiddo yn y DU
 incomeSources.add.incomeSourceReportingMethod.fp.caption                =   Eiddo tramor
 
-# manage income sources reporting method
-incomeSources.manage.propertyReportingMethod.heading.annual             = Newid i gyflwyno adroddiadau’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
-incomeSources.manage.propertyReportingMethod.heading.quarterly          = Newid i gyflwyno adroddiadau’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
-incomeSources.manage.propertyReportingMethod.subHeading.UkProperty      = Eiddo yn y DU
-incomeSources.manage.propertyReportingMethod.subHeading.ForeignProperty = Eiddo tramor
-incomeSources.manage.propertyReportingMethod.subHeading.SelfEmployment  = Unig fasnachwr
-incomeSources.manage.propertyReportingMethod.description.annual         = Os byddwch yn newid i adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth drwy’ch meddalwedd sy’n cydweddu neu’ch cyfrif ar-lein CThEF.
-incomeSources.manage.propertyReportingMethod.description.quarterly      = Bydd newid i adrodd yn chwarterol yn golygu y bydd angen i chi gyflwyno’ch diweddariadau chwarterol drwy feddalwedd sy’n cydweddu.
-incomeSources.manage.propertyReportingMethod.inset.quarterly            = Os ydych wedi cyflwyno unrhyw incwm a threuliau i CThEF ar gyfer y flwyddyn dreth hon, byddant yn cael eu dileu o’n cofnodion. Gwnewch yn siŵr eich bod yn cadw’r wybodaeth hon yn ddiogel oherwydd y bydd angen i chi ei chynnwys yn eich diweddariadau chwarterol.
-incomeSources.manage.propertyReportingMethod.confirm                    = Cadarnhau a chadw
+# manage uk property reporting method
+incomeSources.manage.propertyReportingMethod.heading.annual                        = Cadarnhewch eich bod am gyflwyno adroddiadau’n flynyddol ar gyfer blwyddyn dreth {0} i {1}
+incomeSources.manage.propertyReportingMethod.heading.quarterly                     = Cadarnhewch eich bod am gyflwyno adroddiadau’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
+incomeSources.manage.propertyReportingMethod.checkbox.annual                       = Hoffwn newid i adrodd yn flynyddol
+incomeSources.manage.propertyReportingMethod.checkbox.quarterly                    = Hoffwn newid i adrodd yn chwarterol
+incomeSources.manage.propertyReportingMethod.error.quarterly                       = Dewiswch eich bod am newid i gyflwyno adroddiadau’n chwarterol
+incomeSources.manage.propertyReportingMethod.error.annual                          = Dewiswch eich bod am newid i gyflwyno adroddiadau’n flynyddol
+incomeSources.manage.propertyReportingMethod.changingToAnnualWarning.individual    = Bydd CThEF yn tynnu unrhyw ddiweddariadau incwm rydych eisoes wedi’u cyflwyno ar gyfer y flwyddyn dreth hon. Bydd angen i chi gynnwys unrhyw incwm a gyflwynwyd yn flaenorol ar eich Ffurflen Dreth flynyddol.
+incomeSources.manage.propertyReportingMethod.changingToAnnualWarning.agent         = Bydd CThEF yn tynnu unrhyw ddiweddariadau incwm mae’ch cleient eisoes wedi’u cyflwyno ar gyfer y flwyddyn dreth hon. Bydd angen i chi gynnwys unrhyw incwm a gyflwynwyd yn flaenorol ar Ffurflen Dreth flynyddol eich cleient.
+incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.individual = Bydd CThEF yn tynnu unrhyw ddiweddariadau incwm rydych eisoes wedi’u cyflwyno ar gyfer y flwyddyn dreth hon. Bydd angen i chi gynnwys unrhyw incwm a gyflwynwyd yn flaenorol yn eich Ffurflen Dreth chwarterol.
+incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.agent      = Bydd CThEF yn tynnu unrhyw ddiweddariadau incwm mae’ch cleient eisoes wedi’u cyflwyno ar gyfer y flwyddyn dreth hon. Bydd angen i chi gynnwys unrhyw incwm a gyflwynwyd yn flaenorol ar Ffurflen Dreth chwarterol eich cleient.
 
 # manage obligations page
 incomeSources.add.manageObligations.h1                                =   Bydd
@@ -1968,6 +1969,17 @@ manageBusinesses.type-of-property.h2                                     = Pa fa
 manageBusinesses.type-of-property.uk                                     = Busnes eiddo yn y DU
 manageBusinesses.type-of-property.foreign                                = Busnes eiddo tramor
 manageBusinesses.type-of-property.error                                  = Dewiswch opsiwn
+
+# manage income sources reporting method
+manageBusinesses.manage.propertyReportingMethod.heading.annual             = Newid i gyflwyno adroddiadau’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
+manageBusinesses.manage.propertyReportingMethod.heading.quarterly          = Newid i gyflwyno adroddiadau’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
+manageBusinesses.manage.propertyReportingMethod.subHeading.UkProperty      = Eiddo yn y DU
+manageBusinesses.manage.propertyReportingMethod.subHeading.ForeignProperty = Eiddo tramor
+manageBusinesses.manage.propertyReportingMethod.subHeading.SelfEmployment  = Unig fasnachwr
+manageBusinesses.manage.propertyReportingMethod.description.annual         = Os byddwch yn newid i adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth drwy’ch meddalwedd sy’n cydweddu neu’ch cyfrif ar-lein CThEF.
+manageBusinesses.manage.propertyReportingMethod.description.quarterly      = Bydd newid i adrodd yn chwarterol yn golygu y bydd angen i chi gyflwyno’ch diweddariadau chwarterol drwy feddalwedd sy’n cydweddu.
+manageBusinesses.manage.propertyReportingMethod.inset.quarterly            = Os ydych wedi cyflwyno unrhyw incwm a threuliau i CThEF ar gyfer y flwyddyn dreth hon, byddant yn cael eu dileu o’n cofnodion. Gwnewch yn siŵr eich bod yn cadw’r wybodaeth hon yn ddiogel oherwydd y bydd angen i chi ei chynnwys yn eich diweddariadau chwarterol.
+manageBusinesses.manage.propertyReportingMethod.confirm                    = Cadarnhau a chadw
 
 
 # credits
