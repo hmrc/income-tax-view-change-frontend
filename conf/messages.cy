@@ -1831,16 +1831,15 @@ incomeSources.add.incomeSourceReportingMethod.uk.caption                =   Eidd
 incomeSources.add.incomeSourceReportingMethod.fp.caption                =   Eiddo tramor
 
 # manage uk property reporting method
-incomeSources.manage.propertyReportingMethod.heading.annual                        = Cadarnhewch eich bod am gyflwyno adroddiadau’n flynyddol ar gyfer blwyddyn dreth {0} i {1}
-incomeSources.manage.propertyReportingMethod.heading.quarterly                     = Cadarnhewch eich bod am gyflwyno adroddiadau’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
-incomeSources.manage.propertyReportingMethod.checkbox.annual                       = Hoffwn newid i adrodd yn flynyddol
-incomeSources.manage.propertyReportingMethod.checkbox.quarterly                    = Hoffwn newid i adrodd yn chwarterol
-incomeSources.manage.propertyReportingMethod.error.quarterly                       = Dewiswch eich bod am newid i gyflwyno adroddiadau’n chwarterol
-incomeSources.manage.propertyReportingMethod.error.annual                          = Dewiswch eich bod am newid i gyflwyno adroddiadau’n flynyddol
-incomeSources.manage.propertyReportingMethod.changingToAnnualWarning.individual    = Bydd CThEF yn tynnu unrhyw ddiweddariadau incwm rydych eisoes wedi’u cyflwyno ar gyfer y flwyddyn dreth hon. Bydd angen i chi gynnwys unrhyw incwm a gyflwynwyd yn flaenorol ar eich Ffurflen Dreth flynyddol.
-incomeSources.manage.propertyReportingMethod.changingToAnnualWarning.agent         = Bydd CThEF yn tynnu unrhyw ddiweddariadau incwm mae’ch cleient eisoes wedi’u cyflwyno ar gyfer y flwyddyn dreth hon. Bydd angen i chi gynnwys unrhyw incwm a gyflwynwyd yn flaenorol ar Ffurflen Dreth flynyddol eich cleient.
-incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.individual = Bydd CThEF yn tynnu unrhyw ddiweddariadau incwm rydych eisoes wedi’u cyflwyno ar gyfer y flwyddyn dreth hon. Bydd angen i chi gynnwys unrhyw incwm a gyflwynwyd yn flaenorol yn eich Ffurflen Dreth chwarterol.
-incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.agent      = Bydd CThEF yn tynnu unrhyw ddiweddariadau incwm mae’ch cleient eisoes wedi’u cyflwyno ar gyfer y flwyddyn dreth hon. Bydd angen i chi gynnwys unrhyw incwm a gyflwynwyd yn flaenorol ar Ffurflen Dreth chwarterol eich cleient.
+incomeSources.manage.propertyReportingMethod.heading.annual             = Change to annual reporting for {0} to {1} tax year
+incomeSources.manage.propertyReportingMethod.heading.quarterly          = Change to quarterly reporting for {0} to {1} tax year
+incomeSources.manage.propertyReportingMethod.subHeading.UkProperty      = UK property
+incomeSources.manage.propertyReportingMethod.subHeading.ForeignProperty = Foreign property
+incomeSources.manage.propertyReportingMethod.subHeading.SelfEmployment  = Sole trader
+incomeSources.manage.propertyReportingMethod.description.annual         = If you change to annual reporting, you can submit your tax return through your HMRC online account or compatible software.
+incomeSources.manage.propertyReportingMethod.description.quarterly      = Changing to quarterly reporting will mean you need to submit your quarterly updates through compatible software.
+incomeSources.manage.propertyReportingMethod.inset.quarterly            = If you have submitted any income and expenses for this tax year to HMRC, this will be deleted from our records. So make sure you keep hold of this information because you will need to include it in your quarterly updates.
+incomeSources.manage.propertyReportingMethod.confirm                    = Confirm and save
 
 # manage obligations page
 incomeSources.add.manageObligations.h1                                =   Bydd
