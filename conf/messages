@@ -896,7 +896,13 @@ whatYouOwe.interestChargesWarning                                  = Interest ch
 ## Your Self Assessment Charges
 
 selfAssessmentCharges.heading                                      = Your Self Assessment charges
-
+selfAssessmentCharges.charges-due-now                              = Charges due now
+selfAssessmentCharges.tableHead.type-of-charge                     = Type of charge
+selfAssessmentCharges.tableHead.estimated-interest                 = Estimated interest
+selfAssessmentCharges.tableHead.amount                             = Amount
+selfAssessmentCharges.table.total-amount                           = Total amount: {0}
+selfAssessmentCharges.overdue-inset-text-1                         = Payments you make may take up to 3 working days depending on the payment method you use. Payments must reach HMRC by the due date to avoid any late payment interest or penalty.
+selfAssessmentCharges.overdue-inset-text-2                         = Any payments you make will go toward overdue charges in the order they were due.
 
 
 ## Charge Summary ##
