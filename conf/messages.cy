@@ -1830,16 +1830,16 @@ incomeSources.add.incomeSourceReportingMethod.se.caption                =   Unig
 incomeSources.add.incomeSourceReportingMethod.uk.caption                =   Eiddo yn y DU
 incomeSources.add.incomeSourceReportingMethod.fp.caption                =   Eiddo tramor
 
-# manage uk property reporting method
-incomeSources.manage.propertyReportingMethod.heading.annual             = Change to annual reporting for {0} to {1} tax year
-incomeSources.manage.propertyReportingMethod.heading.quarterly          = Change to quarterly reporting for {0} to {1} tax year
-incomeSources.manage.propertyReportingMethod.subHeading.UkProperty      = UK property
-incomeSources.manage.propertyReportingMethod.subHeading.ForeignProperty = Foreign property
-incomeSources.manage.propertyReportingMethod.subHeading.SelfEmployment  = Sole trader
-incomeSources.manage.propertyReportingMethod.description.annual         = If you change to annual reporting, you can submit your tax return through your HMRC online account or compatible software.
-incomeSources.manage.propertyReportingMethod.description.quarterly      = Changing to quarterly reporting will mean you need to submit your quarterly updates through compatible software.
-incomeSources.manage.propertyReportingMethod.inset.quarterly            = If you have submitted any income and expenses for this tax year to HMRC, this will be deleted from our records. So make sure you keep hold of this information because you will need to include it in your quarterly updates.
-incomeSources.manage.propertyReportingMethod.confirm                    = Confirm and save
+# manage income sources reporting method
+incomeSources.manage.propertyReportingMethod.heading.annual             = Newid i gyflwyno adroddiadau’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
+incomeSources.manage.propertyReportingMethod.heading.quarterly          = Newid i gyflwyno adroddiadau’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
+incomeSources.manage.propertyReportingMethod.subHeading.UkProperty      = Eiddo yn y DU
+incomeSources.manage.propertyReportingMethod.subHeading.ForeignProperty = Eiddo tramor
+incomeSources.manage.propertyReportingMethod.subHeading.SelfEmployment  = Unig fasnachwr
+incomeSources.manage.propertyReportingMethod.description.annual         = Os byddwch yn newid i adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth drwy’ch meddalwedd sy’n cydweddu neu’ch cyfrif ar-lein CThEF.
+incomeSources.manage.propertyReportingMethod.description.quarterly      = Bydd newid i adrodd yn chwarterol yn golygu y bydd angen i chi gyflwyno’ch diweddariadau chwarterol drwy feddalwedd sy’n cydweddu.
+incomeSources.manage.propertyReportingMethod.inset.quarterly            = Os ydych wedi cyflwyno unrhyw incwm a threuliau i CThEF ar gyfer y flwyddyn dreth hon, byddant yn cael eu dileu o’n cofnodion. Gwnewch yn siŵr eich bod yn cadw’r wybodaeth hon yn ddiogel oherwydd y bydd angen i chi ei chynnwys yn eich diweddariadau chwarterol.
+incomeSources.manage.propertyReportingMethod.confirm                    = Cadarnhau a chadw
 
 # manage obligations page
 incomeSources.add.manageObligations.h1                                =   Bydd

@@ -65,7 +65,7 @@
         @p(id = Some("change-reporting-method-description")){@getMessage(s"description.$newReportingMethod")}
 
         @if(newReportingMethod == "quarterly") {
-            @govukInsetText(InsetText(content = HtmlContent(messages("incomeSources.manage.propertyReportingMethod.inset.quarterly"))))
+            @govukInsetText(InsetText(id=Some("change-reporting-method-inset"), content = HtmlContent(messages("incomeSources.manage.propertyReportingMethod.inset.quarterly"))))
         }
 
         @govukButton(Button(

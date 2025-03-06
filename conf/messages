@@ -1831,7 +1831,7 @@ incomeSources.add.incomeSourceReportingMethod.se.caption                =   Sole
 incomeSources.add.incomeSourceReportingMethod.uk.caption                =   UK property
 incomeSources.add.incomeSourceReportingMethod.fp.caption                =   Foreign property
 
-# manage uk property reporting method
+# manage income sources reporting method
 incomeSources.manage.propertyReportingMethod.heading.annual             = Change to annual reporting for {0} to {1} tax year
 incomeSources.manage.propertyReportingMethod.heading.quarterly          = Change to quarterly reporting for {0} to {1} tax year
 incomeSources.manage.propertyReportingMethod.subHeading.UkProperty      = UK property
