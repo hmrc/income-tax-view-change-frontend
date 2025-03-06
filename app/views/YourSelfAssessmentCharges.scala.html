@@ -351,9 +351,10 @@
     <p class="govuk-body">
         @getNewMessage("payment-plan-1")
         @link(
-            link = "#",
+            link = "https://www.gov.uk/difficulties-paying-hmrc",
             messageKey = getNewMessage("payment-plan-link-text"),
-            id = Some("payment-plan-link"))
+            id = Some("payment-plan-link"),
+            target = Some("_blank"))
         @getNewMessage("payment-plan-2")
     </p>
 }
@@ -407,7 +408,9 @@
                                 <br>
                                 <div>
                                     @getNewMessage("important-p2")
-                                    <a class="govuk-notification-banner__link" href="#">@getNewMessage("important-p2-link-text")</a>
+                                    <a class="govuk-notification-banner__link"
+                                    href=@controllers.routes.PaymentController.paymentHandoff(whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.get._2.toPence, origin).url>
+                                        <b>@getNewMessage("important-p2-link-text")</b></a>
                                 </div>
                             </p>
                         </div>
