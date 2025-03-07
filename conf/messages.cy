@@ -1971,7 +1971,7 @@ manageBusinesses.type-of-property.foreign                                = Busne
 manageBusinesses.type-of-property.error                                  = Dewiswch opsiwn
 
 # manage income sources reporting method
-manageBusinesses.manage.propertyReportingMethod.heading.annual             = Newid i gyflwyno adroddiadau’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
+manageBusinesses.manage.propertyReportingMethod.heading.annual             = Newidiadau i adrodd blynyddol ar gyfer blwyddyn dreth {0} i {1}
 manageBusinesses.manage.propertyReportingMethod.heading.quarterly          = Newid i gyflwyno adroddiadau’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
 manageBusinesses.manage.propertyReportingMethod.subHeading.UkProperty      = Eiddo yn y DU
 manageBusinesses.manage.propertyReportingMethod.subHeading.ForeignProperty = Eiddo tramor
