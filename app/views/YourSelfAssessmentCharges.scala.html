@@ -274,17 +274,9 @@
     @tableRowWithInterest(rowId: String, chargeItem: ChargeItem, index: Int, id: String) = {
         <tr class="govuk-table__row" id="@rowId">
             <td class="govuk-table__cell">
-            @if(chargeItem.isLatePaymentInterest && chargeItem.isPaid) {
-                @chargeItem.getInterestEndDate.toLongDateShort.toNonBreaking
-            } else {
-                @chargeItem.getDueDate.toLongDateShort.toNonBreaking
-            }
+                @chargeItem.getDisplayDueDate.toLongDate.toNonBreaking
             </td>
             <td class="govuk-table__cell">
-                @if(chargeItem.isNotPaidAndNotOverduePoaReconciliationDebit()) {
-                    <div> <span class="govuk-tag govuk-tag--red">@messages("taxYears.accruesInterest") </span></div>
-                }
-
                 @getPaymentTypeEntry(chargeItem = chargeItem, isOverduePayment = true,
                     rowId = rowId, isMFADebit = chargeItem.transactionType == MfaDebitCharge, index = index)
 
@@ -356,8 +348,8 @@
                 link = "https://www.gov.uk/difficulties-paying-hmrc",
                 messageKey = getNewMessage("payment-plan-link-text"),
                 id = Some("payment-plan-link"),
-                target = Some("_blank"))
-            @getNewMessage("payment-plan-2")
+                target = Some("_blank"),
+                outerMessage = ".")
         </p>
     }
 
@@ -380,19 +372,10 @@
 
                     @saNoteParagraph
                 } else {
-
-                    @if(hasOverdueOrAccruingInterestCharges) {
-                        @govukWarningText(WarningText(
-                            attributes = Map("id" -> "interest-charges-warning"),
-                            content = Text(getMessage("interestChargesWarning"))
-                        ))
-                    }
-
                     <div>
-
                         @if(whatYouOweChargesList.chargesList.nonEmpty || whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
 
-                            @if(whatYouOweChargesList.overdueChargeList.nonEmpty || whatYouOweChargesList.overdueOutstandingCharges.nonEmpty) {
+                            @if(whatYouOweChargesList.overdueOrAccruingInterestChargeList.nonEmpty || whatYouOweChargesList.overdueOutstandingCharges.nonEmpty) {
                                 <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
                                     <div class="govuk-notification-banner__header">
                                         <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
@@ -404,9 +387,9 @@
                                         @getNewMessage("charges-due-now-with-amount", whatYouOweChargesList.balanceDetails.overDueAmount.toCurrencyString)
                                         </h3>
                                         <p class="govuk-body">
-                                    <div>
-                                        @getNewMessage("important-p1")
-                                    </div>
+                                        <div>
+                                            @getNewMessage("important-p1")
+                                        </div>
                                         <br>
                                         <div>
                                             @getNewMessage("important-p2")
@@ -424,7 +407,7 @@
                                     Contents
                                 </h2>
                                 <ul class="govuk-tabs__list">
-                                    @if(whatYouOweChargesList.overdueChargeList.nonEmpty || whatYouOweChargesList.overdueOutstandingCharges.nonEmpty) {
+                                    @if(whatYouOweChargesList.overdueOrAccruingInterestChargeList.nonEmpty || whatYouOweChargesList.overdueOutstandingCharges.nonEmpty) {
                                         <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
                                             <a class="govuk-tabs__tab" href="#charges-due-now">
                                             @getNewMessage("charges-due-now")
@@ -437,7 +420,7 @@
                                         </a>
                                     </li>
                                 </ul>
-                                @if(whatYouOweChargesList.overdueChargeList.nonEmpty || whatYouOweChargesList.overdueOutstandingCharges.nonEmpty) {
+                                @if(whatYouOweChargesList.overdueOrAccruingInterestChargeList.nonEmpty || whatYouOweChargesList.overdueOutstandingCharges.nonEmpty) {
                                     <div class="govuk-tabs__panel" id="charges-due-now">
                                         <table class="govuk-table">
                                             @newTableHead("over-due-payments-table-head")
@@ -468,7 +451,7 @@
                                                         }</td>
                                                     </tr>
                                                 }
-                                                @for((charge, index) <- whatYouOweChargesList.sortThisChargesListPlease(whatYouOweChargesList.overdueChargeList).zipWithIndex) {
+                                                @for((charge, index) <- whatYouOweChargesList.sortThisChargesListPlease(whatYouOweChargesList.overdueOrAccruingInterestChargeList).zipWithIndex) {
                                                     @tableRowWithInterest(s"due-$index", charge, index, "taxYearSummary-link")
                                                 }
                                                 <tr class="govuk-table__header">

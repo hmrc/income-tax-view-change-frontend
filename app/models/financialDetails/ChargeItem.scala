@@ -69,6 +69,12 @@ case class ChargeItem (
 
   def getDueDate: LocalDate = dueDate.getOrElse(throw MissingFieldException("documentDueDate"))
 
+  def getDisplayDueDate: LocalDate = if (isLatePaymentInterest && isPaid) {
+    getInterestEndDate
+  } else {
+    getDueDate
+  }
+
   def getInterestFromDate: LocalDate = interestFromDate.getOrElse(throw MissingFieldException("documentInterestFromDate"))
 
   def getInterestEndDate: LocalDate = interestEndDate.getOrElse(throw MissingFieldException("documentInterestEndDate"))

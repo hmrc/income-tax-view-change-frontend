@@ -909,8 +909,7 @@ selfAssessmentCharges.table.total-amount                           = Total amoun
 selfAssessmentCharges.overdue-inset-text-1                         = Payments you make may take up to 3 working days depending on the payment method you use. Payments must reach HMRC by the due date to avoid any late payment interest or penalty.
 selfAssessmentCharges.overdue-inset-text-2                         = Any payments you make will go toward overdue charges in the order they were due.
 selfAssessmentCharges.payment-plan-1                               = If you cannot pay your tax bill in full, you may be able to
-selfAssessmentCharges.payment-plan-link-text                       = set up a payment plan
-selfAssessmentCharges.payment-plan-2                               = to pay it in instalments.
+selfAssessmentCharges.payment-plan-link-text                       = set up a Self Assessment payment plan
 
 
 ## Charge Summary ##

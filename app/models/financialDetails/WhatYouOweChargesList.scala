@@ -27,13 +27,15 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
                                  outstandingChargesModel: Option[OutstandingChargesModel] = None,
                                  codedOutDocumentDetail: Option[ChargeItem] = None)(implicit val dateService: DateServiceInterface) {
 
-  lazy val overdueChargeList: List[ChargeItem] = chargesList.filter(_.isOverdue())
+  lazy val overdueChargeList: List[ChargeItem] = chargesList.filter(x => x.isOverdue())
+
+  lazy val overdueOrAccruingInterestChargeList: List[ChargeItem] = chargesList.filter(x => x.isOverdue() || x.hasAccruingInterest)
   lazy val overdueOutstandingCharges: List[OutstandingChargeModel] = outstandingChargesModel.toList.flatMap(_.outstandingCharges)
     .filter(_.relevantDueDate.getOrElse(LocalDate.MAX).isBefore(dateService.getCurrentDate))
 
-  lazy val chargesDueWithin30DaysList: List[ChargeItem] = chargesList.filter(x => !x.isOverdue() && isWithin30Days(x.dueDate))
+  lazy val chargesDueWithin30DaysList: List[ChargeItem] = chargesList.filter(x => !x.isOverdue() && !x.hasAccruingInterest && isWithin30Days(x.dueDate))
 
-  lazy val chargesDueAfter30DaysList: List[ChargeItem] = chargesList.filter(x => !x.isOverdue() && !isWithin30Days(x.dueDate))
+  lazy val chargesDueAfter30DaysList: List[ChargeItem] = chargesList.filter(x => !x.isOverdue() && !x.hasAccruingInterest && !isWithin30Days(x.dueDate))
 
   def isWithin30Days(date: Option[LocalDate]): Boolean = {
     val currentDate = dateService.getCurrentDate
@@ -49,7 +51,8 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
     charge1.dueDate.exists(date1 => charge2.dueDate.exists(_.isAfter(date1))))
 
   def sortThisChargesListPlease(charges: List[ChargeItem]): List[ChargeItem] = charges.sortWith((charge1, charge2) =>
-    charge1.dueDate.exists(date1 => charge2.dueDate.exists(_.isAfter(date1))))
+    charge2.getDisplayDueDate.isAfter(charge1.getDisplayDueDate)
+  )
 
   def bcdChargeTypeDefinedAndGreaterThanZero: Boolean =
     if (outstandingChargesModel.isDefined && outstandingChargesModel.get.bcdChargeType.isDefined
