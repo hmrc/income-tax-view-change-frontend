@@ -68,7 +68,8 @@ class ChooseTaxYearController @Inject()(authActions: AuthActions,
         isAgent,
         routes.ChooseTaxYearController.submit(isAgent, incomeSourceType),
         dateService.getCurrentTaxYear,
-        dateService.getCurrentTaxYear.nextYear))
+        dateService.getCurrentTaxYear.nextYear,
+        incomeSourceType))
       )
     }
   }.recover {
@@ -87,7 +88,8 @@ class ChooseTaxYearController @Inject()(authActions: AuthActions,
             isAgent,
             routes.ChooseTaxYearController.submit(isAgent, incomeSourceType),
             dateService.getCurrentTaxYear,
-            dateService.getCurrentTaxYear.nextYear))
+            dateService.getCurrentTaxYear.nextYear,
+            incomeSourceType))
           )
         },
         form => {
@@ -103,7 +105,8 @@ class ChooseTaxYearController @Inject()(authActions: AuthActions,
                 isAgent,
                 routes.ChooseTaxYearController.submit(isAgent, incomeSourceType),
                 dateService.getCurrentTaxYear,
-                dateService.getCurrentTaxYear.nextYear)))
+                dateService.getCurrentTaxYear.nextYear,
+                incomeSourceType)))
 
             case _ => Future.failed(new Exception(s"failed to retrieve session data for journey ${journeyType.toString}"))
           }

@@ -42,6 +42,14 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
     }
   }
 
+  def getSubheading(incomeSourceType: IncomeSourceType): String = {
+    incomeSourceType match {
+      case SelfEmployment => "Sole trader"
+      case UkProperty => "UK property"
+      case ForeignProperty => "Foreign property"
+    }
+  }
+
   override def beforeEach(): Unit = {
     super.beforeEach()
     repository.set(UIJourneySessionData(
@@ -70,12 +78,10 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-              //IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
               result should have(
                 httpStatus(OK),
-                elementTextByID("choose-tax-year-heading")("Sole Trader Which tax year do you want to report quarterly for?"),
-                elementTextByID("choose-tax-year-subheading")("Sole Trader"),
+                elementTextByID("choose-tax-year-heading")(s"${getSubheading(incomeSourceType)} Which tax year do you want to report quarterly for?"),
+                elementTextByID("choose-tax-year-subheading")(getSubheading(incomeSourceType)),
                 elementTextBySelector("[for='current-year-checkbox']")("2024 to 2025"),
                 elementTextBySelector("[for='next-year-checkbox']")("2025 to 2026"),
                 elementTextByID("continue-button")("Continue"),
@@ -128,8 +134,8 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
 
               result should have(
                 httpStatus(BAD_REQUEST),
-                elementTextByID("choose-tax-year-heading")("Sole Trader Which tax year do you want to report quarterly for?"),
-                elementTextByID("choose-tax-year-subheading")("Sole Trader"),
+                elementTextByID("choose-tax-year-heading")(s"${getSubheading(incomeSourceType)} Which tax year do you want to report quarterly for?"),
+                elementTextByID("choose-tax-year-subheading")(getSubheading(incomeSourceType)),
                 elementTextBySelector("[for='current-year-checkbox']")("2024 to 2025"),
                 elementTextBySelector("[for='next-year-checkbox']")("2025 to 2026"),
                 elementTextByID("continue-button")("Continue"),
