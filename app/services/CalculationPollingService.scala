@@ -29,7 +29,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.{Duration, DurationInt, MILLISECONDS}
 import scala.concurrent.{ExecutionContext, Future}
 
-
+@deprecated("Being moved to submission team", "MISUV-8977")
 @Singleton
 class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConfig,
                                           val mongoLockRepository: MongoLockRepository,
