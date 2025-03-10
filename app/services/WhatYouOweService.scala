@@ -21,6 +21,7 @@ import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import connectors.{FinancialDetailsConnector, OutstandingChargesConnector}
 import models.financialDetails._
+import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -79,19 +80,19 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           chargesList = getFilteredChargesList(financialDetailsModelList, isReviewAndReconciledEnabled, isFilterCodedOutPoasEnabled),
           codedOutDocumentDetail = codedOutChargeItem)
 
-        callOutstandingCharges(dateService.getCurrentTaxYearEnd).map {
+        callOutstandingCharges(dateService.getCurrentTaxYear).map {
           case Some(outstandingChargesModel) => whatYouOweChargesList.copy(outstandingChargesModel = Some(outstandingChargesModel))
           case _ => whatYouOweChargesList
         }
     }
   }
 
-  private def callOutstandingCharges(currentTaxYear: Int)
+  private def callOutstandingCharges(currentTaxYear: TaxYear)
                                     (implicit headerCarrier: HeaderCarrier,mtdUser: MtdItUser[_]):Future[Option[OutstandingChargesModel]] = {
     val saUtr: Option[String] = mtdUser.saUtr
     val yearOfMigration: Option[String] = mtdUser.incomeSources.yearOfMigration
 
-    if (saUtr.isDefined && yearOfMigration.isDefined && yearOfMigration.get.toInt >= currentTaxYear - 1) {
+    if (saUtr.isDefined && yearOfMigration.isDefined && yearOfMigration.get.toInt >= currentTaxYear.startYear) {
       val saPreviousYear = mtdUser.incomeSources.yearOfMigration.get.toInt - 1
       outstandingChargesConnector.getOutstandingCharges("utr", mtdUser.saUtr.get, saPreviousYear.toString) map {
         case outstandingChargesModel: OutstandingChargesModel => Some(outstandingChargesModel)
