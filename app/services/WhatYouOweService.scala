@@ -80,19 +80,21 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           chargesList = getFilteredChargesList(financialDetailsModelList, isReviewAndReconciledEnabled, isFilterCodedOutPoasEnabled),
           codedOutDocumentDetail = codedOutChargeItem)
 
-        callOutstandingCharges(dateService.getCurrentTaxYear).map {
-          case Some(outstandingChargesModel) => whatYouOweChargesList.copy(outstandingChargesModel = Some(outstandingChargesModel))
-          case _ => whatYouOweChargesList
+        (mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration) match {
+          case (Some(_), Some(year)) =>
+            callOutstandingCharges(dateService.getCurrentTaxYear, year).map {
+              case Some(outstandingChargesModel) => whatYouOweChargesList.copy(outstandingChargesModel = Some(outstandingChargesModel))
+              case _ => whatYouOweChargesList
+            }
+          case _ => Future.successful(whatYouOweChargesList)
         }
     }
   }
 
-  private def callOutstandingCharges(currentTaxYear: TaxYear)
+  private def callOutstandingCharges(currentTaxYear: TaxYear, yearOfMigration: String)
                                     (implicit headerCarrier: HeaderCarrier,mtdUser: MtdItUser[_]):Future[Option[OutstandingChargesModel]] = {
-    val saUtr: Option[String] = mtdUser.saUtr
-    val yearOfMigration: Option[String] = mtdUser.incomeSources.yearOfMigration
 
-    if (saUtr.isDefined && yearOfMigration.isDefined && yearOfMigration.get.toInt >= currentTaxYear.startYear) {
+    if (yearOfMigration.toInt >= currentTaxYear.startYear) {
       val saPreviousYear = mtdUser.incomeSources.yearOfMigration.get.toInt - 1
       outstandingChargesConnector.getOutstandingCharges("utr", mtdUser.saUtr.get, saPreviousYear.toString) map {
         case outstandingChargesModel: OutstandingChargesModel => Some(outstandingChargesModel)
