@@ -90,5 +90,4 @@ class FeatureSwitchRepository @Inject()(val mongoComponent: MongoComponent,
       _ <- collection.insertMany(switches).toFuture().map(_ => ())
     } yield ()
   }
-
 }
