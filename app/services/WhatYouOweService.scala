@@ -95,8 +95,8 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
                                     (implicit headerCarrier: HeaderCarrier,mtdUser: MtdItUser[_]):Future[Option[OutstandingChargesModel]] = {
 
     if (yearOfMigration.toInt >= currentTaxYear.startYear) {
-      val saPreviousYear = mtdUser.incomeSources.yearOfMigration.get.toInt - 1
-      outstandingChargesConnector.getOutstandingCharges("utr", mtdUser.saUtr.get, saPreviousYear.toString) map {
+      val saPreviousYear = (yearOfMigration.toInt - 1).toString
+      outstandingChargesConnector.getOutstandingCharges("utr", mtdUser.saUtr.get, saPreviousYear) map {
         case outstandingChargesModel: OutstandingChargesModel => Some(outstandingChargesModel)
         case outstandingChargesErrorModel: OutstandingChargesErrorModel if outstandingChargesErrorModel.code == 404 => None
         case _ => throw new Exception("Error response while getting outstanding charges")
