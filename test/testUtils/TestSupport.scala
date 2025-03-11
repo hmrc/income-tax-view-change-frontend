@@ -311,7 +311,6 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
       sys.props += featureSwitch.name -> FEATURE_SWITCH_ON
     }
 
-
   override def disable(featureSwitch: FeatureSwitchName): Unit =
     if (appConfig.readFeatureSwitchesFromMongo)
       Await.result(featureSwitchRepository.setFeatureSwitch(featureSwitch, false), 5.seconds)

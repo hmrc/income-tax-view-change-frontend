@@ -55,7 +55,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
           mockBothIncomeSources()
           setupMockCreateSession(true)
           setupMockClearSession(true)
-          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any())(any()))
+          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any())(any()))
             .thenReturn(
               Right(
                 ViewIncomeSourcesViewModel(
@@ -81,7 +81,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
           mockBothIncomeSources()
           setupMockCreateSession(true)
           setupMockClearSession(true)
-          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any())(any()))
+          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any())(any()))
             .thenReturn(
               Right(
                 ViewIncomeSourcesViewModel(
@@ -117,7 +117,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
           enable(IncomeSourcesFs)
           enable(DisplayBusinessStartDate)
           mockBothIncomeSources()
-          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any())(any()))
+          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any())(any()))
             .thenReturn(
               Left(MissingFieldException("Trading Name"))
             )
@@ -133,7 +133,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
           mockBothIncomeSources()
           setupMockCreateSession(true)
           setupMockClearSession(true)
-          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any())(any()))
+          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any())(any()))
             .thenReturn(
               Right(
                 ViewIncomeSourcesViewModel(
@@ -169,7 +169,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
             mockBothIncomeSources()
             setupMockCreateSession(true)
             setupMockClearSession(true)
-            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any())(any()))
+            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any())(any()))
               .thenReturn(
                 Right(
                   ViewIncomeSourcesViewModel(
@@ -205,7 +205,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
             enable(IncomeSourcesFs)
             enable(DisplayBusinessStartDate)
             mockBothIncomeSources()
-            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any())(any()))
+            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any())(any()))
               .thenReturn(
                 Left(MissingFieldException("Trading Name"))
               )
@@ -221,7 +221,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
             mockBothIncomeSources()
             setupMockCreateSession(true)
             setupMockClearSession(true)
-            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any())(any()))
+            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any())(any()))
               .thenReturn(
                 Right(
                   ViewIncomeSourcesViewModel(
