@@ -23,14 +23,21 @@ import models.admin._
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.Configuration
 import testUtils.TestSupport
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with MockitoSugar {
 
-  val mockAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
+  override val appConfig: FrontendAppConfig = new FrontendAppConfig(
+    app.injector.instanceOf[ServicesConfig],
+    app.injector.instanceOf[Configuration]
+  ) {
+    override lazy val readFeatureSwitchesFromMongo: Boolean = false
+  }
 
   object MockFeatureSwitching extends FeatureSwitching {
-    override val appConfig: FrontendAppConfig = mockAppConfig
+    override val appConfig: FrontendAppConfig = mock[FrontendAppConfig]
   }
 
   override protected def beforeEach(): Unit = {
@@ -77,8 +84,6 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
 
       s"enable and disable feature switches by setting system properties for FS: ${featureSwitchName.name}" in {
 
-        when(mockAppConfig.readFeatureSwitchesFromMongo).thenReturn(false)
-
         enable(featureSwitchName)
         sys.props(featureSwitchName.name) shouldBe "true"
 
@@ -88,26 +93,20 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
 
       s"return true if a feature switch is enabled in system properties for FS: ${featureSwitchName.name}" in {
 
-        when(mockAppConfig.readFeatureSwitchesFromMongo).thenReturn(false)
-
         enable(featureSwitchName)
 
-        isEnabled(featureSwitchName) shouldBe true
+        isEnabledFromConfig(featureSwitchName) shouldBe true
       }
 
       s"return false if a feature switch is disabled in system properties for FS: ${featureSwitchName.name}" in {
 
-        when(mockAppConfig.readFeatureSwitchesFromMongo).thenReturn(false)
-
         enable(featureSwitchName)
         disable(featureSwitchName)
 
-        isEnabled(featureSwitchName) shouldBe false
+        isEnabledFromConfig(featureSwitchName) shouldBe false
       }
 
       s"provide a fold function that branches based on feature state for FS: ${featureSwitchName.name}" in {
-
-        when(mockAppConfig.readFeatureSwitchesFromMongo).thenReturn(false)
 
         enable(featureSwitchName)
 
@@ -129,7 +128,7 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
 
       val featureSwitchName = ReviewAndReconcilePoa
 
-      when(mockAppConfig.readFeatureSwitchesFromMongo).thenReturn(true)
+      when(MockFeatureSwitching.appConfig.readFeatureSwitchesFromMongo).thenReturn(true)
 
       val userFeatureSwitches = List(FeatureSwitch(featureSwitchName, isEnabled = true))
 
@@ -140,7 +139,7 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
 
       val featureSwitchName = ReviewAndReconcilePoa
 
-      when(appConfig.readFeatureSwitchesFromMongo).thenReturn(false)
+      when(MockFeatureSwitching.appConfig.readFeatureSwitchesFromMongo).thenReturn(false)
 
       enable(featureSwitchName)
 
