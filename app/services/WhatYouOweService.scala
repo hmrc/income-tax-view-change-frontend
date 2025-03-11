@@ -80,14 +80,18 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           chargesList = getFilteredChargesList(financialDetailsModelList, isReviewAndReconciledEnabled, isFilterCodedOutPoasEnabled),
           codedOutDocumentDetail = codedOutChargeItem)
 
-        (mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration) match {
-          case (Some(_), Some(year)) =>
-            callOutstandingCharges(dateService.getCurrentTaxYear, year).map {
-              case Some(outstandingChargesModel) => whatYouOweChargesList.copy(outstandingChargesModel = Some(outstandingChargesModel))
-              case _ => whatYouOweChargesList
-            }
-          case _ => Future.successful(whatYouOweChargesList)
-        }
+        {
+          for {
+          utr <- mtdUser.saUtr
+          yearOfMigration <- mtdUser.incomeSources.yearOfMigration
+        } yield
+          callOutstandingCharges(dateService.getCurrentTaxYear, yearOfMigration).map {
+            case Some(outstandingChargesModel) => whatYouOweChargesList.copy(outstandingChargesModel = Some(outstandingChargesModel))
+            case _ => whatYouOweChargesList
+          }
+      }.getOrElse{
+      Future.successful(whatYouOweChargesList)
+    }
     }
   }
 
