@@ -43,6 +43,7 @@ import play.twirl.api.Html
 import services.DateService
 import testConstants.BaseTestConstants._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
+import testOnly.repository.FeatureSwitchRepository
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Enrolments}
@@ -64,6 +65,8 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
         Jsoup.parse(a.toString()).text() == Jsoup.parse(b.toString).text()
       }
     }
+
+  val featureSwitchRepository = app.injector.instanceOf[FeatureSwitchRepository]
 
   implicit val timeout: PatienceConfig = PatienceConfig(5.seconds)
 
@@ -291,7 +294,10 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
   }
 
   def disableAllSwitches(): Unit = {
-    allFeatureSwitches.foreach(switch => disable(switch))
+    if (appConfig.readFeatureSwitchesFromMongo)
+      allFeatureSwitches.map(_ => featureSwitchRepository.setFeatureSwitches(allFeatureSwitches.map(x => x -> true).toMap))
+    else
+      allFeatureSwitches.foreach(switch => disable(switch))
   }
 
 }
