@@ -77,6 +77,8 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
 
       s"enable and disable feature switches by setting system properties for FS: ${featureSwitchName.name}" in {
 
+        when(mockAppConfig.readFeatureSwitchesFromMongo).thenReturn(false)
+
         enable(featureSwitchName)
         sys.props(featureSwitchName.name) shouldBe "true"
 
@@ -86,20 +88,26 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
 
       s"return true if a feature switch is enabled in system properties for FS: ${featureSwitchName.name}" in {
 
+        when(mockAppConfig.readFeatureSwitchesFromMongo).thenReturn(false)
+
         enable(featureSwitchName)
 
-        isEnabledFromConfig(featureSwitchName) shouldBe true
+        isEnabled(featureSwitchName) shouldBe true
       }
 
       s"return false if a feature switch is disabled in system properties for FS: ${featureSwitchName.name}" in {
 
+        when(mockAppConfig.readFeatureSwitchesFromMongo).thenReturn(false)
+
         enable(featureSwitchName)
         disable(featureSwitchName)
 
-        isEnabledFromConfig(featureSwitchName) shouldBe false
+        isEnabled(featureSwitchName) shouldBe false
       }
 
       s"provide a fold function that branches based on feature state for FS: ${featureSwitchName.name}" in {
+
+        when(mockAppConfig.readFeatureSwitchesFromMongo).thenReturn(false)
 
         enable(featureSwitchName)
 
