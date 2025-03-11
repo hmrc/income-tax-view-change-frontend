@@ -78,6 +78,9 @@ class SingleTaxYearWarningViewSpec extends TestSupport {
             )
           )
 
+        println("****HHHHUUK((((")
+        println(pageDocument)
+
         def testContentByIds(idsAndContent: Seq[(String, String)]): Unit =
           idsAndContent.foreach {
             case (selectors, content) =>

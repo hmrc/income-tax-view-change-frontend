@@ -37,6 +37,7 @@
     mainTemplate: unifiedLayout,
     implicitDateFormatter: ImplicitDateFormatterImpl,
     breakdownPartial: taxYearSummaryBreakdownPartial,
+    h1WithCaption: h1WithCaption,
     h2: h2,
     h3: h3,
     p: p,
@@ -405,10 +406,12 @@
 
 @mainTemplate(pageTitle = messages("tax-year-summary.heading"), backUrl = Some(backUrl), isAgent = isAgent,
     btaNavPartial = user.btaNavPartial, useFallbackBackLink = true) {
-    <h1 class="govuk-heading-xl" id="heading">
-        <span class="govuk-caption-xl">@messages("tax-year-summary.heading-secondary", (taxYear - 1).toString, taxYear.toString)</span>
-        @messages("tax-year-summary.heading")
-    </h1>
+
+    @h1WithCaption(
+        heading = messages("tax-year-summary.heading"),
+        captionMsg = messages("tax-year-summary.heading-secondary", (taxYear - 1).toString, taxYear.toString)
+    )
+
     @viewModel.calculationSummary.map { model =>
         @if(!model.crystallised.contains(true) && !model.messages.isDefined) {
             @govukInsetText(InsetText(content = HtmlContent(

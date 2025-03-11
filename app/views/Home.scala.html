@@ -26,7 +26,7 @@
 @this(
     layout: unifiedLayout,
     appConfig: config.FrontendAppConfig,
-    h1: h1,
+    h1WithCaption: h1WithCaption,
     h2: h2,
     h3link: h3link,
     p: p,
@@ -81,10 +81,14 @@ viewModel: HomePageViewModel
 @customLayout = {
     <div class="grid-row">
         <div class="column-full">
-            <h1 class="govuk-heading-xl @if(user.saUtr.isDefined) { margin-bottom-zero }">
-                <span id="sub-heading" class="govuk-caption-xl">@user.userName.map(_.name)</span>
-                <span id="income-tax-heading">@messages("home.heading")</span>
-            </h1>
+            @h1WithCaption(
+                heading = messages("home.heading"),
+                captionMsg = user.userName.fold("")(_.name.getOrElse("")),
+                extraClasses = if(user.saUtr.isDefined) { "margin-bottom-zero" } else {""},
+                headingId = Some("income-tax-heading"),
+                captionId = Some("sub-heading")
+            )
+
 
             @user.saUtr.map { utr =>
                 <div id="utr-reference-heading" class="form-hint heading-xl-addon">
