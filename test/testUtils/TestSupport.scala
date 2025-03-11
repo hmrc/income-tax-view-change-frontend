@@ -24,6 +24,7 @@ import controllers.agent.sessionUtils
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
 import implicits.ImplicitDateFormatterImpl
 import models.admin.FeatureSwitchName.allFeatureSwitches
+import models.admin.FeatureSwitchName
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import org.apache.pekko.actor.ActorSystem
 import org.jsoup.Jsoup
@@ -53,7 +54,7 @@ import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
 
 import java.time.LocalDate
 import scala.concurrent.duration._
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterAll with BeforeAndAfterEach with Injecting with FeatureSwitching {
 
@@ -293,11 +294,25 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
     }
   }
 
-  def disableAllSwitches(): Unit = {
+  def disableAllSwitches(): Unit =
     if (appConfig.readFeatureSwitchesFromMongo)
-      allFeatureSwitches.map(_ => featureSwitchRepository.setFeatureSwitches(allFeatureSwitches.map(x => x -> true).toMap))
+      Await.result(
+        for {
+          _ <- featureSwitchRepository.clearFeatureSwitches()
+          _ <- featureSwitchRepository.setFeatureSwitches(allFeatureSwitches.map(_ -> false).toMap)
+        } yield (), 5.seconds)
     else
       allFeatureSwitches.foreach(switch => disable(switch))
-  }
 
+  override def enable(featureSwitch: FeatureSwitchName): Unit =
+    if (appConfig.readFeatureSwitchesFromMongo)
+      Await.result(featureSwitchRepository.setFeatureSwitch(featureSwitch, true), 5.seconds)
+    else
+      sys.props += featureSwitch.name -> FEATURE_SWITCH_ON
+
+  override def disable(featureSwitch: FeatureSwitchName): Unit =
+    if (appConfig.readFeatureSwitchesFromMongo)
+      Await.result(featureSwitchRepository.setFeatureSwitch(featureSwitch, false), 5.seconds)
+    else
+      sys.props += featureSwitch.name -> FEATURE_SWITCH_OFF
 }
