@@ -72,37 +72,9 @@ class FeatureSwitchRepository @Inject()(val mongoComponent: MongoComponent,
       .toSingle()
       .toFuture()
 
-//  def setFeatureSwitches(featureSwitches: Map[FeatureSwitchName, Boolean]): Future[Unit] = {
-//    val futures = featureSwitches.map { case (name, state) =>
-//      val filter = Filters.eq("name", name.toString)
-//
-//      collection.replaceOne(filter, FeatureSwitch(name, state), ReplaceOptions().upsert(true)).toFuture()
-//    }
-//
-//    Future.sequence(futures).map(_ => ())
-//  }
-
   def clearFeatureSwitches(): Future[Unit] = {
     collection.deleteMany(Filters.exists("name")).toFuture().map(_ => ())
   }
-
-//  def setFeatureSwitches(featureSwitches: Map[FeatureSwitchName, Boolean]): Future[Unit] = {
-//    val switches: List[FeatureSwitch] = featureSwitches.map {
-//      case (flag, status) =>
-//        FeatureSwitch(
-//          name        = flag,
-//          isEnabled   = status
-//        )
-//    }.toList
-//
-//    withSessionAndTransaction(
-//      session =>
-//        for {
-//          _ <- collection.deleteMany(session, filter = in("name", featureSwitches.keys.toSeq: _*)).toFuture()
-//          _ <- collection.insertMany(session, switches).toFuture()
-//        } yield ()
-//    )
-//  }
 
   def setFeatureSwitches(featureSwitches: Map[FeatureSwitchName, Boolean]): Future[Unit] = {
     val switches: List[FeatureSwitch] = featureSwitches.map {
