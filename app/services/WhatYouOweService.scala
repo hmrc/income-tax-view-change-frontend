@@ -23,6 +23,7 @@ import connectors.{FinancialDetailsConnector, OutstandingChargesConnector}
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
+import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
@@ -82,28 +83,31 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
 
         {
           for {
-          utr <- mtdUser.saUtr
-          yearOfMigration <- mtdUser.incomeSources.yearOfMigration
-        } yield
-          callOutstandingCharges(dateService.getCurrentTaxYear, yearOfMigration).map {
-            case Some(outstandingChargesModel) => whatYouOweChargesList.copy(outstandingChargesModel = Some(outstandingChargesModel))
-            case _ => whatYouOweChargesList
-          }
-      }.getOrElse{
-      Future.successful(whatYouOweChargesList)
-    }
+            clientUtr <- mtdUser.saUtr
+            yearOfMigrationAsString <- mtdUser.incomeSources.yearOfMigration
+          } yield
+            callOutstandingCharges(dateService.getCurrentTaxYear, yearOfMigrationAsString, clientUtr).map {
+              case Some(outstandingChargesModel) => whatYouOweChargesList.copy(outstandingChargesModel = Some(outstandingChargesModel))
+              case _ => whatYouOweChargesList
+            }
+        }.getOrElse {
+          Future.successful(whatYouOweChargesList)
+        }
     }
   }
 
-  private def callOutstandingCharges(currentTaxYear: TaxYear, yearOfMigration: String)
-                                    (implicit headerCarrier: HeaderCarrier,mtdUser: MtdItUser[_]):Future[Option[OutstandingChargesModel]] = {
-
+  private def callOutstandingCharges(currentTaxYear: TaxYear, yearOfMigration: String, utr: String)
+                                    (implicit headerCarrier: HeaderCarrier): Future[Option[OutstandingChargesModel]] = {
+    // Move this comparison on the type level: compare TaxYear with TaxYear
     if (yearOfMigration.toInt >= currentTaxYear.startYear) {
       val saPreviousYear = (yearOfMigration.toInt - 1).toString
-      outstandingChargesConnector.getOutstandingCharges("utr", mtdUser.saUtr.get, saPreviousYear) map {
-        case outstandingChargesModel: OutstandingChargesModel => Some(outstandingChargesModel)
-        case outstandingChargesErrorModel: OutstandingChargesErrorModel if outstandingChargesErrorModel.code == 404 => None
-        case _ => throw new Exception("Error response while getting outstanding charges")
+      outstandingChargesConnector.getOutstandingCharges("utr", utr, saPreviousYear) map {
+        case outstandingChargesModel: OutstandingChargesModel =>
+          Some(outstandingChargesModel)
+        case outstandingChargesErrorModel: OutstandingChargesErrorModel if outstandingChargesErrorModel.code == NOT_FOUND =>
+          None
+        case _ =>
+          throw new Exception("Error response while getting outstanding charges")
       }
     } else {
       Future.successful(None)
@@ -119,10 +123,11 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       getChargeItemOpt(financialDetails)
 
     financialDetailsList
-      .flatMap(financialDetails =>  {
+      .flatMap(financialDetails => {
         financialDetails
           .getAllDocumentDetailsWithDueDates()
-          .flatMap(dd => getChargeItem(financialDetails.financialDetails)(dd.documentDetail))})
+          .flatMap(dd => getChargeItem(financialDetails.financialDetails)(dd.documentDetail))
+      })
       .filter(validChargeTypeCondition)
       .filterNot(_.subTransactionType.contains(Accepted))
       .filterNot(_.isReviewAndReconcileCharge && !isReviewAndReconcileEnabled)
