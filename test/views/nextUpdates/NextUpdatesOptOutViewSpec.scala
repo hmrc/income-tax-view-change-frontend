@@ -16,13 +16,15 @@
 
 package views.nextUpdates
 
+import auth.MtdItUser
 import config.FrontendAppConfig
-import models.admin.ReportingFrequencyPage
+import models.admin.{FeatureSwitch, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
 import models.obligations._
 import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutMultiYearViewModel, OptOutOneYearViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import services.optout.{OneYearOptOutFollowedByAnnual, OneYearOptOutFollowedByMandated}
@@ -45,7 +47,17 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
 
   def nextUpdatesViewUtils: NextUpdatesViewUtils = new NextUpdatesViewUtils(linkComponent)
 
-  class Setup(quarterlyUpdateContentShow: Boolean = true, isSupportingAgent: Boolean = false) {
+  val individualUserWithReportingFrequencyPageFsEnabled = getIndividualUser(FakeRequest())
+    .addFeatureSwitches(List(FeatureSwitch(ReportingFrequencyPage, true)))
+
+  val individualUserWithReportingFrequencyPageFsDisabled = getIndividualUser(FakeRequest())
+    .addFeatureSwitches(List(FeatureSwitch(ReportingFrequencyPage, false)))
+
+  class Setup(quarterlyUpdateContentShow: Boolean = true, isSupportingAgent: Boolean = false, reportingFrequencyPageFsEnabled: Boolean = false) {
+
+    val user =
+      if (reportingFrequencyPageFsEnabled) individualUserWithReportingFrequencyPageFsEnabled
+      else                                 individualUserWithReportingFrequencyPageFsDisabled
 
     val checks: NextUpdatesQuarterlyReportingContentChecks =
       if (quarterlyUpdateContentShow) NextUpdatesQuarterlyReportingContentChecks(
@@ -67,48 +79,66 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
     val optOutMultiYearViewModel: OptOutMultiYearViewModel =
       OptOutMultiYearViewModel()
 
-    def whatTheUserCanDoContentSingleAnnual: Option[Html] =
+    def whatTheUserCanDoContentSingleAnnual: Option[Html] = {
+      implicit val individualUser = user
       nextUpdatesViewUtils.whatTheUserCanDo(Some(optOutOneYearViewModel), isSupportingAgent)
+    }
 
-    def whatTheUserCanDoContentSingleMandated: Option[Html] =
+    def whatTheUserCanDoContentSingleMandated: Option[Html] = {
+      implicit val individualUser = user
       nextUpdatesViewUtils.whatTheUserCanDo(Some(optOutOneYearViewModelWithMandated), isSupportingAgent)
+    }
 
-    def whatTheUserCanDoContentMulti: Option[Html] =
+    def whatTheUserCanDoContentMulti: Option[Html] = {
+      implicit val individualUser = user
       nextUpdatesViewUtils.whatTheUserCanDo(Some(optOutMultiYearViewModel), isSupportingAgent)
+    }
 
-    lazy val obligationsModel: NextUpdatesViewModel =
+    lazy val obligationsModel: NextUpdatesViewModel = {
+      implicit val individualUser = user
       NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(
         business1.incomeSourceId,
         twoObligationsSuccessModel.obligations
       ))).obligationsByDate.map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
         DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
       })
+    }
 
-    def oneYearOptOutAnnualView: Document =
+    def oneYearOptOutAnnualView: Document = {
+      implicit val individualUser = user
       Jsoup.parse(contentAsString(
         nextUpdatesView(obligationsModel, Some(optOutOneYearViewModel), checks, "testBackURL", isSupportingAgent = isSupportingAgent, whatTheUserCanDo = whatTheUserCanDoContentSingleAnnual)
       ))
+    }
 
-    def pageDocumentWithReportingContent: Document =
+    def pageDocumentWithReportingContent: Document = {
+      implicit val individualUser = user
       Jsoup.parse(contentAsString(
         nextUpdatesView(obligationsModel, Some(optOutOneYearViewModel), checks, "testBackURL", isSupportingAgent = isSupportingAgent, whatTheUserCanDo = whatTheUserCanDoContentSingleAnnual)
       ))
+    }
 
-    def pageDocumentWithWarning: Document =
+    def pageDocumentWithWarning: Document = {
+      implicit val individualUser = user
       Jsoup.parse(contentAsString(
         nextUpdatesView(obligationsModel, Some(optOutOneYearViewModelWithMandated), checks, "testBackURL", isSupportingAgent = isSupportingAgent, whatTheUserCanDo = whatTheUserCanDoContentSingleMandated)
       ))
+    }
 
-    def pageDocumentWithWarningWithReportingContent: Document =
+    def pageDocumentWithWarningWithReportingContent: Document = {
+      implicit val individualUser = user
       Jsoup.parse(contentAsString(
         nextUpdatesView(obligationsModel, Some(optOutOneYearViewModelWithMandated), checks, "testBackURL", isSupportingAgent = isSupportingAgent, whatTheUserCanDo = whatTheUserCanDoContentSingleMandated)
       ))
+    }
 
 
-    def pageDocumentMultiYearOptOut: Document =
+    def pageDocumentMultiYearOptOut: Document = {
+      implicit val individualUser = user
       Jsoup.parse(contentAsString(
         nextUpdatesView(obligationsModel, Some(optOutMultiYearViewModel), checks, "testBackURL", isSupportingAgent = isSupportingAgent, whatTheUserCanDo = whatTheUserCanDoContentMulti)
       ))
+    }
   }
 
   //TODO: Move this object out to help clean up this file and modularise a little
@@ -222,17 +252,17 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
     //TODO: Improve test descriptions
     "Reporting Frequency feature switch is turned ON" should {
 
-      "have the confirm opt out with reporting content and link)" in new Setup() {
+      "have the confirm opt out with reporting content and link)" in new Setup(reportingFrequencyPageFsEnabled = true) {
         enable(ReportingFrequencyPage)
         pageDocumentWithWarningWithReportingContent.getElementById("reporting-frequency-link").attr("href") shouldBe reportingFrequencyLink
       }
 
-      "have the single year opt out with reporting content and link" in new Setup() {
+      "have the single year opt out with reporting content and link" in new Setup(reportingFrequencyPageFsEnabled = true) {
         enable(ReportingFrequencyPage)
         pageDocumentWithWarningWithReportingContent.getElementById("reporting-frequency-link").attr("href") shouldBe reportingFrequencyLink
       }
 
-      "multi year scenario opt out with reporting content and link" in new Setup() {
+      "multi year scenario opt out with reporting content and link" in new Setup(reportingFrequencyPageFsEnabled = true) {
         enable(ReportingFrequencyPage)
         pageDocumentMultiYearOptOut.getElementById("reporting-frequency-link").attr("href") shouldBe reportingFrequencyLink
       }
