@@ -409,7 +409,8 @@
 
     @h1WithCaption(
         heading = messages("tax-year-summary.heading"),
-        captionMsg = messages("tax-year-summary.heading-secondary", (taxYear - 1).toString, taxYear.toString)
+        captionMsg = messages("tax-year-summary.heading-secondary", (taxYear - 1).toString, taxYear.toString),
+        headingId = Some("heading")
     )
 
     @viewModel.calculationSummary.map { model =>
