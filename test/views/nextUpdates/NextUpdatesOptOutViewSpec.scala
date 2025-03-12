@@ -51,7 +51,9 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
 
     val user =
       getIndividualUser(FakeRequest())
-        .addFeatureSwitches(List(FeatureSwitch(ReportingFrequencyPage, reportingFrequencyPageFsEnabled)))
+        .addFeatureSwitches(List(
+          FeatureSwitch(ReportingFrequencyPage, reportingFrequencyPageFsEnabled)
+        ))
 
     val checks: NextUpdatesQuarterlyReportingContentChecks =
       if (quarterlyUpdateContentShow) NextUpdatesQuarterlyReportingContentChecks(
@@ -82,51 +84,39 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
     def whatTheUserCanDoContentMulti: Option[Html] =
       nextUpdatesViewUtils.whatTheUserCanDo(Some(optOutMultiYearViewModel), isSupportingAgent)(user, implicitly)
 
-    lazy val obligationsModel: NextUpdatesViewModel = {
-      implicit val individualUser = user
+    lazy val obligationsModel: NextUpdatesViewModel =
       NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(
         business1.incomeSourceId,
         twoObligationsSuccessModel.obligations
-      ))).obligationsByDate.map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
+      ))).obligationsByDate(user).map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
         DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
       })
-    }
 
-    def oneYearOptOutAnnualView: Document = {
-      implicit val individualUser = user
+    def oneYearOptOutAnnualView: Document =
       Jsoup.parse(contentAsString(
-        nextUpdatesView(obligationsModel, Some(optOutOneYearViewModel), checks, "testBackURL", isSupportingAgent = isSupportingAgent, whatTheUserCanDo = whatTheUserCanDoContentSingleAnnual)
+        nextUpdatesView(obligationsModel, Some(optOutOneYearViewModel), checks, "testBackURL", isSupportingAgent = isSupportingAgent, whatTheUserCanDo = whatTheUserCanDoContentSingleAnnual)(implicitly, user)
       ))
-    }
 
-    def pageDocumentWithReportingContent: Document = {
-      implicit val individualUser = user
+    def pageDocumentWithReportingContent: Document =
       Jsoup.parse(contentAsString(
-        nextUpdatesView(obligationsModel, Some(optOutOneYearViewModel), checks, "testBackURL", isSupportingAgent = isSupportingAgent, whatTheUserCanDo = whatTheUserCanDoContentSingleAnnual)
+        nextUpdatesView(obligationsModel, Some(optOutOneYearViewModel), checks, "testBackURL", isSupportingAgent = isSupportingAgent, whatTheUserCanDo = whatTheUserCanDoContentSingleAnnual)(implicitly, user)
       ))
-    }
 
-    def pageDocumentWithWarning: Document = {
-      implicit val individualUser = user
+    def pageDocumentWithWarning: Document =
       Jsoup.parse(contentAsString(
-        nextUpdatesView(obligationsModel, Some(optOutOneYearViewModelWithMandated), checks, "testBackURL", isSupportingAgent = isSupportingAgent, whatTheUserCanDo = whatTheUserCanDoContentSingleMandated)
+        nextUpdatesView(obligationsModel, Some(optOutOneYearViewModelWithMandated), checks, "testBackURL", isSupportingAgent = isSupportingAgent, whatTheUserCanDo = whatTheUserCanDoContentSingleMandated)(implicitly, user)
       ))
-    }
 
-    def pageDocumentWithWarningWithReportingContent: Document = {
-      implicit val individualUser = user
+    def pageDocumentWithWarningWithReportingContent: Document =
       Jsoup.parse(contentAsString(
-        nextUpdatesView(obligationsModel, Some(optOutOneYearViewModelWithMandated), checks, "testBackURL", isSupportingAgent = isSupportingAgent, whatTheUserCanDo = whatTheUserCanDoContentSingleMandated)
+        nextUpdatesView(obligationsModel, Some(optOutOneYearViewModelWithMandated), checks, "testBackURL", isSupportingAgent = isSupportingAgent, whatTheUserCanDo = whatTheUserCanDoContentSingleMandated)(implicitly, user)
       ))
-    }
 
 
-    def pageDocumentMultiYearOptOut: Document = {
-      implicit val individualUser = user
+    def pageDocumentMultiYearOptOut: Document =
       Jsoup.parse(contentAsString(
-        nextUpdatesView(obligationsModel, Some(optOutMultiYearViewModel), checks, "testBackURL", isSupportingAgent = isSupportingAgent, whatTheUserCanDo = whatTheUserCanDoContentMulti)
+        nextUpdatesView(obligationsModel, Some(optOutMultiYearViewModel), checks, "testBackURL", isSupportingAgent = isSupportingAgent, whatTheUserCanDo = whatTheUserCanDoContentMulti)(implicitly, user)
       ))
-    }
   }
 
   //TODO: Move this object out to help clean up this file and modularise a little
