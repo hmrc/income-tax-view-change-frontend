@@ -17,7 +17,6 @@
 package controllers.optOut
 
 import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
@@ -28,7 +27,7 @@ import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.businessAndPropertyResponseWoMigration
 import uk.gov.hmrc.http.client.HttpClientV2
 
-class OptOutCancelledControllerISpec extends ControllerISpecHelper with FeatureSwitching {
+class OptOutCancelledControllerISpec extends ControllerISpecHelper {
 
   override val appConfig: FrontendAppConfig = testAppConfig
 

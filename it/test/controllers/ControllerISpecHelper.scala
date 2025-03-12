@@ -17,17 +17,28 @@
 package controllers
 
 import audit.models.AccessDeniedForSupportingAgentAuditModel
+import config.FrontendAppConfig
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.BusinessDetailsStub.stubGetBusinessDetails
 import helpers.servicemocks.CitizenDetailsStub.stubGetCitizenDetails
 import helpers.servicemocks._
+import models.admin.FeatureSwitchName
+import models.admin.FeatureSwitchName.allFeatureSwitches
 import play.api.http.Status.{SEE_OTHER, UNAUTHORIZED}
 import testConstants.BaseIntegrationTestConstants.getAgentClientDetailsForCookie
+import testOnly.repository.FeatureSwitchRepository
+
+import scala.concurrent.Await
+import scala.concurrent.duration.DurationInt
 
 trait ControllerISpecHelper extends ComponentSpecBase {
 
   val mtdAllRoles = List(MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent)
+
+  val featureSwitchRepository = app.injector.instanceOf[FeatureSwitchRepository]
+
+  override val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   def homeUrl(mtdUserRole: MTDUserRole): String = mtdUserRole match {
     case MTDIndividual => controllers.routes.HomeController.show().url
@@ -245,4 +256,20 @@ trait ControllerISpecHelper extends ComponentSpecBase {
       AuditStub.verifyAuditEvent(AccessDeniedForSupportingAgentAuditModel(getAuthorisedAndEnrolledUser(MTDSupportingAgent)))
     }
   }
+
+  def disableAllSwitches(): Unit =
+    if (appConfig.readFeatureSwitchesFromMongo)
+      Await.result(
+        for {
+          _ <- featureSwitchRepository.clearFeatureSwitches()
+          _ <- featureSwitchRepository.setFeatureSwitches(allFeatureSwitches.map(_ -> false).toMap)
+        } yield (), 5.seconds)
+    else
+      allFeatureSwitches.foreach(switch => disable(switch))
+
+  override def enable(featureSwitch: FeatureSwitchName): Unit =
+    if (appConfig.readFeatureSwitchesFromMongo)
+      Await.result(featureSwitchRepository.setFeatureSwitch(featureSwitch, true), 5.seconds)
+    else
+      sys.props += featureSwitch.name -> FEATURE_SWITCH_ON
 }
