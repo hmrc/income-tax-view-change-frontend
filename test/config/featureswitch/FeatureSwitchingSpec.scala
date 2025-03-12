@@ -36,10 +36,6 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
     override lazy val readFeatureSwitchesFromMongo: Boolean = false
   }
 
-  object MockFeatureSwitching extends FeatureSwitching {
-    override val appConfig: FrontendAppConfig = mock[FrontendAppConfig]
-  }
-
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     FeatureSwitchName.allFeatureSwitches.foreach(feature => sys.props.remove(feature.name))
@@ -123,6 +119,10 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
 
 
   "Mock FeatureSwitching" when {
+
+    object MockFeatureSwitching extends FeatureSwitching {
+      override val appConfig: FrontendAppConfig = mock[FrontendAppConfig]
+    }
 
     "use MongoDB feature switch status if MongoDB is enabled in config" in {
 
