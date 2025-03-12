@@ -242,14 +242,6 @@
     @* }*@
     @* </td>*@
     @* <td class="govuk-table__cell">*@
-    @* @if(chargeItem.isNotPaidAndNotOverduePoaReconciliationDebit()) {*@
-    @* <div> <span class="govuk-tag govuk-tag--red">@messages("taxYears.accruesInterest") </span></div>*@
-    @* }*@
-    @* @if(isOverduePayment){*@
-    @* <div>*@
-    @* <span id="@rowId2-overdue" class="govuk-tag govuk-tag--red" >@getMessage("over-due")</span>*@
-    @* </div>*@
-    @* }*@
 
     @* @getPaymentTypeEntry(chargeItem = chargeItem, isOverduePayment = isOverduePayment,*@
     @* rowId = rowId2, isMFADebit = chargeItem.transactionType == MfaDebitCharge, index = index)*@
@@ -431,9 +423,6 @@
                                                             whatYouOweChargesList.getRelevantDueDate.toLongDateShort
                                                         }</td>
                                                         <td class="govuk-table__cell">
-                                                            @if(whatYouOweChargesList.getRelevantDueDate.isBefore(currentDate)) {
-                                                                <span id="balancing-charge-type-overdue" class="govuk-tag govuk-tag--red">@getMessage("over-due")</span>
-                                                            }
                                                             @p(id = Some("balancing-charge"))(Html(getMessage("balancingCharge.text")))
                                                             @p(id = Some("pre-mtd-digital"))(Html(getMessage("pre-mtd-digital")))
                                                         </td>
