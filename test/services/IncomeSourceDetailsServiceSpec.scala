@@ -20,18 +20,14 @@ import audit.mocks.MockAuditingService
 import auth.MtdItUser
 import auth.authV2.models.AuthorisedAndEnrolledRequest
 import authV2.AuthActionsTestData.defaultMTDITUser
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import mocks.connectors.MockBusinessDetailsConnector
 import mocks.services.config.MockAppConfig
 import mocks.services.{MockAsyncCacheApi, MockNextUpdatesService}
-import models.admin.{AdjustPaymentsOnAccount, DisplayBusinessStartDate, FeatureSwitch}
+import models.admin.{DisplayBusinessStartDate, FeatureSwitch}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels._
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.cache.AsyncCacheApi
 import testConstants.BaseTestConstants._
 import testConstants.BusinessDetailsTestConstants._
@@ -54,10 +50,6 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetail
     IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty)
   )
     .addFeatureSwitches(List(FeatureSwitch(DisplayBusinessStartDate, true)))
-
-  object MockFeatureSwitching extends FeatureSwitching {
-    override val appConfig: FrontendAppConfig = mock[FrontendAppConfig]
-  }
 
   object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockBusinessDetailsConnector, ec, mockAppConfig)
 
@@ -178,11 +170,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetail
     "a user has a uk property and a sole trader business" should {
       "return a ViewIncomeSourcesViewModel with a sole trader business and uk property" in {
 
-        when(MockFeatureSwitching.appConfig.readFeatureSwitchesFromMongo).thenReturn(true)
-
         enable(DisplayBusinessStartDate)
-
-        when(MockFeatureSwitching.isEnabled(DisplayBusinessStartDate)).thenReturn(true)
 
         val result = TestIncomeSourceDetailsService.getViewIncomeSourceViewModel(ukPropertyAndSoleTraderBusinessIncome, true)
 
