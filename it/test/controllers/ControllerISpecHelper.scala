@@ -260,10 +260,9 @@ trait ControllerISpecHelper extends ComponentSpecBase {
   def disableAllSwitches(): Unit =
     if (appConfig.readFeatureSwitchesFromMongo)
       Await.result(
-        for {
-          _ <- featureSwitchRepository.clearFeatureSwitches()
-          _ <- featureSwitchRepository.setFeatureSwitches(allFeatureSwitches.map(_ -> false).toMap)
-        } yield (), 5.seconds)
+        featureSwitchRepository.setFeatureSwitches(allFeatureSwitches.map(_ -> false).toMap),
+        5.seconds
+      )
     else
       allFeatureSwitches.foreach(switch => disable(switch))
 
