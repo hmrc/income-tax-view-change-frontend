@@ -47,17 +47,11 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
 
   def nextUpdatesViewUtils: NextUpdatesViewUtils = new NextUpdatesViewUtils(linkComponent)
 
-  val individualUserWithReportingFrequencyPageFsEnabled = getIndividualUser(FakeRequest())
-    .addFeatureSwitches(List(FeatureSwitch(ReportingFrequencyPage, true)))
-
-  val individualUserWithReportingFrequencyPageFsDisabled = getIndividualUser(FakeRequest())
-    .addFeatureSwitches(List(FeatureSwitch(ReportingFrequencyPage, false)))
-
   class Setup(quarterlyUpdateContentShow: Boolean = true, isSupportingAgent: Boolean = false, reportingFrequencyPageFsEnabled: Boolean = false) {
 
     val user =
-      if (reportingFrequencyPageFsEnabled) individualUserWithReportingFrequencyPageFsEnabled
-      else                                 individualUserWithReportingFrequencyPageFsDisabled
+      getIndividualUser(FakeRequest())
+        .addFeatureSwitches(List(FeatureSwitch(ReportingFrequencyPage, reportingFrequencyPageFsEnabled)))
 
     val checks: NextUpdatesQuarterlyReportingContentChecks =
       if (quarterlyUpdateContentShow) NextUpdatesQuarterlyReportingContentChecks(
@@ -79,20 +73,14 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
     val optOutMultiYearViewModel: OptOutMultiYearViewModel =
       OptOutMultiYearViewModel()
 
-    def whatTheUserCanDoContentSingleAnnual: Option[Html] = {
-      implicit val individualUser = user
-      nextUpdatesViewUtils.whatTheUserCanDo(Some(optOutOneYearViewModel), isSupportingAgent)
-    }
+    def whatTheUserCanDoContentSingleAnnual: Option[Html] =
+      nextUpdatesViewUtils.whatTheUserCanDo(Some(optOutOneYearViewModel), isSupportingAgent)(user, implicitly)
 
-    def whatTheUserCanDoContentSingleMandated: Option[Html] = {
-      implicit val individualUser = user
-      nextUpdatesViewUtils.whatTheUserCanDo(Some(optOutOneYearViewModelWithMandated), isSupportingAgent)
-    }
+    def whatTheUserCanDoContentSingleMandated: Option[Html] =
+      nextUpdatesViewUtils.whatTheUserCanDo(Some(optOutOneYearViewModelWithMandated), isSupportingAgent)(user, implicitly)
 
-    def whatTheUserCanDoContentMulti: Option[Html] = {
-      implicit val individualUser = user
-      nextUpdatesViewUtils.whatTheUserCanDo(Some(optOutMultiYearViewModel), isSupportingAgent)
-    }
+    def whatTheUserCanDoContentMulti: Option[Html] =
+      nextUpdatesViewUtils.whatTheUserCanDo(Some(optOutMultiYearViewModel), isSupportingAgent)(user, implicitly)
 
     lazy val obligationsModel: NextUpdatesViewModel = {
       implicit val individualUser = user
