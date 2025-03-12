@@ -22,9 +22,12 @@
 @import views.html.partials.taxcalcbreakdown.TableRow
 @import exceptions.MissingFieldException
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components._
+
 
 @this(
     mainTemplate: unifiedLayout,
+    h1WithCaption: h1WithCaption,
     tableRow: TableRow,
     capitalGainsTaxTable: CapitalGainsTaxTableNew,
     govukInsetText: GovukInsetText
@@ -76,10 +79,10 @@
 @mainTemplate(pageTitle = messages("taxCal_breakdown.heading"), backUrl = Some(backUrl), isAgent = isAgent,
     btaNavPartial = btaNavPartial, useFallbackBackLink = true) {
 
-    <h1 class="govuk-heading-xl">
-        <span class="govuk-caption-xl">@messages("taxCal_breakdown.dates", s"${taxYear - 1}", s"$taxYear")</span>
-        @messages("taxCal_breakdown.heading")
-    </h1>
+    @h1WithCaption(
+        heading = messages("taxCal_breakdown.heading"),
+        captionMsg = messages("taxCal_breakdown.dates", s"${taxYear - 1}", s"$taxYear")
+    )
 
     <div class="govuk-body-l" id="explanation">
         @messages(

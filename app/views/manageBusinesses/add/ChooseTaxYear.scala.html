@@ -27,10 +27,21 @@
         formWithCSRF: FormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
         govukButton: GovukButton,
-        govukCheckboxes: GovukCheckboxes
+        govukCheckboxes: GovukCheckboxes,
+        h1WithCaption: h1WithCaption
 )
 
 @(form: Form[ChooseTaxYearForm], isAgent: Boolean, postAction: Call, currentTaxYear: TaxYear, nextTaxYear: TaxYear, incomeSourceType: IncomeSourceType)(implicit user: auth.MtdItUser[_], messages: Messages)
+
+@header = @{
+    h1WithCaption(
+        heading = messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading"),
+        captionMsg = messages(s"manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.$incomeSourceType.subHeading"),
+        size = "l",
+        headingId = Some("choose-tax-year-heading"),
+        captionId = Some("choose-tax-year-subheading")
+    )
+}
 
 @mainTemplate(
     pageTitle = messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading"),
@@ -57,14 +68,14 @@
 
     @formWithCSRF(action = postAction) {
 
-    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-        <h1 id="choose-tax-year-heading" class="govuk-heading-l">
-            <span id="choose-tax-year-subheading" class="govuk-caption-l">@messages(s"manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.$incomeSourceType.subHeading")</span>
-            @messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading")
-        </h1>
-    </legend>
-
     @govukCheckboxes(Checkboxes(
+        fieldset = Some(Fieldset(
+            legend = Some(Legend(
+                content = HtmlContent(header),
+                classes = "govuk-fieldset__legend--l",
+                isPageHeading = true
+            ))
+        )),
         name = "choose-tax-year",
         hint = Some(Hint(content = Text(messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text")))),
         items = Seq(

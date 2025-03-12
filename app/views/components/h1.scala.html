@@ -16,10 +16,8 @@
 
 @this()
 
-@(msg: String, classes: String = "govuk-heading-xl", id: Option[String] = None)(implicit messages: Messages)
+@(msg: String, size: String = "xl", extraClasses: String = "", id: Option[String] = None)
 
-@if(id.isDefined){
-    <h1 class="@classes" id="@id">@messages(msg)</h1>
-} else{
-    <h1 class="@classes">@messages(msg)</h1>
-}
+<h1 class="govuk-heading-@{size} @extraClasses" @if(id.isDefined){id = "@id"}>
+  @msg
+</h1>

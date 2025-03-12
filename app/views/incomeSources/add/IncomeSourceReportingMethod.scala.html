@@ -41,6 +41,7 @@
     govukRadios: GovukRadios,
     govukInput : GovukInput,
     h1: h1,
+    h2: h2,
     p:p
 )
 
@@ -93,7 +94,7 @@
         form = incomeSourceReportingMethodForm
     )
 
-    @h1(messages("incomeSources.add.incomeSourceReportingMethod.heading"), classes = "govuk-heading-xl margin-bottom-100")
+    @h1(messages("incomeSources.add.incomeSourceReportingMethod.heading"), extraClasses = "margin-bottom-100")
 
     @p() {
         @messages("incomeSources.add.incomeSourceReportingMethod.description1", incomeSourceReportingViewModel.latencyYear2.get.taxYear)
@@ -113,7 +114,7 @@
         <li id="bullet-3">@Html(messages("incomeSources.add.incomeSourceReportingMethod.description4.bullet3"))</li>
     </ul>
 
-    @h1(messages("incomeSources.add.incomeSourceReportingMethod.chooseReport"), classes = "govuk-heading-m")
+    @h2(messages("incomeSources.add.incomeSourceReportingMethod.chooseReport"))
 
     @formWithCSRF(action = postAction, Symbol("id") -> "add-uk-property-reporting-method-form") {
         @if(incomeSourceReportingViewModel.latencyYear1.isDefined) {
