@@ -71,7 +71,6 @@ class SelectYourReasonViewSpec extends TestSupport {
     }
 
     "render the correct heading" in {
-      println(document)
       document.getElementsByClass("govuk-heading-l").first().text() shouldBe heading
     }
 
