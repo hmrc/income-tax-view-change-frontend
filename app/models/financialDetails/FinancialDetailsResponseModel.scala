@@ -32,9 +32,9 @@ import scala.util.{Failure, Success, Try}
 
 sealed trait FinancialDetailsResponseModel
 
-case class FinancialDetailsModel(balanceDetails: BalanceDetails,
+case class FinancialDetailsModel  (balanceDetails: BalanceDetails,
                                  private val documentDetails: List[DocumentDetail],
-                                 financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
+                                          financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
 
   def getDueDateForFinancialDetail(financialDetail: FinancialDetail): Option[LocalDate] = {
     financialDetail.items.flatMap(_.headOption.flatMap(_.dueDate))
@@ -261,6 +261,12 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
 
 object FinancialDetailsModel {
   implicit val format: Format[FinancialDetailsModel] = Json.format[FinancialDetailsModel]
+  
+  def apply(balanceDetails: BalanceDetails,
+            documentDetails: List[DocumentDetail],
+            financialDetails: List[FinancialDetail]) = new FinancialDetailsModel(
+              balanceDetails = balanceDetails,
+              documentDetails = documentDetails, financialDetails = financialDetails)
 }
 
 case class FinancialDetailsErrorModel(code: Int, message: String) extends FinancialDetailsResponseModel
