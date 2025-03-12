@@ -63,16 +63,8 @@ case class DocumentDetail(taxYear: Int,
   def outstandingAmountZero: Boolean =
     outstandingAmount == 0
 
-  def hasLpiWithDunningLock: Boolean =
-    lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
-
   def hasAccruingInterest: Boolean =
     interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0 && !isPaid
-
-  def originalAmountIsNotZeroOrNegative: Boolean = originalAmount match {
-    case amount if amount <= 0 => false
-    case _ => true
-  }
 
   def isLatePaymentInterest: Boolean = latePaymentInterestAmount match {
     case Some(amount) if amount <= 0 => false
@@ -90,29 +82,11 @@ case class DocumentDetail(taxYear: Int,
     case _ => false
   }
 
-  val interestIsPartPaid: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != latePaymentInterestAmount.getOrElse[BigDecimal](0)
-
-  def getInterestPaidStatus: String = {
-    if (interestIsPaid) "paid"
-    else if (interestIsPartPaid) "part-paid"
-    else "unpaid"
-  }
-
-  def checkIsPaid(isInterestCharge: Boolean): Boolean = {
-    if (isInterestCharge) interestIsPaid
-    else isPaid
-  }
-
   val isPartPaid: Boolean = outstandingAmount != originalAmount
 
   def remainingToPay: BigDecimal = {
     if (isPaid) BigDecimal(0)
     else outstandingAmount
-  }
-
-  def remainingToPayByChargeOrInterest: BigDecimal = {
-    if (isLatePaymentInterest) interestRemainingToPay
-    else remainingToPay
   }
 
   def interestRemainingToPay: BigDecimal = {

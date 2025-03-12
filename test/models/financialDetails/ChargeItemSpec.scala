@@ -23,7 +23,7 @@ import models.financialDetails.ChargeItem.filterAllowedCharges
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseTestConstants.app
 import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.{documentDetailModel, financialDetail}
+import testConstants.FinancialDetailsTestConstants.{documentDetailModel, financialDetail, fullDocumentDetailModel}
 import testUtils.UnitSpec
 
 import java.time.LocalDate
@@ -537,6 +537,22 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
         val chargesList = List()
         val filtered = chargesList.map(filterAllowedCharges(true, PoaOneReconciliationDebit, PoaTwoReconciliationDebit))
         filtered shouldBe List()
+      }
+    }
+  }
+
+  "originalAmountIsNotZeroOrNegative" should {
+    "return false" when {
+      "original amount is zero" in {
+        chargeItemModel().copy(originalAmount = 0).originalAmountIsNotZeroOrNegative shouldBe false
+      }
+      "original amount is negative" in {
+        chargeItemModel().copy(originalAmount = -20).originalAmountIsNotZeroOrNegative shouldBe false
+      }
+    }
+    "return true" when {
+      "original amount is positive" in {
+        chargeItemModel().copy(originalAmount = 20).originalAmountIsNotZeroOrNegative shouldBe true
       }
     }
   }

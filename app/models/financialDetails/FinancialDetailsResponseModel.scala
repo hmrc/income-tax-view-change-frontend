@@ -94,9 +94,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       isReviewAndReconcilePoaTwoDebit(documentId)
   }
 
-  def findDocumentDetailForTaxYear(taxYear: Int): Option[DocumentDetail] = documentDetails.find(_.taxYear == taxYear)
-
-
   def findDocumentDetailByIdWithDueDate(id: String)(implicit dateService: DateServiceInterface): Option[DocumentDetailWithDueDate] = {
     documentDetails.find(_.transactionId == id)
       .map(documentDetail => DocumentDetailWithDueDate(

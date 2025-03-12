@@ -150,6 +150,11 @@ case class ChargeItem (
     case PoaTwoDebit => "4913"
     case _ => "no valid case"
   }
+
+  def originalAmountIsNotZeroOrNegative: Boolean = originalAmount match {
+    case amount if amount <= 0 => false
+    case _ => true
+  }
 }
 
 object ChargeItem {

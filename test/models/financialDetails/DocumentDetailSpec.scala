@@ -95,35 +95,6 @@ class DocumentDetailSpec extends UnitSpec {
       }
     }
 
-    "originalAmountIsNotZeroOrNegative" should {
-      "return false" when {
-        "original amount is zero" in {
-          fullDocumentDetailModel.copy(originalAmount = 0).originalAmountIsNotZeroOrNegative shouldBe false
-        }
-        "original amount is negative" in {
-          fullDocumentDetailModel.copy(originalAmount = -20).originalAmountIsNotZeroOrNegative shouldBe false
-        }
-      }
-      "return true" when {
-        "original amount is positive" in {
-          fullDocumentDetailModel.copy(originalAmount = 20).originalAmountIsNotZeroOrNegative shouldBe true
-        }
-      }
-    }
-
-    "originalAmountIsNotNegative" should {
-      "return false" when {
-        "original amount is negative" in {
-          fullDocumentDetailModel.copy(originalAmount = -20).originalAmountIsNotZeroOrNegative shouldBe false
-        }
-      }
-      "return true" when {
-        "original amount is positive" in {
-          fullDocumentDetailModel.copy(originalAmount = 20).originalAmountIsNotZeroOrNegative shouldBe true
-        }
-      }
-    }
-
     "getChargeTypeKey" should {
 
 
