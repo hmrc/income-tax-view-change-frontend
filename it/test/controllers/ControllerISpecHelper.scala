@@ -272,4 +272,11 @@ trait ControllerISpecHelper extends ComponentSpecBase {
       Await.result(featureSwitchRepository.setFeatureSwitch(featureSwitch, true), 5.seconds)
     else
       sys.props += featureSwitch.name -> FEATURE_SWITCH_ON
+
+  override def disable(featureSwitch: FeatureSwitchName): Unit =
+    if (appConfig.readFeatureSwitchesFromMongo)
+      Await.result(featureSwitchRepository.setFeatureSwitch(featureSwitch, false), 5.seconds)
+    else
+      sys.props += featureSwitch.name -> FEATURE_SWITCH_OFF
+
 }

@@ -16,7 +16,6 @@
 
 package controllers.optOut
 
-import config.FrontendAppConfig
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
@@ -28,8 +27,6 @@ import testConstants.IncomeSourceIntegrationTestConstants.businessAndPropertyRes
 import uk.gov.hmrc.http.client.HttpClientV2
 
 class OptOutCancelledControllerISpec extends ControllerISpecHelper {
-
-  override val appConfig: FrontendAppConfig = testAppConfig
 
   lazy val httpClient: HttpClientV2 = app.injector.instanceOf(classOf[HttpClientV2])
 
