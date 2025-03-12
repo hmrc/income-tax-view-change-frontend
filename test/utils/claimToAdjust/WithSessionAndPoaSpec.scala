@@ -75,9 +75,9 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
     EitherT.rightT(Ok(whatYouNeedToKnowView(isAgent = true, whatYouNeedToKnowViewModel(true, true))))
   }
 
-  override implicit val individualUser: MtdItUser[_] = defaultMTDITUser(Some(testUserTypeIndividual),
-    IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
-    .addFeatureSwitches(List(FeatureSwitch(AdjustPaymentsOnAccount, true)))
+  override implicit val individualUser: MtdItUser[_] =
+    defaultMTDITUser(Some(testUserTypeIndividual), IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
+      .addFeatureSwitches(List(FeatureSwitch(AdjustPaymentsOnAccount, true)))
 
   val agentUser: MtdItUser[_] =
     defaultMTDITUser(Some(testUserTypeAgent), businessAndPropertyAligned, FakeRequest())
