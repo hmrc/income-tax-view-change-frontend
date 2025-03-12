@@ -1,0 +1,64 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import models.chargeSummary.ChargeSummaryViewModel
+@import models.chargeSummary.PaymentHistoryAllocation
+@import models.financialDetails.MfaDebitCharge
+@import models.chargeSummary.PaymentHistoryAllocations
+@import exceptions.MissingFieldException
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+@import implicits.ImplicitDateFormatterImpl
+@import implicits.HtmlFormatter.NbspString
+@import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+
+@this(
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        p: p
+)
+
+@(viewModel: ChargeSummaryViewModel, allocation: PaymentHistoryAllocations, payment: PaymentHistoryAllocation)(implicit messages: Messages)
+
+@import implicitDateFormatter.longDate
+
+@allocationLinkHTML(link: String, linkText: String) = {
+    <a class="govuk-link" href="@link">
+        @linkText
+        <span class="govuk-visually-hidden"> @viewModel.taxYearToCodingOut</span>
+    </a>
+}
+
+@{
+    val matchingPayment = payment.clearingId
+
+    if(matchingPayment.isDefined) {
+        val link = if(viewModel.isAgent) {
+            controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(matchingPayment.get).url
+        } else {
+            controllers.routes.PaymentAllocationsController.viewPaymentAllocation(matchingPayment.get, None).url
+        }
+        val linkText = if (viewModel.chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit") else
+            allocation.getPaymentAllocationTextInChargeSummary.map(msg => {
+                messages(msg, viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
+            }).getOrElse(
+                throw MissingFieldException("Allocation link text missing")
+            )
+        allocationLinkHTML(link, linkText)
+    } else {
+        allocation.getPaymentAllocationTextInChargeSummary.map(msg => messages(msg, viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut))
+    }
+}
