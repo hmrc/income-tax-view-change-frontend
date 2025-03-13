@@ -65,6 +65,14 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
     ))
   )
 
+  def whatYouOweChargesListFuture: WhatYouOweChargesList = WhatYouOweChargesList(
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    List(chargeItemModel(TaxYear.forYearEnd(2049), interestOutstandingAmount = None, dueDate = Some(LocalDate.of(2050,1,1)))),
+    Some(OutstandingChargesModel(List(
+      OutstandingChargeModel("BCD", Some(LocalDate.parse("2050-12-31")), 10.23, 1234))
+    ))
+  )
+
   def whatYouOweChargesListWithReviewReconcile: WhatYouOweChargesList = WhatYouOweChargesList(
     BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     financialDetailsReviewAndReconcileCi,
@@ -110,8 +118,8 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
         if (mtdUserRole == MTDSupportingAgent) {
           testSupportingAgentDeniedAccess(action)(fakeRequest)
         } else {
-          "render the what you owe page" that {
-            "has payments owed" when {
+          "render the your self assessment charges page" that {
+            "has charges owed" when {
               "the user has a fill list of charges" in {
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
@@ -134,7 +142,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
               }
             }
-            "displays the Charges due now tab" when {
+            "displays the Charges due now tab and warning banner" when {
               "the user has overdue charges" in {
                 disable(AdjustPaymentsOnAccount)
                 setupMockSuccess(mtdUserRole)
@@ -143,7 +151,10 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
 
                 val result = action(fakeRequest)
-                contentAsString(result).contains("Charges due now") shouldBe true
+                contentAsString(result).contains("Important") shouldBe true
+                contentAsString(result).contains("Charges due now: £2.00") shouldBe true
+                val doc: Document = Jsoup.parse(contentAsString(result))
+                Option(doc.getElementById("charges-due-now")).isDefined shouldBe true
               }
               "the user has PoA reconciliation debits accruing interest and ReviewAndReconcilePoa FS is enabled" in {
                 enable(ReviewAndReconcilePoa)
@@ -157,8 +168,25 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 val result = action(fakeRequest)
 
                 status(result) shouldBe Status.OK
-                contentAsString(result).contains("Charges due now") shouldBe true
+                contentAsString(result).contains("Important") shouldBe true
+                contentAsString(result).contains("Charges due now: £2.00") shouldBe true
                 contentAsString(result).contains("First payment on account: extra amount from your tax return") shouldBe true
+                val doc: Document = Jsoup.parse(contentAsString(result))
+                Option(doc.getElementById("charges-due-now")).isDefined shouldBe true
+              }
+            }
+            "not display the Charges due now tab or warning banner" when {
+              "the user has no charges that are overdue or accruing interest" in {
+                disable(AdjustPaymentsOnAccount)
+                setupMockSuccess(mtdUserRole)
+                mockSingleBISWithCurrentYearAsMigrationYear()
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
+                  .thenReturn(Future.successful(whatYouOweChargesListFuture))
+
+                val result = action(fakeRequest)
+                val doc: Document = Jsoup.parse(contentAsString(result))
+                Option(doc.getElementById("overdue-important-warning")).isDefined shouldBe false
+                Option(doc.getElementById("charges-due-now")).isDefined shouldBe false
               }
             }
 

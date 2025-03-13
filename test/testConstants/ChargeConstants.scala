@@ -44,7 +44,6 @@ trait ChargeConstants {
                       interestFromDate:  Option[LocalDate] = Some(LocalDate.of(2018, 3, 29)),
                       interestEndDate: Option[LocalDate] = Some(LocalDate.of(2018, 6, 15)),
                       lpiWithDunningLock: Option[BigDecimal] = Some(100.0),
-                      isOverdue:Boolean = true,
                       dunningLock:Boolean = false,
                       poaRelevantAmount: Option[BigDecimal] = None): ChargeItem = ChargeItem(
     transactionId = transactionId,

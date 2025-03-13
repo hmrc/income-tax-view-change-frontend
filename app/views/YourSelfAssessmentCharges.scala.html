@@ -334,7 +334,7 @@
     }
 
     @getPaymentPlanSection = {
-        <p class="govuk-body">
+        <p class="govuk-body" id="payment-plan">
             @getNewMessage("payment-plan-1")
             @link(
                 link = "https://www.gov.uk/difficulties-paying-hmrc",
@@ -374,7 +374,7 @@
                                         @getNewMessage("important")
                                         </h2>
                                     </div>
-                                    <div class="govuk-notification-banner__content">
+                                    <div class="govuk-notification-banner__content" id="overdue-important-warning">
                                         <h3 class="govuk-notification-banner__heading">
                                         @getNewMessage("charges-due-now-with-amount", whatYouOweChargesList.balanceDetails.overDueAmount.toCurrencyString)
                                         </h3>
@@ -451,7 +451,7 @@
                                             </tbody>
                                         </table>
 
-                                        <div class="govuk-inset-text">
+                                        <div class="govuk-inset-text" id="overdue-payment-text">
                                             <div>
                                             @getNewMessage("overdue-inset-text-1")
                                             </div>
