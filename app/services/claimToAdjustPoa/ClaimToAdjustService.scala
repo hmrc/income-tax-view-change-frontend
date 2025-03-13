@@ -23,6 +23,7 @@ import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.core.Nino
 import models.financialDetails.{ChargeItem, FinancialDetailsErrorModel, FinancialDetailsModel, PoaOneDebit, PoaTwoDebit}
 import models.incomeSourceDetails.TaxYear
+import play.api.Logger
 import play.api.http.Status.NOT_FOUND
 import services.claimToAdjustPoa.ClaimToAdjustHelper
 import uk.gov.hmrc.http.HeaderCarrier
@@ -43,10 +44,15 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
       for {
         chargeItems <- EitherT(getNonCrystallisedFinancialDetails(nino))
         maybeTaxYear <- EitherT.right[Throwable](Future.successful {
-          chargeItems.find( chargeItem => List(PoaOneDebit, PoaTwoDebit).contains(chargeItem.transactionType) )
+          // Sorting added is a hot fix and there must be a better way to achieve this
+          chargeItems.sortWith(_.taxYear.startYear > _.taxYear.startYear )
+            .find( chargeItem => List(PoaOneDebit, PoaTwoDebit).contains(chargeItem.transactionType) )
             .map(_.taxYear)
         })
-      } yield maybeTaxYear
+      } yield {
+        Logger("application").error(s"Here is the value: ${chargeItems}")
+        maybeTaxYear
+      }
     }.value
   }
 
