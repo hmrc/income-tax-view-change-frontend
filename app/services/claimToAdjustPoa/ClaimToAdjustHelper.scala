@@ -243,12 +243,10 @@ object ClaimToAdjustHelper {
   private final val POA1: String = Poa1Charge.key
   private final val POA2: String = Poa2Charge.key
 
+  // TODO: decommission logic where we indentify charge type by documentDescription
   val poaDocumentDescriptions: List[String] = List(POA1, POA2)
-
   val isPoaOne: DocumentDetail => Boolean = _.documentDescription.contains(POA1)
-
   val isPoaTwo: DocumentDetail => Boolean = _.documentDescription.contains(POA2)
-
   val isPoa: DocumentDetail => Boolean = documentDetail => isPoaOne(documentDetail) || isPoaTwo(documentDetail)
 
   val isPoaDocumentDescription: String => Boolean = poaDocumentDescriptions.contains(_)

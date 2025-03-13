@@ -45,12 +45,12 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
         chargeItems <- EitherT(getNonCrystallisedFinancialDetails(nino))
         maybeTaxYear <- EitherT.right[Throwable](Future.successful {
           // Sorting added is a hot fix and there must be a better way to achieve this
+          // or should we drop taxYears for which submission deadline already pass
           chargeItems.sortWith(_.taxYear.startYear > _.taxYear.startYear )
             .find( chargeItem => List(PoaOneDebit, PoaTwoDebit).contains(chargeItem.transactionType) )
             .map(_.taxYear)
         })
       } yield {
-        Logger("application").error(s"Here is the value: ${chargeItems}")
         maybeTaxYear
       }
     }.value
