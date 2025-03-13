@@ -900,6 +900,7 @@ selfAssessmentCharges.important                                    = Important
 selfAssessmentCharges.important-p1                                 = This is the total amount of overdue tax you need to pay. Any interest will increase daily until the overdue amount is paid.
 selfAssessmentCharges.important-p2                                 = You can
 selfAssessmentCharges.important-p2-link-text                       = pay the total amount needed now.
+selfAssessmentCharges.charges-due-in-30-days                       = Charges due in 30 days
 selfAssessmentCharges.charges-due-now-with-amount                  = Charges due now: {0}
 selfAssessmentCharges.charges-due-now                              = Charges due now
 selfAssessmentCharges.tableHead.type-of-charge                     = Type of charge

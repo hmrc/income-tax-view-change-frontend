@@ -45,6 +45,7 @@
 
 @(currentDate: LocalDate,
         hasOverdueOrAccruingInterestCharges: Boolean,
+        hasChargesDueWithin30Days: Boolean,
         whatYouOweChargesList: WhatYouOweChargesList,
         hasLpiWithDunningLock: Boolean,
         currentTaxYear: Int,
@@ -419,8 +420,49 @@
                                             Placeholder
                                         </a>
                                     </li>
+                                    <li class="govuk-tabs__list-item">
+                                        <a class="govuk-tabs__tab" href="#charges-due-in-30-days">
+                                            @getNewMessage("charges-due-in-30-days")
+                                        </a>
+                                    </li>
                                 </ul>
-                                @if(whatYouOweChargesList.overdueOrAccruingInterestChargeList.nonEmpty || whatYouOweChargesList.overdueOutstandingCharges.nonEmpty) {
+                                    @if(whatYouOweChargesList.chargesDueWithin30DaysList.nonEmpty) {
+                                    <div class="govuk-tabs__panel" id="charges-due-in-30-days">
+                                        <table class="govuk-table">
+                                            @newTableHead("due-in-30-days-payments-table-head")
+                                            <tbody class="govuk-table__body">
+                                            @for((charge, index) <- whatYouOweChargesList.sortThisChargesListPlease(whatYouOweChargesList.chargesDueWithin30DaysList).zipWithIndex) {
+                                            @tableRowWithInterest(s"due-30-days-$index", charge, index, "taxYearSummary-link")
+                                            }
+                                            <tr class="govuk-table__header">
+                                                <td class="govuk-table__header" colspan="2">
+                                                    @getNewMessage("table.total-amount", whatYouOweChargesList.balanceDetails.balanceDueWithin30Days.toCurrencyString)
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <div class="govuk-inset-text">
+                                            <div>
+                                                @getNewMessage("overdue-inset-text-1")
+                                            </div>
+                                            <br>
+                                            <div>
+                                                @getNewMessage("overdue-inset-text-2")
+                                            </div>
+                                        </div>
+
+                                        @if(utr.isDefined && !isAgent && whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.isDefined) {
+                                        <div id="payment-button">
+                                            @link(link = controllers.routes.PaymentController.paymentHandoff(whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.get._2.toPence, origin).url,
+                                            messageKey = getPrefix("payNow"), classes = "govuk-button", role = Some("button"),
+                                            id = Some("payment-button-link"))
+                                        </div>
+                                        }
+                                    </div>
+                                    }
+
+                                    @if(whatYouOweChargesList.overdueOrAccruingInterestChargeList.nonEmpty || whatYouOweChargesList.overdueOutstandingCharges.nonEmpty) {
                                     <div class="govuk-tabs__panel" id="charges-due-now">
                                         <table class="govuk-table">
                                             @newTableHead("over-due-payments-table-head")
