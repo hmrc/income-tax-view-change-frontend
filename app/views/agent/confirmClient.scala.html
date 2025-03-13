@@ -22,7 +22,7 @@
     mainTemplate: unifiedLayout,
     continueButton: ContinueButton,
     form: FormWithCSRF,
-    h1: h1_large,
+    h1: h1,
     h2: h2,
     p: p,
     link: link)
@@ -37,7 +37,7 @@
     showServiceName = false
 ) {
 
-    @h1(msg = "agent.confirmClient.heading")
+    @h1(msg = messages("agent.confirmClient.heading"), size = "l")
     <dl class="govuk-summary-list govuk-summary-list--no-border">
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">

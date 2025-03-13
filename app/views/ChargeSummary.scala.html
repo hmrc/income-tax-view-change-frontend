@@ -34,6 +34,7 @@
     mainTemplate: unifiedLayout,
     appConfig: config.FrontendAppConfig,
     implicitDateFormatter: ImplicitDateFormatterImpl,
+    h1WithCaption: h1WithCaption,
     p: p,
     link: link,
     govukWarningText : GovukWarningText,
@@ -260,11 +261,10 @@
         @chargeSummaryHasDunningLocksOrLpiWithDunningLock(viewModel.chargeItem, viewModel.dueDate, viewModel.latePaymentInterestCharge, appConfig)
     }
 
-    <h1 class="govuk-heading-xl">
-        <span class="govuk-caption-xl"> @messages("paymentDue.tax-year", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString) </span>
-        @{ messages(viewModel.pageTitle) }
-    </h1>
-
+    @h1WithCaption(
+        heading = messages(viewModel.pageTitle),
+        captionMsg = messages("paymentDue.tax-year", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
+    )
 
     @if(Seq(PoaOneReconciliationDebit, PoaTwoReconciliationDebit).contains(viewModel.chargeItem.transactionType) && !viewModel.latePaymentInterestCharge) {
         @govukWarningText(WarningText(content = Text(messages("chargeSummary.reviewAndReconcilePoa.warning"))))

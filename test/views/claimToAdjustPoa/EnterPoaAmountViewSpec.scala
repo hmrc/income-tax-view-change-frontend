@@ -73,12 +73,13 @@ class EnterPoaAmountViewSpec extends TestSupport{
 
   "The Enter PoA Amount page" should {
     "render the correct constant page content" in new Setup {
+      val captionMsg = msgs("claimToAdjustPoa.enterPoaAmount.caption", fixedDate.getYear.toString, (fixedDate.getYear + 1).toString)
+      val h1Msg = msg("heading")
       document.title shouldBe msgs("htmlTitle", msg("heading"))
 
-      document.getElementById("caption").text shouldBe
-        msgs("claimToAdjustPoa.enterPoaAmount.caption", fixedDate.getYear.toString, (fixedDate.getYear + 1).toString)
+      document.getElementById("caption").text shouldBe captionMsg
 
-      document.getElementById("h1").text shouldBe msg("heading")
+      document.getElementById("h1").text shouldBe s"$captionMsg $h1Msg"
 
       document.getElementById("bulletPoints").text() shouldBe {msg("p1") + " " + msg("bullet1") + " " + msg("bullet2")}
 

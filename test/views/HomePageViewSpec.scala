@@ -100,11 +100,11 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
               nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture, utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
               user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, creditAndRefundEnabled: Boolean = false, displayCeaseAnIncome: Boolean = false,
               incomeSourcesEnabled: Boolean = false, incomeSourcesNewJourneyEnabled: Boolean = false, reportingFrequencyEnabled: Boolean = false, penaltiesAndAppealsIsEnabled: Boolean = true,
-              penaltyPoints: Int = 0, submissionFrequency: String = "Annual", currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary) {
+              penaltyPoints: Int = 0, submissionFrequency: String = "Annual", currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary, yourSelfAssessmentChargesEnabled: Boolean = false) {
 
     val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear - 1, currentTaxYear), iTSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
 
-    val nextPaymentsTileViewModel = NextPaymentsTileViewModel(Some(paymentDueDate), overDuePaymentsCount, paymentsAccruingInterestCount, reviewAndReconcileEnabled)
+    val nextPaymentsTileViewModel = NextPaymentsTileViewModel(Some(paymentDueDate), overDuePaymentsCount, paymentsAccruingInterestCount, reviewAndReconcileEnabled, yourSelfAssessmentChargesEnabled)
 
     val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(List(financialDetailsModel()), creditAndRefundEnabled, paymentHistoryEnabled, isUserMigrated = user.incomeSources.yearOfMigration.isDefined)
 
@@ -132,6 +132,10 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     )(FakeRequest(), implicitly, user, implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
+    val user2 = user.copy(authUserDetails = user.authUserDetails.copy(name = None))
+    lazy val page2 = home(homePageViewModel)(FakeRequest(), implicitly, user2, implicitly)
+    lazy val document2: Document = Jsoup.parse(contentAsString(page2))
+
     def getElementById(id: String): Option[Element] = Option(document.getElementById(id))
 
     def getTextOfElementById(id: String): Option[String] = getElementById(id).map(_.text)
@@ -156,7 +160,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     }
 
     s"have the page heading '${messages("home.heading")}'" in new Setup {
-      getTextOfElementById("income-tax-heading") shouldBe Some("Income Tax")
+      getTextOfElementById("income-tax-heading") shouldBe Some(s"$testUserName Income Tax")
     }
 
     "have the right keep-alive url in hmrc timeout dialog" in new Setup {

@@ -118,6 +118,7 @@ home.agent.heading                                              = Treth Incwm ei
 home.agent.headingWithClientName                                = Treth Incwm {0}
 home.agent.changeClientLink                                     = Newid cleient
 home.agent.payments.view                                        = Gwirio’r hyn sydd ar eich cleient
+home.agent.payments.selfAssessment.view                         = Gwiriwch daliadau Hunanasesiad eich cleient
 home.agent.returns.viewLink                                     = Bwrw golwg dros Ffurflen Dreth bresennol eich cleient ar gyfer {0} i {1}
 home.agent.visualHidden.clientsName                             = Enw’r cleient
 home.agent.your-returns.updatesLink                             = Diweddaru a chyflwyno Ffurflen Dreth eich cleient ar gyfer {0} i {1}
@@ -127,6 +128,7 @@ home.payments.heading                                           = Taliadau nesaf
 home.payments.daily-interest-charges                            = Taliadau llog dyddiol
 home.payments.no-payments-due                                   = Dim taliadau’n ddyledus
 home.payments.view                                              = Gwirio’r hyn sydd arnoch
+home.payments.selfAssessment.view                               = Gwiriwch eich taliadau Hunanasesiad
 home.overdue.date.update.count                                  = {0} Ddiweddariadau yn hwyr
 home.overdue.date.payment.count                                 = {0} Daliadau am fod yn hwyr
 home.overdue.date                                               = Yn hwyr
@@ -1969,6 +1971,17 @@ manageBusinesses.type-of-property.h2                                     = Pa fa
 manageBusinesses.type-of-property.uk                                     = Busnes eiddo yn y DU
 manageBusinesses.type-of-property.foreign                                = Busnes eiddo tramor
 manageBusinesses.type-of-property.error                                  = Dewiswch opsiwn
+
+# manage income sources reporting method
+manageBusinesses.manage.propertyReportingMethod.heading.annual             = Newidiadau i adrodd blynyddol ar gyfer blwyddyn dreth {0} i {1}
+manageBusinesses.manage.propertyReportingMethod.heading.quarterly          = Newid i gyflwyno adroddiadau’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
+manageBusinesses.manage.propertyReportingMethod.subHeading.UkProperty      = Eiddo yn y DU
+manageBusinesses.manage.propertyReportingMethod.subHeading.ForeignProperty = Eiddo tramor
+manageBusinesses.manage.propertyReportingMethod.subHeading.SelfEmployment  = Unig fasnachwr
+manageBusinesses.manage.propertyReportingMethod.description.annual         = Os byddwch yn newid i adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth drwy’ch meddalwedd sy’n cydweddu neu’ch cyfrif ar-lein CThEF.
+manageBusinesses.manage.propertyReportingMethod.description.quarterly      = Bydd newid i adrodd yn chwarterol yn golygu y bydd angen i chi gyflwyno’ch diweddariadau chwarterol drwy feddalwedd sy’n cydweddu.
+manageBusinesses.manage.propertyReportingMethod.inset.quarterly            = Os ydych wedi cyflwyno unrhyw incwm a threuliau i CThEF ar gyfer y flwyddyn dreth hon, byddant yn cael eu dileu o’n cofnodion. Gwnewch yn siŵr eich bod yn cadw’r wybodaeth hon yn ddiogel oherwydd y bydd angen i chi ei chynnwys yn eich diweddariadau chwarterol.
+manageBusinesses.manage.propertyReportingMethod.confirm                    = Cadarnhau a chadw
 
 
 # credits
