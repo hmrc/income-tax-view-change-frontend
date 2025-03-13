@@ -73,7 +73,6 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
         currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,
         dunningLock = whatYouOweChargesList.hasDunningLock,
         reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
-        isAgent = isAgent,
         isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
         creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
         origin = origin,

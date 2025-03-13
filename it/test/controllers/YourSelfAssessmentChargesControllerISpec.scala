@@ -106,7 +106,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
       "/agents/your-self-assessment-charges"
     }
   }
-  mtdAllRoles.foreach { case mtdUserRole =>
+  mtdAllRoles.foreach { mtdUserRole =>
     val path = getPath(mtdUserRole)
     val additionalCookies = getAdditionalCookies(mtdUserRole)
     s"GET $path" when {
