@@ -15,20 +15,43 @@
  *@
 
 @import enums.GatewayPage.{WhatYouOwePage, NoMatch, GatewayPage}
+@import views.html.helper.CSPNonce
 
 @this()
-    @(href: String, gatewayPageOpt: Option[GatewayPage] = None)(implicit messages: Messages)
+@(href: String, gatewayPageOpt: Option[GatewayPage] = None)(implicit request: RequestHeader, messages: Messages)
 
 @getFallbackLinkText = @{
-    gatewayPageOpt match {
-        case Some(page) => messages(s"back.${page.name}")
-        case None => messages("base.back")
-    }
+  gatewayPageOpt match {
+    case Some(page) => messages(s"back.${page.name}")
+    case None => messages("base.back")
+  }
 }
 
-<script id="js-backlink">
-    document.write('<a id="back-js" class="govuk-back-link" href="javascript:history.back()">@messages("base.back")</a>')
-</script>
-<noscript id="backlink-fallback">
+<noscript>
     <a id="back-fallback" class="govuk-back-link" href="@href">@getFallbackLinkText</a>
 </noscript>
+
+<div id="backlink-container"></div>
+
+<script @CSPNonce.attr>
+    document.addEventListener("DOMContentLoaded", function() {
+        var container = document.getElementById("backlink-container");
+
+        var backLink = document.createElement("a");
+        backLink.id = "back-js";
+        backLink.className = "govuk-back-link";
+        backLink.href = "#";
+        backLink.textContent = "@getFallbackLinkText";
+
+        backLink.addEventListener("click", function(event) {
+            event.preventDefault();
+            if (window.history.length > 1) {
+                history.back();
+            } else {
+                window.location.href = "@href";
+            }
+        });
+
+        container.appendChild(backLink);
+    });
+</script>

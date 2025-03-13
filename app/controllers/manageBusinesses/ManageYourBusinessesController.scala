@@ -20,6 +20,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import models.admin.DisplayBusinessStartDate
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -64,7 +65,7 @@ class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageY
                    (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
 
     withIncomeSourcesFS {
-      incomeSourceDetailsService.getViewIncomeSourceViewModel(sources) match {
+      incomeSourceDetailsService.getViewIncomeSourceViewModel(sources, isEnabled(DisplayBusinessStartDate)) match {
         case Right(viewModel) =>
           Future(hc.sessionId.get).flatMap { sessionId =>
             sessionService.clearSession(sessionId.value).map { _ =>

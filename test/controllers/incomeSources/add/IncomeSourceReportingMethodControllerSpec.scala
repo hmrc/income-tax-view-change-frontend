@@ -226,11 +226,11 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions
 
               status(result) shouldBe OK
               if (isAgent) document.title shouldBe titleAgent else document.title shouldBe title
-              document.select("h1:nth-child(1)").text shouldBe heading
+              document.select("h1:nth-child(1)").text should include(heading)
               document.getElementsByClass("govuk-body").get(1).text shouldBe description2
               document.getElementsByClass("govuk-body").get(2).text shouldBe description3
               document.select("ul").get(1).text shouldBe description4
-              document.select("h1").get(1).text shouldBe chooseReport
+              document.select("h2").get(1).text shouldBe chooseReport
               document.getElementsByTag("legend").get(0).text shouldBe taxYear_2023
               document.getElementsByClass("govuk-body").get(0).text shouldBe description1_2023
               document.getElementById("new_tax_year_2_reporting_method_tax_year").`val`() shouldBe "2023"
@@ -246,11 +246,11 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions
 
               status(result) shouldBe OK
               if (isAgent) document.title shouldBe titleAgent else document.title shouldBe title
-              document.select("h1:nth-child(1)").text shouldBe heading
+              document.select("h1:nth-child(1)").text should include(heading)
               document.getElementsByClass("govuk-body").get(1).text shouldBe description2
               document.getElementsByClass("govuk-body").get(2).text shouldBe description3
               document.select("ul").get(1).text shouldBe description4
-              document.select("h1").get(1).text shouldBe chooseReport
+              document.select("h2").get(1).text shouldBe chooseReport
               document.getElementsByTag("legend").get(0).text shouldBe taxYear_2022
               document.getElementsByClass("govuk-body").get(0).text shouldBe description1_2023
               document.getElementById("new_tax_year_1_reporting_method_tax_year").`val`() shouldBe "2022"
@@ -266,11 +266,11 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions
 
               status(result) shouldBe OK
               if (isAgent) document.title shouldBe titleAgent else document.title shouldBe title
-              document.select("h1:nth-child(1)").text shouldBe heading
+              document.select("h1:nth-child(1)").text should include(heading)
               document.getElementsByClass("govuk-body").get(1).text shouldBe description2
               document.getElementsByClass("govuk-body").get(2).text shouldBe description3
               document.select("ul").get(1).text shouldBe description4
-              document.select("h1").get(1).text shouldBe chooseReport
+              document.select("h2").get(1).text shouldBe chooseReport
               document.getElementsByTag("legend").get(0).text shouldBe taxYear_2023
               document.getElementsByClass("govuk-body").get(0).text shouldBe description1_2024
               document.getElementById("new_tax_year_1_reporting_method_tax_year").`val`() shouldBe "2023"

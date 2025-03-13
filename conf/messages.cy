@@ -118,6 +118,7 @@ home.agent.heading                                              = Treth Incwm ei
 home.agent.headingWithClientName                                = Treth Incwm {0}
 home.agent.changeClientLink                                     = Newid cleient
 home.agent.payments.view                                        = Gwirio’r hyn sydd ar eich cleient
+home.agent.payments.selfAssessment.view                         = Gwiriwch daliadau Hunanasesiad eich cleient
 home.agent.returns.viewLink                                     = Bwrw golwg dros Ffurflen Dreth bresennol eich cleient ar gyfer {0} i {1}
 home.agent.visualHidden.clientsName                             = Enw’r cleient
 home.agent.your-returns.updatesLink                             = Diweddaru a chyflwyno Ffurflen Dreth eich cleient ar gyfer {0} i {1}
@@ -127,6 +128,7 @@ home.payments.heading                                           = Taliadau nesaf
 home.payments.daily-interest-charges                            = Taliadau llog dyddiol
 home.payments.no-payments-due                                   = Dim taliadau’n ddyledus
 home.payments.view                                              = Gwirio’r hyn sydd arnoch
+home.payments.selfAssessment.view                               = Gwiriwch eich taliadau Hunanasesiad
 home.overdue.date.update.count                                  = {0} Ddiweddariadau yn hwyr
 home.overdue.date.payment.count                                 = {0} Daliadau am fod yn hwyr
 home.overdue.date                                               = Yn hwyr
@@ -1993,13 +1995,15 @@ manageBusinesses.check-answers.change                                    = Newid
 
 # manage business sole trader reporting frequency
 
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading           = Pa flwyddyn dreth ydych chi am gyflwyno’n chwarterol ar ei chyfer?
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.subHeading        = Unig fasnachwr
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text         = Dewiswch bob un sy’n berthnasol.
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox     = {0} i {1}
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button            = Parhau
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header      = Mae problem
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description = Dewiswch y blynyddoedd treth yr hoffech gyflwyno’n chwarterol ar eu cyfer
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading                    = Pa flwyddyn dreth ydych chi am gyflwyno’n chwarterol ar ei chyfer?
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.SelfEmployment.subHeading  = Unig fasnachwr
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.UkProperty.subHeading      = Eiddo yn y DU
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.ForeignProperty.subHeading = Eiddo tramor
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text                  = Dewiswch bob un sy’n berthnasol.
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox              = {0} i {1}
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button                     = Parhau
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header               = Mae problem
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description          = Dewiswch y blynyddoedd treth yr hoffech gyflwyno’n chwarterol ar eu cyfer
 
 #######################################################################################################################
 ## Claim to Adjust POA - Add ##

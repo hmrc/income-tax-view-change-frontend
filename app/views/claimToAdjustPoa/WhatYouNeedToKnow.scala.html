@@ -25,7 +25,7 @@
 @this(
         mainTemplate: unifiedLayout,
         appConfig: config.FrontendAppConfig,
-        h1: h1,
+        h1WithCaption: h1WithCaption,
         h2: h2,
         p: p,
         link: link,
@@ -59,10 +59,11 @@
     btaNavPartial = user.btaNavPartial,
     useFallbackBackLink = true) {
 
-    <span class="govuk-caption-xl" id="caption">@getMessage("caption", viewModel.poaTaxYear.startYear.toString, viewModel.poaTaxYear.endYear.toString)</span>
-
-    @h1(msg = getMessage("h1"),
-     id = Some("h1"))
+    @h1WithCaption(heading = getMessage("h1"),
+        captionMsg = getMessage("caption", viewModel.poaTaxYear.startYear.toString, viewModel.poaTaxYear.endYear.toString),
+        headingId = Some("h1"),
+        captionId = Some("caption")
+    )
 
     @p(id=Some("p1")){
         @getMessage("p1", viewModel.poaTaxYear.startYear.toString, viewModel.poaTaxYear.endYear.toString)

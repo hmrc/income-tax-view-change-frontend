@@ -46,7 +46,6 @@ class FeatureSwitchRepository @Inject()(val mongoComponent: MongoComponent,
 )
   with Transactions {
 
-  private implicit val tc: TransactionConfiguration = TransactionConfiguration.strict
 
   def getFeatureSwitch(name: FeatureSwitchName): Future[Option[FeatureSwitch]] =
     collection
@@ -82,12 +81,9 @@ class FeatureSwitchRepository @Inject()(val mongoComponent: MongoComponent,
         )
     }.toList
 
-    withSessionAndTransaction(
-      session =>
-        for {
-          _ <- collection.deleteMany(session, filter = in("name", featureSwitches.keys.toSeq: _*)).toFuture()
-          _ <- collection.insertMany(session, switches).toFuture()
-        } yield ()
-    )
+    for {
+      _ <- collection.deleteMany(in("name", featureSwitches.keys.toSeq: _*)).toFuture()
+      _ <- collection.insertMany(switches).toFuture().map(_ => ())
+    } yield ()
   }
 }

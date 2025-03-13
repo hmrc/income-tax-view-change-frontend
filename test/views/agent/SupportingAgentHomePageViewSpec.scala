@@ -175,21 +175,11 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
       }
 
       "have a language selection switch" which {
-        "displays the current language" in new TestSetup {
-          val langSwitch: Option[Element] = getElementById("lang-switch-en")
-          langSwitch.map(_.select("li:nth-child(1)").text) shouldBe Some(messages("language-switcher.english"))
-        }
 
-        "changes with JS ENABLED" in new TestSetup {
-          val langSwitchScript: Option[Element] = getElementById("lang-switch-en-js")
-          langSwitchScript.toString.contains("/report-quarterly/income-and-expenses/view/switch-to-welsh") shouldBe true
-          langSwitchScript.toString.contains(messages("language-switcher.welsh")) shouldBe true
-        }
-
-        "changes with JS DISABLED" in new TestSetup {
-          val langSwitchNoScript: Option[Element] = getElementById("lang-switch-en-no-js")
-          langSwitchNoScript.map(_.select("a").attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/switch-to-welsh")
-          langSwitchNoScript.map(_.select("a span:nth-child(2)").text) shouldBe Some(messages("language-switcher.welsh"))
+        "displays the correct content" in new TestSetup {
+          val langSwitchScript: Option[Element] = getElementById("language-switch")
+          langSwitchScript.map(_.select("li:nth-child(1)").text) shouldBe Some("English")
+          langSwitchScript.map(_.select("li:nth-child(2)").text) shouldBe Some("Newid yr iaith ir Gymraeg Cymraeg")
         }
       }
 
@@ -199,7 +189,6 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
 
       "not have a payment history tile" in new TestSetup() {
           getElementById("payment-history-tile") shouldBe None
-
       }
 
       s"have a change client link" in new TestSetup {

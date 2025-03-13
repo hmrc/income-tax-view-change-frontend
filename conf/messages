@@ -118,6 +118,7 @@ home.agent.heading                                              = Your client’
 home.agent.headingWithClientName                                = {0}’s Income Tax
 home.agent.changeClientLink                                     = Change client
 home.agent.payments.view                                        = Check what your client owes
+home.agent.payments.selfAssessment.view                         = Check your client’s Self Assessment charges
 home.agent.returns.viewLink                                     = View your client’s current {0} to {1} return
 home.agent.visualHidden.clientsName                             = Client’s name
 home.agent.your-returns.updatesLink                             = Update and submit your client’s {0} to {1} return
@@ -127,6 +128,7 @@ home.payments.heading                                           = Next charges d
 home.payments.daily-interest-charges                            = Daily interest charges
 home.payments.no-payments-due                                   = No payments due
 home.payments.view                                              = Check what you owe
+home.payments.selfAssessment.view                               = Check your Self Assessment charges
 home.updates.heading                                            = Next updates due
 home.updates.view                                               = View update deadlines
 home.updates.view.opt-out                                       = View deadlines and manage how you report
@@ -2011,15 +2013,17 @@ manageBusinesses.check-answers.reporting.annually                        = Annua
 manageBusinesses.check-answers.confirm                                   = Confirm and continue
 manageBusinesses.check-answers.change                                    = Change
 
-# manage business sole trader reporting frequency
+# manage business choose reporting methods for years
 
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading           = Which tax year do you want to report quarterly for?
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.subHeading        = Sole Trader
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text         = Select all that apply.
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox     = {0} to {1}
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button            = Continue
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header      = There is a problem
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description = Select the tax years you want to report quarterly
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading                    = Which tax year do you want to report quarterly for?
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.SelfEmployment.subHeading  = Sole trader
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.UkProperty.subHeading      = UK property
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.ForeignProperty.subHeading = Foreign property
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text                  = Select all that apply.
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox              = {0} to {1}
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button                     = Continue
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header               = There is a problem
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description          = Select the tax years you want to report quarterly
 
 
 #######################################################################################################################
