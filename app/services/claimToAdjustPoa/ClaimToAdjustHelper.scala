@@ -49,9 +49,11 @@ trait ClaimToAdjustHelper {
   val sortByTaxYearC: List[ChargeItem] => List[ChargeItem] =
     _.sortBy(_.taxYear.startYear).reverse
 
+  //TODO: do we need these 2 case classes at all?
   protected case class FinancialDetailsAndPoaModel(chargeItem: List[ChargeItem],
                                                    poaModel: Option[PaymentOnAccountViewModel])
 
+  //TODO: very likely don't need this case class at all as after AC-1 we expect chargeReference to be part of ChargeItem
   protected case class FinancialDetailAndChargeRefMaybe(chargeItems: List[ChargeItem],
                                                         chargeReference: Option[String])
 
