@@ -1629,7 +1629,7 @@ cease-check-answers-fp.caption                                = Foreign property
 
 
 # check business details
-check-details.title                                     = Check your answers
+check-details.title                                     = Confirm this information is correct
 check-details.heading                                   = Sole trader
 check-details.business-name                             = Business name
 check-details.start-date                                = Trading start date
@@ -1639,22 +1639,25 @@ check-details.accounting-method                         = Accounting method
 check-details.cash-accounting                           = Cash basis accounting
 check-details.traditional-accounting                    = Traditional accounting
 check-details.change                                    = Change
+check-details.description                               = Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so.
 
-check-details-uk.title                                  = Check your answers
+check-details-uk.title                                  = Confirm this information is correct
 check-details-uk.heading                                = UK property
 check-details-uk.start-date                             = Start date
 check-details-uk.accounting-method                      = Accounting method
 check-details-uk.cash-accounting                        = Cash basis accounting
 check-details-uk.traditional-accounting                 = Traditional accounting
 check-details-uk.change                                 = Change
+check-details-uk.description                            = Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so.
 
-check-details-fp.title                                  = Check your answers
+check-details-fp.title                                  = Confirm this information is correct
 check-details-fp.heading                                = Foreign property
 check-details-fp.start-date                             = Start date
 check-details-fp.accounting-method                      = Accounting method
 check-details-fp.cash-accounting                        = Cash basis accounting
 check-details-fp.traditional-accounting                 = Traditional accounting
 check-details-fp.change                                 = Change
+check-details-fp.description                            = Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so.
 
 check-business-details.title                            = Check your details
 check-business-details.heading                          = Sole trader business you entered
