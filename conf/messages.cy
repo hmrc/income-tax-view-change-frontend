@@ -1972,6 +1972,17 @@ manageBusinesses.type-of-property.uk                                     = Busne
 manageBusinesses.type-of-property.foreign                                = Busnes eiddo tramor
 manageBusinesses.type-of-property.error                                  = Dewiswch opsiwn
 
+# manage income sources reporting method
+manageBusinesses.manage.propertyReportingMethod.heading.annual             = Newidiadau i adrodd blynyddol ar gyfer blwyddyn dreth {0} i {1}
+manageBusinesses.manage.propertyReportingMethod.heading.quarterly          = Newid i gyflwyno adroddiadau’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
+manageBusinesses.manage.propertyReportingMethod.subHeading.UkProperty      = Eiddo yn y DU
+manageBusinesses.manage.propertyReportingMethod.subHeading.ForeignProperty = Eiddo tramor
+manageBusinesses.manage.propertyReportingMethod.subHeading.SelfEmployment  = Unig fasnachwr
+manageBusinesses.manage.propertyReportingMethod.description.annual         = Os byddwch yn newid i adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth drwy’ch meddalwedd sy’n cydweddu neu’ch cyfrif ar-lein CThEF.
+manageBusinesses.manage.propertyReportingMethod.description.quarterly      = Bydd newid i adrodd yn chwarterol yn golygu y bydd angen i chi gyflwyno’ch diweddariadau chwarterol drwy feddalwedd sy’n cydweddu.
+manageBusinesses.manage.propertyReportingMethod.inset.quarterly            = Os ydych wedi cyflwyno unrhyw incwm a threuliau i CThEF ar gyfer y flwyddyn dreth hon, byddant yn cael eu dileu o’n cofnodion. Gwnewch yn siŵr eich bod yn cadw’r wybodaeth hon yn ddiogel oherwydd y bydd angen i chi ei chynnwys yn eich diweddariadau chwarterol.
+manageBusinesses.manage.propertyReportingMethod.confirm                    = Cadarnhau a chadw
+
 
 # credits
 credit.description.balancingCharge                                      = Credyd o ordaliad treth
