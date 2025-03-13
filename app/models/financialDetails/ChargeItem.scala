@@ -151,6 +151,7 @@ case class ChargeItem (
     case PoaTwoDebit => "4913"
     case _ => "no valid case"
   }
+
 }
 
 object ChargeItem {
@@ -207,5 +208,6 @@ object ChargeItem {
       chargeReference = financialDetail.chargeReference
     )
   }
+
 
 }

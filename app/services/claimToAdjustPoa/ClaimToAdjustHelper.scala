@@ -43,8 +43,8 @@ trait ClaimToAdjustHelper {
     LocalDate.of(date.getYear, Month.JANUARY, LAST_DAY_OF_JANUARY)
       .plusYears(1)
 
-  val sortByTaxYear: List[DocumentDetail] => List[DocumentDetail] =
-    _.sortBy(_.taxYear).reverse
+//  val sortByTaxYear: List[DocumentDetail] => List[DocumentDetail] =
+//    _.sortBy(_.taxYear).reverse
 
   val sortByTaxYearC: List[ChargeItem] => List[ChargeItem] =
     _.sortBy(_.taxYear.startYear).reverse
@@ -52,7 +52,7 @@ trait ClaimToAdjustHelper {
   protected case class FinancialDetailsAndPoaModel(chargeItem: List[ChargeItem],
                                                    poaModel: Option[PaymentOnAccountViewModel])
 
-  protected case class FinancialDetailAndChargeRefMaybe(documentDetails: List[DocumentDetail],
+  protected case class FinancialDetailAndChargeRefMaybe(chargeItems: List[ChargeItem],
                                                         chargeReference: Option[String])
 
   def getPaymentOnAccountModel(charges: List[ChargeItem],
@@ -155,13 +155,14 @@ trait ClaimToAdjustHelper {
     }
   }
 
-  def getAmendablePoaViewModel(documentDetails: List[DocumentDetail],
+  def getAmendablePoaViewModel(chargeItems: List[ChargeItem],
                                poasHaveBeenAdjustedPreviously: Boolean): Either[Throwable, PaymentOnAccountViewModel] = {
+
     val res  = for {
-      poaOneDocDetail <- documentDetails.find(isPoaOne)
-      poaTwoDocDetail <- documentDetails.find(isPoaTwo)
+      poaOneDocDetail <- chargeItems.find(charge => charge.transactionType == PoaOneDebit)
+      poaTwoDocDetail <- chargeItems.find(charge => charge.transactionType == PoaTwoDebit)
       latestDocumentDetail = poaTwoDocDetail
-      poaTwoDueDate <- poaTwoDocDetail.documentDueDate
+      poaTwoDueDate <- poaTwoDocDetail.dueDate
       taxReturnDeadline = getTaxReturnDeadline(poaTwoDueDate)
       poasAreBeforeDeadline = poaTwoDueDate isBefore taxReturnDeadline
       if poasAreBeforeDeadline
@@ -171,7 +172,7 @@ trait ClaimToAdjustHelper {
           PaymentOnAccountViewModel(
             poaOneTransactionId = poaOneDocDetail.transactionId,
             poaTwoTransactionId = poaTwoDocDetail.transactionId,
-            taxYear = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
+            taxYear = latestDocumentDetail.taxYear,
             totalAmountOne = poaOneDocDetail.originalAmount,
             totalAmountTwo = poaTwoDocDetail.originalAmount,
             relevantAmountOne = poaOneDocDetail.poaRelevantAmount.get,
@@ -224,11 +225,10 @@ trait ClaimToAdjustHelper {
     }
   }
 
-  protected def getFinancialDetailAndChargeRefModel(financialDetailModel: Option[FinancialDetailsModel]): Either[Throwable, FinancialDetailAndChargeRefMaybe] = {
-    financialDetailModel match {
-      case Some(
-      FinancialDetailsModel(_, documentDetails, FinancialDetail(_, _, _, _, _, chargeReference, _, _, _, _, _, _, _, _) :: _)) =>
-        Right(FinancialDetailAndChargeRefMaybe(documentDetails, chargeReference))
+  protected def getFinancialDetailAndChargeRefModel(chargeItems: List[ChargeItem]): Either[Throwable, FinancialDetailAndChargeRefMaybe] = {
+    chargeItems match {
+      case head :: _ =>
+        Right(FinancialDetailAndChargeRefMaybe(chargeItems, head.chargeReference) )
       case _ =>
         Left(new Exception("Failed to retrieve non-crystallised financial details"))
     }
