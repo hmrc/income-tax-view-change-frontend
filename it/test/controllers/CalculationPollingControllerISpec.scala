@@ -24,7 +24,7 @@ import play.api.http.Status._
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndUkProperty
 import testConstants.NewCalcBreakdownItTestConstants._
-
+@deprecated("Being moved to submission team", "MISUV-8977")
 class CalculationPollingControllerISpec extends ControllerISpecHelper {
 
   def getPath(mtdRole: MTDUserRole, isFinalCalc: Boolean = false): String = {

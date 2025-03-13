@@ -23,14 +23,17 @@ import models.admin._
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.Configuration
 import testUtils.TestSupport
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with MockitoSugar {
 
-  val mockAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
-
-  object MockFeatureSwitching extends FeatureSwitching {
-    override val appConfig: FrontendAppConfig = mockAppConfig
+  override val appConfig: FrontendAppConfig = new FrontendAppConfig(
+    app.injector.instanceOf[ServicesConfig],
+    app.injector.instanceOf[Configuration]
+  ) {
+    override lazy val readFeatureSwitchesFromMongo: Boolean = false
   }
 
   override protected def beforeEach(): Unit = {
@@ -117,11 +120,15 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
 
   "Mock FeatureSwitching" when {
 
+    object MockFeatureSwitching extends FeatureSwitching {
+      override val appConfig: FrontendAppConfig = mock[FrontendAppConfig]
+    }
+
     "use MongoDB feature switch status if MongoDB is enabled in config" in {
 
       val featureSwitchName = ReviewAndReconcilePoa
 
-      when(mockAppConfig.readFeatureSwitchesFromMongo).thenReturn(true)
+      when(MockFeatureSwitching.appConfig.readFeatureSwitchesFromMongo).thenReturn(true)
 
       val userFeatureSwitches = List(FeatureSwitch(featureSwitchName, isEnabled = true))
 
@@ -132,7 +139,7 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
 
       val featureSwitchName = ReviewAndReconcilePoa
 
-      when(appConfig.readFeatureSwitchesFromMongo).thenReturn(false)
+      when(MockFeatureSwitching.appConfig.readFeatureSwitchesFromMongo).thenReturn(false)
 
       enable(featureSwitchName)
 

@@ -54,7 +54,6 @@
 
     @formWithCSRF(action = postAction, Symbol("id") -> s"$prefix-form") {
 
-
         @hmrcPageHeading(PageHeading(
             text = getMessage(s"heading.$newReportingMethod", taxYearStartYear, taxYearEndYear),
             headingClasses = Some("govuk-heading-l"),

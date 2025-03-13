@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package views.helpers.injected
 
-import enums.GatewayPage.{GatewayPage, NoMatch, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage}
+import enums.GatewayPage._
 import testUtils.ViewSpec
 import views.html.helpers.injected.BackLinkWithFallback
 
@@ -25,41 +25,63 @@ class BackLinkWithFallbackSpec extends ViewSpec {
   val backLink: BackLinkWithFallback = app.injector.instanceOf[BackLinkWithFallback]
 
   class Test extends Setup(backLink("testUrl", None))
+
   class TestWithGatewayPage(page: Option[GatewayPage]) extends Setup(backLink("testUrl", page))
 
-  "The BackLink" should {
-    "generate a back link" which {
-      "has the correct javascript link" in new Test {
-        assert(document.select("script").html contains """<a id="back-js" class="govuk-back-link" href="javascript:history.back()">Back</a>""")
-      }
-      "has the correct noscript fallback url" in new Test {
-        assert(document.select("noscript").text contains """id="back-fallback"""")
-        assert(document.select("noscript").text contains "href=\"testUrl\"")
-      }
-      "has the correct noscript fallback link text" in new Test {
-        assert(document.select("noscript").text contains ">Back")
+  "BackLinkWithFallback" should {
+
+    "generate a JavaScript back link" which {
+      "contains the expected JavaScript snippet" in new Test {
+        val scriptContent = document.select("script").html()
+
+        scriptContent should include("document.addEventListener(\"DOMContentLoaded\", function() {")
+        scriptContent should include("var container = document.getElementById(\"backlink-container\");")
+        scriptContent should include("var backLink = document.createElement(\"a\");")
+        scriptContent should include("backLink.id = \"back-js\";")
+        scriptContent should include("backLink.className = \"govuk-back-link\";")
+        scriptContent should include("backLink.href = \"#\";")
+        scriptContent should include("backLink.addEventListener(\"click\", function(event) {")
       }
     }
 
-    "generate a back link with gateway page" which {
-      "has the correct javascript link" in new TestWithGatewayPage(Some(PaymentHistoryPage)) {
-        assert(document.select("script").html contains """<a id="back-js" class="govuk-back-link" href="javascript:history.back()">Back</a>""")
+    "generate a noscript fallback link" which {
+      "contains the correct URL" in new Test {
+        val noscriptContent = document.select("noscript").html()
+        noscriptContent should include("id=\"back-fallback\"")
+        noscriptContent should include("href=\"testUrl\"")
       }
-      "has the correct noscript fallback url" in new TestWithGatewayPage(Some(PaymentHistoryPage)) {
-        assert(document.select("noscript").text contains """id="back-fallback"""")
-        assert(document.select("noscript").text contains "href=\"testUrl\"")
+
+      "contains the correct default text" in new Test {
+        val noscriptContent = document.select("noscript").text()
+        noscriptContent should include("Back")
       }
-      "has the correct noscript fallback link text with Payment History Page" in new TestWithGatewayPage(Some(PaymentHistoryPage)) {
-        assert(document.select("noscript").text contains s">${messages("Back to Payment History")}")
+    }
+
+    "generate a noscript fallback with a gateway page" which {
+      "contains the correct URL for Payment History Page" in new TestWithGatewayPage(Some(PaymentHistoryPage)) {
+        val noscriptContent = document.select("noscript").html()
+        noscriptContent should include("id=\"back-fallback\"")
+        noscriptContent should include("href=\"testUrl\"")
       }
-      "has the correct noscript fallback link text with WhatYouOwe Page" in new TestWithGatewayPage(Some(WhatYouOwePage)) {
-        assert(document.select("noscript").text contains s">${messages("Back to What You Owe")}")
+
+      "has the correct text for Payment History Page" in new TestWithGatewayPage(Some(PaymentHistoryPage)) {
+        val noscriptContent = document.select("noscript").text()
+        noscriptContent should include(messages("Back to Payment History"))
       }
-      "has the correct noscript fallback link text with TaxYearSummary Page" in new TestWithGatewayPage(Some(TaxYearSummaryPage)) {
-        assert(document.select("noscript").text contains s">${messages("back.taxYearSummary")}")
+
+      "has the correct text for WhatYouOwe Page" in new TestWithGatewayPage(Some(WhatYouOwePage)) {
+        val noscriptContent = document.select("noscript").text()
+        noscriptContent should include(messages("Back to What You Owe"))
       }
-      "has the correct noscript fallback link text with NoMatch Page" in new TestWithGatewayPage(Some(NoMatch)) {
-        assert(document.select("noscript").text contains s">${messages("back.nomatch")}")
+
+      "has the correct text for Tax Year Summary Page" in new TestWithGatewayPage(Some(TaxYearSummaryPage)) {
+        val noscriptContent = document.select("noscript").text()
+        noscriptContent should include(messages("back.taxYearSummary"))
+      }
+
+      "has the correct text for NoMatch Page" in new TestWithGatewayPage(Some(NoMatch)) {
+        val noscriptContent = document.select("noscript").text()
+        noscriptContent should include(messages("back.nomatch"))
       }
     }
   }

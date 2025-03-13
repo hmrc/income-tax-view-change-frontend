@@ -62,7 +62,7 @@ class ManageIncomeSourceControllerSpec extends MockAuthActions
             setupMockCreateSession(true)
             setupMockDeleteSession(true)
 
-            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any())(any()))
+            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any())(any()))
               .thenReturn(
                 Right(
                   ViewIncomeSourcesViewModel(
@@ -104,7 +104,7 @@ class ManageIncomeSourceControllerSpec extends MockAuthActions
             setupMockCreateSession(true)
             setupMockDeleteSession(true)
 
-            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any())(any()))
+            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any())(any()))
               .thenReturn(Left(MissingFieldException("Trading Name")))
 
             val result = action(fakeRequest)
