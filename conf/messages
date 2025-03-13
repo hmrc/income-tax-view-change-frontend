@@ -901,6 +901,7 @@ selfAssessmentCharges.important-p2                                 = You can
 selfAssessmentCharges.important-p2-link-text                       = pay the total amount needed now.
 selfAssessmentCharges.charges-due-now-with-amount                  = Charges due now: {0}
 selfAssessmentCharges.no-payments-due                              = You have no payments due.
+selfAssessmentCharges.no-payments-due-agent                        = Your client has no payments due.
 selfAssessmentCharges.charges-due-now                              = Charges due now
 selfAssessmentCharges.tableHead.due-date                           = Due date
 selfAssessmentCharges.tableHead.tax-year                           = Tax year
