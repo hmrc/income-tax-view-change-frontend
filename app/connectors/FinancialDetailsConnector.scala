@@ -22,7 +22,7 @@ import models.core.ResponseModel.{ResponseModel, UnexpectedError}
 import models.core.{CorrelationId, Nino}
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails._
-import models.incomeSourceDetails.TaxYear
+import models.incomeSourceDetails.{TaxYear, TaxYearRange}
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel, FinancialDetailsWithDocumentDetailsResponse}
 import models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}
 import play.api.Logger
@@ -181,10 +181,10 @@ class FinancialDetailsConnector @Inject()(
       }
   }
 
-  def getFinancialDetails(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)
+  def getFinancialDetails(taxYearRange: TaxYearRange, nino: String)
                          (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
 
-    val url = getChargesUrl(nino, taxYearFrom.financialYearStartString, taxYearTo.financialYearEndString)
+    val url = getChargesUrl(nino, taxYearRange.startYear.financialYearStartString, taxYearRange.endYear.financialYearEndString)
     Logger("application").debug(s"GET $url")
 
     val hc: HeaderCarrier = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")

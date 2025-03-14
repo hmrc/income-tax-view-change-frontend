@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import connectors.FinancialDetailsConnector
 import models.creditDetailModel._
 import models.financialDetails._
-import models.incomeSourceDetails.TaxYear
+import models.incomeSourceDetails.{TaxYear, TaxYearRange}
 import services.CreditHistoryService.CreditHistoryError
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -65,7 +65,7 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
 
   private def getCreditsByTaxYearV2(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)
                                  (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
-    financialDetailsConnector.getFinancialDetails(taxYearFrom, taxYearTo, nino).flatMap {
+    financialDetailsConnector.getFinancialDetails(TaxYearRange(taxYearFrom, taxYearTo), nino).flatMap {
       case financialDetailsModel: FinancialDetailsModel =>
         val fdRes = financialDetailsModel.getPairedDocumentDetails().flatMap {
           case (document: DocumentDetail, financialDetail: FinancialDetail) =>
