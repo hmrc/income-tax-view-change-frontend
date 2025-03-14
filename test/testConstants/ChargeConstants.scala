@@ -44,7 +44,6 @@ trait ChargeConstants {
                       interestFromDate:  Option[LocalDate] = Some(LocalDate.of(2018, 3, 29)),
                       interestEndDate: Option[LocalDate] = Some(LocalDate.of(2018, 6, 15)),
                       lpiWithDunningLock: Option[BigDecimal] = Some(100.0),
-                      isOverdue:Boolean = true,
                       dunningLock:Boolean = false,
                       poaRelevantAmount: Option[BigDecimal] = None): ChargeItem = ChargeItem(
     transactionId = transactionId,
@@ -544,6 +543,8 @@ trait ChargeConstants {
     transactionTypes = List(PoaOneReconciliationDebit, PoaTwoDebit),
     dueDate = List(Some(fixedDate.plusYears(100).minusDays(1)), Some(fixedDate.plusYears(100).plusDays(30))),
     outstandingAmount = List(50, 75),
+    outstandingInterest = List(Some(BigDecimal(10)),Some(BigDecimal(20))),
+    interestRate = List(Some(BigDecimal(2)),Some(BigDecimal(2))),
     taxYear = fixedDate.getYear.toString,
     latePaymentInterestAmount = List(None, None),
     dunningLock = noDunningLocks
