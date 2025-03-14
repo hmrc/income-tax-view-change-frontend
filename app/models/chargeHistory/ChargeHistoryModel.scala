@@ -44,7 +44,7 @@ case class ChargeHistoryModel(taxYear: String,
       }
   }
 
-  val isPoa: Boolean = isPoaDocumentDescription(documentDescription)
+  //val isPoa: Boolean = isPoaDocumentDescription(documentDescription)
 }
 
 object ChargeHistoryModel {
