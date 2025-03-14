@@ -911,6 +911,8 @@ selfAssessmentCharges.overdue-inset-text-1                         = Payments yo
 selfAssessmentCharges.overdue-inset-text-2                         = Any payments you make will go toward overdue charges in the order they were due.
 selfAssessmentCharges.payment-plan-1                               = If you cannot pay your tax bill in full, you may be able to
 selfAssessmentCharges.payment-plan-link-text                       = set up a Self Assessment payment plan
+selfAssessmentCharges.no-payments-due                              = No charges due today
+selfAssessmentCharges.pay-upcoming-charges                         = pay your upcoming Self Assessment charges before the due date.
 
 
 ## Charge Summary ##

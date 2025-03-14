@@ -155,18 +155,18 @@
     @* <tr class="govuk-table__row">*@
     @* <th scope="col" class="govuk-table__header">@getMessage("tableHead.due-date")</th>*@
     @* <th scope="col" class="govuk-table__header">@getMessage("tableHead.charge-type")</th>*@
-    @* <th scope="col" class="govuk-table__header">@getMessage("tableHead.tax-year")</th>*@
+    @* <th scope="col" class="govuk-table__header govuk-table__header--numeric">@getMessage("tableHead.tax-year")</th>*@
     @* <th scope="col" class="govuk-table__header govuk-table__header--numeric">@getMessage("tableHead.amount-due").toNonBreaking</th>*@
     @* </tr>*@
     @* </thead>*@
         @*}*@
-    @newTableHead(headId: String) = {
+    @newTableHead(headId: String, showInterest: Boolean) = {
         <thead class="govuk-table__head" id="@headId">
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">@getMessage("tableHead.due-date")</th>
                 <th scope="col" class="govuk-table__header">@getNewMessage("tableHead.type-of-charge")</th>
-                <th scope="col" class="govuk-table__header">@getMessage("tableHead.tax-year")</th>
-                <th scope="col" class="govuk-table__header govuk-table__header--numeric">@getNewMessage("tableHead.estimated-interest")</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric">@getMessage("tableHead.tax-year")</th>
+                @if(showInterest) {<th scope="col" class="govuk-table__header govuk-table__header--numeric">@getNewMessage("tableHead.estimated-interest")</th>}
                 <th scope="col" class="govuk-table__header govuk-table__header--numeric">@getNewMessage("tableHead.amount").toNonBreaking</th>
             </tr>
         </thead>
@@ -302,6 +302,24 @@
         </tr>
     }
 
+    @tableRowWithoutInterest(rowId: String, chargeItem: ChargeItem, index: Int, id: String) = {
+        <tr class="govuk-table__row" id="@rowId">
+            <td class="govuk-table__cell">
+                @chargeItem.getDisplayDueDate.toLongDate.toNonBreaking
+            </td>
+            <td class="govuk-table__cell">
+                @getPaymentTypeEntry(chargeItem = chargeItem, isOverduePayment = true,
+                rowId = rowId, isMFADebit = chargeItem.transactionType == MfaDebitCharge, index = index)
+            </td>
+            <td class="govuk-table__cell govuk-table__cell--numeric">
+                @taxYearSummaryLink(chargeItem.taxYear.endYear, index, id)
+            </td>
+            <td class="govuk-table__cell govuk-table__cell--numeric">
+                @chargeItem.remainingToPay.toCurrency
+            </td>
+        </tr>
+    }
+
 
     @getNoPaymentsDueText = @{
         if(isAgent) messages("whatYouOwe.no-payments-due-agent") else messages("whatYouOwe.no-payments-due")
@@ -401,8 +419,21 @@
                                         </p>
                                     </div>
                                 </div>
-                            }
-
+                            } else {
+                        <h2 class="govuk-heading-m"> @getNewMessage("no-payments-due") </h2>
+                        <p class="govuk-body">
+                            You can
+                            @link(
+                            link = controllers.routes.PaymentController.paymentHandoff(
+                            whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.map(_._2.toPence).getOrElse(0L),
+                            origin
+                            ).url,
+                            messageKey = getNewMessage("pay-upcoming-charges"),
+                            id = Some("pay-upcoming-charges-link")
+                            )
+                        </p>
+                        <br>
+                        }
                             <div class="govuk-tabs" data-module="govuk-tabs">
                                 <h2 class="govuk-tabs__title">
                                     Contents
@@ -429,10 +460,10 @@
                                     @if(whatYouOweChargesList.chargesDueWithin30DaysList.nonEmpty) {
                                     <div class="govuk-tabs__panel" id="charges-due-in-30-days">
                                         <table class="govuk-table">
-                                            @newTableHead("due-in-30-days-payments-table-head")
+                                            @newTableHead("due-in-30-days-payments-table-head", false)
                                             <tbody class="govuk-table__body">
                                             @for((charge, index) <- whatYouOweChargesList.sortThisChargesListPlease(whatYouOweChargesList.chargesDueWithin30DaysList).zipWithIndex) {
-                                            @tableRowWithInterest(s"due-30-days-$index", charge, index, "taxYearSummary-link")
+                                            @tableRowWithoutInterest(s"due-30-days-$index", charge, index, "taxYearSummary-link")
                                             }
                                             <tr class="govuk-table__header">
                                                 <td class="govuk-table__header" colspan="2">
@@ -465,7 +496,7 @@
                                     @if(whatYouOweChargesList.overdueOrAccruingInterestChargeList.nonEmpty || whatYouOweChargesList.overdueOutstandingCharges.nonEmpty) {
                                     <div class="govuk-tabs__panel" id="charges-due-now">
                                         <table class="govuk-table">
-                                            @newTableHead("over-due-payments-table-head")
+                                            @newTableHead("over-due-payments-table-head", true)
                                             <tbody class="govuk-table__body">
                                                 @if(whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
                                                     <tr class="govuk-table__row" id="balancing-charge-type-0">

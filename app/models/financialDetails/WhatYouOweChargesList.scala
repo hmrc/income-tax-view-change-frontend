@@ -28,8 +28,6 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
                                  codedOutDocumentDetail: Option[ChargeItem] = None)(implicit val dateService: DateServiceInterface) {
 
   lazy val overdueChargeList: List[ChargeItem] = chargesList.filter(x => x.isOverdue())
-  println(s"DEBUG: Initializing WhatYouOweChargesList with balanceDueWithin30Days = ${balanceDetails.balanceDueWithin30Days}")
-
 
   lazy val overdueOrAccruingInterestChargeList: List[ChargeItem] = chargesList.filter(x => x.isOverdue() || x.hasAccruingInterest)
   lazy val overdueOutstandingCharges: List[OutstandingChargeModel] = outstandingChargesModel.toList.flatMap(_.outstandingCharges)
