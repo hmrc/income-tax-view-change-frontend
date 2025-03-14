@@ -54,25 +54,11 @@ case class DocumentDetail(taxYear: Int,
     case credit => Some(credit * -1)
   }
 
-  def paymentOrChargeCredit: Option[BigDecimal] = outstandingAmount match {
-    case _ if (outstandingAmount >= 0) => None
-    case credit => Some(credit * -1)
-  }
-
-
   def outstandingAmountZero: Boolean =
     outstandingAmount == 0
 
-  def hasLpiWithDunningLock: Boolean =
-    lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
-
   def hasAccruingInterest: Boolean =
     interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0 && !isPaid
-
-  def originalAmountIsNotZeroOrNegative: Boolean = originalAmount match {
-    case amount if amount <= 0 => false
-    case _ => true
-  }
 
   def isLatePaymentInterest: Boolean = latePaymentInterestAmount match {
     case Some(amount) if amount <= 0 => false
@@ -90,19 +76,6 @@ case class DocumentDetail(taxYear: Int,
     case _ => false
   }
 
-  val interestIsPartPaid: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != latePaymentInterestAmount.getOrElse[BigDecimal](0)
-
-  def getInterestPaidStatus: String = {
-    if (interestIsPaid) "paid"
-    else if (interestIsPartPaid) "part-paid"
-    else "unpaid"
-  }
-
-  def checkIsPaid(isInterestCharge: Boolean): Boolean = {
-    if (isInterestCharge) interestIsPaid
-    else isPaid
-  }
-
   val isPartPaid: Boolean = outstandingAmount != originalAmount
 
   def remainingToPay: BigDecimal = {
@@ -110,16 +83,10 @@ case class DocumentDetail(taxYear: Int,
     else outstandingAmount
   }
 
-  def remainingToPayByChargeOrInterest: BigDecimal = {
-    if (isLatePaymentInterest) interestRemainingToPay
-    else remainingToPay
-  }
-
   def interestRemainingToPay: BigDecimal = {
     if (interestIsPaid) BigDecimal(0)
     else interestOutstandingAmount.getOrElse(latePaymentInterestAmount.get)
   }
-
 
   def checkIfEitherChargeOrLpiHasRemainingToPay: Boolean = {
     if (isLatePaymentInterest) interestRemainingToPay > 0
@@ -229,8 +196,6 @@ case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Op
   def isAccruingInterest: Boolean = {
     isReviewAndReconcileDebit && !documentDetail.isPaid && !isOverdue
   }
-
-  def isOnlyInterest: Boolean = {(isOverdue && isLatePaymentInterest) || (documentDetail.interestRemainingToPay > 0 && documentDetail.isPaid)}
 }
 
 object DocumentDetail {

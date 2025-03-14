@@ -145,10 +145,20 @@ case class ChargeItem (
     else interestOutstandingAmount.getOrElse(latePaymentInterestAmount.getOrElse(0))
   }
 
+  def checkIfEitherChargeOrLpiHasRemainingToPay: Boolean = {
+    if (isLatePaymentInterest) interestRemainingToPay > 0
+    else remainingToPay > 0
+  }
+
   def poaLinkForDrilldownPage: String = transactionType match {
     case PoaOneDebit => "4911"
     case PoaTwoDebit => "4913"
     case _ => "no valid case"
+  }
+
+  def originalAmountIsNotZeroOrNegative: Boolean = originalAmount match {
+    case amount if amount <= 0 => false
+    case _ => true
   }
 }
 
