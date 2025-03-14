@@ -895,6 +895,27 @@ whatYouOwe.adjust-poa.paid-4                                    = 31 Ionawr {0}
 whatYouOwe.adjust-poa.paid-5                                    = fan bellaf.
 whatYouOwe.interestChargesWarning                               = Bydd taliadau llog yn parhau i gynyddu bob dydd nes bod y taliadau y maent yn ymwneud â nhw yn cael eu talu’n llawn.
 
+## Your Self Assessment Charges
+
+selfAssessmentCharges.heading                                      = Your Self Assessment charges
+selfAssessmentCharges.important                                    = Important
+selfAssessmentCharges.important-p1                                 = This is the total amount of overdue tax you need to pay. Any interest will increase daily until the overdue amount is paid.
+selfAssessmentCharges.important-p2                                 = You can
+selfAssessmentCharges.important-p2-link-text                       = pay the total amount needed now.
+selfAssessmentCharges.charges-due-in-30-days                       = Charges due in 30 days
+selfAssessmentCharges.charges-due-now-with-amount                  = Charges due now: {0}
+selfAssessmentCharges.charges-due-now                              = Charges due now
+selfAssessmentCharges.tableHead.type-of-charge                     = Type of charge
+selfAssessmentCharges.tableHead.estimated-interest                 = Estimated interest
+selfAssessmentCharges.tableHead.amount                             = Amount
+selfAssessmentCharges.table.total-amount                           = Total amount: {0}
+selfAssessmentCharges.overdue-inset-text-1                         = Payments you make may take up to 3 working days depending on the payment method you use. Payments must reach HMRC by the due date to avoid any late payment interest or penalty.
+selfAssessmentCharges.overdue-inset-text-2                         = Any payments you make will go toward overdue charges in the order they were due.
+selfAssessmentCharges.payment-plan-1                               = If you cannot pay your tax bill in full, you may be able to
+selfAssessmentCharges.payment-plan-link-text                       = set up a Self Assessment payment plan
+selfAssessmentCharges.no-payments-due                              = No charges due today
+selfAssessmentCharges.pay-upcoming-charges                         = pay your upcoming Self Assessment charges before the due date.
+
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad cyntaf ar gyfrif
 chargeSummary.paymentOnAccount2.text                            = Ail daliad ar gyfrif
