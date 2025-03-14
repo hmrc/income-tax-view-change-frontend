@@ -27,6 +27,7 @@ case class BusinessDetailsModel(incomeSourceId: String,
                                 tradingName: Option[String],
                                 firstAccountingPeriodEndDate: Option[LocalDate],
                                 tradingStartDate: Option[LocalDate],
+                                contextualTaxYear: Option[Int],
                                 cessation: Option[CessationModel],
                                 cashOrAccruals: Boolean,
                                 address: Option[AddressModel] = None,
@@ -36,6 +37,13 @@ case class BusinessDetailsModel(incomeSourceId: String,
   def isCeased: Boolean = cessation.exists(_.date.nonEmpty)
 
   def isOngoingSoleTraderBusiness(id: String): Boolean = !isCeased && id == incomeSourceId
+
+  def getTradingStartDate: LocalDate = (tradingStartDate, contextualTaxYear) match {
+    case (Some(startDate), None) => startDate
+    case (None, Some(taxYear)) => LocalDate.of(taxYear - 1, 4, 6)
+    case (Some(startDate), Some(_)) => startDate
+    case (None, None) => LocalDate.MIN
+  }
 }
 
 object BusinessDetailsModel {

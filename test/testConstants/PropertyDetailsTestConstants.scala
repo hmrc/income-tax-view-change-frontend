@@ -44,6 +44,7 @@ object PropertyDetailsTestConstants {
   val testStartDate = LocalDate.of(2022, 1, 1)
   val testStartDate2 = LocalDate.of(2021, 1, 1)
   val testStartDateBeforeEarliestStartDate = LocalDate.of(2013, 1, 1)
+  val testContextualTaxYear = 2024
   val testPropertyStartDateOption: Option[LocalDate] = Some(LocalDate.of(2022, 1, 1))
   val testPropertyStartDateOption2: Option[LocalDate] = Some(LocalDate.of(2021, 1, 1))
   val testIncomeType = "property-unspecified"
@@ -56,6 +57,7 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(testIncomeType),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     cessation = None,
     cashOrAccruals = true
   )
@@ -78,6 +80,7 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     cessation = None,
     quarterTypeElection = Some(quarterTypeElectionCalendar),
     cashOrAccruals = true
@@ -89,6 +92,7 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     cessation = None,
     cashOrAccruals = true
   )
@@ -99,6 +103,7 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = None,
+    contextualTaxYear = None,
     cessation = None,
     cashOrAccruals = true
   )
@@ -113,6 +118,7 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     cessation = None,
     cashOrAccruals = true
   )
@@ -123,6 +129,7 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     cessation = None,
     cashOrAccruals = true
   )
@@ -137,6 +144,7 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(testIncomeType),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     cessation = Some(testPropertyCessation),
     cashOrAccruals = true
   )
@@ -147,6 +155,7 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     cessation = Some(testPropertyCessation),
     cashOrAccruals = true
   )
@@ -157,6 +166,7 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     cessation = Some(testPropertyCessation3),
     cashOrAccruals = true
   )
@@ -167,6 +177,7 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     cessation = Some(testPropertyCessation),
     cashOrAccruals = true
   )
@@ -177,6 +188,7 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = Some(testStartDate2),
+    contextualTaxYear = None,
     cessation = Some(testPropertyCessation2),
     cashOrAccruals = true
   )
@@ -187,6 +199,7 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = None,
     tradingStartDate = Some(testStartDate2),
+    contextualTaxYear = None,
     cessation = Some(testPropertyCessation2),
     cashOrAccruals = true
   )
@@ -230,6 +243,7 @@ object PropertyDetailsTestConstants {
       firstAccountingPeriodEndDate = None,
       incomeSourceType = if (incomeSourceType == UkProperty) Some(ukIncomeType) else Some(foreignIncomeType),
       tradingStartDate = Some(testStartDate),
+      contextualTaxYear = None,
       cessation = Some(CessationModel(date = testCeaseDate, reason = Some("01"))),
       latencyDetails = None,
       quarterTypeElection = Some(quarterTypeElectionStandard),
@@ -243,6 +257,7 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     cessation = None,
     latencyDetails = None,
     quarterTypeElection = Some(quarterTypeElectionStandard),
@@ -255,6 +270,7 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     cessation = None,
     latencyDetails = None,
     cashOrAccruals = true
@@ -266,6 +282,19 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDateBeforeEarliestStartDate),
+    contextualTaxYear = None,
+    cessation = None,
+    latencyDetails = None,
+    cashOrAccruals = true
+  )
+
+  val ukPropertyDetailsBeforeContextualTaxYear = PropertyDetailsModel(
+    incomeSourceId = testSelfEmploymentId2,
+    accountingPeriod = Some(testPropertyAccountingPeriod),
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(ukIncomeType),
+    tradingStartDate = None,
+    contextualTaxYear = Some(testContextualTaxYear),
     cessation = None,
     latencyDetails = None,
     cashOrAccruals = true
@@ -277,6 +306,7 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails1),
     cashOrAccruals = true
@@ -288,6 +318,7 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails4),
     quarterTypeElection = Some(quarterTypeElectionCalendar),
@@ -300,6 +331,7 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = None,
+    contextualTaxYear = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails2),
     cashOrAccruals = true
@@ -311,6 +343,19 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = Some(testStartDateBeforeEarliestStartDate),
+    contextualTaxYear = None,
+    cessation = None,
+    latencyDetails = None,
+    cashOrAccruals = true
+  )
+
+  val foreignPropertyDetailsBeforeContextualTaxYear = PropertyDetailsModel(
+    incomeSourceId = testSelfEmploymentId2,
+    accountingPeriod = Some(testPropertyAccountingPeriod),
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(foreignIncomeType),
+    tradingStartDate = None,
+    contextualTaxYear = Some(testContextualTaxYear),
     cessation = None,
     latencyDetails = None,
     cashOrAccruals = true
@@ -322,6 +367,7 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails1),
     cashOrAccruals = true
@@ -333,6 +379,7 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails5),
     quarterTypeElection = Some(quarterTypeElectionStandard),
@@ -345,6 +392,7 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = None,
+    contextualTaxYear = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails2),
     cashOrAccruals = true

@@ -77,6 +77,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           None,
           firstAccountingPeriodEndDate = Some(LocalDate.of(getTaxEndYear(fixedDate.minusYears(count - 1)), april, fifth)),
           tradingStartDate = None,
+          contextualTaxYear = None,
           cessation = None,
           address = Some(address),
           cashOrAccruals = true
@@ -100,6 +101,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         None,
         Some(getCurrentTaxYearEnd.minusYears(1)),
         tradingStartDate = None,
+        contextualTaxYear = None,
         cessation = None,
         address = Some(address),
         cashOrAccruals = true
