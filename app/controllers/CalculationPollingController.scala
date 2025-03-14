@@ -31,7 +31,7 @@ import uk.gov.hmrc.play.language.LanguageUtils
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-
+@deprecated("Being moved to submission team", "MISUV-8977")
 @Singleton
 class CalculationPollingController @Inject()(val authActions: AuthActions,
                                              pollCalculationService: CalculationPollingService,

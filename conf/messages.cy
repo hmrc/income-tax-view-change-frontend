@@ -118,6 +118,7 @@ home.agent.heading                                              = Treth Incwm ei
 home.agent.headingWithClientName                                = Treth Incwm {0}
 home.agent.changeClientLink                                     = Newid cleient
 home.agent.payments.view                                        = Gwirio’r hyn sydd ar eich cleient
+home.agent.payments.selfAssessment.view                         = Gwiriwch daliadau Hunanasesiad eich cleient
 home.agent.returns.viewLink                                     = Bwrw golwg dros Ffurflen Dreth bresennol eich cleient ar gyfer {0} i {1}
 home.agent.visualHidden.clientsName                             = Enw’r cleient
 home.agent.your-returns.updatesLink                             = Diweddaru a chyflwyno Ffurflen Dreth eich cleient ar gyfer {0} i {1}
@@ -127,6 +128,7 @@ home.payments.heading                                           = Taliadau nesaf
 home.payments.daily-interest-charges                            = Taliadau llog dyddiol
 home.payments.no-payments-due                                   = Dim taliadau’n ddyledus
 home.payments.view                                              = Gwirio’r hyn sydd arnoch
+home.payments.selfAssessment.view                               = Gwiriwch eich taliadau Hunanasesiad
 home.overdue.date.update.count                                  = {0} Ddiweddariadau yn hwyr
 home.overdue.date.payment.count                                 = {0} Daliadau am fod yn hwyr
 home.overdue.date                                               = Yn hwyr
@@ -1626,7 +1628,7 @@ cease-check-answers-fp.caption                                = Eiddo tramor
 
 
 # check business details
-check-details.title                                     = Gwirio’ch atebion
+check-details.title                                     = Cadarnhewch fod yr wybodaeth hon yn gywir
 check-details.heading                                   = Unig fasnachwr
 check-details.business-name                             = Enw’r busnes
 check-details.start-date                                = Dyddiad dechrau masnachu
@@ -1636,22 +1638,25 @@ check-details.accounting-method                         = Dull cyfrifydd
 check-details.cash-accounting                           = Cyfrifyddu ar sail arian parod
 check-details.traditional-accounting                    = Cyfrifyddu traddodiadol
 check-details.change                                    = Newid
+check-details.description                               = Unwaith y byddwch yn cadarnhau’r manylion hyn, ni fyddwch yn gallu eu diwygio yn y cam nesaf a bydd angen i chi gysylltu â CThEF i wneud hynny.
 
-check-details-uk.title                                  = Gwirio’ch atebion
+check-details-uk.title                                  = Cadarnhewch fod yr wybodaeth hon yn gywir
 check-details-uk.heading                                = Eiddo yn y DU
 check-details-uk.start-date                             = Dyddiad dechrau
 check-details-uk.accounting-method                      = Dull cyfrifyddu
 check-details-uk.cash-accounting                        = Cyfrifyddu ar sail arian parod
 check-details-uk.traditional-accounting                 = Cyfrifyddu traddodiadol
 check-details-uk.change                                 = Newid
+check-details-uk.description                            = Unwaith y byddwch yn cadarnhau’r manylion hyn, ni fyddwch yn gallu eu diwygio yn y cam nesaf a bydd angen i chi gysylltu â CThEF i wneud hynny.
 
-check-details-fp.title                                  = Gwirio’ch atebion
+check-details-fp.title                                  = Cadarnhewch fod yr wybodaeth hon yn gywir
 check-details-fp.heading                                = Eiddo tramor
 check-details-fp.start-date                             = Dyddiad dechrau
 check-details-fp.accounting-method                      = Dull cyfrifyddu
 check-details-fp.cash-accounting                        = Cyfrifyddu ar sail arian parod
 check-details-fp.traditional-accounting                 = Cyfrifyddu traddodiadol
 check-details-fp.change                                 = Newid
+check-details-fp.description                            = Unwaith y byddwch yn cadarnhau’r manylion hyn, ni fyddwch yn gallu eu diwygio yn y cam nesaf a bydd angen i chi gysylltu â CThEF i wneud hynny.
 
 check-business-details.title                            = Gwirio’ch manylion
 check-business-details.heading                          = Y busnes unig fasnachwr a nodwyd gennych
@@ -1970,6 +1975,17 @@ manageBusinesses.type-of-property.uk                                     = Busne
 manageBusinesses.type-of-property.foreign                                = Busnes eiddo tramor
 manageBusinesses.type-of-property.error                                  = Dewiswch opsiwn
 
+# manage income sources reporting method
+manageBusinesses.manage.propertyReportingMethod.heading.annual             = Newidiadau i adrodd blynyddol ar gyfer blwyddyn dreth {0} i {1}
+manageBusinesses.manage.propertyReportingMethod.heading.quarterly          = Newid i gyflwyno adroddiadau’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
+manageBusinesses.manage.propertyReportingMethod.subHeading.UkProperty      = Eiddo yn y DU
+manageBusinesses.manage.propertyReportingMethod.subHeading.ForeignProperty = Eiddo tramor
+manageBusinesses.manage.propertyReportingMethod.subHeading.SelfEmployment  = Unig fasnachwr
+manageBusinesses.manage.propertyReportingMethod.description.annual         = Os byddwch yn newid i adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth drwy’ch meddalwedd sy’n cydweddu neu’ch cyfrif ar-lein CThEF.
+manageBusinesses.manage.propertyReportingMethod.description.quarterly      = Bydd newid i adrodd yn chwarterol yn golygu y bydd angen i chi gyflwyno’ch diweddariadau chwarterol drwy feddalwedd sy’n cydweddu.
+manageBusinesses.manage.propertyReportingMethod.inset.quarterly            = Os ydych wedi cyflwyno unrhyw incwm a threuliau i CThEF ar gyfer y flwyddyn dreth hon, byddant yn cael eu dileu o’n cofnodion. Gwnewch yn siŵr eich bod yn cadw’r wybodaeth hon yn ddiogel oherwydd y bydd angen i chi ei chynnwys yn eich diweddariadau chwarterol.
+manageBusinesses.manage.propertyReportingMethod.confirm                    = Cadarnhau a chadw
+
 
 # credits
 credit.description.balancingCharge                                      = Credyd o ordaliad treth
@@ -1993,13 +2009,15 @@ manageBusinesses.check-answers.change                                    = Newid
 
 # manage business sole trader reporting frequency
 
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading           = Pa flwyddyn dreth ydych chi am gyflwyno’n chwarterol ar ei chyfer?
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.subHeading        = Unig fasnachwr
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text         = Dewiswch bob un sy’n berthnasol.
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox     = {0} i {1}
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button            = Parhau
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header      = Mae problem
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description = Dewiswch y blynyddoedd treth yr hoffech gyflwyno’n chwarterol ar eu cyfer
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading                    = Pa flwyddyn dreth ydych chi am gyflwyno’n chwarterol ar ei chyfer?
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.SelfEmployment.subHeading  = Unig fasnachwr
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.UkProperty.subHeading      = Eiddo yn y DU
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.ForeignProperty.subHeading = Eiddo tramor
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text                  = Dewiswch bob un sy’n berthnasol.
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox              = {0} i {1}
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button                     = Parhau
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header               = Mae problem
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description          = Dewiswch y blynyddoedd treth yr hoffech gyflwyno’n chwarterol ar eu cyfer
 
 #######################################################################################################################
 ## Claim to Adjust POA - Add ##

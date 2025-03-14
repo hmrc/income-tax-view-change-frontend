@@ -20,7 +20,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import views.html.helpers.injected.ErrorSummary
-@import views.html.components.p
+@import views.html.components._
 
 @this(
         mainTemplate: unifiedLayout,
@@ -28,6 +28,7 @@
         govukRadios: GovukRadios,
         errorSummary: ErrorSummary,
         govukButton: GovukButton,
+        h1: h1,
         p: p
 )
 
@@ -68,7 +69,7 @@
         <div class="govuk-form-group govuk-form-group--error">
         }
 
-        <h1 class="govuk-heading-l" id="start-date-heading">@messages("radioForm.checkDate.heading")</h1>
+        @h1(msg = messages("radioForm.checkDate.heading"), size = "l", id = Some("start-date-heading"))
         @p(id=Some("start-date-value")){
             @incomeSourceStartDate
         }

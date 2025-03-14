@@ -31,6 +31,7 @@
         errorSummary: ErrorSummary,
         govukButton: GovukButton,
         govukInsetText: GovukInsetText,
+        h1: h1,
         p: p
 )
 
@@ -53,12 +54,6 @@
 
 @insetBlock = {
     @govukInsetText(InsetText(id=Some("warning-inset"),content = HtmlContent(getMessage("inset.text",taxYear.endYear.toString))))
-}
-
-@headingContent = {
-    <h1 id="heading" class="govuk-heading-l">
-        @title
-    </h1>
 }
 
 @formBlock = {
@@ -103,7 +98,7 @@
     btaNavPartial = user.btaNavPartial
 ) {
     @errorSummary(form = form)
-    @headingContent
+    @{h1(msg = title, size = "l", id = Some("heading"))}
     @detailBlock
     @insetBlock
     @formBlock

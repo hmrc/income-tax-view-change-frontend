@@ -16,18 +16,24 @@
 
 package controllers
 
+import auth.MtdItUser
+import authV2.AuthActionsTestData.defaultMTDITUser
 import mocks.auth.MockAuthActions
 import mocks.services.{MockCreditHistoryService, MockDateService, MockFinancialDetailsService}
-import models.admin.ChargeHistory
+import models.admin.{ChargeHistory, FeatureSwitch}
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.mockito.Mockito.{mock, reset, when}
 import play.api
 import play.api.Application
+import testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
+import testUtils.TestSupport
 
 import java.time.LocalDate
 
 class ChargeSummaryControllerTest extends MockAuthActions
   with MockFinancialDetailsService
+  with TestSupport
   with MockCreditHistoryService
   with MockDateService {
 
@@ -46,6 +52,15 @@ class ChargeSummaryControllerTest extends MockAuthActions
       api.inject.bind[DocumentDetail].toInstance(documentDetail),
       api.inject.bind[DocumentDetailWithDueDate].toInstance(documentDetailWithDueDate)
     ).build()
+
+  override lazy val tsTestUser: MtdItUser[_] =
+    defaultMTDITUser(Some(testUserTypeIndividual), IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
+      .addFeatureSwitches(List(FeatureSwitch(ChargeHistory, true)))
+
+  override lazy val tsTestUserAgent: MtdItUser[_] =
+    defaultMTDITUser(Some(testUserTypeAgent), IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
+      .addFeatureSwitches(List(FeatureSwitch(ChargeHistory, true)))
+
 
   lazy val testController = app.injector.instanceOf[ChargeSummaryController]
 

@@ -321,7 +321,7 @@
     btaNavPartial = btaNavPartial,
     useFallbackBackLink = true
 ) {
-    @h1(msg = getHeading, id = Some("page-heading"))
+    @h1(msg = messages(getHeading), id = Some("page-heading"))
     @if(whatYouOweChargesList.isChargesListEmpty && whatYouOweChargesList.codedOutDocumentDetail.isEmpty) {
         @p(id = Some("no-payments-due"))(Html(getNoPaymentsDueText))
 

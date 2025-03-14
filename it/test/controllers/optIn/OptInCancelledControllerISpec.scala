@@ -16,7 +16,6 @@
 
 package controllers.optIn
 
-import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import controllers.ControllerISpecHelper
 import enums.JourneyType.{Opt, OptInJourney}
@@ -35,8 +34,6 @@ import testConstants.IncomeSourceIntegrationTestConstants.businessAndPropertyRes
 import uk.gov.hmrc.http.client.HttpClientV2
 
 class OptInCancelledControllerISpec extends ControllerISpecHelper with FeatureSwitching {
-
-  override val appConfig: FrontendAppConfig = testAppConfig
 
   lazy val httpClient: HttpClientV2 = app.injector.instanceOf(classOf[HttpClientV2])
 

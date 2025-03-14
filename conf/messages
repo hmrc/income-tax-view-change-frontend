@@ -118,6 +118,7 @@ home.agent.heading                                              = Your client’
 home.agent.headingWithClientName                                = {0}’s Income Tax
 home.agent.changeClientLink                                     = Change client
 home.agent.payments.view                                        = Check what your client owes
+home.agent.payments.selfAssessment.view                         = Check your client’s Self Assessment charges
 home.agent.returns.viewLink                                     = View your client’s current {0} to {1} return
 home.agent.visualHidden.clientsName                             = Client’s name
 home.agent.your-returns.updatesLink                             = Update and submit your client’s {0} to {1} return
@@ -127,6 +128,7 @@ home.payments.heading                                           = Next charges d
 home.payments.daily-interest-charges                            = Daily interest charges
 home.payments.no-payments-due                                   = No payments due
 home.payments.view                                              = Check what you owe
+home.payments.selfAssessment.view                               = Check your Self Assessment charges
 home.updates.heading                                            = Next updates due
 home.updates.view                                               = View update deadlines
 home.updates.view.opt-out                                       = View deadlines and manage how you report
@@ -1649,7 +1651,7 @@ cease-check-answers-fp.caption                                = Foreign property
 
 
 # check business details
-check-details.title                                     = Check your answers
+check-details.title                                     = Confirm this information is correct
 check-details.heading                                   = Sole trader
 check-details.business-name                             = Business name
 check-details.start-date                                = Trading start date
@@ -1659,22 +1661,25 @@ check-details.accounting-method                         = Accounting method
 check-details.cash-accounting                           = Cash basis accounting
 check-details.traditional-accounting                    = Traditional accounting
 check-details.change                                    = Change
+check-details.description                               = Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so.
 
-check-details-uk.title                                  = Check your answers
+check-details-uk.title                                  = Confirm this information is correct
 check-details-uk.heading                                = UK property
 check-details-uk.start-date                             = Start date
 check-details-uk.accounting-method                      = Accounting method
 check-details-uk.cash-accounting                        = Cash basis accounting
 check-details-uk.traditional-accounting                 = Traditional accounting
 check-details-uk.change                                 = Change
+check-details-uk.description                            = Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so.
 
-check-details-fp.title                                  = Check your answers
+check-details-fp.title                                  = Confirm this information is correct
 check-details-fp.heading                                = Foreign property
 check-details-fp.start-date                             = Start date
 check-details-fp.accounting-method                      = Accounting method
 check-details-fp.cash-accounting                        = Cash basis accounting
 check-details-fp.traditional-accounting                 = Traditional accounting
 check-details-fp.change                                 = Change
+check-details-fp.description                            = Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so.
 
 check-business-details.title                            = Check your details
 check-business-details.heading                          = Sole trader business you entered
@@ -1993,6 +1998,17 @@ manageBusinesses.type-of-property.uk                                     = UK pr
 manageBusinesses.type-of-property.foreign                                = Foreign property business
 manageBusinesses.type-of-property.error                                  = Select an option
 
+# manage income sources reporting method
+manageBusinesses.manage.propertyReportingMethod.heading.annual             = Change to annual reporting for {0} to {1} tax year
+manageBusinesses.manage.propertyReportingMethod.heading.quarterly          = Change to quarterly reporting for {0} to {1} tax year
+manageBusinesses.manage.propertyReportingMethod.subHeading.UkProperty      = UK property
+manageBusinesses.manage.propertyReportingMethod.subHeading.ForeignProperty = Foreign property
+manageBusinesses.manage.propertyReportingMethod.subHeading.SelfEmployment  = Sole trader
+manageBusinesses.manage.propertyReportingMethod.description.annual         = If you change to annual reporting, you can submit your tax return through your HMRC online account or compatible software.
+manageBusinesses.manage.propertyReportingMethod.description.quarterly      = Changing to quarterly reporting will mean you need to submit your quarterly updates through compatible software.
+manageBusinesses.manage.propertyReportingMethod.inset.quarterly            = If you have submitted any income and expenses for this tax year to HMRC, this will be deleted from our records. So make sure you keep hold of this information because you will need to include it in your quarterly updates.
+manageBusinesses.manage.propertyReportingMethod.confirm                    = Confirm and save
+
 
 # credits
 credit.description.balancingCharge                                    = Credit from overpaid tax
@@ -2014,15 +2030,17 @@ manageBusinesses.check-answers.reporting.annually                        = Annua
 manageBusinesses.check-answers.confirm                                   = Confirm and continue
 manageBusinesses.check-answers.change                                    = Change
 
-# manage business sole trader reporting frequency
+# manage business choose reporting methods for years
 
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading           = Which tax year do you want to report quarterly for?
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.subHeading        = Sole Trader
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text         = Select all that apply.
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox     = {0} to {1}
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button            = Continue
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header      = There is a problem
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description = Select the tax years you want to report quarterly
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading                    = Which tax year do you want to report quarterly for?
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.SelfEmployment.subHeading  = Sole trader
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.UkProperty.subHeading      = UK property
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.ForeignProperty.subHeading = Foreign property
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text                  = Select all that apply.
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox              = {0} to {1}
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button                     = Continue
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header               = There is a problem
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description          = Select the tax years you want to report quarterly
 
 
 #######################################################################################################################

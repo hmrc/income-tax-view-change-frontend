@@ -20,7 +20,8 @@
 @import views.html.components._
 
 @this(mainTemplate: unifiedLayout,
-      p: p
+    h1WithCaption: h1WithCaption,
+    p: p
 )
 
 @(endOfYearEstimateModel: EndOfYearEstimate, taxYear: Int, backUrl: String, isAgent: Boolean = false, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
@@ -47,10 +48,10 @@
 @mainTemplate(pageTitle = messages("forecast_income.heading", s"${taxYear - 1}", s"$taxYear"), backUrl = Some(backUrl),
     isAgent = isAgent, btaNavPartial = btaNavPartial, useFallbackBackLink = true) {
 
-    <h1 class="govuk-heading-xl">
-        <span class="govuk-caption-xl">@messages("forecast_income.dates", s"${taxYear - 1}", s"$taxYear")</span>
-        @messages("forecast_income.heading")
-    </h1>
+    @h1WithCaption(
+        heading = messages("forecast_income.heading"),
+        captionMsg = messages("forecast_income.dates", s"${taxYear - 1}", s"$taxYear")
+    )
 
     <div>
 
