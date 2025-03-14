@@ -54,12 +54,6 @@ case class DocumentDetail(taxYear: Int,
     case credit => Some(credit * -1)
   }
 
-  def paymentOrChargeCredit: Option[BigDecimal] = outstandingAmount match {
-    case _ if (outstandingAmount >= 0) => None
-    case credit => Some(credit * -1)
-  }
-
-
   def outstandingAmountZero: Boolean =
     outstandingAmount == 0
 
