@@ -49,7 +49,7 @@ trait ClaimToAdjustHelper {
   val sortByTaxYearC: List[ChargeItem] => List[ChargeItem] =
     _.sortBy(_.taxYear.startYear).reverse
 
-  protected case class FinancialDetailsAndPoaModel(financialDetails: Option[FinancialDetailsModel],
+  protected case class FinancialDetailsAndPoaModel(chargeItem: List[ChargeItem],
                                                    poaModel: Option[PaymentOnAccountViewModel])
 
   protected case class FinancialDetailAndChargeRefMaybe(documentDetails: List[DocumentDetail],
@@ -212,10 +212,10 @@ trait ClaimToAdjustHelper {
   }
 
   // TODO: re-write with the use of EitherT
-  protected def toFinancialDetail(financialPoaDetails: Either[Throwable, FinancialDetailsAndPoaModel]): Either[Throwable, Option[FinancialDetail]] = {
+  protected def toFinancialDetail(financialPoaDetails: Either[Throwable, FinancialDetailsAndPoaModel]): Either[Throwable, Option[ChargeItem]] = {
     financialPoaDetails match {
-      case Right(FinancialDetailsAndPoaModel(Some(finDetails), _)) =>
-        finDetails.financialDetails.headOption match {
+      case Right(FinancialDetailsAndPoaModel(chargeItems, _)) =>
+        chargeItems.headOption match {
           case Some(detail) => Right(Some(detail))
           case None => Left(new Exception("No financial details found for this charge"))
         }

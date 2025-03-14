@@ -103,8 +103,8 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
                                     (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[String]]] = {
     {
       for {
-        financialDetails <- EitherT(Future.successful(toFinancialDetail(financialPoaDetails)))
-        chargeHistoryModelMaybe <- EitherT(getChargeHistory(chargeHistoryConnector, financialDetails.flatMap(_.chargeReference)))
+        someChargeItem <- EitherT(Future.successful(toFinancialDetail(financialPoaDetails)))
+        chargeHistoryModelMaybe <- EitherT(getChargeHistory(chargeHistoryConnector, someChargeItem.flatMap(_.chargeReference)))
       } yield chargeHistoryModelMaybe.flatMap(_.poaAdjustmentReason)
     }.value
   }
@@ -126,21 +126,21 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   private def getPoaModelAndFinancialDetailsForNonCrystallised(nino: Nino)
                                                               (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, FinancialDetailsAndPoaModel]] = {
     checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, calculationListConnector, ec).flatMap {
-      case None => Future.successful(Right(FinancialDetailsAndPoaModel(None, None)))
+      case None => Future.successful(Right(FinancialDetailsAndPoaModel(List(), None)))
       case Some(taxYear: TaxYear) =>
         financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
           case financialDetails: FinancialDetailsModel =>
             val charges = sortByTaxYearC(financialDetails.toChargeItem())
             getPaymentOnAccountModel(charges) match {
               case Right(x) =>
-                Right(FinancialDetailsAndPoaModel(Some(financialDetails), x))
+                Right(FinancialDetailsAndPoaModel(charges, x))
               case Left(ex) =>
                 Left(ex)
             }
           case error: FinancialDetailsErrorModel if error.code != NOT_FOUND =>
             Left(new Exception("There was an error whilst fetching financial details data"))
           case _ =>
-            Right(FinancialDetailsAndPoaModel(None, None))
+            Right(FinancialDetailsAndPoaModel(List.empty, None))
         }
     }
   }
