@@ -60,6 +60,7 @@ object IncomeSourceDetailsTestConstants {
   val ukPropertyWithSoleTraderBusiness = IncomeSourceDetailsModel(testNino, testMtditid, None, List(business2018), List(ukPropertyDetails, ceasedUKPropertyDetailsCessation2020))
   val ukPlusForeignPropertyWithSoleTraderIncomeSource = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), List(soleTraderBusiness), List(ukPropertyDetails, foreignPropertyDetails))
   val ukForeignSoleTraderIncomeSourceBeforeEarliestStartDate = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), List(soleTraderBusiness3), List(ukPropertyDetails3BeforeEarliest, foreignPropertyDetailsBeforeEarliest))
+  val ukForeignSoleTraderIncomeSourceBeforeContextualTaxYear = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), List(soleTraderBusiness4), List(ukPropertyDetailsBeforeContextualTaxYear, foreignPropertyDetailsBeforeContextualTaxYear))
   val ukPropertyAndSoleTraderBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), List(soleTraderBusiness), List(ukPropertyDetails))
   val ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), List(soleTraderBusiness, ceasedBusiness), List(ukPropertyDetails, foreignPropertyDetails))
   val ukPropertyAndSoleTraderBusinessIncomeNoTradingName = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), List(soleTraderBusinessNoTradingName), List(ukPropertyDetails))

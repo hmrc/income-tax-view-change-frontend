@@ -26,6 +26,7 @@ case class PropertyDetailsModel(incomeSourceId: String,
                                 firstAccountingPeriodEndDate: Option[LocalDate],
                                 incomeSourceType: Option[String],
                                 tradingStartDate: Option[LocalDate],
+                                contextualTaxYear: Option[Int],
                                 cessation: Option[CessationModel],
                                 cashOrAccruals: Boolean,
                                 latencyDetails: Option[LatencyDetails] = None,
@@ -41,6 +42,12 @@ case class PropertyDetailsModel(incomeSourceId: String,
 
   def isOngoingForeignProperty: Boolean = isForeignProperty && !isCeased
 
+  def getTradingStartDate: LocalDate = (tradingStartDate, contextualTaxYear) match {
+    case (Some(startDate), None) => startDate
+    case (None, Some(taxYear)) => LocalDate.of(taxYear - 1, 4, 6)
+    case (Some(startDate), Some(_)) => startDate
+    case (None, None) => LocalDate.MIN
+  }
 }
 
 object PropertyDetailsModel {

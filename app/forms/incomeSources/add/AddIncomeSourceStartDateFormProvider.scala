@@ -39,7 +39,7 @@ class AddIncomeSourceStartDateFormProvider extends Mappings {
     val invalidFutureDateErrorMessage = messages(s"$messagesPrefix.error.future", earliestLongInvalidDate)
 
     val dateFormErrorPrefix = "dateForm.error"
-    val invalidMessage = s"$dateFormErrorPrefix.date.error.invalid"
+    val invalidMessage = s"$dateFormErrorPrefix.invalid"
 
     Form(
       "value" -> localDate(
