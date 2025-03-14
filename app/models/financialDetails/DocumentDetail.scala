@@ -88,7 +88,6 @@ case class DocumentDetail(taxYear: Int,
     else interestOutstandingAmount.getOrElse(latePaymentInterestAmount.get)
   }
 
-
   def checkIfEitherChargeOrLpiHasRemainingToPay: Boolean = {
     if (isLatePaymentInterest) interestRemainingToPay > 0
     else remainingToPay > 0
@@ -197,8 +196,6 @@ case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Op
   def isAccruingInterest: Boolean = {
     isReviewAndReconcileDebit && !documentDetail.isPaid && !isOverdue
   }
-
-  def isOnlyInterest: Boolean = {(isOverdue && isLatePaymentInterest) || (documentDetail.interestRemainingToPay > 0 && documentDetail.isPaid)}
 }
 
 object DocumentDetail {

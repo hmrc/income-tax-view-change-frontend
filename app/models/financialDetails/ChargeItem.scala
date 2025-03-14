@@ -42,8 +42,7 @@ case class ChargeItem (
                         lpiWithDunningLock: Option[BigDecimal],
                         amountCodedOut: Option[BigDecimal],
                         dunningLock: Boolean,
-                        poaRelevantAmount: Option[BigDecimal],
-                        chargeReference: Option[String]) extends TransactionItem {
+                        poaRelevantAmount: Option[BigDecimal]) extends TransactionItem {
 
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean =
     dueDate.exists(_ isBefore dateService.getCurrentDate)
@@ -146,6 +145,11 @@ case class ChargeItem (
     else interestOutstandingAmount.getOrElse(latePaymentInterestAmount.getOrElse(0))
   }
 
+  def checkIfEitherChargeOrLpiHasRemainingToPay: Boolean = {
+    if (isLatePaymentInterest) interestRemainingToPay > 0
+    else remainingToPay > 0
+  }
+
   def poaLinkForDrilldownPage: String = transactionType match {
     case PoaOneDebit => "4911"
     case PoaTwoDebit => "4913"
@@ -208,8 +212,7 @@ object ChargeItem {
       lpiWithDunningLock = documentDetail.lpiWithDunningLock,
       amountCodedOut = documentDetail.amountCodedOut,
       dunningLock = dunningLockExists,
-      poaRelevantAmount = documentDetail.poaRelevantAmount,
-      chargeReference = financialDetail.chargeReference
+      poaRelevantAmount = documentDetail.poaRelevantAmount
     )
   }
 

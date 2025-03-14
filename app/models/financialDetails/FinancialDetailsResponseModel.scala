@@ -63,18 +63,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     }
   }
 
-  def isReviewAndReconcilePoaOneDebit(documentId: String): Boolean = {
-    financialDetails.exists { fd =>
-      fd.transactionId.contains(documentId) && isReviewAndReconcilePoaOne(fd.mainTransaction)
-    }
-  }
-
-  def isReviewAndReconcilePoaTwoDebit(documentId: String): Boolean = {
-    financialDetails.exists { fd =>
-      fd.transactionId.contains(documentId) && isReviewAndReconcilePoaTwo(fd.mainTransaction)
-    }
-  }
-
   def isReviewAndReconcilePoaOneDebit(documentId: String, reviewAndReconcileIsEnabled: Boolean): Boolean = {
     reviewAndReconcileIsEnabled &&
       financialDetails.exists { fd =>
@@ -87,11 +75,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       financialDetails.exists { fd =>
         fd.transactionId.contains(documentId) && isReviewAndReconcilePoaTwo(fd.mainTransaction)
       }
-  }
-
-  def isReviewAndReconcileDebit(documentId: String): Boolean = {
-    isReviewAndReconcilePoaOneDebit(documentId) ||
-      isReviewAndReconcilePoaTwoDebit(documentId)
   }
 
   def findDocumentDetailByIdWithDueDate(id: String)(implicit dateService: DateServiceInterface): Option[DocumentDetailWithDueDate] = {
