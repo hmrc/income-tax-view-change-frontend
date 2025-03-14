@@ -66,14 +66,6 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
             val sortedCharges = sortByTaxYearC(chargeItems)
             getPaymentOnAccountModel(sortedCharges)
           }
-//            chargeItems
-//            .map { chargeItem =>
-//              val charges = sortByTaxYearC( chargeItem )
-//              getPaymentOnAccountModel(charges)
-//            } match {
-//              case Some(x) => x
-//              case None => Left(new Exception("Unable to extract getPaymentOnAccountModel"))
-//          }
           ))
       } yield paymentOnAccountViewModelMaybe
     }.value
@@ -102,7 +94,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
       for {
         chargeItems <- EitherT(getNonCrystallisedFinancialDetails(nino))
         fdAndChargeMaybe <- EitherT(Future.successful(getFinancialDetailAndChargeRefModel(chargeItems)))
-        haveBeenAdjusted <- EitherT(isSubsequentAdjustment(chargeHistoryConnector, fdAndChargeMaybe.chargeReference))
+        haveBeenAdjusted <- EitherT(isSubsequentAdjustment(chargeHistoryConnector, fdAndChargeMaybe))
         paymentOnAccountViewModel <- EitherT(
           Future.successful(getAmendablePoaViewModel(sortByTaxYearC(fdAndChargeMaybe.chargeItems), haveBeenAdjusted)))
       } yield paymentOnAccountViewModel

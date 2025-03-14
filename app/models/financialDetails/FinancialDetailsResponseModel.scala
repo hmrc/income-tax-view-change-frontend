@@ -25,7 +25,6 @@ import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import play.api.Logger
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
-import services.claimToAdjustPoa.ClaimToAdjustHelper.poaDocumentDescriptions
 
 import java.time.LocalDate
 import scala.util.{Failure, Success, Try}
@@ -221,10 +220,10 @@ case class FinancialDetailsModel  (balanceDetails: BalanceDetails,
     documentDetails.find(_.latePaymentInterestId == chargeReference)
   }
 
-  def arePoaPaymentsPresent(): Option[TaxYear] = {
-    documentDetails.filter(_.documentDescription.exists(description => poaDocumentDescriptions.contains(description)))
-      .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
-  }
+//  def arePoaPaymentsPresent(): Option[TaxYear] = {
+//    documentDetails.filter(_.documentDescription.exists(description => poaDocumentDescriptions.contains(description)))
+//      .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
+//  }
 
   def toChargeItem(): List[ChargeItem] = {
     Try {

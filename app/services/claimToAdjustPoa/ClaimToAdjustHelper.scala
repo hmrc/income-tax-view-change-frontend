@@ -198,10 +198,11 @@ trait ClaimToAdjustHelper {
     }
   }
 
-  protected def isSubsequentAdjustment(chargeHistoryConnector: ChargeHistoryConnector, chargeReference: Option[String])
+  protected def isSubsequentAdjustment(chargeHistoryConnector: ChargeHistoryConnector, model: FinancialDetailAndChargeRefMaybe)
                                       (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
-    chargeHistoryConnector.getChargeHistory(user.nino, chargeReference) map {
-      case ChargesHistoryModel(_, _, _, Some(charges)) if charges.filter(_.isPoa).exists(_.poaAdjustmentReason.isDefined) => Right(true)
+    chargeHistoryConnector.getChargeHistory(user.nino, model.chargeReference) map {
+      case ChargesHistoryModel(_, _, _, Some(charges)) if charges.exists(_.poaAdjustmentReason.isDefined) => Right(true)
+        //charges.filter(_.isPoa).exists(_.poaAdjustmentReason.isDefined) => Right(true)
       case ChargesHistoryModel(_, _, _, _) => Right(false)
       case ChargesHistoryErrorModel(code, message) =>
         Logger("application").error("getChargeHistory returned a non-valid response")
@@ -211,7 +212,7 @@ trait ClaimToAdjustHelper {
 
   private def extractPoaChargeHistory(chargeHistories: List[ChargeHistoryModel]): Option[ChargeHistoryModel] = {
     // We are not differentiating between POA 1 & 2 as records for both should match since they are always amended together
-    chargeHistories.find(chargeHistoryModel => chargeHistoryModel.isPoa)
+    chargeHistories.find(chargeHistoryModel => chargeHistoryModel.poaAdjustmentReason.isDefined)
   }
 
   // TODO: re-write with the use of EitherT
