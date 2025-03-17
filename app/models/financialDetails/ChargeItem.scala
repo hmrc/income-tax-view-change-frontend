@@ -17,6 +17,7 @@
 package models.financialDetails
 
 import exceptions.{CouldNotCreateChargeItemException, MissingFieldException}
+import models.financialDetails.ChargeType.{poaOneReconciliationDebit, poaTwoReconciliationDebit}
 import models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
@@ -149,8 +150,8 @@ case class ChargeItem (
   }
 
   def poaLinkForDrilldownPage: String = transactionType match {
-    case PoaOneDebit => "4911"
-    case PoaTwoDebit => "4913"
+    case PoaOneDebit => poaOneReconciliationDebit
+    case PoaTwoDebit => poaTwoReconciliationDebit
     case _ => "no valid case"
   }
 }
