@@ -87,7 +87,7 @@ case class DocumentDetail(taxYear: Int,
     else interestOutstandingAmount.getOrElse(latePaymentInterestAmount.get)
   }
 
-  @deprecated("Method to eventually be removed in 1553 refactoring", "MISUV-8849")
+  @deprecated("Use checkIfEitherChargeOrLpiHasRemainingToPay in ChargeItem model instead", "MISUV-8849")
   def checkIfEitherChargeOrLpiHasRemainingToPay: Boolean = {
     if (isLatePaymentInterest) interestRemainingToPay > 0
     else remainingToPay > 0
