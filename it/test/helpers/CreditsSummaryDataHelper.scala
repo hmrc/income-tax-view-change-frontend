@@ -37,7 +37,7 @@ trait CreditsSummaryDataHelper {
         documentDate = LocalDate.of(2023, 12, 23)
       ),
       creditType = MfaCreditType,
-      balanceDetails = None
+      availableCredit = None
     ),
     CreditDetailModel(
       date = fixedDate.plusYears(1),
@@ -51,7 +51,7 @@ trait CreditsSummaryDataHelper {
         documentDate = LocalDate.of(2023, 12, 23)
       ),
       creditType = CutOverCreditType,
-      balanceDetails = None
+      availableCredit = None
     ),
     CreditDetailModel(
       date = fixedDate.plusYears(1),
@@ -65,7 +65,7 @@ trait CreditsSummaryDataHelper {
         documentDate = LocalDate.of(2023, 12, 23)
       ),
       creditType = CutOverCreditType,
-      balanceDetails = None
+      availableCredit = None
     ),
     CreditDetailModel(
       date = fixedDate.plusYears(1),
@@ -79,7 +79,7 @@ trait CreditsSummaryDataHelper {
         documentDate = LocalDate.of(2023, 12, 23)
       ),
       creditType = CutOverCreditType,
-      balanceDetails = None
+      availableCredit = None
     )
   )
 
@@ -96,7 +96,7 @@ trait CreditsSummaryDataHelper {
         documentDate = LocalDate.of(2023, 12, 23)
       ),
       creditType = BalancingChargeCreditType,
-      balanceDetails = None
+      availableCredit = None
     ),
     CreditDetailModel(
       date = LocalDate.of(2018, 3, 29),
@@ -110,7 +110,7 @@ trait CreditsSummaryDataHelper {
         documentDate = LocalDate.of(2023, 12, 23)
       ),
       creditType = BalancingChargeCreditType,
-      balanceDetails = None
+      availableCredit = None
     ),
     CreditDetailModel(
       date = fixedDate.plusYears(1),
@@ -124,7 +124,7 @@ trait CreditsSummaryDataHelper {
         documentDate = LocalDate.of(2023, 12, 23)
       ),
       creditType = CutOverCreditType,
-      balanceDetails = None
+      availableCredit = None
     ),
     CreditDetailModel(
       date = fixedDate.plusYears(1),
@@ -138,7 +138,7 @@ trait CreditsSummaryDataHelper {
         documentDate = LocalDate.of(2023, 12, 23)
       ),
       creditType = CutOverCreditType,
-      balanceDetails = None
+      availableCredit = None
     ),
     CreditDetailModel(
       date = fixedDate.plusYears(1),
@@ -152,7 +152,7 @@ trait CreditsSummaryDataHelper {
         documentDate = LocalDate.of(2023, 12, 23)
       ),
       creditType = CutOverCreditType,
-      balanceDetails = None
+      availableCredit = None
     )
   )
 }

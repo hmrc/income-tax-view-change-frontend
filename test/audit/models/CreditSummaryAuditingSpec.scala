@@ -43,7 +43,7 @@ class CreditSummaryAuditingSpec extends TestSupport {
       documentDate = LocalDate.of(2018, 1, 2)
     ),
     creditType = MfaCreditType,
-    balanceDetails = None
+    availableCredit = None
   )
 
   val creditDetailsModelPartiallyPaid = creditDetailsModelPaid
@@ -109,7 +109,7 @@ class CreditSummaryAuditingSpec extends TestSupport {
             documentDate = LocalDate.of(2023, 12, 23)
           ),
           creditType = MfaCreditType,
-          balanceDetails = None
+          availableCredit = None
         )
       )
 

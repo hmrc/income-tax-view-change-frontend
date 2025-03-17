@@ -87,7 +87,8 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
       case Right(credits) =>
         val charges: List[CreditDetailModel] = credits.sortBy(_.date.toEpochDay)
         val maybeAvailableCredit: Option[BigDecimal] =
-          credits.flatMap(_.balanceDetails.flatMap(_.availableCredit.filter(_ > 0.00))).headOption
+          //credits.flatMap(_.balanceDetails.flatMap(_.availableCredit.filter(_ > 0.00))).headOption
+          credits.flatMap(_.availableCredit.filter(_ > 0.00)).headOption
         auditCreditSummary(maybeAvailableCredit, charges)
         val backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER), calendarYear) else getBackURL(user.headers.get(REFERER), origin, calendarYear)
         Future.successful(Ok(creditsView(

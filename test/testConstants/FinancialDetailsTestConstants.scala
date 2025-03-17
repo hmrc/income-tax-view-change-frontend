@@ -1458,8 +1458,8 @@ object FinancialDetailsTestConstants {
     val documentDetail2 = documentDetailModel(documentDescription = Some("ITSA Standalone Claim"), outstandingAmount = BigDecimal(-500.00), paymentLotItem = None, paymentLot = None)
 
     List(
-      CreditDetailModel(documentDetail1.documentDate, documentDetail1, MfaCreditType, Some(financialDetailCreditCharge.balanceDetails)),
-      CreditDetailModel(documentDetail2.documentDate, documentDetail2, MfaCreditType, Some(financialDetailCreditCharge.balanceDetails))
+      CreditDetailModel(documentDetail1.documentDate, documentDetail1, MfaCreditType, financialDetailCreditCharge.balanceDetails.availableCredit),
+      CreditDetailModel(documentDetail2.documentDate, documentDetail2, MfaCreditType, financialDetailCreditCharge.balanceDetails.availableCredit)
     )
   }
 
@@ -1472,12 +1472,12 @@ object FinancialDetailsTestConstants {
     val documentDetailBCC2 = documentDetailModel(documentDescription = Some("ITSA- Bal Charge"), outstandingAmount = BigDecimal(1400.00), paymentLotItem = None, paymentLot = None, originalAmount = 200)
 
     List(
-      CreditDetailModel(documentDetailMFA1.documentDate, documentDetailMFA1, MfaCreditType, Some(financialDetailCreditCharge.balanceDetails)),
-      CreditDetailModel(documentDetailMFA2.documentDate, documentDetailMFA2, MfaCreditType, Some(financialDetailCreditCharge.balanceDetails)),
-      CreditDetailModel(documentDetailCutoverCredit1.documentDate, documentDetailCutoverCredit1, CutOverCreditType, Some(financialDetailCreditCharge.balanceDetails)),
-      CreditDetailModel(documentDetailCutoverCredit2.documentDate, documentDetailCutoverCredit2, CutOverCreditType, Some(financialDetailCreditCharge.balanceDetails)),
-      CreditDetailModel(documentDetailCutoverCredit2.documentDate, documentDetailBCC1, BalancingChargeCreditType, Some(financialDetailCreditCharge.balanceDetails)),
-      CreditDetailModel(documentDetailCutoverCredit2.documentDate, documentDetailBCC2, BalancingChargeCreditType, Some(financialDetailCreditCharge.balanceDetails))
+      CreditDetailModel(documentDetailMFA1.documentDate, documentDetailMFA1, MfaCreditType, financialDetailCreditCharge.balanceDetails.availableCredit),
+      CreditDetailModel(documentDetailMFA2.documentDate, documentDetailMFA2, MfaCreditType, financialDetailCreditCharge.balanceDetails.availableCredit),
+      CreditDetailModel(documentDetailCutoverCredit1.documentDate, documentDetailCutoverCredit1, CutOverCreditType, financialDetailCreditCharge.balanceDetails.availableCredit),
+      CreditDetailModel(documentDetailCutoverCredit2.documentDate, documentDetailCutoverCredit2, CutOverCreditType, financialDetailCreditCharge.balanceDetails.availableCredit),
+      CreditDetailModel(documentDetailCutoverCredit2.documentDate, documentDetailBCC1, BalancingChargeCreditType, financialDetailCreditCharge.balanceDetails.availableCredit),
+      CreditDetailModel(documentDetailCutoverCredit2.documentDate, documentDetailBCC2, BalancingChargeCreditType, financialDetailCreditCharge.balanceDetails.availableCredit)
     )
   }
 
@@ -1520,8 +1520,8 @@ object FinancialDetailsTestConstants {
       documentDate = LocalDate.of(2018, 7, 30))
 
     List(
-      CreditDetailModel(documentDetail1.documentDate, documentDetail1, MfaCreditType, Some(financialDetailCreditCharge.balanceDetails)),
-      CreditDetailModel(documentDetail2.documentDate, documentDetail2, MfaCreditType, Some(financialDetailCreditCharge.balanceDetails))
+      CreditDetailModel(documentDetail1.documentDate, documentDetail1, MfaCreditType, financialDetailCreditCharge.balanceDetails.availableCredit),
+      CreditDetailModel(documentDetail2.documentDate, documentDetail2, MfaCreditType, financialDetailCreditCharge.balanceDetails.availableCredit)
     )
   }
 
