@@ -84,9 +84,13 @@
 
     <h1 class="govuk-heading-m"> @{ s"${getMessage("overDueCharge")}\t${viewModel.chargeItem.outstandingAmount.toCurrencyString}".toEmsp }</h1>
 
-    @p() { @getMessage("due", viewModel.chargeItem.getDueDate.toLongDate) }
+    @p() {
+        @getMessage("due", viewModel.chargeItem.getDueDate.toLongDate)
+    }
 
-    @p() { @getMessage("chargeReference", viewModel.chargeItem.chargeReference.getOrElse(throw new MissingFieldException("chargeReference"))) }
+    @p() {
+        @getMessage("chargeReference", viewModel.chargeItem.chargeReference.getOrElse(throw new MissingFieldException("chargeReference")))
+    }
 
     @govukDetails(Details(
         summary = Text(getMessage("whatIsABalancingPayment.linkText")),
@@ -97,7 +101,9 @@
 
         @h2(getMessage("interestOnCharge.heading"), classes = "govuk-heading-l")
 
-        @p() { @getMessage("interestOnCharge.p1") }
+        @p() {
+            @getMessage("interestOnCharge.p1")
+        }
 
         @govukDetails(Details(
             summary = Text(getMessage("howIsInterestCalculated.linkText")),
