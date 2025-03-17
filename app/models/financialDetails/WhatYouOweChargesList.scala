@@ -26,7 +26,7 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
                                  outstandingChargesModel: Option[OutstandingChargesModel] = None,
                                  codedOutDocumentDetail: Option[ChargeItem] = None)(implicit val dateService: DateServiceInterface) {
 
-  lazy val overdueChargeList: List[ChargeItem] = chargesList.filter(x => x.isOverdue())
+  private lazy val overdueChargeList: List[ChargeItem] = chargesList.filter(_.isOverdue())
 
   val availableCredit: Option[BigDecimal] = this.balanceDetails.availableCredit.flatMap(v => if (v > 0) Some(v) else None)
 
