@@ -395,7 +395,7 @@
                                                         }</td>
                                                     </tr>
                                                 }
-                                                @for((charge, index) <- whatYouOweChargesList.sortChargesList(whatYouOweChargesList.overdueOrAccruingInterestChargeList).zipWithIndex) {
+                                                @for((charge, index) <- ChargeItem.sortChargesList(whatYouOweChargesList.overdueOrAccruingInterestChargeList).zipWithIndex) {
                                                     @tableRowWithInterest(s"due-$index", charge, index, "taxYearSummary-link")
                                                 }
                                                 <tr class="govuk-table__header">

@@ -64,8 +64,6 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
   def totalAmount(amount: String): String = messages("selfAssessmentCharges.table.total-amount", amount)
   val paymentProcessingText: String = s"${messages("selfAssessmentCharges.overdue-inset-text-1")} ${messages("selfAssessmentCharges.overdue-inset-text-2")}"
   val paymentPlanText: String = s"${messages("selfAssessmentCharges.payment-plan-1")} ${messages("selfAssessmentCharges.payment-plan-link-text")} (opens in new tab)."
-  val paymentsMade: String = messages("selfAssessmentCharges.payments-made")
-  val paymentsMadeAgent: String = messages("selfAssessmentCharges.payments-made-agent")
   val poa1Text: String = messages("selfAssessmentCharges.paymentOnAccount1.text")
   val latePoa1Text: String = messages("selfAssessmentCharges.lpi.paymentOnAccount1.text")
   val poa2Text: String = messages("selfAssessmentCharges.paymentOnAccount2.text")
@@ -144,9 +142,8 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       hasOverdueOrAccruingInterestCharges = false,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
-      currentTaxYear = currentTaxYear,
+      currentTaxYear = TaxYear(currentTaxYear-1, currentTaxYear),
       backUrl = "testBackURL",
-      utr = Some("1234567890"),
       dunningLock = dunningLock,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       creditAndRefundEnabled = true,
@@ -189,9 +186,8 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       hasOverdueOrAccruingInterestCharges = false,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
-      currentTaxYear = currentTaxYear,
+      currentTaxYear = TaxYear(currentTaxYear-1, currentTaxYear),
       backUrl = "testBackURL",
-      utr = Some("1234567890"),
       dunningLock = dunningLock,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       creditAndRefundEnabled = true,

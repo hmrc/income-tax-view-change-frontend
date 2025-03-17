@@ -170,6 +170,10 @@ object ChargeItem {
     }
   }
 
+  def sortChargesList(charges: List[ChargeItem]): List[ChargeItem] = charges.sortWith((charge1, charge2) =>
+    charge2.getDisplayDueDate.isAfter(charge1.getDisplayDueDate)
+  )
+
   def fromDocumentPair(documentDetail: DocumentDetail, financialDetails: List[FinancialDetail]): ChargeItem = {
 
     val financialDetail = financialDetails.find(_.transactionId.contains(documentDetail.transactionId)) match {

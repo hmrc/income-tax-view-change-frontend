@@ -97,6 +97,14 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
     override def isAfterTaxReturnDeadlineButBeforeTaxYearEnd: Boolean = false
 
     override def getCurrentTaxYear: TaxYear = TaxYear.forYearEnd(getCurrentTaxYearEnd)
+
+    override def isWithin30Days(date: Option[LocalDate]): Boolean = {
+      val currentDate = getCurrentDate
+      date match {
+        case Some(dueDate) => dueDate.minusDays(30).isBefore(currentDate)
+        case None => false
+      }
+    }
   }
 
   def getPath(mtdRole: MTDUserRole): String = {
