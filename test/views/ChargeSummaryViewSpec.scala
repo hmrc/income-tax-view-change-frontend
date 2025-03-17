@@ -110,6 +110,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
   def reviewAndReconcileCreditChargeItem(transactionType: TransactionType): Option[ChargeItem] =
     Some(ChargeItem(
       transactionId = "some-id",
+      chargeReference = "1040000124",
       taxYear = TaxYear(2019, 2020),
       transactionType = transactionType,
       subTransactionType = None,

@@ -31,6 +31,7 @@ trait ChargeConstants {
 
   def chargeItemModel(taxYear: TaxYear = TaxYear.forYearEnd(2018),
                       transactionId: String = id1040000123,
+                      chargeReference: String = "1040000124",
                       transactionType: TransactionType = PoaOneDebit,
                       subTransactionType: Option[SubTransactionType] = None,
                       documentDate: LocalDate = LocalDate.of(2018, 3, 29),
@@ -48,6 +49,7 @@ trait ChargeConstants {
                       dunningLock:Boolean = false,
                       poaRelevantAmount: Option[BigDecimal] = None): ChargeItem = ChargeItem(
     transactionId = transactionId,
+    chargeReference = chargeReference,
     taxYear = taxYear,
     transactionType = transactionType,
     subTransactionType = subTransactionType,
@@ -70,6 +72,7 @@ trait ChargeConstants {
                                               dunningLock: List[Option[String]],
                                               documentDate: List[LocalDate] = List(LocalDate.of(2018, 3, 29), LocalDate.of(2018, 3, 29)),
                                               transactionId: List[String] = List(id1040000124, id1040000125),
+                                              chargeReference: String = "1040000124",
                                               transactionTypes: List[ChargeType] = List(PoaOneDebit, PoaTwoDebit),
                                               subTransactionTypes: List[Option[SubTransactionType]] = List(None, None),
                                               originalAmount: List[BigDecimal] = List( 43.21, 12.34),
@@ -88,6 +91,7 @@ trait ChargeConstants {
 
     List(
       ChargeItem(transactionId = transactionId.head,
+        chargeReference = chargeReference,
         taxYear = TaxYear.forYearEnd(taxYear.toInt),
         transactionType = transactionTypes.head,
         subTransactionType = subTransactionTypes.head,
@@ -105,6 +109,7 @@ trait ChargeConstants {
         dunningLock = dunningLock.head.isDefined,
         poaRelevantAmount = poaRelevantAmount),
       ChargeItem(transactionId = transactionId(1),
+        chargeReference = chargeReference,
         taxYear = TaxYear.forYearEnd(taxYear.toInt),
         transactionType = transactionTypes(1),
         subTransactionType = subTransactionTypes(1),
@@ -185,6 +190,7 @@ trait ChargeConstants {
       ChargeItem(
         taxYear = TaxYear.forYearEnd(2021),
         transactionId = "1040000123",
+        chargeReference = "1040000124",
         transactionType = BalancingCharge,
         subTransactionType = None,
         outstandingAmount = 2000,
@@ -202,6 +208,7 @@ trait ChargeConstants {
       ChargeItem(
         taxYear = TaxYear.forYearEnd(2021),
         transactionId = "1040000124",
+        chargeReference = "1040000124",
         transactionType = PoaOneDebit,
         subTransactionType = None,
         outstandingAmount = 2000,
@@ -219,6 +226,7 @@ trait ChargeConstants {
       ChargeItem(
         taxYear = TaxYear.forYearEnd(2021),
         transactionId = "1040000125",
+        chargeReference = "1040000124",
         transactionType = PoaTwoDebit,
         subTransactionType = None,
         outstandingAmount = 2000,
@@ -264,6 +272,7 @@ trait ChargeConstants {
 
   def chargeItemWithCodingOutNics2Ci(): ChargeItem = ChargeItem(
           transactionId = "CODINGOUT01", taxYear = TaxYear.forYearEnd(2021),
+          chargeReference = "1040000124",
           transactionType = BalancingCharge,
           subTransactionType = Some(Nics2),
           outstandingAmount = 12.34,
@@ -283,6 +292,7 @@ trait ChargeConstants {
   def chargeItemWithCodingOutCancelledPayeSaCi(): ChargeItem = ChargeItem(
     transactionId = "CODINGOUT01", taxYear = TaxYear.forYearEnd(2021),
     transactionType = BalancingCharge,
+    chargeReference = "1040000124",
     subTransactionType = Some(Cancelled),
     outstandingAmount = 12.34,
     originalAmount = 43.21,
@@ -300,6 +310,7 @@ trait ChargeConstants {
 
   val poa1WithCodedOut = ChargeItem(
     transactionId = id1040000123,
+    chargeReference = "1040000124",
     taxYear = TaxYear.forYearEnd(currentYear.toInt),
     transactionType = PoaOneDebit,
     subTransactionType = None,
@@ -319,6 +330,7 @@ trait ChargeConstants {
   )
   val poa2WithCodedOut = ChargeItem(
     transactionId = id1040000124,
+    chargeReference = "1040000124",
     taxYear = TaxYear.forYearEnd(currentYear.toInt),
     transactionType = PoaTwoDebit,
     subTransactionType = None,
@@ -339,6 +351,7 @@ trait ChargeConstants {
 
   val poa2 = ChargeItem(
       transactionId = id1040000124,
+      chargeReference = "1040000124",
       taxYear = TaxYear.forYearEnd(currentYear.toInt),
       transactionType = PoaTwoDebit,
       subTransactionType = None,
@@ -360,6 +373,7 @@ trait ChargeConstants {
   val balancingChargeNics2 = ChargeItem(
     taxYear = TaxYear.forYearEnd(2021),
     transactionId = id1040000124,
+    chargeReference = "1040000124",
     transactionType = BalancingCharge,
     subTransactionType = Some(Nics2),
     originalAmount = 43.21,
@@ -377,6 +391,7 @@ trait ChargeConstants {
 
   val balancingChargeCancelled = ChargeItem(taxYear = TaxYear.forYearEnd(2021),
     transactionId = id1040000125,
+    chargeReference = "1040000124",
     transactionType = BalancingCharge,
     subTransactionType = Some(Cancelled),
     originalAmount = 43.21,
@@ -406,6 +421,7 @@ trait ChargeConstants {
     List(
       ChargeItem(
         id1040000124,
+        chargeReference = "1040000124",
         taxYear,
         transactionType = PoaOneDebit,
         subTransactionType = None,
@@ -425,6 +441,7 @@ trait ChargeConstants {
       ),
       ChargeItem(
         id1040000125,
+        chargeReference = "1040000124",
         taxYear,
         transactionType = PoaOneDebit,
         subTransactionType = None,
@@ -455,6 +472,7 @@ trait ChargeConstants {
         ChargeItem(
           taxYear = TaxYear.forYearEnd(2021),
           transactionId = "transId1",
+          chargeReference = "1040000124",
           transactionType = firstTransactionType,
           subTransactionType = None,
           outstandingAmount = 1000,
@@ -473,6 +491,7 @@ trait ChargeConstants {
         ChargeItem(
           taxYear = TaxYear.forYearEnd(2021),
           transactionId = "transId2",
+          chargeReference = "1040000124",
           transactionType = PoaOneDebit,
           subTransactionType = None,
           outstandingAmount = 100,
@@ -745,6 +764,7 @@ trait ChargeConstants {
 
   val codedOutChargeItemsA: ChargeItem = ChargeItem(
     id1040000124,
+    chargeReference = "1040000124",
     TaxYear.forYearEnd(2022),
     PoaOneDebit,
     None,
@@ -761,6 +781,7 @@ trait ChargeConstants {
 
   val codedOutDocumentDetailCi: ChargeItem = ChargeItem(
     transactionId = "CODINGOUT02",
+    chargeReference = "1040000124",
     taxYear = TaxYear.forYearEnd(2021),
     transactionType = BalancingCharge,
     subTransactionType = Some(Nics2),
@@ -781,6 +802,7 @@ trait ChargeConstants {
 
   val codedOutDocumentDetailPayeSACi: ChargeItem = ChargeItem(
     transactionId = "CODINGOUT02",
+    chargeReference = "1040000124",
     taxYear = TaxYear.forYearEnd(2021),
     transactionType = BalancingCharge,
     subTransactionType = Some(Accepted),
@@ -802,6 +824,7 @@ trait ChargeConstants {
   val codedOutDocumentDetailFullyCollectedCi: ChargeItem = ChargeItem(
     taxYear = TaxYear.forYearEnd(2021),
     transactionId = "CODINGOUT02",
+    chargeReference = "1040000124",
     transactionType = BalancingCharge,
     subTransactionType = Some(Nics2),
     outstandingAmount = 12.34,
