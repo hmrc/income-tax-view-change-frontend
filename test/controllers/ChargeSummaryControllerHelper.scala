@@ -48,7 +48,7 @@ trait ChargeSummaryControllerHelper  extends MockAuthActions
       .thenReturn(Some(
         ChargeItem(
           transactionId = "transactionId",
-          chargeReference = "1040000124",
+          chargeReference = Some("1040000124"),
           taxYear = TaxYear(2017, 2018),
           transactionType = transactionType,
           subTransactionType = None,

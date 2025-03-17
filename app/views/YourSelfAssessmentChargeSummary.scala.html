@@ -28,6 +28,7 @@
 @import views.html.partials.yourSelfAssessmentCharges.InterestOnYourBalancingPaymentTable
 @import views.html.partials.yourSelfAssessmentCharges.WhatIsABalancingPayment
 @import views.html.partials.yourSelfAssessmentCharges.HowIsInterestCalculated
+@import exceptions.MissingFieldException
 
 @import java.time.LocalDate
 
@@ -85,7 +86,7 @@
 
     @p() { @getMessage("due", viewModel.chargeItem.getDueDate.toLongDate) }
 
-    @p() { @getMessage("chargeReference", viewModel.chargeItem.chargeReference) }
+    @p() { @getMessage("chargeReference", viewModel.chargeItem.chargeReference.getOrElse(throw new MissingFieldException("chargeReference"))) }
 
     @govukDetails(Details(
         summary = Text(getMessage("whatIsABalancingPayment.linkText")),
