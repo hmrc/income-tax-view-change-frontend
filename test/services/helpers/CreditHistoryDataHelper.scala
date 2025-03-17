@@ -213,19 +213,19 @@ trait CreditHistoryDataHelper {
     date = LocalDate.parse("2022-08-25"),
     documentDetail = documentDetailsWhichIsCutOverCredit,
     CutOverCreditType,
-    balanceDetails = Some(expectedBalancedDetails)
+    availableCredit = expectedBalancedDetails.availableCredit
   )
   val creditDetailModelasMfa = CreditDetailModel(
     date = LocalDate.parse("2022-03-29"),
     documentDetail = documentDetailsWhichIsMfaCredit,
     MfaCreditType,
-    balanceDetails = Some(expectedBalancedDetails)
+    availableCredit = expectedBalancedDetails.availableCredit
   )
   val creditDetailModelasBCC = CreditDetailModel(
     date = LocalDate.parse("2022-03-29"),
     documentDetail = documentDetailsWhichIsBCCredit,
     BalancingChargeCreditType,
-    balanceDetails = Some(expectedBalancedDetails)
+    availableCredit = expectedBalancedDetails.availableCredit
   )
 
 
@@ -233,7 +233,7 @@ trait CreditHistoryDataHelper {
     date = LocalDate.parse("2022-03-29"),
     documentDetail = documentDetailsWhichIsRepaymentInterestCredit,
     RepaymentInterest,
-    balanceDetails = Some(expectedBalancedDetails)
+    availableCredit = expectedBalancedDetails.availableCredit
   )
 
   val taxYearFinancialDetails_PlusOneYear = FinancialDetailsModel(

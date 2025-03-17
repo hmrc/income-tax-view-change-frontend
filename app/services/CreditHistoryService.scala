@@ -47,9 +47,11 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
               case (Some(CutOverCreditType), true) =>
                 // if we didn't find CutOverCredit dueDate then we "lost" this document
                 financialDetailsModel.getDueDateForFinancialDetail(financialDetail)
-                  .map(dueDate => CreditDetailModel(date = dueDate, document, CutOverCreditType, Some(financialDetailsModel.balanceDetails)))
+                  .map(dueDate => CreditDetailModel(date = dueDate, document, CutOverCreditType,
+                    availableCredit = financialDetailsModel.balanceDetails.availableCredit))
               case (Some(creditType), true) =>
-                Some(CreditDetailModel(date = document.documentDate, document, creditType, Some(financialDetailsModel.balanceDetails)))
+                Some(CreditDetailModel(date = document.documentDate, document, creditType,
+                  availableCredit = financialDetailsModel.balanceDetails.availableCredit))
               case (_, _) => None
             }
         }
@@ -73,9 +75,11 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
               case (Some(CutOverCreditType), true) =>
                 // if we didn't find CutOverCredit dueDate then we "lost" this document
                 financialDetailsModel.getDueDateForFinancialDetail(financialDetail)
-                  .map(dueDate => CreditDetailModel(date = dueDate, document, CutOverCreditType, Some(financialDetailsModel.balanceDetails)))
+                  .map(dueDate => CreditDetailModel(date = dueDate, document, CutOverCreditType,
+                    availableCredit = financialDetailsModel.balanceDetails.availableCredit))
               case (Some(creditType), true) =>
-                Some(CreditDetailModel(date = document.documentDate, document, creditType, Some(financialDetailsModel.balanceDetails)))
+                Some(CreditDetailModel(date = document.documentDate, document, creditType,
+                  availableCredit = financialDetailsModel.balanceDetails.availableCredit))
               case (_, _) => None
             }
         }
