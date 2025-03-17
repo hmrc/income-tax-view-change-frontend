@@ -17,11 +17,10 @@
 package models.financialDetails
 
 import exceptions.{CouldNotCreateChargeItemException, MissingFieldException}
+import models.financialDetails.ChargeType.{poaOneReconciliationDebit, poaTwoReconciliationDebit}
 import models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
-import models.financialDetails.TransactionItem
-import models.financialDetails.TransactionType.format
 
 import java.time.LocalDate
 
@@ -145,9 +144,14 @@ case class ChargeItem (
     else interestOutstandingAmount.getOrElse(latePaymentInterestAmount.getOrElse(0))
   }
 
+  def checkIfEitherChargeOrLpiHasRemainingToPay: Boolean = {
+    if (isLatePaymentInterest) interestRemainingToPay > 0
+    else remainingToPay > 0
+  }
+
   def poaLinkForDrilldownPage: String = transactionType match {
-    case PoaOneDebit => "4911"
-    case PoaTwoDebit => "4913"
+    case PoaOneDebit => poaOneReconciliationDebit
+    case PoaTwoDebit => poaTwoReconciliationDebit
     case _ => "no valid case"
   }
 }
