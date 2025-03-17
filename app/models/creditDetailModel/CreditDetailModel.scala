@@ -20,6 +20,7 @@ import models.financialDetails.{ChargeItem, CreditType}
 
 import java.time.LocalDate
 
+// TODO: convert this model a sub-type of TransactionItem ?
 case class CreditDetailModel(date: LocalDate,
                              charge: ChargeItem,
                              creditType: CreditType,
