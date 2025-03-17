@@ -50,7 +50,7 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
   def sortedChargesList: List[ChargeItem] = chargesList.sortWith((charge1, charge2) =>
     charge1.dueDate.exists(date1 => charge2.dueDate.exists(_.isAfter(date1))))
 
-  def sortThisChargesListPlease(charges: List[ChargeItem]): List[ChargeItem] = charges.sortWith((charge1, charge2) =>
+  def sortChargesList(charges: List[ChargeItem]): List[ChargeItem] = charges.sortWith((charge1, charge2) =>
     charge2.getDisplayDueDate.isAfter(charge1.getDisplayDueDate)
   )
 
