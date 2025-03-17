@@ -1692,14 +1692,15 @@ business-added.deadlines                                = Your revised deadlines
 business-added.to                                       = to
 
 # Foreign Property Added - Uses above keys as base also, intentionally empty field below.
-business-added.foreign-property.head                    =
-business-added.foreign-property.h1                      = Foreign property
-business-added.foreign-property.base                    = has been added to your account
-business-added.uk-property.head                         =
-business-added.uk-property.h1                           = UK property
-business-added.uk-property.base                         = has been added to your account
-business-added.sole-trader.head                         =
-business-added.sole-trader.base                         = has been added to your account
+business-added.foreign-property.title                   = Foreign property has been added to your account
+business-added.foreign-property.panel.title             = Foreign property
+business-added.foreign-property.panel.body              = has been added to your account
+business-added.uk-property.title                        = UK property has been added to your account
+business-added.uk-property.panel.title                  = UK property
+business-added.uk-property.panel.body                   = has been added to your account
+business-added.sole-trader.title                        = {0} has been added to your account
+business-added.sole-trader.panel.title                  = {0}
+business-added.sole-trader.panel.body                   = has been added to your account
 
 business-added.quarterly-heading                              = Send quarterly updates
 business-added.quarterly-p1                                   = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
@@ -1775,11 +1776,12 @@ cannotGoBack.hasBeenAdded2                                = page.
 cannotGoBack.needToChoose                                 = You now need to choose how often you want to send income and expense updates to HMRC for this income source.
 
 ## Income Source Ceased Obligation Page ##
-business-ceased.obligation.heading1.se.part1                        =
-business-ceased.obligation.heading1.se.part2                        = Sole trader business
-business-ceased.obligation.heading1.uk-property.part2               = UK property
-business-ceased.obligation.heading1.foreign-property.part2          = Foreign property
-business-ceased.obligation.heading1.base                            = has ceased
+business-ceased.obligation.title                                    = {0} has ceased
+business-ceased.obligation.panel.title                              = {0}
+business-ceased.obligation.panel.body                               = has ceased
+business-ceased.obligation.sole-trader                              = Sole trader business
+business-ceased.obligation.uk-property                              = UK property
+business-ceased.obligation.foreign-property                         = Foreign property
 business-ceased.obligation.heading2.text                            = What you must do
 business-ceased.obligation.next-update.text                         = Your next upcoming update
 business-ceased.obligation.next-update.next-quarterly.text          = Your next quarterly update for tax year {0} to {1} is due by
@@ -1849,11 +1851,11 @@ incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.individu
 incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.agent           = HMRC will remove any income updates your client has already submitted for this tax year. Any previously submitted income will need to be included in your client’s quarterly tax return.
 
 # manage obligations page
-incomeSources.add.manageObligations.h1                                =
-incomeSources.add.manageObligations.h2                                =   will report
+incomeSources.add.manageObligations.title                             = {0} will report {1} for the tax year {2} to {3}
+incomeSources.add.manageObligations.panel.title                       = {0}
+incomeSources.add.manageObligations.panel.body                        =   will report {0} for the tax year {1} to {2}
 incomeSources.add.manageObligations.annually                          =   annually
 incomeSources.add.manageObligations.quarterly                         =   quarterly
-incomeSources.add.manageObligations.tax-year                          =   for the tax year
 incomeSources.add.manageObligations.to                                =   to
 incomeSources.add.manageObligations.sole-trader                       =   Sole trader business
 incomeSources.add.manageObligations.uk-property                       =   UK property

@@ -27,20 +27,19 @@
     link: link,
     hr: hr,
     govukTable: GovukTable,
-    govukInsetText : GovukInsetText
+    govukInsetText : GovukInsetText,
+    govukPanel : GovukPanel
 )
 
 @(model: OptInCompletedViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
 
-@panel = {
-    <div class="govuk-panel govuk-panel--confirmation">
-        <h1 class="govuk-panel__title">
-            @messages("optin.completedOptIn.heading")
-        </h1>
-        <div class="govuk-panel__body">
-            @messages(model.headingMessageKey, model.startYear, model.endYear)
-        </div>
-    </div>
+@panel = @{
+    govukPanel(
+        Panel(
+            title = Text(messages("optin.completedOptIn.heading")),
+            content = Text(messages(model.headingMessageKey, model.startYear, model.endYear))
+        )
+    )
 }
 
 @makingTaxDigitalUrl = {

@@ -58,19 +58,11 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
 
   def getExpectedHeading(incomeSourceType: IncomeSourceType, isAnnualChange: Boolean): String = {
     val changeToKey = if(isAnnualChange) "annually" else "quarterly"
-    val messageH1 = messagesAPI(s"$prefix.h1")
-    val messageH2 = messagesAPI(s"$prefix.h2")
-    val commonMessageEnd = messagesAPI(s"$prefix.$changeToKey") + " " + messagesAPI(s"$prefix.tax-year") + " " + "2023 to 2024"
     val tradingNameOrProperyMessage = incomeSourceType match {
       case SelfEmployment => business1.tradingName.getOrElse("")
       case _ => messagesAPI(s"$prefix.${incomeSourceType.messagesSuffix}")
     }
-    if (messageH1.nonEmpty) {
-      messageH1 + " " + tradingNameOrProperyMessage + " " + messageH2 + " " + commonMessageEnd
-    }
-    else {
-      tradingNameOrProperyMessage + " " + messageH2 + " " + commonMessageEnd
-    }
+    messagesAPI(s"$prefix.title", tradingNameOrProperyMessage, changeToKey, "2023", "2024")
   }
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]

@@ -77,6 +77,7 @@ class OptInCompletedViewSpec extends TestSupport {
   }
 
   s"has the correct content for year $taxYear22_23 which is the current year" in new SetupForCurrentYear(false, taxYear22_23, false) {
+    println(pageDocument)
 
     pageDocument.title() shouldBe titleContent
 
