@@ -20,8 +20,6 @@ import exceptions.{CouldNotCreateChargeItemException, MissingFieldException}
 import models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
-import models.financialDetails.TransactionItem
-import models.financialDetails.TransactionType.format
 
 import java.time.LocalDate
 
@@ -154,11 +152,6 @@ case class ChargeItem (
     case PoaOneDebit => "4911"
     case PoaTwoDebit => "4913"
     case _ => "no valid case"
-  }
-
-  def originalAmountIsNotZeroOrNegative: Boolean = originalAmount match {
-    case amount if amount <= 0 => false
-    case _ => true
   }
 }
 

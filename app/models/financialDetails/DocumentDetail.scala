@@ -17,12 +17,11 @@
 package models.financialDetails
 
 import enums.CodingOutType._
-import enums.{BalancingCharge, DocumentType, OtherCharge, Poa1Charge, Poa1ReconciliationDebit, Poa2Charge, Poa2ReconciliationDebit, TRMAmendCharge, TRMNewCharge}
+import enums._
 import play.api.Logger
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{Json, Reads, Writes, __}
 import services.DateServiceInterface
-import services.claimToAdjustPoa.ClaimToAdjustHelper.{POA1, POA2}
 
 import java.time.LocalDate
 
@@ -88,6 +87,7 @@ case class DocumentDetail(taxYear: Int,
     else interestOutstandingAmount.getOrElse(latePaymentInterestAmount.get)
   }
 
+  @deprecated("Method to eventually be removed in 1553 refactoring", "MISUV-8849")
   def checkIfEitherChargeOrLpiHasRemainingToPay: Boolean = {
     if (isLatePaymentInterest) interestRemainingToPay > 0
     else remainingToPay > 0

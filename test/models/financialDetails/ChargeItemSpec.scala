@@ -23,7 +23,7 @@ import models.financialDetails.ChargeItem.filterAllowedCharges
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseTestConstants.app
 import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.{documentDetailModel, financialDetail, fullDocumentDetailModel}
+import testConstants.FinancialDetailsTestConstants.{documentDetailModel, financialDetail}
 import testUtils.UnitSpec
 
 import java.time.LocalDate
@@ -542,17 +542,25 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
   }
 
   "originalAmountIsNotZeroOrNegative" should {
+    def originalAmountIsNotZeroOrNegative(chargeItem: ChargeItem): Boolean = chargeItem.originalAmount match {
+      case amount if amount <= 0 => false
+      case _ => true
+    }
+
     "return false" when {
       "original amount is zero" in {
-        chargeItemModel().copy(originalAmount = 0).originalAmountIsNotZeroOrNegative shouldBe false
+        val chargeItemModelZeroAmount = chargeItemModel().copy(originalAmount = 0)
+        originalAmountIsNotZeroOrNegative(chargeItemModelZeroAmount) shouldBe false
       }
       "original amount is negative" in {
-        chargeItemModel().copy(originalAmount = -20).originalAmountIsNotZeroOrNegative shouldBe false
+        val chargeItemModelNegativeAmount = chargeItemModel().copy(originalAmount = -20)
+        originalAmountIsNotZeroOrNegative(chargeItemModelNegativeAmount) shouldBe false
       }
     }
     "return true" when {
       "original amount is positive" in {
-        chargeItemModel().copy(originalAmount = 20).originalAmountIsNotZeroOrNegative shouldBe true
+        val chargeItemModelPositiveAmount = chargeItemModel().copy(originalAmount = 20)
+        originalAmountIsNotZeroOrNegative(chargeItemModelPositiveAmount) shouldBe true
       }
     }
   }

@@ -16,8 +16,7 @@
 
 package models.financialDetails
 
-import auth.MtdItUser
-import enums.{Poa1Charge, Poa1ReconciliationDebit, Poa2Charge, Poa2ReconciliationDebit, TRMAmendCharge, TRMNewCharge}
+import enums._
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails.ReviewAndReconcileUtils.{isReviewAndReconcilePoaOne, isReviewAndReconcilePoaTwo}
 import models.incomeSourceDetails.TaxYear
