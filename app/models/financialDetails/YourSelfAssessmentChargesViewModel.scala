@@ -19,6 +19,8 @@ package models.financialDetails
 import models.financialDetails.YourSelfAssessmentChargesViewModel.getDisplayDueDate
 import models.incomeSourceDetails.TaxYear
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
+import models.outstandingCharges.OutstandingChargeModel
+import services.DateServiceInterface
 
 import java.time.LocalDate
 
@@ -31,10 +33,18 @@ case class YourSelfAssessmentChargesViewModel(currentDate: LocalDate,
                                               dunningLock: Boolean,
                                               reviewAndReconcileEnabled: Boolean,
                                               creditAndRefundEnabled: Boolean,
-                                              claimToAdjustViewModel: WYOClaimToAdjustViewModel) {
+                                              claimToAdjustViewModel: WYOClaimToAdjustViewModel)(implicit val dateService: DateServiceInterface) {
+
+  lazy val overdueOrAccruingInterestChargeList: List[ChargeItem] = whatYouOweChargesList.chargesList.filter(x => x.isOverdue() || x.hasAccruingInterest)
+  lazy val overdueOutstandingCharges: List[OutstandingChargeModel] = whatYouOweChargesList.outstandingChargesModel.toList.flatMap(_.outstandingCharges)
+    .filter(_.relevantDueDate.getOrElse(LocalDate.MAX).isBefore(dateService.getCurrentDate))
+
+  lazy val chargesDueWithin30DaysList: List[ChargeItem] = whatYouOweChargesList.chargesList.filter(x => !x.isOverdue() && !x.hasAccruingInterest && dateService.isWithin30Days(x.dueDate))
+
+  lazy val chargesDueAfter30DaysList: List[ChargeItem] = whatYouOweChargesList.chargesList.filter(x => !x.isOverdue() && !x.hasAccruingInterest && !dateService.isWithin30Days(x.dueDate))
 
 
-  def sortedOverdueOrAccruingInterestChargeList: List[ChargeItem] = whatYouOweChargesList.overdueOrAccruingInterestChargeList.sortWith((charge1, charge2) =>
+  def sortedOverdueOrAccruingInterestChargeList: List[ChargeItem] = overdueOrAccruingInterestChargeList.sortWith((charge1, charge2) =>
     getDisplayDueDate(charge2).isAfter(getDisplayDueDate(charge1))
   )
 
