@@ -14,32 +14,42 @@
  * limitations under the License.
  *@
 
-@import models.financialDetails.ChargeItem
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import _root_.implicits.HtmlFormatter.NbspString
 @import views.html.components.h2
 @import models.chargeSummary.ChargeSummaryViewModel
+@import views.html.partials.yourSelfAssessmentCharges.LatePaymentInterestChargeMessage
+@import models.repaymentHistory.RepaymentHistoryUtils
+@import exceptions.MissingFieldException
+@import java.time.LocalDate
 @import models.financialDetails.PoaOneDebit
 @import models.financialDetails.PoaTwoDebit
-@import models.financialDetails.Accepted
-@import views.html.partials.chargeSummary.ChargeSummaryPaymentAllocation
-@import models.repaymentHistory.RepaymentHistoryUtils
-
-
-@import java.time.LocalDate
 
 @this(
         govukTable: GovukTable,
         implicitDateFormatter: ImplicitDateFormatterImpl,
-        chargeSummaryPaymentAllocation: ChargeSummaryPaymentAllocation,
+        latePaymentInterestChargeMessage: LatePaymentInterestChargeMessage,
         h2: h2
 )
 
 @(viewModel: ChargeSummaryViewModel)(implicit messages: Messages)
 
 @import implicitDateFormatter.longDate
+
+@reviewAndReconcileCreditMessage = {
+    <a class="govuk-link" id="rar-charge-link" href="@RepaymentHistoryUtils.getPoaChargeLinkUrl(viewModel.isAgent, viewModel.chargeItem.taxYear.endYear, viewModel.chargeItem.transactionId)">
+        @messages(s"chargeSummary.chargeHistory.${viewModel.chargeItem.transactionType.key}")
+    </a>
+}
+
+@getCreationDate(date: Option[LocalDate]) = @{
+    date match {
+        case Some(value) => value.toLongDate
+        case None => messages("incomeSources.generic.unknown")
+    }
+}
 
 @chargeHistoryHeading = @{
     viewModel.chargeItem.transactionType match {
@@ -50,81 +60,113 @@
     }
 }
 
-@getCreationDate(date: Option[LocalDate]) = @{
-    date match {
-        case Some(value) => value.toLongDateShort.toNonBreaking
-        case None => messages("incomeSources.generic.unknown")
-    }
-}
+@govukTable(Table(
+    head = Some(
+        Seq(
+            HeadCell(
+                content = Text(messages("chargeSummary.chargeHistory.description"))
+            ),
+            HeadCell(
+                content = HtmlContent(messages("chargeSummary.chargeHistory.date"))
+            ),
+            HeadCell(
+                content = Text(messages("chargeSummary.chargeHistory.amount")),
+                format = Some("numeric")
+            )
+        )
+    ),
+    rows = Seq(
+        if(viewModel.noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment)
+            Seq(
+                TableRow(
+                    content = Text(messages(s"chargeSummary.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}"))
+                ),
+                TableRow(
+                    content = HtmlContent(getCreationDate(viewModel.adjustmentHistory.creationEvent.adjustmentDate).toNonBreaking)
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.adjustmentHistory.creationEvent.amount.toCurrency), format = Some("numeric")
+                )
+            ) else Nil,
 
-@if(viewModel.hasPaymentBreakdown && viewModel.chargeItem.subTransactionType == None) {
-    <h3 id="charge-history-h3" class="govuk-heading-l">@chargeHistoryHeading</h3>
-} else {
-    <h2 id="charge-history-h2" class="govuk-heading-l">@chargeHistoryHeading</h2>
-}
+        if(viewModel.latePaymentInterestCharge)
+            Seq(
+                TableRow(
+                    content = Text(messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}"))
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.chargeItem.interestEndDate.get.toLongDate.toNonBreaking)
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.chargeItem.latePaymentInterestAmount.get.toCurrency),
+                    format = Some("numeric")
+                )
+            ) else Nil,
 
-<table class="govuk-table" id="payment-history-table">
-
-    <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">@messages("chargeSummary.chargeHistory.description")</th>
-            <th scope="col" class="govuk-table__header">@messages("chargeSummary.chargeHistory.date")</th>
-            <th scope="col" class="govuk-table__header govuk-table__header--numeric">@messages("chargeSummary.chargeHistory.amount")</th>
-        </tr>
-    </thead>
-
-    <tbody class = "govuk-table__body">
-        @if(viewModel.chargeHistoryEnabled){
-            @if(viewModel.noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment) {
-                <tr>
-                    <td class="govuk-table__cell">@{
-                        messages(s"chargeSummary.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}")
-                    }
-                    </td>
-                    <td class="govuk-table__cell">@{
-                        getCreationDate(viewModel.adjustmentHistory.creationEvent.adjustmentDate)
-                    }</td>
-                    <td class="govuk-table__cell govuk-table__cell--numeric">@{
-                        viewModel.adjustmentHistory.creationEvent.amount.toCurrency
-                    }</td>
-                </tr>
-            }
-
-            @if(viewModel.latePaymentInterestCharge){
-                <tr>
-                    <td class="govuk-table__cell">@messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}")</td>
-                    <td class="govuk-table__cell">@{viewModel.chargeItem.interestEndDate.get.toLongDateShort.toNonBreaking}</td>
-                    <td class="govuk-table__cell govuk-table__cell--numeric">@{viewModel.chargeItem.latePaymentInterestAmount.get.toCurrency}</td>
-                </tr>
-            }
-
-            @if(viewModel.chargeItem.subTransactionType == Some(Accepted)) {
-                <tr>
-                    <td class="govuk-table__cell">@messages("chargeSummary.codingOutPayHistoryAmount", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)</td>
-                    <td class="govuk-table__cell">@{viewModel.chargeItem.documentDate.toLongDateShort.toNonBreaking}</td>
-                    <td class="govuk-table__cell govuk-table__cell--numeric">@{viewModel.chargeItem.originalAmount.toCurrency}</td>
-                </tr>
-            }
-
-            @viewModel.reviewAndReconcileCredit.map { charge =>
-                <tr>
-                    <td class="govuk-table__cell">
-                        <a class="govuk-link" id="rar-charge-link" href="@RepaymentHistoryUtils.getPoaChargeLinkUrl(viewModel.isAgent, charge.taxYear.endYear, charge.transactionId)">
-                        @messages(s"chargeSummary.chargeHistory.${charge.transactionType.key}")
-                        </a>
-                    </td>
-                    <td class="govuk-table__cell" id="rar-due-date">@{charge.getDueDate.toLongDateShort.toNonBreaking}</td>
-                    <td class="govuk-table__cell govuk-table__cell--numeric" id="rar-total-amount">@{charge.originalAmount.abs.toCurrency}</td>
-                </tr>
-            }
-
-            @for(charge <- viewModel.adjustmentHistory.adjustments) {
-                <tr>
-                    <td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}")</td>
-                    <td class="govuk-table__cell">@{charge.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDateShort.toNonBreaking}</td>
-                    <td class="govuk-table__cell govuk-table__cell--numeric">@{charge.amount.toCurrency}</td>
-                </tr>
-            }
+        if(viewModel.latePaymentInterestCharge)
+            Seq(
+                TableRow(
+                    content = Text(messages("chargeSummary.codingOutPayHistoryAmount", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut))
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.chargeItem.documentDate.toLongDate.toNonBreaking)
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.chargeItem.originalAmount.toCurrency),
+                    format = Some("numeric")
+                )
+            ) else Nil
+    )
+        ++ viewModel.reviewAndReconcileCredit.toSeq.map { charge =>
+            Seq(
+                TableRow(
+                    content = Text(messages("chargeSummary.codingOutPayHistoryAmount", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut))
+                ),
+                TableRow(
+                    content = HtmlContent(reviewAndReconcileCreditMessage),
+                    attributes = Map("id" -> "rar-due-date")
+                ),
+                TableRow(
+                    content = HtmlContent(charge.originalAmount.abs.toCurrency), attributes = Map("id" -> "rar-total-amount"),
+                    format = Some("numeric")
+                )
+            )
         }
-    </tbody>
-</table>
+
+        ++ viewModel.adjustmentHistory.adjustments.map { charge =>
+            Seq(
+                TableRow(
+                    content = Text(messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}"))
+                ),
+                TableRow(
+                    content = HtmlContent(charge.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDate.toNonBreaking)
+                ),
+                TableRow(content = HtmlContent(charge.amount.toCurrency),
+                    format = Some("numeric")
+                )
+            )
+        }
+
+        ++ (for {
+            allocation <- viewModel.paymentAllocations
+            payment    <- allocation.allocations
+            if !viewModel.latePaymentInterestCharge
+        } yield {
+            Seq(
+                TableRow(
+                    content = HtmlContent(latePaymentInterestChargeMessage(viewModel, allocation, payment).toString)
+                ),
+                TableRow(
+                    content = HtmlContent(payment.dueDate.getOrElse(throw MissingFieldException("Payment Date")).toLongDate.toNonBreaking)
+                ),
+                TableRow(
+                    content = HtmlContent(payment.amount.getOrElse(throw MissingFieldException("Payment Amount")).abs.toCurrency),
+                    format = Some("numeric")
+                )
+            )
+    }),
+    caption = Some(chargeHistoryHeading),
+    attributes = Map("id" -> "payment-history-table"),
+    captionClasses = "govuk-table__caption--l",
+    firstCellIsHeader = false
+))
