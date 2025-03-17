@@ -53,7 +53,6 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
 
   def handleRequest(backUrl: String,
                     itvcErrorHandler: ShowInternalServerError,
-                    isAgent: Boolean,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
@@ -70,10 +69,9 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
         currentDate = dateService.getCurrentDate,
         hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
         whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
-        currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,
+        currentTaxYear = dateService.getCurrentTaxYear, backUrl = backUrl,
         dunningLock = whatYouOweChargesList.hasDunningLock,
         reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
-        isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
         creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
         origin = origin,
         claimToAdjustViewModel = ctaViewModel)(user, user, messages, dateService)
@@ -81,7 +79,7 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
     }
   } recover {
     case ex: Exception =>
-      Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+      Logger("application").error(s"${if (user.isAgent()) "[Agent]"}" +
         s"Error received while getting WhatYouOwe page details: ${ex.getMessage} - ${ex.getCause}")
       itvcErrorHandler.showInternalServerError()
   }
@@ -90,7 +88,8 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
     if (isEnabled(AdjustPaymentsOnAccount)) {
       claimToAdjustService.getPoaTaxYearForEntryPoint(nino).flatMap {
         case Right(value) => Future.successful(WYOClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), value))
-        case Left(ex: Throwable) => Future.failed(ex)
+        case Left(ex: Throwable) => Logger("application").error(s"Unable to create WYOClaimToAdjustViewModel: ${ex.getMessage} - ${ex.getCause}")
+          Future.failed(ex)
       }
     } else {
       Future.successful(WYOClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), None))
@@ -102,7 +101,6 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
       handleRequest(
         backUrl = controllers.routes.HomeController.show(origin).url,
         itvcErrorHandler = itvcErrorHandler,
-        isAgent = false,
         origin = origin
       )
   }
@@ -111,8 +109,7 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
     implicit mtdItUser =>
       handleRequest(
         backUrl = controllers.routes.HomeController.showAgent.url,
-        itvcErrorHandler = itvcErrorHandlerAgent,
-        isAgent = true
+        itvcErrorHandler = itvcErrorHandlerAgent
       )
   }
 

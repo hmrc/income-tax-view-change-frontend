@@ -26,6 +26,7 @@
 @import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 @import models.financialDetails.Nics2
 @import models.financialDetails.MfaDebitCharge
+@import models.incomeSourceDetails.TaxYear
 @import services.DateServiceInterface
 @import _root_.implicits.HtmlFormatter.NbspString
 
@@ -46,12 +47,10 @@
         hasOverdueOrAccruingInterestCharges: Boolean,
         whatYouOweChargesList: WhatYouOweChargesList,
         hasLpiWithDunningLock: Boolean,
-        currentTaxYear: Int,
+        currentTaxYear: TaxYear,
         backUrl: String,
-        utr: Option[String],
         dunningLock: Boolean,
         reviewAndReconcileEnabled: Boolean,
-        isUserMigrated: Boolean = false,
         creditAndRefundEnabled: Boolean,
         claimToAdjustViewModel: WYOClaimToAdjustViewModel,
         origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages, dateService: DateServiceInterface)
@@ -92,7 +91,7 @@
     }
 
     @saNoteParagraph = {
-    @utr.map { utr =>
+    @user.saUtr.map { utr =>
         <div id="payments-due-note">
             @govukInsetText(InsetText(content = HtmlContent(saNoteParagraphContent(utr))))
         </div>
@@ -115,7 +114,7 @@
     }
 
     @creditAndRefundsControllerURL = @{
-        if(isUserMigrated) {
+        if(user.incomeSources.yearOfMigration.isDefined) {
             if(user.isAgent()) {
                 controllers.routes.CreditAndRefundController.showAgent().url
             } else {
@@ -383,7 +382,7 @@
                                                             @p(id = Some("pre-mtd-digital"))(Html(getMessage("pre-mtd-digital")))
                                                         </td>
                                                         <td class="govuk-table__cell">
-                                                        @getMessage("pre-mtd-year", (currentTaxYear - 2).toString, (currentTaxYear - 1).toString)
+                                                        @getMessage("pre-mtd-year", (currentTaxYear.endYear - 2).toString, (currentTaxYear.endYear - 1).toString)
                                                         </td>
                                                         <td class="govuk-table__cell govuk-table__cell--numeric">
                                                         @if(whatYouOweChargesList.outstandingChargesModel.get.getAciChargeWithTieBreaker.isDefined
@@ -417,7 +416,7 @@
                                             </div>
                                         </div>
 
-                                        @if(utr.isDefined && !user.isAgent() && whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.isDefined) {
+                                        @if(user.saUtr.isDefined && !user.isAgent() && whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.isDefined) {
                                             <div id="payment-button">
                                             @link(link = controllers.routes.PaymentController.paymentHandoff(whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.get._2.toPence, origin).url,
                                                 messageKey = getPrefix("payNow"), classes = "govuk-button", role = Some("button"),
