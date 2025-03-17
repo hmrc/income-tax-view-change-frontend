@@ -924,6 +924,7 @@ selfAssessmentCharges.balancingCharge.interest.line1.text                     = 
 selfAssessmentCharges.balancingCharge.interest.line2.text                     = {0} to {1}
 selfAssessmentCharges.pre-mtd-digital                                         = (Pre-Making Tax Digital)
 selfAssessmentCharges.pre-mtd-year                                            = {0} to {1}
+selfAssessmentCharges.taxYear                                                 = Tax year
 selfAssessmentCharges.table.total-amount                                      = Total amount: {0}
 selfAssessmentCharges.payNow                                                  = Make a payment
 selfAssessmentCharges.overdue-inset-text-1                                    = Payments you make may take up to 3 working days depending on the payment method you use. Payments must reach HMRC by the due date to avoid any late payment interest or penalty.

@@ -362,7 +362,7 @@
                         @if(whatYouOweChargesList.chargesList.nonEmpty || whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
 
                             @if(whatYouOweChargesList.overdueOrAccruingInterestChargeList.nonEmpty || whatYouOweChargesList.overdueOutstandingCharges.nonEmpty) {
-                                <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+                                <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner" id="overdue-banner">
                                     <div class="govuk-notification-banner__header">
                                         <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
                                         @getNewMessage("important")
@@ -388,7 +388,7 @@
                                 </div>
                             }
 
-                            <div class="govuk-tabs" data-module="govuk-tabs">
+                            <div class="govuk-tabs" data-module="govuk-tabs" id="self-assessment-charges-tabs">
                                 <h2 class="govuk-tabs__title">
                                     Contents
                                 </h2>
@@ -408,14 +408,14 @@
                                 </ul>
                                 @if(whatYouOweChargesList.overdueOrAccruingInterestChargeList.nonEmpty || whatYouOweChargesList.overdueOutstandingCharges.nonEmpty) {
                                     <div class="govuk-tabs__panel" id="charges-due-now">
-                                        <table class="govuk-table">
+                                        <table class="govuk-table" id="charges-due-now-table">
                                             @newTableHead("over-due-payments-table-head")
                                             <caption class="govuk-table__caption govuk-visually-hidden">@getNewMessage("charges-due-now")</caption>
                                             <tbody class="govuk-table__body">
                                                 @if(whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
                                                     <tr class="govuk-table__row" id="balancing-charge-type-0">
                                                         <td class="govuk-table__cell">@{
-                                                            whatYouOweChargesList.getRelevantDueDate.toLongDateShort
+                                                            whatYouOweChargesList.getRelevantDueDate.toLongDate
                                                         }</td>
                                                         <td class="govuk-table__cell">
                                                             @p(id = Some("balancing-charge"))(Html(getNewMessage("balancingCharge.text")))
@@ -439,7 +439,7 @@
                                                     @tableRowWithInterest(s"due-$index", charge, index, "taxYearSummary-link")
                                                 }
                                                 <tr class="govuk-table__header">
-                                                    <td class="govuk-table__header" colspan="2">
+                                                    <td class="govuk-table__header" colspan="2" id="total-amount">
                                                     @getNewMessage("table.total-amount", whatYouOweChargesList.balanceDetails.overDueAmount.toCurrencyString)
                                                     </td>
                                                 </tr>
