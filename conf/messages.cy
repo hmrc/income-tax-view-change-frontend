@@ -1698,7 +1698,7 @@ cease-check-answers-fp.caption                                = Eiddo tramor
 
 
 # check business details
-check-details.title                                     = Gwirio’ch atebion
+check-details.title                                     = Cadarnhewch fod yr wybodaeth hon yn gywir
 check-details.heading                                   = Unig fasnachwr
 check-details.business-name                             = Enw’r busnes
 check-details.start-date                                = Dyddiad dechrau masnachu
@@ -1708,22 +1708,25 @@ check-details.accounting-method                         = Dull cyfrifydd
 check-details.cash-accounting                           = Cyfrifyddu ar sail arian parod
 check-details.traditional-accounting                    = Cyfrifyddu traddodiadol
 check-details.change                                    = Newid
+check-details.description                               = Unwaith y byddwch yn cadarnhau’r manylion hyn, ni fyddwch yn gallu eu diwygio yn y cam nesaf a bydd angen i chi gysylltu â CThEF i wneud hynny.
 
-check-details-uk.title                                  = Gwirio’ch atebion
+check-details-uk.title                                  = Cadarnhewch fod yr wybodaeth hon yn gywir
 check-details-uk.heading                                = Eiddo yn y DU
 check-details-uk.start-date                             = Dyddiad dechrau
 check-details-uk.accounting-method                      = Dull cyfrifyddu
 check-details-uk.cash-accounting                        = Cyfrifyddu ar sail arian parod
 check-details-uk.traditional-accounting                 = Cyfrifyddu traddodiadol
 check-details-uk.change                                 = Newid
+check-details-uk.description                            = Unwaith y byddwch yn cadarnhau’r manylion hyn, ni fyddwch yn gallu eu diwygio yn y cam nesaf a bydd angen i chi gysylltu â CThEF i wneud hynny.
 
-check-details-fp.title                                  = Gwirio’ch atebion
+check-details-fp.title                                  = Cadarnhewch fod yr wybodaeth hon yn gywir
 check-details-fp.heading                                = Eiddo tramor
 check-details-fp.start-date                             = Dyddiad dechrau
 check-details-fp.accounting-method                      = Dull cyfrifyddu
 check-details-fp.cash-accounting                        = Cyfrifyddu ar sail arian parod
 check-details-fp.traditional-accounting                 = Cyfrifyddu traddodiadol
 check-details-fp.change                                 = Newid
+check-details-fp.description                            = Unwaith y byddwch yn cadarnhau’r manylion hyn, ni fyddwch yn gallu eu diwygio yn y cam nesaf a bydd angen i chi gysylltu â CThEF i wneud hynny.
 
 check-business-details.title                            = Gwirio’ch manylion
 check-business-details.heading                          = Y busnes unig fasnachwr a nodwyd gennych

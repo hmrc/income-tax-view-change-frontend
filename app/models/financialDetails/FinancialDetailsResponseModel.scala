@@ -16,8 +16,7 @@
 
 package models.financialDetails
 
-import auth.MtdItUser
-import enums.{Poa1Charge, Poa1ReconciliationDebit, Poa2Charge, Poa2ReconciliationDebit, TRMAmendCharge, TRMNewCharge}
+import enums._
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails.ReviewAndReconcileUtils.{isReviewAndReconcilePoaOne, isReviewAndReconcilePoaTwo}
 import models.incomeSourceDetails.TaxYear
@@ -63,18 +62,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     }
   }
 
-  def isReviewAndReconcilePoaOneDebit(documentId: String): Boolean = {
-    financialDetails.exists { fd =>
-      fd.transactionId.contains(documentId) && isReviewAndReconcilePoaOne(fd.mainTransaction)
-    }
-  }
-
-  def isReviewAndReconcilePoaTwoDebit(documentId: String): Boolean = {
-    financialDetails.exists { fd =>
-      fd.transactionId.contains(documentId) && isReviewAndReconcilePoaTwo(fd.mainTransaction)
-    }
-  }
-
   def isReviewAndReconcilePoaOneDebit(documentId: String, reviewAndReconcileIsEnabled: Boolean): Boolean = {
     reviewAndReconcileIsEnabled &&
       financialDetails.exists { fd =>
@@ -88,14 +75,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
         fd.transactionId.contains(documentId) && isReviewAndReconcilePoaTwo(fd.mainTransaction)
       }
   }
-
-  def isReviewAndReconcileDebit(documentId: String): Boolean = {
-    isReviewAndReconcilePoaOneDebit(documentId) ||
-      isReviewAndReconcilePoaTwoDebit(documentId)
-  }
-
-  def findDocumentDetailForTaxYear(taxYear: Int): Option[DocumentDetail] = documentDetails.find(_.taxYear == taxYear)
-
 
   def findDocumentDetailByIdWithDueDate(id: String)(implicit dateService: DateServiceInterface): Option[DocumentDetailWithDueDate] = {
     documentDetails.find(_.transactionId == id)
