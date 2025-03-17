@@ -69,12 +69,6 @@ case class ChargeItem (
 
   def getDueDate: LocalDate = dueDate.getOrElse(throw MissingFieldException("documentDueDate"))
 
-  def getDisplayDueDate: LocalDate = if (isLatePaymentInterest && isPaid) {
-    getInterestEndDate
-  } else {
-    getDueDate
-  }
-
   def getInterestFromDate: LocalDate = interestFromDate.getOrElse(throw MissingFieldException("documentInterestFromDate"))
 
   def getInterestEndDate: LocalDate = interestEndDate.getOrElse(throw MissingFieldException("documentInterestEndDate"))
@@ -169,10 +163,6 @@ object ChargeItem {
       case _ => true
     }
   }
-
-  def sortChargesList(charges: List[ChargeItem]): List[ChargeItem] = charges.sortWith((charge1, charge2) =>
-    charge2.getDisplayDueDate.isAfter(charge1.getDisplayDueDate)
-  )
 
   def fromDocumentPair(documentDetail: DocumentDetail, financialDetails: List[FinancialDetail]): ChargeItem = {
 

@@ -26,6 +26,7 @@ import enums.GatewayPage.WhatYouOwePage
 import forms.utils.SessionKeys.gatewayPage
 import models.admin._
 import models.core.Nino
+import models.financialDetails.YourSelfAssessmentChargesViewModel
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
@@ -65,7 +66,7 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
 
       val hasOverdueCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
       val hasAccruingInterestReviewAndReconcileCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isNotPaidAndNotOverduePoaReconciliationDebit()(dateService))
-      Ok(view(
+      val viewModel: YourSelfAssessmentChargesViewModel = YourSelfAssessmentChargesViewModel(
         currentDate = dateService.getCurrentDate,
         hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
         whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
@@ -73,8 +74,11 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
         dunningLock = whatYouOweChargesList.hasDunningLock,
         reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
         creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
-        origin = origin,
-        claimToAdjustViewModel = ctaViewModel)(user, user, messages, dateService)
+        claimToAdjustViewModel = ctaViewModel
+      )
+      Ok(view(
+        viewModel = viewModel,
+        origin = origin)(user, user, messages, dateService)
       ).addingToSession(gatewayPage -> WhatYouOwePage.name)
     }
   } recover {

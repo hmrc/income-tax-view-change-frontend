@@ -21,7 +21,7 @@ import authV2.AuthActionsTestData.defaultMTDITUser
 import config.featureswitch.FeatureSwitching
 import enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CLASS2_NICS}
 import implicits.ImplicitDateFormatter
-import models.financialDetails.{BalanceDetails, DocumentDetail, WhatYouOweChargesList}
+import models.financialDetails.{BalanceDetails, DocumentDetail, WhatYouOweChargesList, YourSelfAssessmentChargesViewModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.outstandingCharges.OutstandingChargesModel
@@ -137,7 +137,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
 
     val defaultClaimToAdjustViewModel: WYOClaimToAdjustViewModel = ctaViewModel(adjustPaymentsOnAccountFSEnabled)
 
-    val html: HtmlFormat.Appendable = yourSelfAssessmentChargesView(
+    val viewModel = YourSelfAssessmentChargesViewModel(
       currentDate = dateService.getCurrentDate,
       hasOverdueOrAccruingInterestCharges = false,
       whatYouOweChargesList = charges,
@@ -147,7 +147,12 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       dunningLock = dunningLock,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       creditAndRefundEnabled = true,
-      claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel))(FakeRequest(), individualUser, implicitly, dateService)
+      claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel)
+    )
+
+    val html: HtmlFormat.Appendable = yourSelfAssessmentChargesView(
+      viewModel
+      )(FakeRequest(), individualUser, implicitly, dateService)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def findElementById(id: String): Option[Element] = {
@@ -181,8 +186,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
     }
 
     private val currentDateIs: LocalDate = dateService.getCurrentDate
-    val html: HtmlFormat.Appendable = yourSelfAssessmentChargesView(
-      currentDateIs,
+    val viewModel = YourSelfAssessmentChargesViewModel(currentDateIs,
       hasOverdueOrAccruingInterestCharges = false,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
@@ -191,7 +195,9 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       dunningLock = dunningLock,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       creditAndRefundEnabled = true,
-      claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel)
+      claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel))
+    val html: HtmlFormat.Appendable = yourSelfAssessmentChargesView(
+      viewModel
     )(FakeRequest(), agentUser, implicitly, dateService)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
