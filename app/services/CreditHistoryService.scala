@@ -65,7 +65,7 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
 
   private def getCreditsByTaxYearV2(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)
                                  (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
-    financialDetailsConnector.getFinancialDetails(TaxYearRange(taxYearFrom, taxYearTo), nino).flatMap {
+    financialDetailsConnector.getFinancialDetails(taxYearFrom, taxYearTo, nino).flatMap {
       case financialDetailsModel: FinancialDetailsModel =>
         val fdRes = financialDetailsModel.getPairedDocumentDetails().flatMap {
           case (document: DocumentDetail, financialDetail: FinancialDetail) =>

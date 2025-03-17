@@ -181,7 +181,44 @@ class FinancialDetailsConnector @Inject()(
       }
   }
 
-  def getFinancialDetails(taxYearRange: TaxYearRange, nino: String)
+  def getFinancialDetails(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)
+                         (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
+
+    val url = getChargesUrl(nino, taxYearFrom.financialYearStartString, taxYearTo.financialYearEndString)
+    Logger("application").debug(s"GET $url")
+
+    val hc: HeaderCarrier = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
+
+    httpV2
+      .get(url"$url")
+      .setHeader(hc.extraHeaders: _*)
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case OK =>
+            Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
+            response.json.validate[FinancialDetailsModel].fold(
+              invalid => {
+                Logger("application").error(s"Json Validation Error: $invalid")
+                FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing FinancialDetails Data Response")
+              },
+              valid => valid
+            )
+          case status if status >= 500 =>
+            Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
+            FinancialDetailsErrorModel(response.status, response.body)
+          case _ =>
+            Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
+            FinancialDetailsErrorModel(response.status, response.body)
+        }
+      }.recover {
+        case ex =>
+          Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
+          FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
+      }
+  }
+
+  def getFinancialDetailsByTaxYearRange(taxYearRange: TaxYearRange, nino: String)
                          (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
 
     val url = getChargesUrl(nino, taxYearRange.startYear.financialYearStartString, taxYearRange.endYear.financialYearEndString)
