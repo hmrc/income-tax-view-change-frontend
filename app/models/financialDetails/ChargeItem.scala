@@ -41,12 +41,22 @@ case class ChargeItem (
                         lpiWithDunningLock: Option[BigDecimal],
                         amountCodedOut: Option[BigDecimal],
                         dunningLock: Boolean,
-                        poaRelevantAmount: Option[BigDecimal]) extends TransactionItem {
+                        poaRelevantAmount: Option[BigDecimal],
+                        dueDateForFinancialDetail: Option[LocalDate] = None,
+                        paymentLotItem: Option[String],
+                        paymentLot: Option[String]
+                      ) extends TransactionItem {
 
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean =
     dueDate.exists(_ isBefore dateService.getCurrentDate)
 
   val isCredit = originalAmount < 0
+
+  def credit: Option[BigDecimal] = originalAmount match {
+    case _ if (paymentLotItem.isDefined && paymentLot.isDefined) => None
+    case _ if (originalAmount >= 0) => None
+    case credit => Some(credit * -1)
+  }
 
   val hasLpiWithDunningLock: Boolean =
     lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
@@ -206,7 +216,10 @@ object ChargeItem {
       lpiWithDunningLock = documentDetail.lpiWithDunningLock,
       amountCodedOut = documentDetail.amountCodedOut,
       dunningLock = dunningLockExists,
-      poaRelevantAmount = documentDetail.poaRelevantAmount
+      poaRelevantAmount = documentDetail.poaRelevantAmount,
+      dueDateForFinancialDetail = FinancialDetailsModel.getDueDateForFinancialDetail(financialDetail),
+      paymentLotItem = documentDetail.paymentLotItem,
+      paymentLot = documentDetail.paymentLot
     )
   }
 

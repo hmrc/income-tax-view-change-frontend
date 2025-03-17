@@ -35,10 +35,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
                                  private val documentDetails: List[DocumentDetail],
                                  financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
 
-  def getDueDateForFinancialDetail(financialDetail: FinancialDetail): Option[LocalDate] = {
-    financialDetail.items.flatMap(_.headOption.flatMap(_.dueDate))
-  }
-
   def getAllDueDates: List[LocalDate] = {
     documentDetails.flatMap(_.getDueDate())
   }
@@ -104,6 +100,25 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       (documentDetail, financialDetails.find(_.transactionId.get == documentDetail.transactionId)
         .getOrElse(throw new Exception("no financialDetail found for documentDetail" + documentDetail)))
     )
+  }
+
+  // TODO: use unified conversion here
+  def getPairedDocumentDetailsV2(): List[ChargeItem] = {
+    val res = documentDetails.map(documentDetail =>
+      Try {
+        ChargeItem.fromDocumentPair(documentDetail = documentDetail,
+          financialDetails = financialDetails
+            .filter(_.transactionId.isDefined)
+          .filter(_.transactionId.get == documentDetail.transactionId) )
+      }.toOption
+
+    )
+      //(documentDetail, financialDetails.find(_.transactionId.get == documentDetail.transactionId)
+      //  .getOrElse(throw new Exception("no financialDetail found for documentDetail" + documentDetail)))
+      //)
+    // TODO: log conversion error
+    val y = res.flatMap(x => x.map(y => List(y)).getOrElse( List[ChargeItem]() ) )
+    y
   }
 
 
@@ -240,6 +255,10 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
 
 object FinancialDetailsModel {
   implicit val format: Format[FinancialDetailsModel] = Json.format[FinancialDetailsModel]
+
+  def getDueDateForFinancialDetail(financialDetail: FinancialDetail): Option[LocalDate] = {
+    financialDetail.items.flatMap(_.headOption.flatMap(_.dueDate))
+  }
 }
 
 case class FinancialDetailsErrorModel(code: Int, message: String) extends FinancialDetailsResponseModel
