@@ -1,0 +1,91 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import _root_.implicits.HtmlFormatter.NbspString
+@import views.html.components.h2
+@import models.chargeSummary.ChargeSummaryViewModel
+@import views.html.partials.chargeSummary.ChargeSummaryPaymentAllocation
+
+@import java.time.LocalDate
+
+@this(
+    govukTable: GovukTable,
+    implicitDateFormatter: ImplicitDateFormatterImpl,
+    chargeSummaryPaymentAllocation: ChargeSummaryPaymentAllocation,
+    h2: h2
+)
+
+@(viewModel: ChargeSummaryViewModel)(implicit messages: Messages)
+
+@import implicitDateFormatter.longDate
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"yourSelfAssessmentChargeSummary.table.$key", args: _*)
+}
+
+@govukTable(Table(
+    rows = Seq(
+        Seq(
+            TableRow(
+                content = Text(viewModel.chargeItem.outstandingAmount.toCurrencyString)
+            ),
+            TableRow(
+                content = Text(getMessage("daysOverdue", viewModel.chargeItem.getInterestFromDate.toLongDate, viewModel.chargeItem.getInterestEndDate.toLongDate))
+            ),
+            TableRow(
+                content = Text(viewModel.chargeItem.getInterestRate.toString + "%"),
+                format = Some("numeric")
+            ),
+            TableRow(
+                content = Text(viewModel.chargeItem.getInterestOutstandingAmount.toCurrencyString)
+            )
+        ),
+        Seq(
+            TableRow(
+                content = HtmlContent(s"<b>${getMessage("totalInterestToDate")}</b>")
+            ),
+            TableRow(
+                content = Empty,
+            ),
+            TableRow(
+                content = Empty,
+            ),
+            TableRow(
+                content = Text(viewModel.chargeItem.getInterestOutstandingAmount.toCurrencyString)
+            )
+        )
+    ),
+    head = Some(Seq(
+        HeadCell(
+            content = Text(getMessage("head.amountInterestIsAppliedTo"))
+        ),
+        HeadCell(
+            content = Text(getMessage("head.daysOverdue"))
+        ),
+        HeadCell(
+            content = Text(getMessage("head.interestRate")),
+            format = Some("numeric")
+        ),
+        HeadCell(
+            content = Text(getMessage("head.amount")),
+            format = Some("numeric")
+        )
+    )),
+    classes = "govuk-!-margin-bottom-9"
+))

@@ -26,6 +26,7 @@ import java.time.LocalDate
 
 case class ChargeItem (
                         transactionId: String,
+                        chargeReference: String,
                         taxYear: TaxYear,
                         transactionType: TransactionType,
                         subTransactionType: Option[SubTransactionType],
@@ -188,8 +189,14 @@ object ChargeItem {
     val dunningLockExists =
       financialDetails.exists(financialDetail => financialDetail.transactionId.contains(documentDetail.transactionId) && financialDetail.dunningLockExists)
 
+    val chargeReference = financialDetail.chargeReference match {
+      case Some(ref) => ref
+      case _         => throw CouldNotCreateChargeItemException(s"Could not find ChargeReference for $mainTransaction for charge ${documentDetail.transactionId}")
+    }
+
     ChargeItem(
       transactionId = documentDetail.transactionId,
+      chargeReference = chargeReference,
       taxYear = TaxYear.forYearEnd(documentDetail.taxYear),
       transactionType = chargeType,
       subTransactionType = documentDetail.documentText
