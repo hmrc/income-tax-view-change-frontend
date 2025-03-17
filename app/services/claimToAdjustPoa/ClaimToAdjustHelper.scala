@@ -43,16 +43,18 @@ trait ClaimToAdjustHelper {
     LocalDate.of(date.getYear, Month.JANUARY, LAST_DAY_OF_JANUARY)
       .plusYears(1)
 
-  val sortByTaxYear: List[DocumentDetail] => List[DocumentDetail] =
-    _.sortBy(_.taxYear).reverse
+//  val sortByTaxYear: List[DocumentDetail] => List[DocumentDetail] =
+//    _.sortBy(_.taxYear).reverse
 
   val sortByTaxYearC: List[ChargeItem] => List[ChargeItem] =
     _.sortBy(_.taxYear.startYear).reverse
 
-  protected case class FinancialDetailsAndPoaModel(financialDetails: Option[FinancialDetailsModel],
+  //TODO: do we need these 2 case classes at all?
+  protected case class FinancialDetailsAndPoaModel(chargeItem: List[ChargeItem],
                                                    poaModel: Option[PaymentOnAccountViewModel])
 
-  protected case class FinancialDetailAndChargeRefMaybe(documentDetails: List[DocumentDetail],
+  //TODO: very likely don't need this case class at all as after AC-1 we expect chargeReference to be part of ChargeItem
+  protected case class FinancialDetailAndChargeRefMaybe(chargeItems: List[ChargeItem],
                                                         chargeReference: Option[String])
 
   def getPaymentOnAccountModel(charges: List[ChargeItem],
@@ -155,13 +157,14 @@ trait ClaimToAdjustHelper {
     }
   }
 
-  def getAmendablePoaViewModel(documentDetails: List[DocumentDetail],
+  def getAmendablePoaViewModel(chargeItems: List[ChargeItem],
                                poasHaveBeenAdjustedPreviously: Boolean): Either[Throwable, PaymentOnAccountViewModel] = {
+
     val res  = for {
-      poaOneDocDetail <- documentDetails.find(isPoaOne)
-      poaTwoDocDetail <- documentDetails.find(isPoaTwo)
+      poaOneDocDetail <- chargeItems.find(charge => charge.transactionType == PoaOneDebit)
+      poaTwoDocDetail <- chargeItems.find(charge => charge.transactionType == PoaTwoDebit)
       latestDocumentDetail = poaTwoDocDetail
-      poaTwoDueDate <- poaTwoDocDetail.documentDueDate
+      poaTwoDueDate <- poaTwoDocDetail.dueDate
       taxReturnDeadline = getTaxReturnDeadline(poaTwoDueDate)
       poasAreBeforeDeadline = poaTwoDueDate isBefore taxReturnDeadline
       if poasAreBeforeDeadline
@@ -171,7 +174,7 @@ trait ClaimToAdjustHelper {
           PaymentOnAccountViewModel(
             poaOneTransactionId = poaOneDocDetail.transactionId,
             poaTwoTransactionId = poaTwoDocDetail.transactionId,
-            taxYear = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
+            taxYear = latestDocumentDetail.taxYear,
             totalAmountOne = poaOneDocDetail.originalAmount,
             totalAmountTwo = poaTwoDocDetail.originalAmount,
             relevantAmountOne = poaOneDocDetail.poaRelevantAmount.get,
@@ -195,10 +198,11 @@ trait ClaimToAdjustHelper {
     }
   }
 
-  protected def isSubsequentAdjustment(chargeHistoryConnector: ChargeHistoryConnector, chargeReference: Option[String])
+  protected def isSubsequentAdjustment(chargeHistoryConnector: ChargeHistoryConnector, model: FinancialDetailAndChargeRefMaybe)
                                       (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
-    chargeHistoryConnector.getChargeHistory(user.nino, chargeReference) map {
-      case ChargesHistoryModel(_, _, _, Some(charges)) if charges.filter(_.isPoa).exists(_.poaAdjustmentReason.isDefined) => Right(true)
+    chargeHistoryConnector.getChargeHistory(user.nino, model.chargeReference) map {
+      case ChargesHistoryModel(_, _, _, Some(charges)) if charges.exists(_.poaAdjustmentReason.isDefined) => Right(true)
+        //charges.filter(_.isPoa).exists(_.poaAdjustmentReason.isDefined) => Right(true)
       case ChargesHistoryModel(_, _, _, _) => Right(false)
       case ChargesHistoryErrorModel(code, message) =>
         Logger("application").error("getChargeHistory returned a non-valid response")
@@ -208,14 +212,14 @@ trait ClaimToAdjustHelper {
 
   private def extractPoaChargeHistory(chargeHistories: List[ChargeHistoryModel]): Option[ChargeHistoryModel] = {
     // We are not differentiating between POA 1 & 2 as records for both should match since they are always amended together
-    chargeHistories.find(chargeHistoryModel => chargeHistoryModel.isPoa)
+    chargeHistories.find(chargeHistoryModel => chargeHistoryModel.poaAdjustmentReason.isDefined)
   }
 
   // TODO: re-write with the use of EitherT
-  protected def toFinancialDetail(financialPoaDetails: Either[Throwable, FinancialDetailsAndPoaModel]): Either[Throwable, Option[FinancialDetail]] = {
+  protected def toFinancialDetail(financialPoaDetails: Either[Throwable, FinancialDetailsAndPoaModel]): Either[Throwable, Option[ChargeItem]] = {
     financialPoaDetails match {
-      case Right(FinancialDetailsAndPoaModel(Some(finDetails), _)) =>
-        finDetails.financialDetails.headOption match {
+      case Right(FinancialDetailsAndPoaModel(chargeItems, _)) =>
+        chargeItems.headOption match {
           case Some(detail) => Right(Some(detail))
           case None => Left(new Exception("No financial details found for this charge"))
         }
@@ -224,11 +228,10 @@ trait ClaimToAdjustHelper {
     }
   }
 
-  protected def getFinancialDetailAndChargeRefModel(financialDetailModel: Option[FinancialDetailsModel]): Either[Throwable, FinancialDetailAndChargeRefMaybe] = {
-    financialDetailModel match {
-      case Some(
-      FinancialDetailsModel(_, documentDetails, FinancialDetail(_, _, _, _, _, chargeReference, _, _, _, _, _, _, _, _) :: _)) =>
-        Right(FinancialDetailAndChargeRefMaybe(documentDetails, chargeReference))
+  protected def getFinancialDetailAndChargeRefModel(chargeItems: List[ChargeItem]): Either[Throwable, FinancialDetailAndChargeRefMaybe] = {
+    chargeItems match {
+      case head :: _ =>
+        Right(FinancialDetailAndChargeRefMaybe(chargeItems, head.chargeReference) )
       case _ =>
         Left(new Exception("Failed to retrieve non-crystallised financial details"))
     }
@@ -241,12 +244,10 @@ object ClaimToAdjustHelper {
   private final val POA1: String = Poa1Charge.key
   private final val POA2: String = Poa2Charge.key
 
+  // TODO: decommission logic where we identify charge type by documentDescription
   val poaDocumentDescriptions: List[String] = List(POA1, POA2)
-
   val isPoaOne: DocumentDetail => Boolean = _.documentDescription.contains(POA1)
-
   val isPoaTwo: DocumentDetail => Boolean = _.documentDescription.contains(POA2)
-
   val isPoa: DocumentDetail => Boolean = documentDetail => isPoaOne(documentDetail) || isPoaTwo(documentDetail)
 
   val isPoaDocumentDescription: String => Boolean = poaDocumentDescriptions.contains(_)

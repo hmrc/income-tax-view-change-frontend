@@ -24,16 +24,15 @@ import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import play.api.Logger
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
-import services.claimToAdjustPoa.ClaimToAdjustHelper.poaDocumentDescriptions
 
 import java.time.LocalDate
 import scala.util.{Failure, Success, Try}
 
 sealed trait FinancialDetailsResponseModel
 
-case class FinancialDetailsModel(balanceDetails: BalanceDetails,
+case class FinancialDetailsModel  (balanceDetails: BalanceDetails,
                                  private val documentDetails: List[DocumentDetail],
-                                 financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
+                                          financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
 
   def getDueDateForFinancialDetail(financialDetail: FinancialDetail): Option[LocalDate] = {
     financialDetail.items.flatMap(_.headOption.flatMap(_.dueDate))
@@ -200,10 +199,10 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     documentDetails.find(_.latePaymentInterestId == chargeReference)
   }
 
-  def arePoaPaymentsPresent(): Option[TaxYear] = {
-    documentDetails.filter(_.documentDescription.exists(description => poaDocumentDescriptions.contains(description)))
-      .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
-  }
+//  def arePoaPaymentsPresent(): Option[TaxYear] = {
+//    documentDetails.filter(_.documentDescription.exists(description => poaDocumentDescriptions.contains(description)))
+//      .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
+//  }
 
   def toChargeItem(): List[ChargeItem] = {
     Try {
@@ -240,6 +239,12 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
 
 object FinancialDetailsModel {
   implicit val format: Format[FinancialDetailsModel] = Json.format[FinancialDetailsModel]
+  
+  def apply(balanceDetails: BalanceDetails,
+            documentDetails: List[DocumentDetail],
+            financialDetails: List[FinancialDetail]) = new FinancialDetailsModel(
+              balanceDetails = balanceDetails,
+              documentDetails = documentDetails, financialDetails = financialDetails)
 }
 
 case class FinancialDetailsErrorModel(code: Int, message: String) extends FinancialDetailsResponseModel
