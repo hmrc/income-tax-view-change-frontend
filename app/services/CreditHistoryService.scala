@@ -87,15 +87,15 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
     } yield (creditModelForTaxYear, creditModelForTaxYearPlusOne) match {
       case (Right(creditModelTY), Right(creditModelTYandOne)) =>
         val creditsForTaxYearAndPlusOne =
-          (creditModelTY ++ creditModelTYandOne).filter(creditDetailModel => creditDetailModel.charge.taxYear.startYear == calendarYear)
+          (creditModelTY ++ creditModelTYandOne).filter(creditDetailModel => creditDetailModel.charge.taxYear.endYear == calendarYear)
         Right(creditsForTaxYearAndPlusOne)
       case (Right(creditModelTY), Left(_)) =>
         val creditsForTaxYear =
-          creditModelTY.filter(creditDetailModel => creditDetailModel.charge.taxYear.startYear == calendarYear)
+          creditModelTY.filter(creditDetailModel => creditDetailModel.charge.taxYear.endYear == calendarYear)
         Right(creditsForTaxYear)
       case (Left(_), Right(creditModelTYandOne)) =>
         val creditsForTaxYearPlusOne =
-          creditModelTYandOne.filter(creditDetailModel => creditDetailModel.charge.taxYear.startYear == calendarYear)
+          creditModelTYandOne.filter(creditDetailModel => creditDetailModel.charge.taxYear.endYear == calendarYear)
         Right(creditsForTaxYearPlusOne)
       case (_, _) =>
         Left(CreditHistoryError)
