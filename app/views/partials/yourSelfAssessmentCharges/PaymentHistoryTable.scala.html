@@ -127,7 +127,8 @@
                     attributes = Map("id" -> "rar-due-date")
                 ),
                 TableRow(
-                    content = HtmlContent(charge.originalAmount.abs.toCurrency), attributes = Map("id" -> "rar-total-amount"),
+                    content = HtmlContent(charge.originalAmount.abs.toCurrency),
+                    attributes = Map("id" -> "rar-total-amount"),
                     format = Some("numeric")
                 )
             )
@@ -141,7 +142,8 @@
                 TableRow(
                     content = HtmlContent(charge.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDate.toNonBreaking)
                 ),
-                TableRow(content = HtmlContent(charge.amount.toCurrency),
+                TableRow(
+                    content = HtmlContent(charge.amount.toCurrency),
                     format = Some("numeric")
                 )
             )
