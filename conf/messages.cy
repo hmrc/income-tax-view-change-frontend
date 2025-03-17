@@ -1768,14 +1768,15 @@ business-added.deadlines                                = Eich dyddiadau cau syd
 business-added.to                                       = i
 
 # Foreign Property Added
-business-added.foreign-property.head                    = Mae
-business-added.foreign-property.h1                      = eiddo tramor
-business-added.foreign-property.base                    = wedi cael ei ychwanegu i’ch cyfrif
-business-added.uk-property.head                         = Mae
-business-added.uk-property.h1                           = eiddo yn y DU
-business-added.uk-property.base                         = wedi cael ei ychwanegu i’ch cyfrif
-business-added.sole-trader.head                         = Ychwanegwyd
-business-added.sole-trader.base                         = i’ch cyfrif
+business-added.foreign-property.title                   = Mae eiddo tramor wedi cael ei ychwanegu i’ch cyfrif
+business-added.foreign-property.panel.title             = Mae eiddo tramor
+business-added.foreign-property.panel.body              = wedi cael ei ychwanegu i’ch cyfrif
+business-added.uk-property.title                        = Mae eiddo yn y DU wedi cael ei ychwanegu i’ch cyfrif
+business-added.uk-property.panel.title                  = Mae eiddo yn y DU
+business-added.uk-property.panel.body                   = wedi cael ei ychwanegu i’ch cyfrif
+business-added.sole-trader.title                        = Ychwanegwyd {0} i’ch cyfrif
+business-added.sole-trader.panel.title                  = Ychwanegwyd {0}
+business-added.sole-trader.panel.body                   = i’ch cyfrif
 
 business-added.quarterly-heading                        = Anfon diweddariadau chwarterol
 business-added.quarterly-p1                             = Mae’n rhaid i chi anfon diweddariadau chwarterol o’ch incwm a’ch treuliau, gan ddefnyddio meddalwedd sy’n cydweddu, erbyn y dyddiadau cau canlynol:
@@ -1851,11 +1852,12 @@ cannotGoBack.hasBeenAdded2                         =
 cannotGoBack.needToChoose                          = Nawr mae angen i chi ddewis pa mor aml yr hoffech anfon diweddariadau am eich incwm a’ch treuliau at CThEF ar gyfer y ffynhonnell incwm hon.
 
 ## Income Source Creased Obligation Page ##
-business-ceased.obligation.heading1.se.part1                        = Mae
-business-ceased.obligation.heading1.se.part2                        = Busnes unig fasnachwr
-business-ceased.obligation.heading1.uk-property.part2               = Eiddo yn y DU
-business-ceased.obligation.heading1.foreign-property.part2          = Eiddo tramor
-business-ceased.obligation.heading1.base                            = wedi dod i ben
+business-ceased.obligation.title                                    = Mae {0} wedi dod i ben
+business-ceased.obligation.panel.title                              = Mae {0}
+business-ceased.obligation.panel.body                               = wedi dod i ben
+business-ceased.obligation.sole-trader                              = Busnes unig fasnachwr
+business-ceased.obligation.uk-property                              = Eiddo yn y DU
+business-ceased.obligation.foreign-property                         = Eiddo tramor
 business-ceased.obligation.heading2.text                            = Yr hyn y mae’n rhaid i chi ei wneud
 business-ceased.obligation.next-update.text                         = Eich diweddariad nesaf sydd ar y gweill
 business-ceased.obligation.next-update.next-quarterly.text          = Y dyddiad cau ar gyfer cyflwyno’ch datganiad terfynol ar gyfer blwyddyn dreth {0} i {1} yw
@@ -1925,11 +1927,11 @@ incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.individu
 incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.agent      = Bydd CThEF yn tynnu unrhyw ddiweddariadau incwm mae’ch cleient eisoes wedi’u cyflwyno ar gyfer y flwyddyn dreth hon. Bydd angen i chi gynnwys unrhyw incwm a gyflwynwyd yn flaenorol ar Ffurflen Dreth chwarterol eich cleient.
 
 # manage obligations page
-incomeSources.add.manageObligations.h1                                =   Bydd
-incomeSources.add.manageObligations.h2                                =   yn cyflwyno adroddiadau’n
+incomeSources.add.manageObligations.title                             =   Bydd {0} yn cyflwyno adroddiadau’n {1} ar gyfer blwyddyn dreth {2} i {3}
+incomeSources.add.manageObligations.panel.title                       =   Bydd {0}
+incomeSources.add.manageObligations.panel.body                        =   yn cyflwyno adroddiadau’n {0} ar gyfer blwyddyn dreth {1} i {2}
 incomeSources.add.manageObligations.annually                          =   flynyddol
 incomeSources.add.manageObligations.quarterly                         =   chwarterol
-incomeSources.add.manageObligations.tax-year                          =   ar gyfer blwyddyn dreth
 incomeSources.add.manageObligations.to                                =   i
 incomeSources.add.manageObligations.sole-trader                       =   y busnes unig fasnachwr
 incomeSources.add.manageObligations.uk-property                       =   eiddo yn y DU
