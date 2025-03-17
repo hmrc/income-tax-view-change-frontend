@@ -16,21 +16,18 @@
 
 @import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import models.financialDetails.ChargeType
 @import models.chargeSummary.ChargeSummaryViewModel
-@import models.financialDetails.{Accepted, BalancingCharge, Cancelled, MfaDebitCharge, PoaOneDebit, PoaOneReconciliationDebit, PoaOneReconciliationCredit, PoaTwoDebit, PoaTwoReconciliationDebit, PoaTwoReconciliationCredit, TransactionType}
 @import services.DateServiceInterface
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
-@import models.repaymentHistory.RepaymentHistoryUtils
-@import _root_.implicits.HtmlFormatter.NbspString
 @import _root_.implicits.HtmlFormatter.EmspString
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import views.html.partials.yourSelfAssessmentCharges.PaymentHistoryTable
 @import views.html.partials.yourSelfAssessmentCharges.InterestOnYourBalancingPaymentTable
+@import views.html.partials.yourSelfAssessmentCharges.WhatIsABalancingPayment
+@import views.html.partials.yourSelfAssessmentCharges.HowIsInterestCalculated
 
 @import java.time.LocalDate
 
@@ -49,6 +46,8 @@
     govukInsetText: GovukInsetText,
     govukDetails : GovukDetails,
     hmrcPageHeading: HmrcPageHeading,
+    whatIsABalancingPayment: WhatIsABalancingPayment,
+    howIsInterestCalculated: HowIsInterestCalculated,
     interestOnYourBalancingPaymentTable: InterestOnYourBalancingPaymentTable,
     paymentHistoryTable: PaymentHistoryTable
 )
@@ -66,33 +65,6 @@
 
 @getMessage(key: String, args: String*) = @{
     messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
-}
-
-@whatIsABalancingPayment = {
-    @p() { @getMessage("whatIsABalancingPayment.p1") }
-
-    @bulletPointList(
-        getMessage("whatIsABalancingPayment.p2"),
-        getMessage("whatIsABalancingPayment.p3")
-    )
-
-    @p() { @getMessage("whatIsABalancingPayment.p4") }
-}
-
-@howIsInterestCalculated = {
-    @numberList(
-        getMessage("howIsInterestCalculated.p1"),
-        getMessage("howIsInterestCalculated.p2"),
-        getMessage("howIsInterestCalculated.p3")
-    )
-
-    @p() { @getMessage("howIsInterestCalculated.p4") }
-
-    @getMessage("howIsInterestCalculated.p5")
-    <br>
-    @getMessage("howIsInterestCalculated.p6")
-    <br>
-    @getMessage("howIsInterestCalculated.p7")
 }
 
 @mainTemplate(
@@ -117,7 +89,7 @@
 
     @govukDetails(Details(
         summary = Text(getMessage("whatIsABalancingPayment.linkText")),
-        content = HtmlContent(whatIsABalancingPayment)
+        content = HtmlContent(whatIsABalancingPayment())
     ))
 
     @if(viewModel.chargeItem.hasAccruingInterest) {
@@ -128,7 +100,7 @@
 
         @govukDetails(Details(
             summary = Text(getMessage("howIsInterestCalculated.linkText")),
-            content = HtmlContent(howIsInterestCalculated)
+            content = HtmlContent(howIsInterestCalculated())
         ))
 
         @interestOnYourBalancingPaymentTable(viewModel)
