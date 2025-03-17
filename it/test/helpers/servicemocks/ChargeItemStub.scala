@@ -25,7 +25,7 @@ import java.time.LocalDate
 object ChargeItemStub {
   def docDetail(chargeType: ChargeType): ChargeItem = ChargeItem(
     transactionId = "1040000124",
-    chargeReference = Some("1040000124"),
+    chargeReference = Some("ABCD1234"),
     taxYear = TaxYear.forYearEnd(testTaxYear),
     transactionType = chargeType,
     subTransactionType = None,
@@ -47,7 +47,7 @@ object ChargeItemStub {
   def chargeItemWithInterest(chargeType: ChargeType = PoaOneDebit,
                              subTransactionType: Option[SubTransactionType] = None): ChargeItem = ChargeItem(
     transactionId = "1040000124",
-    chargeReference = Some("1040000124"),
+    chargeReference = Some("ABCD1234"),
     taxYear = TaxYear.forYearEnd(testTaxYear),
     transactionType = chargeType,
     subTransactionType = subTransactionType,
@@ -70,7 +70,7 @@ object ChargeItemStub {
                                        subTransactionType: Option[SubTransactionType] = None,
                                        dueDate: Option[LocalDate] = Some(LocalDate.of(2017, 7, 1))): ChargeItem = ChargeItem(
     transactionId = "1040000124",
-    chargeReference = Some("1040000124"),
+    chargeReference = Some("ABCD1234"),
     taxYear = TaxYear.forYearEnd(testTaxYear),
     transactionType = chargeType,
     subTransactionType = subTransactionType,
