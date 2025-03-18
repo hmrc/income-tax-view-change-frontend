@@ -18,7 +18,6 @@
 
 @this(
         p: p,
-        numberList: numberList,
         bulletPointList: bulletPointList,
 )
 
@@ -31,16 +30,15 @@
     messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
 }
 
-@numberList(
-    getMessage("howIsInterestCalculated.p1"),
-    getMessage("howIsInterestCalculated.p2"),
-    getMessage("howIsInterestCalculated.p3")
-)
-@p(id = Some("howIsInterestCalculated.p4")) {
-    @getMessage("howIsInterestCalculated.p4")
+@p(id = Some("whatIsABalancingPayment.p1")) {
+    @getMessage("whatIsABalancingPayment.p1")
 }
-@getMessage("howIsInterestCalculated.p5")
-<br>
-@getMessage("howIsInterestCalculated.p6")
-<br>
-@getMessage("howIsInterestCalculated.p7")
+
+@bulletPointList(
+    getMessage("whatIsABalancingPayment.p2"),
+    getMessage("whatIsABalancingPayment.p3")
+)
+
+@p(id = Some("whatIsABalancingPayment.p4")) {
+    @getMessage("whatIsABalancingPayment.p4")
+}
