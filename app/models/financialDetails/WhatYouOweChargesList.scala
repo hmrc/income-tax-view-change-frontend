@@ -17,7 +17,8 @@
 package models.financialDetails
 
 import exceptions.MissingFieldException
-import models.outstandingCharges.OutstandingChargesModel
+import models.financialDetails.YourSelfAssessmentChargesViewModel.getDisplayDueDate
+import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import services.DateServiceInterface
 
 import java.time.LocalDate
@@ -27,6 +28,22 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
                                  codedOutDocumentDetail: Option[ChargeItem] = None)(implicit val dateService: DateServiceInterface) {
 
   private lazy val overdueChargeList: List[ChargeItem] = chargesList.filter(_.isOverdue())
+
+  def overdueOrAccruingInterestChargeList: List[ChargeItem] = chargesList.filter(x => x.isOverdue() || x.hasAccruingInterest)
+
+  def overdueOutstandingCharges: List[OutstandingChargeModel] = outstandingChargesModel.toList.flatMap(_.outstandingCharges)
+    .filter(_.relevantDueDate.getOrElse(LocalDate.MAX).isBefore(dateService.getCurrentDate))
+
+  def chargesDueWithin30DaysList: List[ChargeItem] = chargesList.filter(x => !x.isOverdue() && !x.hasAccruingInterest && dateService.isWithin30Days(x.dueDate.getOrElse(LocalDate.MAX)))
+
+  def chargesDueAfter30DaysList: List[ChargeItem] = chargesList.filter(x => !x.isOverdue() && !x.hasAccruingInterest && !dateService.isWithin30Days(x.dueDate.getOrElse(LocalDate.MAX)))
+
+
+  def sortedOverdueOrAccruingInterestChargeList: List[ChargeItem] = {
+    overdueOrAccruingInterestChargeList.sortWith((charge1, charge2) =>
+      getDisplayDueDate(charge2).isAfter(getDisplayDueDate(charge1))
+    )
+  }
 
   val availableCredit: Option[BigDecimal] = this.balanceDetails.availableCredit.flatMap(v => if (v > 0) Some(v) else None)
 
