@@ -39,8 +39,8 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
     financialDetailsConnector.getFinancialDetails(taxYear, nino)
   }
 
-  def getFinancialDetailsV2(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
-    financialDetailsConnector.getFinancialDetails(taxYearFrom, taxYearTo, nino)
+  def getFinancialDetailsV2(taxYearRange: TaxYearRange, nino: String)(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
+    financialDetailsConnector.getFinancialDetailsByTaxYearRange(taxYearRange, nino)
   }
 
   def getChargeDueDates(financialDetails: List[FinancialDetailsResponseModel]): Option[Either[(LocalDate, Boolean), Int]] = {
