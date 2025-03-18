@@ -98,12 +98,9 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
 
     override def getCurrentTaxYear: TaxYear = TaxYear.forYearEnd(getCurrentTaxYearEnd)
 
-    override def isWithin30Days(date: Option[LocalDate]): Boolean = {
+    override def isWithin30Days(date: LocalDate): Boolean = {
       val currentDate = getCurrentDate
-      date match {
-        case Some(dueDate) => dueDate.minusDays(30).isBefore(currentDate)
-        case None => false
-      }
+      date.minusDays(30).isBefore(currentDate)
     }
   }
 

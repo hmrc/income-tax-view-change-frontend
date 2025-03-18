@@ -78,7 +78,7 @@ class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
       }
     }
 
-    override def isWithin30Days(date: Option[LocalDate]): Boolean = false
+    override def isWithin30Days(date: LocalDate): Boolean = false
   }
 
   object insetWarningMessages {

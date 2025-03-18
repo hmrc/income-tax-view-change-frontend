@@ -60,7 +60,7 @@ object IncomeSourcesFormsSpec extends Properties("incomeSourcesForms.validation"
 
     override protected def now(): LocalDate = currentDate
 
-    override def isWithin30Days(date: Option[LocalDate]): Boolean = false
+    override def isWithin30Days(date: LocalDate): Boolean = false
   }
 
   val ukPropertyFormFactory = new UKPropertyEndDateForm(testDateService)

@@ -180,15 +180,12 @@ class DateServiceSpec extends TestSupport {
     val f = fixture(fixedDate)
     "return false" when {
       "date is more than 30 days in the future" in {
-        f.fakeTestDateService.isWithin30Days(Some(LocalDate.of(2024, 1, 16))) shouldBe false
-      }
-      "no date provided" in {
-        f.fakeTestDateService.isWithin30Days(None) shouldBe false
+        f.fakeTestDateService.isWithin30Days(LocalDate.of(2024, 1, 16)) shouldBe false
       }
     }
     "return true" when {
       "date is within 30 days" in {
-        f.fakeTestDateService.isWithin30Days(Some(LocalDate.of(2024, 1, 1))) shouldBe true
+        f.fakeTestDateService.isWithin30Days(LocalDate.of(2024, 1, 1)) shouldBe true
       }
     }
   }

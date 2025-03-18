@@ -144,7 +144,7 @@
     }
 
     @paymentTypeEntry(chargeItem: ChargeItem, rowId: String, isInterest: Boolean,
-        isMFADebit: Boolean, linkSuffix: String, index: Int) = @{
+        linkSuffix: String, index: Int) = @{
 
     val chargeTypeKey = chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)
     val lpi = if(isInterest) "lpi." else ""
@@ -170,7 +170,7 @@
         </a>
     }
 
-    @getPaymentTypeEntry(chargeItem: ChargeItem, rowId: String, isOverduePayment: Boolean, isMFADebit: Boolean, index: Int) = @{
+    @getPaymentTypeEntry(chargeItem: ChargeItem, rowId: String, isOverduePayment: Boolean, index: Int) = @{
         val isInterest = chargeItem.isLatePaymentInterest
 
         def getLinkSuffix(): String = {
@@ -186,7 +186,7 @@
         }
 
         paymentTypeEntry(chargeItem, rowId, isInterest = isInterest,
-            linkSuffix = getLinkSuffix(), isMFADebit = isMFADebit, index = index)
+            linkSuffix = getLinkSuffix(), index = index)
     }
 
     @getReturnHref(year: Int) = @{
@@ -212,7 +212,7 @@
             </td>
             <td class="govuk-table__cell">
                 @getPaymentTypeEntry(chargeItem = chargeItem, isOverduePayment = true,
-                    rowId = rowId, isMFADebit = chargeItem.transactionType == MfaDebitCharge, index = index)
+                    rowId = rowId, index = index)
 
                 @if(chargeItem.dunningLock) {
                     <div class="form-hint govuk-body-s"> @getMessage("paymentUnderReview") </div>

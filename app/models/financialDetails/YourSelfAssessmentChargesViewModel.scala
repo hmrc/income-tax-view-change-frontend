@@ -39,9 +39,9 @@ case class YourSelfAssessmentChargesViewModel(currentDate: LocalDate,
   lazy val overdueOutstandingCharges: List[OutstandingChargeModel] = whatYouOweChargesList.outstandingChargesModel.toList.flatMap(_.outstandingCharges)
     .filter(_.relevantDueDate.getOrElse(LocalDate.MAX).isBefore(dateService.getCurrentDate))
 
-  lazy val chargesDueWithin30DaysList: List[ChargeItem] = whatYouOweChargesList.chargesList.filter(x => !x.isOverdue() && !x.hasAccruingInterest && dateService.isWithin30Days(x.dueDate))
+  lazy val chargesDueWithin30DaysList: List[ChargeItem] = whatYouOweChargesList.chargesList.filter(x => !x.isOverdue() && !x.hasAccruingInterest && dateService.isWithin30Days(x.dueDate.getOrElse(LocalDate.MAX)))
 
-  lazy val chargesDueAfter30DaysList: List[ChargeItem] = whatYouOweChargesList.chargesList.filter(x => !x.isOverdue() && !x.hasAccruingInterest && !dateService.isWithin30Days(x.dueDate))
+  lazy val chargesDueAfter30DaysList: List[ChargeItem] = whatYouOweChargesList.chargesList.filter(x => !x.isOverdue() && !x.hasAccruingInterest && !dateService.isWithin30Days(x.dueDate.getOrElse(LocalDate.MAX)))
 
 
   def sortedOverdueOrAccruingInterestChargeList: List[ChargeItem] = overdueOrAccruingInterestChargeList.sortWith((charge1, charge2) =>
