@@ -43,8 +43,8 @@ case class ChargeItem (
                         dunningLock: Boolean,
                         poaRelevantAmount: Option[BigDecimal],
                         dueDateForFinancialDetail: Option[LocalDate] = None,
-                        paymentLotItem: Option[String],
-                        paymentLot: Option[String]
+                        paymentLotItem: Option[String] = None,
+                        paymentLot: Option[String] = None
                       ) extends TransactionItem {
 
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean =

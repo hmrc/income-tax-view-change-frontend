@@ -20,6 +20,7 @@ package services.helpers
 import enums.ChargeType.NIC4_WALES
 import models.creditDetailModel._
 import models.financialDetails._
+import models.incomeSourceDetails.TaxYear
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import testConstants.BusinessDetailsTestConstants.fixedDate
 
@@ -209,21 +210,38 @@ trait CreditHistoryDataHelper {
 
   val expectedBalancedDetails = BalanceDetails(1.0,2.0,3.0,None,None,None,None,None)
 
+  val newCharge = ChargeItem(
+    taxYear = TaxYear.forYearEnd(2021),
+    transactionId = "1040000123",
+    transactionType = BalancingCharge,
+    subTransactionType = None,
+    outstandingAmount = 2000,
+    originalAmount = 2000,
+    documentDate = LocalDate.parse("2018-03-29"),
+    interestOutstandingAmount = Some(80),
+    interestRate = None,
+    interestFromDate = Some(LocalDate.parse("2018-03-29")),
+    interestEndDate = Some(LocalDate.parse("2023-11-15")),
+    latePaymentInterestAmount = Some(100),
+    lpiWithDunningLock = None,
+    amountCodedOut = None,
+    dueDate = Some(LocalDate.parse("2022-01-01")), dunningLock = false,
+    poaRelevantAmount = None)
   val creditDetailModelasCutOver = CreditDetailModel(
     date = LocalDate.parse("2022-08-25"),
-    documentDetail = documentDetailsWhichIsCutOverCredit,
+    charge = newCharge, //documentDetailsWhichIsCutOverCredit,
     CutOverCreditType,
     availableCredit = expectedBalancedDetails.availableCredit
   )
   val creditDetailModelasMfa = CreditDetailModel(
     date = LocalDate.parse("2022-03-29"),
-    documentDetail = documentDetailsWhichIsMfaCredit,
+    charge = newCharge, // documentDetailsWhichIsMfaCredit,
     MfaCreditType,
     availableCredit = expectedBalancedDetails.availableCredit
   )
   val creditDetailModelasBCC = CreditDetailModel(
     date = LocalDate.parse("2022-03-29"),
-    documentDetail = documentDetailsWhichIsBCCredit,
+    charge = newCharge, // documentDetailsWhichIsBCCredit,
     BalancingChargeCreditType,
     availableCredit = expectedBalancedDetails.availableCredit
   )
@@ -231,7 +249,7 @@ trait CreditHistoryDataHelper {
 
   val creditDetailModelasSetInterest = CreditDetailModel(
     date = LocalDate.parse("2022-03-29"),
-    documentDetail = documentDetailsWhichIsRepaymentInterestCredit,
+    charge = newCharge, //§  = documentDetailsWhichIsRepaymentInterestCredit,
     RepaymentInterest,
     availableCredit = expectedBalancedDetails.availableCredit
   )

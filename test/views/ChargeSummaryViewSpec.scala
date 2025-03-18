@@ -125,7 +125,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       lpiWithDunningLock = None,
       amountCodedOut = None,
       dunningLock = false,
-      poaRelevantAmount = None
+      poaRelevantAmount = None,
+
     ))
 
   def paymentsForCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal, clearingSAPDocument: Option[String], clearingId: Option[String]): PaymentHistoryAllocations =
