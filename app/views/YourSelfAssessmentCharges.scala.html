@@ -374,7 +374,7 @@
                                                         </td>
                                                         <td class="govuk-table__cell govuk-table__cell--numeric">
                                                         @if(viewModel.whatYouOweChargesList.outstandingChargesModel.get.getAciChargeWithTieBreaker.isDefined
-                                                                && viewModel.whatYouOweChargesList.getRelevantDueDate.isBefore(viewModel.currentDate)) @{
+                                                                && viewModel.whatYouOweChargesList.getRelevantDueDate.isBefore(viewModel.dateService.getCurrentDate)) @{
                                                             viewModel.whatYouOweChargesList.getAciChargeWithTieBreakerChargeAmount.toCurrency
                                                         }
                                                         </td>

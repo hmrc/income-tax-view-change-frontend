@@ -138,7 +138,6 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
     val defaultClaimToAdjustViewModel: WYOClaimToAdjustViewModel = ctaViewModel(adjustPaymentsOnAccountFSEnabled)
 
     val viewModel = YourSelfAssessmentChargesViewModel(
-      currentDate = dateService.getCurrentDate,
       hasOverdueOrAccruingInterestCharges = false,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
@@ -185,8 +184,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       Option(pageDocument.getElementById(id))
     }
 
-    private val currentDateIs: LocalDate = dateService.getCurrentDate
-    val viewModel = YourSelfAssessmentChargesViewModel(currentDateIs,
+    val viewModel = YourSelfAssessmentChargesViewModel(
       hasOverdueOrAccruingInterestCharges = false,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,

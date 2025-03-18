@@ -16,16 +16,13 @@
 
 package models.financialDetails
 
-import models.financialDetails.YourSelfAssessmentChargesViewModel.getDisplayDueDate
 import models.incomeSourceDetails.TaxYear
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
-import models.outstandingCharges.OutstandingChargeModel
 import services.DateServiceInterface
 
 import java.time.LocalDate
 
-case class YourSelfAssessmentChargesViewModel(currentDate: LocalDate,
-                                              hasOverdueOrAccruingInterestCharges: Boolean,
+case class YourSelfAssessmentChargesViewModel(hasOverdueOrAccruingInterestCharges: Boolean,
                                               whatYouOweChargesList: WhatYouOweChargesList,
                                               hasLpiWithDunningLock: Boolean,
                                               currentTaxYear: TaxYear,
