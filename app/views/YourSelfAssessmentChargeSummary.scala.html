@@ -89,7 +89,7 @@
     }
 
     @p() {
-        @getMessage("chargeReference", viewModel.chargeItem.chargeReference.getOrElse(throw new MissingFieldException("chargeReference")))
+        @getMessage("chargeReference", viewModel.chargeItem.getChargeReference)
     }
 
     @govukDetails(Details(
