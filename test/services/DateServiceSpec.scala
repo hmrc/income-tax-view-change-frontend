@@ -187,6 +187,9 @@ class DateServiceSpec extends TestSupport {
       "date is within 30 days" in {
         f.fakeTestDateService.isWithin30Days(LocalDate.of(2024, 1, 1)) shouldBe true
       }
+      "date is same as current date" in {
+        f.fakeTestDateService.isWithin30Days(fixedDate) shouldBe true
+      }
     }
   }
 }
