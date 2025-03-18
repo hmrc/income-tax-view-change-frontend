@@ -33,22 +33,7 @@ case class YourSelfAssessmentChargesViewModel(currentDate: LocalDate,
                                               dunningLock: Boolean,
                                               reviewAndReconcileEnabled: Boolean,
                                               creditAndRefundEnabled: Boolean,
-                                              claimToAdjustViewModel: WYOClaimToAdjustViewModel)(implicit val dateService: DateServiceInterface) {
-
-  lazy val overdueOrAccruingInterestChargeList: List[ChargeItem] = whatYouOweChargesList.chargesList.filter(x => x.isOverdue() || x.hasAccruingInterest)
-  lazy val overdueOutstandingCharges: List[OutstandingChargeModel] = whatYouOweChargesList.outstandingChargesModel.toList.flatMap(_.outstandingCharges)
-    .filter(_.relevantDueDate.getOrElse(LocalDate.MAX).isBefore(dateService.getCurrentDate))
-
-  lazy val chargesDueWithin30DaysList: List[ChargeItem] = whatYouOweChargesList.chargesList.filter(x => !x.isOverdue() && !x.hasAccruingInterest && dateService.isWithin30Days(x.dueDate.getOrElse(LocalDate.MAX)))
-
-  lazy val chargesDueAfter30DaysList: List[ChargeItem] = whatYouOweChargesList.chargesList.filter(x => !x.isOverdue() && !x.hasAccruingInterest && !dateService.isWithin30Days(x.dueDate.getOrElse(LocalDate.MAX)))
-
-
-  def sortedOverdueOrAccruingInterestChargeList: List[ChargeItem] = overdueOrAccruingInterestChargeList.sortWith((charge1, charge2) =>
-    getDisplayDueDate(charge2).isAfter(getDisplayDueDate(charge1))
-  )
-
-}
+                                              claimToAdjustViewModel: WYOClaimToAdjustViewModel)(implicit val dateService: DateServiceInterface)
 
 object YourSelfAssessmentChargesViewModel {
   def getDisplayDueDate(chargeItem: ChargeItem): LocalDate = if (chargeItem.isLatePaymentInterest && chargeItem.isPaid) {
