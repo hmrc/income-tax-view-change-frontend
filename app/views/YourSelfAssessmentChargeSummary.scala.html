@@ -92,12 +92,15 @@
         @getMessage("chargeReference", viewModel.chargeItem.getChargeReference)
     }
 
-    @govukDetails(Details(
-        summary = Text(getMessage("whatIsABalancingPayment.linkText")),
-        content = HtmlContent(whatIsABalancingPayment())
-    ))
 
-    @if(viewModel.chargeItem.hasAccruingInterest) {
+   @if(viewModel.chargeItem.isBalancingCharge) {
+       @govukDetails(Details(
+           summary = Text(getMessage("whatIsABalancingPayment.linkText")),
+           content = HtmlContent(whatIsABalancingPayment())
+       ))
+   }
+
+    @if(viewModel.chargeItem.hasAccruingInterest && viewModel.chargeItem.isBalancingCharge) {
 
         @h2(getMessage("interestOnCharge.heading"), classes = "govuk-heading-l")
 
