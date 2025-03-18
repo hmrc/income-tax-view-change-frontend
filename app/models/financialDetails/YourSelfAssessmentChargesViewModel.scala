@@ -31,6 +31,8 @@ case class YourSelfAssessmentChargesViewModel(hasOverdueOrAccruingInterestCharge
                                               creditAndRefundEnabled: Boolean,
                                               claimToAdjustViewModel: WYOClaimToAdjustViewModel)(implicit val dateService: DateServiceInterface) {
   lazy val currentTaxYear: TaxYear = dateService.getCurrentTaxYear
+
+  lazy val currentDate: LocalDate = dateService.getCurrentDate
 }
 
 object YourSelfAssessmentChargesViewModel {
