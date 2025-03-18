@@ -400,7 +400,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
           firstChargeRow.select("td").first().text() shouldBe fixedDate.minusDays(30).toLongDate
           firstChargeRow.select("td").get(1).text() shouldBe preMTDRemainingBalance
           firstChargeRow.select("td").get(2).text() shouldBe preMtdPayments(
-            (fixedDate.getYear - 2).toString, (fixedDate.getYear - 1).toString)
+            (fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
           firstChargeRow.select("td").get(3).text() shouldBe "£12.67"
           firstChargeRow.select("td").last().text() shouldBe "£123,456.67"
 
