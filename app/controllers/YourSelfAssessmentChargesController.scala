@@ -69,7 +69,7 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
       val viewModel: YourSelfAssessmentChargesViewModel = YourSelfAssessmentChargesViewModel(
         hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
         whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
-        currentTaxYear = dateService.getCurrentTaxYear, backUrl = backUrl,
+        backUrl = backUrl,
         dunningLock = whatYouOweChargesList.hasDunningLock,
         reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
         creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),

@@ -25,12 +25,13 @@ import java.time.LocalDate
 case class YourSelfAssessmentChargesViewModel(hasOverdueOrAccruingInterestCharges: Boolean,
                                               whatYouOweChargesList: WhatYouOweChargesList,
                                               hasLpiWithDunningLock: Boolean,
-                                              currentTaxYear: TaxYear,
                                               backUrl: String,
                                               dunningLock: Boolean,
                                               reviewAndReconcileEnabled: Boolean,
                                               creditAndRefundEnabled: Boolean,
-                                              claimToAdjustViewModel: WYOClaimToAdjustViewModel)(implicit val dateService: DateServiceInterface)
+                                              claimToAdjustViewModel: WYOClaimToAdjustViewModel)(implicit val dateService: DateServiceInterface) {
+  lazy val currentTaxYear: TaxYear = dateService.getCurrentTaxYear
+}
 
 object YourSelfAssessmentChargesViewModel {
   def getDisplayDueDate(chargeItem: ChargeItem): LocalDate = if (chargeItem.isLatePaymentInterest && chargeItem.isPaid) {
