@@ -2461,7 +2461,7 @@ yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p2          = did not ha
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p3          = owe more than what you paid during the year (for example, through payments on account or PAYE)
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p4          = You’ll also need to make a balancing payment if you owe anything for Capital Gains Tax or student loans.
 
-yourSelfAssessmentChargeSummary.interestOnCharge.heading                = Interest on your balancing payment
+yourSelfAssessmentChargeSummary.interestOnCharge.heading                = Interest on your {0}
 yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = The amount of Interest you have to pay will increase every day until you pay the overdue charge.
 yourSelfAssessmentChargeSummary.table.daysOverdue                       = {0} to {1}
 yourSelfAssessmentChargeSummary.table.totalInterestToDate               = Total interest to date
@@ -2485,3 +2485,11 @@ yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Income Tax
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = Class 4 National Insurance contributions
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount.
 
+yourSelfAssessmentChargeSummary.lpi.poa.text                                = You have received this penalty because you are late paying your Income Tax.
+yourSelfAssessmentChargeSummary.lpi.poa.ViewHowYourPenaltyWasCalculated     = View how your penalty was calculated.
+
+yourSelfAssessmentChargeSummary.lpi.poa1.heading = First late payment penalty
+yourSelfAssessmentChargeSummary.lpi.poa2.heading = Second late payment penalty
+
+yourSelfAssessmentChargeSummary.lpi.chargeHistory.Poa1heading = First late payment penalty history
+yourSelfAssessmentChargeSummary.lpi.chargeHistory.Poa2heading = Second late payment penalty history

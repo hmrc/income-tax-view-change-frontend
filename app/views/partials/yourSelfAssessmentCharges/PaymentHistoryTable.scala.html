@@ -53,10 +53,12 @@
 
 @chargeHistoryHeading = @{
     viewModel.chargeItem.transactionType match {
-        case _ if viewModel.latePaymentInterestCharge => messages("chargeSummary.chargeHistory.lateInterestPayment")
-        case PoaOneDebit                              => messages("chargeSummary.chargeHistory.Poa1heading")
-        case PoaTwoDebit                              => messages("chargeSummary.chargeHistory.Poa2heading")
-        case _                                        => messages("chargeSummary.chargeHistory.heading")
+        case PoaOneDebit if viewModel.latePaymentInterestCharge     => messages("yourSelfAssessmentChargeSummary.lpi.chargeHistory.Poa1heading")
+        case PoaOneDebit                                            => messages("chargeSummary.chargeHistory.Poa1heading")
+        case PoaTwoDebit if viewModel.latePaymentInterestCharge     => messages("yourSelfAssessmentChargeSummary.lpi.chargeHistory.Poa2heading")
+        case PoaTwoDebit                                            => messages("chargeSummary.chargeHistory.Poa2heading")
+        case _           if viewModel.latePaymentInterestCharge     => messages("chargeSummary.chargeHistory.lateInterestPayment")
+        case _                                                      => messages("chargeSummary.chargeHistory.heading")
     }
 }
 
@@ -169,5 +171,5 @@
     }),
     caption = Some(chargeHistoryHeading),
     attributes = Map("id" -> "payment-history-table"),
-    captionClasses = "govuk-table__caption--l"
+    captionClasses = "govuk-table__caption--m"
 ))

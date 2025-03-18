@@ -74,6 +74,17 @@
     messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
 }
 
+@chargeName = @{
+    viewModel.chargeItem.transactionType match {
+        case PoaOneDebit if viewModel.latePaymentInterestCharge     => messages("yourSelfAssessmentChargeSummary.lpi.poa1.heading")
+        case PoaOneDebit                                            => messages("chargeSummary.chargeHistory.Poa1heading")
+        case PoaTwoDebit if viewModel.latePaymentInterestCharge     => messages("yourSelfAssessmentChargeSummary.lpi.poa2.heading")
+        case PoaTwoDebit                                            => messages("chargeSummary.chargeHistory.Poa2heading")
+        case _           if viewModel.latePaymentInterestCharge     => messages("chargeSummary.chargeHistory.lateInterestPayment")
+        case _                                                      => messages("chargeSummary.chargeHistory.heading")
+    }
+}
+
 @mainTemplate(
     pageTitle = messages(viewModel.pageTitle),
     backUrl = Some(viewModel.backUrl),
@@ -98,13 +109,24 @@
         @getMessage("chargeReference", viewModel.chargeItem.getChargeReference)
     }
 
+    @if(viewModel.chargeItem.isLatePaymentInterest && viewModel.chargeItem.isPaymentOnAccount) {
+        @p() { @getMessage("lpi.poa.text") }
+
+        @link(
+            link = "",
+            messageKey = "yourSelfAssessmentChargeSummary.lpi.poa.ViewHowYourPenaltyWasCalculated"
+        )
+        <br>
+        <br>
+    }
+
     @{viewModel.chargeItem.transactionType match {
         case BalancingCharge =>
             govukDetails(Details(
                 summary = Text(getMessage("whatIsABalancingPayment.linkText")),
                 content = HtmlContent(whatIsABalancingPayment())
             ))
-        case PoaOneDebit | PoaTwoDebit =>
+        case PoaOneDebit | PoaTwoDebit if !viewModel.chargeItem.isLatePaymentInterest =>
             govukDetails(Details(
                 summary = Text(getMessage("whatIsPaymentOnAccount.linkText")),
                 content = HtmlContent(whatIsPaymentOnAccount())
@@ -112,20 +134,14 @@
         case _ =>
     }}
 
+    @if(viewModel.chargeItem.hasAccruingInterest || viewModel.chargeItem.isLatePaymentInterest) {
 
-   @if(viewModel.chargeItem.isBalancingCharge) {
-       @govukDetails(Details(
-           summary = Text(getMessage("whatIsABalancingPayment.linkText")),
-           content = HtmlContent(whatIsABalancingPayment())
-       ))
-   }
+        @h2(getMessage("interestOnCharge.heading", chargeName), classes = "govuk-heading-l")
 
-    @if(viewModel.chargeItem.hasAccruingInterest && viewModel.chargeItem.isBalancingCharge) {
-
-        @h2(getMessage("interestOnCharge.heading"), classes = "govuk-heading-l")
-
-        @p() {
-            @getMessage("interestOnCharge.p1")
+        @if(viewModel.chargeItem.isBalancingCharge) {
+            @p() {
+                @getMessage("interestOnCharge.p1")
+            }
         }
 
         @govukDetails(Details(
