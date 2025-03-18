@@ -18,7 +18,7 @@
 
 @this(
         p: p,
-        bulletPointList: bulletPointList,
+        link: link
 )
 
 @()(
@@ -34,10 +34,15 @@
     @getMessage("whatIsPaymentOnAccount.p1")
 }
 
-@bulletPointList(
-    getMessage("whatIsPaymentOnAccount.p2"),
-    getMessage("whatIsPaymentOnAccount.p3"),
-)
+<ul class="govuk-list govuk-list--bullet">
+    <li>@getMessage("whatIsPaymentOnAccount.p2")</li>
+    <li>@link(
+            link = "https://www.gov.uk/self-employed-national-insurance-rates",
+            messageKey = getMessage("whatIsPaymentOnAccount.p3"),
+            rel = Some("noreferrer noopener"),
+            target = Some("_blank")
+    )</li>
+</ul>
 
 @p(id = Some("howIsInterestCalculated.p4")) {
     @getMessage("whatIsPaymentOnAccount.p4")
