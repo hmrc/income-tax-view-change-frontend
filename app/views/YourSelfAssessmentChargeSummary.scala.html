@@ -77,9 +77,9 @@
 @chargeName = @{
     viewModel.chargeItem.transactionType match {
         case PoaOneDebit if viewModel.latePaymentInterestCharge     => messages("yourSelfAssessmentChargeSummary.lpi.poa1.heading")
-        case PoaOneDebit                                            => messages("chargeSummary.chargeHistory.Poa1heading")
+        case PoaOneDebit                                            => messages("whatYouOwe.paymentOnAccount1.text")
         case PoaTwoDebit if viewModel.latePaymentInterestCharge     => messages("yourSelfAssessmentChargeSummary.lpi.poa2.heading")
-        case PoaTwoDebit                                            => messages("chargeSummary.chargeHistory.Poa2heading")
+        case PoaTwoDebit                                            => messages("whatYouOwe.paymentOnAccount2.text")
         case BalancingCharge                                        => messages("yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge")
         case _           if viewModel.latePaymentInterestCharge     => messages("chargeSummary.chargeHistory.lateInterestPayment")
         case _                                                      => messages("chargeSummary.chargeHistory.heading")
@@ -117,6 +117,7 @@
             link = "",
             messageKey = "yourSelfAssessmentChargeSummary.lpi.poa.ViewHowYourPenaltyWasCalculated"
         )
+        <br>
         <br>
         <br>
     }
