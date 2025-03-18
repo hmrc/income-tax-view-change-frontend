@@ -67,6 +67,8 @@ case class ChargeItem (
     }
   }
 
+  def getChargeReference: String = chargeReference.getOrElse(throw MissingFieldException("chargeReference"))
+
   def getDueDate: LocalDate = dueDate.getOrElse(throw MissingFieldException("documentDueDate"))
 
   def getInterestFromDate: LocalDate = interestFromDate.getOrElse(throw MissingFieldException("documentInterestFromDate"))
