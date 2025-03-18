@@ -29,6 +29,10 @@
 @import views.html.partials.yourSelfAssessmentCharges.WhatIsABalancingPayment
 @import views.html.partials.yourSelfAssessmentCharges.HowIsInterestCalculated
 @import exceptions.MissingFieldException
+@import views.html.partials.yourSelfAssessmentCharges.WhatIsPaymentOnAccount
+@import models.financialDetails.PoaOneDebit
+@import models.financialDetails.PoaTwoDebit
+@import models.financialDetails.BalancingCharge
 
 @import java.time.LocalDate
 
@@ -49,6 +53,7 @@
     hmrcPageHeading: HmrcPageHeading,
     whatIsABalancingPayment: WhatIsABalancingPayment,
     howIsInterestCalculated: HowIsInterestCalculated,
+    whatIsPaymentOnAccount: WhatIsPaymentOnAccount,
     interestOnYourBalancingPaymentTable: InterestOnYourBalancingPaymentTable,
     paymentHistoryTable: PaymentHistoryTable
 )
@@ -63,6 +68,7 @@
 )
 
 @import implicitDateFormatter.longDate
+
 
 @getMessage(key: String, args: String*) = @{
     messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
@@ -91,6 +97,20 @@
     @p() {
         @getMessage("chargeReference", viewModel.chargeItem.getChargeReference)
     }
+
+    @{viewModel.chargeItem.transactionType match {
+        case BalancingCharge =>
+            govukDetails(Details(
+                summary = Text(getMessage("whatIsABalancingPayment.linkText")),
+                content = HtmlContent(whatIsABalancingPayment())
+            ))
+        case PoaOneDebit | PoaTwoDebit =>
+            govukDetails(Details(
+                summary = Text(getMessage("whatIsPaymentOnAccount.linkText")),
+                content = HtmlContent(whatIsPaymentOnAccount())
+            ))
+        case _ =>
+    }}
 
 
    @if(viewModel.chargeItem.isBalancingCharge) {

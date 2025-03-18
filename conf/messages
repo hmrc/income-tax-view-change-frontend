@@ -2482,6 +2482,7 @@ yourSelfAssessmentChargeSummary.howIsInterestCalculated.p5          = 5,000 x 50
 yourSelfAssessmentChargeSummary.howIsInterestCalculated.p6          = 250,000 / 365 = 684.93
 yourSelfAssessmentChargeSummary.howIsInterestCalculated.p7          = 684.93 x 0.0725 = 49.66
 
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.linkText     = What is payment on account?
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = Payments on account are two advance payments made towards your next tax bill. They pay for:
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Income Tax
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = Class 4 National Insurance contributions
