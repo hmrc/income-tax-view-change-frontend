@@ -309,7 +309,7 @@
                     <div>
                         @if(viewModel.whatYouOweChargesList.chargesList.nonEmpty || viewModel.whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
 
-                            @if(viewModel.whatYouOweChargesList.overdueOrAccruingInterestChargeList || viewModel.whatYouOweChargesList.overdueOutstandingCharges.nonEmpty) {
+                            @if(ChargeItem.overdueOrAccruingInterestChargeList(viewModel.whatYouOweChargesList) || viewModel.whatYouOweChargesList.overdueOutstandingCharges.nonEmpty) {
                                 <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner" id="overdue-banner">
                                     <div class="govuk-notification-banner__header">
                                         <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
@@ -341,7 +341,7 @@
                                     Contents
                                 </h2>
                                 <ul class="govuk-tabs__list">
-                                    @if(viewModel.whatYouOweChargesList.overdueOrAccruingInterestChargeList.nonEmpty || viewModel.whatYouOweChargesList.overdueOutstandingCharges.nonEmpty) {
+                                    @if(ChargeItem.overdueOrAccruingInterestChargeList(viewModel.whatYouOweChargesList).nonEmpty || viewModel.whatYouOweChargesList.overdueOutstandingCharges.nonEmpty) {
                                         <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
                                             <a class="govuk-tabs__tab" href="#charges-due-now">
                                             @getMessage("charges-due-now")
@@ -354,7 +354,7 @@
                                         </a>
                                     </li>
                                 </ul>
-                                @if(viewModel.whatYouOweChargesList.overdueOrAccruingInterestChargeList.nonEmpty || viewModel.whatYouOweChargesList.overdueOutstandingCharges.nonEmpty) {
+                                @if(ChargeItem.overdueOrAccruingInterestChargeList(viewModel.whatYouOweChargesList).nonEmpty || viewModel.whatYouOweChargesList.overdueOutstandingCharges.nonEmpty) {
                                     <div class="govuk-tabs__panel" id="charges-due-now">
                                         <table class="govuk-table" id="charges-due-now-table">
                                             @tableHead("over-due-payments-table-head")
@@ -383,7 +383,7 @@
                                                         }</td>
                                                     </tr>
                                                 }
-                                                @for((charge, index) <- viewModel.whatYouOweChargesList.sortedOverdueOrAccruingInterestChargeList.zipWithIndex) {
+                                                @for((charge, index) <- ChargeItem.sortedOverdueOrAccruingInterestChargeList(viewModel.whatYouOweChargesList).zipWithIndex) {
                                                     @tableRowWithInterest(s"due-$index", charge, index, "taxYearSummary-link")
                                                 }
                                                 <tr class="govuk-table__header">

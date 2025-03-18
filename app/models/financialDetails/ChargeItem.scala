@@ -26,24 +26,24 @@ import services.DateServiceInterface
 
 import java.time.LocalDate
 
-case class ChargeItem(
-                       transactionId: String,
-                       taxYear: TaxYear,
-                       transactionType: TransactionType,
-                       subTransactionType: Option[SubTransactionType],
-                       documentDate: LocalDate,
-                       dueDate: Option[LocalDate],
-                       originalAmount: BigDecimal,
-                       outstandingAmount: BigDecimal,
-                       interestOutstandingAmount: Option[BigDecimal],
-                       latePaymentInterestAmount: Option[BigDecimal],
-                       interestFromDate: Option[LocalDate],
-                       interestEndDate: Option[LocalDate],
-                       interestRate: Option[BigDecimal],
-                       lpiWithDunningLock: Option[BigDecimal],
-                       amountCodedOut: Option[BigDecimal],
-                       dunningLock: Boolean,
-                       poaRelevantAmount: Option[BigDecimal]) extends TransactionItem {
+case class ChargeItem (
+                        transactionId: String,
+                        taxYear: TaxYear,
+                        transactionType: TransactionType,
+                        subTransactionType: Option[SubTransactionType],
+                        documentDate: LocalDate,
+                        dueDate: Option[LocalDate],
+                        originalAmount: BigDecimal,
+                        outstandingAmount: BigDecimal,
+                        interestOutstandingAmount: Option[BigDecimal],
+                        latePaymentInterestAmount: Option[BigDecimal],
+                        interestFromDate: Option[LocalDate],
+                        interestEndDate: Option[LocalDate],
+                        interestRate: Option[BigDecimal],
+                        lpiWithDunningLock: Option[BigDecimal],
+                        amountCodedOut: Option[BigDecimal],
+                        dunningLock: Boolean,
+                        poaRelevantAmount: Option[BigDecimal]) extends TransactionItem {
 
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean =
     dueDate.exists(_ isBefore dateService.getCurrentDate)
@@ -61,7 +61,7 @@ case class ChargeItem(
   }
 
   def getDueDateForNonZeroBalancingCharge: Option[LocalDate] = {
-    if (transactionType == BalancingCharge && (subTransactionType.isEmpty) && originalAmount == 0.0) {
+    if(transactionType == BalancingCharge && (subTransactionType.isEmpty) && originalAmount == 0.0) {
       None
     } else {
       dueDate
@@ -91,9 +91,7 @@ case class ChargeItem(
     case _ => false
   }
 
-  def isOnlyInterest(implicit dateService: DateServiceInterface): Boolean = {
-    (isOverdue() && isLatePaymentInterest) || (interestRemainingToPay > 0 && isPaid)
-  }
+  def isOnlyInterest(implicit dateService: DateServiceInterface): Boolean = {(isOverdue() && isLatePaymentInterest) || (interestRemainingToPay > 0 && isPaid)}
 
   def isCodingOut: Boolean = {
     val codingOutSubTypes = Seq(Nics2, Accepted, Cancelled)
@@ -143,7 +141,6 @@ case class ChargeItem(
     if (isInterestCharge) interestIsPaid
     else isPaid
   }
-
   def interestRemainingToPay: BigDecimal = {
     if (interestIsPaid) BigDecimal(0)
     else interestOutstandingAmount.getOrElse(latePaymentInterestAmount.getOrElse(0))
@@ -165,13 +162,24 @@ object ChargeItem {
 
   implicit val format: Format[ChargeItem] = Json.format[ChargeItem]
 
-  def filterAllowedCharges(isChargeTypeEnabled: Boolean, chargeType: ChargeType*)
+  def filterAllowedCharges(isChargeTypeEnabled:Boolean, chargeType: ChargeType*)
                           (chargeItem: TransactionItem): Boolean = {
     (isChargeTypeEnabled, chargeItem.transactionType) match {
       case (false, transactionType) if chargeType.toList.contains(transactionType) => false
       case _ => true
     }
   }
+
+  def overdueOrAccruingInterestChargeList(whatYouOweChargesList: WhatYouOweChargesList)(implicit dateServiceInterface: DateServiceInterface): List[ChargeItem] = whatYouOweChargesList.chargesList.filter(x => x.isOverdue() || x.hasAccruingInterest)
+
+  def chargesDueWithin30DaysList(whatYouOweChargesList: WhatYouOweChargesList)(implicit dateService: DateServiceInterface): List[ChargeItem] = whatYouOweChargesList.chargesList.filter(x => !x.isOverdue() && !x.hasAccruingInterest && dateService.isWithin30Days(x.dueDate.getOrElse(LocalDate.MAX)))
+
+  def chargesDueAfter30DaysList(whatYouOweChargesList: WhatYouOweChargesList)(implicit dateService: DateServiceInterface): List[ChargeItem] = whatYouOweChargesList.chargesList.filter(x => !x.isOverdue() && !x.hasAccruingInterest && !dateService.isWithin30Days(x.dueDate.getOrElse(LocalDate.MAX)))
+
+
+  def sortedOverdueOrAccruingInterestChargeList(whatYouOweChargesList: WhatYouOweChargesList)(implicit dateServiceInterface: DateServiceInterface): List[ChargeItem] = overdueOrAccruingInterestChargeList(whatYouOweChargesList).sortWith((charge1, charge2) =>
+    getDisplayDueDate(charge2).isAfter(getDisplayDueDate(charge1))
+  )
 
   def fromDocumentPair(documentDetail: DocumentDetail, financialDetails: List[FinancialDetail]): ChargeItem = {
 
