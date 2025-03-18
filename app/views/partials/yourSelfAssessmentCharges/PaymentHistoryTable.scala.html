@@ -26,6 +26,7 @@
 @import java.time.LocalDate
 @import models.financialDetails.PoaOneDebit
 @import models.financialDetails.PoaTwoDebit
+@import models.financialDetails.BalancingCharge
 
 @this(
         govukTable: GovukTable,
@@ -57,6 +58,7 @@
         case PoaOneDebit                                            => messages("chargeSummary.chargeHistory.Poa1heading")
         case PoaTwoDebit if viewModel.latePaymentInterestCharge     => messages("yourSelfAssessmentChargeSummary.lpi.chargeHistory.Poa2heading")
         case PoaTwoDebit                                            => messages("chargeSummary.chargeHistory.Poa2heading")
+        case BalancingCharge                                        => messages("yourSelfAssessmentChargeSummary.chargeHistory.balancingPayment.heading")
         case _           if viewModel.latePaymentInterestCharge     => messages("chargeSummary.chargeHistory.lateInterestPayment")
         case _                                                      => messages("chargeSummary.chargeHistory.heading")
     }
@@ -171,5 +173,5 @@
     }),
     caption = Some(chargeHistoryHeading),
     attributes = Map("id" -> "payment-history-table"),
-    captionClasses = "govuk-table__caption--m"
+    captionClasses = "govuk-table__caption--l"
 ))

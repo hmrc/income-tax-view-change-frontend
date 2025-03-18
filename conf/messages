@@ -2494,5 +2494,9 @@ yourSelfAssessmentChargeSummary.lpi.poa.ViewHowYourPenaltyWasCalculated     = Vi
 yourSelfAssessmentChargeSummary.lpi.poa1.heading = First late payment penalty
 yourSelfAssessmentChargeSummary.lpi.poa2.heading = Second late payment penalty
 
-yourSelfAssessmentChargeSummary.lpi.chargeHistory.Poa1heading = First late payment penalty history
-yourSelfAssessmentChargeSummary.lpi.chargeHistory.Poa2heading = Second late payment penalty history
+yourSelfAssessmentChargeSummary.lpi.chargeHistory.Poa1heading          = First late payment penalty history
+yourSelfAssessmentChargeSummary.lpi.chargeHistory.Poa2heading          = Second late payment penalty history
+yourSelfAssessmentChargeSummary.chargeHistory.balancingPayment.heading = Balancing payment history
+
+yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge = Balancing payment
+

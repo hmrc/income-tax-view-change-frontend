@@ -80,20 +80,21 @@
         case PoaOneDebit                                            => messages("chargeSummary.chargeHistory.Poa1heading")
         case PoaTwoDebit if viewModel.latePaymentInterestCharge     => messages("yourSelfAssessmentChargeSummary.lpi.poa2.heading")
         case PoaTwoDebit                                            => messages("chargeSummary.chargeHistory.Poa2heading")
+        case BalancingCharge                                        => messages("yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge")
         case _           if viewModel.latePaymentInterestCharge     => messages("chargeSummary.chargeHistory.lateInterestPayment")
         case _                                                      => messages("chargeSummary.chargeHistory.heading")
     }
 }
 
 @mainTemplate(
-    pageTitle = messages(viewModel.pageTitle),
+    pageTitle = chargeName,
     backUrl = Some(viewModel.backUrl),
     isAgent = viewModel.isAgent,
     btaNavPartial = viewModel.btaNavPartial,
     gatewayPage = viewModel.gatewayPage) {
 
     @hmrcPageHeading(PageHeading(
-        text = messages(viewModel.pageTitle),
+        text = chargeName,
         headingClasses = Some("govuk-heading-xl"),
         section = Some(getMessage("tax-year", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)),
         captionClasses = Some("govuk-caption-xl")
