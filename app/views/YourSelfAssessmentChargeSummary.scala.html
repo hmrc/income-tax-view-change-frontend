@@ -100,7 +100,9 @@
         captionClasses = Some("govuk-caption-xl")
     ))
 
-    <h1 class="govuk-heading-m"> @{ s"${getMessage("overDueCharge")}\t${viewModel.chargeItem.outstandingAmount.toCurrencyString}".toEmsp }</h1>
+    <h1 class="govuk-heading-m"> @{
+        s"${getMessage(if(viewModel.chargeItem.isOverdue()) "overDueCharge" else "charge")}\t${viewModel.chargeItem.outstandingAmount.toCurrencyString}".toEmsp
+    }</h1>
 
     @p() {
         @getMessage("due", viewModel.chargeItem.getDueDate.toLongDate)
