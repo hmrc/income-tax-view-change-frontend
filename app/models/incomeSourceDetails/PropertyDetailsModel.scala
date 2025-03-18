@@ -42,7 +42,7 @@ case class PropertyDetailsModel(incomeSourceId: String,
 
   def isOngoingForeignProperty: Boolean = isForeignProperty && !isCeased
 
-  def getTradingStartDate: LocalDate = (tradingStartDate, contextualTaxYear) match {
+  def getTradingStartDateForCessation: LocalDate = (tradingStartDate, contextualTaxYear) match {
     case (Some(startDate), _) => startDate
     case (None, Some(taxYear)) => TaxYear(taxYear - 1, taxYear).toFinancialYearStart
     case (None, None) => LocalDate.MIN

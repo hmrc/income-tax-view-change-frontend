@@ -61,17 +61,17 @@ class IncomeSourceEndDateForm @Inject()(val dateService: DateService)(implicit v
 
       val minimumDateConstraints = incomeSourceType match {
         case UkProperty =>
-          val ukStartDate = user.incomeSources.properties.filter(_.isUkProperty).filter(!_.isCeased).map(_.getTradingStartDate).headOption.getOrElse(LocalDate.MIN)
+          val ukStartDate = user.incomeSources.properties.filter(_.isUkProperty).filter(!_.isCeased).map(_.getTradingStartDateForCessation).headOption.getOrElse(LocalDate.MIN)
 
           List(minDate(ukStartDate, dateMustBeAfterBusinessStartDate(UkProperty)))
         case ForeignProperty =>
-          val foreignStartDate = user.incomeSources.properties.filter(_.isForeignProperty).filter(!_.isCeased).map(_.getTradingStartDate).headOption.getOrElse(LocalDate.MIN)
+          val foreignStartDate = user.incomeSources.properties.filter(_.isForeignProperty).filter(!_.isCeased).map(_.getTradingStartDateForCessation).headOption.getOrElse(LocalDate.MIN)
 
           List(minDate(foreignStartDate, dateMustBeAfterBusinessStartDate(ForeignProperty)))
         case SelfEmployment =>
           val errorMessage: String = "missing income source ID"
           val incomeSourceId = id.getOrElse(throw new Exception(errorMessage))
-          val businessStartDate = user.incomeSources.businesses.find(_.incomeSourceId == incomeSourceId).map(_.getTradingStartDate).getOrElse(LocalDate.MIN)
+          val businessStartDate = user.incomeSources.businesses.find(_.incomeSourceId == incomeSourceId).map(_.getTradingStartDateForCessation).getOrElse(LocalDate.MIN)
 
           List(minDate(businessStartDate, dateMustBeAfterBusinessStartDate(SelfEmployment)),
             minDate(LocalDate.of(2015, 4, 6), dateMustNotBeBefore6April2015(SelfEmployment)))

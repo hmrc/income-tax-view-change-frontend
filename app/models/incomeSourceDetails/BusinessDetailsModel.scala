@@ -38,7 +38,7 @@ case class BusinessDetailsModel(incomeSourceId: String,
 
   def isOngoingSoleTraderBusiness(id: String): Boolean = !isCeased && id == incomeSourceId
 
-  def getTradingStartDate: LocalDate = (tradingStartDate, contextualTaxYear) match {
+  def getTradingStartDateForCessation: LocalDate = (tradingStartDate, contextualTaxYear) match {
     case (Some(startDate), _) => startDate
     case (None, Some(taxYear)) => TaxYear(taxYear - 1, taxYear).toFinancialYearStart
     case (None, None) => LocalDate.MIN
