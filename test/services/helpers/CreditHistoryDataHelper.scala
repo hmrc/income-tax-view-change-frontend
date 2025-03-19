@@ -51,7 +51,8 @@ trait CreditHistoryDataHelper {
 
 
   val documentDetailsWhichIsCutOverCredit = DocumentDetail(
-    taxYear = 2022, transactionId = "testTransactionId1",
+    taxYear = 2022,
+    transactionId = "testTransactionId1",
     documentDescription = Some("ITSA Cutover Credits"),
     documentText = None, outstandingAmount = 100.00, originalAmount = -120.00,
     documentDate = LocalDate.of(taxYear, 3, 29)
@@ -60,7 +61,7 @@ trait CreditHistoryDataHelper {
     transactionId = "testTransactionId2",
     documentDescription = Some("TRM New Charge"), documentText = None,
     outstandingAmount = -150.00, originalAmount = -150.00,
-    documentDate = LocalDate.of(taxYear, 3, 29))
+    documentDate = LocalDate.of(2022, 3, 29))
 
   val documentDetailsWhichIsBCCredit = DocumentDetail(taxYear = 2022,
     transactionId = "testTransactionId3",
@@ -210,46 +211,78 @@ trait CreditHistoryDataHelper {
 
   val expectedBalancedDetails = BalanceDetails(1.0,2.0,3.0,None,None,None,None,None)
 
-  val newCharge = ChargeItem(
-    taxYear = TaxYear.forYearEnd(2021),
-    transactionId = "1040000123",
-    transactionType = BalancingCharge,
-    subTransactionType = None,
-    outstandingAmount = 2000,
-    originalAmount = 2000,
-    documentDate = LocalDate.parse("2018-03-29"),
-    interestOutstandingAmount = Some(80),
-    interestRate = None,
-    interestFromDate = Some(LocalDate.parse("2018-03-29")),
-    interestEndDate = Some(LocalDate.parse("2023-11-15")),
-    latePaymentInterestAmount = Some(100),
-    lpiWithDunningLock = None,
-    amountCodedOut = None,
-    dueDate = Some(LocalDate.parse("2022-01-01")), dunningLock = false,
-    poaRelevantAmount = None)
+  // TODO: tidy up mainType text !!!
+  val financialDetailsForCutOver = List(
+    FinancialDetail(taxYear = "2022", mainType = Some("ITSA Overpayment Relief"),
+      mainTransaction = Some("6110"), transactionId = Some(documentDetailsWhichIsCutOverCredit.transactionId),
+      transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
+      clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some( LocalDate.parse("2022-08-25") ))))
+    )
+  )
+  val financialDetailsMfa = List(
+    FinancialDetail(taxYear = "2022", mainType = Some("ITSA Overpayment Relief"),
+      mainTransaction = Some("4004"), transactionId = Some(documentDetailsWhichIsMfaCredit.transactionId),
+      transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
+      clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some( LocalDate.parse("2022-08-25") ))))
+    )
+  )
+
+  val financialDetailsBcc = List(
+    FinancialDetail(taxYear = "2022", mainType = Some("SA Balancing Charge Credit"),
+      mainTransaction = Some("4905"), transactionId = Some(documentDetailsWhichIsBCCredit.transactionId),
+      transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
+      clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some( LocalDate.parse("2022-08-25") ))))
+    )
+  )
+
+  val financialDetailsRepayment = List(
+    FinancialDetail(taxYear = "2022", mainType = Some("ITSA Overpayment Relief"),
+      mainTransaction = Some("6020"), transactionId = Some(documentDetailsWhichIsRepaymentInterestCredit.transactionId),
+      transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
+      clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some( LocalDate.parse("2022-08-25") ))))
+    )
+  )
+
+  val newCutOverCharge: ChargeItem = ChargeItem.fromDocumentPair(
+    documentDetailsWhichIsCutOverCredit,
+    financialDetailsForCutOver
+  )
+  val newMfaCharge: ChargeItem = ChargeItem.fromDocumentPair(
+    documentDetailsWhichIsMfaCredit,
+    financialDetailsMfa
+  )
+
+  val newBccCharge: ChargeItem = ChargeItem.fromDocumentPair(
+    documentDetailsWhichIsBCCredit,
+    financialDetailsBcc
+  )
+
+  val newRepaymentCharge: ChargeItem = ChargeItem.fromDocumentPair(
+    documentDetailsWhichIsRepaymentInterestCredit,
+    financialDetailsRepayment
+  )
   val creditDetailModelasCutOver = CreditDetailModel(
     date = LocalDate.parse("2022-08-25"),
-    charge = newCharge, //documentDetailsWhichIsCutOverCredit,
+    charge = newCutOverCharge, //documentDetailsWhichIsCutOverCredit,
     CutOverCreditType,
     availableCredit = expectedBalancedDetails.availableCredit
   )
   val creditDetailModelasMfa = CreditDetailModel(
     date = LocalDate.parse("2022-03-29"),
-    charge = newCharge, // documentDetailsWhichIsMfaCredit,
+    charge = newMfaCharge, // documentDetailsWhichIsMfaCredit,
     MfaCreditType,
     availableCredit = expectedBalancedDetails.availableCredit
   )
   val creditDetailModelasBCC = CreditDetailModel(
     date = LocalDate.parse("2022-03-29"),
-    charge = newCharge, // documentDetailsWhichIsBCCredit,
+    charge = newBccCharge, // documentDetailsWhichIsBCCredit,
     BalancingChargeCreditType,
     availableCredit = expectedBalancedDetails.availableCredit
   )
 
-
   val creditDetailModelasSetInterest = CreditDetailModel(
     date = LocalDate.parse("2022-03-29"),
-    charge = newCharge, //§  = documentDetailsWhichIsRepaymentInterestCredit,
+    charge = newRepaymentCharge, //§  = documentDetailsWhichIsRepaymentInterestCredit,
     RepaymentInterest,
     availableCredit = expectedBalancedDetails.availableCredit
   )
@@ -265,13 +298,13 @@ trait CreditHistoryDataHelper {
     financialDetails = List(
       FinancialDetail(taxYear = "2022", mainType = Some("ITSA Overpayment Relief"), mainTransaction = Some("4004"), transactionId = Some(documentDetailsWhichIsMfaCredit.transactionId),
         transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
-        clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some(fixedDate.plusDays(3)))))),
+        clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some( LocalDate.parse("2022-08-25") ))))),
       FinancialDetail(taxYear = "2022", mainType = None, mainTransaction = None, transactionId = Some("testTransactionId8"),
         transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
         clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some(fixedDate.plusDays(5)))))),
       FinancialDetail(taxYear = "2022", mainType = Some("SA Balancing Charge Credit"), mainTransaction = Some("4905"), transactionId = Some(documentDetailsWhichIsBCCredit.transactionId),
         transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
-        clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some(fixedDate.plusDays(5))))))
+        clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some( LocalDate.parse("2022-08-25") )))))
     )
   )
 
