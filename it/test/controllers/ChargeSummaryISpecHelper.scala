@@ -174,7 +174,6 @@ trait ChargeSummaryISpecHelper extends ControllerISpecHelper {
 
   val chargeItemUnpaid: ChargeItem = ChargeItem(
     transactionId = "1040000124",
-    chargeReference = Some("ABCD1234"),
     taxYear = TaxYear.forYearEnd(2018),
     transactionType = MfaDebitCharge,
     subTransactionType = None,

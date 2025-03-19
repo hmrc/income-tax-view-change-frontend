@@ -28,7 +28,6 @@ import java.time.LocalDate
 
 case class ChargeItem (
                         transactionId: String,
-                        chargeReference: Option[String],
                         taxYear: TaxYear,
                         transactionType: TransactionType,
                         subTransactionType: Option[SubTransactionType],
@@ -68,8 +67,6 @@ case class ChargeItem (
       dueDate
     }
   }
-
-  def getChargeReference: String = chargeReference.getOrElse(throw MissingFieldException("chargeReference"))
 
   def getDueDate: LocalDate = dueDate.getOrElse(throw MissingFieldException("documentDueDate"))
 
@@ -210,7 +207,6 @@ object ChargeItem {
 
     ChargeItem(
       transactionId = documentDetail.transactionId,
-      chargeReference = financialDetail.chargeReference,
       taxYear = TaxYear.forYearEnd(documentDetail.taxYear),
       transactionType = chargeType,
       subTransactionType = documentDetail.documentText
