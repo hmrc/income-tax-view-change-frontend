@@ -126,14 +126,14 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
   "getFinancialDetailsV2" when {
     "a successful financial details response is returned from the connector" should {
       "return a valid FinancialDetails model" in {
-        setupMockGetFinancialDetails(fixedTaxYear, fixedTaxYear, testNino)(financialDetailsModel(fixedTaxYear.endYear))
-        TestFinancialDetailsService.getFinancialDetailsV2(fixedTaxYear, fixedTaxYear, testNino).futureValue shouldBe financialDetailsModel(fixedTaxYear.endYear)
+        setupMockGetFinancialDetailsByTaxYearRange(fixedTaxYearRange, testNino)(financialDetailsModel(fixedTaxYear.endYear))
+        TestFinancialDetailsService.getFinancialDetailsV2(fixedTaxYearRange, testNino).futureValue shouldBe financialDetailsModel(fixedTaxYear.endYear)
       }
     }
     "a error model is returned from the connector" should {
       "return a FinancialDetailsError model" in {
-        setupMockGetFinancialDetails(fixedTaxYear, fixedTaxYear, testNino)(testFinancialDetailsErrorModel)
-        TestFinancialDetailsService.getFinancialDetailsV2(fixedTaxYear, fixedTaxYear, testNino).futureValue shouldBe testFinancialDetailsErrorModel
+        setupMockGetFinancialDetailsByTaxYearRange(fixedTaxYearRange, testNino)(testFinancialDetailsErrorModel)
+        TestFinancialDetailsService.getFinancialDetailsV2(fixedTaxYearRange, testNino).futureValue shouldBe testFinancialDetailsErrorModel
       }
     }
   }

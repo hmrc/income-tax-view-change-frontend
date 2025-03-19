@@ -25,7 +25,7 @@ import enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
 import implicits.ImplicitDateFormatterImpl
 import models.admin.FeatureSwitchName.allFeatureSwitches
 import models.admin.FeatureSwitchName
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, TaxYearRange}
 import org.apache.pekko.actor.ActorSystem
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -93,7 +93,8 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
   // Set fixed date for DateService
   lazy val fixedDate: LocalDate = LocalDate.of(2023, 12, 15)
   lazy val fixedTaxYear: TaxYear = TaxYear(2023, 2024)
-  
+  lazy val fixedTaxYearRange: TaxYearRange = TaxYearRange(fixedTaxYear, fixedTaxYear)
+
   implicit lazy val dateService: DateService = new DateService {
 
     override def getCurrentDate: LocalDate = fixedDate
