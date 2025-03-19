@@ -43,12 +43,11 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(GroupedObligationsModel("123", List(SingleObligationModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "EOPS", StatusFulfilled)))))
 
   val pageTitle: String = messagesAPI("htmlTitle.agent", {
-    s"${messagesAPI("business-added.uk-property.h1")} " +
-      s"${messagesAPI("business-added.uk-property.base")}".trim()
+    s"${messagesAPI("business-added.uk-property.title")}"
   })
   val confirmationPanelContent: String = {
-    s"${messagesAPI("business-added.uk-property.h1")} " +
-      s"${messagesAPI("business-added.uk-property.base")}"
+    s"${messagesAPI("business-added.uk-property.panel.title")} " +
+      s"${messagesAPI("business-added.uk-property.panel.body")}"
   }
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
@@ -69,13 +68,10 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
 
   def getExpectedPageTitle(incomeSourceType: IncomeSourceType): String = {
     incomeSourceType match {
-      case SelfEmployment if (messagesAPI("business-added.sole-trader.head").nonEmpty) =>
-        messagesAPI("business-added.sole-trader.head") + " " + business1.tradingName.getOrElse("") + " " + messagesAPI("business-added.sole-trader.base")
-      case SelfEmployment => business1.tradingName.getOrElse("") + " " + messagesAPI("business-added.sole-trader.base")
+      case SelfEmployment => messagesAPI("business-added.sole-trader.title", business1.tradingName.get)
       case UkProperty =>
-        s"${messagesAPI("business-added.uk-property.h1")} " +
-          s"${messagesAPI("business-added.uk-property.base")}".trim()
-      case _ => messagesAPI("business-added.foreign-property.h1") + " " + messagesAPI("business-added.foreign-property.base")
+        s"${messagesAPI("business-added.uk-property.title")}"
+      case _ => messagesAPI("business-added.foreign-property.title")
     }
   }
 

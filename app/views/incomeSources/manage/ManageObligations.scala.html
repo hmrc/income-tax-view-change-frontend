@@ -32,7 +32,8 @@
         p: p,
         link: link,
         hr: hr,
-        govukTable: GovukTable
+        govukTable: GovukTable,
+        govukPanel: GovukPanel
 )
 
 @(
@@ -73,8 +74,12 @@ s"${getMessage("table.heading-1")} ${quarterly.head.inboundCorrespondenceFrom.ge
 }
 
 @getPageTitle = @{
-val title = getUniqueMessage("h1") + " " + getBusinessName(businessName) + " " + getUniqueMessage("h2") + " " + getPeriodMessage(changeTo) + " " + getUniqueMessage("tax-year") + " " + taxYear.startYear + " " + getMessage("to") + " " + taxYear.endYear
-title.trim
+    val title = getUniqueMessage("title", getBusinessName(businessName), getPeriodMessage(changeTo), s"${taxYear.startYear}", s"${taxYear.endYear}")
+    title.trim
+}
+
+@getPanelTitle = @{
+    getUniqueMessage("panel.title", getBusinessName(businessName))
 }
 
 @mainTemplate(pageTitle = getPageTitle,
@@ -83,22 +88,12 @@ btaNavPartial = user.btaNavPartial) {
 
     @formWithCSRF(action = postAction) {
 
-        <div class="govuk-panel govuk-panel--confirmation" id="banner">
-            <div class="govuk-panel__body govuk-!-margin-bottom-3">
-            @getUniqueMessage("h1")
-            </div>
-            <h1 class="govuk-panel__title">
-            @getBusinessName(businessName)
-            </h1>
-            <div class="govuk-panel__body">
-                @getUniqueMessage("h2")
-                @getPeriodMessage(changeTo)
-                @getUniqueMessage("tax-year")
-                @taxYear.startYear
-                @getMessage("to")
-                @taxYear.endYear
-            </div>
-        </div>
+        @govukPanel(
+            Panel(
+                title = Text(getPanelTitle),
+                content = Text(getUniqueMessage("panel.body", getPeriodMessage(changeTo), s"${taxYear.startYear}", s"${taxYear.endYear}"))
+            )
+        )
 
         <h2 class="govuk-label-wrapper">
             <label class="govuk-label govuk-label--l govuk-!-margin-top-8">

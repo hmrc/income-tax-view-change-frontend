@@ -78,29 +78,29 @@ class ManageObligationsViewSpec extends ViewSpec {
   "Manage Obligations page" should {
     "Display the correct banner and heading" when {
       "Called on self employment with a name" in new Setup(validSECallWithName) {
-        val banner: Element = layoutContent.getElementById("banner")
-        banner.text() shouldBe "test name will report quarterly for the tax year 2023 to 2024"
+        val panel = document.getElementsByClass("govuk-panel").first()
+        panel.text() shouldBe "test name will report quarterly for the tax year 2023 to 2024"
 
         val heading: Element = layoutContent.getElementsByTag("h2").first()
         heading.text shouldBe ManageObligationsMessages.h2
       }
       "Called on self employment with no name" in new Setup(validSECallNoName) {
-        val banner: Element = layoutContent.getElementById("banner")
-        banner.text() shouldBe "Sole trader business will report annually for the tax year 2023 to 2024"
+        val panel = document.getElementsByClass("govuk-panel").first()
+        panel.text() shouldBe "Sole trader business will report annually for the tax year 2023 to 2024"
 
         val heading: Element = layoutContent.getElementsByTag("h2").first()
         heading.text shouldBe ManageObligationsMessages.h2
       }
       "Called on UK property" in new Setup(validUKCall) {
-        val banner: Element = layoutContent.getElementById("banner")
-        banner.text() shouldBe "UK property will report quarterly for the tax year 2023 to 2024"
+        val panel = document.getElementsByClass("govuk-panel").first()
+        panel.text() shouldBe "UK property will report quarterly for the tax year 2023 to 2024"
 
         val heading: Element = layoutContent.getElementsByTag("h2").first()
         heading.text shouldBe ManageObligationsMessages.h2
       }
       "Called on foreign property" in new Setup(validFPCall) {
-        val banner: Element = layoutContent.getElementById("banner")
-        banner.text() shouldBe "Foreign property will report annually for the tax year 2023 to 2024"
+        val panel = document.getElementsByClass("govuk-panel").first()
+        panel.text() shouldBe "Foreign property will report annually for the tax year 2023 to 2024"
 
         val heading: Element = layoutContent.getElementsByTag("h2").first()
         heading.text shouldBe ManageObligationsMessages.h2

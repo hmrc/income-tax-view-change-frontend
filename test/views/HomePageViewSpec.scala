@@ -159,8 +159,12 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       document.title() shouldBe "Income Tax - Manage your Income Tax updates - GOV.UK"
     }
 
+    s"have the users name as caption" in new Setup {
+      getTextOfElementById("sub-heading") shouldBe Some(testUserName)
+    }
+
     s"have the page heading '${messages("home.heading")}'" in new Setup {
-      getTextOfElementById("income-tax-heading") shouldBe Some(s"$testUserName Income Tax")
+      getTextOfElementById("income-tax-heading") shouldBe Some(s"Income Tax")
     }
 
     "have the right keep-alive url in hmrc timeout dialog" in new Setup {

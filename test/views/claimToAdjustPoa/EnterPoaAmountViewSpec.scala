@@ -79,7 +79,7 @@ class EnterPoaAmountViewSpec extends TestSupport{
 
       document.getElementById("caption").text shouldBe captionMsg
 
-      document.getElementById("h1").text shouldBe s"$captionMsg $h1Msg"
+      document.getElementById("h1").text shouldBe h1Msg
 
       document.getElementById("bulletPoints").text() shouldBe {msg("p1") + " " + msg("bullet1") + " " + msg("bullet2")}
 

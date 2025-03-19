@@ -81,7 +81,7 @@ class IncomeBreakdownViewSpec extends ViewSpec {
 
   def subHeading(taxYear: Int): String = messages("income_breakdown.dates", s"${taxYear - 1}", s"$taxYear")
 
-  def heading(taxYear: Int): String = s"${subHeading(taxYear)} ${messages("income_breakdown.heading")}"
+  def heading: String = s"${messages("income_breakdown.heading")}"
 
 
   "The income breakdown view" when {
@@ -100,8 +100,7 @@ class IncomeBreakdownViewSpec extends ViewSpec {
       }
 
       "have the correct heading" in new Setup(view) {
-        layoutContent hasPageHeading heading(taxYear)
-        layoutContent.h1.select(".govuk-caption-xl").text() shouldBe subHeading(taxYear)
+        layoutContent hasPageHeading heading
       }
 
       "have the correct caption" in new Setup(view) {
@@ -142,8 +141,7 @@ class IncomeBreakdownViewSpec extends ViewSpec {
       }
 
       "have the correct heading" in new Setup(view) {
-        layoutContent hasPageHeading heading(taxYear)
-        layoutContent.h1.select(".govuk-caption-xl").text() shouldBe subHeading(taxYear)
+        layoutContent hasPageHeading heading
       }
 
       "have the correct caption" in new Setup(view) {

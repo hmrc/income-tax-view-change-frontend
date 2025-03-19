@@ -58,7 +58,7 @@ class WhatYouNeedToKnowViewSpec extends TestSupport {
       }
 
       "render the main heading" in new Setup {
-        document.getElementById("h1").text shouldBe s"$expectedCaption $expectedH1"
+        document.getElementById("h1").text shouldBe expectedH1
       }
 
       "render the first paragraph" in new Setup {

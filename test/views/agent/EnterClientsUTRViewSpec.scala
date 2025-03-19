@@ -95,12 +95,12 @@ class EnterClientsUTRViewSpec extends ViewSpec {
             val form: Element = layoutContent.selectHead("form")
             form.selectHead("div").attr("class").contains("govuk-form-group--error") shouldBe true
 
-            val error: Element = form.selectHead("span")
+            val error: Element = form.getElementsByClass("govuk-error-message").first()
             val input: Element = form.selectHead("input")
 
             error.attr("id") shouldBe s"${ClientsUTRForm.utr}-error"
             error.text shouldBe s"${EnterClientsUTRMessages.errorPrefix} $errorMessage"
-            val errorPrefix: Element = error.selectHead("span > span")
+            val errorPrefix: Element = error.selectHead("span")
             errorPrefix.attr("class") shouldBe "govuk-visually-hidden"
             errorPrefix.text shouldBe EnterClientsUTRMessages.errorPrefix
 

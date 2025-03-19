@@ -28,7 +28,8 @@
     link: link,
     hr: hr,
     govukTable: GovukTable,
-    govukInsetText : GovukInsetText
+    govukInsetText : GovukInsetText,
+    govukPanel : GovukPanel
 )
 
 @(
@@ -39,22 +40,20 @@
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 
-@panelBody = @{
-    viewModel.state match {
-      case Some(OneYearOptOutFollowedByMandated)  => "optout.confirmedOptOut.one-year"
-      case _ => "optout.confirmedOptOut.taxYear"
-    }
+@getPanel(bodyMsgKey: String) = @{
+    govukPanel(
+        Panel(
+            title = Text(messages("optout.confirmedOptOut.heading")),
+            content = Text(messages(bodyMsgKey, viewModel.startYear, viewModel.endYear))
+        )
+    )
 }
 
-@panel = {
-    <div class="govuk-panel govuk-panel--confirmation">
-        <h1 class="govuk-panel__title">
-            @messages("optout.confirmedOptOut.heading")
-        </h1>
-        <div class="govuk-panel__body">
-            @messages(panelBody, viewModel.startYear, viewModel.endYear)
-        </div>
-    </div>
+@panel = @{
+    viewModel.state match {
+      case Some(OneYearOptOutFollowedByMandated)  => getPanel("optout.confirmedOptOut.one-year")
+      case _ => getPanel("optout.confirmedOptOut.taxYear")
+    }
 }
 
 @optOutYearFollowedByMandatedContent = {

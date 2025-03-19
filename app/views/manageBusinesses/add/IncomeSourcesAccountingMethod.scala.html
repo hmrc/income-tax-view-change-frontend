@@ -23,7 +23,7 @@
 
 @this(mainTemplate: unifiedLayout,
         implicitDateFormatter: ImplicitDateFormatterImpl,
-        h1: h1,
+        h1WithCaption: h1WithCaption,
         p: p,
         dateInput: dateInput,
         continueButton: ContinueButton,
@@ -85,7 +85,7 @@
 
         @errorSummary(form)
 
-        <h1 class="govuk-caption-xl hmrc-caption-xl" id="@captionId"><span class="govuk-visually-hidden">@messages("accessibility.this-section-is") </span>@incomeSourceTypeCaption</h1>
+        <span class="govuk-caption-xl hmrc-caption-xl" id="@captionId"><span class="govuk-visually-hidden">@messages("accessibility.this-section-is") </span>@incomeSourceTypeCaption</span>
 
         @govukRadios(Radios(
             fieldset = Some(Fieldset(

@@ -21,13 +21,15 @@
   extraClasses: String = "",
   size: String = "xl",
   headingId: Option[String] = None,
-  captionId: Option[String] = None)
+  captionId: Option[String] = None,
+  optCaptionHiddenMsg: Option[String] = None)
 
-@caption = {
-    <span class="govuk-caption-@{size} hmrc-caption-@{size}" @if(captionId.isDefined) {id="@captionId"}>@captionMsg</span>
-}
-
+<span class="govuk-caption-@{size} hmrc-caption-@{size}" @if(captionId.isDefined) {id="@captionId"}>
+    @optCaptionHiddenMsg.map{captionHiddenMsg =>
+        <span class="govuk-visually-hidden">@captionHiddenMsg</span>
+    }
+    @captionMsg
+</span>
 <h1 class="govuk-heading-@{size} @extraClasses" @if(headingId.isDefined){id = "@headingId"}>
-   @caption
    @heading
 </h1>

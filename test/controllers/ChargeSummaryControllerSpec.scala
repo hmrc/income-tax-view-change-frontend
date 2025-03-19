@@ -77,7 +77,8 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
-                document.select("h1").text() shouldBe successHeadingForRAR1(startYear.toString, endYear.toString)
+                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption(startYear.toString, endYear.toString)
+                document.select("h1").text() shouldBe successHeadingForRAR1
                 document.getElementsByClass("govuk-warning-text__text").text() shouldBe warningText
                 document.getElementById("rar-poa1-explanation").text() shouldBe explanationTextForRAR1
                 document.getElementById("charge-history-h3").text() shouldBe paymentHistoryHeadingForRARCharge
@@ -107,7 +108,8 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                   routes.ChargeSummaryController.show(testTaxYear, id1040000126).url
                 }
 
-                document.select("h1").text() shouldBe successHeadingForRAR2(startYear.toString, endYear.toString)
+                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption(startYear.toString, endYear.toString)
+                document.select("h1").text() shouldBe successHeadingForRAR2
                 document.getElementsByClass("govuk-warning-text__text").text() shouldBe warningText
                 document.getElementById("rar-poa2-explanation").text() shouldBe explanationTextForRAR2
                 document.getElementById("charge-history-h3").text() shouldBe paymentHistoryHeadingForRARCharge
@@ -135,7 +137,8 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
 
-                document.select("h1").text() shouldBe successHeadingRAR1Interest(startYear.toString, endYear.toString)
+                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption(startYear.toString, endYear.toString)
+                document.select("h1").text() shouldBe successHeadingRAR1Interest
                 document.getElementById("poa1-extra-charge-p1").text() shouldBe descriptionTextRAR1Interest
               }
 
@@ -148,6 +151,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
 
+                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption("2017", "2018")
                 document.select("h1").text() shouldBe successHeadingForPOA1
                 document.select("#dunningLocksBanner").size() shouldBe 1
                 document.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
@@ -165,6 +169,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
+                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption("2017", "2018")
                 document.select("h1").text() shouldBe lateInterestSuccessHeading
                 document.select("#dunningLocksBanner").size() shouldBe 0
                 document.select("main h2").text() shouldBe lpiHistoryHeading
@@ -210,6 +215,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 status(result) shouldBe Status.OK
                 val doc = JsoupParse(result).toHtmlDocument
+                doc.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption("2017", "2018")
                 doc.select("h1").text() shouldBe successHeadingForPOA1
                 doc.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
                 doc.select("main h3").text() shouldBe paymentHistoryHeadingForPOA1Charge
@@ -234,6 +240,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
 
+                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption(startYear.toString, endYear.toString)
                 document.select("h1").text() shouldBe successHeadingForPOA1
                 document.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
                 document.select("main h3").text() shouldBe paymentHistoryHeadingForPOA1Charge
@@ -290,7 +297,8 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
 
-                document.select("h1").text() shouldBe successHeadingForRAR1("2022", "2023")
+                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption("2022", "2023")
+                document.select("h1").text() shouldBe successHeadingForRAR1
                 document.select("#payment-processing-bullets").isEmpty shouldBe true
               }
 
@@ -342,8 +350,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val result: Future[Result] = action(id1040000123)(fakeRequest)
 
                 status(result) shouldBe Status.OK
-                JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe "2017 to 2018 tax year " +
-                  messages("chargeSummary.hmrcAdjustment.text")
+                JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe messages("chargeSummary.hmrcAdjustment.text")
               }
             }
           }

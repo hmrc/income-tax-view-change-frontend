@@ -39,6 +39,7 @@ class SelectYourReasonViewSpec extends TestSupport {
   val documentWithErrors: Document = Jsoup.parse(viewWithErrors.toString())
 
   val title = "Select Your Reason - Manage your Income Tax updates - GOV.UK"
+  val hiddenCaption = "This section is"
   val caption = "2023 to 2024 tax year"
   val heading = "Select your reason"
   val paragraph1 = "You can only reduce your payments on account for one of the reasons listed below. If none of these apply to you, " +
@@ -67,27 +68,29 @@ class SelectYourReasonViewSpec extends TestSupport {
     }
 
     "render the correct caption" in {
-      document.select("#main-content > div > div > div.govuk-\\!-margin-bottom-6 > h2").first().ownText() shouldBe caption
+      document.getElementsByClass("govuk-caption-l").first().ownText() shouldBe caption
     }
 
     "render the correct heading" in {
       document.getElementsByClass("govuk-heading-l").first().text() shouldBe heading
     }
 
+    val paragraphs = document.getElementsByClass("govuk-body-m")
+
     "render the correct first paragraph" in {
-      document.select("#value-hint > p:nth-child(1)").text() shouldBe paragraph1
+      paragraphs.first().text() shouldBe paragraph1
     }
 
     "render the correct second paragraph" in {
-      document.select("#value-hint > p:nth-child(2)").text() shouldBe paragraph2
+      paragraphs.get(1).text() shouldBe paragraph2
     }
 
     "has the correct link in the second paragraph which takes the user to the HMRC payments plan page" in {
-      document.select("#value-hint > p:nth-child(2) > a").attr("href") shouldBe paragraph2Link
+      paragraphs.get(1).getElementsByTag("a").attr("href") shouldBe paragraph2Link
     }
 
     "renders the correct subheading" in {
-      document.getElementsByClass("govuk-heading-m").first().text() shouldBe subheading
+      document.getElementsByClass("govuk-fieldset__legend--m").first().text() shouldBe subheading
     }
 
     "renders the correct first bullet point text" in {
