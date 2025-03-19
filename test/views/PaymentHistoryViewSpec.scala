@@ -67,6 +67,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
     }
 
+    override def isWithin30Days(date: LocalDate): Boolean = false
   }
 
   object PaymentHistoryMessages {

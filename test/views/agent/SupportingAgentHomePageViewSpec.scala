@@ -170,7 +170,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
         "has a link to view and manage updates - Opt Out" in new TestSetup(nextUpdatesTileViewModel = viewModelOptOut) {
           val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
           link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/next-updates")
-          link.map(_.text) shouldBe Some(messages("home.updates.view.opt-out"))
+          link.map(_.text) shouldBe Some(messages("home.updates.view.reportingFrequency"))
         }
       }
 
