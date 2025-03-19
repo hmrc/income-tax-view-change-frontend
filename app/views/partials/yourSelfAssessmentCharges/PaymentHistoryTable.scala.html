@@ -54,13 +54,10 @@
 
 @chargeHistoryHeading = @{
     viewModel.chargeItem.transactionType match {
-        case PoaOneDebit if viewModel.latePaymentInterestCharge     => messages("yourSelfAssessmentChargeSummary.lpi.chargeHistory.Poa1heading")
-        case PoaOneDebit                                            => messages("chargeSummary.chargeHistory.Poa1heading")
-        case PoaTwoDebit if viewModel.latePaymentInterestCharge     => messages("yourSelfAssessmentChargeSummary.lpi.chargeHistory.Poa2heading")
-        case PoaTwoDebit                                            => messages("chargeSummary.chargeHistory.Poa2heading")
-        case BalancingCharge                                        => messages("yourSelfAssessmentChargeSummary.chargeHistory.balancingPayment.heading")
-        case _           if viewModel.latePaymentInterestCharge     => messages("chargeSummary.chargeHistory.lateInterestPayment")
-        case _                                                      => messages("chargeSummary.chargeHistory.heading")
+        case PoaOneDebit     => messages("chargeSummary.chargeHistory.Poa1heading")
+        case PoaTwoDebit     => messages("chargeSummary.chargeHistory.Poa2heading")
+        case BalancingCharge => messages("yourSelfAssessmentChargeSummary.chargeHistory.balancingPayment.heading")
+        case _               => messages("chargeSummary.chargeHistory.heading")
     }
 }
 

@@ -2489,15 +2489,14 @@ yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Income Tax
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = Class 4 National Insurance contributions
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount.
 
-yourSelfAssessmentChargeSummary.lpi.poa.text                                = You have received this penalty because you are late paying your Income Tax.
-yourSelfAssessmentChargeSummary.lpi.poa.ViewHowYourPenaltyWasCalculated     = View how your penalty was calculated.
+yourSelfAssessmentChargeSummary.balancingPayment.heading    = Balancing payment
+yourSelfAssessmentChargeSummary.paymentOnAccount1.heading   = First payment on account
+yourSelfAssessmentChargeSummary.paymentOnAccount2.heading   = Second payment on account
+yourSelfAssessmentChargeSummary.unknown.heading             = Unknown
 
-yourSelfAssessmentChargeSummary.lpi.poa1.heading = First late payment penalty
-yourSelfAssessmentChargeSummary.lpi.poa2.heading = Second late payment penalty
+yourSelfAssessmentChargeSummary.chargeHistory.balancingPayment.heading  = Balancing payment history
+yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount1.heading = First payment on account history
+yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount2.heading = First payment on account history
+yourSelfAssessmentChargeSummary.chargeHistory.unknown.heading		    = History of this charge
 
-yourSelfAssessmentChargeSummary.lpi.chargeHistory.Poa1heading          = First late payment penalty history
-yourSelfAssessmentChargeSummary.lpi.chargeHistory.Poa2heading          = Second late payment penalty history
-yourSelfAssessmentChargeSummary.chargeHistory.balancingPayment.heading = Balancing payment history
-
-yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge = Balancing payment
 

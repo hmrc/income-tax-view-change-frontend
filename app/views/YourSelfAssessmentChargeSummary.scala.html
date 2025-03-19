@@ -76,13 +76,10 @@
 
 @chargeName = @{
     viewModel.chargeItem.transactionType match {
-        case PoaOneDebit if viewModel.latePaymentInterestCharge     => messages("yourSelfAssessmentChargeSummary.lpi.poa1.heading")
-        case PoaOneDebit                                            => messages("whatYouOwe.paymentOnAccount1.text")
-        case PoaTwoDebit if viewModel.latePaymentInterestCharge     => messages("yourSelfAssessmentChargeSummary.lpi.poa2.heading")
-        case PoaTwoDebit                                            => messages("whatYouOwe.paymentOnAccount2.text")
-        case BalancingCharge                                        => messages("yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge")
-        case _           if viewModel.latePaymentInterestCharge     => messages("chargeSummary.chargeHistory.lateInterestPayment")
-        case _                                                      => messages("chargeSummary.chargeHistory.heading")
+        case PoaOneDebit     => getMessage("paymentOnAccount1.heading")
+        case PoaTwoDebit     => getMessage("paymentOnAccount2.heading")
+        case BalancingCharge => getMessage("balancingPayment.heading")
+        case _               => messages("chargeSummary.chargeHistory.heading")
     }
 }
 
@@ -110,18 +107,6 @@
 
     @p() {
         @getMessage("chargeReference", viewModel.chargeItem.getChargeReference)
-    }
-
-    @if(viewModel.chargeItem.isLatePaymentInterest && viewModel.chargeItem.isPaymentOnAccount) {
-        @p() { @getMessage("lpi.poa.text") }
-
-        @link(
-            link = "",
-            messageKey = "yourSelfAssessmentChargeSummary.lpi.poa.ViewHowYourPenaltyWasCalculated"
-        )
-        <br>
-        <br>
-        <br>
     }
 
     @{viewModel.chargeItem.transactionType match {
