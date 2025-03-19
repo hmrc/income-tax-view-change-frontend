@@ -26,7 +26,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import views.html.partials.yourSelfAssessmentCharges.PaymentHistoryTable
 @import views.html.partials.yourSelfAssessmentCharges.InterestOnYourBalancingPaymentTable
-@import views.html.partials.yourSelfAssessmentCharges.HowIsInterestCalculated
+@import views.html.partials.yourSelfAssessmentCharges.HowIsInterestCalculatedDetails
 @import views.helpers.ChargeName
 @import views.html.partials.yourSelfAssessmentCharges.ChargeDetails
 
@@ -48,7 +48,7 @@
     govukDetails : GovukDetails,
     chargeDetails: ChargeDetails,
     hmrcPageHeading: HmrcPageHeading,
-    howIsInterestCalculated: HowIsInterestCalculated,
+    howIsInterestCalculatedDetails: HowIsInterestCalculatedDetails,
     interestOnYourBalancingPaymentTable: InterestOnYourBalancingPaymentTable,
     paymentHistoryTable: PaymentHistoryTable
 )
@@ -86,7 +86,10 @@
     ))
 
     <h1 class="govuk-heading-m"> @{
-        s"${getMessage(if(viewModel.chargeItem.isOverdue()) "overDueCharge" else "charge")}\t${viewModel.chargeItem.outstandingAmount.toCurrencyString}".toEmsp
+        s"${getMessage(
+            if(viewModel.chargeItem.isOverdue()) "overDueCharge"
+            else                                 "charge"
+        )}\t${viewModel.chargeItem.outstandingAmount.toCurrencyString}".toEmsp
     }</h1>
 
     @p() {
@@ -97,18 +100,7 @@
 
     @if(viewModel.chargeItem.hasAccruingInterest) {
 
-        @h2(getMessage("interestOnCharge.heading", chargeName), classes = "govuk-heading-l")
-
-        @if(viewModel.chargeItem.isBalancingCharge) {
-            @p() {
-                @getMessage("interestOnCharge.p1")
-            }
-        }
-
-        @govukDetails(Details(
-            summary = Text(getMessage("howIsInterestCalculated.linkText")),
-            content = HtmlContent(howIsInterestCalculated())
-        ))
+        @howIsInterestCalculatedDetails(chargeName)
 
         @interestOnYourBalancingPaymentTable(viewModel)
     }

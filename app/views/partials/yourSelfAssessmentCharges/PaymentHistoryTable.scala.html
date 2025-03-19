@@ -29,10 +29,10 @@
 @import models.financialDetails.BalancingCharge
 
 @this(
-        govukTable: GovukTable,
-        implicitDateFormatter: ImplicitDateFormatterImpl,
-        latePaymentInterestChargeMessage: LatePaymentInterestChargeMessage,
-        h2: h2
+    govukTable: GovukTable,
+    implicitDateFormatter: ImplicitDateFormatterImpl,
+    latePaymentInterestChargeMessage: LatePaymentInterestChargeMessage,
+    h2: h2
 )
 
 @(viewModel: ChargeSummaryViewModel)(implicit messages: Messages)
@@ -52,12 +52,16 @@
     }
 }
 
+@getMessage(key: String, args: String*) = @{
+    messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
+}
+
 @chargeHistoryHeading = @{
     viewModel.chargeItem.transactionType match {
-        case PoaOneDebit     => messages("chargeSummary.chargeHistory.Poa1heading")
-        case PoaTwoDebit     => messages("chargeSummary.chargeHistory.Poa2heading")
-        case BalancingCharge => messages("yourSelfAssessmentChargeSummary.chargeHistory.balancingPayment.heading")
-        case _               => messages("chargeSummary.chargeHistory.heading")
+        case PoaOneDebit     => getMessage("chargeHistory.paymentOnAccount1.heading")
+        case PoaTwoDebit     => getMessage("chargeHistory.paymentOnAccount2.heading")
+        case BalancingCharge => getMessage("chargeHistory.balancingPayment.heading")
+        case _               => getMessage("chargeHistory.unknown.heading")
     }
 }
 

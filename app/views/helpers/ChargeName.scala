@@ -28,7 +28,7 @@ object ChargeName {
       case PoaOneDebit     => messages("yourSelfAssessmentChargeSummary.paymentOnAccount1.heading")
       case PoaTwoDebit     => messages("yourSelfAssessmentChargeSummary.paymentOnAccount2.heading")
       case BalancingCharge => messages("yourSelfAssessmentChargeSummary.balancingPayment.heading")
-      case _               => messages("chargeSummary.chargeHistory.heading")
+      case _               => messages("yourSelfAssessmentChargeSummary.unknown.heading")
     }
   }
 }
