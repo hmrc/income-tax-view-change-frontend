@@ -26,13 +26,9 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import views.html.partials.yourSelfAssessmentCharges.PaymentHistoryTable
 @import views.html.partials.yourSelfAssessmentCharges.InterestOnYourBalancingPaymentTable
-@import views.html.partials.yourSelfAssessmentCharges.WhatIsABalancingPayment
 @import views.html.partials.yourSelfAssessmentCharges.HowIsInterestCalculated
-@import exceptions.MissingFieldException
-@import views.html.partials.yourSelfAssessmentCharges.WhatIsPaymentOnAccount
-@import models.financialDetails.PoaOneDebit
-@import models.financialDetails.PoaTwoDebit
-@import models.financialDetails.BalancingCharge
+@import views.helpers.ChargeName
+@import views.html.partials.yourSelfAssessmentCharges.ChargeDetails
 
 @import java.time.LocalDate
 
@@ -50,38 +46,30 @@
     govukWarningText: GovukWarningText,
     govukInsetText: GovukInsetText,
     govukDetails : GovukDetails,
+    chargeDetails: ChargeDetails,
     hmrcPageHeading: HmrcPageHeading,
-    whatIsABalancingPayment: WhatIsABalancingPayment,
     howIsInterestCalculated: HowIsInterestCalculated,
-    whatIsPaymentOnAccount: WhatIsPaymentOnAccount,
     interestOnYourBalancingPaymentTable: InterestOnYourBalancingPaymentTable,
     paymentHistoryTable: PaymentHistoryTable
 )
 
 @(
     viewModel: ChargeSummaryViewModel,
-    whatYouOweUrl: String,
+    whatYouOweUrl: String
 )(
     implicit request: Request[_],
-    messages: Messages, appConfig: config.FrontendAppConfig,
+    messages: Messages,
+    appConfig: config.FrontendAppConfig,
     dateService: DateServiceInterface
 )
 
 @import implicitDateFormatter.longDate
 
-
 @getMessage(key: String, args: String*) = @{
     messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
 }
 
-@chargeName = @{
-    viewModel.chargeItem.transactionType match {
-        case PoaOneDebit     => getMessage("paymentOnAccount1.heading")
-        case PoaTwoDebit     => getMessage("paymentOnAccount2.heading")
-        case BalancingCharge => getMessage("balancingPayment.heading")
-        case _               => messages("chargeSummary.chargeHistory.heading")
-    }
-}
+@chargeName = @{ ChargeName(viewModel.chargeItem.transactionType) }
 
 @mainTemplate(
     pageTitle = chargeName,
@@ -105,21 +93,9 @@
         @getMessage("due", viewModel.chargeItem.getDueDate.toLongDate)
     }
 
-    @{viewModel.chargeItem.transactionType match {
-        case BalancingCharge =>
-            govukDetails(Details(
-                summary = Text(getMessage("whatIsABalancingPayment.linkText")),
-                content = HtmlContent(whatIsABalancingPayment())
-            ))
-        case PoaOneDebit | PoaTwoDebit if !viewModel.chargeItem.isLatePaymentInterest =>
-            govukDetails(Details(
-                summary = Text(getMessage("whatIsPaymentOnAccount.linkText")),
-                content = HtmlContent(whatIsPaymentOnAccount())
-            ))
-        case _ =>
-    }}
+    @chargeDetails(viewModel.chargeItem.transactionType)
 
-    @if(viewModel.chargeItem.hasAccruingInterest || viewModel.chargeItem.isLatePaymentInterest) {
+    @if(viewModel.chargeItem.hasAccruingInterest) {
 
         @h2(getMessage("interestOnCharge.heading", chargeName), classes = "govuk-heading-l")
 
