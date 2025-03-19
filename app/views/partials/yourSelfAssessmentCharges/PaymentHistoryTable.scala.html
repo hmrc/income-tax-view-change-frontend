@@ -45,13 +45,6 @@
     </a>
 }
 
-@getCreationDate(date: Option[LocalDate]) = @{
-    date match {
-        case Some(value) => value.toLongDate
-        case None => messages("incomeSources.generic.unknown")
-    }
-}
-
 @getMessage(key: String, args: String*) = @{
     messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
 }
@@ -87,7 +80,9 @@
                     content = Text(messages(s"chargeSummary.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}"))
                 ),
                 TableRow(
-                    content = HtmlContent(getCreationDate(viewModel.adjustmentHistory.creationEvent.adjustmentDate).toNonBreaking)
+                    content = HtmlContent(
+                        viewModel.adjustmentHistory.creationEvent.adjustmentDate.map(_.toLongDate.toNonBreaking).getOrElse(Html(messages("incomeSources.generic.unknown")))
+                    )
                 ),
                 TableRow(
                     content = HtmlContent(viewModel.adjustmentHistory.creationEvent.amount.toCurrency), format = Some("numeric")
