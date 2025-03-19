@@ -27,7 +27,7 @@ case class BusinessDetailsModel(incomeSourceId: String,
                                 tradingName: Option[String],
                                 firstAccountingPeriodEndDate: Option[LocalDate],
                                 tradingStartDate: Option[LocalDate],
-                                contextualTaxYear: Option[Int],
+                                contextualTaxYear: Option[String],
                                 cessation: Option[CessationModel],
                                 cashOrAccruals: Boolean,
                                 address: Option[AddressModel] = None,
@@ -40,7 +40,7 @@ case class BusinessDetailsModel(incomeSourceId: String,
 
   def getTradingStartDateForCessation: LocalDate = (tradingStartDate, contextualTaxYear) match {
     case (Some(startDate), _) => startDate
-    case (None, Some(taxYear)) => TaxYear(taxYear - 1, taxYear).toFinancialYearStart
+    case (None, Some(taxYear)) => TaxYear(taxYear.toInt - 1, taxYear.toInt).toFinancialYearStart
     case (None, None) => LocalDate.MIN
   }
 }

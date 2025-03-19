@@ -70,7 +70,7 @@ object BusinessDetailsTestConstants {
   val testStartDate = LocalDate.parse("2022-01-01")
   val testStartDate2 = LocalDate.parse("2021-01-01")
   val testStartDate3 = LocalDate.parse("2013-01-01")
-  val testContextualTaxYear = 2024
+  val testContextualTaxYear = "2024"
   val testStartDateFormatted = "1 January 2022"
   val testStartDate2Formatted = "1 January 2021"
   val testStartDate3Formatted = "1 January 2013"
