@@ -19,7 +19,7 @@ package controllers.manageBusinesses.cease
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSourcesFs, NavBarFs}
+import models.admin.{DisplayBusinessStartDate, IncomeSourcesFs, NavBarFs}
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesAndUkProperty}
@@ -29,13 +29,14 @@ class CeaseIncomeSourcesControllerISpec extends ControllerISpecHelper {
   val pageTitleMsgKey = "cease-income-sources.heading"
   val soleTraderBusinessName1: String = "business"
   val soleTraderBusinessName2: String = "secondBusiness"
-  val ceaseMessage: String = messagesAPI("cease-income-sources.cease")
-  val startDateMessage: String = messagesAPI("cease-income-sources.table-head.date-started")
-  val ceasedDateMessage: String = messagesAPI("cease-income-sources.table-head.date-ended")
-  val businessNameMessage: String = messagesAPI("cease-income-sources.table-head.business-name")
+  val ceaseMessage: String = "Cease"
+  val startDateMessage: String = "Date started"
+  val ceasedDateMessage: String = "Date ended"
+  val businessNameMessage: String = "Business name"
   val startDate = "1 January 2017"
-  val ceasedBusinessMessage: String = messagesAPI("cease-income-sources.ceased-businesses.h1")
+  val ceasedBusinessMessage: String = "Businesses that have ceased"
   val ceasedBusinessName: String = "ceasedBusiness"
+  val unknownTradingStartDate: String = "Unknown"
 
   def getPath(mtdRole: MTDUserRole): String = {
     val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
@@ -53,6 +54,7 @@ class CeaseIncomeSourcesControllerISpec extends ControllerISpecHelper {
               stubAuthorised(mtdUserRole)
               disable(NavBarFs)
               enable(IncomeSourcesFs)
+              enable(DisplayBusinessStartDate)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
               val result = buildGETMTDClient(path, additionalCookies).futureValue
               IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
@@ -69,9 +71,33 @@ class CeaseIncomeSourcesControllerISpec extends ControllerISpecHelper {
                 elementTextByID("table-row-trading-start-date-uk")(startDate)
               )
             }
+
+            "DisplayBusinessStartDate FS is disabled - UK Property" in {
+              stubAuthorised(mtdUserRole)
+              disable(NavBarFs)
+              enable(IncomeSourcesFs)
+              disable(DisplayBusinessStartDate)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, pageTitleMsgKey),
+                elementTextByID("table-head-business-name")(businessNameMessage),
+                elementTextByID("table-row-trading-name-0")(soleTraderBusinessName1),
+                elementTextByID("table-row-trading-name-1")(soleTraderBusinessName2),
+                elementTextByID("cease-link-business-0")(ceaseMessage),
+                elementTextByID("cease-link-business-1")(ceaseMessage),
+                elementTextByID("table-head-date-started-uk")(startDateMessage),
+                elementTextByID("table-row-trading-start-date-uk")(unknownTradingStartDate)
+              )
+            }
+
             "Income source details are enabled for for foreign property" in {
               stubAuthorised(mtdUserRole)
               enable(IncomeSourcesFs)
+              enable(DisplayBusinessStartDate)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
               val result = buildGETMTDClient(path, additionalCookies).futureValue
               IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
@@ -85,6 +111,26 @@ class CeaseIncomeSourcesControllerISpec extends ControllerISpecHelper {
                 elementTextByID("cease-link-foreign")(ceaseMessage),
                 elementTextByID("table-head-date-started-foreign")(startDateMessage),
                 elementTextByID("table-row-trading-start-date-foreign")(startDate)
+              )
+            }
+
+            "DisplayBusinessStartDate FS is disabled - Foreign Property" in {
+              stubAuthorised(mtdUserRole)
+              enable(IncomeSourcesFs)
+              disable(DisplayBusinessStartDate)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, pageTitleMsgKey),
+                elementTextByID("ceased-businesses-heading")(ceasedBusinessMessage),
+                elementTextByID("ceased-businesses-table-head-date-ended")(ceasedDateMessage),
+                elementTextByID("ceased-business-table-row-trading-name-0")(ceasedBusinessName),
+                elementTextByID("cease-link-foreign")(ceaseMessage),
+                elementTextByID("table-head-date-started-foreign")(startDateMessage),
+                elementTextByID("table-row-trading-start-date-foreign")(unknownTradingStartDate)
               )
             }
           }

@@ -63,12 +63,13 @@ class ViewAllCeasedBusinessesControllerSpec extends MockAuthActions
           setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, SelfEmployment)))))
           setupMockDeleteSession(true)
 
-          when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
+          when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any(), any()))
             .thenReturn(Right(CeaseIncomeSourcesViewModel(
               soleTraderBusinesses = List(ceaseBusinessDetailsViewModel, ceaseBusinessDetailsViewModel2),
               ukProperty = Some(ceaseUkPropertyDetailsViewModel),
               foreignProperty = Some(ceaseForeignPropertyDetailsViewModel),
-              ceasedBusinesses = List(ceasedBusinessDetailsViewModel, ceasedForeignPropertyDetailsViewModel, ceasedUkPropertyDetailsViewModel))))
+              ceasedBusinesses = List(ceasedBusinessDetailsViewModel, ceasedForeignPropertyDetailsViewModel, ceasedUkPropertyDetailsViewModel),
+              displayStartDate = true)))
 
           val result: Future[Result] = action(fakeRequest)
           status(result) shouldBe Status.OK
@@ -80,7 +81,7 @@ class ViewAllCeasedBusinessesControllerSpec extends MockAuthActions
             enable(IncomeSourcesFs)
             mockBothIncomeSources()
 
-            when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
+            when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any(), any()))
               .thenReturn(Left(MissingFieldException("Trading Name")))
 
             val result: Future[Result] = action(fakeRequest)
