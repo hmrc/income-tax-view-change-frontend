@@ -27,6 +27,7 @@
 @import models.financialDetails.PoaOneDebit
 @import models.financialDetails.PoaTwoDebit
 @import models.financialDetails.BalancingCharge
+@import models.financialDetails.ChargeItem
 
 @this(
     govukTable: GovukTable,
@@ -39,9 +40,9 @@
 
 @import implicitDateFormatter.longDate
 
-@reviewAndReconcileCreditMessage = {
-    <a class="govuk-link" id="rar-charge-link" href="@RepaymentHistoryUtils.getPoaChargeLinkUrl(viewModel.isAgent, viewModel.chargeItem.taxYear.endYear, viewModel.chargeItem.transactionId)">
-        @messages(s"chargeSummary.chargeHistory.${viewModel.chargeItem.transactionType.key}")
+@reviewAndReconcileCreditMessage(charge: ChargeItem) = {
+    <a class="govuk-link" id="rar-charge-link" href="@RepaymentHistoryUtils.getPoaChargeLinkUrl(viewModel.isAgent, charge.taxYear.endYear, charge.transactionId)">
+        @messages(s"chargeSummary.chargeHistory.${charge.transactionType.key}")
     </a>
 }
 
@@ -120,10 +121,11 @@
         ++ viewModel.reviewAndReconcileCredit.toSeq.map { charge =>
             Seq(
                 TableRow(
-                    content = Text(messages("chargeSummary.codingOutPayHistoryAmount", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut))
+                    content = HtmlContent(reviewAndReconcileCreditMessage(charge)),
+                    attributes = Map("id" -> "rar-due-date")
                 ),
                 TableRow(
-                    content = HtmlContent(reviewAndReconcileCreditMessage),
+                    content = HtmlContent(charge.getDueDate.toLongDate.toNonBreaking),
                     attributes = Map("id" -> "rar-due-date")
                 ),
                 TableRow(
