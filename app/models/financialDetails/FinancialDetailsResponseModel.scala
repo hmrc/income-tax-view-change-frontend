@@ -35,10 +35,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
                                  private val documentDetails: List[DocumentDetail],
                                  financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
 
-  def getDueDateForFinancialDetail(financialDetail: FinancialDetail): Option[LocalDate] = {
-    financialDetail.items.flatMap(_.headOption.flatMap(_.dueDate))
-  }
-
   def getAllDueDates: List[LocalDate] = {
     documentDetails.flatMap(_.getDueDate())
   }
@@ -99,11 +95,18 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
         isReviewAndReconcilePoaTwoDebit = isReviewAndReconcilePoaTwoDebit(documentDetail.transactionId, reviewAndReconcileEnabled)))
   }
 
-  def getPairedDocumentDetails(): List[(DocumentDetail, FinancialDetail)] = {
+
+  def getPairedDocumentDetails(): List[ChargeItem] = {
     documentDetails.map(documentDetail =>
-      (documentDetail, financialDetails.find(_.transactionId.get == documentDetail.transactionId)
-        .getOrElse(throw new Exception("no financialDetail found for documentDetail" + documentDetail)))
+      Try {
+        ChargeItem.fromDocumentPair(documentDetail = documentDetail,
+          financialDetails = financialDetails
+            .filter(_.transactionId.isDefined)
+          .filter(_.transactionId.get == documentDetail.transactionId) )
+      }.toOption
+
     )
+    .flatMap(x => x.map(y => List(y)).getOrElse( List[ChargeItem]() ) )
   }
 
 
@@ -240,6 +243,10 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
 
 object FinancialDetailsModel {
   implicit val format: Format[FinancialDetailsModel] = Json.format[FinancialDetailsModel]
+
+  def getDueDateForFinancialDetail(financialDetail: FinancialDetail): Option[LocalDate] = {
+    financialDetail.items.flatMap(_.headOption.flatMap(_.dueDate))
+  }
 }
 
 case class FinancialDetailsErrorModel(code: Int, message: String) extends FinancialDetailsResponseModel
