@@ -51,6 +51,7 @@ object PropertyDetailsIntegrationTestConstants {
     propertyIncomeType,
     propertyTradingStartDate,
     None,
+    None,
     cashOrAccruals = false
   )
 
@@ -63,6 +64,7 @@ object PropertyDetailsIntegrationTestConstants {
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
     propertyIncomeType,
     propertyTradingStartDate,
+    None,
     None,
     cashOrAccruals = false
   )
@@ -77,6 +79,7 @@ object PropertyDetailsIntegrationTestConstants {
     propertyIncomeType,
     propertyTradingStartDate,
     None,
+    None,
     cashOrAccruals = false
   )
 
@@ -90,6 +93,7 @@ object PropertyDetailsIntegrationTestConstants {
     ukPropertyIncomeType,
     propertyTradingStartDate,
     None,
+    None,
     cashOrAccruals = false
   )
 
@@ -101,6 +105,7 @@ object PropertyDetailsIntegrationTestConstants {
     )),
     firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
     ukPropertyIncomeType,
+    None,
     None,
     None,
     cashOrAccruals = false
@@ -116,6 +121,7 @@ object PropertyDetailsIntegrationTestConstants {
     foreignPropertyIncomeType,
     propertyTradingStartDate,
     None,
+    None,
     cashOrAccruals = false
   )
 
@@ -127,6 +133,7 @@ object PropertyDetailsIntegrationTestConstants {
     )),
     firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
     foreignPropertyIncomeType,
+    None,
     None,
     None,
     cashOrAccruals = false
@@ -149,6 +156,7 @@ object PropertyDetailsIntegrationTestConstants {
     firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
     incomeSourceType = ukPropertyIncomeType,
     tradingStartDate = propertyTradingStartDate,
+    None,
     cessation = None,
     cashOrAccruals = false,
     latencyDetails = Some(testLatencyDetails3)
@@ -163,6 +171,7 @@ object PropertyDetailsIntegrationTestConstants {
     firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
     incomeSourceType = foreignPropertyIncomeType,
     tradingStartDate = propertyTradingStartDate,
+    None,
     cessation = None,
     cashOrAccruals = false,
     latencyDetails = Some(testLatencyDetails3)
@@ -177,6 +186,7 @@ object PropertyDetailsIntegrationTestConstants {
     firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
     incomeSourceType = foreignPropertyIncomeType,
     tradingStartDate = propertyTradingStartDate,
+    contextualTaxYear = None,
     cessation = Some(CessationModel(Some(LocalDate.of(endYear, 12, 31)), Some("Ceased Reason"))),
     cashOrAccruals = false,
     latencyDetails = Some(testLatencyDetails3)

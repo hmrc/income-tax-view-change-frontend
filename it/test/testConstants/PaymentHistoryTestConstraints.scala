@@ -62,6 +62,7 @@ object PaymentHistoryTestConstraints {
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
     None,
     None,
+    None,
     address = Some(address),
     cashOrAccruals = false
   )
@@ -75,6 +76,7 @@ object PaymentHistoryTestConstraints {
     )),
     tradingName = Some(b2TradingName),
     firstAccountingPeriodEndDate = Some(b2AccountingEnd),
+    None,
     None,
     None,
     address = Some(address),

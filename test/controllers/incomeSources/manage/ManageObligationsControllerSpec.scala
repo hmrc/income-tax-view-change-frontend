@@ -90,6 +90,7 @@ class ManageObligationsControllerSpec extends MockAuthActions
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some("uk-property"),
     tradingStartDate = None,
+    contextualTaxYear = None,
     cessation = None,
     cashOrAccruals = false,
     latencyDetails = None
@@ -110,6 +111,7 @@ class ManageObligationsControllerSpec extends MockAuthActions
           Some("Test name"),
           None,
           Some(LocalDate.of(2022, 1, 1)),
+          contextualTaxYear = None,
           None,
           cashOrAccruals = false
         )), List.empty)
@@ -176,6 +178,7 @@ class ManageObligationsControllerSpec extends MockAuthActions
                     None,
                     None,
                     Some(LocalDate.of(2022, 1, 1)),
+                    contextualTaxYear = None,
                     None,
                     cashOrAccruals = true
                   )), List.empty)
