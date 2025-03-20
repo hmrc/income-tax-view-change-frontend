@@ -193,14 +193,9 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
           poaTwoChargeUrl = poaTwoChargeUrl
         )
 
-        def isChargeAllowed(chargeItem: ChargeItem) =
-          Seq(BalancingCharge, PoaOneDebit, PoaTwoDebit).contains(chargeItem.transactionType) &&
-            !chargeItem.isLatePaymentInterest &&
-            !chargeItem.isCodingOut
-
         mandatoryViewDataPresent(isInterestCharge, documentDetailWithDueDate) match {
           case Right(_) => Ok {
-            if (isEnabled(YourSelfAssessmentCharges) && isChargeAllowed(chargeItem))
+            if (isEnabled(YourSelfAssessmentCharges) && chargeItem.isAllowed)
               yourSelfAssessmentChargeSummary(viewModel, whatYouOweUrl)
             else
               chargeSummaryView(viewModel, whatYouOweUrl)

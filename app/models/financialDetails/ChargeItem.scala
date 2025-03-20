@@ -113,6 +113,11 @@ case class ChargeItem (
     else remainingToPay
   }
 
+  def isAllowed: Boolean =
+    Seq(BalancingCharge, PoaOneDebit, PoaTwoDebit).contains(transactionType) &&
+      !isLatePaymentInterest &&
+      !isCodingOut
+
   val isPartPaid: Boolean = outstandingAmount != originalAmount
 
   val interestIsPartPaid: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != latePaymentInterestAmount.getOrElse[BigDecimal](0)
