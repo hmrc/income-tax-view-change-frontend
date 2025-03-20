@@ -2567,7 +2567,7 @@ yourSelfAssessmentChargeSummary.unknown.heading             = Unknown
 
 yourSelfAssessmentChargeSummary.chargeHistory.balancingPayment.heading  = Balancing payment history
 yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount1.heading = First payment on account history
-yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount2.heading = First payment on account history
+yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount2.heading = Second payment on account history
 yourSelfAssessmentChargeSummary.chargeHistory.unknown.heading		    = History of this charge
 
 
