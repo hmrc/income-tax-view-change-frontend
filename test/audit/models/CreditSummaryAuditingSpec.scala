@@ -17,7 +17,7 @@
 package audit.models
 
 import models.creditDetailModel.CreditDetailModel
-import models.financialDetails.{BalancingCharge, ChargeItem, CutOverCreditType, DocumentDetail, MfaCreditType}
+import models.financialDetails.{BalancingCharge, ChargeItem, CutOverCreditType, DocumentDetail, FinancialDetail, MfaCreditType, SubItem}
 import models.incomeSourceDetails.TaxYear
 import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
@@ -32,54 +32,46 @@ class CreditSummaryAuditingSpec extends TestSupport {
 
   implicit val msgApi: MessagesApi = messagesApi
 
-  val newCharge = ChargeItem(
-    taxYear = TaxYear.forYearEnd(2021),
-    transactionId = "1040000123",
-    transactionType = BalancingCharge,
-    subTransactionType = None,
-    outstandingAmount = 2000,
-    originalAmount = 2000,
-    documentDate = LocalDate.parse("2018-03-29"),
-    interestOutstandingAmount = Some(80),
-    interestRate = None,
-    interestFromDate = Some(LocalDate.parse("2018-03-29")),
-    interestEndDate = Some(LocalDate.parse("2023-11-15")),
-    latePaymentInterestAmount = Some(100),
-    lpiWithDunningLock = None,
-    amountCodedOut = None,
-    dueDate = Some(LocalDate.parse("2022-01-01")), dunningLock = false,
-    poaRelevantAmount = None)
+  val documentDetailsA =      DocumentDetail(
+    taxYear = 2018,
+    transactionId = "1001",
+    documentDescription = None,
+    documentText = None,
+    outstandingAmount = BigDecimal("0"),
+    originalAmount = 0,
+    documentDate = LocalDate.of(2018, 1, 2)
+  )
+  val financialDetailsA = List(
+    FinancialDetail(taxYear = "2023", mainType = Some("ITSA Overpayment Relief"),
+      mainTransaction = Some("4004"), transactionId = Some(documentDetailsA.transactionId),
+      transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
+      clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some( LocalDate.parse("2022-08-25") ))))
+    )
+  )
+
+  val chargeItem : ChargeItem = ChargeItem.fromDocumentPair(documentDetailsA, financialDetailsA)
   val creditDetailsModelPaid = CreditDetailModel(
     date = LocalDate.of(2018, 1, 2),
-    charge = newCharge,
-//      DocumentDetail(
-//      taxYear = 2018,
-//      transactionId = "1001",
-//      documentDescription = None,
-//      documentText = None,
-//      outstandingAmount = BigDecimal("0"),
-//      originalAmount = 0,
-//      documentDate = LocalDate.of(2018, 1, 2)
-//    ),
+    charge = chargeItem,
     creditType = MfaCreditType,
     availableCredit = None
   )
 
   val creditDetailsModelPartiallyPaid = creditDetailsModelPaid
-//    .copy(documentDetail = creditDetailsModelPaid.documentDetail
-//      .copy(outstandingAmount = BigDecimal("-150.00")),
-//      date = LocalDate.of(2019, 11, 12)
-//    )
+    .copy(charge = creditDetailsModelPaid.charge
+      .copy(outstandingAmount = BigDecimal("-150.00")),
+      date = LocalDate.of(2019, 11, 12)
+    )
 
   val creditDetailsModelUnPaid = creditDetailsModelPaid
-//    .copy(documentDetail = creditDetailsModelPaid.documentDetail
-//      .copy(
-//        originalAmount = BigDecimal("1.5"),
-//        outstandingAmount = BigDecimal("1.5")
-//      ),
-//      creditType = CutOverCreditType,
-//      date = LocalDate.of(2021, 3, 7)
-//    )
+    .copy(charge = creditDetailsModelPaid.charge
+      .copy(
+        originalAmount = BigDecimal("1.5"),
+        outstandingAmount = BigDecimal("1.5")
+      ),
+      creditType = CutOverCreditType,
+      date = LocalDate.of(2021, 3, 7)
+    )
 
 
   "CreditSummaryDetails conversion" should {
@@ -115,36 +107,29 @@ class CreditSummaryAuditingSpec extends TestSupport {
     }
 
     "- return json object" in {
-      val newCharge = ChargeItem(
-        taxYear = TaxYear.forYearEnd(2021),
-        transactionId = "1040000123",
-        transactionType = BalancingCharge,
-        subTransactionType = None,
-        outstandingAmount = 2000,
-        originalAmount = 2000,
-        documentDate = LocalDate.parse("2018-03-29"),
-        interestOutstandingAmount = Some(80),
-        interestRate = None,
-        interestFromDate = Some(LocalDate.parse("2018-03-29")),
-        interestEndDate = Some(LocalDate.parse("2023-11-15")),
-        latePaymentInterestAmount = Some(100),
-        lpiWithDunningLock = None,
-        amountCodedOut = None,
-        dueDate = Some(LocalDate.parse("2022-01-01")), dunningLock = false,
-        poaRelevantAmount = None)
+      val documentDetail = DocumentDetail(
+        taxYear = 2023,
+        transactionId = "transId",
+        documentDescription = Some("docId"),
+        documentText = Some("text"),
+        outstandingAmount = BigDecimal("1400"),
+        originalAmount = BigDecimal("1400"),
+        documentDate = LocalDate.of(2023, 12, 23)
+      )
+      val financialDetails = List(
+        FinancialDetail(taxYear = "2023", mainType = Some("ITSA Overpayment Relief"),
+          mainTransaction = Some("4004"), transactionId = Some(documentDetail.transactionId),
+          transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
+          clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some( LocalDate.parse("2022-08-25") ))))
+        )
+      )
+
+      val chargeItem : ChargeItem = ChargeItem.fromDocumentPair(documentDetail, financialDetails)
+
       val chargesList: Seq[CreditDetailModel] = Seq(
         CreditDetailModel(
           date = LocalDate.of(2018, 3, 29),
-          charge = newCharge,
-//          documentDetail = DocumentDetail(
-//            taxYear = 2023,
-//            transactionId = "transId",
-//            documentDescription = Some("docId"),
-//            documentText = Some("text"),
-//            outstandingAmount = BigDecimal("1400"),
-//            originalAmount = BigDecimal("1400"),
-//            documentDate = LocalDate.of(2023, 12, 23)
-//          ),
+          charge = chargeItem,
           creditType = MfaCreditType,
           availableCredit = None
         )

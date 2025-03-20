@@ -1,4 +1,0 @@
-Right(List(
-CreditDetailModel(2022-08-25, ChargeItem("testTransactionId1", 2021-2022, CutOverCreditType, None, 2022-03-29, None, -120.0, 100.0, None, None, None, None, None, None, None, false, None, Some(2022-08-25), None, None), CutOverCreditType, None),
-CreditDetailModel(2022-03-29, ChargeItem("testTransactionId2", 2021-2022, MfaCreditType, None, 2022-08-25, None, -150.0, -150.0, None, None, None, None, None, None, None, false, None, Some(2023-12-18), None, None), MfaCreditType, None),
-CreditDetailModel(2022-03-29, ChargeItem("testTransactionId3", 2021-2022, BalancingChargeCreditType, None, 2022-03-29, None, -150.0, 120.0, None, None, None, None, None, None, None, false, None, Some(2023-12-20), None, None), BalancingChargeCreditType, None)))
