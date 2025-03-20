@@ -41,7 +41,7 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
     financialDetailsConnector.getFinancialDetails(taxYear, nino).flatMap {
       case financialDetailsModel: FinancialDetailsModel =>
         //val chargeItems: List[ChargeItem] = financialDetailsModel.toChargeItem()
-        val fdRes = financialDetailsModel.getPairedDocumentDetailsV2.flatMap {
+        val fdRes = financialDetailsModel.getPairedDocumentDetails.flatMap {
 
           // Apply rewiring to use ChargeItem instead of DocumentDetails here
           case (chargeItem: ChargeItem) =>

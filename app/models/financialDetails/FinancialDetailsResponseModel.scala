@@ -95,16 +95,9 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
         isReviewAndReconcilePoaTwoDebit = isReviewAndReconcilePoaTwoDebit(documentDetail.transactionId, reviewAndReconcileEnabled)))
   }
 
-  def getPairedDocumentDetails(): List[(DocumentDetail, FinancialDetail)] = {
-    documentDetails.map(documentDetail =>
-      (documentDetail, financialDetails.find(_.transactionId.get == documentDetail.transactionId)
-        .getOrElse(throw new Exception("no financialDetail found for documentDetail" + documentDetail)))
-    )
-  }
 
-  // TODO: use unified conversion here
-  def getPairedDocumentDetailsV2(): List[ChargeItem] = {
-    val res = documentDetails.map(documentDetail =>
+  def getPairedDocumentDetails(): List[ChargeItem] = {
+    documentDetails.map(documentDetail =>
       Try {
         ChargeItem.fromDocumentPair(documentDetail = documentDetail,
           financialDetails = financialDetails
@@ -113,12 +106,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       }.toOption
 
     )
-      //(documentDetail, financialDetails.find(_.transactionId.get == documentDetail.transactionId)
-      //  .getOrElse(throw new Exception("no financialDetail found for documentDetail" + documentDetail)))
-      //)
-    // TODO: log conversion error
-    val y = res.flatMap(x => x.map(y => List(y)).getOrElse( List[ChargeItem]() ) )
-    y
+    .flatMap(x => x.map(y => List(y)).getOrElse( List[ChargeItem]() ) )
   }
 
 
