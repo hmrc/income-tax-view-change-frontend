@@ -360,7 +360,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         val financialDetail = getFinancialDetailSuccess()
         val expectedResult: Option[FinancialDetailsResponseModel] = Some(financialDetail)
 
-        setupMockGetFinancialDetails(fixedTaxYear, fixedTaxYear, testNino)(financialDetail)
+        setupMockGetFinancialDetailsByTaxYearRange(fixedTaxYearRange, testNino)(financialDetail)
         val result = TestFinancialDetailsService.getAllFinancialDetailsV2(mtdUser(1), headerCarrier, ec)
         result.futureValue shouldBe expectedResult
       }
@@ -369,7 +369,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         val financialDetail = getMultiYearFinancialDetailSuccess()
         val expectedResult: Option[FinancialDetailsResponseModel] = Some(financialDetail)
 
-        setupMockGetFinancialDetails(fixedTaxYear.previousYear, fixedTaxYear.nextYear,testNino)(financialDetail)
+        setupMockGetFinancialDetailsByTaxYearRange(multiYearRange, testNino)(financialDetail)
 
         val result = TestFinancialDetailsService.getAllFinancialDetailsV2(mtdUser(2), headerCarrier, ec)
 
@@ -379,7 +379,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         val financialDetailNotFound = FinancialDetailsErrorModel(Status.NOT_FOUND, "not found")
         val expectedResult: Option[FinancialDetailsResponseModel] = None
 
-        setupMockGetFinancialDetails(fixedTaxYear, fixedTaxYear, testNino)(financialDetailNotFound)
+        setupMockGetFinancialDetailsByTaxYearRange(fixedTaxYearRange, testNino)(financialDetailNotFound)
 
         val result = TestFinancialDetailsService.getAllFinancialDetailsV2(mtdUser(1), headerCarrier, ec)
 
@@ -391,7 +391,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         val financialDetailsError = FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "internal service error")
         val expectedResult: Option[FinancialDetailsResponseModel] = Some(financialDetailsError)
 
-        setupMockGetFinancialDetails(fixedTaxYear, fixedTaxYear, testNino)(financialDetailsError)
+        setupMockGetFinancialDetailsByTaxYearRange(fixedTaxYearRange, testNino)(financialDetailsError)
 
         val result = TestFinancialDetailsService.getAllFinancialDetailsV2(mtdUser(1), headerCarrier, ec)
 
