@@ -55,7 +55,7 @@
 }
 
 
-@h2(getMessage("interestOnCharge.heading", chargeName), classes = "govuk-heading-l", optId = Some("interest-on-your-charge-heading"))
+@h2(getMessage("interestOnCharge.heading", chargeName.toLowerCase), classes = "govuk-heading-l", optId = Some("interest-on-your-charge-heading"))
 
 @p(id = Some("interestOnCharge.p1")) {
     @getMessage("interestOnCharge.p1")
