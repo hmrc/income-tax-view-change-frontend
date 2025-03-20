@@ -20,7 +20,7 @@ import models.financialDetails.{ChargeItem, CreditType}
 
 import java.time.LocalDate
 
-// TODO: convert this model a sub-type of TransactionItem ?
+// Story created => https://jira.tools.tax.service.gov.uk/browse/MISUV-9399
 case class CreditDetailModel(date: LocalDate,
                              charge: ChargeItem,
                              creditType: CreditType,

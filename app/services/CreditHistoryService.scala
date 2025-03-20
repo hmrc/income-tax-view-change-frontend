@@ -40,14 +40,11 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
                                  (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
     financialDetailsConnector.getFinancialDetails(taxYear, nino).flatMap {
       case financialDetailsModel: FinancialDetailsModel =>
-        //val chargeItems: List[ChargeItem] = financialDetailsModel.toChargeItem()
         val fdRes = financialDetailsModel.getPairedDocumentDetails.flatMap {
-
           // Apply rewiring to use ChargeItem instead of DocumentDetails here
           case (chargeItem: ChargeItem) =>
             (chargeItem.transactionType, chargeItem.credit.isDefined) match {
               case (CutOverCreditType, true) =>
-                // if we didn't find CutOverCredit dueDate then we "lost" this document
                 Some(
                   CreditDetailModel(
                     date = chargeItem.dueDateForFinancialDetail.get,
