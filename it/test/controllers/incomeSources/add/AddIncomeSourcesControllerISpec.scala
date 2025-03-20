@@ -19,7 +19,7 @@ package controllers.incomeSources.add
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSourcesFs, NavBarFs}
+import models.admin.{DisplayBusinessStartDate, IncomeSourcesFs, NavBarFs}
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesResponse
@@ -29,12 +29,14 @@ class AddIncomeSourcesControllerISpec extends ControllerISpecHelper {
   val pageTitleMsgKey = "incomeSources.add.addIncomeSources.heading"
   val soleTraderBusinessName1: String = "business"
   val soleTraderBusinessName2: String = "secondBusiness"
-  val addBusinessLink: String = messagesAPI("incomeSources.add.addIncomeSources.selfEmployment.link")
-  val businessNameMessage: String = messagesAPI("incomeSources.add.addIncomeSources.selfEmployment.heading")
-  val ukPropertyHeading: String = messagesAPI("incomeSources.add.addIncomeSources.ukProperty.heading")
-  val addUKPropertyLink: String = messagesAPI("incomeSources.add.addIncomeSources.ukProperty.link")
-  val foreignPropertyHeading: String = messagesAPI("incomeSources.add.addIncomeSources.foreignProperty.heading")
-  val foreignPropertyLink: String = messagesAPI("incomeSources.add.addIncomeSources.foreignProperty.link")
+  val addBusinessLink: String = "Add a sole trader income source"
+  val businessNameMessage: String = "Sole trader businesses"
+  val ukPropertyHeading: String = "UK Property"
+  val addUKPropertyLink: String = "Add income from UK property"
+  val foreignPropertyHeading: String = "Foreign Property"
+  val foreignPropertyLink: String = "Add income from foreign property"
+  val tradingStartDate: String = "1 January 2017"
+  val tradingStartDate2: String = "1 January 2018"
 
   def getPath(mtdRole: MTDUserRole, isChange: Boolean): String = {
     val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
@@ -47,9 +49,10 @@ class AddIncomeSourcesControllerISpec extends ControllerISpecHelper {
     s"GET $path" when {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
-          "render the Add Income Source page" in {
+          "render the Add Income Source page - DisplayBusinessStartDate Enabled" in {
             enable(IncomeSourcesFs)
             disable(NavBarFs)
+            enable(DisplayBusinessStartDate)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
             val res = buildGETMTDClient(path, additionalCookies).futureValue
@@ -61,6 +64,33 @@ class AddIncomeSourcesControllerISpec extends ControllerISpecHelper {
               elementTextByID("self-employment-h2")(businessNameMessage),
               elementTextByID("table-row-trading-name-0")(soleTraderBusinessName1),
               elementTextByID("table-row-trading-name-1")(soleTraderBusinessName2),
+              elementTextByID("table-row-trading-start-date-0")(tradingStartDate),
+              elementTextByID("table-row-trading-start-date-1")(tradingStartDate2),
+              elementTextByID("self-employment-link")(addBusinessLink),
+              elementTextByID("uk-property-h2")(ukPropertyHeading),
+              elementTextByID("uk-property-link")(addUKPropertyLink),
+              elementTextByID("foreign-property-h2")(foreignPropertyHeading),
+              elementTextByID("foreign-property-link")(foreignPropertyLink),
+            )
+          }
+
+          "render the Add Income Source page - DisplayBusinessStartDate Disabled" in {
+            enable(IncomeSourcesFs)
+            disable(NavBarFs)
+            disable(DisplayBusinessStartDate)
+            stubAuthorised(mtdUserRole)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
+            val res = buildGETMTDClient(path, additionalCookies).futureValue
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+            res should have(
+              httpStatus(OK),
+              pageTitle(mtdUserRole, pageTitleMsgKey),
+              elementTextByID("self-employment-h2")(businessNameMessage),
+              elementTextByID("table-row-trading-name-0")(soleTraderBusinessName1),
+              elementTextByID("table-row-trading-name-1")(soleTraderBusinessName2),
+              elementTextByID("table-row-trading-start-date-0")(""),
+              elementTextByID("table-row-trading-start-date-2")(""),
               elementTextByID("self-employment-link")(addBusinessLink),
               elementTextByID("uk-property-h2")(ukPropertyHeading),
               elementTextByID("uk-property-link")(addUKPropertyLink),
