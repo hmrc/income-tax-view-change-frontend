@@ -939,7 +939,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       }
 
       "no due date, display as N/A" in new TestSetup(
-        chargeItem = chargeItemModel(dueDate = None, lpiWithDunningLock = None, isOverdue = false),
+        chargeItem = chargeItemModel(dueDate = None, lpiWithDunningLock = None),
         dueDate = None)
       {
         verifySummaryListRowNumeric(1, dueDate, "N/A")
