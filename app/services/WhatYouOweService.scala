@@ -44,23 +44,25 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     (chargeItem.transactionType, chargeItem.subTransactionType) match {
       case (_, Some(Nics2)) => true
       case (PoaOneDebit | PoaTwoDebit | PoaOneReconciliationDebit
-            | PoaTwoReconciliationDebit | BalancingCharge | MfaDebitCharge, _) => true
+            | PoaTwoReconciliationDebit | BalancingCharge | LateSubmissionPenalty
+            | FirstLatePaymentPenalty| SecondLatePaymentPenalty| MfaDebitCharge, _) => true
       case (_, _) => false
     }
   }
 
-  def getWhatYouOweChargesList(isReviewAndReconcile: Boolean, isFilterCodedOutPoasEnabled: Boolean)
+  def getWhatYouOweChargesList(isReviewAndReconcile: Boolean, isFilterCodedOutPoasEnabled: Boolean, isPenaltiesEnabled: Boolean)
                               (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
     {
       for {
         unpaidChanges <- financialDetailsService.getAllUnpaidFinancialDetails()
-      } yield getWhatYouOweChargesList(unpaidChanges, isReviewAndReconcile, isFilterCodedOutPoasEnabled)
+      } yield getWhatYouOweChargesList(unpaidChanges, isReviewAndReconcile, isFilterCodedOutPoasEnabled, isPenaltiesEnabled)
     }.flatten
   }
 
   def getWhatYouOweChargesList(unpaidCharges: List[FinancialDetailsResponseModel],
                                isReviewAndReconciledEnabled: Boolean,
-                               isFilterCodedOutPoasEnabled: Boolean)
+                               isFilterCodedOutPoasEnabled: Boolean,
+                               isPenaltiesEnabled: Boolean)
                               (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
 
     unpaidCharges match {
@@ -78,7 +80,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
 
         val whatYouOweChargesList = WhatYouOweChargesList(
           balanceDetails = balanceDetails,
-          chargesList = getFilteredChargesList(financialDetailsModelList, isReviewAndReconciledEnabled, isFilterCodedOutPoasEnabled),
+          chargesList = getFilteredChargesList(financialDetailsModelList, isReviewAndReconciledEnabled, isFilterCodedOutPoasEnabled, isPenaltiesEnabled),
           codedOutDocumentDetail = codedOutChargeItem)
 
         {
@@ -116,7 +118,8 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
 
   private def getFilteredChargesList(financialDetailsList: List[FinancialDetailsModel],
                                      isReviewAndReconcileEnabled: Boolean,
-                                     isFilterCodedOutPoasEnabled: Boolean)
+                                     isFilterCodedOutPoasEnabled: Boolean,
+                                     isPenaltiesEnabled: Boolean)
                                     (implicit user: MtdItUser[_]): List[ChargeItem] = {
 
     def getChargeItem(financialDetails: List[FinancialDetail]): DocumentDetail => Option[ChargeItem] =
@@ -131,6 +134,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       .filter(validChargeTypeCondition)
       .filterNot(_.subTransactionType.contains(Accepted))
       .filterNot(_.isReviewAndReconcileCharge && !isReviewAndReconcileEnabled)
+      .filterNot(_.isPenalty && !isPenaltiesEnabled)
       .filter(_.remainingToPayByChargeOrInterest > 0)
       .filter(_.notCodedOutPoa(isFilterCodedOutPoasEnabled))
       .sortBy(_.dueDate.get)

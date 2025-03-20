@@ -33,6 +33,7 @@ case class ChargeSummaryViewModel(
                                    chargeHistoryEnabled: Boolean,
                                    latePaymentInterestCharge: Boolean,
                                    reviewAndReconcileEnabled: Boolean,
+                                   penaltiesEnabled: Boolean,
                                    reviewAndReconcileCredit: Option[ChargeItem],
                                    isAgent: Boolean = false,
                                    btaNavPartial: Option[Html] = None,

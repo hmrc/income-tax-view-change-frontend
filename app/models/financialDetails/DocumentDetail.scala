@@ -147,6 +147,9 @@ case class DocumentDetail(taxYear: Int,
     case Some(Poa1ReconciliationDebit.key) => "poa1ExtraCharge.text"
     case Some(Poa2ReconciliationDebit.key) => "poa2ExtraCharge.text"
     case Some(BalancingCharge.key) => "balancingCharge.text"
+    case Some(LateSubmissionPenalty.key) => "lateSubmissionPenalty.text"
+    case Some(FirstLatePaymentPenalty.key) => "firstLatePaymentPenalty.text"
+    case Some(SecondLatePaymentPenalty.key) => "secondLatePaymentPenalty.text"
     case Some(TRMNewCharge.key) | Some(TRMAmendCharge.key) => (isClass2Nic, isPayeSelfAssessment, isCancelledPayeSelfAssessment) match {
       case (true, false, false) => "class2Nic.text"
       case (false, true, false) => "codingOut.text"

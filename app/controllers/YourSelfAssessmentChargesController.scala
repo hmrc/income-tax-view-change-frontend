@@ -58,7 +58,7 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     for {
-      whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isEnabled(ReviewAndReconcilePoa), isEnabled(FilterCodedOutPoas))
+      whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isEnabled(ReviewAndReconcilePoa), isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
       ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
     } yield {
 
@@ -72,6 +72,7 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
         backUrl = backUrl,
         dunningLock = whatYouOweChargesList.hasDunningLock,
         reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
+        penaltiesEnabled = isEnabled(PenaltiesAndAppeals),
         creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
         claimToAdjustViewModel = ctaViewModel
       )

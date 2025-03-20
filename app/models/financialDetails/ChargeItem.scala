@@ -125,6 +125,10 @@ case class ChargeItem (
 
   val isReviewAndReconcileCharge: Boolean = isPoaReconciliationCredit || isPoaReconciliationDebit
 
+  val isPenalty: Boolean = transactionType == LateSubmissionPenalty ||
+    transactionType == FirstLatePaymentPenalty ||
+    transactionType == SecondLatePaymentPenalty
+
   def getInterestPaidStatus: String = {
     if (interestIsPaid) "paid"
     else if (interestIsPartPaid) "part-paid"
