@@ -1485,8 +1485,6 @@ object FinancialDetailsTestConstants {
     val documentDetailMFA2 = documentDetailModel(documentDescription = Some("ITSA Standalone Claim"), outstandingAmount = BigDecimal(-500.00), paymentLotItem = None, paymentLot = None)
     val documentDetailCutoverCredit1 = documentDetailModel(documentDescription = Some("ITSA Cutover Credits"), outstandingAmount = BigDecimal(200.00), paymentLotItem = None, paymentLot = None, originalAmount = 200)
     val documentDetailCutoverCredit2 = documentDetailModel(documentDescription = Some("ITSA Cutover Credits"), outstandingAmount = BigDecimal(1200.00), paymentLotItem = None, paymentLot = None, originalAmount = 2000)
-//    val documentDetailBCC1 = documentDetailModel(documentDescription = Some("ITSA- Bal Charge"), outstandingAmount = BigDecimal(1200.00), paymentLotItem = None, paymentLot = None, originalAmount = 2000)
-//    val documentDetailBCC2 = documentDetailModel(documentDescription = Some("ITSA- Bal Charge"), outstandingAmount = BigDecimal(1400.00), paymentLotItem = None, paymentLot = None, originalAmount = 200)
 
     val newCharge = ChargeItem(
       taxYear = TaxYear.forYearEnd(2021),
