@@ -113,7 +113,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.select("h1").eq(1).text() shouldBe "Overdue charge: £1,400.00"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
-                document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your First payment on account"
+                document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your first payment on account"
                 document.getElementById("interestOnCharge.p1").text() shouldBe "The amount of Interest you have to pay will increase every day until you pay the overdue charge."
                 document.getElementById("howIsInterestCalculated.linkText").text().contains("How is interest calculated?")
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
@@ -135,7 +135,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.select("h1").eq(1).text() shouldBe "Overdue charge: £1,400.00"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
-                document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your Second payment on account"
+                document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your second payment on account"
                 document.getElementById("interestOnCharge.p1").text() shouldBe "The amount of Interest you have to pay will increase every day until you pay the overdue charge."
                 document.getElementById("howIsInterestCalculated.linkText").text().contains("How is interest calculated?")
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
@@ -177,7 +177,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Overdue charge: £100.00"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is a balancing payment?"
-                document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your Balancing payment"
+                document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your balancing payment"
                 document.getElementById("interestOnCharge.p1").text() shouldBe "The amount of Interest you have to pay will increase every day until you pay the overdue charge."
                 document.getElementById("howIsInterestCalculated.linkText").text().contains("How is interest calculated?")
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
