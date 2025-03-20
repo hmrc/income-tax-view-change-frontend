@@ -113,7 +113,8 @@ case class ChargeItem (
     else remainingToPay
   }
 
-  // this method is used to filter charges down to those currently allowed for the new Your Self Assessment Charge Summary feature
+  // this method is used to filter charges down to those currently allowed for the
+  // new Your Self Assessment Charge Summary feature
   def isAllowed: Boolean =
     Seq(BalancingCharge, PoaOneDebit, PoaTwoDebit).contains(transactionType) &&
       !isLatePaymentInterest &&
