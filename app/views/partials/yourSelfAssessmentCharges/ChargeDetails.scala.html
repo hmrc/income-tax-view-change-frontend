@@ -48,11 +48,13 @@
 @{transactionType match {
     case BalancingCharge =>
         govukDetails(Details(
+            id      = Some("balancing-charge-details"),
             summary = Text(getMessage("whatIsABalancingPayment.linkText")),
             content = HtmlContent(whatIsABalancingPayment())
         ))
     case PoaOneDebit | PoaTwoDebit =>
         govukDetails(Details(
+            id      = Some("payment-on-account-details"),
             summary = Text(getMessage("whatIsPaymentOnAccount.linkText")),
             content = HtmlContent(whatIsPaymentOnAccount())
         ))

@@ -17,7 +17,7 @@
 package controllers
 
 import enums.{MTDIndividual, MTDSupportingAgent}
-import models.admin.{ChargeHistory, ReviewAndReconcilePoa}
+import models.admin.{ChargeHistory, ReviewAndReconcilePoa, YourSelfAssessmentCharges}
 import models.financialDetails.PoaTwoReconciliationCredit
 import models.repaymentHistory.RepaymentHistoryUtils
 import play.api
@@ -60,6 +60,130 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
           testSupportingAgentDeniedAccess(action(id1040000123))(fakeRequest)
         } else {
           "render the charge summary page" when {
+            "charge history & your self assessment charges feature switch is enabled and there is a user" that {
+              "provided with an id associated to a POA1 Debit" in new Setup(
+                financialDetailsModelWithPoaOneAndTwo()) {
+                enable(ReviewAndReconcilePoa)
+                enable(YourSelfAssessmentCharges)
+                enable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000125)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.select("h1").first().text() shouldBe "First payment on account"
+                document.select("h1").eq(1).text() shouldBe "Overdue charge: £1,400.00"
+                document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
+                document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
+                document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "First payment on account history"
+              }
+              "provided with an id associated to a POA2 Debit" in new Setup(
+                financialDetailsModelWithPoaOneAndTwo()) {
+                enable(ReviewAndReconcilePoa)
+                enable(YourSelfAssessmentCharges)
+                enable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000126)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.select("h1").first().text() shouldBe "Second payment on account"
+                document.select("h1").eq(1).text() shouldBe "Overdue charge: £1,400.00"
+                document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
+                document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
+                document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "Second payment on account history"
+              }
+              "provided with an id associated to a POA1 Debit with accruing interest" in new Setup(
+                financialDetailsModelWithPoaOneAndTwoWithLpi()) {
+                enable(ReviewAndReconcilePoa)
+                enable(YourSelfAssessmentCharges)
+                enable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000125)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.select("h1").first().text() shouldBe "First payment on account"
+                document.select("h1").eq(1).text() shouldBe "Overdue charge: £1,400.00"
+                document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
+                document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
+                document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your First payment on account"
+                document.getElementById("interestOnCharge.p1").text() shouldBe "The amount of Interest you have to pay will increase every day until you pay the overdue charge."
+                document.getElementById("howIsInterestCalculated.linkText").text().contains("How is interest calculated?")
+                document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
+                document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "First payment on account history"
+              }
+              "provided with an id associated to a POA2 Debit with accruing interest" in new Setup(
+                financialDetailsModelWithPoaOneAndTwoWithLpi()) {
+                enable(ReviewAndReconcilePoa)
+                enable(YourSelfAssessmentCharges)
+                enable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000126)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.select("h1").first().text() shouldBe "Second payment on account"
+                document.select("h1").eq(1).text() shouldBe "Overdue charge: £1,400.00"
+                document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
+                document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
+                document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your Second payment on account"
+                document.getElementById("interestOnCharge.p1").text() shouldBe "The amount of Interest you have to pay will increase every day until you pay the overdue charge."
+                document.getElementById("howIsInterestCalculated.linkText").text().contains("How is interest calculated?")
+                document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
+                document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "Second payment on account history"
+              }
+              "provided with an id associated to a Balancing payment" in new Setup(
+                testValidFinancialDetailsModelWithBalancingCharge) {
+                enable(ReviewAndReconcilePoa)
+                enable(YourSelfAssessmentCharges)
+                enable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000123)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.select("h1").first().text() shouldBe "Balancing payment"
+                document.getElementsByClass("govuk-caption-xl").first().text() should include("2018 to 2019 tax year")
+                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Overdue charge: £10.33"
+                document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
+                document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is a balancing payment?"
+                document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "Balancing payment history"
+              }
+              "provided with an id associated to a Balancing payment with accruing interest" in new Setup(
+                testValidFinancialDetailsModelWithBalancingChargeWithAccruingInterest) {
+                enable(ReviewAndReconcilePoa)
+                enable(YourSelfAssessmentCharges)
+                enable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000123)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.getElementsByClass("govuk-heading-xl").first().text() should include("Balancing payment")
+                document.getElementsByClass("govuk-caption-xl").first().text() should include("2018 to 2019 tax year")
+                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Overdue charge: £100.00"
+                document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
+                document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is a balancing payment?"
+                document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your Balancing payment"
+                document.getElementById("interestOnCharge.p1").text() shouldBe "The amount of Interest you have to pay will increase every day until you pay the overdue charge."
+                document.getElementById("howIsInterestCalculated.linkText").text().contains("How is interest calculated?")
+                document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
+                document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "Balancing payment history"
+              }
+            }
             "charge history feature is enabled and there is a user" that {
               "provided with an id associated to a Review & Reconcile Debit Charge for POA1" in new Setup(
                 testFinancialDetailsModelWithReviewAndReconcileAndPoas) {

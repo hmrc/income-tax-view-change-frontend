@@ -25,8 +25,8 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import views.html.partials.yourSelfAssessmentCharges.PaymentHistoryTable
-@import views.html.partials.yourSelfAssessmentCharges.InterestOnYourBalancingPaymentTable
-@import views.html.partials.yourSelfAssessmentCharges.HowIsInterestCalculatedDetails
+@import views.html.partials.yourSelfAssessmentCharges.InterestOnYourChargeTable
+@import views.html.partials.yourSelfAssessmentCharges.InterestOnYourChargeSection
 @import views.helpers.ChargeName
 @import views.html.partials.yourSelfAssessmentCharges.ChargeDetails
 
@@ -48,8 +48,8 @@
     govukDetails : GovukDetails,
     chargeDetails: ChargeDetails,
     hmrcPageHeading: HmrcPageHeading,
-    howIsInterestCalculatedDetails: HowIsInterestCalculatedDetails,
-    interestOnYourBalancingPaymentTable: InterestOnYourBalancingPaymentTable,
+    interestOnYourChargeSection: InterestOnYourChargeSection,
+    interestOnYourChargeTable: InterestOnYourChargeTable,
     paymentHistoryTable: PaymentHistoryTable
 )
 
@@ -85,14 +85,14 @@
         captionClasses = Some("govuk-caption-xl")
     ))
 
-    <h1 class="govuk-heading-m"> @{
+    <h1 class="govuk-heading-m" id="charge-amount-heading"> @{
         s"${getMessage(
             if(viewModel.chargeItem.isOverdue()) "overDueCharge"
             else                                 "charge"
         )}\t${viewModel.chargeItem.outstandingAmount.toCurrencyString}".toEmsp
     }</h1>
 
-    @p() {
+    @p(id = Some("due-date-text")) {
         @getMessage("due", viewModel.chargeItem.getDueDate.toLongDate)
     }
 
@@ -100,9 +100,9 @@
 
     @if(viewModel.chargeItem.hasAccruingInterest) {
 
-        @howIsInterestCalculatedDetails(chargeName)
+        @interestOnYourChargeSection(chargeName)
 
-        @interestOnYourBalancingPaymentTable(viewModel)
+        @interestOnYourChargeTable(viewModel)
     }
 
     @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit) {

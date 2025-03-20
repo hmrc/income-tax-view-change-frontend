@@ -55,13 +55,14 @@
 }
 
 
-@h2(getMessage("interestOnCharge.heading", chargeName), classes = "govuk-heading-l")
+@h2(getMessage("interestOnCharge.heading", chargeName), classes = "govuk-heading-l", optId = Some("interest-on-your-charge-heading"))
 
-@p() {
+@p(id = Some("interestOnCharge.p1")) {
     @getMessage("interestOnCharge.p1")
 }
 
 @govukDetails(Details(
+    id      = Some("howIsInterestCalculated.linkText"),
     summary = Text(getMessage("howIsInterestCalculated.linkText")),
     content = HtmlContent(html)
 ))
