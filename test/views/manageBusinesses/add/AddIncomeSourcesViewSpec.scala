@@ -40,7 +40,8 @@ class AddIncomeSourcesViewSpec extends TestSupport {
       CeasedBusinessDetailsViewModel(Some(testTradeName), SelfEmployment, Some(testStartDate3), testCessation.date.get),
       CeasedBusinessDetailsViewModel(None, UkProperty, Some(testStartDate3), testCessation2.date.get),
       CeasedBusinessDetailsViewModel(None, ForeignProperty, Some(testStartDate3), testCessation3.date.get)
-    )
+    ),
+    displayStartDate = true
   )
 
   val viewModelMin: AddIncomeSourcesViewModel = AddIncomeSourcesViewModel(
@@ -50,7 +51,8 @@ class AddIncomeSourcesViewSpec extends TestSupport {
     ceasedBusinesses = List(
       CeasedBusinessDetailsViewModel(None, SelfEmployment, None, testCessation.date.get),
       CeasedBusinessDetailsViewModel(None, UkProperty, None, testCessation2.date.get)
-    )
+    ),
+    displayStartDate = true
   )
 
 
