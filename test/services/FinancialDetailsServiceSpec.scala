@@ -568,7 +568,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           financialDetail
         )
 
-        setupMockGetFinancialDetails(fixedTaxYear, fixedTaxYear, testNino)(financialDetail)
+        setupMockGetFinancialDetailsByTaxYearRange(fixedTaxYearRange, testNino)(financialDetail)
         val result = TestFinancialDetailsService.getAllUnpaidFinancialDetailsV2()(mtdUser(1), headerCarrier, ec)
 
         result.futureValue shouldBe expectedResult
@@ -588,7 +588,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           ))
         )
 
-        setupMockGetFinancialDetails(fixedTaxYear.previousYear, fixedTaxYear, testNino)(getFinancialDetailSuccess(documentDetails = List(
+        setupMockGetFinancialDetailsByTaxYearRange(multiYearRange, testNino)(getFinancialDetailSuccess(documentDetails = List(
           fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(50.0)),
           fullDocumentDetailModel.copy(outstandingAmount = 100.00, originalAmount = 100.00),
           fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(0.00), interestOutstandingAmount = Some(100.00)),
@@ -607,7 +607,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
       }
       "no unpaid transactions exist" in {
 
-        setupMockGetFinancialDetails(fixedTaxYear.previousYear, fixedTaxYear, testNino)(getFinancialDetailSuccess(documentDetails = List(
+        setupMockGetFinancialDetailsByTaxYearRange(multiYearRange, testNino)(getFinancialDetailSuccess(documentDetails = List(
           fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None),
           fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None),
           fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None),
@@ -642,7 +642,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           fullFinancialDetailModel
         ))
 
-        setupMockGetFinancialDetails(fixedTaxYear.previousYear, fixedTaxYear, testNino)(financialDetailCodingOut)
+        setupMockGetFinancialDetailsByTaxYearRange(multiYearRange, testNino)(financialDetailCodingOut)
 
         val result = TestFinancialDetailsService.getAllUnpaidFinancialDetailsV2()(mtdUser(2), headerCarrier, ec)
 
