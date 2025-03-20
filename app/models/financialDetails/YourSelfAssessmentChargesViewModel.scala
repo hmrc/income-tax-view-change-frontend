@@ -23,6 +23,7 @@ import services.DateServiceInterface
 import java.time.LocalDate
 
 case class YourSelfAssessmentChargesViewModel(hasOverdueOrAccruingInterestCharges: Boolean,
+                                              hasChargesDueWithin30Days: Boolean,
                                               whatYouOweChargesList: WhatYouOweChargesList,
                                               hasLpiWithDunningLock: Boolean,
                                               backUrl: String,

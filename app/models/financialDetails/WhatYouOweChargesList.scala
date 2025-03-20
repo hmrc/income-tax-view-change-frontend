@@ -28,6 +28,8 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
 
   lazy val overdueChargeList: List[ChargeItem] = chargesList.filter(x => x.isOverdue())
 
+  lazy val chargesDueWithin30DaysList: List[ChargeItem] = chargesList.filter(x => !x.isOverdue() && !x.hasAccruingInterest &&  x.dueDate.exists(dateService.isWithin30Days))
+
   def overdueOutstandingCharges: List[OutstandingChargeModel] = outstandingChargesModel.toList.flatMap(_.outstandingCharges)
     .filter(_.relevantDueDate.getOrElse(LocalDate.MAX).isBefore(dateService.getCurrentDate))
 

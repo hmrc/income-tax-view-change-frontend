@@ -139,6 +139,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
 
     val viewModel = YourSelfAssessmentChargesViewModel(
       hasOverdueOrAccruingInterestCharges = false,
+      hasChargesDueWithin30Days = charges.chargesDueWithin30DaysList.nonEmpty,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
       backUrl = "testBackURL",
@@ -185,6 +186,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
 
     val viewModel = YourSelfAssessmentChargesViewModel(
       hasOverdueOrAccruingInterestCharges = false,
+      hasChargesDueWithin30Days = charges.chargesDueWithin30DaysList.nonEmpty,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
       backUrl = "testBackURL",
