@@ -125,9 +125,20 @@ case class ChargeItem (
     else remainingToPay
   }
 
+  // this method is used to filter charges down to those currently allowed for the
+  // new Your Self Assessment Charge Summary feature
+  def isAllowed: Boolean =
+    Seq(BalancingCharge, PoaOneDebit, PoaTwoDebit).contains(transactionType) &&
+      !isLatePaymentInterest &&
+      !isCodingOut
+
   val isPartPaid: Boolean = outstandingAmount != originalAmount
 
   val interestIsPartPaid: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != latePaymentInterestAmount.getOrElse[BigDecimal](0)
+
+  val isBalancingCharge: Boolean = transactionType == BalancingCharge
+
+  val isPaymentOnAccount: Boolean = transactionType == PoaOneDebit || transactionType == PoaTwoDebit
 
   val isPoaReconciliationCredit: Boolean = transactionType == PoaOneReconciliationCredit ||
     transactionType == PoaTwoReconciliationCredit

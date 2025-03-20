@@ -603,6 +603,32 @@ object FinancialDetailsTestConstants {
       )
     )
 
+  def financialDetailsModelWithPoaOneAndTwo() =
+    FinancialDetailsModel(
+      balanceDetails = balanceDetails,
+      documentDetails = List(
+        documentDetailModel(transactionId = id1040000126, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, latePaymentInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1))),
+        documentDetailModel(transactionId = id1040000125, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, latePaymentInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1)))
+      ),
+      financialDetails = List(
+        financialDetail(transactionId = Some(id1040000125), taxYear = testTaxYear, mainTransaction = "4920"),
+        financialDetail(transactionId = Some(id1040000126), taxYear = testTaxYear, mainTransaction = "4930")
+      )
+    )
+
+  def financialDetailsModelWithPoaOneAndTwoWithLpi() =
+    FinancialDetailsModel(
+      balanceDetails = balanceDetails,
+      documentDetails = List(
+        documentDetailModel(transactionId = id1040000126, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, latePaymentInterestAmount = Some(-100), documentDueDate = Some(LocalDate.of(2020,1,1))),
+        documentDetailModel(transactionId = id1040000125, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, latePaymentInterestAmount = Some(-100), documentDueDate = Some(LocalDate.of(2020,1,1)))
+      ),
+      financialDetails = List(
+        financialDetail(transactionId = Some(id1040000125), taxYear = testTaxYear, mainTransaction = "4920"),
+        financialDetail(transactionId = Some(id1040000126), taxYear = testTaxYear, mainTransaction = "4930")
+      )
+    )
+
 
   def financialDetailsModelWithMFADebit() =
     FinancialDetailsModel(
@@ -790,6 +816,114 @@ object FinancialDetailsTestConstants {
           amount = Some(100),
           dunningLock = None,
           interestLock = None,
+          clearingDate = Some(LocalDate.parse("2020-08-16")),
+          clearingReason = Some("clearingReason"),
+          clearingSAPDocument = None,
+          outgoingPaymentMethod = Some("outgoingPaymentMethod"),
+          paymentReference = Some("paymentReference"),
+          paymentAmount = Some(100),
+          paymentMethod = Some("paymentMethod"),
+          paymentLot = Some("paymentLot"),
+          paymentLotItem = Some("paymentLotItem"),
+          paymentId = Some("paymentLot-paymentLotItem")))))
+    )
+  )
+
+  val testValidFinancialDetailsModelWithBalancingCharge: FinancialDetailsModel = FinancialDetailsModel(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    documentDetails = List(
+      DocumentDetail(taxYear = 2019,
+        transactionId = id1040000123,
+        documentDescription = None,
+        documentText = Some("documentText"),
+        documentDueDate = Some(LocalDate.of(2018, 3, 29)),
+        outstandingAmount = 10.33,
+        originalAmount = 10.33,
+        documentDate = LocalDate.of(2018, 3, 29),
+        interestOutstandingAmount = Some(100),
+        interestRate = Some(100),
+        latePaymentInterestId = Some("latePaymentInterestId1"),
+        interestFromDate = Some(LocalDate.of(2018, 3, 29)),
+        interestEndDate = Some(LocalDate.of(2018, 3, 29)),
+        latePaymentInterestAmount = None,
+        lpiWithDunningLock = None,
+        paymentLotItem = Some("paymentLotItem"),
+        paymentLot = Some("paymentLot"))
+    ),
+    financialDetails = List(
+      FinancialDetail(
+        taxYear = "2019",
+        mainType = Some("SA Balancing Charge"),
+        mainTransaction = Some("4910"),
+        transactionId = Some(id1040000123),
+        transactionDate = Some(LocalDate.parse("2020-08-16")),
+        `type` = Some("type"),
+        totalAmount = Some(100),
+        originalAmount = Some(100),
+        outstandingAmount = Some(100),
+        clearedAmount = Some(100),
+        chargeType = Some(NIC4_WALES),
+        accruedInterest = Some(100),
+        items = Some(Seq(SubItem(
+          dueDate = Some(LocalDate.parse("2019-05-15")),
+          subItemId = Some("1"),
+          amount = Some(100),
+          dunningLock = Some("Stand over order"),
+          interestLock = Some("interestLock"),
+          clearingDate = Some(LocalDate.parse("2020-08-16")),
+          clearingReason = Some("clearingReason"),
+          clearingSAPDocument = None,
+          outgoingPaymentMethod = Some("outgoingPaymentMethod"),
+          paymentReference = Some("paymentReference"),
+          paymentAmount = Some(100),
+          paymentMethod = Some("paymentMethod"),
+          paymentLot = Some("paymentLot"),
+          paymentLotItem = Some("paymentLotItem"),
+          paymentId = Some("paymentLot-paymentLotItem")))))
+    )
+  )
+
+  val testValidFinancialDetailsModelWithBalancingChargeWithAccruingInterest: FinancialDetailsModel = FinancialDetailsModel(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    documentDetails = List(
+      DocumentDetail(taxYear = 2019,
+        transactionId = id1040000123,
+        documentDescription = None,
+        documentText = Some("documentText"),
+        documentDueDate = Some(LocalDate.of(2018, 3, 29)),
+        outstandingAmount = 100,
+        originalAmount = 10.33,
+        documentDate = LocalDate.of(2018, 3, 29),
+        interestOutstandingAmount = Some(100),
+        interestRate = Some(100),
+        latePaymentInterestId = Some("latePaymentInterestId1"),
+        interestFromDate = Some(LocalDate.of(2018, 3, 29)),
+        interestEndDate = Some(LocalDate.of(2018, 3, 29)),
+        latePaymentInterestAmount = Some(-100),
+        lpiWithDunningLock = None,
+        paymentLotItem = Some("paymentLotItem"),
+        paymentLot = Some("paymentLot"))
+    ),
+    financialDetails = List(
+      FinancialDetail(
+        taxYear = "2019",
+        mainType = Some("SA Balancing Charge"),
+        mainTransaction = Some("4910"),
+        transactionId = Some(id1040000123),
+        transactionDate = Some(LocalDate.parse("2020-08-16")),
+        `type` = Some("type"),
+        totalAmount = Some(100),
+        originalAmount = Some(100),
+        outstandingAmount = Some(0),
+        clearedAmount = Some(100),
+        chargeType = Some(NIC4_WALES),
+        accruedInterest = Some(100),
+        items = Some(Seq(SubItem(
+          dueDate = Some(LocalDate.parse("2019-05-15")),
+          subItemId = Some("1"),
+          amount = Some(100),
+          dunningLock = Some("Stand over order"),
+          interestLock = Some("interestLock"),
           clearingDate = Some(LocalDate.parse("2020-08-16")),
           clearingReason = Some("clearingReason"),
           clearingSAPDocument = None,

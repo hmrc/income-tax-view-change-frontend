@@ -2524,5 +2524,50 @@ reporting.frequency.latency.details.section.text.para3.text.1       = You can do
 reporting.frequency.latency.details.section.text.para3.link.text    = all businesses
 reporting.frequency.latency.details.section.text.para3.text.2       = section
 
+yourSelfAssessmentChargeSummary.tax-year                            = {0} to {1} tax year
+yourSelfAssessmentChargeSummary.overDueCharge                       = Overdue charge:
+yourSelfAssessmentChargeSummary.charge                              = Charge:
+yourSelfAssessmentChargeSummary.due                                 = Due {0}
+yourSelfAssessmentChargeSummary.chargeReference                     = Charge Reference: {0}
+
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.linkText    = What is a balancing payment?
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p1          = A balancing payment is the tax you still need to pay for a tax year. This happens if you:
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p2          = did not have any tax to pay during the year (for example, if your last Self Assessment tax bill was under £1,000)
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p3          = owe more than what you paid during the year (for example, through payments on account or PAYE)
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p4          = You’ll also need to make a balancing payment if you owe anything for Capital Gains Tax or student loans.
+
+yourSelfAssessmentChargeSummary.interestOnCharge.heading                = Interest on your {0}
+yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = The amount of Interest you have to pay will increase every day until you pay the overdue charge.
+yourSelfAssessmentChargeSummary.table.daysOverdue                       = {0} to {1}
+yourSelfAssessmentChargeSummary.table.totalInterestToDate               = Total interest to date
+yourSelfAssessmentChargeSummary.table.head.amountInterestIsAppliedTo    = Amount interest is applied to
+yourSelfAssessmentChargeSummary.table.head.daysOverdue                  = Days overdue
+yourSelfAssessmentChargeSummary.table.head.interestRate                 = Interest rate
+yourSelfAssessmentChargeSummary.table.head.amount                       = Amount
+
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.linkText    = How is interest calculated?
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p1          = Multiply the amount the interest is applied to by the number of days overdue (period).
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p2          = Divide that answer by 365 (days).
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p3          = Multiply that answer by 0.0725 (7.25%).
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p4          = In this example, the amount the interest is applied to is £5000, and the number of days overdue is 50.
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p5          = 5,000 x 50 = 250,000
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p6          = 250,000 / 365 = 684.93
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p7          = 684.93 x 0.0725 = 49.66
+
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.linkText     = What is payment on account?
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = Payments on account are two advance payments made towards your next tax bill. They pay for:
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Income Tax
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = Class 4 National Insurance contributions
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount.
+
+yourSelfAssessmentChargeSummary.balancingPayment.heading    = Balancing payment
+yourSelfAssessmentChargeSummary.paymentOnAccount1.heading   = First payment on account
+yourSelfAssessmentChargeSummary.paymentOnAccount2.heading   = Second payment on account
+yourSelfAssessmentChargeSummary.unknown.heading             = Unknown
+
+yourSelfAssessmentChargeSummary.chargeHistory.balancingPayment.heading  = Balancing payment history
+yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount1.heading = First payment on account history
+yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount2.heading = Second payment on account history
+yourSelfAssessmentChargeSummary.chargeHistory.unknown.heading		    = History of this charge
 
 
