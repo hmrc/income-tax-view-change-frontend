@@ -52,6 +52,7 @@ case class ChargeItem (
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean =
     dueDate.exists(_ isBefore dateService.getCurrentDate)
 
+  // => TODO: to clarify / raise with the BA / why we have two way of identifying credits charge?
   val isCredit = originalAmount < 0
 
   def credit: Option[BigDecimal] = originalAmount match {
@@ -59,6 +60,7 @@ case class ChargeItem (
     case _ if (originalAmount >= 0) => None
     case credit => Some(credit * -1)
   }
+  // <=
 
   val hasLpiWithDunningLock: Boolean =
     lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
