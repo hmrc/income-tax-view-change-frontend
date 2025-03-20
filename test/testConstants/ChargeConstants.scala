@@ -356,7 +356,6 @@ trait ChargeConstants {
     paymentLot = Some("paymentLot")
   )
 
-  //Some(2023-12-14), Some("paymentLotItem"), Some("paymentLot")
   val poa2 = ChargeItem(
       transactionId = id1040000124,
       taxYear = TaxYear.forYearEnd(currentYear.toInt),
