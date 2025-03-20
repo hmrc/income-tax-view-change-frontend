@@ -25,7 +25,7 @@ import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
 import services.DateService
-import testConstants.BaseTestConstants.{app, chargeReference, testErrorMessage, testErrorNotFoundStatus, testErrorStatus, testTaxYear}
+import testConstants.BaseTestConstants.{app, chargeReference, taxYear, testErrorMessage, testErrorNotFoundStatus, testErrorStatus, testTaxYear}
 import testConstants.FinancialDetailsTestConstants.{documentDetailWithDueDateModel, financialDetail}
 
 import java.time.LocalDate
@@ -1591,9 +1591,26 @@ object FinancialDetailsTestConstants {
     val documentDetail1 = documentDetailModel(documentDescription = Some("ITSA Overpayment Relief"), outstandingAmount = BigDecimal(-1400.00), paymentLotItem = None, paymentLot = None)
     val documentDetail2 = documentDetailModel(documentDescription = Some("ITSA Standalone Claim"), outstandingAmount = BigDecimal(-500.00), paymentLotItem = None, paymentLot = None)
 
+    val newCharge = ChargeItem(
+      taxYear = TaxYear.forYearEnd(2021),
+      transactionId = "1040000123",
+      transactionType = BalancingCharge,
+      subTransactionType = None,
+      outstandingAmount = 2000,
+      originalAmount = 2000,
+      documentDate = LocalDate.parse("2018-03-29"),
+      interestOutstandingAmount = Some(80),
+      interestRate = None,
+      interestFromDate = Some(LocalDate.parse("2018-03-29")),
+      interestEndDate = Some(LocalDate.parse("2023-11-15")),
+      latePaymentInterestAmount = Some(100),
+      lpiWithDunningLock = None,
+      amountCodedOut = None,
+      dueDate = Some(LocalDate.parse("2022-01-01")), dunningLock = false,
+      poaRelevantAmount = None)
     List(
-      CreditDetailModel(documentDetail1.documentDate, documentDetail1, MfaCreditType, Some(financialDetailCreditCharge.balanceDetails)),
-      CreditDetailModel(documentDetail2.documentDate, documentDetail2, MfaCreditType, Some(financialDetailCreditCharge.balanceDetails))
+      CreditDetailModel(documentDetail1.documentDate, charge = newCharge, MfaCreditType, financialDetailCreditCharge.balanceDetails.availableCredit),
+      CreditDetailModel(documentDetail2.documentDate, charge = newCharge, MfaCreditType, financialDetailCreditCharge.balanceDetails.availableCredit)
     )
   }
 
@@ -1602,16 +1619,31 @@ object FinancialDetailsTestConstants {
     val documentDetailMFA2 = documentDetailModel(documentDescription = Some("ITSA Standalone Claim"), outstandingAmount = BigDecimal(-500.00), paymentLotItem = None, paymentLot = None)
     val documentDetailCutoverCredit1 = documentDetailModel(documentDescription = Some("ITSA Cutover Credits"), outstandingAmount = BigDecimal(200.00), paymentLotItem = None, paymentLot = None, originalAmount = 200)
     val documentDetailCutoverCredit2 = documentDetailModel(documentDescription = Some("ITSA Cutover Credits"), outstandingAmount = BigDecimal(1200.00), paymentLotItem = None, paymentLot = None, originalAmount = 2000)
-    val documentDetailBCC1 = documentDetailModel(documentDescription = Some("ITSA- Bal Charge"), outstandingAmount = BigDecimal(1200.00), paymentLotItem = None, paymentLot = None, originalAmount = 2000)
-    val documentDetailBCC2 = documentDetailModel(documentDescription = Some("ITSA- Bal Charge"), outstandingAmount = BigDecimal(1400.00), paymentLotItem = None, paymentLot = None, originalAmount = 200)
 
+    val newCharge = ChargeItem(
+      taxYear = TaxYear.forYearEnd(2021),
+      transactionId = "1040000123",
+      transactionType = BalancingCharge,
+      subTransactionType = None,
+      outstandingAmount = 2000,
+      originalAmount = 2000,
+      documentDate = LocalDate.parse("2018-03-29"),
+      interestOutstandingAmount = Some(80),
+      interestRate = None,
+      interestFromDate = Some(LocalDate.parse("2018-03-29")),
+      interestEndDate = Some(LocalDate.parse("2023-11-15")),
+      latePaymentInterestAmount = Some(100),
+      lpiWithDunningLock = None,
+      amountCodedOut = None,
+      dueDate = Some(LocalDate.parse("2022-01-01")), dunningLock = false,
+      poaRelevantAmount = None)
     List(
-      CreditDetailModel(documentDetailMFA1.documentDate, documentDetailMFA1, MfaCreditType, Some(financialDetailCreditCharge.balanceDetails)),
-      CreditDetailModel(documentDetailMFA2.documentDate, documentDetailMFA2, MfaCreditType, Some(financialDetailCreditCharge.balanceDetails)),
-      CreditDetailModel(documentDetailCutoverCredit1.documentDate, documentDetailCutoverCredit1, CutOverCreditType, Some(financialDetailCreditCharge.balanceDetails)),
-      CreditDetailModel(documentDetailCutoverCredit2.documentDate, documentDetailCutoverCredit2, CutOverCreditType, Some(financialDetailCreditCharge.balanceDetails)),
-      CreditDetailModel(documentDetailCutoverCredit2.documentDate, documentDetailBCC1, BalancingChargeCreditType, Some(financialDetailCreditCharge.balanceDetails)),
-      CreditDetailModel(documentDetailCutoverCredit2.documentDate, documentDetailBCC2, BalancingChargeCreditType, Some(financialDetailCreditCharge.balanceDetails))
+      CreditDetailModel(documentDetailMFA1.documentDate, charge = newCharge, MfaCreditType, financialDetailCreditCharge.balanceDetails.availableCredit),
+      CreditDetailModel(documentDetailMFA2.documentDate, charge = newCharge, MfaCreditType, financialDetailCreditCharge.balanceDetails.availableCredit),
+      CreditDetailModel(documentDetailCutoverCredit1.documentDate, charge = newCharge, CutOverCreditType, financialDetailCreditCharge.balanceDetails.availableCredit),
+      CreditDetailModel(documentDetailCutoverCredit2.documentDate, charge = newCharge, CutOverCreditType, financialDetailCreditCharge.balanceDetails.availableCredit),
+      CreditDetailModel(documentDetailCutoverCredit2.documentDate, charge = newCharge, BalancingChargeCreditType, financialDetailCreditCharge.balanceDetails.availableCredit),
+      CreditDetailModel(documentDetailCutoverCredit2.documentDate, charge = newCharge, BalancingChargeCreditType, financialDetailCreditCharge.balanceDetails.availableCredit)
     )
   }
 
@@ -1645,6 +1677,13 @@ object FinancialDetailsTestConstants {
       paymentLot = None,
       originalAmount = BigDecimal(-800.00),
       documentDate = LocalDate.of(2018, 4, 16))
+    val financialDetailsMfa1 = List(
+      FinancialDetail(taxYear = "2022", mainType = Some("ITSA Overpayment Relief"),
+        mainTransaction = Some("4004"), transactionId = Some(documentDetail1.transactionId),
+        transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
+        clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some( LocalDate.parse("2022-08-25") ))))
+      )
+    )
     val documentDetail2 = documentDetailModel(
       documentDescription = Some("ITSA Overpayment Relief"),
       outstandingAmount = BigDecimal(-1400.00),
@@ -1652,10 +1691,18 @@ object FinancialDetailsTestConstants {
       paymentLot = None,
       originalAmount = BigDecimal(-1400.00),
       documentDate = LocalDate.of(2018, 7, 30))
-
+    val financialDetailsMfa2 = List(
+      FinancialDetail(taxYear = "2022", mainType = Some("ITSA Overpayment Relief"),
+        mainTransaction = Some("4004"), transactionId = Some(documentDetail1.transactionId),
+        transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
+        clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some( LocalDate.parse("2022-08-25") ))))
+      )
+    )
+    val newCharge1:  ChargeItem = ChargeItem.fromDocumentPair(documentDetail1, financialDetailsMfa1)
+    val newCharge2:  ChargeItem = ChargeItem.fromDocumentPair(documentDetail2, financialDetailsMfa2)
     List(
-      CreditDetailModel(documentDetail1.documentDate, documentDetail1, MfaCreditType, Some(financialDetailCreditCharge.balanceDetails)),
-      CreditDetailModel(documentDetail2.documentDate, documentDetail2, MfaCreditType, Some(financialDetailCreditCharge.balanceDetails))
+      CreditDetailModel(documentDetail1.documentDate, charge = newCharge1, MfaCreditType, financialDetailCreditCharge.balanceDetails.availableCredit),
+      CreditDetailModel(documentDetail2.documentDate, charge = newCharge2, MfaCreditType, financialDetailCreditCharge.balanceDetails.availableCredit)
     )
   }
 
@@ -1671,16 +1718,27 @@ object FinancialDetailsTestConstants {
 
   val creditAndRefundCreditDetailListFullyAllocatedMFA = {
     val documentDetail = documentDetailModel(
+      transactionId = "someTransactionId",
       documentDescription = Some("ITSA Overpayment Relief"),
       outstandingAmount = BigDecimal(0),
       paymentLotItem = None,
       paymentLot = None,
       originalAmount = BigDecimal(20)
     )
+    val financialDetailMfa = FinancialDetail(taxYear = "2022", mainType = Some("ITSA Overpayment Relief"),
+      mainTransaction = Some("4004"), transactionId = Some(documentDetail.transactionId),
+      transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
+      clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some( LocalDate.parse("2022-08-25") ))))
+    )
+
+    val newChargeItem: ChargeItem = ChargeItem.fromDocumentPair(
+      documentDetail, List(financialDetailMfa)
+    )
     List(CreditDetailModel(
       date = documentDetail.documentDate,
-      documentDetail = documentDetail,
-      creditType = MfaCreditType
+      charge = newChargeItem,//documentDetail,
+      creditType = MfaCreditType,
+      availableCredit = None
     ))
   }
 
@@ -1696,16 +1754,28 @@ object FinancialDetailsTestConstants {
 
   val creditAndRefundCreditDetailListNotYetAllocatedMFA = {
     val documentDetail = documentDetailModel(
+      transactionId = "someTransactionId",
       documentDescription = Some("ITSA Overpayment Relief"),
       outstandingAmount = BigDecimal(-3000),
       paymentLotItem = None,
       paymentLot = None,
       originalAmount = BigDecimal(-3000)
     )
+    val financialDetailsMfa = List(
+      FinancialDetail(taxYear = "2022", mainType = Some("ITSA Overpayment Relief"),
+        mainTransaction = Some("4004"), transactionId = Some(documentDetail.transactionId),
+        transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
+        clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some( LocalDate.parse("2022-08-25") ))))
+      )
+    )
+    val newChargeItem : ChargeItem = ChargeItem.fromDocumentPair(
+      documentDetail = documentDetail,
+      financialDetails = financialDetailsMfa)
     List(CreditDetailModel(
       date = documentDetail.documentDate,
-      documentDetail = documentDetail,
-      creditType = MfaCreditType
+      charge = newChargeItem,//documentDetail,
+      creditType = MfaCreditType,
+      availableCredit = None
     ))
   }
 
@@ -1721,16 +1791,30 @@ object FinancialDetailsTestConstants {
 
   val creditAndRefundCreditDetailListPartiallyAllocatedMFA = {
     val documentDetail = documentDetailModel(
+      transactionId = "someTransactionId",
       documentDescription = Some("ITSA Overpayment Relief"),
       outstandingAmount = BigDecimal(-3000),
       paymentLotItem = None,
       paymentLot = None,
       originalAmount = BigDecimal(1000)
     )
+    val financialDetailsMfa = List(
+      FinancialDetail(taxYear = "2022", mainType = Some("ITSA Overpayment Relief"),
+        mainTransaction = Some("4004"), transactionId = Some(documentDetail.transactionId),
+        transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
+        clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some( LocalDate.parse("2022-08-25") ))))
+      )
+    )
+
+    val newChargeItem : ChargeItem = ChargeItem.fromDocumentPair(
+      documentDetail = documentDetail,
+      financialDetails = financialDetailsMfa)
+
     List(CreditDetailModel(
       date = documentDetail.documentDate,
-      documentDetail = documentDetail,
-      creditType = MfaCreditType
+      charge = newChargeItem,
+      creditType = MfaCreditType,
+      availableCredit = None
     ))
   }
 
