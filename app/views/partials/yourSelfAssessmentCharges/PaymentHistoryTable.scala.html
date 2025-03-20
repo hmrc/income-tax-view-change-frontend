@@ -75,7 +75,7 @@
         )
     ),
     rows = Seq(
-        if(viewModel.noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment)
+        if(viewModel.noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment && viewModel.chargeHistoryEnabled)
             Seq(
                 TableRow(
                     content = Text(messages(s"chargeSummary.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}"))
@@ -90,7 +90,7 @@
                 )
             ) else Nil,
 
-        if(viewModel.latePaymentInterestCharge)
+        if(viewModel.latePaymentInterestCharge && viewModel.chargeHistoryEnabled)
             Seq(
                 TableRow(
                     content = Text(messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}"))
@@ -104,7 +104,7 @@
                 )
             ) else Nil,
 
-        if(viewModel.latePaymentInterestCharge)
+        if(viewModel.latePaymentInterestCharge && viewModel.chargeHistoryEnabled)
             Seq(
                 TableRow(
                     content = Text(messages("chargeSummary.codingOutPayHistoryAmount", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut))
@@ -118,37 +118,41 @@
                 )
             ) else Nil
     )
-        ++ viewModel.reviewAndReconcileCredit.toSeq.map { charge =>
-            Seq(
-                TableRow(
-                    content = HtmlContent(reviewAndReconcileCreditMessage(charge)),
-                    attributes = Map("id" -> "rar-due-date")
-                ),
-                TableRow(
-                    content = HtmlContent(charge.getDueDate.toLongDate.toNonBreaking),
-                    attributes = Map("id" -> "rar-due-date")
-                ),
-                TableRow(
-                    content = HtmlContent(charge.originalAmount.abs.toCurrency),
-                    attributes = Map("id" -> "rar-total-amount"),
-                    format = Some("numeric")
+        ++ viewModel.reviewAndReconcileCredit.toSeq.map {
+            case charge if viewModel.chargeHistoryEnabled =>
+                Seq(
+                    TableRow(
+                        content = HtmlContent(reviewAndReconcileCreditMessage(charge)),
+                        attributes = Map("id" -> "rar-due-date")
+                    ),
+                    TableRow(
+                        content = HtmlContent(charge.getDueDate.toLongDate.toNonBreaking),
+                        attributes = Map("id" -> "rar-due-date")
+                    ),
+                    TableRow(
+                        content = HtmlContent(charge.originalAmount.abs.toCurrency),
+                        attributes = Map("id" -> "rar-total-amount"),
+                        format = Some("numeric")
+                    )
                 )
-            )
+            case _ => Nil
         }
 
-        ++ viewModel.adjustmentHistory.adjustments.map { charge =>
-            Seq(
-                TableRow(
-                    content = Text(messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}"))
-                ),
-                TableRow(
-                    content = HtmlContent(charge.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDate.toNonBreaking)
-                ),
-                TableRow(
-                    content = HtmlContent(charge.amount.toCurrency),
-                    format = Some("numeric")
+        ++ viewModel.adjustmentHistory.adjustments.map {
+            case charge if viewModel.chargeHistoryEnabled =>
+                Seq(
+                    TableRow(
+                        content = Text(messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}"))
+                    ),
+                    TableRow(
+                        content = HtmlContent(charge.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDate.toNonBreaking)
+                    ),
+                    TableRow(
+                        content = HtmlContent(charge.amount.toCurrency),
+                        format = Some("numeric")
+                    )
                 )
-            )
+            case _ => Nil
         }
 
         ++ (for {
