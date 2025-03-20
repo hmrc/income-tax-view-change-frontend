@@ -27,7 +27,7 @@
 @import views.html.partials.yourSelfAssessmentCharges.PaymentHistoryTable
 @import views.html.partials.yourSelfAssessmentCharges.InterestOnYourChargeTable
 @import views.html.partials.yourSelfAssessmentCharges.InterestOnYourChargeSection
-@import views.helpers.ChargeName
+@import views.helpers.ChargeNameLangHelper
 @import views.html.partials.yourSelfAssessmentCharges.ChargeDetails
 
 @import java.time.LocalDate
@@ -69,7 +69,7 @@
     messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
 }
 
-@chargeName = @{ ChargeName(viewModel.chargeItem.transactionType) }
+@chargeName = @{ ChargeNameLangHelper(viewModel.chargeItem.transactionType) }
 
 @mainTemplate(
     pageTitle = chargeName,

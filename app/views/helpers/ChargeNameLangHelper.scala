@@ -20,7 +20,7 @@ import models.financialDetails.{BalancingCharge, PoaOneDebit, PoaTwoDebit, Trans
 import play.api.i18n.Messages
 
 
-object ChargeName {
+object ChargeNameLangHelper {
 
   def apply(transactionType: TransactionType)(implicit messages: Messages): String = {
 
