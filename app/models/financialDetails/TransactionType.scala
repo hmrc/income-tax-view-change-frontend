@@ -154,7 +154,8 @@ object ChargeType {
         Some(PoaTwoReconciliationCredit)
       case x if ChargeType.mfaDebit.contains(x) =>
         Some(MfaDebitCharge)
-      case code => // TODO: need to merge this into a single function
+      case code =>
+        // TODO: need to merge this into a single function: https://jira.tools.tax.service.gov.uk/browse/MISUV-9400
         CreditType.fromCode(code)
     }
   }
