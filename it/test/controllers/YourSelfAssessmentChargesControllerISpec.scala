@@ -194,7 +194,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                   val documentDetailsForTestTaxYear = financialDetailsModel.documentDetailsFilterByTaxYear(testTaxYear)
 
                   val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
-                  val chargeItems = financialDetails.toChargeItem()
+                  val chargeItems = financialDetails.toChargeItem
 
                   WhatYouOweChargesList(
                     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
@@ -289,7 +289,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                 val whatYouOweChargesList = {
                   val documentDetailsForTestTaxYear = financialDetailsModel.documentDetailsFilterByTaxYear(testTaxYear)
                   val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
-                  val chargeItems = financialDetails.toChargeItem()
+                  val chargeItems = financialDetails.toChargeItem
 
                   WhatYouOweChargesList(
                     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
@@ -327,7 +327,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                   val documentDetailsForTestTaxYear = financialDetailsModel.documentDetailsFilterByTaxYear(testTaxYear)
 
                   val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
-                  val chargeItems = financialDetails.toChargeItem()
+                  val chargeItems = financialDetails.toChargeItem
 
 
                   WhatYouOweChargesList(
@@ -364,7 +364,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                 val whatYouOweChargesList = {
                   val documentDetailsForTestTaxYear = financialDetailsModel.documentDetailsFilterByTaxYear(testTaxYear)
                   val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
-                  val chargeItems = financialDetails.toChargeItem()
+                  val chargeItems = financialDetails.toChargeItem
 
                   WhatYouOweChargesList(
                     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),

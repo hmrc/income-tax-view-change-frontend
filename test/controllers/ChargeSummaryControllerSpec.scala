@@ -70,9 +70,9 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 val result: Future[Result] = action(id1040000123)(fakeRequest)
                 val chargeSummaryUrl = if(isAgent) {
-                  routes.ChargeSummaryController.showAgent(testTaxYear, id1040000125).url
+                  routes.ChargeSummaryController.showAgent(testTaxYear, id1040000123).url
                 } else {
-                  routes.ChargeSummaryController.show(testTaxYear, id1040000125).url
+                  routes.ChargeSummaryController.show(testTaxYear, id1040000123).url
                 }
 
                 status(result) shouldBe Status.OK
@@ -102,9 +102,9 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
                 val chargeSummaryUrl = if(isAgent) {
-                  routes.ChargeSummaryController.showAgent(testTaxYear, id1040000126).url
+                  routes.ChargeSummaryController.showAgent(testTaxYear, id1040000124).url
                 } else {
-                  routes.ChargeSummaryController.show(testTaxYear, id1040000126).url
+                  routes.ChargeSummaryController.show(testTaxYear, id1040000124).url
                 }
 
                 document.select("h1").text() shouldBe successHeadingForRAR2(startYear.toString, endYear.toString)
