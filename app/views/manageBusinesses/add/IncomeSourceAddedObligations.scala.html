@@ -207,7 +207,7 @@
         <a href=@getManageUrl>@getMessage("view-all-businesses")</a>
       </div>
 
-      @if(reportingMethod == ChosenReportingMethod.Quarterly || reportingMethod == ChosenReportingMethod.Hybrid) {
+      @if(reportingMethod == ChosenReportingMethod.Hybrid) {
         <div class="govuk-body govuk-!-margin-top-8" id="change-frequency">
           @getMessage("quarterly-opt-out-hybrid-text-1")
           <a class="govuk-link" href=@getReportingFrequencyUrl>@getMessage("quarterly-opt-out-hybrid-link")</a>

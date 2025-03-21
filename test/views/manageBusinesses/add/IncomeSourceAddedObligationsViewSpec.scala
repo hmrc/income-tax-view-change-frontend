@@ -886,10 +886,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
       "It is reporting quarterly" in new Setup(validCurrentTaxYearQuarterlyCallNoOverdue) {
         Option(document.getElementById("change-frequency")) match {
-          case Some(changeFrequency) =>
-            changeFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your businesses."
-            changeFrequency.select("a").attr("href") shouldBe nextUpdatesUrl
-          case None => fail("No upcoming updates link was found")
+          case Some(_) =>
+            fail("Upcoming updates link was found")
+          case None =>
         }
       }
 
