@@ -31,6 +31,8 @@ import scala.util.{Failure, Success, Try}
 
 sealed trait FinancialDetailsResponseModel
 
+// TODO-[1]: make balanceDetails private val -> apply re-design and fix test failures where needed
+// TODO-[2]: make financialDetails private val -> ~
 case class FinancialDetailsModel(balanceDetails: BalanceDetails,
                                  private val documentDetails: List[DocumentDetail],
                                  financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
@@ -52,12 +54,14 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     }
   }
 
+  // TODO: to be removed as we should rely on the chargeType available in ChargeItem type;
   def isMFADebit(documentId: String): Boolean = {
     financialDetails.exists { fd =>
       fd.transactionId.contains(documentId) && MfaDebitUtils.isMFADebitMainType(fd.mainType)
     }
   }
 
+  // TODO: we need to identify this on the chargeItem level -> mark as deprecated
   def isReviewAndReconcilePoaOneDebit(documentId: String, reviewAndReconcileIsEnabled: Boolean): Boolean = {
     reviewAndReconcileIsEnabled &&
       financialDetails.exists { fd =>
@@ -65,6 +69,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       }
   }
 
+  // TODO: we need to identify this on the chargeItem level -> mark as deprecated
   def isReviewAndReconcilePoaTwoDebit(documentId: String, reviewAndReconcileIsEnabled: Boolean): Boolean = {
     reviewAndReconcileIsEnabled &&
       financialDetails.exists { fd =>
