@@ -363,12 +363,13 @@
                                     </div>
                                 </div>
                             } else {
-                                <h2 class ="govuk-body">@getMessage("no-charges-due-today")</h2>
+                                <h2 class="govuk-heading-m">@getMessage("no-charges-due-today")</h2>
                                 <p class="govuk-body">
-                                    @getMessage("selfAssessmentCharges.upcoming-charges-before-due-date1")
+
+                                    @getMessage("upcoming-charges-before-due-date1")
                                     @link(
                                         link = "",
-                                        messageKey = getMessage("selfAssessmentCharges.upcoming-charges-before-due-date2"),
+                                        messageKey = getMessage("upcoming-charges-before-due-date2"),
                                         id = Some(""),
                                         target = Some("_blank"),
                                         outerMessage = ".")
