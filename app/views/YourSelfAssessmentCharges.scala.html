@@ -309,15 +309,16 @@
                 outerMessage = ".")
         </p>
 
+    @if(viewModel.claimToAdjustViewModel.adjustPaymentsOnAccountFSEnabled) {
         <p class="govuk-body" id="adjust-payments-on-account">
             @link(
-            link = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url,
-            messageKey = getMessage("adjust-poa", "2024", "2025"),
-            id = Some("adjust-poa-link")
-            )
+                link = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url,
+                messageKey = getMessage("adjust-poa", "2024", "2025"),
+                id = Some("adjust-poa-link")
+                )
         </p>
+        }
     }
-
 
     @mainTemplate(
         pageTitle = getMessage("heading"),
