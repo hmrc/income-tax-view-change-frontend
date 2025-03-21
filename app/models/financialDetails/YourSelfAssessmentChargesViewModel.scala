@@ -23,13 +23,13 @@ import services.DateServiceInterface
 import java.time.LocalDate
 
 case class YourSelfAssessmentChargesViewModel(hasOverdueOrAccruingInterestCharges: Boolean,
-                                              hasChargesDueWithin30Days: Boolean,
                                               whatYouOweChargesList: WhatYouOweChargesList,
                                               hasLpiWithDunningLock: Boolean,
                                               backUrl: String,
                                               dunningLock: Boolean,
                                               reviewAndReconcileEnabled: Boolean,
                                               creditAndRefundEnabled: Boolean,
+                                              earliestTaxYearAndAmountByDueDate: (TaxYear, BigDecimal),
                                               claimToAdjustViewModel: WYOClaimToAdjustViewModel)(implicit val dateService: DateServiceInterface) {
   lazy val currentTaxYear: TaxYear = dateService.getCurrentTaxYear
 

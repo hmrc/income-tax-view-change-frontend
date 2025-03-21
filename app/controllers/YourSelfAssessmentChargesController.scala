@@ -27,6 +27,7 @@ import forms.utils.SessionKeys.gatewayPage
 import models.admin._
 import models.core.Nino
 import models.financialDetails.YourSelfAssessmentChargesViewModel
+import models.incomeSourceDetails.TaxYear
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
@@ -66,15 +67,19 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
 
       val hasOverdueCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
       val hasAccruingInterestReviewAndReconcileCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isNotPaidAndNotOverduePoaReconciliationDebit()(dateService))
-      val hasChargesDueWithin30Days: Boolean = whatYouOweChargesList.chargesDueWithin30DaysList.nonEmpty
+      val earliestTaxYearAndAmount: (TaxYear, BigDecimal) =
+        whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate
+          .map { case (year, amount) => (TaxYear.forYearEnd(year), amount) }
+          .getOrElse(throw new RuntimeException("Missing earliest tax year and amount in whatYouOweChargesList"))
+
       val viewModel: YourSelfAssessmentChargesViewModel = YourSelfAssessmentChargesViewModel(
         hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
-        hasChargesDueWithin30Days = hasChargesDueWithin30Days,
         whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
         backUrl = backUrl,
         dunningLock = whatYouOweChargesList.hasDunningLock,
         reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
         creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
+        earliestTaxYearAndAmountByDueDate = earliestTaxYearAndAmount,
         claimToAdjustViewModel = ctaViewModel
       )
       Ok(view(
@@ -100,6 +105,7 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
       Future.successful(WYOClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), None))
     }
   }
+
 
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>

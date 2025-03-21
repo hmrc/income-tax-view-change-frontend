@@ -313,7 +313,7 @@
         <p class="govuk-body" id="adjust-payments-on-account">
             @link(
                 link = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url,
-                messageKey = getMessage("adjust-poa", "2024", "2025"),
+                messageKey = getMessage("adjust-poa", viewModel.currentTaxYear.startYear.toString, viewModel.currentTaxYear.endYear.toString),
                 id = Some("adjust-poa-link")
                 )
         </p>
@@ -433,12 +433,16 @@
                                         </div>
                                     </div>
 
-                                    @if(user.saUtr.isDefined && !user.isAgent() && viewModel.whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.isDefined) {
-                                    <div id="payment-button">
-                                        @link(link = controllers.routes.PaymentController.paymentHandoff(viewModel.whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.get._2.toPence, origin).url,
-                                        messageKey = getPrefix("payNow"), classes = "govuk-button", role = Some("button"),
-                                        id = Some("payment-button-link"))
-                                    </div>
+                                    @if(user.saUtr.isDefined && !user.isAgent()) {
+                                        <div id="payment-button">
+                                            @link(
+                                                link = controllers.routes.PaymentController.paymentHandoff(viewModel.earliestTaxYearAndAmountByDueDate._2.toPence, origin).url,
+                                                messageKey = getPrefix("payNow"),
+                                                classes = "govuk-button",
+                                                role = Some("button"),
+                                                id = Some("payment-button-link")
+                                                )
+                                        </div>
                                     }
                                 </div>
                                 }
@@ -493,11 +497,15 @@
                                             </div>
                                         </div>
 
-                                        @if(user.saUtr.isDefined && !user.isAgent() && viewModel.whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.isDefined) {
+                                        @if(user.saUtr.isDefined && !user.isAgent()) {
                                             <div id="payment-button">
-                                            @link(link = controllers.routes.PaymentController.paymentHandoff(viewModel.whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.get._2.toPence, origin).url,
-                                                messageKey = getPrefix("payNow"), classes = "govuk-button", role = Some("button"),
-                                                id = Some("payment-button-link"))
+                                                @link(
+                                                    link = controllers.routes.PaymentController.paymentHandoff(viewModel.earliestTaxYearAndAmountByDueDate._2.toPence, origin).url,
+                                                    messageKey = getPrefix("payNow"),
+                                                    classes = "govuk-button",
+                                                    role = Some("button"),
+                                                    id = Some("payment-button-link")
+                                                    )
                                             </div>
                                         }
                                     </div>
