@@ -217,17 +217,21 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   // TODO: we might need a single conversion method instead
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // TODO: add conversion errors in the log
   def asChargeItems: List[ChargeItem] = {
     documentDetails.map(documentDetail =>
-        Try {
-          ChargeItem.fromDocumentPair(documentDetail = documentDetail,
-            financialDetails = financialDetails
-              .filter(_.transactionId.isDefined)
-              .filter(_.transactionId.get == documentDetail.transactionId))
-        }.toOption
-      )
-      .flatMap(x => x.map(y => List(y)).getOrElse(List[ChargeItem]()))
+      Try {
+        ChargeItem.fromDocumentPair(documentDetail = documentDetail,
+          financialDetails = financialDetails
+            .filter(_.transactionId.isDefined)
+            .filter(_.transactionId.get == documentDetail.transactionId))
+      } match {
+        case Success(res) =>
+          Some(res)
+        case Failure(ex) =>
+          Logger("application").warn(s"Failed conversion - asChargeItems - ${ex.getMessage}")
+          None
+      }
+    ).flatMap(x => x.map(y => List(y)).getOrElse(List[ChargeItem]()))
   }
 
   def toChargeItem: List[ChargeItem] = {
@@ -240,7 +244,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       case Success(res) =>
         res
       case Failure(ex) =>
-        Logger("application").warn(ex.getMessage)
+        Logger("application").warn(s"Failed conversion - toChargeItem - ${ex.getMessage}")
         List[ChargeItem]()
     }
   }
