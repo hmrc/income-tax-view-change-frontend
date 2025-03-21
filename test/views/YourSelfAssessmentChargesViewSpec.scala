@@ -145,6 +145,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       dunningLock = dunningLock,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       creditAndRefundEnabled = true,
+      earliestTaxYearAndAmountByDueDate = TaxYear(2024, 2025) -> BigDecimal(100.00),
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel)
     )
 
@@ -191,6 +192,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       dunningLock = dunningLock,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       creditAndRefundEnabled = true,
+      earliestTaxYearAndAmountByDueDate = TaxYear(2024, 2025) -> BigDecimal(100.00),
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel))
     val html: HtmlFormat.Appendable = yourSelfAssessmentChargesView(
       viewModel
