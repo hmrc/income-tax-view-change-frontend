@@ -134,11 +134,20 @@ class NextUpdatesService @Inject()(
     } yield {
       val (finalDeclarationDates, otherObligationDates) = datesList.partition(datesModel => datesModel.isFinalDec)
 
-      val quarterlyDates: Seq[DatesModel] = otherObligationDates.filter(datesModel => datesModel.obligationType == "Quarterly")
-        .sortBy(_.inboundCorrespondenceFrom)
+      val quarterlyDates: Seq[DatesModel] =
+        otherObligationDates
+          .filter(datesModel => datesModel.obligationType == "Quarterly")
+          .sortBy(_.inboundCorrespondenceFrom)
 
-      val obligationsGroupedByYear = quarterlyDates.groupBy(datesModel => dateService.getAccountingPeriodEndDate(datesModel.inboundCorrespondenceTo).getYear)
-      val sortedObligationsByYear = obligationsGroupedByYear.toSeq.sortBy(_._1).map(_._2.distinct.sortBy(_.periodKey))
+      val obligationsGroupedByYear =
+        quarterlyDates
+          .groupBy(datesModel => dateService.getAccountingPeriodEndDate(datesModel.inboundCorrespondenceTo).getYear)
+
+      val sortedObligationsByYear =
+        obligationsGroupedByYear
+          .toSeq
+          .sortBy(_._1)
+          .map(_._2.distinct.sortBy(_.periodKey))
 
       val finalDecDates: Seq[DatesModel] = finalDeclarationDates.distinct.sortBy(_.inboundCorrespondenceFrom)
 

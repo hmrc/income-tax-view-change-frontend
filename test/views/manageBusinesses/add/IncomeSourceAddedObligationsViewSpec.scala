@@ -347,6 +347,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
   val submitSoftwareUrl = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
 
   "Income Source Added Obligations - Individual" should {
+
     "Display the correct banner message" when {
       "Business type is UK Property Business" in new Setup(validUKPropertyBusinessCall) {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
@@ -858,13 +859,14 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
     "Display the view upcoming updates link when there are no overdue obligations" in new Setup(validCallWithData) {
       Option(document.getElementById("view-upcoming-updates")) match {
         case Some(upcomingUpdatesLink) => upcomingUpdatesLink.text() shouldBe "View your upcoming updates"
-        case None => fail("No upcoming updates link was found")
+        case None => fail("No view or change your reporting frequency link was found")
       }
     }
+
     "Display the view overdue and upcoming updates link when there are no overdue obligations" in new Setup(validCurrentTaxYearQuarterlyCallOneOverdue) {
       Option(document.getElementById("view-upcoming-updates")) match {
         case Some(upcomingUpdatesLink) => upcomingUpdatesLink.text() shouldBe "View your overdue and upcoming updates"
-        case None => fail("No upcoming updates link was found")
+        case None => fail("No view or change your reporting frequency link was found")
       }
     }
 
@@ -880,16 +882,15 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           case Some(changeFrequency) =>
             changeFrequency.text() shouldBe "You can decide at any time to opt out of quarterly reporting and report annually for all your businesses on your reporting frequency page."
             changeFrequency.select("a").attr("href") shouldBe nextUpdatesUrl
-          case None => fail("No upcoming updates link was found")
+          case None => fail("No view or change your reporting frequency link was found")
         }
       }
 
       "It is reporting quarterly" in new Setup(validCurrentTaxYearQuarterlyCallNoOverdue) {
         Option(document.getElementById("change-frequency")) match {
-          case Some(changeFrequency) =>
-            changeFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your businesses."
-            changeFrequency.select("a").attr("href") shouldBe nextUpdatesUrl
-          case None => fail("No upcoming updates link was found")
+          case Some(_) =>
+            fail("View or change your reporting frequency link was found")
+          case None =>
         }
       }
 
@@ -898,7 +899,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           case Some(changeFrequency) =>
             changeFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your businesses."
             changeFrequency.select("a").attr("href") shouldBe nextUpdatesUrl
-          case None => fail("No upcoming updates link was found")
+          case None => fail("No view or change your reporting frequency link was found")
         }
       }
 
@@ -907,12 +908,13 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           case Some(changeFrequency) =>
             changeFrequency.text() shouldBe "You are set to report annually for your new business. Find out more about your reporting frequency."
             changeFrequency.select("a").attr("href") shouldBe nextUpdatesUrl
-          case None => fail("No upcoming updates link was found")
+          case None => fail("No view or change your reporting frequency link was found")
         }
       }
     }
 
     "Display the correct submit tax return / updates subheading and text" when {
+
       "It is reporting annually" in new Setup(validCurrentTaxYearAnnualCallNoOverdue) {
         val subHeading: Element = layoutContent.getElementsByTag("h2").last()
         subHeading.text shouldBe IncomeSourceAddedMessages.submitTaxReturn

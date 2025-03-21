@@ -19,10 +19,10 @@ package controllers.manageBusinesses.add
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import enums.IncomeSourceJourney.IncomeSourceType
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.core.IncomeSourceId
-import models.incomeSourceDetails.{AddIncomeSourceData, ChosenReportingMethod, UIJourneySessionData}
+import models.incomeSourceDetails._
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -31,124 +31,136 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
 import views.html.manageBusinesses.add.IncomeSourceAddedObligations
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceAddedController @Inject()(val authActions: AuthActions,
-                                            val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                            val obligationsView: IncomeSourceAddedObligations,
+class IncomeSourceAddedController @Inject()(authActions: AuthActions,
+                                            incomeSourceDetailsService: IncomeSourceDetailsService,
+                                            obligationsView: IncomeSourceAddedObligations,
                                             nextUpdatesService: NextUpdatesService,
                                             val sessionService: SessionService,
-                                            val itvcErrorHandler: ItvcErrorHandler,
-                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                            itvcErrorHandler: ItvcErrorHandler,
+                                            itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                             dateService: DateServiceInterface)
-                                           (implicit val appConfig: FrontendAppConfig,
-                                            val mcc: MessagesControllerComponents,
-                                            val ec: ExecutionContext)
+                                           (implicit val appConfig: FrontendAppConfig, mcc: MessagesControllerComponents, val ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses {
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
-      handleRequest(isAgent = false, incomeSourceType)(implicitly, itvcErrorHandler)
-  }
+  val logger: Logger = Logger("application")
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
-    implicit mtdItUser =>
-      handleRequest(isAgent = true, incomeSourceType)(implicitly, itvcErrorHandlerAgent)
-  }
+  private def handleRequest(
+                             isAgent: Boolean,
+                             incomeSourceType: IncomeSourceType
+                           )(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
 
-  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                           (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
+    val errorView = Future(errorHandler.showInternalServerError())
+    val agentPrefix = if (isAgent) "[Agent]" else ""
+
     withIncomeSourcesFS {
       sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType)).flatMap {
+
         case Right(Some(sessionData)) =>
-          (for {
-            incomeSourceIdModel <- sessionData.addIncomeSourceData.flatMap(_.incomeSourceId.map(IncomeSourceId(_)))
-            (startDate, businessName) <- incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceIdModel)
-          } yield {
-            val reportingMethod: ChosenReportingMethod = getReportingMethod(sessionData.addIncomeSourceData)
-            if (reportingMethod != ChosenReportingMethod.Unknown) {
-              handleSuccess(
-                isAgent = isAgent,
-                businessName = businessName,
-                incomeSourceType = incomeSourceType,
-                incomeSourceId = incomeSourceIdModel,
-                showPreviousTaxYears = startDate.isBefore(dateService.getCurrentTaxYearStart),
-                sessionData = sessionData,
-                reportingMethod = reportingMethod
-              )
-            } else {
-              Logger("application").error(
-                s"${if (isAgent) "[Agent]" else ""}" + s"retrieved an unknown case for chosen reporting method: $reportingMethod")
-              Future.successful {
-                errorHandler.showInternalServerError()
+
+          val result: Option[Future[Result]] =
+            for {
+              incomeSourceId: IncomeSourceId <- sessionData.addIncomeSourceData.flatMap(_.incomeSourceId.map(id => IncomeSourceId(id)))
+              (startDate: LocalDate, businessName: Option[String]) <- incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceId)
+              showPreviousTaxYears = startDate.isBefore(dateService.getCurrentTaxYearStart)
+              reportingMethod: ChosenReportingMethod = incomeSourceDetailsService.getReportingMethod(sessionData.addIncomeSourceData)
+            } yield {
+              reportingMethod match {
+                case ChosenReportingMethod.Unknown =>
+                  logger.error(s"retrieved an unknown case for chosen reporting method: $reportingMethod")
+                  errorView
+                case _ =>
+                  handleSuccess(
+                    isAgent = isAgent,
+                    businessName = businessName,
+                    incomeSourceType = incomeSourceType,
+                    incomeSourceId = incomeSourceId,
+                    showPreviousTaxYears = showPreviousTaxYears,
+                    sessionData = sessionData
+                  )
               }
             }
-          }) getOrElse {
-            Logger("application").error(
-              s"${if (isAgent) "[Agent]" else ""}" + s"could not find incomeSource for IncomeSourceType: $incomeSourceType")
-            Future.successful {
-              errorHandler.showInternalServerError()
-            }
+          result.getOrElse {
+            logger.error(agentPrefix + s"could not find incomeSource for IncomeSourceType: $incomeSourceType")
+            errorView
           }
         case _ =>
-          val agentPrefix = if (isAgent) "[Agent]" else ""
-          Logger("application").error(agentPrefix + s"Unable to retrieve Mongo session data for $incomeSourceType")
-          Future.successful {
-            errorHandler.showInternalServerError()
-          }
+          logger.error(agentPrefix + s"Unable to retrieve Mongo session data for $incomeSourceType")
+          errorView
       }
-    } recover {
-      case ex: Exception =>
-        Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" +
-          s"Error getting IncomeSourceAdded page: - ${ex.getMessage} - ${ex.getCause}, IncomeSourceType: $incomeSourceType")
-        errorHandler.showInternalServerError()
     }
   }
 
-  private def getReportingMethod(maybeAddIncomeSourceData: Option[AddIncomeSourceData]): ChosenReportingMethod = {
-    val (reportingMethodTaxYear1, reportingMethodTaxYear2) = (
-      maybeAddIncomeSourceData.flatMap(_.reportingMethodTaxYear1).orElse(None),
-      maybeAddIncomeSourceData.flatMap(_.reportingMethodTaxYear2).orElse(None)
-    )
-    (reportingMethodTaxYear1, reportingMethodTaxYear2) match {
-      case (Some("A"), Some("A")) | (None, Some("A")) => ChosenReportingMethod.Annual
-      case (Some("Q"), Some("Q")) | (None, Some("Q")) => ChosenReportingMethod.Quarterly
-      case (Some("A"), Some("Q")) | (Some("Q"), Some("A")) => ChosenReportingMethod.Hybrid
-      case (None, None) => ChosenReportingMethod.DefaultAnnual
-      case _ => ChosenReportingMethod.Unknown
+  private def getLatencyDetailsFromUser(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Option[LatencyDetails] = {
+    incomeSourceType match {
+      case SelfEmployment => user.incomeSources.businesses.flatMap(_.latencyDetails).headOption
+      case UkProperty => user.incomeSources.getUKProperty.flatMap(_.latencyDetails)
+      case ForeignProperty => user.incomeSources.getForeignProperty.flatMap(_.latencyDetails)
     }
   }
 
-  private def handleSuccess(incomeSourceId: IncomeSourceId, incomeSourceType: IncomeSourceType, businessName: Option[String],
-                            showPreviousTaxYears: Boolean, isAgent: Boolean, sessionData: UIJourneySessionData, reportingMethod: ChosenReportingMethod
+  private def handleSuccess(
+                             incomeSourceId: IncomeSourceId,
+                             incomeSourceType: IncomeSourceType,
+                             businessName: Option[String],
+                             showPreviousTaxYears: Boolean,
+                             isAgent: Boolean,
+                             sessionData: UIJourneySessionData
                            )(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
-    val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
-    val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(journeyIsComplete = Some(true))
+
+    lazy val showErrorView = errorHandler.showInternalServerError()
+    val originalAddIncomeSourceSessionData: AddIncomeSourceData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
+    val updatedAddIncomeSourceSessionData: AddIncomeSourceData = originalAddIncomeSourceSessionData.copy(journeyIsComplete = Some(true))
     val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
-    sessionService.setMongoData(uiJourneySessionData).flatMap { _ =>
-      uiJourneySessionData.addIncomeSourceData.flatMap(_.dateStarted) match {
+
+    val incomeSourceBeingAddedLatencyDetails: Option[LatencyDetails] =
+      getLatencyDetailsFromUser(incomeSourceType)
+
+    val reportingMethodTaxYear1 =
+      incomeSourceBeingAddedLatencyDetails.map(_.latencyIndicator1)
+
+    val reportingMethodTaxYear2 =
+      incomeSourceBeingAddedLatencyDetails.map(_.latencyIndicator2)
+
+    for {
+      _ <- sessionService.setMongoData(uiJourneySessionData)
+      viewModel <- nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears)
+      dateStarted <- Future(uiJourneySessionData.addIncomeSourceData.flatMap(_.dateStarted))
+    } yield {
+      dateStarted match {
         case Some(dateStarted) =>
-          nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
-            val taxYearEndOfBusinessStartDate = dateService.getAccountingPeriodEndDate(dateStarted)
-            val isBusinessHistoric = taxYearEndOfBusinessStartDate.getYear < viewModel.currentTaxYear - 1
-            Ok(obligationsView(
-              businessName = businessName,
+          val taxYearEndOfBusinessStartDate = dateService.getAccountingPeriodEndDate(dateStarted)
+          val isBusinessHistoric = taxYearEndOfBusinessStartDate.getYear < viewModel.currentTaxYear - 1
+          Ok(
+            obligationsView(
               sources = viewModel,
               isAgent = isAgent,
+              businessName = businessName,
               incomeSourceType = incomeSourceType,
               currentDate = dateService.getCurrentDate,
               isBusinessHistoric = isBusinessHistoric,
-              reportingMethod = reportingMethod
-            ))
-          }
+              reportingMethod = viewModel.reportingMethod(reportingMethodTaxYear1, reportingMethodTaxYear2)
+            )
+          )
         case None =>
           val agentPrefix = if (isAgent) "[Agent]" else ""
-          Logger("application").error(agentPrefix + s"Unable to retrieve Mongo session data for $incomeSourceType")
-          Future.successful {
-            errorHandler.showInternalServerError()
-          }
+          logger.error(agentPrefix + s"Unable to retrieve Mongo session data for $incomeSourceType")
+          showErrorView
       }
     }
   }
+
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit mtdItUser =>
+      handleRequest(isAgent = false, incomeSourceType)(mtdItUser, itvcErrorHandler)
+    }
+
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    authActions.asMTDAgentWithConfirmedClient.async { implicit mtdItUser =>
+      handleRequest(isAgent = true, incomeSourceType)(mtdItUser, itvcErrorHandlerAgent)
+    }
+
 }
