@@ -181,10 +181,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     documentDetails.exists(_.transactionId == id)
   }
 
-  def documentDetailsFilter(predicate: DocumentDetail => Boolean): Option[DocumentDetail] = {
-    this.documentDetails.find(predicate)
-  }
-
   def documentDetailsFilterByTaxYear(taxYear: Int): List[DocumentDetail] = {
     this.documentDetails.filter(_.taxYear == taxYear)
   }
