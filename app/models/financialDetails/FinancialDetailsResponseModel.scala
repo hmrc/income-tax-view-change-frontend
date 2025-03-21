@@ -77,12 +77,14 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       }
   }
 
+  // TODO: drop usage of DocumentDetailWithDueDate / and use ChargeItem/TransactionItem instead
   def findDocumentDetailByIdWithDueDate(id: String)(implicit dateService: DateServiceInterface): Option[DocumentDetailWithDueDate] = {
     documentDetails.find(_.transactionId == id)
       .map(documentDetail => DocumentDetailWithDueDate(
         documentDetail, documentDetail.getDueDate(), dunningLock = dunningLockExists(documentDetail.transactionId)))
   }
 
+  // TODO: method possibly is not required at all: TaxYearSummaryController -> withTaxYearFinancials
   def findDueDateByDocumentDetails(documentDetail: DocumentDetail): Option[LocalDate] = {
     financialDetails.find { fd =>
       fd.transactionId.contains(documentDetail.transactionId) &&
@@ -91,6 +93,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   }
 
 
+  // TODO: drop usage of DocumentDetailWithDueDate / and use ChargeItem/TransactionItem instead
   def getAllDocumentDetailsWithDueDates(reviewAndReconcileEnabled: Boolean = false)(implicit dateService: DateServiceInterface): List[DocumentDetailWithDueDate] = {
     documentDetails.map(documentDetail =>
       DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate(),
@@ -100,21 +103,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
         isReviewAndReconcilePoaTwoDebit = isReviewAndReconcilePoaTwoDebit(documentDetail.transactionId, reviewAndReconcileEnabled)))
   }
 
-
-  def getPairedDocumentDetails(): List[ChargeItem] = {
-    documentDetails.map(documentDetail =>
-      Try {
-        ChargeItem.fromDocumentPair(documentDetail = documentDetail,
-          financialDetails = financialDetails
-            .filter(_.transactionId.isDefined)
-          .filter(_.transactionId.get == documentDetail.transactionId) )
-      }.toOption
-
-    )
-    .flatMap(x => x.map(y => List(y)).getOrElse( List[ChargeItem]() ) )
-  }
-
-
+  //TODO: is this approach of validating charge type is applicable at all?
   def validChargeTypeCondition: DocumentDetail => Boolean = documentDetail => {
     (documentDetail.documentText, documentDetail.getDocType) match {
       case (Some(documentText), _) if documentText.contains("Class 2 National Insurance") => true
@@ -213,21 +202,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
   }
 
-  def toChargeItem(): List[ChargeItem] = {
-    Try {
-      this.documentDetails
-        .map( documentDetail =>
-          ChargeItem.fromDocumentPair(documentDetail, financialDetails)
-        )
-    } match {
-      case Success(res) =>
-        res
-      case Failure(ex) =>
-        Logger("application").warn(ex.getMessage)
-        List[ChargeItem]()
-    }
-  }
-
   def unpaidDocumentDetails(): List[DocumentDetail] = {
     this.documentDetails.collect {
       case documentDetail: DocumentDetail if documentDetail.isCodingOutDocumentDetail => documentDetail
@@ -242,6 +216,39 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       x => !x.isPaid && x.hasAccruingInterest && x.documentDueDate.getOrElse(LocalDate.MIN).isAfter(currentDate)
     )
   }
+
+  /////////////////////////// to ChargeItem conversion methods: START //////////////////////////////////////////////////
+  // TODO: we might need a single conversion method instead
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // TODO: add conversion errors in the log
+  def asChargeItems: List[ChargeItem] = {
+    documentDetails.map(documentDetail =>
+        Try {
+          ChargeItem.fromDocumentPair(documentDetail = documentDetail,
+            financialDetails = financialDetails
+              .filter(_.transactionId.isDefined)
+              .filter(_.transactionId.get == documentDetail.transactionId))
+        }.toOption
+      )
+      .flatMap(x => x.map(y => List(y)).getOrElse(List[ChargeItem]()))
+  }
+
+  def toChargeItem: List[ChargeItem] = {
+    Try {
+      this.documentDetails
+        .map(documentDetail =>
+          ChargeItem.fromDocumentPair(documentDetail, financialDetails)
+        )
+    } match {
+      case Success(res) =>
+        res
+      case Failure(ex) =>
+        Logger("application").warn(ex.getMessage)
+        List[ChargeItem]()
+    }
+  }
+  /////////////////////////// to ChargeItem conversion method: END /////////////////////////////////////////////////////
 
 }
 
