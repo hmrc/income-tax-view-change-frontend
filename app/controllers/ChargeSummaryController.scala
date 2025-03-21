@@ -149,14 +149,16 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
     chargeHistoryService.chargeHistoryResponse(isInterestCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment,
       chargeReference, isEnabled(ChargeHistory)).map {
       case Right(chargeHistory) =>
-        auditChargeSummary(chargeItem, paymentBreakdown, chargeHistory, paymentAllocations,
-          isInterestCharge, isMFADebit, taxYear)
+        auditChargeSummary(chargeItem, paymentBreakdown,
+          chargeHistory, paymentAllocations, isInterestCharge, isMFADebit, taxYear)
 
         val chargeItems : List[ChargeItem] = chargeDetailsforTaxYear.asChargeItems
         val (poaOneChargeUrl, poaTwoChargeUrl) = {
           for {
-            poaOneChargeItem <- chargeItems.filter(x => x.transactionType == PoaOneDebit || x.transactionType == PoaOneReconciliationDebit)
-            poaTwoChargeItem <- chargeItems.filter(x => x.transactionType == PoaTwoDebit || x.transactionType == PoaTwoReconciliationDebit)
+            poaOneChargeItem <- chargeItems
+              .filter(c => List(PoaOneDebit, PoaOneReconciliationDebit).contains(c.transactionType))
+            poaTwoChargeItem <- chargeItems
+              .filter(c => List(PoaTwoDebit, PoaTwoReconciliationDebit).contains(c.transactionType))
           } yield {
             if (isAgent)
               (
