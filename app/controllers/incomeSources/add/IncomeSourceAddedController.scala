@@ -22,6 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.core.IncomeSourceId
+import models.incomeSourceDetails.viewmodels.ObligationsViewModel
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -88,6 +89,7 @@ class IncomeSourceAddedController @Inject()(val authActions: AuthActions,
 
   def handleSuccess(incomeSourceId: IncomeSourceId, incomeSourceType: IncomeSourceType, businessName: Option[String],
                     showPreviousTaxYears: Boolean, isAgent: Boolean)(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
+
     sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType)).flatMap {
       case Right(Some(sessionData)) =>
         val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
@@ -96,7 +98,7 @@ class IncomeSourceAddedController @Inject()(val authActions: AuthActions,
         sessionService.setMongoData(uiJourneySessionData).flatMap { _ =>
           incomeSourceType match {
             case SelfEmployment =>
-              nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
+              nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel: ObligationsViewModel =>
                 Ok(obligationsView(businessName = businessName, sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
               }
             case _ => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>

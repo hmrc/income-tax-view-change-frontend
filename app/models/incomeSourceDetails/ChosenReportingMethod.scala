@@ -19,9 +19,14 @@ package models.incomeSourceDetails
 sealed trait ChosenReportingMethod
 
 object ChosenReportingMethod {
+
   case object Annual extends ChosenReportingMethod
 
   case object Quarterly extends ChosenReportingMethod
+
+  case object QuarterlyAnnual extends ChosenReportingMethod
+
+  case object AnnualQuarterly extends ChosenReportingMethod
 
   case object Hybrid extends ChosenReportingMethod
 

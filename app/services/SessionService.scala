@@ -93,8 +93,7 @@ class SessionService @Inject()(
     }
   }
 
-  def setMongoData(uiJourneySessionData: UIJourneySessionData)
-                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+  def setMongoData(uiJourneySessionData: UIJourneySessionData): Future[Boolean] = {
     if (config.encryptionIsEnabled)
       sensitiveUIJourneySessionDataRepository.set(uiJourneySessionData)
     else
