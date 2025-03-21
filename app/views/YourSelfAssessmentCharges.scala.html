@@ -131,13 +131,15 @@
     }
     }
 
-    @tableHead(headId: String) = {
+    @tableHead(headId: String, estimatedInterestPresent: Boolean = true) = {
         <thead class="govuk-table__head" id="@headId">
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">@getMessage("tableHead.due-date")</th>
                 <th scope="col" class="govuk-table__header">@getMessage("tableHead.type-of-charge")</th>
                 <th scope="col" class="govuk-table__header">@getMessage("tableHead.tax-year")</th>
-                <th scope="col" class="govuk-table__header govuk-table__header--numeric">@getMessage("tableHead.estimated-interest")</th>
+                @if(estimatedInterestPresent) {
+                    <th scope="col" class="govuk-table__header govuk-table__header--numeric">@getMessage("tableHead.estimated-interest")</th>
+                }
                 <th scope="col" class="govuk-table__header govuk-table__header--numeric">@getMessage("tableHead.amount").toNonBreaking</th>
             </tr>
         </thead>
@@ -222,9 +224,9 @@
                 }
             </td>
             <td class="govuk-table__cell"> @taxYearSummaryLink(chargeItem.taxYear.endYear, index, id)</td>
-            <td class="govuk-table__cell govuk-table__cell--numeric"> @if(chargeItem.hasAccruingInterest) @{
-                chargeItem.getInterestOutstandingAmount.toCurrency
-            }</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric"> @if(chargeItem.hasAccruingInterest) @{
+                    chargeItem.getInterestOutstandingAmount.toCurrency
+                }</td>
             <td class="govuk-table__cell govuk-table__cell--numeric">@{
                 if(chargeItem.isOnlyInterest) {
                     chargeItem.interestRemainingToPay.toCurrency
@@ -234,6 +236,33 @@
             }</td>
         </tr>
     }
+
+@tableRowWithNoInterest(rowId: String, chargeItem: ChargeItem, index: Int, id: String) = {
+    <tr class="govuk-table__row" id="@rowId">
+        <td class="govuk-table__cell">
+        @getDisplayDueDate(chargeItem).toLongDate.toNonBreaking
+        </td>
+        <td class="govuk-table__cell">
+            @getPaymentTypeEntry(chargeItem = chargeItem, isOverduePayment = true,
+                rowId = rowId, index = index)
+
+            @if(chargeItem.dunningLock) {
+                <div class="form-hint govuk-body-s"> @getMessage("paymentUnderReview") </div>
+            }
+            @if(chargeItem.hasLpiWithDunningLock) {
+                <div class="form-hint govuk-body-s" id="LpiDunningLock"> @getMessage("paymentUnderReview") </div>
+            }
+        </td>
+        <td class="govuk-table__cell"> @taxYearSummaryLink(chargeItem.taxYear.endYear, index, id)</td>
+        <td class="govuk-table__cell govuk-table__cell--numeric">@{
+            if(chargeItem.isOnlyInterest) {
+                chargeItem.interestRemainingToPay.toCurrency
+            } else {
+                chargeItem.remainingToPay.toCurrency
+            }
+        }</td>
+    </tr>
+}
 
 
     @getNoPaymentsDueText = @{
@@ -331,9 +360,19 @@
                                             href=@controllers.routes.PaymentController.paymentHandoff(viewModel.whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.get._2.toPence, origin).url>
                                                 <b>@getMessage("important-p2-link-text")</b></a>
                                         </div>
-                                        </p>
                                     </div>
                                 </div>
+                            } else {
+                                <h2 class ="govuk-body">@getMessage("no-charges-due-today")</h2>
+                                <p class="govuk-body">
+                                    @getMessage("selfAssessmentCharges.upcoming-charges-before-due-date1")
+                                    @link(
+                                        link = "",
+                                        messageKey = getMessage("selfAssessmentCharges.upcoming-charges-before-due-date2"),
+                                        id = Some(""),
+                                        target = Some("_blank"),
+                                        outerMessage = ".")
+                                </p>
                             }
 
                             <div class="govuk-tabs" data-module="govuk-tabs" id="self-assessment-charges-tabs">
@@ -348,11 +387,13 @@
                                             </a>
                                         </li>
                                     }
-                                    <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-                                        <a class="govuk-tabs__tab" href="#placeholder">
-                                            Placeholder
-                                        </a>
-                                    </li>
+                                    @if(ChargeItem.chargesDueAfter30DaysList(viewModel.whatYouOweChargesList).nonEmpty) {
+                                        <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                                            <a class="govuk-tabs__tab" href="#placeholder">
+                                            @getMessage("charges-to-pay-later")
+                                            </a>
+                                        </li>
+                                    }
                                 </ul>
                                 @if(ChargeItem.overdueOrAccruingInterestChargeList(viewModel.whatYouOweChargesList).nonEmpty || viewModel.whatYouOweChargesList.overdueOutstandingCharges.nonEmpty) {
                                     <div class="govuk-tabs__panel" id="charges-due-now">
@@ -413,9 +454,17 @@
                                         }
                                     </div>
                                 }
-                                <div class="govuk-tabs__panel" id="placeholder">
-                                    <h2 class="govuk-heading-l">Placeholder</h2>
-                                </div>
+
+                                    <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="placeholder">
+                                        <table class="govuk-table">
+                                            @tableHead("charges-due-later-table-head", estimatedInterestPresent = false)
+                                            <tbody class="govuk-table__body">
+                                            @for((charge, index) <- ChargeItem.chargesDueAfter30DaysList(viewModel.whatYouOweChargesList).zipWithIndex) {
+                                                @tableRowWithNoInterest(s"due-$index", charge, index, "taxYearSummary-link")
+                                            }
+                                            </tbody>
+                                        </table>
+                                    </div>
                             </div>
 
                             @getPaymentPlanSection
