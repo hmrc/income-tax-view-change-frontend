@@ -56,7 +56,7 @@ class BeforeYouStartControllerSpec extends MockAuthActions with MockOptInService
           "contains a button to redirect to choose tax year" when {
             "there are multiple optIn tax years" in {
               setupMockSuccess(mtdRole)
-              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
               when(mockOptInService.availableOptInTaxYear()(any(), any(), any()))
                 .thenReturn(Future.successful(Seq(taxYear2024, taxYear2025)))
@@ -73,7 +73,7 @@ class BeforeYouStartControllerSpec extends MockAuthActions with MockOptInService
           "contains a button to redirect to confirm tax year page" when {
             "there is one optIn tax year" in {
               setupMockSuccess(mtdRole)
-              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
               when(mockOptInService.availableOptInTaxYear()(any(), any(), any()))
                 .thenReturn(Future.successful(Seq(taxYear2024)))
@@ -90,7 +90,7 @@ class BeforeYouStartControllerSpec extends MockAuthActions with MockOptInService
         "render the error page" when {
           "the call to get available optInTaxYear fails" in {
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             when(mockOptInService.availableOptInTaxYear()(any(), any(), any()))
               .thenReturn(Future.failed(new Exception("Some error")))

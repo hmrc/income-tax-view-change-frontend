@@ -19,9 +19,8 @@ package services
 
 import auth.MtdItUser
 import connectors.CreateIncomeSourceConnector
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.UkProperty
 import models.createIncomeSource._
-import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.viewmodels._
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
@@ -59,7 +58,8 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
         Future.successful(Left(new Error("Failed to create incomeSources")))
       case Left(incomeSourceError) =>
         Logger("application").error("failed to create")
-        Future.successful(Left(new Error(s"Failed to create incomeSources: ${incomeSourceError}")))}
+        Future.successful(Left(new Error(s"Failed to create incomeSources: ${incomeSourceError}")))
+    }
   }
 
   def createRequest(viewModel: CheckDetailsViewModel)(implicit
@@ -100,9 +100,9 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
   }
 
   def createBusiness(viewModel: CheckBusinessDetailsViewModel)(implicit
-                                                       ec: ExecutionContext,
-                                                       user: MtdItUser[_],
-                                                       hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
+                                                               ec: ExecutionContext,
+                                                               user: MtdItUser[_],
+                                                               hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
     convertToCreateBusinessIncomeSourceRequest(viewModel) match {
       case Right(requestObject) =>
         createBusiness(requestObject)
@@ -125,9 +125,9 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
   }
 
   def createForeignProperty(viewModel: CheckPropertyViewModel)(implicit
-                                                              ec: ExecutionContext,
-                                                              user: MtdItUser[_],
-                                                              hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
+                                                               ec: ExecutionContext,
+                                                               user: MtdItUser[_],
+                                                               hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
     createForeignPropertyIncomeSourceRequest(viewModel) match {
       case Right(requestObject) =>
         createForeignProperty(requestObject)

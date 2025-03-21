@@ -84,7 +84,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
         s"render the choose tax year page" that {
           "has intent not pre-selected" in {
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockFetchIntent(Future.successful(None))
             mockGetSubmissionCountForTaxYear(counts)
             mockRecallOptOutProposition(Future.successful(optOutProposition))
@@ -98,7 +98,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
 
           "has intent pre-selected" in {
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockFetchIntent(Future.successful(Some(optOutTaxYear.taxYear)))
             mockGetSubmissionCountForTaxYear(counts)
             mockRecallOptOutProposition(Future.successful(optOutProposition))
@@ -122,7 +122,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
           "current tax is chosen" in {
 
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             mockGetSubmissionCountForTaxYear(counts)
             mockSaveIntent(currentTaxYear, Future.successful(true))
@@ -144,7 +144,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
 
           "previous tax is chosen" in {
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             mockGetSubmissionCountForTaxYear(counts)
             mockSaveIntent(previousTaxYear, Future.successful(true))
@@ -164,7 +164,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
 
           "next tax is chosen" in {
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             mockGetSubmissionCountForTaxYear(counts)
             mockSaveIntent(nextTaxYear, Future.successful(true))
@@ -186,7 +186,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
         "return a BadRequest" when {
           "choice is missing in form" in {
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             mockGetSubmissionCountForTaxYear(counts)
             mockSaveIntent(nextTaxYear, Future.successful(true))
@@ -206,7 +206,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
         "return an Internal Server Error" when {
           "intent cant be saved" in {
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             mockGetSubmissionCountForTaxYear(counts)
             mockSaveIntent(currentTaxYear, Future.successful(false))

@@ -52,7 +52,7 @@ class ForecastTaxCalcSummaryControllerSpec extends MockAuthActions with MockCalc
           "render the forecast tax calc summary page" in {
             setupMockSuccess(mtdUserRole)
             mockCalculationSuccessfulNew(testMtditid)
-            setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+            setupMockGetIncomeSourceDetails(businessIncome2018and2019)
 
             val result = action(fakeRequest)
             status(result) shouldBe Status.OK
@@ -69,14 +69,14 @@ class ForecastTaxCalcSummaryControllerSpec extends MockAuthActions with MockCalc
             "given a tax year which can not be found in ETMP" in {
               setupMockSuccess(mtdUserRole)
               mockCalculationNotFoundNew(testMtditid)
-              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+              setupMockGetIncomeSourceDetails(businessIncome2018and2019)
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
             }
             "there is a downstream error which return NOT_FOUND" in {
               setupMockSuccess(mtdUserRole)
               mockCalculationNotFoundNew(testMtditid)
-              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+              setupMockGetIncomeSourceDetails(businessIncome2018and2019)
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
             }
@@ -84,7 +84,7 @@ class ForecastTaxCalcSummaryControllerSpec extends MockAuthActions with MockCalc
             "there is a downstream error which return INTERNAL_SERVER_ERROR" in {
               setupMockSuccess(mtdUserRole)
               mockCalculationErrorNew(testMtditid)
-              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+              setupMockGetIncomeSourceDetails(businessIncome2018and2019)
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
             }

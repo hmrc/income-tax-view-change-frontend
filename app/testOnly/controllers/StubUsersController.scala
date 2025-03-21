@@ -18,10 +18,10 @@ package testOnly.controllers
 
 import config.FrontendAppConfig
 import controllers.BaseController
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.api.Logger
 import testOnly.models.UserRecord
 import testOnly.utils.UserRepository
 
@@ -49,7 +49,7 @@ class StubUsersController @Inject()(implicit val appConfig: FrontendAppConfig,
     )
   }
 
-  val deleteUsers: Action[AnyContent] = Action.async { implicit request =>
+  val deleteUsers: Action[AnyContent] = Action.async {
     userRepository.removeAll().flatMap(_ =>
       Future.successful(Ok("\nDeleted all mongo data from FE user collection"))
     )

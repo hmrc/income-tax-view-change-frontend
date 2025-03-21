@@ -20,7 +20,6 @@ import auth.MtdItUser
 import connectors.ChargeHistoryConnector
 import enums.CreateReversalReason
 import models.chargeHistory._
-import models.financialDetails.ChargeType.{poaOneReconciliationCredit, poaTwoReconciliationCredit}
 import models.financialDetails._
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -30,8 +29,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnector) {
 
   def chargeHistoryResponse(isLatePaymentCharge: Boolean, isPayeSelfAssessment: Boolean, chargeReference: Option[String],
-                                    isChargeHistoryEnabled: Boolean)
-                                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ChargesHistoryErrorModel, List[ChargeHistoryModel]]] = {
+                            isChargeHistoryEnabled: Boolean)
+                           (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ChargesHistoryErrorModel, List[ChargeHistoryModel]]] = {
     if (!isLatePaymentCharge && isChargeHistoryEnabled && !isPayeSelfAssessment) {
       chargeHistoryConnector.getChargeHistory(user.nino, chargeReference).map {
         case chargesHistory: ChargesHistoryModel => Right(chargesHistory.chargeHistoryDetails.getOrElse(Nil))

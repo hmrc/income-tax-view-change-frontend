@@ -18,8 +18,8 @@ package testOnly.controllers
 
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import models.admin.{FeatureSwitchName, InvalidFS}
 import models.admin.FeatureSwitchName.allFeatureSwitches
+import models.admin.{FeatureSwitchName, InvalidFS}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -83,11 +83,11 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
     def getEnabledFeatureSwitches: Map[FeatureSwitchName, Boolean] = {
       val subData: Set[String] =
         submittedData match {
-        case _ if submittedData.contains(DISABLE_ALL_FEATURES) => Set.empty
-        case _ if submittedData.contains(ENABLE_ALL_FEATURES) => allFeatureSwitches.map(_.name)
-        case _ if submittedData.contains(PROD_FEATURES) => prodEnabledFsList
-        case _ => submittedData
-      }
+          case _ if submittedData.contains(DISABLE_ALL_FEATURES) => Set.empty
+          case _ if submittedData.contains(ENABLE_ALL_FEATURES) => allFeatureSwitches.map(_.name)
+          case _ if submittedData.contains(PROD_FEATURES) => prodEnabledFsList
+          case _ => submittedData
+        }
       subData.map(x => allFeatureSwitches.find(e => e.name == x)).collect {
         case Some(fs) => fs
       }.map(x => x -> true).toMap
@@ -118,7 +118,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
 
   }
 
-  def enableAll(): Action[AnyContent] = Action.async { implicit user =>
+  def enableAll(): Action[AnyContent] = Action.async {
     for {
       featureSwitches <- featureSwitchService.getAll
       _ <- Future.sequence(

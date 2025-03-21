@@ -59,7 +59,7 @@ class ForecastIncomeSummaryControllerSpec extends MockAuthActions with MockCalcu
             "the given tax year is present in ETMP" in {
               setupMockSuccess(mtdUserRole)
               mockCalculationSuccessfulNew(testMtditid)
-              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+              setupMockGetIncomeSourceDetails(businessIncome2018and2019)
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK
@@ -91,7 +91,7 @@ class ForecastIncomeSummaryControllerSpec extends MockAuthActions with MockCalcu
             "given a tax year which can not be found in ETMP" in {
               setupMockSuccess(mtdUserRole)
               mockCalculationNotFoundNew(testMtditid)
-              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+              setupMockGetIncomeSourceDetails(businessIncome2018and2019)
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
             }
@@ -99,7 +99,7 @@ class ForecastIncomeSummaryControllerSpec extends MockAuthActions with MockCalcu
             "there is a downstream error which return INTERNAL_SERVER_ERROR" in {
               setupMockSuccess(mtdUserRole)
               mockCalculationErrorNew(testMtditid)
-              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+              setupMockGetIncomeSourceDetails(businessIncome2018and2019)
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
             }

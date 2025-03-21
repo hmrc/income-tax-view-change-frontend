@@ -73,7 +73,7 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
         s"return result with $OK status" in {
           setupMockSuccess(mtdUserRole)
           enable(IncomeSourcesFs)
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
 
           val result: Future[Result] = showAction(requestGET)
@@ -84,7 +84,7 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
           "there is no tax year eligible for opt out" in {
             setupMockSuccess(mtdUserRole)
             enable(IncomeSourcesFs)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(noEligibleTaxYearResponse)
 
             val result: Future[Result] = showAction(requestGET)
@@ -94,7 +94,7 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
           "opt out service fails" in {
             setupMockSuccess(mtdUserRole)
             enable(IncomeSourcesFs)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(failedResponse)
 
             val result: Future[Result] = showAction(requestGET)
@@ -116,7 +116,7 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
           "Yes response is submitted" in {
             setupMockSuccess(mtdUserRole)
             enable(IncomeSourcesFs)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
 
             val result: Future[Result] = submitAction(
@@ -134,7 +134,7 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
           "No response is submitted" in {
             setupMockSuccess(mtdUserRole)
             enable(IncomeSourcesFs)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
 
             val result: Future[Result] = submitAction(
@@ -151,7 +151,7 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
           "invalid response is submitted" in {
             setupMockSuccess(mtdUserRole)
             enable(IncomeSourcesFs)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
 
             val result: Future[Result] = submitAction(
@@ -166,7 +166,7 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
           "there is no tax year eligible for opt out" in {
             setupMockSuccess(mtdUserRole)
             enable(IncomeSourcesFs)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(noEligibleTaxYearResponse)
 
             val result: Future[Result] = submitAction(requestPOST)
@@ -176,7 +176,7 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
           "opt out service fails" in {
             setupMockSuccess(mtdUserRole)
             enable(IncomeSourcesFs)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(failedResponse)
 
             val result: Future[Result] = submitAction(requestPOST)

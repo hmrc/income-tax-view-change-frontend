@@ -51,7 +51,7 @@ class OptInCompletedControllerSpec extends MockAuthActions
         s"render the optInCompleted page" that {
           "is for the current year" in {
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val proposition = createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
             mockFetchOptInProposition(Some(proposition))
@@ -63,7 +63,7 @@ class OptInCompletedControllerSpec extends MockAuthActions
 
           "is for next year" in {
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val proposition = createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
             mockFetchOptInProposition(Some(proposition))
@@ -76,7 +76,7 @@ class OptInCompletedControllerSpec extends MockAuthActions
         "render the error page" when {
           "no proposition returned" in {
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             mockFetchOptInProposition(None)
             mockFetchSavedChosenTaxYear(Some(taxYear2023))
@@ -87,7 +87,7 @@ class OptInCompletedControllerSpec extends MockAuthActions
 
           "FetchSavedChosenTaxYear fails" in {
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val proposition = createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
             mockFetchOptInProposition(Some(proposition))
