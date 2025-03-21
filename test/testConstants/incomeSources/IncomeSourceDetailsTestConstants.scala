@@ -102,7 +102,8 @@ object IncomeSourceDetailsTestConstants {
     soleTraderBusinesses = List(ceaseBusinessDetailsViewModel, ceaseBusinessDetailsViewModel2),
     ukProperty = Some(ceaseUkPropertyDetailsViewModel),
     foreignProperty = Some(ceaseForeignPropertyDetailsViewModel),
-    ceasedBusinesses = Nil)
+    ceasedBusinesses = Nil,
+    displayStartDate = true)
 
   val checkCeaseBusinessDetailsModel = CheckCeaseIncomeSourceDetailsViewModel(
     incomeSourceId = IncomeSourceId(testSelfEmploymentId),

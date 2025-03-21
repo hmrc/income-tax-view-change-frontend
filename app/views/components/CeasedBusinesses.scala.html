@@ -29,7 +29,8 @@
 )
 
 @(
-        ceasedBusinesses: List[CeasedBusinessDetailsViewModel]
+        ceasedBusinesses: List[CeasedBusinessDetailsViewModel],
+        displayStartDate: Boolean
 )(implicit messages: Messages,
         user: auth.MtdItUser[_])
 
@@ -51,32 +52,55 @@
     businesses.sortWith((a, b) => a.cessationDate.isAfter(b.cessationDate))
 }
 
-@govukTable(Table(
-    head = Some(List(
-        HeadCell(
-            content = Text(getMessage("table-head.business-name")),
-            attributes = Map("id" -> "ceased-businesses-table-head-name")),
-        HeadCell(
-            content = Text(getMessage("table-head.date-started")),
-            attributes = Map("id" -> "ceased-businesses-table-head-date-started")),
-        HeadCell(
-            content = Text(getMessage("table-head.date-ended")),
-            attributes = Map("id" -> "ceased-businesses-table-head-date-ended"))
-    )),
-    rows = orderedCeasedBusinesses(ceasedBusinesses).zipWithIndex.map { case (business, index) => Seq(
-        TableRow(
-            content = Text(columnOneValue(business)),
-            attributes = Map("id" -> s"ceased-business-table-row-trading-name-$index")),
-        TableRow(
-            content = Text(business.tradingStartDate match {
-                case Some(date) => date.toLongDate
-                case None => messages("incomeSources.generic.unknown")
-            }),
-            attributes = Map("id" -> s"ceased-business-table-row-date-started-$index")),
-        TableRow(
-            content = Text(business.cessationDate.toLongDate),
-            attributes = Map("id" -> s"ceased-business-table-row-date-ended-$index")),
-    )
-    },
-    attributes = Map("id" -> "ceased-businesses-table")
-))
+@if(displayStartDate) {
+    @govukTable(Table(
+        head = Some(List(
+            HeadCell(
+                content = Text(getMessage("table-head.business-name")),
+                attributes = Map("id" -> "ceased-businesses-table-head-name")),
+            HeadCell(
+                content = Text(getMessage("table-head.date-started")),
+                attributes = Map("id" -> "ceased-businesses-table-head-date-started")),
+            HeadCell(
+                content = Text(getMessage("table-head.date-ended")),
+                attributes = Map("id" -> "ceased-businesses-table-head-date-ended"))
+        )),
+        rows = orderedCeasedBusinesses(ceasedBusinesses).zipWithIndex.map { case (business, index) => Seq(
+            TableRow(
+                content = Text(columnOneValue(business)),
+                attributes = Map("id" -> s"ceased-business-table-row-trading-name-$index")),
+            TableRow(
+                content = Text(business.tradingStartDate match {
+                    case Some(date) => date.toLongDate
+                    case None => messages("incomeSources.generic.unknown")
+                }),
+                attributes = Map("id" -> s"ceased-business-table-row-date-started-$index")),
+            TableRow(
+                content = Text(business.cessationDate.toLongDate),
+                attributes = Map("id" -> s"ceased-business-table-row-date-ended-$index")),
+        )
+        },
+        attributes = Map("id" -> "ceased-businesses-table")
+    ))
+} else {
+    @govukTable(Table(
+        head = Some(List(
+            HeadCell(
+                content = Text(getMessage("table-head.business-name")),
+                attributes = Map("id" -> "ceased-businesses-table-head-name")),
+            HeadCell(
+                content = Text(getMessage("table-head.date-ended")),
+                attributes = Map("id" -> "ceased-businesses-table-head-date-ended"))
+        )),
+        rows = orderedCeasedBusinesses(ceasedBusinesses).zipWithIndex.map { case (business, index) => Seq(
+            TableRow(
+                content = Text(columnOneValue(business)),
+                attributes = Map("id" -> s"ceased-business-table-row-trading-name-$index")),
+            TableRow(
+                content = Text(business.cessationDate.toLongDate),
+                attributes = Map("id" -> s"ceased-business-table-row-date-ended-$index")),
+        )
+        },
+        attributes = Map("id" -> "ceased-businesses-table")
+    ))
+}

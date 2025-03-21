@@ -165,7 +165,7 @@
 
     @if(sources.viewCeasedBusinesses.nonEmpty) {
         @h2(msg = getMessage("ceased-businesses-h2"),optId = Some("ceased-businesses-heading"))
-        @ceasedBusinesses(sources.viewCeasedBusinesses)
+        @ceasedBusinesses(sources.viewCeasedBusinesses, sources.displayStartDate)
     }
 
     <br>

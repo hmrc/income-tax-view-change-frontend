@@ -42,7 +42,8 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
           CeasedBusinessDetailsViewModel(None, SelfEmployment, None, testCessation.date.get),
           CeasedBusinessDetailsViewModel(None, ForeignProperty, None, testCessation2.date.get),
           CeasedBusinessDetailsViewModel(None, UkProperty, None, testCessation3.date.get)
-        )
+        ),
+        displayStartDate = true
       )
     } else {
       CeaseIncomeSourcesViewModel(
@@ -53,7 +54,8 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
           CeasedBusinessDetailsViewModel(tradingName = Some(testTradeName), incomeSourceType = SelfEmployment, tradingStartDate = Some(testStartDate3), cessationDate = testCessation3.date.get),
           CeasedBusinessDetailsViewModel(tradingName = None, incomeSourceType = ForeignProperty, tradingStartDate = Some(testStartDate), cessationDate = testCessation.date.get),
           CeasedBusinessDetailsViewModel(tradingName = None, incomeSourceType = UkProperty, tradingStartDate = Some(testStartDate2), cessationDate = testCessation2.date.get)
-        )
+        ),
+        displayStartDate = true
       )
     }
 
@@ -70,10 +72,6 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
     }
 
     lazy val document: Document = Jsoup.parse(contentAsString(view))
-
-    def getMessage(key: String, args: String*): String = {
-      messages(s"cease-income-sources.$key", args: _*)
-    }
 
     def getCeaseSoleTraderBusinessURL(incomeSourceId: String): String = {
       controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(Some(incomeSourceId),
@@ -101,13 +99,13 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
     val id = mkIncomeSourceId(testSelfEmploymentId).toHash.hash
 
     "render heading" in new Setup(false) {
-      document.getElementById("heading").text() shouldBe getMessage("heading")
+      document.getElementById("heading").text() shouldBe "Cease an income source"
     }
     "render Self employment table" when {
       "all fields have value" in new Setup(false) {
         val table = document.getElementById("sole-trader-businesses-table")
 
-        document.getElementById("self-employment-h1").text() shouldBe getMessage("self-employment.h1")
+        document.getElementById("self-employment-h1").text() shouldBe "Self employment (sole trader)"
         table.getElementById("table-row-trading-name-0").text() shouldBe testTradeName
         table.getElementById("table-row-trading-start-date-0").text() shouldBe testStartDate.toLongDate
         table.getElementById("cease-link-business-0").attr("href") shouldBe getCeaseSoleTraderBusinessURL(id)
@@ -116,9 +114,9 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       "unknown is shown on missing fields" in new Setup(false, missingValues = true) {
         val table = document.getElementById("sole-trader-businesses-table")
 
-        document.getElementById("self-employment-h1").text() shouldBe getMessage("self-employment.h1")
-        table.getElementById("table-row-trading-name-0").text() shouldBe getMessage("unknown")
-        table.getElementById("table-row-trading-start-date-0").text() shouldBe getMessage("unknown")
+        document.getElementById("self-employment-h1").text() shouldBe "Self employment (sole trader)"
+        table.getElementById("table-row-trading-name-0").text() shouldBe "Unknown"
+        table.getElementById("table-row-trading-start-date-0").text() shouldBe "Unknown"
         table.getElementById("cease-link-business-0").attr("href") shouldBe getCeaseSoleTraderBusinessURL(id)
       }
 
@@ -128,9 +126,9 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       "all fields have value" in new Setup(false) {
         val table = document.getElementById("uk-property-table")
 
-        document.getElementById("uk-property-h1").text() shouldBe getMessage("uk-property.h1")
-        document.getElementById("uk-property-p1").text() shouldBe getMessage("uk-property.p1")
-        table.getElementById("table-head-date-started-uk").text() shouldBe getMessage("table-head.date-started")
+        document.getElementById("uk-property-h1").text() shouldBe "UK property"
+        document.getElementById("uk-property-p1").text() shouldBe "You should only cease your UK property if you no longer receive any income from it."
+        table.getElementById("table-head-date-started-uk").text() shouldBe "Date started"
         table.getElementById("table-row-trading-start-date-uk").text() shouldBe testStartDate.toLongDate
         table.getElementById("cease-link-uk").attr("href") shouldBe getCeaseUkPropertyURL
       }
@@ -138,10 +136,10 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       "unknown is shown on missing fields" in new Setup(false, missingValues = true) {
         val table = document.getElementById("uk-property-table")
 
-        document.getElementById("uk-property-h1").text() shouldBe getMessage("uk-property.h1")
-        document.getElementById("uk-property-p1").text() shouldBe getMessage("uk-property.p1")
-        table.getElementById("table-head-date-started-uk").text() shouldBe getMessage("table-head.date-started")
-        table.getElementById("table-row-trading-start-date-uk").text() shouldBe getMessage("unknown")
+        document.getElementById("uk-property-h1").text() shouldBe "UK property"
+        document.getElementById("uk-property-p1").text() shouldBe "You should only cease your UK property if you no longer receive any income from it."
+        table.getElementById("table-head-date-started-uk").text() shouldBe "Date started"
+        table.getElementById("table-row-trading-start-date-uk").text() shouldBe "Unknown"
         table.getElementById("cease-link-uk").attr("href") shouldBe getCeaseUkPropertyURL
       }
     }
@@ -150,9 +148,9 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       "all fields have value" in new Setup(false) {
         val table = document.getElementById("foreign-property-table")
 
-        document.getElementById("foreign-property-h1").text() shouldBe getMessage("foreign-property.h1")
-        document.getElementById("foreign-property-p1").text() shouldBe getMessage("foreign-property.p1")
-        table.getElementById("table-head-date-started-foreign").text() shouldBe getMessage("table-head.date-started")
+        document.getElementById("foreign-property-h1").text() shouldBe "Foreign property"
+        document.getElementById("foreign-property-p1").text() shouldBe "You should only cease your foreign property if you no longer receive any income from it."
+        table.getElementById("table-head-date-started-foreign").text() shouldBe "Date started"
         table.getElementById("table-row-trading-start-date-foreign").text() shouldBe testStartDate.toLongDate
         table.getElementById("cease-link-foreign").attr("href") shouldBe getCeaseForeignPropertyURL
       }
@@ -160,10 +158,10 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       "unknown is shown on missing fields" in new Setup(false, missingValues = true) {
         val table = document.getElementById("foreign-property-table")
 
-        document.getElementById("foreign-property-h1").text() shouldBe getMessage("foreign-property.h1")
-        document.getElementById("foreign-property-p1").text() shouldBe getMessage("foreign-property.p1")
-        table.getElementById("table-head-date-started-foreign").text() shouldBe getMessage("table-head.date-started")
-        table.getElementById("table-row-trading-start-date-foreign").text() shouldBe getMessage("unknown")
+        document.getElementById("foreign-property-h1").text() shouldBe "Foreign property"
+        document.getElementById("foreign-property-p1").text() shouldBe "You should only cease your foreign property if you no longer receive any income from it."
+        table.getElementById("table-head-date-started-foreign").text() shouldBe "Date started"
+        table.getElementById("table-row-trading-start-date-foreign").text() shouldBe "Unknown"
         table.getElementById("cease-link-foreign").attr("href") shouldBe getCeaseForeignPropertyURL
       }
     }
@@ -172,11 +170,11 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       "all fields have value" in new Setup(false) {
         val table = document.getElementById("ceased-businesses-table")
 
-        document.getElementById("ceased-businesses-heading").text() shouldBe messages("incomeSources.ceased-income-sources.heading")
+        document.getElementById("ceased-businesses-heading").text() shouldBe "Businesses that have ceased"
 
-        table.getElementById("ceased-businesses-table-head-name").text() shouldBe messages("incomeSources.ceased-income-sources.table-head.business-name")
-        table.getElementById("ceased-businesses-table-head-date-started").text() shouldBe messages("incomeSources.ceased-income-sources.table-head.date-started")
-        table.getElementById("ceased-businesses-table-head-date-ended").text() shouldBe messages("incomeSources.ceased-income-sources.table-head.date-ended")
+        table.getElementById("ceased-businesses-table-head-name").text() shouldBe "Business name"
+        table.getElementById("ceased-businesses-table-head-date-started").text() shouldBe "Date started"
+        table.getElementById("ceased-businesses-table-head-date-ended").text() shouldBe "Date ended"
 
         table.getElementById("ceased-business-table-row-trading-name-0").text() shouldBe testTradeName
         table.getElementById("ceased-business-table-row-date-started-0").text() shouldBe testStartDate3.toLongDate
@@ -194,22 +192,22 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       "unknown is shown on missing fields" in new Setup(false, missingValues = true) {
         val table = document.getElementById("ceased-businesses-table")
 
-        document.getElementById("ceased-businesses-heading").text() shouldBe messages("incomeSources.ceased-income-sources.heading")
+        document.getElementById("ceased-businesses-heading").text() shouldBe "Businesses that have ceased"
 
-        table.getElementById("ceased-businesses-table-head-name").text() shouldBe messages("incomeSources.ceased-income-sources.table-head.business-name")
-        table.getElementById("ceased-businesses-table-head-date-started").text() shouldBe messages("incomeSources.ceased-income-sources.table-head.date-started")
-        table.getElementById("ceased-businesses-table-head-date-ended").text() shouldBe messages("incomeSources.ceased-income-sources.table-head.date-ended")
+        table.getElementById("ceased-businesses-table-head-name").text() shouldBe "Business name"
+        table.getElementById("ceased-businesses-table-head-date-started").text() shouldBe "Date started"
+        table.getElementById("ceased-businesses-table-head-date-ended").text() shouldBe "Date ended"
 
         table.getElementById("ceased-business-table-row-trading-name-0").text() shouldBe columnOneUkProperty
-        table.getElementById("ceased-business-table-row-date-started-0").text() shouldBe messages("incomeSources.generic.unknown")
+        table.getElementById("ceased-business-table-row-date-started-0").text() shouldBe "Unknown"
         table.getElementById("ceased-business-table-row-date-ended-0").text() shouldBe testCessation3.date.get.toLongDate
 
         table.getElementById("ceased-business-table-row-trading-name-1").text() shouldBe columnOneForeignProperty
-        table.getElementById("ceased-business-table-row-date-started-1").text() shouldBe messages("incomeSources.generic.unknown")
+        table.getElementById("ceased-business-table-row-date-started-1").text() shouldBe "Unknown"
         table.getElementById("ceased-business-table-row-date-ended-1").text() shouldBe testCessation2.date.get.toLongDate
 
-        table.getElementById("ceased-business-table-row-trading-name-2").text() shouldBe messages("incomeSources.ceased-income-sources.unknown-sole-trader")
-        table.getElementById("ceased-business-table-row-date-started-2").text() shouldBe messages("incomeSources.generic.unknown")
+        table.getElementById("ceased-business-table-row-trading-name-2").text() shouldBe "Sole trader business"
+        table.getElementById("ceased-business-table-row-date-started-2").text() shouldBe "Unknown"
         table.getElementById("ceased-business-table-row-date-ended-2").text() shouldBe testCessation.date.get.toLongDate
       }
     }
@@ -220,13 +218,13 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
     val id = mkIncomeSourceId(testSelfEmploymentId).toHash.hash
 
     "render heading" in new Setup(true) {
-      document.getElementById("heading").text() shouldBe getMessage("heading")
+      document.getElementById("heading").text() shouldBe "Cease an income source"
     }
     "render Self employment table" when {
       "all fields have value" in new Setup(true) {
         val table = document.getElementById("sole-trader-businesses-table")
 
-        document.getElementById("self-employment-h1").text() shouldBe getMessage("self-employment.h1")
+        document.getElementById("self-employment-h1").text() shouldBe "Self employment (sole trader)"
         table.getElementById("table-row-trading-name-0").text() shouldBe testTradeName
         table.getElementById("table-row-trading-start-date-0").text() shouldBe testStartDate.toLongDate
         table.getElementById("cease-link-business-0").attr("href") shouldBe getCeaseSoleTraderBusinessURL(id)
@@ -235,9 +233,9 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       "unknown is shown on missing fields" in new Setup(true, missingValues = true) {
         val table = document.getElementById("sole-trader-businesses-table")
 
-        document.getElementById("self-employment-h1").text() shouldBe getMessage("self-employment.h1")
-        table.getElementById("table-row-trading-name-0").text() shouldBe getMessage("unknown")
-        table.getElementById("table-row-trading-start-date-0").text() shouldBe getMessage("unknown")
+        document.getElementById("self-employment-h1").text() shouldBe "Self employment (sole trader)"
+        table.getElementById("table-row-trading-name-0").text() shouldBe "Unknown"
+        table.getElementById("table-row-trading-start-date-0").text() shouldBe "Unknown"
         table.getElementById("cease-link-business-0").attr("href") shouldBe getCeaseSoleTraderBusinessURL(id)
       }
 
@@ -247,9 +245,9 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       "all fields have value" in new Setup(true) {
         val table = document.getElementById("uk-property-table")
 
-        document.getElementById("uk-property-h1").text() shouldBe getMessage("uk-property.h1")
-        document.getElementById("uk-property-p1").text() shouldBe getMessage("uk-property.p1")
-        table.getElementById("table-head-date-started-uk").text() shouldBe getMessage("table-head.date-started")
+        document.getElementById("uk-property-h1").text() shouldBe "UK property"
+        document.getElementById("uk-property-p1").text() shouldBe "You should only cease your UK property if you no longer receive any income from it."
+        table.getElementById("table-head-date-started-uk").text() shouldBe "Date started"
         table.getElementById("table-row-trading-start-date-uk").text() shouldBe testStartDate.toLongDate
         table.getElementById("cease-link-uk").attr("href") shouldBe getCeaseUkPropertyURL
       }
@@ -257,10 +255,10 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       "unknown is shown on missing fields" in new Setup(true, missingValues = true) {
         val table = document.getElementById("uk-property-table")
 
-        document.getElementById("uk-property-h1").text() shouldBe getMessage("uk-property.h1")
-        document.getElementById("uk-property-p1").text() shouldBe getMessage("uk-property.p1")
-        table.getElementById("table-head-date-started-uk").text() shouldBe getMessage("table-head.date-started")
-        table.getElementById("table-row-trading-start-date-uk").text() shouldBe getMessage("unknown")
+        document.getElementById("uk-property-h1").text() shouldBe "UK property"
+        document.getElementById("uk-property-p1").text() shouldBe "You should only cease your UK property if you no longer receive any income from it."
+        table.getElementById("table-head-date-started-uk").text() shouldBe "Date started"
+        table.getElementById("table-row-trading-start-date-uk").text() shouldBe "Unknown"
         table.getElementById("cease-link-uk").attr("href") shouldBe getCeaseUkPropertyURL
       }
     }
@@ -269,9 +267,9 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       "all fields have value" in new Setup(true) {
         val table = document.getElementById("foreign-property-table")
 
-        document.getElementById("foreign-property-h1").text() shouldBe getMessage("foreign-property.h1")
-        document.getElementById("foreign-property-p1").text() shouldBe getMessage("foreign-property.p1")
-        table.getElementById("table-head-date-started-foreign").text() shouldBe getMessage("table-head.date-started")
+        document.getElementById("foreign-property-h1").text() shouldBe "Foreign property"
+        document.getElementById("foreign-property-p1").text() shouldBe "You should only cease your foreign property if you no longer receive any income from it."
+        table.getElementById("table-head-date-started-foreign").text() shouldBe "Date started"
         table.getElementById("table-row-trading-start-date-foreign").text() shouldBe testStartDate.toLongDate
         table.getElementById("cease-link-foreign").attr("href") shouldBe getCeaseForeignPropertyURL
       }
@@ -279,10 +277,10 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       "unknown is shown on missing fields" in new Setup(true, missingValues = true) {
         val table = document.getElementById("foreign-property-table")
 
-        document.getElementById("foreign-property-h1").text() shouldBe getMessage("foreign-property.h1")
-        document.getElementById("foreign-property-p1").text() shouldBe getMessage("foreign-property.p1")
-        table.getElementById("table-head-date-started-foreign").text() shouldBe getMessage("table-head.date-started")
-        table.getElementById("table-row-trading-start-date-foreign").text() shouldBe getMessage("unknown")
+        document.getElementById("foreign-property-h1").text() shouldBe "Foreign property"
+        document.getElementById("foreign-property-p1").text() shouldBe "You should only cease your foreign property if you no longer receive any income from it."
+        table.getElementById("table-head-date-started-foreign").text() shouldBe "Date started"
+        table.getElementById("table-row-trading-start-date-foreign").text() shouldBe "Unknown"
         table.getElementById("cease-link-foreign").attr("href") shouldBe getCeaseForeignPropertyURL
       }
     }
@@ -291,11 +289,11 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       "all fields have value" in new Setup(true) {
         val table = document.getElementById("ceased-businesses-table")
 
-        document.getElementById("ceased-businesses-heading").text() shouldBe messages("incomeSources.ceased-income-sources.heading")
+        document.getElementById("ceased-businesses-heading").text() shouldBe "Businesses that have ceased"
 
-        table.getElementById("ceased-businesses-table-head-name").text() shouldBe messages("incomeSources.ceased-income-sources.table-head.business-name")
-        table.getElementById("ceased-businesses-table-head-date-started").text() shouldBe messages("incomeSources.ceased-income-sources.table-head.date-started")
-        table.getElementById("ceased-businesses-table-head-date-ended").text() shouldBe messages("incomeSources.ceased-income-sources.table-head.date-ended")
+        table.getElementById("ceased-businesses-table-head-name").text() shouldBe "Business name"
+        table.getElementById("ceased-businesses-table-head-date-started").text() shouldBe "Date started"
+        table.getElementById("ceased-businesses-table-head-date-ended").text() shouldBe "Date ended"
 
         table.getElementById("ceased-business-table-row-trading-name-0").text() shouldBe testTradeName
         table.getElementById("ceased-business-table-row-date-started-0").text() shouldBe testStartDate3.toLongDate
@@ -313,22 +311,22 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       "unknown is shown on missing fields" in new Setup(true, missingValues = true) {
         val table = document.getElementById("ceased-businesses-table")
 
-        document.getElementById("ceased-businesses-heading").text() shouldBe messages("incomeSources.ceased-income-sources.heading")
+        document.getElementById("ceased-businesses-heading").text() shouldBe "Businesses that have ceased"
 
-        table.getElementById("ceased-businesses-table-head-name").text() shouldBe messages("incomeSources.ceased-income-sources.table-head.business-name")
-        table.getElementById("ceased-businesses-table-head-date-started").text() shouldBe messages("incomeSources.ceased-income-sources.table-head.date-started")
-        table.getElementById("ceased-businesses-table-head-date-ended").text() shouldBe messages("incomeSources.ceased-income-sources.table-head.date-ended")
+        table.getElementById("ceased-businesses-table-head-name").text() shouldBe "Business name"
+        table.getElementById("ceased-businesses-table-head-date-started").text() shouldBe "Date started"
+        table.getElementById("ceased-businesses-table-head-date-ended").text() shouldBe "Date ended"
 
         table.getElementById("ceased-business-table-row-trading-name-0").text() shouldBe columnOneUkProperty
-        table.getElementById("ceased-business-table-row-date-started-0").text() shouldBe messages("incomeSources.generic.unknown")
+        table.getElementById("ceased-business-table-row-date-started-0").text() shouldBe "Unknown"
         table.getElementById("ceased-business-table-row-date-ended-0").text() shouldBe testCessation3.date.get.toLongDate
 
         table.getElementById("ceased-business-table-row-trading-name-1").text() shouldBe columnOneForeignProperty
-        table.getElementById("ceased-business-table-row-date-started-1").text() shouldBe messages("incomeSources.generic.unknown")
+        table.getElementById("ceased-business-table-row-date-started-1").text() shouldBe "Unknown"
         table.getElementById("ceased-business-table-row-date-ended-1").text() shouldBe testCessation2.date.get.toLongDate
 
-        table.getElementById("ceased-business-table-row-trading-name-2").text() shouldBe messages("incomeSources.ceased-income-sources.unknown-sole-trader")
-        table.getElementById("ceased-business-table-row-date-started-2").text() shouldBe messages("incomeSources.generic.unknown")
+        table.getElementById("ceased-business-table-row-trading-name-2").text() shouldBe "Sole trader business"
+        table.getElementById("ceased-business-table-row-date-started-2").text() shouldBe "Unknown"
         table.getElementById("ceased-business-table-row-date-ended-2").text() shouldBe testCessation.date.get.toLongDate
       }
     }

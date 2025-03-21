@@ -54,7 +54,7 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
     businessDetailsConnector.getIncomeSources()
   }
 
-  def getAddIncomeSourceViewModel(sources: IncomeSourceDetailsModel): Try[AddIncomeSourcesViewModel] = Try {
+  def getAddIncomeSourceViewModel(sources: IncomeSourceDetailsModel, displayBusinessStartDateFS: Boolean): Try[AddIncomeSourcesViewModel] = Try {
     val soleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
     val ukProperty = sources.properties.filterNot(_.isCeased).find(_.isUkProperty)
     val foreignProperty = sources.properties.filterNot(_.isCeased).find(_.isForeignProperty)
@@ -71,7 +71,8 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
       foreignProperty = foreignProperty.map { property =>
         PropertyDetailsViewModel(property.tradingStartDate)
       },
-      ceasedBusinesses = getCeasedBusinesses(sources = sources)
+      ceasedBusinesses = getCeasedBusinesses(sources = sources),
+      displayStartDate = displayBusinessStartDateFS
     )
   }
 
@@ -116,7 +117,7 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
     }.toEither
   }
 
-  def getCeaseIncomeSourceViewModel(sources: IncomeSourceDetailsModel): Either[Throwable, CeaseIncomeSourcesViewModel] = {
+  def getCeaseIncomeSourceViewModel(sources: IncomeSourceDetailsModel, displayBusinessStartDateFS: Boolean): Either[Throwable, CeaseIncomeSourcesViewModel] = {
 
     val maybeSoleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
     val soleTraderBusinessesExists = maybeSoleTraderBusinesses.nonEmpty
@@ -148,7 +149,8 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
             maybeForeignProperty.flatMap(_.tradingStartDate)
           ))
         } else None,
-        getCeasedBusinesses(sources = sources)
+        getCeasedBusinesses(sources = sources),
+        displayBusinessStartDateFS
       )
     }.toEither
   }
