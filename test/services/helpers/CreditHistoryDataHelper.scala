@@ -20,6 +20,7 @@ package services.helpers
 import enums.ChargeType.NIC4_WALES
 import models.creditDetailModel._
 import models.financialDetails._
+import models.incomeSourceDetails.{TaxYear, TaxYearRange}
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import testConstants.BusinessDetailsTestConstants.fixedDate
 
@@ -44,6 +45,7 @@ trait CreditHistoryDataHelper {
   )
 
   val taxYear: Int = 2022
+  val taxYearRange: TaxYearRange = TaxYearRange(TaxYear.forYearEnd(2022), TaxYear.forYearEnd(2023))
   val nino: String = "someNino"
   val documentIdA: String = "DOCID01"
   val documentIdB: String = "DOCID02"

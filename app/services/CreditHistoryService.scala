@@ -63,9 +63,9 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
     }
   }
 
-  private def getCreditsByTaxYearV2(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)
+  private def getCreditsByTaxYearV2(taxYearRange: TaxYearRange, nino: String)
                                  (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
-    financialDetailsConnector.getFinancialDetails(taxYearFrom, taxYearTo, nino).flatMap {
+      financialDetailsConnector.getFinancialDetailsByTaxYearRange(taxYearRange, nino).flatMap {
       case financialDetailsModel: FinancialDetailsModel =>
         val fdRes = financialDetailsModel.getPairedDocumentDetails().flatMap {
           case (document: DocumentDetail, financialDetail: FinancialDetail) =>
@@ -114,14 +114,14 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
     }
   }
 
-  def getCreditsHistoryV2(calendarYear: Int, nino: String)
+  def getCreditsHistoryV2(taxYearRange: TaxYearRange, nino: String)
                        (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
 
     for {
-      creditModelsForBothYears <- getCreditsByTaxYearV2(TaxYear(calendarYear-1, calendarYear), TaxYear(calendarYear, calendarYear + 1), nino)
+      creditModelsForBothYears <- getCreditsByTaxYearV2(taxYearRange, nino)
     } yield creditModelsForBothYears match {
       case Right(creditModel) =>
-        val creditsForTaxYearAndPlusOne = creditModel.filter(creditDetailModel => creditDetailModel.documentDetail.taxYear == calendarYear)
+        val creditsForTaxYearAndPlusOne = creditModel.filter(creditDetailModel => creditDetailModel.documentDetail.taxYear == taxYearRange.endYear.startYear)
         Right(creditsForTaxYearAndPlusOne)
       case _ =>
         Left(CreditHistoryError)
