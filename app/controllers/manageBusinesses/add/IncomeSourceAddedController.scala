@@ -59,7 +59,7 @@ class IncomeSourceAddedController @Inject()(val authActions: AuthActions,
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                            (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
-    withIncomeSourcesFS {
+    withNewIncomeSourcesFS {
       sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType)).flatMap {
         case Right(Some(sessionData)) =>
           (for {
@@ -124,7 +124,7 @@ class IncomeSourceAddedController @Inject()(val authActions: AuthActions,
                             showPreviousTaxYears: Boolean, isAgent: Boolean, sessionData: UIJourneySessionData, reportingMethod: ChosenReportingMethod
                            )(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
     val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
-    val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(journeyIsComplete = Some(true))
+    val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(incomeSourceCreatedJourneyComplete = Some(true))
     val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
     sessionService.setMongoData(uiJourneySessionData).flatMap { _ =>
       uiJourneySessionData.addIncomeSourceData.flatMap(_.dateStarted) match {

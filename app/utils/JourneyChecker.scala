@@ -95,8 +95,8 @@ trait JourneyChecker extends IncomeSourcesUtils {
     }
   }
 
-  def withSessionData(incomeSources: IncomeSourceJourneyType, journeyState: JourneyState)(codeBlock: UIJourneySessionData => Future[Result])
-                     (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  def withSessionDataAndOldIncomeSourceFS(incomeSources: IncomeSourceJourneyType, journeyState: JourneyState)(codeBlock: UIJourneySessionData => Future[Result])
+                                         (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     withIncomeSourcesFS {
       sessionService.getMongo(incomeSources).flatMap {
         case Right(Some(data: UIJourneySessionData)) if showCannotGoBackErrorPage(data, incomeSources, journeyState) =>
@@ -124,10 +124,10 @@ trait JourneyChecker extends IncomeSourcesUtils {
     (incomeSources.operation, journeyState) match {
       case (_, CannotGoBackPage) => false
       case (Add, BeforeSubmissionPage) | (Add, InitialPage) =>
-        data.addIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false) ||
+        data.addIncomeSourceData.flatMap(_.incomeSourceCreatedJourneyComplete).getOrElse(false) ||
           data.addIncomeSourceData.flatMap(_.incomeSourceAdded).getOrElse(false)
       case (Add, _) =>
-        data.addIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
+        data.addIncomeSourceData.flatMap(_.incomeSourceCreatedJourneyComplete).getOrElse(false)
       case (Manage, _) =>
         data.manageIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
       case (Cease, _) =>

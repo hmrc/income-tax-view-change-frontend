@@ -21,7 +21,7 @@ import exceptions.MissingFieldException
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesFs
+import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.viewmodels.ViewIncomeSourcesViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -55,7 +55,7 @@ class ManageIncomeSourceControllerSpec extends MockAuthActions
       s"the user is authenticated as a $mtdRole" should {
         "render the manage income sources page" when {
           "the user has a sole trader business and a UK property" in {
-            enable(IncomeSourcesFs)
+            enable(IncomeSourcesNewJourney)
             setupMockSuccess(mtdRole)
             mockBothIncomeSources()
 
@@ -82,7 +82,7 @@ class ManageIncomeSourceControllerSpec extends MockAuthActions
         "redirect to the home page" when {
           "IncomeSources FS is disabled" in {
             setupMockSuccess(mtdRole)
-            disable(IncomeSourcesFs)
+            disable(IncomeSourcesNewJourney)
             mockBusinessIncomeSource()
             val result: Future[Result] = action(fakeRequest)
             status(result) shouldBe Status.SEE_OTHER
@@ -97,7 +97,7 @@ class ManageIncomeSourceControllerSpec extends MockAuthActions
 
         "render the error page" when {
           "error response from service" in {
-            enable(IncomeSourcesFs)
+            enable(IncomeSourcesNewJourney)
             setupMockSuccess(mtdRole)
             mockBothIncomeSources()
 

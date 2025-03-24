@@ -97,10 +97,10 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
 
   def getBackUrl(isAgent: Boolean, incomeSourceType: IncomeSourceType): String = {
     ((isAgent, incomeSourceType) match {
-      case (false, UkProperty) => controllers.manageBusinesses.add.routes.AddIncomeSourceController.show()
-      case (true, UkProperty) => controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent()
-      case (false, ForeignProperty) => controllers.manageBusinesses.add.routes.AddIncomeSourceController.show()
-      case (true, ForeignProperty) => controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent()
+      case (false, UkProperty) => controllers.manageBusinesses.routes.ManageYourBusinessesController.show()
+      case (true, UkProperty) => controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent()
+      case (false, ForeignProperty) => controllers.manageBusinesses.routes.ManageYourBusinessesController.show()
+      case (true, ForeignProperty) => controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent()
       case (false, SelfEmployment) => controllers.manageBusinesses.add.routes.AddBusinessNameController.show(isChange = false)
       case (true, SelfEmployment) => controllers.manageBusinesses.add.routes.AddBusinessNameController.showAgent(isChange = false)
     }).url

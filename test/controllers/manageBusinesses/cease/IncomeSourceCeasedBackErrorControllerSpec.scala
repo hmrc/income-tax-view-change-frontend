@@ -20,7 +20,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesFs
+import models.admin.IncomeSourcesNewJourney
 import play.api
 import play.api.http.Status.OK
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
@@ -44,7 +44,7 @@ class IncomeSourceCeasedBackErrorControllerSpec extends MockAuthActions with Moc
         s"the user is authenticated as a $mtdRole" should {
           "return 200 OK" in {
             setupMockSuccess(mtdRole)
-            enable(IncomeSourcesFs)
+            enable(IncomeSourcesNewJourney)
             mockUKPropertyIncomeSourceWithLatency2024()
             val result = action(fakeRequest)
             status(result) shouldBe OK

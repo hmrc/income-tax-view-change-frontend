@@ -21,7 +21,7 @@ import exceptions.MissingFieldException
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.{DisplayBusinessStartDate, IncomeSourcesFs}
+import models.admin.{DisplayBusinessStartDate, IncomeSourcesNewJourney}
 import models.incomeSourceDetails.viewmodels.ViewIncomeSourcesViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -50,7 +50,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
       "render the manage businesses page" when {
         "the IncomeSources FS in enabled and the DisplayBusinessStartDate FS is enabled" in {
           setupMockUserAuth
-          enable(IncomeSourcesFs)
+          enable(IncomeSourcesNewJourney)
           enable(DisplayBusinessStartDate)
           mockBothIncomeSources()
           setupMockCreateSession(true)
@@ -76,7 +76,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
       "render the manage businesses page with no business start date" when {
         "the IncomeSources FS in enabled and the DisplayBusinessStartDate FS is disabled" in {
           setupMockUserAuth
-          enable(IncomeSourcesFs)
+          enable(IncomeSourcesNewJourney)
           disable(DisplayBusinessStartDate)
           mockBothIncomeSources()
           setupMockCreateSession(true)
@@ -101,7 +101,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
 
       "redirect to the home page" when {
         "the IncomeSources FS is disabled" in {
-          disable(IncomeSourcesFs)
+          disable(IncomeSourcesNewJourney)
           setupMockUserAuth
           mockBothIncomeSources()
 
@@ -114,7 +114,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
       "render the error page" when {
         "the call to get income source view model fails" in {
           setupMockUserAuth
-          enable(IncomeSourcesFs)
+          enable(IncomeSourcesNewJourney)
           enable(DisplayBusinessStartDate)
           mockBothIncomeSources()
           when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any())(any()))
@@ -128,7 +128,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
 
         "the header carrier is missing the X-sessionId" in {
           setupMockUserAuth
-          enable(IncomeSourcesFs)
+          enable(IncomeSourcesNewJourney)
           enable(DisplayBusinessStartDate)
           mockBothIncomeSources()
           setupMockCreateSession(true)
@@ -164,7 +164,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
         "render the manage businesses page" when {
           "the IncomeSources FS in enabled" in {
             setupMockAgentWithClientAuth(isSupportingAgent)
-            enable(IncomeSourcesFs)
+            enable(IncomeSourcesNewJourney)
             enable(DisplayBusinessStartDate)
             mockBothIncomeSources()
             setupMockCreateSession(true)
@@ -189,7 +189,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
 
         "redirect to the home page" when {
           "the IncomeSources FS is disabled" in {
-            disable(IncomeSourcesFs)
+            disable(IncomeSourcesNewJourney)
             setupMockAgentWithClientAuth(isSupportingAgent)
             mockBothIncomeSources()
 
@@ -202,7 +202,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
         "render the error page" when {
           "the call to get income source view model fails" in {
             setupMockAgentWithClientAuth(isSupportingAgent)
-            enable(IncomeSourcesFs)
+            enable(IncomeSourcesNewJourney)
             enable(DisplayBusinessStartDate)
             mockBothIncomeSources()
             when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any())(any()))
@@ -216,7 +216,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
 
           "the header carrier is missing the X-sessionId" in {
             setupMockAgentWithClientAuth(isSupportingAgent)
-            enable(IncomeSourcesFs)
+            enable(IncomeSourcesNewJourney)
             enable(DisplayBusinessStartDate)
             mockBothIncomeSources()
             setupMockCreateSession(true)

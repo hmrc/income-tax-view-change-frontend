@@ -22,7 +22,7 @@ import forms.manageBusinesses.add.AddProprertyForm
 import forms.manageBusinesses.add.AddProprertyForm._
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesFs
+import models.admin.IncomeSourcesNewJourney
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api
@@ -66,7 +66,7 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
       s"the user is authenticated as a $mtdRole" should {
         "display the add property page" when {
           "IncomeSources FS is enabled" in {
-            enable(IncomeSourcesFs)
+            enable(IncomeSourcesNewJourney)
             setupMockSuccess(mtdRole)
             mockNoIncomeSources()
             val result = action(fakeRequest)
@@ -81,7 +81,7 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
 
         "redirect to the home page" when {
           "IncomeSources FS is disabled" in {
-            disable(IncomeSourcesFs)
+            disable(IncomeSourcesNewJourney)
             setupMockSuccess(mtdRole)
 
             mockNoIncomeSources()
@@ -103,7 +103,7 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
       s"the user is authenticated as a $mtdRole" should {
         s"return ${Status.SEE_OTHER}: redirect to the correct Add Start Date Page" when {
           "foreign property selected" in {
-            enable(IncomeSourcesFs)
+            enable(IncomeSourcesNewJourney)
             setupMockSuccess(mtdRole)
 
             mockNoIncomeSources()
@@ -117,7 +117,7 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
             redirectLocation(result) shouldBe Some(redirectUrl)
           }
           "uk property selected" in {
-            enable(IncomeSourcesFs)
+            enable(IncomeSourcesNewJourney)
             setupMockSuccess(mtdRole)
 
             mockNoIncomeSources()
@@ -134,7 +134,7 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
 
         s"return ${Status.BAD_REQUEST}" when {
           "an invalid form is submitted" in {
-            enable(IncomeSourcesFs)
+            enable(IncomeSourcesNewJourney)
             setupMockSuccess(mtdRole)
 
             mockNoIncomeSources()
@@ -147,7 +147,7 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
             document.title shouldBe getValidationErrorTabTitle()
           }
           "an empty form is submitted" in {
-            enable(IncomeSourcesFs)
+            enable(IncomeSourcesNewJourney)
             setupMockSuccess(mtdRole)
 
             mockNoIncomeSources()
@@ -160,7 +160,7 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
             document.title shouldBe getValidationErrorTabTitle()
           }
           "no form is submitted" in {
-            enable(IncomeSourcesFs)
+            enable(IncomeSourcesNewJourney)
             setupMockSuccess(mtdRole)
 
             mockNoIncomeSources()
@@ -173,7 +173,7 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
 
         "redirect to the home page" when {
           "IncomeSources FS is disabled" in {
-            disable(IncomeSourcesFs)
+            disable(IncomeSourcesNewJourney)
             setupMockSuccess(mtdRole)
 
             mockNoIncomeSources()

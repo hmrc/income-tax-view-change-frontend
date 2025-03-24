@@ -84,7 +84,7 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
 
     val messagesPrefix = incomeSourceType.startDateMessagesPrefix
 
-    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = {
+    withSessionDataAndOldIncomeSourceFS(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = {
       incomeSourceType match {
         case SelfEmployment => BeforeSubmissionPage
         case _ => InitialPage
@@ -154,7 +154,7 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
 
   def handleValidFormData(formData: LocalDate, incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean)
                          (implicit user: MtdItUser[_]): Future[Result] = {
-    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = {
+    withSessionDataAndOldIncomeSourceFS(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = {
       incomeSourceType match {
         case SelfEmployment => BeforeSubmissionPage
         case _ => InitialPage

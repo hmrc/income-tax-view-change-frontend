@@ -63,9 +63,10 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
   }
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
-                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
-    showCeaseIncomeSourceView(sources, isAgent, backUrl)
-  }
+                   (implicit user: MtdItUser[_]): Future[Result] =
+    withNewIncomeSourcesFS {
+      showCeaseIncomeSourceView(sources, isAgent, backUrl)
+    }
 
   private def showCeaseIncomeSourceView(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)(implicit user: MtdItUser[_]): Future[Result] = {
     incomeSourceDetailsService.getCeaseIncomeSourceViewModel(sources) match {

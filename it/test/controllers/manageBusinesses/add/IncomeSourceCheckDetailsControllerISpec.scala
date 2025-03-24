@@ -22,7 +22,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.admin.{IncomeSourcesFs, IncomeSourcesNewJourney, NavBarFs}
+import models.admin.{IncomeSourcesNewJourney, NavBarFs}
 import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import models.incomeSourceDetails.UIJourneySessionData
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -75,7 +75,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
           "is authenticated, with a valid enrolment" should {
             "render the Check Business details page with accounting method" when {
               "the user has no existing businesses" in {
-                enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
                 enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
@@ -131,7 +131,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
           "is authenticated, with a valid enrolment" should {
             "redirect to IncomeSourceReportingFrequencyController" when {
               "user selects 'confirm and continue'" in {
-                enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
                 enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
@@ -164,7 +164,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
             "render the error page" when {
               "error in response from API" in {
-                enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
                 enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
@@ -196,7 +196,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
               }
 
               "user session has no details" in {
-                enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
                 enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)

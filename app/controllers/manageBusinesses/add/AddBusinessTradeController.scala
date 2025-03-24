@@ -63,7 +63,7 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
     }).url
   }
 
-  def getPostAction(isAgent: Boolean, isChange: Boolean) = if(isAgent) {
+  private def getPostAction(isAgent: Boolean, isChange: Boolean): Call = if(isAgent) {
     controllers.manageBusinesses.add.routes.AddBusinessTradeController.submitAgent(isChange)
   } else {
     controllers.manageBusinesses.add.routes.AddBusinessTradeController.submit(isChange)
@@ -80,7 +80,7 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
   }
 
   def handleRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
+    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
       val businessTradeOpt = sessionData.addIncomeSourceData.flatMap(_.businessTrade)
       val filledForm = businessTradeOpt.fold(BusinessTradeForm.form)(businessTrade =>
         BusinessTradeForm.form.fill(BusinessTradeForm(businessTrade)))
@@ -109,7 +109,7 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
   }
 
   def handleSubmitRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
-    withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
+    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
       val businessNameOpt = sessionData.addIncomeSourceData.flatMap(_.businessName)
 
       BusinessTradeForm

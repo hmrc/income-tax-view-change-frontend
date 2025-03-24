@@ -32,7 +32,7 @@ object CeaseIncomeSourceData {
   val incomeSourceIdField:          String = "incomeSourceId"
   val dateCeasedField:              String = "endDate"
   val ceaseIncomeSourceDeclare:     String = "ceaseIncomeSourceDeclare"
-  val journeyIsCompleteField:       String = "journeyIsComplete"
+  val journeyIsCompleteField:       String = "incomeSourceCreatedJourneyComplete"
 
   def getJSONKeyPath(name: String): String = s"ceaseIncomeSourceData.$name"
 

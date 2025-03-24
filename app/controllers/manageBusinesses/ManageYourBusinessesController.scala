@@ -63,7 +63,7 @@ class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageY
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
                    (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
 
-    withIncomeSourcesFS {
+    withNewIncomeSourcesFS {
       incomeSourceDetailsService.getViewIncomeSourceViewModel(sources) match {
         case Right(viewModel) =>
           Future(hc.sessionId.get).flatMap { sessionId =>

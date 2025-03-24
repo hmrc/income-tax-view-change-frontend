@@ -42,7 +42,7 @@ class IncomeSourceCeasedBackErrorController @Inject()(val authActions: AuthActio
 
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), journeyState = CannotGoBackPage) { _ =>
+                   (implicit user: MtdItUser[_]): Future[Result] = withSessionDataAndOldIncomeSourceFS(IncomeSourceJourneyType(Cease, incomeSourceType), journeyState = CannotGoBackPage) { _ =>
     Future.successful(Ok(cannotGoBackCeasedError(isAgent, incomeSourceType)))
   }
 

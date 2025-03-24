@@ -21,7 +21,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSourcesFs, NavBarFs}
+import models.admin.{IncomeSourcesNewJourney, NavBarFs}
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -96,7 +96,7 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
             "is authenticated, with a valid enrolment" should {
               "render the Business Added page" when {
                 "income sources is enabled" in {
-                  enable(IncomeSourcesFs)
+                  enable(IncomeSourcesNewJourney)
                   disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
 
@@ -118,7 +118,7 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
 
                   val expectedText: String = getExpectedPageTitle(incomeSourceType)
 
-                  sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
+                  sessionService.getMongoKey(AddIncomeSourceData.incomeSourceCreatedJourneyCompleteField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
 
                   result should have(
                     httpStatus(OK),
@@ -129,7 +129,7 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
               }
               s"redirect to home controller" when {
                 "Income Sources Feature Switch is disabled" in {
-                  disable(IncomeSourcesFs)
+                  disable(IncomeSourcesNewJourney)
                   disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
@@ -151,7 +151,7 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
               if (incomeSourceType == UkProperty) {
                 "render error page" when {
                   "UK property income source is missing trading start date" in {
-                    enable(IncomeSourcesFs)
+                    enable(IncomeSourcesNewJourney)
                     disable(NavBarFs)
                     stubAuthorised(mtdUserRole)
                     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse.copy(properties = List(ukProperty.copy(tradingStartDate = None))))

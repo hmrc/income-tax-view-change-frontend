@@ -335,9 +335,6 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
     viewModelWithCurrentYearAnnual, isAgent = false, SelfEmployment, Some("Test Name"), dayFirstQuarter2024_2025,
     isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.DefaultAnnual)
 
-  val addIncomeSourceShowURL: String = controllers.manageBusinesses.add.routes.AddIncomeSourceController.show().url
-  val addIncomeSourceShowAgentURL: String = controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent().url
-
   val nextUpdatesUrl: String = controllers.routes.NextUpdatesController.show().url
   val nextUpdatesAgentUrl: String = controllers.routes.NextUpdatesController.showAgent.url
 

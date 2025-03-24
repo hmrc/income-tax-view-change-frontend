@@ -83,7 +83,7 @@ class IncomeSourceReportingMethodController @Inject()(val authActions: AuthActio
   }
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
-    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
+    withSessionDataAndOldIncomeSourceFS(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
 
       sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
         case Some(id) => handleIncomeSourceIdRetrievalSuccess(incomeSourceType, id, sessionData, isAgent = isAgent)
@@ -182,7 +182,7 @@ class IncomeSourceReportingMethodController @Inject()(val authActions: AuthActio
 
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]):
   Future[Result] = {
-    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
+    withSessionDataAndOldIncomeSourceFS(IncomeSourceJourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
       sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
         case Some(id) => IncomeSourceReportingMethodForm.form.bindFromRequest().fold(
           invalid => handleInvalidForm(invalid, incomeSourceType, IncomeSourceId(id), isAgent),

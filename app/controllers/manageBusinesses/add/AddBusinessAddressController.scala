@@ -61,7 +61,7 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
   def handleRequest(isAgent: Boolean, isChange: Boolean)
                    (implicit user: MtdItUser[_],
                     errorHandler: ShowInternalServerError): Future[Result] = {
-    withIncomeSourcesFS {
+    withNewIncomeSourcesFS {
       addressLookupService.initialiseAddressJourney(
         isAgent = isAgent,
         isChange = isChange
@@ -125,13 +125,17 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
 
   def submit(id: Option[String], isChange: Boolean): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
-      val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
-      handleSubmitRequest(isAgent = false, incomeSourceIdMaybe, isChange = isChange)(implicitly, itvcErrorHandler)
+      withNewIncomeSourcesFS {
+        val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
+        handleSubmitRequest(isAgent = false, incomeSourceIdMaybe, isChange = isChange)(implicitly, itvcErrorHandler)
+      }
   }
 
   def agentSubmit(id: Option[String], isChange: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
-      val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
-      handleSubmitRequest(isAgent = true, incomeSourceIdMaybe, isChange = isChange)(implicitly, itvcErrorHandlerAgent)
+      withNewIncomeSourcesFS {
+        val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
+        handleSubmitRequest(isAgent = true, incomeSourceIdMaybe, isChange = isChange)(implicitly, itvcErrorHandlerAgent)
+      }
   }
 }

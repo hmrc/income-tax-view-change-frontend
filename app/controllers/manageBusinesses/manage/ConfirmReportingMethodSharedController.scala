@@ -58,7 +58,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
            changeTo: String,
            incomeSourceType: IncomeSourceType
           ): Action[AnyContent] = authActions.asMTDIndividual.async { implicit user =>
-    withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
+    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
       val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
       val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
       handleShowRequest(taxYear, changeTo, false, incomeSourceType, incomeSourceIdOpt)
@@ -69,7 +69,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
            changeTo: String,
            incomeSourceType: IncomeSourceType
           ): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async { implicit user =>
-    withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
+    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
       val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
       val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
       handleShowRequest(taxYear, changeTo, true, incomeSourceType, incomeSourceIdOpt)
@@ -81,7 +81,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
              incomeSourceType: IncomeSourceType
             ): Action[AnyContent] = authActions.asMTDIndividual.async { implicit user =>
 
-    withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), BeforeSubmissionPage) { sessionData =>
+    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Manage, incomeSourceType), BeforeSubmissionPage) { sessionData =>
       val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
       val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
       handleSubmitRequest(taxYear, changeTo, false, incomeSourceIdOpt, incomeSourceType)
@@ -93,7 +93,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
              incomeSourceType: IncomeSourceType
             ): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async { implicit user =>
 
-    withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), BeforeSubmissionPage) { sessionData =>
+    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Manage, incomeSourceType), BeforeSubmissionPage) { sessionData =>
       val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
       val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
       handleSubmitRequest(taxYear, changeTo, true, incomeSourceIdOpt, incomeSourceType)
@@ -179,31 +179,29 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     val incomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, maybeIncomeSourceId.map(m => m.value))
     val (backCall, successCall) = getRedirectCalls(taxYear, isAgent, changeTo, incomeSourceId, incomeSourceType)
 
-    withIncomeSourcesFS {
-      (getTaxYearModel(taxYear), getReportingMethod(changeTo)) match {
-        case (Some(taxYearModel), Some(reportingMethod)) =>
-          ConfirmReportingMethodForm(changeTo).bindFromRequest().fold(
-            formWithErrors => {
-              Future.successful(
-                BadRequest(
-                  confirmReportingMethod(
-                    isAgent = isAgent,
-                    form = formWithErrors,
-                    backUrl = backCall.url,
-                    newReportingMethod = reportingMethod,
-                    taxYearEndYear = taxYearModel.endYear.toString,
-                    taxYearStartYear = taxYearModel.startYear.toString,
-                    postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
-                    isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear)
-                  )
+    (getTaxYearModel(taxYear), getReportingMethod(changeTo)) match {
+      case (Some(taxYearModel), Some(reportingMethod)) =>
+        ConfirmReportingMethodForm(changeTo).bindFromRequest().fold(
+          formWithErrors => {
+            Future.successful(
+              BadRequest(
+                confirmReportingMethod(
+                  isAgent = isAgent,
+                  form = formWithErrors,
+                  backUrl = backCall.url,
+                  newReportingMethod = reportingMethod,
+                  taxYearEndYear = taxYearModel.endYear.toString,
+                  taxYearStartYear = taxYearModel.startYear.toString,
+                  postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
+                  isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear)
                 )
               )
-            },
-            _ => Future.successful(Redirect(successCall))
-          )
-        case (None, _) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse taxYear: $taxYear"))
-        case (_, None) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse reporting method: $changeTo"))
-      }
+            )
+          },
+          _ => Future.successful(Redirect(successCall))
+        )
+      case (None, _) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse taxYear: $taxYear"))
+      case (_, None) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse reporting method: $changeTo"))
     }
   }
 

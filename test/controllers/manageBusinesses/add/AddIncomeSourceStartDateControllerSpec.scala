@@ -22,7 +22,7 @@ import enums.MTDIndividual
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesFs
+import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
@@ -63,7 +63,7 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
 
   val incomeSourceTypes: List[IncomeSourceType] = List(SelfEmployment, UkProperty, ForeignProperty)
 
-  def sessionDataCompletedJourney(journeyType: IncomeSourceJourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
+  def sessionDataCompletedJourney(journeyType: IncomeSourceJourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceCreatedJourneyComplete = Some(true))))
 
   def sessionDataISAdded(journeyType: IncomeSourceJourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceAdded = Some(true))))
 
@@ -128,7 +128,7 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
             s"return ${Status.OK}: render the Add ${incomeSourceType.key} start date page" when {
               "incomeSources FS is enabled" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
                 mockNoIncomeSources()
                 if(isChange) {
                   val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
@@ -155,7 +155,7 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
               s"return ${Status.OK}: render the Add Business start date Change page with form filled " when {
                 s"session contains key: $dateStartedField (${incomeSourceType.key})" in {
                   setupMockSuccess(mtdRole)
-                  enable(IncomeSourcesFs)
+                  enable(IncomeSourcesNewJourney)
 
                   mockNoIncomeSources()
                   setupMockCreateSession(true)
@@ -180,7 +180,7 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
             s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
               s"user has already completed the journey (${incomeSourceType.key})" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
 
                 mockNoIncomeSources()
                 setupMockGetMongo(Right(Some(sessionDataCompletedJourney(IncomeSourceJourneyType(Add, incomeSourceType)))))
@@ -193,7 +193,7 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
               }
               s"user has already added their income source (${incomeSourceType.key})" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
                 mockNoIncomeSources()
                 setupMockGetMongo(Right(Some(sessionDataISAdded(IncomeSourceJourneyType(Add, incomeSourceType)))))
 
@@ -206,7 +206,7 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
             }
             s"return ${Status.SEE_OTHER} and redirect to home page" when {
               s"incomeSources FS is disabled (${incomeSourceType.key})" in {
-                disable(IncomeSourcesFs)
+                disable(IncomeSourcesNewJourney)
                 setupMockSuccess(mtdRole)
 
                 mockNoIncomeSources()
@@ -230,7 +230,7 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
             s"redirect to the Add Business Start Date Check page" when {
               "a valid form is submitted" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
 
                 mockNoIncomeSources()
                 setupMockCreateSession(true)
@@ -250,7 +250,7 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
             s"return ${Status.BAD_REQUEST}" when {
               "an invalid form is submitted" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
 
                 mockNoIncomeSources()
 
@@ -263,7 +263,7 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
               }
               "an empty form is submitted" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
 
                 mockNoIncomeSources()
 
@@ -277,7 +277,7 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
               }
               "no form is submitted" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
 
                 mockNoIncomeSources()
 
@@ -290,7 +290,7 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
             s"return ${Status.SEE_OTHER} and redirect to home page" when {
               "incomeSources FS is disabled" in {
                 setupMockSuccess(mtdRole)
-                disable(IncomeSourcesFs)
+                disable(IncomeSourcesNewJourney)
 
                 mockNoIncomeSources()
 

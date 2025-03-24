@@ -23,7 +23,7 @@ import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSourcesFs, NavBarFs}
+import models.admin.{IncomeSourcesNewJourney, NavBarFs}
 import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData, UIJourneySessionData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -92,7 +92,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
         "is authenticated, with a valid enrolment" should {
           "render the Confirm Reporting Method page" when {
             "all query parameters are valid" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
 
@@ -116,7 +116,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           "redirect to home page" when {
             "Income Sources FS is Disabled" in {
-              disable(IncomeSourcesFs)
+              disable(IncomeSourcesNewJourney)
               disable(NavBarFs)
                stubAuthorised(mtdUserRole)
 
@@ -147,7 +147,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
         "is authenticated, with a valid enrolment" should {
           "render the Confirm Reporting Method page" when {
             "all query parameters are valid" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               disable(NavBarFs)
                stubAuthorised(mtdUserRole)
 
@@ -170,7 +170,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           "redirect to home page" when {
             "Income Sources FS is Disabled" in {
-              disable(IncomeSourcesFs)
+              disable(IncomeSourcesNewJourney)
               disable(NavBarFs)
                stubAuthorised(mtdUserRole)
 
@@ -200,7 +200,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
         "is authenticated, with a valid enrolment" should {
           "render the Confirm Reporting Method page" when {
             "all query parameters are valid" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               disable(NavBarFs)
                stubAuthorised(mtdUserRole)
 
@@ -223,7 +223,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           "redirect to home page" when {
             "Income Sources FS is Disabled" in {
-              disable(IncomeSourcesFs)
+              disable(IncomeSourcesNewJourney)
               disable(NavBarFs)
                stubAuthorised(mtdUserRole)
 
@@ -252,7 +252,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
         "is authenticated, with a valid enrolment" should {
           s"redirect to Check your answers" when {
             "called with a valid form" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               disable(NavBarFs)
                stubAuthorised(mtdUserRole)
 
@@ -276,7 +276,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           s"return ${Status.BAD_REQUEST}" when {
             "called with a invalid form" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               disable(NavBarFs)
                stubAuthorised(mtdUserRole)
 
@@ -299,7 +299,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           "redirect to home page" when {
             "Income Sources FS is disabled" in {
-              disable(IncomeSourcesFs)
+              disable(IncomeSourcesNewJourney)
               disable(NavBarFs)
                stubAuthorised(mtdUserRole)
 
@@ -331,7 +331,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
         "is authenticated, with a valid enrolment" should {
           s"redirect to Check your answers" when {
             "called with a valid form" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               disable(NavBarFs)
                stubAuthorised(mtdUserRole)
 
@@ -352,7 +352,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           s"return ${Status.BAD_REQUEST}" when {
             "called with a invalid form" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               disable(NavBarFs)
                stubAuthorised(mtdUserRole)
 
@@ -372,7 +372,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           "redirect to home page" when {
             "Income Sources FS is disabled" in {
-              disable(IncomeSourcesFs)
+              disable(IncomeSourcesNewJourney)
               disable(NavBarFs)
                stubAuthorised(mtdUserRole)
 
@@ -403,7 +403,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
         "is authenticated, with a valid enrolment" should {
           s"redirect to check your answers" when {
             "called with a valid form" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               disable(NavBarFs)
                stubAuthorised(mtdUserRole)
 
@@ -424,7 +424,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           s"return ${Status.BAD_REQUEST}" when {
             "called with a invalid form" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               disable(NavBarFs)
                stubAuthorised(mtdUserRole)
 
@@ -445,7 +445,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
           "redirect to home page" when {
             "Income Sources FS is disabled" in {
-              disable(IncomeSourcesFs)
+              disable(IncomeSourcesNewJourney)
               disable(NavBarFs)
                stubAuthorised(mtdUserRole)
 
