@@ -138,8 +138,6 @@ case class ChargeItem (
 
   val isBalancingCharge: Boolean = transactionType == BalancingCharge
 
-  val isPaymentOnAccount: Boolean = transactionType == PoaOneDebit || transactionType == PoaTwoDebit
-
   val isPoaReconciliationCredit: Boolean = transactionType == PoaOneReconciliationCredit ||
     transactionType == PoaTwoReconciliationCredit
 
