@@ -310,13 +310,14 @@
         </p>
 
     @if(viewModel.claimToAdjustViewModel.adjustPaymentsOnAccountFSEnabled) {
-        <p class="govuk-body" id="adjust-payments-on-account">
-            @link(
-                link = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url,
-                messageKey = getMessage("adjust-poa", viewModel.currentTaxYear.startYear.toString, viewModel.currentTaxYear.endYear.toString),
-                id = Some("adjust-poa-link")
-                )
-        </p>
+        @viewModel.claimToAdjustViewModel.claimToAdjustTaxYear.orElse(Some(viewModel.currentTaxYear)).map { taxYear =>
+            <p class="govuk-body" id="adjust-payments-on-account">
+                @link(
+                    link = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url,
+                    messageKey = getMessage("adjust-poa", taxYear.startYear.toString, taxYear.endYear.toString),
+                    id = Some("adjust-poa-link")
+                    )
+            </p>
         }
     }
 
@@ -434,15 +435,17 @@
                                     </div>
 
                                     @if(user.saUtr.isDefined && !user.isAgent()) {
-                                        <div id="payment-button">
-                                            @link(
-                                                link = controllers.routes.PaymentController.paymentHandoff(viewModel.earliestTaxYearAndAmountByDueDate._2.toPence, origin).url,
-                                                messageKey = getPrefix("payNow"),
-                                                classes = "govuk-button",
-                                                role = Some("button"),
-                                                id = Some("payment-button-link")
-                                                )
-                                        </div>
+                                        @viewModel.earliestTaxYearAndAmountByDueDate.map { taxYearWithAmount =>
+                                            <div id="payment-button">
+                                                @link(
+                                                    controllers.routes.PaymentController.paymentHandoff(taxYearWithAmount.amount.toPence, origin).url,
+                                                    messageKey = getPrefix("payNow"),
+                                                    classes = "govuk-button",
+                                                    role = Some("button"),
+                                                    id = Some("payment-button-link")
+                                                    )
+                                            </div>
+                                        }
                                     }
                                 </div>
                                 }
@@ -498,15 +501,17 @@
                                         </div>
 
                                         @if(user.saUtr.isDefined && !user.isAgent()) {
-                                            <div id="payment-button">
-                                                @link(
-                                                    link = controllers.routes.PaymentController.paymentHandoff(viewModel.earliestTaxYearAndAmountByDueDate._2.toPence, origin).url,
-                                                    messageKey = getPrefix("payNow"),
-                                                    classes = "govuk-button",
-                                                    role = Some("button"),
-                                                    id = Some("payment-button-link")
-                                                    )
-                                            </div>
+                                            @viewModel.earliestTaxYearAndAmountByDueDate.map { taxYearWithAmount =>
+                                                <div id="payment-button">
+                                                    @link(
+                                                        controllers.routes.PaymentController.paymentHandoff(taxYearWithAmount.amount.toPence, origin).url,
+                                                        messageKey = getPrefix("payNow"),
+                                                        classes = "govuk-button",
+                                                        role = Some("button"),
+                                                        id = Some("payment-button-link")
+                                                        )
+                                                </div>
+                                            }
                                         }
                                     </div>
                                 }
