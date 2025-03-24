@@ -195,7 +195,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
 
         mandatoryViewDataPresent(isInterestCharge, documentDetailWithDueDate) match {
           case Right(_) => Ok {
-            if (isEnabled(YourSelfAssessmentCharges) && chargeItem.isAllowed)
+            if (isEnabled(YourSelfAssessmentCharges) && chargeItem.isIncludedInSACSummary)
               yourSelfAssessmentChargeSummary(viewModel, whatYouOweUrl)
             else
               chargeSummaryView(viewModel, whatYouOweUrl)
