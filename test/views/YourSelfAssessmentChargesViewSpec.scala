@@ -21,7 +21,7 @@ import authV2.AuthActionsTestData.defaultMTDITUser
 import config.featureswitch.FeatureSwitching
 import enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CLASS2_NICS}
 import implicits.ImplicitDateFormatter
-import models.financialDetails.{BalanceDetails, DocumentDetail, WhatYouOweChargesList, YourSelfAssessmentChargesViewModel}
+import models.financialDetails.{BalanceDetails, ChargeItem, DocumentDetail, WhatYouOweChargesList, YourSelfAssessmentChargesViewModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.outstandingCharges.OutstandingChargesModel
@@ -71,6 +71,9 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
   val poaExtra2Text: String = messages("selfAssessmentCharges.reviewAndReconcilePoa2.text")
   val poa1ReconcileInterest: String = messages("selfAssessmentCharges.lpi.reviewAndReconcilePoa1.text")
   val poa2ReconcileInterest: String = messages("selfAssessmentCharges.lpi.reviewAndReconcilePoa2.text")
+  val lateSubmissionPenaltyText: String = messages("selfAssessmentCharges.lateSubmissionPenalty.text")
+  val firstLPPText: String = messages("selfAssessmentCharges.firstLatePaymentPenalty.text")
+  val secondLPPText: String = messages("selfAssessmentCharges.secondLatePaymentPenalty.text")
   val remainingBalance: String = messages("selfAssessmentCharges.balancingCharge.text")
   val preMTDRemainingBalance: String = s"${messages("selfAssessmentCharges.balancingCharge.text")} ${messages("selfAssessmentCharges.pre-mtd-digital")}"
   val remainingBalanceLine1: String = messages("selfAssessmentCharges.remaining-balance.line1")
@@ -127,6 +130,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
                   dunningLock: Boolean = false,
                   migrationYear: Int = fixedDate.getYear - 1,
                   reviewAndReconcileEnabled: Boolean = false,
+                  penaltiesEnabled: Boolean = false,
                   adjustPaymentsOnAccountFSEnabled: Boolean = false,
                   claimToAdjustViewModel: Option[WYOClaimToAdjustViewModel] = None
                  ) {
@@ -144,7 +148,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       backUrl = "testBackURL",
       dunningLock = dunningLock,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
-      penaltiesEnabled = true,
+      penaltiesEnabled = penaltiesEnabled,
       creditAndRefundEnabled = true,
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel)
     )
@@ -204,6 +208,12 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = financialDetailsOverdueInterestDataCi(latePaymentInterest),
     outstandingChargesModel = Some(outstandingChargesOverdueDataIt)
+  )
+
+  def whatYouOweDataWithPenalties: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    chargesList = financialDetailsLatePaymentPenalties ++ financialDetailsLateSubmissionPenalty,
+    outstandingChargesModel = None
   )
 
   def whatYouOweDataWithOverdueLPI(latePaymentInterest: List[Option[BigDecimal]],
@@ -424,6 +434,36 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
 
         }
 
+        "display penalties if user has penalties" in new TestSetup(charges = whatYouOweDataWithPenalties, penaltiesEnabled = true) {
+          val overduePoa = pageDocument.getElementById("due-0")
+          overduePoa.select("td").first().text() shouldBe fixedDate.minusMonths(3).toLongDate
+          overduePoa.select("td").get(1).text() shouldBe s"$poa2Text 1"
+          overduePoa.select("td").get(2).text() shouldBe taxYearSummaryText("2022", "2023")
+          overduePoa.select("td").get(3).text() shouldBe "£24.99"
+          overduePoa.select("td").last().text() shouldBe "£75.99"
+
+          val lateSubmissionPenalty = pageDocument.getElementById("due-1")
+          lateSubmissionPenalty.select("td").first().text() shouldBe fixedDate.minusMonths(2).toLongDate
+          lateSubmissionPenalty.select("td").get(1).text() shouldBe s"$lateSubmissionPenaltyText 2"
+          lateSubmissionPenalty.select("td").get(2).text() shouldBe taxYearSummaryText("2022", "2023")
+          lateSubmissionPenalty.select("td").get(3).text() shouldBe "£42.57"
+          lateSubmissionPenalty.select("td").last().text() shouldBe "£100.01"
+
+          val firstLatePaymentPenalty = pageDocument.getElementById("due-2")
+          firstLatePaymentPenalty.select("td").first().text() shouldBe fixedDate.minusDays(10).toLongDate
+          firstLatePaymentPenalty.select("td").get(1).text() shouldBe s"$firstLPPText 3"
+          firstLatePaymentPenalty.select("td").get(2).text() shouldBe taxYearSummaryText("2022", "2023")
+          firstLatePaymentPenalty.select("td").get(3).text() shouldBe "£42.50"
+          firstLatePaymentPenalty.select("td").last().text() shouldBe "£50.00"
+
+          val secondLatePaymentPenalty = pageDocument.getElementById("due-3")
+          secondLatePaymentPenalty.select("td").first().text() shouldBe fixedDate.minusDays(1).toLongDate
+          secondLatePaymentPenalty.select("td").get(1).text() shouldBe s"$secondLPPText 4"
+          secondLatePaymentPenalty.select("td").get(2).text() shouldBe taxYearSummaryText("2022", "2023")
+          secondLatePaymentPenalty.select("td").get(3).text() shouldBe "£24.05"
+          secondLatePaymentPenalty.select("td").last().text() shouldBe "£75.00"
+        }
+
         "display the payment button and payment content in tab" in new TestSetup(charges = whatYouOweDataWithOverdueDataAndInterest()) {
           findElementById("payment-button").isDefined shouldBe true
           val paymentButton = pageDocument.getElementById("payment-button")
@@ -585,6 +625,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
             fixedDate.getYear, "1040000125").url
         }
       }
+
 //
 //      "the user has charges and access viewer with mixed dates" should { //TODO: TO be implemented once we have multiple tabs on this page, and display charges due in the future
 //        s"have the title $yourSelfAssessmentChargesTitle and notes" in new TestSetup(charges = whatYouOweDataWithMixedData1) {

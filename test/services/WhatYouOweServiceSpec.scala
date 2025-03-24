@@ -300,8 +300,27 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 //        testGetWhatYouOweChargesList(ReviewReconcileEnabled = true, financialDetails = financialDetailsWithMixedData4, expectedResult = whatYouOweDataWithMixedData4Unfiltered)
       }
       "return list excluding POA extra charges" in {
-        testGetWhatYouOweChargesList(ReviewReconcileEnabled = false, financialDetails = financialDetailsReviewAndReconcile, expectedResult = whatYouOweEmptyRandR)
+        testGetWhatYouOweChargesList(ReviewReconcileEnabled = false, financialDetails = financialDetailsReviewAndReconcile, expectedResult = whatYouOweEmpty)
         testGetWhatYouOweChargesList(ReviewReconcileEnabled = false, financialDetails = financialDetailsWithMixedData4, expectedResult = whatYouOweDataWithMixedData4Filtered)
+      }
+    }
+
+    "with Penalties And Accruals" should {
+      def testGetWhatYouOweChargesList(penaltiesEnabled: Boolean, financialDetails: FinancialDetailsModel, expectedResult: WhatYouOweChargesList): Unit = {
+        if (penaltiesEnabled) enable(PenaltiesAndAppeals) else disable(PenaltiesAndAppeals)
+        when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
+          .thenReturn(Future.successful(OutstandingChargesModel(List())))
+        when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
+          .thenReturn(Future.successful(List(financialDetails)))
+        TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(ReviewAndReconcilePoa), isEnabled(FilterCodedOutPoas), isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals)).futureValue shouldBe expectedResult
+      }
+      "return list including penalties" in {
+        testGetWhatYouOweChargesList(penaltiesEnabled = true, financialDetails = financialDetailsModelLatePaymentPenalties, expectedResult = whatYouOweLatePaymentPenalties)
+        testGetWhatYouOweChargesList(penaltiesEnabled = true, financialDetails = financialDetailsWithMixedData4Penalties, expectedResult = whatYouOweDataWithMixedDate4PenaltiesUnfilered)
+      }
+      "return list excluding penalties" in {
+        testGetWhatYouOweChargesList(penaltiesEnabled = false, financialDetails = financialDetailsModelLatePaymentPenalties, expectedResult = whatYouOweEmpty)
+        testGetWhatYouOweChargesList(penaltiesEnabled = false, financialDetails = financialDetailsWithMixedData4Penalties, expectedResult = whatYouOweDataWithMixedData4Filtered)
       }
     }
   }

@@ -137,6 +137,31 @@ trait ChargeConstants {
     poaRelevantAmount = None
   )
 
+  def financialDetailsLatePaymentPenalties: List[ChargeItem] = testFinancialDetailsChargeItems(
+    transactionTypes = List(FirstLatePaymentPenalty, SecondLatePaymentPenalty),
+    dueDate = dueDateOverdue,
+    dunningLock = noDunningLocks,
+    outstandingAmount = List(50.0, 75.0),
+    taxYear = fixedDate.getYear.toString,
+    outstandingInterest = List(Some(42.50), Some(24.05)),
+    interestRate = List(Some(2.6), Some(6.2)),
+    interestFromDate = List(Some(LocalDate.of(2019, 5, 25)), Some(LocalDate.of(2019, 5, 25))),
+    interestEndDate = List(Some(LocalDate.of(2019, 6, 25)), Some(LocalDate.of(2019, 6, 25))),
+    poaRelevantAmount = None
+  )
+
+  def financialDetailsLateSubmissionPenalty: List[ChargeItem] = testFinancialDetailsChargeItems(
+    transactionTypes = List(LateSubmissionPenalty, PoaTwoDebit),
+    dueDate = List(Some(fixedDate.minusMonths(2)), Some(fixedDate.minusMonths(3))),
+    dunningLock = noDunningLocks,
+    outstandingAmount = List(100.01, 75.99),
+    taxYear = fixedDate.getYear.toString,
+    outstandingInterest = List(Some(42.57), Some(24.99)),
+    interestRate = List(Some(2.6), Some(6.2)),
+    interestFromDate = List(Some(LocalDate.of(2019, 5, 25)), Some(LocalDate.of(2019, 5, 25))),
+    interestEndDate = List(Some(LocalDate.of(2019, 6, 25)), Some(LocalDate.of(2019, 6, 25))),
+    poaRelevantAmount = None
+  )
 
   def financialDetailsOverdueWithLpi(
                                       latePaymentInterest: List[Option[BigDecimal]],
@@ -550,6 +575,39 @@ trait ChargeConstants {
     dunningLock = noDunningLocks
   )
 
+  val financialDetailsModelLatePaymentPenalties: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
+    documentDescription = List(Some("LPP1"), Some("LPP2")),
+    mainType = List(Some("LPP1"), Some("LPP2")),
+    mainTransaction = List(Some("4028"), Some("4029")),
+    dueDate = List(Some(fixedDate.plusDays(1)), Some(fixedDate.plusDays(1))),
+    outstandingAmount = List(50, 75),
+    taxYear = fixedDate.getYear.toString,
+    latePaymentInterestAmount = List(None, None),
+    interestOutstandingAmount = List(None, None),
+    interestEndDate = List(Some(LocalDate.of(2018, 6, 15)), Some(LocalDate.of(2018, 6, 15))),
+    lpiWithDunningLock = List(None, None)
+  )
+
+  val financialDetailsLatePaymentPenaltiesChargeItem: List[ChargeItem] = testFinancialDetailsChargeItems(
+    transactionId = List(id1040000123, id1040000124),
+    transactionTypes = List(FirstLatePaymentPenalty, SecondLatePaymentPenalty),
+    dueDate = List(Some(fixedDate.plusDays(1)), Some(fixedDate.plusDays(1))),
+    outstandingAmount = List(50, 75),
+    taxYear = fixedDate.getYear.toString,
+    latePaymentInterestAmount = List(None, None),
+    dunningLock = noDunningLocks,
+    interestRate = List(Some(100), Some(100))
+  )
+  val financialDetailsLateSubmissionPenaltyChargeItem: List[ChargeItem] = testFinancialDetailsChargeItems(
+    transactionId = List(id1040000123, id1040000124),
+    transactionTypes = List(LateSubmissionPenalty, PoaTwoDebit),
+    dueDate = List(Some(fixedDate.plusDays(1)), Some(fixedDate.plusDays(1))),
+    outstandingAmount = List(50, 75),
+    taxYear = fixedDate.getYear.toString,
+    latePaymentInterestAmount = List(None, None),
+    dunningLock = noDunningLocks
+  )
+
   val financialDetailsOverdueCharges: List[ChargeItem] = testFinancialDetailsChargeItems(
     transactionId = List(id1040000123, id1040000124),
     transactionTypes = List(PoaOneReconciliationDebit, PoaTwoReconciliationDebit),
@@ -630,6 +688,20 @@ trait ChargeConstants {
     dunningLock = List(None, None)
   )
 
+  val financialDetailsWithMixedData4PenaltiesCi: List[ChargeItem] = testFinancialDetailsChargeItems(
+    transactionId = List(id1040000123, id1040000124),
+    transactionTypes = List(LateSubmissionPenalty, PoaTwoDebit),
+    dueDate = List(Some(fixedDate.plusDays(30)), Some(fixedDate.minusDays(1))),
+    outstandingAmount = List(50, 75),
+    outstandingInterest  = List(Some(100.0), Some(100.0)),
+    latePaymentInterestAmount  = List(None, None),
+    lpiWithDunningLock = List(Some(100.0), Some(100.0)),
+    interestRate = List(Some(100.0), Some(100.0)),
+    interestEndDate = List(Some(LocalDate.of(2018,3,29)),Some(LocalDate.of(2018,3,29))),
+    taxYear = fixedDate.getYear.toString,
+    dunningLock = List(None, None)
+  )
+
   val whatYouOweDataWithMixedData4Unfiltered: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = List(financialDetailsWithMixedData4Ci.head,
@@ -639,6 +711,12 @@ trait ChargeConstants {
   val whatYouOweDataWithMixedData4Filtered: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = List(financialDetailsWithMixedData4Ci(1)),
+    outstandingChargesModel = Some(OutstandingChargesModel(List()))
+  )
+
+  val whatYouOweDataWithMixedDate4PenaltiesUnfilered: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    chargesList = financialDetailsWithMixedData4PenaltiesCi.reverse,
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
@@ -657,6 +735,12 @@ trait ChargeConstants {
   val whatYouOweReconciliationInterestData: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = financialDetailsReviewAndReconcileInterest,
+    outstandingChargesModel = Some(OutstandingChargesModel(List()))
+  )
+
+  val whatYouOweLatePaymentPenalties: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    chargesList = financialDetailsLatePaymentPenaltiesChargeItem,
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
