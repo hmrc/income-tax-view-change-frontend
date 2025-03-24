@@ -16,6 +16,7 @@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import _root_.implicits.ImplicitPercentageFormatter.PercentageFormatterBigDecimal
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import _root_.implicits.HtmlFormatter.NbspString
 @import views.html.components.h2
@@ -49,7 +50,7 @@
                 content = Text(getMessage("daysOverdue", viewModel.chargeItem.getInterestFromDate.toLongDate, viewModel.chargeItem.getInterestEndDate.toLongDate))
             ),
             TableRow(
-                content = Text(viewModel.chargeItem.getInterestRate.toString + "%"),
+                content = Text(viewModel.chargeItem.getInterestRate.toPercentage),
                 format = Some("numeric")
             ),
             TableRow(
