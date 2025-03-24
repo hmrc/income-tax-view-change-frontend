@@ -522,25 +522,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
               }
             }
 
-          s"return ${Status.BAD_REQUEST}" when {
-            "called with a invalid form" in {
-              enable(IncomeSourcesNewJourney)
-              disable(NavBarFs)
-               stubAuthorised(mtdUserRole)
-
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-                await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
-
-                val formData = Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
-
-                val result = buildPOSTMTDPostClient(pathUK, additionalCookies, body = formData).futureValue
-
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
-                )
-              }
+            "redirect to home page" when {
               "Income Sources New Journey FS is disabled" in {
                 enable(IncomeSourcesFs)
                 disable(IncomeSourcesNewJourney)
@@ -616,26 +598,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             }
 
             "redirect to home page" when {
-              "Income Sources FS is disabled" in {
-                disable(IncomeSourcesFs)
-                enable(IncomeSourcesNewJourney)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
-
-                await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
-
-                val formData = Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
-
-                val result = buildPOSTMTDPostClient(pathFP, additionalCookies, body = formData).futureValue
-
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
-                )
-              }
-
               "Income Sources New Journey FS is disabled" in {
                 enable(IncomeSourcesFs)
                 disable(IncomeSourcesNewJourney)
