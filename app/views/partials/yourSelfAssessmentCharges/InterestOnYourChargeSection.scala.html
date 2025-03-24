@@ -19,6 +19,8 @@
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Details
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
+@import models.financialDetails.TransactionType
+@import views.helpers.ChargeNameLangHelper
 
 @this(
     p: p,
@@ -28,7 +30,7 @@
 )
 
 @(
-    chargeName: String
+    transactionType: TransactionType
 )(
     implicit request: Request[_],
     messages: Messages
@@ -55,7 +57,7 @@
 }
 
 
-@h2(getMessage("interestOnCharge.heading", chargeName.toLowerCase), classes = "govuk-heading-l", optId = Some("interest-on-your-charge-heading"))
+@h2(getMessage("interestOnCharge.heading", ChargeNameLangHelper(transactionType).toLowerCase), classes = "govuk-heading-l", optId = Some("interest-on-your-charge-heading"))
 
 @p(id = Some("interestOnCharge.p1")) {
     @getMessage("interestOnCharge.p1")

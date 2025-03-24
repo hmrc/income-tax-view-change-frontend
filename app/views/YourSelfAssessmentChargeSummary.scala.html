@@ -100,7 +100,7 @@
 
     @if(viewModel.chargeItem.hasAccruingInterest) {
 
-        @interestOnYourChargeSection(chargeName)
+        @interestOnYourChargeSection(viewModel.chargeItem.transactionType)
 
         @interestOnYourChargeTable(viewModel)
     }
