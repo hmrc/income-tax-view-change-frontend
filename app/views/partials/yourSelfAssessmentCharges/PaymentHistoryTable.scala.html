@@ -117,7 +117,7 @@
                 )
             ) else Nil
     )
-        ++ viewModel.reviewAndReconcileCredit.toSeq.map {
+        ++ viewModel.reviewAndReconcileCredit.toSeq.collect {
             case charge if viewModel.chargeHistoryEnabled =>
                 Seq(
                     TableRow(
@@ -134,10 +134,9 @@
                         format = Some("numeric")
                     )
                 )
-            case _ => Nil
         }
 
-        ++ viewModel.adjustmentHistory.adjustments.map {
+        ++ viewModel.adjustmentHistory.adjustments.collect {
             case charge if viewModel.chargeHistoryEnabled =>
                 Seq(
                     TableRow(
@@ -151,7 +150,6 @@
                         format = Some("numeric")
                     )
                 )
-            case _ => Nil
         }
 
         ++ (for {
