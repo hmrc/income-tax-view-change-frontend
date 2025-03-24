@@ -18,11 +18,6 @@ package implicits
 
 trait ImplicitPercentageFormatter {
 
-  implicit class PercentageFormatterInt(x: Int) {
-
-    def toPercentage: String = s"$x%"
-  }
-
   implicit class PercentageFormatterBigDecimal(x: BigDecimal) {
 
     def toPercentage: String = s"$x%"
