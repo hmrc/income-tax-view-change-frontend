@@ -44,8 +44,8 @@ case class OptInAuditModel(optInProposition: OptInProposition,
   override val detail: JsValue =
     Utilities.userAuditDetails(user) ++ outcome ++
       Json.obj(
-        "optInRequestedFromTaxYear" -> intentTaxYear.formatTaxYearRange,
-        "currentYear" -> optInProposition.currentTaxYear.taxYear.formatTaxYearRange,
+        "optInRequestedFromTaxYear" -> intentTaxYear.formatAsShortYearRange,
+        "currentYear" -> optInProposition.currentTaxYear.taxYear.formatAsShortYearRange,
         "beforeITSAStatusCurrentYear" -> optInProposition.currentTaxYear.status,
         "beforeITSAStatusCurrentYear+1" -> optInProposition.nextTaxYear.status,
         "afterAssumedITSAStatusCurrentYear" -> optInProposition.currentTaxYear.expectedItsaStatusAfter(intentTaxYear),

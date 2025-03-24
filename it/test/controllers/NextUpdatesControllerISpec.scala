@@ -345,7 +345,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
 
           IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
-          ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatTaxYearRange)
+          ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatAsShortYearRange)
           CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
 
@@ -377,7 +377,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
 
           IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
-          ITSAStatusDetailsStub.stubGetITSAStatusDetails(previousYear.formatTaxYearRange)
+          ITSAStatusDetailsStub.stubGetITSAStatusDetails(previousYear.formatAsShortYearRange)
           CalculationListStub.stubGetLegacyCalculationListError(testNino, previousYear.endYear.toString)
 
 
@@ -409,7 +409,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
 
           IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
-          ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatTaxYearRange)
+          ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatAsShortYearRange)
           CalculationListStub.stubGetLegacyCalculationListError(testNino, previousYear.endYear.toString)
 
 
