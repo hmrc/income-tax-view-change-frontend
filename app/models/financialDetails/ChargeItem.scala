@@ -136,8 +136,6 @@ case class ChargeItem (
 
   val interestIsPartPaid: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != latePaymentInterestAmount.getOrElse[BigDecimal](0)
 
-  val isBalancingCharge: Boolean = transactionType == BalancingCharge
-
   val isPoaReconciliationCredit: Boolean = transactionType == PoaOneReconciliationCredit ||
     transactionType == PoaTwoReconciliationCredit
 
