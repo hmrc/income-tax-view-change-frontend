@@ -129,6 +129,8 @@ case class ChargeItem (
     transactionType == FirstLatePaymentPenalty ||
     transactionType == SecondLatePaymentPenalty
 
+  val isLPP2: Boolean = transactionType == SecondLatePaymentPenalty
+
   def getInterestPaidStatus: String = {
     if (interestIsPaid) "paid"
     else if (interestIsPartPaid) "part-paid"

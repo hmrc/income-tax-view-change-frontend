@@ -96,7 +96,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             mockGetDueDates(Right(futureDueDates))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
-            when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+            when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
               .thenReturn(Future.successful(oneOverdueBCDPaymentInWhatYouOweChargesList))
 
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
@@ -276,7 +276,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
 
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
-          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
 
           val result: Future[Result] = controller.showAgent()(fakeRequest)
@@ -294,7 +294,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           mockGetDueDates(Right(futureDueDates))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None), List(), List()))))
-          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
@@ -318,7 +318,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
               financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
             ))))
-          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 

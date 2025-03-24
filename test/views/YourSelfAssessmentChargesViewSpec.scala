@@ -144,6 +144,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       backUrl = "testBackURL",
       dunningLock = dunningLock,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
+      penaltiesEnabled = true,
       creditAndRefundEnabled = true,
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel)
     )
@@ -190,6 +191,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       backUrl = "testBackURL",
       dunningLock = dunningLock,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
+      penaltiesEnabled = true,
       creditAndRefundEnabled = true,
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel))
     val html: HtmlFormat.Appendable = yourSelfAssessmentChargesView(
