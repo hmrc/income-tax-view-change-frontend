@@ -17,8 +17,7 @@
 package helpers
 
 import models.creditDetailModel.CreditDetailModel
-import models.financialDetails.DocumentDetail
-import models.financialDetails.{BalancingChargeCreditType, CutOverCreditType, MfaCreditType}
+import models.financialDetails.{BalancingChargeCreditType, ChargeItem, CutOverCreditType, DocumentDetail, FinancialDetail, MfaCreditType, SubItem}
 
 import java.time.LocalDate
 
@@ -27,21 +26,30 @@ trait CreditsSummaryDataHelper {
   val chargesList: Seq[CreditDetailModel] = Seq(
     CreditDetailModel(
       date = LocalDate.of(2018, 3, 29),
-      documentDetail = DocumentDetail(
-        taxYear = 2023,
+      charge = ChargeItem.fromDocumentPair(
+        DocumentDetail(taxYear = 2023,
         transactionId = "transId",
         documentDescription = Some("docId"),
         documentText = Some("text"),
         outstandingAmount = BigDecimal("1400"),
         originalAmount = BigDecimal("1400"),
         documentDate = LocalDate.of(2023, 12, 23)
+      ),
+        List(
+          FinancialDetail(taxYear = "2022", mainType = Some("ITSA Overpayment Relief"),
+          mainTransaction = Some("4004"), transactionId = Some("transId"),
+          transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
+          clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some( LocalDate.parse("2022-08-25") ))))
+        )
+        )
       ),
       creditType = MfaCreditType,
-      balanceDetails = None
+      availableCredit = None
     ),
     CreditDetailModel(
       date = fixedDate.plusYears(1),
-      documentDetail = DocumentDetail(
+      charge =
+        ChargeItem.fromDocumentPair( DocumentDetail(
         taxYear = 2023,
         transactionId = "transId",
         documentDescription = Some("docId"),
@@ -50,12 +58,46 @@ trait CreditsSummaryDataHelper {
         originalAmount = BigDecimal("1400"),
         documentDate = LocalDate.of(2023, 12, 23)
       ),
+          List(
+            FinancialDetail(taxYear = "2022", mainType = Some("ITSA Overpayment Relief"),
+              mainTransaction = Some("4004"), transactionId = Some("transId"),
+              transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
+              clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some( LocalDate.parse("2022-08-25") ))))
+            )
+          )
+        ),
       creditType = CutOverCreditType,
-      balanceDetails = None
+      availableCredit = None
     ),
     CreditDetailModel(
       date = fixedDate.plusYears(1),
-      documentDetail = DocumentDetail(
+      charge =
+        ChargeItem.fromDocumentPair(
+          DocumentDetail(
+            taxYear = 2023,
+            transactionId = "transId",
+            documentDescription = Some("docId"),
+            documentText = Some("text"),
+            outstandingAmount = BigDecimal("1400"),
+            originalAmount = BigDecimal("1400"),
+          documentDate = LocalDate.of(2023, 12, 23)
+          ),
+          List(
+            FinancialDetail(taxYear = "2022", mainType = Some("ITSA Overpayment Relief"),
+              mainTransaction = Some("4004"), transactionId = Some("transId"),
+              transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
+              clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some( LocalDate.parse("2022-08-25") ))))
+            )
+          )
+        ),
+      creditType = CutOverCreditType,
+      availableCredit = None
+    ),
+    CreditDetailModel(
+      date = fixedDate.plusYears(1),
+      charge =
+        ChargeItem.fromDocumentPair(
+          DocumentDetail(
         taxYear = 2023,
         transactionId = "transId",
         documentDescription = Some("docId"),
@@ -64,29 +106,24 @@ trait CreditsSummaryDataHelper {
         originalAmount = BigDecimal("1400"),
         documentDate = LocalDate.of(2023, 12, 23)
       ),
+          List(
+            FinancialDetail(taxYear = "2022", mainType = Some("ITSA Overpayment Relief"),
+              mainTransaction = Some("4004"), transactionId = Some("transId"),
+              transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
+              clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some( LocalDate.parse("2022-08-25") ))))
+            )
+          )
+        ),
       creditType = CutOverCreditType,
-      balanceDetails = None
-    ),
-    CreditDetailModel(
-      date = fixedDate.plusYears(1),
-      documentDetail = DocumentDetail(
-        taxYear = 2023,
-        transactionId = "transId",
-        documentDescription = Some("docId"),
-        documentText = Some("text"),
-        outstandingAmount = BigDecimal("1400"),
-        originalAmount = BigDecimal("1400"),
-        documentDate = LocalDate.of(2023, 12, 23)
-      ),
-      creditType = CutOverCreditType,
-      balanceDetails = None
+      availableCredit = None
     )
   )
 
   val chargesListV2: Seq[CreditDetailModel] = Seq(
     CreditDetailModel(
       date = LocalDate.of(2018, 3, 29),
-      documentDetail = DocumentDetail(
+      charge =
+        ChargeItem.fromDocumentPair( DocumentDetail(
         taxYear = 2023,
         transactionId = "transId",
         documentDescription = Some("docId"),
@@ -95,12 +132,21 @@ trait CreditsSummaryDataHelper {
         originalAmount = BigDecimal("1400"),
         documentDate = LocalDate.of(2023, 12, 23)
       ),
+          List(
+            FinancialDetail(taxYear = "2022", mainType = Some("ITSA Overpayment Relief"),
+              mainTransaction = Some("4004"), transactionId = Some("transId"),
+              transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
+              clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some( LocalDate.parse("2022-08-25") ))))
+            )
+          )
+        ),
       creditType = BalancingChargeCreditType,
-      balanceDetails = None
+      availableCredit = None
     ),
     CreditDetailModel(
       date = LocalDate.of(2018, 3, 29),
-      documentDetail = DocumentDetail(
+      charge =
+        ChargeItem.fromDocumentPair( DocumentDetail(
         taxYear = 2023,
         transactionId = "transId",
         documentDescription = Some("docId"),
@@ -109,12 +155,20 @@ trait CreditsSummaryDataHelper {
         originalAmount = BigDecimal("1400"),
         documentDate = LocalDate.of(2023, 12, 23)
       ),
+          List(
+            FinancialDetail(taxYear = "2022", mainType = Some("ITSA Overpayment Relief"),
+              mainTransaction = Some("4004"), transactionId = Some("transId"),
+              transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
+              clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some( LocalDate.parse("2022-08-25") ))))
+            )
+          )
+        ),
       creditType = BalancingChargeCreditType,
-      balanceDetails = None
+      availableCredit = None
     ),
     CreditDetailModel(
       date = fixedDate.plusYears(1),
-      documentDetail = DocumentDetail(
+      charge = ChargeItem.fromDocumentPair( DocumentDetail(
         taxYear = 2023,
         transactionId = "transId",
         documentDescription = Some("docId"),
@@ -123,12 +177,20 @@ trait CreditsSummaryDataHelper {
         originalAmount = BigDecimal("1400"),
         documentDate = LocalDate.of(2023, 12, 23)
       ),
+        List(
+          FinancialDetail(taxYear = "2022", mainType = Some("ITSA Overpayment Relief"),
+            mainTransaction = Some("4004"), transactionId = Some("transId"),
+            transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
+            clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some( LocalDate.parse("2022-08-25") ))))
+          )
+        )
+      ),
       creditType = CutOverCreditType,
-      balanceDetails = None
+      availableCredit = None
     ),
     CreditDetailModel(
       date = fixedDate.plusYears(1),
-      documentDetail = DocumentDetail(
+      charge = ChargeItem.fromDocumentPair( DocumentDetail(
         taxYear = 2023,
         transactionId = "transId",
         documentDescription = Some("docId"),
@@ -137,12 +199,21 @@ trait CreditsSummaryDataHelper {
         originalAmount = BigDecimal("1400"),
         documentDate = LocalDate.of(2023, 12, 23)
       ),
+        List(
+          FinancialDetail(taxYear = "2022", mainType = Some("ITSA Overpayment Relief"),
+            mainTransaction = Some("4004"), transactionId = Some("transId"),
+            transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
+            clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some( LocalDate.parse("2022-08-25") ))))
+          )
+        )
+      ),
       creditType = CutOverCreditType,
-      balanceDetails = None
+      availableCredit = None
     ),
     CreditDetailModel(
       date = fixedDate.plusYears(1),
-      documentDetail = DocumentDetail(
+      charge = ChargeItem.fromDocumentPair(
+        DocumentDetail(
         taxYear = 2023,
         transactionId = "transId",
         documentDescription = Some("docId"),
@@ -151,8 +222,16 @@ trait CreditsSummaryDataHelper {
         originalAmount = BigDecimal("1400"),
         documentDate = LocalDate.of(2023, 12, 23)
       ),
+        List(
+          FinancialDetail(taxYear = "2022", mainType = Some("ITSA Overpayment Relief"),
+            mainTransaction = Some("4004"), transactionId = Some("transId"),
+            transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
+            clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some( LocalDate.parse("2022-08-25") ))))
+          )
+        )
+      ),
       creditType = CutOverCreditType,
-      balanceDetails = None
+      availableCredit = None
     )
   )
 }

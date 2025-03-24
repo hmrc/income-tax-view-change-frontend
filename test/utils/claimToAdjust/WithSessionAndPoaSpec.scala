@@ -16,14 +16,16 @@
 
 package utils.claimToAdjust
 
+import auth.MtdItUser
+import authV2.AuthActionsTestData.defaultMTDITUser
 import cats.data.EitherT
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
-import models.admin.AdjustPaymentsOnAccount
+import models.admin.{AdjustPaymentsOnAccount, FeatureSwitch, ReportingFrequencyPage}
 import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoaAmendmentData, WhatYouNeedToKnowViewModel}
 import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
-import models.incomeSourceDetails.TaxYear
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, spy, when}
@@ -35,6 +37,9 @@ import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.WhatYouNeedToKnow
 import org.jsoup.nodes.Document
+import play.api.test.FakeRequest
+import testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -70,6 +75,13 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
     EitherT.rightT(Ok(whatYouNeedToKnowView(isAgent = true, whatYouNeedToKnowViewModel(true, true))))
   }
 
+  override implicit val individualUser: MtdItUser[_] =
+    defaultMTDITUser(Some(testUserTypeIndividual), IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
+      .addFeatureSwitches(List(FeatureSwitch(AdjustPaymentsOnAccount, true)))
+
+  val agentUser: MtdItUser[_] =
+    defaultMTDITUser(Some(testUserTypeAgent), businessAndPropertyAligned, FakeRequest())
+      .addFeatureSwitches(List(FeatureSwitch(AdjustPaymentsOnAccount, true)))
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -85,8 +97,8 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
 
         when(TestWithSessionAndPoaSpy.showCannotGoBackErrorPage(ArgumentMatchers.eq(true), ArgumentMatchers.eq(BeforeSubmissionPage))).thenReturn(true)
 
-        val res = TestWithSessionAndPoaSpy.withSessionDataAndPoa(journeyState = BeforeSubmissionPage)(successfulFutureOk)(tsTestUser, headerCarrier)
-        val resAgent = TestWithSessionAndPoaSpy.withSessionDataAndPoa(journeyState = BeforeSubmissionPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
+        val res = TestWithSessionAndPoaSpy.withSessionDataAndPoa(journeyState = BeforeSubmissionPage)(successfulFutureOk)(individualUser, headerCarrier)
+        val resAgent = TestWithSessionAndPoaSpy.withSessionDataAndPoa(journeyState = BeforeSubmissionPage)(successfulFutureOkAgent)(agentUser, headerCarrier)
 
         status(res) shouldBe SEE_OTHER
         redirectLocation(res) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(false).url)
@@ -102,8 +114,8 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
 
         when(TestWithSessionAndPoaSpy.showCannotGoBackErrorPage(ArgumentMatchers.eq(false), ArgumentMatchers.eq(CannotGoBackPage))).thenReturn(false)
 
-        val res = TestWithSessionAndPoaSpy.withSessionDataAndPoa(journeyState = CannotGoBackPage)(successfulFutureOk)(tsTestUser, headerCarrier)
-        val resAgent = TestWithSessionAndPoaSpy.withSessionDataAndPoa(journeyState = CannotGoBackPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
+        val res = TestWithSessionAndPoaSpy.withSessionDataAndPoa(journeyState = CannotGoBackPage)(successfulFutureOk)(individualUser, headerCarrier)
+        val resAgent = TestWithSessionAndPoaSpy.withSessionDataAndPoa(journeyState = CannotGoBackPage)(successfulFutureOkAgent)(agentUser, headerCarrier)
         val doc: Document = Jsoup.parse(contentAsString(res))
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
@@ -118,8 +130,8 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
         setupMockPaymentOnAccountSessionService(Future.successful(Right(None)))
         setupMockGetPaymentsOnAccount()
 
-        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = CannotGoBackPage)(successfulFutureOk)(tsTestUser, headerCarrier)
-        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = CannotGoBackPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
+        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = CannotGoBackPage)(successfulFutureOk)(individualUser, headerCarrier)
+        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = CannotGoBackPage)(successfulFutureOkAgent)(agentUser, headerCarrier)
         val doc: Document = Jsoup.parse(contentAsString(res))
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
@@ -132,8 +144,8 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
         setupMockPaymentOnAccountSessionService(Future.successful(Left(new Exception("Error"))))
         setupMockGetPaymentsOnAccount()
 
-        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = CannotGoBackPage)(successfulFutureOk)(tsTestUser, headerCarrier)
-        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = CannotGoBackPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
+        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = CannotGoBackPage)(successfulFutureOk)(individualUser, headerCarrier)
+        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = CannotGoBackPage)(successfulFutureOkAgent)(agentUser, headerCarrier)
         val doc: Document = Jsoup.parse(contentAsString(res))
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
@@ -146,8 +158,8 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
         setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
         setupMockGetPaymentsOnAccount(None)
 
-        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = CannotGoBackPage)(successfulFutureOk)(tsTestUser, headerCarrier)
-        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = CannotGoBackPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
+        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = CannotGoBackPage)(successfulFutureOk)(individualUser, headerCarrier)
+        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = CannotGoBackPage)(successfulFutureOkAgent)(agentUser, headerCarrier)
         val doc: Document = Jsoup.parse(contentAsString(res))
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
@@ -160,8 +172,8 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
         setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
         setupMockGetPaymentsOnAccountBuildFailure()
 
-        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = CannotGoBackPage)(successfulFutureOk)(tsTestUser, headerCarrier)
-        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = CannotGoBackPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
+        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = CannotGoBackPage)(successfulFutureOk)(individualUser, headerCarrier)
+        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = CannotGoBackPage)(successfulFutureOkAgent)(agentUser, headerCarrier)
         val doc: Document = Jsoup.parse(contentAsString(res))
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
@@ -178,8 +190,8 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
         setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
         setupMockGetPaymentsOnAccount()
 
-        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOk)(tsTestUser, headerCarrier)
-        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
+        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOk)(individualUser, headerCarrier)
+        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOkAgent)(agentUser, headerCarrier)
         val doc: Document = Jsoup.parse(contentAsString(res))
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
@@ -193,8 +205,8 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
         setupMockGetPaymentsOnAccount()
         setupMockPaymentOnAccountSessionServiceCreateSession(Future.successful(Right((): Unit)))
 
-        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOk)(tsTestUser, headerCarrier)
-        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
+        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOk)(individualUser, headerCarrier)
+        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOkAgent)(agentUser, headerCarrier)
         val doc: Document = Jsoup.parse(contentAsString(res))
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
@@ -208,8 +220,8 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
         setupMockGetPaymentsOnAccount()
         setupMockPaymentOnAccountSessionServiceCreateSession(Future.successful(Right((): Unit)))
 
-        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOk)(tsTestUser, headerCarrier)
-        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
+        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOk)(individualUser, headerCarrier)
+        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOkAgent)(agentUser, headerCarrier)
         val doc: Document = Jsoup.parse(contentAsString(res))
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
@@ -225,8 +237,8 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
         setupMockGetPaymentsOnAccount()
         setupMockPaymentOnAccountSessionServiceCreateSession(Future.successful(Left(new Exception("Error"))))
 
-        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOk)(tsTestUser, headerCarrier)
-        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
+        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOk)(individualUser, headerCarrier)
+        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOkAgent)(agentUser, headerCarrier)
         val doc: Document = Jsoup.parse(contentAsString(res))
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
@@ -240,8 +252,8 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
         setupMockPaymentOnAccountSessionService(Future.successful(Left(new Exception("Error"))))
         setupMockGetPaymentsOnAccount()
 
-        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOk)(tsTestUser, headerCarrier)
-        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
+        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOk)(individualUser, headerCarrier)
+        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOkAgent)(agentUser, headerCarrier)
         val doc: Document = Jsoup.parse(contentAsString(res))
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
@@ -254,8 +266,8 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
         setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
         setupMockGetPaymentsOnAccountBuildFailure()
 
-        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOk)(tsTestUser, headerCarrier)
-        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
+        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOk)(individualUser, headerCarrier)
+        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOkAgent)(agentUser, headerCarrier)
         val doc: Document = Jsoup.parse(contentAsString(res))
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
@@ -268,8 +280,8 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
         setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
         setupMockGetPaymentsOnAccount(None)
 
-        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOk)(tsTestUser, headerCarrier)
-        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
+        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOk)(individualUser, headerCarrier)
+        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOkAgent)(agentUser, headerCarrier)
         val doc: Document = Jsoup.parse(contentAsString(res))
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
@@ -282,8 +294,8 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
         setupMockPaymentOnAccountSessionService(Future.successful(Left(new Exception("Error"))))
         setupMockGetPaymentsOnAccount(None)
 
-        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOk)(tsTestUser, headerCarrier)
-        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
+        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOk)(individualUser, headerCarrier)
+        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOkAgent)(agentUser, headerCarrier)
         val doc: Document = Jsoup.parse(contentAsString(res))
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
@@ -296,8 +308,8 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
         setupMockPaymentOnAccountSessionService(Future.successful(Left(new Exception("Error"))))
         setupMockGetPaymentsOnAccountBuildFailure()
 
-        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOk)(tsTestUser, headerCarrier)
-        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
+        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOk)(individualUser, headerCarrier)
+        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOkAgent)(agentUser, headerCarrier)
         val doc: Document = Jsoup.parse(contentAsString(res))
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
@@ -310,8 +322,8 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
         setupMockPaymentOnAccountSessionService(Future.successful(Right(None)))
         setupMockGetPaymentsOnAccount(None)
 
-        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOk)(tsTestUser, headerCarrier)
-        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
+        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOk)(individualUser, headerCarrier)
+        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOkAgent)(agentUser, headerCarrier)
         val doc: Document = Jsoup.parse(contentAsString(res))
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
@@ -324,8 +336,8 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
         setupMockPaymentOnAccountSessionService(Future.successful(Right(None)))
         setupMockGetPaymentsOnAccountBuildFailure()
 
-        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOk)(tsTestUser, headerCarrier)
-        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
+        val res = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOk)(individualUser, headerCarrier)
+        val resAgent = TestWithSessionAndPoa.withSessionDataAndPoa(journeyState = InitialPage)(successfulFutureOkAgent)(agentUser, headerCarrier)
         val doc: Document = Jsoup.parse(contentAsString(res))
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 

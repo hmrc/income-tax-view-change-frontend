@@ -82,11 +82,10 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
     lazy val document: Document = Jsoup.parse(contentAsString(view))
   }
 
-  def getMessage(incomeSourceType: IncomeSourceType, key:String): String = {
+  def getStartDateMessage(incomeSourceType: IncomeSourceType): String = {
     incomeSourceType match {
-      case SelfEmployment => messages(s"check-details.$key")
-      case UkProperty => messages(s"check-details-uk.$key")
-      case ForeignProperty => messages(s"check-details-fp.$key")
+      case SelfEmployment => "Trading start date"
+      case _              => "Start date"
     }
   }
 
@@ -94,17 +93,17 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
     "render the page correctly" when {
       def runPageContenttest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
         "render the heading" in new Setup(false, incomeSourceType) {
-          document.getElementsByClass("govuk-heading-l").text() shouldBe messages("check-details.title")
+          document.getElementsByClass("govuk-heading-l").text() shouldBe "Confirm this information is correct"
         }
 
         if (incomeSourceType == SelfEmployment) {
 
           "render the summary list" in new Setup(isAgent, incomeSourceType) {
-            document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe messages("check-details.business-name")
-            document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe messages("check-details.start-date")
-            document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe messages("check-details.trade")
-            document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe messages("check-details.address")
-            document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe messages("check-details.accounting-method")
+            document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe "Business name"
+            document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe "Trading start date"
+            document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe "Type of trade"
+            document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe "Address"
+            document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe "Accounting method"
 
             document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe businessName
             document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe businessStartDate
@@ -115,21 +114,26 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
         }
           else {
           "render the summary list" in new Setup(isAgent, incomeSourceType) {
-            document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe getMessage(incomeSourceType, "start-date")
-            document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe getMessage(incomeSourceType, "accounting-method")
+            document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe getStartDateMessage(incomeSourceType)
+            document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe "Accounting method"
 
             document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe businessStartDate
             document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe businessAccountingMethod
         }
 
         }
+
+        "render the description" in new Setup(isAgent, incomeSourceType) {
+          document.getElementById("check-details-description").text() shouldBe "Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so."
+        }
+
         "render the back link" in new Setup(isAgent, incomeSourceType) {
-          document.getElementById("back-fallback").text() shouldBe messages("base.back")
+          document.getElementById("back-fallback").text() shouldBe "Back"
           document.getElementById("back-fallback").attr("href") shouldBe backUrl
 
         }
         "render the continue button" in new Setup(isAgent, incomeSourceType) {
-          document.getElementById("confirm-button").text() shouldBe messages("base.confirm-and-continue")
+          document.getElementById("confirm-button").text() shouldBe "Confirm and continue"
         }
       }
 

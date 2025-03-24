@@ -33,9 +33,8 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration, MILLISECONDS}
-
+@deprecated("Being moved to submission team", "MISUV-8977")
 class CalculationPollingServiceSpec extends TestSupport with MockCalculationService {
-
   val liabilityCalculationSuccessResponse: LiabilityCalculationResponse = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
       taxRegime = "UK", class2VoluntaryContributions = None

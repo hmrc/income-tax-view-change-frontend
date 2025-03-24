@@ -66,7 +66,8 @@ class ChooseTaxYearController @Inject()(authActions: AuthActions,
         isAgent,
         routes.ChooseTaxYearController.submit(isAgent, incomeSourceType),
         dateService.getCurrentTaxYear,
-        dateService.getCurrentTaxYear.nextYear))
+        dateService.getCurrentTaxYear.nextYear,
+        incomeSourceType))
       )
     }
   }.recover {
@@ -74,8 +75,7 @@ class ChooseTaxYearController @Inject()(authActions: AuthActions,
       Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
       errorHandler(isAgent).showInternalServerError()
   }
-
-
+  
   def submit(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
       implicit user => {
@@ -86,24 +86,24 @@ class ChooseTaxYearController @Inject()(authActions: AuthActions,
               isAgent,
               routes.ChooseTaxYearController.submit(isAgent, incomeSourceType),
               dateService.getCurrentTaxYear,
-              dateService.getCurrentTaxYear.nextYear))
+              dateService.getCurrentTaxYear.nextYear,
+              incomeSourceType))
             )
           },
           form => {
             val journeyType = IncomeSourceJourneyType(ManageReportingFrequency, incomeSourceType)
-
             sessionService.getMongo(journeyType).flatMap {
               case Right(Some(sessionData)) =>
                 val updatedSessionData = IncomeSourceReportingFrequencySourceData(form.currentTaxYear, form.nextTaxYear)
-
+                
                 sessionService.setMongoData(sessionData.copy(incomeSourceReportingFrequencyData = Some(updatedSessionData)))
                 Future.successful(Ok(chooseTaxYear(
                   ChooseTaxYearForm(),
                   isAgent,
                   routes.ChooseTaxYearController.submit(isAgent, incomeSourceType),
                   dateService.getCurrentTaxYear,
-                  dateService.getCurrentTaxYear.nextYear)))
-
+                  dateService.getCurrentTaxYear.nextYear,
+                  incomeSourceType)))
               case _ => Future.failed(new Exception(s"failed to retrieve session data for journey ${journeyType.toString}"))
             }
           }

@@ -16,8 +16,7 @@
 
 package models.financialDetails
 
-import auth.MtdItUser
-import enums.{Poa1Charge, Poa1ReconciliationDebit, Poa2Charge, Poa2ReconciliationDebit, TRMAmendCharge, TRMNewCharge}
+import enums._
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails.ReviewAndReconcileUtils.{isReviewAndReconcilePoaOne, isReviewAndReconcilePoaTwo}
 import models.incomeSourceDetails.TaxYear
@@ -35,10 +34,6 @@ sealed trait FinancialDetailsResponseModel
 case class FinancialDetailsModel(balanceDetails: BalanceDetails,
                                  private val documentDetails: List[DocumentDetail],
                                  financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
-
-  def getDueDateForFinancialDetail(financialDetail: FinancialDetail): Option[LocalDate] = {
-    financialDetail.items.flatMap(_.headOption.flatMap(_.dueDate))
-  }
 
   def getAllDueDates: List[LocalDate] = {
     documentDetails.flatMap(_.getDueDate())
@@ -63,18 +58,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     }
   }
 
-  def isReviewAndReconcilePoaOneDebit(documentId: String): Boolean = {
-    financialDetails.exists { fd =>
-      fd.transactionId.contains(documentId) && isReviewAndReconcilePoaOne(fd.mainTransaction)
-    }
-  }
-
-  def isReviewAndReconcilePoaTwoDebit(documentId: String): Boolean = {
-    financialDetails.exists { fd =>
-      fd.transactionId.contains(documentId) && isReviewAndReconcilePoaTwo(fd.mainTransaction)
-    }
-  }
-
   def isReviewAndReconcilePoaOneDebit(documentId: String, reviewAndReconcileIsEnabled: Boolean): Boolean = {
     reviewAndReconcileIsEnabled &&
       financialDetails.exists { fd =>
@@ -88,14 +71,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
         fd.transactionId.contains(documentId) && isReviewAndReconcilePoaTwo(fd.mainTransaction)
       }
   }
-
-  def isReviewAndReconcileDebit(documentId: String): Boolean = {
-    isReviewAndReconcilePoaOneDebit(documentId) ||
-      isReviewAndReconcilePoaTwoDebit(documentId)
-  }
-
-  def findDocumentDetailForTaxYear(taxYear: Int): Option[DocumentDetail] = documentDetails.find(_.taxYear == taxYear)
-
 
   def findDocumentDetailByIdWithDueDate(id: String)(implicit dateService: DateServiceInterface): Option[DocumentDetailWithDueDate] = {
     documentDetails.find(_.transactionId == id)
@@ -120,11 +95,18 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
         isReviewAndReconcilePoaTwoDebit = isReviewAndReconcilePoaTwoDebit(documentDetail.transactionId, reviewAndReconcileEnabled)))
   }
 
-  def getPairedDocumentDetails(): List[(DocumentDetail, FinancialDetail)] = {
+
+  def getPairedDocumentDetails(): List[ChargeItem] = {
     documentDetails.map(documentDetail =>
-      (documentDetail, financialDetails.find(_.transactionId.get == documentDetail.transactionId)
-        .getOrElse(throw new Exception("no financialDetail found for documentDetail" + documentDetail)))
+      Try {
+        ChargeItem.fromDocumentPair(documentDetail = documentDetail,
+          financialDetails = financialDetails
+            .filter(_.transactionId.isDefined)
+          .filter(_.transactionId.get == documentDetail.transactionId) )
+      }.toOption
+
     )
+    .flatMap(x => x.map(y => List(y)).getOrElse( List[ChargeItem]() ) )
   }
 
 
@@ -261,6 +243,10 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
 
 object FinancialDetailsModel {
   implicit val format: Format[FinancialDetailsModel] = Json.format[FinancialDetailsModel]
+
+  def getDueDateForFinancialDetail(financialDetail: FinancialDetail): Option[LocalDate] = {
+    financialDetail.items.flatMap(_.headOption.flatMap(_.dueDate))
+  }
 }
 
 case class FinancialDetailsErrorModel(code: Int, message: String) extends FinancialDetailsResponseModel

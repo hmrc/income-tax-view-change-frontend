@@ -50,12 +50,6 @@
     businessTradeForm("business-trade")
 }
 
-@headingContent = {
-    <h1 class="govuk-heading-l">
-        @messages("add-trade.heading")
-    </h1>
-}
-
 @hintContent = {
     @p(classes="govuk-hint"){
         @messages("add-trade.trade-info-1")
@@ -84,8 +78,8 @@ btaNavPartial = user.btaNavPartial) {
                 label = Label(
                     isPageHeading = true,
                     classes = "govuk-label--l",
-                    content = HtmlContent(
-                        headingContent
+                    content = Text(
+                        messages("add-trade.heading")
                     )
                 ),
                 hint = Some(Hint(content = HtmlContent(

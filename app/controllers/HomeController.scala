@@ -94,7 +94,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
     } yield {
 
-      val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(OptOutFs))
+      val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(ReportingFrequencyPage))
       val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, isEnabled(IncomeSourcesFs),
         isEnabled(IncomeSourcesNewJourney))
       val accountSettingsTileViewModel = AccountSettingsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
@@ -128,7 +128,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
     } yield {
 
-      val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(OptOutFs))
+      val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(ReportingFrequencyPage))
 
       val paymentCreditAndRefundHistoryTileViewModel =
         PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds), user.incomeSources.yearOfMigration.isDefined)
@@ -140,7 +140,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
       val accountSettingsTileViewModel = AccountSettingsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
 
-      NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount, accruingInterestPaymentsCount, isEnabled(ReviewAndReconcilePoa)).verify match {
+      NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount, accruingInterestPaymentsCount, isEnabled(ReviewAndReconcilePoa), isEnabled(YourSelfAssessmentCharges)).verify match {
 
         case Right(viewModel: NextPaymentsTileViewModel) => val homeViewModel = HomePageViewModel(
           utr = user.saUtr,

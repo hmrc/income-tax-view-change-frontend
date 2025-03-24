@@ -72,7 +72,7 @@
     <div class="grid-row">
         <div class="column-full">
             <span class="govuk-caption-xl">@messages("home.agent.supporting.caption")</span>
-            @h1(pageHeading, classes = "govuk-heading-xl margin-bottom-zero")
+            @h1(pageHeading, extraClasses = "margin-bottom-zero")
 
             @p(classes = "govuk-hint margin-bottom-zero") {
                 @user.saUtr.map { utr =>

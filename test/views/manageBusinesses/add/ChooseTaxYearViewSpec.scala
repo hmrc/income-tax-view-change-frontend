@@ -32,8 +32,13 @@ class ChooseTaxYearViewSpec extends TestSupport {
   val view: ChooseTaxYear = app.injector.instanceOf[ChooseTaxYear]
 
   class Setup(form: Form[ChooseTaxYearForm] = ChooseTaxYearForm(), incomeSourceType: IncomeSourceType) {
+    val subHeadingText: String = incomeSourceType match {
+      case SelfEmployment => "Sole trader"
+      case UkProperty => "UK property"
+      case ForeignProperty => "Foreign property"
+    }
     val postAction: Call = controllers.manageBusinesses.add.routes.ChooseTaxYearController.submit(false, incomeSourceType)
-    val pageDocument: Document = Jsoup.parse(contentAsString(view(form, isAgent = false, postAction, TaxYear(2023, 2024), TaxYear(2024, 2025))))
+    val pageDocument: Document = Jsoup.parse(contentAsString(view(form, isAgent = false, postAction, TaxYear(2023, 2024), TaxYear(2024, 2025), incomeSourceType)))
   }
 
   val incomeSourceTypes: Seq[IncomeSourceType] = List(SelfEmployment, UkProperty, ForeignProperty)
@@ -49,7 +54,7 @@ class ChooseTaxYearViewSpec extends TestSupport {
       }
 
       "have the correct sub-heading" in new Setup(incomeSourceType = incomeSourceType) {
-        pageDocument.getElementById("choose-tax-year-subheading").text() shouldBe "Sole Trader"
+        pageDocument.getElementById("choose-tax-year-subheading").text() shouldBe subHeadingText
       }
 
       "have the correct checkbox contents" in new Setup(incomeSourceType = incomeSourceType) {

@@ -16,6 +16,6 @@
 
 @this()
 
-@(msg: String, classes: String = "govuk-heading-xl", size: String = "l")(implicit messages: Messages)
+@(msg: String, size: String = "l")
 
-<span class="govuk-caption-@{size} hmrc-caption-xl">@msg</span>
+<span class="govuk-caption-@{size} hmrc-caption-@{size}">msg</span>

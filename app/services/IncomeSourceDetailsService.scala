@@ -75,7 +75,9 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
     )
   }
 
-  def getViewIncomeSourceViewModel(sources: IncomeSourceDetailsModel)(implicit user: MtdItUser[_]): Either[Throwable, ViewIncomeSourcesViewModel] = {
+  def getViewIncomeSourceViewModel(sources: IncomeSourceDetailsModel,
+                                   displayBusinessStartDateFS: Boolean
+                                  )(implicit user: MtdItUser[_]): Either[Throwable, ViewIncomeSourcesViewModel] = {
 
     val maybeSoleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
     val soleTraderBusinessesExists = maybeSoleTraderBusinesses.nonEmpty
@@ -109,7 +111,7 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
           ))
         } else None,
         getCeasedBusinesses(sources = sources),
-        isEnabled(DisplayBusinessStartDate)
+        displayBusinessStartDateFS
       )
     }.toEither
   }

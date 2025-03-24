@@ -19,7 +19,7 @@
 
 @this(
       mainTemplate: unifiedLayout,
-      h1: h1_large,
+      h1: h1,
       p: data_metric_p
 )
 
@@ -27,7 +27,7 @@
 
 @mainTemplate(pageTitle = pageTitle, isAgent = isAgent, isErrorPage = true) {
 
-     @h1(msg = heading)
+     @h1(msg = messages(heading), size = "l")
      @content
 
 }

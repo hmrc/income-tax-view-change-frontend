@@ -27,7 +27,7 @@
 @this(
         mainTemplate: unifiedLayout,
         appConfig: config.FrontendAppConfig,
-        h1: h1,
+        h1WithCaption: h1WithCaption,
         h2: h2,
         p: p,
         link: link,
@@ -116,10 +116,12 @@
         form = enterPoaForm
     )
 
-    <span class="govuk-caption-xl" id="caption">@getMessage("caption", viewModel.taxYear.startYear.toString, viewModel.taxYear.endYear.toString)</span>
 
-    @h1(msg = getMessage("heading"),
-        id = Some("h1"))
+    @h1WithCaption(heading = getMessage("heading"),
+        captionMsg = getMessage("caption", viewModel.taxYear.startYear.toString, viewModel.taxYear.endYear.toString),
+        headingId = Some("h1"),
+        captionId = Some("caption")
+    )
 
     <div id="bulletPoints">
         @p(id=Some("p1")){

@@ -118,6 +118,7 @@ home.agent.heading                                              = Treth Incwm ei
 home.agent.headingWithClientName                                = Treth Incwm {0}
 home.agent.changeClientLink                                     = Newid cleient
 home.agent.payments.view                                        = Gwirio’r hyn sydd ar eich cleient
+home.agent.payments.selfAssessment.view                         = Gwiriwch daliadau Hunanasesiad eich cleient
 home.agent.returns.viewLink                                     = Bwrw golwg dros Ffurflen Dreth bresennol eich cleient ar gyfer {0} i {1}
 home.agent.visualHidden.clientsName                             = Enw’r cleient
 home.agent.your-returns.updatesLink                             = Diweddaru a chyflwyno Ffurflen Dreth eich cleient ar gyfer {0} i {1}
@@ -127,12 +128,13 @@ home.payments.heading                                           = Taliadau nesaf
 home.payments.daily-interest-charges                            = Taliadau llog dyddiol
 home.payments.no-payments-due                                   = Dim taliadau’n ddyledus
 home.payments.view                                              = Gwirio’r hyn sydd arnoch
+home.payments.selfAssessment.view                               = Gwiriwch eich taliadau Hunanasesiad
 home.overdue.date.update.count                                  = {0} Ddiweddariadau yn hwyr
 home.overdue.date.payment.count                                 = {0} Daliadau am fod yn hwyr
 home.overdue.date                                               = Yn hwyr
 home.updates.heading                                            = Diweddariad nesaf i’w gyflwyno erbyn
 home.updates.view                                               = Bwrw golwg dros ddyddiadau cau diweddariadau
-home.updates.view.opt-out                                       = Bwrw golwg dros ddyddiadau cau a rheoli sut rydych yn adrodd
+home.updates.view.reportingFrequency                            = Bwrw golwg dros ddyddiadau cau a rheoli sut rydych yn adrodd
 home.tax-years.heading                                          = Ffurflenni Treth
 home.your-returns.agent.description                             = Defnyddiwch y gwasanaeth hwn i roi gwybod am incwm heb ei drethu ac unrhyw ryddhad treth yr ydych yn ei hawlio
 home.your-returns.description                                   = Defnyddiwch y gwasanaeth hwn i roi gwybod am incwm heb ei drethu ac unrhyw ryddhad treth yr ydych yn ei hawlio
@@ -817,9 +819,6 @@ whatYouOwe.sa-note-agent-3                                      = Bydd hwn yn Dd
 whatYouOwe.sa-link                                              = cyfrif Hunanasesiad ar-lein blaenorol
 whatYouOwe.sa-link-agent                                        = cyfrif Hunanasesiad ar gyfer Asiantau
 whatYouOwe.outstanding-charges-note                             = Caiff unrhyw daliadau a wnaed eu defnyddio ar gyfer y costau sydd heb eu talu ar gyfer y blynyddoedd treth hyn yn gyntaf ac ni ddangosir hwy yn yma.
-whatYouOwe.dropdown.info                                        = Beth yw’r mathau o daliadau?
-whatYouOwe.payment-days-note                                    = Gall gymryd hyd at 7 diwrnod i brosesu taliadau.
-whatYouOwe.credit-on-account                                    = Os ydych yn gwneud taliad fwy na 30 diwrnod cyn bod taliad yn ddyledus, byddwch yn ei weld fel credyd ar gyfrif.
 whatYouOwe.payNow                                               = Gwneud taliad
 whatYouOwe.pay-now-aria                                         = Talu nawr ar gyfer Blwyddyn dreth  {0} i {1}
 whatYouOwe.pre-mtd-year                                         = {0} i {1}
@@ -892,6 +891,79 @@ whatYouOwe.adjust-poa.paid-3                                    = ar unrhyw adeg
 whatYouOwe.adjust-poa.paid-4                                    = 31 Ionawr {0}
 whatYouOwe.adjust-poa.paid-5                                    = fan bellaf.
 whatYouOwe.interestChargesWarning                               = Bydd taliadau llog yn parhau i gynyddu bob dydd nes bod y taliadau y maent yn ymwneud â nhw yn cael eu talu’n llawn.
+
+## Your Self Assessment Charges
+
+selfAssessmentCharges.heading                                      = Your Self Assessment charges
+selfAssessmentCharges.important                                    = Important
+selfAssessmentCharges.important-p1                                 = This is the total amount of overdue tax you need to pay. Any interest will increase daily until the overdue amount is paid.
+selfAssessmentCharges.important-p2                                 = You can
+selfAssessmentCharges.important-p2-link-text                       = pay the total amount needed now.
+selfAssessmentCharges.charges-due-now-with-amount                  = Charges due now: {0}
+selfAssessmentCharges.no-payments-due                              = Nid oes gennych taliadau sy’n ddyledus.
+selfAssessmentCharges.no-payments-due-agent                        = Nid oes gan eich cleient daliadau sy’n ddyledus.
+selfAssessmentCharges.charges-due-now                              = Charges due now
+selfAssessmentCharges.tableHead.due-date                           = Dyddiad dyledus
+selfAssessmentCharges.tableHead.tax-year                           = Blwyddyn dreth
+selfAssessmentCharges.tableHead.type-of-charge                     = Type of charge
+selfAssessmentCharges.tableHead.estimated-interest                 = Estimated interest
+selfAssessmentCharges.tableHead.amount                             = Amount
+selfAssessmentCharges.tax-year-summary.taxYear                                = {0} i {1}
+selfAssessmentCharges.paymentOnAccount1.text							      = Taliad cyntaf ar gyfrif
+selfAssessmentCharges.paymentOnAccount2.text							      = Ail daliad ar gyfrif
+selfAssessmentCharges.reviewAndReconcilePoa1.text                             = Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+selfAssessmentCharges.reviewAndReconcilePoa2.text                             = Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+selfAssessmentCharges.lpi.reviewAndReconcilePoa1.text                         = Llog ar y taliad cyntaf ar gyfrif: swm ychwanegol
+selfAssessmentCharges.lpi.reviewAndReconcilePoa2.text                         = Llog ar yr ail daliad ar gyfrif: swm ychwanegol
+selfAssessmentCharges.hmrcAdjustment.text                                     = Addasiad CThEF
+selfAssessmentCharges.lpi.paymentOnAccount1.text                              = Llog am dalu’n hwyr ar y taliad ar gyfrif cyntaf
+selfAssessmentCharges.lpi.paymentOnAccount2.text                              = Llog am dalu’n hwyr ar yr ail daliad ar gyfrif
+selfAssessmentCharges.lpi.balancingCharge.text                                = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
+selfAssessmentCharges.balancingCharge.text  							      = Taliad mantoli
+selfAssessmentCharges.balancingCharge.interest.line1.text                     = Llog ar y balans sy’n weddill
+selfAssessmentCharges.balancingCharge.interest.line2.text                     = {0} i {1}
+selfAssessmentCharges.pre-mtd-digital                                         = (Cyn y cynllun Troi Treth yn Ddigidol)
+selfAssessmentCharges.pre-mtd-year                                            = {0} i {1}
+selfAssessmentCharges.taxYear                                                 = Blwyddyn dreth
+selfAssessmentCharges.table.total-amount                                      = Total amount: {0}
+selfAssessmentCharges.payNow                                                  = Gwneud taliad
+selfAssessmentCharges.overdue-inset-text-1                                    = Payments you make may take up to 3 working days depending on the payment method you use. Payments must reach HMRC by the due date to avoid any late payment interest or penalty.
+selfAssessmentCharges.overdue-inset-text-2                                    = Any payments you make will go toward overdue charges in the order they were due.
+selfAssessmentCharges.payment-plan-1                                          = If you cannot pay your tax bill in full, you may be able to
+selfAssessmentCharges.payment-plan-link-text                                  = set up a Self Assessment payment plan
+selfAssessmentCharges.sa-note                                                 = Mae gennych daliadau’n ddyledus o hyd ar gyfer eich blynyddoedd treth Hunanasesiad blaenorol. Er mwyn bwrw golwg dros y taliadau hyn sydd heb eu talu, mae angen i chi fynd i’ch
+selfAssessmentCharges.sa-note-agent-1                                         = Mae’n bosibl y bydd gan eich cleient daliadau sy’n ddyledus o hyd ar gyfer blynyddoedd treth Hunanasesiad blaenorol
+selfAssessmentCharges.sa-note-agent-2                                         = Er mwyn bwrw golwg dros flynyddoedd treth eich cleient cyn iddo gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fewngofnodi i’ch
+selfAssessmentCharges.sa-note-agent-3                                         = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
+selfAssessmentCharges.sa-link                                                 = cyfrif Hunanasesiad ar-lein blaenorol
+selfAssessmentCharges.sa-link-agent                                           = cyfrif Hunanasesiad ar gyfer Asiantau
+selfAssessmentCharges.outstanding-charges-note                                = Caiff unrhyw daliadau a wnaed eu defnyddio ar gyfer y costau sydd heb eu talu ar gyfer y blynyddoedd treth hyn yn gyntaf ac ni ddangosir hwy yn yma.
+selfAssessmentCharges.paymentUnderReview                                      = Taliad dan adolygiad
+selfAssessmentCharges.dunningLock.text                                        = Mae un neu fwy o’ch taliadau yn cael eu hadolygu ar hyn o bryd oherwydd {0}
+selfAssessmentCharges.dunningLock.link                                        = bod apêl ar y gweill yn erbyn penderfyniad treth
+selfAssessmentCharges.codingOut-1a                                            = Mae gan eich cleient
+selfAssessmentCharges.codingOut-1b                                            = o dreth ar gyfer
+selfAssessmentCharges.codingOut-2                                             = blwyddyn dreth {0} i {1}
+selfAssessmentCharges.codingOut-3                                             = yn cael ei thalu drwy ei god treth TWE. Nid yw’r swm hwn yn rhan o gyfanswm ei daliadau sy’n ddyledus oherwydd ein bod yn eu casglu’n awtomatig.
+selfAssessmentCharges.codingOut-individual                                    = sy’n cael ei thalu drwy’ch cod treth TWE. Nid yw’r swm hwn yn rhan o gyfanswm eich taliadau sy’n ddyledus oherwydd eu bod yn cael eu casglu’n awtomatig.
+selfAssessmentCharges.class2Nic.text                                          = Yswiriant Gwladol Dosbarth 2
+selfAssessmentCharges.cancelledPayeSelfAssessment.text                        = Hunanasesiad TWE wedi’i ganslo (trwy eich cod treth TWE)
+selfAssessmentCharges.credit-overpaid-prefix                                  = Mae gennych
+selfAssessmentCharges.credit-overpaid-amount                                  = {0} yn eich cyfrif
+selfAssessmentCharges.unallocated-credit-note                                 = . Byddwn yn defnyddio hwn i dalu’r symiau sy’n ddyledus ar y dyddiad dyledus nesaf.
+selfAssessmentCharges.moneyOnAccount                                          = Arian yn eich cyfrif
+selfAssessmentCharges.moneyOnAccount-1                                        = Mae cyfanswm o
+selfAssessmentCharges.moneyOnAccount-2                                        = yn eich cyfrif. Gallwch adael yr arian yno i dalu’ch bil nesaf neu gallwch
+selfAssessmentCharges.moneyOnAccount-3                                        = hawlio ad-daliad
+selfAssessmentCharges.moneyOnAccount-agent                                    = Arian yng nghyfrif eich cleient
+selfAssessmentCharges.moneyOnAccount-agent-2                                  = yng nghyfrif eich cleient. Gallwch adael yr arian yno i dalu bil nesaf eich cleient neu gallwch
+selfAssessmentCharges.adjust-poa                                              = Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
+selfAssessmentCharges.adjust-poa.paid-1                                       = Gallwch
+selfAssessmentCharges.adjust-poa.paid-2                                       = addasu eich taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
+selfAssessmentCharges.adjust-poa.paid-3                                       = ar unrhyw adeg cyn cyflwyno’ch Ffurflen Dreth ar gyfer 2023 i 2024, ac erbyn
+selfAssessmentCharges.adjust-poa.paid-4                                       = 31 Ionawr {0}
+selfAssessmentCharges.adjust-poa.paid-5                                       = fan bellaf.
+selfAssessmentCharges.interestChargesWarning                                  = Bydd taliadau llog yn parhau i gynyddu bob dydd nes bod y taliadau y maent yn ymwneud â nhw yn cael eu talu’n llawn.
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad cyntaf ar gyfrif
@@ -1626,7 +1698,7 @@ cease-check-answers-fp.caption                                = Eiddo tramor
 
 
 # check business details
-check-details.title                                     = Gwirio’ch atebion
+check-details.title                                     = Cadarnhewch fod yr wybodaeth hon yn gywir
 check-details.heading                                   = Unig fasnachwr
 check-details.business-name                             = Enw’r busnes
 check-details.start-date                                = Dyddiad dechrau masnachu
@@ -1636,22 +1708,25 @@ check-details.accounting-method                         = Dull cyfrifydd
 check-details.cash-accounting                           = Cyfrifyddu ar sail arian parod
 check-details.traditional-accounting                    = Cyfrifyddu traddodiadol
 check-details.change                                    = Newid
+check-details.description                               = Unwaith y byddwch yn cadarnhau’r manylion hyn, ni fyddwch yn gallu eu diwygio yn y cam nesaf a bydd angen i chi gysylltu â CThEF i wneud hynny.
 
-check-details-uk.title                                  = Gwirio’ch atebion
+check-details-uk.title                                  = Cadarnhewch fod yr wybodaeth hon yn gywir
 check-details-uk.heading                                = Eiddo yn y DU
 check-details-uk.start-date                             = Dyddiad dechrau
 check-details-uk.accounting-method                      = Dull cyfrifyddu
 check-details-uk.cash-accounting                        = Cyfrifyddu ar sail arian parod
 check-details-uk.traditional-accounting                 = Cyfrifyddu traddodiadol
 check-details-uk.change                                 = Newid
+check-details-uk.description                            = Unwaith y byddwch yn cadarnhau’r manylion hyn, ni fyddwch yn gallu eu diwygio yn y cam nesaf a bydd angen i chi gysylltu â CThEF i wneud hynny.
 
-check-details-fp.title                                  = Gwirio’ch atebion
+check-details-fp.title                                  = Cadarnhewch fod yr wybodaeth hon yn gywir
 check-details-fp.heading                                = Eiddo tramor
 check-details-fp.start-date                             = Dyddiad dechrau
 check-details-fp.accounting-method                      = Dull cyfrifyddu
 check-details-fp.cash-accounting                        = Cyfrifyddu ar sail arian parod
 check-details-fp.traditional-accounting                 = Cyfrifyddu traddodiadol
 check-details-fp.change                                 = Newid
+check-details-fp.description                            = Unwaith y byddwch yn cadarnhau’r manylion hyn, ni fyddwch yn gallu eu diwygio yn y cam nesaf a bydd angen i chi gysylltu â CThEF i wneud hynny.
 
 check-business-details.title                            = Gwirio’ch manylion
 check-business-details.heading                          = Y busnes unig fasnachwr a nodwyd gennych
@@ -1970,6 +2045,17 @@ manageBusinesses.type-of-property.uk                                     = Busne
 manageBusinesses.type-of-property.foreign                                = Busnes eiddo tramor
 manageBusinesses.type-of-property.error                                  = Dewiswch opsiwn
 
+# manage income sources reporting method
+manageBusinesses.manage.propertyReportingMethod.heading.annual             = Newidiadau i adrodd blynyddol ar gyfer blwyddyn dreth {0} i {1}
+manageBusinesses.manage.propertyReportingMethod.heading.quarterly          = Newid i gyflwyno adroddiadau’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
+manageBusinesses.manage.propertyReportingMethod.subHeading.UkProperty      = Eiddo yn y DU
+manageBusinesses.manage.propertyReportingMethod.subHeading.ForeignProperty = Eiddo tramor
+manageBusinesses.manage.propertyReportingMethod.subHeading.SelfEmployment  = Unig fasnachwr
+manageBusinesses.manage.propertyReportingMethod.description.annual         = Os byddwch yn newid i adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth drwy’ch meddalwedd sy’n cydweddu neu’ch cyfrif ar-lein CThEF.
+manageBusinesses.manage.propertyReportingMethod.description.quarterly      = Bydd newid i adrodd yn chwarterol yn golygu y bydd angen i chi gyflwyno’ch diweddariadau chwarterol drwy feddalwedd sy’n cydweddu.
+manageBusinesses.manage.propertyReportingMethod.inset.quarterly            = Os ydych wedi cyflwyno unrhyw incwm a threuliau i CThEF ar gyfer y flwyddyn dreth hon, byddant yn cael eu dileu o’n cofnodion. Gwnewch yn siŵr eich bod yn cadw’r wybodaeth hon yn ddiogel oherwydd y bydd angen i chi ei chynnwys yn eich diweddariadau chwarterol.
+manageBusinesses.manage.propertyReportingMethod.confirm                    = Cadarnhau a chadw
+
 
 # credits
 credit.description.balancingCharge                                      = Credyd o ordaliad treth
@@ -1993,13 +2079,15 @@ manageBusinesses.check-answers.change                                    = Newid
 
 # manage business sole trader reporting frequency
 
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading           = Pa flwyddyn dreth ydych chi am gyflwyno’n chwarterol ar ei chyfer?
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.subHeading        = Unig fasnachwr
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text         = Dewiswch bob un sy’n berthnasol.
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox     = {0} i {1}
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button            = Parhau
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header      = Mae problem
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description = Dewiswch y blynyddoedd treth yr hoffech gyflwyno’n chwarterol ar eu cyfer
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading                    = Pa flwyddyn dreth ydych chi am gyflwyno’n chwarterol ar ei chyfer?
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.SelfEmployment.subHeading  = Unig fasnachwr
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.UkProperty.subHeading      = Eiddo yn y DU
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.ForeignProperty.subHeading = Eiddo tramor
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text                  = Dewiswch bob un sy’n berthnasol.
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox              = {0} i {1}
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button                     = Parhau
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header               = Mae problem
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description          = Dewiswch y blynyddoedd treth yr hoffech gyflwyno’n chwarterol ar eu cyfer
 
 #######################################################################################################################
 ## Claim to Adjust POA - Add ##

@@ -20,6 +20,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.JourneyType.Manage
+import models.admin.DisplayBusinessStartDate
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -59,7 +60,7 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
                    (implicit user: MtdItUser[_]): Future[Result] = {
 
     withIncomeSourcesFS {
-      incomeSourceDetailsService.getViewIncomeSourceViewModel(sources) match {
+      incomeSourceDetailsService.getViewIncomeSourceViewModel(sources, isEnabled(DisplayBusinessStartDate)) match {
         case Right(viewModel) =>
           sessionService.deleteSession(Manage).map { _ =>
             Ok(manageIncomeSources(

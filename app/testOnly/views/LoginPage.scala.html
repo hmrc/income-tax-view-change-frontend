@@ -19,14 +19,15 @@
 @import views.html.layouts.unifiedLayout
 @import play.api.libs.json.Json
 @import models.itsaStatus.ITSAStatus
+@import views.html.helper.CSPNonce
 
 @this(
-        layout: unifiedLayout,
-        govukButton: GovukButton,
-        govukSelect: GovukSelect,
-        govukCheckboxes: GovukCheckboxes,
-        govukRadios: GovukRadios,
-        form: FormWithCSRF
+    layout: unifiedLayout,
+    govukButton: GovukButton,
+    govukSelect: GovukSelect,
+    govukCheckboxes: GovukCheckboxes,
+    govukRadios: GovukRadios,
+    form: FormWithCSRF
 )
 
 @(postAction: Call, users: Seq[UserRecord], optOutCustomDataUserPrefixes: Seq[String])(implicit request: Request[_], messages: Messages)
@@ -58,33 +59,49 @@
 }
 
 @layout(pageTitle = "Login - Manage your Income Tax updates - GOV.UK") {
+
     <link href='/report-quarterly/income-and-expenses/view/assets/stylesheets/application.css' media="screen" rel="stylesheet" type="text/css" />
-    <script src="@testOnly.controllers.routes.TestOnlyAssetsController.at("optOutCustomData.js")"></script>
+
+    <script @CSPNonce.attr>
+    function optOutCustomData(answer, customPrefixes) {
+        const ninoPrefix = answer.value.substring(0, 2);
+
+        if (customPrefixes.includes(ninoPrefix)) {
+            document.getElementById("OptOutCustomDataDropdowns").classList.remove("display-none");
+        } else {
+            document.getElementById("OptOutCustomDataDropdowns").classList.add("display-none");
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const ninoSelect = document.getElementById("nino");
+
+        if (ninoSelect) {
+            const customPrefixes = JSON.parse(ninoSelect.getAttribute("data-custom-prefixes"));
+
+            ninoSelect.addEventListener("change", function () {
+                optOutCustomData(this, customPrefixes);
+            });
+        }
+    });
+</script>
 
     <h1 class="govuk-heading-l">Select Nino/User</h1>
 
     @form(postAction) {
-
         <div class="govuk-form-group">
-            <label class="govuk-label" for="sort">
+            <label class="govuk-label" for="nino">
                 NINO
             </label>
-            <select class="govuk-select" id="nino" name="nino" onchange='optOutCustomData(this, @Html(Json.toJson(optOutCustomDataUserPrefixes).toString))'>
-            @for(user <- users) {
-                <option value="@user.nino">@{
-                    user.nino
-                } - @{
-                    user.description
-                }</option>
-            }
+            <select class="govuk-select" id="nino" name="nino"
+                    data-custom-prefixes='@Html(Json.toJson(optOutCustomDataUserPrefixes).toString)'>
+                @for(user <- users) {
+                <option value="@user.nino">@user.nino - @user.description</option>
+                }
             </select>
         </div>
 
-
         @govukRadios(Radios(
-            fieldset = Some(Fieldset(
-                legend = None
-            )),
             name = "AgentType",
             items = Seq(
                 RadioItem(
@@ -105,6 +122,7 @@
         ))
 
         <div class="display-none" id="OptOutCustomDataDropdowns">
+
             @govukSelect(Select(
                 id = "cyMinusOneCrystallisationStatus",
                 name = "cyMinusOneCrystallisationStatus",
@@ -113,7 +131,7 @@
                         SelectItem(
                             value = Some("Default"),
                             text = "Default"
-                        ),
+                    ),
                         SelectItem(
                             value = Some("Crystallised"),
                             text = "Crystallised"
@@ -121,39 +139,34 @@
                         SelectItem(
                             value = Some("NonCrystallised"),
                             text = "Non Crystallised"
-                        )),
+                        )
+                    ),
                 label = Label(
-                    content = Text("CY-1 Crystallisation"))
+                content = Text("CY-1 Crystallisation"))
             ))
 
             @govukSelect(Select(
                 id = "cyMinusOneItsaStatus",
                 name = "cyMinusOneItsaStatus",
                 items = ITSAOptions,
-                label = Label(
-                    content = Text("CY-1 ITSA Status"))
+                label = Label(content = Text("CY-1 ITSA Status"))
             ))
 
             @govukSelect(Select(
                 id = "cyItsaStatus",
                 name = "cyItsaStatus",
                 items = ITSAOptions,
-                label = Label(
-                    content = Text("CY ITSA Status"))
+                label = Label(content = Text("CY ITSA Status"))
             ))
 
             @govukSelect(Select(
                 id = "cyPlusOneItsaStatus",
                 name = "cyPlusOneItsaStatus",
                 items = ITSAOptions,
-                label = Label(
-                    content = Text("CY+1 ITSA Status"))
+                label = Label(content = Text("CY+1 ITSA Status"))
             ))
         </div>
 
-        @govukButton(Button(
-            content = Text("Login")
-        ))
-
+        @govukButton(Button(content = Text("Login")))
     }
 }

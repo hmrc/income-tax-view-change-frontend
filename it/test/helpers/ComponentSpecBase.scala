@@ -87,6 +87,11 @@ class TestDateService extends DateServiceInterface {
   }
 
   override def isAfterTaxReturnDeadlineButBeforeTaxYearEnd: Boolean = true
+
+  override def isWithin30Days(date: LocalDate): Boolean = {
+    val currentDate = getCurrentDate
+    date.minusDays(30).isBefore(currentDate)
+  }
 }
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers

@@ -97,6 +97,11 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
     override def isAfterTaxReturnDeadlineButBeforeTaxYearEnd: Boolean = false
 
     override def getCurrentTaxYear: TaxYear = TaxYear.forYearEnd(getCurrentTaxYearEnd)
+
+    override def isWithin30Days(date: LocalDate): Boolean = {
+      val currentDate = getCurrentDate
+      date.minusDays(30).isBefore(currentDate)
+    }
   }
 
   def getPath(mtdRole: MTDUserRole): String = {

@@ -26,7 +26,7 @@ import play.api.http.Status
 import play.api.test.Helpers._
 import services.CalculationPollingService
 import testConstants.BaseTestConstants.testTaxYear
-
+@deprecated("Being moved to submission team", "MISUV-8977")
 class CalculationPollingControllerSpec extends MockAuthActions with MockCalculationPollingService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings

@@ -19,7 +19,6 @@ package testUtils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import org.scalactic.Equality
 import org.scalatest.{Assertion, Succeeded}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Call
@@ -153,14 +152,11 @@ trait ViewSpec extends TestSupport {
     }
 
     def hasFallbackBacklink(): Assertion = {
-      element.select("script#js-backlink").size() shouldBe 1
-      element.select("noscript#backlink-fallback").size() shouldBe 1
+      Option(element.getElementById("back-fallback")).isDefined shouldBe true
     }
 
     def hasFallbackBacklinkTo(url: String): Assertion = {
-      element.select("script#js-backlink").size() shouldBe 1
-      element.select("noscript#backlink-fallback").size() shouldBe 1
-      element.select("noscript#backlink-fallback").html().contains(url) shouldBe true
+      element.getElementById("back-fallback").hasCorrectHref(url) shouldBe Succeeded
     }
 
     def hasCorrectHref(href: String): Assertion = {
@@ -212,7 +208,5 @@ trait ViewSpec extends TestSupport {
     def getSummaryListActions(id: String): Element = {
       element.getElementById(id)
     }
-
   }
-
 }

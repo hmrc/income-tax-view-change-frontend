@@ -42,13 +42,6 @@
 
 @(form: Form[_], submitAction: Call, isAgent: Boolean, taxYear: TaxYear)(implicit messages: Messages, user: auth.MtdItUser[_])
 
-@headingSection = {
-    <h1 id="single-tax-year-warning-heading" class="govuk-heading-l">@messages("optIn.singleTaxYearWarning.heading")</h1>
-    @p(id = Some("single-tax-year-warning-paragraph"), classes ="govuk-body-m govuk-!-margin-bottom-8"){
-        @messages("optIn.singleTaxYearWarning.desc1")
-    }
-}
-
 @volReportingAndQuarterlyUpdatesSection = {
     @p(id = Some("voluntary-reporting-subheading"), classes = "govuk-body-m govuk-!-font-weight-bold"){
         @messages("optIn.singleTaxYearWarning.inset.subHeading")
@@ -128,7 +121,10 @@
     btaNavPartial = user.btaNavPartial,
 ) {
     @errorSummary(form = form)
-    @headingSection
+    @h1(msg = messages("optIn.singleTaxYearWarning.heading"), size = "l", id = Some("single-tax-year-warning-heading"))
+    @p(id = Some("single-tax-year-warning-paragraph"), classes ="govuk-body-m govuk-!-margin-bottom-8"){
+        @messages("optIn.singleTaxYearWarning.desc1")
+    }
     @volReportingAndQuarterlyUpdatesSection
     @detailsDropdown(messages("optIn.singleTaxYearWarning.dropDown.heading"), howToSubmitOverdueDropDown)
     @confirmOptInForCurrentYearForm

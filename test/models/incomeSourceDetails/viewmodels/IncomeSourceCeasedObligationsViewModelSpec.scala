@@ -77,6 +77,8 @@ class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
         accountingPeriodEndDate.plusYears(1)
       }
     }
+
+    override def isWithin30Days(date: LocalDate): Boolean = false
   }
 
   object insetWarningMessages {

@@ -16,11 +16,14 @@
 
 package utils.claimToAdjust
 
+import auth.MtdItUser
+import authV2.AuthActionsTestData.defaultMTDITUser
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import mocks.services.MockPaymentOnAccountSessionService
-import models.admin.AdjustPaymentsOnAccount
+import models.admin.{AdjustPaymentsOnAccount, FeatureSwitch}
 import models.claimToAdjustPoa.PoaAmendmentData
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers
@@ -30,6 +33,7 @@ import play.api.mvc.Result
 import play.api.mvc.Results.{Ok, Redirect}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.PaymentOnAccountSessionService
+import testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
 import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.WhatYouNeedToKnow
@@ -55,6 +59,14 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
     override val agentErrorHandler: AgentItvcErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
     override implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   })
+
+  override lazy val tsTestUser: MtdItUser[_] =
+    defaultMTDITUser(Some(testUserTypeIndividual), IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
+      .addFeatureSwitches(List(FeatureSwitch(AdjustPaymentsOnAccount, true)))
+
+  override lazy val tsTestUserAgent: MtdItUser[_] =
+    defaultMTDITUser(Some(testUserTypeAgent), IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
+      .addFeatureSwitches(List(FeatureSwitch(AdjustPaymentsOnAccount, true)))
 
   val whatYouNeedToKnowView: WhatYouNeedToKnow = app.injector.instanceOf[WhatYouNeedToKnow]
 

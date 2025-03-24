@@ -47,17 +47,18 @@ class WhatYouNeedToKnowViewSpec extends TestSupport {
   }
 
   "The WhatYouNeedToKnow page" should {
-      "render the page heading" in new Setup {
+   val expectedCaption = msgs("claimToAdjustPoa.whatYouNeedToKnow.caption", fixedDate.getYear.toString, (fixedDate.getYear + 1).toString)
+    val expectedH1 = msgs("claimToAdjustPoa.whatYouNeedToKnow.h1")
+    "render the page heading" in new Setup {
         document.title shouldBe msgs("htmlTitle", msgs("claimToAdjustPoa.whatYouNeedToKnow.heading"))
       }
 
       "render the caption" in new Setup {
-        document.getElementById("caption").text shouldBe
-          msgs("claimToAdjustPoa.whatYouNeedToKnow.caption", fixedDate.getYear.toString, (fixedDate.getYear + 1).toString)
+        document.getElementById("caption").text shouldBe expectedCaption
       }
 
       "render the main heading" in new Setup {
-        document.getElementById("h1").text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.h1")
+        document.getElementById("h1").text shouldBe s"$expectedCaption $expectedH1"
       }
 
       "render the first paragraph" in new Setup {

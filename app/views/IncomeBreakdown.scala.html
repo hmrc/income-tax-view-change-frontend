@@ -21,6 +21,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(mainTemplate: unifiedLayout,
+      h1WithCaption: h1WithCaption,
       p: p,
       table : table
 )
@@ -30,10 +31,10 @@
 @mainTemplate(pageTitle = messages("income_breakdown.heading", s"${taxYear - 1}", s"$taxYear"), backUrl = Some(backUrl),
     isAgent = isAgent, btaNavPartial = btaNavPartial, useFallbackBackLink = true) {
 
-    <h1 class="govuk-heading-xl">
-        <span class="govuk-caption-xl">@messages("income_breakdown.dates", s"${taxYear - 1}", s"$taxYear")</span>
-        @messages("income_breakdown.heading")
-    </h1>
+    @h1WithCaption(
+        heading = messages("income_breakdown.heading"),
+        captionMsg = messages("income_breakdown.dates", s"${taxYear - 1}", s"$taxYear")
+    )
 
     @table(
         tableCaptionMessage = "income_breakdown.heading",

@@ -280,8 +280,9 @@
             attributes = Map("id" -> "check-details-table")
         ))
 
-        <br>
-        <br>
+        @p(id = Some("check-details-description")){
+            @getMessage("description")
+        }
 
         @govukButton(Button(
             content = Text(messages("base.confirm-and-continue")),

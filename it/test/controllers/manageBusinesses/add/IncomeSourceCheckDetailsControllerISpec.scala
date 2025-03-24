@@ -43,7 +43,8 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
     }
   }
 
-  val continueButtonText: String = messagesAPI("base.confirm-and-continue")
+  val continueButtonText: String = "Confirm and continue"
+  val descriptionText: String = "Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so."
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
@@ -98,6 +99,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
                       elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(3) dd:nth-of-type(1)")(testBusinessTrade),
                       elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(4) dd:nth-of-type(1)")(testBusinessAddressLine1 + " " + testBusinessPostCode + " " + testBusinessCountryCode),
                       elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(5) dd:nth-of-type(1)")(testBusinessAccountingMethodView),
+                      elementTextByID("check-details-description")(descriptionText),
                       elementTextByID("confirm-button")(continueButtonText)
                     )
 
@@ -107,6 +109,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
                       pageTitle(mtdUserRole,"check-details-uk.title"),
                       elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(1) dd:nth-of-type(1)")("1 January 2023"),
                       elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dd:nth-of-type(1)")(testBusinessAccountingMethodView),
+                      elementTextByID("check-details-description")(descriptionText),
                       elementTextByID("confirm-button")(continueButtonText)
                     )
 
@@ -116,6 +119,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
                       pageTitle(mtdUserRole, "check-details-fp.title"),
                       elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(1) dd:nth-of-type(1)")("1 January 2023"),
                       elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dd:nth-of-type(1)")(testBusinessAccountingMethodView),
+                      elementTextByID("check-details-description")(descriptionText),
                       elementTextByID("confirm-button")(continueButtonText)
                     )
                 }

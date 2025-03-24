@@ -22,6 +22,7 @@
 
 
 @this(mainTemplate: unifiedLayout,
+    h1WithCaption: h1WithCaption,
     p: p
 )
 
@@ -53,10 +54,10 @@
 @mainTemplate(pageTitle = messages("forecast_taxCalc.heading"), backUrl = Some(backUrl), isAgent = isAgent,
     btaNavPartial = btaNavPartial, useFallbackBackLink = true) {
 
-    <h1 class="govuk-heading-xl">
-        <span class="govuk-caption-xl">@messages("forecast_taxCalc.dates", s"${taxYear - 1}", s"$taxYear")</span>
-        @messages("forecast_taxCalc.heading")
-    </h1>
+    @h1WithCaption(
+        heading = messages("forecast_taxCalc.heading"),
+        captionMsg = messages("forecast_taxCalc.dates", s"${taxYear - 1}", s"$taxYear")
+    )
 
     @dataItem("totalEstimatedIncome", endOfYearEstimateModel.totalEstimatedIncome.map(tei => BigDecimal(tei)))
     @dataItem("totalAllowancesAndDeductions", Some(endOfYearEstimateModel.totalAllowancesAndDeductions.getOrElse(BigDecimal(0))))

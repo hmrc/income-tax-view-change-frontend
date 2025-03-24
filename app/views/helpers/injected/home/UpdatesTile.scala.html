@@ -43,8 +43,8 @@
 @nextUpdatesLink = @{
     link(
         link = nextUpdatesControllerURL,
-        messageKey = if(nextUpdatesTileViewModel.isOptOutEnabled) {
-            "home.updates.view.opt-out"
+        messageKey = if(nextUpdatesTileViewModel.isReportingFrequencyEnabled) {
+            "home.updates.view.reportingFrequency"
         } else {
             "home.updates.view"
         }

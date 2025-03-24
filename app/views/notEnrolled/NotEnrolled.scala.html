@@ -30,7 +30,7 @@
 
 @unifiedLayout(pageTitle = messages("not_enrolled.heading"), mainClass = None, showLogout = true, showBtaHeader = false, showServiceName = false, isErrorPage = true) {
 
-    @h1(msg="not_enrolled.heading", id=Some("page-heading"))
+    @h1(msg=messages("not_enrolled.heading"), id=Some("page-heading"))
     @p(id=Some("sign-up")){
         @messages("not_enrolled.sign-up")
         @link(id=Some("sign-up-link"), link = appConfig.signUpUrl, messageKey = "not_enrolled.sign-up.link", target = Some("_blank"), rel=Some("noreferrer noopener"), outerMessage = ".")

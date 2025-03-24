@@ -62,9 +62,9 @@
 ) {
 
     @if(paymentAllocations.hasDocumentDetailWithCredit) {
-        @h1(msg = "paymentAllocation.earlyTaxYear.heading", id = Some("page-heading"))
+        @h1(msg = messages("paymentAllocation.earlyTaxYear.heading"), id = Some("page-heading"))
     } else {
-        @h1(msg = "paymentAllocation.heading", id = Some("page-heading"))
+        @h1(msg = messages("paymentAllocation.heading"), id = Some("page-heading"))
     }
 
     @if(saUtr.isDefined && paymentAllocations.hasDocumentDetailWithCredit) {

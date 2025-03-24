@@ -35,7 +35,8 @@ import views.html.CreditsSummary
 import java.net.URL
 
 
-class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec with CreditHistoryDataHelper {
+class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching
+  with ImplicitDateFormatter with ViewSpec with CreditHistoryDataHelper {
 
   val creditsSummaryView: CreditsSummary = app.injector.instanceOf[CreditsSummary]
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]

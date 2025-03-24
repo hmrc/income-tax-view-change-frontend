@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.WiremockHelper
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
@@ -30,7 +29,6 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 
 class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 
-  override val appConfig: FrontendAppConfig = testAppConfig
   val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
   val previousStartYear = dateService.getCurrentTaxYear.previousYear.startYear.toString

@@ -64,7 +64,7 @@
     outstandingAmount != original amount(partially allocated)
     outstandingAmount == 0 (allocated)
 *@
-@getStatus(charges: DocumentDetail) = @{
+@getStatus(charges: ChargeItem) = @{
     charges.getChargePaidStatus match {
         case "paid" => getMessage("table.status-fully-allocated")
         case "part-paid" => getMessage("table.status-partially-allocated")
@@ -149,13 +149,13 @@
                 @if(charges.nonEmpty) {
                     @tableHead("over-due-payments-table-head")
                     <tbody class="govuk-table__body">
-                        @for((documentDetail, creditType, date, index) <- charges.zipWithIndex.map(x => (x._1.documentDetail, x._1.creditType, x._1.date, x._2))) {
+                        @for((charge, creditType, date, index) <- charges.zipWithIndex.map(x => (x._1.charge, x._1.creditType, x._1.date, x._2))) {
                             <tr class="govuk-table__row " id="@getIndex(index)">
                                 <td class="govuk-table__cell govuk-!-width-one-quarter">@date.toLongDateShort</td>
                                 <td class="govuk-table__cell govuk-!-width-one-half">@messages(s"credit.description.${creditType.key}")</td>
-                                <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@getStatus(documentDetail)</td>
+                                <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@getStatus(charge)</td>
                                 <td class="govuk-table__cell numeric govuk-!-width-one-quarter govuk-!-text-align-right">
-                                    @documentDetail.originalAmount.abs.toCurrencyString
+                                    @charge.originalAmount.abs.toCurrencyString
                                 </td>
                             </tr>
                         }

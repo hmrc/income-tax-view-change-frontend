@@ -21,6 +21,7 @@
 
 @this(
     mainTemplate: unifiedLayout,
+    h1WithCaption: h1WithCaption,
     p: p
 )
 
@@ -39,10 +40,10 @@
 @mainTemplate(pageTitle = messages("deduction_breakdown.heading"), backUrl = Some(backUrl), isAgent = isAgent,
     btaNavPartial = btaNavPartial, useFallbackBackLink = true) {
 
-    <h1 class="govuk-heading-xl">
-        <span class="govuk-caption-xl">@messages("deduction_breakdown.dates", s"${taxYear-1}", s"$taxYear")</span>
-        @messages("deduction_breakdown.heading")
-    </h1>
+    @h1WithCaption(
+        heading = messages("deduction_breakdown.heading"),
+        captionMsg = messages("deduction_breakdown.dates", s"${taxYear-1}", s"$taxYear")
+    )
     <div>
         <table class="govuk-table deductions-table govuk-!-margin-bottom-8">
             <caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden">

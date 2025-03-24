@@ -147,7 +147,7 @@ govukInsetText : GovukInsetText
     useFallbackBackLink = true
 ) {
 
-    @h1(msg = "credit-and-refund.heading")
+    @h1(msg = messages("credit-and-refund.heading"))
 
     @if(viewModel.hasCreditOrRefunds){
         @getAvailableCreditContent

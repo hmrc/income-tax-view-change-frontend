@@ -57,7 +57,7 @@
     btaNavPartial = user.btaNavPartial) {
     @formWithCSRF(action = postAction) {
 
-        @h1(msg = messages("cannotGoBack.heading"), classes = "govuk-heading-xl", id = Some("title"))
+        @h1(msg = messages("cannotGoBack.heading"), id = Some("title"))
 
         @govukWarningText(WarningText(
             iconFallbackText = Some("Warning"),

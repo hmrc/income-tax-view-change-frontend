@@ -21,7 +21,7 @@ import authV2.AuthActionsTestData.defaultMTDITUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
-import models.admin.ReportingFrequencyPage
+import models.admin.{FeatureSwitch, ReportingFrequencyPage}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.optout.{OptOutMultiYearViewModel, OptOutOneYearViewModel}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -30,21 +30,21 @@ import play.api.test.FakeRequest
 import play.twirl.api.{Html, HtmlFormat}
 import services.optout.{OneYearOptOutFollowedByAnnual, OneYearOptOutFollowedByMandated}
 import testConstants.BaseTestConstants.{testNino, testUserTypeIndividual}
-import testUtils.UnitSpec
+import testUtils.{TestSupport, UnitSpec}
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.components.link
 
-class NextUpdatesViewUtilsSpec extends UnitSpec with FeatureSwitching with ImplicitDateFormatter with GuiceOneAppPerSuite {
+class NextUpdatesViewUtilsSpec extends UnitSpec with TestSupport with ImplicitDateFormatter with GuiceOneAppPerSuite {
 
   override implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   override implicit val languageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
   val linkComponent: link = app.injector.instanceOf[link]
 
-  implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
+  override implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
-  implicit val tsTestUser: MtdItUser[_] = defaultMTDITUser(Some(testUserTypeIndividual),
+  override implicit val individualUser: MtdItUser[_] = defaultMTDITUser(Some(testUserTypeIndividual),
     IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
-
+    .addFeatureSwitches(List(FeatureSwitch(ReportingFrequencyPage, true)))
 
   val nextUpdatesViewUtils = new NextUpdatesViewUtils(linkComponent)
 
@@ -115,6 +115,10 @@ class NextUpdatesViewUtilsSpec extends UnitSpec with FeatureSwitching with Impli
       }
 
       "Reporting Frequency feature switch is OFF" when {
+
+        implicit val individualUser: MtdItUser[_] = defaultMTDITUser(Some(testUserTypeIndividual),
+          IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
+          .addFeatureSwitches(List(FeatureSwitch(ReportingFrequencyPage, false)))
 
         "Single year optout model is used and warning shown" should {
 
