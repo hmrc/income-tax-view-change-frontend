@@ -18,15 +18,19 @@ package controllers.manageBusinesses.add
 
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{IncomeSourceJourneyType, ManageReportingFrequency}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.IncomeSourcesNewJourney
-import models.incomeSourceDetails.{IncomeSourceReportingFrequencySourceData, UIJourneySessionData}
+import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData, UIJourneySessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository
 import services.{DateService, SessionService}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
+
+import java.time.LocalDate
 
 class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
   override val dateService: DateService = app.injector.instanceOf[DateService] //overridden for TYS as implemented with 2023 elsewhere
@@ -116,6 +120,11 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
             "submit the reporting frequency for the income source" in {
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+              await(sessionService.createSession(IncomeSourceJourneyType(ManageReportingFrequency, incomeSourceType)))
+
+              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-RF-SE",
+                addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("incomeSourceId"), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
 
               val result = buildPOSTMTDPostClient(path, additionalCookies, Map("current-year-checkbox" -> Seq("true"), "next-year-checkbox" -> Seq("true"))).futureValue
 

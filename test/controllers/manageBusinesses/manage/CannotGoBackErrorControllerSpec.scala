@@ -21,7 +21,7 @@ import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesFs
+import models.admin.IncomeSourcesNewJourney
 import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
@@ -52,7 +52,7 @@ class CannotGoBackErrorControllerSpec extends MockAuthActions with MockSessionSe
         val action = testController.show(isAgent, incomeSourceType)
         s"the user is authenticated as a $mtdRole" should {
           "render the manage income sources page" in {
-            enable(IncomeSourcesFs)
+            enable(IncomeSourcesNewJourney)
             setupMockSuccess(mtdRole)
             mockUKPropertyIncomeSourceWithLatency2024()
             setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
@@ -63,7 +63,7 @@ class CannotGoBackErrorControllerSpec extends MockAuthActions with MockSessionSe
 
           "render the error page" when {
             "Required Mongo data is missing" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
               mockUKPropertyIncomeSourceWithLatency2024()
               setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))

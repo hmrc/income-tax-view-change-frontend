@@ -20,7 +20,7 @@ import audit.AuditingService
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType, SelfEmployment}
+import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.incomeSources.add.IncomeSourceReportingMethodForm
 import forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
@@ -63,52 +63,42 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  lazy val backUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
-    (isAgent, incomeSourceType.equals(SelfEmployment)) match {
-      case (false, true) => routes.AddBusinessAddressController.show(NormalMode).url
-      case (true, true) => routes.AddBusinessAddressController.showAgent(NormalMode).url
-      case (_, _) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, mode = NormalMode, incomeSourceType).url
-    }
-
   lazy val errorRedirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
     if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(incomeSourceType).url
     else routes.IncomeSourceReportingMethodNotSavedController.show(incomeSourceType).url
 
-  lazy val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
+  lazy val incomeSourceAddedPageUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
     if (isAgent) routes.IncomeSourceAddedController.showAgent(incomeSourceType).url
     else routes.IncomeSourceAddedController.show(incomeSourceType).url
 
   lazy val submitUrl: (Boolean, IncomeSourceType) => Call = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
     controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.submit(isAgent, incomeSourceType)
-
-  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
-      handleRequest(isAgent = isAgent, incomeSourceType)
-  }
-
-  def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
-    withNewIncomeSourcesFS {
-      withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
-
-        sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
-          case Some(id) => handleIncomeSourceIdRetrievalSuccess(incomeSourceType, id, sessionData, isAgent = isAgent)
-          case None =>
-            val agentPrefix = if (isAgent) "[Agent]" else ""
-            Logger("application").error(agentPrefix +
-              s"Unable to retrieve incomeSourceId from session data for for $incomeSourceType")
-            Future.successful {
-              errorHandler(isAgent).showInternalServerError()
-            }
-        }
-      }.recover {
-        case ex: Exception =>
-          Logger("application").error(
-            "" +
-              s"Unable to display IncomeSourceReportingMethod page for $incomeSourceType: ${ex.getMessage} ${ex.getCause}")
-          errorHandler(isAgent).showInternalServerError()
-      }
+  
+  def show(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+      implicit user =>
+        handleGetRequest(isAgent = isAgent, incomeSourceType)
     }
 
+  def handleGetRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
+    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
+      sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
+        case Some(id) => handleIncomeSourceIdRetrievalSuccess(incomeSourceType, id, sessionData, isAgent = isAgent)
+        case None =>
+          val agentPrefix = if (isAgent) "[Agent]" else ""
+          Logger("application").error(agentPrefix +
+            s"Unable to retrieve incomeSourceId from session data for $incomeSourceType on IncomeSourceReportingFrequency page")
+          Future.successful {
+            errorHandler(isAgent).showInternalServerError()
+          }
+      }
+    }.recover {
+      case ex: Exception =>
+        Logger("application").error(
+          "" +
+            s"Unable to display IncomeSourceReportingMethod page for $incomeSourceType: ${ex.getMessage} ${ex.getCause}")
+        errorHandler(isAgent).showInternalServerError()
+    }
   }
 
 
@@ -133,7 +123,7 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
             )))
           case false =>
             Future.successful {
-              Redirect(redirectUrl(isAgent, incomeSourceType))
+              Redirect(incomeSourceAddedPageUrl(isAgent, incomeSourceType))
             }
         }
     }
@@ -148,13 +138,14 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
   }
 
 
-  def submit(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
-      handleSubmit(isAgent, incomeSourceType)
-  }
+  def submit(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+      implicit user =>
+        handleSubmit(isAgent, incomeSourceType)
+    }
 
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
-    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
+    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
       sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
         case Some(id) =>
           IncomeSourceReportingMethodForm.form.bindFromRequest().fold(

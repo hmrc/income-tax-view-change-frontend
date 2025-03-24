@@ -57,7 +57,7 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
   def show(isAgent: Boolean,
            incomeSourceType: IncomeSourceType): Action[AnyContent] =
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
-      withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
+      withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
         val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
         val chnageToStringOpt = sessionData.manageIncomeSourceData.flatMap(_.reportingMethod)
         val taxYearStringOpt = sessionData.manageIncomeSourceData.flatMap(_.taxYear)
@@ -83,7 +83,6 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
                                 backUrl: String)(implicit user: MtdItUser[_]): Future[Result] = {
     val maybeIncomeSourceId: Option[IncomeSourceId] =
       user.incomeSources.getIncomeSourceId(incomeSourceType, incomeSourceIdOpt.map(m => m.value))
-    withIncomeSourcesFS {
       Future.successful(
         (taxYearStringOpt, chnageToStringOpt, maybeIncomeSourceId) match {
           case (Some(taxYearStringOpt), Some(changeToStringOpt), Some(id)) =>
@@ -105,7 +104,6 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
                 s" changeTo and incomesourceId: $taxYearStringOpt, $chnageToStringOpt and $maybeIncomeSourceId")
         }
       )
-    }
   }
 
   private def logAndShowError(isAgent: Boolean, errorMessage: String)(implicit user: MtdItUser[_]): Result = {
@@ -120,19 +118,17 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
     val successCall = getSuccessCall(isAgent, incomeSourceType)
     val errorCall = getErrorCall(incomeSourceType, isAgent)
 
-    withIncomeSourcesFS {
-      withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
-        sessionData.manageIncomeSourceData.map(x => (x.taxYear, x.reportingMethod, x.incomeSourceId)) match {
-          case Some((Some(taxYear), Some(reportingMethod), incomeSourceIdStringOpt)) =>
-            val incomeSourceBusinessName: Option[String] = user.incomeSources.getIncomeSourceBusinessName(incomeSourceType, incomeSourceIdStringOpt)
-            val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
-            val incomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, incomeSourceIdOpt.map(m => m.value))
+    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
+      sessionData.manageIncomeSourceData.map(x => (x.taxYear, x.reportingMethod, x.incomeSourceId)) match {
+        case Some((Some(taxYear), Some(reportingMethod), incomeSourceIdStringOpt)) =>
+          val incomeSourceBusinessName: Option[String] = user.incomeSources.getIncomeSourceBusinessName(incomeSourceType, incomeSourceIdStringOpt)
+          val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
+          val incomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, incomeSourceIdOpt.map(m => m.value))
 
-            handleSubmitRequest(errorCall, isAgent, successCall,
-              TaxYear(startYear = taxYear - 1, endYear = taxYear),
-              incomeSourceId, ReportingMethod(reportingMethod), incomeSourceBusinessName, incomeSourceType)
-          case _ => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Missing session values"))
-        }
+          handleSubmitRequest(errorCall, isAgent, successCall,
+            TaxYear(startYear = taxYear - 1, endYear = taxYear),
+            incomeSourceId, ReportingMethod(reportingMethod), incomeSourceBusinessName, incomeSourceType)
+        case _ => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Missing session values"))
       }
     }
   }
@@ -194,7 +190,7 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
                                      incomeSourceBusinessName: Option[String],
                                      incomeSourceType: IncomeSourceType
                                     )(implicit user: MtdItUser[_]): Future[Result] = {
-    withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = BeforeSubmissionPage) { uiJourneySessionData =>
+    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = BeforeSubmissionPage) { uiJourneySessionData =>
       val newUIJourneySessionData = uiJourneySessionData.copy(manageIncomeSourceData =
         Some(ManageIncomeSourceData(Some(incomeSourceId.value), Some(reportingMethod.name), Some(taxYear.endYear), Some(true))))
 

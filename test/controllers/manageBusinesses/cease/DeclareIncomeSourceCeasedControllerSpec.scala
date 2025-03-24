@@ -22,8 +22,7 @@ import enums.MTDIndividual
 import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesFs
-import models.core.NormalMode
+import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -86,7 +85,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
         s"the user is authenticated as a $mtdRole" should {
           "render the declare incomeSourceCeased page" in {
             setupMockSuccess(mtdRole)
-            enable(IncomeSourcesFs)
+            enable(IncomeSourcesNewJourney)
             mockBothPropertyBothBusiness()
 
             setupMockCreateSession(true)
@@ -101,7 +100,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
           "return 303 SEE_OTHER and redirect to home page" when {
             "income sources FS Disabled" in {
               setupMockSuccess(mtdRole)
-              disable(IncomeSourcesFs)
+              disable(IncomeSourcesNewJourney)
               mockBothPropertyBothBusiness()
               val result = action(fakeRequest)
               val expectedRedirectUrl: String = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
@@ -113,7 +112,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
             "journey is complete" in {
               setupMockSuccess(mtdRole)
               disableAllSwitches()
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
@@ -145,7 +144,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
           "redirect to end date controller" when {
             "cease declaration is completed" in {
               setupMockSuccess(mtdRole)
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               mockBothPropertyBothBusiness()
               setupMockSetSessionKeyMongo(Right(true))
 
@@ -164,7 +163,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
             "income source FS Disabled" in {
               setupMockSuccess(mtdRole)
 
-              disable(IncomeSourcesFs)
+              disable(IncomeSourcesNewJourney)
               mockBothPropertyBothBusiness()
 
               val result = action(fakeRequest.withFormUrlEncodedBody(validFormData.toSeq: _*))
@@ -178,7 +177,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
           "return 500 INTERNAL_SERVER_ERROR" when {
             "Exception received from Mongo" in {
               setupMockSuccess(mtdRole)
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               mockBothPropertyBothBusiness()
               setupMockSetSessionKeyMongo(Left(new Exception))
               val result = action(fakeRequest.withFormUrlEncodedBody(validFormData.toSeq: _*))

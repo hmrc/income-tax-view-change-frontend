@@ -117,7 +117,7 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
 
                   val expectedText: String = getExpectedPageTitle(incomeSourceType)
 
-                  sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
+                  sessionService.getMongoKey(AddIncomeSourceData.incomeSourceCreatedJourneyCompleteField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
 
                   result should have(
                     httpStatus(OK),

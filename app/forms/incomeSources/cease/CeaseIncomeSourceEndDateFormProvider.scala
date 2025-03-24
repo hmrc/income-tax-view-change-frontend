@@ -27,13 +27,16 @@ import java.time.LocalDate
 
 class CeaseIncomeSourceEndDateFormProvider extends Mappings {
 
+<<<<<<< HEAD
   def apply(incomeSourceType: IncomeSourceType, id: Option[String] = None, newIncomeSourceJourney: Boolean)
            (implicit user: MtdItUser[_], dateService: DateServiceInterface): Form[LocalDate] = {
+=======
+  def apply(incomeSourceType: IncomeSourceType, id: Option[String] = None)(implicit messages: Messages, user: MtdItUser[_], dateService: DateServiceInterface): Form[LocalDate] = {
+>>>>>>> 5bb064202 (Fixing Feature switch and adding change urls. Also some cleanups)
 
     val messagePrefix = incomeSourceType.endDateMessagePrefix
     val dateFormPrefix = "dateForm.error"
-    val invalidMessage = if (newIncomeSourceJourney) "dateForm.error.invalid" else
-      s"$messagePrefix.error.invalid"
+    val invalidMessage = s"$messagePrefix.error.invalid"
 
     def dateMustBeAfterBusinessStartDate(incomeSourceType: IncomeSourceType): String =
       s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.beforeStartDate"

@@ -59,8 +59,8 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
                    (implicit user: MtdItUser[_]): Future[Result] = {
 
-    withIncomeSourcesFS {
-      incomeSourceDetailsService.getViewIncomeSourceViewModel(sources, isEnabled(DisplayBusinessStartDate)) match {
+    withNewIncomeSourcesFS {
+      incomeSourceDetailsService.getViewIncomeSourceViewModel(sources) match {
         case Right(viewModel) =>
           sessionService.deleteSession(Manage).map { _ =>
             Ok(manageIncomeSources(

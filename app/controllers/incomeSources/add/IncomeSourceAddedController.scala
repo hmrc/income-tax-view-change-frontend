@@ -60,7 +60,7 @@ class IncomeSourceAddedController @Inject()(val authActions: AuthActions,
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                            (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
-    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
+    withSessionDataAndOldIncomeSourceFS(IncomeSourceJourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
       (for {
         incomeSourceIdModel: IncomeSourceId <- sessionData.addIncomeSourceData.flatMap(_.incomeSourceId.map(IncomeSourceId(_)))
         incomeSourceFromUser: IncomeSourceFromUser <- incomeSourceDetailsService.getIncomeSource(incomeSourceType, incomeSourceIdModel, user.incomeSources)
@@ -93,7 +93,7 @@ class IncomeSourceAddedController @Inject()(val authActions: AuthActions,
     sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType)).flatMap {
       case Right(Some(sessionData)) =>
         val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
-        val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(journeyIsComplete = Some(true))
+        val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(incomeSourceCreatedJourneyComplete = Some(true))
         val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
         sessionService.setMongoData(uiJourneySessionData).flatMap { _ =>
           incomeSourceType match {

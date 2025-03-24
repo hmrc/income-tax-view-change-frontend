@@ -36,13 +36,12 @@ case object Manage extends Operation {
   override val operationType = "MANAGE"
 }
 
-case object Cease extends Operation {
-  override val operationType = "CEASE"
+case object ManageReportingFrequency extends Operation {
+  override val operationType = "MANAGE-RF"
 }
 
-//This is dummy at the moment but will be used when we link all these stories in CYA page
-case class IncomeSourceReportingFrequencyJourney() extends JourneyType {
-  override def toString: String = "IncomeSourceReportingFrequencyJourney"
+case object Cease extends Operation {
+  override val operationType = "CEASE"
 }
 
 case class Opt(optJourney: OptJourney) extends JourneyType {

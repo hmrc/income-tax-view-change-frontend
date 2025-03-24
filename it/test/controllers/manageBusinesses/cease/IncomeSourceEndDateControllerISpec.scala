@@ -21,7 +21,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSourcesFs, NavBarFs}
+import models.admin.{IncomeSourcesNewJourney, NavBarFs}
 import models.incomeSourceDetails.CeaseIncomeSourceData.{dateCeasedField, incomeSourceIdField}
 import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -94,7 +94,7 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
               "render the Date Business Ceased Page" in {
                 stubAuthorised(mtdUserRole)
                 disable(NavBarFs)
-                enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
 
@@ -122,7 +122,7 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
                 "no session data" in {
                   stubAuthorised(mtdUserRole)
                   disable(NavBarFs)
-                  enable(IncomeSourcesFs)
+                  enable(IncomeSourcesNewJourney)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
 
                   val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -154,7 +154,7 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
                   }
                   stubAuthorised(mtdUserRole)
                   disable(NavBarFs)
-                  enable(IncomeSourcesFs)
+                  enable(IncomeSourcesNewJourney)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
 
                   setupTestMongoData(incomeSourceType)
@@ -185,7 +185,7 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
                   }
                   stubAuthorised(mtdUserRole)
                   disable(NavBarFs)
-                  enable(IncomeSourcesFs)
+                  enable(IncomeSourcesNewJourney)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
 
                   val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue

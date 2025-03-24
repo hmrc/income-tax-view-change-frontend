@@ -51,22 +51,23 @@ class CannotGoBackErrorController @Inject()(val authActions: AuthActions,
       )
   }
 
-  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = CannotGoBackPage) { data =>
-    data.manageIncomeSourceData match {
-      case Some(manageData) if manageData.reportingMethod.isDefined && manageData.taxYear.isDefined =>
-        val subheadingContent = getSubheadingContent(incomeSourceType, manageData.reportingMethod.get, manageData.taxYear.get)
-        Future.successful {
-          Ok(cannotGoBackError(isAgent, subheadingContent))
-        }
-      case _ =>
-        val errorPrefix = if (isAgent) "[Agent]"
-        else " "
-        Logger("application").error(errorPrefix + s"Unable to retrieve manage data from Mongo for $incomeSourceType.")
-        Future.successful {
-          errorHandler(isAgent).showInternalServerError()
-        }
+  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] =
+    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = CannotGoBackPage) { data =>
+      data.manageIncomeSourceData match {
+        case Some(manageData) if manageData.reportingMethod.isDefined && manageData.taxYear.isDefined =>
+          val subheadingContent = getSubheadingContent(incomeSourceType, manageData.reportingMethod.get, manageData.taxYear.get)
+          Future.successful {
+            Ok(cannotGoBackError(isAgent, subheadingContent))
+          }
+        case _ =>
+          val errorPrefix = if (isAgent) "[Agent]"
+          else " "
+          Logger("application").error(errorPrefix + s"Unable to retrieve manage data from Mongo for $incomeSourceType.")
+          Future.successful {
+            errorHandler(isAgent).showInternalServerError()
+          }
+      }
     }
-  }
 
   def getSubheadingContent(incomeSourceType: IncomeSourceType, reportingMethod: String, taxYear: Int)(implicit request: Request[_]): String = {
     val methodString = if (reportingMethod == "annual")

@@ -21,7 +21,7 @@ import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.{IncomeSourcesFs, IncomeSourcesNewJourney}
+import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.AddIncomeSourceData
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import org.jsoup.Jsoup
@@ -192,7 +192,7 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
   }
 
   def setupMockCalls(isAgent: Boolean, incomeSourceType: IncomeSourceType, mtdRole: MTDUserRole, scenario: Scenario): Unit = {
-    enable(IncomeSourcesFs)
+    enable(IncomeSourcesNewJourney)
     enable(IncomeSourcesNewJourney)
     setupMockSuccess(mtdRole)
     setupMockIncomeSourceDetailsCall(scenario, incomeSourceType)
@@ -219,7 +219,7 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
     val isAgent = mtdRole != MTDIndividual
     incomeSourceTypes.foreach { incomeSourceType =>
       s"show($isAgent, $incomeSourceType)" when {
-        val action = testController.show(isAgent, incomeSourceType)
+        val action = testController.show(isAgent, false, incomeSourceType)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
           "render the reporting frequency page" when {
@@ -260,7 +260,7 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
           "return 303 SEE_OTHER and redirect to home page" when {
             s"navigating to the ${getTestTitleIncomeSourceType(incomeSourceType)} Reporting Frequency page with FS disabled" in {
               setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-              disable(IncomeSourcesFs)
+              disable(IncomeSourcesNewJourney)
               disable(IncomeSourcesNewJourney)
 
               val expectedRedirectUrl = if (isAgent) controllers.routes.HomeController.showAgent().url
@@ -284,7 +284,7 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
       }
 
       s"submit($isAgent, $incomeSourceType)" when {
-        val action = testController.submit(isAgent, incomeSourceType)
+        val action = testController.submit(isAgent, false, incomeSourceType)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
         s"the user is authenticated as a $mtdRole" should {
           "return 303 SEE_OTHER and redirect to [NEXT PAGE IN JOURNEY]" when {
@@ -296,7 +296,7 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
           "return 303 SEE_OTHER and redirect to home page" when {
             s"POST request to the ${getTestTitleIncomeSourceType(incomeSourceType)} Reporting Frequency page with FS disabled" in {
               setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-              disable(IncomeSourcesFs)
+              disable(IncomeSourcesNewJourney)
               disable(IncomeSourcesNewJourney)
 
               val expectedRedirectUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
