@@ -108,7 +108,7 @@ class TaxYearSpec extends UnitSpec with TestSupport {
 
   "formatTaxYearRange method" when {
     "invoked on a TaxYear object" should {
-      "return a string with the tax year range" in {
+      "return a string with the tax year as short year range" in {
         val taxYear: TaxYear = TaxYear(2098, 2099)
         val taxYearRange: String = taxYear.formatAsShortYearRange
 
