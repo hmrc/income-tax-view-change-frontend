@@ -24,7 +24,7 @@ import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.core.{CheckMode, NormalMode}
-import models.admin.{AccountingMethodJourney, IncomeSourcesFs}
+import models.admin.{AccountingMethodJourney, IncomeSourcesFs, IncomeSourcesNewJourney}
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
@@ -105,7 +105,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
   val title: String = s"${messages("htmlTitle", heading)}"
 
 
-  def sessionDataCompletedJourney(journeyType: IncomeSourceJourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
+  def sessionDataCompletedJourney(journeyType: IncomeSourceJourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceCreatedJourneyComplete = Some(true))))
 
   def sessionDataISAdded(journeyType: IncomeSourceJourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceAdded = Some(true))))
 
@@ -146,7 +146,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
             s"render the start date check page" when {
               s"session contains key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
                 mockNoIncomeSources()
                 setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
 
@@ -168,7 +168,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
             s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
               "user has already completed the journey" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
 
                 mockNoIncomeSources()
                 setupMockGetMongo(Right(Some(sessionDataCompletedJourney(journeyType(incomeSourceType)))))
@@ -182,7 +182,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
               }
               "user has already added their income source" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
 
                 mockNoIncomeSources()
                 setupMockGetMongo(Right(Some(sessionDataISAdded(journeyType(incomeSourceType)))))
@@ -199,7 +199,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
             s"redirect to home page" when {
               "Income Sources FS is disabled" in {
                 setupMockSuccess(mtdRole)
-                disable(IncomeSourcesFs)
+                disable(IncomeSourcesNewJourney)
                 mockNoIncomeSources()
 
                 val result = action(fakeRequest)
@@ -213,7 +213,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
             s"render the error page" when {
               s"calling Business Start Date Check Page but session does not contain key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
 
                 mockNoIncomeSources()
                 setupMockGetMongo(Right(Some(sessionData(journeyType(incomeSourceType)))))
@@ -234,7 +234,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
             s"return ${Status.SEE_OTHER}: redirect back to add $incomeSourceType start date page with ${AddIncomeSourceData.accountingPeriodStartDateField} removed from session, isAgent = $isAgent" when {
               "No is submitted with the form" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
 
                 mockNoIncomeSources()
                 setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
@@ -256,7 +256,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
               s"return ${Status.SEE_OTHER}: redirect to $incomeSourceType accounting method page, isAgent = $isAgent" when {
                 "Yes is submitted with the form with a valid session" in {
                   setupMockSuccess(mtdRole)
-                  enable(IncomeSourcesFs)
+                  enable(IncomeSourcesNewJourney)
                   enable(AccountingMethodJourney)
 
                   mockNoIncomeSources()
@@ -309,7 +309,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
               s"return ${Status.SEE_OTHER}: redirect to check $incomeSourceType details page, isAgent = $isAgent" when {
                 "Yes is submitted with isUpdate flag set to true" in {
                   setupMockSuccess(mtdRole)
-                  enable(IncomeSourcesFs)
+                  enable(IncomeSourcesNewJourney)
                   mockNoIncomeSources()
 
                   setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
@@ -333,7 +333,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
             s"return ${Status.BAD_REQUEST} with an error summary(isAgent = $isAgent, $incomeSourceType)" when {
               "form is submitted with neither radio option selected" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
 
                 mockNoIncomeSources()
                 setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
@@ -346,7 +346,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
               }
               "an invalid response is submitted" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
 
                 mockNoIncomeSources()
                 setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
@@ -369,7 +369,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
             s"redirect to home page" when {
               "IncomeSources FS is disabled" in {
                 setupMockSuccess(mtdRole)
-                disable(IncomeSourcesFs)
+                disable(IncomeSourcesNewJourney)
 
                 mockNoIncomeSources()
 

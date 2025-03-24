@@ -20,6 +20,7 @@ import enums.IncomeSourceJourney.SelfEmployment
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
+import models.admin.IncomeSourcesNewJourney
 import models.core.{CheckMode, NormalMode}
 import models.admin.{AccountingMethodJourney, IncomeSourcesFs}
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, BusinessAddressModel, UIJourneySessionData}
@@ -79,8 +80,9 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
           "redirect to the address lookup service" when {
             "location redirect is returned by the lookup service" in {
               setupMockSuccess(mtdRole)
-              enable(IncomeSourcesFs)
-              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+              enable(IncomeSourcesNewJourney)
+              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
               when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
                 .thenReturn(Future(Right(Some("Sample location"))))
 
@@ -107,7 +109,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
           "return the correct error" when {
             "no location returned" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
               when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
@@ -118,7 +120,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
             }
 
             "failure returned" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
               when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
@@ -143,23 +145,9 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
           "redirect to add accounting method page" when {
             "valid data received" in {
               setupMockSuccess(mtdRole)
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               enable(AccountingMethodJourney)
-              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-
-              setupMockGetMongo(Right(Some(UIJourneySessionData("", ""))))
-              setupMockSetMongoData(result = true)
-              when(mockAddressLookupService.fetchAddress(any())(any()))
-                .thenReturn(Future(Right(testBusinessAddressModel)))
-
-              val result: Future[Result] = action(fakeRequest)
-              status(result) shouldBe SEE_OTHER
-              verifySetMongoData()
-            }
-            "valid data received (accounting method FS disabled)" in {
-              setupMockSuccess(mtdRole)
-              enable(IncomeSourcesFs)
-              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
               setupMockGetMongo(Right(Some(UIJourneySessionData("", ""))))
               setupMockSetMongoData(result = true)
@@ -175,8 +163,8 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
           "return the correct error" when {
             "no address returned" in {
               setupMockSuccess(mtdRole)
-              enable(IncomeSourcesFs)
-              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+              enable(IncomeSourcesNewJourney)
+              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
               setupMockGetMongo(Right(Some(UIJourneySessionData("", ""))))
               setupMockSetMongoData(result = true)

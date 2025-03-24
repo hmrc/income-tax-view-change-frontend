@@ -47,20 +47,24 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
 
   def show(): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
-      handleRequest(
-        sources = user.incomeSources,
-        isAgent = false,
-        backUrl = controllers.routes.HomeController.show().url
-      )
+      withIncomeSourcesFS {
+        handleRequest(
+          sources = user.incomeSources,
+          isAgent = false,
+          backUrl = controllers.routes.HomeController.show().url
+        )
+      }
   }
 
   def showAgent(): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async{
     implicit mtdItUser =>
-      handleRequest(
-        sources = mtdItUser.incomeSources,
-        isAgent = true,
-        backUrl = controllers.routes.HomeController.showAgent().url
-      )
+      withIncomeSourcesFS {
+        handleRequest(
+          sources = mtdItUser.incomeSources,
+          isAgent = true,
+          backUrl = controllers.routes.HomeController.showAgent.url
+        )
+      }
   }
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)

@@ -21,7 +21,7 @@ import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesFs
+import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
 import play.api
@@ -79,7 +79,7 @@ class ReportingMethodSetBackErrorControllerSpec extends MockAuthActions with Moc
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
           "render the you cannot go back error page" in {
-            enable(IncomeSourcesFs)
+            enable(IncomeSourcesNewJourney)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 

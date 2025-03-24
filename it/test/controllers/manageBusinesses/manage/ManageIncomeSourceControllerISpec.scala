@@ -19,7 +19,7 @@ package controllers.manageBusinesses.manage
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSourcesFs, NavBarFs}
+import models.admin.{IncomeSourcesNewJourney, NavBarFs}
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesAndUkProperty}
@@ -51,7 +51,7 @@ class ManageIncomeSourceControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "render the View Income Source page" when {
             "the user has multiple businesses and property" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
@@ -77,7 +77,7 @@ class ManageIncomeSourceControllerISpec extends ControllerISpecHelper {
             }
 
             "the user has foreign property and ceased business" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)

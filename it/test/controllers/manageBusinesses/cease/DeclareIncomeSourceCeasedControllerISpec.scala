@@ -21,7 +21,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSourcesFs, NavBarFs}
+import models.admin.{IncomeSourcesNewJourney, NavBarFs}
 import models.core.NormalMode
 import models.incomeSourceDetails.CeaseIncomeSourceData.ceaseIncomeSourceDeclare
 import models.incomeSourceDetails.UIJourneySessionData
@@ -62,7 +62,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ControllerISpecHelper {
             "render the income source ceased Page" in {
               stubAuthorised(mtdUserRole)
               disable(NavBarFs)
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -89,7 +89,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ControllerISpecHelper {
               "continue is pressed correctly" in {
                 stubAuthorised(mtdUserRole)
                 disable(NavBarFs)
-                enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                 await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"CEASE-${incomeSourceType.key}")))
 

@@ -61,7 +61,7 @@ class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService w
               setupMockGetCurrentTaxYear(TaxYear(2024, 2025))
               enable(IncomeSourcesNewJourney)
 
-              val result: Future[Result] = controller.show(isAgent, incomeSourceType)(fakeGetRequestBasedOnMTDUserType(mtdRole))
+              val result: Future[Result] = controller.show(isAgent, false, incomeSourceType)(fakeGetRequestBasedOnMTDUserType(mtdRole))
 
               status(result) shouldBe OK
             }
@@ -73,7 +73,7 @@ class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService w
               setupMockGetCurrentTaxYear(TaxYear(2024, 2025))
               disable(IncomeSourcesNewJourney)
 
-              val result: Future[Result] = controller.show(isAgent, incomeSourceType)(fakeGetRequestBasedOnMTDUserType(mtdRole))
+              val result: Future[Result] = controller.show(isAgent, false, incomeSourceType)(fakeGetRequestBasedOnMTDUserType(mtdRole))
 
               val homeUrl = if (mtdRole == MTDIndividual) {
                 controllers.routes.HomeController.show().url
@@ -91,7 +91,7 @@ class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService w
               mockSingleBusinessIncomeSourceError()
               enable(IncomeSourcesNewJourney)
 
-              val result: Future[Result] = controller.show(isAgent, incomeSourceType)(fakeGetRequestBasedOnMTDUserType(mtdRole))
+              val result: Future[Result] = controller.show(isAgent, false, incomeSourceType)(fakeGetRequestBasedOnMTDUserType(mtdRole))
 
               status(result) shouldBe INTERNAL_SERVER_ERROR
             }
@@ -113,7 +113,7 @@ class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService w
 
               val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
 
-              val result: Future[Result] = controller.submit(isAgent, incomeSourceType)(fakeRequest.withFormUrlEncodedBody(
+              val result: Future[Result] = controller.submit(isAgent, false, incomeSourceType)(fakeRequest.withFormUrlEncodedBody(
                 "current-year-checkbox" -> "true",
                 "next-year-checkbox" -> "true"
               ))
@@ -132,7 +132,7 @@ class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService w
               setupMockGetMongo(Right(Some(UIJourneySessionData(sessionId, journeyType))))
               setupMockSetMongoData(true)
 
-              val result: Future[Result] = controller.submit(isAgent, incomeSourceType)(fakeGetRequestBasedOnMTDUserType(mtdRole))
+              val result: Future[Result] = controller.submit(isAgent, false, incomeSourceType)(fakeGetRequestBasedOnMTDUserType(mtdRole))
 
               status(result) shouldBe BAD_REQUEST
             }
@@ -148,7 +148,7 @@ class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService w
               setupMockGetMongo(Right(Some(UIJourneySessionData(sessionId, journeyType))))
               setupMockSetMongoData(true)
 
-              val result: Future[Result] = controller.submit(isAgent, incomeSourceType)(fakeGetRequestBasedOnMTDUserType(mtdRole))
+              val result: Future[Result] = controller.submit(isAgent, false, incomeSourceType)(fakeGetRequestBasedOnMTDUserType(mtdRole))
 
               status(result) shouldBe INTERNAL_SERVER_ERROR
             }
