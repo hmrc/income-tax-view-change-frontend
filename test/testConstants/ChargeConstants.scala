@@ -625,7 +625,8 @@ trait ChargeConstants {
     taxYear = fixedDate.getYear.toString,
     latePaymentInterestAmount = List(None, None),
     dunningLock = noDunningLocks,
-    interestRate = List(Some(100), Some(100))
+    interestRate = List(Some(100), Some(100)),
+    dueDateForFinancialDetail = List(fixedDate.plusDays(1), fixedDate.plusDays(1))
   )
   val financialDetailsLateSubmissionPenaltyChargeItem: List[ChargeItem] = testFinancialDetailsChargeItems(
     transactionId = List(id1040000123, id1040000124),
@@ -729,7 +730,8 @@ trait ChargeConstants {
     interestRate = List(Some(100.0), Some(100.0)),
     interestEndDate = List(Some(LocalDate.of(2018,3,29)),Some(LocalDate.of(2018,3,29))),
     taxYear = fixedDate.getYear.toString,
-    dunningLock = List(None, None)
+    dunningLock = List(None, None),
+    dueDateForFinancialDetail = List(fixedDate.plusDays(30), fixedDate.minusDays(1))
   )
 
   val whatYouOweDataWithMixedData4Unfiltered: WhatYouOweChargesList = WhatYouOweChargesList(

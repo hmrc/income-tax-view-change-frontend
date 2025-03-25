@@ -312,7 +312,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
           .thenReturn(Future.successful(OutstandingChargesModel(List())))
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
           .thenReturn(Future.successful(List(financialDetails)))
-        TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(ReviewAndReconcilePoa), isEnabled(FilterCodedOutPoas), isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals)).futureValue shouldBe expectedResult
+        TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(ReviewAndReconcilePoa), isEnabled(FilterCodedOutPoas), isPenaltiesEnabled = penaltiesEnabled).futureValue shouldBe expectedResult
       }
       "return list including penalties" in {
         testGetWhatYouOweChargesList(penaltiesEnabled = true, financialDetails = financialDetailsModelLatePaymentPenalties, expectedResult = whatYouOweLatePaymentPenalties)
