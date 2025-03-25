@@ -39,7 +39,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.FallBackBackLinks
-import views.html.ChargeSummary
+import views.html.{ChargeSummary, YourSelfAssessmentChargeSummary}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -54,6 +54,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                                         val itvcErrorHandler: ItvcErrorHandler,
                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                         val chargeSummaryView: ChargeSummary,
+                                        val yourSelfAssessmentChargeSummary: YourSelfAssessmentChargeSummary,
                                         val chargeHistoryService: ChargeHistoryService)
                                        (implicit val appConfig: FrontendAppConfig,
                                         dateService: DateServiceInterface,
@@ -195,9 +196,14 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
           poaOneChargeUrl = poaOneChargeUrl,
           poaTwoChargeUrl = poaTwoChargeUrl
         )
+
         mandatoryViewDataPresent(isInterestCharge, documentDetailWithDueDate) match {
-          case Right(_) =>
-            Ok(chargeSummaryView(viewModel, whatYouOweUrl))
+          case Right(_) => Ok {
+            if (isEnabled(YourSelfAssessmentCharges) && chargeItem.isIncludedInSACSummary)
+              yourSelfAssessmentChargeSummary(viewModel, whatYouOweUrl)
+            else
+              chargeSummaryView(viewModel, whatYouOweUrl)
+          }
           case Left(ec) => onError(s"Invalid response from charge history: ${ec.message}", isAgent, showInternalServerError = true)
         }
       case _ =>
