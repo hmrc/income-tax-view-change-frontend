@@ -21,7 +21,6 @@ import config.FrontendAppConfig
 import connectors.FinancialDetailsConnector
 import models.creditDetailModel._
 import models.financialDetails._
-import models.incomeSourceDetails.TaxYear
 import services.CreditHistoryService.CreditHistoryError
 import uk.gov.hmrc.http.HeaderCarrier
 
