@@ -540,4 +540,28 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
       }
     }
   }
+
+  "originalAmountIsNotZeroOrNegative" should {
+    def originalAmountIsNotZeroOrNegative(chargeItem: ChargeItem): Boolean = chargeItem.originalAmount match {
+      case amount if amount <= 0 => false
+      case _ => true
+    }
+
+    "return false" when {
+      "original amount is zero" in {
+        val chargeItemModelZeroAmount = chargeItemModel().copy(originalAmount = 0)
+        originalAmountIsNotZeroOrNegative(chargeItemModelZeroAmount) shouldBe false
+      }
+      "original amount is negative" in {
+        val chargeItemModelNegativeAmount = chargeItemModel().copy(originalAmount = -20.32)
+        originalAmountIsNotZeroOrNegative(chargeItemModelNegativeAmount) shouldBe false
+      }
+    }
+    "return true" when {
+      "original amount is positive" in {
+        val chargeItemModelPositiveAmount = chargeItemModel().copy(originalAmount = 20.89)
+        originalAmountIsNotZeroOrNegative(chargeItemModelPositiveAmount) shouldBe true
+      }
+    }
+  }
 }

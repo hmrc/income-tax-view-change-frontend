@@ -125,7 +125,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       lpiWithDunningLock = None,
       amountCodedOut = None,
       dunningLock = false,
-      poaRelevantAmount = None
+      poaRelevantAmount = None,
+
     ))
 
   def paymentsForCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal, clearingSAPDocument: Option[String], clearingId: Option[String]): PaymentHistoryAllocations =
@@ -938,7 +939,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       }
 
       "no due date, display as N/A" in new TestSetup(
-        chargeItem = chargeItemModel(dueDate = None, lpiWithDunningLock = None, isOverdue = false),
+        chargeItem = chargeItemModel(dueDate = None, lpiWithDunningLock = None),
         dueDate = None)
       {
         verifySummaryListRowNumeric(1, dueDate, "N/A")

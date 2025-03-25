@@ -20,12 +20,13 @@ import audit.AuditingService
 import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
 import auth.authV2.AuthActions
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import config._
+import config.featureswitch._
 import enums.GatewayPage.WhatYouOwePage
 import forms.utils.SessionKeys.gatewayPage
-import models.admin.{AdjustPaymentsOnAccount, CreditsRefundsRepay, FilterCodedOutPoas, ReviewAndReconcilePoa, YourSelfAssessmentCharges}
+import models.admin._
 import models.core.Nino
+import models.financialDetails.YourSelfAssessmentChargesViewModel
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
@@ -33,23 +34,23 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{ClaimToAdjustService, DateServiceInterface, WhatYouOweService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.WhatYouOwe
+import views.html.YourSelfAssessmentCharges
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions,
-                                     val whatYouOweService: WhatYouOweService,
-                                     val claimToAdjustService: ClaimToAdjustService,
-                                     val itvcErrorHandler: ItvcErrorHandler,
-                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                     val auditingService: AuditingService,
-                                     val dateService: DateServiceInterface,
-                                     whatYouOwe: WhatYouOwe
+                                                    val whatYouOweService: WhatYouOweService,
+                                                    val claimToAdjustService: ClaimToAdjustService,
+                                                    val itvcErrorHandler: ItvcErrorHandler,
+                                                    val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                                    val auditingService: AuditingService,
+                                                    implicit val dateService: DateServiceInterface,
+                                                    view: YourSelfAssessmentCharges
                                     )(implicit val appConfig: FrontendAppConfig,
                                       val mcc: MessagesControllerComponents,
-                                      val ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport with FeatureSwitching{
-
+                                      val ec: ExecutionContext) extends FrontendController(mcc)
+  with I18nSupport with FeatureSwitching {
 
   def handleRequest(backUrl: String,
                     itvcErrorHandler: ShowInternalServerError,
@@ -65,18 +66,18 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
 
       val hasOverdueCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
       val hasAccruingInterestReviewAndReconcileCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isNotPaidAndNotOverduePoaReconciliationDebit()(dateService))
-      Ok(whatYouOwe(
-        currentDate = dateService.getCurrentDate,
+      val viewModel: YourSelfAssessmentChargesViewModel = YourSelfAssessmentChargesViewModel(
         hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
         whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
-        currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,
+        backUrl = backUrl,
         dunningLock = whatYouOweChargesList.hasDunningLock,
         reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
-        isAgent = user.isAgent(),
-        isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
         creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
-        origin = origin,
-        claimToAdjustViewModel = ctaViewModel)(user, user, messages, dateService)
+        claimToAdjustViewModel = ctaViewModel
+      )
+      Ok(view(
+        viewModel = viewModel,
+        origin = origin)(user, user, messages, dateService)
       ).addingToSession(gatewayPage -> WhatYouOwePage.name)
     }
   } recover {
@@ -90,8 +91,7 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
     if (isEnabled(AdjustPaymentsOnAccount)) {
       claimToAdjustService.getPoaTaxYearForEntryPoint(nino).flatMap {
         case Right(value) => Future.successful(WYOClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), value))
-        case Left(ex: Throwable) =>
-          Logger("application").error(s"Unable to create WYOClaimToAdjustViewModel: ${ex.getMessage} - ${ex.getCause}")
+        case Left(ex: Throwable) => Logger("application").error(s"Unable to create WYOClaimToAdjustViewModel: ${ex.getMessage} - ${ex.getCause}")
           Future.failed(ex)
       }
     } else {
@@ -115,4 +115,5 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
         itvcErrorHandler = itvcErrorHandlerAgent
       )
   }
+
 }

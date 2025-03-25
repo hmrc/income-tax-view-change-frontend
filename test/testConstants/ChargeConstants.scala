@@ -44,7 +44,6 @@ trait ChargeConstants {
                       interestFromDate:  Option[LocalDate] = Some(LocalDate.of(2018, 3, 29)),
                       interestEndDate: Option[LocalDate] = Some(LocalDate.of(2018, 6, 15)),
                       lpiWithDunningLock: Option[BigDecimal] = Some(100.0),
-                      isOverdue:Boolean = true,
                       dunningLock:Boolean = false,
                       poaRelevantAmount: Option[BigDecimal] = None): ChargeItem = ChargeItem(
     transactionId = transactionId,
@@ -84,7 +83,8 @@ trait ChargeConstants {
                                                 List(Some(LocalDate.of(2018, 6, 15)), Some(LocalDate.of(2018, 6, 15))),
                                               taxYear: String = fixedDate.getYear.toString,
                                               overdue: List[Boolean] = List(true, true),
-                                              poaRelevantAmount: Option[BigDecimal] = None): List[ChargeItem] = {
+                                              poaRelevantAmount: Option[BigDecimal] = None,
+                                              dueDateForFinancialDetail: List[LocalDate] = List.empty): List[ChargeItem] = {
 
     List(
       ChargeItem(transactionId = transactionId.head,
@@ -103,7 +103,10 @@ trait ChargeConstants {
         lpiWithDunningLock = lpiWithDunningLock.head,
         amountCodedOut = None,
         dunningLock = dunningLock.head.isDefined,
-        poaRelevantAmount = poaRelevantAmount),
+        poaRelevantAmount = poaRelevantAmount,
+        dueDateForFinancialDetail = dueDateForFinancialDetail.headOption,
+        paymentLotItem = Some("paymentLotItem"),
+        paymentLot = Some("paymentLot")),
       ChargeItem(transactionId = transactionId(1),
         taxYear = TaxYear.forYearEnd(taxYear.toInt),
         transactionType = transactionTypes(1),
@@ -120,7 +123,11 @@ trait ChargeConstants {
         lpiWithDunningLock = lpiWithDunningLock(1),
         amountCodedOut = None,
         dunningLock = dunningLock(1).isDefined,
-        poaRelevantAmount = poaRelevantAmount)
+        poaRelevantAmount = poaRelevantAmount,
+        dueDateForFinancialDetail = if (dueDateForFinancialDetail.isEmpty) None else dueDateForFinancialDetail.tail.headOption,
+        paymentLotItem = Some("paymentLotItem"),
+        paymentLot = Some("paymentLot")
+      )
     )
   }
 
@@ -158,7 +165,8 @@ trait ChargeConstants {
     dunningLock = dunningLocks,
     interestFromDate = List(None, None),
     interestEndDate = List(None, None),
-    poaRelevantAmount = None
+    poaRelevantAmount = None,
+    dueDateForFinancialDetail = List(LocalDate.parse("2024-01-29"), LocalDate.parse("2024-02-03"))
   )
 
   def financialDetailsDueIn30DaysCi(dunningLocks: List[Option[String]] = noDunningLocks): List[ChargeItem] =
@@ -168,7 +176,8 @@ trait ChargeConstants {
       interestEndDate = List(None, None),
       dunningLock = dunningLocks,
       overdue = List(false, false),
-      poaRelevantAmount = None
+      poaRelevantAmount = None,
+      dueDateForFinancialDetail = List(LocalDate.parse("2023-12-15"), LocalDate.parse("2023-12-16"))
     )
 
   def outstandingChargesModelIt(dueDate: LocalDate): OutstandingChargesModel = OutstandingChargesModel(
@@ -259,7 +268,8 @@ trait ChargeConstants {
     dueDate = dueDateOverdue,
     dunningLock = noDunningLocks,
     interestFromDate = List(None, None),
-    interestEndDate = List(None, None)
+    interestEndDate = List(None, None),
+    dueDateForFinancialDetail = List(LocalDate.parse("2023-12-05"), LocalDate.parse("2023-12-14"))
   )
 
   def chargeItemWithCodingOutNics2Ci(): ChargeItem = ChargeItem(
@@ -295,7 +305,10 @@ trait ChargeConstants {
     dueDate = Some(LocalDate.parse("2021-08-25")),
     lpiWithDunningLock = None, amountCodedOut = None,
     dunningLock = false,
-    poaRelevantAmount = None
+    poaRelevantAmount = None,
+    dueDateForFinancialDetail = Some(LocalDate.parse("2024-01-14")),
+    paymentLotItem = Some("paymentLotItem"),
+    paymentLot = Some("paymentLot")
   )
 
   val poa1WithCodedOut = ChargeItem(
@@ -315,7 +328,10 @@ trait ChargeConstants {
     interestRate = Some(100),
     amountCodedOut = Some(30),
     dunningLock = false,
-    poaRelevantAmount = None
+    poaRelevantAmount = None,
+    dueDateForFinancialDetail = Some(LocalDate.parse("2024-01-14")),
+    paymentLotItem = Some("paymentLotItem"),
+    paymentLot = Some("paymentLot")
   )
   val poa2WithCodedOut = ChargeItem(
     transactionId = id1040000124,
@@ -334,7 +350,10 @@ trait ChargeConstants {
     interestRate = Some(100),
     amountCodedOut = Some(70),
     dunningLock = false,
-    poaRelevantAmount = None
+    poaRelevantAmount = None,
+    dueDateForFinancialDetail = Some( LocalDate.parse("2023-12-14")),
+    paymentLotItem = Some("paymentLotItem"),
+    paymentLot = Some("paymentLot")
   )
 
   val poa2 = ChargeItem(
@@ -354,7 +373,10 @@ trait ChargeConstants {
       interestRate = Some(100.0),
       amountCodedOut = None,
       dunningLock = false,
-      poaRelevantAmount = None
+      poaRelevantAmount = None,
+      dueDateForFinancialDetail = Some( LocalDate.parse("2023-12-14")),
+    paymentLotItem = Some("paymentLotItem"),
+       paymentLot = Some("paymentLot")
   )
 
   val balancingChargeNics2 = ChargeItem(
@@ -373,7 +395,10 @@ trait ChargeConstants {
     lpiWithDunningLock = None,
     amountCodedOut = None,
     dunningLock = false,
-    poaRelevantAmount = None)
+    poaRelevantAmount = None,
+    dueDateForFinancialDetail = Some(LocalDate.parse("2021-08-24")),
+    paymentLotItem = None, paymentLot = None
+  )
 
   val balancingChargeCancelled = ChargeItem(taxYear = TaxYear.forYearEnd(2021),
     transactionId = id1040000125,
@@ -391,7 +416,10 @@ trait ChargeConstants {
     lpiWithDunningLock = None,
     amountCodedOut = None,
     dunningLock = false,
-    poaRelevantAmount = None)
+    poaRelevantAmount = None,
+    dueDateForFinancialDetail = Some(LocalDate.parse("2021-08-25")),
+    paymentLotItem = None, paymentLot = None
+  )
 
   val  balancingChargePaye = balancingChargeNics2.copy(
     transactionId = id1040000126,
@@ -543,7 +571,9 @@ trait ChargeConstants {
     transactionId = List(id1040000123, id1040000124),
     transactionTypes = List(PoaOneReconciliationDebit, PoaTwoDebit),
     dueDate = List(Some(fixedDate.plusYears(100).minusDays(1)), Some(fixedDate.plusYears(100).plusDays(30))),
-    outstandingAmount = List(50, 75),
+    outstandingAmount = List(50.06, 75.07),
+    outstandingInterest = List(Some(BigDecimal(10.01)),Some(BigDecimal(20.20))),
+    interestRate = List(Some(BigDecimal(2.75)),Some(BigDecimal(2))),
     taxYear = fixedDate.getYear.toString,
     latePaymentInterestAmount = List(None, None),
     dunningLock = noDunningLocks
@@ -595,7 +625,7 @@ trait ChargeConstants {
       interestRate = List(Some(100.0), Some(100.0)),
       interestFromDate = List(Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29))),
       interestEndDate = List(Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29))),
-      dunningLock = noDunningLocks).reverse,
+      dunningLock = noDunningLocks, dueDateForFinancialDetail = List(LocalDate.parse("2024-01-19"), fixedDate.minusDays(1))).reverse,
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
@@ -611,7 +641,7 @@ trait ChargeConstants {
       interestRate = List(Some(100.0), Some(100.0)),
       interestFromDate = List(Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29))),
       interestEndDate = List(Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29))),
-      dunningLock = noDunningLocks).reverse,
+      dunningLock = noDunningLocks, dueDateForFinancialDetail = List(LocalDate.parse("2024-01-14"), LocalDate.parse("2023-12-14"))).reverse,
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
@@ -626,7 +656,8 @@ trait ChargeConstants {
     interestRate = List(Some(100.0), Some(100.0)),
     interestEndDate = List(Some(LocalDate.of(2018,3,29)),Some(LocalDate.of(2018,3,29))),
     taxYear = fixedDate.getYear.toString,
-    dunningLock = List(None, None)
+    dunningLock = List(None, None),
+    dueDateForFinancialDetail = List(LocalDate.parse("2023-12-14"), LocalDate.parse("2023-12-14"))
   )
 
   val whatYouOweDataWithMixedData4Unfiltered: WhatYouOweChargesList = WhatYouOweChargesList(
@@ -688,7 +719,8 @@ trait ChargeConstants {
       dueDate = dueDateOverdue,
       dunningLock = dunningLocks,
       interestFromDate = List(None, None),
-      interestEndDate = List(None, None)
+      interestEndDate = List(None, None),
+      dueDateForFinancialDetail = List( LocalDate.parse("2023-12-05"), LocalDate.parse("2023-12-14"))
     ),
     outstandingChargesModel = Some(outstandingChargesOverdueDataIt)
   )
@@ -699,7 +731,8 @@ trait ChargeConstants {
       dueDate = dueDateOverdue,
       dunningLock = dunningLocks,
       interestFromDate = List(None, None),
-      interestEndDate = List(None, None)
+      interestEndDate = List(None, None),
+      dueDateForFinancialDetail = List(LocalDate.parse("2023-12-05"), LocalDate.parse("2023-12-14"))
     ),
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
@@ -712,7 +745,8 @@ trait ChargeConstants {
       dueDate = dueDateOverdue,
       dunningLock = dunningLocks,
       outstandingInterest = List(Some(100), Some(100)),
-      interestRate = List(Some(1.0), Some(1.0))
+      interestRate = List(Some(1.0), Some(1.0)),
+      dueDateForFinancialDetail = List( LocalDate.parse("2024-01-29"), LocalDate.parse("2024-02-03") )
     ),
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
@@ -724,7 +758,8 @@ trait ChargeConstants {
       dueDate = dueDates,
       dunningLock = dunningLocks,
       interestEndDate = List(None, None),
-      interestFromDate = List(None, None)
+      interestFromDate = List(None, None),
+      dueDateForFinancialDetail = List( LocalDate.parse("2024-01-29"), LocalDate.parse("2024-02-03") )
     ),
     outstandingChargesModel = Some(outstandingChargesDueInMoreThan30Days)
   )
@@ -922,7 +957,7 @@ trait ChargeConstants {
       transactionType = PoaOneDebit,
       dueDate = Some(fixedDate.plusDays(45)),
       outstandingAmount = 125,
-      taxYear = TaxYear.forYearEnd(fixedDate.getYear)
+      taxYear = TaxYear.forYearEnd(fixedDate.getYear),
     )),
     codedOutDocumentDetail = Some(codedOutChargeItemsA)
   )
@@ -940,7 +975,8 @@ trait ChargeConstants {
       lpiWithDunningLock = List(Some(100.0), Some(100.0)),
       outstandingInterest = List(None, None),
       interestEndDate = List(Some(LocalDate.of(2018,3,29)), Some(LocalDate.of(2018,3,29))),
-      latePaymentInterestAmount = List(None, None)
+      latePaymentInterestAmount = List(None, None),
+      dueDateForFinancialDetail = List(LocalDate.parse("2023-12-14"), LocalDate.parse("2024-01-19"))
     ),
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )

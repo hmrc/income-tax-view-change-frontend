@@ -27,7 +27,7 @@ object CreditSummaryAuditing {
 
   case class CreditSummaryDetails(date: String, description: String, status: String, amount: String)
 
-  private def toStatus(charge: CreditDetailModel): String = charge.documentDetail.getChargePaidStatus match {
+  private def toStatus(credit: CreditDetailModel): String = credit.charge.getChargePaidStatus match {
     case "paid" => "Fully allocated"
     case "part-paid" => "Partially allocated"
     case "unpaid" | _ => "Not allocated"
@@ -36,14 +36,14 @@ object CreditSummaryAuditing {
   private def toDescription(creditType: CreditType)
                            (implicit messages: MessagesApi): String = messages(s"credit.description.${creditType.key}")(Lang("en"))
 
-  implicit def creditDetailModelToCreditSummaryDetails(charge: CreditDetailModel)
+  implicit def creditDetailModelToCreditSummaryDetails(credit: CreditDetailModel)
                                                       (implicit messages: MessagesApi): CreditSummaryDetails = {
     // we assume that we would never show amount equal to zero
     CreditSummaryDetails(
-      date = charge.date.toString,
-      description = toDescription(charge.creditType)(messages),
-      status = toStatus(charge),
-      amount = charge.documentDetail.originalAmount.abs.toString())
+      date = credit.date.toString,
+      description = toDescription(credit.creditType)(messages),
+      status = toStatus(credit),
+      amount = credit.charge.originalAmount.abs.toString())
   }
 
   implicit def toCreditSummaryDetailsSeq(charge: Seq[CreditDetailModel])

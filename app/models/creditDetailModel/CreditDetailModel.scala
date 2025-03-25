@@ -16,8 +16,12 @@
 
 package models.creditDetailModel
 
-import models.financialDetails.{BalanceDetails, CreditType, DocumentDetail}
+import models.financialDetails.{ChargeItem, CreditType}
 
 import java.time.LocalDate
 
-case class CreditDetailModel(date: LocalDate, documentDetail: DocumentDetail, creditType: CreditType, balanceDetails: Option[BalanceDetails] = None)
+// Story created => https://jira.tools.tax.service.gov.uk/browse/MISUV-9399
+case class CreditDetailModel(date: LocalDate,
+                             charge: ChargeItem,
+                             creditType: CreditType,
+                             availableCredit: Option[BigDecimal] = None)
