@@ -235,7 +235,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
 
                 val result = action(fakeRequest)
-                contentAsString(result).contains("Adjust payments on account for the 2017 to 2018 tax year") shouldBe true
+                contentAsString(result).contains("Adjust your payments on account for the 2017 to 2018 tax year") shouldBe true
               }
               "the AdjustPaymentsOnAccount FS is enabled and there are no adjustable POAs" in {
                 enable(AdjustPaymentsOnAccount)

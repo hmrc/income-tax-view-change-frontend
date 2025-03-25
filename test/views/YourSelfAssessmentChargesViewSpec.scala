@@ -25,6 +25,7 @@ import models.financialDetails.{BalanceDetails, ChargeItem, DocumentDetail, What
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.outstandingCharges.OutstandingChargesModel
+import models.taxYearAmount.EarliestDueCharge
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest
@@ -150,6 +151,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       penaltiesEnabled = penaltiesEnabled,
       creditAndRefundEnabled = true,
+      earliestTaxYearAndAmountByDueDate = Some(EarliestDueCharge(TaxYear(2024, 2025), BigDecimal(100.00))),
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel)
     )
 
@@ -197,6 +199,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       penaltiesEnabled = true,
       creditAndRefundEnabled = true,
+      earliestTaxYearAndAmountByDueDate = Some(EarliestDueCharge(TaxYear(2024, 2025), BigDecimal(100.00))),
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel))
     val html: HtmlFormat.Appendable = yourSelfAssessmentChargesView(
       viewModel
@@ -727,6 +730,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
 //
 //    }
 
+
     "AdjustPaymentsOnAccount is enabled" when {
 
       "user has a POA that can be adjusted" when {
@@ -802,15 +806,15 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
   "agent" when {
     "The What you owe view with financial details model" when {
 
-//      s"have the title '${ //TODO: Also deals with future charges, re-implement after charges due in 30 days tab is done
-//        messages("htmlTitle.agent", messages("selfAssessmentCharges.heading"))
-//      }'" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()(dateService)) {
-//        pageDocument.title() shouldBe messages("htmlTitle.agent", messages("selfAssessmentCharges.heading"))
-//        pageDocument.getElementById("due-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(fixedDate.getYear, "1040000124").url
-//        pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(fixedDate.getYear).url
-//      }
+      s"have the title '${ //TODO: Also deals with future charges, re-implement after charges due in 30 days tab is done
+        messages("htmlTitle.agent", messages("selfAssessmentCharges.heading"))
+      }'" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()(dateService)) {
+      pageDocument.title() shouldBe messages("htmlTitle.agent", messages("selfAssessmentCharges.heading"))
+      pageDocument.getElementById("due-30-days-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(fixedDate.getYear, "1040000124").url
+      pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(fixedDate.getYear).url
+    }
 
-      "not have button Pay now with no chagres" in new AgentTestSetup(charges = noChargesModel) {
+    "not have button Pay now with no chagres" in new AgentTestSetup(charges = noChargesModel) {
         findAgentElementById("payment-button") shouldBe None
       }
       "not have button Pay now with charges" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
@@ -897,5 +901,84 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       }
     }
   }
+  "charges are due in 30 days" should {
 
+    "display the charges due within 30 days section" when {
+      "there are charges due within 30 days" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
+        val tableHead = pageDocument.getElementById("due-in-30-days-payments-table-head")
+        tableHead should not be null
+        tableHead.select("th").get(0).text() shouldBe dueDate
+        tableHead.select("th").get(1).text() shouldBe chargeType
+        tableHead.select("th").get(2).text() shouldBe taxYear
+        tableHead.select("th").get(3).text() shouldBe amountDue
+
+        val chargeRow = pageDocument.getElementById("due-30-days-0")
+        chargeRow should not be null
+        chargeRow.select("td").get(0).text() should include("5 December 2023")
+        chargeRow.select("td").get(1).text() should include(poa1Text)
+        chargeRow.select("td").get(2).text() should include("Tax year")
+        chargeRow.select("td").get(3).text() shouldBe "£50.00"
+
+        val totalRow = pageDocument.select("#charges-due-in-30-days .govuk-table__header").last()
+        totalRow.text() should include("£50.00")
+      }
+
+      "display the payment button and content in the section" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
+        val button = pageDocument.getElementById("payment-button")
+        button.text() shouldBe payNow
+        val buttonLink = pageDocument.getElementById("payment-button-link")
+        buttonLink.attr("href") should include("/report-quarterly/income-and-expenses/view/payment")
+
+        val insetText = pageDocument.select(".govuk-inset-text").text()
+        insetText should include(messages("selfAssessmentCharges.overdue-inset-text-1"))
+        insetText should include(messages("selfAssessmentCharges.overdue-inset-text-2"))
+      }
+
+      "display the payment plan content and link in the section" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
+        val paymentPlan = pageDocument.getElementById("payment-plan")
+        paymentPlan.text() shouldBe paymentPlanText
+        paymentPlan.select("a").attr("href") shouldBe "https://www.gov.uk/difficulties-paying-hmrc"
+      }
+
+      "adjust payments on account link is present with correct href" when {
+        "the FS is enabled and viewModel has a tax year" in new TestSetup(
+          charges = whatYouOweDataWithDataDueIn30Days(),
+          adjustPaymentsOnAccountFSEnabled = true,
+          claimToAdjustViewModel = Some(ctaViewModel(true))
+        ) {
+          val adjustLink = pageDocument.getElementById("adjust-poa-link")
+          adjustLink.text shouldBe "Adjust your payments on account for the 2024 to 2025 tax year"
+          adjustLink.attr("href") shouldBe claimToAdjustLink(false)
+        }
+      }
+
+      "no charges due today heading is shown" when {
+        "there are charges only due in 30 days" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
+          val headings = pageDocument.select("h2").eachText()
+          headings should contain(messages("selfAssessmentCharges.no-charges-due"))
+        }
+      }
+    }
+
+    "not display the charges due within 30 days section" when {
+      "there are no charges due within 30 days" in new TestSetup(charges = noChargesModel) {
+        findElementById("charges-due-within-30-days") shouldBe None
+      }
+    }
+    "display the correct type of charge in 30-day section" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
+      val charge = pageDocument.select("#charges-due-in-30-days tbody tr").get(0).select("td").get(1).text()
+
+        charge.startsWith(poa1Text) ||
+        charge.startsWith(poa2Text) ||
+        charge.startsWith(remainingBalance) shouldBe true
+    }
+    "show the 'Pay upcoming charges' link when only charges due in 30 days exist" in new TestSetup(
+      charges = whatYouOweDataWithDataDueIn30Days()
+    ) {
+      val link = pageDocument.getElementById("pay-upcoming-charges-link")
+      link should not be null
+      link.text() shouldBe messages("selfAssessmentCharges.pay-upcoming-charges")
+      link.attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(5000).url
+    }
+  }
 }
