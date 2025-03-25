@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,11 @@
  * limitations under the License.
  */
 
-package implicits
+package models.taxYearAmount
 
-import play.twirl.api.Html
+import models.incomeSourceDetails.TaxYear
 
-object HtmlFormatter {
-  implicit class NbspString(val str: String) extends AnyVal {
-    def toNonBreaking: Html =
-      Html(str.replace(" ", "&nbsp;"))
-  }
-
-  implicit class EmspString(val str: String) extends AnyVal {
-    def toEmsp: Html =
-      Html(str.replace("\t", "&emsp;"))
-  }
-}
+case class EarliestDueCharge(
+                                     taxYear: TaxYear,
+                                     amount: BigDecimal
+                                   )

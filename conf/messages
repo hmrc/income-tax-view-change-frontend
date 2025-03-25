@@ -899,6 +899,7 @@ selfAssessmentCharges.important                                    = Important
 selfAssessmentCharges.important-p1                                 = This is the total amount of overdue tax you need to pay. Any interest will increase daily until the overdue amount is paid.
 selfAssessmentCharges.important-p2                                 = You can
 selfAssessmentCharges.important-p2-link-text                       = pay the total amount needed now.
+selfAssessmentCharges.charges-due-in-30-days                       = Charges due in 30 days
 selfAssessmentCharges.charges-due-now-with-amount                  = Charges due now: {0}
 selfAssessmentCharges.no-payments-due                              = You have no payments due.
 selfAssessmentCharges.no-payments-due-agent                        = Your client has no payments due.
@@ -908,6 +909,8 @@ selfAssessmentCharges.tableHead.tax-year                           = Tax year
 selfAssessmentCharges.tableHead.type-of-charge                     = Type of charge
 selfAssessmentCharges.tableHead.estimated-interest                 = Estimated interest
 selfAssessmentCharges.tableHead.amount                             = Amount
+selfAssessmentCharges.no-charges-due                               = No charges due today
+selfAssessmentCharges.pay-upcoming-charges                         = pay your upcoming Self Assessment charges before the due date.
 selfAssessmentCharges.tax-year-summary.taxYear                                = {0} to {1}
 selfAssessmentCharges.paymentOnAccount1.text							      = First payment on account
 selfAssessmentCharges.paymentOnAccount2.text							      = Second payment on account
@@ -957,9 +960,9 @@ selfAssessmentCharges.moneyOnAccount-2                                        = 
 selfAssessmentCharges.moneyOnAccount-3                                        = claim a refund
 selfAssessmentCharges.moneyOnAccount-agent                                    = Money in your client’s account
 selfAssessmentCharges.moneyOnAccount-agent-2                                  = in your client’s account. You can leave the money there to pay their next bill or
-selfAssessmentCharges.adjust-poa                                              = Adjust payments on account for the {0} to {1} tax year
+selfAssessmentCharges.adjust-poa                                              = Adjust your payments on account for the {0} to {1} tax year
 selfAssessmentCharges.adjust-poa.paid-1                                       = You can
-selfAssessmentCharges.adjust-poa.paid-2                                       = adjust your payments on account for the {0} to {1} tax year
+selfAssessmentCharges.adjust-poa.paid-2                                       = Adjust your payments on account for the {0} to {1} tax year
 selfAssessmentCharges.adjust-poa.paid-3                                       = at any point before submitting your tax return for {0} to {1}, and no later than
 selfAssessmentCharges.adjust-poa.paid-4                                       = 31 January {0}.
 selfAssessmentCharges.adjust-poa.paid-5                                       =
@@ -2524,5 +2527,50 @@ reporting.frequency.latency.details.section.text.para3.text.1       = You can do
 reporting.frequency.latency.details.section.text.para3.link.text    = all businesses
 reporting.frequency.latency.details.section.text.para3.text.2       = section
 
+yourSelfAssessmentChargeSummary.tax-year                            = {0} to {1} tax year
+yourSelfAssessmentChargeSummary.overDueCharge                       = Overdue charge:
+yourSelfAssessmentChargeSummary.charge                              = Charge:
+yourSelfAssessmentChargeSummary.due                                 = Due {0}
+yourSelfAssessmentChargeSummary.chargeReference                     = Charge Reference: {0}
+
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.linkText    = What is a balancing payment?
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p1          = A balancing payment is the tax you still need to pay for a tax year. This happens if you:
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p2          = did not have any tax to pay during the year (for example, if your last Self Assessment tax bill was under £1,000)
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p3          = owe more than what you paid during the year (for example, through payments on account or PAYE)
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p4          = You’ll also need to make a balancing payment if you owe anything for Capital Gains Tax or student loans.
+
+yourSelfAssessmentChargeSummary.interestOnCharge.heading                = Interest on your {0}
+yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = The amount of Interest you have to pay will increase every day until you pay the overdue charge.
+yourSelfAssessmentChargeSummary.table.daysOverdue                       = {0} to {1}
+yourSelfAssessmentChargeSummary.table.totalInterestToDate               = Total interest to date
+yourSelfAssessmentChargeSummary.table.head.amountInterestIsAppliedTo    = Amount interest is applied to
+yourSelfAssessmentChargeSummary.table.head.daysOverdue                  = Days overdue
+yourSelfAssessmentChargeSummary.table.head.interestRate                 = Interest rate
+yourSelfAssessmentChargeSummary.table.head.amount                       = Amount
+
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.linkText    = How is interest calculated?
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p1          = Multiply the amount the interest is applied to by the number of days overdue (period).
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p2          = Divide that answer by 365 (days).
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p3          = Multiply that answer by 0.0725 (7.25%).
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p4          = In this example, the amount the interest is applied to is £5000, and the number of days overdue is 50.
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p5          = 5,000 x 50 = 250,000
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p6          = 250,000 / 365 = 684.93
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p7          = 684.93 x 0.0725 = 49.66
+
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.linkText     = What is payment on account?
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = Payments on account are two advance payments made towards your next tax bill. They pay for:
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Income Tax
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = Class 4 National Insurance contributions
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount.
+
+yourSelfAssessmentChargeSummary.balancingPayment.heading    = Balancing payment
+yourSelfAssessmentChargeSummary.paymentOnAccount1.heading   = First payment on account
+yourSelfAssessmentChargeSummary.paymentOnAccount2.heading   = Second payment on account
+yourSelfAssessmentChargeSummary.unknown.heading             = Unknown
+
+yourSelfAssessmentChargeSummary.chargeHistory.balancingPayment.heading  = Balancing payment history
+yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount1.heading = First payment on account history
+yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount2.heading = Second payment on account history
+yourSelfAssessmentChargeSummary.chargeHistory.unknown.heading		    = History of this charge
 
 

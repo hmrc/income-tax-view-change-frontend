@@ -526,7 +526,7 @@ trait ChargeConstants {
   )
 
   def whatYouOweDataWithDataDueIn30Days(dunningLocks: List[Option[String]] = noDunningLocks)(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 0.00, 1.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(50.00, 0.00, 50.00, None, None, None, None, None),
     chargesList = financialDetailsDueIn30DaysCi(dunningLocks),
     outstandingChargesModel = Some(outstandingChargesDueIn30Days)
   )

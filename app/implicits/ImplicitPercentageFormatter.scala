@@ -16,16 +16,12 @@
 
 package implicits
 
-import play.twirl.api.Html
+trait ImplicitPercentageFormatter {
 
-object HtmlFormatter {
-  implicit class NbspString(val str: String) extends AnyVal {
-    def toNonBreaking: Html =
-      Html(str.replace(" ", "&nbsp;"))
-  }
+  implicit class PercentageFormatterBigDecimal(x: BigDecimal) {
 
-  implicit class EmspString(val str: String) extends AnyVal {
-    def toEmsp: Html =
-      Html(str.replace("\t", "&emsp;"))
+    def toPercentage: String = s"$x%"
   }
 }
+
+object ImplicitPercentageFormatter extends ImplicitPercentageFormatter

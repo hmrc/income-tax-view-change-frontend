@@ -18,6 +18,7 @@ package models.financialDetails
 
 import models.incomeSourceDetails.TaxYear
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
+import models.taxYearAmount.EarliestDueCharge
 import services.DateServiceInterface
 
 import java.time.LocalDate
@@ -29,6 +30,7 @@ case class YourSelfAssessmentChargesViewModel(hasOverdueOrAccruingInterestCharge
                                               dunningLock: Boolean,
                                               reviewAndReconcileEnabled: Boolean,
                                               creditAndRefundEnabled: Boolean,
+                                              earliestTaxYearAndAmountByDueDate: Option[EarliestDueCharge],
                                               claimToAdjustViewModel: WYOClaimToAdjustViewModel)(implicit val dateService: DateServiceInterface) {
   lazy val currentTaxYear: TaxYear = dateService.getCurrentTaxYear
 
