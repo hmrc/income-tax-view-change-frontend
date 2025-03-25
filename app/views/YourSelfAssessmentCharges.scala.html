@@ -393,11 +393,13 @@
                                         </a>
                                     </li>
                                     }
-                                    <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-                                        <a class="govuk-tabs__tab" href="#placeholder">
-                                            Placeholder
-                                        </a>
-                                    </li>
+                                    @if(ChargeItem.chargesDueAfter30DaysList(viewModel.whatYouOweChargesList).nonEmpty) {
+                                        <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                                            <a class="govuk-tabs__tab" href="#charges-due-later" id="charges-due-later">
+                                            @getMessage("charges-to-pay-later")
+                                            </a>
+                                        </li>
+                                    }
                                 </ul>
 
                                 @if(viewModel.whatYouOweChargesList.chargesDueWithin30DaysList.nonEmpty) {
@@ -507,9 +509,16 @@
                                         }
                                     </div>
                                 }
-                                <div class="govuk-tabs__panel" id="placeholder">
-                                    <h2 class="govuk-heading-l">Placeholder</h2>
-                                </div>
+                            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="charges-due-later">
+                                <table class="govuk-table">
+                                    @tableHead("charges-due-later-table-head", showInterest = false)
+                                    <tbody class="govuk-table__body">
+                                    @for((charge, index) <- ChargeItem.chargesDueAfter30DaysList(viewModel.whatYouOweChargesList).zipWithIndex) {
+                                        @tableRowWithoutInterest(s"due-$index", charge, index, "taxYearSummary-link")
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
                             </div>
 
                             @getPaymentPlanSection

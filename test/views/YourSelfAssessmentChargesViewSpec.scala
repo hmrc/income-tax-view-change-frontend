@@ -33,7 +33,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
 import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.{dueDateOverdue, noDunningLocks, oneDunningLock, outstandingChargesModel, twoDunningLocks}
+import testConstants.FinancialDetailsTestConstants.{dueDateOverdue, futureFixedDate, noDunningLocks, oneDunningLock, outstandingChargesModel, twoDunningLocks}
 import testUtils.{TestSupport, ViewSpec}
 import views.html.YourSelfAssessmentCharges
 
@@ -97,6 +97,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
   val itsaPOA1: String = "ITSA- POA 1"
   val itsaPOA2: String = "ITSA - POA 2"
   val cancelledPayeSelfAssessment: String = messages("selfAssessmentCharges.cancelledPayeSelfAssessment.text")
+  val chargesToPayLaterTab: String = messages("selfAssessmentCharges.charges-to-pay-later")
 
   val interestEndDateFuture: LocalDate = LocalDate.of(2100, 1, 1)
 
@@ -341,6 +342,13 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
     chargesList = List(chargeItemWithCodingOutNics2Ci()),
     outstandingChargesModel = None,
     codedOutDocumentDetail = Some(codedOutDocumentDetailCi)
+  )
+
+  val whatYouOweDataWithDueDateInFuture: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    chargesList = List(poa1WithFutureDueDate, poa2WithFutureDueDate),
+    outstandingChargesModel = None,
+    codedOutDocumentDetail = None
   )
 
   val whatYouOweDataCodingOutWithoutAmountCodingOut: WhatYouOweChargesList = whatYouOweDataWithCodingOutNics2.copy(codedOutDocumentDetail = None)
@@ -629,6 +637,39 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
         }
       }
 
+
+      "the user has charges due in over 30 days" should {
+        s"have the title $yourSelfAssessmentChargesTitle" in new TestSetup(charges = whatYouOweDataWithDueDateInFuture) {
+          pageDocument.title() shouldBe yourSelfAssessmentChargesTitle
+        }
+
+        s"have a page heading of $yourSelfAssessmentChargesHeading" in new TestSetup(charges = whatYouOweDataWithDueDateInFuture) {
+          pageDocument.getElementById("page-heading").text() shouldBe yourSelfAssessmentChargesHeading
+        }
+
+        "display the 'Charges due later' tab, with correct table header, charges and total" in new TestSetup(charges = whatYouOweDataWithDueDateInFuture) {
+          findElementById("self-assessment-charges-tabs").isDefined shouldBe true
+
+          val tableHead = pageDocument.getElementById("charges-due-later-table-head")
+          tableHead.select("th").first().text() shouldBe dueDate
+          tableHead.select("th").get(1).text() shouldBe chargeType
+          tableHead.select("th").get(2).text() shouldBe taxYear
+          tableHead.select("th").get(3).text() shouldBe amountDue
+
+          val chargesDueLaterTableRow1: Element = pageDocument.select("tr").get(1)
+          chargesDueLaterTableRow1.select("td").first().text() shouldBe futureFixedDate.toLongDate
+          chargesDueLaterTableRow1.select("td").get(1).text() shouldBe poa1Text + s" 1"
+          chargesDueLaterTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((futureFixedDate.getYear - 1).toString, futureFixedDate.getYear.toString())
+          chargesDueLaterTableRow1.select("td").last().text() shouldBe "£2,500.00"
+
+          val chargesDueLaterTableRow2: Element = pageDocument.select("tr").get(2)
+          chargesDueLaterTableRow2.select("td").first().text() shouldBe futureFixedDate.plusYears(2).toLongDate
+          chargesDueLaterTableRow2.select("td").get(1).text() shouldBe poa2Text + s" 2"
+          chargesDueLaterTableRow2.select("td").get(2).text() shouldBe taxYearSummaryText((futureFixedDate.getYear - 1).toString, futureFixedDate.getYear.toString())
+          chargesDueLaterTableRow2.select("td").last().text() shouldBe "£3,500.00"
+        }
+
+      }
 //
 //      "the user has charges and access viewer with mixed dates" should { //TODO: TO be implemented once we have multiple tabs on this page, and display charges due in the future
 //        s"have the title $yourSelfAssessmentChargesTitle and notes" in new TestSetup(charges = whatYouOweDataWithMixedData1) {
