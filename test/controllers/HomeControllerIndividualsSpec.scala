@@ -65,15 +65,17 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockUserAuth
             mockSingleBusinessIncomeSource()
             mockGetDueDates(Right(futureDueDates))
+            val financialDetails = List(FinancialDetailsModel(
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+              documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
+                documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
+              financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
+                mainTransaction = Some("4920"), transactionId = Some("testId"),
+                items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
-              .thenReturn(Future.successful(List(FinancialDetailsModel(
-                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-                documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
-                  documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
-                financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
-                  mainTransaction = Some("4920"), transactionId = Some("testId"),
-                  items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))))))
+              .thenReturn(Future.successful(financialDetails))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetFilteredChargesListFromFinancialDetails(financialDetails.flatMap(_.asChargeItems))
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
@@ -91,6 +93,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
               .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
             when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
               .thenReturn(Future.successful(oneOverdueBCDPaymentInWhatYouOweChargesList))
+            setupMockGetFilteredChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -107,29 +110,31 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockUserAuth
             mockSingleBusinessIncomeSource()
             mockGetDueDates(Right(futureDueDates))
+            val financialDetails = List(
+              FinancialDetailsModel(
+                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+                documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId1", None, None, 1000.00, 0, LocalDate.of(2018, 3, 29),
+                  documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
+                financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, transactionId = Some("testId1"), mainTransaction = Some("4910"),
+                  items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
+              FinancialDetailsModel(
+                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+                documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId2", Some("ITSA- POA 1"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
+                  documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
+                financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, mainType = Some("SA Payment on Account 1"), transactionId = Some("testId2"), mainTransaction = Some("4920"),
+                  items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString), dunningLock = Some("Stand over order"))))))),
+              FinancialDetailsModel(
+                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+                documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId3", Some("ITSA - POA 2"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
+                  documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
+                financialDetails = List(FinancialDetail(nextPaymentYear, mainType = Some("SA Payment on Account 2"), mainTransaction = Some("4930"),
+                  transactionId = Some("testId3"),
+                  items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))
+            )
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
-              .thenReturn(Future.successful(List(
-                FinancialDetailsModel(
-                  balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-                  documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId1", None, None, 1000.00, 0, LocalDate.of(2018, 3, 29),
-                    documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
-                  financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, transactionId = Some("testId1"), mainTransaction = Some("4910"),
-                    items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
-                FinancialDetailsModel(
-                  balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-                  documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId2", Some("ITSA- POA 1"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
-                    documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
-                  financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, mainType = Some("SA Payment on Account 1"), transactionId = Some("testId2"), mainTransaction = Some("4920"),
-                    items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString), dunningLock = Some("Stand over order"))))))),
-                FinancialDetailsModel(
-                  balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-                  documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId3", Some("ITSA - POA 2"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
-                    documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
-                  financialDetails = List(FinancialDetail(nextPaymentYear, mainType = Some("SA Payment on Account 2"), mainTransaction = Some("4930"),
-                    transactionId = Some("testId3"),
-                    items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))
-              )))
+              .thenReturn(Future.successful(financialDetails))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetFilteredChargesListFromFinancialDetails(financialDetails.flatMap(_.asChargeItems))
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -145,35 +150,37 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockUserAuth
             mockSingleBusinessIncomeSource()
             mockGetDueDates(Right(futureDueDates))
+            val financialDetails = List(
+              FinancialDetailsModel(
+                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+                documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId1", None, None, 1000.00, 0, LocalDate.of(2018, 3, 29),
+                  documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
+                financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, transactionId = Some("testId1"), mainTransaction = Some("4910"),
+                  items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
+              FinancialDetailsModel(
+                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+                documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId1", None, None, 1000.00, 0, LocalDate.of(2018, 3, 29),
+                  paymentLotItem = Some("123"), paymentLot = Some("456"), documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
+                financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, transactionId = Some("testId1"), mainTransaction = Some("4910"),
+                  items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
+              FinancialDetailsModel(
+                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+                documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId2", Some("ITSA- POA 1"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
+                  documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
+                financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, mainType = Some("SA Payment on Account 1"), transactionId = Some("testId2"),  mainTransaction = Some("4920"),
+                  items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
+              FinancialDetailsModel(
+                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+                documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId3", Some("ITSA - POA 2"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
+                  documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
+                financialDetails = List(FinancialDetail(nextPaymentYear, mainType = Some("SA Payment on Account 2"), mainTransaction = Some("4930"),
+                  transactionId = Some("testId3"),
+                  items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))
+            )
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
-              .thenReturn(Future.successful(List(
-                FinancialDetailsModel(
-                  balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-                  documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId1", None, None, 1000.00, 0, LocalDate.of(2018, 3, 29),
-                    documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
-                  financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, transactionId = Some("testId1"), mainTransaction = Some("4910"),
-                    items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
-                FinancialDetailsModel(
-                  balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-                  documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId1", None, None, 1000.00, 0, LocalDate.of(2018, 3, 29),
-                    paymentLotItem = Some("123"), paymentLot = Some("456"), documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
-                  financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, transactionId = Some("testId1"), mainTransaction = Some("4910"),
-                    items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
-                FinancialDetailsModel(
-                  balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-                  documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId2", Some("ITSA- POA 1"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
-                    documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
-                  financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, mainType = Some("SA Payment on Account 1"), transactionId = Some("testId2"),  mainTransaction = Some("4920"),
-                    items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
-                FinancialDetailsModel(
-                  balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-                  documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId3", Some("ITSA - POA 2"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
-                    documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
-                  financialDetails = List(FinancialDetail(nextPaymentYear, mainType = Some("SA Payment on Account 2"), mainTransaction = Some("4930"),
-                    transactionId = Some("testId3"),
-                    items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))
-              )))
+              .thenReturn(Future.successful(financialDetails))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetFilteredChargesListFromFinancialDetails(financialDetails.flatMap(_.asChargeItems).take(3))
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -210,6 +217,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
                     items = Some(Seq(SubItem(dueDate = Some(futureDueDates.head)))))))
               )))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -248,6 +256,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
                     items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString)))))))
               )))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -271,6 +280,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
           when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
+          setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -290,6 +300,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             .thenReturn(Future.successful(List(FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None), List(), List()))))
           when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
+          setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -314,6 +325,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             ))))
           when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
+          setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -330,6 +342,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         "there is a future update date to display" in new Setup {
           setupNextUpdatesTests(futureDueDates)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
@@ -342,6 +355,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         "there is an overdue update date to display" in new Setup {
           setupNextUpdatesTests(overdueDueDates)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
@@ -354,6 +368,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         "there are no updates to display" in new Setup {
           setupNextUpdatesTests(Seq())
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
@@ -371,6 +386,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           mockGetDueDates(Right(Seq()))
           mockGetAllUnpaidFinancialDetails()
           setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+          setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -397,6 +413,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
                   items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
               ))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
+            setupMockGetFilteredChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -427,6 +444,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
                   items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
               ))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
+            setupMockGetFilteredChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
             status(result) shouldBe Status.OK
@@ -458,6 +476,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
             ))))
           setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
+          setupMockGetFilteredChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList.chargesList)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
           status(result) shouldBe Status.OK
@@ -486,6 +505,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
                   items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
               ))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -510,6 +530,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
                   items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
               ))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -536,6 +557,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
                   items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
               ))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -554,6 +576,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockUserAuth
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
@@ -573,6 +596,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockUserAuth
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Voluntary))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
@@ -591,6 +615,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockUserAuth
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Mandated))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+            setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))

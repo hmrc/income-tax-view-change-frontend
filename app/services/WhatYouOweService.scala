@@ -107,7 +107,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     }
   }
 
-  private def getFilteredChargesList(financialDetailsList: List[FinancialDetailsModel],
+  def getFilteredChargesList(financialDetailsList: List[FinancialDetailsModel],
                                      isReviewAndReconcileEnabled: Boolean,
                                      isFilterCodedOutPoasEnabled: Boolean,
                                      isPenaltiesEnabled: Boolean)

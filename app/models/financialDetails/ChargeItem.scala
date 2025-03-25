@@ -215,11 +215,6 @@ object ChargeItem {
     }
   }
 
-  def getChargesWithRemainingToPay(items: List[ChargeItem]): List[ChargeItem] = {
-    items.filterNot(item => item.paymentLot.isDefined && item.paymentLotItem.isDefined)
-      .filter(item => item.checkIfEitherChargeOrLpiHasRemainingToPay)
-  }
-
   def fromDocumentPair(documentDetail: DocumentDetail, financialDetails: List[FinancialDetail]): ChargeItem = {
 
     val financialDetail = financialDetails.find(_.transactionId.contains(documentDetail.transactionId)) match {
