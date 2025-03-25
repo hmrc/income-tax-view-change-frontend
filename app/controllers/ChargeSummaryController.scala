@@ -28,6 +28,7 @@ import forms.utils.SessionKeys.gatewayPage
 import models.admin._
 import models.chargeHistory._
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
+import models.financialDetails.ChargeType.poaOneReconciliationDebit
 import models.financialDetails._
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -148,25 +149,28 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
     chargeHistoryService.chargeHistoryResponse(isInterestCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment,
       chargeReference, isEnabled(ChargeHistory)).map {
       case Right(chargeHistory) =>
-        auditChargeSummary(chargeItem, paymentBreakdown, chargeHistory, paymentAllocations,
-          isInterestCharge, isMFADebit, taxYear)
+        auditChargeSummary(chargeItem, paymentBreakdown,
+          chargeHistory, paymentAllocations, isInterestCharge, isMFADebit, taxYear)
 
-
-        val (poaOneChargeUrl, poaTwoChargeUrl) =
-          (for {
-            poaOneTaxYearTo     <- chargeDetailsforTaxYear.documentDetailsFilter(isPoaOne).map(_.taxYear)
-            poaOneTransactionId <- chargeDetailsforTaxYear.documentDetailsFilter(isPoaOne).map(_.transactionId)
-            poaTwoTaxYearTo     <- chargeDetailsforTaxYear.documentDetailsFilter(isPoaTwo).map(_.taxYear)
-            poaTwoTransactionId <- chargeDetailsforTaxYear.documentDetailsFilter(isPoaTwo).map(_.transactionId)
-          } yield
+        val chargeItems : List[ChargeItem] = chargeDetailsforTaxYear.asChargeItems
+        val (poaOneChargeUrl, poaTwoChargeUrl) = {
+          for {
+            poaOneChargeItem <- chargeItems
+              .filter(c => List(PoaOneDebit, PoaOneReconciliationDebit).contains(c.transactionType))
+            poaTwoChargeItem <- chargeItems
+              .filter(c => List(PoaTwoDebit, PoaTwoReconciliationDebit).contains(c.transactionType))
+          } yield {
             if (isAgent)
-              (routes.ChargeSummaryController.showAgent(poaOneTaxYearTo, poaOneTransactionId).url,
-                routes.ChargeSummaryController.showAgent(poaTwoTaxYearTo, poaTwoTransactionId).url)
+              (
+                routes.ChargeSummaryController.showAgent(poaOneChargeItem.taxYear.endYear, poaOneChargeItem.transactionId).url,
+                routes.ChargeSummaryController.showAgent(poaTwoChargeItem.taxYear.endYear, poaTwoChargeItem.transactionId).url
+              )
             else
-              (routes.ChargeSummaryController.show(poaOneTaxYearTo, poaOneTransactionId).url,
-                routes.ChargeSummaryController.show(poaTwoTaxYearTo, poaTwoTransactionId).url)
-            ).getOrElse(("", ""))
-
+              (routes.ChargeSummaryController.show(poaOneChargeItem.taxYear.endYear, poaOneChargeItem.transactionId).url,
+                routes.ChargeSummaryController.show(poaTwoChargeItem.taxYear.endYear, poaTwoChargeItem.transactionId).url
+              )
+          }
+        }.headOption.getOrElse( ("", ""))
         val whatYouOweUrl = {
           if (isAgent) controllers.routes.WhatYouOweController.showAgent.url
           else controllers.routes.WhatYouOweController.show(origin).url

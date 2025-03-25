@@ -40,7 +40,7 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
                                  (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
     financialDetailsConnector.getFinancialDetails(taxYear, nino).flatMap {
       case financialDetailsModel: FinancialDetailsModel =>
-        val fdRes = financialDetailsModel.getPairedDocumentDetails.flatMap {
+        val fdRes = financialDetailsModel.asChargeItems.flatMap {
           // Apply rewiring to use ChargeItem instead of DocumentDetails here
           case (chargeItem: ChargeItem) =>
             (chargeItem.transactionType, chargeItem.credit.isDefined) match {
