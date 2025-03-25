@@ -148,8 +148,10 @@ object ChargeType {
   private val poaTwoDebit = "4930"
 
   private val lateSubmissionPenalty = "4027"
-  private val firstLatePaymentPenalty = List("4028", "4031")
-  private val secondLatePaymentPenalty = List("4029", "4032")
+  private val firstLatePaymentPenalty: List[String] = List("4028", "4031")
+  private val secondLatePaymentPenalty: List[String] = List("4029", "4032")
+
+  lazy val penaltyMainTransactions = List(lateSubmissionPenalty) ++ firstLatePaymentPenalty ++ secondLatePaymentPenalty
 
   private val mfaDebit = Range.inclusive(4000, 4003)
     .map(_.toString).toList

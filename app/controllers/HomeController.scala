@@ -117,7 +117,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
     for {
       unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails
-      paymentsDue = getDueDates(unpaidCharges)
+      paymentsDue = getDueDates(unpaidCharges, isEnabled(PenaltiesAndAppeals))
       dunningLockExists = hasDunningLock(unpaidCharges)
       outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
       outstandingChargeDueDates = getRelevantDates(outstandingChargesModel)
@@ -171,9 +171,9 @@ class HomeController @Inject()(val homeView: views.html.Home,
 }
   }
 
-  private def getDueDates(unpaidCharges: List[FinancialDetailsResponseModel]): List[LocalDate] =
+  private def getDueDates(unpaidCharges: List[FinancialDetailsResponseModel], penaltiesEnabled: Boolean): List[LocalDate] =
   (unpaidCharges collect {
-    case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
+    case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay(penaltiesEnabled).getAllDueDates
   })
     .flatten
     .sortWith(_ isBefore _)

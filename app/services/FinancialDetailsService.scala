@@ -43,9 +43,9 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
     financialDetailsConnector.getFinancialDetails(taxYearFrom, taxYearTo, nino)
   }
 
-  def getChargeDueDates(financialDetails: List[FinancialDetailsResponseModel]): Option[Either[(LocalDate, Boolean), Int]] = {
+  def getChargeDueDates(financialDetails: List[FinancialDetailsResponseModel], penaltiesEnabled: Boolean): Option[Either[(LocalDate, Boolean), Int]] = {
     val chargeDueDates: List[LocalDate] = financialDetails.flatMap {
-      case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
+      case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay(penaltiesEnabled).getAllDueDates
       case _ => List.empty[LocalDate]
     }.sortWith(_ isBefore _)
 
