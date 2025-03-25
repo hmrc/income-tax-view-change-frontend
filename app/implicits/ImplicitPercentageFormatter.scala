@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package models.creditDetailModel
+package implicits
 
-import models.financialDetails.{ChargeItem, CreditType}
+trait ImplicitPercentageFormatter {
 
-import java.time.LocalDate
+  implicit class PercentageFormatterBigDecimal(x: BigDecimal) {
 
-// Story created => https://jira.tools.tax.service.gov.uk/browse/MISUV-9399
-case class CreditDetailModel(date: LocalDate,
-                             charge: ChargeItem,
-                             creditType: CreditType,
-                             availableCredit: Option[BigDecimal] = None)
+    def toPercentage: String = s"$x%"
+  }
+}
+
+object ImplicitPercentageFormatter extends ImplicitPercentageFormatter

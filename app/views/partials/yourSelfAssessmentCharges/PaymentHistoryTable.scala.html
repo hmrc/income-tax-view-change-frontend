@@ -1,0 +1,176 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import _root_.implicits.HtmlFormatter.NbspString
+@import views.html.components.h2
+@import models.chargeSummary.ChargeSummaryViewModel
+@import views.html.partials.yourSelfAssessmentCharges.LatePaymentInterestChargeMessage
+@import models.repaymentHistory.RepaymentHistoryUtils
+@import exceptions.MissingFieldException
+@import models.financialDetails.PoaOneDebit
+@import models.financialDetails.PoaTwoDebit
+@import models.financialDetails.BalancingCharge
+@import models.financialDetails.ChargeItem
+
+@this(
+    govukTable: GovukTable,
+    implicitDateFormatter: ImplicitDateFormatterImpl,
+    latePaymentInterestChargeMessage: LatePaymentInterestChargeMessage,
+    h2: h2
+)
+
+@(viewModel: ChargeSummaryViewModel)(implicit messages: Messages)
+
+@import implicitDateFormatter.longDate
+
+@reviewAndReconcileCreditMessage(charge: ChargeItem) = {
+    <a class="govuk-link" id="rar-charge-link" href="@RepaymentHistoryUtils.getPoaChargeLinkUrl(viewModel.isAgent, charge.taxYear.endYear, charge.transactionId)">
+        @messages(s"chargeSummary.chargeHistory.${charge.transactionType.key}")
+    </a>
+}
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
+}
+
+@chargeHistoryHeading = @{
+    viewModel.chargeItem.transactionType match {
+        case PoaOneDebit     => getMessage("chargeHistory.paymentOnAccount1.heading")
+        case PoaTwoDebit     => getMessage("chargeHistory.paymentOnAccount2.heading")
+        case BalancingCharge => getMessage("chargeHistory.balancingPayment.heading")
+        case _               => getMessage("chargeHistory.unknown.heading")
+    }
+}
+
+@govukTable(Table(
+    head = Some(
+        Seq(
+            HeadCell(
+                content = Text(messages("chargeSummary.chargeHistory.description"))
+            ),
+            HeadCell(
+                content = HtmlContent(messages("chargeSummary.chargeHistory.date"))
+            ),
+            HeadCell(
+                content = Text(messages("chargeSummary.chargeHistory.amount")),
+                format = Some("numeric")
+            )
+        )
+    ),
+    rows = Seq(
+        if(viewModel.noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment && viewModel.chargeHistoryEnabled)
+            Seq(
+                TableRow(
+                    content = Text(messages(s"chargeSummary.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}"))
+                ),
+                TableRow(
+                    content = HtmlContent(
+                        viewModel.adjustmentHistory.creationEvent.adjustmentDate.map(_.toLongDate.toNonBreaking).getOrElse(Html(messages("incomeSources.generic.unknown")))
+                    )
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.adjustmentHistory.creationEvent.amount.toCurrency), format = Some("numeric")
+                )
+            ) else Nil,
+
+        if(viewModel.latePaymentInterestCharge && viewModel.chargeHistoryEnabled)
+            Seq(
+                TableRow(
+                    content = Text(messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}"))
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.chargeItem.interestEndDate.get.toLongDate.toNonBreaking)
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.chargeItem.latePaymentInterestAmount.get.toCurrency),
+                    format = Some("numeric")
+                )
+            ) else Nil,
+
+        if(viewModel.latePaymentInterestCharge && viewModel.chargeHistoryEnabled)
+            Seq(
+                TableRow(
+                    content = Text(messages("chargeSummary.codingOutPayHistoryAmount", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut))
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.chargeItem.documentDate.toLongDate.toNonBreaking)
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.chargeItem.originalAmount.toCurrency),
+                    format = Some("numeric")
+                )
+            ) else Nil
+    )
+        ++ viewModel.reviewAndReconcileCredit.toSeq.collect {
+            case charge if viewModel.chargeHistoryEnabled =>
+                Seq(
+                    TableRow(
+                        content = HtmlContent(reviewAndReconcileCreditMessage(charge)),
+                        attributes = Map("id" -> "rar-due-date")
+                    ),
+                    TableRow(
+                        content = HtmlContent(charge.getDueDate.toLongDate.toNonBreaking),
+                        attributes = Map("id" -> "rar-due-date")
+                    ),
+                    TableRow(
+                        content = HtmlContent(charge.originalAmount.abs.toCurrency),
+                        attributes = Map("id" -> "rar-total-amount"),
+                        format = Some("numeric")
+                    )
+                )
+        }
+
+        ++ viewModel.adjustmentHistory.adjustments.collect {
+            case charge if viewModel.chargeHistoryEnabled =>
+                Seq(
+                    TableRow(
+                        content = Text(messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}"))
+                    ),
+                    TableRow(
+                        content = HtmlContent(charge.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDate.toNonBreaking)
+                    ),
+                    TableRow(
+                        content = HtmlContent(charge.amount.toCurrency),
+                        format = Some("numeric")
+                    )
+                )
+        }
+
+        ++ (for {
+            allocation <- viewModel.paymentAllocations
+            payment    <- allocation.allocations
+            if !viewModel.latePaymentInterestCharge
+        } yield {
+            Seq(
+                TableRow(
+                    content = HtmlContent(latePaymentInterestChargeMessage(viewModel, allocation, payment).toString)
+                ),
+                TableRow(
+                    content = HtmlContent(payment.dueDate.getOrElse(throw MissingFieldException("Payment Date")).toLongDate.toNonBreaking)
+                ),
+                TableRow(
+                    content = HtmlContent(payment.amount.getOrElse(throw MissingFieldException("Payment Amount")).abs.toCurrency),
+                    format = Some("numeric")
+                )
+            )
+    }),
+    caption = Some(chargeHistoryHeading),
+    attributes = Map("id" -> "payment-history-table"),
+    captionClasses = "govuk-table__caption--m"
+))

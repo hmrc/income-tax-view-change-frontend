@@ -234,7 +234,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
                 FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000125), None, Some("ABCD1234"), Some("type"), Some(100), Some(100),
                   Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
                 FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000126), None, Some("ABCD1234"), Some("type"), Some(100), Some(100),
-                  Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out")))))
+                  Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")), dunningLock = Some("Coding out")))))
               )
             ))))
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(ReviewAndReconcilePoa), isEnabled(FilterCodedOutPoas), isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals)).futureValue shouldBe WhatYouOweChargesList(

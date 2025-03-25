@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,16 +12,33 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package models.creditDetailModel
+@import views.html.components._
 
-import models.financialDetails.{ChargeItem, CreditType}
+@this(
+        p: p,
+        bulletPointList: bulletPointList,
+)
 
-import java.time.LocalDate
+@()(
+        implicit request: Request[_],
+        messages: Messages
+)
 
-// Story created => https://jira.tools.tax.service.gov.uk/browse/MISUV-9399
-case class CreditDetailModel(date: LocalDate,
-                             charge: ChargeItem,
-                             creditType: CreditType,
-                             availableCredit: Option[BigDecimal] = None)
+@getMessage(key: String, args: String*) = @{
+    messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
+}
+
+@p(id = Some("whatIsABalancingPayment.p1")) {
+    @getMessage("whatIsABalancingPayment.p1")
+}
+
+@bulletPointList(
+    getMessage("whatIsABalancingPayment.p2"),
+    getMessage("whatIsABalancingPayment.p3")
+)
+
+@p(id = Some("whatIsABalancingPayment.p4")) {
+    @getMessage("whatIsABalancingPayment.p4")
+}

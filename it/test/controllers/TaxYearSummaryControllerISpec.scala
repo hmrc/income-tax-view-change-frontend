@@ -224,7 +224,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
                 AuditStub.verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser(mtdUserRole, singleBusinessResponse),
                   messagesAPI, TaxYearSummaryViewModel(Some(CalculationSummary(liabilityCalculationModelSuccessfulExpected)),
-                    financialDetailsDunningLockSuccess.toChargeItem().map(TaxYearSummaryChargeItem.fromChargeItem),
+                    financialDetailsDunningLockSuccess.toChargeItem.map(TaxYearSummaryChargeItem.fromChargeItem),
                     allObligations, reviewAndReconcileEnabled = true, penaltiesEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel)))
               }
 
