@@ -40,12 +40,13 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
 
   implicit lazy val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
+  private val validChargeTypes = List(PoaOneDebit, PoaTwoDebit, PoaOneReconciliationDebit, PoaTwoReconciliationDebit,
+    BalancingCharge, LateSubmissionPenalty, FirstLatePaymentPenalty, SecondLatePaymentPenalty, MfaDebitCharge)
+
   val validChargeTypeCondition: ChargeItem => Boolean = chargeItem => {
     (chargeItem.transactionType, chargeItem.subTransactionType) match {
       case (_, Some(Nics2)) => true
-      case (PoaOneDebit | PoaTwoDebit | PoaOneReconciliationDebit
-            | PoaTwoReconciliationDebit | BalancingCharge | LateSubmissionPenalty
-            | FirstLatePaymentPenalty| SecondLatePaymentPenalty| MfaDebitCharge, _) => true
+      case (x, _) if validChargeTypes.contains(x) => true
       case (_, _) => false
     }
   }
