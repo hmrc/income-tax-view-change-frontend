@@ -167,7 +167,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           )
 
           val result: Option[Either[(LocalDate, Boolean), Int]] = {
-            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear), penaltiesEnabled = true)
+            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))
           }
 
           result shouldBe Some(Left(fixedDate.minusDays(1) -> true))
@@ -200,7 +200,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           )
 
           val result: Option[Either[(LocalDate, Boolean), Int]] = {
-            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear), penaltiesEnabled = true)
+            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))
           }
 
           result shouldBe Some(Left(fixedDate.plusDays(5) -> false))
@@ -233,7 +233,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           )
 
           val result: Option[Either[(LocalDate, Boolean), Int]] = {
-            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear), penaltiesEnabled = true)
+            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))
           }
 
           result shouldBe Some(Right(2))
@@ -246,7 +246,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None), List(), List())
 
           val result: Option[Either[(LocalDate, Boolean), Int]] = {
-            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear), penaltiesEnabled = true)
+            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))
           }
 
           result shouldBe None

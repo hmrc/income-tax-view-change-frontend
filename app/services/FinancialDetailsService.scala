@@ -19,6 +19,7 @@ package services
 import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.FinancialDetailsConnector
+import models.financialDetails.ChargeItem.{getChargesWithRemainingToPay, validChargeTypeCondition}
 import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
@@ -43,9 +44,10 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
     financialDetailsConnector.getFinancialDetails(taxYearFrom, taxYearTo, nino)
   }
 
-  def getChargeDueDates(financialDetails: List[FinancialDetailsResponseModel], penaltiesEnabled: Boolean): Option[Either[(LocalDate, Boolean), Int]] = {
+  def getChargeDueDates(financialDetails: List[FinancialDetailsResponseModel]): Option[Either[(LocalDate, Boolean), Int]] = {
     val chargeDueDates: List[LocalDate] = financialDetails.flatMap {
-      case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay(penaltiesEnabled).getAllDueDates
+      case fdm: FinancialDetailsModel =>
+        getChargesWithRemainingToPay(fdm.asChargeItems).filter(validChargeTypeCondition).flatMap(_.dueDate)
       case _ => List.empty[LocalDate]
     }.sortWith(_ isBefore _)
 

@@ -48,7 +48,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
     val overdueWarningMessageDunningLockFalse: String = messages("home.overdue.message.dunningLock.false")
     val expectedOverDuePaymentsText = s"${messages("home.overdue.date")} 31 January 2019"
     lazy val expectedAvailableCreditText: String => String = (amount: String) => messages("home.paymentHistoryRefund.availableCredit", amount)
-    val twoOverduePayments: String = messages("home.overdue.date.payment.count", "2")
+    val threeOverduePayments: String = messages("home.overdue.date.payment.count", "3")
   }
 
   override def beforeEach(): Unit = {
@@ -71,7 +71,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
                 documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
                   documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
                 financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
-                  transactionId = Some("testId"),
+                  mainTransaction = Some("4920"), transactionId = Some("testId"),
                   items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
@@ -113,19 +113,19 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
                   balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
                   documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId1", None, None, 1000.00, 0, LocalDate.of(2018, 3, 29),
                     documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
-                  financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, transactionId = Some("testId1"),
+                  financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, transactionId = Some("testId1"), mainTransaction = Some("4910"),
                     items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
                 FinancialDetailsModel(
                   balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
                   documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId2", Some("ITSA- POA 1"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
                     documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
-                  financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, mainType = Some("SA Payment on Account 1"), transactionId = Some("testId2"),
+                  financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, mainType = Some("SA Payment on Account 1"), transactionId = Some("testId2"), mainTransaction = Some("4920"),
                     items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString), dunningLock = Some("Stand over order"))))))),
                 FinancialDetailsModel(
                   balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
                   documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId3", Some("ITSA - POA 2"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
                     documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
-                  financialDetails = List(FinancialDetail(nextPaymentYear, mainType = Some("SA Payment on Account 2"),
+                  financialDetails = List(FinancialDetail(nextPaymentYear, mainType = Some("SA Payment on Account 2"), mainTransaction = Some("4930"),
                     transactionId = Some("testId3"),
                     items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))
               )))
@@ -137,7 +137,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
-            document.select("#payments-tile p:nth-child(2)").text shouldBe twoOverduePayments
+            document.select("#payments-tile p:nth-child(2)").text shouldBe threeOverduePayments
             document.select("#overdue-warning").text shouldBe s"! Warning $overdueWarningMessageDunningLockTrue"
           }
 
@@ -151,25 +151,25 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
                   balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
                   documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId1", None, None, 1000.00, 0, LocalDate.of(2018, 3, 29),
                     documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
-                  financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, transactionId = Some("testId1"),
+                  financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, transactionId = Some("testId1"), mainTransaction = Some("4910"),
                     items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
                 FinancialDetailsModel(
                   balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
                   documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId1", None, None, 1000.00, 0, LocalDate.of(2018, 3, 29),
                     paymentLotItem = Some("123"), paymentLot = Some("456"), documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
-                  financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, transactionId = Some("testId1"),
+                  financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, transactionId = Some("testId1"), mainTransaction = Some("4910"),
                     items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
                 FinancialDetailsModel(
                   balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
                   documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId2", Some("ITSA- POA 1"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
                     documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
-                  financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, mainType = Some("SA Payment on Account 1"), transactionId = Some("testId2"),
+                  financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, mainType = Some("SA Payment on Account 1"), transactionId = Some("testId2"),  mainTransaction = Some("4920"),
                     items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
                 FinancialDetailsModel(
                   balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
                   documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId3", Some("ITSA - POA 2"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
                     documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
-                  financialDetails = List(FinancialDetail(nextPaymentYear, mainType = Some("SA Payment on Account 2"),
+                  financialDetails = List(FinancialDetail(nextPaymentYear, mainType = Some("SA Payment on Account 2"), mainTransaction = Some("4930"),
                     transactionId = Some("testId3"),
                     items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))
               )))
@@ -181,7 +181,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
-            document.select("#payments-tile p:nth-child(2)").text shouldBe twoOverduePayments
+            document.select("#payments-tile p:nth-child(2)").text shouldBe threeOverduePayments
             document.select("#overdue-warning").text shouldBe s"! Warning $overdueWarningMessageDunningLockFalse"
           }
         }

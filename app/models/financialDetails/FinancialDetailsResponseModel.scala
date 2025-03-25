@@ -18,7 +18,6 @@ package models.financialDetails
 
 import enums._
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
-import models.financialDetails.ChargeType.penaltyMainTransactions
 import models.financialDetails.ReviewAndReconcileUtils.{isReviewAndReconcilePoaOne, isReviewAndReconcilePoaTwo}
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
@@ -78,20 +77,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       }
   }
 
-  def isValidPenalty(documentId: String, penaltiesEnabled: Boolean): Boolean = {
-    penaltiesEnabled &&
-      financialDetails.exists { fd =>
-        fd.transactionId.contains(documentId) && hasPenaltyMainTransaction(fd.mainTransaction)
-      }
-  }
-
-  private def hasPenaltyMainTransaction(mainTrans: Option[String]): Boolean = {
-    mainTrans match {
-      case Some(value) if penaltyMainTransactions.contains(value) => true
-      case _ => false
-    }
-  }
-
   // TODO: drop usage of DocumentDetailWithDueDate / and use ChargeItem/TransactionItem instead
   def findDocumentDetailByIdWithDueDate(id: String)(implicit dateService: DateServiceInterface): Option[DocumentDetailWithDueDate] = {
     documentDetails.find(_.transactionId == id)
@@ -125,18 +110,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       case (_, Poa1Charge | Poa2Charge | Poa1ReconciliationDebit | Poa2ReconciliationDebit | TRMNewCharge | TRMAmendCharge) => true
       case (_, _) => false
     }
-  }
-
-  def validChargesWithRemainingToPay(penaltiesEnabled: Boolean): FinancialDetailsModel = {
-    val filteredDocuments = documentDetails.filterNot(document => document.paymentLot.isDefined && document.paymentLotItem.isDefined)
-      .filter(documentDetail => documentDetail.documentDescription.isDefined && documentDetail.checkIfEitherChargeOrLpiHasRemainingToPay
-        && (validChargeTypeCondition(documentDetail) || isValidPenalty(documentDetail.transactionId, penaltiesEnabled))).filterNot(_.isPayeSelfAssessment)
-
-    FinancialDetailsModel(
-      balanceDetails,
-      filteredDocuments,
-      financialDetails.filter(financial => filteredDocuments.map(_.transactionId).contains(financial.transactionId.get))
-    )
   }
 
   def filterPayments(): FinancialDetailsModel = {

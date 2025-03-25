@@ -24,6 +24,7 @@ import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.MTDSupportingAgent
 import models.admin._
+import models.financialDetails.ChargeItem.{getChargesWithRemainingToPay, validChargeTypeCondition}
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
 import models.homePage._
 import models.incomeSourceDetails.TaxYear
@@ -117,7 +118,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
     for {
       unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails
-      paymentsDue = getDueDates(unpaidCharges, isEnabled(PenaltiesAndAppeals))
+      paymentsDue = getDueDates(unpaidCharges)
       dunningLockExists = hasDunningLock(unpaidCharges)
       outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
       outstandingChargeDueDates = getRelevantDates(outstandingChargesModel)
@@ -171,9 +172,10 @@ class HomeController @Inject()(val homeView: views.html.Home,
 }
   }
 
-  private def getDueDates(unpaidCharges: List[FinancialDetailsResponseModel], penaltiesEnabled: Boolean): List[LocalDate] =
+  private def getDueDates(unpaidCharges: List[FinancialDetailsResponseModel]): List[LocalDate] =
   (unpaidCharges collect {
-    case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay(penaltiesEnabled).getAllDueDates
+    case fdm: FinancialDetailsModel =>
+      getChargesWithRemainingToPay(fdm.asChargeItems).filter(validChargeTypeCondition).flatMap(_.dueDate)
   })
     .flatten
     .sortWith(_ isBefore _)

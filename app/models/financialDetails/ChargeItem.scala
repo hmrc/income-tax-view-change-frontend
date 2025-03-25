@@ -204,6 +204,22 @@ object ChargeItem {
     getDisplayDueDate(charge2).isAfter(getDisplayDueDate(charge1))
   )
 
+  private val validChargeTypes = List(PoaOneDebit, PoaTwoDebit, PoaOneReconciliationDebit, PoaTwoReconciliationDebit,
+    BalancingCharge, LateSubmissionPenalty, FirstLatePaymentPenalty, SecondLatePaymentPenalty, MfaDebitCharge)
+
+  val validChargeTypeCondition: ChargeItem => Boolean = chargeItem => {
+    (chargeItem.transactionType, chargeItem.subTransactionType) match {
+      case (_, Some(Nics2)) => true
+      case (x, _) if validChargeTypes.contains(x) => true
+      case (_, _) => false
+    }
+  }
+
+  def getChargesWithRemainingToPay(items: List[ChargeItem]): List[ChargeItem] = {
+    items.filterNot(item => item.paymentLot.isDefined && item.paymentLotItem.isDefined)
+      .filter(item => item.checkIfEitherChargeOrLpiHasRemainingToPay)
+  }
+
   def fromDocumentPair(documentDetail: DocumentDetail, financialDetails: List[FinancialDetail]): ChargeItem = {
 
     val financialDetail = financialDetails.find(_.transactionId.contains(documentDetail.transactionId)) match {

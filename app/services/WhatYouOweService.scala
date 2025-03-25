@@ -20,6 +20,7 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import connectors.{FinancialDetailsConnector, OutstandingChargesConnector}
+import models.financialDetails.ChargeItem.validChargeTypeCondition
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
@@ -39,17 +40,6 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   extends TransactionUtils with FeatureSwitching {
 
   implicit lazy val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
-
-  private val validChargeTypes = List(PoaOneDebit, PoaTwoDebit, PoaOneReconciliationDebit, PoaTwoReconciliationDebit,
-    BalancingCharge, LateSubmissionPenalty, FirstLatePaymentPenalty, SecondLatePaymentPenalty, MfaDebitCharge)
-
-  val validChargeTypeCondition: ChargeItem => Boolean = chargeItem => {
-    (chargeItem.transactionType, chargeItem.subTransactionType) match {
-      case (_, Some(Nics2)) => true
-      case (x, _) if validChargeTypes.contains(x) => true
-      case (_, _) => false
-    }
-  }
 
   def getWhatYouOweChargesList(isReviewAndReconcile: Boolean, isFilterCodedOutPoasEnabled: Boolean, isPenaltiesEnabled: Boolean)
                               (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
