@@ -21,7 +21,7 @@ import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import services.{DateService, DateServiceInterface}
-import testConstants.FinancialDetailsTestConstants.{currentYear, dueDateDueIn30Days, dueDateMoreThan30Days, dueDateOverdue, financialDetailsReviewAndReconcileInterest, fixedDate, id1040000123, id1040000124, id1040000125, id1040000126, noDunningLocks, oneDunningLock, outstandingChargesDueIn30Days, outstandingChargesDueInMoreThan30Days, outstandingChargesModel, testFinancialDetailsModelWithChargesOfSameType}
+import testConstants.FinancialDetailsTestConstants.{currentYear, dueDateDueIn30Days, dueDateMoreThan30Days, dueDateOverdue, financialDetailsReviewAndReconcileInterest, fixedDate, futureFixedDate, id1040000123, id1040000124, id1040000125, id1040000126, noDunningLocks, oneDunningLock, outstandingChargesDueIn30Days, outstandingChargesDueInMoreThan30Days, outstandingChargesModel, testFinancialDetailsModelWithChargesOfSameType}
 
 import java.time.LocalDate
 
@@ -377,6 +377,52 @@ trait ChargeConstants {
       dueDateForFinancialDetail = Some( LocalDate.parse("2023-12-14")),
     paymentLotItem = Some("paymentLotItem"),
        paymentLot = Some("paymentLot")
+  )
+
+  val poa1WithFutureDueDate = ChargeItem(
+    transactionId = id1040000123,
+    taxYear = TaxYear.forYearEnd(2030),
+    transactionType = PoaOneDebit,
+    subTransactionType = None,
+    outstandingAmount = 2500,
+    originalAmount = 4000,
+    documentDate = LocalDate.of(2018, 3, 29),
+    dueDate = Some(futureFixedDate),
+    latePaymentInterestAmount = None,
+    interestOutstandingAmount = None,
+    interestFromDate = None,
+    interestEndDate = None,
+    lpiWithDunningLock = None,
+    interestRate = None,
+    amountCodedOut = None,
+    dunningLock = false,
+    poaRelevantAmount = Some(2500),
+    dueDateForFinancialDetail = None,
+    paymentLotItem = Some("paymentLotItem"),
+    paymentLot = Some("paymentLot")
+  )
+
+  val poa2WithFutureDueDate = ChargeItem(
+    transactionId = id1040000123,
+    taxYear = TaxYear.forYearEnd(2030),
+    transactionType = PoaTwoDebit,
+    subTransactionType = None,
+    outstandingAmount = 3500,
+    originalAmount = 4000,
+    documentDate = LocalDate.of(2018, 3, 29),
+    dueDate = Some(futureFixedDate.plusYears(2)),
+    latePaymentInterestAmount = None,
+    interestOutstandingAmount = None,
+    interestFromDate = None,
+    interestEndDate = None,
+    lpiWithDunningLock = None,
+    interestRate = None,
+    amountCodedOut = None,
+    dunningLock = false,
+    poaRelevantAmount = Some(2500),
+    dueDateForFinancialDetail = None,
+    paymentLotItem = Some("paymentLotItem"),
+    paymentLot = Some("paymentLot")
   )
 
   val balancingChargeNics2 = ChargeItem(

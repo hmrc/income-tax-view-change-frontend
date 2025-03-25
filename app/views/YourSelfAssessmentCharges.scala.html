@@ -390,7 +390,7 @@
                                     }
                                     @if(ChargeItem.chargesDueAfter30DaysList(viewModel.whatYouOweChargesList).nonEmpty) {
                                         <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-                                            <a class="govuk-tabs__tab" href="#placeholder">
+                                            <a class="govuk-tabs__tab" href="#charges-due-later" id="charges-due-later">
                                             @getMessage("charges-to-pay-later")
                                             </a>
                                         </li>
@@ -456,7 +456,7 @@
                                     </div>
                                 }
 
-                                    <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="placeholder">
+                                    <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="charges-due-later">
                                         <table class="govuk-table">
                                             @tableHead("charges-due-later-table-head", estimatedInterestPresent = false)
                                             <tbody class="govuk-table__body">
