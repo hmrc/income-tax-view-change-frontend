@@ -17,3 +17,14 @@
 package models.incomeSourceDetails
 
 case class TaxYearRange(startYear: TaxYear, endYear: TaxYear)
+
+object TaxYearRange {
+
+  def apply(startYear: TaxYear, endYear: TaxYear): Either[Throwable, TaxYearRange] = {
+    if (startYear.startYear < endYear.startYear) {
+      Right(new TaxYearRange(startYear, endYear))
+    } else {
+      Left(new Exception(s"Invalid TaxYearRange: startYear ${startYear.startYear} must be before endYear ${endYear.startYear}"))
+    }
+  }
+}
