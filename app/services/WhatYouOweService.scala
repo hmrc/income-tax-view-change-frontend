@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import connectors.{FinancialDetailsConnector, OutstandingChargesConnector}
-import models.financialDetails.ChargeItem.validChargeTypeCondition
+import models.financialDetails.ChargeItem.isAKnownTypeOfCharge
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
@@ -122,7 +122,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           .getAllDocumentDetailsWithDueDates()
           .flatMap(dd => getChargeItem(financialDetails.financialDetails)(dd.documentDetail))
       })
-      .filter(validChargeTypeCondition)
+      .filter(isAKnownTypeOfCharge)
       .filterNot(_.subTransactionType.contains(Accepted))
       .filterNot(_.isReviewAndReconcileCharge && !isReviewAndReconcileEnabled)
       .filterNot(_.isPenalty && !isPenaltiesEnabled)

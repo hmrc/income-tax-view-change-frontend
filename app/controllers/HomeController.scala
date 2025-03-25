@@ -173,10 +173,10 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
   private def getDueDates(unpaidCharges: List[FinancialDetailsResponseModel], reviewAndReconcileEnabled: Boolean, isFilterOutCodedPoasEnabled: Boolean,
                           penaltiesEnabled: Boolean)(implicit user: MtdItUser[_]): List[LocalDate] = {
-    val x = unpaidCharges collect {
+    val chargesList = unpaidCharges collect {
       case fdm: FinancialDetailsModel => fdm
     }
-      whatYouOweService.getFilteredChargesList(x, reviewAndReconcileEnabled, isFilterOutCodedPoasEnabled, penaltiesEnabled).flatMap(_.dueDate)
+      whatYouOweService.getFilteredChargesList(chargesList, reviewAndReconcileEnabled, isFilterOutCodedPoasEnabled, penaltiesEnabled).flatMap(_.dueDate)
       .sortWith(_ isBefore _)
       .sortBy(_.toEpochDay())
   }

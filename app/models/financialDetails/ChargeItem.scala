@@ -207,7 +207,7 @@ object ChargeItem {
   private val validChargeTypes = List(PoaOneDebit, PoaTwoDebit, PoaOneReconciliationDebit, PoaTwoReconciliationDebit,
     BalancingCharge, LateSubmissionPenalty, FirstLatePaymentPenalty, SecondLatePaymentPenalty, MfaDebitCharge)
 
-  val validChargeTypeCondition: ChargeItem => Boolean = chargeItem => {
+  val isAKnownTypeOfCharge: ChargeItem => Boolean = chargeItem => {
     (chargeItem.transactionType, chargeItem.subTransactionType) match {
       case (_, Some(Nics2)) => true
       case (x, _) if validChargeTypes.contains(x) => true

@@ -328,11 +328,11 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
   "WhatYouOweService.validChargeType val" should {
 
     def testValidChargeType(chargeItems: List[ChargeItem], expectedResult: Boolean): Unit = {
-      assertResult(expected = expectedResult)(actual = chargeItems.forall(chargeItem => ChargeItem.validChargeTypeCondition(chargeItem)))
+      assertResult(expected = expectedResult)(actual = chargeItems.forall(chargeItem => ChargeItem.isAKnownTypeOfCharge(chargeItem)))
     }
 
     "validate Class 2 National Insurance charges" in {
-      ChargeItem.validChargeTypeCondition(chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Nics2)))
+      ChargeItem.isAKnownTypeOfCharge(chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Nics2)))
     }
 
     "validate Payment on Accounts" in {
@@ -360,7 +360,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
     }
 
     "not validate any MFA" in {
-      ChargeItem.validChargeTypeCondition(chargeItemModel(transactionType = MfaDebitCharge))
+      ChargeItem.isAKnownTypeOfCharge(chargeItemModel(transactionType = MfaDebitCharge))
     }
   }
 }
