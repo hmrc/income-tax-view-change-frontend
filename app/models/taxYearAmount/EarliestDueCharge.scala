@@ -18,7 +18,7 @@ package models.taxYearAmount
 
 import models.incomeSourceDetails.TaxYear
 
-case class TaxYearWithAmount(
+case class EarliestDueCharge(
                                      taxYear: TaxYear,
                                      amount: BigDecimal
                                    )

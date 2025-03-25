@@ -25,7 +25,7 @@ import models.financialDetails.{BalanceDetails, DocumentDetail, WhatYouOweCharge
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.outstandingCharges.OutstandingChargesModel
-import models.taxYearAmount.TaxYearWithAmount
+import models.taxYearAmount.EarliestDueCharge
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest
@@ -146,7 +146,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       dunningLock = dunningLock,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       creditAndRefundEnabled = true,
-      earliestTaxYearAndAmountByDueDate = Some(TaxYearWithAmount(TaxYear(2024, 2025), BigDecimal(100.00))),
+      earliestTaxYearAndAmountByDueDate = Some(EarliestDueCharge(TaxYear(2024, 2025), BigDecimal(100.00))),
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel)
     )
 
@@ -193,7 +193,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       dunningLock = dunningLock,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       creditAndRefundEnabled = true,
-      earliestTaxYearAndAmountByDueDate = Some(TaxYearWithAmount(TaxYear(2024, 2025), BigDecimal(100.00))),
+      earliestTaxYearAndAmountByDueDate = Some(EarliestDueCharge(TaxYear(2024, 2025), BigDecimal(100.00))),
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel))
     val html: HtmlFormat.Appendable = yourSelfAssessmentChargesView(
       viewModel

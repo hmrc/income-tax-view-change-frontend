@@ -29,7 +29,7 @@ import models.core.Nino
 import models.financialDetails.YourSelfAssessmentChargesViewModel
 import models.incomeSourceDetails.TaxYear
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
-import models.taxYearAmount.TaxYearWithAmount
+import models.taxYearAmount.EarliestDueCharge
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -68,9 +68,9 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
 
       val hasOverdueCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
       val hasAccruingInterestReviewAndReconcileCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isNotPaidAndNotOverduePoaReconciliationDebit()(dateService))
-      val earliestTaxYearAndAmount: Option[TaxYearWithAmount] =
+      val earliestTaxYearAndAmount: Option[EarliestDueCharge] =
         whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate
-          .map { case (year, amount) => TaxYearWithAmount(TaxYear.forYearEnd(year), amount) }
+          .map { case (year, amount) => EarliestDueCharge(TaxYear.forYearEnd(year), amount) }
 
       val viewModel: YourSelfAssessmentChargesViewModel = YourSelfAssessmentChargesViewModel(
         hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
