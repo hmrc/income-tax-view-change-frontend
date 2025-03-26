@@ -447,28 +447,28 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
 
         "display penalties if user has penalties" in new TestSetup(charges = whatYouOweDataWithPenalties, penaltiesEnabled = true) {
           val overduePoa = pageDocument.getElementById("due-0")
-          overduePoa.select("td").first().text() shouldBe fixedDate.minusMonths(3).toLongDate
+          overduePoa.select("td").first().text() shouldBe fixedDate.minusMonths(3).toLongDateShort
           overduePoa.select("td").get(1).text() shouldBe s"$poa2Text 1"
           overduePoa.select("td").get(2).text() shouldBe taxYearSummaryText("2022", "2023")
           overduePoa.select("td").get(3).text() shouldBe "£24.99"
           overduePoa.select("td").last().text() shouldBe "£75.99"
 
           val lateSubmissionPenalty = pageDocument.getElementById("due-1")
-          lateSubmissionPenalty.select("td").first().text() shouldBe fixedDate.minusMonths(2).toLongDate
+          lateSubmissionPenalty.select("td").first().text() shouldBe fixedDate.minusMonths(2).toLongDateShort
           lateSubmissionPenalty.select("td").get(1).text() shouldBe s"$lateSubmissionPenaltyText 2"
           lateSubmissionPenalty.select("td").get(2).text() shouldBe taxYearSummaryText("2022", "2023")
           lateSubmissionPenalty.select("td").get(3).text() shouldBe "£42.57"
           lateSubmissionPenalty.select("td").last().text() shouldBe "£100.01"
 
           val firstLatePaymentPenalty = pageDocument.getElementById("due-2")
-          firstLatePaymentPenalty.select("td").first().text() shouldBe fixedDate.minusDays(10).toLongDate
+          firstLatePaymentPenalty.select("td").first().text() shouldBe fixedDate.minusDays(10).toLongDateShort
           firstLatePaymentPenalty.select("td").get(1).text() shouldBe s"$firstLPPText 3"
           firstLatePaymentPenalty.select("td").get(2).text() shouldBe taxYearSummaryText("2022", "2023")
           firstLatePaymentPenalty.select("td").get(3).text() shouldBe "£42.50"
           firstLatePaymentPenalty.select("td").last().text() shouldBe "£50.00"
 
           val secondLatePaymentPenalty = pageDocument.getElementById("due-3")
-          secondLatePaymentPenalty.select("td").first().text() shouldBe fixedDate.minusDays(1).toLongDate
+          secondLatePaymentPenalty.select("td").first().text() shouldBe fixedDate.minusDays(1).toLongDateShort
           secondLatePaymentPenalty.select("td").get(1).text() shouldBe s"$secondLPPText 4"
           secondLatePaymentPenalty.select("td").get(2).text() shouldBe taxYearSummaryText("2022", "2023")
           secondLatePaymentPenalty.select("td").get(3).text() shouldBe "£24.05"
