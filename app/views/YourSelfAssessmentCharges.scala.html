@@ -308,18 +308,6 @@
                 target = Some("_blank"),
                 outerMessage = ".")
         </p>
-
-    @if(viewModel.claimToAdjustViewModel.adjustPaymentsOnAccountFSEnabled) {
-        @viewModel.claimToAdjustViewModel.claimToAdjustTaxYear.orElse(Some(viewModel.currentTaxYear)).map { taxYear =>
-            <p class="govuk-body" id="adjust-payments-on-account">
-                @link(
-                    link = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url,
-                    messageKey = getMessage("adjust-poa", taxYear.startYear.toString, taxYear.endYear.toString),
-                    id = Some("adjust-poa-link")
-                    )
-            </p>
-            }
-        }
     }
 
     @mainTemplate(
