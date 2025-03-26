@@ -16,15 +16,6 @@
 
 package models.incomeSourceDetails
 
-case class TaxYearRange(startYear: TaxYear, endYear: TaxYear)
-
-object TaxYearRange {
-
-  def apply(startYear: TaxYear, endYear: TaxYear): Option[TaxYearRange] = {
-    if (startYear.startYear <= endYear.startYear) {
-      Some(new TaxYearRange(startYear, endYear))
-    } else {
-      None
-    }
-  }
+case class TaxYearRange(startYear: TaxYear, endYear: TaxYear) {
+  require(startYear.startYear <= endYear.startYear, "Start tax year must be equal to or lower than end year")
 }

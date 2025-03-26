@@ -69,21 +69,14 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
       Future.successful(None)
     else {
       val (from, to) = (yearsOfMigration.min, yearsOfMigration.max)
-      val taxYearRange =  TaxYearRange(TaxYear.forYearEnd(from), TaxYear.forYearEnd(to))
 
-      taxYearRange match {
-        case None => Logger("application").error("Invalid TaxYearRange")
-        Future.successful(None)
-        case Some(taxRange) =>  Logger("application").debug(s"Getting financial details for TaxYears: ${from} - ${to}")
+      for {
+        response <- financialDetailsConnector.getFinancialDetailsByTaxYearRange(TaxYearRange(TaxYear.forYearEnd(from), TaxYear.forYearEnd(to)), user.nino)
 
-          for {
-            response <- financialDetailsConnector.getFinancialDetailsByTaxYearRange(taxRange, user.nino)
-
-          } yield response match {
-            case financialDetails: FinancialDetailsModel => Some(financialDetails)
-            case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Some(error)
-            case _ => None
-          }
+      } yield response match {
+        case financialDetails: FinancialDetailsModel => Some(financialDetails)
+        case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Some(error)
+        case _ => None
       }
 
     }

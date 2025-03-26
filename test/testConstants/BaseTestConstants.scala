@@ -101,7 +101,7 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testYear2017 = 2017
   val testTaxYear2017: TaxYear = TaxYear(2017, 2018)
   val testTaxYear2016: TaxYear = TaxYear(2016, 2017)
-  val testTaxYearRange2017: TaxYearRange = TaxYearRange(testTaxYear2017,testTaxYear2017).get
+  val testTaxYearRange2017: TaxYearRange = TaxYearRange(testTaxYear2017,testTaxYear2017)
   val testMigrationYear2019 = "2019"
   val testFrom = "2016-04-06"
   val testTo = "2017-04-05"
