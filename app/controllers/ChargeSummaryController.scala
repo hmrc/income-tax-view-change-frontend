@@ -93,7 +93,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
         case (year, response) if year == taxYear => response
       }
       matchingYear.headOption match {
-        case Some(fdmForTaxYear: FinancialDetailsModel) if fdmForTaxYear.documentDetailsExist(id) =>
+        case Some(fdmForTaxYear: FinancialDetailsModel) if fdmForTaxYear.asChargeItems.exists(_.transactionId == id) =>
           doShowChargeSummary(taxYear, id, isInterestCharge, fdmForTaxYear, paymentsFromAllYears, isAgent, origin, isMFADebit(fdmForTaxYear, id))
         case Some(_: FinancialDetailsModel) =>
           Future.successful(onError(s"Transaction id not found for tax year $taxYear", isAgent, showInternalServerError = false))
