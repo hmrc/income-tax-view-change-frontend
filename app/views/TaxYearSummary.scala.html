@@ -52,6 +52,7 @@
 
 @import implicitDateFormatter._
 @reviewAndReconcileEnabled = @{viewModel.reviewAndReconcileEnabled}
+@penaltiesEnabled = @{viewModel.penaltiesEnabled}
 @showForecastData = @{viewModel.showForecastData}
 
 
@@ -178,7 +179,7 @@
 }
 
 @getChargeSummaryMessage(chargeItem: TaxYearSummaryChargeItem) = @{
-    val chargeTypeKey = chargeItem.getChargeTypeKey(reviewAndReconcileEnabled)
+    val chargeTypeKey = chargeItem.getChargeTypeKey(reviewAndReconcileEnabled, penaltiesEnabled)
     val lpi = if (chargeItem.isLatePaymentInterest) "lpi." else ""
     messages(s"tax-year-summary.payments.${lpi}${chargeTypeKey}")
 }

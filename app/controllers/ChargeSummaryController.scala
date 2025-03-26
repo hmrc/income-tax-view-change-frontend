@@ -93,7 +93,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
         case (year, response) if year == taxYear => response
       }
       matchingYear.headOption match {
-        case Some(fdmForTaxYear: FinancialDetailsModel) if fdmForTaxYear.documentDetailsExist(id) =>
+        case Some(fdmForTaxYear: FinancialDetailsModel) if fdmForTaxYear.asChargeItems.exists(_.transactionId == id) =>
           doShowChargeSummary(taxYear, id, isInterestCharge, fdmForTaxYear, paymentsFromAllYears, isAgent, origin, isMFADebit(fdmForTaxYear, id))
         case Some(_: FinancialDetailsModel) =>
           Future.successful(onError(s"Transaction id not found for tax year $taxYear", isAgent, showInternalServerError = false))
@@ -188,6 +188,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
           chargeHistoryEnabled = isEnabled(ChargeHistory),
           latePaymentInterestCharge = isInterestCharge,
           reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
+          penaltiesEnabled = isEnabled(PenaltiesAndAppeals),
           reviewAndReconcileCredit = chargeHistoryService.getReviewAndReconcileCredit(chargeItem, chargeDetailsforTaxYear, isEnabled(ReviewAndReconcilePoa)),
           btaNavPartial = user.btaNavPartial,
           isAgent = isAgent,

@@ -76,6 +76,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       chargeHistoryEnabled = chargeHistoryEnabled,
       latePaymentInterestCharge = latePaymentInterestCharge,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
+      penaltiesEnabled = true,
       isAgent = isAgent,
       poaOneChargeUrl = "testUrl1",
       poaTwoChargeUrl = "testUrl2",
@@ -1215,7 +1216,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         latePaymentInterestCharge = false,
         reviewAndReconcileCredit = None,
         reviewAndReconcileEnabled = false,
-        isAgent = false,
+        penaltiesEnabled = true,
         poaOneChargeUrl = "",
         poaTwoChargeUrl = "",
         adjustmentHistory = defaultAdjustmentHistory)

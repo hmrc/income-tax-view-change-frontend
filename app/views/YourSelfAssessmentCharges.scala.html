@@ -150,17 +150,20 @@
     @paymentTypeEntry(chargeItem: ChargeItem, rowId: String, isInterest: Boolean,
         linkSuffix: String, index: Int) = @{
 
-    val chargeTypeKey = chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)
+    val chargeTypeKey = chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled, viewModel.penaltiesEnabled)
     val lpi = if(isInterest) "lpi." else ""
     val linkText = getMessage(s"${lpi}${chargeTypeKey}")
     val taxYear = chargeItem.taxYear
-    val linkHref = if(user.isAgent()) {
-
+    val linkHref = if (chargeItem.isLPP2) {
+        Call("GET", "penalties/income-tax") //to be implemented once we get Urls from Penalty Reform
+    } else {
+        if(user.isAgent()) {
         controllers.routes.ChargeSummaryController.showAgent(taxYear.endYear,
             chargeItem.transactionId, isInterest)
     } else {
         controllers.routes.ChargeSummaryController.show(taxYear.endYear,
             chargeItem.transactionId, isInterest, origin)
+    }
     }
     paymentTypeEntryHTML(linkText = linkText, linkHref = linkHref, taxYear = taxYear.endYear, rowId = rowId,
         linkSuffix: String, index + 1)
@@ -308,18 +311,6 @@
                 target = Some("_blank"),
                 outerMessage = ".")
         </p>
-
-    @if(viewModel.claimToAdjustViewModel.adjustPaymentsOnAccountFSEnabled) {
-        @viewModel.claimToAdjustViewModel.claimToAdjustTaxYear.orElse(Some(viewModel.currentTaxYear)).map { taxYear =>
-            <p class="govuk-body" id="adjust-payments-on-account">
-                @link(
-                    link = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url,
-                    messageKey = getMessage("adjust-poa", taxYear.startYear.toString, taxYear.endYear.toString),
-                    id = Some("adjust-poa-link")
-                    )
-            </p>
-            }
-        }
     }
 
     @mainTemplate(

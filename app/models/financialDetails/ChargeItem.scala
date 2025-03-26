@@ -144,6 +144,10 @@ case class ChargeItem (
 
   val isReviewAndReconcileCharge: Boolean = isPoaReconciliationCredit || isPoaReconciliationDebit
 
+  val isPenalty: Boolean = List(LateSubmissionPenalty, FirstLatePaymentPenalty, SecondLatePaymentPenalty).contains(this.transactionType)
+
+  val isLPP2: Boolean = transactionType == SecondLatePaymentPenalty
+
   def getInterestPaidStatus: String = {
     if (interestIsPaid) "paid"
     else if (interestIsPartPaid) "part-paid"
@@ -199,6 +203,17 @@ object ChargeItem {
   def sortedOverdueOrAccruingInterestChargeList(whatYouOweChargesList: WhatYouOweChargesList)(implicit dateServiceInterface: DateServiceInterface): List[ChargeItem] = overdueOrAccruingInterestChargeList(whatYouOweChargesList).sortWith((charge1, charge2) =>
     getDisplayDueDate(charge2).isAfter(getDisplayDueDate(charge1))
   )
+
+  private val validChargeTypes = List(PoaOneDebit, PoaTwoDebit, PoaOneReconciliationDebit, PoaTwoReconciliationDebit,
+    BalancingCharge, LateSubmissionPenalty, FirstLatePaymentPenalty, SecondLatePaymentPenalty, MfaDebitCharge)
+
+  val isAKnownTypeOfCharge: ChargeItem => Boolean = chargeItem => {
+    (chargeItem.transactionType, chargeItem.subTransactionType) match {
+      case (_, Some(Nics2)) => true
+      case (x, _) if validChargeTypes.contains(x) => true
+      case (_, _) => false
+    }
+  }
 
   def fromDocumentPair(documentDetail: DocumentDetail, financialDetails: List[FinancialDetail]): ChargeItem = {
 

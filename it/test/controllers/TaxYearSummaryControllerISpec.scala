@@ -225,7 +225,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 AuditStub.verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser(mtdUserRole, singleBusinessResponse),
                   messagesAPI, TaxYearSummaryViewModel(Some(CalculationSummary(liabilityCalculationModelSuccessfulExpected)),
                     financialDetailsDunningLockSuccess.toChargeItem.map(TaxYearSummaryChargeItem.fromChargeItem),
-                    allObligations, reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel)))
+                    allObligations, reviewAndReconcileEnabled = true, penaltiesEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel)))
               }
 
 
@@ -401,7 +401,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                       Some(CalculationSummary(liabilityCalculationModelSuccessful)),
                       emptyPaymentsList,
                       allObligations,
-                      reviewAndReconcileEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel
+                      reviewAndReconcileEnabled = true, penaltiesEnabled = true, showForecastData = true, ctaViewModel = emptyCTAModel
                     )))
                 }
                 "retrieving a calculation failed" in {
@@ -533,7 +533,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                     Some(CalculationSummary(liabilityCalculationModelSuccessful)),
 
                     auditDD.map(dd => ChargeItem.fromDocumentPair(dd.documentDetail, financialDetailsMFADebits.financialDetails)).map(TaxYearSummaryChargeItem.fromChargeItem), allObligations,
-                    reviewAndReconcileEnabled = true,
+                    reviewAndReconcileEnabled = true, penaltiesEnabled = true,
                     showForecastData = true, ctaViewModel = emptyCTAModel)))
 
                 allObligations.obligations.foreach {

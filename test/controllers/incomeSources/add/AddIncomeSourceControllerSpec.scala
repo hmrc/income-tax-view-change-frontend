@@ -60,12 +60,13 @@ class AddIncomeSourceControllerSpec extends MockAuthActions
             ukPlusForeignPropertyWithSoleTraderIncomeSource()
             setupMockSuccess(mtdRole)
             setupMockDeleteSession(true)
-            when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
+            when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any(), any()))
               .thenReturn(Success(AddIncomeSourcesViewModel(
                 soleTraderBusinesses = List(businessDetailsViewModel, businessDetailsViewModel2),
                 ukProperty = Some(ukPropertyDetailsViewModel),
                 foreignProperty = None,
-                ceasedBusinesses = Nil)))
+                ceasedBusinesses = Nil,
+                displayStartDate = true)))
 
             val result = action(fakeRequest)
             status(result) shouldBe Status.OK
@@ -79,8 +80,8 @@ class AddIncomeSourceControllerSpec extends MockAuthActions
             mockNoIncomeSources()
             setupMockSuccess(mtdRole)
             setupMockDeleteSession(true)
-            when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
-              .thenReturn(Success(AddIncomeSourcesViewModel(Nil, None, None, Nil)))
+            when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any(), any()))
+              .thenReturn(Success(AddIncomeSourcesViewModel(Nil, None, None, Nil, true)))
 
             val result = action(fakeRequest)
 
@@ -105,12 +106,13 @@ class AddIncomeSourceControllerSpec extends MockAuthActions
             setupMockSuccess(mtdRole)
 
             setupMockDeleteSession(true)
-            when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
+            when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any(), any()))
               .thenReturn(Success(AddIncomeSourcesViewModel(
                 soleTraderBusinesses = List(businessDetailsViewModel),
                 ukProperty = Some(ukPropertyDetailsViewModel),
                 foreignProperty = Some(foreignPropertyDetailsViewModel),
-                ceasedBusinesses = List(ceasedBusinessDetailsViewModel))))
+                ceasedBusinesses = List(ceasedBusinessDetailsViewModel),
+                displayStartDate = true)))
 
             val result = action(fakeRequest)
 
@@ -151,7 +153,7 @@ class AddIncomeSourceControllerSpec extends MockAuthActions
             mockUkPropertyWithSoleTraderBusiness()
             setupMockSuccess(mtdRole)
 
-            when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
+            when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any(), any()))
               .thenReturn(Failure(new Exception("UnknownError")))
 
             val result = action(fakeRequest)
