@@ -181,10 +181,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     this.documentDetails.filter(_.taxYear == taxYear)
   }
 
-  def documentDetailsWithTransactionId(id: String): Option[DocumentDetail] = {
-    documentDetails.find(_.transactionId == id)
-  }
-
   def documentDetailsWithLpiId(chargeReference: Option[String]): Option[DocumentDetail] = {
     documentDetails.find(_.latePaymentInterestId == chargeReference)
   }
