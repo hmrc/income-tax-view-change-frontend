@@ -76,28 +76,45 @@
         optId = Some("self-employment-h2"))
 
     @if(sources.soleTraderBusinesses.nonEmpty) {
+        @if(sources.displayStartDate) {
+            @govukTable(Table(
+                head = Some(List(
+                    HeadCell(
+                        content = Text(getMessage("tableHead.businessName")),
+                        attributes = Map("id" -> "table-head-business-name")),
+                    HeadCell(
+                        content = Text(getMessage("tableHead.dateStarted")),
+                        attributes = Map("id" -> "table-head-date-started"))
+                )),
+                rows = sources.soleTraderBusinesses.zipWithIndex.map { case (business, index) => Seq(
+                    TableRow(
+                        content = Text(business.tradingName.getOrElse(messageForEmptyField)),
+                        attributes = Map("id" -> s"table-row-trading-name-$index")),
 
-        @govukTable(Table(
-            head = Some(List(
+                    TableRow(
+                        content = Text(business.tradingStartDate.map(_.toLongDate).getOrElse(messageForEmptyField)),
+                        attributes = Map("id" -> s"table-row-trading-start-date-$index"))
+                )
+                },
+                attributes = Map("id" -> "sole-trader-businesses-table")
+            ))
+        } else {
+            @govukTable(Table(
+                head = Some(List(
                 HeadCell(
                     content = Text(getMessage("tableHead.businessName")),
                     attributes = Map("id" -> "table-head-business-name")),
-                HeadCell(
-                    content = Text(getMessage("tableHead.dateStarted")),
-                    attributes = Map("id" -> "table-head-date-started"))
-            )),
-            rows = sources.soleTraderBusinesses.zipWithIndex.map { case (business, index) => Seq(
+                )),
+                rows = sources.soleTraderBusinesses.zipWithIndex.map { case (business, index) => Seq(
                 TableRow(
                     content = Text(business.tradingName.getOrElse(messageForEmptyField)),
                     attributes = Map("id" -> s"table-row-trading-name-$index")),
+                    )
+                },
+                attributes = Map("id" -> "sole-trader-businesses-table")
+            ))
+        }
 
-                TableRow(
-                    content = Text(business.tradingStartDate.map(_.toLongDate).getOrElse(messageForEmptyField)),
-                    attributes = Map("id" -> s"table-row-trading-start-date-$index"))
-            )
-            },
-            attributes = Map("id" -> "sole-trader-businesses-table")
-        ))
     } else {
         @hr()
     }
@@ -116,21 +133,22 @@
         @p(id = Some("uk-property-p1")) {
             @getMessage("ukProperty.text")
         }
-
-        @govukTable(Table(
-            head = Some(List(
-                HeadCell(
-                    content = Text(getMessage("tableHead.dateStarted")),
-                    attributes = Map("id" -> "table-head-date-started-uk"))
-            )),
-            rows = Seq(Seq(
-                TableRow(
-                    content = Text(sources.ukProperty.flatMap(_.tradingStartDate.map(_.toLongDate)).getOrElse(messageForEmptyField)),
-                    attributes = Map("id" -> "table-row-trading-start-date-uk")
-                )
-            )),
-            attributes = Map("id" -> "uk-property-table")
-        ))
+        @if(sources.displayStartDate) {
+            @govukTable(Table(
+                head = Some(List(
+                    HeadCell(
+                        content = Text(getMessage("tableHead.dateStarted")),
+                        attributes = Map("id" -> "table-head-date-started-uk"))
+                )),
+                rows = Seq(Seq(
+                    TableRow(
+                        content = Text(sources.ukProperty.flatMap(_.tradingStartDate.map(_.toLongDate)).getOrElse(messageForEmptyField)),
+                        attributes = Map("id" -> "table-row-trading-start-date-uk")
+                    )
+                )),
+                attributes = Map("id" -> "uk-property-table")
+            ))
+        }
     } else {
         @hr()
 
@@ -149,20 +167,21 @@
         @p(id = Some("foreign-property-p1")) {
             @getMessage("foreignProperty.text")
         }
-
-        @govukTable(Table(
-            head = Some(List(
-                HeadCell(
-                    content = Text(getMessage("tableHead.dateStarted")),
-                    attributes = Map("id" -> "table-head-date-started-foreign"))
-            )),
-            rows = Seq(Seq(
-                TableRow(
-                    content = Text(sources.foreignProperty.flatMap(_.tradingStartDate.map(_.toLongDate)).getOrElse(messageForEmptyField)),
-                    attributes = Map("id" -> "table-row-trading-start-date-foreign"))
-            )),
-            attributes = Map("id" -> "foreign-property-table")
-        ))
+        @if(sources.displayStartDate) {
+            @govukTable(Table(
+                head = Some(List(
+                    HeadCell(
+                        content = Text(getMessage("tableHead.dateStarted")),
+                        attributes = Map("id" -> "table-head-date-started-foreign"))
+                )),
+                rows = Seq(Seq(
+                    TableRow(
+                        content = Text(sources.foreignProperty.flatMap(_.tradingStartDate.map(_.toLongDate)).getOrElse(messageForEmptyField)),
+                        attributes = Map("id" -> "table-row-trading-start-date-foreign"))
+                )),
+                attributes = Map("id" -> "foreign-property-table")
+            ))
+        }
     } else {
         @hr()
 
@@ -175,7 +194,7 @@
 
     @if(sources.ceasedBusinesses.nonEmpty) {
         @h2(msg = getMessage("ceasedBusinesses.heading"),optId = Some("ceased-businesses-heading"))
-        @ceasedBusinesses(sources.ceasedBusinesses)
+        @ceasedBusinesses(sources.ceasedBusinesses, sources.displayStartDate)
     }
 
     <br>

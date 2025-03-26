@@ -32,7 +32,7 @@ class AddIncomeSourcesViewSpec extends TestSupport {
   val backUrlAgent: String = controllers.routes.HomeController.showAgent.url
 
 
-  val viewModelMax: AddIncomeSourcesViewModel = AddIncomeSourcesViewModel(
+  def viewModelMax(displayStartDate: Boolean = true): AddIncomeSourcesViewModel = AddIncomeSourcesViewModel(
     soleTraderBusinesses = List(BusinessDetailsViewModel(Some(testTradeName), Some(testStartDate))),
     ukProperty = Some(PropertyDetailsViewModel(Some(testStartDate))),
     foreignProperty = Some(PropertyDetailsViewModel(Some(testStartDate))),
@@ -40,7 +40,8 @@ class AddIncomeSourcesViewSpec extends TestSupport {
       CeasedBusinessDetailsViewModel(Some(testTradeName), SelfEmployment, Some(testStartDate3), testCessation.date.get),
       CeasedBusinessDetailsViewModel(None, UkProperty, Some(testStartDate3), testCessation2.date.get),
       CeasedBusinessDetailsViewModel(None, ForeignProperty, Some(testStartDate3), testCessation3.date.get)
-    )
+    ),
+    displayStartDate = displayStartDate
   )
 
   val viewModelMin: AddIncomeSourcesViewModel = AddIncomeSourcesViewModel(
@@ -50,7 +51,8 @@ class AddIncomeSourcesViewSpec extends TestSupport {
     ceasedBusinesses = List(
       CeasedBusinessDetailsViewModel(None, SelfEmployment, None, testCessation.date.get),
       CeasedBusinessDetailsViewModel(None, UkProperty, None, testCessation2.date.get)
-    )
+    ),
+    displayStartDate = true
   )
 
 
@@ -66,17 +68,17 @@ class AddIncomeSourcesViewSpec extends TestSupport {
 
   "AddIncomeSources - Individual" should {
     "display data from optional fields" when {
-      "Sole trader trading name and trading start date are present in the response" in new Setup(viewModelMax, isAgent = false) {
+      "Sole trader trading name and trading start date are present in the response" in new Setup(viewModelMax(), isAgent = false) {
         document.getElementById("table-row-trading-name-0").text shouldBe testTradeName
         document.getElementById("table-row-trading-start-date-0").text shouldBe testStartDateFormatted
       }
-      "UK property trading start date is present in the response" in new Setup(viewModelMax, isAgent = false) {
+      "UK property trading start date is present in the response" in new Setup(viewModelMax(), isAgent = false) {
         document.getElementById("table-row-trading-start-date-uk").text shouldBe testStartDateFormatted
       }
-      "Foreign property trading start date is present in the response" in new Setup(viewModelMax, isAgent = false) {
+      "Foreign property trading start date is present in the response" in new Setup(viewModelMax(), isAgent = false) {
         document.getElementById("table-row-trading-start-date-foreign").text shouldBe testStartDateFormatted
       }
-      "Ceased business trading name and trading start date are present in the response" in new Setup(viewModelMax, isAgent = false) {
+      "Ceased business trading name and trading start date are present in the response" in new Setup(viewModelMax(), isAgent = false) {
 
         document.getElementById("ceased-business-table-row-trading-name-0").text shouldBe columnOneForeignProperty
         document.getElementById("ceased-business-table-row-date-started-0").text shouldBe testStartDate3Formatted
@@ -112,6 +114,14 @@ class AddIncomeSourcesViewSpec extends TestSupport {
         document.getElementById("ceased-business-table-row-date-started-1").text shouldBe testUnknownValue
         document.getElementById("ceased-business-table-row-date-ended-1").text shouldBe testCessationDate
 
+      }
+    }
+
+    "not display trading start date" when {
+      "displayStartDate is set to false" in new Setup(viewModelMax(false), isAgent = false) {
+        Option(document.getElementById("table-row-trading-start-date-0")) shouldBe None
+        Option(document.getElementById("table-row-trading-start-date-foreign")) shouldBe None
+        Option(document.getElementById("table-row-trading-start-date-uk")) shouldBe None
       }
     }
   }

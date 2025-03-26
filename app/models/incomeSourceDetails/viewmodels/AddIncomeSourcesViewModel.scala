@@ -21,7 +21,8 @@ import java.time.LocalDate
 case class AddIncomeSourcesViewModel(soleTraderBusinesses: List[BusinessDetailsViewModel],
                                      ukProperty: Option[PropertyDetailsViewModel],
                                      foreignProperty: Option[PropertyDetailsViewModel],
-                                     ceasedBusinesses: List[CeasedBusinessDetailsViewModel])
+                                     ceasedBusinesses: List[CeasedBusinessDetailsViewModel],
+                                     displayStartDate: Boolean)
 
 case class BusinessDetailsViewModel(tradingName: Option[String], tradingStartDate: Option[LocalDate])
 
