@@ -82,7 +82,7 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
       .find { charge =>
         targetChargeItem.transactionType match {
           case PoaOneDebit => reviewAndReconcileEnabled && charge.transactionType == PoaOneReconciliationCredit
-          case PoaTwoDebit => reviewAndReconcileEnabled && charge.transactionType == PoaTwoReconciliationDebit
+          case PoaTwoDebit => reviewAndReconcileEnabled && charge.transactionType == PoaTwoReconciliationCredit
           case _ => false
         }
       }
