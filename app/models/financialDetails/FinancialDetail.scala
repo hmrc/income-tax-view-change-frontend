@@ -55,9 +55,9 @@ case class FinancialDetail(taxYear: String,
     }
   }
 
-  val isReconcilePoaOneCredit: Boolean = mainTransaction.contains(poaOneReviewAndReconcileCredit)
+  //val isReconcilePoaOneCredit: Boolean = mainTransaction.contains(poaOneReviewAndReconcileCredit)
 
-  val isReconcilePoaTwoCredit: Boolean = mainTransaction.contains(poaTwoReviewAndReconcileCredit)
+  //val isReconcilePoaTwoCredit: Boolean = mainTransaction.contains(poaTwoReviewAndReconcileCredit)
 
   lazy private val interestLockReasons = Set(
     "Clerical Interest Signal",
