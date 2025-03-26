@@ -947,7 +947,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
           claimToAdjustViewModel = Some(ctaViewModel(true))
         ) {
           val adjustLink = pageDocument.getElementById("adjust-poa-link")
-          adjustLink.text shouldBe "Adjust your payments on account for the 2024 to 2025 tax year"
+          adjustLink.text shouldBe "Adjust payments on account for the 2024 to 2025 tax year"
           adjustLink.attr("href") shouldBe claimToAdjustLink(false)
         }
       }
