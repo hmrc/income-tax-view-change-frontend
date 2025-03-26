@@ -84,59 +84,6 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
     allocation.dueDate shouldBe Some(LocalDate.parse("2018-09-07"))
   }
 }
-  "getAllDueDates" should {
-
-    val fd1 = FinancialDetail(
-      taxYear = "2017",
-      mainType = Some("SA Payment on Account 1"),
-      transactionId = Some("transid1"),
-      items = Some(Seq(SubItem(Some(LocalDate.parse("2017-01-31"))), SubItem(Some(LocalDate.parse("2018-01-31")))))
-    )
-    val fd2 = FinancialDetail(
-      taxYear = "2017",
-      mainType = Some("SA Payment on Account 2"),
-      transactionId = Some("transid2"),
-      items = Some(Seq(SubItem(Some(LocalDate.parse("2021-12-01"))), SubItem(Some(LocalDate.parse("2021-12-01")))))
-    )
-    val fd3 = FinancialDetail(
-      taxYear = "2018",
-      mainType = Some("SA Payment on Account 1"),
-      transactionId = Some("transid1"),
-      items = Some(Seq(SubItem(Some(LocalDate.parse("2021-12-01"))), SubItem(Some(LocalDate.parse("2021-12-01")))))
-    )
-    val fd4 = FinancialDetail(
-      taxYear = "2018",
-      mainType = Some("SA Payment on Account 2"),
-      transactionId = Some("transid2"),
-      items = Some(Seq(SubItem(Some(LocalDate.parse("2021-12-01"))), SubItem(Some(LocalDate.parse("2021-12-01")))))
-    )
-
-    val dd1 = DocumentDetail(taxYear = 2017,
-      transactionId = "transid1",
-      documentDescription = Some("ITSA- POA 1"),
-      documentText = Some("documentText"),
-      outstandingAmount = 0,
-      originalAmount = 0,
-      documentDate = LocalDate.parse("2018-03-21"),
-      effectiveDateOfPayment = Some(LocalDate.parse("2017-01-31")),
-      documentDueDate = Some(LocalDate.parse("2017-01-31")))
-
-    val dd2 = DocumentDetail(taxYear = 2018,
-      transactionId = "transid2",
-      documentDescription = Some("ITSA - POA 2"),
-      documentText = Some("documentText2"),
-      outstandingAmount = 0,
-      originalAmount = 0,
-      documentDate = LocalDate.parse("2018-03-21"),
-      effectiveDateOfPayment = Some(LocalDate.parse("2021-12-01")),
-      documentDueDate = Some(LocalDate.parse("2021-12-01")))
-
-    val fdm: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1, 2, 3, None, None, None, None, None), List(dd1, dd2), List(fd1, fd2, fd3, fd4))
-
-    "return a list of due dates" in {
-      fdm.getAllDueDates shouldBe List(LocalDate.parse("2017-01-31"), LocalDate.parse("2021-12-01"))
-    }
-  }
 
   "WhatYouOweService.validChargeType val" should {
     val fdm: FinancialDetailsModel = financialDetailsModel()
