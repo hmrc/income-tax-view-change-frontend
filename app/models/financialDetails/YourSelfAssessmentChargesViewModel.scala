@@ -29,6 +29,7 @@ case class YourSelfAssessmentChargesViewModel(hasOverdueOrAccruingInterestCharge
                                               backUrl: String,
                                               dunningLock: Boolean,
                                               reviewAndReconcileEnabled: Boolean,
+                                              penaltiesEnabled: Boolean,
                                               creditAndRefundEnabled: Boolean,
                                               earliestTaxYearAndAmountByDueDate: Option[EarliestDueCharge],
                                               claimToAdjustViewModel: WYOClaimToAdjustViewModel)(implicit val dateService: DateServiceInterface) {

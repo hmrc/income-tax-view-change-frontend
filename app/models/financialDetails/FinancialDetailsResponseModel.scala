@@ -112,18 +112,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     }
   }
 
-  def validChargesWithRemainingToPay: FinancialDetailsModel = {
-    val filteredDocuments = documentDetails.filterNot(document => document.paymentLot.isDefined && document.paymentLotItem.isDefined)
-      .filter(documentDetail => documentDetail.documentDescription.isDefined && documentDetail.checkIfEitherChargeOrLpiHasRemainingToPay
-        && validChargeTypeCondition(documentDetail)).filterNot(_.isPayeSelfAssessment)
-
-    FinancialDetailsModel(
-      balanceDetails,
-      filteredDocuments,
-      financialDetails.filter(financial => filteredDocuments.map(_.transactionId).contains(financial.transactionId.get))
-    )
-  }
-
   def filterPayments(): FinancialDetailsModel = {
     val filteredDocuments = documentDetails.filter(document => document.paymentLot.isDefined && document.paymentLotItem.isDefined)
     FinancialDetailsModel(

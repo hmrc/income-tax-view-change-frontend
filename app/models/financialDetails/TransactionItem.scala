@@ -47,7 +47,7 @@ trait TransactionItem {
   }
 
   // TODO: duplicate logic, in scope of => https://jira.tools.tax.service.gov.uk/browse/MISUV-8557
-  def getChargeTypeKey(reviewAndReconcileEnabled: Boolean = false): String =
+  def getChargeTypeKey(reviewAndReconcileEnabled: Boolean = false, penaltiesEnabled: Boolean = false): String =
     (transactionType, subTransactionType) match {
       case (PoaOneDebit, _) => "paymentOnAccount1.text"
       case (PoaTwoDebit, _) => "paymentOnAccount2.text"
@@ -60,6 +60,9 @@ trait TransactionItem {
       case (PoaTwoReconciliationDebit, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa2.text"
       case (PoaOneReconciliationCredit, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa1Credit.text"
       case (PoaTwoReconciliationCredit, _) if reviewAndReconcileEnabled => "reviewAndReconcilePoa2Credit.text"
+      case (LateSubmissionPenalty, _) if penaltiesEnabled => "lateSubmissionPenalty.text"
+      case (FirstLatePaymentPenalty, _) if penaltiesEnabled => "firstLatePaymentPenalty.text"
+      case (SecondLatePaymentPenalty, _) if penaltiesEnabled => "secondLatePaymentPenalty.text"
       case error =>
         Logger("application").error(s"Missing or non-matching charge type: $error found")
         "unknownCharge"

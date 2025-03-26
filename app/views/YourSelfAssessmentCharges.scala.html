@@ -150,17 +150,20 @@
     @paymentTypeEntry(chargeItem: ChargeItem, rowId: String, isInterest: Boolean,
         linkSuffix: String, index: Int) = @{
 
-    val chargeTypeKey = chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)
+    val chargeTypeKey = chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled, viewModel.penaltiesEnabled)
     val lpi = if(isInterest) "lpi." else ""
     val linkText = getMessage(s"${lpi}${chargeTypeKey}")
     val taxYear = chargeItem.taxYear
-    val linkHref = if(user.isAgent()) {
-
+    val linkHref = if (chargeItem.isLPP2) {
+        Call("GET", "penalties/income-tax") //to be implemented once we get Urls from Penalty Reform
+    } else {
+        if(user.isAgent()) {
         controllers.routes.ChargeSummaryController.showAgent(taxYear.endYear,
             chargeItem.transactionId, isInterest)
     } else {
         controllers.routes.ChargeSummaryController.show(taxYear.endYear,
             chargeItem.transactionId, isInterest, origin)
+    }
     }
     paymentTypeEntryHTML(linkText = linkText, linkHref = linkHref, taxYear = taxYear.endYear, rowId = rowId,
         linkSuffix: String, index + 1)

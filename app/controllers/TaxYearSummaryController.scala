@@ -94,6 +94,7 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
           chargeItems,
           obligations,
           reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
+          penaltiesEnabled = isEnabled(PenaltiesAndAppeals),
           showForecastData = showForecast(calculationSummary),
           ctaViewModel = claimToAdjustViewModel
         )
@@ -121,6 +122,7 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
           chargeItems,
           obligations,
           isEnabled(ReviewAndReconcilePoa),
+          isEnabled(PenaltiesAndAppeals),
           showForecastData = true,
           claimToAdjustViewModel)
 
