@@ -36,6 +36,31 @@ case class YourSelfAssessmentChargesViewModel(hasOverdueOrAccruingInterestCharge
   lazy val currentTaxYear: TaxYear = dateService.getCurrentTaxYear
 
   lazy val currentDate: LocalDate = dateService.getCurrentDate
+
+  def overdueChargesWithIndex: List[(ChargeItem, Int)] = {
+    ChargeItem.sortedOverdueOrAccruingInterestChargeList(whatYouOweChargesList).zipWithIndex
+  }
+
+  def chargesDueWithin30DaysWithIndex: List[(ChargeItem, Int)] = {
+    ChargeItem.chargesDueWithin30DaysList(whatYouOweChargesList).zipWithIndex
+  }
+
+  def chargesDueAfter30DaysWithIndex: List[(ChargeItem, Int)] = {
+    ChargeItem.chargesDueAfter30DaysList(whatYouOweChargesList).zipWithIndex
+  }
+
+  def chargesDueAfter30DaysListNonEmpty: Boolean = {
+    ChargeItem.chargesDueAfter30DaysList(whatYouOweChargesList).nonEmpty
+  }
+
+  def chargesDueWithin30DaysListNonEmpty: Boolean = {
+    ChargeItem.chargesDueWithin30DaysList(whatYouOweChargesList).nonEmpty
+  }
+
+  def overdueAccruingInterestOrOutstandingChargesListNonEmpty: Boolean = {
+    ChargeItem.overdueOrAccruingInterestChargeList(whatYouOweChargesList).nonEmpty ||
+      whatYouOweChargesList.overdueOutstandingCharges.nonEmpty
+  }
 }
 
 object YourSelfAssessmentChargesViewModel {

@@ -215,7 +215,7 @@
     @tableRowWithInterest(rowId: String, chargeItem: ChargeItem, index: Int, id: String) = {
         <tr class="govuk-table__row" id="@rowId">
             <td class="govuk-table__cell">
-                @getDisplayDueDate(chargeItem).toLongDate.toNonBreaking
+                @getDisplayDueDate(chargeItem).toLongDateShort.toNonBreaking
             </td>
             <td class="govuk-table__cell">
                 @getPaymentTypeEntry(chargeItem = chargeItem, isOverduePayment = true,
@@ -245,7 +245,7 @@
 @tableRowWithoutInterest(rowId: String, chargeItem: ChargeItem, index: Int, id: String) = {
 <tr class="govuk-table__row" id="@rowId">
     <td class="govuk-table__cell">
-        @getDisplayDueDate(chargeItem).toLongDate.toNonBreaking
+        @getDisplayDueDate(chargeItem).toLongDateShort.toNonBreaking
     </td>
     <td class="govuk-table__cell">
         @getPaymentTypeEntry(chargeItem = chargeItem, isOverduePayment = false,
@@ -379,21 +379,21 @@
                                     Contents
                                 </h2>
                                 <ul class="govuk-tabs__list">
-                                    @if(ChargeItem.overdueOrAccruingInterestChargeList(viewModel.whatYouOweChargesList).nonEmpty || viewModel.whatYouOweChargesList.overdueOutstandingCharges.nonEmpty) {
+                                    @if(viewModel.overdueAccruingInterestOrOutstandingChargesListNonEmpty) {
                                         <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
                                             <a class="govuk-tabs__tab" href="#charges-due-now">
                                             @getMessage("charges-due-now")
                                             </a>
                                         </li>
                                     }
-                                    @if(viewModel.whatYouOweChargesList.chargesDueWithin30DaysList.nonEmpty) {
+                                    @if(viewModel.chargesDueWithin30DaysListNonEmpty) {
                                     <li class="govuk-tabs__list-item">
                                         <a class="govuk-tabs__tab" href="#charges-due-in-30-days">
                                             @getMessage("charges-due-in-30-days")
                                         </a>
                                     </li>
                                     }
-                                    @if(ChargeItem.chargesDueAfter30DaysList(viewModel.whatYouOweChargesList).nonEmpty) {
+                                    @if(viewModel.chargesDueAfter30DaysListNonEmpty) {
                                         <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
                                             <a class="govuk-tabs__tab" href="#charges-due-later" id="charges-due-later">
                                             @getMessage("charges-to-pay-later")
@@ -402,12 +402,12 @@
                                     }
                                 </ul>
 
-                                @if(viewModel.whatYouOweChargesList.chargesDueWithin30DaysList.nonEmpty) {
+                                @if(viewModel.chargesDueWithin30DaysListNonEmpty) {
                                 <div class="govuk-tabs__panel" id="charges-due-in-30-days">
                                     <table class="govuk-table">
                                         @tableHead("due-in-30-days-payments-table-head", false)
                                         <tbody class="govuk-table__body">
-                                        @for((charge, index) <- ChargeItem.chargesDueWithin30DaysList(viewModel.whatYouOweChargesList).zipWithIndex) {
+                                        @for((charge, index) <- viewModel.chargesDueWithin30DaysWithIndex) {
                                         @tableRowWithoutInterest(s"due-30-days-$index", charge, index, "taxYearSummary-link")
                                         }
                                         <tr class="govuk-table__header">
@@ -453,7 +453,7 @@
                                                 @if(viewModel.whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
                                                     <tr class="govuk-table__row" id="balancing-charge-type-0">
                                                         <td class="govuk-table__cell">@{
-                                                            viewModel.whatYouOweChargesList.getRelevantDueDate.toLongDate
+                                                            viewModel.whatYouOweChargesList.getRelevantDueDate.toLongDateShort
                                                         }</td>
                                                         <td class="govuk-table__cell">
                                                             @p(id = Some("balancing-charge"))(Html(getMessage("balancingCharge.text")))
@@ -473,7 +473,7 @@
                                                         }</td>
                                                     </tr>
                                                 }
-                                                @for((charge, index) <- ChargeItem.sortedOverdueOrAccruingInterestChargeList(viewModel.whatYouOweChargesList).zipWithIndex) {
+                                                @for((charge, index) <- viewModel.overdueChargesWithIndex) {
                                                     @tableRowWithInterest(s"due-$index", charge, index, "taxYearSummary-link")
                                                 }
                                                 <tr class="govuk-table__header">
@@ -513,7 +513,7 @@
                                 <table class="govuk-table">
                                     @tableHead("charges-due-later-table-head", showInterest = false)
                                     <tbody class="govuk-table__body">
-                                    @for((charge, index) <- ChargeItem.chargesDueAfter30DaysList(viewModel.whatYouOweChargesList).zipWithIndex) {
+                                    @for((charge, index) <- viewModel.chargesDueAfter30DaysWithIndex) {
                                         @tableRowWithoutInterest(s"due-$index", charge, index, "taxYearSummary-link")
                                     }
                                     </tbody>

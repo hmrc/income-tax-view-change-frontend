@@ -420,7 +420,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
           tableHead.select("th").get(4).text() shouldBe amountDue
 
           val firstChargeRow = pageDocument.getElementById("balancing-charge-type-0")
-          firstChargeRow.select("td").first().text() shouldBe fixedDate.minusDays(30).toLongDate
+          firstChargeRow.select("td").first().text() shouldBe fixedDate.minusDays(30).toLongDateShort
           firstChargeRow.select("td").get(1).text() shouldBe preMTDRemainingBalance
           firstChargeRow.select("td").get(2).text() shouldBe preMtdPayments(
             (fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
@@ -428,14 +428,14 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
           firstChargeRow.select("td").last().text() shouldBe "£123,456.67"
 
           val secondChargeRow = pageDocument.getElementById("due-0")
-          secondChargeRow.select("td").first().text() shouldBe fixedDate.minusDays(10).toLongDate
+          secondChargeRow.select("td").first().text() shouldBe fixedDate.minusDays(10).toLongDateShort
           secondChargeRow.select("td").get(1).text() shouldBe s"$poa1Text 1"
           secondChargeRow.select("td").get(2).text() shouldBe taxYearSummaryText("2022", "2023")
           secondChargeRow.select("td").get(3).text() shouldBe "£100.00"
           secondChargeRow.select("td").last().text() shouldBe "£50.00"
 
           val thirdChargeRow = pageDocument.getElementById("due-1")
-          thirdChargeRow.select("td").first().text() shouldBe fixedDate.minusDays(1).toLongDate
+          thirdChargeRow.select("td").first().text() shouldBe fixedDate.minusDays(1).toLongDateShort
           thirdChargeRow.select("td").get(1).text() shouldBe s"$poa2Text 2"
           thirdChargeRow.select("td").get(2).text() shouldBe taxYearSummaryText("2022", "2023")
           thirdChargeRow.select("td").get(3).text() shouldBe "£100.00"
@@ -594,7 +594,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
           overdueTableHeader.select("th").last().text() shouldBe amountDue
 
           val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(2)
-          overduePaymentsTableRow1.select("td").first().text() shouldBe fixedDate.minusDays(10).toLongDate
+          overduePaymentsTableRow1.select("td").first().text() shouldBe fixedDate.minusDays(10).toLongDateShort
           overduePaymentsTableRow1.select("td").get(1).text() shouldBe poa1Text + s" 1"
           overduePaymentsTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
           overduePaymentsTableRow1.select("td").last().text() shouldBe "£50.00"
@@ -628,7 +628,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
         }
         "have overdue payments with POA2 charge type with hyperlink " in new TestSetup(charges = whatYouOweDataWithOverdueLPI(List(None, None))) {
           val overduePaymentsTableRow2: Element = pageDocument.select("tr").get(3)
-          overduePaymentsTableRow2.select("td").first().text() shouldBe fixedDate.minusDays(1).toLongDate
+          overduePaymentsTableRow2.select("td").first().text() shouldBe fixedDate.minusDays(1).toLongDateShort
           overduePaymentsTableRow2.select("td").get(1).text() shouldBe poa2Text + s" 2"
           overduePaymentsTableRow2.select("td").last().text() shouldBe "£75.00"
 
@@ -657,13 +657,13 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
           tableHead.select("th").get(3).text() shouldBe amountDue
 
           val chargesDueLaterTableRow1: Element = pageDocument.select("tr").get(1)
-          chargesDueLaterTableRow1.select("td").first().text() shouldBe futureFixedDate.toLongDate
+          chargesDueLaterTableRow1.select("td").first().text() shouldBe futureFixedDate.toLongDateShort
           chargesDueLaterTableRow1.select("td").get(1).text() shouldBe poa1Text + s" 1"
           chargesDueLaterTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((futureFixedDate.getYear - 1).toString, futureFixedDate.getYear.toString())
           chargesDueLaterTableRow1.select("td").last().text() shouldBe "£2,500.00"
 
           val chargesDueLaterTableRow2: Element = pageDocument.select("tr").get(2)
-          chargesDueLaterTableRow2.select("td").first().text() shouldBe futureFixedDate.plusYears(2).toLongDate
+          chargesDueLaterTableRow2.select("td").first().text() shouldBe futureFixedDate.plusYears(2).toLongDateShort
           chargesDueLaterTableRow2.select("td").get(1).text() shouldBe poa2Text + s" 2"
           chargesDueLaterTableRow2.select("td").get(2).text() shouldBe taxYearSummaryText((futureFixedDate.getYear - 1).toString, futureFixedDate.getYear.toString())
           chargesDueLaterTableRow2.select("td").last().text() shouldBe "£3,500.00"
@@ -955,7 +955,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
 
         val chargeRow = pageDocument.getElementById("due-30-days-0")
         chargeRow should not be null
-        chargeRow.select("td").get(0).text() should include("5 December 2023")
+        chargeRow.select("td").get(0).text() should include("5 Dec 2023")
         chargeRow.select("td").get(1).text() should include(poa1Text)
         chargeRow.select("td").get(2).text() should include("Tax year")
         chargeRow.select("td").get(3).text() shouldBe "£50.00"
