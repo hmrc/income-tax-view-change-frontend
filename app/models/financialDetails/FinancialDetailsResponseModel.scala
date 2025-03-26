@@ -165,16 +165,8 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       financialDetails ++ financialDetailsModel.financialDetails)
   }
 
-  def documentDetailsExist(id: String): Boolean = {
-    documentDetails.exists(_.transactionId == id)
-  }
-
   def documentDetailsFilterByTaxYear(taxYear: Int): List[DocumentDetail] = {
     this.documentDetails.filter(_.taxYear == taxYear)
-  }
-
-  def documentDetailsWithTransactionId(id: String): Option[DocumentDetail] = {
-    documentDetails.find(_.transactionId == id)
   }
 
   def documentDetailsWithLpiId(chargeReference: Option[String]): Option[DocumentDetail] = {
