@@ -16,6 +16,7 @@
 
 package models
 
+import models.extensions.FinancialDetailsModelExtension
 import models.financialDetails._
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.{JsSuccess, Json}
