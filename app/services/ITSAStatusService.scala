@@ -36,7 +36,7 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
                                  (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[List[ITSAStatusResponseModel]] = {
     itsaStatusConnector.getITSAStatusDetail(
       nino = user.nino,
-      taxYear = taxYear.formatTaxYearRange,
+      taxYear = taxYear.formatAsShortYearRange,
       futureYears = futureYears,
       history = history).flatMap {
       case Right(itsaStatus) => Future.successful(itsaStatus)
