@@ -149,7 +149,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
       chargeReference, isEnabled(ChargeHistory)).map {
       case Right(chargeHistory) =>
         auditChargeSummary(chargeItem, paymentBreakdown,
-          chargeHistory, paymentAllocations, isInterestCharge, isMFADebit, taxYear, reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa), penaltiesEnabled = isEnabled(PenaltiesAndAppeals))
+          chargeHistory, paymentAllocations, isInterestCharge, isMFADebit, taxYear)
 
         val chargeItems : List[ChargeItem] = chargeDetailsforTaxYear.asChargeItems
         val (poaOneChargeUrl, poaTwoChargeUrl) = {
@@ -261,8 +261,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
   private def auditChargeSummary(chargeItem: ChargeItem,
                                  paymentBreakdown: List[FinancialDetail], chargeHistories: List[ChargeHistoryModel],
                                  paymentAllocations: List[PaymentHistoryAllocations], isLatePaymentCharge: Boolean,
-                                 isMFADebit: Boolean, taxYear: Int, reviewAndReconcileEnabled: Boolean,
-                                 penaltiesEnabled: Boolean)
+                                 isMFADebit: Boolean, taxYear: Int)
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
     auditingService.extendedAudit(ChargeSummaryAudit(
       mtdItUser = user,
@@ -273,8 +272,8 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
       isLatePaymentCharge = isLatePaymentCharge,
       isMFADebit = isMFADebit,
       taxYear = taxYear,
-      reviewAndReconcileEnabled = reviewAndReconcileEnabled,
-      penaltiesEnabled = penaltiesEnabled
+      reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
+      penaltiesEnabled = isEnabled(PenaltiesAndAppeals)
     ))
   }
 }
