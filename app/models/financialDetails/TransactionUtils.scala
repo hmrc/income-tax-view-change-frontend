@@ -22,17 +22,6 @@ import scala.util.{Failure, Success, Try}
 
 trait TransactionUtils {
 
-
-  // Extend FinancialDetailsModel with methods which applicable only during testing
-  implicit class FinancialDetailsModelConversion(fdm: FinancialDetailsModel) {
-    def documentDetailsFilterByTaxYear(taxYear: Int) : List[DocumentDetail] = {
-      fdm match {
-        case FinancialDetailsModel(_, documentDetails, _) =>
-          documentDetails.filter(_.taxYear == taxYear)
-      }
-    }
-  }
-
   def getChargeItemOpt(financialDetails: List[FinancialDetail])
                       (documentDetail: DocumentDetail): Option[ChargeItem] = {
     Try(ChargeItem.fromDocumentPair(

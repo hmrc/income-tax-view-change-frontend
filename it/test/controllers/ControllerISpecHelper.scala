@@ -25,6 +25,7 @@ import helpers.servicemocks.CitizenDetailsStub.stubGetCitizenDetails
 import helpers.servicemocks._
 import models.admin.FeatureSwitchName
 import models.admin.FeatureSwitchName.allFeatureSwitches
+import models.financialDetails.{DocumentDetail, FinancialDetailsModel}
 import play.api.http.Status.{SEE_OTHER, UNAUTHORIZED}
 import testConstants.BaseIntegrationTestConstants.getAgentClientDetailsForCookie
 import testOnly.repository.FeatureSwitchRepository
@@ -33,6 +34,16 @@ import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
 
 trait ControllerISpecHelper extends ComponentSpecBase {
+
+  // Extend FinancialDetailsModel with methods which applicable only during testing
+  implicit class FinancialDetailsModelConversion(fdm: FinancialDetailsModel) {
+    def documentDetailsFilterByTaxYear(taxYear: Int) : List[DocumentDetail] = {
+      fdm match {
+        case FinancialDetailsModel(_, documentDetails, _) =>
+          documentDetails.filter(_.taxYear == taxYear)
+      }
+    }
+  }
 
   val mtdAllRoles = List(MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent)
 
