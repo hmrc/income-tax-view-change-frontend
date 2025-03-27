@@ -88,7 +88,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     } flatMap (_ => documentDetail.documentDueDate)
   }
 
-
   // TODO: drop usage of DocumentDetailWithDueDate / and use ChargeItem/TransactionItem instead
   def getAllDocumentDetailsWithDueDates(reviewAndReconcileEnabled: Boolean = false)(implicit dateService: DateServiceInterface): List[DocumentDetailWithDueDate] = {
     documentDetails.map(documentDetail =>
