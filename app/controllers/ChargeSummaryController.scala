@@ -28,12 +28,10 @@ import forms.utils.SessionKeys.gatewayPage
 import models.admin._
 import models.chargeHistory._
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
-import models.financialDetails.ChargeType.poaOneReconciliationDebit
 import models.financialDetails._
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.claimToAdjustPoa.ClaimToAdjustHelper.{isPoaOne, isPoaTwo}
 import services.{ChargeHistoryService, DateServiceInterface, FinancialDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -151,7 +149,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
       chargeReference, isEnabled(ChargeHistory)).map {
       case Right(chargeHistory) =>
         auditChargeSummary(chargeItem, paymentBreakdown,
-          chargeHistory, paymentAllocations, isInterestCharge, isMFADebit, taxYear)
+          chargeHistory, paymentAllocations, isInterestCharge, isMFADebit, taxYear, reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa), penaltiesEnabled = isEnabled(PenaltiesAndAppeals))
 
         val chargeItems : List[ChargeItem] = chargeDetailsforTaxYear.asChargeItems
         val (poaOneChargeUrl, poaTwoChargeUrl) = {
@@ -263,7 +261,8 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
   private def auditChargeSummary(chargeItem: ChargeItem,
                                  paymentBreakdown: List[FinancialDetail], chargeHistories: List[ChargeHistoryModel],
                                  paymentAllocations: List[PaymentHistoryAllocations], isLatePaymentCharge: Boolean,
-                                 isMFADebit: Boolean, taxYear: Int)
+                                 isMFADebit: Boolean, taxYear: Int, reviewAndReconcileEnabled: Boolean,
+                                 penaltiesEnabled: Boolean)
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
     auditingService.extendedAudit(ChargeSummaryAudit(
       mtdItUser = user,
@@ -273,7 +272,9 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
       paymentAllocations = paymentAllocations,
       isLatePaymentCharge = isLatePaymentCharge,
       isMFADebit = isMFADebit,
-      taxYear = taxYear
+      taxYear = taxYear,
+      reviewAndReconcileEnabled = reviewAndReconcileEnabled,
+      penaltiesEnabled = penaltiesEnabled
     ))
   }
 }

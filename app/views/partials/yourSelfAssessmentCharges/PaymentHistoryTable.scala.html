@@ -26,6 +26,7 @@
 @import models.financialDetails.PoaOneDebit
 @import models.financialDetails.PoaTwoDebit
 @import models.financialDetails.BalancingCharge
+@import models.financialDetails.LateSubmissionPenalty
 @import models.financialDetails.ChargeItem
 
 @this(
@@ -54,6 +55,7 @@
         case PoaOneDebit     => getMessage("chargeHistory.paymentOnAccount1.heading")
         case PoaTwoDebit     => getMessage("chargeHistory.paymentOnAccount2.heading")
         case BalancingCharge => getMessage("chargeHistory.balancingPayment.heading")
+        case LateSubmissionPenalty => getMessage("chargeHistory.lateSubmissionPenalty.heading")
         case _               => getMessage("chargeHistory.unknown.heading")
     }
 }
@@ -77,7 +79,7 @@
         if(viewModel.noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment && viewModel.chargeHistoryEnabled)
             Seq(
                 TableRow(
-                    content = Text(messages(s"chargeSummary.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}"))
+                    content = Text(messages(s"chargeSummary.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled, viewModel.penaltiesEnabled)}"))
                 ),
                 TableRow(
                     content = HtmlContent(
@@ -92,7 +94,7 @@
         if(viewModel.latePaymentInterestCharge && viewModel.chargeHistoryEnabled)
             Seq(
                 TableRow(
-                    content = Text(messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}"))
+                    content = Text(messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled, viewModel.penaltiesEnabled)}"))
                 ),
                 TableRow(
                     content = HtmlContent(viewModel.chargeItem.interestEndDate.get.toLongDate.toNonBreaking)
@@ -140,7 +142,7 @@
             case charge if viewModel.chargeHistoryEnabled =>
                 Seq(
                     TableRow(
-                        content = Text(messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}"))
+                        content = Text(messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled, viewModel.penaltiesEnabled)}"))
                     ),
                     TableRow(
                         content = HtmlContent(charge.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDate.toNonBreaking)

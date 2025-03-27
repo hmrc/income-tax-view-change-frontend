@@ -19,6 +19,7 @@
 @import models.financialDetails.BalancingCharge
 @import models.financialDetails.PoaOneDebit
 @import models.financialDetails.PoaTwoDebit
+@import models.financialDetails.LateSubmissionPenalty
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 @import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
@@ -28,6 +29,7 @@
 
 @this(
     p: p,
+    link: link,
     numberList: numberList,
     whatIsPaymentOnAccount: WhatIsPaymentOnAccount,
     whatIsABalancingPayment: WhatIsABalancingPayment,
@@ -58,5 +60,29 @@
             summary = Text(getMessage("whatIsPaymentOnAccount.linkText")),
             content = HtmlContent(whatIsPaymentOnAccount())
         ))
+    case LateSubmissionPenalty =>
+        LSPContent
     case _ =>
 }}
+
+@LSPContent = {
+    @p(id = Some("LSP-content")) {
+        @getMessage("lateSubmissionPenalty.penaltyPoints")
+    }
+    @p(id = Some("Line2")) {
+        @getMessage("lateSubmissionPenalty.fourPoints")
+    }
+    @p(id = Some("Line3")) {
+        @getMessage("lateSubmissionPenalty.avoidInFuture")
+    }
+    @p(id = Some("Line4")) {
+        @getMessage("lateSubmissionPenalty.penaltyLinkText1")
+        @link(
+            id = Some("late-submission-penalty-link"),
+            link="",
+            rel= Some("noreferrer noopener"),
+            messageKey = "yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText"
+        )
+        @getMessage("lateSubmissionPenalty.penaltyLinkText2")
+    }
+}
