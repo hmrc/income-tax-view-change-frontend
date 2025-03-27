@@ -904,6 +904,7 @@ selfAssessmentCharges.charges-due-now-with-amount                  = Charges due
 selfAssessmentCharges.no-payments-due                              = Nid oes gennych taliadau sy’n ddyledus.
 selfAssessmentCharges.no-payments-due-agent                        = Nid oes gan eich cleient daliadau sy’n ddyledus.
 selfAssessmentCharges.charges-due-now                              = Charges due now
+selfAssessmentCharges.charges-to-pay-later                         = Charges to pay later
 selfAssessmentCharges.tableHead.due-date                           = Dyddiad dyledus
 selfAssessmentCharges.tableHead.tax-year                           = Blwyddyn dreth
 selfAssessmentCharges.tableHead.type-of-charge                     = Type of charge

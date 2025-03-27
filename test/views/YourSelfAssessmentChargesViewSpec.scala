@@ -33,7 +33,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
 import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.{dueDateOverdue, noDunningLocks, oneDunningLock, outstandingChargesModel, twoDunningLocks}
+import testConstants.FinancialDetailsTestConstants.{dueDateOverdue, futureFixedDate, noDunningLocks, oneDunningLock, outstandingChargesModel, twoDunningLocks}
 import testUtils.{TestSupport, ViewSpec}
 import views.html.YourSelfAssessmentCharges
 
@@ -97,6 +97,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
   val itsaPOA1: String = "ITSA- POA 1"
   val itsaPOA2: String = "ITSA - POA 2"
   val cancelledPayeSelfAssessment: String = messages("selfAssessmentCharges.cancelledPayeSelfAssessment.text")
+  val chargesToPayLaterTab: String = messages("selfAssessmentCharges.charges-to-pay-later")
 
   val interestEndDateFuture: LocalDate = LocalDate.of(2100, 1, 1)
 
@@ -343,6 +344,13 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
     codedOutDocumentDetail = Some(codedOutDocumentDetailCi)
   )
 
+  val whatYouOweDataWithDueDateInFuture: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    chargesList = List(poa1WithFutureDueDate, poa2WithFutureDueDate),
+    outstandingChargesModel = None,
+    codedOutDocumentDetail = None
+  )
+
   val whatYouOweDataCodingOutWithoutAmountCodingOut: WhatYouOweChargesList = whatYouOweDataWithCodingOutNics2.copy(codedOutDocumentDetail = None)
 
   val whatYouOweDataWithCancelledPayeSa: WhatYouOweChargesList = WhatYouOweChargesList(
@@ -412,7 +420,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
           tableHead.select("th").get(4).text() shouldBe amountDue
 
           val firstChargeRow = pageDocument.getElementById("balancing-charge-type-0")
-          firstChargeRow.select("td").first().text() shouldBe fixedDate.minusDays(30).toLongDate
+          firstChargeRow.select("td").first().text() shouldBe fixedDate.minusDays(30).toLongDateShort
           firstChargeRow.select("td").get(1).text() shouldBe preMTDRemainingBalance
           firstChargeRow.select("td").get(2).text() shouldBe preMtdPayments(
             (fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
@@ -420,14 +428,14 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
           firstChargeRow.select("td").last().text() shouldBe "£123,456.67"
 
           val secondChargeRow = pageDocument.getElementById("due-0")
-          secondChargeRow.select("td").first().text() shouldBe fixedDate.minusDays(10).toLongDate
+          secondChargeRow.select("td").first().text() shouldBe fixedDate.minusDays(10).toLongDateShort
           secondChargeRow.select("td").get(1).text() shouldBe s"$poa1Text 1"
           secondChargeRow.select("td").get(2).text() shouldBe taxYearSummaryText("2022", "2023")
           secondChargeRow.select("td").get(3).text() shouldBe "£100.00"
           secondChargeRow.select("td").last().text() shouldBe "£50.00"
 
           val thirdChargeRow = pageDocument.getElementById("due-1")
-          thirdChargeRow.select("td").first().text() shouldBe fixedDate.minusDays(1).toLongDate
+          thirdChargeRow.select("td").first().text() shouldBe fixedDate.minusDays(1).toLongDateShort
           thirdChargeRow.select("td").get(1).text() shouldBe s"$poa2Text 2"
           thirdChargeRow.select("td").get(2).text() shouldBe taxYearSummaryText("2022", "2023")
           thirdChargeRow.select("td").get(3).text() shouldBe "£100.00"
@@ -439,28 +447,28 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
 
         "display penalties if user has penalties" in new TestSetup(charges = whatYouOweDataWithPenalties, penaltiesEnabled = true) {
           val overduePoa = pageDocument.getElementById("due-0")
-          overduePoa.select("td").first().text() shouldBe fixedDate.minusMonths(3).toLongDate
+          overduePoa.select("td").first().text() shouldBe fixedDate.minusMonths(3).toLongDateShort
           overduePoa.select("td").get(1).text() shouldBe s"$poa2Text 1"
           overduePoa.select("td").get(2).text() shouldBe taxYearSummaryText("2022", "2023")
           overduePoa.select("td").get(3).text() shouldBe "£24.99"
           overduePoa.select("td").last().text() shouldBe "£75.99"
 
           val lateSubmissionPenalty = pageDocument.getElementById("due-1")
-          lateSubmissionPenalty.select("td").first().text() shouldBe fixedDate.minusMonths(2).toLongDate
+          lateSubmissionPenalty.select("td").first().text() shouldBe fixedDate.minusMonths(2).toLongDateShort
           lateSubmissionPenalty.select("td").get(1).text() shouldBe s"$lateSubmissionPenaltyText 2"
           lateSubmissionPenalty.select("td").get(2).text() shouldBe taxYearSummaryText("2022", "2023")
           lateSubmissionPenalty.select("td").get(3).text() shouldBe "£42.57"
           lateSubmissionPenalty.select("td").last().text() shouldBe "£100.01"
 
           val firstLatePaymentPenalty = pageDocument.getElementById("due-2")
-          firstLatePaymentPenalty.select("td").first().text() shouldBe fixedDate.minusDays(10).toLongDate
+          firstLatePaymentPenalty.select("td").first().text() shouldBe fixedDate.minusDays(10).toLongDateShort
           firstLatePaymentPenalty.select("td").get(1).text() shouldBe s"$firstLPPText 3"
           firstLatePaymentPenalty.select("td").get(2).text() shouldBe taxYearSummaryText("2022", "2023")
           firstLatePaymentPenalty.select("td").get(3).text() shouldBe "£42.50"
           firstLatePaymentPenalty.select("td").last().text() shouldBe "£50.00"
 
           val secondLatePaymentPenalty = pageDocument.getElementById("due-3")
-          secondLatePaymentPenalty.select("td").first().text() shouldBe fixedDate.minusDays(1).toLongDate
+          secondLatePaymentPenalty.select("td").first().text() shouldBe fixedDate.minusDays(1).toLongDateShort
           secondLatePaymentPenalty.select("td").get(1).text() shouldBe s"$secondLPPText 4"
           secondLatePaymentPenalty.select("td").get(2).text() shouldBe taxYearSummaryText("2022", "2023")
           secondLatePaymentPenalty.select("td").get(3).text() shouldBe "£24.05"
@@ -586,7 +594,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
           overdueTableHeader.select("th").last().text() shouldBe amountDue
 
           val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(2)
-          overduePaymentsTableRow1.select("td").first().text() shouldBe fixedDate.minusDays(10).toLongDate
+          overduePaymentsTableRow1.select("td").first().text() shouldBe fixedDate.minusDays(10).toLongDateShort
           overduePaymentsTableRow1.select("td").get(1).text() shouldBe poa1Text + s" 1"
           overduePaymentsTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
           overduePaymentsTableRow1.select("td").last().text() shouldBe "£50.00"
@@ -620,7 +628,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
         }
         "have overdue payments with POA2 charge type with hyperlink " in new TestSetup(charges = whatYouOweDataWithOverdueLPI(List(None, None))) {
           val overduePaymentsTableRow2: Element = pageDocument.select("tr").get(3)
-          overduePaymentsTableRow2.select("td").first().text() shouldBe fixedDate.minusDays(1).toLongDate
+          overduePaymentsTableRow2.select("td").first().text() shouldBe fixedDate.minusDays(1).toLongDateShort
           overduePaymentsTableRow2.select("td").get(1).text() shouldBe poa2Text + s" 2"
           overduePaymentsTableRow2.select("td").last().text() shouldBe "£75.00"
 
@@ -629,6 +637,39 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
         }
       }
 
+
+      "the user has charges due in over 30 days" should {
+        s"have the title $yourSelfAssessmentChargesTitle" in new TestSetup(charges = whatYouOweDataWithDueDateInFuture) {
+          pageDocument.title() shouldBe yourSelfAssessmentChargesTitle
+        }
+
+        s"have a page heading of $yourSelfAssessmentChargesHeading" in new TestSetup(charges = whatYouOweDataWithDueDateInFuture) {
+          pageDocument.getElementById("page-heading").text() shouldBe yourSelfAssessmentChargesHeading
+        }
+
+        "display the 'Charges due later' tab, with correct table header, charges and total" in new TestSetup(charges = whatYouOweDataWithDueDateInFuture) {
+          findElementById("self-assessment-charges-tabs").isDefined shouldBe true
+
+          val tableHead = pageDocument.getElementById("charges-due-later-table-head")
+          tableHead.select("th").first().text() shouldBe dueDate
+          tableHead.select("th").get(1).text() shouldBe chargeType
+          tableHead.select("th").get(2).text() shouldBe taxYear
+          tableHead.select("th").get(3).text() shouldBe amountDue
+
+          val chargesDueLaterTableRow1: Element = pageDocument.select("tr").get(1)
+          chargesDueLaterTableRow1.select("td").first().text() shouldBe futureFixedDate.toLongDateShort
+          chargesDueLaterTableRow1.select("td").get(1).text() shouldBe poa1Text + s" 1"
+          chargesDueLaterTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((futureFixedDate.getYear - 1).toString, futureFixedDate.getYear.toString())
+          chargesDueLaterTableRow1.select("td").last().text() shouldBe "£2,500.00"
+
+          val chargesDueLaterTableRow2: Element = pageDocument.select("tr").get(2)
+          chargesDueLaterTableRow2.select("td").first().text() shouldBe futureFixedDate.plusYears(2).toLongDateShort
+          chargesDueLaterTableRow2.select("td").get(1).text() shouldBe poa2Text + s" 2"
+          chargesDueLaterTableRow2.select("td").get(2).text() shouldBe taxYearSummaryText((futureFixedDate.getYear - 1).toString, futureFixedDate.getYear.toString())
+          chargesDueLaterTableRow2.select("td").last().text() shouldBe "£3,500.00"
+        }
+
+      }
 //
 //      "the user has charges and access viewer with mixed dates" should { //TODO: TO be implemented once we have multiple tabs on this page, and display charges due in the future
 //        s"have the title $yourSelfAssessmentChargesTitle and notes" in new TestSetup(charges = whatYouOweDataWithMixedData1) {
@@ -914,7 +955,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
 
         val chargeRow = pageDocument.getElementById("due-30-days-0")
         chargeRow should not be null
-        chargeRow.select("td").get(0).text() should include("5 December 2023")
+        chargeRow.select("td").get(0).text() should include("5 Dec 2023")
         chargeRow.select("td").get(1).text() should include(poa1Text)
         chargeRow.select("td").get(2).text() should include("Tax year")
         chargeRow.select("td").get(3).text() shouldBe "£50.00"
