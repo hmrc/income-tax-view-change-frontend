@@ -165,10 +165,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       financialDetails ++ financialDetailsModel.financialDetails)
   }
 
-//  def documentDetailsFilterByTaxYear(taxYear: Int): List[DocumentDetail] = {
-//    this.documentDetails.filter(_.taxYear == taxYear)
-//  }
-
   def documentDetailsWithLpiId(chargeReference: Option[String]): Option[DocumentDetail] = {
     documentDetails.find(_.latePaymentInterestId == chargeReference)
   }

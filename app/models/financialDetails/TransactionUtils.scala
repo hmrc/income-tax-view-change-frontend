@@ -22,7 +22,8 @@ import scala.util.{Failure, Success, Try}
 
 trait TransactionUtils {
 
-  // implicit class IntWithTimes
+
+  // Extend FinancialDetailsModel with methods which applicable only during testing
   implicit class FinancialDetailsModelConversion(fdm: FinancialDetailsModel) {
     def documentDetailsFilterByTaxYear(taxYear: Int) : List[DocumentDetail] = {
       fdm match {
@@ -31,8 +32,6 @@ trait TransactionUtils {
       }
     }
   }
-
-  //documentDetailsFilterByTaxYear
 
   def getChargeItemOpt(financialDetails: List[FinancialDetail])
                       (documentDetail: DocumentDetail): Option[ChargeItem] = {
