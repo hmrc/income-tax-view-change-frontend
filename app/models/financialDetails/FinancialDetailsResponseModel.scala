@@ -37,10 +37,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
                                  private val documentDetails: List[DocumentDetail],
                                  financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
 
-  def getAllDueDates: List[LocalDate] = {
-    documentDetails.flatMap(_.getDueDate())
-  }
-
   def dunningLockExists(documentId: String): Boolean = {
     documentDetails.filter(_.transactionId == documentId)
       .exists { documentDetail =>

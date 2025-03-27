@@ -24,7 +24,7 @@ import testUtils.UnitSpec
 
 import java.time.LocalDate
 
-class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
+class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers with FinancialDetailsModelExtension {
 
   "The ChargesModel" should {
 
