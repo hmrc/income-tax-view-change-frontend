@@ -904,6 +904,7 @@ selfAssessmentCharges.charges-due-now-with-amount                  = Charges due
 selfAssessmentCharges.no-payments-due                              = You have no payments due.
 selfAssessmentCharges.no-payments-due-agent                        = Your client has no payments due.
 selfAssessmentCharges.charges-due-now                              = Charges due now
+selfAssessmentCharges.charges-to-pay-later                         = Charges to pay later
 selfAssessmentCharges.tableHead.due-date                           = Due date
 selfAssessmentCharges.tableHead.tax-year                           = Tax year
 selfAssessmentCharges.tableHead.type-of-charge                     = Type of charge
