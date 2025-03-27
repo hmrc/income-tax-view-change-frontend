@@ -61,8 +61,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
         } else {
           "render the charge summary page" when {
             "charge history & your self assessment charges feature switch is enabled and there is a user" that {
-              "provided with an id associated to a POA1 Debit" in new Setup(
-                financialDetailsModelWithPoaOneAndTwo()) {
+              "provided with an id associated to a POA1 Debit" in new Setup(financialDetailsModelWithPoaOneAndTwo()) {
                 enable(ReviewAndReconcilePoa)
                 enable(YourSelfAssessmentCharges)
                 enable(ChargeHistory)
@@ -79,8 +78,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "First payment on account history"
               }
-              "provided with an id associated to a POA2 Debit" in new Setup(
-                financialDetailsModelWithPoaOneAndTwo()) {
+              "provided with an id associated to a POA2 Debit" in new Setup(financialDetailsModelWithPoaOneAndTwo()) {
                 enable(ReviewAndReconcilePoa)
                 enable(YourSelfAssessmentCharges)
                 enable(ChargeHistory)
@@ -97,8 +95,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "Second payment on account history"
               }
-              "provided with an id associated to a POA1 Debit with accruing interest" in new Setup(
-                financialDetailsModelWithPoaOneAndTwoWithLpi()) {
+              "provided with an id associated to a POA1 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaOneAndTwoWithLpi()) {
                 enable(ReviewAndReconcilePoa)
                 enable(YourSelfAssessmentCharges)
                 enable(ChargeHistory)
@@ -119,8 +116,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
                 document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "First payment on account history"
               }
-              "provided with an id associated to a POA2 Debit with accruing interest" in new Setup(
-                financialDetailsModelWithPoaOneAndTwoWithLpi()) {
+              "provided with an id associated to a POA2 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaOneAndTwoWithLpi()) {
                 enable(ReviewAndReconcilePoa)
                 enable(YourSelfAssessmentCharges)
                 enable(ChargeHistory)
@@ -141,8 +137,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
                 document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "Second payment on account history"
               }
-              "provided with an id associated to a Balancing payment" in new Setup(
-                testValidFinancialDetailsModelWithBalancingCharge) {
+              "provided with an id associated to a Balancing payment" in new Setup(testValidFinancialDetailsModelWithBalancingCharge) {
                 enable(ReviewAndReconcilePoa)
                 enable(YourSelfAssessmentCharges)
                 enable(ChargeHistory)
@@ -160,8 +155,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is a balancing payment?"
                 document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "Balancing payment history"
               }
-              "provided with an id associated to a Balancing payment with accruing interest" in new Setup(
-                testValidFinancialDetailsModelWithBalancingChargeWithAccruingInterest) {
+              "provided with an id associated to a Balancing payment with accruing interest" in new Setup(testValidFinancialDetailsModelWithBalancingChargeWithAccruingInterest) {
                 enable(ReviewAndReconcilePoa)
                 enable(YourSelfAssessmentCharges)
                 enable(ChargeHistory)
@@ -182,6 +176,28 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("howIsInterestCalculated.linkText").text().contains("How is interest calculated?")
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
                 document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "Balancing payment history"
+              }
+              "provided with an id associated to a Late Submission Penalty" in new Setup(testValidFinancialDetailsModelWithLateSubmissionPenalty) {
+                enable(ReviewAndReconcilePoa)
+                enable(YourSelfAssessmentCharges)
+                enable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000123)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.select("h1").first().text() shouldBe "Late submission penalty"
+                document.getElementsByClass("govuk-caption-xl").first().text() should include("2018 to 2019 tax year")
+                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Overdue charge: £10.33"
+                document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
+                document.getElementById("LSP-content-1").text() shouldBe "You will get a late submission penalty point every time you send a submission after the deadline. A submission can be a quarterly update or annual tax return."
+                document.getElementById("LSP-content-2").text() shouldBe "If you reach 4 points, you’ll have to pay a £200 penalty."
+                document.getElementById("LSP-content-3").text() shouldBe "To avoid receiving late submission penalty points in the future, and the potential for a financial penalty, you need to send your submissions on time."
+                document.getElementById("LSP-content-4").text() shouldBe "You can view the details about your penalty and find out how to appeal."
+                document.getElementsByClass("govuk-heading-l").first().text() shouldBe "Interest on your late submission penalty"
+                document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "Late submission penalty history"
               }
             }
             "charge history feature is enabled and there is a user" that {
