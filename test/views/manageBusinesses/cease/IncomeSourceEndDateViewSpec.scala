@@ -40,6 +40,7 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
 
   val IncomeSourceEndDateView: IncomeSourceEndDate = app.injector.instanceOf[IncomeSourceEndDate]
   val incomeSourceEndDateForm: CeaseIncomeSourceEndDateFormProvider = app.injector.instanceOf[CeaseIncomeSourceEndDateFormProvider]
+  val nextTaxYear: Int = dateService.getCurrentTaxYearEnd + 1
 
   val prefixSoleTrader: String = SelfEmployment.endDateMessagePrefix
   val prefixUKProperty: String = UkProperty.endDateMessagePrefix
@@ -75,6 +76,36 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
     }
 
     lazy val document: Document = if (error) Jsoup.parse(contentAsString(viewError)) else Jsoup.parse(contentAsString(view))
+  }
+
+  class SetupWithBoundaryDateFormErrors(isAgent: Boolean, error: Boolean = false, incomeSourceType: IncomeSourceType, boundaryResultMessage: String, dateEntered: LocalDate) {
+    val mockDateService: DateService = app.injector.instanceOf[DateService]
+    val testPostActionCall: Call = Call("GET", "/test/path")
+    val testBackUrl: String = "/test/back/path"
+    val view: Html = incomeSourceType match {
+      case SelfEmployment =>
+        val form: Form[LocalDate] = incomeSourceEndDateForm.apply(SelfEmployment, Some(testSelfEmploymentId), true)
+        IncomeSourceEndDateView(SelfEmployment, form, testPostActionCall, isAgent, testBackUrl)
+      case _ =>
+        val form: Form[LocalDate] = incomeSourceEndDateForm.apply(incomeSourceType, None, true)
+        IncomeSourceEndDateView(incomeSourceType, form, testPostActionCall, isAgent, testBackUrl)
+    }
+
+    val viewError: Html = incomeSourceType match {
+      case SelfEmployment =>
+        val form: Form[LocalDate] = incomeSourceEndDateForm.apply(SelfEmployment, Some(testSelfEmploymentId), newIncomeSourceJourney = false)
+        form.bind(data = Map("value" -> dateEntered.toString))
+        val errorFormSE = form.withError(FormError("income-source-end-date", s"incomeSources.cease.endDate.selfEmployment.$boundaryResultMessage"))
+        IncomeSourceEndDateView(SelfEmployment, errorFormSE, testPostActionCall, isAgent, testBackUrl)
+
+      case _ =>
+        val form: Form[LocalDate] = incomeSourceEndDateForm.apply(incomeSourceType, None, newIncomeSourceJourney = false)
+        form.bind(data = Map("value" -> dateEntered.toString))
+        val errorFormSE = form.withError(FormError("income-source-end-date", s"incomeSources.cease.endDate.selfEmployment.$boundaryResultMessage"))
+        IncomeSourceEndDateView(incomeSourceType, errorFormSE, testPostActionCall, isAgent, testBackUrl)
+    }
+
+    lazy val document: Document = Jsoup.parse(contentAsString(viewError))
   }
 
   "BusinessEndDateView - Individual" should {
@@ -117,6 +148,12 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
     "render the error summary" in new Setup(isAgent = false, error = true, incomeSourceType = SelfEmployment) {
       document.getElementById("error-summary").text() shouldBe messages("base.error_summary.heading") + " " + messages("dateForm.error.monthAndYear.required")
     }
+    "render the before tax year form error - self employment" in new SetupWithBoundaryDateFormErrors(isAgent = false, incomeSourceType = SelfEmployment, boundaryResultMessage = "beforeStartDate", dateEntered = LocalDate.of(2022, 2, 2)) {
+      document.getElementById("error-summary").text() shouldBe messages("base.error_summary.heading") + " " + messages("incomeSources.cease.endDate.selfEmployment.beforeStartDate")
+    }
+    "render the after tax year form error - self employment" in new SetupWithBoundaryDateFormErrors(isAgent = false, incomeSourceType = SelfEmployment, boundaryResultMessage = "future", dateEntered = LocalDate.of(nextTaxYear, 5, 5)) {
+      document.getElementById("error-summary").text() shouldBe messages("base.error_summary.heading") + " " + messages("incomeSources.cease.endDate.selfEmployment.future")
+    }
   }
 
   "BusinessEndDateView - Agent" should {
@@ -158,6 +195,12 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
     }
     "render the error summary" in new Setup(isAgent = true, error = true, incomeSourceType = SelfEmployment) {
       document.getElementById("error-summary").text() shouldBe messages("base.error_summary.heading") + " " + messages("dateForm.error.monthAndYear.required")
+    }
+    "render the before tax year form error - self employment" in new SetupWithBoundaryDateFormErrors(isAgent = true, incomeSourceType = SelfEmployment, boundaryResultMessage = "beforeStartDate", dateEntered = LocalDate.of(2022, 2, 2)) {
+      document.getElementById("error-summary").text() shouldBe messages("base.error_summary.heading") + " " + messages("incomeSources.cease.endDate.selfEmployment.beforeStartDate")
+    }
+    "render the after tax year form error - self employment" in new SetupWithBoundaryDateFormErrors(isAgent = true, incomeSourceType = SelfEmployment, boundaryResultMessage = "future", dateEntered = LocalDate.of(nextTaxYear, 5, 5)) {
+      document.getElementById("error-summary").text() shouldBe messages("base.error_summary.heading") + " " + messages("incomeSources.cease.endDate.selfEmployment.future")
     }
   }
 
