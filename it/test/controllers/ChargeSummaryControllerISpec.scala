@@ -78,9 +78,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                     chargeHistories = List.empty,
                     paymentAllocations = List.empty,
                     isLatePaymentCharge = false,
-                    taxYear = testTaxYearTyped,
-                    reviewAndReconcileEnabled = false,
-                    penaltiesEnabled = false
+                    taxYear = testTaxYearTyped
                   )(dateService))
                 }
               }
@@ -106,9 +104,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                     chargeHistories = List.empty,
                     paymentAllocations = paymentAllocation,
                     isLatePaymentCharge = false,
-                    taxYear = testTaxYearTyped,
-                    reviewAndReconcileEnabled = false,
-                    penaltiesEnabled = false
+                    taxYear = testTaxYearTyped
                   )(dateService))
 
                   res should have(
@@ -141,9 +137,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                     chargeHistories = chargeHistories,
                     paymentAllocations = paymentAllocation,
                     isLatePaymentCharge = false,
-                    taxYear = testTaxYearTyped,
-                    reviewAndReconcileEnabled = false,
-                    penaltiesEnabled = false
+                    taxYear = testTaxYearTyped
                   )(dateService)
 
                   AuditStub.verifyAuditEvent(expectedAuditEvent)
@@ -174,9 +168,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                       chargeHistories = List.empty,
                       paymentAllocations = paymentAllocation,
                       isLatePaymentCharge = true,
-                      taxYear = testTaxYearTyped,
-                      reviewAndReconcileEnabled = false,
-                      penaltiesEnabled = false
+                      taxYear = testTaxYearTyped
                     ))
 
                   res should have(
@@ -379,9 +371,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                   paymentAllocations = List.empty,
                   isLatePaymentCharge = false,
                   isMFADebit = true,
-                  taxYear = testTaxYearTyped,
-                  reviewAndReconcileEnabled = false,
-                  penaltiesEnabled = false
+                  taxYear = testTaxYearTyped
                 ))
               }
 
@@ -421,9 +411,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                   paymentAllocations = List.empty,
                   isLatePaymentCharge = false,
                   isMFADebit = true,
-                  taxYear = testTaxYearTyped,
-                  reviewAndReconcileEnabled = false,
-                  penaltiesEnabled = false
+                  taxYear = testTaxYearTyped
                 ))
               }
             }
