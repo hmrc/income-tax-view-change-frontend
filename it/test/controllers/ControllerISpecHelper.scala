@@ -25,6 +25,7 @@ import helpers.servicemocks.CitizenDetailsStub.stubGetCitizenDetails
 import helpers.servicemocks._
 import models.admin.FeatureSwitchName
 import models.admin.FeatureSwitchName.allFeatureSwitches
+import models.extensions.FinancialDetailsModelExtension
 import play.api.http.Status.{SEE_OTHER, UNAUTHORIZED}
 import testConstants.BaseIntegrationTestConstants.getAgentClientDetailsForCookie
 import testOnly.repository.FeatureSwitchRepository
@@ -32,7 +33,7 @@ import testOnly.repository.FeatureSwitchRepository
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
 
-trait ControllerISpecHelper extends ComponentSpecBase {
+trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModelExtension {
 
   val mtdAllRoles = List(MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent)
 

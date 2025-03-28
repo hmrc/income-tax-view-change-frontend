@@ -37,10 +37,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
                                  private val documentDetails: List[DocumentDetail],
                                  financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
 
-  def getAllDueDates: List[LocalDate] = {
-    documentDetails.flatMap(_.getDueDate())
-  }
-
   def dunningLockExists(documentId: String): Boolean = {
     documentDetails.filter(_.transactionId == documentId)
       .exists { documentDetail =>
@@ -92,7 +88,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     } flatMap (_ => documentDetail.documentDueDate)
   }
 
-
   // TODO: drop usage of DocumentDetailWithDueDate / and use ChargeItem/TransactionItem instead
   def getAllDocumentDetailsWithDueDates(reviewAndReconcileEnabled: Boolean = false)(implicit dateService: DateServiceInterface): List[DocumentDetailWithDueDate] = {
     documentDetails.map(documentDetail =>
@@ -101,15 +96,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
         isMFADebit = isMFADebit(documentDetail.transactionId),
         isReviewAndReconcilePoaOneDebit = isReviewAndReconcilePoaOneDebit(documentDetail.transactionId, reviewAndReconcileEnabled),
         isReviewAndReconcilePoaTwoDebit = isReviewAndReconcilePoaTwoDebit(documentDetail.transactionId, reviewAndReconcileEnabled)))
-  }
-
-  //TODO: is this approach of validating charge type is applicable at all?
-  def validChargeTypeCondition: DocumentDetail => Boolean = documentDetail => {
-    (documentDetail.documentText, documentDetail.getDocType) match {
-      case (Some(documentText), _) if documentText.contains("Class 2 National Insurance") => true
-      case (_, Poa1Charge | Poa2Charge | Poa1ReconciliationDebit | Poa2ReconciliationDebit | TRMNewCharge | TRMAmendCharge) => true
-      case (_, _) => false
-    }
   }
 
   def filterPayments(): FinancialDetailsModel = {
@@ -165,10 +151,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       financialDetails ++ financialDetailsModel.financialDetails)
   }
 
-  def documentDetailsFilterByTaxYear(taxYear: Int): List[DocumentDetail] = {
-    this.documentDetails.filter(_.taxYear == taxYear)
-  }
-
   def documentDetailsWithLpiId(chargeReference: Option[String]): Option[DocumentDetail] = {
     documentDetails.find(_.latePaymentInterestId == chargeReference)
   }
@@ -187,10 +169,8 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     }
   }
 
-  def docDetailsNotDueWithInterest(currentDate: LocalDate): List[DocumentDetail] = {
-    this.documentDetails.filter(
-      x => !x.isPaid && x.hasAccruingInterest && x.documentDueDate.getOrElse(LocalDate.MIN).isAfter(currentDate)
-    )
+  def docDetailsNotDueWithInterest(currentDate: LocalDate): Int = {
+    this.documentDetails.count(x => !x.isPaid && x.hasAccruingInterest && x.documentDueDate.getOrElse(LocalDate.MIN).isAfter(currentDate))
   }
 
   /////////////////////////// to ChargeItem conversion methods: START //////////////////////////////////////////////////
