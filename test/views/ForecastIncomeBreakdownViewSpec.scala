@@ -186,7 +186,7 @@ class ForecastIncomeBreakdownViewSpec extends ViewSpec {
       }
 
       "have the correct heading" in new Setup(view) {
-        layoutContent hasPageHeading s"${messages("forecast_income.dates", "2016", "2017")} ${messages("forecast_income.heading")}"
+        layoutContent hasPageHeading s"${messages("forecast_income.heading")}"
       }
 
       "have the correct caption" in new Setup(view) {
