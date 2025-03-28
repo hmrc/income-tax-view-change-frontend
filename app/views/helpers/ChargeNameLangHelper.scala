@@ -17,7 +17,7 @@
 package views.helpers
 
 import models.chargeSummary.ChargeSummaryViewModel
-import models.financialDetails.{BalancingCharge, LateSubmissionPenalty, PoaOneDebit, PoaTwoDebit, TransactionType}
+import models.financialDetails.{BalancingCharge, LateSubmissionPenalty, FirstLatePaymentPenalty, PoaOneDebit, PoaTwoDebit, TransactionType}
 import play.api.i18n.Messages
 
 
@@ -30,6 +30,7 @@ object ChargeNameLangHelper {
       case PoaTwoDebit     => messages("yourSelfAssessmentChargeSummary.paymentOnAccount2.heading")
       case BalancingCharge => messages("yourSelfAssessmentChargeSummary.balancingPayment.heading")
       case LateSubmissionPenalty => messages("yourSelfAssessmentChargeSummary.lateSubmissionPenalty.heading")
+      case FirstLatePaymentPenalty => messages("yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.heading")
       case _               => messages("yourSelfAssessmentChargeSummary.unknown.heading")
     }
   }

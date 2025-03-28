@@ -939,6 +939,60 @@ object FinancialDetailsTestConstants {
     )
   )
 
+  val testValidFinancialDetailsModelWithLatePaymentPenalty: FinancialDetailsModel = FinancialDetailsModel(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    documentDetails = List(
+      DocumentDetail(taxYear = 2021,
+        transactionId = id1040000123,
+        documentDescription = None,
+        documentText = Some("documentText"),
+        documentDueDate = Some(LocalDate.of(2020, 3, 29)),
+        outstandingAmount = 200.33,
+        originalAmount = 10.33,
+        documentDate = LocalDate.of(2020, 1, 29),
+        interestOutstandingAmount = Some(100),
+        interestRate = Some(100),
+        latePaymentInterestId = Some("latePaymentInterestId1"),
+        interestFromDate = Some(LocalDate.of(2020, 3, 29)),
+        interestEndDate = Some(LocalDate.of(2020, 3, 29)),
+        latePaymentInterestAmount = None,
+        lpiWithDunningLock = None,
+        paymentLotItem = Some("paymentLotItem"),
+        paymentLot = Some("paymentLot"))
+    ),
+    financialDetails = List(
+      FinancialDetail(
+        taxYear = "2019",
+        mainType = Some("SA Balancing Charge"),
+        mainTransaction = Some("4028"),
+        transactionId = Some(id1040000123),
+        transactionDate = Some(LocalDate.parse("2020-08-16")),
+        `type` = Some("type"),
+        totalAmount = Some(100),
+        originalAmount = Some(100),
+        outstandingAmount = Some(100),
+        clearedAmount = Some(100),
+        chargeType = Some(NIC4_WALES),
+        accruedInterest = Some(100),
+        items = Some(Seq(SubItem(
+          dueDate = Some(LocalDate.parse("2019-05-15")),
+          subItemId = Some("1"),
+          amount = Some(100),
+          dunningLock = Some("Stand over order"),
+          interestLock = Some("interestLock"),
+          clearingDate = Some(LocalDate.parse("2020-08-16")),
+          clearingReason = Some("clearingReason"),
+          clearingSAPDocument = None,
+          outgoingPaymentMethod = Some("outgoingPaymentMethod"),
+          paymentReference = Some("paymentReference"),
+          paymentAmount = Some(100),
+          paymentMethod = Some("paymentMethod"),
+          paymentLot = Some("paymentLot"),
+          paymentLotItem = Some("paymentLotItem"),
+          paymentId = Some("paymentLot-paymentLotItem")))))
+    )
+  )
+
   val testValidFinancialDetailsModelWithBalancingChargeWithAccruingInterest: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     documentDetails = List(
