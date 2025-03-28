@@ -68,6 +68,7 @@ object BusinessDetailsTestConstants {
   val testCessation2 = CessationModel(Some(LocalDate.of(year2019, Month.JANUARY, 1)), Some("It was a stupid idea anyway"))
   val testCessation3 = CessationModel(Some(LocalDate.of(year2022, Month.JANUARY, 1)), Some("It was a stupid idea anyway"))
   val testStartDate = LocalDate.parse("2022-01-01")
+  val testStartDate2005 = LocalDate.parse("2005-01-01")
   val testStartDate2 = LocalDate.parse("2021-01-01")
   val testStartDate3 = LocalDate.parse("2013-01-01")
   val testContextualTaxYear = "2024"
@@ -272,6 +273,21 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
+    cessation = None,
+    cashOrAccruals = false,
+    latencyDetails = None,
+    address = Some(address),
+    quarterTypeElection = Some(quarterTypeElectionCalendar)
+  )
+
+  val soleTraderBusinessWithStartDate2005 = BusinessDetailsModel(
+    incomeSourceId = testSelfEmploymentId,
+    incomeSource = Some(testIncomeSource),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
+    tradingName = Some(testTradeName),
+    firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
+    tradingStartDate = Some(testStartDate2005),
     contextualTaxYear = None,
     cessation = None,
     cashOrAccruals = false,

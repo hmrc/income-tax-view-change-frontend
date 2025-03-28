@@ -31,7 +31,7 @@ import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc._
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.SessionService
+import services.{DateService, SessionService}
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData}
 
@@ -41,7 +41,8 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
 
   override lazy val app = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[SessionService].toInstance(mockSessionService)
+      api.inject.bind[SessionService].toInstance(mockSessionService),
+      api.inject.bind[DateService].toInstance(dateService),
     ).build()
 
   lazy val testController = app.injector.instanceOf[IncomeSourceEndDateController]
@@ -213,8 +214,8 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                 redirectLocation(result) shouldBe Some(redirectLocationResult)
               }
             }
-            "display before tax year error" when {
-              "form is completed successfully" in {
+            "display date errors" when {
+              "form is errored out with before trading start date error" in {
                 setupMockSuccess(mtdRole)
                 enable(IncomeSourcesFs)
                 mockBothPropertyBothBusiness()
@@ -249,9 +250,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                 document.getElementById("error-summary").text() shouldBe expectedErrorMessage._1
                 document.getElementById("value-error").text() shouldBe expectedErrorMessage._2
               }
-            }
-            "display after tax year error" when {
-              "form is completed successfully" in {
+              "form is errored out with future date error" in {
                 setupMockSuccess(mtdRole)
                 enable(IncomeSourcesFs)
                 mockBothPropertyBothBusiness()
@@ -263,7 +262,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                 }
                 setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
                 val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody("value.day" -> "27", "value.month" -> "8",
-                  "value.year" -> "2025"))
+                  "value.year" -> (dateService.getCurrentDate.getYear + 1).toString))
 
                 val expectedErrorMessage: (String, String) = incomeSourceType match {
                   case SelfEmployment => (
@@ -285,6 +284,28 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                 document.title shouldBe getValidationErrorTabTitle(incomeSourceType)
                 document.getElementById("error-summary").text() shouldBe expectedErrorMessage._1
                 document.getElementById("value-error").text() shouldBe expectedErrorMessage._2
+              }
+              "form is errored out with earliest date error for SelfEmployment" in {
+                if (incomeSourceType == SelfEmployment) {
+                  setupMockSuccess(mtdRole)
+                  enable(IncomeSourcesFs)
+                  mockSoleTraderWithStartDate2005()
+                  setupMockCreateSession(true)
+                  if (incomeSourceType == SelfEmployment) {
+                    setupMockSetMultipleMongoData(Right(true))
+                  } else {
+                    setupMockSetSessionKeyMongo(Right(true))
+                  }
+                  setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
+                  val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody("value.day" -> "27", "value.month" -> "8",
+                    "value.year" -> "2014"))
+
+                  status(result) shouldBe Status.BAD_REQUEST
+                  val document: Document = Jsoup.parse(contentAsString(result))
+                  document.title shouldBe getValidationErrorTabTitle(incomeSourceType)
+                  document.getElementById("error-summary").text() shouldBe "There is a problem The date your sole trader business stopped cannot be earlier than the 6th of April 2015"
+                  document.getElementById("value-error").text() shouldBe "Error:: The date your sole trader business stopped cannot be earlier than the 6th of April 2015"
+                }
               }
             }
             "return 400 BAD_REQUEST" when {
