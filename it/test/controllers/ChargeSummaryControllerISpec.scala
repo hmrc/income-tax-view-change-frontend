@@ -27,7 +27,7 @@ import models.admin.ChargeHistory
 import models.financialDetails._
 import play.api.http.Status._
 import play.api.libs.json.Json
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testTaxYear}
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testTaxYear, testTaxYearTyped}
 import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.messages.ChargeSummaryMessages._
@@ -78,7 +78,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                     chargeHistories = List.empty,
                     paymentAllocations = List.empty,
                     isLatePaymentCharge = false,
-                    taxYear = testTaxYear,
+                    taxYear = testTaxYearTyped,
                     reviewAndReconcileEnabled = false,
                     penaltiesEnabled = false
                   )(dateService))
@@ -106,7 +106,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                     chargeHistories = List.empty,
                     paymentAllocations = paymentAllocation,
                     isLatePaymentCharge = false,
-                    taxYear = testTaxYear,
+                    taxYear = testTaxYearTyped,
                     reviewAndReconcileEnabled = false,
                     penaltiesEnabled = false
                   )(dateService))
@@ -141,7 +141,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                     chargeHistories = chargeHistories,
                     paymentAllocations = paymentAllocation,
                     isLatePaymentCharge = false,
-                    taxYear = testTaxYear,
+                    taxYear = testTaxYearTyped,
                     reviewAndReconcileEnabled = false,
                     penaltiesEnabled = false
                   )(dateService)
@@ -174,7 +174,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                       chargeHistories = List.empty,
                       paymentAllocations = paymentAllocation,
                       isLatePaymentCharge = true,
-                      taxYear = testTaxYear,
+                      taxYear = testTaxYearTyped,
                       reviewAndReconcileEnabled = false,
                       penaltiesEnabled = false
                     ))
@@ -379,7 +379,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                   paymentAllocations = List.empty,
                   isLatePaymentCharge = false,
                   isMFADebit = true,
-                  taxYear = testTaxYear,
+                  taxYear = testTaxYearTyped,
                   reviewAndReconcileEnabled = false,
                   penaltiesEnabled = false
                 ))
@@ -421,7 +421,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                   paymentAllocations = List.empty,
                   isLatePaymentCharge = false,
                   isMFADebit = true,
-                  taxYear = testTaxYear,
+                  taxYear = testTaxYearTyped,
                   reviewAndReconcileEnabled = false,
                   penaltiesEnabled = false
                 ))

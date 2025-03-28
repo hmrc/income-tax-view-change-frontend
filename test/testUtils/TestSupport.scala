@@ -309,6 +309,15 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
     else
       sys.props += featureSwitch.name -> FEATURE_SWITCH_ON
 
+  def enable(featureSwitchNames: FeatureSwitchName*): Unit = {
+    featureSwitchNames.foreach{ featureSwitch =>
+      if (appConfig.readFeatureSwitchesFromMongo)
+        Await.result(featureSwitchRepository.setFeatureSwitch(featureSwitch, true), 5.seconds)
+      else
+        sys.props += featureSwitch.name -> FEATURE_SWITCH_ON
+    }
+  }
+
   override def disable(featureSwitch: FeatureSwitchName): Unit =
     if (appConfig.readFeatureSwitchesFromMongo)
       Await.result(featureSwitchRepository.setFeatureSwitch(featureSwitch, false), 5.seconds)

@@ -153,7 +153,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
     chargeHistories = List.empty,
     paymentAllocations = List.empty,
     isLatePaymentCharge = false,
-    taxYear = taxYear,
+    taxYear = taxYearTyped,
     reviewAndReconcileEnabled = false,
     penaltiesEnabled = false
   )
@@ -179,7 +179,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
     chargeHistories = if (!isLateInterestCharge) chargeHistory else List.empty,
     paymentAllocations = paymentAllocation,
     isLatePaymentCharge = isLateInterestCharge,
-    taxYear = taxYear,
+    taxYear = taxYearTyped,
     reviewAndReconcileEnabled = false,
     penaltiesEnabled = false
   )

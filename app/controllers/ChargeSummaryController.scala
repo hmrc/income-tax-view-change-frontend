@@ -29,6 +29,7 @@ import models.admin._
 import models.chargeHistory._
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
 import models.financialDetails._
+import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -271,7 +272,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
       paymentAllocations = paymentAllocations,
       isLatePaymentCharge = isLatePaymentCharge,
       isMFADebit = isMFADebit,
-      taxYear = taxYear,
+      taxYear = TaxYear.makeTaxYearWithEndYear(taxYear),
       reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
       penaltiesEnabled = isEnabled(PenaltiesAndAppeals)
     ))
