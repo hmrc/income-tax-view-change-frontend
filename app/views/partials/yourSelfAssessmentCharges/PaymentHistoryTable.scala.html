@@ -79,7 +79,7 @@
         if(viewModel.noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment && viewModel.chargeHistoryEnabled)
             Seq(
                 TableRow(
-                    content = Text(messages(s"chargeSummary.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled, viewModel.penaltiesEnabled)}"))
+                    content = Text(messages(s"chargeSummary.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey}"))
                 ),
                 TableRow(
                     content = HtmlContent(
@@ -94,7 +94,7 @@
         if(viewModel.latePaymentInterestCharge && viewModel.chargeHistoryEnabled)
             Seq(
                 TableRow(
-                    content = Text(messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled, viewModel.penaltiesEnabled)}"))
+                    content = Text(messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey}"))
                 ),
                 TableRow(
                     content = HtmlContent(viewModel.chargeItem.interestEndDate.get.toLongDate.toNonBreaking)
@@ -142,7 +142,7 @@
             case charge if viewModel.chargeHistoryEnabled =>
                 Seq(
                     TableRow(
-                        content = Text(messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled, viewModel.penaltiesEnabled)}"))
+                        content = Text(messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey}"))
                     ),
                     TableRow(
                         content = HtmlContent(charge.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDate.toNonBreaking)

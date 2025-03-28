@@ -153,9 +153,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
     chargeHistories = List.empty,
     paymentAllocations = List.empty,
     isLatePaymentCharge = false,
-    taxYear = taxYearTyped,
-    reviewAndReconcileEnabled = false,
-    penaltiesEnabled = false
+    taxYear = taxYearTyped
   )
 
   def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal): PaymentHistoryAllocations =
@@ -179,9 +177,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
     chargeHistories = if (!isLateInterestCharge) chargeHistory else List.empty,
     paymentAllocations = paymentAllocation,
     isLatePaymentCharge = isLateInterestCharge,
-    taxYear = taxYearTyped,
-    reviewAndReconcileEnabled = false,
-    penaltiesEnabled = false
+    taxYear = taxYearTyped
   )
 
   "ChargeSummaryAudit(mtdItUser, charge, agentReferenceNumber)" should {

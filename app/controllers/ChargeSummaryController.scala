@@ -272,9 +272,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
       paymentAllocations = paymentAllocations,
       isLatePaymentCharge = isLatePaymentCharge,
       isMFADebit = isMFADebit,
-      taxYear = TaxYear.makeTaxYearWithEndYear(taxYear),
-      reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
-      penaltiesEnabled = isEnabled(PenaltiesAndAppeals)
+      taxYear = TaxYear.makeTaxYearWithEndYear(taxYear)
     ))
   }
 }

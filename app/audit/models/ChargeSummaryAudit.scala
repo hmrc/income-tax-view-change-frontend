@@ -35,9 +35,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
                               paymentAllocations: List[PaymentHistoryAllocations],
                               isLatePaymentCharge: Boolean,
                               isMFADebit: Boolean = false,
-                              taxYear: TaxYear,
-                              reviewAndReconcileEnabled: Boolean,
-                              penaltiesEnabled: Boolean
+                              taxYear: TaxYear
                              )(implicit val dateService: DateServiceInterface) extends ExtendedAuditModel with PaymentSharedFunctions {
 
   private def getAllocationDescriptionFromKey(key: Option[String]): String = {
@@ -104,7 +102,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
   private def chargeHistoryJson(chargeHistory: ChargeHistoryModel): JsObject = Json.obj(
     "date" -> chargeHistory.reversalDate,
     "description" -> getChargeTypeFromKey(
-      Some(s"chargeSummary.chargeHistory.${chargeHistory.reasonCode.map(_.value).getOrElse("Unknown")}.${chargeItem.getChargeTypeKey(reviewAndReconcileEnabled, penaltiesEnabled)}")),
+      Some(s"chargeSummary.chargeHistory.${chargeHistory.reasonCode.map(_.value).getOrElse("Unknown")}.${chargeItem.getChargeTypeKey}")),
     "amount" -> chargeHistory.totalAmount
   )
 
