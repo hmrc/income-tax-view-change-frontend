@@ -17,7 +17,7 @@
 package controllers
 
 import enums.{MTDIndividual, MTDSupportingAgent}
-import models.admin.{ChargeHistory, ReviewAndReconcilePoa, YourSelfAssessmentCharges}
+import models.admin.{ChargeHistory, PenaltiesAndAppeals, ReviewAndReconcilePoa, YourSelfAssessmentCharges}
 import models.financialDetails.PoaTwoReconciliationCredit
 import models.repaymentHistory.RepaymentHistoryUtils
 import play.api
@@ -182,6 +182,25 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("howIsInterestCalculated.linkText").text().contains("How is interest calculated?")
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
                 document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "Balancing payment history"
+              }
+
+              "provided with an id associated to a Late payment penalty" in new Setup(testValidFinancialDetailsModelWithLatePaymentPenalty){
+                enable(ReviewAndReconcilePoa)
+                enable(YourSelfAssessmentCharges)
+                enable(ChargeHistory)
+
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000123)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.select("h1").first().text() shouldBe "First late payment penalty"
+                document.getElementsByClass("govuk-caption-xl").first().text() should include("2020 to 2021 tax year")
+                document.getElementById("charge-amount-heading").text() shouldBe "Overdue charge: £200.33"
+                document.getElementById("due-date-text").text() shouldBe "Due 29 March 2020"
+
               }
             }
             "charge history feature is enabled and there is a user" that {
