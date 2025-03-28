@@ -30,20 +30,25 @@ import java.time.LocalDate
 
 class AddIncomeSourceStartDateViewSpec extends TestSupport {
 
-  class Setup(isAgent: Boolean, hasError: Boolean = false, incomeSourceType: IncomeSourceType, isChange: Boolean = false) {
+  class Setup(isAgent: Boolean, formType: String = "Standard", incomeSourceType: IncomeSourceType, isChange: Boolean = false) {
 
     val addIncomeSourceStartDate: AddIncomeSourceStartDate = app.injector.instanceOf[AddIncomeSourceStartDate]
     lazy val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider().apply(incomeSourceType.startDateMessagesPrefix)
-    lazy val errorForm: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(incomeSourceType.startDateMessagesPrefix)
-      .withError(FormError("income-source-start-date", s"${incomeSourceType.startDateMessagesPrefix}.error.required"))
+    lazy val errorFormWithRequiredError: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(incomeSourceType.startDateMessagesPrefix)
+      .withError(FormError("income-source-start-date", s"${incomeSourceType.startDateMessagesPrefix}.required", "day"))
+    lazy val errorFormWithInvalidDateError: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(incomeSourceType.startDateMessagesPrefix)
+      .withError(FormError("income-source-start-date", s"${incomeSourceType.startDateMessagesPrefix}.error.invalid"))
 
     val document: Document = {
       Jsoup.parse(
         contentAsString(
           addIncomeSourceStartDate(
             form = {
-              if(hasError) errorForm
-              else form
+              formType match {
+                case "Standard" => form
+                case "StartDateRequired" => errorFormWithRequiredError
+                case "InvalidDate" => errorFormWithInvalidDateError
+              }
             },
             postAction = Call("", ""),
             isAgent = isAgent,
@@ -61,36 +66,47 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
 
   def executeTest(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
     s"${if (isAgent) "Agent" else "Individual"}: AddIncomeSourceStartDateView - $incomeSourceType" should {
-      "render the heading" in new Setup(isAgent, hasError = false, incomeSourceType) {
-        document.getElementsByClass("govuk-caption-l").text() shouldBe getCaption(incomeSourceType)
-        document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe
-          messages(s"${incomeSourceType.startDateMessagesPrefix}.heading")
+      "render the heading" in new Setup(isAgent, "Standard", incomeSourceType) {
+        val heading = incomeSourceType match {
+          case SelfEmployment => "When did your business start trading?"
+          case UkProperty => "When did your UK property business start?"
+          case ForeignProperty => "When did your foreign property business start?"
+        }
+
+        document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe heading
       }
-      "render the hint" in new Setup(isAgent, hasError = false, incomeSourceType) {
-        document.getElementById("value-hint").text() shouldBe
-          s"${messages(s"${incomeSourceType.startDateMessagesPrefix}.hint")} ${messages(s"${incomeSourceType.startDateMessagesPrefix}.hint2")} ${messages("dateForm.hint")}"
+      "render the hint" in new Setup(isAgent, "Standard", incomeSourceType) {
+        val hintText = incomeSourceType match {
+          case SelfEmployment => "This is the date we’ll use to calculate your Class 2 National Insurance charge, if appropriate."
+          case UkProperty => "This is the date you first received rental income from this UK property business, such as letting or renting out a property or land."
+          case ForeignProperty => "This is the date you first received rental income from this foreign property business, such as letting or renting out a property or land."
+        }
+        document.getElementById("value-hint").text() shouldBe s"The date your business started trading can be today, in the past or up to 7 days in the future. $hintText For example, 27 3 2020"
       }
-      "render the date form" in new Setup(isAgent, hasError = false, incomeSourceType) {
+      "render the date form" in new Setup(isAgent, "Standard", incomeSourceType) {
         document.getElementsByClass("govuk-label govuk-date-input__label").eq(0).text() shouldBe "Day"
         document.getElementsByClass("govuk-label govuk-date-input__label").eq(1).text() shouldBe "Month"
         document.getElementsByClass("govuk-label govuk-date-input__label").eq(2).text() shouldBe "Year"
         document.getElementsByClass("govuk-date-input__item").size() shouldBe 3
       }
-      "render the back link which with correct redirect for normal journey" in new Setup(isAgent, hasError = false, incomeSourceType) {
-        document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      "render the back link which with correct redirect for normal journey" in new Setup(isAgent, "Standard", incomeSourceType) {
+        document.getElementById("back-fallback").text() shouldBe "Back"
         document.getElementById("back-fallback").attr("href") shouldBe getBackUrl(isAgent, incomeSourceType)
       }
       "render the back link which with correct redirect for change journey" in new Setup(
-        isAgent, hasError = false, incomeSourceType, isChange = true) {
-        document.getElementById("back-fallback").text() shouldBe messages("base.back")
+        isAgent, "Standard", incomeSourceType, isChange = true) {
+        document.getElementById("back-fallback").text() shouldBe "Back"
         document.getElementById("back-fallback").attr("href") shouldBe getBackUrlChange(isAgent, incomeSourceType)
       }
-      "render the continue button" in new Setup(isAgent, hasError = false, incomeSourceType) {
-        document.getElementById("continue-button").text() shouldBe messages("base.continue")
+      "render the continue button" in new Setup(isAgent, "Standard", incomeSourceType) {
+        document.getElementById("continue-button").text() shouldBe "Continue"
       }
-      "render the error summary" in new Setup(isAgent, hasError = true, incomeSourceType) {
-        document.getElementById("error-summary").text() shouldBe messages("base.error_summary.heading") + " " +
-          messages(s"${incomeSourceType.startDateMessagesPrefix}.error.required")
+      "render the error summary with required error" in new Setup(isAgent, "StartDateRequired", incomeSourceType) {
+        document.getElementsByClass("govuk-list govuk-error-summary__list").text().contains("The date must include a") shouldBe true
+      }
+      "render the error summary with invalid error" in new Setup(isAgent, "InvalidDate", incomeSourceType) {
+        document.getElementById("error-summary").text() shouldBe "There is a problem" + " " +
+          "The date must be a real date"
       }
     }
   }

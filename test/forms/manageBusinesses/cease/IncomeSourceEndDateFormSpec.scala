@@ -26,7 +26,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.{Form, FormError}
 import services.DateService
 import testConstants.BaseTestConstants.testSelfEmploymentId
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessIncome2, ukForeignSoleTraderIncomeSourceBeforeEarliestStartDate, ukPlusForeignPropertyWithSoleTraderIncomeSource}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
@@ -40,7 +40,7 @@ class IncomeSourceEndDateFormSpec extends AnyWordSpec with Matchers with TestSup
 
   val testUser2: MtdItUser[_] = getMinimalMTDITUser(Some(Individual), businessIncome2, false, fakeRequestNoSession)
 
-  val testUser3: MtdItUser[_] = getMinimalMTDITUser(Some(Individual), ukForeignSoleTraderIncomeSourceBeforeEarliestStartDate, false, fakeRequestNoSession)
+  val testUser3: MtdItUser[_] = getMinimalMTDITUser(Some(Individual), ukForeignSoleTraderIncomeSourceBeforeContextualTaxYear, false, fakeRequestNoSession)
 
   def setupTestId(incomeSourceType: IncomeSourceType): Option[String] = {
     if (incomeSourceType == SelfEmployment) {
@@ -79,6 +79,21 @@ class IncomeSourceEndDateFormSpec extends AnyWordSpec with Matchers with TestSup
     completedForm.data.get("income-source-end-date.month") shouldBe Some("8")
     completedForm.data.get("income-source-end-date.year") shouldBe Some("2016")
     completedForm.errors shouldBe List(FormError("income-source-end-date", List(s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.beforeStartDate"), List()))
+  }
+
+  def setupBindContextualTaxYear(incomeSourceType: IncomeSourceType, dateDMYYYY:(Int, Int, Int)): Seq[FormError] = {
+    val form: Form[DateFormElement] = new IncomeSourceEndDateForm(mockDateService).apply(incomeSourceType, setupTestId(incomeSourceType), newIncomeSourceJourney = false)(testUser3)
+    val formData = Map(
+      "income-source-end-date.day" -> s"${dateDMYYYY._1}",
+      "income-source-end-date.month" -> s"${dateDMYYYY._2}",
+      "income-source-end-date.year" -> s"${dateDMYYYY._3}"
+    )
+    val completedForm = form.bind(formData)
+
+    completedForm.data.get("income-source-end-date.day") shouldBe Some(s"${dateDMYYYY._1}")
+    completedForm.data.get("income-source-end-date.month") shouldBe Some(s"${dateDMYYYY._2}")
+    completedForm.data.get("income-source-end-date.year") shouldBe Some(s"${dateDMYYYY._3}")
+    completedForm.errors
   }
 
   "IncomeSourceEndDate form" should {
@@ -151,6 +166,46 @@ class IncomeSourceEndDateFormSpec extends AnyWordSpec with Matchers with TestSup
     "bind with a date earlier than the business start date - Foreign Property" in {
       setupBindBeforeStartDateTest(ForeignProperty)
     }
+
+    "bind with a date earlier than the contextual tax year - Self Employment" in {
+      val formErrors = setupBindContextualTaxYear(SelfEmployment, dateDMYYYY = (5, 4, 2023))
+      formErrors shouldBe List(FormError("income-source-end-date", List(s"incomeSources.cease.endDate.${SelfEmployment.messagesCamel}.beforeStartDate"), List()))
+    }
+    "bind with a date on the contextual tax year - Self Employment" in {
+      val formErrors = setupBindContextualTaxYear(SelfEmployment, dateDMYYYY = (6, 4, 2023))
+      formErrors shouldBe List.empty
+    }
+    "bind with a date after the contextual tax year - Self Employment" in {
+      val formErrors = setupBindContextualTaxYear(SelfEmployment, dateDMYYYY = (12, 5, dateService.getCurrentTaxYearEnd+1))
+      formErrors shouldBe List(FormError("income-source-end-date", List(s"incomeSources.cease.endDate.${SelfEmployment.messagesCamel}.future"), List()))
+    }
+
+    "bind with a date earlier than the contextual tax year - UK Property" in {
+      val formErrors = setupBindContextualTaxYear(UkProperty, dateDMYYYY = (5, 4, 2023))
+      formErrors shouldBe List(FormError("income-source-end-date", List(s"incomeSources.cease.endDate.${UkProperty.messagesCamel}.beforeStartDate"), List()))
+    }
+    "bind with a date on the contextual tax year - UK Property" in {
+      val formErrors = setupBindContextualTaxYear(UkProperty, dateDMYYYY = (6, 4, 2023))
+      formErrors shouldBe List.empty
+    }
+    "bind with a date after the contextual tax year - UK Property" in {
+      val formErrors = setupBindContextualTaxYear(UkProperty, dateDMYYYY = (6, 4, dateService.getCurrentTaxYearEnd+1))
+      formErrors shouldBe List(FormError("income-source-end-date", List(s"incomeSources.cease.endDate.${UkProperty.messagesCamel}.future"), List()))
+    }
+
+    "bind with a date earlier than the contextual tax year - Foreign Property" in {
+      val formErrors = setupBindContextualTaxYear(ForeignProperty, dateDMYYYY = (5, 4, 2023))
+      formErrors shouldBe List(FormError("income-source-end-date", List(s"incomeSources.cease.endDate.${ForeignProperty.messagesCamel}.beforeStartDate"), List()))
+    }
+    "bind with a date on the contextual tax year - Foreign Property" in {
+      val formErrors = setupBindContextualTaxYear(ForeignProperty, dateDMYYYY = (6, 4, 2023))
+      formErrors shouldBe List()
+    }
+    "bind with a date after the contextual tax year - Foreign Property" in {
+      val formErrors = setupBindContextualTaxYear(ForeignProperty, dateDMYYYY = (6, 4, dateService.getCurrentTaxYearEnd+1))
+      formErrors shouldBe List(FormError("income-source-end-date", List(s"incomeSources.cease.endDate.${ForeignProperty.messagesCamel}.future"), List()))
+    }
+
     "give the correct error when binding with a date both before business start date and the 6th of April 2015 - Self Employment" in {
       val form: Form[DateFormElement] = new IncomeSourceEndDateForm(mockDateService).apply(SelfEmployment, setupTestId(SelfEmployment), false)(testUser2)
       val formData = Map("income-source-end-date.day" -> "14", "income-source-end-date.month" -> "10", "income-source-end-date.year" -> "2012")

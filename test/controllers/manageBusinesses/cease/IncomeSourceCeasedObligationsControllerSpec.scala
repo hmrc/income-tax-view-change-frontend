@@ -103,6 +103,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends MockAuthActions
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some("uk-property"),
     tradingStartDate = None,
+    contextualTaxYear = None,
     cessation = None,
     cashOrAccruals = false,
     latencyDetails = None
@@ -117,6 +118,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends MockAuthActions
       Some("Test name"),
       None,
       Some(LocalDate.of(2022, 1, 1)),
+      contextualTaxYear = None,
       None,
       cashOrAccruals = false
     )), List.empty)

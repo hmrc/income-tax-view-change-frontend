@@ -279,6 +279,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions
                   None,
                   None,
                   Some(LocalDate.of(2022, 1, 1)),
+                  contextualTaxYear = None,
                   None,
                   cashOrAccruals = false
                 )), List.empty)
