@@ -26,6 +26,7 @@ object GatewayPage {
       case WhatYouOwePage.name => WhatYouOwePage
       case PaymentHistoryPage.name => PaymentHistoryPage
       case TaxYearSummaryPage.name => TaxYearSummaryPage
+      case YourSelfAssessmentChargeSummaryPage.name => YourSelfAssessmentChargeSummaryPage
       case _ => NoMatch
     }
   }
@@ -33,6 +34,10 @@ object GatewayPage {
 
 case object WhatYouOwePage extends GatewayPage {
   val name = "whatYouOwe"
+}
+
+case object YourSelfAssessmentChargeSummaryPage extends GatewayPage {
+  val name = "yourSelfAssessmentChargeSummary"
 }
 
 case object PaymentHistoryPage extends GatewayPage {

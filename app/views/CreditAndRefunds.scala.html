@@ -43,7 +43,7 @@ refundViewRow: refundViewRow,
 govukInsetText : GovukInsetText
 )
 @(viewModel: CreditAndRefundViewModel,
-    isAgent: Boolean = false, backUrl: String)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
+    isAgent: Boolean = false, backUrl: String, yourSelfAssessmentChargesFS: Boolean)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
 @getWhatYouOwe(isAgent: Boolean) = @{
@@ -51,6 +51,14 @@ govukInsetText : GovukInsetText
         controllers.routes.WhatYouOweController.showAgent.url
     } else {
         controllers.routes.WhatYouOweController.show().url
+    }
+}
+
+@checkSACharges(isAgent: Boolean) = @{
+    if(isAgent) {
+        controllers.routes.YourSelfAssessmentChargesController.showAgent.url
+    } else {
+        controllers.routes.YourSelfAssessmentChargesController.show().url
     }
 }
 
@@ -106,11 +114,21 @@ govukInsetText : GovukInsetText
         } else {
             @messages("credit-and-refund.upcoming-allocated-credit-1-all", viewModel.allocatedCredit.toCurrencyString)
         }
-        @link(
-            link = getWhatYouOwe(isAgent),
-            messageKey = "credit-and-refund.upcoming-allocated-credit-2"
-        )
-        @messages("credit-and-refund.upcoming-allocated-credit-3")
+        @if(yourSelfAssessmentChargesFS) {
+            @link(
+                link = checkSACharges(isAgent),
+                messageKey = "credit-and-refund.selfAssessment.upcoming-allocated-credit-2"
+            )
+            @messages("credit-and-refund.selfAssessment.upcoming-allocated-credit-3")
+        } else {
+            @link(
+                link = getWhatYouOwe(isAgent),
+                messageKey = "credit-and-refund.upcoming-allocated-credit-2"
+            )
+            @messages("credit-and-refund.upcoming-allocated-credit-3")
+        }
+
+
     }
 }
 

@@ -128,7 +128,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
-                result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
+                result.futureValue.session.get(gatewayPage) shouldBe Some("yourSelfAssessmentChargeSummary")
               }
 
               "the user has no charges" in {
@@ -139,7 +139,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
-                result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
+                result.futureValue.session.get(gatewayPage) shouldBe Some("yourSelfAssessmentChargeSummary")
               }
             }
             "displays the Charges due now tab and warning banner" when {
@@ -201,7 +201,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
-                result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
+                result.futureValue.session.get(gatewayPage) shouldBe Some("yourSelfAssessmentChargeSummary")
                 val doc: Document = Jsoup.parse(contentAsString(result))
                 Option(doc.getElementById("money-in-your-account")).isDefined shouldBe (true)
                 doc.select("#money-in-your-account").select("div h2").text() shouldBe messages("whatYouOwe.moneyOnAccount" + {if(isAgent) "-agent" else ""})
@@ -218,7 +218,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
-                result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
+                result.futureValue.session.get(gatewayPage) shouldBe Some("yourSelfAssessmentChargeSummary")
                 val doc: Document = Jsoup.parse(contentAsString(result))
                 Option(doc.getElementById("money-in-your-account")).isDefined shouldBe (false)
               }
