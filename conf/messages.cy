@@ -1070,6 +1070,13 @@ chargeSummary.whatYouOwe.textTwo-agent							= i wirio a oes ganddo unrhyw dalia
 chargeSummary.whatYouOwe.linkText                               = yr hyn sydd arnoch
 chargeSummary.whatYouOwe.linkText-agent							= yr hyn sydd ar eich cleient
 
+chargeSummary.selfAssessmentCharges.textOne                     = Bwriwch olwg dros
+chargeSummary.selfAssessmentCharges.textTwo                     = sydd arnoch i wirio a oes gennych unrhyw daliadau eraill sy’n ddyledus.
+chargeSummary.selfAssessmentCharges.textOne-agent               = Bwriwch olwg dros
+chargeSummary.selfAssessmentCharges.textTwo-agent				= sydd ar eich cleient i wirio a oes ganddo unrhyw daliadau eraill sy’n ddyledus.
+chargeSummary.selfAssessmentCharges.linkText                    = y taliadau Hunanasesiad
+chargeSummary.selfAssessmentCharges.linkText-agent				= y taliadau Hunanasesiad
+
 chargeSummary.chargeHistory.heading								        = Hanes y tâl hwn
 chargeSummary.chargeHistory.lateInterestPayment					        = Hanes llog am dalu’n hwyr
 chargeSummary.chargeHistory.Poa1heading                                 = Hanes eich taliad ar gyfrif cyntaf
@@ -1287,7 +1294,9 @@ credit-and-refund.available-to-claim                              = Mae {0} ar g
 credit-and-refund.upcoming-allocated-credit-1                     = Mae CThEF wedi cadw {0} o’r swm hwn i dalu’ch bil treth sydd i ddod.
 credit-and-refund.upcoming-allocated-credit-1-all                 = Mae CThEF wedi cadw’r cyfanswm o {0} i dalu’ch bil treth sydd i ddod.
 credit-and-refund.upcoming-allocated-credit-2                     = Gwiriwch yr hyn sydd arnoch
+credit-and-refund.selfAssessment.upcoming-allocated-credit-2      = Gwiriwch eich taliadau Hunanasesiad
 credit-and-refund.upcoming-allocated-credit-3                     = i gael rhagor o wybodaeth.
+credit-and-refund.selfAssessment.upcoming-allocated-credit-3      = i gael rhagor o wybodaeth.
 
 credit-and-refund.no-credit                                       = Nid oes gennych arian yn eich cyfrif.
 credit-and-refund.claim-refund-btn                                = Hawlio ad-daliad
@@ -2220,8 +2229,10 @@ claimToAdjustPoa.success.heading                    = Taliadau ar gyfrif wedi’
 claimToAdjustPoa.success.h1                         = Taliadau ar gyfrif wedi’u diweddaru
 claimToAdjustPoa.success.p1                         = Mae’ch taliadau ar gyfrif ar gyfer blwyddyn dreth 2023 i 2024 yn {2} yr un erbyn hyn
 claimToAdjustPoa.success.p2                         = Gallwch addasu’ch taliadau ar gyfrif eto, hyd at y swm cychwynnol a gyfrifwyd gan CThEF, mor aml ag sydd ei angen cyn cyflwyno’ch Ffurflen Dreth ar gyfer {0} i {1}, ac erbyn 31 Ionawr {2} fan bellaf.
-claimToAdjustPoa.success.check                      = Gwirio’r
+claimToAdjustPoa.success.check                      = Gwiriwch
+claimToAdjustPoa.success.yourSelfAssessmentCharges  = eich taliadau Hunanasesiad
 claimToAdjustPoa.success.whatYouOwe                 = hyn sydd arnoch
+claimToAdjustPoa.success.forUpcomingPaymentDue      = i gael gwybod a oes unrhyw daliadau dyledus ar y gweill.
 claimToAdjustPoa.success.forUpcomingCharges         = ar gyfer newidiadau sydd ar y gweill.
 claimToAdjustPoa.success.overdueTitle               = Taliadau am fod yn hwyr
 claimToAdjustPoa.success.overdueText1               = Bellach, mae gennych daliadau am fod yn hwyr sydd angen eu talu. Gwiriwch yr
@@ -2235,6 +2246,7 @@ claimToAdjustPoa.youCannotGoBack.bullet1Text             = gwiriwch
 claimToAdjustPoa.youCannotGoBack.bullet1Link             = statws eich taliadau ar gyfrif
 claimToAdjustPoa.youCannotGoBack.bullet2Text             = gwiriwch
 claimToAdjustPoa.youCannotGoBack.bullet2Link             = yr hyn sydd arnoch
+claimToAdjustPoa.youCannotGoBack.sa.bullet2Link          = Gwiriwch eich taliadau Hunanasesiad
 claimToAdjustPoa.youCannotGoBack.bullet3Text             = ewch yn ôl i’r
 claimToAdjustPoa.youCannotGoBack.bullet3Link             = hafan
 

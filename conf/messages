@@ -1071,6 +1071,13 @@ chargeSummary.whatYouOwe.textTwo-agent							   = to check if they have any othe
 chargeSummary.whatYouOwe.linkText								   = what you owe
 chargeSummary.whatYouOwe.linkText-agent							   = what your client owes
 
+chargeSummary.selfAssessmentCharges.textOne							= View
+chargeSummary.selfAssessmentCharges.textTwo							= to check if you have any other payments due.
+chargeSummary.selfAssessmentCharges.textOne-agent					= View
+chargeSummary.selfAssessmentCharges.textTwo-agent					= to check if they have any other payments due.
+chargeSummary.selfAssessmentCharges.linkText						= your Self Assessment charges
+chargeSummary.selfAssessmentCharges.linkText-agent					= your client’s Self Assessment charges
+
 chargeSummary.chargeHistory.heading								        = History of this charge
 chargeSummary.chargeHistory.lateInterestPayment					        = Late payment interest history
 chargeSummary.chargeHistory.Poa1heading                                 = First payment on account history
@@ -1288,7 +1295,9 @@ credit-and-refund.available-to-claim                              = {0} availabl
 credit-and-refund.upcoming-allocated-credit-1                     = HMRC has reserved {0} of this to cover your upcoming tax bill.
 credit-and-refund.upcoming-allocated-credit-1-all                 = HMRC has reserved all {0} to cover your upcoming tax bill.
 credit-and-refund.upcoming-allocated-credit-2                     = Check what you owe
+credit-and-refund.selfAssessment.upcoming-allocated-credit-2      = Check your Self Assessment charges
 credit-and-refund.upcoming-allocated-credit-3                     = for further information.
+credit-and-refund.selfAssessment.upcoming-allocated-credit-3      = for more information.
 
 credit-and-refund.no-credit                                       = You have no money in your account.
 credit-and-refund.claim-refund-btn                                = Claim a refund
@@ -2224,7 +2233,9 @@ claimToAdjustPoa.success.h1                             = Payments on account up
 claimToAdjustPoa.success.p1                             = Your payments on account for the {0} to {1} tax year are now {2} each
 claimToAdjustPoa.success.p2                             = You can adjust your payments on account again, up to the initial amount calculated by HMRC, as often as you need to before submitting your tax return for {0} to {1}, and no later than 31 January {2}.
 claimToAdjustPoa.success.check                          = Check
+claimToAdjustPoa.success.yourSelfAssessmentCharges      = your Self Assessment charges
 claimToAdjustPoa.success.whatYouOwe                     = what you owe
+claimToAdjustPoa.success.forUpcomingPaymentDue          = for upcoming payment due.
 claimToAdjustPoa.success.forUpcomingCharges             = for upcoming charges.
 claimToAdjustPoa.success.overdueTitle                   = Overdue charges
 claimToAdjustPoa.success.overdueText1                   = You now have overdue charges that need to be paid. Check
@@ -2238,6 +2249,7 @@ claimToAdjustPoa.youCannotGoBack.bullet1Text             = check the
 claimToAdjustPoa.youCannotGoBack.bullet1Link             = status of your payments on account
 claimToAdjustPoa.youCannotGoBack.bullet2Text             = check
 claimToAdjustPoa.youCannotGoBack.bullet2Link             = what you owe
+claimToAdjustPoa.youCannotGoBack.sa.bullet2Link          = your Self Assessment charges
 claimToAdjustPoa.youCannotGoBack.bullet3Text             = go back to the
 claimToAdjustPoa.youCannotGoBack.bullet3Link             = homepage
 

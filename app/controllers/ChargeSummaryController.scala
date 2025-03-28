@@ -176,8 +176,12 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
           if (isAgent) controllers.routes.WhatYouOweController.showAgent.url
           else controllers.routes.WhatYouOweController.show(origin).url
         }
+        val saChargesUrl: String = {
+          if(isAgent) controllers.routes.YourSelfAssessmentChargesController.showAgent.url
+          else controllers.routes.YourSelfAssessmentChargesController.show(origin).url
+      }
 
-        val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
+      val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
           currentDate = dateService.getCurrentDate,
           chargeItem = chargeItem,
           backUrl = getChargeSummaryBackUrl(sessionGatewayPage, taxYear, origin, isAgent),
@@ -203,7 +207,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
             if (isEnabled(YourSelfAssessmentCharges) && chargeItem.isIncludedInSACSummary)
               yourSelfAssessmentChargeSummary(viewModel, whatYouOweUrl)
             else
-              chargeSummaryView(viewModel, whatYouOweUrl)
+              chargeSummaryView(viewModel, whatYouOweUrl, saChargesUrl, isEnabled(YourSelfAssessmentCharges))
           }
           case Left(ec) => onError(s"Invalid response from charge history: ${ec.message}", isAgent, showInternalServerError = true)
         }
