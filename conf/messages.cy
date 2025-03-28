@@ -1085,6 +1085,7 @@ chargeSummary.chargeHistory.created.codingOut.text                      = PAYE s
 chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text	= Hunanasesiad TWE wedi’i ganslo (trwy eich cod treth TWE)
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = Creodd CThEF y swm ychwanegol hwn ar gyfer eich taliad ar gyfrif cyntaf yn seiliedig ar eich Ffurflen Dreth
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = Creodd CThEF y swm ychwanegol hwn ar gyfer eich ail daliad ar gyfrif yn seiliedig ar eich Ffurflen Dreth
+chargeSummary.chargeHistory.created.firstLatePaymentPenalty.text        = HMRC created your late payment penalty
 chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = Taliad ar gyfrif 1 o 2 wedi’i ostwng oherwydd cais gan y trethdalwr
 chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = Taliad ar gyfrif 2 o 2 wedi’i ostwng oherwydd cais gan y trethdalwr
 chargeSummary.chargeHistory.request.balancingCharge.text	   	        = Taliad Mantoli wedi’i ostwng oherwydd cais gan y trethdalwr
@@ -2574,4 +2575,10 @@ yourSelfAssessmentChargeSummary.unknown.heading             = Unknown
 yourSelfAssessmentChargeSummary.chargeHistory.balancingPayment.heading  = Balancing payment history
 yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount1.heading = First payment on account history
 yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount2.heading = Second payment on account history
+yourSelfAssessmentChargeSummary.chargeHistory.firstLatePaymentPenalty.heading = First late payment penalty history
 yourSelfAssessmentChargeSummary.chargeHistory.unknown.heading		    = History of this charge
+
+
+yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.heading = First late payment penalty
+yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p = You have received this penalty because you are late paying your Income Tax.
+yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link = View how your penalty was calculated.

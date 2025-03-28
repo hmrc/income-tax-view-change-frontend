@@ -1086,6 +1086,7 @@ chargeSummary.chargeHistory.created.codingOut.text                      = Self A
 chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text	= Cancelled PAYE Self Assessment (through your PAYE tax code) created
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = HMRC created this extra amount for your first payment on account based on your tax return
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = HMRC created this extra amount for your second payment on account based on your tax return
+chargeSummary.chargeHistory.created.firstLatePaymentPenalty.text        = HMRC created your late payment penalty
 chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = Payment on account 1 of 2 reduced by taxpayer request
 chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = Payment on account 2 of 2 reduced by taxpayer request
 chargeSummary.chargeHistory.request.balancingCharge.text	   	        = Balancing payment reduced by taxpayer request
@@ -2578,6 +2579,11 @@ yourSelfAssessmentChargeSummary.unknown.heading             = Unknown
 yourSelfAssessmentChargeSummary.chargeHistory.balancingPayment.heading  = Balancing payment history
 yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount1.heading = First payment on account history
 yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount2.heading = Second payment on account history
+yourSelfAssessmentChargeSummary.chargeHistory.firstLatePaymentPenalty.heading = First late payment penalty history
 yourSelfAssessmentChargeSummary.chargeHistory.unknown.heading		    = History of this charge
+
+yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.heading = First late payment penalty
+yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p = You have received this penalty because you are late paying your Income Tax.
+yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link = View how your penalty was calculated.
 
 

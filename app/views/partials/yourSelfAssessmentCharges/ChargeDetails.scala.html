@@ -25,14 +25,17 @@
 @import views.html.partials.yourSelfAssessmentCharges.WhatIsPaymentOnAccount
 @import views.html.partials.yourSelfAssessmentCharges.WhatIsABalancingPayment
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Details
+@import models.financialDetails.FirstLatePaymentPenalty
 
 @this(
-    p: p,
-    numberList: numberList,
-    whatIsPaymentOnAccount: WhatIsPaymentOnAccount,
-    whatIsABalancingPayment: WhatIsABalancingPayment,
-    govukDetails: GovukDetails
+        p: p,
+        link: link,
+        numberList: numberList,
+        whatIsPaymentOnAccount: WhatIsPaymentOnAccount,
+        whatIsABalancingPayment: WhatIsABalancingPayment,
+        govukDetails: GovukDetails
 )
+
 
 @(
     transactionType: TransactionType
@@ -58,5 +61,20 @@
             summary = Text(getMessage("whatIsPaymentOnAccount.linkText")),
             content = HtmlContent(whatIsPaymentOnAccount())
         ))
+    case FirstLatePaymentPenalty =>
+        LPP1Content
     case _ =>
 }}
+
+@LPP1Content = {
+    @p(id = Some("first-payment-penalty-p1")) {
+        @getMessage("firstLatePaymentPenalty.p")
+    }
+
+    @link(
+        link = "/penalties/income-tax",
+        messageKey = "yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link"
+    )
+
+
+}
