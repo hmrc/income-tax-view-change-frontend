@@ -312,6 +312,80 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
               redirectLocation(result) shouldBe Some(redirectLocationResult)
             }
           }
+          "display before tax year error" when {
+            "form is completed successfully" in {
+              setupMockSuccess(mtdRole)
+              enable(IncomeSourcesFs)
+              mockBothPropertyBothBusiness()
+              setupMockCreateSession(true)
+              if (incomeSourceType == SelfEmployment) {
+                setupMockSetMultipleMongoData(Right(true))
+              } else {
+                setupMockSetSessionKeyMongo(Right(true))
+              }
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
+              val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody("value.day" -> "27", "value.month" -> "8",
+                "value.year" -> "2018"))
+
+              val expectedErrorMessage: (String, String) = incomeSourceType match {
+                case SelfEmployment => (
+                  "There is a problem The date your sole trader business stopped must be on or after the date it started trading",
+                  "Error:: The date your sole trader business stopped must be on or after the date it started trading"
+                )
+                case UkProperty => (
+                  "There is a problem The date your UK property business stopped must be on or after the date it started trading",
+                  "Error:: The date your UK property business stopped must be on or after the date it started trading"
+                )
+                case ForeignProperty => (
+                  "There is a problem The date your foreign property business stopped must be on or after the date it started trading",
+                  "Error:: The date your foreign property business stopped must be on or after the date it started trading"
+                )
+              }
+
+              status(result) shouldBe Status.BAD_REQUEST
+              val document: Document = Jsoup.parse(contentAsString(result))
+              document.title shouldBe getValidationErrorTabTitle(incomeSourceType)
+              document.getElementById("error-summary").text() shouldBe expectedErrorMessage._1
+              document.getElementById("value-error").text() shouldBe expectedErrorMessage._2
+            }
+          }
+          "display after tax year error" when {
+            "form is completed successfully" in {
+              setupMockSuccess(mtdRole)
+              enable(IncomeSourcesFs)
+              mockBothPropertyBothBusiness()
+              setupMockCreateSession(true)
+              if (incomeSourceType == SelfEmployment) {
+                setupMockSetMultipleMongoData(Right(true))
+              } else {
+                setupMockSetSessionKeyMongo(Right(true))
+              }
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
+              val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody("value.day" -> "27", "value.month" -> "8",
+                "value.year" -> "2025"))
+
+              val expectedErrorMessage: (String, String) = incomeSourceType match {
+                case SelfEmployment => (
+                  "There is a problem The date your sole trader business stopped must be today or in the past",
+                  "Error:: The date your sole trader business stopped must be today or in the past"
+                )
+                case UkProperty => (
+                  "There is a problem The date your UK property business stopped must be today or in the past",
+                  "Error:: The date your UK property business stopped must be today or in the past"
+                )
+                case ForeignProperty => (
+                  "There is a problem The date your foreign property business stopped must be today or in the past",
+                  "Error:: The date your foreign property business stopped must be today or in the past"
+                )
+              }
+
+              status(result) shouldBe Status.BAD_REQUEST
+              val document: Document = Jsoup.parse(contentAsString(result))
+              document.title shouldBe getValidationErrorTabTitle(incomeSourceType)
+              document.getElementById("error-summary").text() shouldBe expectedErrorMessage._1
+              document.getElementById("value-error").text() shouldBe expectedErrorMessage._2
+            }
+          }
           "return 400 BAD_REQUEST" when {
             "the form is not completed successfully" in {
               setupMockSuccess(mtdRole)
