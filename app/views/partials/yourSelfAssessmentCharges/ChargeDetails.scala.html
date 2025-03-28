@@ -37,7 +37,8 @@
 )
 
 @(
-    transactionType: TransactionType
+    transactionType: TransactionType,
+    LSPUrl: String
 )(
     implicit request: Request[_],
     messages: Messages
@@ -79,7 +80,7 @@
         @getMessage("lateSubmissionPenalty.penaltyLinkText1")
         @link(
             id = Some("late-submission-penalty-link"),
-            link="",
+            link= LSPUrl,
             rel= Some("noreferrer noopener"),
             messageKey = "yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText"
         )

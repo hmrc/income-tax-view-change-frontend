@@ -96,7 +96,7 @@
         @getMessage("due", viewModel.chargeItem.getDueDate.toLongDate)
     }
 
-    @chargeDetails(viewModel.chargeItem.transactionType)
+    @chargeDetails(viewModel.chargeItem.transactionType, viewModel.LSPUrl.getOrElse(""))
 
     @if(viewModel.chargeItem.hasAccruingInterest) {
 
