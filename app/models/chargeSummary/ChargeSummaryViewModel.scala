@@ -70,7 +70,7 @@ case class ChargeSummaryViewModel(
   val messagePrefix = if(latePaymentInterestCharge)"lpi."
   else ""
   val pageTitle: String =
-    s"chargeSummary.$messagePrefix${chargeItem.getChargeTypeKey(reviewAndReconcileEnabled, penaltiesEnabled)}"
+    s"chargeSummary.$messagePrefix${chargeItem.getChargeTypeKey}"
 
   val isBalancingChargeZero: Boolean = chargeItem.transactionType match {
     case _ if chargeItem.subTransactionType.isDefined => false
