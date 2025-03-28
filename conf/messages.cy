@@ -20,6 +20,7 @@ accessibility.this-section-is                                   = Teitl yr adran
 
 # Fallback Back Links
 back.whatYouOwe = Yn ôl i Yr hyn sydd arnoch
+back.yourSelfAssessmentChargeSummary = Yn ôl i’ch taliadau Hunanasesiad
 back.paymentHistory = Yn ôl i Hanes taliadau
 back.taxYearSummary = Yn ôl i Crynodeb o’r flwyddyn dreth
 back.nomatch = Yn ôl

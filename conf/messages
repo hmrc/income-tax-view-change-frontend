@@ -20,6 +20,7 @@ accessibility.this-section-is                                   = This section i
 
 # Fallback Back Links
 back.whatYouOwe     = Back to What You Owe
+back.yourSelfAssessmentChargeSummary  = Back to Your Self Assessment charges
 back.paymentHistory = Back to Payment History
 back.taxYearSummary = Back to Tax Year Summary
 back.nomatch        = Back
