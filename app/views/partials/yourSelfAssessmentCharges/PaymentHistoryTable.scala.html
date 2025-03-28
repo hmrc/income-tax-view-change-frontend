@@ -23,10 +23,8 @@
 @import views.html.partials.yourSelfAssessmentCharges.LatePaymentInterestChargeMessage
 @import models.repaymentHistory.RepaymentHistoryUtils
 @import exceptions.MissingFieldException
-@import models.financialDetails.PoaOneDebit
-@import models.financialDetails.PoaTwoDebit
-@import models.financialDetails.BalancingCharge
 @import models.financialDetails.ChargeItem
+@import views.helpers.ChargeNameLangHelper
 
 @this(
     govukTable: GovukTable,
@@ -49,15 +47,6 @@
     messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
 }
 
-@chargeHistoryHeading = @{
-    viewModel.chargeItem.transactionType match {
-        case PoaOneDebit     => getMessage("chargeHistory.paymentOnAccount1.heading")
-        case PoaTwoDebit     => getMessage("chargeHistory.paymentOnAccount2.heading")
-        case BalancingCharge => getMessage("chargeHistory.balancingPayment.heading")
-        case _               => getMessage("chargeHistory.unknown.heading")
-    }
-}
-
 @govukTable(Table(
     head = Some(
         Seq(
@@ -77,7 +66,7 @@
         if(viewModel.noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment && viewModel.chargeHistoryEnabled)
             Seq(
                 TableRow(
-                    content = Text(messages(s"chargeSummary.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}"))
+                    content = Text(messages(s"chargeSummary.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey}"))
                 ),
                 TableRow(
                     content = HtmlContent(
@@ -92,7 +81,7 @@
         if(viewModel.latePaymentInterestCharge && viewModel.chargeHistoryEnabled)
             Seq(
                 TableRow(
-                    content = Text(messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}"))
+                    content = Text(messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey}"))
                 ),
                 TableRow(
                     content = HtmlContent(viewModel.chargeItem.interestEndDate.get.toLongDate.toNonBreaking)
@@ -140,7 +129,7 @@
             case charge if viewModel.chargeHistoryEnabled =>
                 Seq(
                     TableRow(
-                        content = Text(messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}"))
+                        content = Text(messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey}"))
                     ),
                     TableRow(
                         content = HtmlContent(charge.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDate.toNonBreaking)
@@ -170,7 +159,7 @@
                 )
             )
     }),
-    caption = Some(chargeHistoryHeading),
+    caption = Some(getMessage(ChargeNameLangHelper.chargeHistoryHeading(viewModel))),
     attributes = Map("id" -> "payment-history-table"),
     captionClasses = "govuk-table__caption--m"
 ))

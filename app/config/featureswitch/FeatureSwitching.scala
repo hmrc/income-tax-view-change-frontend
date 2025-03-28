@@ -48,6 +48,12 @@ trait FeatureSwitching {
   def enable(featureSwitch: FeatureSwitchName): Unit =
     sys.props += featureSwitch.name -> FEATURE_SWITCH_ON
 
+  def enable(featureSwitches: FeatureSwitchName*): Unit = {
+    featureSwitches.foreach(
+      fs => sys.props += fs.name -> FEATURE_SWITCH_ON
+    )
+  }
+
   def disable(featureSwitch: FeatureSwitchName): Unit =
     sys.props += featureSwitch.name -> FEATURE_SWITCH_OFF
 

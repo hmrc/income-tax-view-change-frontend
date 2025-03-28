@@ -28,12 +28,11 @@ import forms.utils.SessionKeys.gatewayPage
 import models.admin._
 import models.chargeHistory._
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
-import models.financialDetails.ChargeType.poaOneReconciliationDebit
 import models.financialDetails._
+import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.claimToAdjustPoa.ClaimToAdjustHelper.{isPoaOne, isPoaTwo}
 import services.{ChargeHistoryService, DateServiceInterface, FinancialDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -273,7 +272,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
       paymentAllocations = paymentAllocations,
       isLatePaymentCharge = isLatePaymentCharge,
       isMFADebit = isMFADebit,
-      taxYear = taxYear
+      taxYear = TaxYear.makeTaxYearWithEndYear(taxYear)
     ))
   }
 }

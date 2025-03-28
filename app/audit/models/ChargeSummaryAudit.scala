@@ -22,6 +22,7 @@ import enums.AuditType.ChargeSummary
 import models.chargeHistory.ChargeHistoryModel
 import models.chargeSummary.PaymentHistoryAllocations
 import models.financialDetails._
+import models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{JsObject, JsValue, Json}
 import services.DateServiceInterface
 import utils.Utilities._
@@ -34,7 +35,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
                               paymentAllocations: List[PaymentHistoryAllocations],
                               isLatePaymentCharge: Boolean,
                               isMFADebit: Boolean = false,
-                              taxYear: Int
+                              taxYear: TaxYear
                              )(implicit val dateService: DateServiceInterface) extends ExtendedAuditModel with PaymentSharedFunctions {
 
   private def getAllocationDescriptionFromKey(key: Option[String]): String = {
@@ -55,7 +56,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
       case Some("balancingCharge.text") => "Late payment interest for remaining balance"
       case Some("codingOut.cancelled") => "Cancelled PAYE Self Assessment (through your PAYE tax code)"
       case Some("codingOut.accepted") =>
-        s"Amount collected through your PAYE tax code for ${taxYear + 1} to ${taxYear + 2} tax year"
+        s"Amount collected through your PAYE tax code for ${taxYear.addYears(2).startYear} to ${taxYear.addYears(2).endYear} tax year"
       case _ => s"Some unexpected message key: $key"
     }
   }
@@ -101,7 +102,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
   private def chargeHistoryJson(chargeHistory: ChargeHistoryModel): JsObject = Json.obj(
     "date" -> chargeHistory.reversalDate,
     "description" -> getChargeTypeFromKey(
-      Some(s"chargeSummary.chargeHistory.${chargeHistory.reasonCode.map(_.value).getOrElse("Unknown")}.${chargeItem.getChargeTypeKey()}")),
+      Some(s"chargeSummary.chargeHistory.${chargeHistory.reasonCode.map(_.value).getOrElse("Unknown")}.${chargeItem.getChargeTypeKey}")),
     "amount" -> chargeHistory.totalAmount
   )
 

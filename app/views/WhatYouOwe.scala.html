@@ -159,7 +159,7 @@
 @paymentTypeEntry(chargeItem: ChargeItem, rowId: String, isInterest: Boolean,
     isMFADebit: Boolean, linkSuffix: String, index: Int) = @{
 
-    val chargeTypeKey = chargeItem.getChargeTypeKey(reviewAndReconcileEnabled)
+    val chargeTypeKey = chargeItem.getChargeTypeKey
     val lpi = if (isInterest) "lpi." else ""
     val linkText = getMessage(s"${lpi}${chargeTypeKey}")
     val taxYear = chargeItem.taxYear

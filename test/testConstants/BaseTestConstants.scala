@@ -52,6 +52,7 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testUserNino: Nino = Nino(testNino)
   val testSaUtr = "1234567890"
   val taxYear: Int = 2020
+  val taxYearTyped: TaxYear = TaxYear(2019, 2020)
   val taxYear2020: String = "2020"
   val idNumber = "1234567890"
   val idType: String = "utr"
