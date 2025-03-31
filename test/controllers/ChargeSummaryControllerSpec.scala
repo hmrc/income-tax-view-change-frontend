@@ -187,9 +187,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "provided with an id associated to a Late payment penalty" in new Setup(testValidFinancialDetailsModelWithLatePaymentPenalty){
-                enable(ReviewAndReconcilePoa)
-                enable(YourSelfAssessmentCharges)
-                enable(ChargeHistory)
+                enable(ReviewAndReconcilePoa, YourSelfAssessmentCharges, ChargeHistory)
 
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
