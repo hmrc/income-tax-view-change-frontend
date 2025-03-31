@@ -17,13 +17,13 @@
 @this()
 
 @(
- html: Html,
- classes: String = "govuk-heading-s",
- optId: Option[String] = None
+  html: Html,
+  classes: String = "govuk-heading-s",
+  optId: Option[String] = None
 )(
- implicit messages: Messages
+  implicit messages: Messages
 )
 
 <h3 @optId.map(value => s"id=$value") class="@classes">
- @html
+  @html
 </h3>
