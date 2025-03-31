@@ -29,6 +29,7 @@
         formWithCSRF: FormWithCSRF,
         h1: h1,
         h2: h2,
+        h3WithHtml: h3WithHtml,
         p: p,
         link: link,
         hr: hr,
@@ -114,11 +115,14 @@
 @showCapitalGainBlock = {
   @if(source.incomeSourceType != SelfEmployment) {
     <div id="capital-gain-block" class="govuk-!-margin-bottom-7">
-        <h3 class="govuk-label-wrapper">
-            <label class="govuk-label govuk-label--m govuk-!-margin-bottom-4">
-                @getMessage("capital-gain-tax.text")
-            </label>
-        </h3>
+        @h3WithHtml(
+            Html(s"""
+                |<label class="govuk-label govuk-label--m govuk-!-margin-bottom-4">
+                |   ${getMessage("capital-gain-tax.text")}
+                |</label>""".stripMargin
+            ),
+            classes = "govuk-label-wrapper"
+        )
         @p(id=Some("capital-gain-content")){
             @getMessage("capital-gain-tax.info1.text")
         }
@@ -138,11 +142,14 @@
         @source.insetWarningMessageKey.map(getInsetWarning(_))
 
         <div id="next-upcoming-updates" class="govuk-!-margin-bottom-7">
-            <h3 id="next-upcoming-updates-heading" class="govuk-label-wrapper">
-                <label class="govuk-label--m govuk-!-margin-top-4 govuk-heading-m  govuk-!-margin-bottom-4 ">
-                    @getMessage("next-update.text")
-                </label>
-            </h3>
+            @h3WithHtml(
+                Html(s"""
+                    |<label class="govuk-label--m govuk-!-margin-top-4 govuk-heading-m  govuk-!-margin-bottom-4">
+                    |   ${getMessage("next-update.text")}
+                    |</label>""".stripMargin),
+                optId = Some("next-upcoming-updates-heading"),
+                classes = "govuk-label-wrapper"
+            )
             @if(source.firstQuarterlyUpdate.isEmpty && source.finalDeclarationUpdate.size == 1){
                 @p(id=Some("final-declaration-update")){
                     @getNextFinalDeclarationUpdate()

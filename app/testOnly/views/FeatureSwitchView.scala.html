@@ -17,8 +17,9 @@
 @import helper._
 @import models.admin.FeatureSwitchName
 @import views.html.layouts.unifiedLayout
+@import views.html.components.h3
 
-@this( unifiedLayout: unifiedLayout)
+@this(unifiedLayout: unifiedLayout, h3: h3)
 
 @(switchNames: Map[FeatureSwitchName, Boolean], action: Call)(implicit request: Request[_], messages: Messages)
 
@@ -31,7 +32,10 @@
                     Which features would you like to have enabled?
                 </h1>
             </legend>
-            <h3 class="govuk-heading-m">Frontend features</h3>
+            @h3(
+                msg = "Frontend features",
+                classes = "govuk-heading-m"
+            )
             <div class="govuk-checkboxes" data-module="govuk-checkboxes">
             @for((switch, state) <- switchNames) {
                 <div class="govuk-checkboxes__item">

@@ -33,6 +33,7 @@
         appConfig: config.FrontendAppConfig,
         h1: h1,
         h2: h2,
+        h3: h3,
         p: p,
         link: link,
         detailsDropdown: detailsDropdown,
@@ -342,9 +343,10 @@
                                         </h2>
                                     </div>
                                     <div class="govuk-notification-banner__content" id="overdue-important-warning">
-                                        <h3 class="govuk-notification-banner__heading">
-                                        @getMessage("charges-due-now-with-amount", viewModel.whatYouOweChargesList.balanceDetails.overDueAmount.toCurrencyString)
-                                        </h3>
+                                        @h3(
+                                            msg = getMessage("charges-due-now-with-amount", viewModel.whatYouOweChargesList.balanceDetails.overDueAmount.toCurrencyString),
+                                            classes = "govuk-notification-banner__heading"
+                                        )
                                         <p class="govuk-body">
                                         <div>
                                             @getMessage("important-p1")
