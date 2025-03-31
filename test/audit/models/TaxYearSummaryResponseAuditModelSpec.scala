@@ -254,7 +254,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
           forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
           forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
         ), charges = payments(paymentHasADunningLock).map(TaxYearSummaryChargeItem.fromChargeItem),
-        obligations = updates, reviewAndReconcileEnabled = true, ctaViewModel = emptyCTAViewModel
+        obligations = updates, ctaViewModel = emptyCTAViewModel
         ),
       messages
     )
@@ -273,8 +273,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
         forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
         forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
       ), charges = payments(paymentHasADunningLock).map(TaxYearSummaryChargeItem.fromChargeItem(_)),
-        obligations = updates, showForecastData = true,
-        reviewAndReconcileEnabled = true, ctaViewModel = emptyCTAViewModel
+        obligations = updates, showForecastData = true, ctaViewModel = emptyCTAViewModel
       )
     )
 

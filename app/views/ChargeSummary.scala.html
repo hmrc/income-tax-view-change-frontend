@@ -48,7 +48,7 @@
     govukInsetText : GovukInsetText
 )
 
-@(viewModel: ChargeSummaryViewModel, whatYouOweUrl: String)(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig, dateService: DateServiceInterface)
+@(viewModel: ChargeSummaryViewModel, whatYouOweUrl: String, saChargesUrl: String, yourSelfAssessmentChargesFS: Boolean)(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig, dateService: DateServiceInterface)
 
 @import implicitDateFormatter.longDate
 
@@ -334,14 +334,44 @@
         getInterestRatesLink
     }
 
-    @if(!viewModel.isCredit) {
-        @if(viewModel.hasInterestLocks && viewModel.hasAccruedInterest) {
-            @p(id = Some("p-interest-locks-msg")) {
-                @if(viewModel.isAgent) {
+    @if(yourSelfAssessmentChargesFS) {
+        @if(!viewModel.isCredit) {
+            @if(viewModel.hasInterestLocks && viewModel.hasAccruedInterest) {
+                @p(id = Some("p-interest-locks-msg")) {
+            @if(viewModel.isAgent) {
+                @messages("chargeSummary.selfAssessmentCharges.textOne-agent")
+                @link(id = Some("SAChargesAgentInterestLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText-agent")
+                @messages("chargeSummary.interestLocks.text-agent")
+            } else {
+                @messages("chargeSummary.selfAssessmentCharges.textOne")
+                @link(id = Some("SAChargesInterestLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText")
+                @messages("chargeSummary.interestLocks.text")
+                }
+
+            }
+        } else {
+            @p() {
+            @if(viewModel.isAgent) {
+                @messages("chargeSummary.selfAssessmentCharges.textOne-agent"),
+                @link(id = Some("SAChargesAgentLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText-agent")
+                @messages("chargeSummary.selfAssessmentCharges.textTwo-agent")
+            } else {
+                @messages("chargeSummary.selfAssessmentCharges.textOne")
+                @link(id = Some("SAChargesLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText")
+                @messages("chargeSummary.selfAssessmentCharges.textTwo")
+                }
+            }
+        }
+    }
+    } else {
+        @if(!viewModel.isCredit) {
+            @if(viewModel.hasInterestLocks && viewModel.hasAccruedInterest) {
+                @p(id = Some("p-interest-locks-msg")) {
+                    @if(viewModel.isAgent) {
                     @messages("chargeSummary.whatYouOwe.textOne-agent")
                     @link(id = Some("what-you-owe-interest-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
                     @messages("chargeSummary.interestLocks.text-agent")
-                } else {
+                    } else {
                     @messages("chargeSummary.whatYouOwe.textOne")
                     @link(id = Some("what-you-owe-interest-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
                     @messages("chargeSummary.interestLocks.text")
@@ -350,21 +380,24 @@
             }
         } else {
             @p() {
-                @if(viewModel.isAgent) {
-                    @messages("chargeSummary.whatYouOwe.textOne-agent"),
-                    @link(id = Some("what-you-owe-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
-                    @messages("chargeSummary.whatYouOwe.textTwo-agent")
+            @if(viewModel.isAgent) {
+                @messages("chargeSummary.whatYouOwe.textOne-agent"),
+                @link(id = Some("what-you-owe-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+                @messages("chargeSummary.whatYouOwe.textTwo-agent")
                 } else {
-                    @messages("chargeSummary.whatYouOwe.textOne")
-                    @link(id = Some("what-you-owe-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
-                    @messages("chargeSummary.whatYouOwe.textTwo")
+                @messages("chargeSummary.whatYouOwe.textOne")
+                @link(id = Some("what-you-owe-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
+                @messages("chargeSummary.whatYouOwe.textTwo")
                 }
             }
         }
     }
+}
 
 
-    @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit){
+
+
+@if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit){
         @if(viewModel.hasPaymentBreakdown && viewModel.chargeItem.subTransactionType == None) {
             <h3 id="charge-history-h3" class="govuk-heading-m">@chargeHistoryHeading</h3>
         } else {
@@ -389,7 +422,7 @@
                             getCreationDate(viewModel.adjustmentHistory.creationEvent.adjustmentDate)
                         }</td>
                         <td class="govuk-table__cell">@{
-                            messages(s"chargeSummary.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}")
+                            messages(s"chargeSummary.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey}")
                         }
                         </td>
                         <td class="govuk-table__cell govuk-table__cell--numeric">@{
@@ -401,7 +434,7 @@
                 @if(viewModel.latePaymentInterestCharge){
                     <tr>
                         <td class="govuk-table__cell">@{viewModel.chargeItem.interestEndDate.get.toLongDateShort.toNonBreaking}</td>
-                        <td class="govuk-table__cell">@messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}")</td>
+                        <td class="govuk-table__cell">@messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey}")</td>
                         <td class="govuk-table__cell govuk-table__cell--numeric">@{viewModel.chargeItem.latePaymentInterestAmount.get.toCurrency}</td>
                     </tr>
                 }
@@ -429,7 +462,7 @@
                 @for(charge <- viewModel.adjustmentHistory.adjustments) {
                     <tr>
                         <td class="govuk-table__cell">@{charge.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDateShort.toNonBreaking}</td>
-                        <td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey(viewModel.reviewAndReconcileEnabled)}")</td>
+                        <td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey}")</td>
                         <td class="govuk-table__cell govuk-table__cell--numeric">@{charge.amount.toCurrency}</td>
                     </tr>
                 }

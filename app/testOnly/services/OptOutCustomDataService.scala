@@ -38,16 +38,16 @@ class OptOutCustomDataService @Inject()(implicit val appConfig: FrontendAppConfi
   def uploadCalculationListData(nino: Nino, taxYear: TaxYear, status: String)(implicit hc: HeaderCarrier)
   : Future[Unit] = {
     handleDefaultValues(status = status) {
-      Logger("application").info(s" Attempting to overwrite data for < NINO $nino >, < taxYearRange: ${taxYear.formatTaxYearRange} > and < status: $status >")
-      dynamicStubService.overwriteCalculationList(nino = nino, taxYearRange = taxYear.formatTaxYearRange, crystallisationStatus = status)
+      Logger("application").info(s" Attempting to overwrite data for < NINO $nino >, < taxYearRange: ${taxYear.formatAsShortYearRange} > and < status: $status >")
+      dynamicStubService.overwriteCalculationList(nino = nino, taxYearRange = taxYear.formatAsShortYearRange, crystallisationStatus = status)
     }
   }
 
   def uploadITSAStatusData(nino: Nino, taxYear: TaxYear, status: String)(implicit hc: HeaderCarrier)
   : Future[Unit] = {
     handleDefaultValues(status = status) {
-      Logger("application").info(s" Attempting to overwrite data for < NINO $nino >, < taxYearRange: ${taxYear.formatTaxYearRange} > and < status: $status >")
-      dynamicStubService.overwriteItsaStatus(nino = nino, taxYearRange = taxYear.formatTaxYearRange, ITSAStatus = status)
+      Logger("application").info(s" Attempting to overwrite data for < NINO $nino >, < taxYearRange: ${taxYear.formatAsShortYearRange} > and < status: $status >")
+      dynamicStubService.overwriteItsaStatus(nino = nino, taxYearRange = taxYear.formatAsShortYearRange, ITSAStatus = status)
     }
   }
 
@@ -92,7 +92,7 @@ class OptOutCustomDataService @Inject()(implicit val appConfig: FrontendAppConfi
         cyMinusOneItsaStatusResponse)
 
     val payload: DataModel = DataModel(
-      _id = s"/income-tax/$nino/person-itd/itsa-status/${taxYear.addYears(-1).formatTaxYearRange}?futureYears=true&history=false",
+      _id = s"/income-tax/$nino/person-itd/itsa-status/${taxYear.addYears(-1).formatAsShortYearRange}?futureYears=true&history=false",
       schemaId = "getITSAStatusSuccess", method = "GET", status = OK, response = Some(Json.toJson(itsaStatusCombined))
     )
 

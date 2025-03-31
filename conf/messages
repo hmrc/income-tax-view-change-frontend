@@ -20,6 +20,7 @@ accessibility.this-section-is                                   = This section i
 
 # Fallback Back Links
 back.whatYouOwe     = Back to What You Owe
+back.yourSelfAssessmentChargeSummary  = Back to Your Self Assessment charges
 back.paymentHistory = Back to Payment History
 back.taxYearSummary = Back to Tax Year Summary
 back.nomatch        = Back
@@ -131,7 +132,7 @@ home.payments.view                                              = Check what you
 home.payments.selfAssessment.view                               = Check your Self Assessment charges
 home.updates.heading                                            = Next updates due
 home.updates.view                                               = View update deadlines
-home.updates.view.opt-out                                       = View deadlines and manage how you report
+home.updates.view.reportingFrequency                            = View deadlines and manage how you report
 home.paymentHistory.heading                                     = Payment history
 home.paymentHistory.view                                        = Payment history
 home.paymentHistoryRefund.availableCredit                       = {0} is in your account
@@ -826,9 +827,6 @@ whatYouOwe.sa-note-agent-3                                         = This will b
 whatYouOwe.sa-link                                                 = Self Assessment online account
 whatYouOwe.sa-link-agent                                           = Self Assessment for Agents account
 whatYouOwe.outstanding-charges-note                                = Any payments made will be used for outstanding charges in these tax years first and will not be displayed here.
-whatYouOwe.dropdown.info                                           = What are the payment types?
-whatYouOwe.payment-days-note                                       = Payments can take up to 7 days to process.
-whatYouOwe.credit-on-account                                       = If you make a payment more than 30 days before a payment is due, you will see it as credit on account.
 whatYouOwe.payNow                                                  = Make a payment
 whatYouOwe.pay-now-aria                                            = Pay now for Tax year {0} to {1}
 whatYouOwe.pre-mtd-year                                            = {0} to {1}
@@ -894,6 +892,88 @@ whatYouOwe.adjust-poa.paid-3                                       = at any poin
 whatYouOwe.adjust-poa.paid-4                                       = 31 January {0}.
 whatYouOwe.adjust-poa.paid-5                                       =
 whatYouOwe.interestChargesWarning                                  = Interest charges will keep increasing every day until the charges they relate to are paid in full.
+
+## Your Self Assessment Charges
+
+selfAssessmentCharges.heading                                      = Your Self Assessment charges
+selfAssessmentCharges.important                                    = Important
+selfAssessmentCharges.important-p1                                 = This is the total amount of overdue tax you need to pay. Any interest will increase daily until the overdue amount is paid.
+selfAssessmentCharges.important-p2                                 = You can
+selfAssessmentCharges.important-p2-link-text                       = pay the total amount needed now.
+selfAssessmentCharges.charges-due-in-30-days                       = Charges due in 30 days
+selfAssessmentCharges.charges-due-now-with-amount                  = Charges due now: {0}
+selfAssessmentCharges.no-payments-due                              = You have no payments due.
+selfAssessmentCharges.no-payments-due-agent                        = Your client has no payments due.
+selfAssessmentCharges.charges-due-now                              = Charges due now
+selfAssessmentCharges.charges-to-pay-later                         = Charges to pay later
+selfAssessmentCharges.tableHead.due-date                           = Due date
+selfAssessmentCharges.tableHead.tax-year                           = Tax year
+selfAssessmentCharges.tableHead.type-of-charge                     = Type of charge
+selfAssessmentCharges.tableHead.estimated-interest                 = Estimated interest
+selfAssessmentCharges.tableHead.amount                             = Amount
+selfAssessmentCharges.no-charges-due                               = No charges due today
+selfAssessmentCharges.pay-upcoming-charges                         = pay your upcoming Self Assessment charges before the due date.
+selfAssessmentCharges.tax-year-summary.taxYear                                = {0} to {1}
+selfAssessmentCharges.paymentOnAccount1.text							      = First payment on account
+selfAssessmentCharges.paymentOnAccount2.text							      = Second payment on account
+selfAssessmentCharges.reviewAndReconcilePoa1.text                             = First payment on account: extra amount from your tax return
+selfAssessmentCharges.reviewAndReconcilePoa2.text                             = Second payment on account: extra amount from your tax return
+selfAssessmentCharges.lpi.reviewAndReconcilePoa1.text                         = Interest for first payment on account: extra amount
+selfAssessmentCharges.lpi.reviewAndReconcilePoa2.text                         = Interest for second payment on account: extra amount
+selfAssessmentCharges.hmrcAdjustment.text                                     = HMRC adjustment
+selfAssessmentCharges.lpi.paymentOnAccount1.text                              = Late payment interest on first payment on account
+selfAssessmentCharges.lpi.paymentOnAccount2.text                              = Late payment interest on second payment on account
+selfAssessmentCharges.lateSubmissionPenalty.text                              = Late submission penalty
+selfAssessmentCharges.firstLatePaymentPenalty.text                            = First late payment penalty
+selfAssessmentCharges.secondLatePaymentPenalty.text                           = Second late payment penalty
+selfAssessmentCharges.lpi.lateSubmissionPenalty.text                          = Interest for late submission penalty
+selfAssessmentCharges.lpi.balancingCharge.text                                = Late payment interest on balancing payment
+selfAssessmentCharges.balancingCharge.text  							      = Balancing payment
+selfAssessmentCharges.balancingCharge.interest.line1.text                     = Interest on Balancing payment
+selfAssessmentCharges.balancingCharge.interest.line2.text                     = {0} to {1}
+selfAssessmentCharges.pre-mtd-digital                                         = (Pre-Making Tax Digital)
+selfAssessmentCharges.pre-mtd-year                                            = {0} to {1}
+selfAssessmentCharges.taxYear                                                 = Tax year
+selfAssessmentCharges.table.total-amount                                      = Total amount: {0}
+selfAssessmentCharges.payNow                                                  = Make a payment
+selfAssessmentCharges.overdue-inset-text-1                                    = Payments you make may take up to 3 working days depending on the payment method you use. Payments must reach HMRC by the due date to avoid any late payment interest or penalty.
+selfAssessmentCharges.overdue-inset-text-2                                    = Any payments you make will go toward overdue charges in the order they were due.
+selfAssessmentCharges.payment-plan-1                                          = If you cannot pay your tax bill in full, you may be able to
+selfAssessmentCharges.payment-plan-link-text                                  = set up a Self Assessment payment plan
+selfAssessmentCharges.sa-note                                                 = You may still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous
+selfAssessmentCharges.sa-note-agent-1                                         = Your client may still have payments due for earlier Self Assessment tax years
+selfAssessmentCharges.sa-note-agent-2                                         = To view your client’s tax years from before they signed up to Making Tax Digital for Income Tax, you need to sign in to your
+selfAssessmentCharges.sa-note-agent-3                                         = This will be a different Government Gateway ID and password to your Agent Services account.
+selfAssessmentCharges.sa-link                                                 = Self Assessment online account
+selfAssessmentCharges.sa-link-agent                                           = Self Assessment for Agents account
+selfAssessmentCharges.outstanding-charges-note                                = Any payments made will be used for outstanding charges in these tax years first and will not be displayed here.
+selfAssessmentCharges.paymentUnderReview                                      = Payment under review
+selfAssessmentCharges.dunningLock.text                                        = One or more of your payments are currently under review because {0}
+selfAssessmentCharges.dunningLock.link                                        = there is a current appeal against a tax decision
+selfAssessmentCharges.codingOut-1a                                            = Your client has
+selfAssessmentCharges.codingOut-1b                                            = of tax for the
+selfAssessmentCharges.codingOut-2                                             = {0} to {1} tax year
+selfAssessmentCharges.codingOut-3                                             = being paid through their PAYE tax code. This amount is not part of their total payments due because we are collecting them automatically.
+selfAssessmentCharges.codingOut-individual                                    = being paid through your PAYE tax code. This amount is not part of your total payments due because they are being collected automatically.
+selfAssessmentCharges.class2Nic.text                                          = Class 2 National Insurance
+selfAssessmentCharges.cancelledPayeSelfAssessment.text                        = Cancelled PAYE Self Assessment (through your PAYE tax code)
+selfAssessmentCharges.credit-overpaid-prefix                                  = You have
+selfAssessmentCharges.credit-overpaid-amount                                  = {0} in your account
+selfAssessmentCharges.unallocated-credit-note                                 = . We’ll use this to pay the amount due on the next due date.
+selfAssessmentCharges.moneyOnAccount                                          = Money in your account
+selfAssessmentCharges.moneyOnAccount-1                                        = There is a total of
+selfAssessmentCharges.moneyOnAccount-2                                        = in your account. You can leave the money there to pay your next bill or
+selfAssessmentCharges.moneyOnAccount-3                                        = claim a refund
+selfAssessmentCharges.moneyOnAccount-agent                                    = Money in your client’s account
+selfAssessmentCharges.moneyOnAccount-agent-2                                  = in your client’s account. You can leave the money there to pay their next bill or
+selfAssessmentCharges.adjust-poa                                              = Adjust payments on account for the {0} to {1} tax year
+selfAssessmentCharges.adjust-poa.paid-1                                       = You can
+selfAssessmentCharges.adjust-poa.paid-2                                       = adjust your payments on account for the {0} to {1} tax year
+selfAssessmentCharges.adjust-poa.paid-3                                       = at any point before submitting your tax return for {0} to {1}, and no later than
+selfAssessmentCharges.adjust-poa.paid-4                                       = 31 January {0}.
+selfAssessmentCharges.adjust-poa.paid-5                                       =
+selfAssessmentCharges.interestChargesWarning                                  = Interest charges will keep increasing every day until the charges they relate to are paid in full.
+
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = First payment on account
@@ -992,6 +1072,13 @@ chargeSummary.whatYouOwe.textTwo-agent							   = to check if they have any othe
 chargeSummary.whatYouOwe.linkText								   = what you owe
 chargeSummary.whatYouOwe.linkText-agent							   = what your client owes
 
+chargeSummary.selfAssessmentCharges.textOne							= View
+chargeSummary.selfAssessmentCharges.textTwo							= to check if you have any other payments due.
+chargeSummary.selfAssessmentCharges.textOne-agent					= View
+chargeSummary.selfAssessmentCharges.textTwo-agent					= to check if they have any other payments due.
+chargeSummary.selfAssessmentCharges.linkText						= your Self Assessment charges
+chargeSummary.selfAssessmentCharges.linkText-agent					= your client’s Self Assessment charges
+
 chargeSummary.chargeHistory.heading								        = History of this charge
 chargeSummary.chargeHistory.lateInterestPayment					        = Late payment interest history
 chargeSummary.chargeHistory.Poa1heading                                 = First payment on account history
@@ -1007,6 +1094,7 @@ chargeSummary.chargeHistory.created.codingOut.text                      = Self A
 chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text	= Cancelled PAYE Self Assessment (through your PAYE tax code) created
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = HMRC created this extra amount for your first payment on account based on your tax return
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = HMRC created this extra amount for your second payment on account based on your tax return
+chargeSummary.chargeHistory.created.lateSubmissionPenalty.text          = HMRC created your late submission penalty
 chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = Payment on account 1 of 2 reduced by taxpayer request
 chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = Payment on account 2 of 2 reduced by taxpayer request
 chargeSummary.chargeHistory.request.balancingCharge.text	   	        = Balancing payment reduced by taxpayer request
@@ -1209,7 +1297,9 @@ credit-and-refund.available-to-claim                              = {0} availabl
 credit-and-refund.upcoming-allocated-credit-1                     = HMRC has reserved {0} of this to cover your upcoming tax bill.
 credit-and-refund.upcoming-allocated-credit-1-all                 = HMRC has reserved all {0} to cover your upcoming tax bill.
 credit-and-refund.upcoming-allocated-credit-2                     = Check what you owe
+credit-and-refund.selfAssessment.upcoming-allocated-credit-2      = Check your Self Assessment charges
 credit-and-refund.upcoming-allocated-credit-3                     = for further information.
+credit-and-refund.selfAssessment.upcoming-allocated-credit-3      = for more information.
 
 credit-and-refund.no-credit                                       = You have no money in your account.
 credit-and-refund.claim-refund-btn                                = Claim a refund
@@ -1629,7 +1719,7 @@ cease-check-answers-fp.caption                                = Foreign property
 
 
 # check business details
-check-details.title                                     = Check your answers
+check-details.title                                     = Confirm this information is correct
 check-details.heading                                   = Sole trader
 check-details.business-name                             = Business name
 check-details.start-date                                = Trading start date
@@ -1639,22 +1729,25 @@ check-details.accounting-method                         = Accounting method
 check-details.cash-accounting                           = Cash basis accounting
 check-details.traditional-accounting                    = Traditional accounting
 check-details.change                                    = Change
+check-details.description                               = Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so.
 
-check-details-uk.title                                  = Check your answers
+check-details-uk.title                                  = Confirm this information is correct
 check-details-uk.heading                                = UK property
 check-details-uk.start-date                             = Start date
 check-details-uk.accounting-method                      = Accounting method
 check-details-uk.cash-accounting                        = Cash basis accounting
 check-details-uk.traditional-accounting                 = Traditional accounting
 check-details-uk.change                                 = Change
+check-details-uk.description                            = Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so.
 
-check-details-fp.title                                  = Check your answers
+check-details-fp.title                                  = Confirm this information is correct
 check-details-fp.heading                                = Foreign property
 check-details-fp.start-date                             = Start date
 check-details-fp.accounting-method                      = Accounting method
 check-details-fp.cash-accounting                        = Cash basis accounting
 check-details-fp.traditional-accounting                 = Traditional accounting
 check-details-fp.change                                 = Change
+check-details-fp.description                            = Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so.
 
 check-business-details.title                            = Check your details
 check-business-details.heading                          = Sole trader business you entered
@@ -1689,14 +1782,15 @@ business-added.deadlines                                = Your revised deadlines
 business-added.to                                       = to
 
 # Foreign Property Added - Uses above keys as base also, intentionally empty field below.
-business-added.foreign-property.head                    =
-business-added.foreign-property.h1                      = Foreign property
-business-added.foreign-property.base                    = has been added to your account
-business-added.uk-property.head                         =
-business-added.uk-property.h1                           = UK property
-business-added.uk-property.base                         = has been added to your account
-business-added.sole-trader.head                         =
-business-added.sole-trader.base                         = has been added to your account
+business-added.foreign-property.title                   = Foreign property has been added to your account
+business-added.foreign-property.panel.title             = Foreign property
+business-added.foreign-property.panel.body              = has been added to your account
+business-added.uk-property.title                        = UK property has been added to your account
+business-added.uk-property.panel.title                  = UK property
+business-added.uk-property.panel.body                   = has been added to your account
+business-added.sole-trader.title                        = {0} has been added to your account
+business-added.sole-trader.panel.title                  = {0}
+business-added.sole-trader.panel.body                   = has been added to your account
 
 business-added.quarterly-heading                              = Send quarterly updates
 business-added.quarterly-p1                                   = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
@@ -1772,11 +1866,12 @@ cannotGoBack.hasBeenAdded2                                = page.
 cannotGoBack.needToChoose                                 = You now need to choose how often you want to send income and expense updates to HMRC for this income source.
 
 ## Income Source Ceased Obligation Page ##
-business-ceased.obligation.heading1.se.part1                        =
-business-ceased.obligation.heading1.se.part2                        = Sole trader business
-business-ceased.obligation.heading1.uk-property.part2               = UK property
-business-ceased.obligation.heading1.foreign-property.part2          = Foreign property
-business-ceased.obligation.heading1.base                            = has ceased
+business-ceased.obligation.title                                    = {0} has ceased
+business-ceased.obligation.panel.title                              = {0}
+business-ceased.obligation.panel.body                               = has ceased
+business-ceased.obligation.sole-trader                              = Sole trader business
+business-ceased.obligation.uk-property                              = UK property
+business-ceased.obligation.foreign-property                         = Foreign property
 business-ceased.obligation.heading2.text                            = What you must do
 business-ceased.obligation.next-update.text                         = Your next upcoming update
 business-ceased.obligation.next-update.next-quarterly.text          = Your next quarterly update for tax year {0} to {1} is due by
@@ -1846,11 +1941,11 @@ incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.individu
 incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.agent           = HMRC will remove any income updates your client has already submitted for this tax year. Any previously submitted income will need to be included in your client’s quarterly tax return.
 
 # manage obligations page
-incomeSources.add.manageObligations.h1                                =
-incomeSources.add.manageObligations.h2                                =   will report
+incomeSources.add.manageObligations.title                             = {0} will report {1} for the tax year {2} to {3}
+incomeSources.add.manageObligations.panel.title                       = {0}
+incomeSources.add.manageObligations.panel.body                        =   will report {0} for the tax year {1} to {2}
 incomeSources.add.manageObligations.annually                          =   annually
 incomeSources.add.manageObligations.quarterly                         =   quarterly
-incomeSources.add.manageObligations.tax-year                          =   for the tax year
 incomeSources.add.manageObligations.to                                =   to
 incomeSources.add.manageObligations.sole-trader                       =   Sole trader business
 incomeSources.add.manageObligations.uk-property                       =   UK property
@@ -2142,7 +2237,9 @@ claimToAdjustPoa.success.h1                             = Payments on account up
 claimToAdjustPoa.success.p1                             = Your payments on account for the {0} to {1} tax year are now {2} each
 claimToAdjustPoa.success.p2                             = You can adjust your payments on account again, up to the initial amount calculated by HMRC, as often as you need to before submitting your tax return for {0} to {1}, and no later than 31 January {2}.
 claimToAdjustPoa.success.check                          = Check
+claimToAdjustPoa.success.yourSelfAssessmentCharges      = your Self Assessment charges
 claimToAdjustPoa.success.whatYouOwe                     = what you owe
+claimToAdjustPoa.success.forUpcomingPaymentDue          = for upcoming payment due.
 claimToAdjustPoa.success.forUpcomingCharges             = for upcoming charges.
 claimToAdjustPoa.success.overdueTitle                   = Overdue charges
 claimToAdjustPoa.success.overdueText1                   = You now have overdue charges that need to be paid. Check
@@ -2156,6 +2253,7 @@ claimToAdjustPoa.youCannotGoBack.bullet1Text             = check the
 claimToAdjustPoa.youCannotGoBack.bullet1Link             = status of your payments on account
 claimToAdjustPoa.youCannotGoBack.bullet2Text             = check
 claimToAdjustPoa.youCannotGoBack.bullet2Link             = what you owe
+claimToAdjustPoa.youCannotGoBack.sa.bullet2Link          = your Self Assessment charges
 claimToAdjustPoa.youCannotGoBack.bullet3Text             = go back to the
 claimToAdjustPoa.youCannotGoBack.bullet3Link             = homepage
 
@@ -2450,5 +2548,59 @@ reporting.frequency.latency.details.section.text.para3.text.1       = You can do
 reporting.frequency.latency.details.section.text.para3.link.text    = all businesses
 reporting.frequency.latency.details.section.text.para3.text.2       = section
 
+yourSelfAssessmentChargeSummary.tax-year                            = {0} to {1} tax year
+yourSelfAssessmentChargeSummary.overDueCharge                       = Overdue charge:
+yourSelfAssessmentChargeSummary.charge                              = Charge:
+yourSelfAssessmentChargeSummary.due                                 = Due {0}
+yourSelfAssessmentChargeSummary.chargeReference                     = Charge Reference: {0}
+
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.linkText    = What is a balancing payment?
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p1          = A balancing payment is the tax you still need to pay for a tax year. This happens if you:
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p2          = did not have any tax to pay during the year (for example, if your last Self Assessment tax bill was under £1,000)
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p3          = owe more than what you paid during the year (for example, through payments on account or PAYE)
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p4          = You’ll also need to make a balancing payment if you owe anything for Capital Gains Tax or student loans.
+
+yourSelfAssessmentChargeSummary.interestOnCharge.heading                = Interest on your {0}
+yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = The amount of interest you have to pay will increase every day until you pay the overdue charge.
+yourSelfAssessmentChargeSummary.table.daysOverdue                       = {0} to {1}
+yourSelfAssessmentChargeSummary.table.totalInterestToDate               = Total interest to date
+yourSelfAssessmentChargeSummary.table.head.amountInterestIsAppliedTo    = Amount interest is applied to
+yourSelfAssessmentChargeSummary.table.head.daysOverdue                  = Days overdue
+yourSelfAssessmentChargeSummary.table.head.interestRate                 = Interest rate
+yourSelfAssessmentChargeSummary.table.head.amount                       = Amount
+
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.linkText    = How is interest calculated?
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p1          = Multiply the amount the interest is applied to by the number of days overdue (period).
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p2          = Divide that answer by 365 (days).
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p3          = Multiply that answer by 0.0725 (7.25%).
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p4          = In this example, the amount the interest is applied to is £5000, and the number of days overdue is 50.
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p5          = 5,000 x 50 = 250,000
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p6          = 250,000 / 365 = 684.93
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p7          = 684.93 x 0.0725 = 49.66
+
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.linkText     = What is payment on account?
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = Payments on account are two advance payments made towards your next tax bill. They pay for:
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Income Tax
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = Class 4 National Insurance contributions
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount.
+
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyPoints     = You will get a late submission penalty point every time you send a submission after the deadline. A submission can be a quarterly update or annual tax return.
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.fourPoints        = If you reach 4 points, you’ll have to pay a £200 penalty.
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.avoidInFuture     = To avoid receiving late submission penalty points in the future, and the potential for a financial penalty, you need to send your submissions on time.
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText1  = You can
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText   = view the details about your penalty
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText2  = and find out how to appeal.
+
+yourSelfAssessmentChargeSummary.balancingPayment.heading    = Balancing payment
+yourSelfAssessmentChargeSummary.paymentOnAccount1.heading   = First payment on account
+yourSelfAssessmentChargeSummary.paymentOnAccount2.heading   = Second payment on account
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.heading = Late submission penalty
+yourSelfAssessmentChargeSummary.unknown.heading             = Unknown
+
+yourSelfAssessmentChargeSummary.chargeHistory.balancingPayment.heading      = Balancing payment history
+yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount1.heading     = First payment on account history
+yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount2.heading     = Second payment on account history
+yourSelfAssessmentChargeSummary.chargeHistory.lateSubmissionPenalty.heading = Late submission penalty history
+yourSelfAssessmentChargeSummary.chargeHistory.unknown.heading		        = History of this charge
 
 

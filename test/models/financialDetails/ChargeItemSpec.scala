@@ -465,44 +465,44 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
         "charge is a POA 1" in {
           val poa1 = chargeItemModel(transactionType = PoaOneDebit, subTransactionType = None)
-          val key = poa1.getChargeTypeKey()
+          val key = poa1.getChargeTypeKey
           key shouldBe "paymentOnAccount1.text"
         }
 
         "charge is a POA 2" in {
           val poa1 = chargeItemModel(transactionType = PoaTwoDebit, subTransactionType = None)
-          val key = poa1.getChargeTypeKey()
+          val key = poa1.getChargeTypeKey
           key shouldBe "paymentOnAccount2.text"
         }
 
 
         "charge is a HMRC adjustment" in {
           val poa1 = chargeItemModel(transactionType = MfaDebitCharge, subTransactionType = None)
-          val key = poa1.getChargeTypeKey()
+          val key = poa1.getChargeTypeKey
           key shouldBe "hmrcAdjustment.text"
         }
 
         "charge is a Class 2 National Insurance Balancing Charge" in {
           val poa1 = chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Nics2))
-          val key = poa1.getChargeTypeKey()
+          val key = poa1.getChargeTypeKey
           key shouldBe "class2Nic.text"
         }
 
         "charge is a PAYE payment" in {
           val poa1 = chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Accepted))
-          val key = poa1.getChargeTypeKey()
+          val key = poa1.getChargeTypeKey
           key shouldBe "codingOut.text"
         }
 
         "charge is a cancelled PAYE SA payment" in {
           val poa1 = chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Cancelled))
-          val key = poa1.getChargeTypeKey()
+          val key = poa1.getChargeTypeKey
           key shouldBe "cancelledPayeSelfAssessment.text"
         }
 
         "charge is a balancing charge" in {
           val poa1 = chargeItemModel(transactionType = BalancingCharge, subTransactionType = None)
-          val key = poa1.getChargeTypeKey()
+          val key = poa1.getChargeTypeKey
           key shouldBe "balancingCharge.text"
         }
   }
@@ -537,6 +537,30 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
         val chargesList = List()
         val filtered = chargesList.map(filterAllowedCharges(true, PoaOneReconciliationDebit, PoaTwoReconciliationDebit))
         filtered shouldBe List()
+      }
+    }
+  }
+
+  "originalAmountIsNotZeroOrNegative" should {
+    def originalAmountIsNotZeroOrNegative(chargeItem: ChargeItem): Boolean = chargeItem.originalAmount match {
+      case amount if amount <= 0 => false
+      case _ => true
+    }
+
+    "return false" when {
+      "original amount is zero" in {
+        val chargeItemModelZeroAmount = chargeItemModel().copy(originalAmount = 0)
+        originalAmountIsNotZeroOrNegative(chargeItemModelZeroAmount) shouldBe false
+      }
+      "original amount is negative" in {
+        val chargeItemModelNegativeAmount = chargeItemModel().copy(originalAmount = -20.32)
+        originalAmountIsNotZeroOrNegative(chargeItemModelNegativeAmount) shouldBe false
+      }
+    }
+    "return true" when {
+      "original amount is positive" in {
+        val chargeItemModelPositiveAmount = chargeItemModel().copy(originalAmount = 20.89)
+        originalAmountIsNotZeroOrNegative(chargeItemModelPositiveAmount) shouldBe true
       }
     }
   }

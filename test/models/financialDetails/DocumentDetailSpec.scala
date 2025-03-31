@@ -95,35 +95,6 @@ class DocumentDetailSpec extends UnitSpec {
       }
     }
 
-    "originalAmountIsNotZeroOrNegative" should {
-      "return false" when {
-        "original amount is zero" in {
-          fullDocumentDetailModel.copy(originalAmount = 0).originalAmountIsNotZeroOrNegative shouldBe false
-        }
-        "original amount is negative" in {
-          fullDocumentDetailModel.copy(originalAmount = -20).originalAmountIsNotZeroOrNegative shouldBe false
-        }
-      }
-      "return true" when {
-        "original amount is positive" in {
-          fullDocumentDetailModel.copy(originalAmount = 20).originalAmountIsNotZeroOrNegative shouldBe true
-        }
-      }
-    }
-
-    "originalAmountIsNotNegative" should {
-      "return false" when {
-        "original amount is negative" in {
-          fullDocumentDetailModel.copy(originalAmount = -20).originalAmountIsNotZeroOrNegative shouldBe false
-        }
-      }
-      "return true" when {
-        "original amount is positive" in {
-          fullDocumentDetailModel.copy(originalAmount = 20).originalAmountIsNotZeroOrNegative shouldBe true
-        }
-      }
-    }
-
     "getChargeTypeKey" should {
 
 
@@ -207,17 +178,27 @@ class DocumentDetailSpec extends UnitSpec {
     }
 
     "deriving the paymentOrChargeCredit value" should {
+      def paymentOrChargeCredit(documentDetail: DocumentDetail):Option[BigDecimal] = {
+        documentDetail.outstandingAmount match {
+          case _ if documentDetail.outstandingAmount >= 0 => None
+          case credit => Some(credit * -1)
+        }
+      }
+
       "produce a credit value" when {
         "there is an outstanding amount and it is negative" in {
-          fullDocumentDetailModel.copy(outstandingAmount = BigDecimal(-10.00)).paymentOrChargeCredit shouldBe Some(BigDecimal(10.00))
+          val updateDocumentDetails = fullDocumentDetailModel.copy(outstandingAmount = BigDecimal(-10.00))
+          val result = paymentOrChargeCredit(updateDocumentDetails)
+          result shouldBe Some(BigDecimal(10.00))
+
         }
       }
 
       "produce no value" when {
-
         "the outstanding amount is not negative" in {
-          fullDocumentDetailModel.copy(outstandingAmount = BigDecimal(10.00), paymentLot = None,
-            paymentLotItem = None).paymentOrChargeCredit shouldBe None
+          val updatedModel = fullDocumentDetailModel.copy(outstandingAmount = BigDecimal(10.00), paymentLot = None, paymentLotItem = None)
+          val result = paymentOrChargeCredit(updatedModel)
+          result shouldBe None
         }
       }
     }

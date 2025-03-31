@@ -245,7 +245,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
                   nino = testNino,
                   deadlines = currentObligations
                 )
-                ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatTaxYearRange, futureYears = true)
+                ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatAsShortYearRange, futureYears = true)
                 CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
 
@@ -284,7 +284,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
                   nino = testNino,
                   deadlines = currentObligations
                 )
-                ITSAStatusDetailsStub.stubGetITSAStatusDetails(previousYear.formatTaxYearRange)
+                ITSAStatusDetailsStub.stubGetITSAStatusDetails(previousYear.formatAsShortYearRange)
                 CalculationListStub.stubGetLegacyCalculationListError(testNino, previousYear.endYear.toString)
 
 
@@ -323,7 +323,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
                   nino = testNino,
                   deadlines = currentObligations
                 )
-                ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatTaxYearRange, futureYears = true)
+                ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatAsShortYearRange, futureYears = true)
                 CalculationListStub.stubGetLegacyCalculationListError(testNino, previousYear.endYear.toString)
 
 

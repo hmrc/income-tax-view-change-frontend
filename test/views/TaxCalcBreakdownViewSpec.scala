@@ -405,8 +405,8 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       }
 
       "have the correct heading" in new Setup(view) {
-        pageContent(pageContentSelector) hasPageHeading s"${messages("taxCal_breakdown.dates", s"${taxYear2017 - 1}", s"$taxYear2017")} ${messages("taxCal_breakdown.heading")}"
-        pageContent(pageContentSelector).h1.select(headingSelector).text() shouldBe messages("taxCal_breakdown.dates", s"${taxYear2017 - 1}", s"$taxYear2017")
+        document.getElementsByClass("govuk-heading-xl").text() shouldBe messages("taxCal_breakdown.heading")
+        document.getElementsByClass("govuk-caption-xl").text() shouldBe messages("taxCal_breakdown.dates", s"${taxYear2017 - 1}", s"$taxYear2017")
       }
 
       "have the correct guidance" in new Setup(view) {
@@ -440,8 +440,8 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       }
 
       "have the correct heading" in new Setup(view) {
-        pageContent(pageContentSelector) hasPageHeading s"${messages("taxCal_breakdown.dates", s"${taxYear - 1}", s"$taxYear")} ${messages("taxCal_breakdown.heading")}"
-        pageContent(pageContentSelector).h1.select(headingSelector).text() shouldBe messages("taxCal_breakdown.dates", s"${taxYear - 1}", s"$taxYear")
+        document.getElementsByClass("govuk-heading-xl").text() shouldBe messages("taxCal_breakdown.heading")
+        document.getElementsByClass("govuk-caption-xl").text() shouldBe messages("taxCal_breakdown.dates", s"${taxYear2017}", s"${taxYear2017 + 1}")
       }
 
       "have the correct guidance" in new Setup(view) {

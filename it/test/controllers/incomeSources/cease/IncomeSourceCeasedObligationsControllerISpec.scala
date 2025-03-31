@@ -66,9 +66,9 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
 
   def getExpectedTitle(incomeSourceType: IncomeSourceType): String = {
     incomeSourceType match {
-      case SelfEmployment => b1TradingName + " " + messagesAPI(s"$prefix.heading1.base")
-      case UkProperty => messagesAPI("business-ceased.obligation.heading1.uk-property.part2") + " " + messagesAPI("business-ceased.obligation.heading1.base")
-      case ForeignProperty => messagesAPI("business-ceased.obligation.heading1.foreign-property.part2") + " " + messagesAPI("business-ceased.obligation.heading1.base")
+      case SelfEmployment => messagesAPI(s"$prefix.title", b1TradingName)
+      case UkProperty => messagesAPI(s"$prefix.title", messagesAPI(s"$prefix.uk-property"))
+      case ForeignProperty => messagesAPI(s"$prefix.title", messagesAPI(s"$prefix.foreign-property"))
     }
   }
 

@@ -16,8 +16,7 @@
 
 package models.financialDetails
 
-import auth.MtdItUser
-import enums.{Poa1Charge, Poa1ReconciliationDebit, Poa2Charge, Poa2ReconciliationDebit, TRMAmendCharge, TRMNewCharge}
+import enums._
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails.ReviewAndReconcileUtils.{isReviewAndReconcilePoaOne, isReviewAndReconcilePoaTwo}
 import models.incomeSourceDetails.TaxYear
@@ -32,17 +31,11 @@ import scala.util.{Failure, Success, Try}
 
 sealed trait FinancialDetailsResponseModel
 
+// TODO-[1]: make balanceDetails private val -> apply re-design and fix test failures where needed
+// TODO-[2]: make financialDetails private val -> ~
 case class FinancialDetailsModel(balanceDetails: BalanceDetails,
                                  private val documentDetails: List[DocumentDetail],
                                  financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
-
-  def getDueDateForFinancialDetail(financialDetail: FinancialDetail): Option[LocalDate] = {
-    financialDetail.items.flatMap(_.headOption.flatMap(_.dueDate))
-  }
-
-  def getAllDueDates: List[LocalDate] = {
-    documentDetails.flatMap(_.getDueDate())
-  }
 
   def dunningLockExists(documentId: String): Boolean = {
     documentDetails.filter(_.transactionId == documentId)
@@ -57,24 +50,14 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     }
   }
 
+  // TODO: to be removed as we should rely on the chargeType available in ChargeItem type;
   def isMFADebit(documentId: String): Boolean = {
     financialDetails.exists { fd =>
       fd.transactionId.contains(documentId) && MfaDebitUtils.isMFADebitMainType(fd.mainType)
     }
   }
 
-  def isReviewAndReconcilePoaOneDebit(documentId: String): Boolean = {
-    financialDetails.exists { fd =>
-      fd.transactionId.contains(documentId) && isReviewAndReconcilePoaOne(fd.mainTransaction)
-    }
-  }
-
-  def isReviewAndReconcilePoaTwoDebit(documentId: String): Boolean = {
-    financialDetails.exists { fd =>
-      fd.transactionId.contains(documentId) && isReviewAndReconcilePoaTwo(fd.mainTransaction)
-    }
-  }
-
+  // TODO: we need to identify this on the chargeItem level -> mark as deprecated
   def isReviewAndReconcilePoaOneDebit(documentId: String, reviewAndReconcileIsEnabled: Boolean): Boolean = {
     reviewAndReconcileIsEnabled &&
       financialDetails.exists { fd =>
@@ -82,6 +65,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       }
   }
 
+  // TODO: we need to identify this on the chargeItem level -> mark as deprecated
   def isReviewAndReconcilePoaTwoDebit(documentId: String, reviewAndReconcileIsEnabled: Boolean): Boolean = {
     reviewAndReconcileIsEnabled &&
       financialDetails.exists { fd =>
@@ -89,20 +73,14 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       }
   }
 
-  def isReviewAndReconcileDebit(documentId: String): Boolean = {
-    isReviewAndReconcilePoaOneDebit(documentId) ||
-      isReviewAndReconcilePoaTwoDebit(documentId)
-  }
-
-  def findDocumentDetailForTaxYear(taxYear: Int): Option[DocumentDetail] = documentDetails.find(_.taxYear == taxYear)
-
-
+  // TODO: drop usage of DocumentDetailWithDueDate / and use ChargeItem/TransactionItem instead
   def findDocumentDetailByIdWithDueDate(id: String)(implicit dateService: DateServiceInterface): Option[DocumentDetailWithDueDate] = {
     documentDetails.find(_.transactionId == id)
       .map(documentDetail => DocumentDetailWithDueDate(
         documentDetail, documentDetail.getDueDate(), dunningLock = dunningLockExists(documentDetail.transactionId)))
   }
 
+  // TODO: method possibly is not required at all: TaxYearSummaryController -> withTaxYearFinancials
   def findDueDateByDocumentDetails(documentDetail: DocumentDetail): Option[LocalDate] = {
     financialDetails.find { fd =>
       fd.transactionId.contains(documentDetail.transactionId) &&
@@ -110,7 +88,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     } flatMap (_ => documentDetail.documentDueDate)
   }
 
-
+  // TODO: drop usage of DocumentDetailWithDueDate / and use ChargeItem/TransactionItem instead
   def getAllDocumentDetailsWithDueDates(reviewAndReconcileEnabled: Boolean = false)(implicit dateService: DateServiceInterface): List[DocumentDetailWithDueDate] = {
     documentDetails.map(documentDetail =>
       DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate(),
@@ -118,34 +96,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
         isMFADebit = isMFADebit(documentDetail.transactionId),
         isReviewAndReconcilePoaOneDebit = isReviewAndReconcilePoaOneDebit(documentDetail.transactionId, reviewAndReconcileEnabled),
         isReviewAndReconcilePoaTwoDebit = isReviewAndReconcilePoaTwoDebit(documentDetail.transactionId, reviewAndReconcileEnabled)))
-  }
-
-  def getPairedDocumentDetails(): List[(DocumentDetail, FinancialDetail)] = {
-    documentDetails.map(documentDetail =>
-      (documentDetail, financialDetails.find(_.transactionId.get == documentDetail.transactionId)
-        .getOrElse(throw new Exception("no financialDetail found for documentDetail" + documentDetail)))
-    )
-  }
-
-
-  def validChargeTypeCondition: DocumentDetail => Boolean = documentDetail => {
-    (documentDetail.documentText, documentDetail.getDocType) match {
-      case (Some(documentText), _) if documentText.contains("Class 2 National Insurance") => true
-      case (_, Poa1Charge | Poa2Charge | Poa1ReconciliationDebit | Poa2ReconciliationDebit | TRMNewCharge | TRMAmendCharge) => true
-      case (_, _) => false
-    }
-  }
-
-  def validChargesWithRemainingToPay: FinancialDetailsModel = {
-    val filteredDocuments = documentDetails.filterNot(document => document.paymentLot.isDefined && document.paymentLotItem.isDefined)
-      .filter(documentDetail => documentDetail.documentDescription.isDefined && documentDetail.checkIfEitherChargeOrLpiHasRemainingToPay
-        && validChargeTypeCondition(documentDetail)).filterNot(_.isPayeSelfAssessment)
-
-    FinancialDetailsModel(
-      balanceDetails,
-      filteredDocuments,
-      financialDetails.filter(financial => filteredDocuments.map(_.transactionId).contains(financial.transactionId.get))
-    )
   }
 
   def filterPayments(): FinancialDetailsModel = {
@@ -201,22 +151,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       financialDetails ++ financialDetailsModel.financialDetails)
   }
 
-  def documentDetailsExist(id: String): Boolean = {
-    documentDetails.exists(_.transactionId == id)
-  }
-
-  def documentDetailsFilter(predicate: DocumentDetail => Boolean): Option[DocumentDetail] = {
-    this.documentDetails.find(predicate)
-  }
-
-  def documentDetailsFilterByTaxYear(taxYear: Int): List[DocumentDetail] = {
-    this.documentDetails.filter(_.taxYear == taxYear)
-  }
-
-  def documentDetailsWithTransactionId(id: String): Option[DocumentDetail] = {
-    documentDetails.find(_.transactionId == id)
-  }
-
   def documentDetailsWithLpiId(chargeReference: Option[String]): Option[DocumentDetail] = {
     documentDetails.find(_.latePaymentInterestId == chargeReference)
   }
@@ -224,21 +158,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   def arePoaPaymentsPresent(): Option[TaxYear] = {
     documentDetails.filter(_.documentDescription.exists(description => poaDocumentDescriptions.contains(description)))
       .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
-  }
-
-  def toChargeItem(): List[ChargeItem] = {
-    Try {
-      this.documentDetails
-        .map( documentDetail =>
-          ChargeItem.fromDocumentPair(documentDetail, financialDetails)
-        )
-    } match {
-      case Success(res) =>
-        res
-      case Failure(ex) =>
-        Logger("application").warn(ex.getMessage)
-        List[ChargeItem]()
-    }
   }
 
   def unpaidDocumentDetails(): List[DocumentDetail] = {
@@ -250,17 +169,56 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     }
   }
 
-  def docDetailsNotDueWithInterest(currentDate: LocalDate): List[DocumentDetail] = {
-    this.documentDetails.filter(
-      x => !x.isPaid && x.hasAccruingInterest && x.documentDueDate.getOrElse(LocalDate.MIN).isAfter(currentDate)
-    )
+  def docDetailsNotDueWithInterest(currentDate: LocalDate): Int = {
+    this.documentDetails.count(x => !x.isPaid && x.hasAccruingInterest && x.documentDueDate.getOrElse(LocalDate.MIN).isAfter(currentDate))
   }
+
+  /////////////////////////// to ChargeItem conversion methods: START //////////////////////////////////////////////////
+  // TODO: we might need a single conversion method instead
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  def asChargeItems: List[ChargeItem] = {
+    documentDetails.map(documentDetail =>
+      Try {
+        ChargeItem.fromDocumentPair(documentDetail = documentDetail,
+          financialDetails = financialDetails
+            .filter(_.transactionId.isDefined)
+            .filter(_.transactionId.get == documentDetail.transactionId))
+      } match {
+        case Success(res) =>
+          Some(res)
+        case Failure(ex) =>
+          Logger("application").warn(s"Failed conversion - asChargeItems - ${ex.getMessage}")
+          None
+      }
+    ).flatMap(x => x.map(y => List(y)).getOrElse(List[ChargeItem]()))
+  }
+
+  def toChargeItem: List[ChargeItem] = {
+    Try {
+      this.documentDetails
+        .map(documentDetail =>
+          ChargeItem.fromDocumentPair(documentDetail, financialDetails)
+        )
+    } match {
+      case Success(res) =>
+        res
+      case Failure(ex) =>
+        Logger("application").warn(s"Failed conversion - toChargeItem - ${ex.getMessage}")
+        List[ChargeItem]()
+    }
+  }
+  /////////////////////////// to ChargeItem conversion method: END /////////////////////////////////////////////////////
 
 }
 
 
 object FinancialDetailsModel {
   implicit val format: Format[FinancialDetailsModel] = Json.format[FinancialDetailsModel]
+
+  def getDueDateForFinancialDetail(financialDetail: FinancialDetail): Option[LocalDate] = {
+    financialDetail.items.flatMap(_.headOption.flatMap(_.dueDate))
+  }
 }
 
 case class FinancialDetailsErrorModel(code: Int, message: String) extends FinancialDetailsResponseModel

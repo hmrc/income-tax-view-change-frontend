@@ -119,6 +119,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
                   FinancialDetail(
                     taxYear = getCurrentTaxYearEnd.getYear.toString,
                     mainType = Some("SA Payment on Account 1"),
+                    mainTransaction = Some("4920"),
                     transactionId = Some("testTransactionId"),
                     items = Some(Seq(SubItem(Some(currentDate))))
                   )
@@ -189,6 +190,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
                   FinancialDetail(
                     taxYear = getCurrentTaxYearEnd.getYear.toString,
                     mainType = Some("SA Payment on Account 1"),
+                    mainTransaction = Some("4920"),
                     transactionId = Some("testTransactionId"),
                     items = Some(Seq(SubItem(Some(currentDate))))
                   )
@@ -261,6 +263,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
                   FinancialDetail(
                     taxYear = getCurrentTaxYearEnd.getYear.toString,
                     mainType = Some("SA Payment on Account 1"),
+                    mainTransaction = Some("4920"),
                     transactionId = Some("testTransactionId"),
                     items = Some(Seq(SubItem(Some(currentDate.minusDays(1)))))
                   )
@@ -331,6 +334,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
                   FinancialDetail(
                     taxYear = getCurrentTaxYearEnd.getYear.toString,
                     mainType = Some("SA Payment on Account 1"),
+                    mainTransaction = Some("4920"),
                     transactionId = Some("testTransactionId"),
                     items = Some(Seq(SubItem(Some(currentDate.minusDays(1)))))
                   )
@@ -416,12 +420,14 @@ class HomeControllerISpec extends ControllerISpecHelper {
                   FinancialDetail(
                     taxYear = getCurrentTaxYearEnd.getYear.toString,
                     mainType = Some("SA Payment on Account 1"),
+                    mainTransaction = Some("4920"),
                     transactionId = Some("testTransactionId1"),
                     items = Some(Seq(SubItem(Some(currentDate.minusDays(1)))))
                   ),
                   FinancialDetail(
                     taxYear = getCurrentTaxYearEnd.getYear.toString,
                     mainType = Some("SA Payment on Account 2"),
+                    mainTransaction = Some("4930"),
                     transactionId = Some("testTransactionId2"),
                     items = Some(Seq(SubItem(Some(currentDate.minusDays(2)))))
                   )
@@ -495,6 +501,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
                   FinancialDetail(
                     taxYear = getCurrentTaxYearEnd.getYear.toString,
                     mainType = Some("SA Payment on Account 1"),
+                    mainTransaction = Some("4920"),
                     transactionId = Some("testTransactionId"),
                     items = Some(Seq(SubItem(Some(currentDate))))
                   )
@@ -567,6 +574,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
                   FinancialDetail(
                     taxYear = getCurrentTaxYearEnd.getYear.toString,
                     mainType = Some("SA Payment on Account 1"),
+                    mainTransaction = Some("4920"),
                     transactionId = Some("testTransactionId"),
                     items = Some(Seq(SubItem(Some(currentDate))))
                   )
@@ -639,6 +647,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
                   FinancialDetail(
                     taxYear = getCurrentTaxYearEnd.getYear.toString,
                     mainType = Some("SA Payment on Account 1"),
+                    mainTransaction = Some("4920"),
                     transactionId = Some("testTransactionId"),
                     items = Some(Seq(SubItem(Some(currentDate))))
                   )

@@ -20,12 +20,11 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.FinancialDetailsConnector
 import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
-import models.incomeSourceDetails.TaxYear
+import models.incomeSourceDetails.{TaxYear, TaxYearRange}
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -39,25 +38,8 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
     financialDetailsConnector.getFinancialDetails(taxYear, nino)
   }
 
-  def getFinancialDetailsV2(taxYearFrom: TaxYear, taxYearTo: TaxYear, nino: String)(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
-    financialDetailsConnector.getFinancialDetails(taxYearFrom, taxYearTo, nino)
-  }
-
-  def getChargeDueDates(financialDetails: List[FinancialDetailsResponseModel]): Option[Either[(LocalDate, Boolean), Int]] = {
-    val chargeDueDates: List[LocalDate] = financialDetails.flatMap {
-      case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
-      case _ => List.empty[LocalDate]
-    }.sortWith(_ isBefore _)
-
-    val overdueDates: List[LocalDate] = chargeDueDates.filter(_ isBefore dateService.getCurrentDate)
-    val nextDueDates: List[LocalDate] = chargeDueDates.diff(overdueDates)
-
-    (overdueDates, nextDueDates) match {
-      case (Nil, Nil) => None
-      case (Nil, nextDueDate :: _) => Some(Left((nextDueDate, false)))
-      case (overdueDate :: Nil, _) => Some(Left((overdueDate, true)))
-      case _ => Some(Right(overdueDates.size))
-    }
+  def getFinancialDetailsV2(taxYearRange: TaxYearRange, nino: String)(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
+    financialDetailsConnector.getFinancialDetailsByTaxYearRange(taxYearRange, nino)
   }
 
   @deprecated("Use getAllFinancialDetailsV2 instead", "MISUV-8845")
@@ -87,15 +69,16 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
       Future.successful(None)
     else {
       val (from, to) = (yearsOfMigration.min, yearsOfMigration.max)
-      Logger("application").debug(s"Getting financial details for TaxYears: ${from} - ${to}")
 
       for {
-        response <- financialDetailsConnector.getFinancialDetails(TaxYear.forYearEnd(from), TaxYear.forYearEnd(to), user.nino)
+        response <- financialDetailsConnector.getFinancialDetailsByTaxYearRange(TaxYearRange(TaxYear.forYearEnd(from), TaxYear.forYearEnd(to)), user.nino)
+
       } yield response match {
         case financialDetails: FinancialDetailsModel => Some(financialDetails)
         case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Some(error)
         case _ => None
       }
+
     }
   }
 

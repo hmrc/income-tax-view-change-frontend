@@ -94,7 +94,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
     } yield {
 
-      val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(OptOutFs))
+      val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(ReportingFrequencyPage))
       val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, isEnabled(IncomeSourcesFs),
         isEnabled(IncomeSourcesNewJourney))
       val accountSettingsTileViewModel = AccountSettingsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
@@ -117,7 +117,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
     for {
       unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails
-      paymentsDue = getDueDates(unpaidCharges)
+      paymentsDue = getDueDates(unpaidCharges, isEnabled(ReviewAndReconcilePoa), isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
       dunningLockExists = hasDunningLock(unpaidCharges)
       outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
       outstandingChargeDueDates = getRelevantDates(outstandingChargesModel)
@@ -128,7 +128,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
     } yield {
 
-      val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(OptOutFs))
+      val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(ReportingFrequencyPage))
 
       val paymentCreditAndRefundHistoryTileViewModel =
         PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds), user.incomeSources.yearOfMigration.isDefined)
@@ -171,20 +171,23 @@ class HomeController @Inject()(val homeView: views.html.Home,
 }
   }
 
-  private def getDueDates(unpaidCharges: List[FinancialDetailsResponseModel]): List[LocalDate] =
-  (unpaidCharges collect {
-    case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
-  })
-    .flatten
-    .sortWith(_ isBefore _)
-    .sortBy(_.toEpochDay())
+  private def getDueDates(unpaidCharges: List[FinancialDetailsResponseModel], reviewAndReconcileEnabled: Boolean, isFilterOutCodedPoasEnabled: Boolean,
+                          penaltiesEnabled: Boolean)(implicit user: MtdItUser[_]): List[LocalDate] = {
+    val chargesList = unpaidCharges collect {
+      case fdm: FinancialDetailsModel => fdm
+    }
+      whatYouOweService.getFilteredChargesList(chargesList, reviewAndReconcileEnabled, isFilterOutCodedPoasEnabled, penaltiesEnabled).flatMap(_.dueDate)
+      .sortWith(_ isBefore _)
+      .sortBy(_.toEpochDay())
+  }
 
 private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsResponseModel])
                                       (implicit user: MtdItUser[_]): Future[List[OutstandingChargeModel]] =
   whatYouOweService.getWhatYouOweChargesList(
     unpaidCharges,
     isReviewAndReconciledEnabled = isEnabled(ReviewAndReconcilePoa),
-    isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas)
+    isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas),
+    isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals)
   ) map {
     case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(outstandingCharges)), _) =>
       outstandingCharges.filter(_.isBalancingChargeDebit)

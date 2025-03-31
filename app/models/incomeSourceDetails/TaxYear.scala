@@ -31,7 +31,7 @@ case class TaxYear(startYear: Int, endYear: Int) {
     TaxYear(startYear = startYear + delta, endYear = endYear + delta)
   }
 
-  def formatTaxYearRange: String = {
+  def formatAsShortYearRange: String = {
     s"${startYear.toString.takeRight(2)}-${endYear.toString.takeRight(2)}"
   }
 

@@ -51,7 +51,6 @@
   )(implicit request: Request[_], dateService: DateServiceInterface, messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter._
-@reviewAndReconcileEnabled = @{viewModel.reviewAndReconcileEnabled}
 @showForecastData = @{viewModel.showForecastData}
 
 
@@ -178,7 +177,7 @@
 }
 
 @getChargeSummaryMessage(chargeItem: TaxYearSummaryChargeItem) = @{
-    val chargeTypeKey = chargeItem.getChargeTypeKey(reviewAndReconcileEnabled)
+    val chargeTypeKey = chargeItem.getChargeTypeKey
     val lpi = if (chargeItem.isLatePaymentInterest) "lpi." else ""
     messages(s"tax-year-summary.payments.${lpi}${chargeTypeKey}")
 }

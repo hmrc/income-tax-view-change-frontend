@@ -20,6 +20,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.JourneyType.Manage
+import models.admin.DisplayBusinessStartDate
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -61,7 +62,7 @@ class ViewAllCeasedBusinessesController @Inject()(val viewAllCeasedBusinesses: V
     lazy val errorHandler = if(isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     withIncomeSourcesFS {
-      incomeSourceDetailsService.getCeaseIncomeSourceViewModel(sources) match {
+      incomeSourceDetailsService.getCeaseIncomeSourceViewModel(sources, isEnabled(DisplayBusinessStartDate)) match {
         case Right(viewModel) =>
           sessionService.deleteSession(Manage).map { _ =>
             Ok(viewAllCeasedBusinesses(

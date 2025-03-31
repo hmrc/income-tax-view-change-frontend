@@ -90,6 +90,11 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
     TaxYear.forYearEnd(yearEnd)
   }
 
+  def isWithin30Days(date: LocalDate): Boolean = {
+    val currentDate = getCurrentDate
+    date.minusDays(30).isBefore(currentDate)
+  }
+
 }
 
 @ImplementedBy(classOf[DateService])
@@ -111,4 +116,5 @@ trait DateServiceInterface {
 
   def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate
 
+  def isWithin30Days(date: LocalDate): Boolean
 }
