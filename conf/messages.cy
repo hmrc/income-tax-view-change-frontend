@@ -1085,6 +1085,7 @@ chargeSummary.chargeHistory.created.codingOut.text                      = PAYE s
 chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text	= Hunanasesiad TWE wedi’i ganslo (trwy eich cod treth TWE)
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = Creodd CThEF y swm ychwanegol hwn ar gyfer eich taliad ar gyfrif cyntaf yn seiliedig ar eich Ffurflen Dreth
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = Creodd CThEF y swm ychwanegol hwn ar gyfer eich ail daliad ar gyfrif yn seiliedig ar eich Ffurflen Dreth
+chargeSummary.chargeHistory.created.lateSubmissionPenalty.text          = HMRC created your late submission penalty
 chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = Taliad ar gyfrif 1 o 2 wedi’i ostwng oherwydd cais gan y trethdalwr
 chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = Taliad ar gyfrif 2 o 2 wedi’i ostwng oherwydd cais gan y trethdalwr
 chargeSummary.chargeHistory.request.balancingCharge.text	   	        = Taliad Mantoli wedi’i ostwng oherwydd cais gan y trethdalwr
@@ -2566,12 +2567,21 @@ yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Income Tax
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = Class 4 National Insurance contributions
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount.
 
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyPoints     = You will get a late submission penalty point every time you send a submission after the deadline. A submission can be a quarterly update or annual tax return.
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.fourPoints        = If you reach 4 points, you’ll have to pay a £200 penalty.
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.avoidInFuture     = To avoid receiving late submission penalty points in the future, and the potential for a financial penalty, you need to send your submissions on time.
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText1  = You can
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText   = view the details about your penalty
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText2  = and find out how to appeal.
+
 yourSelfAssessmentChargeSummary.balancingPayment.heading    = Balancing payment
 yourSelfAssessmentChargeSummary.paymentOnAccount1.heading   = First payment on account
 yourSelfAssessmentChargeSummary.paymentOnAccount2.heading   = Second payment on account
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.heading = Late submission penalty
 yourSelfAssessmentChargeSummary.unknown.heading             = Unknown
 
 yourSelfAssessmentChargeSummary.chargeHistory.balancingPayment.heading  = Balancing payment history
 yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount1.heading = First payment on account history
 yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount2.heading = Second payment on account history
+yourSelfAssessmentChargeSummary.chargeHistory.lateSubmissionPenalty.heading = Late submission penalty history
 yourSelfAssessmentChargeSummary.chargeHistory.unknown.heading		    = History of this charge

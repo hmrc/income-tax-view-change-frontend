@@ -16,7 +16,8 @@
 
 package views.helpers
 
-import models.financialDetails.{BalancingCharge, PoaOneDebit, PoaTwoDebit, TransactionType}
+import models.chargeSummary.ChargeSummaryViewModel
+import models.financialDetails.{BalancingCharge, LateSubmissionPenalty, PoaOneDebit, PoaTwoDebit, TransactionType}
 import play.api.i18n.Messages
 
 
@@ -28,7 +29,18 @@ object ChargeNameLangHelper {
       case PoaOneDebit     => messages("yourSelfAssessmentChargeSummary.paymentOnAccount1.heading")
       case PoaTwoDebit     => messages("yourSelfAssessmentChargeSummary.paymentOnAccount2.heading")
       case BalancingCharge => messages("yourSelfAssessmentChargeSummary.balancingPayment.heading")
+      case LateSubmissionPenalty => messages("yourSelfAssessmentChargeSummary.lateSubmissionPenalty.heading")
       case _               => messages("yourSelfAssessmentChargeSummary.unknown.heading")
+    }
+  }
+
+  def chargeHistoryHeading(viewModel: ChargeSummaryViewModel): String = {
+    viewModel.chargeItem.transactionType match {
+      case PoaOneDebit     => "chargeHistory.paymentOnAccount1.heading"
+      case PoaTwoDebit     => "chargeHistory.paymentOnAccount2.heading"
+      case BalancingCharge => "chargeHistory.balancingPayment.heading"
+      case LateSubmissionPenalty => "chargeHistory.lateSubmissionPenalty.heading"
+      case _               => "chargeHistory.unknown.heading"
     }
   }
 }

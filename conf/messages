@@ -1086,6 +1086,7 @@ chargeSummary.chargeHistory.created.codingOut.text                      = Self A
 chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text	= Cancelled PAYE Self Assessment (through your PAYE tax code) created
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = HMRC created this extra amount for your first payment on account based on your tax return
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = HMRC created this extra amount for your second payment on account based on your tax return
+chargeSummary.chargeHistory.created.lateSubmissionPenalty.text          = HMRC created your late submission penalty
 chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = Payment on account 1 of 2 reduced by taxpayer request
 chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = Payment on account 2 of 2 reduced by taxpayer request
 chargeSummary.chargeHistory.request.balancingCharge.text	   	        = Balancing payment reduced by taxpayer request
@@ -2547,7 +2548,7 @@ yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p3          = owe more t
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p4          = You’ll also need to make a balancing payment if you owe anything for Capital Gains Tax or student loans.
 
 yourSelfAssessmentChargeSummary.interestOnCharge.heading                = Interest on your {0}
-yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = The amount of Interest you have to pay will increase every day until you pay the overdue charge.
+yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = The amount of interest you have to pay will increase every day until you pay the overdue charge.
 yourSelfAssessmentChargeSummary.table.daysOverdue                       = {0} to {1}
 yourSelfAssessmentChargeSummary.table.totalInterestToDate               = Total interest to date
 yourSelfAssessmentChargeSummary.table.head.amountInterestIsAppliedTo    = Amount interest is applied to
@@ -2570,14 +2571,23 @@ yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Income Tax
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = Class 4 National Insurance contributions
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount.
 
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyPoints     = You will get a late submission penalty point every time you send a submission after the deadline. A submission can be a quarterly update or annual tax return.
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.fourPoints        = If you reach 4 points, you’ll have to pay a £200 penalty.
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.avoidInFuture     = To avoid receiving late submission penalty points in the future, and the potential for a financial penalty, you need to send your submissions on time.
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText1  = You can
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText   = view the details about your penalty
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText2  = and find out how to appeal.
+
 yourSelfAssessmentChargeSummary.balancingPayment.heading    = Balancing payment
 yourSelfAssessmentChargeSummary.paymentOnAccount1.heading   = First payment on account
 yourSelfAssessmentChargeSummary.paymentOnAccount2.heading   = Second payment on account
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.heading = Late submission penalty
 yourSelfAssessmentChargeSummary.unknown.heading             = Unknown
 
-yourSelfAssessmentChargeSummary.chargeHistory.balancingPayment.heading  = Balancing payment history
-yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount1.heading = First payment on account history
-yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount2.heading = Second payment on account history
-yourSelfAssessmentChargeSummary.chargeHistory.unknown.heading		    = History of this charge
+yourSelfAssessmentChargeSummary.chargeHistory.balancingPayment.heading      = Balancing payment history
+yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount1.heading     = First payment on account history
+yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount2.heading     = Second payment on account history
+yourSelfAssessmentChargeSummary.chargeHistory.lateSubmissionPenalty.heading = Late submission penalty history
+yourSelfAssessmentChargeSummary.chargeHistory.unknown.heading		        = History of this charge
 
 
