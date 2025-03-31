@@ -2548,7 +2548,7 @@ yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p3          = owe more t
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p4          = You’ll also need to make a balancing payment if you owe anything for Capital Gains Tax or student loans.
 
 yourSelfAssessmentChargeSummary.interestOnCharge.heading                = Interest on your {0}
-yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = The amount of Interest you have to pay will increase every day until you pay the overdue charge.
+yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = The amount of interest you have to pay will increase every day until you pay the overdue charge.
 yourSelfAssessmentChargeSummary.table.daysOverdue                       = {0} to {1}
 yourSelfAssessmentChargeSummary.table.totalInterestToDate               = Total interest to date
 yourSelfAssessmentChargeSummary.table.head.amountInterestIsAppliedTo    = Amount interest is applied to
