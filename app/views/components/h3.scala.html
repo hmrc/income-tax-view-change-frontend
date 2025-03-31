@@ -16,6 +16,6 @@
 
 @this()
 
-@(msg: String, classes: String = "govuk-heading-s", optId: Option[String] = None)(implicit messages: Messages)
+@(msg: String, classes: String = "govuk-heading-s", optId: Option[String] = None)
 
 <h3 @optId.map(value => s"id=$value") class="@classes">@msg</h3>
