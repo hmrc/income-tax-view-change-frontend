@@ -30,6 +30,7 @@ case class YourSelfAssessmentChargesViewModel(hasOverdueOrAccruingInterestCharge
                                               dunningLock: Boolean,
                                               reviewAndReconcileEnabled: Boolean,
                                               penaltiesEnabled: Boolean,
+                                              LPP2Url: String,
                                               creditAndRefundEnabled: Boolean,
                                               earliestTaxYearAndAmountByDueDate: Option[EarliestDueCharge],
                                               claimToAdjustViewModel: WYOClaimToAdjustViewModel)(implicit val dateService: DateServiceInterface) {

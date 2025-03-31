@@ -80,6 +80,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       isAgent = isAgent,
       poaOneChargeUrl = "testUrl1",
       poaTwoChargeUrl = "testUrl2",
+      LSPUrl = Some("testLSPUrl"),
       adjustmentHistory = adjustmentHistory,
       poaExtraChargeLink = poaExtraChargeLink)
 
@@ -1242,6 +1243,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         reviewAndReconcileCredit = None,
         reviewAndReconcileEnabled = false,
         penaltiesEnabled = true,
+        LSPUrl = None,
         poaOneChargeUrl = "",
         poaTwoChargeUrl = "",
         adjustmentHistory = defaultAdjustmentHistory)
