@@ -22,7 +22,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config._
 import config.featureswitch._
-import enums.GatewayPage.WhatYouOwePage
+import enums.GatewayPage.{WhatYouOwePage, YourSelfAssessmentChargeSummaryPage}
 import forms.utils.SessionKeys.gatewayPage
 import models.admin._
 import models.core.Nino
@@ -86,7 +86,7 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
       Ok(view(
         viewModel = viewModel,
         origin = origin)(user, user, messages, dateService)
-      ).addingToSession(gatewayPage -> WhatYouOwePage.name)
+      ).addingToSession(gatewayPage -> YourSelfAssessmentChargeSummaryPage.name)
     }
   } recover {
     case ex: Exception =>

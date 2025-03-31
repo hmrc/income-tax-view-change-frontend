@@ -33,7 +33,8 @@
 
 @(
         isAgent: Boolean,
-        poaTaxYear: TaxYear
+        poaTaxYear: TaxYear,
+        yourSelfAssessmentChargesFS: Boolean
 )(
         implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_]
 )
@@ -50,6 +51,11 @@
 @wyoLinkUrl = @{
     if(isAgent) controllers.routes.WhatYouOweController.showAgent.url
     else controllers.routes.WhatYouOweController.show().url
+}
+
+@saChargesUrl = @{
+    if(isAgent) controllers.routes.YourSelfAssessmentChargesController.showAgent.url
+    else controllers.routes.YourSelfAssessmentChargesController.show().url
 }
 
 @getHomeUrl = @{
@@ -85,11 +91,19 @@
         }
         </li>
 
+        @if(yourSelfAssessmentChargesFS) {
+        <li>@p(classes = "govuk-!-margin-bottom-4") {
+            @getMessage("bullet2Text")
+            @link(link = saChargesUrl, messageKey = "claimToAdjustPoa.youCannotGoBack.sa.bullet2Link", id = Some("link-2"))
+        }
+        </li>
+        } else {
         <li>@p(classes = "govuk-!-margin-bottom-4") {
             @getMessage("bullet2Text")
             @link(link = wyoLinkUrl, messageKey = "claimToAdjustPoa.youCannotGoBack.bullet2Link", id = Some("link-2"))
-        }
+            }
         </li>
+        }
 
         <li>@p(classes = "govuk-!-margin-bottom-4") {
             @getMessage("bullet3Text")
