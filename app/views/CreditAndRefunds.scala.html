@@ -133,7 +133,7 @@ govukInsetText : GovukInsetText
 }
 
 @getHowMuchCanIClaimContent = {
-    @h2(messages("credit-and-refund.how-much-can-i-claim"), classes = "govuk-heading-l")
+    @h2(msg = messages("credit-and-refund.how-much-can-i-claim"), classes = "govuk-heading-l")
 
     @p(){
         <span class="govuk-!-font-weight-bold">@messages("credit-and-refund.the-most-you-can-claim", viewModel.availableCredit.toCurrencyString)</span>
