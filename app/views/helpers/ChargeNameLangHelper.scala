@@ -41,6 +41,7 @@ object ChargeNameLangHelper {
       case PoaTwoDebit     => "chargeHistory.paymentOnAccount2.heading"
       case BalancingCharge => "chargeHistory.balancingPayment.heading"
       case LateSubmissionPenalty => "chargeHistory.lateSubmissionPenalty.heading"
+      case FirstLatePaymentPenalty => "chargeHistory.firstLatePaymentPenalty.heading"
       case _               => "chargeHistory.unknown.heading"
     }
   }

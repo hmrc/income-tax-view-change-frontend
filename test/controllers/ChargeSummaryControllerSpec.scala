@@ -200,9 +200,10 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "First late payment penalty"
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2020 to 2021 tax year")
-                document.getElementById("charge-amount-heading").text() shouldBe "Overdue charge: £200.33"
+                document.getElementById("charge-amount-heading").text() shouldBe "Overdue charge: £200.33"
                 document.getElementById("due-date-text").text() shouldBe "Due 29 March 2020"
-
+                document.getElementById("first-payment-penalty-p1").text() shouldBe "You have received this penalty because you are late paying your Income Tax."
+                document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "First late payment penalty history"
               }
             }
             "charge history feature is enabled and there is a user" that {
