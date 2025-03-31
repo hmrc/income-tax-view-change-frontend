@@ -215,7 +215,7 @@
 
 
       @if(reportingMethod == ChosenReportingMethod.Quarterly) {
-        @h2(msg = "submit-software-text", classes = "govuk-!-margin-top-8")
+        @h2(msg = getMessage("submit-software-text"), classes = "govuk-!-margin-top-8")
 
         <div class="govuk-body" id="submit-text">
           <p>@getMessage("submit-software-quarterly-text")
@@ -224,7 +224,7 @@
         </div>
       }
       @if(reportingMethod == ChosenReportingMethod.Annual || reportingMethod == ChosenReportingMethod.DefaultAnnual) {
-        @h2(msg = "submit-tax-return", classes = "govuk-!-margin-top-8")
+        @h2(msg = getMessage("submit-tax-return"), classes = "govuk-!-margin-top-8")
 
         <div class="govuk-body" id="submit-text">
           <p>@getMessage("submit-tax-return-text")
@@ -233,7 +233,7 @@
         </div>
       }
       @if(reportingMethod == ChosenReportingMethod.Hybrid) {
-        @h2(msg = "submit-software-text", classes = "govuk-!-margin-top-8")
+        @h2(msg = getMessage("submit-software-text"), classes = "govuk-!-margin-top-8")
 
         <div class="govuk-body" id="quarterly-submit-text">
           <p>@getMessage("submit-software-quarterly-text")
