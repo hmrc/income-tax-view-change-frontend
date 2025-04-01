@@ -19,7 +19,7 @@ package controllers.manageBusinesses.add
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.IncomeSourceType
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.core.IncomeSourceId
 import models.incomeSourceDetails._
@@ -94,14 +94,6 @@ class IncomeSourceAddedController @Inject()(authActions: AuthActions,
     }
   }
 
-  private def getLatencyDetailsFromUser(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Option[LatencyDetails] = {
-    incomeSourceType match {
-      case SelfEmployment => user.incomeSources.businesses.flatMap(_.latencyDetails).headOption
-      case UkProperty => user.incomeSources.getUKProperty.flatMap(_.latencyDetails)
-      case ForeignProperty => user.incomeSources.getForeignProperty.flatMap(_.latencyDetails)
-    }
-  }
-
   private def handleSuccess(
                              incomeSourceId: IncomeSourceId,
                              incomeSourceType: IncomeSourceType,
@@ -117,7 +109,7 @@ class IncomeSourceAddedController @Inject()(authActions: AuthActions,
     val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
 
     val incomeSourceBeingAddedLatencyDetails: Option[LatencyDetails] =
-      getLatencyDetailsFromUser(incomeSourceType)
+      incomeSourceDetailsService.getLatencyDetailsFromUser(incomeSourceType)
 
     val reportingMethodTaxYear1 =
       incomeSourceBeingAddedLatencyDetails.map(_.latencyIndicator1)

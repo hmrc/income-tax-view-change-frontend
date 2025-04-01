@@ -25,7 +25,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels._
-import models.incomeSourceDetails.{AddIncomeSourceData, ChosenReportingMethod, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
+import models.incomeSourceDetails.{AddIncomeSourceData, ChosenReportingMethod, IncomeSourceDetailsModel, IncomeSourceDetailsResponse, LatencyDetails}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
@@ -269,6 +269,14 @@ class IncomeSourceDetailsService @Inject()(
       case (Some("A"), Some("Q")) | (Some("Q"), Some("A")) => ChosenReportingMethod.Hybrid
       case (None, None) => ChosenReportingMethod.DefaultAnnual
       case _ => ChosenReportingMethod.Unknown
+    }
+  }
+
+  def getLatencyDetailsFromUser(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Option[LatencyDetails] = {
+    incomeSourceType match {
+      case SelfEmployment => user.incomeSources.businesses.flatMap(_.latencyDetails).headOption
+      case UkProperty => user.incomeSources.getUKProperty.flatMap(_.latencyDetails)
+      case ForeignProperty => user.incomeSources.getForeignProperty.flatMap(_.latencyDetails)
     }
   }
 }
