@@ -98,10 +98,10 @@ class IncomeSourceAddedController @Inject()(val authActions: AuthActions,
         sessionService.setMongoData(uiJourneySessionData).flatMap { _ =>
           incomeSourceType match {
             case SelfEmployment =>
-              nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel: ObligationsViewModel =>
+              nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears).map { viewModel: ObligationsViewModel =>
                 Ok(obligationsView(businessName = businessName, sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
               }
-            case _ => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
+            case _ => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears).map { viewModel =>
               Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = incomeSourceType))
             }
           }
