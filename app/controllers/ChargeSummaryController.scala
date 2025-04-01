@@ -152,7 +152,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
         auditChargeSummary(chargeItem, paymentBreakdown,
           chargeHistory, paymentAllocations, isInterestCharge, isMFADebit, taxYear)
 
-        val chargeItems : List[ChargeItem] = chargeDetailsforTaxYear.asChargeItems
+        val chargeItems: List[ChargeItem] = chargeDetailsforTaxYear.asChargeItems
         val (poaOneChargeUrl, poaTwoChargeUrl) = {
           for {
             poaOneChargeItem <- chargeItems
@@ -170,18 +170,19 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                 routes.ChargeSummaryController.show(poaTwoChargeItem.taxYear.endYear, poaTwoChargeItem.transactionId).url
               )
           }
-        }.headOption.getOrElse( ("", ""))
+        }.headOption.getOrElse(("", ""))
         val whatYouOweUrl = {
           if (isAgent) controllers.routes.WhatYouOweController.showAgent.url
           else controllers.routes.WhatYouOweController.show(origin).url
         }
         val saChargesUrl: String = {
-          if(isAgent) controllers.routes.YourSelfAssessmentChargesController.showAgent.url
+          if (isAgent) controllers.routes.YourSelfAssessmentChargesController.showAgent.url
           else controllers.routes.YourSelfAssessmentChargesController.show(origin).url
-      }
+        }
         val LSPUrl = if (chargeItem.transactionType == LateSubmissionPenalty) Some(appConfig.incomeTaxPenaltiesFrontend) else None
+        val LPPUrl = if (chargeItem.transactionType == FirstLatePaymentPenalty) Some(appConfig.incomeTaxPenaltiesFrontendCalculation) else None
 
-      val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
+        val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
           currentDate = dateService.getCurrentDate,
           chargeItem = chargeItem,
           backUrl = getChargeSummaryBackUrl(sessionGatewayPage, taxYear, origin, isAgent),
@@ -200,7 +201,8 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
           poaExtraChargeLink = checkForPoaExtraChargeLink(chargeDetailsforTaxYear, documentDetailWithDueDate, isAgent),
           poaOneChargeUrl = poaOneChargeUrl,
           poaTwoChargeUrl = poaTwoChargeUrl,
-          LSPUrl = LSPUrl
+          LSPUrl = LSPUrl,
+          LPPUrl = LPPUrl
         )
 
         mandatoryViewDataPresent(isInterestCharge, documentDetailWithDueDate) match {
