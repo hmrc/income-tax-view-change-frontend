@@ -104,7 +104,7 @@
 }
 
 @errorMessageHeader(header: String) = {
-    <h2 class="govuk-heading-m">@messages(header)</h2>
+    @h2(msg = messages(header), classes = "govuk-heading-m")
 }
 
 @singleErrorMessage(errorMessage: String, messageValue: String) = {

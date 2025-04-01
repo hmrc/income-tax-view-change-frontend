@@ -25,7 +25,7 @@
 @import views.html.partials.chargeSummary._
 @import views.html.components._
 
-@this(p: p, implicitDateFormatter: ImplicitDateFormatterImpl)
+@this(p: p, h2: h2, implicitDateFormatter: ImplicitDateFormatterImpl)
 
 @(  chargeItem: models.financialDetails.ChargeItem,
     paymentBreakdown: List[FinancialDetail],
@@ -36,7 +36,7 @@
 
 @hasInterestLocks = @{ paymentBreakdown.exists(_.interestLockExists) }
 
-<h2 class="govuk-heading-m" id="heading-payment-breakdown">@messages("chargeSummary.paymentBreakdown.heading")</h2>
+@h2(msg = "chargeSummary.paymentBreakdown.heading", optId = Some("heading-payment-breakdown"))
 <dl class="govuk-summary-list govuk-!-margin-bottom-8">
     @for(financialDetail <- paymentBreakdown) {
         <div class="govuk-summary-list__row">

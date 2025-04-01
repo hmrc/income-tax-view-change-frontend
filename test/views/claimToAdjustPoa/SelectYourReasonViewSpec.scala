@@ -90,7 +90,7 @@ class SelectYourReasonViewSpec extends TestSupport {
     }
 
     "renders the correct subheading" in {
-      document.getElementsByClass("govuk-fieldset__legend--m").first().text() shouldBe subheading
+      document.select("#select-your-reason-form h2").first().text() shouldBe subheading
     }
 
     "renders the correct first bullet point text" in {

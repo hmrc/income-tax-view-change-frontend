@@ -36,6 +36,7 @@
     implicitDateFormatter: ImplicitDateFormatterImpl,
     h1WithCaption: h1WithCaption,
     p: p,
+    h2: h2,
     h3: h3,
     link: link,
     govukWarningText : GovukWarningText,
@@ -406,7 +407,7 @@
                 optId = Some("charge-history-h3")
             )
         } else {
-            <h2 id="charge-history-h2" class="govuk-heading-m">@chargeHistoryHeading</h2>
+            @h2(msg = chargeHistoryHeading, optId = Some("charge-history-h2"))
         }
 
         <table class="govuk-table" id="payment-history-table">

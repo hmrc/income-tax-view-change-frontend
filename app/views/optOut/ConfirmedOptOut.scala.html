@@ -57,7 +57,7 @@
 }
 
 @optOutYearFollowedByMandatedContent = {
-    <h2 class="govuk-heading-m">@messages("optout.confirmedOptOut.report-quarterly-next-year-onwards")</h2>
+    @h2(msg = "optout.confirmedOptOut.report-quarterly-next-year-onwards")
 
     @{
         val externalRefLink = messages("optout.confirmedOptOut.software-compatible.link")
@@ -99,7 +99,7 @@
 
 @revisedDeadlinesBlock = {
     <div id="revised-deadlines" class="govuk-!-margin-bottom-7 govuk-!-margin-top-8">
-        <h2 id="revised-deadlines-heading" class="govuk-heading-m" >@messages("optout.confirmedOptOut.yourRevisedDeadlines.h2")</h2>
+        @h2(msg = "optout.confirmedOptOut.yourRevisedDeadlines.h2", optId = Some("revised-deadlines-heading"))
         <p id="revised-deadlines-p1" class="govuk-body">@Html(messages("optout.confirmedOptOut.yourRevisedDeadlines.desc1", viewModel.startYear, viewModel.endYear, viewModel.nextYear))</p>
         @p(id = Some("view-upcoming-updates")) {
             @link(
@@ -131,7 +131,7 @@
         @if(viewModel.isOneYearOptOutFollowedByMandated) {
             @optOutYearFollowedByMandatedContent
         } else {
-            <h2 class="govuk-heading-m" >@messages("optout.confirmedOptOut.reportQuarterly")</h2>
+            @h2(msg = "optout.confirmedOptOut.reportQuarterly")
             @p(){
                 @messages("optout.confirmedOptOut.reportQuarterly.desc1")
             }

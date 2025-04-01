@@ -52,7 +52,7 @@
 
 @submitUpdatesInSoftware = {
     <div id="optin-completed-view" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
-        <h2 id="optin-completed-view-heading" class="govuk-heading-m" >@messages("optin.completedOptIn.submitUpdates")</h2>
+        @h2(msg = "optin.completedOptIn.submitUpdates", optId = Some("optin-completed-view-heading"))
         @p(id = Some("optin-completed-view-p3")){
             @messages("optin.completedOptIn.submitUpdates.desc1.a")
             <a href="@makingTaxDigitalUrl" class="govuk-link govuk-body" target="_blank" rel="noopener noreferrer">
@@ -70,7 +70,7 @@
 @futureReporting = {
     <div id="optin-completed-view" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
         @if(!model.annualWithFollowingYearMandated) {
-            <h2 class="govuk-heading-m" >@messages("optin.completedOptIn.futureReporting")</h2>
+            @h2(msg = "optin.completedOptIn.futureReporting")
             @p(id=Some("optin-completed-view-p5")){
                 @if(model.isCurrentYear) {
                     @messages("optin.completedOptIn.cy.futureReporting.desc1", model.startYear, model.endYear)
@@ -88,7 +88,7 @@
                 @messages("optin.completedOptIn.futureReporting.desc2")
             }
         } else {
-            <h2 class="govuk-heading-m" >@messages("optin.completedOptIn.nymandated.futureReporting")</h2>
+            @h2(msg = "optin.completedOptIn.nymandated.futureReporting")
             @p(id=Some("optin-completed-view-p5")){
                 @messages("optin.completedOptIn.nymandated.futureReporting.desc1", model.startYear, model.endYear)
             }

@@ -30,6 +30,7 @@
       paymentAllocationsCreditAmount: PaymentAllocationsCreditAmount,
       implicitDateFormatter: ImplicitDateFormatterImpl,
       h1:h1,
+      h2: h2,
       p:p,
       govukInsetText: GovukInsetText,
       link: link,
@@ -96,7 +97,7 @@
 
 @if(paymentAllocations.showPaymentAllocationsTable()) {
 
-    <h2 class="govuk-heading-m">@messages("paymentAllocation.tableSection.heading")</h2>
+    @h2(msg = "paymentAllocation.tableSection.heading")
 
     <table class="govuk-table" id="payment-allocation-table">
         <caption class="govuk-table__caption heading-large govuk-visually-hidden">@messages("paymentAllocation.tableSection.heading")</caption>

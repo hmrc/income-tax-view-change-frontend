@@ -19,15 +19,17 @@
 @import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import _root_.implicits.HtmlFormatter.NbspString
+@import views.html.components.h2
 
 @this(govukTable: GovukTable,
+        h2: h2,
         implicitDateFormatter: ImplicitDateFormatterImpl)
 
 @(chargeItem: ChargeItem, link: String, linkText: String)(implicit messages: Messages)
 
 @import implicitDateFormatter.longDate
 
-<h2 class="govuk-heading-l" id="allocation"> @messages("chargeSummary.allocation")</h2>
+@h2(msg = "chargeSummary.allocation", classes = "govuk-heading-l", optId = Some("allocation"))
 
 <table class="govuk-table" id="allocation-table">
     <thead class="govuk-table__head">
