@@ -48,11 +48,11 @@
     useFallbackLink: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @formContent = {
-    @p(classes = "form-hint govuk-body-m"){
+    @p(classes = "govuk-body-m"){
         @messages("claimToAdjustPoa.selectYourReason.p1")
     }
 
-    @p(classes = "form-hint govuk-body-m"){
+    @p(classes = "govuk-body-m"){
         @messages("claimToAdjustPoa.selectYourReason.p2.a")
         <a class="govuk-link" target="_blank" href="https://www.gov.uk/difficulties-paying-hmrc">@messages("claimToAdjustPoa.selectYourReason.p2.link")</a>@messages("claimToAdjustPoa.selectYourReason.p2.b")
     }
