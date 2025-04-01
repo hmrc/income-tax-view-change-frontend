@@ -20,6 +20,7 @@ accessibility.this-section-is                                   = Teitl yr adran
 
 # Fallback Back Links
 back.whatYouOwe = Yn ôl i Yr hyn sydd arnoch
+back.yourSelfAssessmentChargeSummary = Yn ôl i’ch taliadau Hunanasesiad
 back.paymentHistory = Yn ôl i Hanes taliadau
 back.taxYearSummary = Yn ôl i Crynodeb o’r flwyddyn dreth
 back.nomatch = Yn ôl
@@ -1070,6 +1071,13 @@ chargeSummary.whatYouOwe.textTwo-agent							= i wirio a oes ganddo unrhyw dalia
 chargeSummary.whatYouOwe.linkText                               = yr hyn sydd arnoch
 chargeSummary.whatYouOwe.linkText-agent							= yr hyn sydd ar eich cleient
 
+chargeSummary.selfAssessmentCharges.textOne                     = Bwriwch olwg dros
+chargeSummary.selfAssessmentCharges.textTwo                     = sydd arnoch i wirio a oes gennych unrhyw daliadau eraill sy’n ddyledus.
+chargeSummary.selfAssessmentCharges.textOne-agent               = Bwriwch olwg dros
+chargeSummary.selfAssessmentCharges.textTwo-agent				= sydd ar eich cleient i wirio a oes ganddo unrhyw daliadau eraill sy’n ddyledus.
+chargeSummary.selfAssessmentCharges.linkText                    = y taliadau Hunanasesiad
+chargeSummary.selfAssessmentCharges.linkText-agent				= y taliadau Hunanasesiad
+
 chargeSummary.chargeHistory.heading								        = Hanes y tâl hwn
 chargeSummary.chargeHistory.lateInterestPayment					        = Hanes llog am dalu’n hwyr
 chargeSummary.chargeHistory.Poa1heading                                 = Hanes eich taliad ar gyfrif cyntaf
@@ -1086,6 +1094,7 @@ chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text	= Hunanases
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = Creodd CThEF y swm ychwanegol hwn ar gyfer eich taliad ar gyfrif cyntaf yn seiliedig ar eich Ffurflen Dreth
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = Creodd CThEF y swm ychwanegol hwn ar gyfer eich ail daliad ar gyfrif yn seiliedig ar eich Ffurflen Dreth
 chargeSummary.chargeHistory.created.lateSubmissionPenalty.text          = HMRC created your late submission penalty
+chargeSummary.chargeHistory.created.firstLatePaymentPenalty.text        = HMRC created your late payment penalty
 chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = Taliad ar gyfrif 1 o 2 wedi’i ostwng oherwydd cais gan y trethdalwr
 chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = Taliad ar gyfrif 2 o 2 wedi’i ostwng oherwydd cais gan y trethdalwr
 chargeSummary.chargeHistory.request.balancingCharge.text	   	        = Taliad Mantoli wedi’i ostwng oherwydd cais gan y trethdalwr
@@ -1288,7 +1297,9 @@ credit-and-refund.available-to-claim                              = Mae {0} ar g
 credit-and-refund.upcoming-allocated-credit-1                     = Mae CThEF wedi cadw {0} o’r swm hwn i dalu’ch bil treth sydd i ddod.
 credit-and-refund.upcoming-allocated-credit-1-all                 = Mae CThEF wedi cadw’r cyfanswm o {0} i dalu’ch bil treth sydd i ddod.
 credit-and-refund.upcoming-allocated-credit-2                     = Gwiriwch yr hyn sydd arnoch
+credit-and-refund.selfAssessment.upcoming-allocated-credit-2      = Gwiriwch eich taliadau Hunanasesiad
 credit-and-refund.upcoming-allocated-credit-3                     = i gael rhagor o wybodaeth.
+credit-and-refund.selfAssessment.upcoming-allocated-credit-3      = i gael rhagor o wybodaeth.
 
 credit-and-refund.no-credit                                       = Nid oes gennych arian yn eich cyfrif.
 credit-and-refund.claim-refund-btn                                = Hawlio ad-daliad
@@ -2223,8 +2234,10 @@ claimToAdjustPoa.success.heading                    = Taliadau ar gyfrif wedi’
 claimToAdjustPoa.success.h1                         = Taliadau ar gyfrif wedi’u diweddaru
 claimToAdjustPoa.success.p1                         = Mae’ch taliadau ar gyfrif ar gyfer blwyddyn dreth 2023 i 2024 yn {2} yr un erbyn hyn
 claimToAdjustPoa.success.p2                         = Gallwch addasu’ch taliadau ar gyfrif eto, hyd at y swm cychwynnol a gyfrifwyd gan CThEF, mor aml ag sydd ei angen cyn cyflwyno’ch Ffurflen Dreth ar gyfer {0} i {1}, ac erbyn 31 Ionawr {2} fan bellaf.
-claimToAdjustPoa.success.check                      = Gwirio’r
+claimToAdjustPoa.success.check                      = Gwiriwch
+claimToAdjustPoa.success.yourSelfAssessmentCharges  = eich taliadau Hunanasesiad
 claimToAdjustPoa.success.whatYouOwe                 = hyn sydd arnoch
+claimToAdjustPoa.success.forUpcomingPaymentDue      = i gael gwybod a oes unrhyw daliadau dyledus ar y gweill.
 claimToAdjustPoa.success.forUpcomingCharges         = ar gyfer newidiadau sydd ar y gweill.
 claimToAdjustPoa.success.overdueTitle               = Taliadau am fod yn hwyr
 claimToAdjustPoa.success.overdueText1               = Bellach, mae gennych daliadau am fod yn hwyr sydd angen eu talu. Gwiriwch yr
@@ -2238,6 +2251,7 @@ claimToAdjustPoa.youCannotGoBack.bullet1Text             = gwiriwch
 claimToAdjustPoa.youCannotGoBack.bullet1Link             = statws eich taliadau ar gyfrif
 claimToAdjustPoa.youCannotGoBack.bullet2Text             = gwiriwch
 claimToAdjustPoa.youCannotGoBack.bullet2Link             = yr hyn sydd arnoch
+claimToAdjustPoa.youCannotGoBack.sa.bullet2Link          = Gwiriwch eich taliadau Hunanasesiad
 claimToAdjustPoa.youCannotGoBack.bullet3Text             = ewch yn ôl i’r
 claimToAdjustPoa.youCannotGoBack.bullet3Link             = hafan
 
@@ -2583,5 +2597,11 @@ yourSelfAssessmentChargeSummary.unknown.heading             = Unknown
 yourSelfAssessmentChargeSummary.chargeHistory.balancingPayment.heading  = Balancing payment history
 yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount1.heading = First payment on account history
 yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount2.heading = Second payment on account history
+yourSelfAssessmentChargeSummary.chargeHistory.firstLatePaymentPenalty.heading = First late payment penalty history
 yourSelfAssessmentChargeSummary.chargeHistory.lateSubmissionPenalty.heading = Late submission penalty history
 yourSelfAssessmentChargeSummary.chargeHistory.unknown.heading		    = History of this charge
+
+
+yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.heading = First late payment penalty
+yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p = You have received this penalty because you are late paying your Income Tax.
+yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link = View how your penalty was calculated.

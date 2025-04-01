@@ -54,6 +54,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
       None,
       Some(getCurrentTaxYearEnd),
       Some(b2TradingStart),
+      None,
       Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason))),
       address = Some(address),
       cashOrAccruals = false
