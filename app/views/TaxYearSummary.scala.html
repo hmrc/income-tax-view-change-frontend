@@ -39,7 +39,7 @@
     breakdownPartial: taxYearSummaryBreakdownPartial,
     h1WithCaption: h1WithCaption,
     h2: h2,
-    h3: h3,
+    h3WithHtml: h3WithHtml,
     p: p,
     link: link,
     govukInsetText: GovukInsetText,
@@ -289,11 +289,14 @@
         @groupedObligations.map { case (due, dueObligations) =>
 
         <div class="govuk-tax-years-updates-table">
-            <h3 class="govuk-heading-m">
-                <span class="govuk-tax-years-updates-table__section-title" id="table-default-content-@due">
-                @messages("updateTab.due", due.toLongDate)
-                </span>
-            </h3>
+            @h3WithHtml(
+                Html(s"""
+                    |<span class="govuk-tax-years-updates-table__section-title" id="table-default-content-$due">
+                    |   ${messages("updateTab.due", due.toLongDate)}
+                    |</span>""".stripMargin
+                ),
+                classes = "govuk-heading-m"
+            )
             @dueObligations.map { case (quarterlyTypeName, obligations) =>
                 <table class="govuk-table">
                     <caption class="govuk-table__caption" style="margin-bottom: 0px;">

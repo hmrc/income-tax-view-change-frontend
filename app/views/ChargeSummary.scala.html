@@ -37,6 +37,7 @@
     h1WithCaption: h1WithCaption,
     p: p,
     h2: h2,
+    h3: h3,
     link: link,
     govukWarningText : GovukWarningText,
     chargeSummaryLpiCharge: ChargeSummaryLpiCharge,
@@ -400,7 +401,11 @@
 
 @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit){
         @if(viewModel.hasPaymentBreakdown && viewModel.chargeItem.subTransactionType == None) {
-            <h3 id="charge-history-h3" class="govuk-heading-m">@chargeHistoryHeading</h3>
+            @h3(
+                msg = chargeHistoryHeading,
+                classes = "govuk-heading-m",
+                optId = Some("charge-history-h3")
+            )
         } else {
             @h2(msg = chargeHistoryHeading, optId = Some("charge-history-h2"))
         }

@@ -27,6 +27,7 @@
         appConfig: config.FrontendAppConfig,
         h1WithCaption: h1WithCaption,
         h2: h2,
+        h3: h3,
         p: p,
         link: link,
         form: FormWithCSRF,
@@ -97,13 +98,16 @@
     @newTabLinkHTML(getMessage("link"), getMessage("link-text"))
 
     @if(viewModel.showIncreaseAfterPaymentContent){
-        <h3 class="govuk-heading-m">@getMessage("increase-after-payment.h1")</h3>
+        @h3(
+            msg = getMessage("increase-after-payment.h1"),
+            classes = "govuk-heading-m"
+        )
 
         @p(id = Some("p6")) {
             @getMessage("increase-after-payment.p1")
         }
 
-        <h3 class="govuk-heading-s">@getMessage("increase-after-payment.h2")</h3>
+        @h3(getMessage("increase-after-payment.h2"))
 
         @p(id = Some("p7")) {
             @getMessage("increase-after-payment.p2")
