@@ -26,6 +26,7 @@
 @import views.html.partials.yourSelfAssessmentCharges.WhatIsPaymentOnAccount
 @import views.html.partials.yourSelfAssessmentCharges.WhatIsABalancingPayment
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Details
+@import models.financialDetails.FirstLatePaymentPenalty
 
 @this(
     p: p,
@@ -35,6 +36,7 @@
     whatIsABalancingPayment: WhatIsABalancingPayment,
     govukDetails: GovukDetails
 )
+
 
 @(
     transactionType: TransactionType
@@ -62,6 +64,8 @@
         ))
     case LateSubmissionPenalty =>
         LSPContent
+    case FirstLatePaymentPenalty =>
+        LPP1Content
     case _ =>
 }}
 
@@ -85,4 +89,17 @@
         )
         @getMessage("lateSubmissionPenalty.penaltyLinkText2")
     }
+}
+
+@LPP1Content = {
+    @p(id = Some("first-payment-penalty-p1")) {
+        @getMessage("firstLatePaymentPenalty.p")
+    }
+
+    @link(
+        link = "/penalties/income-tax",
+        messageKey = "yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link"
+    )
+
+
 }
