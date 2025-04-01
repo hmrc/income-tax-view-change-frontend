@@ -55,9 +55,8 @@ object NextPaymentsTileViewModel {
     val financialDetailsModels = unpaidCharges collect {
       case fdm: FinancialDetailsModel => fdm
     }
-
-    val docDetailsNotDueWithInterest: List[DocumentDetail] = financialDetailsModels.flatMap(_.docDetailsNotDueWithInterest(currentDate))
-    docDetailsNotDueWithInterest.length
+    financialDetailsModels
+      .foldLeft(0)( (acc, c) => c.docDetailsNotDueWithInterest(currentDate) + acc)
   }
 }
 

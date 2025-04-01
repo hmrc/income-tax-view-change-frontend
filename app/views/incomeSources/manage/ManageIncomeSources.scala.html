@@ -80,7 +80,9 @@
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
                     <th class="govuk-table__header" scope="col" id="table-head-business-name">@getMessage("table-head.business-name")</th>
-                    <th class="govuk-table__header" scope="col" id="table-head-date-started">@getMessage("table-head.date-started")</th>
+                    @if(sources.displayStartDate) {
+                        <th class="govuk-table__header" scope="col" id="table-head-date-started">@getMessage("table-head.date-started")</th>
+                    }
                     <td class="govuk-table__header" id="empty0"></td>
                 </tr>
             </thead>
@@ -90,9 +92,11 @@
                     <td class="govuk-table__cell" id="@{
                         s"table-row-trading-name-$index"
                     }">@business.tradingName.getOrElse(getMessage("unknown-field"))</td>
-                    <td class="govuk-table__cell" id="@{
-                        s"table-row-trading-start-date-$index"
-                    }">@business.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))</td>
+                    @if(sources.displayStartDate) {
+                        <td class="govuk-table__cell" id="@{
+                            s"table-row-trading-start-date-$index"
+                        }">@business.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))</td>
+                    }
                     <td class="govuk-table__cell govuk-!-text-align-right">
                         <a class="govuk-link" id="@{
                             s"view-link-business-$index"
@@ -122,7 +126,14 @@
             </thead>
             <tbody>
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell" id="table-row-trading-start-date-uk">@ukProperty.map(_.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))).get</td>
+                    <td class="govuk-table__cell" id="table-row-trading-start-date-uk">
+                        @ukProperty.map { property =>
+                            @property.tradingStartDate match {
+                                case Some(date) if sources.displayStartDate => { @date.toLongDate }
+                                case _ => { @getMessage("unknown-field") }
+                            }
+                        }
+                    </td>
                     <td class="govuk-table__cell govuk-!-text-align-right">
                         <a class="govuk-link" id="view-link-business-uk-property" href=@incomeSourceDetailsURL(UkProperty, None)>
                         @getMessage("choose")
@@ -149,7 +160,14 @@
             </thead>
             <tbody>
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell" id="table-row-trading-start-date-foreign">@foreignProperty.map(_.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))).get</td>
+                    <td class="govuk-table__cell" id="table-row-trading-start-date-foreign">
+                        @foreignProperty.map { property =>
+                            @property.tradingStartDate match {
+                                case Some(date) if sources.displayStartDate => { @date.toLongDate }
+                                case _ => { @getMessage("unknown-field") }
+                            }
+                        }
+                    </td>
                     <td class="govuk-table__cell govuk-!-text-align-right">
                         <a class="govuk-link" id="view-link-business-foreign-property" href=@incomeSourceDetailsURL(ForeignProperty, None)>
                         @getMessage("choose")
@@ -165,7 +183,7 @@
 
     @if(sources.viewCeasedBusinesses.nonEmpty) {
         @h2(msg = getMessage("ceased-businesses-h2"),optId = Some("ceased-businesses-heading"))
-        @ceasedBusinesses(sources.viewCeasedBusinesses)
+        @ceasedBusinesses(sources.viewCeasedBusinesses, sources.displayStartDate)
     }
 
     <br>

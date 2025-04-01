@@ -199,11 +199,12 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions
                 val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel(testNino, "", Some("2022"), List(BusinessDetailsModel(
                   testSelfEmploymentId,
                   incomeSource = Some(testIncomeSource),
-                  None,
-                  None,
-                  None,
-                  Some(LocalDate.of(2022, 1, 1)),
-                  None,
+                  accountingPeriod = None,
+                  tradingName = None,
+                  firstAccountingPeriodEndDate = None,
+                  tradingStartDate = Some(LocalDate.of(2022, 1, 1)),
+                  contextualTaxYear = None,
+                  cessation = None,
                   cashOrAccruals = false
                 )), List.empty)
                 setupMockGetSessionKeyMongoTyped[String](Right(Some(testSelfEmploymentId)))

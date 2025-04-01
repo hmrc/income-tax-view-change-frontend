@@ -45,7 +45,7 @@ class OptOutAuditModelSpec extends TestSupport {
         val expectedOutcome: Outcome = Outcome(isSuccessful = true, None, None)
 
         auditModel.nino shouldEqual user.nino
-        auditModel.currentYear shouldEqual TaxYear(2023, 2024).formatTaxYearRange
+        auditModel.currentYear shouldEqual TaxYear(2023, 2024).formatAsShortYearRange
         auditModel.auditType shouldEqual "OptOutQuarterlyReportingRequest"
         auditModel.transactionName shouldEqual "opt-out-quarterly-reporting-request"
         auditModel.outcome shouldEqual expectedOutcome
@@ -85,8 +85,8 @@ class OptOutAuditModelSpec extends TestSupport {
             mtditid = user.mtditid,
             nino = testNino,
             outcome = expectedOutcome,
-            optOutRequestedFromTaxYear = taxYear.previousYear.formatTaxYearRange,
-            currentYear = taxYear.formatTaxYearRange,
+            optOutRequestedFromTaxYear = taxYear.previousYear.formatAsShortYearRange,
+            currentYear = taxYear.formatAsShortYearRange,
             `beforeITSAStatusCurrentYear-1` = Voluntary,
             beforeITSAStatusCurrentYear = NoStatus,
             `beforeITSAStatusCurrentYear+1` = NoStatus,
@@ -144,8 +144,8 @@ class OptOutAuditModelSpec extends TestSupport {
             mtditid = user.mtditid,
             nino = testNino,
             outcome = expectedOutcome,
-            optOutRequestedFromTaxYear = taxYear.previousYear.formatTaxYearRange,
-            currentYear = taxYear.formatTaxYearRange,
+            optOutRequestedFromTaxYear = taxYear.previousYear.formatAsShortYearRange,
+            currentYear = taxYear.formatAsShortYearRange,
             `beforeITSAStatusCurrentYear-1` = Voluntary,
             beforeITSAStatusCurrentYear = NoStatus,
             `beforeITSAStatusCurrentYear+1` = NoStatus,

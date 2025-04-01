@@ -1,0 +1,105 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import models.financialDetails.TransactionType
+@import models.financialDetails.BalancingCharge
+@import models.financialDetails.PoaOneDebit
+@import models.financialDetails.PoaTwoDebit
+@import models.financialDetails.LateSubmissionPenalty
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+@import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+@import views.html.partials.yourSelfAssessmentCharges.WhatIsPaymentOnAccount
+@import views.html.partials.yourSelfAssessmentCharges.WhatIsABalancingPayment
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Details
+@import models.financialDetails.FirstLatePaymentPenalty
+
+@this(
+    p: p,
+    link: link,
+    numberList: numberList,
+    whatIsPaymentOnAccount: WhatIsPaymentOnAccount,
+    whatIsABalancingPayment: WhatIsABalancingPayment,
+    govukDetails: GovukDetails
+)
+
+
+@(
+    transactionType: TransactionType
+)(
+    implicit request: Request[_],
+    messages: Messages
+)
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
+}
+
+@{transactionType match {
+    case BalancingCharge =>
+        govukDetails(Details(
+            id      = Some("balancing-charge-details"),
+            summary = Text(getMessage("whatIsABalancingPayment.linkText")),
+            content = HtmlContent(whatIsABalancingPayment())
+        ))
+    case PoaOneDebit | PoaTwoDebit =>
+        govukDetails(Details(
+            id      = Some("payment-on-account-details"),
+            summary = Text(getMessage("whatIsPaymentOnAccount.linkText")),
+            content = HtmlContent(whatIsPaymentOnAccount())
+        ))
+    case LateSubmissionPenalty =>
+        LSPContent
+    case FirstLatePaymentPenalty =>
+        LPP1Content
+    case _ =>
+}}
+
+@LSPContent = {
+    @p(id = Some("LSP-content-1")) {
+        @getMessage("lateSubmissionPenalty.penaltyPoints")
+    }
+    @p(id = Some("LSP-content-2")) {
+        @getMessage("lateSubmissionPenalty.fourPoints")
+    }
+    @p(id = Some("LSP-content-3")) {
+        @getMessage("lateSubmissionPenalty.avoidInFuture")
+    }
+    @p(id = Some("LSP-content-4")) {
+        @getMessage("lateSubmissionPenalty.penaltyLinkText1")
+        @link(
+            id = Some("late-submission-penalty-link"),
+            link="",
+            rel= Some("noreferrer noopener"),
+            messageKey = "yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText"
+        )
+        @getMessage("lateSubmissionPenalty.penaltyLinkText2")
+    }
+}
+
+@LPP1Content = {
+    @p(id = Some("first-payment-penalty-p1")) {
+        @getMessage("firstLatePaymentPenalty.p")
+    }
+
+    @link(
+        link = "/penalties/income-tax",
+        messageKey = "yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link"
+    )
+
+
+}

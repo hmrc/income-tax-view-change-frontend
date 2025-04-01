@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
       api.inject.bind[DateService].toInstance(dateService)
     ).build()
 
-  lazy val testController = app.injector.instanceOf[WhatYouOweController]
+  lazy val testController: YourSelfAssessmentChargesController = app.injector.instanceOf[YourSelfAssessmentChargesController]
 
   def testFinancialDetail(taxYear: Int): FinancialDetailsModel = financialDetailsModel(taxYear)
 
@@ -65,12 +65,25 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
     ))
   )
 
+  def whatYouOweChargesListFuture: WhatYouOweChargesList = WhatYouOweChargesList(
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    List(chargeItemModel(TaxYear.forYearEnd(2049), interestOutstandingAmount = None, dueDate = Some(LocalDate.of(2050,1,1)))),
+    Some(OutstandingChargesModel(List(
+      OutstandingChargeModel("BCD", Some(LocalDate.parse("2050-12-31")), 10.23, 1234))
+    ))
+  )
+
   def whatYouOweChargesListWithReviewReconcile: WhatYouOweChargesList = WhatYouOweChargesList(
     BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     financialDetailsReviewAndReconcileCi,
     Some(OutstandingChargesModel(List(
       OutstandingChargeModel("BCD", Some(LocalDate.parse("2020-12-31")), 10.23, 1234), OutstandingChargeModel("ACI", None, 1.23, 1234))
     ))
+  )
+
+  def whatYouOweChargesListOnlyReconciliation: WhatYouOweChargesList = WhatYouOweChargesList(
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    financialDetailsReviewAndReconcileCi
   )
 
   def whatYouOweChargesListWithOverdueCharge: WhatYouOweChargesList = WhatYouOweChargesList(
@@ -105,28 +118,75 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
         if (mtdUserRole == MTDSupportingAgent) {
           testSupportingAgentDeniedAccess(action)(fakeRequest)
         } else {
-          "render the what you owe page" that {
-            "has payments owed" when {
+          "render the your self assessment charges page" that {
+            "has charges owed" when {
               "the user has a fill list of charges" in {
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
-                result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
+                result.futureValue.session.get(gatewayPage) shouldBe Some("yourSelfAssessmentChargeSummary")
               }
 
               "the user has no charges" in {
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListEmpty))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
-                result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
+                result.futureValue.session.get(gatewayPage) shouldBe Some("yourSelfAssessmentChargeSummary")
+              }
+            }
+            "displays the Charges due now tab and warning banner" when {
+              "the user has overdue charges" in {
+                disable(AdjustPaymentsOnAccount)
+                setupMockSuccess(mtdUserRole)
+                mockSingleBISWithCurrentYearAsMigrationYear()
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+                  .thenReturn(Future.successful(whatYouOweChargesListFull))
+
+                val result = action(fakeRequest)
+                contentAsString(result).contains("Important") shouldBe true
+                contentAsString(result).contains("Charges due now: £2.00") shouldBe true
+                val doc: Document = Jsoup.parse(contentAsString(result))
+                Option(doc.getElementById("charges-due-now")).isDefined shouldBe true
+              }
+              "the user has PoA reconciliation debits accruing interest and ReviewAndReconcilePoa FS is enabled" in {
+                enable(ReviewAndReconcilePoa)
+                mockSingleBISWithCurrentYearAsMigrationYear()
+                setupMockSuccess(mtdUserRole)
+                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+                  .thenReturn(Future.successful(whatYouOweChargesListOnlyReconciliation))
+
+                val result = action(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                contentAsString(result).contains("Important") shouldBe true
+                contentAsString(result).contains("Charges due now: £2.00") shouldBe true
+                contentAsString(result).contains("First payment on account: extra amount from your tax return") shouldBe true
+                val doc: Document = Jsoup.parse(contentAsString(result))
+                Option(doc.getElementById("charges-due-now")).isDefined shouldBe true
+              }
+            }
+            "not display the Charges due now tab or warning banner" when {
+              "the user has no charges that are overdue or accruing interest" in {
+                disable(AdjustPaymentsOnAccount)
+                setupMockSuccess(mtdUserRole)
+                mockSingleBISWithCurrentYearAsMigrationYear()
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+                  .thenReturn(Future.successful(whatYouOweChargesListFuture))
+
+                val result = action(fakeRequest)
+                val doc: Document = Jsoup.parse(contentAsString(result))
+                Option(doc.getElementById("overdue-important-warning")).isDefined shouldBe false
+                Option(doc.getElementById("charges-due-now")).isDefined shouldBe false
               }
             }
 
@@ -136,12 +196,12 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 setupMockSuccess(mtdUserRole)
                 enable(CreditsRefundsRepay)
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithAvailableCredits))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
-                result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
+                result.futureValue.session.get(gatewayPage) shouldBe Some("yourSelfAssessmentChargeSummary")
                 val doc: Document = Jsoup.parse(contentAsString(result))
                 Option(doc.getElementById("money-in-your-account")).isDefined shouldBe (true)
                 doc.select("#money-in-your-account").select("div h2").text() shouldBe messages("whatYouOwe.moneyOnAccount" + {if(isAgent) "-agent" else ""})
@@ -153,12 +213,12 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 def whatYouOweWithZeroAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, Some(0.00), None, None, None, None), List.empty)
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithZeroAvailableCredits))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
-                result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
+                result.futureValue.session.get(gatewayPage) shouldBe Some("yourSelfAssessmentChargeSummary")
                 val doc: Document = Jsoup.parse(contentAsString(result))
                 Option(doc.getElementById("money-in-your-account")).isDefined shouldBe (false)
               }
@@ -171,7 +231,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
 
                 val result = action(fakeRequest)
@@ -183,7 +243,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
 
                 val result = action(fakeRequest)
@@ -197,70 +257,11 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 disable(AdjustPaymentsOnAccount)
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
 
                 val result = action(fakeRequest)
                 contentAsString(result).contains("Adjust payments on account for the") shouldBe false
-              }
-            }
-
-            "that includes poa extra charges in charges table" when {
-              "ReviewAndReconcilePoa FS is enabled" in {
-                enable(ReviewAndReconcilePoa)
-                mockSingleBISWithCurrentYearAsMigrationYear()
-                setupMockSuccess(mtdUserRole)
-                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
-
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
-                  .thenReturn(Future.successful(whatYouOweChargesListWithReviewReconcile))
-
-                val result = action(fakeRequest)
-
-                status(result) shouldBe Status.OK
-                contentAsString(result).contains("First payment on account: extra amount from your tax return") shouldBe true
-              }
-            }
-
-            "that includes a interest charges warning" when {
-              "an overdue charge exists" in {
-                enable(ReviewAndReconcilePoa)
-                mockSingleBISWithCurrentYearAsMigrationYear()
-                setupMockSuccess(mtdUserRole)
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
-                  .thenReturn(Future.successful(whatYouOweChargesListWithOverdueCharge))
-
-                val result = action(fakeRequest)
-
-                status(result) shouldBe Status.OK
-                Jsoup.parse(contentAsString(result)).getElementById("interest-charges-warning").text() shouldBe interestChargesWarningText
-              }
-
-              "Review and Reconcile charge with accruing interest exists" in {
-                enable(ReviewAndReconcilePoa)
-                mockSingleBISWithCurrentYearAsMigrationYear()
-                setupMockSuccess(mtdUserRole)
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
-                  .thenReturn(Future.successful(whatYouOweChargesListWithOverdueCharge))
-
-                val result = action(fakeRequest)
-
-                status(result) shouldBe Status.OK
-                Jsoup.parse(contentAsString(result)).getElementById("interest-charges-warning").text() shouldBe interestChargesWarningText
-              }
-            }
-
-            "that hides the interest charge warning" when {
-              "there are no overdue charges or unpaid Review & Reconcile charges" in {
-                enable(ReviewAndReconcilePoa)
-                mockSingleBISWithCurrentYearAsMigrationYear()
-                setupMockSuccess(mtdUserRole)
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
-                  .thenReturn(Future.successful(whatYouOweChargesListWithBalancingChargeNotOverdue))
-
-                val result = action(fakeRequest)
-                status(result) shouldBe Status.OK
-                Option(Jsoup.parse(contentAsString(result)).getElementById("interest-charges-warning")).isDefined shouldBe false
               }
             }
           }
@@ -269,7 +270,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
             "PaymentsDueService returns an exception" in {
               setupMockSuccess(mtdUserRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
-              when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
+              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                 .thenReturn(Future.failed(new Exception("failed to retrieve data")))
 
               val result = action(fakeRequest)
@@ -282,7 +283,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPoaTaxYearForEntryPointCall(Left(new Exception("")))
 
-              when(whatYouOweService.getWhatYouOweChargesList(any(), any())(any(), any()))
+              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(whatYouOweChargesListFull))
 
               val result = action(fakeRequest)
@@ -291,7 +292,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdUserRole, supportingAgentAccessAllowed = false)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
     }
   }
 }

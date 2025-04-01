@@ -50,7 +50,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val saNote: String = s"${messages("whatYouOwe.sa-note")} $saLink."
   val saNoteAgent: String = s"${messages("whatYouOwe.sa-note-agent-1")}. ${messages("whatYouOwe.sa-note-agent-2")} ${messages("whatYouOwe.sa-link-agent")} ${messages("pagehelp.opensInNewTabText")}. ${messages("whatYouOwe.sa-note-agent-3")}"
   val osChargesNote: String = messages("whatYouOwe.outstanding-charges-note")
-  val dropDownInfo: String = messages("whatYouOwe.dropdown.info")
   val paymentUnderReviewPara: String = s"${messages("whatYouOwe.dunningLock.text", s"${messages("whatYouOwe.dunningLock.link")} ${messages("pagehelp.opensInNewTabText")}")}."
   val chargeType: String = messages("tax-year-summary.payments.charge-type")
   val taxYear: String = messages("whatYouOwe.tableHead.tax-year")

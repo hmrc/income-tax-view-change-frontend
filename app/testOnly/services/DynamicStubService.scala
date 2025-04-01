@@ -45,7 +45,7 @@ class DynamicStubService @Inject()(itsaStatusConnector: ITSAStatusConnector,
 
     itsaStatusConnector.getITSAStatusDetail(
       nino = nino,
-      taxYear = taxYear.formatTaxYearRange,
+      taxYear = taxYear.formatAsShortYearRange,
       futureYears = futureYears,
       history = false
     ) map {

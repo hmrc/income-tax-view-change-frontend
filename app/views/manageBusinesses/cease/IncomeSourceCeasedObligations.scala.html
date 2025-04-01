@@ -17,12 +17,10 @@
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 @import models.incomeSourceDetails.viewmodels._
-@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.html.helpers.injected.ErrorSummary
 @import views.html.layouts.unifiedLayout
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
-@import uk.gov.hmrc.govukfrontend.views.Aliases._
 
 @this(
         mainTemplate: unifiedLayout,
@@ -31,10 +29,12 @@
         formWithCSRF: FormWithCSRF,
         h1: h1,
         h2: h2,
+        h3WithHtml: h3WithHtml,
         p: p,
         link: link,
         hr: hr,
-        govukInsetText: GovukInsetText
+        govukInsetText: GovukInsetText,
+        govukPanel: GovukPanel
 )
 
 @(source: IncomeSourceCeasedObligationsViewModel, viewAllBusinessLink: String, viewUpcomingUpdatesLink: String)(implicit messages: Messages, user: auth.MtdItUser[_])
@@ -47,29 +47,28 @@
 
 @getBusinessName(name: Option[String], incomeSourceType: IncomeSourceType) = @{
     incomeSourceType match {
-        case UkProperty => getMessage("heading1.uk-property.part2")
-        case ForeignProperty => getMessage("heading1.foreign-property.part2")
-        case SelfEmployment => name.getOrElse(getMessage("heading1.se.part2"))
+        case UkProperty => getMessage("uk-property")
+        case ForeignProperty => getMessage("foreign-property")
+        case SelfEmployment => name.getOrElse(getMessage("sole-trader"))
     }
 }
 
 @getPageTitle = @{
-    val title = getMessage("heading1.se.part1") + " " + getBusinessName(name = source.businessName, incomeSourceType = source.incomeSourceType) + " " + getMessage("heading1.base")
+    val title = getMessage("title", getBusinessName(name = source.businessName, incomeSourceType = source.incomeSourceType))
     title.trim
 }
 
+@getPanelTitle = @{
+    getMessage("panel.title", getBusinessName(name = source.businessName, incomeSourceType = source.incomeSourceType))
+}
+
 @confirmationPanel = {
-        <div class="govuk-panel govuk-panel--confirmation" id="banner">
-            <div class="govuk-panel__body govuk-!-margin-bottom-3">
-                @getMessage("heading1.se.part1")
-            </div>
-            <h1 class="govuk-panel__title">
-                @getBusinessName(name = source.businessName, incomeSourceType = source.incomeSourceType)
-            </h1>
-            <div class="govuk-panel__body">
-                @getMessage("heading1.base")
-            </div>
-        </div>
+    @govukPanel(
+        Panel(
+            title = Text(getPanelTitle),
+            content = Text(getMessage("panel.body"))
+        )
+    )
 }
 
 @whatYouMustDoHeading = {
@@ -116,11 +115,14 @@
 @showCapitalGainBlock = {
   @if(source.incomeSourceType != SelfEmployment) {
     <div id="capital-gain-block" class="govuk-!-margin-bottom-7">
-        <h3 class="govuk-label-wrapper">
-            <label class="govuk-label govuk-label--m govuk-!-margin-bottom-4">
-                @getMessage("capital-gain-tax.text")
-            </label>
-        </h3>
+        @h3WithHtml(
+            Html(s"""
+                |<label class="govuk-label govuk-label--m govuk-!-margin-bottom-4">
+                |   ${getMessage("capital-gain-tax.text")}
+                |</label>""".stripMargin
+            ),
+            classes = "govuk-label-wrapper"
+        )
         @p(id=Some("capital-gain-content")){
             @getMessage("capital-gain-tax.info1.text")
         }
@@ -140,11 +142,15 @@
         @source.insetWarningMessageKey.map(getInsetWarning(_))
 
         <div id="next-upcoming-updates" class="govuk-!-margin-bottom-7">
-            <h3 id="next-upcoming-updates-heading" class="govuk-label-wrapper">
-                <label class="govuk-label--m govuk-!-margin-top-4 govuk-heading-m  govuk-!-margin-bottom-4 ">
-                    @getMessage("next-update.text")
-                </label>
-            </h3>
+            @h3WithHtml(
+                Html(s"""
+                    |<label class="govuk-label--m govuk-!-margin-top-4 govuk-heading-m  govuk-!-margin-bottom-4">
+                    |   ${getMessage("next-update.text")}
+                    |</label>""".stripMargin
+                ),
+                optId = Some("next-upcoming-updates-heading"),
+                classes = "govuk-label-wrapper"
+            )
             @if(source.firstQuarterlyUpdate.isEmpty && source.finalDeclarationUpdate.size == 1){
                 @p(id=Some("final-declaration-update")){
                     @getNextFinalDeclarationUpdate()

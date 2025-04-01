@@ -68,8 +68,10 @@ object BusinessDetailsTestConstants {
   val testCessation2 = CessationModel(Some(LocalDate.of(year2019, Month.JANUARY, 1)), Some("It was a stupid idea anyway"))
   val testCessation3 = CessationModel(Some(LocalDate.of(year2022, Month.JANUARY, 1)), Some("It was a stupid idea anyway"))
   val testStartDate = LocalDate.parse("2022-01-01")
+  val testStartDate2005 = LocalDate.parse("2005-01-01")
   val testStartDate2 = LocalDate.parse("2021-01-01")
   val testStartDate3 = LocalDate.parse("2013-01-01")
+  val testContextualTaxYear = "2024"
   val testStartDateFormatted = "1 January 2022"
   val testStartDate2Formatted = "1 January 2021"
   val testStartDate3Formatted = "1 January 2013"
@@ -143,6 +145,7 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails),
     address = Some(address),
@@ -157,6 +160,7 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     cessation = None,
     latencyDetails = None,
     address = Some(testBizAddress),
@@ -170,6 +174,7 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     cessation = None,
     latencyDetails = None,
     address = Some(testBizAddress),
@@ -183,6 +188,7 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails1),
     address = Some(address),
@@ -196,6 +202,7 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails2),
     address = Some(address),
@@ -210,6 +217,7 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails1),
     address = Some(testBizAddress),
@@ -223,6 +231,7 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails2),
     address = Some(testBizAddress),
@@ -236,6 +245,7 @@ object BusinessDetailsTestConstants {
     tradingName = None,
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = None,
+    contextualTaxYear = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails2),
     address = None,
@@ -249,6 +259,7 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails),
     address = Some(testBizAddress),
@@ -262,6 +273,22 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
+    cessation = None,
+    cashOrAccruals = false,
+    latencyDetails = None,
+    address = Some(address),
+    quarterTypeElection = Some(quarterTypeElectionCalendar)
+  )
+
+  val soleTraderBusinessWithStartDate2005 = BusinessDetailsModel(
+    incomeSourceId = testSelfEmploymentId,
+    incomeSource = Some(testIncomeSource),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
+    tradingName = Some(testTradeName),
+    firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
+    tradingStartDate = Some(testStartDate2005),
+    contextualTaxYear = None,
     cessation = None,
     cashOrAccruals = false,
     latencyDetails = None,
@@ -276,6 +303,7 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = Some(testStartDate3),
+    contextualTaxYear = None,
     cessation = None,
     cashOrAccruals = true,
     latencyDetails = None,
@@ -289,6 +317,20 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = Some(testStartDate3),
+    contextualTaxYear = None,
+    cessation = None,
+    address = Some(address),
+    cashOrAccruals = true
+  )
+
+  val soleTraderBusiness4 = BusinessDetailsModel(
+    incomeSourceId = testSelfEmploymentId,
+    incomeSource = Some(testIncomeSource),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
+    tradingName = Some(testTradeName),
+    firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
+    tradingStartDate = None,
+    contextualTaxYear = Some(testContextualTaxYear),
     cessation = None,
     address = Some(address),
     cashOrAccruals = true
@@ -301,6 +343,7 @@ object BusinessDetailsTestConstants {
     tradingName = None,
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     cessation = None,
     latencyDetails = None,
     address = None,
@@ -314,6 +357,7 @@ object BusinessDetailsTestConstants {
     tradingName = None,
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = None,
+    contextualTaxYear = None,
     cessation = None,
     latencyDetails = None,
     address = Some(address),
@@ -327,6 +371,7 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = None,
+    contextualTaxYear = None,
     cessation = None,
     latencyDetails = None,
     address = Some(address),
@@ -395,6 +440,7 @@ object BusinessDetailsTestConstants {
     incomeSource = Some(testIncomeSource),
     accountingPeriod = Some(testBusinessAccountingPeriod),
     tradingName = Some(testTradeName2),
+    contextualTaxYear = None,
     firstAccountingPeriodEndDate = None,
     cessation = None,
     tradingStartDate = Some(testStartDate2),
@@ -407,6 +453,7 @@ object BusinessDetailsTestConstants {
     incomeSource = Some(testIncomeSource),
     accountingPeriod = Some(test2018BusinessAccountingPeriod),
     tradingName = Some(testTradeName),
+    contextualTaxYear = None,
     firstAccountingPeriodEndDate = None,
     tradingStartDate = Some(testStartDate),
     cessation = None,
@@ -419,6 +466,7 @@ object BusinessDetailsTestConstants {
     incomeSource = Some(testIncomeSource),
     accountingPeriod = Some(test2019BusinessAccountingPeriod),
     tradingName = Some(testTradeName),
+    contextualTaxYear = None,
     firstAccountingPeriodEndDate = None,
     cessation = None,
     tradingStartDate = Some(testStartDate),
@@ -442,6 +490,7 @@ object BusinessDetailsTestConstants {
     accountingPeriod = Some(AccountingPeriodModel(start = LocalDate.of(year2017, Month.APRIL, 6), end = LocalDate.of(year2018, Month.APRIL, 5))),
     tradingName = Some(testTradeName),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
     cessation = None,
     address = Some(address),
@@ -455,6 +504,7 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = None,
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     cessation = Some(testCessation),
     address = Some(address),
     cashOrAccruals = true
@@ -467,6 +517,7 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName2),
     firstAccountingPeriodEndDate = None,
     tradingStartDate = Some(testStartDate3),
+    contextualTaxYear = None,
     cessation = Some(testCessation2),
     address = Some(address),
     cashOrAccruals = true
@@ -479,6 +530,7 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
     tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
     cessation = None,
     address = Some(address),
     cashOrAccruals = true

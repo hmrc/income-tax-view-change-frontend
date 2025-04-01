@@ -23,7 +23,7 @@ import config.FrontendAppConfig
 import enums.MTDIndividual
 import models.btaNavBar.ListLinks
 import models.core.Nino
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, TaxYearRange}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.test.FakeRequest
@@ -52,6 +52,7 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testUserNino: Nino = Nino(testNino)
   val testSaUtr = "1234567890"
   val taxYear: Int = 2020
+  val taxYearTyped: TaxYear = TaxYear(2019, 2020)
   val taxYear2020: String = "2020"
   val idNumber = "1234567890"
   val idType: String = "utr"
@@ -101,6 +102,7 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testYear2017 = 2017
   val testTaxYear2017: TaxYear = TaxYear(2017, 2018)
   val testTaxYear2016: TaxYear = TaxYear(2016, 2017)
+  val testTaxYearRange2017: TaxYearRange = TaxYearRange(testTaxYear2017,testTaxYear2017)
   val testMigrationYear2019 = "2019"
   val testFrom = "2016-04-06"
   val testTo = "2017-04-05"

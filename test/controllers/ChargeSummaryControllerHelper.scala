@@ -72,21 +72,22 @@ trait ChargeSummaryControllerHelper  extends MockAuthActions
   def emptyAdjustmentHistoryModel: AdjustmentHistoryModel = AdjustmentHistoryModel(AdjustmentModel(1000, None, AmendedReturnReversalReason), List())
 
   val errorHeading: String = messages("standardError.heading")
-  val successHeadingForPOA1 = s"2017 to 2018 tax year ${messages("chargeSummary.paymentOnAccount1.text")}"
-  val successHeadingForBCD = s"2017 to 2018 tax year ${messages("chargeSummary.balancingCharge.text")}"
+  val successHeadingForPOA1 = s"${messages("chargeSummary.paymentOnAccount1.text")}"
+  val successHeadingForBCD = s"${messages("chargeSummary.balancingCharge.text")}"
 
-  def successHeadingForRAR1(startYear: String, endYear: String) = s"$startYear to $endYear tax year ${messages("chargeSummary.reviewAndReconcilePoa1.text")}"
+  def successCaption(startYear: String, endYear: String) = s"$startYear to $endYear tax year"
+  def successHeadingForRAR1 = s"${messages("chargeSummary.reviewAndReconcilePoa1.text")}"
 
-  def successHeadingForRAR2(startYear: String, endYear: String) = s"$startYear to $endYear tax year ${messages("chargeSummary.reviewAndReconcilePoa2.text")}"
+  def successHeadingForRAR2 = s"${messages("chargeSummary.reviewAndReconcilePoa2.text")}"
 
-  def successHeadingRAR1Interest(startYear: String, endYear: String) = s"$startYear to $endYear tax year ${messages("chargeSummary.lpi.reviewAndReconcilePoa1.text")}"
+  def successHeadingRAR1Interest = s"${messages("chargeSummary.lpi.reviewAndReconcilePoa1.text")}"
 
   val dunningLocksBannerHeading: String = messages("chargeSummary.dunning.locks.banner.title")
   val paymentBreakdownHeading: String = messages("chargeSummary.paymentBreakdown.heading")
   val paymentHistoryHeadingForPOA1Charge: String = messages("chargeSummary.chargeHistory.Poa1heading")
   val paymentHistoryHeadingForRARCharge: String = messages("chargeSummary.chargeHistory.heading")
   val lpiHistoryHeading: String = messages("chargeSummary.chargeHistory.lateInterestPayment")
-  val lateInterestSuccessHeading = s"2017 to 2018 tax year ${messages("chargeSummary.lpi.paymentOnAccount1.text")}"
+  val lateInterestSuccessHeading = s"${messages("chargeSummary.lpi.paymentOnAccount1.text")}"
   val paymentprocessingbullet1: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2")} ${messages("pagehelp.opensInNewTabText")} ${messages("chargeSummary.payments-bullet2")}"
   val paymentprocessingbullet1Agent: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2-agent")} ${messages("pagehelp.opensInNewTabText")} ${messages("chargeSummary.payments-bullet2-agent")}"
   val warningText: String = "Warning " + messages("chargeSummary.reviewAndReconcilePoa.warning")

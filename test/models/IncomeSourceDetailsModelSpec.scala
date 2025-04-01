@@ -128,6 +128,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
               tradingName = Some("nextUpdates.business"),
               firstAccountingPeriodEndDate = None,
               tradingStartDate = Some(LocalDate.parse("2022-01-01")),
+              contextualTaxYear = None,
               cessation = None,
               latencyDetails = None,
               address = Some(address),
@@ -139,6 +140,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
               accountingPeriod = None,
               tradingName = Some("nextUpdates.business"),
               tradingStartDate = Some(LocalDate.parse("2022-01-01")),
+              contextualTaxYear = None,
               firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
               cessation = None,
               latencyDetails = None,
@@ -152,7 +154,8 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
             firstAccountingPeriodEndDate = None,
             incomeSourceType = Some("property-unspecified"),
             tradingStartDate = Some(LocalDate.parse("2022-01-01")),
-            None,
+            contextualTaxYear = None,
+            cessation = None,
             cashOrAccruals = true
           )
           ))

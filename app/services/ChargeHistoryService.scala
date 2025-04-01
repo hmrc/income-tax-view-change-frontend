@@ -20,6 +20,7 @@ import auth.MtdItUser
 import connectors.ChargeHistoryConnector
 import enums.CreateReversalReason
 import models.chargeHistory._
+import models.financialDetails.ChargeType.{poaOneReconciliationCredit, poaTwoReconciliationCredit}
 import models.financialDetails._
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -71,24 +72,20 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
     }
   }
 
-  def getReviewAndReconcileCredit(chargeItem: ChargeItem,
+  // TODO-[1]: move feature switch check up the calling stack
+  // TODO-[2]: we might need to move this function on the TransactionItem/ChargeItem level
+  def getReviewAndReconcileCredit(targetChargeItem: ChargeItem,
                                   chargeDetailsForTaxYear: FinancialDetailsModel,
                                   reviewAndReconcileEnabled: Boolean): Option[ChargeItem] = {
-    for {
-      financialDetailForRarCredit <- chargeDetailsForTaxYear.financialDetails.find(
-        chargeItem.transactionType match {
-          case PoaOneDebit => (fd: FinancialDetail) => reviewAndReconcileEnabled && fd.isReconcilePoaOneCredit
-          case PoaTwoDebit => (fd: FinancialDetail) => reviewAndReconcileEnabled && fd.isReconcilePoaTwoCredit
-          case _                   => (_:  FinancialDetail) => false
+    chargeDetailsForTaxYear
+      .asChargeItems
+      .find { charge =>
+        targetChargeItem.transactionType match {
+          case PoaOneDebit => reviewAndReconcileEnabled && charge.transactionType == PoaOneReconciliationCredit
+          case PoaTwoDebit => reviewAndReconcileEnabled && charge.transactionType == PoaTwoReconciliationCredit
+          case _ => false
         }
-      )
-      id                         <- financialDetailForRarCredit.transactionId
-      documentDetailForRarCredit <- chargeDetailsForTaxYear.documentDetailsWithTransactionId(id)
-    } yield {
-      ChargeItem.fromDocumentPair(
-        documentDetailForRarCredit,
-        List(financialDetailForRarCredit)
-      )
-    }
+      }
   }
+
 }

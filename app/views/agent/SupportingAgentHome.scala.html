@@ -28,6 +28,7 @@
     layout: unifiedLayout,
     h1: h1,
     h2: h2,
+    h3: h3,
     h3link: h3link,
     p: p,
     link: link,
@@ -88,7 +89,10 @@
         </div>
     </div>
     @tiles()
-    <h3 class="govuk-heading-m">@messages("home.agent.supporting.paymentAndReturns")</h3>
+    @h3(
+        msg = messages("home.agent.supporting.paymentAndReturns"),
+        classes = "govuk-heading-m"
+    )
     @p(){
         @messages("home.agent.supporting.cannotAccess")
     }

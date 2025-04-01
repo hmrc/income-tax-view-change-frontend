@@ -18,7 +18,9 @@ package models.financialDetails
 
 import exceptions.{CouldNotCreateChargeItemException, MissingFieldException}
 import models.financialDetails.ChargeType.{poaOneReconciliationDebit, poaTwoReconciliationDebit}
+import models.financialDetails.YourSelfAssessmentChargesViewModel.getDisplayDueDate
 import models.incomeSourceDetails.TaxYear
+import models.outstandingCharges.OutstandingChargeModel
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
 
@@ -41,12 +43,24 @@ case class ChargeItem (
                         lpiWithDunningLock: Option[BigDecimal],
                         amountCodedOut: Option[BigDecimal],
                         dunningLock: Boolean,
-                        poaRelevantAmount: Option[BigDecimal]) extends TransactionItem {
+                        poaRelevantAmount: Option[BigDecimal],
+                        dueDateForFinancialDetail: Option[LocalDate] = None,
+                        paymentLotItem: Option[String] = None,
+                        paymentLot: Option[String] = None
+                      ) extends TransactionItem {
 
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean =
     dueDate.exists(_ isBefore dateService.getCurrentDate)
 
+  // => TODO: to clarify / raise with the BA / why we have two way of identifying credits charge?
   val isCredit = originalAmount < 0
+
+  def credit: Option[BigDecimal] = originalAmount match {
+    case _ if (paymentLotItem.isDefined && paymentLot.isDefined) => None
+    case _ if (originalAmount >= 0) => None
+    case credit => Some(credit * -1)
+  }
+  // <=
 
   val hasLpiWithDunningLock: Boolean =
     lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
@@ -111,6 +125,13 @@ case class ChargeItem (
     else remainingToPay
   }
 
+  // this method is used to filter charges down to those currently allowed for the
+  // new Your Self Assessment Charge Summary feature
+  def isIncludedInSACSummary: Boolean =
+    Seq(BalancingCharge, PoaOneDebit, PoaTwoDebit, LateSubmissionPenalty, FirstLatePaymentPenalty).contains(transactionType) &&
+      !isLatePaymentInterest &&
+      !isCodingOut
+
   val isPartPaid: Boolean = outstandingAmount != originalAmount
 
   val interestIsPartPaid: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != latePaymentInterestAmount.getOrElse[BigDecimal](0)
@@ -122,6 +143,10 @@ case class ChargeItem (
     transactionType == PoaTwoReconciliationDebit
 
   val isReviewAndReconcileCharge: Boolean = isPoaReconciliationCredit || isPoaReconciliationDebit
+
+  val isPenalty: Boolean = List(LateSubmissionPenalty, FirstLatePaymentPenalty, SecondLatePaymentPenalty).contains(this.transactionType)
+
+  val isLPP2: Boolean = transactionType == SecondLatePaymentPenalty
 
   def getInterestPaidStatus: String = {
     if (interestIsPaid) "paid"
@@ -168,6 +193,28 @@ object ChargeItem {
     }
   }
 
+  def overdueOrAccruingInterestChargeList(whatYouOweChargesList: WhatYouOweChargesList)(implicit dateServiceInterface: DateServiceInterface): List[ChargeItem] = whatYouOweChargesList.chargesList.filter(x => x.isOverdue() || x.hasAccruingInterest)
+
+  def chargesDueWithin30DaysList(whatYouOweChargesList: WhatYouOweChargesList)(implicit dateService: DateServiceInterface): List[ChargeItem] = whatYouOweChargesList.chargesList.filter(x => !x.isOverdue() && !x.hasAccruingInterest && dateService.isWithin30Days(x.dueDate.getOrElse(LocalDate.MAX)))
+
+  def chargesDueAfter30DaysList(whatYouOweChargesList: WhatYouOweChargesList)(implicit dateService: DateServiceInterface): List[ChargeItem] = whatYouOweChargesList.chargesList.filter(x => !x.isOverdue() && !x.hasAccruingInterest && !dateService.isWithin30Days(x.dueDate.getOrElse(LocalDate.MAX)))
+
+
+  def sortedOverdueOrAccruingInterestChargeList(whatYouOweChargesList: WhatYouOweChargesList)(implicit dateServiceInterface: DateServiceInterface): List[ChargeItem] = overdueOrAccruingInterestChargeList(whatYouOweChargesList).sortWith((charge1, charge2) =>
+    getDisplayDueDate(charge2).isAfter(getDisplayDueDate(charge1))
+  )
+
+  private val validChargeTypes = List(PoaOneDebit, PoaTwoDebit, PoaOneReconciliationDebit, PoaTwoReconciliationDebit,
+    BalancingCharge, LateSubmissionPenalty, FirstLatePaymentPenalty, SecondLatePaymentPenalty, MfaDebitCharge)
+
+  val isAKnownTypeOfCharge: ChargeItem => Boolean = chargeItem => {
+    (chargeItem.transactionType, chargeItem.subTransactionType) match {
+      case (_, Some(Nics2)) => true
+      case (x, _) if validChargeTypes.contains(x) => true
+      case (_, _) => false
+    }
+  }
+
   def fromDocumentPair(documentDetail: DocumentDetail, financialDetails: List[FinancialDetail]): ChargeItem = {
 
     val financialDetail = financialDetails.find(_.transactionId.contains(documentDetail.transactionId)) match {
@@ -206,7 +253,10 @@ object ChargeItem {
       lpiWithDunningLock = documentDetail.lpiWithDunningLock,
       amountCodedOut = documentDetail.amountCodedOut,
       dunningLock = dunningLockExists,
-      poaRelevantAmount = documentDetail.poaRelevantAmount
+      poaRelevantAmount = documentDetail.poaRelevantAmount,
+      dueDateForFinancialDetail = FinancialDetailsModel.getDueDateForFinancialDetail(financialDetail),
+      paymentLotItem = documentDetail.paymentLotItem,
+      paymentLot = documentDetail.paymentLot
     )
   }
 

@@ -44,7 +44,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
                                      val itvcErrorHandler: ItvcErrorHandler,
                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                      val auditingService: AuditingService,
-                                     val dateService: DateServiceInterface,
+                                     implicit val dateService: DateServiceInterface,
                                      whatYouOwe: WhatYouOwe
                                     )(implicit val appConfig: FrontendAppConfig,
                                       val mcc: MessagesControllerComponents,
@@ -58,18 +58,19 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     for {
-      whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isEnabled(ReviewAndReconcilePoa), isEnabled(FilterCodedOutPoas))
+      whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isEnabled(ReviewAndReconcilePoa), isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
       ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
     } yield {
 
       auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
 
+      val chargesListNoPenalties = whatYouOweChargesList.copy(chargesList = whatYouOweChargesList.chargesList.filter(!_.isPenalty))
       val hasOverdueCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
       val hasAccruingInterestReviewAndReconcileCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isNotPaidAndNotOverduePoaReconciliationDebit()(dateService))
       Ok(whatYouOwe(
         currentDate = dateService.getCurrentDate,
         hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
-        whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
+        whatYouOweChargesList = chargesListNoPenalties, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
         currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,
         dunningLock = whatYouOweChargesList.hasDunningLock,
         reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),

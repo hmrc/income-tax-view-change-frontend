@@ -92,7 +92,7 @@ class OptOutTestDataController @Inject()(val authActions: AuthActions,
                                                    (implicit hc: HeaderCarrier): Future[CalculationListResponseModel] = {
 
     if (taxYear.endYear >= 2024) {
-      calculationListService.getCalculationList(nino = Nino(nino), taxYearRange = taxYear.formatTaxYearRange)
+      calculationListService.getCalculationList(nino = Nino(nino), taxYearRange = taxYear.formatAsShortYearRange)
     } else {
       calculationListService.getLegacyCalculationList(nino = Nino(nino), taxYearEnd = taxYear.endYear.toString)
     }

@@ -74,6 +74,7 @@ object BusinessDetailsIntegrationTestConstants {
     tradingName = Some(b1TradingName),
     firstAccountingPeriodEndDate = Some(b1AccountingEnd),
     tradingStartDate = Some(b1TradingStart),
+    contextualTaxYear = None,
     cessation = None,
     address = Some(address),
     cashOrAccruals = false
@@ -89,6 +90,7 @@ object BusinessDetailsIntegrationTestConstants {
     tradingName = Some(b1TradingName),
     firstAccountingPeriodEndDate = Some(b1AccountingEnd),
     tradingStartDate = Some(b1TradingStart),
+    contextualTaxYear = None,
     cessation = None,
     address = Some(testBusinessAddress),
     cashOrAccruals = b1AccountingMethod
@@ -104,6 +106,7 @@ object BusinessDetailsIntegrationTestConstants {
     tradingName = Some(b2TradingName),
     firstAccountingPeriodEndDate = Some(b2AccountingEnd),
     tradingStartDate = Some(b2TradingStart),
+    contextualTaxYear = None,
     cessation = None,
     address = Some(address),
     cashOrAccruals = false
@@ -119,6 +122,7 @@ object BusinessDetailsIntegrationTestConstants {
     tradingName = Some(b3TradingName),
     firstAccountingPeriodEndDate = Some(b2AccountingEnd),
     tradingStartDate = Some(b2TradingStart),
+    contextualTaxYear = None,
     cessation = Some(CessationModel(Some(LocalDate.of(2020, 1, 1)), None)),
     address = Some(address),
     cashOrAccruals = false
@@ -134,6 +138,7 @@ object BusinessDetailsIntegrationTestConstants {
     tradingName = None,
     firstAccountingPeriodEndDate = Some(b1AccountingEnd),
     tradingStartDate = None,
+    contextualTaxYear = None,
     cessation = None,
     address = None,
     cashOrAccruals = false
@@ -149,6 +154,7 @@ object BusinessDetailsIntegrationTestConstants {
     tradingName = Some(b1TradingName),
     firstAccountingPeriodEndDate = Some(b1AccountingEnd),
     tradingStartDate = Some(b1TradingStart),
+    contextualTaxYear = None,
     cessation = None,
     address = Some(testBusinessAddress),
     cashOrAccruals = b1AccountingMethod
@@ -164,6 +170,7 @@ object BusinessDetailsIntegrationTestConstants {
     tradingName = Some(ceasedBusinessTradingName),
     firstAccountingPeriodEndDate = Some(b2AccountingEnd),
     tradingStartDate = Some(b2TradingStart),
+    contextualTaxYear = None,
     cessation = Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason))),
     address = Some(address),
     cashOrAccruals = false
@@ -179,6 +186,7 @@ object BusinessDetailsIntegrationTestConstants {
     tradingName = None,
     firstAccountingPeriodEndDate = Some(b1AccountingEnd),
     tradingStartDate = Some(b1TradingStart),
+    contextualTaxYear = None,
     cessation = None,
     address = None,
     cashOrAccruals = false
@@ -194,6 +202,7 @@ object BusinessDetailsIntegrationTestConstants {
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(b1AccountingEnd),
     tradingStartDate = Some(testDate),
+    contextualTaxYear = None,
     cessation = None,
     address = expectedAddress,
     cashOrAccruals = false,

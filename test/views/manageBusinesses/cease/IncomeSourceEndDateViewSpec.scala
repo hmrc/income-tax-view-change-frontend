@@ -16,11 +16,8 @@
 
 package views.manageBusinesses.cease
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData.defaultMTDITUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.incomeSources.cease.CeaseIncomeSourceEndDateFormProvider
-import forms.models.DateFormElement
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.{Form, FormError}
@@ -28,10 +25,8 @@ import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.Html
 import services.DateService
-import testConstants.BaseTestConstants.{testMtditid, testNino, testSelfEmploymentId}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPlusForeignPropertyWithSoleTraderIncomeSource
+import testConstants.BaseTestConstants.testSelfEmploymentId
 import testUtils.TestSupport
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import views.html.manageBusinesses.cease.IncomeSourceEndDate
 
 import java.time.LocalDate
@@ -40,6 +35,7 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
 
   val IncomeSourceEndDateView: IncomeSourceEndDate = app.injector.instanceOf[IncomeSourceEndDate]
   val incomeSourceEndDateForm: CeaseIncomeSourceEndDateFormProvider = app.injector.instanceOf[CeaseIncomeSourceEndDateFormProvider]
+  val nextTaxYear: Int = dateService.getCurrentTaxYearEnd + 1
 
   val prefixSoleTrader: String = SelfEmployment.endDateMessagePrefix
   val prefixUKProperty: String = UkProperty.endDateMessagePrefix
@@ -47,29 +43,25 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
 
   val ceasePrefix: String = "incomeSources.cease"
 
-  val testUser: MtdItUser[_] = defaultMTDITUser(Some(Individual),
-    ukPlusForeignPropertyWithSoleTraderIncomeSource, fakeRequestWithNinoAndOrigin("pta"))
-
   class Setup(isAgent: Boolean, error: Boolean = false, incomeSourceType: IncomeSourceType) {
-    val mockDateService: DateService = app.injector.instanceOf[DateService]
     val testPostActionCall: Call = Call("GET", "/test/path")
     val testBackUrl: String = "/test/back/path"
     val view: Html = incomeSourceType match {
       case SelfEmployment =>
-        val form: Form[LocalDate] = incomeSourceEndDateForm.apply(SelfEmployment, Some(testSelfEmploymentId), true)
+        val form: Form[LocalDate] = incomeSourceEndDateForm.apply(SelfEmployment, Some(testSelfEmploymentId), newIncomeSourceJourney = true)
         IncomeSourceEndDateView(SelfEmployment, form, testPostActionCall, isAgent, testBackUrl)
       case _ =>
-        val form: Form[LocalDate] = incomeSourceEndDateForm.apply(incomeSourceType, None, true)
+        val form: Form[LocalDate] = incomeSourceEndDateForm.apply(incomeSourceType, None, newIncomeSourceJourney = true)
         IncomeSourceEndDateView(incomeSourceType, form, testPostActionCall, isAgent, testBackUrl)
     }
 
     val viewError: Html = incomeSourceType match {
       case SelfEmployment =>
-        val form: Form[LocalDate] = incomeSourceEndDateForm.apply(SelfEmployment, Some(testSelfEmploymentId), true)
+        val form: Form[LocalDate] = incomeSourceEndDateForm.apply(SelfEmployment, Some(testSelfEmploymentId), newIncomeSourceJourney = true)
         val errorFormSE = form.withError(FormError("income-source-end-date", "dateForm.error.monthAndYear.required"))
         IncomeSourceEndDateView(SelfEmployment, errorFormSE, testPostActionCall, isAgent, testBackUrl)
       case _ =>
-        val form: Form[LocalDate] = incomeSourceEndDateForm.apply(incomeSourceType, None, true)
+        val form: Form[LocalDate] = incomeSourceEndDateForm.apply(incomeSourceType, None, newIncomeSourceJourney = true)
         val errorForm = form.withError(FormError("income-source-end-date", "dateForm.error.monthAndYear.required"))
         IncomeSourceEndDateView(incomeSourceType, errorForm, testPostActionCall, isAgent, testBackUrl)
     }

@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import models.financialDetails.{BalanceDetails, WhatYouOweChargesList}
+import models.financialDetails.{BalanceDetails, ChargeItem, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
@@ -46,8 +46,13 @@ trait MockWhatYouOweService extends UnitSpec with MockDateService with BeforeAnd
   }
 
   def setupMockGetWhatYouOweChargesListFromFinancialDetails(whatYouOweChargesList: WhatYouOweChargesList): Unit = {
-    when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+    when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
       .thenReturn(Future.successful(whatYouOweChargesList))
+  }
+
+  def setupMockGetFilteredChargesListFromFinancialDetails(chargeItems: List[ChargeItem]): Unit = {
+    when(mockWhatYouOweService.getFilteredChargesList(any(), any(), any(), any())(any()))
+      .thenReturn(chargeItems)
   }
 
 }

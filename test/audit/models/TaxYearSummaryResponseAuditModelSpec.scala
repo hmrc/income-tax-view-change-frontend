@@ -123,11 +123,12 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
   val business = List(BusinessDetailsModel(
     "testId",
     incomeSource = Some(testIncomeSource),
-    Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
-    Some("Test Trading Name"),
-    None,
-    Some(getCurrentTaxYearEnd),
-    None,
+    accountingPeriod = Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
+    tradingName = Some("Test Trading Name"),
+    firstAccountingPeriodEndDate = None,
+    tradingStartDate = Some(getCurrentTaxYearEnd),
+    contextualTaxYear = None,
+    cessation = None,
     address = Some(address),
     cashOrAccruals = true
   ))
@@ -253,7 +254,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
           forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
           forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
         ), charges = payments(paymentHasADunningLock).map(TaxYearSummaryChargeItem.fromChargeItem),
-        obligations = updates, reviewAndReconcileEnabled = true, ctaViewModel = emptyCTAViewModel
+        obligations = updates, ctaViewModel = emptyCTAViewModel
         ),
       messages
     )
@@ -272,8 +273,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
         forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
         forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
       ), charges = payments(paymentHasADunningLock).map(TaxYearSummaryChargeItem.fromChargeItem(_)),
-        obligations = updates, showForecastData = true,
-        reviewAndReconcileEnabled = true, ctaViewModel = emptyCTAViewModel
+        obligations = updates, showForecastData = true, ctaViewModel = emptyCTAViewModel
       )
     )
 

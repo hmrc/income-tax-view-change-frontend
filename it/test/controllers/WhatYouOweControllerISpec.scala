@@ -97,6 +97,11 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
     override def isAfterTaxReturnDeadlineButBeforeTaxYearEnd: Boolean = false
 
     override def getCurrentTaxYear: TaxYear = TaxYear.forYearEnd(getCurrentTaxYearEnd)
+
+    override def isWithin30Days(date: LocalDate): Boolean = {
+      val currentDate = getCurrentDate
+      date.minusDays(30).isBefore(currentDate)
+    }
   }
 
   def getPath(mtdRole: MTDUserRole): String = {
@@ -190,7 +195,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                   val documentDetailsForTestTaxYear = financialDetailsModel.documentDetailsFilterByTaxYear(testTaxYear)
 
                   val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
-                  val chargeItems = financialDetails.toChargeItem()
+                  val chargeItems = financialDetails.toChargeItem
 
                   WhatYouOweChargesList(
                     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
@@ -286,7 +291,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                 val whatYouOweChargesList = {
                   val documentDetailsForTestTaxYear = financialDetailsModel.documentDetailsFilterByTaxYear(testTaxYear)
                   val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
-                  val chargeItems = financialDetails.toChargeItem()
+                  val chargeItems = financialDetails.toChargeItem
 
                   WhatYouOweChargesList(
                     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
@@ -324,7 +329,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                   val documentDetailsForTestTaxYear = financialDetailsModel.documentDetailsFilterByTaxYear(testTaxYear)
 
                   val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
-                  val chargeItems = financialDetails.toChargeItem()
+                  val chargeItems = financialDetails.toChargeItem
 
 
                   WhatYouOweChargesList(
@@ -361,7 +366,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                 val whatYouOweChargesList = {
                   val documentDetailsForTestTaxYear = financialDetailsModel.documentDetailsFilterByTaxYear(testTaxYear)
                   val financialDetails = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear)
-                  val chargeItems = financialDetails.toChargeItem()
+                  val chargeItems = financialDetails.toChargeItem
 
                   WhatYouOweChargesList(
                     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),

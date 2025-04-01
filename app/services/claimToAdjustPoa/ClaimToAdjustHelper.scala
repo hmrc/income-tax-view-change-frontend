@@ -116,7 +116,7 @@ trait ClaimToAdjustHelper {
     if (taxYear.isFutureTaxYear(dateService)) {
       Future.successful(true)
     } else {
-      calculationListConnector.getCalculationList(nino, taxYear.formatTaxYearRange).flatMap {
+      calculationListConnector.getCalculationList(nino, taxYear.formatAsShortYearRange).flatMap {
         case res: CalculationListModel => Future.successful(res.crystallised.getOrElse(false))
         case err: CalculationListErrorModel if err.code == 404 =>
           Logger("application").info("User had no calculations for this tax year, therefore is non-crystallised")
