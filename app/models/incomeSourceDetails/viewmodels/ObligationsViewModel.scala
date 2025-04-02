@@ -24,7 +24,7 @@ final case class ObligationsViewModel(
                                        quarterlyObligationsDates: Seq[Seq[DatesModel]],
                                        finalDeclarationDates: Seq[DatesModel],
                                        currentTaxYear: Int,
-                                       showPrevTaxYears: Boolean,
+                                       showPrevTaxYears: Boolean
                                      ) {
 
   def reportingMethod(latencyIndicator1: Option[String], latencyIndicator2: Option[String]): ChosenReportingMethod =
