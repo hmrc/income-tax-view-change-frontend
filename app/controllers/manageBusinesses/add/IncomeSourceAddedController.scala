@@ -50,7 +50,7 @@ class IncomeSourceAddedController @Inject()(
 
   val logger: Logger = Logger("application")
 
-  def getIncomeSourceIdFromSession(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[IncomeSourceId]] = {
+  private def getIncomeSourceIdFromSession(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[IncomeSourceId]] = {
 
     sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType)).flatMap {
       case Right(Some(sessionData)) =>
@@ -73,22 +73,17 @@ class IncomeSourceAddedController @Inject()(
       sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType)).flatMap {
 
         case Right(Some(sessionData)) =>
-
-          val result: Future[Result] = {
+          lazy val result: Future[Result] = {
             for {
-              incomeSourceId: Option[IncomeSourceId] <-
-                getIncomeSourceIdFromSession(incomeSourceType)
-              incomeSourceFromUser: Option[IncomeSourceFromUser] <-
-                Future(incomeSourceId.flatMap(id => incomeSourceDetailsService.getIncomeSource(incomeSourceType, id, user.incomeSources)))
+              incomeSourceId: Option[IncomeSourceId] <- getIncomeSourceIdFromSession(incomeSourceType)
+              incomeSourceFromUser: Option[IncomeSourceFromUser] <- Future(incomeSourceId.flatMap(id => incomeSourceDetailsService.getIncomeSource(incomeSourceType, id, user.incomeSources)))
               showPreviousTaxYears: Boolean = incomeSourceFromUser.exists(_.startDate.isBefore(dateService.getCurrentTaxYearStart))
-              //              reportingMethod: ChosenReportingMethod = incomeSourceDetailsService.getReportingMethod(sessionData.addIncomeSourceData)
-              showView <-
-                incomeSourceId match {
-                  //                  case Some(incomeSourceId) if reportingMethod != ChosenReportingMethod.Unknown =>
-                  case Some(incomeSourceId) =>
+              showView: Result <-
+                (incomeSourceId, incomeSourceFromUser)  match {
+                  case (Some(incomeSourceId), Some(incomeSource)) =>
                     handleSuccess(
                       isAgent = isAgent,
-                      businessName = incomeSourceFromUser.flatMap(_.businessName),
+                      businessName = incomeSource.businessName,
                       incomeSourceType = incomeSourceType,
                       incomeSourceId = incomeSourceId,
                       showPreviousTaxYears = showPreviousTaxYears,
