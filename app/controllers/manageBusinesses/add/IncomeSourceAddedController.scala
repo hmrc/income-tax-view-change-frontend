@@ -32,6 +32,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
 import views.html.manageBusinesses.add.IncomeSourceAddedObligationsView
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -131,7 +132,7 @@ class IncomeSourceAddedController @Inject()(
     for {
       _: Boolean <- sessionService.setMongoData(uiJourneySessionData)
       viewModel: ObligationsViewModel <- nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears)
-      dateStarted <- Future(uiJourneySessionData.addIncomeSourceData.flatMap(_.dateStarted))
+      dateStarted: Option[LocalDate] <- Future(uiJourneySessionData.addIncomeSourceData.flatMap(_.dateStarted))
     } yield {
       dateStarted match {
         case Some(dateStarted) =>
