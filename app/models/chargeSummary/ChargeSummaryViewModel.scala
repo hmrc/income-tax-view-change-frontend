@@ -42,7 +42,9 @@ case class ChargeSummaryViewModel(
                                    adjustmentHistory: AdjustmentHistoryModel,
                                    poaExtraChargeLink: Option[String] = None,
                                    poaOneChargeUrl: String,
-                                   poaTwoChargeUrl: String
+                                   poaTwoChargeUrl: String,
+                                   LSPUrl: Option[String],
+                                   LPPUrl: Option[String]
                                  ) {
 
   val dueDate = chargeItem.dueDate

@@ -23,12 +23,12 @@
     link: link
 )
 
-@(penaltiesAndAppealsTileViewModel: PenaltiesAndAppealsTileViewModel)(implicit messages: Messages)
+@(penaltiesAndAppealsTileViewModel: PenaltiesAndAppealsTileViewModel, penaltiesUrl: String)(implicit messages: Messages)
 
 @penaltiesAndAppealsLink = @{
     link(
         id = Some("sa-penalties-and-appeals-link"),
-        link = "",
+        link = penaltiesUrl,
         messageKey = "home.penaltiesAndAppeals.view"
     )
 }
