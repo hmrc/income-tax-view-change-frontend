@@ -33,16 +33,14 @@ import services.SessionService
 import testConstants.BusinessDetailsTestConstants.viewBusinessDetailsViewModel
 import testConstants.PropertyDetailsTestConstants.viewUkPropertyDetailsViewModel
 
-class ManageYourBusinessesControllerSpec extends MockAuthActions
-  with ImplicitDateFormatter
-  with MockSessionService {
+class ManageYourBusinessesControllerSpec extends MockAuthActions with ImplicitDateFormatter with MockSessionService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
-  lazy val testManageYourBusinessesController = app.injector.instanceOf[ManageYourBusinessesController]
+  lazy val testManageYourBusinessesController: ManageYourBusinessesController = app.injector.instanceOf[ManageYourBusinessesController]
 
   "show()" when {
     "the user is authenticated" should {
@@ -55,7 +53,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
           mockBothIncomeSources()
           setupMockCreateSession(true)
           setupMockClearSession(true)
-          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any())(any()))
+          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any()))
             .thenReturn(
               Right(
                 ViewIncomeSourcesViewModel(
@@ -81,7 +79,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
           mockBothIncomeSources()
           setupMockCreateSession(true)
           setupMockClearSession(true)
-          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any())(any()))
+          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any()))
             .thenReturn(
               Right(
                 ViewIncomeSourcesViewModel(
@@ -117,7 +115,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
           enable(IncomeSourcesFs)
           enable(DisplayBusinessStartDate)
           mockBothIncomeSources()
-          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any())(any()))
+          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any()))
             .thenReturn(
               Left(MissingFieldException("Trading Name"))
             )
@@ -133,7 +131,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
           mockBothIncomeSources()
           setupMockCreateSession(true)
           setupMockClearSession(true)
-          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any())(any()))
+          when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any()))
             .thenReturn(
               Right(
                 ViewIncomeSourcesViewModel(
@@ -169,7 +167,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
             mockBothIncomeSources()
             setupMockCreateSession(true)
             setupMockClearSession(true)
-            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any())(any()))
+            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any()))
               .thenReturn(
                 Right(
                   ViewIncomeSourcesViewModel(
@@ -205,7 +203,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
             enable(IncomeSourcesFs)
             enable(DisplayBusinessStartDate)
             mockBothIncomeSources()
-            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any())(any()))
+            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any()))
               .thenReturn(
                 Left(MissingFieldException("Trading Name"))
               )
@@ -221,7 +219,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions
             mockBothIncomeSources()
             setupMockCreateSession(true)
             setupMockClearSession(true)
-            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any())(any()))
+            when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any()))
               .thenReturn(
                 Right(
                   ViewIncomeSourcesViewModel(
