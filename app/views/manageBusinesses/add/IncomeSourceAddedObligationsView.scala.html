@@ -133,12 +133,12 @@
             s"""
                 <li id="quarterly-list">
                     ${getMessage(
-                    "next-quarterly-obligation-text",
-                    (taxYear - 1).toString,
-                    taxYear.toString,
-                    quarterlyUpdate.inboundCorrespondenceDue.toLongDate,
-                    quarterlyUpdate.inboundCorrespondenceFrom.toLongDate,
-                    quarterlyUpdate.inboundCorrespondenceTo.toLongDate
+                        "next-quarterly-obligation-text",
+                        (taxYear - 1).toString,
+                        taxYear.toString,
+                        quarterlyUpdate.inboundCorrespondenceDue.toLongDate,
+                        quarterlyUpdate.inboundCorrespondenceFrom.toLongDate,
+                        quarterlyUpdate.inboundCorrespondenceTo.toLongDate
                     )}
                 </li>
             """
@@ -150,10 +150,10 @@
             s"""
                 <li id="obligations-list">
                     ${getMessage(
-                    "final-dec-text",
-                    finalDecDate.inboundCorrespondenceFrom.getYear.toString,
-                    finalDecDate.inboundCorrespondenceTo.getYear.toString,
-                    finalDecDate.inboundCorrespondenceDue.toLongDate
+                        "final-dec-text",
+                        finalDecDate.inboundCorrespondenceFrom.getYear.toString,
+                        finalDecDate.inboundCorrespondenceTo.getYear.toString,
+                        finalDecDate.inboundCorrespondenceDue.toLongDate
                     )}
                 </li>
             """
@@ -242,24 +242,24 @@
     ) {
         @h2(getMessage("submit-software-text"), classes = "govuk-heading-m", optId = Some("submit-updates-in-software"))
 
-        @p() {
+        @p(id=Some("submit-via-compatible-software")) {
             @getMessage("submit-software-quarterly-text")
             @linkComponent(id = Some("compatible-software-link"), url = getSoftwareUrl, message = getMessage("submit-software-quarterly-link"))
         }
 
-        @p() { @messages(getMessage("submit-annual-text")) }
+        @p(id=Some("submit-via-compatible-software-annual")) { @messages(getMessage("submit-annual-text")) }
 
     } else if(reportingMethod == ChosenReportingMethod.Annual) {
 
         @h2(getMessage("submit-software-text"), classes = "govuk-heading-m", optId = Some("submit-updates-in-software"))
 
-        @p() { @messages(getMessage("submit-annual-text")) }
+        @p(id=Some("submit-via-compatible-software-annual")) { @messages(getMessage("submit-annual-text")) }
 
     } else {
 
         @h2(getMessage("submit-software-text"), classes = "govuk-heading-m", optId = Some("submit-updates-in-software"))
 
-        @p() {
+        @p(id=Some("submit-via-compatible-software")) {
             @getMessage("submit-software-quarterly-text")
             @linkComponent(id = Some("compatible-software-link"), url = getSoftwareUrl, message = getMessage("submit-software-quarterly-link"))
         }

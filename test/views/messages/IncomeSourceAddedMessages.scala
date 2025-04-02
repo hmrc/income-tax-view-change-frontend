@@ -24,7 +24,7 @@ object IncomeSourceAddedMessages {
   val headingBase: String = "has been added to your account"
   val submitTaxReturn: String = "Submit your tax return"
   val submitUpdatesInSoftware: String = "Submit updates in software"
-  val deadlinesHeading: String = "Your revised deadlines"
+  val yourRevisedDeadlinesHeading: String = "Your revised deadlines"
   val quarterlyText: String = "You must send quarterly updates of your income and expenses using compatible software by the following deadlines:"
   val finalDecHeading: String = "Submit final declarations and pay your tax"
   val finalDecText: String = "You must submit your final declarations and pay the tax you owe by the deadline."
