@@ -30,6 +30,7 @@
         h1: h1,
         h2: h2,
         p: p,
+        linkComponent: linkComponent,
         implicitDateFormatter: ImplicitDateFormatterImpl,
         continueButton: ContinueButton,
         formWithCSRF: FormWithCSRF,
@@ -241,11 +242,12 @@
     ) {
         @h2(getMessage("submit-software-text"), classes = "govuk-heading-m", optId = Some("submit-updates-in-software"))
 
-        <p class="govuk-body" id="submit-text">@getMessage("submit-software-quarterly-text")
-            <a class="govuk-link" href=@getSoftwareUrl>@getMessage("submit-software-quarterly-link")</a>
-        </p>
+        @p() {
+            @getMessage("submit-software-quarterly-text")
+            @linkComponent(id = Some("compatible-software-link"), url = getSoftwareUrl, message = getMessage("submit-software-quarterly-link"))
+        }
 
-        @p() { @messages(getMessage("submit-hybrid-annual-text")) }
+        @p() { @messages(getMessage("submit-annual-text")) }
 
     } else if(reportingMethod == ChosenReportingMethod.Annual) {
 
@@ -257,8 +259,9 @@
 
         @h2(getMessage("submit-software-text"), classes = "govuk-heading-m", optId = Some("submit-updates-in-software"))
 
-        <p class="govuk-body" id="submit-text">@getMessage("submit-software-quarterly-text")
-            <a class="govuk-link" href=@getSoftwareUrl>@getMessage("submit-software-quarterly-link")</a>
-        </p>
+        @p() {
+            @getMessage("submit-software-quarterly-text")
+            @linkComponent(id = Some("compatible-software-link"), url = getSoftwareUrl, message = getMessage("submit-software-quarterly-link"))
+        }
     }
 }
