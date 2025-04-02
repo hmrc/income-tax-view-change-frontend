@@ -115,7 +115,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions
           data.copy(reportingMethodTaxYear1 = reportingMethodTaxYear1, reportingMethodTaxYear2 = reportingMethodTaxYear2)
         ))
     )))
-    when(mockSessionService.setMongoData(any())(any(), any())).thenReturn(Future(true))
+    when(mockSessionService.setMongoData(any())).thenReturn(Future(true))
   }
 
   val incomeSourceTypes: Seq[IncomeSourceType with Serializable] = List(SelfEmployment, UkProperty, ForeignProperty)

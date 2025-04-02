@@ -170,7 +170,7 @@ class OptOutService @Inject()(
     }
   }
 
-  def recallNextUpdatesPageOptOutViewModel()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutViewModel]] = {
+  def recallNextUpdatesPageOptOutViewModel()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutViewModel]] = {
     recallOptOutProposition().map { proposition =>
       proposition.optOutPropositionType.map {
         case p: OneYearOptOutProposition => OptOutOneYearViewModel(oneYearOptOutTaxYear = p.intent.taxYear, state = p.state())
@@ -204,8 +204,7 @@ class OptOutService @Inject()(
     } yield processPropositionType(propositionType.get, intent, quarterlyUpdatesCount)
   }
 
-  def optOutConfirmedPageViewModel()(implicit user: MtdItUser[_],
-                                     hc: HeaderCarrier, ec: ExecutionContext): Future[Option[ConfirmedOptOutViewModel]] = {
+  def optOutConfirmedPageViewModel()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[ConfirmedOptOutViewModel]] = {
     recallOptOutProposition().flatMap { proposition =>
       proposition.optOutPropositionType match {
         case Some(p: OneYearOptOutProposition) => Future.successful(Some(ConfirmedOptOutViewModel(optOutTaxYear = p.intent.taxYear, state = p.state())))

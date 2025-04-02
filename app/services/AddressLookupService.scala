@@ -24,7 +24,6 @@ import models.incomeSourceDetails.BusinessAddressModel
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
 import play.api.Logger
-import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject

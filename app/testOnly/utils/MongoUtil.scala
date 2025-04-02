@@ -17,17 +17,15 @@
 package testOnly.utils
 
 import com.google.inject.Singleton
-import play.api.libs.json.Json
-import testOnly.models.{UserModel, UserRecord}
+import org.mongodb.scala.model.Filters._
+import org.mongodb.scala.model.ReplaceOptions
+import org.mongodb.scala.result.{DeleteResult, UpdateResult}
+import testOnly.models.UserRecord
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import org.mongodb.scala.model.Filters._
-import org.mongodb.scala.model.{ReplaceOptions, UpdateOptions}
-import org.mongodb.scala.result.{DeleteResult, UpdateResult}
-import uk.gov.hmrc.mongo.transaction.{TransactionConfiguration, Transactions}
 
 @Singleton
 class UserRepository @Inject()(val mongoComponent: MongoComponent, implicit val ec: ExecutionContext)

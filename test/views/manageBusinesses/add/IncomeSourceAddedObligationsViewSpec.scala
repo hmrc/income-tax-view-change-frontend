@@ -25,7 +25,7 @@ import play.twirl.api.Html
 import testUtils.ViewSpec
 import views.constants.IncomeSourceAddedObligationsConstants._
 import views.html.manageBusinesses.add.IncomeSourceAddedObligationsView
-import views.messages.IncomeSourceAddedMessages
+import views.messages.IncomeSourceAddedMessages._
 
 class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
@@ -244,24 +244,24 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
         val subText: Elements = layoutContent.select("div").eq(3)
 
-        banner.text() shouldBe IncomeSourceAddedMessages.h1UKProperty
-        subText.text shouldBe IncomeSourceAddedMessages.h1UKProperty + " " + IncomeSourceAddedMessages.headingBase
+        banner.text() shouldBe h1UKProperty
+        subText.text shouldBe h1UKProperty + " " + headingBase
       }
 
       "Business type is Foreign Property Business" in new Setup(validForeignPropertyBusinessCall) {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
         val subText: Elements = layoutContent.select("div").eq(3)
 
-        banner.text() shouldBe IncomeSourceAddedMessages.h1ForeignProperty
-        subText.text shouldBe IncomeSourceAddedMessages.h1ForeignProperty + " " + IncomeSourceAddedMessages.headingBase
+        banner.text() shouldBe h1ForeignProperty
+        subText.text shouldBe h1ForeignProperty + " " + headingBase
       }
 
       "Business type is Sole Trader Business" in new Setup(validSoleTreaderBusinessCall) {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
         val subText: Elements = layoutContent.select("div").eq(3)
 
-        banner.text() shouldBe IncomeSourceAddedMessages.h1SelfEmployment
-        subText.text shouldBe IncomeSourceAddedMessages.h1SelfEmployment + " " + IncomeSourceAddedMessages.headingBase
+        banner.text() shouldBe h1SelfEmployment
+        subText.text shouldBe h1SelfEmployment + " " + headingBase
       }
     }
 
@@ -270,7 +270,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
     }
 
     "Display the correct heading for deadlines" in new Setup(validCallWithData) {
-      document.getElementById("deadlines").text.contains(IncomeSourceAddedMessages.deadlinesHeading)
+      document.getElementById("deadlines").text.contains(deadlinesHeading)
     }
 
     "Not display inset warning text because there are no overdue obligations" when {
@@ -752,7 +752,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
     }
 
     "Render the view all your business link" in new Setup(validCallWithData) {
-      document.getElementById("view-all-businesses-link").text() shouldBe IncomeSourceAddedMessages.viewAllBusinessesText
+      document.getElementById("view-all-businesses-link").text() shouldBe viewAllBusinessesText
       document.getElementById("view-all-businesses-link").select("a").attr("href") shouldBe manageBusinessesUrl
     }
 
@@ -798,7 +798,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
       "It is reporting annually" in new Setup(validCurrentTaxYearAnnualCallNoOverdue) {
         val subHeading: Element = layoutContent.getElementsByTag("h2").last()
-        subHeading.text shouldBe IncomeSourceAddedMessages.submitTaxReturn
+        subHeading.text shouldBe submitTaxReturn
 
         Option(document.getElementById("submit-text")) match {
           case Some(upcomingDeadlineMessage) =>
@@ -811,7 +811,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
       "It is reporting quarterly" in new Setup(validCurrentTaxYearQuarterlyCallNoOverdue) {
         val subHeading: Element = layoutContent.getElementsByTag("h2").last()
-        subHeading.text shouldBe IncomeSourceAddedMessages.submitSoftware
+        subHeading.text shouldBe submitUpdatesInSoftware
 
         Option(document.getElementById("submit-text")) match {
           case Some(upcomingDeadlineMessage) =>
@@ -824,7 +824,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
       "It has hybrid reporting" in new Setup(validAnnualThenFullQuarterlyCallNoOverdue) {
         val subHeading: Element = layoutContent.getElementsByTag("h2").last()
-        subHeading.text shouldBe IncomeSourceAddedMessages.submitSoftware
+        subHeading.text shouldBe submitUpdatesInSoftware
 
         Option(document.getElementById("quarterly-submit-text")) match {
           case Some(upcomingDeadlineMessage) =>
@@ -849,50 +849,50 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
       "Business type is UK Property Business" in new Setup(validUKPropertyBusinessAgentCall) {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
-        banner.text() shouldBe IncomeSourceAddedMessages.h1UKProperty
+        banner.text() shouldBe h1UKProperty
 
 
         val subText: Option[Element] = layoutContent.select("div").eq(3)
 
         subText match {
-          case Some(heading) => heading.text shouldBe IncomeSourceAddedMessages.h1UKProperty + " " + IncomeSourceAddedMessages.headingBase
+          case Some(heading) => heading.text shouldBe h1UKProperty + " " + headingBase
           case _ => fail("No 2nd h2 element found.")
         }
 
         val subHeading: Element = layoutContent.getElementsByTag("h2").last()
-        subHeading.text shouldBe IncomeSourceAddedMessages.submitTaxReturn
+        subHeading.text shouldBe submitTaxReturn
       }
 
       "Business type is Foreign Property Business" in new Setup(validForeignPropertyBusinessAgentCall) {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
-        banner.text() shouldBe IncomeSourceAddedMessages.h1ForeignProperty
+        banner.text() shouldBe h1ForeignProperty
 
 
         val subText: Option[Element] = layoutContent.select("div").eq(3)
 
         subText match {
-          case Some(heading) => heading.text shouldBe IncomeSourceAddedMessages.h1ForeignProperty + " " + IncomeSourceAddedMessages.headingBase
+          case Some(heading) => heading.text shouldBe h1ForeignProperty + " " + headingBase
           case _ => fail("No 2nd h2 element found.")
         }
 
         val subHeading: Element = layoutContent.getElementsByTag("h2").last()
-        subHeading.text shouldBe IncomeSourceAddedMessages.submitTaxReturn
+        subHeading.text shouldBe submitTaxReturn
       }
 
       "Business type is Sole Trader Business" in new Setup(validSoleTreaderBusinessAgentCall) {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
-        banner.text() shouldBe IncomeSourceAddedMessages.h1SelfEmployment
+        banner.text() shouldBe h1SelfEmployment
 
 
         val subText: Option[Element] = layoutContent.select("div").eq(3)
 
         subText match {
-          case Some(heading) => heading.text shouldBe IncomeSourceAddedMessages.h1SelfEmployment + " " + IncomeSourceAddedMessages.headingBase
+          case Some(heading) => heading.text shouldBe h1SelfEmployment + " " + headingBase
           case _ => fail("No 2nd h2 element found.")
         }
 
         val subHeading: Element = layoutContent.getElementsByTag("h2").last()
-        subHeading.text shouldBe IncomeSourceAddedMessages.submitTaxReturn
+        subHeading.text shouldBe submitTaxReturn
       }
     }
 
@@ -906,7 +906,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
     }
 
     "render the view all your businesses link" in new Setup(validAgentCallWithData) {
-      document.getElementById("view-all-businesses-link").text() shouldBe IncomeSourceAddedMessages.viewAllBusinessesText
+      document.getElementById("view-all-businesses-link").text() shouldBe viewAllBusinessesText
     }
   }
 }

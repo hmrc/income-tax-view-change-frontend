@@ -91,7 +91,6 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
   def setupMockSetMongoData(result: Boolean): Unit = {
     when(
       mockSessionService.setMongoData(ArgumentMatchers.any())
-      (ArgumentMatchers.any(), ArgumentMatchers.any())
     ).thenReturn(Future.successful(result))
   }
 
