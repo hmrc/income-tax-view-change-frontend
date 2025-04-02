@@ -27,10 +27,6 @@ case class IncomeSourceId(value: String) {
 
 object IncomeSourceId {
 
-//  def apply(incomeSourceAsString: String): IncomeSourceId = {
-//    IncomeSourceId(incomeSourceAsString)
-//  }
-
   def mkIncomeSourceId(incomeSourceAsString: String): IncomeSourceId = {
     IncomeSourceId(incomeSourceAsString)
   }
