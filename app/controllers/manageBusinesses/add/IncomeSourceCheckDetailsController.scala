@@ -204,7 +204,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
                       sessionData.copy(
                         addIncomeSourceData =
                           sessionData.addIncomeSourceData.map(_.copy(
-                            incomeSourceId = Some(id),
+                            incomeSourceId = Some(id)
                           ))
                       )
                     )
