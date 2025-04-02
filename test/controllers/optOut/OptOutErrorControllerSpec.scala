@@ -38,7 +38,7 @@ class OptOutErrorControllerSpec extends MockAuthActions {
       s"the user is authenticated as a $mtdRole" should {
         s"render the opt out error page" in {
           setupMockSuccess(mtdRole)
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           val result = action(fakeRequest)
 

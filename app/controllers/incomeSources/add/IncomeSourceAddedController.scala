@@ -63,7 +63,7 @@ class IncomeSourceAddedController @Inject()(val authActions: AuthActions,
     withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
       (for {
         incomeSourceIdModel: IncomeSourceId <- sessionData.addIncomeSourceData.flatMap(_.incomeSourceId.map(IncomeSourceId(_)))
-        incomeSourceFromUser: IncomeSourceFromUser <- incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceIdModel)
+        incomeSourceFromUser: IncomeSourceFromUser <- incomeSourceDetailsService.getIncomeSource(incomeSourceType, incomeSourceIdModel, user.incomeSources)
       } yield {
         handleSuccess(
           isAgent = isAgent,

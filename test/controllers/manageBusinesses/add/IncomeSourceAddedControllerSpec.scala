@@ -22,7 +22,6 @@ import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.{MockITSAStatusService, MockNextUpdatesService, MockSessionService}
 import models.admin.IncomeSourcesFs
-import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails._
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import org.mockito.ArgumentMatchers.any
@@ -80,32 +79,35 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions
   ))
 
   def mockSelfEmployment(): Unit = {
-    when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType = any(), incomeSourceId = mkIncomeSourceId(any()))(user = any())).thenReturn(
-      Some(IncomeSourceFromUser(LocalDate.parse("2022-01-01"), Some("Business Name")))
-    )
+    when(mockIncomeSourceDetailsService.getIncomeSource(incomeSourceType = any(), incomeSourceId = any(), any()))
+      .thenReturn(
+        Some(IncomeSourceFromUser(LocalDate.parse("2022-01-01"), Some("Business Name")))
+      )
   }
 
   def mockProperty(): Unit = {
-    when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), mkIncomeSourceId(any()))(any())).thenReturn(
-      Some(IncomeSourceFromUser(LocalDate.parse("2022-01-01"), None))
-    )
-  }
-
-  def mockISDS(incomeSourceType: IncomeSourceType): Unit = {
-    if (incomeSourceType == SelfEmployment)
-      when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), mkIncomeSourceId(any()))(any())).thenReturn(
-        Some(IncomeSourceFromUser(LocalDate.parse("2022-01-01"), Some("Business Name")))
-      )
-    else
-      when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), mkIncomeSourceId(any()))(any())).thenReturn(
+    when(mockIncomeSourceDetailsService.getIncomeSource(incomeSourceType = any(), incomeSourceId = any(), any()))
+      .thenReturn(
         Some(IncomeSourceFromUser(LocalDate.parse("2022-01-01"), None))
       )
   }
 
+  def mockISDS(incomeSourceType: IncomeSourceType): Unit = {
+    if (incomeSourceType == SelfEmployment)
+      when(mockIncomeSourceDetailsService.getIncomeSource(incomeSourceType = any(), incomeSourceId = any(), any()))
+        .thenReturn(
+          Some(IncomeSourceFromUser(LocalDate.parse("2022-01-01"), Some("Business Name")))
+        )
+    else
+      when(mockIncomeSourceDetailsService.getIncomeSource(incomeSourceType = any(), incomeSourceId = any(), any()))
+        .thenReturn(
+          Some(IncomeSourceFromUser(LocalDate.parse("2022-01-01"), None))
+        )
+  }
+
   def mockFailure(): Unit = {
-    when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), mkIncomeSourceId(any()))(any())).thenReturn(
-      None
-    )
+    when(mockIncomeSourceDetailsService.getIncomeSource(incomeSourceType = any(), incomeSourceId = any(), any()))
+      .thenReturn(None)
   }
 
   def mockMongo(incomeSourceType: IncomeSourceType, reportingMethodTaxYear1: Option[String], reportingMethodTaxYear2: Option[String]): Unit = {
@@ -293,7 +295,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions
                   cashOrAccruals = false
                 )), List.empty)
                 setupMockGetSessionKeyMongoTyped[String](Right(Some(testSelfEmploymentId)))
-                setupMockGetIncomeSourceDetails()(sources)
+                setupMockGetIncomeSourceDetails(sources)
                 when(mockNextUpdatesService.getOpenObligations()(any(), any())).
                   thenReturn(Future(testObligationsModel))
                 mockProperty()

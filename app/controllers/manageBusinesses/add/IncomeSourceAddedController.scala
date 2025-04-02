@@ -40,10 +40,10 @@ class IncomeSourceAddedController @Inject()(
                                              incomeSourceDetailsService: IncomeSourceDetailsService,
                                              view: IncomeSourceAddedObligationsView,
                                              nextUpdatesService: NextUpdatesService,
-                                             val sessionService: SessionService,
                                              itvcErrorHandler: ItvcErrorHandler,
                                              itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                             dateService: DateServiceInterface
+                                             dateService: DateServiceInterface,
+                                             val sessionService: SessionService
                                            )
                                            (implicit val appConfig: FrontendAppConfig, mcc: MessagesControllerComponents, val ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses {
@@ -58,15 +58,6 @@ class IncomeSourceAddedController @Inject()(
         Future(incomeSourceId)
       case _ =>
         Future(None)
-    }
-  }
-
-  def getIncomeSourceFromSession(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[IncomeSourceFromUser]] = {
-    for {
-      optId: Option[IncomeSourceId] <- getIncomeSourceIdFromSession(incomeSourceType)
-      incomeSource: Option[IncomeSourceFromUser] <- Future(optId.flatMap(id => incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, id)))
-    } yield {
-      incomeSource
     }
   }
 
@@ -85,13 +76,16 @@ class IncomeSourceAddedController @Inject()(
 
           val result: Future[Result] = {
             for {
-              incomeSourceId: Option[IncomeSourceId] <- getIncomeSourceIdFromSession(incomeSourceType)
-              incomeSourceFromUser: Option[IncomeSourceFromUser] <- getIncomeSourceFromSession(incomeSourceType)
+              incomeSourceId: Option[IncomeSourceId] <-
+                getIncomeSourceIdFromSession(incomeSourceType)
+              incomeSourceFromUser: Option[IncomeSourceFromUser] <-
+                Future(incomeSourceId.flatMap(id => incomeSourceDetailsService.getIncomeSource(incomeSourceType, id, user.incomeSources)))
               showPreviousTaxYears: Boolean = incomeSourceFromUser.exists(_.startDate.isBefore(dateService.getCurrentTaxYearStart))
-              reportingMethod: ChosenReportingMethod = incomeSourceDetailsService.getReportingMethod(sessionData.addIncomeSourceData)
+              //              reportingMethod: ChosenReportingMethod = incomeSourceDetailsService.getReportingMethod(sessionData.addIncomeSourceData)
               showView <-
                 incomeSourceId match {
-                  case Some(incomeSourceId) if reportingMethod != ChosenReportingMethod.Unknown =>
+                  //                  case Some(incomeSourceId) if reportingMethod != ChosenReportingMethod.Unknown =>
+                  case Some(incomeSourceId) =>
                     handleSuccess(
                       isAgent = isAgent,
                       businessName = incomeSourceFromUser.flatMap(_.businessName),
@@ -103,7 +97,6 @@ class IncomeSourceAddedController @Inject()(
                   case _ =>
                     Future(errorView)
                 }
-
             } yield {
               showView
             }
@@ -132,12 +125,12 @@ class IncomeSourceAddedController @Inject()(
     val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
 
     val incomeSourceBeingAddedLatencyDetails: Option[LatencyDetails] =
-      incomeSourceDetailsService.getLatencyDetailsFromUser(incomeSourceType)
+      incomeSourceDetailsService.getLatencyDetailsFromUser(incomeSourceType, user.incomeSources)
 
-    val reportingMethodTaxYear1 =
+    val reportingMethodTaxYear1: Option[String] =
       incomeSourceBeingAddedLatencyDetails.map(_.latencyIndicator1)
 
-    val reportingMethodTaxYear2 =
+    val reportingMethodTaxYear2: Option[String] =
       incomeSourceBeingAddedLatencyDetails.map(_.latencyIndicator2)
 
     for {
