@@ -1836,7 +1836,7 @@ business-added.submit-tax-return                            = Submit your tax re
 business-added.submit-tax-return-text                       = When reporting annually, you can submit your tax return directly through your HMRC online account or
 business-added.submit-tax-return-link                       = software compatible with Making Tax Digital for Income Tax (opens in new tab).
 
-business-added.submit-annual-text                    = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
+business-added.submit-annual-text                           = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
 
 
 ## You cannot go back - Your business has been added page ##
