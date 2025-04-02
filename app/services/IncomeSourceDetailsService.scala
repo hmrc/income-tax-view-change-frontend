@@ -33,8 +33,6 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-case class IncomeSourceFromUser(startDate: LocalDate, businessName: Option[String])
-
 class IncomeSourceDetailsService @Inject()(
                                             businessDetailsConnector: BusinessDetailsConnector
                                           )(

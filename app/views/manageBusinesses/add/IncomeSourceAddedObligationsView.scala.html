@@ -53,21 +53,24 @@
 @getMessage(key: String, args: String*) = @{
     messages(s"business-added.$key", args: _*)
 }
-    @import implicitDateFormatter.longDate
+
+@import implicitDateFormatter.longDate
 
 @getPageTitle = @{
     incomeSourceType match {
-        case _: SelfEmployment.type =>
-        getMessage("sole-trader.title", businessName.get)
-        case _ => getMessage(s"${incomeSourceType.messagesSuffix}.title")
+        case SelfEmployment =>
+            businessName.map(name => getMessage("sole-trader.title", name)).getOrElse("")
+        case _ =>
+            getMessage(s"${incomeSourceType.messagesSuffix}.title")
     }
 }
 
 @getPanelTitle = @{
     incomeSourceType match {
-        case _: SelfEmployment.type =>
-        getMessage("sole-trader.panel.title", businessName.get)
-        case _ => getMessage(s"${incomeSourceType.messagesSuffix}.panel.title")
+        case SelfEmployment =>
+            businessName.map(name => getMessage("sole-trader.title", name)).getOrElse("")
+        case _ =>
+            getMessage(s"${incomeSourceType.messagesSuffix}.panel.title")
     }
 }
 
