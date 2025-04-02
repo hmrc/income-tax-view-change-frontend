@@ -66,7 +66,7 @@ class FinalTaxCalculationControllerSpec extends MockAuthActions
         } else {
           "render the final tax calculation page" in {
             setupMockSuccess(mtdUserRole)
-            setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+            setupMockGetIncomeSourceDetails(businessIncome2018and2019)
             when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
               .thenReturn(Future.successful(testCalcResponse))
             val result = action(fakeRequest)
@@ -77,7 +77,7 @@ class FinalTaxCalculationControllerSpec extends MockAuthActions
           "render the error page" when {
             "calculation service fails" in {
               setupMockSuccess(mtdUserRole)
-              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+              setupMockGetIncomeSourceDetails(businessIncome2018and2019)
               when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
                 .thenReturn(Future.successful(testCalcError))
               val result = action(fakeRequest)
@@ -98,7 +98,7 @@ class FinalTaxCalculationControllerSpec extends MockAuthActions
         } else {
           "redirect to submissionFrontendFinalDeclaration" in {
             setupMockSuccess(mtdUserRole)
-            setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+            setupMockGetIncomeSourceDetails(businessIncome2018and2019)
             when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
               .thenReturn(Future.successful(testCalcResponse))
             val result = action(fakeRequest)
@@ -109,7 +109,7 @@ class FinalTaxCalculationControllerSpec extends MockAuthActions
           "render the error page" when {
             "calculation service returns NO CONTENT" in {
               setupMockSuccess(mtdUserRole)
-              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+              setupMockGetIncomeSourceDetails(businessIncome2018and2019)
               when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
                 .thenReturn(Future.successful(testCalcNOCONTENT))
               val result = action(fakeRequest)
@@ -117,7 +117,7 @@ class FinalTaxCalculationControllerSpec extends MockAuthActions
             }
             "calculation service fails" in {
               setupMockSuccess(mtdUserRole)
-              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+              setupMockGetIncomeSourceDetails(businessIncome2018and2019)
               when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
                 .thenReturn(Future.successful(testCalcError))
               val result = action(fakeRequest)

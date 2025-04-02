@@ -42,8 +42,7 @@ class IncomeSourceDetailsService @Inject()(
                                             val ec: ExecutionContext
                                           ) extends FeatureSwitching {
 
-  def getIncomeSourceDetails()(implicit hc: HeaderCarrier,
-                               mtdUser: AuthorisedAndEnrolledRequest[_]): Future[IncomeSourceDetailsResponse] = {
+  def getIncomeSourceDetails()(implicit hc: HeaderCarrier, mtdUser: AuthorisedAndEnrolledRequest[_]): Future[IncomeSourceDetailsResponse] = {
     businessDetailsConnector.getIncomeSources()
   }
 
@@ -227,14 +226,15 @@ class IncomeSourceDetailsService @Inject()(
     viewModelsForCeasedSEBusinesses ++ viewModelsForCeasedPropertyBusinesses
   }
 
-  def getIncomeSourceFromUser(
-                               incomeSourceType: IncomeSourceType,
-                               incomeSourceId: IncomeSourceId
-                             )(implicit user: MtdItUser[_]): Option[IncomeSourceFromUser] = {
+  def getIncomeSource(
+                       incomeSourceType: IncomeSourceType,
+                       incomeSourceId: IncomeSourceId,
+                       incomeSourceDetailsModel: IncomeSourceDetailsModel
+                     ): Option[IncomeSourceFromUser] = {
     incomeSourceType match {
       case SelfEmployment =>
-        user.incomeSources.businesses
-          .find(m => mkIncomeSourceId(m.incomeSourceId) == incomeSourceId)
+        incomeSourceDetailsModel.businesses
+          .find((model: BusinessDetailsModel) => IncomeSourceId(model.incomeSourceId) == incomeSourceId)
           .flatMap { addedBusiness =>
             for {
               businessName <- addedBusiness.tradingName
@@ -244,14 +244,14 @@ class IncomeSourceDetailsService @Inject()(
       case UkProperty =>
         for {
           newlyAddedProperty <-
-            user.incomeSources.properties.find(incomeSource =>
+            incomeSourceDetailsModel.properties.find(incomeSource =>
               mkIncomeSourceId(incomeSource.incomeSourceId) == incomeSourceId && incomeSource.isUkProperty
             )
           startDate <- newlyAddedProperty.tradingStartDate
         } yield IncomeSourceFromUser(startDate, None)
       case ForeignProperty =>
         for {
-          newlyAddedProperty <- user.incomeSources.properties.find(incomeSource =>
+          newlyAddedProperty <- incomeSourceDetailsModel.properties.find(incomeSource =>
             mkIncomeSourceId(incomeSource.incomeSourceId) == incomeSourceId && incomeSource.isForeignProperty
           )
           startDate <- newlyAddedProperty.tradingStartDate
@@ -262,10 +262,12 @@ class IncomeSourceDetailsService @Inject()(
   }
 
   def getReportingMethod(maybeAddIncomeSourceData: Option[AddIncomeSourceData]): ChosenReportingMethod = {
-    val (reportingMethodTaxYear1, reportingMethodTaxYear2) = (
-      maybeAddIncomeSourceData.flatMap(_.reportingMethodTaxYear1).orElse(None),
-      maybeAddIncomeSourceData.flatMap(_.reportingMethodTaxYear2).orElse(None)
-    )
+    val (reportingMethodTaxYear1, reportingMethodTaxYear2) =
+      (
+        maybeAddIncomeSourceData.flatMap(_.reportingMethodTaxYear1).orElse(None),
+        maybeAddIncomeSourceData.flatMap(_.reportingMethodTaxYear2).orElse(None)
+      )
+
     (reportingMethodTaxYear1, reportingMethodTaxYear2) match {
       case (Some("A"), Some("A")) | (None, Some("A")) => ChosenReportingMethod.Annual
       case (Some("Q"), Some("Q")) | (None, Some("Q")) => ChosenReportingMethod.Quarterly
@@ -275,11 +277,12 @@ class IncomeSourceDetailsService @Inject()(
     }
   }
 
-  def getLatencyDetailsFromUser(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Option[LatencyDetails] = {
+  def getLatencyDetailsFromUser(incomeSourceType: IncomeSourceType, incomeSourceDetailsModel: IncomeSourceDetailsModel): Option[LatencyDetails] = {
     incomeSourceType match {
-      case SelfEmployment => user.incomeSources.businesses.flatMap(_.latencyDetails).headOption
-      case UkProperty => user.incomeSources.getUKProperty.flatMap(_.latencyDetails)
-      case ForeignProperty => user.incomeSources.getForeignProperty.flatMap(_.latencyDetails)
+      case SelfEmployment => incomeSourceDetailsModel.businesses.flatMap(_.latencyDetails).headOption
+      case UkProperty => incomeSourceDetailsModel.getUKProperty.flatMap(_.latencyDetails)
+      case ForeignProperty => incomeSourceDetailsModel.getForeignProperty.flatMap(_.latencyDetails)
+      case _ => None
     }
   }
 }

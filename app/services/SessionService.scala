@@ -33,21 +33,14 @@ class SessionService @Inject()(
                               ) {
 
   def getMongo(journeyType: JourneyType)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[UIJourneySessionData]]] = {
-    if (config.encryptionIsEnabled)
-      sensitiveUIJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType) map {
-        case Some(data: UIJourneySessionData) =>
-          Right(Some(data))
-        case None =>
-          Right(None)
-      }
-    else
-      uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType) map {
-        case Some(data: UIJourneySessionData) =>
-          Right(Some(data))
-        case None =>
-          Right(None)
-      }
-
+    hc.sessionId.map(_.value) match {
+      case Some(sessionId) if config.encryptionIsEnabled =>
+        sensitiveUIJourneySessionDataRepository.get(sessionId, journeyType).map(data => Right(data))
+      case Some(sessionId) =>
+        uiJourneySessionDataRepository.get(sessionId, journeyType).map(data => Right(data))
+      case _ =>
+        Future.successful(Left(new Exception("Missing sessionId in HeaderCarrier")))
+    }
   }
 
   def createSession(journeyType: JourneyType)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {

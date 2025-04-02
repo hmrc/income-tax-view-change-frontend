@@ -38,7 +38,7 @@ class OptInErrorControllerSpec extends MockAuthActions {
       s"the user is authenticated as a $mtdRole" should {
         s"render the error page" in {
           setupMockSuccess(mtdRole)
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           val result = action(fakeRequest)
           status(result) shouldBe Status.OK

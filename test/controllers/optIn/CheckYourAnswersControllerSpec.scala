@@ -55,7 +55,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
       s"the user is authenticated as a $mtdRole" should {
         "render the check your answers page" in {
           setupMockSuccess(mtdRole)
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           when(mockOptInService.getMultiYearCheckYourAnswersViewModel(any())(any(), any(), any()))
             .thenReturn(Future.successful(Some(MultiYearCheckYourAnswersViewModel(
@@ -71,7 +71,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
         s"return result with $INTERNAL_SERVER_ERROR status" when {
           "there is no check your answers view model" in {
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             when(mockOptInService.getMultiYearCheckYourAnswersViewModel(any())(any(), any(), any()))
               .thenReturn(Future.successful(None))
@@ -90,7 +90,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
       s"the user is authenticated as a $mtdRole" should {
         "redirect to OptInCompletedController" in {
           setupMockSuccess(mtdRole)
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           when(mockOptInService.makeOptInCall()(any(), any(), any()))
             .thenReturn(Future.successful(ITSAStatusUpdateResponseSuccess()))
@@ -104,7 +104,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
         s"redirect to optInError page" when {
           "the optInCall fails" in {
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             when(mockOptInService.makeOptInCall()(any(), any(), any()))
               .thenReturn(Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure()))
