@@ -20,7 +20,7 @@ object IncomeSourceAddedMessages {
 
   val h1ForeignProperty: String = "Foreign property"
   val h1UKProperty: String = "UK property"
-  val h1SelfEmployment: String = "Test Name"
+  val h1SelfEmployment: String = "Test Name has been added to your account"
   val headingBase: String = "has been added to your account"
   val submitTaxReturn: String = "Submit your tax return"
   val submitUpdatesInSoftware: String = "Submit updates in software"
