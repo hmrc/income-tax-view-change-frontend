@@ -20,7 +20,7 @@ import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import enums.MTDIndividual
+import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockITSAStatusService, MockNextUpdatesService, MockSessionService}
 import models.admin.IncomeSourcesFs
@@ -76,19 +76,17 @@ class V2IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpd
       sessionService = mockSessionService
     )(frontendAppConfig, messagesControllerComponents, executionContext)
 
-
-  def sessionDataCompletedJourney(journeyType: IncomeSourceJourneyType): UIJourneySessionData =
-    UIJourneySessionData(sessionId = testSessionId, journeyType = journeyType.toString, addIncomeSourceData = Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
-
   ".show()" when {
 
-    "the user is authenticated as a MTDIndividual - SelfEmployment" should {
+    Seq(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
+
+      s"the user is authenticated as a MTDIndividual - $incomeSourceType" should {
 
         "render the income source added page" when {
 
           "FS enabled with newly added income source and obligations view model without choosing reporting methods" in {
 
-            val addSelfEmploymentJourneyType = IncomeSourceJourneyType(Add, SelfEmployment)
+            val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
             val taxYearStartDate = LocalDate.of(2023, 4, 6)
 
             val testLatencyDetails =
@@ -138,9 +136,9 @@ class V2IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpd
               .thenReturn(
                 Future(
                   Right(Some(
-                    notCompletedUIJourneySessionData(journeyType = addSelfEmploymentJourneyType)
+                    notCompletedUIJourneySessionData(journeyType = journeyType)
                       .copy(addIncomeSourceData =
-                        notCompletedUIJourneySessionData(journeyType = addSelfEmploymentJourneyType)
+                        notCompletedUIJourneySessionData(journeyType = journeyType)
                           .addIncomeSourceData.map(data => data.copy(reportingMethodTaxYear1 = None, reportingMethodTaxYear2 = None)
                           )
                       )
@@ -149,13 +147,13 @@ class V2IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpd
               )
 
             val fakeRequest = fakeGetRequestBasedOnMTDUserType(MTDIndividual)
-            val result = testIncomeSourceAddedController.show(SelfEmployment)(fakeRequest)
+            val result = testIncomeSourceAddedController.show(incomeSourceType)(fakeRequest)
             status(result) shouldBe OK
           }
 
           "FS enabled with newly added income source and obligations view model with an overall annual chosen reporting method" in {
 
-            val addSelfEmploymentJourneyType = IncomeSourceJourneyType(Add, SelfEmployment)
+            val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
             val taxYearStartDate = LocalDate.of(2023, 4, 6)
 
             val testLatencyDetails =
@@ -205,9 +203,9 @@ class V2IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpd
               .thenReturn(
                 Future(
                   Right(Some(
-                    notCompletedUIJourneySessionData(journeyType = addSelfEmploymentJourneyType)
+                    notCompletedUIJourneySessionData(journeyType = journeyType)
                       .copy(addIncomeSourceData =
-                        notCompletedUIJourneySessionData(journeyType = addSelfEmploymentJourneyType)
+                        notCompletedUIJourneySessionData(journeyType = journeyType)
                           .addIncomeSourceData.map(data => data.copy(reportingMethodTaxYear1 = Some("A"), reportingMethodTaxYear2 = Some("A"))
                           )
                       )
@@ -216,13 +214,13 @@ class V2IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpd
               )
 
             val fakeRequest = fakeGetRequestBasedOnMTDUserType(MTDIndividual)
-            val result = testIncomeSourceAddedController.show(SelfEmployment)(fakeRequest)
+            val result = testIncomeSourceAddedController.show(incomeSourceType)(fakeRequest)
             status(result) shouldBe OK
           }
 
           "FS enabled with newly added income source and obligations view model with an overall quarterly chosen reporting method" in {
 
-            val addSelfEmploymentJourneyType = IncomeSourceJourneyType(Add, SelfEmployment)
+            val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
             val taxYearStartDate = LocalDate.of(2023, 4, 6)
 
             val testLatencyDetails =
@@ -272,9 +270,9 @@ class V2IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpd
               .thenReturn(
                 Future(
                   Right(Some(
-                    notCompletedUIJourneySessionData(journeyType = addSelfEmploymentJourneyType)
+                    notCompletedUIJourneySessionData(journeyType = journeyType)
                       .copy(addIncomeSourceData =
-                        notCompletedUIJourneySessionData(journeyType = addSelfEmploymentJourneyType)
+                        notCompletedUIJourneySessionData(journeyType = journeyType)
                           .addIncomeSourceData.map(data => data.copy(reportingMethodTaxYear1 = Some("Q"), reportingMethodTaxYear2 = Some("Q"))
                           )
                       )
@@ -283,13 +281,13 @@ class V2IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpd
               )
 
             val fakeRequest = fakeGetRequestBasedOnMTDUserType(MTDIndividual)
-            val result = testIncomeSourceAddedController.show(SelfEmployment)(fakeRequest)
+            val result = testIncomeSourceAddedController.show(incomeSourceType)(fakeRequest)
             status(result) shouldBe OK
           }
 
           "FS enabled with newly added income source and obligations view model with an overall hybrid chosen reporting method" in {
 
-            val addSelfEmploymentJourneyType = IncomeSourceJourneyType(Add, SelfEmployment)
+            val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
             val taxYearStartDate = LocalDate.of(2023, 4, 6)
 
             val testLatencyDetails =
@@ -339,9 +337,9 @@ class V2IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpd
               .thenReturn(
                 Future(
                   Right(Some(
-                    notCompletedUIJourneySessionData(journeyType = addSelfEmploymentJourneyType)
+                    notCompletedUIJourneySessionData(journeyType = journeyType)
                       .copy(addIncomeSourceData =
-                        notCompletedUIJourneySessionData(journeyType = addSelfEmploymentJourneyType)
+                        notCompletedUIJourneySessionData(journeyType = journeyType)
                           .addIncomeSourceData.map(data => data.copy(reportingMethodTaxYear1 = Some("A"), reportingMethodTaxYear2 = Some("Q"))
                           )
                       )
@@ -350,10 +348,565 @@ class V2IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpd
               )
 
             val fakeRequest = fakeGetRequestBasedOnMTDUserType(MTDIndividual)
-            val result = testIncomeSourceAddedController.show(SelfEmployment)(fakeRequest)
+            val result = testIncomeSourceAddedController.show(incomeSourceType)(fakeRequest)
             status(result) shouldBe OK
           }
         }
       }
+    }
+  }
+
+  ".showAgent()" when {
+
+    Seq(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
+
+      s"the user is authenticated as a MTDPrimaryAgent - $incomeSourceType" should {
+
+        "render the income source added page" when {
+
+          "FS enabled with newly added income source and obligations view model without choosing reporting methods" in {
+
+            val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
+            val taxYearStartDate = LocalDate.of(2023, 4, 6)
+
+            val testLatencyDetails =
+              LatencyDetails(
+                latencyEndDate = LocalDate.of(year2019, 1, 1),
+                taxYear1 = year2018.toString,
+                latencyIndicator1 = "A",
+                taxYear2 = year2019.toString,
+                latencyIndicator2 = "Q"
+              )
+
+            disableAllSwitches()
+            enable(IncomeSourcesFs)
+            setupMockSuccess(MTDPrimaryAgent)
+
+            when(
+              mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+              .thenReturn(Future.successful(businessIncome))
+
+            when(mockIncomeSourceDetailsService.getIncomeSource(incomeSourceType = any(), incomeSourceId = any(), incomeSourceDetailsModel = any()))
+              .thenReturn(
+                Some(IncomeSourceFromUser(startDate = LocalDate.parse("2022-01-01"), businessName = Some("Business Name")))
+              )
+
+            when(mockIncomeSourceDetailsService.getLatencyDetailsFromUser(incomeSourceType = any(), incomeSourceDetailsModel = any()))
+              .thenReturn(Some(testLatencyDetails))
+
+            when(mockDateService.getCurrentTaxYearStart)
+              .thenReturn(taxYearStartDate)
+
+            when(mockDateService.getCurrentDate)
+              .thenReturn(LocalDate.of(2024, 2, 6))
+
+            when(mockDateService.getAccountingPeriodEndDate(any()))
+              .thenReturn(LocalDate.of(2024, 4, 5))
+
+            when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any()))
+              .thenReturn(Future(viewModel))
+
+            when(mockNextUpdatesService.getOpenObligations()(any(), any())).
+              thenReturn(Future(testObligationsModel))
+
+            when(mockSessionService.setMongoData(any()))
+              .thenReturn(Future(true))
+
+            when(mockSessionService.getMongo(any())(any(), any()))
+              .thenReturn(
+                Future(
+                  Right(Some(
+                    notCompletedUIJourneySessionData(journeyType = journeyType)
+                      .copy(addIncomeSourceData =
+                        notCompletedUIJourneySessionData(journeyType = journeyType)
+                          .addIncomeSourceData.map(data => data.copy(reportingMethodTaxYear1 = None, reportingMethodTaxYear2 = None)
+                          )
+                      )
+                  ))
+                )
+              )
+
+            val fakeRequest = fakeGetRequestBasedOnMTDUserType(MTDPrimaryAgent)
+            val result = testIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequest)
+            status(result) shouldBe OK
+          }
+
+          "FS enabled with newly added income source and obligations view model with an overall annual chosen reporting method" in {
+
+            val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
+            val taxYearStartDate = LocalDate.of(2023, 4, 6)
+
+            val testLatencyDetails =
+              LatencyDetails(
+                latencyEndDate = LocalDate.of(year2019, 1, 1),
+                taxYear1 = year2018.toString,
+                latencyIndicator1 = "A",
+                taxYear2 = year2019.toString,
+                latencyIndicator2 = "A"
+              )
+
+            disableAllSwitches()
+            enable(IncomeSourcesFs)
+            setupMockSuccess(MTDPrimaryAgent)
+
+            when(
+              mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+              .thenReturn(Future.successful(businessIncome))
+
+            when(mockIncomeSourceDetailsService.getIncomeSource(incomeSourceType = any(), incomeSourceId = any(), incomeSourceDetailsModel = any()))
+              .thenReturn(
+                Some(IncomeSourceFromUser(startDate = LocalDate.parse("2022-01-01"), businessName = Some("Business Name")))
+              )
+
+            when(mockIncomeSourceDetailsService.getLatencyDetailsFromUser(incomeSourceType = any(), incomeSourceDetailsModel = any()))
+              .thenReturn(Some(testLatencyDetails))
+
+            when(mockDateService.getCurrentTaxYearStart)
+              .thenReturn(taxYearStartDate)
+
+            when(mockDateService.getCurrentDate)
+              .thenReturn(LocalDate.of(2024, 2, 6))
+
+            when(mockDateService.getAccountingPeriodEndDate(any()))
+              .thenReturn(LocalDate.of(2024, 4, 5))
+
+            when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any()))
+              .thenReturn(Future(viewModel))
+
+            when(mockNextUpdatesService.getOpenObligations()(any(), any())).
+              thenReturn(Future(testObligationsModel))
+
+            when(mockSessionService.setMongoData(any()))
+              .thenReturn(Future(true))
+
+            when(mockSessionService.getMongo(any())(any(), any()))
+              .thenReturn(
+                Future(
+                  Right(Some(
+                    notCompletedUIJourneySessionData(journeyType = journeyType)
+                      .copy(addIncomeSourceData =
+                        notCompletedUIJourneySessionData(journeyType = journeyType)
+                          .addIncomeSourceData.map(data => data.copy(reportingMethodTaxYear1 = Some("A"), reportingMethodTaxYear2 = Some("A"))
+                          )
+                      )
+                  ))
+                )
+              )
+
+            val fakeRequest = fakeGetRequestBasedOnMTDUserType(MTDPrimaryAgent)
+            val result = testIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequest)
+            status(result) shouldBe OK
+          }
+
+          "FS enabled with newly added income source and obligations view model with an overall quarterly chosen reporting method" in {
+
+            val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
+            val taxYearStartDate = LocalDate.of(2023, 4, 6)
+
+            val testLatencyDetails =
+              LatencyDetails(
+                latencyEndDate = LocalDate.of(year2019, 1, 1),
+                taxYear1 = year2018.toString,
+                latencyIndicator1 = "Q",
+                taxYear2 = year2019.toString,
+                latencyIndicator2 = "Q"
+              )
+
+            disableAllSwitches()
+            enable(IncomeSourcesFs)
+            setupMockSuccess(MTDPrimaryAgent)
+
+            when(
+              mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+              .thenReturn(Future.successful(businessIncome))
+
+            when(mockIncomeSourceDetailsService.getIncomeSource(incomeSourceType = any(), incomeSourceId = any(), incomeSourceDetailsModel = any()))
+              .thenReturn(
+                Some(IncomeSourceFromUser(startDate = LocalDate.parse("2022-01-01"), businessName = Some("Business Name")))
+              )
+
+            when(mockIncomeSourceDetailsService.getLatencyDetailsFromUser(incomeSourceType = any(), incomeSourceDetailsModel = any()))
+              .thenReturn(Some(testLatencyDetails))
+
+            when(mockDateService.getCurrentTaxYearStart)
+              .thenReturn(taxYearStartDate)
+
+            when(mockDateService.getCurrentDate)
+              .thenReturn(LocalDate.of(2024, 2, 6))
+
+            when(mockDateService.getAccountingPeriodEndDate(any()))
+              .thenReturn(LocalDate.of(2024, 4, 5))
+
+            when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any()))
+              .thenReturn(Future(viewModel))
+
+            when(mockNextUpdatesService.getOpenObligations()(any(), any())).
+              thenReturn(Future(testObligationsModel))
+
+            when(mockSessionService.setMongoData(any()))
+              .thenReturn(Future(true))
+
+            when(mockSessionService.getMongo(any())(any(), any()))
+              .thenReturn(
+                Future(
+                  Right(Some(
+                    notCompletedUIJourneySessionData(journeyType = journeyType)
+                      .copy(addIncomeSourceData =
+                        notCompletedUIJourneySessionData(journeyType = journeyType)
+                          .addIncomeSourceData.map(data => data.copy(reportingMethodTaxYear1 = Some("Q"), reportingMethodTaxYear2 = Some("Q"))
+                          )
+                      )
+                  ))
+                )
+              )
+
+            val fakeRequest = fakeGetRequestBasedOnMTDUserType(MTDPrimaryAgent)
+            val result = testIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequest)
+            status(result) shouldBe OK
+          }
+
+          "FS enabled with newly added income source and obligations view model with an overall hybrid chosen reporting method" in {
+
+            val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
+            val taxYearStartDate = LocalDate.of(2023, 4, 6)
+
+            val testLatencyDetails =
+              LatencyDetails(
+                latencyEndDate = LocalDate.of(year2019, 1, 1),
+                taxYear1 = year2018.toString,
+                latencyIndicator1 = "A",
+                taxYear2 = year2019.toString,
+                latencyIndicator2 = "Q"
+              )
+
+            disableAllSwitches()
+            enable(IncomeSourcesFs)
+            setupMockSuccess(MTDPrimaryAgent)
+
+            when(
+              mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+              .thenReturn(Future.successful(businessIncome))
+
+            when(mockIncomeSourceDetailsService.getIncomeSource(incomeSourceType = any(), incomeSourceId = any(), incomeSourceDetailsModel = any()))
+              .thenReturn(
+                Some(IncomeSourceFromUser(startDate = LocalDate.parse("2022-01-01"), businessName = Some("Business Name")))
+              )
+
+            when(mockIncomeSourceDetailsService.getLatencyDetailsFromUser(incomeSourceType = any(), incomeSourceDetailsModel = any()))
+              .thenReturn(Some(testLatencyDetails))
+
+            when(mockDateService.getCurrentTaxYearStart)
+              .thenReturn(taxYearStartDate)
+
+            when(mockDateService.getCurrentDate)
+              .thenReturn(LocalDate.of(2024, 2, 6))
+
+            when(mockDateService.getAccountingPeriodEndDate(any()))
+              .thenReturn(LocalDate.of(2024, 4, 5))
+
+            when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any()))
+              .thenReturn(Future(viewModel))
+
+            when(mockNextUpdatesService.getOpenObligations()(any(), any())).
+              thenReturn(Future(testObligationsModel))
+
+            when(mockSessionService.setMongoData(any()))
+              .thenReturn(Future(true))
+
+            when(mockSessionService.getMongo(any())(any(), any()))
+              .thenReturn(
+                Future(
+                  Right(Some(
+                    notCompletedUIJourneySessionData(journeyType = journeyType)
+                      .copy(addIncomeSourceData =
+                        notCompletedUIJourneySessionData(journeyType = journeyType)
+                          .addIncomeSourceData.map(data => data.copy(reportingMethodTaxYear1 = Some("A"), reportingMethodTaxYear2 = Some("Q"))
+                          )
+                      )
+                  ))
+                )
+              )
+
+            val fakeRequest = fakeGetRequestBasedOnMTDUserType(MTDPrimaryAgent)
+            val result = testIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequest)
+            status(result) shouldBe OK
+          }
+        }
+      }
+
+      s"the user is authenticated as a MTDSupportingAgent - $incomeSourceType" should {
+
+        "render the income source added page" when {
+
+          "FS enabled with newly added income source and obligations view model without choosing reporting methods" in {
+
+            val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
+            val taxYearStartDate = LocalDate.of(2023, 4, 6)
+
+            val testLatencyDetails =
+              LatencyDetails(
+                latencyEndDate = LocalDate.of(year2019, 1, 1),
+                taxYear1 = year2018.toString,
+                latencyIndicator1 = "A",
+                taxYear2 = year2019.toString,
+                latencyIndicator2 = "Q"
+              )
+
+            disableAllSwitches()
+            enable(IncomeSourcesFs)
+            setupMockSuccess(MTDSupportingAgent)
+
+            when(
+              mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+              .thenReturn(Future.successful(businessIncome))
+
+            when(mockIncomeSourceDetailsService.getIncomeSource(incomeSourceType = any(), incomeSourceId = any(), incomeSourceDetailsModel = any()))
+              .thenReturn(
+                Some(IncomeSourceFromUser(startDate = LocalDate.parse("2022-01-01"), businessName = Some("Business Name")))
+              )
+
+            when(mockIncomeSourceDetailsService.getLatencyDetailsFromUser(incomeSourceType = any(), incomeSourceDetailsModel = any()))
+              .thenReturn(Some(testLatencyDetails))
+
+            when(mockDateService.getCurrentTaxYearStart)
+              .thenReturn(taxYearStartDate)
+
+            when(mockDateService.getCurrentDate)
+              .thenReturn(LocalDate.of(2024, 2, 6))
+
+            when(mockDateService.getAccountingPeriodEndDate(any()))
+              .thenReturn(LocalDate.of(2024, 4, 5))
+
+            when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any()))
+              .thenReturn(Future(viewModel))
+
+            when(mockNextUpdatesService.getOpenObligations()(any(), any())).
+              thenReturn(Future(testObligationsModel))
+
+            when(mockSessionService.setMongoData(any()))
+              .thenReturn(Future(true))
+
+            when(mockSessionService.getMongo(any())(any(), any()))
+              .thenReturn(
+                Future(
+                  Right(Some(
+                    notCompletedUIJourneySessionData(journeyType = journeyType)
+                      .copy(addIncomeSourceData =
+                        notCompletedUIJourneySessionData(journeyType = journeyType)
+                          .addIncomeSourceData.map(data => data.copy(reportingMethodTaxYear1 = None, reportingMethodTaxYear2 = None)
+                          )
+                      )
+                  ))
+                )
+              )
+
+            val fakeRequest = fakeGetRequestBasedOnMTDUserType(MTDSupportingAgent)
+            val result = testIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequest)
+            status(result) shouldBe OK
+          }
+
+          "FS enabled with newly added income source and obligations view model with an overall annual chosen reporting method" in {
+
+            val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
+            val taxYearStartDate = LocalDate.of(2023, 4, 6)
+
+            val testLatencyDetails =
+              LatencyDetails(
+                latencyEndDate = LocalDate.of(year2019, 1, 1),
+                taxYear1 = year2018.toString,
+                latencyIndicator1 = "A",
+                taxYear2 = year2019.toString,
+                latencyIndicator2 = "A"
+              )
+
+            disableAllSwitches()
+            enable(IncomeSourcesFs)
+            setupMockSuccess(MTDSupportingAgent)
+
+            when(
+              mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+              .thenReturn(Future.successful(businessIncome))
+
+            when(mockIncomeSourceDetailsService.getIncomeSource(incomeSourceType = any(), incomeSourceId = any(), incomeSourceDetailsModel = any()))
+              .thenReturn(
+                Some(IncomeSourceFromUser(startDate = LocalDate.parse("2022-01-01"), businessName = Some("Business Name")))
+              )
+
+            when(mockIncomeSourceDetailsService.getLatencyDetailsFromUser(incomeSourceType = any(), incomeSourceDetailsModel = any()))
+              .thenReturn(Some(testLatencyDetails))
+
+            when(mockDateService.getCurrentTaxYearStart)
+              .thenReturn(taxYearStartDate)
+
+            when(mockDateService.getCurrentDate)
+              .thenReturn(LocalDate.of(2024, 2, 6))
+
+            when(mockDateService.getAccountingPeriodEndDate(any()))
+              .thenReturn(LocalDate.of(2024, 4, 5))
+
+            when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any()))
+              .thenReturn(Future(viewModel))
+
+            when(mockNextUpdatesService.getOpenObligations()(any(), any())).
+              thenReturn(Future(testObligationsModel))
+
+            when(mockSessionService.setMongoData(any()))
+              .thenReturn(Future(true))
+
+            when(mockSessionService.getMongo(any())(any(), any()))
+              .thenReturn(
+                Future(
+                  Right(Some(
+                    notCompletedUIJourneySessionData(journeyType = journeyType)
+                      .copy(addIncomeSourceData =
+                        notCompletedUIJourneySessionData(journeyType = journeyType)
+                          .addIncomeSourceData.map(data => data.copy(reportingMethodTaxYear1 = Some("A"), reportingMethodTaxYear2 = Some("A"))
+                          )
+                      )
+                  ))
+                )
+              )
+
+            val fakeRequest = fakeGetRequestBasedOnMTDUserType(MTDSupportingAgent)
+            val result = testIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequest)
+            status(result) shouldBe OK
+          }
+
+          "FS enabled with newly added income source and obligations view model with an overall quarterly chosen reporting method" in {
+
+            val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
+            val taxYearStartDate = LocalDate.of(2023, 4, 6)
+
+            val testLatencyDetails =
+              LatencyDetails(
+                latencyEndDate = LocalDate.of(year2019, 1, 1),
+                taxYear1 = year2018.toString,
+                latencyIndicator1 = "Q",
+                taxYear2 = year2019.toString,
+                latencyIndicator2 = "Q"
+              )
+
+            disableAllSwitches()
+            enable(IncomeSourcesFs)
+            setupMockSuccess(MTDSupportingAgent)
+
+            when(
+              mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+              .thenReturn(Future.successful(businessIncome))
+
+            when(mockIncomeSourceDetailsService.getIncomeSource(incomeSourceType = any(), incomeSourceId = any(), incomeSourceDetailsModel = any()))
+              .thenReturn(
+                Some(IncomeSourceFromUser(startDate = LocalDate.parse("2022-01-01"), businessName = Some("Business Name")))
+              )
+
+            when(mockIncomeSourceDetailsService.getLatencyDetailsFromUser(incomeSourceType = any(), incomeSourceDetailsModel = any()))
+              .thenReturn(Some(testLatencyDetails))
+
+            when(mockDateService.getCurrentTaxYearStart)
+              .thenReturn(taxYearStartDate)
+
+            when(mockDateService.getCurrentDate)
+              .thenReturn(LocalDate.of(2024, 2, 6))
+
+            when(mockDateService.getAccountingPeriodEndDate(any()))
+              .thenReturn(LocalDate.of(2024, 4, 5))
+
+            when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any()))
+              .thenReturn(Future(viewModel))
+
+            when(mockNextUpdatesService.getOpenObligations()(any(), any())).
+              thenReturn(Future(testObligationsModel))
+
+            when(mockSessionService.setMongoData(any()))
+              .thenReturn(Future(true))
+
+            when(mockSessionService.getMongo(any())(any(), any()))
+              .thenReturn(
+                Future(
+                  Right(Some(
+                    notCompletedUIJourneySessionData(journeyType = journeyType)
+                      .copy(addIncomeSourceData =
+                        notCompletedUIJourneySessionData(journeyType = journeyType)
+                          .addIncomeSourceData.map(data => data.copy(reportingMethodTaxYear1 = Some("Q"), reportingMethodTaxYear2 = Some("Q"))
+                          )
+                      )
+                  ))
+                )
+              )
+
+            val fakeRequest = fakeGetRequestBasedOnMTDUserType(MTDSupportingAgent)
+            val result = testIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequest)
+            status(result) shouldBe OK
+          }
+
+          "FS enabled with newly added income source and obligations view model with an overall hybrid chosen reporting method" in {
+
+            val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
+            val taxYearStartDate = LocalDate.of(2023, 4, 6)
+
+            val testLatencyDetails =
+              LatencyDetails(
+                latencyEndDate = LocalDate.of(year2019, 1, 1),
+                taxYear1 = year2018.toString,
+                latencyIndicator1 = "A",
+                taxYear2 = year2019.toString,
+                latencyIndicator2 = "Q"
+              )
+
+            disableAllSwitches()
+            enable(IncomeSourcesFs)
+            setupMockSuccess(MTDSupportingAgent)
+
+            when(
+              mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+              .thenReturn(Future.successful(businessIncome))
+
+            when(mockIncomeSourceDetailsService.getIncomeSource(incomeSourceType = any(), incomeSourceId = any(), incomeSourceDetailsModel = any()))
+              .thenReturn(
+                Some(IncomeSourceFromUser(startDate = LocalDate.parse("2022-01-01"), businessName = Some("Business Name")))
+              )
+
+            when(mockIncomeSourceDetailsService.getLatencyDetailsFromUser(incomeSourceType = any(), incomeSourceDetailsModel = any()))
+              .thenReturn(Some(testLatencyDetails))
+
+            when(mockDateService.getCurrentTaxYearStart)
+              .thenReturn(taxYearStartDate)
+
+            when(mockDateService.getCurrentDate)
+              .thenReturn(LocalDate.of(2024, 2, 6))
+
+            when(mockDateService.getAccountingPeriodEndDate(any()))
+              .thenReturn(LocalDate.of(2024, 4, 5))
+
+            when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any()))
+              .thenReturn(Future(viewModel))
+
+            when(mockNextUpdatesService.getOpenObligations()(any(), any())).
+              thenReturn(Future(testObligationsModel))
+
+            when(mockSessionService.setMongoData(any()))
+              .thenReturn(Future(true))
+
+            when(mockSessionService.getMongo(any())(any(), any()))
+              .thenReturn(
+                Future(
+                  Right(Some(
+                    notCompletedUIJourneySessionData(journeyType = journeyType)
+                      .copy(addIncomeSourceData =
+                        notCompletedUIJourneySessionData(journeyType = journeyType)
+                          .addIncomeSourceData.map(data => data.copy(reportingMethodTaxYear1 = Some("A"), reportingMethodTaxYear2 = Some("Q"))
+                          )
+                      )
+                  ))
+                )
+              )
+
+            val fakeRequest = fakeGetRequestBasedOnMTDUserType(MTDSupportingAgent)
+            val result = testIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequest)
+            status(result) shouldBe OK
+          }
+        }
+      }
+    }
   }
 }
