@@ -33,6 +33,8 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
+case class IncomeSourceFromUser(startDate: LocalDate, businessName: Option[String])
+
 class IncomeSourceDetailsService @Inject()(
                                             businessDetailsConnector: BusinessDetailsConnector
                                           )(
@@ -228,7 +230,7 @@ class IncomeSourceDetailsService @Inject()(
   def getIncomeSourceFromUser(
                                incomeSourceType: IncomeSourceType,
                                incomeSourceId: IncomeSourceId
-                             )(implicit user: MtdItUser[_]): Option[(LocalDate, Option[String])] = {
+                             )(implicit user: MtdItUser[_]): Option[IncomeSourceFromUser] = {
     incomeSourceType match {
       case SelfEmployment =>
         user.incomeSources.businesses
@@ -237,23 +239,25 @@ class IncomeSourceDetailsService @Inject()(
             for {
               businessName <- addedBusiness.tradingName
               startDate <- addedBusiness.tradingStartDate
-            } yield (startDate, Some(businessName))
+            } yield IncomeSourceFromUser(startDate, Some(businessName))
           }
       case UkProperty =>
         for {
-          newlyAddedProperty <- user.incomeSources.properties
-            .find(incomeSource =>
+          newlyAddedProperty <-
+            user.incomeSources.properties.find(incomeSource =>
               mkIncomeSourceId(incomeSource.incomeSourceId) == incomeSourceId && incomeSource.isUkProperty
             )
           startDate <- newlyAddedProperty.tradingStartDate
-        } yield (startDate, None)
+        } yield IncomeSourceFromUser(startDate, None)
       case ForeignProperty =>
         for {
           newlyAddedProperty <- user.incomeSources.properties.find(incomeSource =>
             mkIncomeSourceId(incomeSource.incomeSourceId) == incomeSourceId && incomeSource.isForeignProperty
           )
           startDate <- newlyAddedProperty.tradingStartDate
-        } yield (startDate, None)
+        } yield IncomeSourceFromUser(startDate, None)
+      case _ =>
+        None
     }
   }
 

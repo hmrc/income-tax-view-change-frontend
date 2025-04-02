@@ -27,7 +27,7 @@ import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService, SessionService}
+import services.{DateServiceInterface, IncomeSourceDetailsService, IncomeSourceFromUser, NextUpdatesService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyChecker
 import views.html.incomeSources.add.IncomeSourceAddedObligations
@@ -62,15 +62,15 @@ class IncomeSourceAddedController @Inject()(val authActions: AuthActions,
                            (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
       (for {
-        incomeSourceIdModel <- sessionData.addIncomeSourceData.flatMap(_.incomeSourceId.map(IncomeSourceId(_)))
-        (startDate, businessName) <- incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceIdModel)
+        incomeSourceIdModel: IncomeSourceId <- sessionData.addIncomeSourceData.flatMap(_.incomeSourceId.map(IncomeSourceId(_)))
+        incomeSourceFromUser: IncomeSourceFromUser <- incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceIdModel)
       } yield {
         handleSuccess(
           isAgent = isAgent,
-          businessName = businessName,
+          businessName = incomeSourceFromUser.businessName,
           incomeSourceType = incomeSourceType,
           incomeSourceId = incomeSourceIdModel,
-          showPreviousTaxYears = startDate.isBefore(dateService.getCurrentTaxYearStart)
+          showPreviousTaxYears = incomeSourceFromUser.startDate.isBefore(dateService.getCurrentTaxYearStart)
         )
       }) getOrElse {
         Logger("application").error(

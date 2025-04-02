@@ -32,7 +32,7 @@ import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.Result
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.{DateService, NextUpdatesService, SessionService}
+import services.{DateService, IncomeSourceFromUser, NextUpdatesService, SessionService}
 import testConstants.BaseTestConstants.{testNino, testSelfEmploymentId, testSessionId}
 import testConstants.BusinessDetailsTestConstants.testIncomeSource
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, notCompletedUIJourneySessionData}
@@ -80,24 +80,24 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions
 
   def mockSelfEmployment(): Unit = {
     when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), mkIncomeSourceId(any()))(any())).thenReturn(
-      Some((LocalDate.parse("2022-01-01"), Some("Business Name")))
+      Some(IncomeSourceFromUser(LocalDate.parse("2022-01-01"), Some("Business Name")))
     )
   }
 
   def mockProperty(): Unit = {
     when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), mkIncomeSourceId(any()))(any())).thenReturn(
-      Some((LocalDate.parse("2022-01-01"), None))
+      Some(IncomeSourceFromUser(LocalDate.parse("2022-01-01"), None))
     )
   }
 
   def mockISDS(incomeSourceType: IncomeSourceType): Unit = {
     if (incomeSourceType == SelfEmployment)
       when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), mkIncomeSourceId(any()))(any())).thenReturn(
-        Some((LocalDate.parse("2022-01-01"), Some("Business Name")))
+        Some(IncomeSourceFromUser(LocalDate.parse("2022-01-01"), Some("Business Name")))
       )
     else
       when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), mkIncomeSourceId(any()))(any())).thenReturn(
-        Some((LocalDate.parse("2022-01-01"), None))
+        Some(IncomeSourceFromUser(LocalDate.parse("2022-01-01"), None))
       )
   }
 

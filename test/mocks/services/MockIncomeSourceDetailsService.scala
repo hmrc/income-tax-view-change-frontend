@@ -17,7 +17,7 @@
 package mocks.services
 
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
-import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import services.IncomeSourceDetailsService
@@ -39,7 +39,7 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach {
 
   def setupMockGetIncomeSourceDetails()(sources: IncomeSourceDetailsResponse): Unit = {
     when(
-      mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
       .thenReturn(Future.successful(sources))
   }
 
@@ -52,7 +52,7 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach {
   )
 
   def mockSingleBusinessIncomeSourceNoLatency(userMigrated: Boolean = true): Unit = setupMockGetIncomeSourceDetails()(
-      singleBusinessIncomeNoLatency
+    singleBusinessIncomeNoLatency
   )
 
   def mockSingleBusinessIncomeSourceError(): Unit = setupMockGetIncomeSourceDetails()(
@@ -62,6 +62,7 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach {
   def ukPlusForeignPropertyWithSoleTraderIncomeSource(): Unit = setupMockGetIncomeSourceDetails()(singleBusinessIncomeWithCurrentYear)
 
   def mockUkPlusForeignPlusSoleTraderNoLatency(): Unit = setupMockGetIncomeSourceDetails()(ukPlusForeignPropertyAndSoleTraderNoLatency)
+
   def mockUkPlusForeignPlusSoleTraderWithLatency(): Unit = setupMockGetIncomeSourceDetails()(ukPlusForeignPropertyAndSoleTraderWithLatency)
 
   def mockUkPlusForeignPlusSoleTrader2023WithLatencyAndUnknowns(): Unit = setupMockGetIncomeSourceDetails()(ukPlusForeignPropertyAndSoleTrader2023WithUnknowns)
