@@ -17,12 +17,8 @@
 package forms.incomeSources.add
 
 import forms.mappings.Mappings
-import forms.models.DateFormElement
-import forms.validation.CustomConstraints
 import implicits.ImplicitDateFormatter
 import play.api.data.Form
-import play.api.data.Forms.{default, mapping, text, tuple}
-import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import play.api.i18n.Messages
 import services.DateServiceInterface
 
@@ -43,10 +39,10 @@ class AddIncomeSourceStartDateFormProvider extends Mappings {
 
     Form(
       "value" -> localDate(
-        invalidKey     = s"$dateFormErrorPrefix.invalid",
+        invalidKey = s"$dateFormErrorPrefix.invalid",
         allRequiredKey = s"$messagesPrefix.required.all",
         twoRequiredKey = s"$dateFormErrorPrefix.required.two",
-        requiredKey    = s"$dateFormErrorPrefix.required"
+        requiredKey = s"$dateFormErrorPrefix.required"
       ).verifying(
         maxDate(maximumAllowableDate, invalidFutureDateErrorMessage),
         fourDigitValidYear(invalidMessage)

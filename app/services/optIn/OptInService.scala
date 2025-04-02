@@ -20,6 +20,7 @@ import audit.AuditingService
 import audit.models.OptInAuditModel
 import auth.MtdItUser
 import cats.data.OptionT
+import cats.implicits._
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
 import controllers.routes
@@ -35,10 +36,9 @@ import services.optIn.core.{OptInInitialState, OptInProposition}
 import services.{DateServiceInterface, ITSAStatusService}
 import uk.gov.hmrc.http.HeaderCarrier
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
 class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
                              itsaStatusService: ITSAStatusService,
                              dateService: DateServiceInterface,
@@ -58,9 +58,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
                               hc: HeaderCarrier,
                               ec: ExecutionContext): Future[Seq[TaxYear]] = fetchOptInProposition().map(_.availableOptInYears.map(_.taxYear))
 
-  def setupSessionData()(implicit user: MtdItUser[_],
-                         hc: HeaderCarrier,
-                         ec: ExecutionContext): Future[Boolean] = {
+  def setupSessionData()(implicit hc: HeaderCarrier): Future[Boolean] = {
     repository.set(
       UIJourneySessionData(hc.sessionId.get.value,
         Opt(OptInJourney).toString,
@@ -94,13 +92,14 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
     }
   }
 
-  private def fetchSavedOptInSessionData()(implicit user: MtdItUser[_],
-                                           hc: HeaderCarrier,
-                                           ec: ExecutionContext): Future[Option[OptInSessionData]] = {
+  private def fetchSavedOptInSessionData()
+                                        (implicit user: MtdItUser[_],
+                                         hc: HeaderCarrier,
+                                         ec: ExecutionContext): Future[Option[OptInSessionData]] = {
 
     val savedOptInSessionData = for {
       sessionData <- OptionT(fetchExistingUIJourneySessionDataOrInit())
-      optInSessionData <- OptionT.fromOption[Future](sessionData.optInSessionData)
+      optInSessionData <- OptionT(Future(sessionData.optInSessionData))
     } yield optInSessionData
 
     savedOptInSessionData.value
@@ -113,15 +112,15 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
     val savedOptInProposition = for {
 
       optInSessionData <- OptionT(fetchSavedOptInSessionData())
-      contextData <- OptionT.fromOption[Future](optInSessionData.optInContextData)
-      currentYearAsTaxYear <- OptionT.fromOption[Future](contextData.currentYearAsTaxYear())
+      contextData <- OptionT(Future(optInSessionData.optInContextData))
+      currentYearAsTaxYear <- OptionT(Future(contextData.currentYearAsTaxYear()))
 
       currentYearITSAStatus = stringToStatus(contextData.currentYearITSAStatus)
       nextYearITSAStatus = stringToStatus(contextData.nextYearITSAStatus)
 
       proposition = createOptInProposition(currentYearAsTaxYear,
-                                           currentYearITSAStatus,
-                                           nextYearITSAStatus)
+        currentYearITSAStatus,
+        nextYearITSAStatus)
 
     } yield proposition
 
@@ -139,8 +138,8 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
         val nextYear = currentYear.nextYear
         fetchOptInInitialState(currentYear, nextYear)
           .map(initialState => createOptInProposition(currentYear,
-                                                      initialState.currentYearItsaStatus,
-                                                      initialState.nextYearItsaStatus))
+            initialState.currentYearItsaStatus,
+            initialState.nextYearItsaStatus))
       }
     }
   }

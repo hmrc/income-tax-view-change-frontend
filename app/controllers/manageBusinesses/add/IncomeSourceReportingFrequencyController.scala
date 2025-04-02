@@ -55,10 +55,10 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
                                                          val optInService: OptInService,
                                                          val reportingFrequencyViewUtils: ReportingFrequencyViewUtils)
                                                         (implicit val appConfig: FrontendAppConfig,
-                                                      val dateService: DateService,
-                                                      mcc: MessagesControllerComponents,
-                                                      val ec: ExecutionContext
-                                                     ) extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses {
+                                                         val dateService: DateService,
+                                                         mcc: MessagesControllerComponents,
+                                                         val ec: ExecutionContext
+                                                        ) extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses {
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -79,15 +79,15 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
 
   lazy val submitUrl: (Boolean, IncomeSourceType) => Call = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
     controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.submit(isAgent, incomeSourceType)
-  
+
   def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       handleRequest(isAgent = isAgent, incomeSourceType)
   }
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
-    withNewIncomeSourcesFS{
-      withSessionData(IncomeSourceJourneyType (Add, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
+    withNewIncomeSourcesFS {
+      withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
 
         sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
           case Some(id) => handleIncomeSourceIdRetrievalSuccess(incomeSourceType, id, sessionData, isAgent = isAgent)
@@ -200,9 +200,9 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
   }
 
   private def handleValidForm(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    if(isAgent){
+    if (isAgent) {
       Future.successful(Redirect(controllers.routes.HomeController.showAgent))
-    }else{
+    } else {
       Future.successful(Redirect(controllers.routes.HomeController.show()))
     }
   }

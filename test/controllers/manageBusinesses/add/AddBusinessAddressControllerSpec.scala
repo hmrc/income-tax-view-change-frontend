@@ -37,7 +37,7 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAn
 import scala.concurrent.Future
 
 
-class AddBusinessAddressControllerSpec  extends MockAuthActions
+class AddBusinessAddressControllerSpec extends MockAuthActions
   with MockSessionService {
 
   val incomeSourceDetailsService: IncomeSourceDetailsService = mock(classOf[IncomeSourceDetailsService])
@@ -62,7 +62,7 @@ class AddBusinessAddressControllerSpec  extends MockAuthActions
 
   def verifySetMongoData(): Unit = {
     val argument: ArgumentCaptor[UIJourneySessionData] = ArgumentCaptor.forClass(classOf[UIJourneySessionData])
-    verify(mockSessionService).setMongoData(argument.capture())(any(), any())
+    verify(mockSessionService).setMongoData(argument.capture())
     argument.getValue.addIncomeSourceData shouldBe testAddIncomeSourceSessionData
   }
 

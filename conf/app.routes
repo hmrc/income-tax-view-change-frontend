@@ -13,12 +13,12 @@ GET        /language/:lang                                                contro
 #Home Controller
 GET         /                                                             controllers.HomeController.show(origin: Option[String] ?= None)
 GET         /income-tax                                                   controllers.HomeController.show(origin: Option[String] ?= None)
-GET         /agents/client-income-tax                                     controllers.HomeController.showAgent
-GET         /agents                                                       controllers.HomeController.showAgent
+GET         /agents/client-income-tax                                     controllers.HomeController.showAgent()
+GET         /agents                                                       controllers.HomeController.showAgent()
 
 #NextUpdates
 GET         /next-updates                                                 controllers.NextUpdatesController.show(origin: Option[String] ?= None)
-GET         /agents/next-updates                                          controllers.NextUpdatesController.showAgent
+GET         /agents/next-updates                                          controllers.NextUpdatesController.showAgent()
 
 #Reporting Frequency
 GET         /reporting-frequency                                          controllers.ReportingFrequencyPageController.show(isAgent:Boolean = false)
@@ -114,11 +114,11 @@ GET         /agents/payment-made-to-hmrc                                  contro
 
 #WhatYouOwe
 GET         /what-you-owe                                                 controllers.WhatYouOweController.show(origin: Option[String] ?= None)
-GET         /agents/what-your-client-owes                                 controllers.WhatYouOweController.showAgent
+GET         /agents/what-your-client-owes                                 controllers.WhatYouOweController.showAgent()
 
 #Your Self Assessment Charges
 GET         /your-self-assessment-charges                                 controllers.YourSelfAssessmentChargesController.show(origin: Option[String] ?= None)
-GET         /agents/your-self-assessment-charges                          controllers.YourSelfAssessmentChargesController.showAgent
+GET         /agents/your-self-assessment-charges                          controllers.YourSelfAssessmentChargesController.showAgent()
 
 #Charge summary
 GET         /tax-years/:taxYear/charge                                    controllers.ChargeSummaryController.show(taxYear: Int, id: String, isInterestCharge: Boolean ?= false, origin: Option[String] ?= None)
@@ -126,7 +126,7 @@ GET         /agents/tax-years/:taxYear/charge                             contro
 
 #Feedback Routes
 GET         /feedback                                                     controllers.feedback.FeedbackController.show
-GET         /agents/feedback                                              controllers.feedback.FeedbackController.showAgent
+GET         /agents/feedback                                              controllers.feedback.FeedbackController.showAgent()
 POST        /feedback                                                     controllers.feedback.FeedbackController.submit
 POST        /agents/feedback                                              controllers.feedback.FeedbackController.submitAgent
 GET         /thankyou                                                     controllers.feedback.FeedbackController.thankYou
@@ -163,13 +163,13 @@ GET         /language/:lang                                               contro
 
 #Payment history
 GET         /payment-refund-history                                       controllers.PaymentHistoryController.show(origin: Option[String] ?= None)
-GET         /agents/payment-refund-history                                controllers.PaymentHistoryController.showAgent
+GET         /agents/payment-refund-history                                controllers.PaymentHistoryController.showAgent()
 GET         /refund-status                                                controllers.PaymentHistoryController.refundStatus
 
 
 #InYear Tax
 GET         /tax-overview                                                 controllers.InYearTaxCalculationController.show(origin: Option[String] ?= None)
-GET         /agents/tax-overview                                          controllers.InYearTaxCalculationController.showAgent
+GET         /agents/tax-overview                                          controllers.InYearTaxCalculationController.showAgent()
 
 #Final Tax URLs
 GET         /:taxYear/final-tax-overview                                  controllers.FinalTaxCalculationController.show(taxYear: Int, origin: Option[String] ?= None)
