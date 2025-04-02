@@ -34,7 +34,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
   val view: IncomeSourceAddedObligationsView = app.injector.instanceOf[IncomeSourceAddedObligationsView]
 
   val validUKPropertyBusinessCall: Html = view(
-    viewModel, isAgent = false, UkProperty, None, day, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Annual
+    sources = viewModel, isAgent = false, incomeSourceType = UkProperty, businessName = None, currentDate = day, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Annual
   )
 
   val validUKPropertyBusinessAgentCall: Html = view(
@@ -52,9 +52,10 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
     viewModel, isAgent = false, SelfEmployment, testName, day, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Annual
   )
 
-  val validSoleTreaderBusinessAgentCall: Html = view(
-    viewModel, isAgent = true, SelfEmployment, testName, day, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Annual
-  )
+  val validSoleTreaderBusinessAgentCall: Html =
+    view(
+      sources = viewModel, isAgent = true, incomeSourceType = SelfEmployment, businessName = testName, currentDate = day, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Annual
+    )
 
   val validCallWithData: Html = view(
     viewModelWithAllData, isAgent = false, SelfEmployment, testName, day, isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Annual
@@ -869,7 +870,6 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
         banner.text() shouldBe h1ForeignProperty
 
-
         val subText: Option[Element] = layoutContent.select("div").eq(3)
 
         subText match {
@@ -884,7 +884,6 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
       "Business type is Sole Trader Business" in new Setup(validSoleTreaderBusinessAgentCall) {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
         banner.text() shouldBe h1SelfEmployment
-
 
         val subText: Option[Element] = layoutContent.select("div").eq(3)
 
