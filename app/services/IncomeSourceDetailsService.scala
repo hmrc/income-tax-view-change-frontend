@@ -24,16 +24,15 @@ import connectors.BusinessDetailsConnector
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
+import models.incomeSourceDetails._
 import models.incomeSourceDetails.viewmodels._
-import models.incomeSourceDetails.{AddIncomeSourceData, ChosenReportingMethod, IncomeSourceDetailsModel, IncomeSourceDetailsResponse, LatencyDetails}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-@Singleton
 class IncomeSourceDetailsService @Inject()(
                                             businessDetailsConnector: BusinessDetailsConnector
                                           )(

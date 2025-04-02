@@ -29,20 +29,22 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
-import views.html.manageBusinesses.add.IncomeSourceAddedObligations
+import views.html.manageBusinesses.add.IncomeSourceAddedObligationsView
 
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceAddedController @Inject()(authActions: AuthActions,
-                                            incomeSourceDetailsService: IncomeSourceDetailsService,
-                                            obligationsView: IncomeSourceAddedObligations,
-                                            nextUpdatesService: NextUpdatesService,
-                                            val sessionService: SessionService,
-                                            itvcErrorHandler: ItvcErrorHandler,
-                                            itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                            dateService: DateServiceInterface)
+class IncomeSourceAddedController @Inject()(
+                                             authActions: AuthActions,
+                                             incomeSourceDetailsService: IncomeSourceDetailsService,
+                                             view: IncomeSourceAddedObligationsView,
+                                             nextUpdatesService: NextUpdatesService,
+                                             val sessionService: SessionService,
+                                             itvcErrorHandler: ItvcErrorHandler,
+                                             itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                             dateService: DateServiceInterface
+                                           )
                                            (implicit val appConfig: FrontendAppConfig, mcc: MessagesControllerComponents, val ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses {
 
@@ -127,7 +129,7 @@ class IncomeSourceAddedController @Inject()(authActions: AuthActions,
           val taxYearEndOfBusinessStartDate = dateService.getAccountingPeriodEndDate(dateStarted)
           val isBusinessHistoric = taxYearEndOfBusinessStartDate.getYear < viewModel.currentTaxYear - 1
           Ok(
-            obligationsView(
+            view(
               sources = viewModel,
               isAgent = isAgent,
               businessName = businessName,

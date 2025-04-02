@@ -29,7 +29,6 @@ import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.verify
 import play.api
 import play.api.Application
@@ -113,14 +112,14 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
 
   def verifyMongoDatesRemoved(): Unit = {
     val argument: ArgumentCaptor[UIJourneySessionData] = ArgumentCaptor.forClass(classOf[UIJourneySessionData])
-    verify(mockSessionService).setMongoData(argument.capture())(any(), any())
+    verify(mockSessionService).setMongoData(argument.capture())
 
     argument.getValue.addIncomeSourceData shouldBe Some(addIncomeSourceDataEmpty)
   }
 
   def verifySetMongoData(incomeSourceType: IncomeSourceType): Unit = {
     val argument: ArgumentCaptor[UIJourneySessionData] = ArgumentCaptor.forClass(classOf[UIJourneySessionData])
-    verify(mockSessionService).setMongoData(argument.capture())(any(), any())
+    verify(mockSessionService).setMongoData(argument.capture())
 
     if (incomeSourceType.equals(SelfEmployment)) {
       argument.getValue.addIncomeSourceData shouldBe Some(addIncomeSourceDataSE)
@@ -144,7 +143,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
                 mockNoIncomeSources()
                 setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
 
-                if(isChange) {
+                if (isChange) {
                   setupMockGetMongo(Right(Some(sessionDataWithDate(journeyType(incomeSourceType)))))
                 } else {
                   setupMockGetMongo(Right(Some(dataWithAccSD(incomeSourceType))))
@@ -246,7 +245,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
 
               }
             }
-            if(!isChange) {
+            if (!isChange) {
               s"return ${Status.SEE_OTHER}: redirect to $incomeSourceType accounting method page, isAgent = $isAgent" when {
                 "Yes is submitted with the form with a valid session" in {
                   setupMockSuccess(mtdRole)
@@ -263,7 +262,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
                     ))
 
                   status(result) shouldBe SEE_OTHER
-             //     if (incomeSourceType == SelfEmployment) verifySetMongoData(SelfEmployment)
+                  //     if (incomeSourceType == SelfEmployment) verifySetMongoData(SelfEmployment)
                   redirectLocation(result) shouldBe Some({
                     incomeSourceType match {
                       case SelfEmployment if !isAgent => controllers.incomeSources.add.routes.AddBusinessTradeController.show(isChange = false)
@@ -290,7 +289,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
                     ))
 
                   status(result) shouldBe SEE_OTHER
-           //       if (incomeSourceType == SelfEmployment) verifySetMongoData(SelfEmployment)
+                  //       if (incomeSourceType == SelfEmployment) verifySetMongoData(SelfEmployment)
                   redirectLocation(result) shouldBe Some({
                     if (isAgent) routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType) else routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
                   }.url)
@@ -325,8 +324,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
 
                 val result = action(fakeRequest
                   .withFormUrlEncodedBody(
-                      AddIncomeSourceStartDateCheckForm.response -> invalidResponse
-                    ))
+                    AddIncomeSourceStartDateCheckForm.response -> invalidResponse
+                  ))
 
                 status(result) shouldBe BAD_REQUEST
 
