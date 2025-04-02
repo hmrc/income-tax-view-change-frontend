@@ -418,7 +418,7 @@ class V2IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpd
               )
 
             val fakeRequest = fakeGetRequestBasedOnMTDUserType(MTDIndividual)
-            val result = testIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequest)
+            val result = testIncomeSourceAddedController.show(incomeSourceType)(fakeRequest)
             status(result) shouldBe INTERNAL_SERVER_ERROR
           }
 
@@ -551,7 +551,7 @@ class V2IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpd
               )
 
             val fakeRequest = fakeGetRequestBasedOnMTDUserType(MTDIndividual)
-            val result = testIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequest)
+            val result = testIncomeSourceAddedController.show(incomeSourceType)(fakeRequest)
             status(result) shouldBe INTERNAL_SERVER_ERROR
           }
 
