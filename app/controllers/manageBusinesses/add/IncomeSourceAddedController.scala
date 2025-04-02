@@ -23,15 +23,15 @@ import enums.IncomeSourceJourney.IncomeSourceType
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.core.IncomeSourceId
 import models.incomeSourceDetails._
+import models.incomeSourceDetails.viewmodels.ObligationsViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService, SessionService}
+import services._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
 import views.html.manageBusinesses.add.IncomeSourceAddedObligationsView
 
-import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -50,12 +50,32 @@ class IncomeSourceAddedController @Inject()(
 
   val logger: Logger = Logger("application")
 
+  def getIncomeSourceIdFromSession(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[IncomeSourceId]] = {
+
+    sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType)).flatMap {
+      case Right(Some(sessionData)) =>
+        val incomeSourceId: Option[IncomeSourceId] = sessionData.addIncomeSourceData.flatMap(_.incomeSourceId.map(id => IncomeSourceId(id)))
+        Future(incomeSourceId)
+      case _ =>
+        Future(None)
+    }
+  }
+
+  def getIncomeSourceFromSession(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[IncomeSourceFromUser]] = {
+    for {
+      optId: Option[IncomeSourceId] <- getIncomeSourceIdFromSession(incomeSourceType)
+      incomeSource: Option[IncomeSourceFromUser] <- Future(optId.flatMap(id => incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, id)))
+    } yield {
+      incomeSource
+    }
+  }
+
   private def handleRequest(
                              isAgent: Boolean,
                              incomeSourceType: IncomeSourceType
                            )(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
 
-    val errorView = Future(errorHandler.showInternalServerError())
+    val errorView = errorHandler.showInternalServerError()
     val agentPrefix = if (isAgent) "[Agent]" else ""
 
     withIncomeSourcesFS {
@@ -63,35 +83,36 @@ class IncomeSourceAddedController @Inject()(
 
         case Right(Some(sessionData)) =>
 
-          val result: Option[Future[Result]] =
+          val result: Future[Result] = {
             for {
-              incomeSourceId: IncomeSourceId <- sessionData.addIncomeSourceData.flatMap(_.incomeSourceId.map(id => IncomeSourceId(id)))
-              (startDate: LocalDate, businessName: Option[String]) <- incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceId)
-              showPreviousTaxYears = startDate.isBefore(dateService.getCurrentTaxYearStart)
+              incomeSourceId: Option[IncomeSourceId] <- getIncomeSourceIdFromSession(incomeSourceType)
+              incomeSourceFromUser: Option[IncomeSourceFromUser] <- getIncomeSourceFromSession(incomeSourceType)
+              showPreviousTaxYears: Boolean = incomeSourceFromUser.exists(_.startDate.isBefore(dateService.getCurrentTaxYearStart))
               reportingMethod: ChosenReportingMethod = incomeSourceDetailsService.getReportingMethod(sessionData.addIncomeSourceData)
+              showView <-
+                incomeSourceId match {
+                  case Some(incomeSourceId) if reportingMethod != ChosenReportingMethod.Unknown =>
+                    handleSuccess(
+                      isAgent = isAgent,
+                      businessName = incomeSourceFromUser.flatMap(_.businessName),
+                      incomeSourceType = incomeSourceType,
+                      incomeSourceId = incomeSourceId,
+                      showPreviousTaxYears = showPreviousTaxYears,
+                      sessionData = sessionData
+                    )
+                  case _ =>
+                    Future(errorView)
+                }
+
             } yield {
-              reportingMethod match {
-                case ChosenReportingMethod.Unknown =>
-                  logger.error(s"retrieved an unknown case for chosen reporting method: $reportingMethod")
-                  errorView
-                case _ =>
-                  handleSuccess(
-                    isAgent = isAgent,
-                    businessName = businessName,
-                    incomeSourceType = incomeSourceType,
-                    incomeSourceId = incomeSourceId,
-                    showPreviousTaxYears = showPreviousTaxYears,
-                    sessionData = sessionData
-                  )
-              }
+              showView
             }
-          result.getOrElse {
-            logger.error(agentPrefix + s"could not find incomeSource for IncomeSourceType: $incomeSourceType")
-            errorView
           }
+
+          result
         case _ =>
           logger.error(agentPrefix + s"Unable to retrieve Mongo session data for $incomeSourceType")
-          errorView
+          Future(errorView)
       }
     }
   }
@@ -120,8 +141,8 @@ class IncomeSourceAddedController @Inject()(
       incomeSourceBeingAddedLatencyDetails.map(_.latencyIndicator2)
 
     for {
-      _ <- sessionService.setMongoData(uiJourneySessionData)
-      viewModel <- nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears)
+      _: Boolean <- sessionService.setMongoData(uiJourneySessionData)
+      viewModel: ObligationsViewModel <- nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears)
       dateStarted <- Future(uiJourneySessionData.addIncomeSourceData.flatMap(_.dateStarted))
     } yield {
       dateStarted match {

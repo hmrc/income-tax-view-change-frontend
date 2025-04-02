@@ -37,13 +37,15 @@ class SessionService @Inject()(
       sensitiveUIJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType) map {
         case Some(data: UIJourneySessionData) =>
           Right(Some(data))
-        case None => Right(None)
+        case None =>
+          Right(None)
       }
     else
       uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType) map {
         case Some(data: UIJourneySessionData) =>
           Right(Some(data))
-        case None => Right(None)
+        case None =>
+          Right(None)
       }
 
   }
@@ -62,7 +64,8 @@ class SessionService @Inject()(
         } catch {
           case err: ClassCastException => Left(err)
         }
-      case None => Right(None)
+      case None =>
+        Right(None)
     }
   }
 
@@ -75,7 +78,8 @@ class SessionService @Inject()(
           case Manage => getKeyFromObject[String](data.manageIncomeSourceData, key)
           case Cease => getKeyFromObject[String](data.ceaseIncomeSourceData, key)
         }
-      case None => Right(None)
+      case None =>
+        Right(None)
     }
   }
 
