@@ -376,7 +376,8 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
     val annualInset = "annual-warning-inset"
     val quarterlyInset = "quarterly-warning-inset"
     val finalDeclaration = "final-declaration"
-    val compatibleSoftwareParagraph = "submit-via-compatible-software-annual"
+    val annualCompatibleSoftwareParagraph = "submit-via-compatible-software-annual"
+    val quarterlyCompatibleSoftwareParagraph = "submit-via-compatible-software-quarterly"
   }
 
   "Income Source Added Obligations - Individual" when {
@@ -847,7 +848,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val validHistoricAnnualThenFullQuarterlyCallOneQuarterlyOverdue: Html = view(
               sources = viewModelWithAnnualYearThenFullQuarterlyYear,
               isAgent = false,
-              incomeSourceType = SelfEmployment,
+              incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayAfterFirstQuarterDeadline2024_2025,
               isBusinessHistoric = true,
@@ -866,7 +867,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val validHistoricAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue: Html = view(
               sources = viewModelWithAnnualYearThenFullQuarterlyYear,
               isAgent = false,
-              incomeSourceType = SelfEmployment,
+              incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayAfterThirdQuarterDeadline2024_2025,
               isBusinessHistoric = true,
@@ -1329,7 +1330,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             view(
               sources = viewModelWithAllData,
               isAgent = false,
-              incomeSourceType = SelfEmployment,
+              incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = day,
               isBusinessHistoric = false,
@@ -1348,7 +1349,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             view(
               sources = viewModelWithCurrentYearQuarterly,
               isAgent = false,
-              incomeSourceType = SelfEmployment,
+              incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayAfterFirstQuarterDeadline2024_2025,
               isBusinessHistoric = false,
@@ -1367,7 +1368,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             view(
               sources = viewModelWithAllData,
               isAgent = false,
-              incomeSourceType = SelfEmployment,
+              incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = day,
               isBusinessHistoric = false,
@@ -1380,83 +1381,167 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           document.getElementById("view-all-businesses-link").select("a").attr("href") shouldBe manageBusinessesUrl
         }
 
+        // TODO the links of these tests will need to change to the new entry point for the opt in/out journeys once the page is made
         s"display the correct change reporting frequency text - $incomeSourceType" when {
-          // TODO the links of these tests will need to change to the new entry point for the opt in/out journeys once the page is made
-          "it is reporting annually" in new Setup(validCurrentTaxYearAnnualCallNoOverdue) {
-            Option(document.getElementById("change-frequency")) match {
-              case Some(changeFrequency) =>
-                changeFrequency.text() shouldBe "You are set to report annually for your new business. Find out more about your reporting frequency."
-                changeFrequency.select("a").attr("href") shouldBe nextUpdatesUrl
-              case None => fail("No view or change your reporting frequency link was found")
-            }
+
+          "reporting Annually" in {
+
+            val validCurrentTaxYearAnnualCallNoOverdue: Html = view(
+              sources = viewModelWithCurrentYearAnnual,
+              isAgent = false,
+              incomeSourceType = incomeSourceType,
+              businessName = testName,
+              currentDate = dayFirstQuarter2024_2025,
+              isBusinessHistoric = false,
+              reportingMethod = ChosenReportingMethod.Annual
+            )
+
+            val document: Document = Jsoup.parse(validCurrentTaxYearAnnualCallNoOverdue.body)
+            val reportingFrequency = document.getElementById("change-frequency")
+
+            reportingFrequency.text() shouldBe "You are set to report annually for your new business. Find out more about your reporting frequency."
+            reportingFrequency.select("a").attr("href") shouldBe nextUpdatesUrl
           }
 
-          "it is reporting quarterly" in new Setup(validCurrentTaxYearQuarterlyCallNoOverdue) {
+          "reporting Quarterly" in {
+
+            val validCurrentTaxYearQuarterlyCallNoOverdue: Html =
+              view(
+                sources = viewModelWithCurrentYearQuarterly,
+                isAgent = false,
+                incomeSourceType = incomeSourceType,
+                businessName = testName,
+                currentDate = dayFirstQuarter2024_2025,
+                isBusinessHistoric = false,
+                reportingMethod = ChosenReportingMethod.Quarterly
+              )
+
+            val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallNoOverdue.body)
+
             document.getElementById("change-frequency").text() shouldBe "You can decide at any time to opt out of quarterly reporting and report annually for all your businesses on your reporting frequency page."
           }
 
-          "it has hybrid reporting" in new Setup(validAnnualThenFullQuarterlyCallNoOverdue) {
-            Option(document.getElementById("change-frequency")) match {
-              case Some(changeFrequency) =>
-                changeFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your businesses."
-                changeFrequency.select("a").attr("href") shouldBe nextUpdatesUrl
-              case None => fail("No view or change your reporting frequency link was found")
-            }
+          "reporting Hybrid" in {
+
+            val validAnnualThenFullQuarterlyCallNoOverdue: Html =
+              view(
+                sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+                isAgent = false,
+                incomeSourceType = incomeSourceType,
+                businessName = testName,
+                currentDate = dayFirstQuarter2024_2025,
+                isBusinessHistoric = false,
+                reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+              )
+
+            val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
+            val reportingFrequency = document.getElementById("change-frequency")
+
+            reportingFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your businesses."
+            reportingFrequency.select("a").attr("href") shouldBe nextUpdatesUrl
           }
 
-          "it defaults to annual reporting because the reporting methods page was skipped" in new Setup(validCurrentTaxYearDefaultAnnualCallNoOverdue) {
-            Option(document.getElementById("change-frequency")) match {
-              case Some(changeFrequency) =>
-                changeFrequency.text() shouldBe "You are set to report annually for your new business. Find out more about your reporting frequency."
-                changeFrequency.select("a").attr("href") shouldBe nextUpdatesUrl
-              case None => fail("No view or change your reporting frequency link was found")
-            }
+          "reporting methods page was skipped - defaults to Annual reporting " in {
+
+            val validCurrentTaxYearDefaultAnnualCallNoOverdue: Html = view(
+              sources = viewModelWithCurrentYearAnnual,
+              isAgent = false,
+              incomeSourceType = incomeSourceType,
+              businessName = testName,
+              currentDate = dayFirstQuarter2024_2025,
+              isBusinessHistoric = false,
+              reportingMethod = ChosenReportingMethod.DefaultAnnual
+            )
+
+            val document: Document = Jsoup.parse(validCurrentTaxYearDefaultAnnualCallNoOverdue.body)
+            val reportingFrequency = document.getElementById("change-frequency")
+
+            reportingFrequency.text() shouldBe "You are set to report annually for your new business. Find out more about your reporting frequency."
+            reportingFrequency.select("a").attr("href") shouldBe nextUpdatesUrl
           }
         }
 
         s"display the correct submit tax return / updates subheading and text - $incomeSourceType" when {
 
-          "it is reporting annually" in new Setup(validCurrentTaxYearAnnualCallNoOverdue) {
+          "reporting Annually" in {
+
+            val validCurrentTaxYearAnnualCallNoOverdue: Html = view(
+              sources = viewModelWithCurrentYearAnnual,
+              isAgent = false,
+              incomeSourceType = incomeSourceType,
+              businessName = testName,
+              currentDate = dayFirstQuarter2024_2025,
+              isBusinessHistoric = false,
+              reportingMethod = ChosenReportingMethod.Annual
+            )
+
+            val document: Document = Jsoup.parse(validCurrentTaxYearAnnualCallNoOverdue.body)
+            val layoutContent: Element = document.selectHead("#main-content")
 
             val subHeading: Element = layoutContent.getElementsByTag("h2").last()
+            val compatibleSoftwareParagraph = document.getElementById(SelectorHelper.annualCompatibleSoftwareParagraph)
+
 
             subHeading.text shouldBe submitUpdatesInSoftware
-
-            val compatibleSoftwareParagraph = document.getElementById(SelectorHelper.compatibleSoftwareParagraph)
-
             compatibleSoftwareParagraph.text() shouldBe "When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software."
+
           }
 
-          "it is reporting quarterly" in new Setup(validCurrentTaxYearQuarterlyCallNoOverdue) {
+          "reporting Quarterly" in {
+
+            val validCurrentTaxYearQuarterlyCallNoOverdue: Html =
+              view(
+                sources = viewModelWithCurrentYearQuarterly,
+                isAgent = false,
+                incomeSourceType = incomeSourceType,
+                businessName = testName,
+                currentDate = dayFirstQuarter2024_2025,
+                isBusinessHistoric = false,
+                reportingMethod = ChosenReportingMethod.Quarterly
+              )
+
+            val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallNoOverdue.body)
+            val layoutContent: Element = document.selectHead("#main-content")
+
             val subHeading: Element = layoutContent.getElementsByTag("h2").last()
+            val compatibleSoftwareParagraph = document.getElementById(SelectorHelper.quarterlyCompatibleSoftwareParagraph)
+            val compatibleSoftwareLink = compatibleSoftwareParagraph.select("a")
+
             subHeading.text shouldBe submitUpdatesInSoftware
 
-            Option(document.getElementById("submit-via-compatible-software")) match {
-              case Some(upcomingDeadlineMessage) =>
-                upcomingDeadlineMessage.text() shouldBe "For any tax year you are reporting quarterly, you will need software compatible with Making Tax Digital for Income Tax (opens in new tab)."
-                upcomingDeadlineMessage.select("a").text() shouldBe "software compatible with Making Tax Digital for Income Tax (opens in new tab)."
-                upcomingDeadlineMessage.select("a").attr("href") shouldBe submitSoftwareUrl
-              case _ => fail("No submit text was found.")
-            }
+            compatibleSoftwareParagraph.text() shouldBe "For any tax year you are reporting quarterly, you will need software compatible with Making Tax Digital for Income Tax (opens in new tab)."
+            compatibleSoftwareLink.text() shouldBe "software compatible with Making Tax Digital for Income Tax (opens in new tab)."
+            compatibleSoftwareLink.attr("href") shouldBe submitSoftwareUrl
           }
 
-          "it has hybrid reporting" in new Setup(validAnnualThenFullQuarterlyCallNoOverdue) {
+          "reporting Hybrid" in {
+
+            val validAnnualThenFullQuarterlyCallNoOverdue: Html = view(
+              sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+              isAgent = false,
+              incomeSourceType = incomeSourceType,
+              businessName = testName,
+              currentDate = dayFirstQuarter2024_2025,
+              isBusinessHistoric = false,
+              reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+            )
+            val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
+            val layoutContent: Element = document.selectHead("#main-content")
+
             val subHeading: Element = layoutContent.getElementsByTag("h2").last()
+
+            val annualCompatibleSoftwareParagraph = document.getElementById(SelectorHelper.annualCompatibleSoftwareParagraph)
+
+            val quarterlyCompatibleSoftwareParagraph = document.getElementById(SelectorHelper.quarterlyCompatibleSoftwareParagraph)
+            val quarterlyCompatibleSoftwareLink = quarterlyCompatibleSoftwareParagraph.select("a")
+
             subHeading.text shouldBe submitUpdatesInSoftware
 
-            Option(document.getElementById("submit-via-compatible-software")) match {
-              case Some(upcomingDeadlineMessage) =>
-                upcomingDeadlineMessage.text() shouldBe "For any tax year you are reporting quarterly, you will need software compatible with Making Tax Digital for Income Tax (opens in new tab)."
-                upcomingDeadlineMessage.select("a").text() shouldBe "software compatible with Making Tax Digital for Income Tax (opens in new tab)."
-                upcomingDeadlineMessage.select("a").attr("href") shouldBe submitSoftwareUrl
-              case _ => fail("No submit text was found.")
-            }
+            quarterlyCompatibleSoftwareParagraph.text() shouldBe "For any tax year you are reporting quarterly, you will need software compatible with Making Tax Digital for Income Tax (opens in new tab)."
+            quarterlyCompatibleSoftwareLink.text() shouldBe "software compatible with Making Tax Digital for Income Tax (opens in new tab)."
+            quarterlyCompatibleSoftwareLink.attr("href") shouldBe submitSoftwareUrl
 
-            Option(document.getElementById(SelectorHelper.compatibleSoftwareParagraph)) match {
-              case Some(upcomingDeadlineMessage) =>
-                upcomingDeadlineMessage.text() shouldBe "When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software."
-              case _ => fail("No submit text was found.")
-            }
+            annualCompatibleSoftwareParagraph.text() shouldBe "When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software."
           }
         }
       }
