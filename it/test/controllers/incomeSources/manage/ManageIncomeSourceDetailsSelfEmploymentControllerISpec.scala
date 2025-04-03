@@ -24,6 +24,7 @@ import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.incomeSourceDetails.ManageIncomeSourceData.incomeSourceIdField
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import services.DateService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants._
@@ -35,6 +36,11 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
     pathStart + s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentIdHashed"
   }
 
+  trait Test {
+    val dateService: DateService = app.injector.instanceOf[DateService]
+    val taxYearShort = dateService.getCurrentTaxYear.shortenTaxYearEnd
+  }
+
   mtdAllRoles.foreach { mtdUserRole =>
     val path = getPath(mtdUserRole)
     val additionalCookies = getAdditionalCookies(mtdUserRole)
@@ -42,12 +48,12 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           "render the Manage Self Employment business page" when {
-            "URL contains a valid income source ID and user has no latency information" in {
+            "URL contains a valid income source ID and user has no latency information" in new Test {
               enable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse2)
-              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShort)
 
               await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
@@ -67,7 +73,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dd")(businessAccountingMethod)
               )
             }
-            "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
+            "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in new Test {
               //enable(TimeMachineAddYear)
               enable(IncomeSourcesFs)
               disable(NavBarFs)
@@ -75,7 +81,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails))
 
               // TODO after reenabling TimeMachine, change the tax year range to 25-26 for the below stub
-              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2024-25")
+              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShort)
               CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
               CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
@@ -103,13 +109,13 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
                 elementTextByID("change-link-2")("")
               )
             }
-            "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
+            "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in new Test {
               enable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails2))
 
-              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShort)
               CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
               CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
@@ -137,12 +143,12 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
                 elementTextByID("change-link-2")(messagesChangeLinkText)
               )
             }
-            "URL contains a valid income source ID and user has latency information, but itsa status is not mandatory or voluntary" in {
+            "URL contains a valid income source ID and user has latency information, but itsa status is not mandatory or voluntary" in new Test {
               enable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWithUnknownsInLatencyPeriod(latencyDetails))
-              ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual")
+              ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", taxYearShort)
 
               await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 

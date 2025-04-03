@@ -24,11 +24,13 @@ import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.{IncomeSourceReportingFrequencySourceData, UIJourneySessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import repositories.UIJourneySessionDataRepository
-import services.SessionService
+import services.{DateService, SessionService}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
 class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
+  override val dateService: DateService = app.injector.instanceOf[DateService] //overridden for TYS as implemented with 2023 elsewhere
+  val currentTaxYear = dateService.getCurrentTaxYearEnd
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
@@ -82,8 +84,8 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
                 httpStatus(OK),
                 elementTextByID("choose-tax-year-heading")(s"Which tax year do you want to report quarterly for?"),
                 elementTextByID("choose-tax-year-subheading")(getSubheading(incomeSourceType)),
-                elementTextBySelector("[for='current-year-checkbox']")("2024 to 2025"),
-                elementTextBySelector("[for='next-year-checkbox']")("2025 to 2026"),
+                elementTextBySelector("[for='current-year-checkbox']")(s"${currentTaxYear - 1} to $currentTaxYear"),
+                elementTextBySelector("[for='next-year-checkbox']")(s"$currentTaxYear to ${currentTaxYear + 1}"),
                 elementTextByID("continue-button")("Continue"),
               )
             }
@@ -136,8 +138,8 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
                 httpStatus(BAD_REQUEST),
                 elementTextByID("choose-tax-year-heading")(s"Which tax year do you want to report quarterly for?"),
                 elementTextByID("choose-tax-year-subheading")(getSubheading(incomeSourceType)),
-                elementTextBySelector("[for='current-year-checkbox']")("2024 to 2025"),
-                elementTextBySelector("[for='next-year-checkbox']")("2025 to 2026"),
+                elementTextBySelector("[for='current-year-checkbox']")(s"${currentTaxYear - 1} to $currentTaxYear"),
+                elementTextBySelector("[for='next-year-checkbox']")(s"$currentTaxYear to ${currentTaxYear + 1}"),
                 elementTextByID("continue-button")("Continue"),
                 elementTextByID("error-summary-title")("There is a problem"),
                 elementTextByID("error-summary-link")("Select the tax years you want to report quarterly")

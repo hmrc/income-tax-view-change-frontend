@@ -22,6 +22,7 @@ import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeT
 import models.admin.{IncomeSourcesFs, NavBarFs}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import services.DateService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants._
@@ -33,6 +34,11 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
     pathStart + s"/income-sources/manage/your-details-foreign-property"
   }
 
+  trait Test {
+    val dateService: DateService = app.injector.instanceOf[DateService]
+    val taxYearShort = dateService.getCurrentTaxYear.shortenTaxYearEnd
+  }
+
   mtdAllRoles.foreach { mtdUserRole =>
     val path = getPath(mtdUserRole)
     val additionalCookies = getAdditionalCookies(mtdUserRole)
@@ -40,12 +46,12 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           "render the Manage Foreign Property page" when {
-            "URL contains a valid income source ID and user has no latency information" in {
+            "URL contains a valid income source ID and user has no latency information" in new Test {
               enable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
-              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShort)
 
               await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
@@ -60,15 +66,13 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(businessAccountingMethod)
               )
             }
-            "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
-              //enable(TimeMachineAddYear)
+            "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in new Test {
               enable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
 
-              // TODO after reenabling TimeMachine, change the tax year range to 25-26 for the below stub
-              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2024-25")
+              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShort)
               CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
               CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
@@ -85,12 +89,12 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
                 elementTextByID("change-link-2")("")
               )
             }
-            "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
+            "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in new Test {
               enable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails2))
-              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShort)
               CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
               CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
@@ -107,12 +111,12 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
                 elementTextByID("change-link-2")(messagesChangeLinkText)
               )
             }
-            "URL contains a valid income source ID and user has latency information, but itsa status is not mandatory or voluntary" in {
+            "URL contains a valid income source ID and user has latency information, but itsa status is not mandatory or voluntary" in new Test {
               enable(IncomeSourcesFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseWithUnknownsInLatencyPeriod(latencyDetails))
-              ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual")
+              ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", taxYearShort)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
