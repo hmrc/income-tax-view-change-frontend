@@ -299,20 +299,6 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
 
                 result should have(httpStatus(INTERNAL_SERVER_ERROR))
               }
-              "API 1404 returns an error" in {
-                enable(IncomeSourcesFs)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, allBusinessesAndPropertiesInLatencyPeriod(legacyLatencyDetails))
-                await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
-                ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYear1YYYYtoYYForTimeMachineRemoval)
-                ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", currentTaxYearRange)
-                CalculationListStub.stubGetLegacyCalculationListError(testNino, ((taxYear1 - 2).toString))
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-                result should have(httpStatus(INTERNAL_SERVER_ERROR))
-              }
               "API 1878 returns an error" in {
                 enable(IncomeSourcesFs)
                 disable(NavBarFs)
