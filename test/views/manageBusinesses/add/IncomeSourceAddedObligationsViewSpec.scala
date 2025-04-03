@@ -48,7 +48,503 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
   "Income Source Added Obligations - Individual" when {
 
-    "QuarterlyQuarterly" should {
+    "Quarterly" should {
+
+      Seq(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
+
+        s"not display a back button - $incomeSourceType" in {
+
+          val page =
+            view(
+              sources = viewModel,
+              isAgent = false,
+              incomeSourceType = incomeSourceType,
+              businessName = None,
+              currentDate = day,
+              isBusinessHistoric = false,
+              reportingMethod = ChosenReportingMethod.Quarterly
+            )
+
+          val document: Document = Jsoup.parse(page.body)
+          Option(document.getElementById("back")) shouldBe None
+        }
+
+        s"display the correct banner message - $incomeSourceType" in {
+
+          val businessName =
+            incomeSourceType match {
+              case SelfEmployment => Some("Test Name")
+              case UkProperty => None
+              case ForeignProperty => None
+            }
+
+          val page =
+            view(
+              sources = viewModel,
+              isAgent = false,
+              incomeSourceType = incomeSourceType,
+              businessName = businessName,
+              currentDate = day,
+              isBusinessHistoric = false,
+              reportingMethod = ChosenReportingMethod.Quarterly
+            )
+
+          val document: Document = Jsoup.parse(page.body)
+          val layoutContent: Element = document.selectHead("#main-content")
+
+          val banner: Element = layoutContent.getElementsByTag("h1").first()
+          val subText: Elements = layoutContent.select("div").eq(3)
+
+          incomeSourceType match {
+            case SelfEmployment =>
+              banner.text() shouldBe h1SoleTraderContent
+              subText.text shouldBe s"$h1SoleTraderContent $headingBase"
+            case UkProperty =>
+              banner.text() shouldBe h1UKProperty
+              subText.text shouldBe s"$h1UKProperty $headingBase"
+            case ForeignProperty =>
+              banner.text() shouldBe h1ForeignProperty
+              subText.text shouldBe s"$h1ForeignProperty $headingBase"
+          }
+        }
+
+        s"display the correct heading for your-revised-deadlines - $incomeSourceType" in {
+
+          val validSoleTreaderBusinessCall =
+            view(
+              sources = viewModel,
+              isAgent = false,
+              incomeSourceType = incomeSourceType,
+              businessName = None,
+              currentDate = day,
+              isBusinessHistoric = false,
+              reportingMethod = ChosenReportingMethod.Quarterly
+            )
+
+          val document: Document = Jsoup.parse(validSoleTreaderBusinessCall.body)
+
+          document.getElementById(SelectorHelper.yourRevisedDeadlinesH2).text.contains(yourRevisedDeadlinesHeading)
+        }
+
+        s"not display inset warning text because there are no overdue obligations - $incomeSourceType" when {
+
+          s"the business started in the current tax year" when {
+
+            "it is reporting quarterly" in {
+
+              val validCurrentTaxYearQuarterlyCallNoOverdue =
+                view(
+                  sources = viewModelWithCurrentYearQuarterly,
+                  isAgent = false,
+                  incomeSourceType = incomeSourceType,
+                  businessName = testName,
+                  currentDate = dayFirstQuarter2024_2025,
+                  isBusinessHistoric = false,
+                  reportingMethod = ChosenReportingMethod.Quarterly
+                )
+
+              val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallNoOverdue.body)
+              Option(document.getElementById(SelectorHelper.warningInset)) shouldBe None
+            }
+          }
+
+          s"the business started in the previous tax year (CY-1)" when {
+
+            "it is reporting quarterly for both CY-1 and CY" in {
+
+              val validOneQuarterThenQuarterlyCallNoOverdue: Html = view(
+                sources = viewModelOneQuarterYearThenQuarterlyYear,
+                isAgent = false,
+                incomeSourceType = SelfEmployment,
+                businessName = testName,
+                currentDate = dayBeforeLastQuarterlyDeadline2023_2024,
+                isBusinessHistoric = false,
+                reportingMethod = ChosenReportingMethod.Quarterly
+              )
+
+              val document: Document = Jsoup.parse(validOneQuarterThenQuarterlyCallNoOverdue.body)
+
+              Option(document.getElementById(SelectorHelper.warningInset)) shouldBe None
+            }
+          }
+
+          "the business is going to start at a future date in CY+1" in {
+
+            val validFutureTaxYearQuarterlyCall: Html =
+              view(
+                sources = viewModelWithFutureBusinessStartReportingQuarterly,
+                isAgent = false,
+                incomeSourceType = SelfEmployment,
+                businessName = testName,
+                currentDate = dayJustBeforeTaxYearEnd2023_2024,
+                isBusinessHistoric = false,
+                reportingMethod = ChosenReportingMethod.Quarterly
+              )
+
+            val document: Document = Jsoup.parse(validFutureTaxYearQuarterlyCall.body)
+
+            Option(document.getElementById(SelectorHelper.warningInset)) shouldBe None
+          }
+        }
+
+        s"display the correct inset warning text - $incomeSourceType" when {
+
+          "the business started in the current tax year" when {
+
+            "it is reporting quarterly and there is one overdue obligation" in {
+
+              val validCurrentTaxYearQuarterlyCallOneOverdue: Html = view(
+                sources = viewModelWithCurrentYearQuarterly,
+                isAgent = false,
+                incomeSourceType = SelfEmployment,
+                businessName = testName,
+                currentDate = dayAfterFirstQuarterDeadline2024_2025,
+                isBusinessHistoric = false,
+                reportingMethod = ChosenReportingMethod.Quarterly
+              )
+
+              val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallOneOverdue.body)
+              val insetText = document.getElementById(SelectorHelper.warningInset)
+
+              insetText.text() shouldBe "You have 1 overdue update for 3 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
+              insetText.select("b").text() shouldBe "1 overdue update"
+            }
+          }
+
+          "it is reporting quarterly and there are multiple overdue obligations" in {
+
+            val validCurrentTaxYearQuarterlyCallMultipleOverdue: Html =
+              view(
+                sources = viewModelWithCurrentYearQuarterly,
+                isAgent = false,
+                incomeSourceType = SelfEmployment,
+                businessName = testName,
+                currentDate = dayAfterThirdQuarterDeadline2024_2025,
+                isBusinessHistoric = false,
+                reportingMethod = ChosenReportingMethod.Quarterly
+              )
+
+            val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallMultipleOverdue.body)
+
+            val insetText = document.getElementById(SelectorHelper.warningInset)
+            insetText.text() shouldBe "You have 3 overdue updates for 9 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
+            insetText.select("b").text() shouldBe "3 overdue updates"
+          }
+        }
+
+        s"the business started in the previous tax year (CY-1) - $incomeSourceType" when {
+
+          "it is reporting quarterly for both CY-1 and CY" when {
+
+            "there is one overdue quarterly obligation from CY-1" in {
+
+              val validOneQuarterThenQuarterlyCallOneQuarterlyOverdue: Html = view(
+                sources = viewModelOneQuarterYearThenQuarterlyYear,
+                isAgent = false,
+                incomeSourceType = incomeSourceType,
+                businessName = testName,
+                currentDate = dayFirstQuarter2024_2025,
+                isBusinessHistoric = false,
+                reportingMethod = ChosenReportingMethod.Quarterly
+              )
+
+              val document: Document = Jsoup.parse(validOneQuarterThenQuarterlyCallOneQuarterlyOverdue.body)
+              val insetText = document.getElementById(SelectorHelper.warningInset)
+
+              insetText.text() shouldBe "You have 1 overdue update. You must submit these updates with all required income and expenses through your compatible software."
+              insetText.select("b").text() shouldBe "1 overdue update"
+            }
+
+            "there are multiple overdue quarterly obligations from CY-1" in {
+
+              val validTwoQuartersThenQuarterlyCallTwoQuarterlyOverdue: Html = view(
+                sources = viewModelTwoQuarterYearThenQuarterlyYear,
+                isAgent = false,
+                incomeSourceType = incomeSourceType,
+                businessName = testName,
+                currentDate = dayFirstQuarter2024_2025,
+                isBusinessHistoric = false,
+                reportingMethod = ChosenReportingMethod.Quarterly
+              )
+
+              val document: Document = Jsoup.parse(validTwoQuartersThenQuarterlyCallTwoQuarterlyOverdue.body)
+              val insetText = document.getElementById(SelectorHelper.warningInset)
+
+              insetText.text() shouldBe "You have 2 overdue updates. You must submit these updates with all required income and expenses through your compatible software."
+              insetText.select("b").text() shouldBe "2 overdue updates"
+            }
+
+            "there are multiple overdue quarterly obligations from CY-1 and CY" in {
+
+              val validTwoQuartersThenQuarterlyCallTwoQuarterlyOneQuarterlyOverdue: Html = view(
+                sources = viewModelTwoQuarterYearThenQuarterlyYear,
+                isAgent = false,
+                incomeSourceType = incomeSourceType,
+                businessName = testName,
+                currentDate = dayAfterFirstQuarterDeadline2024_2025,
+                isBusinessHistoric = false,
+                reportingMethod = ChosenReportingMethod.Quarterly
+              )
+
+              val document: Document = Jsoup.parse(validTwoQuartersThenQuarterlyCallTwoQuarterlyOneQuarterlyOverdue.body)
+              val insetText = document.getElementById(SelectorHelper.warningInset)
+
+              insetText.text() shouldBe "You have 3 overdue updates. You must submit these updates with all required income and expenses through your compatible software."
+              insetText.select("b").text() shouldBe "3 overdue updates"
+            }
+
+            "there are multiple overdue quarterly obligations from CY-1 and CY, and one overdue annual obligation from CY-1" in {
+
+              val validTwoQuartersThenQuarterlyCallTwoQuarterlyOneAnnualOneQuarterlyOverdue: Html =
+                view(
+                  sources = viewModelTwoQuarterYearThenQuarterlyYear,
+                  isAgent = false,
+                  incomeSourceType = incomeSourceType,
+                  businessName = testName,
+                  currentDate = dayAfterFinalDeclarationDeadline2023_2024,
+                  isBusinessHistoric = false,
+                  reportingMethod = ChosenReportingMethod.Quarterly
+                )
+
+              val document: Document = Jsoup.parse(validTwoQuartersThenQuarterlyCallTwoQuarterlyOneAnnualOneQuarterlyOverdue.body)
+
+              val annualInsetText = document.getElementById(SelectorHelper.annualInset)
+              val quarterlyInsetText = document.getElementById(SelectorHelper.quarterlyInset)
+
+              annualInsetText.text() shouldBe "You have 1 overdue update. You must submit your yearly tax return and pay the tax you owe."
+              annualInsetText.select("b").text() shouldBe "1 overdue update"
+
+              quarterlyInsetText.text() shouldBe "You have 4 overdue updates. You must submit these updates with all required income and expenses through your compatible software."
+              quarterlyInsetText.select("b").text() shouldBe "4 overdue updates"
+            }
+          }
+        }
+
+        s"display the correct revised deadlines content - $incomeSourceType" when {
+
+          "the business started in the current tax year" when {
+
+            "it is reporting quarterly" in {
+
+              val validCurrentTaxYearQuarterlyCallNoOverdue: Html =
+                view(
+                  sources = viewModelWithCurrentYearQuarterly,
+                  isAgent = false,
+                  incomeSourceType = incomeSourceType,
+                  businessName = testName,
+                  currentDate = dayFirstQuarter2024_2025,
+                  isBusinessHistoric = false,
+                  reportingMethod = ChosenReportingMethod.Quarterly
+                )
+
+              val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallNoOverdue.body)
+
+              val yourRevisedDeadlinesH2 = document.getElementById(SelectorHelper.yourRevisedDeadlinesH2)
+              val quarterlyList = document.getElementById(SelectorHelper.quarterlyList)
+              val obligationsList = document.getElementById(SelectorHelper.obligationsList)
+
+              yourRevisedDeadlinesH2.text() shouldBe yourRevisedDeadlinesHeading
+
+              quarterlyList.text() shouldBe "Your next quarterly update for the 2024 to 2025 tax year is due by 5 August 2024 for the quarterly period 6 April 2024 to 5 July 2024"
+              quarterlyList.select("b").text() shouldBe aug5th2024
+
+              obligationsList.text() shouldBe "Your tax return for the 2024 to 2025 tax year is due by 31 January 2026"
+              obligationsList.select("b").text() shouldBe jan31st2026
+            }
+          }
+
+          "the business started in the previous tax year (CY-1)" when {
+
+            "it is reporting quarterly for both CY-1 and CY" when {
+
+              "the current date is before the CY-1 Q4 deadline" in {
+
+                val validFullQuarterlyThenFullyQuarterlyCallBeforeFirstQ4Deadline: Html =
+                  view(
+                    sources = viewModelWithFullQuarterlyYearThenFullQuarterlyYear,
+                    isAgent = false,
+                    incomeSourceType = incomeSourceType,
+                    businessName = testName,
+                    currentDate = dayJustAfterTaxYearStart2024_2025,
+                    isBusinessHistoric = false,
+                    reportingMethod = ChosenReportingMethod.Quarterly
+                  )
+
+                val document: Document = Jsoup.parse(validFullQuarterlyThenFullyQuarterlyCallBeforeFirstQ4Deadline.body)
+
+                val yourRevisedDeadlinesH2 = document.getElementById(SelectorHelper.yourRevisedDeadlinesH2)
+                val quarterlyList = document.getElementById(SelectorHelper.quarterlyList)
+                val obligationsList = document.getElementById(SelectorHelper.obligationsList)
+
+                yourRevisedDeadlinesH2.text() shouldBe yourRevisedDeadlinesHeading
+
+                quarterlyList.text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by 5 May 2024 for the quarterly period 6 January 2024 to 5 April 2024"
+                quarterlyList.select("b").text() shouldBe "5 May 2024"
+
+                obligationsList.text() shouldBe "Your tax return for the 2023 to 2024 tax year is due by 31 January 2025"
+                obligationsList.select("b").text() shouldBe jan31st2025
+              }
+
+              "the current date is between the CY-1 Q4 deadline and the CY Q1 deadline" in {
+
+                val validFullQuarterlyThenFullyQuarterlyCallAfterFirstQ4Deadline: Html =
+                  view(
+                    sources = viewModelWithFullQuarterlyYearThenFullQuarterlyYear,
+                    isAgent = false,
+                    incomeSourceType = incomeSourceType,
+                    businessName = testName,
+                    currentDate = dayFirstQuarter2024_2025,
+                    isBusinessHistoric = false,
+                    reportingMethod = ChosenReportingMethod.Quarterly
+                  )
+
+                val document: Document = Jsoup.parse(validFullQuarterlyThenFullyQuarterlyCallAfterFirstQ4Deadline.body)
+
+                val yourRevisedDeadlinesH2 = document.getElementById(SelectorHelper.yourRevisedDeadlinesH2)
+                val quarterlyList = document.getElementById(SelectorHelper.quarterlyList)
+                val obligationsList = document.getElementById(SelectorHelper.obligationsList)
+
+                yourRevisedDeadlinesH2.text() shouldBe yourRevisedDeadlinesHeading
+
+                quarterlyList.text() shouldBe "Your next quarterly update for the 2024 to 2025 tax year is due by 5 August 2024 for the quarterly period 6 April 2024 to 5 July 2024"
+                quarterlyList.select("b").text() shouldBe aug5th2024
+
+                obligationsList.text() shouldBe "Your tax return for the 2023 to 2024 tax year is due by 31 January 2025"
+                obligationsList.select("b").text() shouldBe jan31st2025
+              }
+
+              "the current date is after the CY-1 final declaration deadline" in {
+
+                val validFullQuarterlyThenFullyQuarterlyCallAfterFirstFinalDecDeadline: Html =
+                  view(
+                    sources = viewModelWithFullQuarterlyYearThenFullQuarterlyYear,
+                    isAgent = false,
+                    incomeSourceType = incomeSourceType,
+                    businessName = testName,
+                    currentDate = dayAfterFinalDeclarationDeadline2023_2024,
+                    isBusinessHistoric = false,
+                    reportingMethod = ChosenReportingMethod.Quarterly
+                  )
+
+                val document: Document = Jsoup.parse(validFullQuarterlyThenFullyQuarterlyCallAfterFirstFinalDecDeadline.body)
+
+                val yourRevisedDeadlinesH2 = document.getElementById(SelectorHelper.yourRevisedDeadlinesH2)
+                val quarterlyList = document.getElementById(SelectorHelper.quarterlyList)
+                val obligationsList = document.getElementById(SelectorHelper.obligationsList)
+
+                yourRevisedDeadlinesH2.text() shouldBe yourRevisedDeadlinesHeading
+
+                quarterlyList.text() shouldBe "Your next quarterly update for the 2024 to 2025 tax year is due by 5 February 2025 for the quarterly period 6 October 2024 to 5 January 2025"
+                quarterlyList.select("b").text() shouldBe "5 February 2025"
+
+                obligationsList.text() shouldBe "Your tax return for the 2024 to 2025 tax year is due by 31 January 2026"
+                obligationsList.select("b").text() shouldBe jan31st2026
+              }
+            }
+          }
+
+          "the business will start in the next tax year" when {
+
+            "it is reporting quarterly" in {
+
+              val validFutureTaxYearQuarterlyCall: Html = view(
+                sources = viewModelWithFutureBusinessStartReportingQuarterly,
+                isAgent = false,
+                incomeSourceType = incomeSourceType,
+                businessName = testName,
+                currentDate = dayJustBeforeTaxYearEnd2023_2024,
+                isBusinessHistoric = false,
+                reportingMethod = ChosenReportingMethod.Quarterly
+              )
+
+              val document: Document = Jsoup.parse(validFutureTaxYearQuarterlyCall.body)
+
+              val yourRevisedDeadlinesH2 = document.getElementById(SelectorHelper.yourRevisedDeadlinesH2)
+              val quarterlyList = document.getElementById(SelectorHelper.quarterlyList)
+              val obligationsList = document.getElementById(SelectorHelper.obligationsList)
+
+              yourRevisedDeadlinesH2.text() shouldBe yourRevisedDeadlinesHeading
+
+              quarterlyList.text() shouldBe "Your next quarterly update for the 2024 to 2025 tax year is due by 5 August 2024 for the quarterly period 6 April 2024 to 5 July 2024"
+              quarterlyList.select("b").text() shouldBe aug5th2024
+
+              obligationsList.text() shouldBe "Your tax return for the 2024 to 2025 tax year is due by 31 January 2026"
+              obligationsList.select("b").text() shouldBe jan31st2026
+            }
+          }
+        }
+
+        s"display the View overdue and upcoming updates link when there are no overdue obligations - $incomeSourceType" in {
+
+          val validCurrentTaxYearQuarterlyCallOneOverdue: Html =
+            view(
+              sources = viewModelWithCurrentYearQuarterly,
+              isAgent = false,
+              incomeSourceType = incomeSourceType,
+              businessName = testName,
+              currentDate = dayAfterFirstQuarterDeadline2024_2025,
+              isBusinessHistoric = false,
+              reportingMethod = ChosenReportingMethod.Quarterly
+            )
+
+          val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallOneOverdue.body)
+          val viewUpcomingUpdatesLink = document.getElementById("view-upcoming-updates")
+
+          viewUpcomingUpdatesLink.text() shouldBe "View your overdue and upcoming updates"
+        }
+
+        // TODO the links of these tests will need to change to the new entry point for the opt in/out journeys once the page is made
+        s"display the correct change reporting frequency text - $incomeSourceType" in {
+
+          val validCurrentTaxYearQuarterlyCallNoOverdue: Html =
+            view(
+              sources = viewModelWithCurrentYearQuarterly,
+              isAgent = false,
+              incomeSourceType = incomeSourceType,
+              businessName = testName,
+              currentDate = dayFirstQuarter2024_2025,
+              isBusinessHistoric = false,
+              reportingMethod = ChosenReportingMethod.Quarterly
+            )
+
+          val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallNoOverdue.body)
+
+          document.getElementById("change-frequency").text() shouldBe "You can decide at any time to opt out of quarterly reporting and report annually for all your businesses on your reporting frequency page."
+        }
+
+        s"display the correct submit tax return / updates subheading and text - $incomeSourceType" in {
+
+          val validCurrentTaxYearQuarterlyCallNoOverdue: Html =
+            view(
+              sources = viewModelWithCurrentYearQuarterly,
+              isAgent = false,
+              incomeSourceType = incomeSourceType,
+              businessName = testName,
+              currentDate = dayFirstQuarter2024_2025,
+              isBusinessHistoric = false,
+              reportingMethod = ChosenReportingMethod.Quarterly
+            )
+
+          val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallNoOverdue.body)
+          val layoutContent: Element = document.selectHead("#main-content")
+
+          val subHeading: Element = layoutContent.getElementsByTag("h2").last()
+          val compatibleSoftwareParagraph = document.getElementById(SelectorHelper.quarterlyCompatibleSoftwareParagraph)
+          val compatibleSoftwareLink = compatibleSoftwareParagraph.select("a")
+
+          subHeading.text shouldBe submitUpdatesInSoftware
+
+          compatibleSoftwareParagraph.text() shouldBe "For any tax year you are reporting quarterly, you will need software compatible with Making Tax Digital for Income Tax (opens in new tab)."
+          compatibleSoftwareLink.text() shouldBe "software compatible with Making Tax Digital for Income Tax (opens in new tab)."
+          compatibleSoftwareLink.attr("href") shouldBe submitSoftwareUrl
+        }
+      }
+    }
+
+
+//TODO: split up into annual, hybrid and default annual scenarios
+
+    "QuarterlyAnnual" should {
 
       Seq(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
 
@@ -519,8 +1015,6 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               insetText.text() shouldBe "You have 1 overdue update. You must submit these updates with all required income and expenses through your compatible software."
               insetText.select("b").text() shouldBe "1 overdue update"
             }
-
-            //TODO Here left off
 
             "there are multiple overdue quarterly obligations from CY-1" in {
 
@@ -1770,8 +2264,6 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               insetText.text() shouldBe "You have 1 overdue update. You must submit these updates with all required income and expenses through your compatible software."
               insetText.select("b").text() shouldBe "1 overdue update"
             }
-
-            //TODO Here left off
 
             "there are multiple overdue quarterly obligations from CY-1" in {
 
