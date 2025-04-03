@@ -547,10 +547,11 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           "it is reporting quarterly and there are multiple overdue obligations" in {
 
-            val validCurrentTaxYearQuarterlyCallMultipleOverdue: Html = view(
-              viewModelWithCurrentYearQuarterly, isAgent = false, SelfEmployment, testName, dayAfterThirdQuarterDeadline2024_2025,
-              isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Quarterly
-            )
+            val validCurrentTaxYearQuarterlyCallMultipleOverdue: Html =
+              view(
+                viewModelWithCurrentYearQuarterly, isAgent = false, SelfEmployment, testName, dayAfterThirdQuarterDeadline2024_2025,
+                isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.Quarterly
+              )
 
             val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallMultipleOverdue.body)
 
@@ -570,7 +571,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 view(
                   sources = viewModelWithAnnualYearThenAnnualYear,
                   isAgent = false,
-                  incomeSourceType = SelfEmployment,
+                  incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayAfterFinalDeclarationDeadline2023_2024AndThirdQuarterDeadline2024_2025,
                   isBusinessHistoric = false,
@@ -590,10 +591,16 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             "there is one overdue quarterly obligation" in {
 
-              val validAnnualThenFullQuarterlyCallOneQuarterlyOverdue: Html = view(
-                viewModelWithAnnualYearThenFullQuarterlyYear, isAgent = false, SelfEmployment, testName, dayAfterFirstQuarterDeadline2024_2025,
-                isBusinessHistoric = false, reportingMethod = ChosenReportingMethod.QuarterlyAnnual
-              )
+              val validAnnualThenFullQuarterlyCallOneQuarterlyOverdue: Html =
+                view(
+                  sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+                  isAgent = false,
+                  incomeSourceType = incomeSourceType,
+                  businessName = testName,
+                  currentDate = dayAfterFirstQuarterDeadline2024_2025,
+                  isBusinessHistoric = false,
+                  reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+                )
 
               val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallOneQuarterlyOverdue.body)
               val insetText = document.getElementById(SelectorHelper.warningInset)
@@ -602,150 +609,269 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               insetText.select("b").text() shouldBe "1 overdue update"
             }
 
-            "there are multiple overdue quarterly obligations" in new Setup(validAnnualThenFullQuarterlyCallTwoQuarterlyOverdue) {
-              Option(document.getElementById(SelectorHelper.warningInset)) match {
-                case Some(insetText) =>
-                  insetText.text() shouldBe "You have 2 overdue updates for 6 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
-                  insetText.select("b").text() shouldBe "2 overdue updates"
-                case None => fail("No inset text was found")
-              }
+            "there are multiple overdue quarterly obligations" in {
+
+              val validAnnualThenFullQuarterlyCallTwoQuarterlyOverdue: Html =
+                view(
+                  sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+                  isAgent = false,
+                  incomeSourceType = incomeSourceType,
+                  businessName = testName,
+                  currentDate = dayAfterSecondQuarterDeadline2024_2025,
+                  isBusinessHistoric = false,
+                  reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+                )
+
+              val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallTwoQuarterlyOverdue.body)
+              val insetText = document.getElementById(SelectorHelper.warningInset)
+
+              insetText.text() shouldBe "You have 2 overdue updates for 6 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
+              insetText.select("b").text() shouldBe "2 overdue updates"
             }
 
-            "there is one overdue annual obligation and multiple overdue quarterly obligations" in new Setup(validAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue) {
-              Option(document.getElementById("annual-warning-inset")) match {
-                case Some(insetText) =>
-                  insetText.text() shouldBe "You have 1 overdue update. You must submit your yearly tax return and pay the tax you owe."
-                  insetText.select("b").text() shouldBe "1 overdue update"
-                case None => fail("No annual inset text was found")
-              }
+            "there is one overdue annual obligation and multiple overdue quarterly obligations" in {
 
-              Option(document.getElementById("quarterly-warning-inset")) match {
-                case Some(insetText) =>
-                  insetText.text() shouldBe "You have 3 overdue updates for 9 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
-                  insetText.select("b").text() shouldBe "3 overdue updates"
-                case None => fail("No quarterly inset text was found")
-              }
+              val validAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue: Html =
+                view(
+                  sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+                  isAgent = false,
+                  incomeSourceType = incomeSourceType,
+                  businessName = testName,
+                  currentDate = dayAfterThirdQuarterDeadline2024_2025,
+                  isBusinessHistoric = false,
+                  reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+                )
+
+              val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue.body)
+
+              val annualInsetText = document.getElementById("annual-warning-inset")
+              val quarterlyInsetText = document.getElementById("quarterly-warning-inset")
+
+              annualInsetText.text() shouldBe "You have 1 overdue update. You must submit your yearly tax return and pay the tax you owe."
+              annualInsetText.select("b").text() shouldBe "1 overdue update"
+
+              quarterlyInsetText.text() shouldBe "You have 3 overdue updates for 9 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
+              quarterlyInsetText.select("b").text() shouldBe "3 overdue updates"
             }
           }
 
           "it is reporting quarterly for CY-1 and annually for CY" when {
 
-            "there is one overdue quarterly obligation" in new Setup(validOneQuarterThenAnnualCallOneQuarterlyOverdue) {
-              Option(document.getElementById(SelectorHelper.warningInset)) match {
-                case Some(insetText) =>
-                  insetText.text() shouldBe "You have 1 overdue update. You must submit these updates with all required income and expenses through your compatible software."
-                  insetText.select("b").text() shouldBe "1 overdue update"
-                case None => fail("No inset text was found")
-              }
+            "there is one overdue quarterly obligation" in {
+
+              val validOneQuarterThenAnnualCallOneQuarterlyOverdue: Html =
+                view(
+                  sources = viewModelOneQuarterYearThenAnnualYear,
+                  isAgent = false,
+                  incomeSourceType = incomeSourceType,
+                  businessName = testName,
+                  currentDate = dayFirstQuarter2024_2025,
+                  isBusinessHistoric = false,
+                  reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+                )
+
+              val document: Document = Jsoup.parse(validOneQuarterThenAnnualCallOneQuarterlyOverdue.body)
+              val insetText = document.getElementById(SelectorHelper.warningInset)
+
+              insetText.text() shouldBe "You have 1 overdue update. You must submit these updates with all required income and expenses through your compatible software."
+              insetText.select("b").text() shouldBe "1 overdue update"
             }
+          }
 
-            "there are multiple overdue quarterly obligations" in new Setup(validTwoQuartersThenAnnualCallTwoQuarterlyOverdue) {
-              Option(document.getElementById(SelectorHelper.warningInset)) match {
-                case Some(insetText) =>
-                  insetText.text() shouldBe "You have 2 overdue updates. You must submit these updates with all required income and expenses through your compatible software."
-                  insetText.select("b").text() shouldBe "2 overdue updates"
-                case None => fail("No inset text was found")
-              }
-            }
+          "there are multiple overdue quarterly obligations" in {
 
-            "there is one overdue quarterly obligation and one overdue annual obligation" in new Setup(validOneQuarterThenAnnualCallOneQuarterlyOneAnnualOverdue) {
-              Option(document.getElementById("annual-warning-inset")) match {
-                case Some(insetText) =>
-                  insetText.text() shouldBe "You have 1 overdue update. You must submit your yearly tax return and pay the tax you owe."
-                  insetText.select("b").text() shouldBe "1 overdue update"
-                case None => fail("No annual inset text was found")
-              }
+            val validTwoQuartersThenAnnualCallTwoQuarterlyOverdue: Html = view(
+              sources = viewModelTwoQuartersYearThenAnnualYear,
+              isAgent = false,
+              incomeSourceType = incomeSourceType,
+              businessName = testName,
+              currentDate = dayFirstQuarter2024_2025,
+              isBusinessHistoric = false,
+              reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+            )
 
-              Option(document.getElementById("quarterly-warning-inset")) match {
-                case Some(insetText) =>
-                  insetText.text() shouldBe "You have 1 overdue update. You must submit these updates with all required income and expenses through your compatible software."
-                  insetText.select("b").text() shouldBe "1 overdue update"
-                case None => fail("No quarterly inset text was found")
-              }
-            }
+            val document: Document = Jsoup.parse(validTwoQuartersThenAnnualCallTwoQuarterlyOverdue.body)
+            val insetText = document.getElementById(SelectorHelper.warningInset)
 
-            "there are multiple overdue quarterly obligations and one overdue annual obligation" in new Setup(validTwoQuarterThenAnnualCallTwoQuarterlyOneAnnualOverdue) {
-              Option(document.getElementById("annual-warning-inset")) match {
-                case Some(insetText) =>
-                  insetText.text() shouldBe "You have 1 overdue update. You must submit your yearly tax return and pay the tax you owe."
-                  insetText.select("b").text() shouldBe "1 overdue update"
-                case None => fail("No annual inset text was found")
-              }
+            insetText.text() shouldBe "You have 2 overdue updates. You must submit these updates with all required income and expenses through your compatible software."
+            insetText.select("b").text() shouldBe "2 overdue updates"
+          }
 
-              Option(document.getElementById("quarterly-warning-inset")) match {
-                case Some(insetText) =>
-                  insetText.text() shouldBe "You have 2 overdue updates. You must submit these updates with all required income and expenses through your compatible software."
-                  insetText.select("b").text() shouldBe "2 overdue updates"
-                case None => fail("No quarterly inset text was found")
-              }
-            }
+          "there is one overdue quarterly obligation and one overdue annual obligation" in {
+
+            val validOneQuarterThenAnnualCallOneQuarterlyOneAnnualOverdue: Html =
+              view(
+                sources = viewModelOneQuarterYearThenAnnualYear,
+                isAgent = false,
+                incomeSourceType = incomeSourceType,
+                businessName = testName,
+                currentDate = dayAfterFinalDeclarationDeadline2023_2024AndThirdQuarterDeadline2024_2025,
+                isBusinessHistoric = false,
+                reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+              )
+
+            val document: Document = Jsoup.parse(validOneQuarterThenAnnualCallOneQuarterlyOneAnnualOverdue.body)
+
+            val annualInsetText = document.getElementById("annual-warning-inset")
+            val quarterlyInsetText = document.getElementById("quarterly-warning-inset")
+
+            annualInsetText.text() shouldBe "You have 1 overdue update. You must submit your yearly tax return and pay the tax you owe."
+            annualInsetText.select("b").text() shouldBe "1 overdue update"
+
+            quarterlyInsetText.text() shouldBe "You have 1 overdue update. You must submit these updates with all required income and expenses through your compatible software."
+            quarterlyInsetText.select("b").text() shouldBe "1 overdue update"
+          }
+
+          "there are multiple overdue quarterly obligations and one overdue annual obligation" in {
+
+            val validTwoQuarterThenAnnualCallTwoQuarterlyOneAnnualOverdue: Html = view(
+              sources = viewModelTwoQuartersYearThenAnnualYear,
+              isAgent = false,
+              incomeSourceType = incomeSourceType,
+              businessName = testName,
+              currentDate = dayAfterFinalDeclarationDeadline2023_2024AndThirdQuarterDeadline2024_2025,
+              isBusinessHistoric = false,
+              reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+            )
+
+            val document: Document = Jsoup.parse(validTwoQuarterThenAnnualCallTwoQuarterlyOneAnnualOverdue.body)
+
+            val annualInsetText = document.getElementById("annual-warning-inset")
+            val quarterlyInsetText = document.getElementById("quarterly-warning-inset")
+
+            annualInsetText.text() shouldBe "You have 1 overdue update. You must submit your yearly tax return and pay the tax you owe."
+            annualInsetText.select("b").text() shouldBe "1 overdue update"
+
+            quarterlyInsetText.text() shouldBe "You have 2 overdue updates. You must submit these updates with all required income and expenses through your compatible software."
+            quarterlyInsetText.select("b").text() shouldBe "2 overdue updates"
           }
 
           "it is reporting quarterly for both CY-1 and CY" when {
 
-            "there is one overdue quarterly obligation from CY-1" in new Setup(validOneQuarterThenQuarterlyCallOneQuarterlyOverdue) {
-              Option(document.getElementById(SelectorHelper.warningInset)) match {
-                case Some(insetText) =>
-                  insetText.text() shouldBe "You have 1 overdue update. You must submit these updates with all required income and expenses through your compatible software."
-                  insetText.select("b").text() shouldBe "1 overdue update"
-                case None => fail("No inset text was found")
-              }
+            "there is one overdue quarterly obligation from CY-1" in {
+
+              val validOneQuarterThenQuarterlyCallOneQuarterlyOverdue: Html = view(
+                sources = viewModelOneQuarterYearThenQuarterlyYear,
+                isAgent = false,
+                incomeSourceType = incomeSourceType,
+                businessName = testName,
+                currentDate = dayFirstQuarter2024_2025,
+                isBusinessHistoric = false,
+                reportingMethod = ChosenReportingMethod.Quarterly
+              )
+
+              val document: Document = Jsoup.parse(validOneQuarterThenQuarterlyCallOneQuarterlyOverdue.body)
+              val insetText = document.getElementById(SelectorHelper.warningInset)
+
+              insetText.text() shouldBe "You have 1 overdue update. You must submit these updates with all required income and expenses through your compatible software."
+              insetText.select("b").text() shouldBe "1 overdue update"
             }
 
-            "there are multiple overdue quarterly obligations from CY-1" in new Setup(validTwoQuartersThenQuarterlyCallTwoQuarterlyOverdue) {
-              Option(document.getElementById(SelectorHelper.warningInset)) match {
-                case Some(insetText) =>
-                  insetText.text() shouldBe "You have 2 overdue updates. You must submit these updates with all required income and expenses through your compatible software."
-                  insetText.select("b").text() shouldBe "2 overdue updates"
-                case None => fail("No inset text was found")
-              }
+            //TODO Here left off
+
+            "there are multiple overdue quarterly obligations from CY-1" in {
+
+              val validTwoQuartersThenQuarterlyCallTwoQuarterlyOverdue: Html = view(
+                sources = viewModelTwoQuarterYearThenQuarterlyYear,
+                isAgent = false,
+                incomeSourceType = incomeSourceType,
+                businessName = testName,
+                currentDate = dayFirstQuarter2024_2025,
+                isBusinessHistoric = false,
+                reportingMethod = ChosenReportingMethod.Quarterly
+              )
+
+              val document: Document = Jsoup.parse(validTwoQuartersThenQuarterlyCallTwoQuarterlyOverdue.body)
+              val insetText = document.getElementById(SelectorHelper.warningInset)
+
+              insetText.text() shouldBe "You have 2 overdue updates. You must submit these updates with all required income and expenses through your compatible software."
+              insetText.select("b").text() shouldBe "2 overdue updates"
             }
 
-            "there are multiple overdue quarterly obligations from CY-1 and CY" in new Setup(validTwoQuartersThenQuarterlyCallTwoQuarterlyOneQuarterlyOverdue) {
-              Option(document.getElementById(SelectorHelper.warningInset)) match {
-                case Some(insetText) =>
-                  insetText.text() shouldBe "You have 3 overdue updates. You must submit these updates with all required income and expenses through your compatible software."
-                  insetText.select("b").text() shouldBe "3 overdue updates"
-                case None => fail("No inset text was found")
-              }
+            "there are multiple overdue quarterly obligations from CY-1 and CY" in {
+
+              val validTwoQuartersThenQuarterlyCallTwoQuarterlyOneQuarterlyOverdue: Html = view(
+                sources = viewModelTwoQuarterYearThenQuarterlyYear,
+                isAgent = false,
+                incomeSourceType = incomeSourceType,
+                businessName = testName,
+                currentDate = dayAfterFirstQuarterDeadline2024_2025,
+                isBusinessHistoric = false,
+                reportingMethod = ChosenReportingMethod.Quarterly
+              )
+
+              val document: Document = Jsoup.parse(validTwoQuartersThenQuarterlyCallTwoQuarterlyOneQuarterlyOverdue.body)
+              val insetText = document.getElementById(SelectorHelper.warningInset)
+
+              insetText.text() shouldBe "You have 3 overdue updates. You must submit these updates with all required income and expenses through your compatible software."
+              insetText.select("b").text() shouldBe "3 overdue updates"
             }
 
-            "there are multiple overdue quarterly obligations from CY-1 and CY, and one overdue annual obligation from CY-1" in new Setup(validTwoQuartersThenQuarterlyCallTwoQuarterlyOneAnnualOneQuarterlyOverdue) {
-              Option(document.getElementById("annual-warning-inset")) match {
-                case Some(insetText) =>
-                  insetText.text() shouldBe "You have 1 overdue update. You must submit your yearly tax return and pay the tax you owe."
-                  insetText.select("b").text() shouldBe "1 overdue update"
-                case None => fail("No annual inset text was found")
-              }
+            "there are multiple overdue quarterly obligations from CY-1 and CY, and one overdue annual obligation from CY-1" in {
 
-              Option(document.getElementById("quarterly-warning-inset")) match {
-                case Some(insetText) =>
-                  insetText.text() shouldBe "You have 4 overdue updates. You must submit these updates with all required income and expenses through your compatible software."
-                  insetText.select("b").text() shouldBe "4 overdue updates"
-                case None => fail("No quarterly inset text was found")
-              }
+              val validTwoQuartersThenQuarterlyCallTwoQuarterlyOneAnnualOneQuarterlyOverdue: Html =
+                view(
+                  sources = viewModelTwoQuarterYearThenQuarterlyYear,
+                  isAgent = false,
+                  incomeSourceType = incomeSourceType,
+                  businessName = testName,
+                  currentDate = dayAfterFinalDeclarationDeadline2023_2024,
+                  isBusinessHistoric = false,
+                  reportingMethod = ChosenReportingMethod.Quarterly
+                )
+
+              val document: Document = Jsoup.parse(validTwoQuartersThenQuarterlyCallTwoQuarterlyOneAnnualOneQuarterlyOverdue.body)
+
+              val annualInsetText = document.getElementById("annual-warning-inset")
+              val quarterlyInsetText = document.getElementById("quarterly-warning-inset")
+
+              annualInsetText.text() shouldBe "You have 1 overdue update. You must submit your yearly tax return and pay the tax you owe."
+              annualInsetText.select("b").text() shouldBe "1 overdue update"
+
+              quarterlyInsetText.text() shouldBe "You have 4 overdue updates. You must submit these updates with all required income and expenses through your compatible software."
+              quarterlyInsetText.select("b").text() shouldBe "4 overdue updates"
             }
           }
         }
 
         s"the business started before CY-1 and has a historic start date - $incomeSourceType" when {
 
-          "there is one overdue obligation" in new Setup(validHistoricAnnualThenFullQuarterlyCallOneQuarterlyOverdue) {
-            Option(document.getElementById(SelectorHelper.warningInset)) match {
-              case Some(insetText) =>
-                insetText.text() shouldBe "You have 1 overdue update. You must make sure that you have sent all the required income and expenses for tax years earlier than 2023 to 2024."
-                insetText.select("b").text() shouldBe "1 overdue update"
-              case None => fail("No inset text was found")
-            }
+          "there is one overdue obligation" in {
+
+            val validHistoricAnnualThenFullQuarterlyCallOneQuarterlyOverdue: Html = view(
+              sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+              isAgent = false,
+              incomeSourceType = SelfEmployment,
+              businessName = testName,
+              currentDate = dayAfterFirstQuarterDeadline2024_2025,
+              isBusinessHistoric = true,
+              reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+            )
+
+            val document: Document = Jsoup.parse(validHistoricAnnualThenFullQuarterlyCallOneQuarterlyOverdue.body)
+            val insetText = document.getElementById(SelectorHelper.warningInset)
+
+            insetText.text() shouldBe "You have 1 overdue update. You must make sure that you have sent all the required income and expenses for tax years earlier than 2023 to 2024."
+            insetText.select("b").text() shouldBe "1 overdue update"
           }
 
-          "there are multiple overdue obligations" in new Setup(validHistoricAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue) {
-            Option(document.getElementById(SelectorHelper.warningInset)) match {
-              case Some(insetText) =>
-                insetText.text() shouldBe "You have 4 overdue updates. You must make sure that you have sent all the required income and expenses for tax years earlier than 2023 to 2024."
-                insetText.select("b").text() shouldBe "4 overdue updates"
-              case None => fail("No inset text was found")
-            }
+          "there are multiple overdue obligations" in {
+
+            val validHistoricAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue: Html = view(
+              sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+              isAgent = false,
+              incomeSourceType = SelfEmployment,
+              businessName = testName,
+              currentDate = dayAfterThirdQuarterDeadline2024_2025,
+              isBusinessHistoric = true,
+              reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+            )
+
+            val document: Document = Jsoup.parse(validHistoricAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue.body)
+            val insetText = document.getElementById(SelectorHelper.warningInset)
+
+            insetText.text() shouldBe "You have 4 overdue updates. You must make sure that you have sent all the required income and expenses for tax years earlier than 2023 to 2024."
+            insetText.select("b").text() shouldBe "4 overdue updates"
           }
         }
       }
