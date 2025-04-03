@@ -42,7 +42,7 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
   override val dateService: DateService = app.injector.instanceOf[DateService] //overridden for TYS as implemented with 2023 elsewhere
 
   def redirectUrl(incomeSourceType: IncomeSourceType, mtdRole: MTDUserRole): String = {
-    if(mtdRole == MTDIndividual){
+    if(mtdRole == MTDIndividual) {
       routes.IncomeSourceAddedController.show(incomeSourceType).url
     } else {
       routes.IncomeSourceAddedController.showAgent(incomeSourceType).url
@@ -79,6 +79,7 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
   val legacyTaxYearRange: String = s"${(taxYear1 - 2).toString.takeRight(2)}-${(taxYear1 - 1).toString.takeRight(2)}"
   val taxYearYYYYtoYYYY = s"${taxYear1 - 1}-$taxYear1"
   val lastDayOfCurrentTaxYear: LocalDate = LocalDate.of(currentTaxYear, APRIL, 5)
+
   val latencyDetails: LatencyDetails =
     LatencyDetails(
       latencyEndDate = lastDayOfCurrentTaxYear.plusYears(2),
@@ -103,6 +104,7 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
       taxYear2 = (taxYear2 -1 ).toString,
       latencyIndicator2 = annuallyIndicator
     )
+
   val businessName: IncomeSourceType => String = {
     case UkProperty => "UK property"
     case ForeignProperty => "Foreign property"
@@ -132,15 +134,14 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
     }
   }
 
-  val validFormData: Map[String, Seq[String]] = Map(
-    "new_tax_year_1_reporting_method" -> Seq("A"),
-    "new_tax_year_2_reporting_method" -> Seq("A"),
-    "new_tax_year_1_reporting_method_tax_year" -> Seq(taxYear1.toString),
-    "tax_year_1_reporting_method" -> Seq("Q"),
-    "new_tax_year_2_reporting_method_tax_year" -> Seq(taxYear2.toString),
-    "tax_year_2_reporting_method" -> Seq("Q")
-  )
-
+    val validFormData: Map[String, Seq[String]] = Map(
+      "new_tax_year_1_reporting_method" -> Seq("A"),
+      "new_tax_year_2_reporting_method" -> Seq("A"),
+      "new_tax_year_1_reporting_method_tax_year" -> Seq(taxYear1.toString),
+      "tax_year_1_reporting_method" -> Seq("Q"),
+      "new_tax_year_2_reporting_method_tax_year" -> Seq(taxYear2.toString),
+      "tax_year_2_reporting_method" -> Seq("Q")
+    )
 
   List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
     mtdAllRoles.foreach { mtdUserRole =>
@@ -191,7 +192,7 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "incomeSources.add.incomeSourceReportingMethod.heading"),
                   elementCountBySelector("#add-uk-property-reporting-method-form > legend:nth-of-type(2)")(0),
-                  elementTextBySelectorList("#add-uk-property-reporting-method-form", "legend:nth-of-type(1)")(s"Tax year 2024-2025")
+                  elementTextBySelectorList("#add-uk-property-reporting-method-form", "legend:nth-of-type(1)")(s"Tax year $taxYear1TYS")
                 )
                 sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
               }
