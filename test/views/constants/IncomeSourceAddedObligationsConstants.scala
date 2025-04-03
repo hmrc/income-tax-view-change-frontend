@@ -23,6 +23,10 @@ import java.time.LocalDate
 
 object IncomeSourceAddedObligationsConstants {
 
+  val aug5th2024 = "5 August 2024"
+  val jan31st2025 = "31 January 2025"
+  val jan31st2026 = "31 January 2026"
+
   val addIncomeSourceShowURL: String = controllers.manageBusinesses.add.routes.AddIncomeSourceController.show().url
   val addIncomeSourceShowAgentURL: String = controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent().url
 
