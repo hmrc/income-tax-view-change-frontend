@@ -28,12 +28,13 @@ import models.outstandingCharges.OutstandingChargesModel
 import models.taxYearAmount.EarliestDueCharge
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
+import org.jsoup.select.Elements
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
 import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.{dueDateOverdue, futureFixedDate, noDunningLocks, oneDunningLock, outstandingChargesModel, twoDunningLocks}
+import testConstants.FinancialDetailsTestConstants.{dueDateOverdue, fixedDate, futureFixedDate, noDunningLocks, oneDunningLock, outstandingChargesModel, twoDunningLocks}
 import testUtils.{TestSupport, ViewSpec}
 import views.html.YourSelfAssessmentCharges
 
@@ -344,9 +345,24 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
     codedOutDocumentDetail = Some(codedOutDocumentDetailCi)
   )
 
+  val whatYouOweDataWithDueDateWithin30Days: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    chargesList = List(poa1WithFutureDueDate.copy(dueDate = Some(fixedDate.plusDays(25)), taxYear = TaxYear.forYearEnd(2023)),
+      poa2WithFutureDueDate.copy(dueDate = Some(fixedDate.plusDays(26)), taxYear = TaxYear.forYearEnd(2023))),
+    outstandingChargesModel = None,
+    codedOutDocumentDetail = None
+  )
+
   val whatYouOweDataWithDueDateInFuture: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = List(poa1WithFutureDueDate, poa2WithFutureDueDate),
+    outstandingChargesModel = None,
+    codedOutDocumentDetail = None
+  )
+
+  val whatYouOweWithDataOverdueAndFuture: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    chargesList = List(poa1WithFutureDueDate, poa1, poa2WithFutureDueDate.copy(dueDate = Some(fixedDate.plusDays(26)), taxYear = TaxYear.forYearEnd(2023))),
     outstandingChargesModel = None,
     codedOutDocumentDetail = None
   )
@@ -411,6 +427,9 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
 
         "display the charges due now tab, with correct table header, charges and total" in new TestSetup(charges = whatYouOweDataWithOverdueDataAndInterest()) {
           findElementById("self-assessment-charges-tabs").isDefined shouldBe true
+
+          val tableHeadings = pageDocument.getElementsByClass("govuk-tabs__list-item")
+          tableHeadings.text() shouldBe "Charges due now"
 
           val tableHead = pageDocument.getElementById("over-due-payments-table-head")
           tableHead.select("th").first().text() shouldBe dueDate
@@ -637,6 +656,47 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
         }
       }
 
+      "the user has charges due within 30 days" should {
+        s"have the title $yourSelfAssessmentChargesTitle" in new TestSetup(charges = whatYouOweDataWithDueDateWithin30Days) {
+          pageDocument.title() shouldBe yourSelfAssessmentChargesTitle
+        }
+
+        s"have a page heading of $yourSelfAssessmentChargesHeading" in new TestSetup(charges = whatYouOweDataWithDueDateWithin30Days) {
+          pageDocument.getElementById("page-heading").text() shouldBe yourSelfAssessmentChargesHeading
+        }
+
+        "display the 'Charges due within 30 days' tab, with correct table header, charges and total" in new TestSetup(charges = whatYouOweDataWithDueDateWithin30Days) {
+          findElementById("self-assessment-charges-tabs").isDefined shouldBe true
+
+          val tableHeadings = pageDocument.getElementsByClass("govuk-tabs__list-item")
+          tableHeadings.text() shouldBe "Charges due in 30 days"
+
+          val tableHead = pageDocument.getElementById("due-in-30-days-payments-table-head")
+          tableHead.select("th").first().text() shouldBe dueDate
+          tableHead.select("th").get(1).text() shouldBe chargeType
+          tableHead.select("th").get(2).text() shouldBe taxYear
+          tableHead.select("th").get(3).text() shouldBe amountDue
+
+          val chargesDueSoonTableRow1: Element = pageDocument.select("tr").get(1)
+          chargesDueSoonTableRow1.select("td").first().text() shouldBe fixedDate.plusDays(25).toLongDateShort
+          chargesDueSoonTableRow1.select("td").get(1).text() shouldBe poa1Text + s" 1"
+          chargesDueSoonTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString())
+          chargesDueSoonTableRow1.select("td").last().text() shouldBe "£2,500.00"
+
+          val chargesDueSoonTableRow2: Element = pageDocument.select("tr").get(2)
+          chargesDueSoonTableRow2.select("td").first().text() shouldBe fixedDate.plusDays(26).toLongDateShort
+          chargesDueSoonTableRow2.select("td").get(1).text() shouldBe poa2Text + s" 2"
+          chargesDueSoonTableRow2.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString())
+          chargesDueSoonTableRow2.select("td").last().text() shouldBe "£3,500.00"
+        }
+
+        "display the payment button and payment content in tab if no more pressing charges" in new TestSetup(charges = whatYouOweDataWithDueDateWithin30Days) {
+          findElementById("payment-button").isDefined shouldBe true
+          val paymentButton = pageDocument.getElementById("payment-button")
+          paymentButton.text() shouldBe messages("selfAssessmentCharges.payNow")
+          pageDocument.getElementById("30-days-payment-text").text() shouldBe paymentProcessingText
+        }
+      }
 
       "the user has charges due in over 30 days" should {
         s"have the title $yourSelfAssessmentChargesTitle" in new TestSetup(charges = whatYouOweDataWithDueDateInFuture) {
@@ -647,8 +707,11 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
           pageDocument.getElementById("page-heading").text() shouldBe yourSelfAssessmentChargesHeading
         }
 
-        "display the 'Charges due later' tab, with correct table header, charges and total" in new TestSetup(charges = whatYouOweDataWithDueDateInFuture) {
+        "display the 'Charges due later' tab, with correct table header and charges" in new TestSetup(charges = whatYouOweDataWithDueDateInFuture) {
           findElementById("self-assessment-charges-tabs").isDefined shouldBe true
+
+          val tableHeadings = pageDocument.getElementsByClass("govuk-tabs__list-item")
+          tableHeadings.text() shouldBe "Charges to pay later"
 
           val tableHead = pageDocument.getElementById("charges-due-later-table-head")
           tableHead.select("th").first().text() shouldBe dueDate
@@ -669,48 +732,89 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
           chargesDueLaterTableRow2.select("td").last().text() shouldBe "£3,500.00"
         }
 
+        "display the payment button and payment content in tab if no more pressing charges" in new TestSetup(charges = whatYouOweDataWithDueDateInFuture) {
+          findElementById("payment-button").isDefined shouldBe true
+          val paymentButton = pageDocument.getElementById("payment-button")
+          paymentButton.text() shouldBe messages("selfAssessmentCharges.payNow")
+          pageDocument.getElementById("later-payment-text").text() shouldBe paymentProcessingText
+        }
       }
-//
-//      "the user has charges and access viewer with mixed dates" should { //TODO: TO be implemented once we have multiple tabs on this page, and display charges due in the future
-//        s"have the title $yourSelfAssessmentChargesTitle and notes" in new TestSetup(charges = whatYouOweDataWithMixedData1) {
-//          pageDocument.title() shouldBe yourSelfAssessmentChargesTitle
-//        }
-//        s"not have MTD payments heading" in new TestSetup(charges = whatYouOweDataWithMixedData1) {
-//          findElementById("pre-mtd-payments-heading") shouldBe None
-//        }
-//
-//        s"have overdue table header, bullet points and data with hyperlink" in new TestSetup(charges = whatYouOweDataWithOverdueMixedData2(List(None, None, None))) {
-//          val overdueTableHeader: Element = pageDocument.select("tr").first()
-//          overdueTableHeader.select("th").first().text() shouldBe dueDate
-//          overdueTableHeader.select("th").get(1).text() shouldBe chargeType
-//          overdueTableHeader.select("th").get(2).text() shouldBe taxYear
-//          overdueTableHeader.select("th").last().text() shouldBe amountDue
-//
-//          val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(1)
-//          overduePaymentsTableRow1.select("td").first().text() shouldBe fixedDate.minusDays(1).toLongDate
-//          overduePaymentsTableRow1.select("td").get(1).text() shouldBe poa2Text + s" 1"
-//          overduePaymentsTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
-//          overduePaymentsTableRow1.select("td").last().text() shouldBe "£75.00"
-//
-//          val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(2)
-//          dueWithInThirtyDaysTableRow1.select("td").first().text() shouldBe fixedDate.plusDays(30).toLongDate
-//          dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe poa1Text + s" 2"
-//          dueWithInThirtyDaysTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
-//          dueWithInThirtyDaysTableRow1.select("td").last().text() shouldBe "£50.00"
-//
-//          pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
-//            fixedDate.getYear, "1040000125").url
-//          pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
-//            fixedDate.getYear).url
-//
-//          pageDocument.getElementById("due-1-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
-//            fixedDate.getYear, "1040000123").url
-//          findElementById("due-1-overdue") shouldBe None
-//          pageDocument.getElementById("taxYearSummary-link-1").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
-//            fixedDate.getYear).url
-//        }
-//
-//      }
+
+      "the user has charges in all 3 tabs" should {
+        s"have the title $yourSelfAssessmentChargesTitle" in new TestSetup(charges = whatYouOweWithDataOverdueAndFuture) {
+          pageDocument.title() shouldBe yourSelfAssessmentChargesTitle
+        }
+
+        s"have a page heading of $yourSelfAssessmentChargesHeading" in new TestSetup(charges = whatYouOweWithDataOverdueAndFuture) {
+          pageDocument.getElementById("page-heading").text() shouldBe yourSelfAssessmentChargesHeading
+        }
+
+        "display all 3 tabs, with a table in each one, and payment button only on Due Now tab" in new TestSetup(charges = whatYouOweWithDataOverdueAndFuture) {
+          findElementById("self-assessment-charges-tabs").isDefined shouldBe true
+
+          val tableHeadings: Elements = pageDocument.getElementsByClass("govuk-tabs__list-item")
+          tableHeadings.first().text() shouldBe "Charges due now"
+          tableHeadings.get(1).text() shouldBe "Charges due in 30 days"
+          tableHeadings.get(2).text() shouldBe "Charges to pay later"
+
+          val overdueTab: Element = pageDocument.getElementById("charges-due-now")
+
+          val overdueTableHead: Element = overdueTab.getElementById("over-due-payments-table-head")
+          overdueTableHead.select("th").first().text() shouldBe dueDate
+          overdueTableHead.select("th").get(1).text() shouldBe chargeType
+          overdueTableHead.select("th").get(2).text() shouldBe taxYear
+          overdueTableHead.select("th").get(3).text() shouldBe estimatedInterest
+          overdueTableHead.select("th").get(4).text() shouldBe amountDue
+
+          val overdueChargeRow: Element = overdueTab.getElementById("due-0")
+          overdueChargeRow.select("td").first().text() shouldBe fixedDate.minusDays(1).toLongDateShort
+          overdueChargeRow.select("td").get(1).text() shouldBe s"$poa1Text 1"
+          overdueChargeRow.select("td").get(2).text() shouldBe taxYearSummaryText("2022", "2023")
+          overdueChargeRow.select("td").get(3).text() shouldBe "£34.56"
+          overdueChargeRow.select("td").last().text() shouldBe "£12.34"
+
+          findElementById("payment-button").isDefined shouldBe true
+          val paymentButton: Element = overdueTab.getElementById("payment-button")
+          paymentButton.text() shouldBe messages("selfAssessmentCharges.payNow")
+          pageDocument.getElementById("overdue-payment-text").text() shouldBe paymentProcessingText
+
+
+
+          val within30DaysTab: Element = pageDocument.getElementById("charges-due-in-30-days")
+
+          val chargesDueSoonTableHead: Element = within30DaysTab.getElementById("due-in-30-days-payments-table-head")
+          chargesDueSoonTableHead.select("th").first().text() shouldBe dueDate
+          chargesDueSoonTableHead.select("th").get(1).text() shouldBe chargeType
+          chargesDueSoonTableHead.select("th").get(2).text() shouldBe taxYear
+          chargesDueSoonTableHead.select("th").get(3).text() shouldBe amountDue
+
+          val chargesDueSoonTableRow1: Element = within30DaysTab.select("tr").get(1)
+          chargesDueSoonTableRow1.select("td").first().text() shouldBe fixedDate.plusDays(26).toLongDateShort
+          chargesDueSoonTableRow1.select("td").get(1).text() shouldBe poa2Text + s" 1"
+          chargesDueSoonTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString())
+          chargesDueSoonTableRow1.select("td").last().text() shouldBe "£3,500.00"
+
+          within30DaysTab.getElementById("payment-button") shouldBe null
+
+
+
+          val beyond30DaysTab: Element = pageDocument.getElementById("charges-due-later")
+
+          val laterTableHead: Element = beyond30DaysTab.getElementById("charges-due-later-table-head").select("tr").first()
+          laterTableHead.select("th").first().text() shouldBe dueDate
+          laterTableHead.select("th").get(1).text() shouldBe chargeType
+          laterTableHead.select("th").get(2).text() shouldBe taxYear
+          laterTableHead.select("th").get(3).text() shouldBe amountDue
+
+          val chargesDueLaterTableRow1: Element = beyond30DaysTab.select("tr").get(1)
+          chargesDueLaterTableRow1.select("td").first().text() shouldBe futureFixedDate.toLongDateShort
+          chargesDueLaterTableRow1.select("td").get(1).text() shouldBe poa1Text + s" 1"
+          chargesDueLaterTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((futureFixedDate.getYear - 1).toString, futureFixedDate.getYear.toString())
+          chargesDueLaterTableRow1.select("td").last().text() shouldBe "£2,500.00"
+
+          beyond30DaysTab.getElementById("payment-button") shouldBe null
+        }
+      }
     }
 
 //    "the user has charges and access viewer with mixed dates and ACI value of zero" should {
