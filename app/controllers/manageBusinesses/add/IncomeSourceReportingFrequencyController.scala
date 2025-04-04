@@ -155,9 +155,11 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
       sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
-        case Some(id) => IncomeSourceReportingMethodForm.form.bindFromRequest().fold(
-          invalid => handleInvalidForm(isAgent, incomeSourceType),
-          valid => handleValidForm(isAgent))
+        case Some(id) =>
+          IncomeSourceReportingMethodForm.form.bindFromRequest().fold(
+            invalid => handleInvalidForm(isAgent, incomeSourceType),
+            valid => handleValidForm(isAgent)
+          )
         case None =>
           val agentPrefix = if (isAgent) "[Agent]" else ""
           Logger("application").error(agentPrefix +
