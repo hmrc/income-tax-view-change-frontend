@@ -56,6 +56,7 @@ case class MtdItUser[A](mtditid: String,
   val isSupportingAgent: Boolean = usersRole == MTDSupportingAgent
 
   def addFeatureSwitches(newFeatureSwitches: List[FeatureSwitch]) = copy(featureSwitches = newFeatureSwitches)
+
   def addNavBar(partial: Html) = copy(btaNavPartial = Some(partial))
 
 }

@@ -17,10 +17,9 @@
 package models.paymentAllocationCharges
 
 import exceptions.MissingFieldException
+import implicits.ImplicitCurrencyFormatter._
 import models.financialDetails.DocumentDetail
 import models.paymentAllocations.AllocationDetail
-import implicits.ImplicitDateFormatter
-import implicits.ImplicitCurrencyFormatter._
 
 import java.time.LocalDate
 
@@ -37,7 +36,7 @@ case class PaymentAllocationViewModel(paymentAllocationChargeModel: FinancialDet
     paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)
 
   def getEffectiveDateOfPayment: LocalDate =
-      paymentAllocationChargeModel.documentDetails.head.effectiveDateOfPayment.getOrElse(throw MissingFieldException("Effective Date Of Payment"))
+    paymentAllocationChargeModel.documentDetails.head.effectiveDateOfPayment.getOrElse(throw MissingFieldException("Effective Date Of Payment"))
 
   def getOriginalAmount: String =
     paymentAllocationChargeModel.filteredDocumentDetails.head.originalAmount.abs.toCurrencyString

@@ -16,13 +16,27 @@
 
 package models.incomeSourceDetails.viewmodels
 
-import models.incomeSourceDetails.TaxYear
+import models.incomeSourceDetails.{ChosenReportingMethod, TaxYear}
 
 import java.time.LocalDate
 
-final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesModel]],
-  finalDeclarationDates: Seq[DatesModel], currentTaxYear: Int, showPrevTaxYears: Boolean
-) {
+final case class ObligationsViewModel(
+                                       quarterlyObligationsDates: Seq[Seq[DatesModel]],
+                                       finalDeclarationDates: Seq[DatesModel],
+                                       currentTaxYear: Int,
+                                       showPrevTaxYears: Boolean
+                                     ) {
+
+  def reportingMethod(latencyIndicator1: Option[String], latencyIndicator2: Option[String]): ChosenReportingMethod =
+    (latencyIndicator1, latencyIndicator2) match {
+      case (Some("Q"), Some("Q")) => ChosenReportingMethod.Quarterly
+      case (Some("A"), Some("Q")) => ChosenReportingMethod.AnnualQuarterly
+      case (Some("Q"), Some("A")) => ChosenReportingMethod.QuarterlyAnnual
+      case (Some("A"), Some("A")) => ChosenReportingMethod.Annual
+      case (None, None) => ChosenReportingMethod.DefaultAnnual
+      case _ => ChosenReportingMethod.Unknown
+    }
+
 
   def getOverdueObligationsMessageComponents(currentDate: LocalDate, isBusinessHistoric: Boolean): OverdueObligationsMessageComponents = {
     if (isBusinessHistoric) {
@@ -124,8 +138,13 @@ final case class ObligationsViewModel(quarterlyObligationsDates: Seq[Seq[DatesMo
   }
 }
 
-final case class DatesModel(inboundCorrespondenceFrom: LocalDate, inboundCorrespondenceTo: LocalDate,
-  inboundCorrespondenceDue: LocalDate, periodKey: String, isFinalDec: Boolean, obligationType: String
-)
+final case class DatesModel(
+                             inboundCorrespondenceFrom: LocalDate,
+                             inboundCorrespondenceTo: LocalDate,
+                             inboundCorrespondenceDue: LocalDate,
+                             periodKey: String,
+                             isFinalDec: Boolean,
+                             obligationType: String
+                           )
 
 final case class OverdueObligationsMessageComponents(messageKey: String, args: List[String])

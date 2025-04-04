@@ -19,7 +19,6 @@ package forms.incomeSources.cease
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.mappings.Mappings
-import implicits.ImplicitDateFormatter
 import play.api.data.Form
 import play.api.data.validation.{Constraint, Valid}
 import play.api.i18n.Messages
@@ -46,7 +45,7 @@ class CeaseIncomeSourceEndDateFormProvider extends Mappings {
 
     val checkMinDateIfSE: Constraint[LocalDate] = {
       if (incomeSourceType == SelfEmployment) minDate(LocalDate.of(2015, 4, 6), dateMustNotBeBefore6April2015(SelfEmployment))
-      else Constraint{_ => Valid}
+      else Constraint { _ => Valid }
     }
 
     val minimumDate: Constraint[LocalDate] = incomeSourceType match {

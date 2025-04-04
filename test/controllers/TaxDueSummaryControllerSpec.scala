@@ -50,7 +50,7 @@ class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationSe
           "render the payment allocation page" when {
             "the tax year can be found in ETMP" in {
               setupMockSuccess(mtdUserRole)
-              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+              setupMockGetIncomeSourceDetails(businessIncome2018and2019)
               mockCalculationSuccessfulNew("XAIT0000123456")
 
               val result = action(fakeRequest)
@@ -67,7 +67,7 @@ class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationSe
             "given a tax year which can not be found in ETMP" in {
               setupMockSuccess(mtdUserRole)
               mockCalculationNotFoundNew("XAIT0000123456")
-              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+              setupMockGetIncomeSourceDetails(businessIncome2018and2019)
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
             }
@@ -75,7 +75,7 @@ class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationSe
             "there is a downstream error" in {
               setupMockSuccess(mtdUserRole)
               mockCalculationErrorNew("XAIT0000123456")
-              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+              setupMockGetIncomeSourceDetails(businessIncome2018and2019)
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
             }

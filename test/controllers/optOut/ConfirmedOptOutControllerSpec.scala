@@ -61,7 +61,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions
         "render the Confirmed page" in {
 
           setupMockSuccess(mtdRole)
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockOptOutConfirmedPageViewModel(eligibleTaxYearResponse)
 
           when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
@@ -89,7 +89,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions
         s"return result with $INTERNAL_SERVER_ERROR status" when {
           "there is no tax year eligible for opt out" in {
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockOptOutConfirmedPageViewModel(noEligibleTaxYearResponse)
 
             when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
@@ -116,7 +116,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions
 
           "opt out service fails" in {
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockOptOutConfirmedPageViewModel(failedResponse)
 
             when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(

@@ -18,7 +18,7 @@ package controllers.manageBusinesses.manage
 
 import auth.MtdItUser
 import auth.authV2.AuthActions
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import models.admin.DisplayBusinessStartDate
@@ -33,6 +33,7 @@ import play.api.mvc._
 import services._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import utils.JourneyCheckerManageBusinesses
 import views.html.manageBusinesses.manage.ManageIncomeSourceDetails
 
@@ -51,20 +52,21 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                                                    (implicit val ec: ExecutionContext,
                                                     val mcc: MessagesControllerComponents,
                                                     val appConfig: FrontendAppConfig) extends FrontendController(mcc)
-    with I18nSupport with JourneyCheckerManageBusinesses {
+  with I18nSupport with JourneyCheckerManageBusinesses {
 
   private def getBackUrl(isAgent: Boolean): String =
-    if(isAgent) {
+    if (isAgent) {
       controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
     } else {
       controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
     }
 
-  private def errorHandler(isAgent: Boolean) = if (isAgent) {
-    itvcErrorHandlerAgent
-  } else {
-    itvcErrorHandler
-  }
+  private def errorHandler(isAgent: Boolean): FrontendErrorHandler with ShowInternalServerError =
+    if (isAgent) {
+      itvcErrorHandlerAgent
+    } else {
+      itvcErrorHandler
+    }
 
 
   def show(isAgent: Boolean,
@@ -140,7 +142,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       backUrl = backUrl
     ))
 
-    result.recover{
+    result.recover {
       case ex =>
         Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
         if (isAgent) {
@@ -222,9 +224,11 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     }
   }
 
-  private def variableViewModelSEBusiness(incomeSource: BusinessDetailsModel,
-                                          latencyYearsQuarterly: LatencyYearsQuarterly,
-                                          latencyYearsCrystallised: LatencyYearsCrystallised)(implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
+  private def variableViewModelSEBusiness(
+                                           incomeSource: BusinessDetailsModel,
+                                           latencyYearsQuarterly: LatencyYearsQuarterly,
+                                           latencyYearsCrystallised: LatencyYearsCrystallised
+                                         ): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
       incomeSource = incomeSource.incomeSource,
@@ -333,8 +337,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
 
 
   private def getManageIncomeSourceViewModelProperty(sources: IncomeSourceDetailsModel,
-                                                      incomeSourceType: IncomeSourceType,
-                                                      isAgent: Boolean
+                                                     incomeSourceType: IncomeSourceType,
+                                                     isAgent: Boolean
                                                     )(implicit user: MtdItUser[_],
                                                       hc: HeaderCarrier,
                                                       ec: ExecutionContext): Future[ManageIncomeSourceDetailsViewModel] = {

@@ -22,7 +22,6 @@ import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.{MockNextUpdatesService, MockSessionService}
 import models.admin.IncomeSourcesFs
-import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails._
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import org.mockito.ArgumentMatchers.any
@@ -79,37 +78,40 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions
   ))
 
   def mockSelfEmployment(): Unit = {
-    when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), mkIncomeSourceId(any()))(any())).thenReturn(
-      Some((LocalDate.parse("2022-01-01"), Some("Business Name")))
-    )
+    when(mockIncomeSourceDetailsService.getIncomeSource(any(), any(), any()))
+      .thenReturn(
+        Some(IncomeSourceFromUser(LocalDate.parse("2022-01-01"), Some("Business Name")))
+      )
   }
 
   def mockProperty(): Unit = {
-    when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), mkIncomeSourceId(any()))(any())).thenReturn(
-      Some((LocalDate.parse("2022-01-01"), None))
-    )
+    when(mockIncomeSourceDetailsService.getIncomeSource(any(), any(), any()))
+      .thenReturn(
+        Some(IncomeSourceFromUser(LocalDate.parse("2022-01-01"), None))
+      )
   }
 
   def mockISDS(incomeSourceType: IncomeSourceType): Unit = {
     if (incomeSourceType == SelfEmployment)
-      when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), mkIncomeSourceId(any()))(any())).thenReturn(
-        Some((LocalDate.parse("2022-01-01"), Some("Business Name")))
-      )
+      when(mockIncomeSourceDetailsService.getIncomeSource(any(), any(), any()))
+        .thenReturn(
+          Some(IncomeSourceFromUser(LocalDate.parse("2022-01-01"), Some("Business Name")))
+        )
     else
-      when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), mkIncomeSourceId(any()))(any())).thenReturn(
-        Some((LocalDate.parse("2022-01-01"), None))
-      )
+      when(mockIncomeSourceDetailsService.getIncomeSource(any(), any(), any()))
+        .thenReturn(
+          Some(IncomeSourceFromUser(LocalDate.parse("2022-01-01"), None))
+        )
   }
 
   def mockFailure(): Unit = {
-    when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), mkIncomeSourceId(any()))(any())).thenReturn(
-      None
-    )
+    when(mockIncomeSourceDetailsService.getIncomeSource(any(), any(), any()))
+      .thenReturn(None)
   }
 
   def mockMongo(incomeSourceType: IncomeSourceType): Unit = {
     setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType)))))
-    when(mockSessionService.setMongoData(any())(any(), any())).thenReturn(Future(true))
+    when(mockSessionService.setMongoData(any())).thenReturn(Future(true))
   }
 
   val incomeSourceTypes: Seq[IncomeSourceType with Serializable] = List(SelfEmployment, UkProperty, ForeignProperty)
@@ -208,7 +210,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions
                   cashOrAccruals = false
                 )), List.empty)
                 setupMockGetSessionKeyMongoTyped[String](Right(Some(testSelfEmploymentId)))
-                setupMockGetIncomeSourceDetails()(sources)
+                setupMockGetIncomeSourceDetails(sources)
                 when(mockNextUpdatesService.getOpenObligations()(any(), any())).
                   thenReturn(Future(testObligationsModel))
                 mockProperty()
@@ -232,11 +234,11 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions
             enable(IncomeSourcesFs)
             setupMockSuccess(mtdRole)
 
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result: Future[Result] = action(fakeRequest)
             status(result) shouldBe SEE_OTHER
-            val expectedLocation = if(mtdRole == MTDIndividual) {
+            val expectedLocation = if (mtdRole == MTDIndividual) {
               controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
             } else {
               controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url

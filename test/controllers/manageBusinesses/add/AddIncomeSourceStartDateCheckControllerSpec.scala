@@ -119,14 +119,14 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
 
   def verifyMongoDatesRemoved(): Unit = {
     val argument: ArgumentCaptor[UIJourneySessionData] = ArgumentCaptor.forClass(classOf[UIJourneySessionData])
-    verify(mockSessionService).setMongoData(argument.capture())(any(), any())
+    verify(mockSessionService).setMongoData(argument.capture())
 
     argument.getValue.addIncomeSourceData shouldBe Some(addIncomeSourceDataEmpty)
   }
 
   def verifySetMongoData(incomeSourceType: IncomeSourceType): Unit = {
     val argument: ArgumentCaptor[UIJourneySessionData] = ArgumentCaptor.forClass(classOf[UIJourneySessionData])
-    verify(mockSessionService).setMongoData(argument.capture())(any(), any())
+    verify(mockSessionService).setMongoData(argument.capture())
 
     if (incomeSourceType.equals(SelfEmployment)) {
       argument.getValue.addIncomeSourceData shouldBe Some(addIncomeSourceDataSE)

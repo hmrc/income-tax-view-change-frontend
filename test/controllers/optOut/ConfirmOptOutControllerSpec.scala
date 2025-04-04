@@ -67,7 +67,7 @@ class ConfirmOptOutControllerSpec extends MockAuthActions
         s"render the confirm opt out page" that {
           "is for one year" in {
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockOptOutCheckPointPageViewModel(oneYearViewModelResponse)
 
             val result = action(fakeRequest)
@@ -77,7 +77,7 @@ class ConfirmOptOutControllerSpec extends MockAuthActions
 
           "is for multiple years" in {
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockOptOutCheckPointPageViewModel(multiYearViewModelResponse)
 
             val result = action(fakeRequest)
@@ -89,7 +89,7 @@ class ConfirmOptOutControllerSpec extends MockAuthActions
 
           "there is no tax year eligible for opt out" in {
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockOptOutCheckPointPageViewModel(noEligibleTaxYearResponse)
 
             val result = action(fakeRequest)
@@ -99,7 +99,7 @@ class ConfirmOptOutControllerSpec extends MockAuthActions
 
           "opt out service fails" in {
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockOptOutCheckPointPageViewModel(failedResponse)
 
             val result = action(fakeRequest)
@@ -118,7 +118,7 @@ class ConfirmOptOutControllerSpec extends MockAuthActions
       s"the user is authenticated as a $mtdRole" should {
         "redirect to confirmed opt out controller" in {
           setupMockSuccess(mtdRole)
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockMakeOptOutUpdateRequest(optOutUpdateResponseSuccess)
 
           val result = action(fakeRequest)
@@ -131,7 +131,7 @@ class ConfirmOptOutControllerSpec extends MockAuthActions
 
           "there is no tax year eligible for opt out" in {
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockMakeOptOutUpdateRequest(optOutUpdateResponseFailure)
 
             val result = action(fakeRequest)
@@ -142,7 +142,7 @@ class ConfirmOptOutControllerSpec extends MockAuthActions
 
           "opt-out service fails" in {
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockMakeOptOutUpdateRequest(optOutUpdateResponseFailure)
 
             val result = action(fakeRequest)

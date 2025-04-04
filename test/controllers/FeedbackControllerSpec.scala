@@ -63,7 +63,7 @@ class FeedbackControllerSpec extends MockAuthActions
     "the user is an enrolled authenticated individual" should {
       "render the feedback page" in {
         setupMockAuthorisedUserNoCheckAuthSuccess(testAuthSuccessResponse())
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+        setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
         val result: Future[Result] = action(fakeRequestWithActiveSession)
         status(result) shouldBe Status.OK
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -96,7 +96,7 @@ class FeedbackControllerSpec extends MockAuthActions
       "submit the form and redirect to the thank you page" when {
         "the form has no errors" in {
           setupMockAuthorisedUserNoCheckAuthSuccess(testAuthSuccessResponse())
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           when(mockFeedbackConnector.submit(any())(any())).thenReturn(Future.successful(Right(())))
           val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(fields.toSeq: _*))
           status(result) shouldBe Status.SEE_OTHER
@@ -106,7 +106,7 @@ class FeedbackControllerSpec extends MockAuthActions
       "return a BadRequest" when {
         "the form is incorrectly filled" in {
           setupMockAuthorisedUserNoCheckAuthSuccess(testAuthSuccessResponse())
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           val result: Future[Result] = action(fakeRequest)
           status(result) shouldBe Status.BAD_REQUEST
         }
@@ -115,7 +115,7 @@ class FeedbackControllerSpec extends MockAuthActions
       "render the error page" when {
         "the submit feedback call fails" in {
           setupMockAuthorisedUserNoCheckAuthSuccess(testAuthSuccessResponse())
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           when(mockFeedbackConnector.submit(any())(any())).thenReturn(Future.successful(Left(500)))
           val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(fields.toSeq: _*))
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -142,7 +142,7 @@ class FeedbackControllerSpec extends MockAuthActions
       "return a BadRequest" when {
         "the form is incorrectly filled" in {
           setupMockAuthorisedUserNoCheckAuthSuccess(agentAuthRetrievalSuccess)
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           val result: Future[Result] = action(fakeRequest)
           status(result) shouldBe Status.BAD_REQUEST
         }
@@ -151,7 +151,7 @@ class FeedbackControllerSpec extends MockAuthActions
       "render the error page" when {
         "the submit feedback call fails" in {
           setupMockAuthorisedUserNoCheckAuthSuccess(agentAuthRetrievalSuccess)
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           when(mockFeedbackConnector.submit(any())(any())).thenReturn(Future.successful(Left(500)))
           val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(fields.toSeq: _*))
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -166,7 +166,7 @@ class FeedbackControllerSpec extends MockAuthActions
     "the user is an enrolled authenticated individual" should {
       "render the thank you page" in {
         setupMockAuthorisedUserNoCheckAuthSuccess(testAuthSuccessResponse())
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+        setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
         val result: Future[Result] = action(fakeRequestWithActiveSession)
         status(result) shouldBe Status.OK
         val document: Document = Jsoup.parse(contentAsString(result))

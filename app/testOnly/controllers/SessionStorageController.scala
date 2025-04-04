@@ -18,7 +18,6 @@ package testOnly.controllers
 
 import config.FrontendAppConfig
 import play.api.i18n.I18nSupport
-import play.api.mvc.Results.Redirect
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -26,9 +25,9 @@ import javax.inject.Inject
 import scala.concurrent.Future
 
 class SessionStorageController @Inject()
-                              (implicit mcc: MessagesControllerComponents,
-                               val appConfig: FrontendAppConfig)
-  extends FrontendController(mcc)  with I18nSupport {
+(implicit mcc: MessagesControllerComponents,
+ val appConfig: FrontendAppConfig)
+  extends FrontendController(mcc) with I18nSupport {
 
 
   val show: Action[AnyContent] = Action.async { implicit request =>
@@ -36,7 +35,7 @@ class SessionStorageController @Inject()
     val filterOutKeys = Seq("sessionId", "authToken", "csrfToken", "origin")
     val sessionDataStr: String = request.session
       .data
-      .filter( kv => !filterOutKeys.contains(kv._1))
+      .filter(kv => !filterOutKeys.contains(kv._1))
       .mkString("\n")
     Future.successful(Ok(sessionDataStr))
   }
@@ -55,7 +54,7 @@ class SessionStorageController @Inject()
           )
         case None =>
           Future.successful(Ok("Unable to add data to session storage"))
-    }
+      }
 
   }
 
