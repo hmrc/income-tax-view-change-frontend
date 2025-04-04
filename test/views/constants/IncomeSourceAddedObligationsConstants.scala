@@ -31,7 +31,9 @@ object IncomeSourceAddedObligationsConstants {
   val addIncomeSourceShowAgentURL: String = controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent().url
 
   val nextUpdatesUrl: String = controllers.routes.NextUpdatesController.show().url
-  val nextUpdatesAgentUrl: String = controllers.routes.NextUpdatesController.showAgent.url
+  val nextUpdatesAgentUrl: String = controllers.routes.NextUpdatesController.showAgent().url
+
+  def reportingFrequencyPageUrl(isAgent: Boolean): String = controllers.routes.ReportingFrequencyPageController.show(isAgent).url
 
   val manageBusinessesUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
   val manageBusinessesAgentUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url

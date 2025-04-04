@@ -723,8 +723,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   businessName = testName,
                   currentDate = dayFirstQuarter2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.Annual
-                  ,
+                  reportingMethod = ChosenReportingMethod.Annual,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
                   getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
                   getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
@@ -747,8 +746,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   businessName = testName,
                   currentDate = dayFirstQuarter2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.Annual
-                  ,
+                  reportingMethod = ChosenReportingMethod.Annual,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
                   getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
                   getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
@@ -817,8 +815,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   businessName = testName,
                   currentDate = dayAfterFinalDeclarationDeadline2023_2024AndThirdQuarterDeadline2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.Annual
-                  ,
+                  reportingMethod = ChosenReportingMethod.Annual,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
                   getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
                   getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
@@ -848,8 +845,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   businessName = testName,
                   currentDate = dayFirstQuarter2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.Annual
-                  ,
+                  reportingMethod = ChosenReportingMethod.Annual,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
                   getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
                   getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
@@ -879,8 +875,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   businessName = testName,
                   currentDate = dayFirstQuarter2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.Annual
-                  ,
+                  reportingMethod = ChosenReportingMethod.Annual,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
                   getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
                   getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
@@ -905,8 +900,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   businessName = testName,
                   currentDate = dayAfterFinalDeclarationDeadline2023_2024AndThirdQuarterDeadline2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.Annual
-                  ,
+                  reportingMethod = ChosenReportingMethod.Annual,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
                   getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
                   getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
@@ -935,8 +929,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   businessName = testName,
                   currentDate = dayJustBeforeTaxYearEnd2023_2024,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.Annual
-                  ,
+                  reportingMethod = ChosenReportingMethod.Annual,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
                   getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
                   getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
@@ -1020,7 +1013,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val reportingFrequency = document.getElementById("change-frequency")
 
             reportingFrequency.text() shouldBe "You are set to report annually for your new business. Find out more about your reporting frequency."
-            reportingFrequency.select("a").attr("href") shouldBe nextUpdatesUrl
+            reportingFrequency.select("a").attr("href") shouldBe reportingFrequencyPageUrl(false)
           }
 
           "reporting Quarterly" in {
@@ -1066,7 +1059,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val reportingFrequency = document.getElementById("change-frequency")
 
             reportingFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your businesses."
-            reportingFrequency.select("a").attr("href") shouldBe nextUpdatesUrl
+            reportingFrequency.select("a").attr("href") shouldBe reportingFrequencyPageUrl(false)
           }
 
           "reporting methods page was skipped - defaults to Annual reporting " in {
@@ -1089,7 +1082,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val reportingFrequency = document.getElementById("change-frequency")
 
             reportingFrequency.text() shouldBe "You are set to report annually for your new business. Find out more about your reporting frequency."
-            reportingFrequency.select("a").attr("href") shouldBe nextUpdatesUrl
+            reportingFrequency.select("a").attr("href") shouldBe reportingFrequencyPageUrl(false)
           }
         }
 
@@ -1594,7 +1587,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val reportingFrequency = document.getElementById("change-frequency")
 
             reportingFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your businesses."
-            reportingFrequency.select("a").attr("href") shouldBe nextUpdatesUrl
+            reportingFrequency.select("a").attr("href") shouldBe reportingFrequencyPageUrl(false)
           }
         }
 
@@ -1959,7 +1952,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val reportingFrequency = document.getElementById("change-frequency")
 
             reportingFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your businesses."
-            reportingFrequency.select("a").attr("href") shouldBe nextUpdatesUrl
+            reportingFrequency.select("a").attr("href") shouldBe reportingFrequencyPageUrl(false)
           }
         }
 
@@ -2021,9 +2014,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = false,
               reportingMethod = ChosenReportingMethod.Quarterly,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
             )
 
           val document: Document = Jsoup.parse(page.body)
@@ -2049,9 +2042,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = false,
               reportingMethod = ChosenReportingMethod.Quarterly,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
             )
 
           val document: Document = Jsoup.parse(page.body)
@@ -2085,9 +2078,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = false,
               reportingMethod = ChosenReportingMethod.Quarterly,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
             )
 
           val document: Document = Jsoup.parse(validSoleTreaderBusinessCall.body)
@@ -2111,7 +2104,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.Quarterly,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                   getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                   getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
@@ -2134,7 +2127,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 isBusinessHistoric = false,
                 reportingMethod = ChosenReportingMethod.Quarterly,
                 getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                 getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                 getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
@@ -2157,7 +2150,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 isBusinessHistoric = false,
                 reportingMethod = ChosenReportingMethod.Quarterly,
                 getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                 getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                 getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
@@ -2183,7 +2176,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 isBusinessHistoric = false,
                 reportingMethod = ChosenReportingMethod.Quarterly,
                 getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                 getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                 getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
@@ -2208,7 +2201,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 isBusinessHistoric = false,
                 reportingMethod = ChosenReportingMethod.Quarterly,
                 getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                 getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                 getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
@@ -2236,7 +2229,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 isBusinessHistoric = false,
                 reportingMethod = ChosenReportingMethod.Quarterly,
                 getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                 getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                 getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
@@ -2259,7 +2252,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 isBusinessHistoric = false,
                 reportingMethod = ChosenReportingMethod.Quarterly,
                 getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                 getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                 getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
@@ -2282,7 +2275,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 isBusinessHistoric = false,
                 reportingMethod = ChosenReportingMethod.Quarterly,
                 getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                 getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                 getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
@@ -2306,7 +2299,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.Quarterly,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                   getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                   getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
@@ -2341,7 +2334,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.Quarterly,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                   getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                   getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
@@ -2378,7 +2371,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                     isBusinessHistoric = false,
                     reportingMethod = ChosenReportingMethod.Quarterly,
                     getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                    getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                    getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                     getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                     getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                   )
@@ -2410,7 +2403,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                     isBusinessHistoric = false,
                     reportingMethod = ChosenReportingMethod.Quarterly,
                     getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                    getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                    getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                     getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                     getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                   )
@@ -2442,7 +2435,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                     isBusinessHistoric = false,
                     reportingMethod = ChosenReportingMethod.Quarterly,
                     getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                    getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                    getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                     getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                     getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                   )
@@ -2477,7 +2470,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 isBusinessHistoric = false,
                 reportingMethod = ChosenReportingMethod.Quarterly,
                 getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                 getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                 getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
@@ -2511,9 +2504,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = false,
               reportingMethod = ChosenReportingMethod.Quarterly,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
             )
 
           val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallOneOverdue.body)
@@ -2535,9 +2528,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = false,
               reportingMethod = ChosenReportingMethod.Quarterly,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
             )
 
           val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallNoOverdue.body)
@@ -2557,9 +2550,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = false,
               reportingMethod = ChosenReportingMethod.Quarterly,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
             )
 
           val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallNoOverdue.body)
@@ -2593,9 +2586,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = false,
               reportingMethod = ChosenReportingMethod.Annual,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url)
 
           val document: Document = Jsoup.parse(page.body)
           Option(document.getElementById("back")) shouldBe None
@@ -2620,9 +2613,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = false,
               reportingMethod = ChosenReportingMethod.Annual,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url)
 
           val document: Document = Jsoup.parse(page.body)
           val layoutContent: Element = document.selectHead("#main-content")
@@ -2655,9 +2648,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = false,
               reportingMethod = ChosenReportingMethod.Annual,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url)
 
           val document: Document = Jsoup.parse(validSoleTreaderBusinessCall.body)
 
@@ -2678,10 +2671,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   businessName = testName,
                   currentDate = dayFirstQuarter2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.Annual
-                  ,
+                  reportingMethod = ChosenReportingMethod.Annual,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                   getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                   getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
@@ -2702,10 +2694,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   businessName = testName,
                   currentDate = dayFirstQuarter2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.Annual
-                  ,
+                  reportingMethod = ChosenReportingMethod.Annual,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                   getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                   getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
@@ -2726,9 +2717,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = true,
               reportingMethod = ChosenReportingMethod.Annual,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url)
 
             val document: Document = Jsoup.parse(validHistoricAnnualThenAnnualCallNoOverdue.body)
 
@@ -2748,7 +2739,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 reportingMethod = ChosenReportingMethod.Annual
                 ,
                 getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                 getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                 getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
@@ -2772,10 +2763,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   businessName = testName,
                   currentDate = dayAfterFinalDeclarationDeadline2023_2024AndThirdQuarterDeadline2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.Annual
-                  ,
+                  reportingMethod = ChosenReportingMethod.Annual,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                   getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                   getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
@@ -2803,8 +2793,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   businessName = testName,
                   currentDate = dayFirstQuarter2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.Annual
-                  ,
+                  reportingMethod = ChosenReportingMethod.Annual,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
                   getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
                   getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
@@ -2834,8 +2823,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   businessName = testName,
                   currentDate = dayFirstQuarter2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.Annual
-                  ,
+                  reportingMethod = ChosenReportingMethod.Annual,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
                   getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
                   getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
@@ -2860,8 +2848,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   businessName = testName,
                   currentDate = dayAfterFinalDeclarationDeadline2023_2024AndThirdQuarterDeadline2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.Annual
-                  ,
+                  reportingMethod = ChosenReportingMethod.Annual,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
                   getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
                   getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
@@ -2890,10 +2877,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   businessName = testName,
                   currentDate = dayJustBeforeTaxYearEnd2023_2024,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.Annual
-                  ,
+                  reportingMethod = ChosenReportingMethod.Annual,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                   getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                   getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
@@ -2921,9 +2907,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = false,
               reportingMethod = ChosenReportingMethod.Annual,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url)
 
           val document: Document = Jsoup.parse(validCallWithData.body)
           val viewUpcomingUpdatesLink = document.getElementById("view-upcoming-updates")
@@ -2943,9 +2929,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = false,
               reportingMethod = ChosenReportingMethod.Annual,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url)
 
           val document: Document = Jsoup.parse(validCallWithData.body)
 
@@ -2967,15 +2953,14 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = false,
               reportingMethod = ChosenReportingMethod.Annual,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url)
 
             val document: Document = Jsoup.parse(validCurrentTaxYearAnnualCallNoOverdue.body)
             val reportingFrequency = document.getElementById("change-frequency")
 
             reportingFrequency.text() shouldBe "You are set to report annually for your new business. Find out more about your reporting frequency."
-            reportingFrequency.select("a").attr("href") shouldBe nextUpdatesAgentUrl
           }
 
           "reporting Quarterly" in {
@@ -2990,7 +2975,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 isBusinessHistoric = false,
                 reportingMethod = ChosenReportingMethod.Quarterly,
                 getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                 getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                 getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
@@ -3012,7 +2997,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 isBusinessHistoric = false,
                 reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
                 getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                 getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                 getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
@@ -3021,7 +3006,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val reportingFrequency = document.getElementById("change-frequency")
 
             reportingFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your businesses."
-            reportingFrequency.select("a").attr("href") shouldBe nextUpdatesAgentUrl
+            reportingFrequency.select("a").attr("href") shouldBe reportingFrequencyPageUrl(true)
           }
 
           "reporting methods page was skipped - defaults to Annual reporting " in {
@@ -3035,16 +3020,16 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = false,
               reportingMethod = ChosenReportingMethod.DefaultAnnual,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
             )
 
             val document: Document = Jsoup.parse(validCurrentTaxYearDefaultAnnualCallNoOverdue.body)
             val reportingFrequency = document.getElementById("change-frequency")
 
             reportingFrequency.text() shouldBe "You are set to report annually for your new business. Find out more about your reporting frequency."
-            reportingFrequency.select("a").attr("href") shouldBe nextUpdatesAgentUrl
+            reportingFrequency.select("a").attr("href") shouldBe reportingFrequencyPageUrl(true)
           }
         }
 
@@ -3061,9 +3046,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = false,
               reportingMethod = ChosenReportingMethod.Annual,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url)
 
             val document: Document = Jsoup.parse(validCurrentTaxYearAnnualCallNoOverdue.body)
             val layoutContent: Element = document.selectHead("#main-content")
@@ -3089,7 +3074,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 isBusinessHistoric = false,
                 reportingMethod = ChosenReportingMethod.Quarterly,
                 getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                 getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                 getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
@@ -3119,9 +3104,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = false,
               reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
             )
             val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
             val layoutContent: Element = document.selectHead("#main-content")
@@ -3161,9 +3146,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = false,
               reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
             )
 
           val document: Document = Jsoup.parse(page.body)
@@ -3189,9 +3174,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = false,
               reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
             )
 
           val document: Document = Jsoup.parse(page.body)
@@ -3225,9 +3210,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = false,
               reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
             )
 
           val document: Document = Jsoup.parse(validSoleTreaderBusinessCall.body)
@@ -3250,7 +3235,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 isBusinessHistoric = false,
                 reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
                 getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                 getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                 getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
@@ -3279,7 +3264,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                   getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                   getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
@@ -3303,9 +3288,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = false,
               reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
             )
 
             val document: Document = Jsoup.parse(validTwoQuartersThenAnnualCallTwoQuarterlyOverdue.body)
@@ -3327,7 +3312,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 isBusinessHistoric = false,
                 reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
                 getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                 getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                 getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
@@ -3355,9 +3340,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = false,
               reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
             )
 
             val document: Document = Jsoup.parse(validTwoQuarterThenAnnualCallTwoQuarterlyOneAnnualOverdue.body)
@@ -3386,9 +3371,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = true,
               reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
             )
 
             val document: Document = Jsoup.parse(validHistoricAnnualThenFullQuarterlyCallOneQuarterlyOverdue.body)
@@ -3409,9 +3394,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = true,
               reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
             )
 
             val document: Document = Jsoup.parse(validHistoricAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue.body)
@@ -3440,7 +3425,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                     isBusinessHistoric = false,
                     reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
                     getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                    getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                    getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                     getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                     getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                   )
@@ -3472,7 +3457,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                     isBusinessHistoric = false,
                     reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
                     getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                    getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                    getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                     getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                     getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                   )
@@ -3503,7 +3488,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                     isBusinessHistoric = false,
                     reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
                     getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                    getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                    getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                     getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                     getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                   )
@@ -3540,7 +3525,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 isBusinessHistoric = false,
                 reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
                 getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                 getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                 getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
@@ -3549,7 +3534,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val reportingFrequency = document.getElementById("change-frequency")
 
             reportingFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your businesses."
-            reportingFrequency.select("a").attr("href") shouldBe nextUpdatesAgentUrl
+            reportingFrequency.select("a").attr("href") shouldBe reportingFrequencyPageUrl(true)
           }
         }
 
@@ -3566,9 +3551,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = false,
               reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
             )
             val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
             val layoutContent: Element = document.selectHead("#main-content")
@@ -3608,9 +3593,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = false,
               reportingMethod = ChosenReportingMethod.AnnualQuarterly,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
             )
 
           val document: Document = Jsoup.parse(page.body)
@@ -3636,9 +3621,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = false,
               reportingMethod = ChosenReportingMethod.AnnualQuarterly,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
             )
 
           val document: Document = Jsoup.parse(page.body)
@@ -3672,9 +3657,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = false,
               reportingMethod = ChosenReportingMethod.AnnualQuarterly,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
             )
 
           val document: Document = Jsoup.parse(validSoleTreaderBusinessCall.body)
@@ -3697,7 +3682,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 isBusinessHistoric = false,
                 reportingMethod = ChosenReportingMethod.AnnualQuarterly,
                 getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                 getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                 getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
@@ -3725,7 +3710,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.AnnualQuarterly,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                   getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                   getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
@@ -3749,7 +3734,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.AnnualQuarterly,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                   getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                   getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
@@ -3773,7 +3758,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.AnnualQuarterly,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                   getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                   getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
@@ -3809,7 +3794,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.AnnualQuarterly,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                   getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                   getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
@@ -3817,8 +3802,6 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
 
                 val yourRevisedDeadlinesH2 = document.getElementById(SelectorHelper.yourRevisedDeadlinesH2)
-                val quarterlyList = document.getElementById(SelectorHelper.quarterlyList)
-                val obligationsList = document.getElementById(SelectorHelper.obligationsList)
 
                 yourRevisedDeadlinesH2.text() shouldBe yourRevisedDeadlinesHeading
               }
@@ -3834,7 +3817,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.AnnualQuarterly,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                   getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                   getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
@@ -3842,8 +3825,6 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallOneQuarterlyOverdue.body)
 
                 val yourRevisedDeadlinesH2 = document.getElementById(SelectorHelper.yourRevisedDeadlinesH2)
-                val quarterlyList = document.getElementById(SelectorHelper.quarterlyList)
-                val obligationsList = document.getElementById(SelectorHelper.obligationsList)
 
                 yourRevisedDeadlinesH2.text() shouldBe yourRevisedDeadlinesHeading
               }
@@ -3859,7 +3840,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.AnnualQuarterly,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                   getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                   getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
@@ -3867,8 +3848,6 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallOneAnnualTwoQuarterlyOverdue.body)
 
                 val yourRevisedDeadlinesH2 = document.getElementById(SelectorHelper.yourRevisedDeadlinesH2)
-                val quarterlyList = document.getElementById(SelectorHelper.quarterlyList)
-                val obligationsList = document.getElementById(SelectorHelper.obligationsList)
 
                 yourRevisedDeadlinesH2.text() shouldBe yourRevisedDeadlinesHeading
               }
@@ -3884,7 +3863,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.AnnualQuarterly,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                   getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                   getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
@@ -3914,7 +3893,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 isBusinessHistoric = false,
                 reportingMethod = ChosenReportingMethod.AnnualQuarterly,
                 getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
                 getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                 getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
@@ -3923,7 +3902,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val reportingFrequency = document.getElementById("change-frequency")
 
             reportingFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your businesses."
-            reportingFrequency.select("a").attr("href") shouldBe nextUpdatesAgentUrl
+            reportingFrequency.select("a").attr("href") shouldBe reportingFrequencyPageUrl(true)
           }
         }
 
@@ -3940,9 +3919,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               isBusinessHistoric = false,
               reportingMethod = ChosenReportingMethod.AnnualQuarterly,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
-              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.showAgent().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
             )
             val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
             val layoutContent: Element = document.selectHead("#main-content")
