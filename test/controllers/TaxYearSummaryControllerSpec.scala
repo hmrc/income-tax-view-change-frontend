@@ -382,6 +382,39 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
               }
             }
 
+            "Penalties in the charges table" when {
+              "the user has penalties and the penalties FS is enabled" in {
+                enable(PenaltiesAndAppeals)
+                setupMockSuccess(mtdUserRole)
+                mockSingleBusinessIncomeSource()
+                mockCalculationSuccessfulNew(testMtditid)
+                mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithAllThreePenalties)
+                mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+                  toDate = LocalDate.of(testTaxYear, 4, 5))(
+                  response = testObligtionsModel
+                )
+
+                val result = action(fakeRequest)
+                def chargeSummaryUrl(id: String) = if(isAgent) {
+                  controllers.routes.ChargeSummaryController.showAgent(testTaxYear, id).url
+                } else {
+                  controllers.routes.ChargeSummaryController.show(testTaxYear, id).url
+                }
+                status(result) shouldBe OK
+                Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").text() shouldBe "Late submission penalty"
+                Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-0").attr("href") shouldBe chargeSummaryUrl("LSP")
+                Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").text() shouldBe "First late payment penalty"
+                Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-1").attr("href") shouldBe chargeSummaryUrl("LPP1")
+                Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-2").text() shouldBe "Second late payment penalty"
+                Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-2").attr("href") shouldBe ""
+              }
+            }
+            "Not show penalties in the charges table" when {
+              "the penalties FS is disabled" in {
+
+              }
+            }
+
             "has a back link to the home page" in {
               setupMockSuccess(mtdUserRole)
               mockSingleBusinessIncomeSource()

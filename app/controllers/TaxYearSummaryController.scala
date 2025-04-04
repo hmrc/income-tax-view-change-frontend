@@ -172,6 +172,8 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
             .filter(_.notCodedOutPoa(isEnabled(FilterCodedOutPoas)))
             .filter(ChargeItem.filterAllowedCharges(isEnabled(ReviewAndReconcilePoa),
               PoaOneReconciliationDebit, PoaTwoReconciliationDebit))
+            .filter(ChargeItem.filterAllowedCharges(isEnabled(PenaltiesAndAppeals),
+              FirstLatePaymentPenalty, SecondLatePaymentPenalty, LateSubmissionPenalty))
         }
 
         val chargeItemsLpi: List[TaxYearSummaryChargeItem] = {
