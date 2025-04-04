@@ -80,7 +80,7 @@ class IncomeSourceAddedController @Inject()(
               incomeSourceFromUser: Option[IncomeSourceFromUser] <- Future(incomeSourceId.flatMap(id => incomeSourceDetailsService.getIncomeSource(incomeSourceType, id, user.incomeSources)))
               showPreviousTaxYears: Boolean = incomeSourceFromUser.exists(_.startDate.isBefore(dateService.getCurrentTaxYearStart))
               showView: Result <-
-                (incomeSourceId, incomeSourceFromUser)  match {
+                (incomeSourceId, incomeSourceFromUser) match {
                   case (Some(incomeSourceId), Some(incomeSource)) =>
                     handleSuccess(
                       isAgent = isAgent,
@@ -115,6 +115,28 @@ class IncomeSourceAddedController @Inject()(
                              sessionData: UIJourneySessionData
                            )(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
 
+    lazy val getNextUpdatesUrl =
+      if (isAgent) {
+        controllers.routes.NextUpdatesController.showAgent().url
+      } else {
+        controllers.routes.NextUpdatesController.show().url
+      }
+
+    lazy val getManageBusinessUrl =
+      if (isAgent) {
+        controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+      } else {
+        controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+      }
+
+    lazy val getReportingFrequencyUrl =
+      // TODO the below link will need to change to the new entry point for the opt in/out journeys once the page is made
+      if (isAgent) {
+        controllers.routes.NextUpdatesController.showAgent().url
+      } else {
+        controllers.routes.NextUpdatesController.show().url
+      }
+
     lazy val showErrorView = errorHandler.showInternalServerError()
     val originalAddIncomeSourceSessionData: AddIncomeSourceData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
     val updatedAddIncomeSourceSessionData: AddIncomeSourceData = originalAddIncomeSourceSessionData.copy(journeyIsComplete = Some(true))
@@ -140,13 +162,17 @@ class IncomeSourceAddedController @Inject()(
           val isBusinessHistoric = taxYearEndOfBusinessStartDate.getYear < viewModel.currentTaxYear - 1
           Ok(
             view(
-              sources = viewModel,
+              viewModel = viewModel,
               isAgent = isAgent,
               businessName = businessName,
               incomeSourceType = incomeSourceType,
               currentDate = dateService.getCurrentDate,
               isBusinessHistoric = isBusinessHistoric,
-              reportingMethod = viewModel.reportingMethod(reportingMethodTaxYear1, reportingMethodTaxYear2)
+              reportingMethod = viewModel.reportingMethod(reportingMethodTaxYear1, reportingMethodTaxYear2),
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = getReportingFrequencyUrl,
+              getNextUpdatesUrl = getNextUpdatesUrl,
+              getManageBusinessUrl = getManageBusinessUrl
             )
           )
         case None =>

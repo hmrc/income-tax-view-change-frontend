@@ -56,13 +56,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val page =
             view(
-              sources = viewModel,
+              viewModel = viewModel,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = None,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.Quarterly
+              reportingMethod = ChosenReportingMethod.Quarterly,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
           val document: Document = Jsoup.parse(page.body)
@@ -80,13 +84,19 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val page =
             view(
-              sources = viewModel,
+              viewModel = viewModel,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = businessName,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.Quarterly
+              reportingMethod = ChosenReportingMethod.Quarterly,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+
+
             )
 
           val document: Document = Jsoup.parse(page.body)
@@ -112,13 +122,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val validSoleTreaderBusinessCall =
             view(
-              sources = viewModel,
+              viewModel = viewModel,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = None,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.Quarterly
+              reportingMethod = ChosenReportingMethod.Quarterly,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
           val document: Document = Jsoup.parse(validSoleTreaderBusinessCall.body)
@@ -134,13 +148,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
               val validCurrentTaxYearQuarterlyCallNoOverdue =
                 view(
-                  sources = viewModelWithCurrentYearQuarterly,
+                  viewModel = viewModelWithCurrentYearQuarterly,
                   isAgent = false,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayFirstQuarter2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.Quarterly
+                  reportingMethod = ChosenReportingMethod.Quarterly,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
 
               val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallNoOverdue.body)
@@ -153,13 +171,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             "it is reporting quarterly for both CY-1 and CY" in {
 
               val validOneQuarterThenQuarterlyCallNoOverdue: Html = view(
-                sources = viewModelOneQuarterYearThenQuarterlyYear,
+                viewModel = viewModelOneQuarterYearThenQuarterlyYear,
                 isAgent = false,
                 incomeSourceType = SelfEmployment,
                 businessName = testName,
                 currentDate = dayBeforeLastQuarterlyDeadline2023_2024,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.Quarterly
+                reportingMethod = ChosenReportingMethod.Quarterly,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
               val document: Document = Jsoup.parse(validOneQuarterThenQuarterlyCallNoOverdue.body)
@@ -172,13 +194,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             val validFutureTaxYearQuarterlyCall: Html =
               view(
-                sources = viewModelWithFutureBusinessStartReportingQuarterly,
+                viewModel = viewModelWithFutureBusinessStartReportingQuarterly,
                 isAgent = false,
                 incomeSourceType = SelfEmployment,
                 businessName = testName,
                 currentDate = dayJustBeforeTaxYearEnd2023_2024,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.Quarterly
+                reportingMethod = ChosenReportingMethod.Quarterly,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
             val document: Document = Jsoup.parse(validFutureTaxYearQuarterlyCall.body)
@@ -194,13 +220,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             "it is reporting quarterly and there is one overdue obligation" in {
 
               val validCurrentTaxYearQuarterlyCallOneOverdue: Html = view(
-                sources = viewModelWithCurrentYearQuarterly,
+                viewModel = viewModelWithCurrentYearQuarterly,
                 isAgent = false,
                 incomeSourceType = SelfEmployment,
                 businessName = testName,
                 currentDate = dayAfterFirstQuarterDeadline2024_2025,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.Quarterly
+                reportingMethod = ChosenReportingMethod.Quarterly,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
               val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallOneOverdue.body)
@@ -215,13 +245,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             val validCurrentTaxYearQuarterlyCallMultipleOverdue: Html =
               view(
-                sources = viewModelWithCurrentYearQuarterly,
+                viewModel = viewModelWithCurrentYearQuarterly,
                 isAgent = false,
                 incomeSourceType = SelfEmployment,
                 businessName = testName,
                 currentDate = dayAfterThirdQuarterDeadline2024_2025,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.Quarterly
+                reportingMethod = ChosenReportingMethod.Quarterly,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
             val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallMultipleOverdue.body)
@@ -239,13 +273,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             "there is one overdue quarterly obligation from CY-1" in {
 
               val validOneQuarterThenQuarterlyCallOneQuarterlyOverdue: Html = view(
-                sources = viewModelOneQuarterYearThenQuarterlyYear,
+                viewModel = viewModelOneQuarterYearThenQuarterlyYear,
                 isAgent = false,
                 incomeSourceType = incomeSourceType,
                 businessName = testName,
                 currentDate = dayFirstQuarter2024_2025,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.Quarterly
+                reportingMethod = ChosenReportingMethod.Quarterly,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
               val document: Document = Jsoup.parse(validOneQuarterThenQuarterlyCallOneQuarterlyOverdue.body)
@@ -258,13 +296,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             "there are multiple overdue quarterly obligations from CY-1" in {
 
               val validTwoQuartersThenQuarterlyCallTwoQuarterlyOverdue: Html = view(
-                sources = viewModelTwoQuarterYearThenQuarterlyYear,
+                viewModel = viewModelTwoQuarterYearThenQuarterlyYear,
                 isAgent = false,
                 incomeSourceType = incomeSourceType,
                 businessName = testName,
                 currentDate = dayFirstQuarter2024_2025,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.Quarterly
+                reportingMethod = ChosenReportingMethod.Quarterly,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
               val document: Document = Jsoup.parse(validTwoQuartersThenQuarterlyCallTwoQuarterlyOverdue.body)
@@ -277,13 +319,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             "there are multiple overdue quarterly obligations from CY-1 and CY" in {
 
               val validTwoQuartersThenQuarterlyCallTwoQuarterlyOneQuarterlyOverdue: Html = view(
-                sources = viewModelTwoQuarterYearThenQuarterlyYear,
+                viewModel = viewModelTwoQuarterYearThenQuarterlyYear,
                 isAgent = false,
                 incomeSourceType = incomeSourceType,
                 businessName = testName,
                 currentDate = dayAfterFirstQuarterDeadline2024_2025,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.Quarterly
+                reportingMethod = ChosenReportingMethod.Quarterly,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
               val document: Document = Jsoup.parse(validTwoQuartersThenQuarterlyCallTwoQuarterlyOneQuarterlyOverdue.body)
@@ -297,13 +343,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
               val validTwoQuartersThenQuarterlyCallTwoQuarterlyOneAnnualOneQuarterlyOverdue: Html =
                 view(
-                  sources = viewModelTwoQuarterYearThenQuarterlyYear,
+                  viewModel = viewModelTwoQuarterYearThenQuarterlyYear,
                   isAgent = false,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayAfterFinalDeclarationDeadline2023_2024,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.Quarterly
+                  reportingMethod = ChosenReportingMethod.Quarterly,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
 
               val document: Document = Jsoup.parse(validTwoQuartersThenQuarterlyCallTwoQuarterlyOneAnnualOneQuarterlyOverdue.body)
@@ -328,13 +378,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
               val validCurrentTaxYearQuarterlyCallNoOverdue: Html =
                 view(
-                  sources = viewModelWithCurrentYearQuarterly,
+                  viewModel = viewModelWithCurrentYearQuarterly,
                   isAgent = false,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayFirstQuarter2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.Quarterly
+                  reportingMethod = ChosenReportingMethod.Quarterly,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
 
               val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallNoOverdue.body)
@@ -361,13 +415,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
                 val validFullQuarterlyThenFullyQuarterlyCallBeforeFirstQ4Deadline: Html =
                   view(
-                    sources = viewModelWithFullQuarterlyYearThenFullQuarterlyYear,
+                    viewModel = viewModelWithFullQuarterlyYearThenFullQuarterlyYear,
                     isAgent = false,
                     incomeSourceType = incomeSourceType,
                     businessName = testName,
                     currentDate = dayJustAfterTaxYearStart2024_2025,
                     isBusinessHistoric = false,
-                    reportingMethod = ChosenReportingMethod.Quarterly
+                    reportingMethod = ChosenReportingMethod.Quarterly,
+                    getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                    getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                    getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                    getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                   )
 
                 val document: Document = Jsoup.parse(validFullQuarterlyThenFullyQuarterlyCallBeforeFirstQ4Deadline.body)
@@ -389,13 +447,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
                 val validFullQuarterlyThenFullyQuarterlyCallAfterFirstQ4Deadline: Html =
                   view(
-                    sources = viewModelWithFullQuarterlyYearThenFullQuarterlyYear,
+                    viewModel = viewModelWithFullQuarterlyYearThenFullQuarterlyYear,
                     isAgent = false,
                     incomeSourceType = incomeSourceType,
                     businessName = testName,
                     currentDate = dayFirstQuarter2024_2025,
                     isBusinessHistoric = false,
-                    reportingMethod = ChosenReportingMethod.Quarterly
+                    reportingMethod = ChosenReportingMethod.Quarterly,
+                    getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                    getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                    getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                    getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                   )
 
                 val document: Document = Jsoup.parse(validFullQuarterlyThenFullyQuarterlyCallAfterFirstQ4Deadline.body)
@@ -417,13 +479,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
                 val validFullQuarterlyThenFullyQuarterlyCallAfterFirstFinalDecDeadline: Html =
                   view(
-                    sources = viewModelWithFullQuarterlyYearThenFullQuarterlyYear,
+                    viewModel = viewModelWithFullQuarterlyYearThenFullQuarterlyYear,
                     isAgent = false,
                     incomeSourceType = incomeSourceType,
                     businessName = testName,
                     currentDate = dayAfterFinalDeclarationDeadline2023_2024,
                     isBusinessHistoric = false,
-                    reportingMethod = ChosenReportingMethod.Quarterly
+                    reportingMethod = ChosenReportingMethod.Quarterly,
+                    getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                    getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                    getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                    getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                   )
 
                 val document: Document = Jsoup.parse(validFullQuarterlyThenFullyQuarterlyCallAfterFirstFinalDecDeadline.body)
@@ -448,13 +514,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             "it is reporting quarterly" in {
 
               val validFutureTaxYearQuarterlyCall: Html = view(
-                sources = viewModelWithFutureBusinessStartReportingQuarterly,
+                viewModel = viewModelWithFutureBusinessStartReportingQuarterly,
                 isAgent = false,
                 incomeSourceType = incomeSourceType,
                 businessName = testName,
                 currentDate = dayJustBeforeTaxYearEnd2023_2024,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.Quarterly
+                reportingMethod = ChosenReportingMethod.Quarterly,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
               val document: Document = Jsoup.parse(validFutureTaxYearQuarterlyCall.body)
@@ -478,13 +548,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val validCurrentTaxYearQuarterlyCallOneOverdue: Html =
             view(
-              sources = viewModelWithCurrentYearQuarterly,
+              viewModel = viewModelWithCurrentYearQuarterly,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayAfterFirstQuarterDeadline2024_2025,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.Quarterly
+              reportingMethod = ChosenReportingMethod.Quarterly,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
           val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallOneOverdue.body)
@@ -498,13 +572,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val validCurrentTaxYearQuarterlyCallNoOverdue: Html =
             view(
-              sources = viewModelWithCurrentYearQuarterly,
+              viewModel = viewModelWithCurrentYearQuarterly,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayFirstQuarter2024_2025,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.Quarterly
+              reportingMethod = ChosenReportingMethod.Quarterly,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
           val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallNoOverdue.body)
@@ -516,13 +594,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val validCurrentTaxYearQuarterlyCallNoOverdue: Html =
             view(
-              sources = viewModelWithCurrentYearQuarterly,
+              viewModel = viewModelWithCurrentYearQuarterly,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayFirstQuarter2024_2025,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.Quarterly
+              reportingMethod = ChosenReportingMethod.Quarterly,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
           val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallNoOverdue.body)
@@ -548,14 +630,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val page =
             view(
-              sources = viewModel,
+              viewModel = viewModel,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = None,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.Annual
-            )
+              reportingMethod = ChosenReportingMethod.Annual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
           val document: Document = Jsoup.parse(page.body)
           Option(document.getElementById("back")) shouldBe None
@@ -572,14 +657,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val page =
             view(
-              sources = viewModel,
+              viewModel = viewModel,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = businessName,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.Annual
-            )
+              reportingMethod = ChosenReportingMethod.Annual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
           val document: Document = Jsoup.parse(page.body)
           val layoutContent: Element = document.selectHead("#main-content")
@@ -604,14 +692,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val validSoleTreaderBusinessCall =
             view(
-              sources = viewModel,
+              viewModel = viewModel,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = None,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.Annual
-            )
+              reportingMethod = ChosenReportingMethod.Annual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
           val document: Document = Jsoup.parse(validSoleTreaderBusinessCall.body)
 
@@ -626,14 +717,18 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
               val validCurrentTaxYearQuarterlyCallNoOverdue =
                 view(
-                  sources = viewModelWithCurrentYearQuarterly,
+                  viewModel = viewModelWithCurrentYearQuarterly,
                   isAgent = false,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayFirstQuarter2024_2025,
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.Annual
-                )
+                  ,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
               val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallNoOverdue.body)
               Option(document.getElementById(SelectorHelper.warningInset)) shouldBe None
@@ -646,14 +741,18 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
               val validAnnualThenAnnualCallNoOverdue: Html =
                 view(
-                  sources = viewModelWithAnnualYearThenAnnualYear,
+                  viewModel = viewModelWithAnnualYearThenAnnualYear,
                   isAgent = false,
                   incomeSourceType = SelfEmployment,
                   businessName = testName,
                   currentDate = dayFirstQuarter2024_2025,
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.Annual
-                )
+                  ,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
               val document: Document = Jsoup.parse(validAnnualThenAnnualCallNoOverdue.body)
 
@@ -664,14 +763,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           "the business started before CY-1 and has a historic start date" in {
 
             val validHistoricAnnualThenAnnualCallNoOverdue: Html = view(
-              sources = viewModelWithAnnualYearThenAnnualYear,
+              viewModel = viewModelWithAnnualYearThenAnnualYear,
               isAgent = false,
               incomeSourceType = SelfEmployment,
               businessName = testName,
               currentDate = dayFirstQuarter2024_2025,
               isBusinessHistoric = true,
-              reportingMethod = ChosenReportingMethod.Annual
-            )
+              reportingMethod = ChosenReportingMethod.Annual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
             val document: Document = Jsoup.parse(validHistoricAnnualThenAnnualCallNoOverdue.body)
 
@@ -682,14 +784,18 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             val validFutureAnnualCallSameTaxYear: Html =
               view(
-                sources = viewModelWithFutureBusinessStartReportingAnnuallySameYaxYear,
+                viewModel = viewModelWithFutureBusinessStartReportingAnnuallySameYaxYear,
                 isAgent = false,
                 incomeSourceType = SelfEmployment,
                 businessName = testName,
                 currentDate = dayFirstQuarter2024_2025,
                 isBusinessHistoric = false,
                 reportingMethod = ChosenReportingMethod.Annual
-              )
+                ,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
             val document: Document = Jsoup.parse(validFutureAnnualCallSameTaxYear.body)
 
@@ -705,14 +811,18 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
               val validAnnualThenAnnualCallOneOverdue: Html =
                 view(
-                  sources = viewModelWithAnnualYearThenAnnualYear,
+                  viewModel = viewModelWithAnnualYearThenAnnualYear,
                   isAgent = false,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayAfterFinalDeclarationDeadline2023_2024AndThirdQuarterDeadline2024_2025,
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.Annual
-                )
+                  ,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
               val document: Document = Jsoup.parse(validAnnualThenAnnualCallOneOverdue.body)
 
@@ -732,14 +842,18 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
               val validCurrentTaxYearAnnualCallNoOverdue: Html =
                 view(
-                  sources = viewModelWithCurrentYearAnnual,
+                  viewModel = viewModelWithCurrentYearAnnual,
                   isAgent = false,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayFirstQuarter2024_2025,
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.Annual
-                )
+                  ,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
               val document: Document = Jsoup.parse(validCurrentTaxYearAnnualCallNoOverdue.body)
 
@@ -759,14 +873,18 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               "the current date is before the deadline for CY-1 final declaration" in {
 
                 val validAnnualThenAnnualCallNoOverdue: Html = view(
-                  sources = viewModelWithAnnualYearThenAnnualYear,
+                  viewModel = viewModelWithAnnualYearThenAnnualYear,
                   isAgent = false,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayFirstQuarter2024_2025,
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.Annual
-                )
+                  ,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
                 val document: Document = Jsoup.parse(validAnnualThenAnnualCallNoOverdue.body)
 
@@ -781,14 +899,18 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               "the current date is after the deadline for CY-1 final declaration" in {
 
                 val validAnnualThenAnnualCallOneOverdue: Html = view(
-                  sources = viewModelWithAnnualYearThenAnnualYear,
+                  viewModel = viewModelWithAnnualYearThenAnnualYear,
                   isAgent = false,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayAfterFinalDeclarationDeadline2023_2024AndThirdQuarterDeadline2024_2025,
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.Annual
-                )
+                  ,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
                 val document: Document = Jsoup.parse(validAnnualThenAnnualCallOneOverdue.body)
 
                 val yourRevisedDeadlinesH2 = document.getElementById(SelectorHelper.yourRevisedDeadlinesH2)
@@ -807,14 +929,18 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
               val validFutureTaxYearAnnualCall: Html =
                 view(
-                  sources = viewModelWithFutureBusinessStartReportingAnnually,
+                  viewModel = viewModelWithFutureBusinessStartReportingAnnually,
                   isAgent = false,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayJustBeforeTaxYearEnd2023_2024,
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.Annual
-                )
+                  ,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
               val document: Document = Jsoup.parse(validFutureTaxYearAnnualCall.body)
 
@@ -832,14 +958,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val validCallWithData: Html =
             view(
-              sources = viewModelWithAllData,
+              viewModel = viewModelWithAllData,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.Annual
-            )
+              reportingMethod = ChosenReportingMethod.Annual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
           val document: Document = Jsoup.parse(validCallWithData.body)
           val viewUpcomingUpdatesLink = document.getElementById("view-upcoming-updates")
@@ -851,14 +980,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val validCallWithData: Html =
             view(
-              sources = viewModelWithAllData,
+              viewModel = viewModelWithAllData,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.Annual
-            )
+              reportingMethod = ChosenReportingMethod.Annual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
           val document: Document = Jsoup.parse(validCallWithData.body)
 
@@ -872,14 +1004,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           "reporting Annually" in {
 
             val validCurrentTaxYearAnnualCallNoOverdue: Html = view(
-              sources = viewModelWithCurrentYearAnnual,
+              viewModel = viewModelWithCurrentYearAnnual,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayFirstQuarter2024_2025,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.Annual
-            )
+              reportingMethod = ChosenReportingMethod.Annual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
             val document: Document = Jsoup.parse(validCurrentTaxYearAnnualCallNoOverdue.body)
             val reportingFrequency = document.getElementById("change-frequency")
@@ -892,13 +1027,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             val validCurrentTaxYearQuarterlyCallNoOverdue: Html =
               view(
-                sources = viewModelWithCurrentYearQuarterly,
+                viewModel = viewModelWithCurrentYearQuarterly,
                 isAgent = false,
                 incomeSourceType = incomeSourceType,
                 businessName = testName,
                 currentDate = dayFirstQuarter2024_2025,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.Quarterly
+                reportingMethod = ChosenReportingMethod.Quarterly,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
             val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallNoOverdue.body)
@@ -910,13 +1049,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             val validAnnualThenFullQuarterlyCallNoOverdue: Html =
               view(
-                sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+                viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
                 isAgent = false,
                 incomeSourceType = incomeSourceType,
                 businessName = testName,
                 currentDate = dayFirstQuarter2024_2025,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+                reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
             val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
@@ -929,13 +1072,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           "reporting methods page was skipped - defaults to Annual reporting " in {
 
             val validCurrentTaxYearDefaultAnnualCallNoOverdue: Html = view(
-              sources = viewModelWithCurrentYearAnnual,
+              viewModel = viewModelWithCurrentYearAnnual,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayFirstQuarter2024_2025,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.DefaultAnnual
+              reportingMethod = ChosenReportingMethod.DefaultAnnual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
             val document: Document = Jsoup.parse(validCurrentTaxYearDefaultAnnualCallNoOverdue.body)
@@ -951,14 +1098,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           "reporting Annually" in {
 
             val validCurrentTaxYearAnnualCallNoOverdue: Html = view(
-              sources = viewModelWithCurrentYearAnnual,
+              viewModel = viewModelWithCurrentYearAnnual,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayFirstQuarter2024_2025,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.Annual
-            )
+              reportingMethod = ChosenReportingMethod.Annual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
             val document: Document = Jsoup.parse(validCurrentTaxYearAnnualCallNoOverdue.body)
             val layoutContent: Element = document.selectHead("#main-content")
@@ -976,13 +1126,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             val validCurrentTaxYearQuarterlyCallNoOverdue: Html =
               view(
-                sources = viewModelWithCurrentYearQuarterly,
+                viewModel = viewModelWithCurrentYearQuarterly,
                 isAgent = false,
                 incomeSourceType = incomeSourceType,
                 businessName = testName,
                 currentDate = dayFirstQuarter2024_2025,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.Quarterly
+                reportingMethod = ChosenReportingMethod.Quarterly,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
             val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallNoOverdue.body)
@@ -1002,13 +1156,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           "reporting Hybrid" in {
 
             val validAnnualThenFullQuarterlyCallNoOverdue: Html = view(
-              sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+              viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayFirstQuarter2024_2025,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+              reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
             val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
             val layoutContent: Element = document.selectHead("#main-content")
@@ -1040,13 +1198,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val page =
             view(
-              sources = viewModel,
+              viewModel = viewModel,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = None,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+              reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
           val document: Document = Jsoup.parse(page.body)
@@ -1064,13 +1226,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val page =
             view(
-              sources = viewModel,
+              viewModel = viewModel,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = businessName,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+              reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
           val document: Document = Jsoup.parse(page.body)
@@ -1096,13 +1262,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val validSoleTreaderBusinessCall =
             view(
-              sources = viewModel,
+              viewModel = viewModel,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = None,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+              reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
           val document: Document = Jsoup.parse(validSoleTreaderBusinessCall.body)
@@ -1117,13 +1287,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             "it is reporting Quarterly for CY-1 and Annually for CY" in {
 
               val validOneQuarterThenAnnualCallNoOverdue: Html = view(
-                sources = viewModelOneQuarterYearThenAnnualYear,
+                viewModel = viewModelOneQuarterYearThenAnnualYear,
                 isAgent = false,
                 incomeSourceType = SelfEmployment,
                 businessName = testName,
                 currentDate = dayBeforeLastQuarterlyDeadline2023_2024,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+                reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
               val document: Document = Jsoup.parse(validOneQuarterThenAnnualCallNoOverdue.body)
@@ -1142,13 +1316,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
               val validOneQuarterThenAnnualCallOneQuarterlyOverdue: Html =
                 view(
-                  sources = viewModelOneQuarterYearThenAnnualYear,
+                  viewModel = viewModelOneQuarterYearThenAnnualYear,
                   isAgent = false,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayFirstQuarter2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+                  reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
 
               val document: Document = Jsoup.parse(validOneQuarterThenAnnualCallOneQuarterlyOverdue.body)
@@ -1162,13 +1340,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           "there are multiple overdue quarterly obligations" in {
 
             val validTwoQuartersThenAnnualCallTwoQuarterlyOverdue: Html = view(
-              sources = viewModelTwoQuartersYearThenAnnualYear,
+              viewModel = viewModelTwoQuartersYearThenAnnualYear,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayFirstQuarter2024_2025,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+              reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
             val document: Document = Jsoup.parse(validTwoQuartersThenAnnualCallTwoQuarterlyOverdue.body)
@@ -1182,13 +1364,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             val validOneQuarterThenAnnualCallOneQuarterlyOneAnnualOverdue: Html =
               view(
-                sources = viewModelOneQuarterYearThenAnnualYear,
+                viewModel = viewModelOneQuarterYearThenAnnualYear,
                 isAgent = false,
                 incomeSourceType = incomeSourceType,
                 businessName = testName,
                 currentDate = dayAfterFinalDeclarationDeadline2023_2024AndThirdQuarterDeadline2024_2025,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+                reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
             val document: Document = Jsoup.parse(validOneQuarterThenAnnualCallOneQuarterlyOneAnnualOverdue.body)
@@ -1206,13 +1392,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           "there are multiple overdue quarterly obligations and one overdue annual obligation" in {
 
             val validTwoQuarterThenAnnualCallTwoQuarterlyOneAnnualOverdue: Html = view(
-              sources = viewModelTwoQuartersYearThenAnnualYear,
+              viewModel = viewModelTwoQuartersYearThenAnnualYear,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayAfterFinalDeclarationDeadline2023_2024AndThirdQuarterDeadline2024_2025,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+              reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
             val document: Document = Jsoup.parse(validTwoQuarterThenAnnualCallTwoQuarterlyOneAnnualOverdue.body)
@@ -1233,13 +1423,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           "there is one overdue obligation" in {
 
             val validHistoricAnnualThenFullQuarterlyCallOneQuarterlyOverdue: Html = view(
-              sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+              viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayAfterFirstQuarterDeadline2024_2025,
               isBusinessHistoric = true,
-              reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+              reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
             val document: Document = Jsoup.parse(validHistoricAnnualThenFullQuarterlyCallOneQuarterlyOverdue.body)
@@ -1252,13 +1446,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           "there are multiple overdue obligations" in {
 
             val validHistoricAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue: Html = view(
-              sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+              viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayAfterThirdQuarterDeadline2024_2025,
               isBusinessHistoric = true,
-              reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+              reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
             val document: Document = Jsoup.parse(validHistoricAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue.body)
@@ -1279,13 +1477,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
                 val validFullQuarterlyThenAnnualCallBeforeQ4Deadline: Html =
                   view(
-                    sources = viewModelWithFullQuarterlyYearThenAnnualYear,
+                    viewModel = viewModelWithFullQuarterlyYearThenAnnualYear,
                     isAgent = false,
                     incomeSourceType = incomeSourceType,
                     businessName = testName,
                     currentDate = dayJustAfterTaxYearStart2024_2025,
                     isBusinessHistoric = false,
-                    reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+                    reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+                    getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                    getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                    getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                    getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                   )
 
                 val document: Document = Jsoup.parse(validFullQuarterlyThenAnnualCallBeforeQ4Deadline.body)
@@ -1307,13 +1509,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
                 val validFullQuarterlyThenAnnualCallAfterQ4Deadline: Html =
                   view(
-                    sources = viewModelWithFullQuarterlyYearThenAnnualYear,
+                    viewModel = viewModelWithFullQuarterlyYearThenAnnualYear,
                     isAgent = false,
                     incomeSourceType = incomeSourceType,
                     businessName = testName,
                     currentDate = dayFirstQuarter2024_2025,
                     isBusinessHistoric = false,
-                    reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+                    reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+                    getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                    getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                    getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                    getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                   )
 
                 val document: Document = Jsoup.parse(validFullQuarterlyThenAnnualCallAfterQ4Deadline.body)
@@ -1334,13 +1540,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
                 val validFullQuarterlyThenAnnualCallAfterFinalDecDeadline: Html =
                   view(
-                    sources = viewModelWithFullQuarterlyYearThenAnnualYear,
+                    viewModel = viewModelWithFullQuarterlyYearThenAnnualYear,
                     isAgent = false,
                     incomeSourceType = incomeSourceType,
                     businessName = testName,
                     currentDate = dayAfterFinalDeclarationDeadline2023_2024,
                     isBusinessHistoric = false,
-                    reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+                    reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+                    getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                    getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                    getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                    getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                   )
 
                 val document: Document = Jsoup.parse(validFullQuarterlyThenAnnualCallAfterFinalDecDeadline.body)
@@ -1367,13 +1577,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             val validAnnualThenFullQuarterlyCallNoOverdue: Html =
               view(
-                sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+                viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
                 isAgent = false,
                 incomeSourceType = incomeSourceType,
                 businessName = testName,
                 currentDate = dayFirstQuarter2024_2025,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+                reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
             val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
@@ -1389,13 +1603,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           "reporting QuarterlyAnnual" in {
 
             val validAnnualThenFullQuarterlyCallNoOverdue: Html = view(
-              sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+              viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayFirstQuarter2024_2025,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+              reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
             val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
             val layoutContent: Element = document.selectHead("#main-content")
@@ -1427,13 +1645,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val page =
             view(
-              sources = viewModel,
+              viewModel = viewModel,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = None,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.AnnualQuarterly
+              reportingMethod = ChosenReportingMethod.AnnualQuarterly,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
           val document: Document = Jsoup.parse(page.body)
@@ -1451,13 +1673,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val page =
             view(
-              sources = viewModel,
+              viewModel = viewModel,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = businessName,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.AnnualQuarterly
+              reportingMethod = ChosenReportingMethod.AnnualQuarterly,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
           val document: Document = Jsoup.parse(page.body)
@@ -1483,13 +1709,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val validSoleTreaderBusinessCall =
             view(
-              sources = viewModel,
+              viewModel = viewModel,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = None,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.AnnualQuarterly
+              reportingMethod = ChosenReportingMethod.AnnualQuarterly,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
           val document: Document = Jsoup.parse(validSoleTreaderBusinessCall.body)
@@ -1504,13 +1734,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             "it is reporting Annually for CY-1 and Quarterly for CY" in {
 
               val validAnnualThenFullQuarterlyCallNoOverdue: Html = view(
-                sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+                viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
                 isAgent = false,
                 incomeSourceType = SelfEmployment,
                 businessName = testName,
                 currentDate = dayFirstQuarter2024_2025,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.AnnualQuarterly
+                reportingMethod = ChosenReportingMethod.AnnualQuarterly,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
               val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
@@ -1528,13 +1762,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
               val validAnnualThenFullQuarterlyCallOneQuarterlyOverdue: Html =
                 view(
-                  sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+                  viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
                   isAgent = false,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayAfterFirstQuarterDeadline2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.AnnualQuarterly
+                  reportingMethod = ChosenReportingMethod.AnnualQuarterly,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
 
               val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallOneQuarterlyOverdue.body)
@@ -1548,13 +1786,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
               val validAnnualThenFullQuarterlyCallTwoQuarterlyOverdue: Html =
                 view(
-                  sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+                  viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
                   isAgent = false,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayAfterSecondQuarterDeadline2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.AnnualQuarterly
+                  reportingMethod = ChosenReportingMethod.AnnualQuarterly,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
 
               val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallTwoQuarterlyOverdue.body)
@@ -1568,13 +1810,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
               val validAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue: Html =
                 view(
-                  sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+                  viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
                   isAgent = false,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayAfterThirdQuarterDeadline2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.AnnualQuarterly
+                  reportingMethod = ChosenReportingMethod.AnnualQuarterly,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
 
               val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue.body)
@@ -1600,13 +1846,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               "the current date is before the CY-1 final declaration deadline and CY Q1 deadline" in {
 
                 val validAnnualThenFullQuarterlyCallNoOverdue: Html = view(
-                  sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+                  viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
                   isAgent = false,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayFirstQuarter2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.AnnualQuarterly
+                  reportingMethod = ChosenReportingMethod.AnnualQuarterly,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
 
                 val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
@@ -1618,13 +1868,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               "the current date is before the CY-1 final declaration deadline and between CY Q1 and Q2 deadlines" in {
 
                 val validAnnualThenFullQuarterlyCallOneQuarterlyOverdue: Html = view(
-                  sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+                  viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
                   isAgent = false,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayAfterFirstQuarterDeadline2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.AnnualQuarterly
+                  reportingMethod = ChosenReportingMethod.AnnualQuarterly,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
 
                 val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallOneQuarterlyOverdue.body)
@@ -1636,13 +1890,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               "the current date is after the CY-1 final declaration deadline and between CY Q2 and Q3 deadlines" in {
 
                 val validAnnualThenFullQuarterlyCallOneAnnualTwoQuarterlyOverdue: Html = view(
-                  sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+                  viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
                   isAgent = false,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayAfterFinalDeclarationDeadline2023_2024,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.AnnualQuarterly
+                  reportingMethod = ChosenReportingMethod.AnnualQuarterly,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
 
                 val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallOneAnnualTwoQuarterlyOverdue.body)
@@ -1655,13 +1913,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
                 val validAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue: Html =
                   view(
-                    sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+                    viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
                     isAgent = false,
                     incomeSourceType = incomeSourceType,
                     businessName = testName,
                     currentDate = dayAfterThirdQuarterDeadline2024_2025,
                     isBusinessHistoric = false,
-                    reportingMethod = ChosenReportingMethod.AnnualQuarterly
+                    reportingMethod = ChosenReportingMethod.AnnualQuarterly,
+                    getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                    getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                    getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                    getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                   )
 
                 val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue.body)
@@ -1680,13 +1942,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             val validAnnualThenFullQuarterlyCallNoOverdue: Html =
               view(
-                sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+                viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
                 isAgent = false,
                 incomeSourceType = incomeSourceType,
                 businessName = testName,
                 currentDate = dayFirstQuarter2024_2025,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.AnnualQuarterly
+                reportingMethod = ChosenReportingMethod.AnnualQuarterly,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
             val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
@@ -1702,13 +1968,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           "reporting AnnualQuarterly" in {
 
             val validAnnualThenFullQuarterlyCallNoOverdue: Html = view(
-              sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+              viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
               isAgent = false,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayFirstQuarter2024_2025,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.AnnualQuarterly
+              reportingMethod = ChosenReportingMethod.AnnualQuarterly,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
             val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
             val layoutContent: Element = document.selectHead("#main-content")
@@ -1743,13 +2013,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val page =
             view(
-              sources = viewModel,
+              viewModel = viewModel,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = None,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.Quarterly
+              reportingMethod = ChosenReportingMethod.Quarterly,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
           val document: Document = Jsoup.parse(page.body)
@@ -1767,13 +2041,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val page =
             view(
-              sources = viewModel,
+              viewModel = viewModel,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = businessName,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.Quarterly
+              reportingMethod = ChosenReportingMethod.Quarterly,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
           val document: Document = Jsoup.parse(page.body)
@@ -1799,13 +2077,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val validSoleTreaderBusinessCall =
             view(
-              sources = viewModel,
+              viewModel = viewModel,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = None,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.Quarterly
+              reportingMethod = ChosenReportingMethod.Quarterly,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
           val document: Document = Jsoup.parse(validSoleTreaderBusinessCall.body)
@@ -1821,13 +2103,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
               val validCurrentTaxYearQuarterlyCallNoOverdue =
                 view(
-                  sources = viewModelWithCurrentYearQuarterly,
+                  viewModel = viewModelWithCurrentYearQuarterly,
                   isAgent = true,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayFirstQuarter2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.Quarterly
+                  reportingMethod = ChosenReportingMethod.Quarterly,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
 
               val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallNoOverdue.body)
@@ -1840,13 +2126,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             "it is reporting quarterly for both CY-1 and CY" in {
 
               val validOneQuarterThenQuarterlyCallNoOverdue: Html = view(
-                sources = viewModelOneQuarterYearThenQuarterlyYear,
+                viewModel = viewModelOneQuarterYearThenQuarterlyYear,
                 isAgent = true,
                 incomeSourceType = SelfEmployment,
                 businessName = testName,
                 currentDate = dayBeforeLastQuarterlyDeadline2023_2024,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.Quarterly
+                reportingMethod = ChosenReportingMethod.Quarterly,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
               val document: Document = Jsoup.parse(validOneQuarterThenQuarterlyCallNoOverdue.body)
@@ -1859,13 +2149,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             val validFutureTaxYearQuarterlyCall: Html =
               view(
-                sources = viewModelWithFutureBusinessStartReportingQuarterly,
+                viewModel = viewModelWithFutureBusinessStartReportingQuarterly,
                 isAgent = true,
                 incomeSourceType = SelfEmployment,
                 businessName = testName,
                 currentDate = dayJustBeforeTaxYearEnd2023_2024,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.Quarterly
+                reportingMethod = ChosenReportingMethod.Quarterly,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
             val document: Document = Jsoup.parse(validFutureTaxYearQuarterlyCall.body)
@@ -1881,13 +2175,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             "it is reporting quarterly and there is one overdue obligation" in {
 
               val validCurrentTaxYearQuarterlyCallOneOverdue: Html = view(
-                sources = viewModelWithCurrentYearQuarterly,
+                viewModel = viewModelWithCurrentYearQuarterly,
                 isAgent = true,
                 incomeSourceType = SelfEmployment,
                 businessName = testName,
                 currentDate = dayAfterFirstQuarterDeadline2024_2025,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.Quarterly
+                reportingMethod = ChosenReportingMethod.Quarterly,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
               val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallOneOverdue.body)
@@ -1902,13 +2200,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             val validCurrentTaxYearQuarterlyCallMultipleOverdue: Html =
               view(
-                sources = viewModelWithCurrentYearQuarterly,
+                viewModel = viewModelWithCurrentYearQuarterly,
                 isAgent = true,
                 incomeSourceType = SelfEmployment,
                 businessName = testName,
                 currentDate = dayAfterThirdQuarterDeadline2024_2025,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.Quarterly
+                reportingMethod = ChosenReportingMethod.Quarterly,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
             val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallMultipleOverdue.body)
@@ -1926,13 +2228,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             "there is one overdue quarterly obligation from CY-1" in {
 
               val validOneQuarterThenQuarterlyCallOneQuarterlyOverdue: Html = view(
-                sources = viewModelOneQuarterYearThenQuarterlyYear,
+                viewModel = viewModelOneQuarterYearThenQuarterlyYear,
                 isAgent = true,
                 incomeSourceType = incomeSourceType,
                 businessName = testName,
                 currentDate = dayFirstQuarter2024_2025,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.Quarterly
+                reportingMethod = ChosenReportingMethod.Quarterly,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
               val document: Document = Jsoup.parse(validOneQuarterThenQuarterlyCallOneQuarterlyOverdue.body)
@@ -1945,13 +2251,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             "there are multiple overdue quarterly obligations from CY-1" in {
 
               val validTwoQuartersThenQuarterlyCallTwoQuarterlyOverdue: Html = view(
-                sources = viewModelTwoQuarterYearThenQuarterlyYear,
+                viewModel = viewModelTwoQuarterYearThenQuarterlyYear,
                 isAgent = true,
                 incomeSourceType = incomeSourceType,
                 businessName = testName,
                 currentDate = dayFirstQuarter2024_2025,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.Quarterly
+                reportingMethod = ChosenReportingMethod.Quarterly,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
               val document: Document = Jsoup.parse(validTwoQuartersThenQuarterlyCallTwoQuarterlyOverdue.body)
@@ -1964,13 +2274,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             "there are multiple overdue quarterly obligations from CY-1 and CY" in {
 
               val validTwoQuartersThenQuarterlyCallTwoQuarterlyOneQuarterlyOverdue: Html = view(
-                sources = viewModelTwoQuarterYearThenQuarterlyYear,
+                viewModel = viewModelTwoQuarterYearThenQuarterlyYear,
                 isAgent = true,
                 incomeSourceType = incomeSourceType,
                 businessName = testName,
                 currentDate = dayAfterFirstQuarterDeadline2024_2025,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.Quarterly
+                reportingMethod = ChosenReportingMethod.Quarterly,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
               val document: Document = Jsoup.parse(validTwoQuartersThenQuarterlyCallTwoQuarterlyOneQuarterlyOverdue.body)
@@ -1984,13 +2298,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
               val validTwoQuartersThenQuarterlyCallTwoQuarterlyOneAnnualOneQuarterlyOverdue: Html =
                 view(
-                  sources = viewModelTwoQuarterYearThenQuarterlyYear,
+                  viewModel = viewModelTwoQuarterYearThenQuarterlyYear,
                   isAgent = true,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayAfterFinalDeclarationDeadline2023_2024,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.Quarterly
+                  reportingMethod = ChosenReportingMethod.Quarterly,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
 
               val document: Document = Jsoup.parse(validTwoQuartersThenQuarterlyCallTwoQuarterlyOneAnnualOneQuarterlyOverdue.body)
@@ -2015,13 +2333,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
               val validCurrentTaxYearQuarterlyCallNoOverdue: Html =
                 view(
-                  sources = viewModelWithCurrentYearQuarterly,
+                  viewModel = viewModelWithCurrentYearQuarterly,
                   isAgent = true,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayFirstQuarter2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.Quarterly
+                  reportingMethod = ChosenReportingMethod.Quarterly,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
 
               val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallNoOverdue.body)
@@ -2048,13 +2370,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
                 val validFullQuarterlyThenFullyQuarterlyCallBeforeFirstQ4Deadline: Html =
                   view(
-                    sources = viewModelWithFullQuarterlyYearThenFullQuarterlyYear,
+                    viewModel = viewModelWithFullQuarterlyYearThenFullQuarterlyYear,
                     isAgent = true,
                     incomeSourceType = incomeSourceType,
                     businessName = testName,
                     currentDate = dayJustAfterTaxYearStart2024_2025,
                     isBusinessHistoric = false,
-                    reportingMethod = ChosenReportingMethod.Quarterly
+                    reportingMethod = ChosenReportingMethod.Quarterly,
+                    getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                    getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                    getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                    getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                   )
 
                 val document: Document = Jsoup.parse(validFullQuarterlyThenFullyQuarterlyCallBeforeFirstQ4Deadline.body)
@@ -2076,13 +2402,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
                 val validFullQuarterlyThenFullyQuarterlyCallAfterFirstQ4Deadline: Html =
                   view(
-                    sources = viewModelWithFullQuarterlyYearThenFullQuarterlyYear,
+                    viewModel = viewModelWithFullQuarterlyYearThenFullQuarterlyYear,
                     isAgent = true,
                     incomeSourceType = incomeSourceType,
                     businessName = testName,
                     currentDate = dayFirstQuarter2024_2025,
                     isBusinessHistoric = false,
-                    reportingMethod = ChosenReportingMethod.Quarterly
+                    reportingMethod = ChosenReportingMethod.Quarterly,
+                    getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                    getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                    getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                    getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                   )
 
                 val document: Document = Jsoup.parse(validFullQuarterlyThenFullyQuarterlyCallAfterFirstQ4Deadline.body)
@@ -2104,13 +2434,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
                 val validFullQuarterlyThenFullyQuarterlyCallAfterFirstFinalDecDeadline: Html =
                   view(
-                    sources = viewModelWithFullQuarterlyYearThenFullQuarterlyYear,
+                    viewModel = viewModelWithFullQuarterlyYearThenFullQuarterlyYear,
                     isAgent = true,
                     incomeSourceType = incomeSourceType,
                     businessName = testName,
                     currentDate = dayAfterFinalDeclarationDeadline2023_2024,
                     isBusinessHistoric = false,
-                    reportingMethod = ChosenReportingMethod.Quarterly
+                    reportingMethod = ChosenReportingMethod.Quarterly,
+                    getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                    getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                    getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                    getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                   )
 
                 val document: Document = Jsoup.parse(validFullQuarterlyThenFullyQuarterlyCallAfterFirstFinalDecDeadline.body)
@@ -2135,13 +2469,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             "it is reporting quarterly" in {
 
               val validFutureTaxYearQuarterlyCall: Html = view(
-                sources = viewModelWithFutureBusinessStartReportingQuarterly,
+                viewModel = viewModelWithFutureBusinessStartReportingQuarterly,
                 isAgent = true,
                 incomeSourceType = incomeSourceType,
                 businessName = testName,
                 currentDate = dayJustBeforeTaxYearEnd2023_2024,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.Quarterly
+                reportingMethod = ChosenReportingMethod.Quarterly,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
               val document: Document = Jsoup.parse(validFutureTaxYearQuarterlyCall.body)
@@ -2165,13 +2503,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val validCurrentTaxYearQuarterlyCallOneOverdue: Html =
             view(
-              sources = viewModelWithCurrentYearQuarterly,
+              viewModel = viewModelWithCurrentYearQuarterly,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayAfterFirstQuarterDeadline2024_2025,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.Quarterly
+              reportingMethod = ChosenReportingMethod.Quarterly,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
           val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallOneOverdue.body)
@@ -2185,13 +2527,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val validCurrentTaxYearQuarterlyCallNoOverdue: Html =
             view(
-              sources = viewModelWithCurrentYearQuarterly,
+              viewModel = viewModelWithCurrentYearQuarterly,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayFirstQuarter2024_2025,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.Quarterly
+              reportingMethod = ChosenReportingMethod.Quarterly,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
           val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallNoOverdue.body)
@@ -2203,13 +2549,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val validCurrentTaxYearQuarterlyCallNoOverdue: Html =
             view(
-              sources = viewModelWithCurrentYearQuarterly,
+              viewModel = viewModelWithCurrentYearQuarterly,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayFirstQuarter2024_2025,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.Quarterly
+              reportingMethod = ChosenReportingMethod.Quarterly,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
           val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallNoOverdue.body)
@@ -2235,14 +2585,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val page =
             view(
-              sources = viewModel,
+              viewModel = viewModel,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = None,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.Annual
-            )
+              reportingMethod = ChosenReportingMethod.Annual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
           val document: Document = Jsoup.parse(page.body)
           Option(document.getElementById("back")) shouldBe None
@@ -2259,14 +2612,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val page =
             view(
-              sources = viewModel,
+              viewModel = viewModel,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = businessName,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.Annual
-            )
+              reportingMethod = ChosenReportingMethod.Annual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
           val document: Document = Jsoup.parse(page.body)
           val layoutContent: Element = document.selectHead("#main-content")
@@ -2291,14 +2647,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val validSoleTreaderBusinessCall =
             view(
-              sources = viewModel,
+              viewModel = viewModel,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = None,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.Annual
-            )
+              reportingMethod = ChosenReportingMethod.Annual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
           val document: Document = Jsoup.parse(validSoleTreaderBusinessCall.body)
 
@@ -2313,14 +2672,18 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
               val validCurrentTaxYearQuarterlyCallNoOverdue =
                 view(
-                  sources = viewModelWithCurrentYearQuarterly,
+                  viewModel = viewModelWithCurrentYearQuarterly,
                   isAgent = true,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayFirstQuarter2024_2025,
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.Annual
-                )
+                  ,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
               val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallNoOverdue.body)
               Option(document.getElementById(SelectorHelper.warningInset)) shouldBe None
@@ -2333,14 +2696,18 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
               val validAnnualThenAnnualCallNoOverdue: Html =
                 view(
-                  sources = viewModelWithAnnualYearThenAnnualYear,
+                  viewModel = viewModelWithAnnualYearThenAnnualYear,
                   isAgent = true,
                   incomeSourceType = SelfEmployment,
                   businessName = testName,
                   currentDate = dayFirstQuarter2024_2025,
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.Annual
-                )
+                  ,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
               val document: Document = Jsoup.parse(validAnnualThenAnnualCallNoOverdue.body)
 
@@ -2351,14 +2718,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           "the business started before CY-1 and has a historic start date" in {
 
             val validHistoricAnnualThenAnnualCallNoOverdue: Html = view(
-              sources = viewModelWithAnnualYearThenAnnualYear,
+              viewModel = viewModelWithAnnualYearThenAnnualYear,
               isAgent = true,
               incomeSourceType = SelfEmployment,
               businessName = testName,
               currentDate = dayFirstQuarter2024_2025,
               isBusinessHistoric = true,
-              reportingMethod = ChosenReportingMethod.Annual
-            )
+              reportingMethod = ChosenReportingMethod.Annual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
             val document: Document = Jsoup.parse(validHistoricAnnualThenAnnualCallNoOverdue.body)
 
@@ -2369,14 +2739,18 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             val validFutureAnnualCallSameTaxYear: Html =
               view(
-                sources = viewModelWithFutureBusinessStartReportingAnnuallySameYaxYear,
+                viewModel = viewModelWithFutureBusinessStartReportingAnnuallySameYaxYear,
                 isAgent = true,
                 incomeSourceType = SelfEmployment,
                 businessName = testName,
                 currentDate = dayFirstQuarter2024_2025,
                 isBusinessHistoric = false,
                 reportingMethod = ChosenReportingMethod.Annual
-              )
+                ,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
             val document: Document = Jsoup.parse(validFutureAnnualCallSameTaxYear.body)
 
@@ -2392,14 +2766,18 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
               val validAnnualThenAnnualCallOneOverdue: Html =
                 view(
-                  sources = viewModelWithAnnualYearThenAnnualYear,
+                  viewModel = viewModelWithAnnualYearThenAnnualYear,
                   isAgent = true,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayAfterFinalDeclarationDeadline2023_2024AndThirdQuarterDeadline2024_2025,
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.Annual
-                )
+                  ,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
               val document: Document = Jsoup.parse(validAnnualThenAnnualCallOneOverdue.body)
 
@@ -2419,14 +2797,18 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
               val validCurrentTaxYearAnnualCallNoOverdue: Html =
                 view(
-                  sources = viewModelWithCurrentYearAnnual,
+                  viewModel = viewModelWithCurrentYearAnnual,
                   isAgent = true,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayFirstQuarter2024_2025,
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.Annual
-                )
+                  ,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
               val document: Document = Jsoup.parse(validCurrentTaxYearAnnualCallNoOverdue.body)
 
@@ -2446,14 +2828,18 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               "the current date is before the deadline for CY-1 final declaration" in {
 
                 val validAnnualThenAnnualCallNoOverdue: Html = view(
-                  sources = viewModelWithAnnualYearThenAnnualYear,
+                  viewModel = viewModelWithAnnualYearThenAnnualYear,
                   isAgent = true,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayFirstQuarter2024_2025,
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.Annual
-                )
+                  ,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
                 val document: Document = Jsoup.parse(validAnnualThenAnnualCallNoOverdue.body)
 
@@ -2468,14 +2854,18 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               "the current date is after the deadline for CY-1 final declaration" in {
 
                 val validAnnualThenAnnualCallOneOverdue: Html = view(
-                  sources = viewModelWithAnnualYearThenAnnualYear,
+                  viewModel = viewModelWithAnnualYearThenAnnualYear,
                   isAgent = true,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayAfterFinalDeclarationDeadline2023_2024AndThirdQuarterDeadline2024_2025,
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.Annual
-                )
+                  ,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
                 val document: Document = Jsoup.parse(validAnnualThenAnnualCallOneOverdue.body)
 
                 val yourRevisedDeadlinesH2 = document.getElementById(SelectorHelper.yourRevisedDeadlinesH2)
@@ -2494,14 +2884,18 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
               val validFutureTaxYearAnnualCall: Html =
                 view(
-                  sources = viewModelWithFutureBusinessStartReportingAnnually,
+                  viewModel = viewModelWithFutureBusinessStartReportingAnnually,
                   isAgent = true,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayJustBeforeTaxYearEnd2023_2024,
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.Annual
-                )
+                  ,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
               val document: Document = Jsoup.parse(validFutureTaxYearAnnualCall.body)
 
@@ -2519,14 +2913,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val validCallWithData: Html =
             view(
-              sources = viewModelWithAllData,
+              viewModel = viewModelWithAllData,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.Annual
-            )
+              reportingMethod = ChosenReportingMethod.Annual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
           val document: Document = Jsoup.parse(validCallWithData.body)
           val viewUpcomingUpdatesLink = document.getElementById("view-upcoming-updates")
@@ -2538,14 +2935,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val validCallWithData: Html =
             view(
-              sources = viewModelWithAllData,
+              viewModel = viewModelWithAllData,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.Annual
-            )
+              reportingMethod = ChosenReportingMethod.Annual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
           val document: Document = Jsoup.parse(validCallWithData.body)
 
@@ -2559,14 +2959,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           "reporting Annually" in {
 
             val validCurrentTaxYearAnnualCallNoOverdue: Html = view(
-              sources = viewModelWithCurrentYearAnnual,
+              viewModel = viewModelWithCurrentYearAnnual,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayFirstQuarter2024_2025,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.Annual
-            )
+              reportingMethod = ChosenReportingMethod.Annual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
             val document: Document = Jsoup.parse(validCurrentTaxYearAnnualCallNoOverdue.body)
             val reportingFrequency = document.getElementById("change-frequency")
@@ -2579,13 +2982,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             val validCurrentTaxYearQuarterlyCallNoOverdue: Html =
               view(
-                sources = viewModelWithCurrentYearQuarterly,
+                viewModel = viewModelWithCurrentYearQuarterly,
                 isAgent = true,
                 incomeSourceType = incomeSourceType,
                 businessName = testName,
                 currentDate = dayFirstQuarter2024_2025,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.Quarterly
+                reportingMethod = ChosenReportingMethod.Quarterly,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
             val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallNoOverdue.body)
@@ -2597,13 +3004,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             val validAnnualThenFullQuarterlyCallNoOverdue: Html =
               view(
-                sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+                viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
                 isAgent = true,
                 incomeSourceType = incomeSourceType,
                 businessName = testName,
                 currentDate = dayFirstQuarter2024_2025,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+                reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
             val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
@@ -2616,13 +3027,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           "reporting methods page was skipped - defaults to Annual reporting " in {
 
             val validCurrentTaxYearDefaultAnnualCallNoOverdue: Html = view(
-              sources = viewModelWithCurrentYearAnnual,
+              viewModel = viewModelWithCurrentYearAnnual,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayFirstQuarter2024_2025,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.DefaultAnnual
+              reportingMethod = ChosenReportingMethod.DefaultAnnual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
             val document: Document = Jsoup.parse(validCurrentTaxYearDefaultAnnualCallNoOverdue.body)
@@ -2638,14 +3053,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           "reporting Annually" in {
 
             val validCurrentTaxYearAnnualCallNoOverdue: Html = view(
-              sources = viewModelWithCurrentYearAnnual,
+              viewModel = viewModelWithCurrentYearAnnual,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayFirstQuarter2024_2025,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.Annual
-            )
+              reportingMethod = ChosenReportingMethod.Annual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
 
             val document: Document = Jsoup.parse(validCurrentTaxYearAnnualCallNoOverdue.body)
             val layoutContent: Element = document.selectHead("#main-content")
@@ -2663,13 +3081,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             val validCurrentTaxYearQuarterlyCallNoOverdue: Html =
               view(
-                sources = viewModelWithCurrentYearQuarterly,
+                viewModel = viewModelWithCurrentYearQuarterly,
                 isAgent = true,
                 incomeSourceType = incomeSourceType,
                 businessName = testName,
                 currentDate = dayFirstQuarter2024_2025,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.Quarterly
+                reportingMethod = ChosenReportingMethod.Quarterly,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
             val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallNoOverdue.body)
@@ -2689,13 +3111,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           "reporting Hybrid" in {
 
             val validAnnualThenFullQuarterlyCallNoOverdue: Html = view(
-              sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+              viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayFirstQuarter2024_2025,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+              reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
             val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
             val layoutContent: Element = document.selectHead("#main-content")
@@ -2727,13 +3153,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val page =
             view(
-              sources = viewModel,
+              viewModel = viewModel,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = None,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+              reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
           val document: Document = Jsoup.parse(page.body)
@@ -2751,13 +3181,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val page =
             view(
-              sources = viewModel,
+              viewModel = viewModel,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = businessName,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+              reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
           val document: Document = Jsoup.parse(page.body)
@@ -2783,13 +3217,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val validSoleTreaderBusinessCall =
             view(
-              sources = viewModel,
+              viewModel = viewModel,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = None,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+              reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
           val document: Document = Jsoup.parse(validSoleTreaderBusinessCall.body)
@@ -2804,13 +3242,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             "it is reporting Quarterly for CY-1 and Annually for CY" in {
 
               val validOneQuarterThenAnnualCallNoOverdue: Html = view(
-                sources = viewModelOneQuarterYearThenAnnualYear,
+                viewModel = viewModelOneQuarterYearThenAnnualYear,
                 isAgent = true,
                 incomeSourceType = SelfEmployment,
                 businessName = testName,
                 currentDate = dayBeforeLastQuarterlyDeadline2023_2024,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+                reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
               val document: Document = Jsoup.parse(validOneQuarterThenAnnualCallNoOverdue.body)
@@ -2829,13 +3271,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
               val validOneQuarterThenAnnualCallOneQuarterlyOverdue: Html =
                 view(
-                  sources = viewModelOneQuarterYearThenAnnualYear,
+                  viewModel = viewModelOneQuarterYearThenAnnualYear,
                   isAgent = true,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayFirstQuarter2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+                  reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
 
               val document: Document = Jsoup.parse(validOneQuarterThenAnnualCallOneQuarterlyOverdue.body)
@@ -2849,13 +3295,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           "there are multiple overdue quarterly obligations" in {
 
             val validTwoQuartersThenAnnualCallTwoQuarterlyOverdue: Html = view(
-              sources = viewModelTwoQuartersYearThenAnnualYear,
+              viewModel = viewModelTwoQuartersYearThenAnnualYear,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayFirstQuarter2024_2025,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+              reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
             val document: Document = Jsoup.parse(validTwoQuartersThenAnnualCallTwoQuarterlyOverdue.body)
@@ -2869,13 +3319,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             val validOneQuarterThenAnnualCallOneQuarterlyOneAnnualOverdue: Html =
               view(
-                sources = viewModelOneQuarterYearThenAnnualYear,
+                viewModel = viewModelOneQuarterYearThenAnnualYear,
                 isAgent = true,
                 incomeSourceType = incomeSourceType,
                 businessName = testName,
                 currentDate = dayAfterFinalDeclarationDeadline2023_2024AndThirdQuarterDeadline2024_2025,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+                reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
             val document: Document = Jsoup.parse(validOneQuarterThenAnnualCallOneQuarterlyOneAnnualOverdue.body)
@@ -2893,13 +3347,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           "there are multiple overdue quarterly obligations and one overdue annual obligation" in {
 
             val validTwoQuarterThenAnnualCallTwoQuarterlyOneAnnualOverdue: Html = view(
-              sources = viewModelTwoQuartersYearThenAnnualYear,
+              viewModel = viewModelTwoQuartersYearThenAnnualYear,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayAfterFinalDeclarationDeadline2023_2024AndThirdQuarterDeadline2024_2025,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+              reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
             val document: Document = Jsoup.parse(validTwoQuarterThenAnnualCallTwoQuarterlyOneAnnualOverdue.body)
@@ -2920,13 +3378,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           "there is one overdue obligation" in {
 
             val validHistoricAnnualThenFullQuarterlyCallOneQuarterlyOverdue: Html = view(
-              sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+              viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayAfterFirstQuarterDeadline2024_2025,
               isBusinessHistoric = true,
-              reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+              reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
             val document: Document = Jsoup.parse(validHistoricAnnualThenFullQuarterlyCallOneQuarterlyOverdue.body)
@@ -2939,13 +3401,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           "there are multiple overdue obligations" in {
 
             val validHistoricAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue: Html = view(
-              sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+              viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayAfterThirdQuarterDeadline2024_2025,
               isBusinessHistoric = true,
-              reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+              reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
             val document: Document = Jsoup.parse(validHistoricAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue.body)
@@ -2966,13 +3432,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
                 val validFullQuarterlyThenAnnualCallBeforeQ4Deadline: Html =
                   view(
-                    sources = viewModelWithFullQuarterlyYearThenAnnualYear,
+                    viewModel = viewModelWithFullQuarterlyYearThenAnnualYear,
                     isAgent = true,
                     incomeSourceType = incomeSourceType,
                     businessName = testName,
                     currentDate = dayJustAfterTaxYearStart2024_2025,
                     isBusinessHistoric = false,
-                    reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+                    reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+                    getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                    getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                    getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                    getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                   )
 
                 val document: Document = Jsoup.parse(validFullQuarterlyThenAnnualCallBeforeQ4Deadline.body)
@@ -2994,13 +3464,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
                 val validFullQuarterlyThenAnnualCallAfterQ4Deadline: Html =
                   view(
-                    sources = viewModelWithFullQuarterlyYearThenAnnualYear,
+                    viewModel = viewModelWithFullQuarterlyYearThenAnnualYear,
                     isAgent = true,
                     incomeSourceType = incomeSourceType,
                     businessName = testName,
                     currentDate = dayFirstQuarter2024_2025,
                     isBusinessHistoric = false,
-                    reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+                    reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+                    getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                    getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                    getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                    getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                   )
 
                 val document: Document = Jsoup.parse(validFullQuarterlyThenAnnualCallAfterQ4Deadline.body)
@@ -3021,13 +3495,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
                 val validFullQuarterlyThenAnnualCallAfterFinalDecDeadline: Html =
                   view(
-                    sources = viewModelWithFullQuarterlyYearThenAnnualYear,
+                    viewModel = viewModelWithFullQuarterlyYearThenAnnualYear,
                     isAgent = true,
                     incomeSourceType = incomeSourceType,
                     businessName = testName,
                     currentDate = dayAfterFinalDeclarationDeadline2023_2024,
                     isBusinessHistoric = false,
-                    reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+                    reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+                    getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                    getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                    getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                    getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                   )
 
                 val document: Document = Jsoup.parse(validFullQuarterlyThenAnnualCallAfterFinalDecDeadline.body)
@@ -3054,13 +3532,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             val validAnnualThenFullQuarterlyCallNoOverdue: Html =
               view(
-                sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+                viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
                 isAgent = true,
                 incomeSourceType = incomeSourceType,
                 businessName = testName,
                 currentDate = dayFirstQuarter2024_2025,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+                reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
             val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
@@ -3076,13 +3558,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           "reporting QuarterlyAnnual" in {
 
             val validAnnualThenFullQuarterlyCallNoOverdue: Html = view(
-              sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+              viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayFirstQuarter2024_2025,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.QuarterlyAnnual
+              reportingMethod = ChosenReportingMethod.QuarterlyAnnual,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
             val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
             val layoutContent: Element = document.selectHead("#main-content")
@@ -3114,13 +3600,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val page =
             view(
-              sources = viewModel,
+              viewModel = viewModel,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = None,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.AnnualQuarterly
+              reportingMethod = ChosenReportingMethod.AnnualQuarterly,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
           val document: Document = Jsoup.parse(page.body)
@@ -3138,13 +3628,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val page =
             view(
-              sources = viewModel,
+              viewModel = viewModel,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = businessName,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.AnnualQuarterly
+              reportingMethod = ChosenReportingMethod.AnnualQuarterly,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
           val document: Document = Jsoup.parse(page.body)
@@ -3170,13 +3664,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
           val validSoleTreaderBusinessCall =
             view(
-              sources = viewModel,
+              viewModel = viewModel,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = None,
               currentDate = day,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.AnnualQuarterly
+              reportingMethod = ChosenReportingMethod.AnnualQuarterly,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
 
           val document: Document = Jsoup.parse(validSoleTreaderBusinessCall.body)
@@ -3191,13 +3689,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             "it is reporting Annually for CY-1 and Quarterly for CY" in {
 
               val validAnnualThenFullQuarterlyCallNoOverdue: Html = view(
-                sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+                viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
                 isAgent = true,
                 incomeSourceType = SelfEmployment,
                 businessName = testName,
                 currentDate = dayFirstQuarter2024_2025,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.AnnualQuarterly
+                reportingMethod = ChosenReportingMethod.AnnualQuarterly,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
               val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
@@ -3215,13 +3717,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
               val validAnnualThenFullQuarterlyCallOneQuarterlyOverdue: Html =
                 view(
-                  sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+                  viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
                   isAgent = true,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayAfterFirstQuarterDeadline2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.AnnualQuarterly
+                  reportingMethod = ChosenReportingMethod.AnnualQuarterly,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
 
               val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallOneQuarterlyOverdue.body)
@@ -3235,13 +3741,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
               val validAnnualThenFullQuarterlyCallTwoQuarterlyOverdue: Html =
                 view(
-                  sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+                  viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
                   isAgent = true,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayAfterSecondQuarterDeadline2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.AnnualQuarterly
+                  reportingMethod = ChosenReportingMethod.AnnualQuarterly,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
 
               val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallTwoQuarterlyOverdue.body)
@@ -3255,13 +3765,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
               val validAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue: Html =
                 view(
-                  sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+                  viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
                   isAgent = true,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayAfterThirdQuarterDeadline2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.AnnualQuarterly
+                  reportingMethod = ChosenReportingMethod.AnnualQuarterly,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
 
               val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue.body)
@@ -3287,13 +3801,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               "the current date is before the CY-1 final declaration deadline and CY Q1 deadline" in {
 
                 val validAnnualThenFullQuarterlyCallNoOverdue: Html = view(
-                  sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+                  viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
                   isAgent = true,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayFirstQuarter2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.AnnualQuarterly
+                  reportingMethod = ChosenReportingMethod.AnnualQuarterly,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
 
                 val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
@@ -3308,13 +3826,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               "the current date is before the CY-1 final declaration deadline and between CY Q1 and Q2 deadlines" in {
 
                 val validAnnualThenFullQuarterlyCallOneQuarterlyOverdue: Html = view(
-                  sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+                  viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
                   isAgent = true,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayAfterFirstQuarterDeadline2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.AnnualQuarterly
+                  reportingMethod = ChosenReportingMethod.AnnualQuarterly,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
 
                 val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallOneQuarterlyOverdue.body)
@@ -3329,13 +3851,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               "the current date is after the CY-1 final declaration deadline and between CY Q2 and Q3 deadlines" in {
 
                 val validAnnualThenFullQuarterlyCallOneAnnualTwoQuarterlyOverdue: Html = view(
-                  sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+                  viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
                   isAgent = true,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayAfterFinalDeclarationDeadline2023_2024,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.AnnualQuarterly
+                  reportingMethod = ChosenReportingMethod.AnnualQuarterly,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
 
                 val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallOneAnnualTwoQuarterlyOverdue.body)
@@ -3350,13 +3876,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               "the current date is after the CY-1 final declaration deadline and the CY Q3 deadline" in {
 
                 val validAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue: Html = view(
-                  sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+                  viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
                   isAgent = true,
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayAfterThirdQuarterDeadline2024_2025,
                   isBusinessHistoric = false,
-                  reportingMethod = ChosenReportingMethod.AnnualQuarterly
+                  reportingMethod = ChosenReportingMethod.AnnualQuarterly,
+                  getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                  getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
                 )
 
                 val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallOneAnnualThreeQuarterlyOverdue.body)
@@ -3376,13 +3906,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             val validAnnualThenFullQuarterlyCallNoOverdue: Html =
               view(
-                sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+                viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
                 isAgent = true,
                 incomeSourceType = incomeSourceType,
                 businessName = testName,
                 currentDate = dayFirstQuarter2024_2025,
                 isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.AnnualQuarterly
+                reportingMethod = ChosenReportingMethod.AnnualQuarterly,
+                getSoftwareUrl = appConfig.compatibleSoftwareLink,
+                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
               )
 
             val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
@@ -3398,13 +3932,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           "reporting AnnualQuarterly" in {
 
             val validAnnualThenFullQuarterlyCallNoOverdue: Html = view(
-              sources = viewModelWithAnnualYearThenFullQuarterlyYear,
+              viewModel = viewModelWithAnnualYearThenFullQuarterlyYear,
               isAgent = true,
               incomeSourceType = incomeSourceType,
               businessName = testName,
               currentDate = dayFirstQuarter2024_2025,
               isBusinessHistoric = false,
-              reportingMethod = ChosenReportingMethod.AnnualQuarterly
+              reportingMethod = ChosenReportingMethod.AnnualQuarterly,
+              getSoftwareUrl = appConfig.compatibleSoftwareLink,
+              getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+              getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
+              getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             )
             val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
             val layoutContent: Element = document.selectHead("#main-content")

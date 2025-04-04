@@ -41,13 +41,17 @@
 )
 
 @(
-    sources: ObligationsViewModel,
+    viewModel: ObligationsViewModel,
     isAgent: Boolean,
     incomeSourceType: IncomeSourceType,
     businessName: Option[String] = None,
     currentDate: LocalDate,
     isBusinessHistoric: Boolean,
-    reportingMethod: ChosenReportingMethod
+    reportingMethod: ChosenReportingMethod,
+    getSoftwareUrl: String,
+    getReportingFrequencyUrl: String,
+    getNextUpdatesUrl: String,
+    getManageBusinessUrl: String
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
@@ -83,45 +87,16 @@
     )
 }
 
-@getManageUrl = @{
-    if(isAgent) {
-        controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
-    } else {
-        controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
-    }
-}
-
-@getNextUpdatesUrl = @{
-    if(isAgent) {
-        controllers.routes.NextUpdatesController.showAgent.url
-    } else {
-        controllers.routes.NextUpdatesController.show().url
-    }
-}
-
-@getReportingFrequencyUrl = @{
-    // TODO the below link will need to change to the new entry point for the opt in/out journeys once the page is made
-    if(isAgent) {
-      controllers.routes.NextUpdatesController.showAgent.url
-    } else {
-      controllers.routes.NextUpdatesController.show().url
-    }
-}
-
-@getSoftwareUrl = @{
-    "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
-}
-
 @getOverdueObligationsComponents = @{
-  sources.getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric)
+  viewModel.getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric)
 }
 
 @getSpecifiedObligationsComponents(isAnnual: Boolean) = @{
-  val modifiedSources: ObligationsViewModel =
-    if (isAnnual) sources.copy(quarterlyObligationsDates = Nil)
-    else sources.copy(finalDeclarationDates = Nil)
+  val modifiedViewModel: ObligationsViewModel =
+    if (isAnnual) viewModel.copy(quarterlyObligationsDates = Nil)
+    else viewModel.copy(finalDeclarationDates = Nil)
 
-  getOverdueObligationsMessage(modifiedSources.getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric))
+  getOverdueObligationsMessage(modifiedViewModel.getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric))
 }
 
 @getOverdueObligationsMessage(overdueObligationsComponents: OverdueObligationsMessageComponents) = @{
@@ -131,7 +106,7 @@
 @getQuarterlyOrHybridList = @{
 
     def renderQuarterlyBullet(quarterlyUpdate: DatesModel): Html = {
-        val taxYear = sources.getQuarterlyObligationTaxYear(quarterlyUpdate)
+        val taxYear = viewModel.getQuarterlyObligationTaxYear(quarterlyUpdate)
         Html(
             s"""
                 <li id="quarterly-list">
@@ -163,11 +138,11 @@
         )
     }
 
-    val quarterlyBullet: List[Html] = sources.getFirstUpcomingQuarterlyDate(currentDate)
+    val quarterlyBullet: List[Html] = viewModel.getFirstUpcomingQuarterlyDate(currentDate)
     .map(renderQuarterlyBullet)
     .toList
 
-    val hybridOrFinalDecBullet: List[Html] = sources.getFinalDeclarationDate(currentDate)
+    val hybridOrFinalDecBullet: List[Html] = viewModel.getFinalDeclarationDate(currentDate)
     .map(renderFinalDecBullet)
     .toList
 
@@ -199,14 +174,14 @@
             @getQuarterlyOrHybridList
         </ul>
     } else {
-         @sources.getFinalDeclarationDate(currentDate).map { finalDecDate =>
+         @viewModel.getFinalDeclarationDate(currentDate).map { finalDecDate =>
               <p class="govuk-body" id="final-declaration">
                   @Html(getMessage("final-dec-text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString, finalDecDate.inboundCorrespondenceDue.toLongDate)).
               </p>
          }
     }
 
-    @if(sources.getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric).messageKey.nonEmpty) {
+    @if(viewModel.getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric).messageKey.nonEmpty) {
       <div class="govuk-link govuk-body" id="view-upcoming-updates">
         <a href=@getNextUpdatesUrl>@getMessage("obligation.view-overdue-upcoming-updates.text")</a>
       </div>
@@ -217,7 +192,7 @@
     }
 
     <div class="govuk-link govuk-body" id="view-all-businesses-link">
-      <a href=@getManageUrl>@getMessage("view-all-businesses")</a>
+      <a href=@getManageBusinessUrl>@getMessage("view-all-businesses")</a>
     </div>
 
     @if(reportingMethod == ChosenReportingMethod.QuarterlyAnnual || reportingMethod == ChosenReportingMethod.AnnualQuarterly) {
