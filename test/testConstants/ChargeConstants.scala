@@ -381,6 +381,29 @@ trait ChargeConstants {
     paymentLot = Some("paymentLot")
   )
 
+  val poa1 = ChargeItem(
+    transactionId = id1040000124,
+    taxYear = TaxYear.forYearEnd(currentYear.toInt),
+    transactionType = PoaOneDebit,
+    subTransactionType = None,
+    outstandingAmount = 12.34,
+    originalAmount = 12.34,
+    documentDate = LocalDate.of(2018, 3, 29),
+    dueDate = Some(fixedDate.minusDays(1)),
+    latePaymentInterestAmount = None,
+    interestOutstandingAmount = Some(34.56),
+    interestFromDate = Some(fixedDate),
+    interestEndDate = Some(fixedDate),
+    lpiWithDunningLock = None,
+    interestRate = Some(4.0),
+    amountCodedOut = None,
+    dunningLock = false,
+    poaRelevantAmount = None,
+    dueDateForFinancialDetail = Some( LocalDate.parse("2023-12-14")),
+    paymentLotItem = Some("paymentLotItem"),
+    paymentLot = Some("paymentLot")
+  )
+
   val poa2 = ChargeItem(
       transactionId = id1040000124,
       taxYear = TaxYear.forYearEnd(currentYear.toInt),

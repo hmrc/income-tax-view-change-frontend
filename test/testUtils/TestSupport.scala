@@ -108,6 +108,10 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
     override def isBeforeLastDayOfTaxYear: Boolean = false
 
     override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate = LocalDate.of(2024, 4, 5)
+
+    override def isWithin30Days(date: LocalDate): Boolean = {
+      date.minusDays(30).isBefore(fixedDate)
+    }
   }
 
   lazy val tsTestUser: MtdItUser[_] =
