@@ -51,6 +51,28 @@ class IncomeSourceAddedController @Inject()(
 
   val logger: Logger = Logger("application")
 
+  def getNextUpdatesUrl(isAgent: Boolean) =
+    if (isAgent) {
+      controllers.routes.NextUpdatesController.showAgent().url
+    } else {
+      controllers.routes.NextUpdatesController.show().url
+    }
+
+  def getManageBusinessUrl(isAgent: Boolean) =
+    if (isAgent) {
+      controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+    } else {
+      controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+    }
+
+  def getReportingFrequencyUrl(isAgent: Boolean) =
+    // TODO the below link will need to change to the new entry point for the opt in/out journeys once the page is made
+    if (isAgent) {
+      controllers.routes.NextUpdatesController.showAgent().url
+    } else {
+      controllers.routes.NextUpdatesController.show().url
+    }
+
   private def getIncomeSourceIdFromSession(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[IncomeSourceId]] = {
 
     sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType)).flatMap {
@@ -115,28 +137,6 @@ class IncomeSourceAddedController @Inject()(
                              sessionData: UIJourneySessionData
                            )(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
 
-    lazy val getNextUpdatesUrl =
-      if (isAgent) {
-        controllers.routes.NextUpdatesController.showAgent().url
-      } else {
-        controllers.routes.NextUpdatesController.show().url
-      }
-
-    lazy val getManageBusinessUrl =
-      if (isAgent) {
-        controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
-      } else {
-        controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
-      }
-
-    lazy val getReportingFrequencyUrl =
-      // TODO the below link will need to change to the new entry point for the opt in/out journeys once the page is made
-      if (isAgent) {
-        controllers.routes.NextUpdatesController.showAgent().url
-      } else {
-        controllers.routes.NextUpdatesController.show().url
-      }
-
     lazy val showErrorView = errorHandler.showInternalServerError()
     val originalAddIncomeSourceSessionData: AddIncomeSourceData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
     val updatedAddIncomeSourceSessionData: AddIncomeSourceData = originalAddIncomeSourceSessionData.copy(journeyIsComplete = Some(true))
@@ -170,9 +170,9 @@ class IncomeSourceAddedController @Inject()(
               isBusinessHistoric = isBusinessHistoric,
               reportingMethod = viewModel.reportingMethod(reportingMethodTaxYear1, reportingMethodTaxYear2),
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = getReportingFrequencyUrl,
-              getNextUpdatesUrl = getNextUpdatesUrl,
-              getManageBusinessUrl = getManageBusinessUrl
+              getReportingFrequencyUrl = getReportingFrequencyUrl(isAgent),
+              getNextUpdatesUrl = getNextUpdatesUrl(isAgent),
+              getManageBusinessUrl = getManageBusinessUrl(isAgent)
             )
           )
         case None =>

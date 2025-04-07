@@ -28,11 +28,14 @@ class AddIncomeSourceStartDateFormProvider extends Mappings {
 
   def apply(messagesPrefix: String)(implicit messages: Messages, dateService: DateServiceInterface, dateFormatter: ImplicitDateFormatter): Form[LocalDate] = {
 
-    val maximumAllowableDate: LocalDate = dateService.getCurrentDate.plusDays(6)
+    // We tested max date to validation, allowing users to submit a date 6 days in advance/future
+    val maximumAllowableDate: LocalDate = dateService.getCurrentDate.plusDays(6) // tested 11-4-2025
     val earliestInvalidDate: LocalDate = maximumAllowableDate.plusDays(1)
 
+    val earliestDatePossible = LocalDate.of(1900, 1, 1)
+
     val earliestLongInvalidDate: String = dateFormatter.longDate(earliestInvalidDate).toLongDate
-    val invalidFutureDateErrorMessage = messages(s"$messagesPrefix.error.future", earliestLongInvalidDate)
+    val invalidFutureDateErrorMessage: String = messages(s"$messagesPrefix.error.future", earliestLongInvalidDate)
 
     val dateFormErrorPrefix = "dateForm.error"
     val invalidMessage = s"$dateFormErrorPrefix.invalid"
@@ -44,8 +47,12 @@ class AddIncomeSourceStartDateFormProvider extends Mappings {
         twoRequiredKey = s"$dateFormErrorPrefix.required.two",
         requiredKey = s"$dateFormErrorPrefix.required"
       ).verifying(
-        maxDate(maximumAllowableDate, invalidFutureDateErrorMessage),
-        fourDigitValidYear(invalidMessage)
+        maxDate(maximumAllowableDate, invalidFutureDateErrorMessage), // max date in future error handling / form validation
+        fourDigitValidYear(invalidMessage), // where is earliest day/year?
+        minDate(
+          minimum = LocalDate.of(1900, 1, 1), // new validation code/date to be added
+          errorKey = "The earliest date must be after 1-1-1900"  //  we would use a message key here, with content driven from the UCD team
+        )
       )
     )
   }
