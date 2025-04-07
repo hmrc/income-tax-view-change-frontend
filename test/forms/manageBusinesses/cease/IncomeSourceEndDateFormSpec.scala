@@ -176,7 +176,7 @@ class IncomeSourceEndDateFormSpec extends AnyWordSpec with Matchers with TestSup
       formErrors shouldBe List.empty
     }
     "bind with a date after the contextual tax year - Self Employment" in {
-      val formErrors = setupBindContextualTaxYear(SelfEmployment, dateDMYYYY = (12, 5, dateService.getCurrentTaxYearEnd+1))
+      val formErrors = setupBindContextualTaxYear(SelfEmployment, dateDMYYYY = (12, 5, mockDateService.getCurrentTaxYearEnd+1))
       formErrors shouldBe List(FormError("income-source-end-date", List(s"incomeSources.cease.endDate.${SelfEmployment.messagesCamel}.future"), List()))
     }
 
@@ -189,7 +189,7 @@ class IncomeSourceEndDateFormSpec extends AnyWordSpec with Matchers with TestSup
       formErrors shouldBe List.empty
     }
     "bind with a date after the contextual tax year - UK Property" in {
-      val formErrors = setupBindContextualTaxYear(UkProperty, dateDMYYYY = (6, 4, dateService.getCurrentTaxYearEnd+1))
+      val formErrors = setupBindContextualTaxYear(UkProperty, dateDMYYYY = (6, 4, mockDateService.getCurrentTaxYearEnd+1))
       formErrors shouldBe List(FormError("income-source-end-date", List(s"incomeSources.cease.endDate.${UkProperty.messagesCamel}.future"), List()))
     }
 
@@ -202,7 +202,7 @@ class IncomeSourceEndDateFormSpec extends AnyWordSpec with Matchers with TestSup
       formErrors shouldBe List()
     }
     "bind with a date after the contextual tax year - Foreign Property" in {
-      val formErrors = setupBindContextualTaxYear(ForeignProperty, dateDMYYYY = (6, 4, dateService.getCurrentTaxYearEnd+1))
+      val formErrors = setupBindContextualTaxYear(ForeignProperty, dateDMYYYY = (6, 4, mockDateService.getCurrentTaxYearEnd+1))
       formErrors shouldBe List(FormError("income-source-end-date", List(s"incomeSources.cease.endDate.${ForeignProperty.messagesCamel}.future"), List()))
     }
 
