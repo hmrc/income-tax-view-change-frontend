@@ -15,10 +15,15 @@
  *@
 
 @import views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.details.Details
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
 
 @this(
         p: p,
         bulletPointList: bulletPointList,
+        govukDetails: GovukDetails
 )
 
 @()(
@@ -30,15 +35,23 @@
     messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
 }
 
-@p(id = Some("whatIsABalancingPayment.p1")) {
-    @getMessage("whatIsABalancingPayment.p1")
-}
+@govukDetails(Details(
+    id      = Some("balancing-charge-details"),
+    summary = Text(getMessage("whatIsABalancingPayment.linkText")),
+    content = HtmlContent(html)
+))
 
-@bulletPointList(
-    getMessage("whatIsABalancingPayment.p2"),
-    getMessage("whatIsABalancingPayment.p3")
-)
+@html = {
+    @p(id = Some("whatIsABalancingPayment.p1")) {
+        @getMessage("whatIsABalancingPayment.p1")
+    }
 
-@p(id = Some("whatIsABalancingPayment.p4")) {
-    @getMessage("whatIsABalancingPayment.p4")
+    @bulletPointList(
+        getMessage("whatIsABalancingPayment.p2"),
+        getMessage("whatIsABalancingPayment.p3")
+    )
+
+    @p(id = Some("whatIsABalancingPayment.p4")) {
+        @getMessage("whatIsABalancingPayment.p4")
+    }
 }
