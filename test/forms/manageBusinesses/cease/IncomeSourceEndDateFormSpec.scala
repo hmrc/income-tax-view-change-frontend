@@ -176,7 +176,7 @@ class IncomeSourceEndDateFormSpec extends AnyWordSpec with Matchers with TestSup
       formErrors shouldBe List.empty
     }
     "bind with a date after the contextual tax year - Self Employment" in {
-      val formErrors = setupBindContextualTaxYear(SelfEmployment, dateDMYYYY = (12, 5, dateService.getCurrentTaxYearEnd+1))
+      val formErrors = setupBindContextualTaxYear(SelfEmployment, dateDMYYYY = (12, 5, dateService.getCurrentTaxYearEnd + 1))
       formErrors shouldBe List(FormError("income-source-end-date", List(s"incomeSources.cease.endDate.${SelfEmployment.messagesCamel}.future"), List()))
     }
 
