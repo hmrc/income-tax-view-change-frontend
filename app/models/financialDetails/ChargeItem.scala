@@ -110,6 +110,9 @@ case class ChargeItem (
     subTransactionType.exists(subType => codingOutSubTypes.contains(subType))
   }
 
+  def isCodingOutNicsTwo: Boolean =
+    subTransactionType.contains(Nics2)
+
   def interestIsPaid: Boolean = interestOutstandingAmount match {
     case Some(amount) if amount == 0 => true
     case _ => false
@@ -130,8 +133,8 @@ case class ChargeItem (
   def isIncludedInSACSummary: Boolean =
     Seq(BalancingCharge, PoaOneDebit, PoaTwoDebit, LateSubmissionPenalty, FirstLatePaymentPenalty)
       .contains(transactionType) &&
+      Seq(Some(Nics2)).contains(subTransactionType) &&
       !isLatePaymentInterest
-//      !isCodingOut
 
   val isPartPaid: Boolean = outstandingAmount != originalAmount
 

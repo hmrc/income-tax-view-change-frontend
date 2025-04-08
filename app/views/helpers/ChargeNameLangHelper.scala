@@ -16,8 +16,7 @@
 
 package views.helpers
 
-import models.chargeSummary.ChargeSummaryViewModel
-import models.financialDetails.{BalancingCharge, ChargeItem, FirstLatePaymentPenalty, LateSubmissionPenalty, Nics2, PoaOneDebit, PoaTwoDebit, TransactionType}
+import models.financialDetails.ChargeItem
 import play.api.i18n.Messages
 
 
@@ -31,6 +30,5 @@ object ChargeNameLangHelper {
   def chargeHistoryHeading(chargeItem: ChargeItem)(implicit messages: Messages): String = {
 
     messages(s"yourSelfAssessmentChargeSummary.chargeHistory.${chargeItem.getChargeTypeKey}.heading")
-
   }
 }
