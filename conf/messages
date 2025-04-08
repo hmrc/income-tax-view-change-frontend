@@ -2612,7 +2612,7 @@ yourSelfAssessmentChargeSummary.chargeHistory.lateSubmissionPenalty.text.heading
 yourSelfAssessmentChargeSummary.chargeHistory.firstLatePaymentPenalty.text.heading  = First late payment penalty history
 yourSelfAssessmentChargeSummary.chargeHistory.unknown.text.heading		            = History of this charge
 
-yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.heading = First late payment penalty
+yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.text.heading = First late payment penalty
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p = You have received this penalty because you are late paying your Income Tax.
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link = View how your penalty was calculated.
 
