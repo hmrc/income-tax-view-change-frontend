@@ -131,9 +131,9 @@ case class ChargeItem (
   // this method is used to filter charges down to those currently allowed for the
   // new Your Self Assessment Charge Summary feature
   def isIncludedInSACSummary: Boolean =
-    Seq(BalancingCharge, PoaOneDebit, PoaTwoDebit, LateSubmissionPenalty, FirstLatePaymentPenalty)
-      .contains(transactionType) &&
-      Seq(Some(Nics2)).contains(subTransactionType) &&
+    (Seq(BalancingCharge, PoaOneDebit, PoaTwoDebit, LateSubmissionPenalty, FirstLatePaymentPenalty)
+      .contains(transactionType) ||
+      Seq(Some(Nics2)).contains(subTransactionType)) &&
       !isLatePaymentInterest
 
   val isPartPaid: Boolean = outstandingAmount != originalAmount
