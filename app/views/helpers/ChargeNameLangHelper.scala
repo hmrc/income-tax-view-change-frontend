@@ -23,28 +23,14 @@ import play.api.i18n.Messages
 
 object ChargeNameLangHelper {
 
-  def apply(chargeItem: ChargeItem)(implicit messages: Messages): String = {
+  def getHeading(chargeItem: ChargeItem)(implicit messages: Messages): String = {
 
-    (chargeItem.transactionType, chargeItem.subTransactionType) match {
-      case (PoaOneDebit, _)                   => messages("yourSelfAssessmentChargeSummary.paymentOnAccount1.heading")
-      case (PoaTwoDebit,_)                    => messages("yourSelfAssessmentChargeSummary.paymentOnAccount2.heading")
-      case (BalancingCharge, Some(Nics2))     => messages("yourSelfAssessmentChargeSummary.class2Nic.heading")
-      case (BalancingCharge, _)               => messages("yourSelfAssessmentChargeSummary.balancingPayment.heading")
-      case (LateSubmissionPenalty, _)         => messages("yourSelfAssessmentChargeSummary.lateSubmissionPenalty.heading")
-      case (FirstLatePaymentPenalty, _)       => messages("yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.heading")
-      case _                                  => messages("yourSelfAssessmentChargeSummary.unknown.heading")
-    }
+    messages(s"yourSelfAssessmentChargeSummary.${chargeItem.getChargeTypeKey}.heading")
   }
 
-  def chargeHistoryHeading(chargeItem: ChargeItem): String = {
-    (chargeItem.transactionType, chargeItem.subTransactionType) match {
-      case (PoaOneDebit, _)               => "chargeHistory.paymentOnAccount1.heading"
-      case (PoaTwoDebit, _)               => "chargeHistory.paymentOnAccount2.heading"
-      case (BalancingCharge, Some(Nics2)) => "chargeHistory.unknown.heading"
-      case (BalancingCharge, _)           => "chargeHistory.balancingPayment.heading"
-      case (LateSubmissionPenalty, _)     => "chargeHistory.lateSubmissionPenalty.heading"
-      case (FirstLatePaymentPenalty, _)   => "chargeHistory.firstLatePaymentPenalty.heading"
-      case _                              => "chargeHistory.unknown.heading"
-    }
+  def chargeHistoryHeading(chargeItem: ChargeItem)(implicit messages: Messages): String = {
+
+    messages(s"yourSelfAssessmentChargeSummary.chargeHistory.${chargeItem.getChargeTypeKey}.heading")
+
   }
 }

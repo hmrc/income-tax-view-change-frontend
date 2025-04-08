@@ -69,17 +69,17 @@
     messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
 }
 
-@chargeName = @{ ChargeNameLangHelper(viewModel.chargeItem) }
+@pageHeading = @{ ChargeNameLangHelper.getHeading(viewModel.chargeItem) }
 
 @mainTemplate(
-    pageTitle = chargeName,
+    pageTitle = pageHeading,
     backUrl = Some(viewModel.backUrl),
     isAgent = viewModel.isAgent,
     btaNavPartial = viewModel.btaNavPartial,
     gatewayPage = viewModel.gatewayPage) {
 
     @hmrcPageHeading(PageHeading(
-        text = chargeName,
+        text = pageHeading,
         headingClasses = Some("govuk-heading-xl"),
         section = Some(getMessage("tax-year", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)),
         captionClasses = Some("govuk-caption-xl")

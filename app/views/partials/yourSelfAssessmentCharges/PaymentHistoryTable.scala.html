@@ -43,10 +43,6 @@
     </a>
 }
 
-@getMessage(key: String, args: String*) = @{
-    messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
-}
-
 @govukTable(Table(
     head = Some(
         Seq(
@@ -159,7 +155,7 @@
                 )
             )
     }),
-    caption = Some(getMessage(ChargeNameLangHelper.chargeHistoryHeading(viewModel.chargeItem))),
+    caption = Some(ChargeNameLangHelper.chargeHistoryHeading(viewModel.chargeItem)),
     attributes = Map("id" -> "payment-history-table"),
     captionClasses = "govuk-table__caption--m"
 ))
