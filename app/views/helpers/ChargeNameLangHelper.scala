@@ -17,32 +17,34 @@
 package views.helpers
 
 import models.chargeSummary.ChargeSummaryViewModel
-import models.financialDetails.{BalancingCharge, LateSubmissionPenalty, FirstLatePaymentPenalty, PoaOneDebit, PoaTwoDebit, TransactionType}
+import models.financialDetails.{BalancingCharge, ChargeItem, FirstLatePaymentPenalty, LateSubmissionPenalty, Nics2, PoaOneDebit, PoaTwoDebit, TransactionType}
 import play.api.i18n.Messages
 
 
 object ChargeNameLangHelper {
 
-  def apply(transactionType: TransactionType)(implicit messages: Messages): String = {
+  def apply(chargeItem: ChargeItem)(implicit messages: Messages): String = {
 
-    transactionType match {
-      case PoaOneDebit     => messages("yourSelfAssessmentChargeSummary.paymentOnAccount1.heading")
-      case PoaTwoDebit     => messages("yourSelfAssessmentChargeSummary.paymentOnAccount2.heading")
-      case BalancingCharge => messages("yourSelfAssessmentChargeSummary.balancingPayment.heading")
-      case LateSubmissionPenalty => messages("yourSelfAssessmentChargeSummary.lateSubmissionPenalty.heading")
-      case FirstLatePaymentPenalty => messages("yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.heading")
-      case _               => messages("yourSelfAssessmentChargeSummary.unknown.heading")
+    (chargeItem.transactionType, chargeItem.subTransactionType) match {
+      case (PoaOneDebit, _)                   => messages("yourSelfAssessmentChargeSummary.paymentOnAccount1.heading")
+      case (PoaTwoDebit,_)                    => messages("yourSelfAssessmentChargeSummary.paymentOnAccount2.heading")
+      case (BalancingCharge, Some(Nics2))     => messages("yourSelfAssessmentChargeSummary.class2Nic.heading")
+      case (BalancingCharge, _)               => messages("yourSelfAssessmentChargeSummary.balancingPayment.heading")
+      case (LateSubmissionPenalty, _)         => messages("yourSelfAssessmentChargeSummary.lateSubmissionPenalty.heading")
+      case (FirstLatePaymentPenalty, _)       => messages("yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.heading")
+      case _                                  => messages("yourSelfAssessmentChargeSummary.unknown.heading")
     }
   }
 
-  def chargeHistoryHeading(viewModel: ChargeSummaryViewModel): String = {
-    viewModel.chargeItem.transactionType match {
-      case PoaOneDebit     => "chargeHistory.paymentOnAccount1.heading"
-      case PoaTwoDebit     => "chargeHistory.paymentOnAccount2.heading"
-      case BalancingCharge => "chargeHistory.balancingPayment.heading"
-      case LateSubmissionPenalty => "chargeHistory.lateSubmissionPenalty.heading"
-      case FirstLatePaymentPenalty => "chargeHistory.firstLatePaymentPenalty.heading"
-      case _               => "chargeHistory.unknown.heading"
+  def chargeHistoryHeading(chargeItem: ChargeItem): String = {
+    (chargeItem.transactionType, chargeItem.subTransactionType) match {
+      case (PoaOneDebit, _)               => "chargeHistory.paymentOnAccount1.heading"
+      case (PoaTwoDebit, _)               => "chargeHistory.paymentOnAccount2.heading"
+      case (BalancingCharge, Some(Nics2)) => "chargeHistory.unknown.heading"
+      case (BalancingCharge, _)           => "chargeHistory.balancingPayment.heading"
+      case (LateSubmissionPenalty, _)     => "chargeHistory.lateSubmissionPenalty.heading"
+      case (FirstLatePaymentPenalty, _)   => "chargeHistory.firstLatePaymentPenalty.heading"
+      case _                              => "chargeHistory.unknown.heading"
     }
   }
 }

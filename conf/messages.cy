@@ -2581,6 +2581,10 @@ yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Income Tax
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = Class 4 National Insurance contributions
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount.
 
+yourSelfAssessmentChargeSummary.classTwoNICSContent.p1    = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
+yourSelfAssessmentChargeSummary.classTwoNICSContent.p2    = View your {0} to check if you have any other payments due.
+yourSelfAssessmentChargeSummary.classTwoNICSContent.link  = Self Assessment charges
+
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyPoints     = You will get a late submission penalty point every time you send a submission after the deadline. A submission can be a quarterly update or annual tax return.
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.fourPoints        = If you reach 4 points, you’ll have to pay a £200 penalty.
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.avoidInFuture     = To avoid receiving late submission penalty points in the future, and the potential for a financial penalty, you need to send your submissions on time.
@@ -2592,6 +2596,7 @@ yourSelfAssessmentChargeSummary.balancingPayment.heading    = Balancing payment
 yourSelfAssessmentChargeSummary.paymentOnAccount1.heading   = First payment on account
 yourSelfAssessmentChargeSummary.paymentOnAccount2.heading   = Second payment on account
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.heading = Late submission penalty
+yourSelfAssessmentChargeSummary.class2Nic.heading             = Class 2 National Insurance
 yourSelfAssessmentChargeSummary.unknown.heading             = Unknown
 
 yourSelfAssessmentChargeSummary.chargeHistory.balancingPayment.heading  = Balancing payment history

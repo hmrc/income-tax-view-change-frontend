@@ -26,7 +26,9 @@
 @import views.html.partials.yourSelfAssessmentCharges.LateSubmissionPenaltyContent
 @import views.html.partials.yourSelfAssessmentCharges.WhatIsPaymentOnAccount
 @import views.html.partials.yourSelfAssessmentCharges.WhatIsABalancingPayment
-
+@import models.financialDetails.ChargeItem
+@import models.financialDetails.Nics2
+@import views.html.partials.yourSelfAssessmentCharges.ClassTwoNICSContent
 
 @this(
     p: p,
@@ -36,22 +38,26 @@
     whatIsABalancingPayment: WhatIsABalancingPayment,
     lateSubmissionPenaltyContent: LateSubmissionPenaltyContent,
     lateSubmissionPenaltyOneContent: LateSubmissionPenaltyOneContent,
+    classTwoNICSContent: ClassTwoNICSContent,
     govukDetails: GovukDetails
 )
 
 @(
-    transactionType: TransactionType,
-
+    chargeItem: ChargeItem,
+    taxYearFrom: String,
+    taxYearTo: String,
+    isAgent: Boolean
 )(
     implicit request: Request[_],
     messages: Messages
 )
 
-@{transactionType match {
-    case BalancingCharge           => whatIsABalancingPayment()
-    case PoaOneDebit | PoaTwoDebit => whatIsPaymentOnAccount()
-    case LateSubmissionPenalty     => lateSubmissionPenaltyContent()
-    case FirstLatePaymentPenalty   => lateSubmissionPenaltyOneContent()
-    case _                         =>
+@{(chargeItem.transactionType, chargeItem.subTransactionType) match {
+    case (BalancingCharge, Some(Nics2)) => classTwoNICSContent(taxYearFrom, taxYearTo, isAgent)
+    case (BalancingCharge, _)           => whatIsABalancingPayment()
+    case (PoaOneDebit | PoaTwoDebit, _) => whatIsPaymentOnAccount()
+    case (LateSubmissionPenalty, _)     => lateSubmissionPenaltyContent()
+    case (FirstLatePaymentPenalty, _)   => lateSubmissionPenaltyOneContent()
+    case _                              =>
 }}
 
