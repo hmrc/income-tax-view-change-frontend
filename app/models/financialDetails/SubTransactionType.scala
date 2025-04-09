@@ -49,6 +49,14 @@ object SubTransactionType {
     }
   }
 
+  def fromCodedOutStatus(codedOutStatus: String): Option[SubTransactionType] = {
+    codedOutStatus match {
+      case CODING_OUT_ACCEPTED.code => Some(Accepted)
+      case CODING_OUT_CANCELLED.code => Some(Cancelled)
+      case _ => None
+    }
+  }
+
   implicit val write: Writes[SubTransactionType] = (transactionType: SubTransactionType) => {
     JsString(transactionType.key)
   }

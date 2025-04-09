@@ -274,7 +274,7 @@
 
     @getExplanationContent
 
-    @if(viewModel.chargeItem.subTransactionType == Some(Accepted)){
+    @if(viewModel.chargeItem.subTransactionType.contains(Accepted)){
         @checkPayeCodePara
         <div id="coding-out-wrapper">
             @govukInsetText(InsetText(content = HtmlContent(codingOutMessageInset)))
@@ -282,7 +282,7 @@
         @codingOutMessage
     }
 
-    @if(viewModel.chargeItem.subTransactionType == Some(Cancelled)){
+    @if(viewModel.chargeItem.subTransactionType.contains(Cancelled)){
         @checkPayeCodePara
         <div id="cancelled-coding-out-wrapper">
             @govukInsetText(InsetText(content = HtmlContent(codingOutCancelledMessageInset)))

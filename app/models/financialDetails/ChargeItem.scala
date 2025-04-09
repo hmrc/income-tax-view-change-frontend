@@ -235,12 +235,14 @@ object ChargeItem {
     val dunningLockExists =
       financialDetails.exists(financialDetail => financialDetail.transactionId.contains(documentDetail.transactionId) && financialDetail.dunningLockExists)
 
+    val codedOutStatus = financialDetail.items.getOrElse(List()).find(_.codedOutStatus.isDefined).flatMap(_.codedOutStatus)
+
     ChargeItem(
       transactionId = documentDetail.transactionId,
       taxYear = TaxYear.forYearEnd(documentDetail.taxYear),
       transactionType = chargeType,
-      subTransactionType = documentDetail.documentText
-        .flatMap(SubTransactionType.fromDocumentText),
+      subTransactionType = codedOutStatus
+        .flatMap(SubTransactionType.fromCodedOutStatus),
       documentDate = documentDetail.documentDate,
       dueDate = documentDetail.documentDueDate,
       originalAmount = documentDetail.originalAmount,
