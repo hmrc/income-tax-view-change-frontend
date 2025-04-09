@@ -110,7 +110,6 @@ case class ChargeItem (
     subTransactionType.exists(subType => codingOutSubTypes.contains(subType))
   }
 
-
   def interestIsPaid: Boolean = interestOutstandingAmount match {
     case Some(amount) if amount == 0 => true
     case _ => false
