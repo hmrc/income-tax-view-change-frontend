@@ -15,10 +15,16 @@
  *@
 
 @import views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Details
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+@import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
+
 
 @this(
         p: p,
-        link: link
+        link: link,
+        govukDetails: GovukDetails
 )
 
 @()(
@@ -30,20 +36,29 @@
     messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
 }
 
-@p(id = Some("howIsInterestCalculated.p1")) {
-    @getMessage("whatIsPaymentOnAccount.p1")
+@govukDetails(Details(
+    id      = Some("payment-on-account-details"),
+    summary = Text(getMessage("whatIsPaymentOnAccount.linkText")),
+    content = HtmlContent(html)
+))
+
+@html= {
+    @p(id = Some("howIsInterestCalculated.p1")) {
+        @getMessage("whatIsPaymentOnAccount.p1")
+    }
+
+        <ul class="govuk-list govuk-list--bullet">
+            <li>@getMessage("whatIsPaymentOnAccount.p2")</li>
+            <li>@link(
+                link = "https://www.gov.uk/self-employed-national-insurance-rates",
+                messageKey = getMessage("whatIsPaymentOnAccount.p3"),
+                rel = Some("noreferrer noopener"),
+                target = Some("_blank")
+            )</li>
+        </ul>
+
+    @p(id = Some("howIsInterestCalculated.p4")) {
+        @getMessage("whatIsPaymentOnAccount.p4")
+    }
 }
 
-<ul class="govuk-list govuk-list--bullet">
-    <li>@getMessage("whatIsPaymentOnAccount.p2")</li>
-    <li>@link(
-            link = "https://www.gov.uk/self-employed-national-insurance-rates",
-            messageKey = getMessage("whatIsPaymentOnAccount.p3"),
-            rel = Some("noreferrer noopener"),
-            target = Some("_blank")
-    )</li>
-</ul>
-
-@p(id = Some("howIsInterestCalculated.p4")) {
-    @getMessage("whatIsPaymentOnAccount.p4")
-}

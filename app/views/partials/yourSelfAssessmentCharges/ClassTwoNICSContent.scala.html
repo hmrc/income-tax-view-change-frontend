@@ -15,18 +15,18 @@
  *@
 
 @import views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.details.Details
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
 
 @this(
         p: p,
+        link: link,
         bulletPointList: bulletPointList,
-        govukDetails: GovukDetails
 )
 
-@()(
+@(
+        taxYearFrom: String,
+        taxYearTo: String,
+        isAgent: Boolean
+)(
         implicit request: Request[_],
         messages: Messages
 )
@@ -35,23 +35,19 @@
     messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
 }
 
-@govukDetails(Details(
-    id      = Some("balancing-charge-details"),
-    summary = Text(getMessage("whatIsABalancingPayment.linkText")),
-    content = HtmlContent(html)
-))
+@p(id = Some("classTwoNICSContent.p1")) {
+    @getMessage("classTwoNICSContent.p1", taxYearFrom, taxYearTo)
+}
 
-@html = {
-    @p(id = Some("whatIsABalancingPayment.p1")) {
-        @getMessage("whatIsABalancingPayment.p1")
-    }
-
-    @bulletPointList(
-        getMessage("whatIsABalancingPayment.p2"),
-        getMessage("whatIsABalancingPayment.p3")
+@p(id = Some("classTwoNICSContent.p2")) {
+    @getMessage("classTwoNICSContent.p2")
+    @link(
+        link = {
+            if (isAgent) routes.YourSelfAssessmentChargesController.showAgent
+            else         routes.YourSelfAssessmentChargesController.show()
+        }.url,
+        messageKey = getMessage("classTwoNICSContent.link"),
+        id = Some("classTwoNICSContent.link")
     )
-
-    @p(id = Some("whatIsABalancingPayment.p4")) {
-        @getMessage("whatIsABalancingPayment.p4")
-    }
+    @getMessage("classTwoNICSContent.p3")
 }

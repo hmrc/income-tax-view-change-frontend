@@ -2588,20 +2588,26 @@ yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText1  = You ca
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText   = view the details about your penalty
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText2  = and find out how to appeal.
 
-yourSelfAssessmentChargeSummary.balancingPayment.heading    = Balancing payment
-yourSelfAssessmentChargeSummary.paymentOnAccount1.heading   = First payment on account
-yourSelfAssessmentChargeSummary.paymentOnAccount2.heading   = Second payment on account
-yourSelfAssessmentChargeSummary.lateSubmissionPenalty.heading = Late submission penalty
-yourSelfAssessmentChargeSummary.unknown.heading             = Unknown
+yourSelfAssessmentChargeSummary.classTwoNICSContent.p1      = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
+yourSelfAssessmentChargeSummary.classTwoNICSContent.p2      = View your
+yourSelfAssessmentChargeSummary.classTwoNICSContent.link    = Self Assessment charges
+yourSelfAssessmentChargeSummary.classTwoNICSContent.p3      = to check if you have any other payments due.
 
-yourSelfAssessmentChargeSummary.chargeHistory.balancingPayment.heading  = Balancing payment history
-yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount1.heading = First payment on account history
-yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount2.heading = Second payment on account history
-yourSelfAssessmentChargeSummary.chargeHistory.firstLatePaymentPenalty.heading = First late payment penalty history
-yourSelfAssessmentChargeSummary.chargeHistory.lateSubmissionPenalty.heading = Late submission penalty history
-yourSelfAssessmentChargeSummary.chargeHistory.unknown.heading		    = History of this charge
+yourSelfAssessmentChargeSummary.balancingCharge.text.heading        = Balancing payment
+yourSelfAssessmentChargeSummary.paymentOnAccount1.text.heading      = First payment on account
+yourSelfAssessmentChargeSummary.paymentOnAccount2.text.heading      = Second payment on account
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.text.heading  = Late submission penalty
+yourSelfAssessmentChargeSummary.class2Nic.text.heading              = Class 2 National Insurance
+yourSelfAssessmentChargeSummary.unknown.heading                     = Unknown
 
+yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.heading          = Balancing payment history
+yourSelfAssessmentChargeSummary.chargeHistory.class2Nic.text.heading                = History of this charge
+yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount1.text.heading        = First payment on account history
+yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount2.text.heading        = Second payment on account history
+yourSelfAssessmentChargeSummary.chargeHistory.lateSubmissionPenalty.text.heading    = Late submission penalty history
+yourSelfAssessmentChargeSummary.chargeHistory.firstLatePaymentPenalty.text.heading  = First late payment penalty history
+yourSelfAssessmentChargeSummary.chargeHistory.unknown.text.heading                  = History of this charge
 
-yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.heading = First late payment penalty
+yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.text.heading = First late payment penalty
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p = You have received this penalty because you are late paying your Income Tax.
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link = View how your penalty was calculated.

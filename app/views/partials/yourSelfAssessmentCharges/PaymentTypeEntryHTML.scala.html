@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,23 +12,32 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package views.helpers
+@import views.html.components._
+@import auth.MtdItUser
 
-import models.financialDetails.ChargeItem
-import play.api.i18n.Messages
+@this(
+    p: p,
+    link: link,
+    appConfig: config.FrontendAppConfig,
+    bulletPointList: bulletPointList,
+)
 
+@(
+    linkText: String,
+    linkHref: Call,
+    taxYear: Int,
+    rowId: String,
+    linkSuffix: String,
+    index: Int
+)(
+    implicit request: Request[_],
+    user: MtdItUser[_],
+    messages: Messages
+)
 
-object ChargeNameLangHelper {
-
-  def getHeading(chargeItem: ChargeItem)(implicit messages: Messages): String = {
-
-    messages(s"yourSelfAssessmentChargeSummary.${chargeItem.getChargeTypeKey}.heading")
-  }
-
-  def chargeHistoryHeading(chargeItem: ChargeItem)(implicit messages: Messages): String = {
-
-    messages(s"yourSelfAssessmentChargeSummary.chargeHistory.${chargeItem.getChargeTypeKey}.heading")
-  }
-}
+<a class="govuk-link" id="@rowId-@linkSuffix" href="@linkHref">
+    @linkText
+    <span class="govuk-visually-hidden">@index</span>
+</a>

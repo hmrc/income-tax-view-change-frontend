@@ -1,0 +1,58 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import auth.MtdItUser
+@import _root_.implicits.ImplicitCurrencyFormatter._
+
+@this(
+    p: p,
+    link: link,
+    h3: h3,
+    appConfig: config.FrontendAppConfig,
+    bulletPointList: bulletPointList,
+)
+
+@(
+    overDueAmount: BigDecimal,
+    paymentHandoffUrl: String
+)(
+    implicit request: Request[_],
+    user: MtdItUser[_],
+    origin: Option[String] = None,
+    messages: Messages
+)
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"selfAssessmentCharges.$key", args: _*)
+}
+
+@h3(
+    msg = getMessage("charges-due-now-with-amount", overDueAmount.toCurrencyString),
+    classes = "govuk-notification-banner__heading"
+)
+<p class="govuk-body">
+    <div>
+        @getMessage("important-p1")
+    </div>
+    <br>
+    <div>
+        @getMessage("important-p2")
+        <a class="govuk-notification-banner__link" href=@paymentHandoffUrl>
+            <b>@getMessage("important-p2-link-text")</b>
+        </a>
+    </div>
+</p>

@@ -15,18 +15,19 @@
  *@
 
 @import views.html.components._
-@import models.financialDetails.TransactionType
 @import models.financialDetails.BalancingCharge
 @import models.financialDetails.PoaOneDebit
 @import models.financialDetails.PoaTwoDebit
 @import models.financialDetails.LateSubmissionPenalty
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-@import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+@import models.financialDetails.FirstLatePaymentPenalty
+@import views.html.partials.yourSelfAssessmentCharges.LateSubmissionPenaltyOneContent
+@import views.html.partials.yourSelfAssessmentCharges.LateSubmissionPenaltyContent
 @import views.html.partials.yourSelfAssessmentCharges.WhatIsPaymentOnAccount
 @import views.html.partials.yourSelfAssessmentCharges.WhatIsABalancingPayment
-@import uk.gov.hmrc.govukfrontend.views.Aliases.Details
-@import models.financialDetails.FirstLatePaymentPenalty
+@import models.financialDetails.ChargeItem
+@import models.financialDetails.Nics2
+@import views.html.partials.yourSelfAssessmentCharges.ClassTwoNICSContent
 
 @this(
     p: p,
@@ -34,72 +35,28 @@
     numberList: numberList,
     whatIsPaymentOnAccount: WhatIsPaymentOnAccount,
     whatIsABalancingPayment: WhatIsABalancingPayment,
+    lateSubmissionPenaltyContent: LateSubmissionPenaltyContent,
+    lateSubmissionPenaltyOneContent: LateSubmissionPenaltyOneContent,
+    classTwoNICSContent: ClassTwoNICSContent,
     govukDetails: GovukDetails
 )
 
-
 @(
-    transactionType: TransactionType
+    chargeItem: ChargeItem,
+    taxYearFrom: String,
+    taxYearTo: String,
+    isAgent: Boolean
 )(
     implicit request: Request[_],
     messages: Messages
 )
 
-@getMessage(key: String, args: String*) = @{
-    messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
-}
-
-@{transactionType match {
-    case BalancingCharge =>
-        govukDetails(Details(
-            id      = Some("balancing-charge-details"),
-            summary = Text(getMessage("whatIsABalancingPayment.linkText")),
-            content = HtmlContent(whatIsABalancingPayment())
-        ))
-    case PoaOneDebit | PoaTwoDebit =>
-        govukDetails(Details(
-            id      = Some("payment-on-account-details"),
-            summary = Text(getMessage("whatIsPaymentOnAccount.linkText")),
-            content = HtmlContent(whatIsPaymentOnAccount())
-        ))
-    case LateSubmissionPenalty =>
-        LSPContent
-    case FirstLatePaymentPenalty =>
-        LPP1Content
-    case _ =>
+@{(chargeItem.transactionType, chargeItem.subTransactionType) match {
+    case (BalancingCharge, Some(Nics2)) => classTwoNICSContent(taxYearFrom, taxYearTo, isAgent)
+    case (BalancingCharge, _)           => whatIsABalancingPayment()
+    case (PoaOneDebit | PoaTwoDebit, _) => whatIsPaymentOnAccount()
+    case (LateSubmissionPenalty, _)     => lateSubmissionPenaltyContent()
+    case (FirstLatePaymentPenalty, _)   => lateSubmissionPenaltyOneContent()
+    case _                              =>
 }}
 
-@LSPContent = {
-    @p(id = Some("LSP-content-1")) {
-        @getMessage("lateSubmissionPenalty.penaltyPoints")
-    }
-    @p(id = Some("LSP-content-2")) {
-        @getMessage("lateSubmissionPenalty.fourPoints")
-    }
-    @p(id = Some("LSP-content-3")) {
-        @getMessage("lateSubmissionPenalty.avoidInFuture")
-    }
-    @p(id = Some("LSP-content-4")) {
-        @getMessage("lateSubmissionPenalty.penaltyLinkText1")
-        @link(
-            id = Some("late-submission-penalty-link"),
-            link="",
-            rel= Some("noreferrer noopener"),
-            messageKey = "yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText"
-        )
-        @getMessage("lateSubmissionPenalty.penaltyLinkText2")
-    }
-}
-
-@LPP1Content = {
-    @p(id = Some("first-payment-penalty-p1")) {
-        @getMessage("firstLatePaymentPenalty.p")
-    }
-
-    @link(
-        link = "/penalties/income-tax",
-        messageKey = "yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link"
-    )
-
-
-}

@@ -110,6 +110,7 @@ case class ChargeItem (
     subTransactionType.exists(subType => codingOutSubTypes.contains(subType))
   }
 
+
   def interestIsPaid: Boolean = interestOutstandingAmount match {
     case Some(amount) if amount == 0 => true
     case _ => false
@@ -127,10 +128,14 @@ case class ChargeItem (
 
   // this method is used to filter charges down to those currently allowed for the
   // new Your Self Assessment Charge Summary feature
-  def isIncludedInSACSummary: Boolean =
-    Seq(BalancingCharge, PoaOneDebit, PoaTwoDebit, LateSubmissionPenalty, FirstLatePaymentPenalty).contains(transactionType) &&
-      !isLatePaymentInterest &&
-      !isCodingOut
+  def isIncludedInSACSummary: Boolean = {
+
+    val validTransactionType = Seq(BalancingCharge, PoaOneDebit, PoaTwoDebit, LateSubmissionPenalty, FirstLatePaymentPenalty).contains(transactionType)
+
+    val validSubTransactionType = Seq(Some(Nics2)).contains(subTransactionType)
+
+    (validTransactionType || validSubTransactionType) && !isLatePaymentInterest
+  }
 
   val isPartPaid: Boolean = outstandingAmount != originalAmount
 
