@@ -37,6 +37,7 @@ import services.{ClaimToAdjustService, DateServiceInterface, WhatYouOweService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.YourSelfAssessmentCharges
+import controllers.routes._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -76,6 +77,25 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
         hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
         whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
         backUrl = backUrl,
+        creditAndRefundUrl = {
+          if(user.isAgent()) CreditAndRefundController.showAgent()
+          else CreditAndRefundController.show()
+        }.url,
+        creditAndRefundsControllerURL = {
+          if(user.incomeSources.yearOfMigration.isDefined) {
+            if(user.isAgent()) {
+              controllers.routes.CreditAndRefundController.showAgent().url
+            } else {
+              controllers.routes.CreditAndRefundController.show().url
+            }
+          } else {
+            if(user.isAgent()) {
+              controllers.routes.NotMigratedUserController.showAgent().url
+            } else {
+              controllers.routes.NotMigratedUserController.show().url
+            }
+          }
+        },
         dunningLock = whatYouOweChargesList.hasDunningLock,
         reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
         penaltiesEnabled = isEnabled(PenaltiesAndAppeals),

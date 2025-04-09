@@ -27,6 +27,8 @@ case class YourSelfAssessmentChargesViewModel(hasOverdueOrAccruingInterestCharge
                                               whatYouOweChargesList: WhatYouOweChargesList,
                                               hasLpiWithDunningLock: Boolean,
                                               backUrl: String,
+                                              creditAndRefundUrl: String,
+                                              creditAndRefundsControllerURL: String,
                                               dunningLock: Boolean,
                                               reviewAndReconcileEnabled: Boolean,
                                               penaltiesEnabled: Boolean,
