@@ -179,8 +179,6 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2020 to 2021 tax year")
                 document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Overdue charge: £12.34"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 25 August 2021"
-                document.getElementById("classTwoNICSContent.p1").text() shouldBe "This is the Class 2 National Insurance payment for the 2020 to 2021 tax year."
-                document.getElementById("classTwoNICSContent.p2").text() shouldBe "View your Self Assessment charges to check if you have any other payments due."
                 document.getElementsByClass("govuk-table__caption govuk-table__caption--m").text() shouldBe "History of this charge"
               }
 

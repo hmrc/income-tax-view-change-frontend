@@ -38,16 +38,3 @@
 @p(id = Some("classTwoNICSContent.p1")) {
     @getMessage("classTwoNICSContent.p1", taxYearFrom, taxYearTo)
 }
-
-@p(id = Some("classTwoNICSContent.p2")) {
-    @getMessage("classTwoNICSContent.p2")
-    @link(
-        link = {
-            if (isAgent) routes.YourSelfAssessmentChargesController.showAgent
-            else         routes.YourSelfAssessmentChargesController.show()
-        }.url,
-        messageKey = getMessage("classTwoNICSContent.link"),
-        id = Some("classTwoNICSContent.link")
-    )
-    @getMessage("classTwoNICSContent.p3")
-}

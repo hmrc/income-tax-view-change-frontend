@@ -2589,9 +2589,6 @@ yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText   = view t
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText2  = and find out how to appeal.
 
 yourSelfAssessmentChargeSummary.classTwoNICSContent.p1                              = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
-yourSelfAssessmentChargeSummary.classTwoNICSContent.p2                              = View your
-yourSelfAssessmentChargeSummary.classTwoNICSContent.link                            = Self Assessment charges
-yourSelfAssessmentChargeSummary.classTwoNICSContent.p3                              = to check if you have any other payments due.
 
 yourSelfAssessmentChargeSummary.balancingCharge.text.heading                        = Balancing payment
 yourSelfAssessmentChargeSummary.paymentOnAccount1.text.heading                      = First payment on account
