@@ -138,6 +138,7 @@ case class ChargeItem (
     validCharge && !isLatePaymentInterest
   }
 
+
   val isPartPaid: Boolean = outstandingAmount != originalAmount
 
   val interestIsPartPaid: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != latePaymentInterestAmount.getOrElse[BigDecimal](0)
