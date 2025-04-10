@@ -129,10 +129,14 @@ case class ChargeItem (
   // new Your Self Assessment Charge Summary feature
   def isIncludedInSACSummary: Boolean = {
 
-    val validCharge = transactionType match {
-      case PoaOneDebit | PoaTwoDebit | LateSubmissionPenalty | FirstLatePaymentPenalty => true
-      case BalancingCharge if Seq(None, Some(Nics2)).contains(subTransactionType)      => true
-      case _                                                                           => false
+    val validCharge = (transactionType, subTransactionType) match {
+      case (BalancingCharge, Some(Nics2)) => true
+      case (BalancingCharge, None       ) => true
+      case (PoaOneDebit,               _) => true
+      case (PoaTwoDebit,               _) => true
+      case (LateSubmissionPenalty,     _) => true
+      case (FirstLatePaymentPenalty,   _) => true
+      case _                              => false
     }
 
     validCharge && !isLatePaymentInterest
