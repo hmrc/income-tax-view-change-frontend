@@ -193,9 +193,9 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
         status(res) shouldBe OK
-        doc.title() shouldBe "What you need to know - Manage your Income Tax updates - GOV.UK"
+        doc.title() shouldBe "What you need to know - Manage your Self Assessment - GOV.UK"
         status(resAgent) shouldBe OK
-        docAgent.title() shouldBe "What you need to know - Manage your client’s Income Tax updates - GOV.UK"
+        docAgent.title() shouldBe "What you need to know - Manage your client’s Self Assessment - GOV.UK"
       }
     }
     "return an internal server error" when {
@@ -238,9 +238,9 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
         status(res) shouldBe OK
-        doc.title() shouldBe "What you need to know - Manage your Income Tax updates - GOV.UK"
+        doc.title() shouldBe "What you need to know - Manage your Self Assessment - GOV.UK"
         status(resAgent) shouldBe OK
-        docAgent.title() shouldBe "What you need to know - Manage your client’s Income Tax updates - GOV.UK"
+        docAgent.title() shouldBe "What you need to know - Manage your client’s Self Assessment - GOV.UK"
       }
       "getMongo returns a right containing None" in {
         setupMockPaymentOnAccountSessionService(Future.successful(Right(None)))
@@ -252,9 +252,9 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
         status(res) shouldBe OK
-        doc.title() shouldBe "What you need to know - Manage your Income Tax updates - GOV.UK"
+        doc.title() shouldBe "What you need to know - Manage your Self Assessment - GOV.UK"
         status(resAgent) shouldBe OK
-        docAgent.title() shouldBe "What you need to know - Manage your client’s Income Tax updates - GOV.UK"
+        docAgent.title() shouldBe "What you need to know - Manage your client’s Self Assessment - GOV.UK"
       }
       "getMongo returns a right containing PoA session data, the journeyComplete flag is set to true and createSession returns a Right containing a Unit" in {
         setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
@@ -266,9 +266,9 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
         status(res) shouldBe OK
-        doc.title() shouldBe "What you need to know - Manage your Income Tax updates - GOV.UK"
+        doc.title() shouldBe "What you need to know - Manage your Self Assessment - GOV.UK"
         status(resAgent) shouldBe OK
-        docAgent.title() shouldBe "What you need to know - Manage your client’s Income Tax updates - GOV.UK"
+        docAgent.title() shouldBe "What you need to know - Manage your client’s Self Assessment - GOV.UK"
       }
     }
     "return an internal server error" when {

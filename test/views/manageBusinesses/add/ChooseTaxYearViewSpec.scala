@@ -46,7 +46,7 @@ class ChooseTaxYearViewSpec extends TestSupport {
   incomeSourceTypes.foreach { incomeSourceType =>
     s"add sole trader choose tax year page for incomeSourceType: $incomeSourceType" should {
       "have the correct title" in new Setup(incomeSourceType = incomeSourceType) {
-        pageDocument.title() shouldBe "Which tax year do you want to report quarterly for? - Manage your Income Tax updates - GOV.UK"
+        pageDocument.title() shouldBe "Which tax year do you want to report quarterly for? - Manage your Self Assessment - GOV.UK"
       }
 
       "have the correct heading" in new Setup(incomeSourceType = incomeSourceType) {

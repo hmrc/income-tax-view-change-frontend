@@ -78,7 +78,7 @@ class AddressLookupConnectorISpec extends AnyWordSpec with ComponentSpecBase wit
                                        |        "heading": "Enter your business address"
                                        |      },
                                        |      "appLevelLabels": {
-                                       |        "navTitle": "Manage your Income Tax updates"
+                                       |        "navTitle": "Manage your Self Assessment"
                                        |      }
                                        |    },
                                        |    "cy": {
@@ -164,7 +164,7 @@ class AddressLookupConnectorISpec extends AnyWordSpec with ComponentSpecBase wit
             |        "heading": "Enter your business address"
             |      },
             |      "appLevelLabels": {
-            |        "navTitle": "Manage your client’s Income Tax updates"
+            |        "navTitle": "Manage your client’s Self Assessment"
             |      }
             |    },
             |    "cy": {

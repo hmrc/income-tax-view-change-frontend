@@ -120,9 +120,9 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
         status(res) shouldBe OK
-        doc.title() shouldBe "What you need to know - Manage your Income Tax updates - GOV.UK"
+        doc.title() shouldBe "What you need to know - Manage your Self Assessment - GOV.UK"
         status(resAgent) shouldBe OK
-        docAgent.title() shouldBe "What you need to know - Manage your client’s Income Tax updates - GOV.UK"
+        docAgent.title() shouldBe "What you need to know - Manage your client’s Self Assessment - GOV.UK"
       }
     }
     "return an internal server error" when {
@@ -196,9 +196,9 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
         status(res) shouldBe OK
-        doc.title() shouldBe "What you need to know - Manage your Income Tax updates - GOV.UK"
+        doc.title() shouldBe "What you need to know - Manage your Self Assessment - GOV.UK"
         status(resAgent) shouldBe OK
-        docAgent.title() shouldBe "What you need to know - Manage your client’s Income Tax updates - GOV.UK"
+        docAgent.title() shouldBe "What you need to know - Manage your client’s Self Assessment - GOV.UK"
       }
       "getMongo returns a right containing PoA session data, getPoaForNonCrystallisedTaxYear call is successful, the journeyComplete flag is set to true and createSession returns a Right containing a Unit" in {
         setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
@@ -211,9 +211,9 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
         status(res) shouldBe OK
-        doc.title() shouldBe "What you need to know - Manage your Income Tax updates - GOV.UK"
+        doc.title() shouldBe "What you need to know - Manage your Self Assessment - GOV.UK"
         status(resAgent) shouldBe OK
-        docAgent.title() shouldBe "What you need to know - Manage your client’s Income Tax updates - GOV.UK"
+        docAgent.title() shouldBe "What you need to know - Manage your client’s Self Assessment - GOV.UK"
       }
       "getMongo returns a right containing None and getPoaForNonCrystallisedTaxYear call is successful and createSession returns a Right containing a Unit" in {
         setupMockPaymentOnAccountSessionService(Future.successful(Right(None)))
@@ -226,9 +226,9 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
         val docAgent: Document = Jsoup.parse(contentAsString(resAgent))
 
         status(res) shouldBe OK
-        doc.title() shouldBe "What you need to know - Manage your Income Tax updates - GOV.UK"
+        doc.title() shouldBe "What you need to know - Manage your Self Assessment - GOV.UK"
         status(resAgent) shouldBe OK
-        docAgent.title() shouldBe "What you need to know - Manage your client’s Income Tax updates - GOV.UK"
+        docAgent.title() shouldBe "What you need to know - Manage your client’s Self Assessment - GOV.UK"
       }
     }
     "return an internal server error" when {

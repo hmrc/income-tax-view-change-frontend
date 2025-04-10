@@ -29,12 +29,12 @@ back.nomatch        = Back
 agent.base.service_name                             = Your client’s Income Tax details
 
 # Header
-header.serviceName                                  = Manage your Income Tax updates
-agent.header.serviceName                            = Manage your client’s Income Tax updates
+header.serviceName                                  = Manage your Self Assessment
+agent.header.serviceName                            = Manage your client’s Self Assessment
 
 # HTML Titles                                       //notify submission team regarding title changes to htmlTitle.confirmClient in HtmlTitle.scala
-htmlTitle                                           = {0} - Manage your Income Tax updates - GOV.UK
-htmlTitle.agent                                     = {0} - Manage your client’s Income Tax updates - GOV.UK
+htmlTitle                                           = {0} - Manage your Self Assessment - GOV.UK
+htmlTitle.agent                                     = {0} - Manage your client’s Self Assessment - GOV.UK
 htmlTitle.errorPage                                 = {0} - GOV.UK
 htmlTitle.invalidInput                              = Error: {0} - GOV.UK
 htmlTitle.confirmClient                             = {0} - GOV.UK

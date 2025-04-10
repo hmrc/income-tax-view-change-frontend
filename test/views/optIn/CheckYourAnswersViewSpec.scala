@@ -47,7 +47,7 @@ class CheckYourAnswersViewSpec extends TestSupport {
   }
 
   object optInChooseTaxYear {
-    val title: String = "Check your answers - Manage your Income Tax updates - GOV.UK"
+    val title: String = "Check your answers - Manage your Self Assessment - GOV.UK"
     val heading: String = messages("optin.checkAnswers.heading")
 
     val optin: String = messages("optin.checkAnswers.optin")
