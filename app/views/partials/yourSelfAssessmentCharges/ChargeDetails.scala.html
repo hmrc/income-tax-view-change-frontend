@@ -53,7 +53,7 @@
 
 @{(chargeItem.transactionType, chargeItem.subTransactionType) match {
     case (BalancingCharge, Some(Nics2)) => classTwoNICSContent(taxYearFrom, taxYearTo, isAgent)
-    case (BalancingCharge, _)           => whatIsABalancingPayment()
+    case (BalancingCharge, None)        => whatIsABalancingPayment()
     case (PoaOneDebit | PoaTwoDebit, _) => whatIsPaymentOnAccount()
     case (LateSubmissionPenalty, _)     => lateSubmissionPenaltyContent()
     case (FirstLatePaymentPenalty, _)   => lateSubmissionPenaltyOneContent()
