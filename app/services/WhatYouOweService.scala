@@ -62,7 +62,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       case financialDetails =>
         val financialDetailsModelList = financialDetails.asInstanceOf[List[FinancialDetailsModel]]
         val balanceDetails = financialDetailsModelList.headOption
-          .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
+          .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None, None))
         val codedOutChargeItem = {
           financialDetailsModelList.flatMap(_.toChargeItem)
             .filter(_.subTransactionType.contains(Accepted))
@@ -72,7 +72,8 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
         val whatYouOweChargesList = WhatYouOweChargesList(
           balanceDetails = balanceDetails,
           chargesList = getFilteredChargesList(financialDetailsModelList, isReviewAndReconciledEnabled, isFilterCodedOutPoasEnabled, isPenaltiesEnabled),
-          codedOutDocumentDetail = codedOutChargeItem)
+          codedOutDocumentDetail = codedOutChargeItem,
+          totalAmountCodedOut = balanceDetails.amountCodedOut)
 
         {
           for {

@@ -24,7 +24,7 @@ import java.time.LocalDate
 
 case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: List[ChargeItem] = List(),
                                  outstandingChargesModel: Option[OutstandingChargesModel] = None,
-                                 codedOutDocumentDetail: Option[ChargeItem] = None)(implicit val dateService: DateServiceInterface) {
+                                 codedOutDocumentDetail: Option[ChargeItem] = None, totalAmountCodedOut: Option[BigDecimal] = None)(implicit val dateService: DateServiceInterface) {
 
   lazy val overdueChargeList: List[ChargeItem] = chargesList.filter(x => x.isOverdue())
 
@@ -32,6 +32,8 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
 
   def overdueOutstandingCharges: List[OutstandingChargeModel] = outstandingChargesModel.toList.flatMap(_.outstandingCharges)
     .filter(_.relevantDueDate.getOrElse(LocalDate.MAX).isBefore(dateService.getCurrentDate))
+
+  def getAmountCodedOut: BigDecimal = totalAmountCodedOut.getOrElse(0.00)
 
   val availableCredit: Option[BigDecimal] = this.balanceDetails.availableCredit.flatMap(v => if (v > 0) Some(v) else None)
 
