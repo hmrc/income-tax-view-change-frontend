@@ -95,7 +95,7 @@ class AddressLookupConnectorISpec extends AnyWordSpec with ComponentSpecBase wit
                                        |        "heading": "Nodwch gyfeiriad eich busnes"
                                        |      },
                                        |      "appLevelLabels": {
-                                       |        "navTitle": "Rheoli’ch diweddariadau Treth Incwm"
+                                       |        "navTitle": "Rheoli’ch Hunanasesiad"
                                        |      }
                                        |    }
                                        |  }
@@ -181,7 +181,7 @@ class AddressLookupConnectorISpec extends AnyWordSpec with ComponentSpecBase wit
             |        "heading": "Nodwch gyfeiriad eich busnes"
             |      },
             |      "appLevelLabels": {
-            |        "navTitle": "Rheoli diweddariadau Treth Incwm eich cleient"
+            |        "navTitle": "Rheoli Rheoli’ch Hunanasesiad eich cleient"
             |      }
             |    }
             |  }

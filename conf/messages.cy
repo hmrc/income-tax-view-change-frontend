@@ -29,12 +29,12 @@ back.nomatch = Yn ôl
 agent.base.service_name                                        = Treth Incwm fanylion eich cleient
 
 # Header
-header.serviceName                                             = Rheoli’ch diweddariadau Treth Incwm
-agent.header.serviceName                                       = Rheoli diweddariadau Treth Incwm eich cleient
+header.serviceName                                             = Rheoli’ch Hunanasesiad
+agent.header.serviceName                                       = Rheoli Rheoli’ch Hunanasesiad eich cleient
 
 # HTML Titles
-htmlTitle                                                       = {0} - Rheoli’ch diweddariadau Treth Incwm - GOV.UK
-htmlTitle.agent                                                 = {0} - Rheoli diweddariadau Treth Incwm eich cleient - GOV.UK
+htmlTitle                                                       = {0} - Rheoli’ch Hunanasesiad - GOV.UK
+htmlTitle.agent                                                 = {0} - Rheoli Rheoli’ch Hunanasesiad eich cleient - GOV.UK
 htmlTitle.errorPage                                             = {0} - GOV.UK
 htmlTitle.invalidInput                                          = Gwall: {0} - GOV.UK
 htmlTitle.confirmClient                                         = {0} - GOV.UK
