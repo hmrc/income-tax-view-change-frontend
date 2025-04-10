@@ -152,6 +152,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       dunningLock = dunningLock,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       penaltiesEnabled = penaltiesEnabled,
+      LPP2Url = "testUrl",
       creditAndRefundEnabled = true,
       earliestTaxYearAndAmountByDueDate = Some(EarliestDueCharge(TaxYear(2024, 2025), BigDecimal(100.00))),
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel)
@@ -200,6 +201,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       dunningLock = dunningLock,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       penaltiesEnabled = true,
+      LPP2Url = "testUrl",
       creditAndRefundEnabled = true,
       earliestTaxYearAndAmountByDueDate = Some(EarliestDueCharge(TaxYear(2024, 2025), BigDecimal(100.00))),
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel))
