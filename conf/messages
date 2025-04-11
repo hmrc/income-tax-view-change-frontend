@@ -1800,7 +1800,7 @@ business.added.sole-trader.income.sources.button                          = Your
 business.added.sole-trader.previous.tax.years.heading                     = Previous tax years
 business.added.sole-trader.previous.tax.years.t1                          = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 
-business.added.sole-trader.view.all.businesses                                                      = View all your businesses
+business.added.sole-trader.view.all.businesses                                          = View all your businesses
 business.added.obligation.inset.single.annual.overdue.text                              = You have <b>1 overdue update</b>. You must submit your yearly tax return and pay the tax you owe.
 business.added.obligation.inset.single.quarterly.overdue.text                           = You have <b>1 overdue update</b> for 3 months of the {0} to {1} tax year. You must submit these updates with all required income and expenses through your compatible software.
 business.added.obligation.inset.multiple.quarterly.overdue.text                         = You have <b>{0} overdue updates</b> for {1} months of the {2} to {3} tax year. You must submit these updates with all required income and expenses through your compatible software.
@@ -1835,6 +1835,8 @@ business.added.sole-trader.submit.tax.return.text                       = When r
 business.added.sole-trader.submit.tax.return.link                       = software compatible with Making Tax Digital for Income Tax (opens in new tab).
 
 business.added.sole-trader.submit.annual.text                           = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
+business.added.sole-trader.submit.annual.annual.text                    = When reporting annually, you can submit your tax return directly through your HMRC online account or
+
 
 
 ##### UK Property Text
@@ -1871,7 +1873,7 @@ business.added.uk-property.obligation.view.upcoming.updates.text                
 business.added.uk-property.next.quarterly.obligation.text                 = Your next quarterly update for the {0} to {1} tax year is due by <b>{2}</b> for the quarterly period {3} to {4}
 business.added.uk-property.final.dec.text                                 = Your tax return for the {0} to {1} tax year is due by <b>{2}</b>
 
-business.added.uk-property.quarterly.opt.out.text.1                       = You can decide at any time to opt out of quarterly reporting and report annually for all your businesses on
+business.added.uk-property.quarterly.opt.out.text.1                       = You can decide at any time to opt out of quarterly reporting and report annually for all your properties on
 business.added.uk-property.quarterly.opt.out.link                         = your reporting frequency
 business.added.uk-property.quarterly.opt.out.text.2                       = page.
 
@@ -1891,6 +1893,7 @@ business.added.uk-property.submit.tax.return.text                         = When
 business.added.uk-property.submit.tax.return.link                         = software compatible with Making Tax Digital for Income Tax (opens in new tab).
 
 business.added.uk-property.submit.annual.text                             = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
+business.added.uk-property.submit.annual.annual.text                      = When reporting annually, you can submit your tax return directly through your HMRC online account or
 
 ##### Foreign Property Text
 
@@ -1926,7 +1929,7 @@ business.added.foreign-property.obligation.view.upcoming.updates.text           
 business.added.foreign-property.next.quarterly.obligation.text               = Your next quarterly update for the {0} to {1} tax year is due by <b>{2}</b> for the quarterly period {3} to {4}
 business.added.foreign-property.final.dec.text                               = Your tax return for the {0} to {1} tax year is due by <b>{2}</b>
 
-business.added.foreign-property.quarterly.opt.out.text.1                     = You can decide at any time to opt out of quarterly reporting and report annually for all your businesses on
+business.added.foreign-property.quarterly.opt.out.text.1                     = You can decide at any time to opt out of quarterly reporting and report annually for all your properties on
 business.added.foreign-property.quarterly.opt.out.link                       = your reporting frequency
 business.added.foreign-property.quarterly.opt.out.text.2                     = page.
 
@@ -1950,6 +1953,8 @@ business.added.foreign-property.submit.tax.return.text                       = W
 business.added.foreign-property.submit.tax.return.link                       = software compatible with Making Tax Digital for Income Tax (opens in new tab).
 
 business.added.foreign-property.submit.annual.text                           = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
+business.added.foreign-property.submit.annual.annual.text                    = When reporting annually, you can submit your tax return directly through your HMRC online account or
+
 
 ## You cannot go back - Your business has been added page ##
 

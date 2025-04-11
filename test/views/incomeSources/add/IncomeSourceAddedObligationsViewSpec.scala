@@ -294,5 +294,4 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
       document.getElementsByTag("form").get(0).attr("method") shouldBe "GET"
     }
   }
-
 }

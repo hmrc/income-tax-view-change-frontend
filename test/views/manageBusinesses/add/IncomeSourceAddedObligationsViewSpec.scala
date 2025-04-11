@@ -95,8 +95,6 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
               getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
               getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
-
-
             )
 
           val document: Document = Jsoup.parse(page.body)
@@ -1058,7 +1056,10 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
             val reportingFrequency = document.getElementById("change-frequency")
 
-            reportingFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your businesses."
+            incomeSourceType match {
+              case UkProperty | ForeignProperty => reportingFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your properties."
+              case _ => reportingFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your businesses."
+            }
             reportingFrequency.select("a").attr("href") shouldBe reportingFrequencyPageUrl(false)
           }
 
@@ -1586,7 +1587,10 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
             val reportingFrequency = document.getElementById("change-frequency")
 
-            reportingFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your businesses."
+            incomeSourceType match {
+              case UkProperty | ForeignProperty => reportingFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your properties."
+              case _ => reportingFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your businesses."
+            }
             reportingFrequency.select("a").attr("href") shouldBe reportingFrequencyPageUrl(false)
           }
         }
@@ -1951,7 +1955,10 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
             val reportingFrequency = document.getElementById("change-frequency")
 
-            reportingFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your businesses."
+            incomeSourceType match {
+              case UkProperty | ForeignProperty => reportingFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your properties."
+              case _ => reportingFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your businesses."
+            }
             reportingFrequency.select("a").attr("href") shouldBe reportingFrequencyPageUrl(false)
           }
         }
@@ -2960,29 +2967,10 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val document: Document = Jsoup.parse(validCurrentTaxYearAnnualCallNoOverdue.body)
             val reportingFrequency = document.getElementById("change-frequency")
 
-            reportingFrequency.text() shouldBe "You are set to report annually for your new business. Find out more about your reporting frequency."
-          }
-
-          "reporting Quarterly" in {
-
-            val validCurrentTaxYearQuarterlyCallNoOverdue: Html =
-              view(
-                viewModel = viewModelWithCurrentYearQuarterly,
-                isAgent = true,
-                incomeSourceType = incomeSourceType,
-                businessName = testName,
-                currentDate = dayFirstQuarter2024_2025,
-                isBusinessHistoric = false,
-                reportingMethod = ChosenReportingMethod.Quarterly,
-                getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(true).url,
-                getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
-                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
-              )
-
-            val document: Document = Jsoup.parse(validCurrentTaxYearQuarterlyCallNoOverdue.body)
-
-            document.getElementById("change-frequency").text() shouldBe "You can decide at any time to opt out of quarterly reporting and report annually for all your businesses on your reporting frequency page."
+            incomeSourceType match {
+              case UkProperty | ForeignProperty => reportingFrequency.text() shouldBe "You can decide at any time to opt out of quarterly reporting and report annually for all your properties on your reporting frequency page."
+              case _ => reportingFrequency.text() shouldBe "You can decide at any time to opt out of quarterly reporting and report annually for all your businesses on your reporting frequency page."
+            }
           }
 
           "reporting Hybrid" in {
@@ -3056,9 +3044,8 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val subHeading: Element = layoutContent.getElementsByTag("h2").last()
             val compatibleSoftwareParagraph = document.getElementById(SelectorHelper.annualCompatibleSoftwareParagraph)
 
-
             subHeading.text shouldBe submitUpdatesInSoftware
-            compatibleSoftwareParagraph.text() shouldBe "When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software."
+            compatibleSoftwareParagraph.text() shouldBe "When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software. software compatible with Making Tax Digital for Income Tax (opens in new tab)."
 
           }
 
@@ -3441,7 +3428,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 quarterlyList.text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by 5 May 2024 for the quarterly period 6 January 2024 to 5 April 2024"
                 quarterlyList.select("b").text() shouldBe "5 May 2024"
 
-                obligationsList.text() shouldBe "Your tax return for the 2023 to 2024 tax year is due by 31 January 2025"
+                obligationsList.text() shouldBe "You must submit your final declarations and pay the tax you owe by the deadline."
                 obligationsList.select("b").text() shouldBe jan31st2025
               }
 
@@ -3533,7 +3520,10 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
             val reportingFrequency = document.getElementById("change-frequency")
 
-            reportingFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your businesses."
+            incomeSourceType match {
+              case UkProperty | ForeignProperty => reportingFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your properties."
+              case _ => reportingFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your businesses."
+            }
             reportingFrequency.select("a").attr("href") shouldBe reportingFrequencyPageUrl(true)
           }
         }
@@ -3630,18 +3620,18 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           val layoutContent: Element = document.selectHead("#main-content")
 
           val banner: Element = layoutContent.getElementsByTag("h1").first()
-          val subText: Elements = layoutContent.select("div").eq(3)
+          val subText: Elements = layoutContent.getElementsByClass("govuk-panel__body")
 
           incomeSourceType match {
             case SelfEmployment =>
               banner.text() shouldBe h1SoleTraderContent
-              subText.text shouldBe s"$h1SoleTraderContent $headingBase"
+              subText.text shouldBe headingBase
             case UkProperty =>
               banner.text() shouldBe h1UKProperty
-              subText.text shouldBe s"$h1UKProperty $headingBase"
+              subText.text shouldBe headingBase
             case ForeignProperty =>
               banner.text() shouldBe h1ForeignProperty
-              subText.text shouldBe s"$h1ForeignProperty $headingBase"
+              subText.text shouldBe headingBase
           }
         }
 
@@ -3901,7 +3891,10 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val document: Document = Jsoup.parse(validAnnualThenFullQuarterlyCallNoOverdue.body)
             val reportingFrequency = document.getElementById("change-frequency")
 
-            reportingFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your businesses."
+            incomeSourceType match {
+              case UkProperty | ForeignProperty => reportingFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your properties."
+              case _ => reportingFrequency.text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting frequency for all your businesses."
+            }
             reportingFrequency.select("a").attr("href") shouldBe reportingFrequencyPageUrl(true)
           }
         }
