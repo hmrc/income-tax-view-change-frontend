@@ -68,6 +68,8 @@ object FeatureSwitchName {
       JsSuccess(ReportingFrequencyPage)
     case JsString(DisplayBusinessStartDate.name) =>
       JsSuccess(DisplayBusinessStartDate)
+    case JsString(AccountingMethodJourney.name) =>
+      JsSuccess(AccountingMethodJourney)
     case JsString(PenaltiesAndAppeals.name) =>
       JsSuccess(PenaltiesAndAppeals)
     case JsString(YourSelfAssessmentCharges.name) =>
@@ -110,6 +112,7 @@ object FeatureSwitchName {
       FilterCodedOutPoas,
       ReportingFrequencyPage,
       DisplayBusinessStartDate,
+      AccountingMethodJourney,
       PenaltiesAndAppeals,
       YourSelfAssessmentCharges
     )
@@ -190,6 +193,11 @@ case object ReportingFrequencyPage extends FeatureSwitchName {
 case object DisplayBusinessStartDate extends FeatureSwitchName {
   override val name: String = "display-business-start-date"
   override val toString: String = "Display Business Start Date"
+}
+
+case object AccountingMethodJourney extends FeatureSwitchName {
+  override val name: String = "accounting-method-journey"
+  override val toString: String = "Accounting Method Journey"
 }
 
 case object PenaltiesAndAppeals extends FeatureSwitchName {
