@@ -48,7 +48,7 @@
 @import implicitDateFormatter.longDate
 
 @getMessage(key: String, args: String*) = @{
-messages(s"business-added.$key", args: _*)
+messages(s"business.added.$key", args: _*)
 }
 
 @getUniqueMessage(key: String, args: String*) = @{
@@ -65,12 +65,12 @@ name match {
 }
 
 @getPeriodMessage(changeTo: String) = @{
-if(changeTo == "annual") getUniqueMessage("annually")
-else getUniqueMessage("quarterly")
+    if(changeTo == "annual") getUniqueMessage("annually")
+    else getUniqueMessage("quarterly")
 }
 
 @getQuarterlyTableHeading(quarterly: Seq[DatesModel]) = @{
-s"${getMessage("table.heading-1")} ${quarterly.head.inboundCorrespondenceFrom.getYear} ${getMessage("to")} ${quarterly.head.inboundCorrespondenceFrom.getYear + 1}"
+    s"${getMessage("table.heading.1")} ${quarterly.head.inboundCorrespondenceFrom.getYear} ${getMessage("to")} ${quarterly.head.inboundCorrespondenceFrom.getYear + 1}"
 }
 
 @getPageTitle = @{
@@ -103,9 +103,9 @@ btaNavPartial = user.btaNavPartial) {
 
         @if(sources.quarterlyObligationsDates.nonEmpty) {
             <div class="box-simple" id="quarterly">
-                <div class="page_headers govuk-heading-m"> @getMessage("quarterly-heading") </div>
+                <div class="page_headers govuk-heading-m"> @getMessage("quarterly.heading") </div>
                 @p(){
-                    @getMessage("quarterly-p1")
+                    @getMessage("quarterly.p1")
                 }
 
                 @for(quarterlyPeriods <- sources.quarterlyObligationsDates) {
@@ -125,7 +125,7 @@ btaNavPartial = user.btaNavPartial) {
                                 content = Text(getQuarterlyTableHeading(quarterlyPeriods))
                             ),
                             HeadCell(
-                                content = Text(getMessage("table.heading-2"))
+                                content = Text(getMessage("table.heading.2"))
                             )
                         )),
                         caption = None,
@@ -136,9 +136,9 @@ btaNavPartial = user.btaNavPartial) {
         }
 
         <div class="box-simple" id="finalDec">
-            <div class="page_headers govuk-heading-m"> @getMessage("final-declaration-heading") </div>
+            <div class="page_headers govuk-heading-m"> @getMessage("final.declaration.heading") </div>
             @p(){
-                @getMessage("final-declaration-text")
+                @getMessage("final.declaration.text")
             }
 
             @govukTable(Table(
@@ -154,10 +154,10 @@ btaNavPartial = user.btaNavPartial) {
                 },
                 head = Some(Seq(
                     HeadCell(
-                        content = Text(getMessage("table.heading-1"))
+                        content = Text(getMessage("table.heading.1"))
                     ),
                     HeadCell(
-                        content = Text(getMessage("table.heading-2"))
+                        content = Text(getMessage("table.heading.2"))
                     )
                 )),
                 caption = None,
@@ -168,7 +168,7 @@ btaNavPartial = user.btaNavPartial) {
         <div class="govuk-!-margin-top-4"> </div>
 
         @continueButton(
-            Some(getMessage("income-sources-button"))
+            Some(getMessage("income.sources.button"))
         )
     }
 }
