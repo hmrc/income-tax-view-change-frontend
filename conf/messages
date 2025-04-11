@@ -1793,7 +1793,7 @@ business.added.sole-trader.panel.body                         = has been added t
 business.added.sole-trader.quarterly.heading                              = Send quarterly updates
 business.added.sole-trader.quarterly.p1                                   = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
 business.added.sole-trader.final.declaration.heading                      = Submit final declarations and pay your tax
-business.added.sole-trader.final.declaration.text                         = You must submit your final declarations and pay the tax you owe by the deadline.
+business.added.sole-trader.obligation.list.text                      = Your tax return for the {0} to {1} tax year is due by <b>{2}</b>
 business.added.sole-trader.table.heading.1                                = Tax year
 business.added.sole-trader.table.heading.2                                = Deadline
 business.added.sole-trader.income.sources.button                          = Your income sources
@@ -1823,8 +1823,8 @@ business.added.sole-trader.quarterly.annual.reporting.frequency.a       = Depend
 business.added.sole-trader.quarterly.annual.reporting.frequency.link    = view and change your reporting frequency
 business.added.sole-trader.quarterly.annual.reporting.frequency.b       = for all your businesses.
 
-business.added.sole-trader.default.annual.reporting.frequency.text      = You are set to report annually for your new business. Find out more about
-business.added.sole-trader.default.annual.reporting.frequency.link      = your reporting frequency.
+business.added.sole-trader.annual.reporting.frequency.text              = You are set to report annually for your new business. Find out more about
+business.added.sole-trader.annual.reporting.frequency.link              = your reporting frequency.
 
 business.added.sole-trader.submit.software.text                         = Submit updates in software
 business.added.sole-trader.submit.software.quarterly.text               = For any tax year you are reporting quarterly, you will need
@@ -1852,7 +1852,7 @@ business.added.uk-property.panel.body                                     = has 
 business.added.uk-property.quarterly.heading                              = Send quarterly updates
 business.added.uk-property.quarterly.p1                                   = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
 business.added.uk-property.final.declaration.heading                      = Submit final declarations and pay your tax
-business.added.uk-property.final.declaration.text                         = You must submit your final declarations and pay the tax you owe by the deadline.
+business.added.uk-property.obligation.list.text                           = Your tax return for the {0} to {1} tax year is due by <b>{2}</b>
 business.added.uk-property.table.heading.1                                = Tax year
 business.added.uk-property.table.heading.2                                = Deadline
 business.added.uk-property.income.sources.button                          = Your income sources
@@ -1881,8 +1881,8 @@ business.added.uk-property.quarterly.annual.reporting.frequency.a         = Depe
 business.added.uk-property.quarterly.annual.reporting.frequency.link      = view and change your reporting frequency
 business.added.uk-property.quarterly.annual.reporting.frequency.b         = for all your properties.
 
-business.added.uk-property.default.annual.reporting.frequency.text        = You are set to report annually for your new property. Find out more about
-business.added.uk-property.default.annual.reporting.frequency.link        = your reporting frequency.
+business.added.uk-property.annual.reporting.frequency.text                = You are set to report annually for your new property. Find out more about
+business.added.uk-property.annual.reporting.frequency.link                = your reporting frequency.
 
 business.added.uk-property.submit.software.text                           = Submit updates in software
 business.added.uk-property.submit.software.quarterly.text                 = For any tax year you are reporting quarterly, you will need
@@ -1895,7 +1895,7 @@ business.added.uk-property.submit.tax.return.link                         = soft
 business.added.uk-property.submit.annual.text                             = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
 business.added.uk-property.submit.annual.annual.text                      = When reporting annually, you can submit your tax return directly through your HMRC online account or
 
-##### Foreign Property Text
+##### Foreign Property Text #####
 
 business.added.foreign-property.text                                      = What you must do
 business.added.foreign-property.deadlines                                 = Your revised deadlines
@@ -1908,7 +1908,7 @@ business.added.foreign-property.panel.body                                = has 
 business.added.foreign-property.quarterly.heading                         = Send quarterly updates
 business.added.foreign-property.quarterly.p1                              = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
 business.added.foreign-property.final.declaration.heading                 = Submit final declarations and pay your tax
-business.added.foreign-property.final.declaration.text                    = You must submit your final declarations and pay the tax you owe by the deadline.
+business.added.foreign-property.obligation.list.text                      = Your tax return for the {0} to {1} tax year is due by <b>{2}</b>
 business.added.foreign-property.table.heading.1                           = Tax year
 business.added.foreign-property.table.heading.2                           = Deadline
 business.added.foreign-property.income.sources.button                     = Your income sources
@@ -1941,8 +1941,8 @@ business.added.foreign-property.quarterly.annual.reporting.frequency.a       = D
 business.added.foreign-property.quarterly.annual.reporting.frequency.link    = view and change your reporting frequency
 business.added.foreign-property.quarterly.annual.reporting.frequency.b       = for all your properties.
 
-business.added.foreign-property.default.annual.reporting.frequency.text      = You are set to report annually for your new property. Find out more about
-business.added.foreign-property.default.annual.reporting.frequency.link      = your reporting frequency.
+business.added.foreign-property.annual.reporting.frequency.text      = You are set to report annually for your new property. Find out more about
+business.added.foreign-property.annual.reporting.frequency.link      = your reporting frequency.
 
 business.added.foreign-property.submit.software.text                         = Submit updates in software
 business.added.foreign-property.submit.software.quarterly.text               = For any tax year you are reporting quarterly, you will need

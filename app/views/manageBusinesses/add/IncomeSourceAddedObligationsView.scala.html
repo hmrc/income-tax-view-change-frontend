@@ -128,7 +128,7 @@
             s"""
                 <li id="obligations-list">
                     ${getMessage(
-                        "final.declaration.text",
+                        "obligation.list.text",
                         finalDecDate.inboundCorrespondenceFrom.getYear.toString,
                         finalDecDate.inboundCorrespondenceTo.getYear.toString,
                         finalDecDate.inboundCorrespondenceDue.toLongDate
@@ -175,7 +175,7 @@
     } else {
          @viewModel.getFinalDeclarationDate(currentDate).map { finalDecDate =>
               <p class="govuk-body" id="final-declaration">
-                  @Html(getMessage("final.dec.text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString, finalDecDate.inboundCorrespondenceDue.toLongDate)).
+                  @Html(getMessage("obligation.list.text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString, finalDecDate.inboundCorrespondenceDue.toLongDate)).
               </p>
          }
     }
@@ -202,9 +202,8 @@
         </div>
     } else if(reportingMethod == ChosenReportingMethod.Annual || reportingMethod == ChosenReportingMethod.DefaultAnnual) {
         <div class="govuk-body" id="change-frequency">
-            @getMessage("quarterly.opt.out.text.1")
-            <a class="govuk-link" href=@getReportingFrequencyUrl>@getMessage("quarterly.opt.out.link")</a>
-            @getMessage("quarterly.opt.out.text.2")
+            @getMessage("annual.reporting.frequency.text")
+            <a class="govuk-link" href=@getReportingFrequencyUrl>@getMessage("annual.reporting.frequency.link")</a>
         </div>
     } else if(reportingMethod == ChosenReportingMethod.Quarterly) {
         @* No output for Quarterly reporting method *@
@@ -229,7 +228,7 @@
 
         @p(id=Some("submit-via-compatible-software-annual")) { @messages(getMessage("submit.annual.text")) }
 
-    } else if(reportingMethod == ChosenReportingMethod.Annual) {
+    } else if(reportingMethod == ChosenReportingMethod.Annual || reportingMethod == ChosenReportingMethod.DefaultAnnual) {
 
         @h2(getMessage("submit.software.text"), classes = "govuk-heading-m", optId = Some("submit-updates-in-software"))
 
