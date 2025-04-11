@@ -165,6 +165,23 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
                 document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "Balancing payment history"
               }
+
+              "provided with an id associated to a charge for Class 2 National Insurance" in new Setup(testFinancialDetailsModelWithCodingOutNics2()) {
+                enable(YourSelfAssessmentCharges, ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action("CODINGOUT01")(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.getElementsByClass("govuk-heading-xl").first().text() should include("Class 2 National Insurance")
+                document.getElementsByClass("govuk-caption-xl").first().text() should include("2020 to 2021 tax year")
+                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Overdue charge: £12.34"
+                document.getElementById("due-date-text").select("p").text() shouldBe "Due 25 August 2021"
+                document.getElementsByClass("govuk-table__caption govuk-table__caption--m").text() shouldBe "History of this charge"
+              }
+
               "provided with an id associated to a Late Submission Penalty" in new Setup(testValidFinancialDetailsModelWithLateSubmissionPenalty) {
                 enable(ReviewAndReconcilePoa, YourSelfAssessmentCharges, ChargeHistory)
                 setupMockSuccess(mtdUserRole)

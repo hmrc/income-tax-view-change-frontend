@@ -47,6 +47,7 @@ trait TransactionItem {
   }
 
   // TODO: duplicate logic, in scope of => https://jira.tools.tax.service.gov.uk/browse/MISUV-8557
+  // TODO: We should remove DocumentDetail.getChargeTypeKey and keep this method below as it is tied to ChargeItem
   def getChargeTypeKey: String =
     (transactionType, subTransactionType) match {
       case (PoaOneDebit, _) => "paymentOnAccount1.text"
