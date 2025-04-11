@@ -600,11 +600,11 @@
         </div>
     }
 
-    @getCodingOutHref(taxYear: Int, transactionId: String) = @{
-        if(user.isAgent()) {
-            controllers.routes.ChargeSummaryController.showAgent(taxYear, transactionId, false)
+    @getCodingOutHref(taxYear: Int) = @{
+        if (user.isAgent()) {
+            controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear)
         } else {
-            controllers.routes.ChargeSummaryController.show(taxYear, transactionId, false, origin = origin)
+            controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin = origin)
         }
     }
 
@@ -615,7 +615,7 @@
         } else {
             @getMessage("credit-overpaid-prefix")
         }
-        <a class="govuk-link" id="coding-out-summary-link" href="@getCodingOutHref(codedOutDocumentDetail.taxYear.endYear, codedOutDocumentDetail.transactionId)">
+        <a class="govuk-link" id="coding-out-summary-link" href="@getCodingOutHref(codedOutDocumentDetail.taxYear.endYear)">
         @codedOutDocumentDetail.getAmountCodedOut.toCurrency
         </a>
         @getMessage("codingOut-1b")
