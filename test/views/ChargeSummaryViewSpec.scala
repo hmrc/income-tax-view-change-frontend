@@ -149,8 +149,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     val taxYearHeading: String = messages("taxYears.table.taxYear.heading")
     val balancingCharge: String = messages("chargeSummary.balancingCharge.text")
     val paymentBreakdownNic2: String = messages("chargeSummary.paymentBreakdown.nic2")
-    val codingOutMessage2017To2018: String = messages("chargeSummary.codingOutMessage", 2017, 2018)
-    val codingOutMessage2017To2018WithStringMessagesArgument: String = messages("chargeSummary.codingOutMessage", "2017", "2018")
+    val codingOutMessage2016To2017: String = messages("chargeSummary.codingOutMessage", 2016, 2017)
+    val codingOutMessage2016To2017WithStringMessagesArgument: String = messages("chargeSummary.codingOutMessage", "2016", "2017")
     val chargeSummaryCodingOutHeading2017To2018: String = s"${messages("chargeSummary.codingOut.text")}"
     val insetPara: String = s"${messages("chargeSummary.codingOutInset-1")} ${messages("chargeSummary.codingOutInset-2")} ${messages("pagehelp.opensInNewTabText")} ${messages("chargeSummary.codingOutInset-3")}"
     val paymentBreakdownInterestLocksCharging: String = messages("chargeSummary.paymentBreakdown.interestLocks.charging")
@@ -362,7 +362,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
   def subItemWithClearingSapDocument(clearingSAPDocument: String): SubItem = SubItem(dueDate = Some(LocalDate.parse("2017-08-07")), clearingSAPDocument = Some(clearingSAPDocument), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))
 
   val payments: FinancialDetailsModel = FinancialDetailsModel(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None),
     documentDetails = List(DocumentDetail(9999, "PAYID01", Some("Payment on Account"), Some("documentText"), -5000, -15000, LocalDate.of(2018, 8, 6), None, None, None, None, None, None, None, Some("lotItem"), Some("lot"))),
     financialDetails = List(FinancialDetail("9999", transactionId = Some("PAYID01"), items = Some(Seq(
       subItemWithClearingSapDocument("123456789012"),
@@ -699,11 +699,11 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
             document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2018)
             document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
             document.select("#coding-out-notice").text() shouldBe insetPara
-            document.select("#coding-out-message").text() shouldBe codingOutMessage2017To2018WithStringMessagesArgument
+            document.select("#coding-out-message").text() shouldBe codingOutMessage2016To2017WithStringMessagesArgument
             document.select("#coding-out-notice-link").attr("href") shouldBe cancellledPayeTaxCodeInsetLink
             document.select(".govuk-table").size() shouldBe 1
             document.select(".govuk-table tbody tr").size() shouldBe 1
-            document.select(".govuk-table tbody tr").get(0).text() shouldBe s"29 Mar 2018 ${messages("chargeSummary.codingOutPayHistoryAmount", "2019", "2020")} £2,500.00"
+            document.select(".govuk-table tbody tr").get(0).text() shouldBe s"29 Mar 2018 ${messages("chargeSummary.codingOutPayHistoryAmount", "2018", "2019")} £2,500.00"
           }
         }
 
@@ -715,10 +715,10 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
             document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
             document.select("h1").text() shouldBe chargeSummaryCodingOutHeading2017To2018
             document.select("#coding-out-notice").text() shouldBe insetPara
-            document.select("#coding-out-message").text() shouldBe codingOutMessage2017To2018WithStringMessagesArgument
+            document.select("#coding-out-message").text() shouldBe codingOutMessage2016To2017WithStringMessagesArgument
             document.select("#coding-out-notice-link").attr("href") shouldBe cancellledPayeTaxCodeInsetLink
             document.selectById("paymentAmount").text() shouldBe "Payment amount £2,500.00"
-            document.selectById("codingOutRemainingToPay").text() shouldBe messages("chargeSummary.codingOutRemainingToPay", "2019", "2020")
+            document.selectById("codingOutRemainingToPay").text() shouldBe messages("chargeSummary.codingOutRemainingToPay", "2018", "2019")
             document.select(".govuk-table tbody tr").size() shouldBe 1
           }
 
