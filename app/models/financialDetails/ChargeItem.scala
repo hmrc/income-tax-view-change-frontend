@@ -241,8 +241,7 @@ object ChargeItem {
       transactionId = documentDetail.transactionId,
       taxYear = TaxYear.forYearEnd(documentDetail.taxYear),
       transactionType = chargeType,
-      subTransactionType = codedOutStatus
-        .flatMap(SubTransactionType.fromCodedOutStatus),
+      subTransactionType = SubTransactionType.fromCodedOutStatusAndDocumentText(documentDetail.documentText, codedOutStatus),
       documentDate = documentDetail.documentDate,
       dueDate = documentDetail.documentDueDate,
       originalAmount = documentDetail.originalAmount,
