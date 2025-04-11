@@ -1829,14 +1829,6 @@ business.added.sole-trader.previous.tax.years.heading                     = Prev
 business.added.sole-trader.previous.tax.years.t1                          = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 
 business.added.sole-trader.view.all.businesses                                          = View all your businesses
-business.added.obligation.inset.single.annual.overdue.text                              = You have <b>1 overdue update</b>. You must submit your yearly tax return and pay the tax you owe.
-business.added.obligation.inset.single.quarterly.overdue.text                           = You have <b>1 overdue update</b> for 3 months of the {0} to {1} tax year. You must submit these updates with all required income and expenses through your compatible software.
-business.added.obligation.inset.multiple.quarterly.overdue.text                         = You have <b>{0} overdue updates</b> for {1} months of the {2} to {3} tax year. You must submit these updates with all required income and expenses through your compatible software.
-business.added.obligation.inset.multiple.tax.years.single.quarterly.overdue.text        = You have <b>1 overdue update</b>. You must submit these updates with all required income and expenses through your compatible software.
-business.added.obligation.inset.multiple.tax.years.multiple.quarterly.overdue.text      = You have <b>{0} overdue updates</b>. You must submit these updates with all required income and expenses through your compatible software.
-business.added.obligation.inset.single.historic.overdue.text                            = You have <b>1 overdue update</b>. You must make sure that you have sent all the required income and expenses for tax years earlier than {0} to {1}.
-business.added.obligation.inset.multiple.historic.overdue.text                          = You have <b>{0} overdue updates</b>. You must make sure that you have sent all the required income and expenses for tax years earlier than {1} to {2}.
-
 business.added.sole-trader.obligation.view.overdue.upcoming.updates.text                = View your overdue and upcoming updates
 business.added.sole-trader.obligation.view.upcoming.updates.text                        = View your upcoming updates
 
@@ -1866,7 +1858,6 @@ business.added.sole-trader.submit.annual.text                           = When r
 business.added.sole-trader.submit.annual.annual.text                    = When reporting annually, you can submit your tax return directly through your HMRC online account or
 
 
-
 ##### UK Property Text
 
 business.added.uk-property.text                                           = What you must do
@@ -1888,15 +1879,8 @@ business.added.uk-property.previous.tax.years.heading                     = Prev
 business.added.uk-property.previous.tax.years.t1                          = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 
 business.added.uk-property.view.all.businesses                                                      = View all your businesses
-business.added.uk-property.obligation.inset.single.annual.overdue.text                              = You have <b>1 overdue update</b>. You must submit your yearly tax return and pay the tax you owe.
-business.added.uk-property.obligation.inset.single.quarterly.overdue.text                           = You have <b>1 overdue update</b> for 3 months of the {0} to {1} tax year. You must submit these updates with all required income and expenses through your compatible software.
-business.added.uk-property.obligation.inset.multiple.quarterly.overdue.text                         = You have <b>{0} overdue updates</b> for {1} months of the {2} to {3} tax year. You must submit these updates with all required income and expenses through your compatible software.
-business.added.uk-property.obligation.inset.multiple.tax.years.single.quarterly.overdue.text        = You have <b>1 overdue update</b>. You must submit these updates with all required income and expenses through your compatible software.
-business.added.uk-property.obligation.inset.multiple.tax.years.multiple.quarterly.overdue.text      = You have <b>{0} overdue updates</b>. You must submit these updates with all required income and expenses through your compatible software.
-business.added.uk-property.obligation.inset.single.historic.overdue.text                            = You have <b>1 overdue update</b>. You must make sure that you have sent all the required income and expenses for tax years earlier than {0} to {1}.
-business.added.uk-property.obligation.inset.multiple.historic.overdue.text                          = You have <b>{0} overdue updates</b>. You must make sure that you have sent all the required income and expenses for tax years earlier than {1} to {2}.
-business.added.uk-property.obligation.view.overdue.upcoming.updates.text                            = View your overdue and upcoming updates
-business.added.uk-property.obligation.view.upcoming.updates.text                                    = View your upcoming updates
+business.added.uk-property.obligation.view.overdue.upcoming.updates.text                = View your overdue and upcoming updates
+business.added.uk-property.obligation.view.upcoming.updates.text                        = View your upcoming updates
 
 business.added.uk-property.next.quarterly.obligation.text                 = Your next quarterly update for the {0} to {1} tax year is due by <b>{2}</b> for the quarterly period {3} to {4}
 business.added.uk-property.final.dec.text                                 = Your tax return for the {0} to {1} tax year is due by <b>{2}</b>
@@ -1943,16 +1927,9 @@ business.added.foreign-property.income.sources.button                     = Your
 business.added.foreign-property.previous.tax.years.heading                = Previous tax years
 business.added.foreign-property.previous.tax.years.t1                     = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 
-business.added.foreign-property.view.all.businesses                                                      = View all your businesses
-business.added.foreign-property.obligation.inset.single.annual.overdue.text                              = You have <b>1 overdue update</b>. You must submit your yearly tax return and pay the tax you owe.
-business.added.foreign-property.obligation.inset.single.quarterly.overdue.text                           = You have <b>1 overdue update</b> for 3 months of the {0} to {1} tax year. You must submit these updates with all required income and expenses through your compatible software.
-business.added.foreign-property.obligation.inset.multiple.quarterly.overdue.text                         = You have <b>{0} overdue updates</b> for {1} months of the {2} to {3} tax year. You must submit these updates with all required income and expenses through your compatible software.
-business.added.foreign-property.obligation.inset.multiple.tax.years.single.quarterly.overdue.text        = You have <b>1 overdue update</b>. You must submit these updates with all required income and expenses through your compatible software.
-business.added.foreign-property.obligation.inset.multiple.tax.years.multiple.quarterly.overdue.text      = You have <b>{0} overdue updates</b>. You must submit these updates with all required income and expenses through your compatible software.
-business.added.foreign-property.obligation.inset.single.historic.overdue.text                            = You have <b>1 overdue update</b>. You must make sure that you have sent all the required income and expenses for tax years earlier than {0} to {1}.
-business.added.foreign-property.obligation.inset.multiple.historic.overdue.text                          = You have <b>{0} overdue updates</b>. You must make sure that you have sent all the required income and expenses for tax years earlier than {1} to {2}.
-business.added.foreign-property.obligation.view.overdue.upcoming.updates.text                            = View your overdue and upcoming updates
-business.added.foreign-property.obligation.view.upcoming.updates.text                                    = View your upcoming updates
+business.added.foreign-property.view.all.businesses                                          = View all your businesses
+business.added.foreign-property.obligation.view.overdue.upcoming.updates.text                = View your overdue and upcoming updates
+business.added.foreign-property.obligation.view.upcoming.updates.text                        = View your upcoming updates
 
 business.added.foreign-property.next.quarterly.obligation.text               = Your next quarterly update for the {0} to {1} tax year is due by <b>{2}</b> for the quarterly period {3} to {4}
 business.added.foreign-property.final.dec.text                               = Your tax return for the {0} to {1} tax year is due by <b>{2}</b>
@@ -1960,10 +1937,6 @@ business.added.foreign-property.final.dec.text                               = Y
 business.added.foreign-property.quarterly.opt.out.text.1                     = You can decide at any time to opt out of quarterly reporting and report annually for all your properties on
 business.added.foreign-property.quarterly.opt.out.link                       = your reporting frequency
 business.added.foreign-property.quarterly.opt.out.text.2                     = page.
-
-business.added.foreign-property.quarterly.opt.out.hybrid.text.1              = Depending on your circumstances, you may be able to
-business.added.foreign-property.quarterly.opt.out.hybrid.link                = view and change your reporting frequency
-business.added.foreign-property.quarterly.opt.out.hybrid.text.2              = for all your properties.
 
 business.added.foreign-property.quarterly.annual.reporting.frequency.a       = Depending on your circumstances, you may be able to
 business.added.foreign-property.quarterly.annual.reporting.frequency.link    = view and change your reporting frequency

@@ -37,7 +37,7 @@ import java.time.LocalDate
 class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
 
   val prefix: String = "business.added"
-  val viewAllBusinessesLinkText: String = messagesAPI(s"$prefix.view-all-businesses")
+  def viewAllBusinessesLinkText(incomeSourceType: IncomeSourceType): String = messagesAPI(s"$prefix.${incomeSourceType.messagesSuffix}.view.all.businesses")
   val day: LocalDate = LocalDate.of(2023, 1, 1)
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(GroupedObligationsModel("123", List(SingleObligationModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "EOPS", StatusFulfilled)))))
 
@@ -83,7 +83,7 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
     }
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
+  mtdAllRoles.foreach { mtdUserRole =>
     List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
       val path = getPath(mtdUserRole, incomeSourceType)
       s"GET $path" when {
@@ -120,7 +120,7 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
                   result should have(
                     httpStatus(OK),
                     pageTitle(mtdUserRole, expectedText),
-                    elementTextByID("view-all-businesses-link")(viewAllBusinessesLinkText)
+                    elementTextByID("view-all-businesses-link")(viewAllBusinessesLinkText(incomeSourceType))
                   )
                 }
               }

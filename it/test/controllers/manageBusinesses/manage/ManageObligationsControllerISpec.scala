@@ -40,9 +40,9 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
   val taxYear = "2023-2024"
 
   val prefix: String = "incomeSources.add.manageObligations"
-  val reusedPrefix: String = "business-added"
+  val reusedPrefix: String = "business.added"
 
-  val continueButtonText: String = messagesAPI(s"$reusedPrefix.income-sources-button")
+  val continueButtonText: String = messagesAPI(s"$reusedPrefix.income.sources.button")
 
   val year = 2022
   val obligationsViewModel: ObligationsViewModel = ObligationsViewModel(
