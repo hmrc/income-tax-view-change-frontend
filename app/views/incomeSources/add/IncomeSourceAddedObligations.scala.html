@@ -51,7 +51,7 @@
 @getPageTitle = @{
     incomeSourceType match {
         case _: SelfEmployment.type =>
-            getMessage("sole.trader.title", businessName.get)
+            getMessage("sole-trader.title", businessName.get)
         case _ => getMessage(s"${incomeSourceType.messagesSuffix}.title")
     }
 }
@@ -67,7 +67,7 @@
 @getPanelTitle = @{
     incomeSourceType match {
         case _: SelfEmployment.type =>
-            getMessage("sole.trader.panel.title", businessName.get)
+            getMessage("sole-trader.panel.title", businessName.get)
         case _ => getMessage(s"${incomeSourceType.messagesSuffix}.panel.title")
     }
 }
