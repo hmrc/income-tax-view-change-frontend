@@ -1859,57 +1859,6 @@ business.added.sole-trader.submit.tax.return.link                       = meddal
 
 business.added.sole-trader.submit.annual.text                           = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar.lein CThEF neu drwy ddefnyddio meddalwedd sy’n cydweddu.
 
-##### Foreign Property Text #####
-
-business.added.foreign-property.text                                     = Yr hyn y mae’n rhaid i chi ei wneud
-business.added.foreign-property.deadlines                                = Eich dyddiadau cau sydd wedi’u haddasu
-business.added.foreign-property.to                                       = i
-
-business.added.foreign-property.title                   = Mae eiddo tramor wedi cael ei ychwanegu i’ch cyfrif
-business.added.foreign-property.panel.title             = Mae eiddo tramor
-business.added.foreign-property.panel.body              = wedi cael ei ychwanegu i’ch cyfrif
-
-business.added.foreign-property.quarterly.heading                        = Anfon diweddariadau chwarterol
-business.added.foreign-property.quarterly.p1                             = Mae’n rhaid i chi anfon diweddariadau chwarterol o’ch incwm a’ch treuliau, gan ddefnyddio meddalwedd sy’n cydweddu, erbyn y dyddiadau cau canlynol:
-business.added.foreign-property.final.declaration.heading                = Cyflwyno’ch datganiadau terfynol a thalu’ch treth
-
-business.added.foreign-property.table.heading.1                          = Blwyddyn dreth
-business.added.foreign-property.table.heading.2                          = Dyddiad cau
-business.added.foreign-property.income.sources.button                    = Eich ffynonellau incwm
-business.added.foreign-property.previous.tax.years.heading               = Blynyddoedd treth blaenorol
-business.added.foreign-property.previous.tax.years.t1                    = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl Incwm a threuliau, a datganiadau terfynol ar gyfer blynyddoedd treth cyn
-
-business.added.foreign-property.obligation.list.text                                                     = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer blwyddyn dreth {0} i {1} erbyn <b>{2}</b>
-business.added.foreign-property.view.all.businesses                         = Bwrw golwg dros eich holl fusnesau
-business.added.foreign-property.obligation.view.overdue.upcoming.updates.text                = Bwrw golwg dros eich diweddariadau sy’n hwyr a’r rhai sydd ar y gweill
-business.added.foreign-property.obligation.view.upcoming.updates.text            = Bwrw golwg dros eich diweddariadau sydd ar y gweill
-
-business.added.foreign-property.next.quarterly.obligation.text               = Mae’n rhaid i chi gyflwyno’ch diweddariad chwarterol nesaf, ar gyfer blwyddyn dreth {0} i {1}, erbyn <b>{2}</b> ar gyfer cyfnod chwarterol {3} i {4}
-business.added.foreign-property.final.dec.text                               = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer blwyddyn dreth {0} i {1} erbyn <b>{2}</b>
-
-business.added.foreign-property.quarterly.opt.out.text.1                     = Gallwch, ar unrhyw adeg, optio allan o adrodd yn chwarterol a phenderfynu adrodd yn flynyddol ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’ch tudalen ynghylch
-business.added.foreign-property.quarterly.opt.out.link                       = amlder eich adroddiadau.
-business.added.foreign-property.quarterly.opt.out.text.2                     = tudalen.
-
-business.added.foreign-property.quarterly.annual.reporting.frequency.a              = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
-business.added.foreign-property.quarterly.annual.reporting.frequency.link           = bwrw golwg dros a newid amlder eich adroddiadau
-business.added.foreign-property.quarterly.annual.reporting.frequency.b              = ar gyfer pob un o’ch busnesau
-
-business.added.foreign-property.annual.reporting.frequency.text      = Rydych wedi dewis cyflwyno adroddiadau blynyddol ar gyfer eich busnes newydd. Rhagor o wybodaeth am
-business.added.foreign-property.annual.reporting.frequency.link      = amlder eich adroddiadau.
-
-business.added.foreign-property.submit.annual.annual.text                    = Rydych wedi dewis cyflwyno adroddiadau blynyddol ar gyfer eich busnes newydd. Rhagor o wybodaeth am
-
-business.added.foreign-property.submit.software.text                         = Cyflwyno diweddariadau drwy ddefnyddio meddalwedd
-business.added.foreign-property.submit.software.quarterly.text               = Os ydych yn adrodd am flwyddyn dreth yn chwarterol, bydd angen i chi ddefnyddio
-business.added.foreign-property.submit.software.quarterly.link               = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd)
-
-business.added.foreign-property.submit.tax.return                            = Cyflwyno’ch Ffurflen Dreth
-business.added.foreign-property.submit.tax.return.text                       = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar.lein CThEF neu drwy ddefnyddio
-business.added.foreign-property.submit.tax.return.link                       = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
-
-business.added.foreign-property.submit.annual.text                           = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar.lein CThEF neu drwy ddefnyddio meddalwedd sy’n cydweddu.
-
 ##### UK Property Text #####
 
 business.added.uk-property.text                                     = Yr hyn y mae’n rhaid i chi ei wneud
@@ -1960,6 +1909,57 @@ business.added.uk-property.submit.tax.return.text                       = Wrth a
 business.added.uk-property.submit.tax.return.link                       = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
 
 business.added.uk-property.submit.annual.text                           = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar.lein CThEF neu drwy ddefnyddio meddalwedd sy’n cydweddu.
+
+##### Foreign Property Text #####
+
+business.added.foreign-property.text                                     = Yr hyn y mae’n rhaid i chi ei wneud
+business.added.foreign-property.deadlines                                = Eich dyddiadau cau sydd wedi’u haddasu
+business.added.foreign-property.to                                       = i
+
+business.added.foreign-property.title                   = Mae eiddo tramor wedi cael ei ychwanegu i’ch cyfrif
+business.added.foreign-property.panel.title             = Mae eiddo tramor
+business.added.foreign-property.panel.body              = wedi cael ei ychwanegu i’ch cyfrif
+
+business.added.foreign-property.quarterly.heading                        = Anfon diweddariadau chwarterol
+business.added.foreign-property.quarterly.p1                             = Mae’n rhaid i chi anfon diweddariadau chwarterol o’ch incwm a’ch treuliau, gan ddefnyddio meddalwedd sy’n cydweddu, erbyn y dyddiadau cau canlynol:
+business.added.foreign-property.final.declaration.heading                = Cyflwyno’ch datganiadau terfynol a thalu’ch treth
+
+business.added.foreign-property.table.heading.1                          = Blwyddyn dreth
+business.added.foreign-property.table.heading.2                          = Dyddiad cau
+business.added.foreign-property.income.sources.button                    = Eich ffynonellau incwm
+business.added.foreign-property.previous.tax.years.heading               = Blynyddoedd treth blaenorol
+business.added.foreign-property.previous.tax.years.t1                    = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl Incwm a threuliau, a datganiadau terfynol ar gyfer blynyddoedd treth cyn
+
+business.added.foreign-property.obligation.list.text                                                     = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer blwyddyn dreth {0} i {1} erbyn <b>{2}</b>
+business.added.foreign-property.view.all.businesses                         = Bwrw golwg dros eich holl fusnesau
+business.added.foreign-property.obligation.view.overdue.upcoming.updates.text                = Bwrw golwg dros eich diweddariadau sy’n hwyr a’r rhai sydd ar y gweill
+business.added.foreign-property.obligation.view.upcoming.updates.text            = Bwrw golwg dros eich diweddariadau sydd ar y gweill
+
+business.added.foreign-property.next.quarterly.obligation.text               = Mae’n rhaid i chi gyflwyno’ch diweddariad chwarterol nesaf, ar gyfer blwyddyn dreth {0} i {1}, erbyn <b>{2}</b> ar gyfer cyfnod chwarterol {3} i {4}
+business.added.foreign-property.final.dec.text                               = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer blwyddyn dreth {0} i {1} erbyn <b>{2}</b>
+
+business.added.foreign-property.quarterly.opt.out.text.1                     = Gallwch, ar unrhyw adeg, optio allan o adrodd yn chwarterol a phenderfynu adrodd yn flynyddol ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’ch tudalen ynghylch
+business.added.foreign-property.quarterly.opt.out.link                       = amlder eich adroddiadau.
+business.added.foreign-property.quarterly.opt.out.text.2                     = tudalen.
+
+business.added.foreign-property.quarterly.annual.reporting.frequency.a              = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
+business.added.foreign-property.quarterly.annual.reporting.frequency.link           = bwrw golwg dros a newid amlder eich adroddiadau
+business.added.foreign-property.quarterly.annual.reporting.frequency.b              = ar gyfer pob un o’ch busnesau
+
+business.added.foreign-property.annual.reporting.frequency.text      = Rydych wedi dewis cyflwyno adroddiadau blynyddol ar gyfer eich busnes newydd. Rhagor o wybodaeth am
+business.added.foreign-property.annual.reporting.frequency.link      = amlder eich adroddiadau.
+
+business.added.foreign-property.submit.annual.annual.text                    = Rydych wedi dewis cyflwyno adroddiadau blynyddol ar gyfer eich busnes newydd. Rhagor o wybodaeth am
+
+business.added.foreign-property.submit.software.text                         = Cyflwyno diweddariadau drwy ddefnyddio meddalwedd
+business.added.foreign-property.submit.software.quarterly.text               = Os ydych yn adrodd am flwyddyn dreth yn chwarterol, bydd angen i chi ddefnyddio
+business.added.foreign-property.submit.software.quarterly.link               = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd)
+
+business.added.foreign-property.submit.tax.return                            = Cyflwyno’ch Ffurflen Dreth
+business.added.foreign-property.submit.tax.return.text                       = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar.lein CThEF neu drwy ddefnyddio
+business.added.foreign-property.submit.tax.return.link                       = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
+
+business.added.foreign-property.submit.annual.text                           = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar.lein CThEF neu drwy ddefnyddio meddalwedd sy’n cydweddu.
 
 ## You cannot go back - Your business has been added page ##
 
