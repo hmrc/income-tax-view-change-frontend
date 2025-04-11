@@ -160,6 +160,7 @@ class IncomeSourceAddedController @Inject()(
         case Some(dateStarted) =>
           val taxYearEndOfBusinessStartDate = dateService.getAccountingPeriodEndDate(dateStarted)
           val isBusinessHistoric = taxYearEndOfBusinessStartDate.getYear < viewModel.currentTaxYear - 1
+          println(viewModel.reportingMethod(reportingMethodTaxYear1, reportingMethodTaxYear2))
           Ok(
             view(
               viewModel = viewModel,

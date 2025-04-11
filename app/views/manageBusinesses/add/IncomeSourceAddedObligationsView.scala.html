@@ -55,7 +55,7 @@
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
-    messages(s"business-added.$key", args: _*)
+    messages(s"business.added.${incomeSourceType.messagesSuffix}.$key", args: _*)
 }
 
 @import implicitDateFormatter.longDate
@@ -63,18 +63,18 @@
 @getPageTitle = @{
     incomeSourceType match {
         case SelfEmployment =>
-            businessName.map(name => getMessage("sole-trader.title", name)).getOrElse("")
+            businessName.map(name => getMessage("title", name)).getOrElse("")
         case _ =>
-            getMessage(s"${incomeSourceType.messagesSuffix}.title")
+            getMessage(s"title")
     }
 }
 
 @getPanelTitle = @{
     incomeSourceType match {
         case SelfEmployment =>
-            businessName.map(name => getMessage("sole-trader.title", name)).getOrElse("")
+            businessName.map(name => getMessage("panel.title", name)).getOrElse("")
         case _ =>
-            getMessage(s"${incomeSourceType.messagesSuffix}.panel.title")
+            getMessage(s"panel.title")
     }
 }
 
@@ -82,7 +82,7 @@
     govukPanel(
         Panel(
             title = Text(getPanelTitle),
-            content = Text(getMessage(s"${incomeSourceType.messagesSuffix}.panel.body"))
+            content = Text(getMessage("panel.body"))
         )
     )
 }
@@ -100,7 +100,7 @@
 }
 
 @getOverdueObligationsMessage(overdueObligationsComponents: OverdueObligationsMessageComponents) = @{
-    messages(s"business-added.${overdueObligationsComponents.messageKey}", overdueObligationsComponents.args: _*)
+    messages(s"business.added.${overdueObligationsComponents.messageKey}", overdueObligationsComponents.args: _*)
 }
 
 @getQuarterlyOrHybridList = @{
@@ -111,7 +111,7 @@
             s"""
                 <li id="quarterly-list">
                     ${getMessage(
-                        "next-quarterly-obligation-text",
+                        "next.quarterly.obligation.text",
                         (taxYear - 1).toString,
                         taxYear.toString,
                         quarterlyUpdate.inboundCorrespondenceDue.toLongDate,
@@ -128,7 +128,7 @@
             s"""
                 <li id="obligations-list">
                     ${getMessage(
-                        "final-dec-text",
+                        "final.declaration.text",
                         finalDecDate.inboundCorrespondenceFrom.getYear.toString,
                         finalDecDate.inboundCorrespondenceTo.getYear.toString,
                         finalDecDate.inboundCorrespondenceDue.toLongDate
@@ -148,7 +148,6 @@
 
     quarterlyBullet ++ hybridOrFinalDecBullet
 }
-
 
 @mainTemplate(
     pageTitle = getPageTitle,
@@ -176,41 +175,44 @@
     } else {
          @viewModel.getFinalDeclarationDate(currentDate).map { finalDecDate =>
               <p class="govuk-body" id="final-declaration">
-                  @Html(getMessage("final-dec-text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString, finalDecDate.inboundCorrespondenceDue.toLongDate)).
+                  @Html(getMessage("final.dec.text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString, finalDecDate.inboundCorrespondenceDue.toLongDate)).
               </p>
          }
     }
 
     @if(viewModel.getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric).messageKey.nonEmpty) {
       <div class="govuk-link govuk-body" id="view-upcoming-updates">
-        <a href=@getNextUpdatesUrl>@getMessage("obligation.view-overdue-upcoming-updates.text")</a>
+        <a href=@getNextUpdatesUrl>@getMessage("obligation.view.overdue.upcoming.updates.text")</a>
       </div>
     } else {
       <div class="govuk-link govuk-body" id="view-upcoming-updates">
-        <a href=@getNextUpdatesUrl>@getMessage("obligation.view-upcoming-updates.text")</a>
+        <a href=@getNextUpdatesUrl>@getMessage("obligation.view.upcoming.updates.text")</a>
       </div>
     }
 
     <div class="govuk-link govuk-body" id="view-all-businesses-link">
-      <a href=@getManageBusinessUrl>@getMessage("view-all-businesses")</a>
+      <a href=@getManageBusinessUrl>@getMessage("view.all.businesses")</a>
     </div>
 
     @if(reportingMethod == ChosenReportingMethod.QuarterlyAnnual || reportingMethod == ChosenReportingMethod.AnnualQuarterly) {
         <div class="govuk-body" id="change-frequency">
-          @getMessage("quarterly-opt-out-hybrid-text-1")
-          <a class="govuk-link" href=@getReportingFrequencyUrl>@getMessage("quarterly-opt-out-hybrid-link")</a>
-          @getMessage("quarterly-opt-out-hybrid-text-2")
+          @getMessage("quarterly.annual.reporting.frequency.a")
+          <a class="govuk-link" href=@getReportingFrequencyUrl>@getMessage("quarterly.annual.reporting.frequency.link")</a>
+          @getMessage("quarterly.annual.reporting.frequency.b")
         </div>
     } else if(reportingMethod == ChosenReportingMethod.Annual || reportingMethod == ChosenReportingMethod.DefaultAnnual) {
         <div class="govuk-body" id="change-frequency">
-            @getMessage("default-annual-reporting-frequency-text")
-            <a class="govuk-link" href=@getReportingFrequencyUrl>@getMessage("default-annual-reporting-frequency-link")</a>
+            @getMessage("quarterly.opt.out.text.1")
+            <a class="govuk-link" href=@getReportingFrequencyUrl>@getMessage("quarterly.opt.out.link")</a>
+            @getMessage("quarterly.opt.out.text.2")
         </div>
+    } else if(reportingMethod == ChosenReportingMethod.Quarterly) {
+        @* No output for Quarterly reporting method *@
     } else {
         <div class="govuk-body" id="change-frequency">
-            @getMessage("quarterly-opt-out-text-1")
-            <a class="govuk-link" href=@getReportingFrequencyUrl>@getMessage("quarterly-opt-out-link")</a>
-            @getMessage("quarterly-opt-out-text-2")
+            @getMessage("quarterly.opt.out.text.1")
+            <a class="govuk-link" href=@getReportingFrequencyUrl>@getMessage("quarterly.opt.out.link")</a>
+            @getMessage("quarterly.opt.out.text.2")
         </div>
     }
 
@@ -218,28 +220,31 @@
         reportingMethod == ChosenReportingMethod.QuarterlyAnnual ||
         reportingMethod == ChosenReportingMethod.AnnualQuarterly
     ) {
-        @h2(getMessage("submit-software-text"), classes = "govuk-heading-m", optId = Some("submit-updates-in-software"))
+        @h2(getMessage("submit.software.text"), classes = "govuk-heading-m", optId = Some("submit-updates-in-software"))
 
         @p(id=Some("submit-via-compatible-software-quarterly")) {
-            @getMessage("submit-software-quarterly-text")
-            @linkComponent(id = Some("compatible-software-link"), url = getSoftwareUrl, message = getMessage("submit-software-quarterly-link"))
+            @getMessage("submit.software.quarterly.text")
+            @linkComponent(id = Some("compatible-software-link"), url = getSoftwareUrl, message = getMessage("submit.software.quarterly.link"))
         }
 
-        @p(id=Some("submit-via-compatible-software-annual")) { @messages(getMessage("submit-annual-text")) }
+        @p(id=Some("submit-via-compatible-software-annual")) { @messages(getMessage("submit.annual.text")) }
 
     } else if(reportingMethod == ChosenReportingMethod.Annual) {
 
-        @h2(getMessage("submit-software-text"), classes = "govuk-heading-m", optId = Some("submit-updates-in-software"))
+        @h2(getMessage("submit.software.text"), classes = "govuk-heading-m", optId = Some("submit-updates-in-software"))
 
-        @p(id=Some("submit-via-compatible-software-annual")) { @messages(getMessage("submit-annual-text")) }
+        @p(id=Some("submit-via-compatible-software-annual")) {
+            @getMessage("submit.annual.text")
+            @linkComponent(id = Some("compatible-software-link"), url = getSoftwareUrl, message = getMessage("submit.software.quarterly.link"))
+        }
 
     } else {
 
-        @h2(getMessage("submit-software-text"), classes = "govuk-heading-m", optId = Some("submit-updates-in-software"))
+        @h2(getMessage("submit.software.text"), classes = "govuk-heading-m", optId = Some("submit-updates-in-software"))
 
         @p(id=Some("submit-via-compatible-software-quarterly")) {
-            @getMessage("submit-software-quarterly-text")
-            @linkComponent(id = Some("compatible-software-link"), url = getSoftwareUrl, message = getMessage("submit-software-quarterly-link"))
+            @getMessage("submit.software.quarterly.text")
+            @linkComponent(id = Some("compatible-software-link"), url = getSoftwareUrl, message = getMessage("submit.software.quarterly.link"))
         }
     }
 }

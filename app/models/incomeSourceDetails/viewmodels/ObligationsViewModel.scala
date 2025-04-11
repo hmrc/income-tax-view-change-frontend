@@ -42,10 +42,10 @@ final case class ObligationsViewModel(
     if (isBusinessHistoric) {
       val nonHistoricOverdueObligations = getNumberOfNonHistoricOverdueObligations(currentDate)
       if (nonHistoricOverdueObligations > 1) {
-        OverdueObligationsMessageComponents("obligation.inset.multiple-historic-overdue.text",
+        OverdueObligationsMessageComponents("obligation.inset.multiple.historic.overdue.text",
           List(getNumberOfNonHistoricOverdueObligations(currentDate).toString, (currentTaxYear - 2).toString, (currentTaxYear - 1).toString))
       } else if (nonHistoricOverdueObligations == 1) {
-        OverdueObligationsMessageComponents("obligation.inset.single-historic-overdue.text",
+        OverdueObligationsMessageComponents("obligation.inset.single.historic.overdue.text",
           List((currentTaxYear - 2).toString, (currentTaxYear - 1).toString))
       } else {
         OverdueObligationsMessageComponents("", Nil)
@@ -82,23 +82,23 @@ final case class ObligationsViewModel(
       ))).nonEmpty) {
         if (numberOfOverdueQuarterlyObligations > 1) {
           OverdueObligationsMessageComponents(
-            "obligation.inset.multiple-tax-years-multiple-quarterly-overdue.text",
+            "obligation.inset.multiple.tax.years.multiple.quarterly.overdue.text",
             List(numberOfOverdueQuarterlyObligations.toString)
           )
         } else {
           OverdueObligationsMessageComponents(
-            "obligation.inset.multiple-tax-years-single-quarterly-overdue.text",
+            "obligation.inset.multiple.tax.years.single.quarterly.overdue.text",
             Nil
           )
         }
       } else if (numberOfOverdueQuarterlyObligations > 1) {
         OverdueObligationsMessageComponents(
-          "obligation.inset.multiple-quarterly-overdue.text",
+          "obligation.inset.multiple.quarterly.overdue.text",
           List(numberOfOverdueQuarterlyObligations.toString, (numberOfOverdueQuarterlyObligations * 3).toString, (currentTaxYear - 1).toString, currentTaxYear.toString)
         )
       } else {
         OverdueObligationsMessageComponents(
-          "obligation.inset.single-quarterly-overdue.text",
+          "obligation.inset.single.quarterly.overdue.text",
           List((currentTaxYear - 1).toString, currentTaxYear.toString)
         )
       }
@@ -106,7 +106,7 @@ final case class ObligationsViewModel(
 
     (overdueAnnual, overdueQuarterly) match {
       case (1, 0) =>
-        OverdueObligationsMessageComponents("obligation.inset.single-annual-overdue.text", Nil)
+        OverdueObligationsMessageComponents("obligation.inset.single.annual.overdue.text", Nil)
       case (0, q) if q > 0 =>
         onlyQuarterly(q)
       case (1, q) if q > 0 =>
