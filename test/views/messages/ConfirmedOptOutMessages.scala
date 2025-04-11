@@ -34,7 +34,7 @@ object ConfirmedOptOutMessages {
 
 
   val heading: String = "Opt out completed"
-  val title: String =  "Opt out completed - Manage your Income Tax updates - GOV.UK"
+  val title: String =  "Opt out completed - Manage your Self Assessment - GOV.UK"
   val panelBodyOneYear: String = s"You are reporting annually for the ${taxYear.startYear} to ${taxYear.endYear} tax year"
   val panelBodyMultiYear: String = s"You are reporting annually from the ${taxYear.startYear} to ${taxYear.endYear} tax year onwards"
 

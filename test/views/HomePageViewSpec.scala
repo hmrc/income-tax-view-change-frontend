@@ -156,7 +156,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     }
 
     s"have the title ${messages("htmlTitle", messages("home.heading"))}" in new Setup {
-      document.title() shouldBe "Income Tax - Manage your Income Tax updates - GOV.UK"
+      document.title() shouldBe "Income Tax - Manage your Self Assessment - GOV.UK"
     }
 
     s"have the users name as caption" in new Setup {
