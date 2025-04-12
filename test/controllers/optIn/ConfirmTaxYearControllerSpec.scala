@@ -60,7 +60,7 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
       s"the user is authenticated as a $mtdRole" should {
         "render the confirm tax year page for current tax year" in {
           setupMockSuccess(mtdRole)
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           when(mockOptInService.getConfirmTaxYearViewModel(any())(any(), any(), any()))
             .thenReturn(Future.successful(Some(ConfirmTaxYearViewModel(
@@ -74,7 +74,7 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
 
         "render the confirm tax year page for next tax year" in {
           setupMockSuccess(mtdRole)
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           when(mockOptInService.getConfirmTaxYearViewModel(any())(any(), any(), any()))
             .thenReturn(Future.successful(Some(ConfirmTaxYearViewModel(
@@ -89,7 +89,7 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
         s"return result with $INTERNAL_SERVER_ERROR status" when {
           "getConfirmTaxYearViewModel fails" in {
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             when(mockOptInService.getConfirmTaxYearViewModel(any())(any(), any(), any()))
               .thenReturn(Future.successful(None))
@@ -108,7 +108,7 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
       s"the user is authenticated as a $mtdRole" should {
         "redirect to OptInCompletedController" in {
           setupMockSuccess(mtdRole)
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           when(mockOptInService.makeOptInCall()(any(), any(), any()))
             .thenReturn(Future.successful(ITSAStatusUpdateResponseSuccess()))
@@ -122,7 +122,7 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
         s"redirect to optInError page" when {
           "the optInCall fails" in {
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             when(mockOptInService.makeOptInCall()(any(), any(), any()))
               .thenReturn(Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure()))

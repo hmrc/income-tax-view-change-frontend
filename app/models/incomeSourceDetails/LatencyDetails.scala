@@ -20,14 +20,18 @@ import play.api.libs.json.{Format, Json}
 
 import java.time.LocalDate
 
-case class LatencyDetails(latencyEndDate: LocalDate,
-                          taxYear1: String, latencyIndicator1: String,
-                          taxYear2: String, latencyIndicator2: String)
+case class LatencyDetails(
+                           latencyEndDate: LocalDate,
+                           taxYear1: String,
+                           latencyIndicator1: String,
+                           taxYear2: String,
+                           latencyIndicator2: String
+                         )
 
 
-case class LatencyYearsQuarterly(firstYear: Option[Boolean], secondYear:Option[Boolean])
+case class LatencyYearsQuarterly(firstYear: Option[Boolean], secondYear: Option[Boolean])
 
-case class LatencyYearsCrystallised(firstYear: Option[Boolean], secondYear:Option[Boolean])
+case class LatencyYearsCrystallised(firstYear: Option[Boolean], secondYear: Option[Boolean])
 
 object LatencyDetails {
   implicit val format: Format[LatencyDetails] = Json.format[LatencyDetails]

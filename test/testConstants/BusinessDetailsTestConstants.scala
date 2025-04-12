@@ -85,6 +85,7 @@ object BusinessDetailsTestConstants {
   val testEndDateString: String = "2022-10-10"
   val testUnknownValue = "Unknown"
   val testUnknownSoleTraderBusinessValue = "Sole trader business"
+
   val testLatencyDetails = LatencyDetails(
     latencyEndDate = LocalDate.of(year2019, 1, 1),
     taxYear1 = year2018.toString,

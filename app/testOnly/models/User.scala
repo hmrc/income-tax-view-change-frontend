@@ -16,7 +16,7 @@
 
 package testOnly.models
 
-import play.api.data.Forms.{boolean, default, mapping, optional, text}
+import play.api.data.Forms.{boolean, mapping, optional, text}
 import play.api.data.{Form, Mapping}
 import play.api.libs.json.{Json, OFormat}
 
@@ -65,16 +65,16 @@ case class PostedUser(nino: String,
 }
 
 object PostedUser {
-    val form: Form[PostedUser] =
-      Form(
-        mapping(
-          "nino" -> text,
-          "AgentType" -> optional(text),
-          "usePTANavBar" -> boolean,
-          "cyMinusOneCrystallisationStatus" -> optional(text),
-          "cyMinusOneItsaStatus" -> optional(text),
-          "cyItsaStatus" -> optional(text),
-          "cyPlusOneItsaStatus" -> optional(text)
-        )(PostedUser.apply)(PostedUser.unapply)
-      )
+  val form: Form[PostedUser] =
+    Form(
+      mapping(
+        "nino" -> text,
+        "AgentType" -> optional(text),
+        "usePTANavBar" -> boolean,
+        "cyMinusOneCrystallisationStatus" -> optional(text),
+        "cyMinusOneItsaStatus" -> optional(text),
+        "cyItsaStatus" -> optional(text),
+        "cyPlusOneItsaStatus" -> optional(text)
+      )(PostedUser.apply)(PostedUser.unapply)
+    )
 }

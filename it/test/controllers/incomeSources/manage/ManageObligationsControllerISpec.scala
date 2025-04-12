@@ -39,9 +39,9 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
   val taxYear = "2023-2024"
 
   val prefix: String = "incomeSources.add.manageObligations"
-  val reusedPrefix: String = "business-added"
+  val reusedPrefix: String = "business.added"
 
-  val continueButtonText: String = messagesAPI(s"$reusedPrefix.income-sources-button")
+  def continueButtonText(incomeSource: IncomeSourceType): String = messagesAPI(s"$reusedPrefix.${incomeSource.messagesSuffix}.income.sources.button")
 
   val year = 2022
   val obligationsViewModel: ObligationsViewModel = ObligationsViewModel(
@@ -103,7 +103,7 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, getExpectedHeading(incomeSourceType, true)),
-                  elementTextByID("continue-button")(continueButtonText)
+                  elementTextByID("continue-button")(continueButtonText(incomeSourceType))
                 )
               }
 
@@ -124,7 +124,7 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, getExpectedHeading(incomeSourceType, false)),
-                  elementTextByID("continue-button")(continueButtonText)
+                  elementTextByID("continue-button")(continueButtonText(incomeSourceType))
                 )
               }
             }

@@ -21,7 +21,6 @@ import helpers.ComponentSpecBase
 class WelshMessagesSpec extends ComponentSpecBase {
 
   val realMessages: Map[String, Map[String, String]] = messagesAPI.messages
-
   val englishMessages: Map[String, String] = realMessages("default")
   val welshMessages: Map[String, String] = realMessages("cy")
 

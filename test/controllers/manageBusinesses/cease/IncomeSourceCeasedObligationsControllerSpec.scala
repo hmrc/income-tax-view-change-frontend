@@ -122,7 +122,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends MockAuthActions
       None,
       cashOrAccruals = false
     )), List.empty)
-    setupMockGetIncomeSourceDetails()(sources)
+    setupMockGetIncomeSourceDetails(sources)
 
     val day = LocalDate.of(2023, 1, 1)
     val dates: Seq[DatesModel] = Seq(
@@ -140,12 +140,12 @@ class IncomeSourceCeasedObligationsControllerSpec extends MockAuthActions
 
   def setUpProperty(isAgent: Boolean, isUkProperty: Boolean): OngoingStubbing[Future[ObligationsResponseModel]] = {
     if (isUkProperty) {
-      setupMockGetIncomeSourceDetails()(ukPropertyIncomeWithCeasedUkPropertyIncome)
+      setupMockGetIncomeSourceDetails(ukPropertyIncomeWithCeasedUkPropertyIncome)
       when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
         .thenReturn(Some(propertyDetailsModelUK))
     }
     else {
-      setupMockGetIncomeSourceDetails()(foreignPropertyIncomeWithCeasedForiegnPropertyIncome)
+      setupMockGetIncomeSourceDetails(foreignPropertyIncomeWithCeasedForiegnPropertyIncome)
       when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
         .thenReturn(Some(propertyDetailsModelForeign))
     }

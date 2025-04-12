@@ -17,7 +17,7 @@
 package mocks.services
 
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
-import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import services.IncomeSourceDetailsService
@@ -37,13 +37,13 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach {
     reset(mockIncomeSourceDetailsService)
   }
 
-  def setupMockGetIncomeSourceDetails()(sources: IncomeSourceDetailsResponse): Unit = {
+  def setupMockGetIncomeSourceDetails(sources: IncomeSourceDetailsResponse): Unit = {
     when(
-      mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
       .thenReturn(Future.successful(sources))
   }
 
-  def mockSingleBusinessIncomeSource(userMigrated: Boolean = true): Unit = setupMockGetIncomeSourceDetails()(
+  def mockSingleBusinessIncomeSource(userMigrated: Boolean = true): Unit = setupMockGetIncomeSourceDetails(
     if (userMigrated) {
       singleBusinessIncome
     } else {
@@ -51,72 +51,71 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach {
     }
   )
 
-  def mockSingleBusinessIncomeSourceNoLatency(userMigrated: Boolean = true): Unit = setupMockGetIncomeSourceDetails()(
-      singleBusinessIncomeNoLatency
-  )
+  def mockSingleBusinessIncomeSourceNoLatency(): Unit =
+    setupMockGetIncomeSourceDetails(singleBusinessIncomeNoLatency)
 
-  def mockSingleBusinessIncomeSourceError(): Unit = setupMockGetIncomeSourceDetails()(
-    errorResponse
-  )
+  def mockSingleBusinessIncomeSourceError(): Unit =
+    setupMockGetIncomeSourceDetails(errorResponse)
 
-  def ukPlusForeignPropertyWithSoleTraderIncomeSource(): Unit = setupMockGetIncomeSourceDetails()(singleBusinessIncomeWithCurrentYear)
+  def ukPlusForeignPropertyWithSoleTraderIncomeSource(): Unit = setupMockGetIncomeSourceDetails(singleBusinessIncomeWithCurrentYear)
 
-  def mockUkPlusForeignPlusSoleTraderNoLatency(): Unit = setupMockGetIncomeSourceDetails()(ukPlusForeignPropertyAndSoleTraderNoLatency)
-  def mockUkPlusForeignPlusSoleTraderWithLatency(): Unit = setupMockGetIncomeSourceDetails()(ukPlusForeignPropertyAndSoleTraderWithLatency)
+  def mockUkPlusForeignPlusSoleTraderNoLatency(): Unit = setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderNoLatency)
 
-  def mockUkPlusForeignPlusSoleTrader2023WithLatencyAndUnknowns(): Unit = setupMockGetIncomeSourceDetails()(ukPlusForeignPropertyAndSoleTrader2023WithUnknowns)
+  def mockUkPlusForeignPlusSoleTraderWithLatency(): Unit = setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderWithLatency)
 
-  def mockSingleBISWithCurrentYearAsMigrationYear(): Unit = setupMockGetIncomeSourceDetails()(singleBusinessIncomeWithCurrentYear)
+  def mockUkPlusForeignPlusSoleTrader2023WithLatencyAndUnknowns(): Unit = setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTrader2023WithUnknowns)
 
-  def mockBusinessIncomeSource(): Unit = setupMockGetIncomeSourceDetails()(businessIncome)
+  def mockSingleBISWithCurrentYearAsMigrationYear(): Unit = setupMockGetIncomeSourceDetails(singleBusinessIncomeWithCurrentYear)
 
-  def mockBusinessIncomeSourceWithAccruals(): Unit = setupMockGetIncomeSourceDetails()(businessIncome2)
+  def mockBusinessIncomeSource(): Unit = setupMockGetIncomeSourceDetails(businessIncome)
 
-  def mockBusinessIncomeSourceWithCashAndAccruals(): Unit = setupMockGetIncomeSourceDetails()(businessIncome3)
+  def mockBusinessIncomeSourceWithAccruals(): Unit = setupMockGetIncomeSourceDetails(businessIncome2)
 
-  def mockBusinessIncomeSourceMissingCashOrAccrualsField(): Unit = setupMockGetIncomeSourceDetails()(businessIncome4)
+  def mockBusinessIncomeSourceWithCashAndAccruals(): Unit = setupMockGetIncomeSourceDetails(businessIncome3)
 
-  def mockPropertyIncomeSource(): Unit = setupMockGetIncomeSourceDetails()(propertyIncomeOnly)
+  def mockBusinessIncomeSourceMissingCashOrAccrualsField(): Unit = setupMockGetIncomeSourceDetails(businessIncome4)
 
-  def mockUKPropertyIncomeSource(): Unit = setupMockGetIncomeSourceDetails()(ukPropertyIncome)
+  def mockPropertyIncomeSource(): Unit = setupMockGetIncomeSourceDetails(propertyIncomeOnly)
 
-  def mockUKPropertyIncomeSourceWithCeasedUkProperty(): Unit = setupMockGetIncomeSourceDetails()(ukPropertyIncomeWithCeasedUkPropertyIncome)
+  def mockUKPropertyIncomeSource(): Unit = setupMockGetIncomeSourceDetails(ukPropertyIncome)
 
-  def mockTwoActiveUkPropertyIncomeSourcesErrorScenario(): Unit = setupMockGetIncomeSourceDetails()(twoActiveUkPropertyIncomes)
+  def mockUKPropertyIncomeSourceWithCeasedUkProperty(): Unit = setupMockGetIncomeSourceDetails(ukPropertyIncomeWithCeasedUkPropertyIncome)
 
-  def mockForeignPropertyIncomeSource(): Unit = setupMockGetIncomeSourceDetails()(foreignPropertyIncome)
+  def mockTwoActiveUkPropertyIncomeSourcesErrorScenario(): Unit = setupMockGetIncomeSourceDetails(twoActiveUkPropertyIncomes)
 
-  def mockTwoActiveForeignPropertyIncomeSourcesErrorScenario(): Unit = setupMockGetIncomeSourceDetails()(twoActiveForeignPropertyIncomes)
+  def mockForeignPropertyIncomeSource(): Unit = setupMockGetIncomeSourceDetails(foreignPropertyIncome)
 
-  def mockForeignPropertyIncomeSourceWithCeasedForeignProperty(): Unit = setupMockGetIncomeSourceDetails()(foreignPropertyIncomeWithCeasedForiegnPropertyIncome)
+  def mockTwoActiveForeignPropertyIncomeSourcesErrorScenario(): Unit = setupMockGetIncomeSourceDetails(twoActiveForeignPropertyIncomes)
 
-  def mockBothIncomeSources(): Unit = setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+  def mockForeignPropertyIncomeSourceWithCeasedForeignProperty(): Unit = setupMockGetIncomeSourceDetails(foreignPropertyIncomeWithCeasedForiegnPropertyIncome)
 
-  def mockUkPropertyWithSoleTraderBusiness(): Unit = setupMockGetIncomeSourceDetails()(ukPropertyWithSoleTraderBusiness)
+  def mockBothIncomeSources(): Unit = setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
-  def mockNoIncomeSources(): Unit = setupMockGetIncomeSourceDetails()(noIncomeDetails)
+  def mockUkPropertyWithSoleTraderBusiness(): Unit = setupMockGetIncomeSourceDetails(ukPropertyWithSoleTraderBusiness)
 
-  def mockBothIncomeSourcesBusinessAligned(): Unit = setupMockGetIncomeSourceDetails()(businessAndPropertyAligned)
+  def mockNoIncomeSources(): Unit = setupMockGetIncomeSourceDetails(noIncomeDetails)
 
-  def mockErrorIncomeSource(): Unit = setupMockGetIncomeSourceDetails()(IncomeSourceDetailsError(testErrorStatus, testErrorMessage))
+  def mockBothIncomeSourcesBusinessAligned(): Unit = setupMockGetIncomeSourceDetails(businessAndPropertyAligned)
 
-  def mockBothPropertyBothBusiness(): Unit = setupMockGetIncomeSourceDetails()(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
+  def mockErrorIncomeSource(): Unit = setupMockGetIncomeSourceDetails(IncomeSourceDetailsError(testErrorStatus, testErrorMessage))
 
-  def mockSoleTraderWithStartDate2005(): Unit = setupMockGetIncomeSourceDetails()(soleTraderWithStartDate2005)
+  def mockBothPropertyBothBusiness(): Unit = setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
 
-  def mockBothPropertyBothBusinessWithLatency(): Unit = setupMockGetIncomeSourceDetails()(ukPlusForeignPropertyAndSoleTraderWithLatency)
+  def mockSoleTraderWithStartDate2005(): Unit = setupMockGetIncomeSourceDetails(soleTraderWithStartDate2005)
 
-  def mockBusinessIncomeSourceWithLatency2023(): Unit = setupMockGetIncomeSourceDetails()(singleBusinessIncome2023)
+  def mockBothPropertyBothBusinessWithLatency(): Unit = setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderWithLatency)
 
-  def mockBusinessIncomeSourceWithLatency2023AndUnknownValues(): Unit = setupMockGetIncomeSourceDetails()(singleBusinessIncome2023WithUnknowns)
+  def mockBusinessIncomeSourceWithLatency2023(): Unit = setupMockGetIncomeSourceDetails(singleBusinessIncome2023)
 
-  def mockBusinessIncomeSourceWithLatency2024(): Unit = setupMockGetIncomeSourceDetails()(singleBusinessIncome2024)
+  def mockBusinessIncomeSourceWithLatency2023AndUnknownValues(): Unit = setupMockGetIncomeSourceDetails(singleBusinessIncome2023WithUnknowns)
 
-  def mockUKPropertyIncomeSourceWithLatency2023(): Unit = setupMockGetIncomeSourceDetails()(singleUKPropertyIncome2023)
+  def mockBusinessIncomeSourceWithLatency2024(): Unit = setupMockGetIncomeSourceDetails(singleBusinessIncome2024)
 
-  def mockForeignPropertyIncomeSourceWithLatency2023(): Unit = setupMockGetIncomeSourceDetails()(singleForeignPropertyIncome2023)
+  def mockUKPropertyIncomeSourceWithLatency2023(): Unit = setupMockGetIncomeSourceDetails(singleUKPropertyIncome2023)
 
-  def mockUKPropertyIncomeSourceWithLatency2024(): Unit = setupMockGetIncomeSourceDetails()(singleUKPropertyIncome2024)
+  def mockForeignPropertyIncomeSourceWithLatency2023(): Unit = setupMockGetIncomeSourceDetails(singleForeignPropertyIncome2023)
 
-  def mockForeignPropertyIncomeSourceWithLatency2024(): Unit = setupMockGetIncomeSourceDetails()(singleForeignPropertyIncome2024)
+  def mockUKPropertyIncomeSourceWithLatency2024(): Unit = setupMockGetIncomeSourceDetails(singleUKPropertyIncome2024)
+
+  def mockForeignPropertyIncomeSourceWithLatency2024(): Unit = setupMockGetIncomeSourceDetails(singleForeignPropertyIncome2024)
 }

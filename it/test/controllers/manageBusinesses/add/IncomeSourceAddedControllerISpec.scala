@@ -36,18 +36,18 @@ import java.time.LocalDate
 
 class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
 
-  val prefix: String = "business-added"
-  val viewAllBusinessesLinkText: String = messagesAPI(s"$prefix.view-all-businesses")
+  val prefix: String = "business.added"
+  def viewAllBusinessesLinkText(incomeSourceType: IncomeSourceType): String = messagesAPI(s"$prefix.${incomeSourceType.messagesSuffix}.view.all.businesses")
   val day: LocalDate = LocalDate.of(2023, 1, 1)
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(GroupedObligationsModel("123", List(SingleObligationModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "EOPS", StatusFulfilled)))))
 
 
   val pageTitle: String = messagesAPI("htmlTitle.agent", {
-    s"${messagesAPI("business-added.uk-property.title")}"
+    s"${messagesAPI("business.added.uk-property.title")}"
   })
   val confirmationPanelContent: String = {
-    s"${messagesAPI("business-added.uk-property.panel.title")} " +
-      s"${messagesAPI("business-added.uk-property.panel.body")}"
+    s"${messagesAPI("business.added.uk-property.panel.title")} " +
+      s"${messagesAPI("business.added.uk-property.panel.body")}"
   }
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
@@ -68,10 +68,10 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
 
   def getExpectedPageTitle(incomeSourceType: IncomeSourceType): String = {
     incomeSourceType match {
-      case SelfEmployment => messagesAPI("business-added.sole-trader.title", business1.tradingName.get)
+      case SelfEmployment => messagesAPI("business.added.sole-trader.title", business1.tradingName.get)
       case UkProperty =>
-        s"${messagesAPI("business-added.uk-property.title")}"
-      case _ => messagesAPI("business-added.foreign-property.title")
+        s"${messagesAPI("business.added.uk-property.title")}"
+      case _ => messagesAPI("business.added.foreign-property.title")
     }
   }
 
@@ -83,7 +83,7 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
     }
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
+  mtdAllRoles.foreach { mtdUserRole =>
     List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
       val path = getPath(mtdUserRole, incomeSourceType)
       s"GET $path" when {
@@ -120,7 +120,7 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
                   result should have(
                     httpStatus(OK),
                     pageTitle(mtdUserRole, expectedText),
-                    elementTextByID("view-all-businesses-link")(viewAllBusinessesLinkText)
+                    elementTextByID("view-all-businesses-link")(viewAllBusinessesLinkText(incomeSourceType))
                   )
                 }
               }

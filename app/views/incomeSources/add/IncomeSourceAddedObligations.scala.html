@@ -39,13 +39,13 @@
 @import implicitDateFormatter.longDate
 
 @getMessage(key: String, args: String*) = @{
-    messages(s"business-added.$key", args: _*)
+    messages(s"business.added.$key", args: _*)
 }
 
 @getQuarterlyTableHeading(quarterly: Seq[DatesModel]) = @{
     val startYear = (quarterly.head.inboundCorrespondenceFrom.getYear)
     val endYear = (quarterly.head.inboundCorrespondenceFrom.getYear + 1)
-    s"${getMessage("table.heading-1")} $startYear ${getMessage("to")} $endYear"
+    s"${getMessage("table.heading.1")} $startYear ${getMessage("to")} $endYear"
 }
 
 @getPageTitle = @{
@@ -97,9 +97,9 @@
 
         @if(sources.quarterlyObligationsDates.nonEmpty) {
             <div class="box-simple" id="quarterly">
-                <div class="page_headers govuk-heading-m"> @getMessage("quarterly-heading") </div>
+                <div class="page_headers govuk-heading-m"> @getMessage("quarterly.heading") </div>
                 @p(){
-                    @getMessage("quarterly-p1")
+                    @getMessage("quarterly.p1")
                 }
 
                 @for(quarterlyPeriods <- sources.quarterlyObligationsDates) {
@@ -119,7 +119,7 @@
                                 content = Text(getQuarterlyTableHeading(quarterlyPeriods))
                             ),
                             HeadCell(
-                                content = Text(getMessage("table.heading-2"))
+                                content = Text(getMessage("table.heading.2"))
                             )
                         )),
                         caption = None,
@@ -131,9 +131,9 @@
 
         @if(sources.finalDeclarationDates.nonEmpty) {
             <div class="box-simple" id="finalDeclaration">
-                <div class="page_headers govuk-heading-m"> @getMessage("final-declaration-heading") </div>
+                <div class="page_headers govuk-heading-m"> @getMessage("final.declaration.heading") </div>
                 @p(){
-                    @getMessage("final-declaration-text")
+                    @getMessage("final.declaration.text")
                 }
 
                 @govukTable(Table(
@@ -149,10 +149,10 @@
                     },
                     head = Some(Seq(
                         HeadCell(
-                            content = Text(getMessage("table.heading-1"))
+                            content = Text(getMessage("table.heading.1"))
                         ),
                         HeadCell(
-                            content = Text(getMessage("table.heading-2"))
+                            content = Text(getMessage("table.heading.2"))
                         )
                     )),
                     caption = None,
@@ -163,10 +163,10 @@
 
         @if(sources.showPrevTaxYears) {
             <div class="box-simple" id="prevYears">
-                <div class="page_headers govuk-heading-m"> @getMessage("previous-tax-years-heading") </div>
+                <div class="page_headers govuk-heading-m"> @getMessage("previous.tax.years.heading") </div>
                 <p class="govuk-body">
                 @{
-                    val head = getMessage("previous-tax-years-t1")
+                    val head = getMessage("previous.tax.years.t1")
                     val to = getMessage("to")
                     val fromYear = sources.currentTaxYear - 1
                     val toYear = sources.currentTaxYear
@@ -178,7 +178,7 @@
         }
 
         <div class="govuk-!-margin-top-8">
-        @continueButton(Some(getMessage("income-sources-button")))
+            @continueButton(Some(getMessage("income.sources.button")))
         </div>
 
     }

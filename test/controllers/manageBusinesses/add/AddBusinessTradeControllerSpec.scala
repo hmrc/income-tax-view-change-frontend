@@ -66,7 +66,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
             "incomeSources feature is enabled" in {
               enable(IncomeSourcesFs)
               setupMockSuccess(mtdRole)
-              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                 .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName)))))))
@@ -80,7 +80,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
             "when feature switch is disabled" in {
               setupMockSuccess(mtdRole)
 
-              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
               setupMockCreateSession(true)
 
               val result: Future[Result] = action(fakeRequest)
@@ -145,7 +145,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
               "the business trade entered is valid" in {
                 enable(IncomeSourcesFs)
                 setupMockSuccess(mtdRole)
-                setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+                setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
                 setupMockCreateSession(true)
                 setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade)))))))
@@ -168,7 +168,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
               "the individual is authenticated and the business trade entered is valid" in {
                 enable(IncomeSourcesFs)
                 setupMockSuccess(mtdRole)
-                setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+                setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
                 setupMockCreateSession(true)
                 setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade)))))))
@@ -191,7 +191,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
             "trade name is same as business name" in {
               enable(IncomeSourcesFs)
               setupMockSuccess(mtdRole)
-              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
               setupMockCreateSession(true)
               val businessNameAsTrade: String = "Test Name"
@@ -210,7 +210,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
               enable(IncomeSourcesFs)
               val invalidBusinessTradeChar: String = "££"
               setupMockSuccess(mtdRole)
-              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                 .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName),
@@ -227,7 +227,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
               enable(IncomeSourcesFs)
               val invalidBusinessTradeEmpty: String = ""
               setupMockSuccess(mtdRole)
-              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                 .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName),
@@ -244,7 +244,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
               enable(IncomeSourcesFs)
               val invalidBusinessTradeShort: String = "A"
               setupMockSuccess(mtdRole)
-              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                 .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName),
@@ -261,7 +261,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
               enable(IncomeSourcesFs)
               val invalidBusinessTradeLong: String = "This trade name is far too long to be accepted"
               setupMockSuccess(mtdRole)
-              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                 .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName),

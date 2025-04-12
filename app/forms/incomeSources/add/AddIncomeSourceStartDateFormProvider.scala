@@ -17,12 +17,8 @@
 package forms.incomeSources.add
 
 import forms.mappings.Mappings
-import forms.models.DateFormElement
-import forms.validation.CustomConstraints
 import implicits.ImplicitDateFormatter
 import play.api.data.Form
-import play.api.data.Forms.{default, mapping, text, tuple}
-import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import play.api.i18n.Messages
 import services.DateServiceInterface
 
@@ -36,17 +32,17 @@ class AddIncomeSourceStartDateFormProvider extends Mappings {
     val earliestInvalidDate: LocalDate = maximumAllowableDate.plusDays(1)
 
     val earliestLongInvalidDate: String = dateFormatter.longDate(earliestInvalidDate).toLongDate
-    val invalidFutureDateErrorMessage = messages(s"$messagesPrefix.error.future", earliestLongInvalidDate)
+    val invalidFutureDateErrorMessage: String = messages(s"$messagesPrefix.error.future", earliestLongInvalidDate)
 
     val dateFormErrorPrefix = "dateForm.error"
     val invalidMessage = s"$dateFormErrorPrefix.invalid"
 
     Form(
       "value" -> localDate(
-        invalidKey     = s"$dateFormErrorPrefix.invalid",
+        invalidKey = s"$dateFormErrorPrefix.invalid",
         allRequiredKey = s"$messagesPrefix.required.all",
         twoRequiredKey = s"$dateFormErrorPrefix.required.two",
-        requiredKey    = s"$dateFormErrorPrefix.required"
+        requiredKey = s"$dateFormErrorPrefix.required"
       ).verifying(
         maxDate(maximumAllowableDate, invalidFutureDateErrorMessage),
         fourDigitValidYear(invalidMessage)
