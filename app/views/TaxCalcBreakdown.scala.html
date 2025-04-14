@@ -20,7 +20,6 @@
 @import implicits.ImplicitCurrencyFormatter._
 @import views.html.partials.taxcalcbreakdown.CapitalGainsTaxTableNew
 @import views.html.partials.taxcalcbreakdown.TableRow
-@import exceptions.MissingFieldException
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 
@@ -97,8 +96,8 @@
 
     @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22201"))){
         @govukInsetText(InsetText(content = HtmlContent(
-            messages(if(isAgent) s"taxCal_breakdown.message.agent.C22201" else s"taxCal_breakdown.message.C22201",viewModel.grossGiftAidPayments.getOrElse(throw MissingFieldException("Gross Gift Aid Payments")).toCurrencyString,
-                BigDecimal(viewModel.getModifiedBaseTaxBand.getOrElse(throw MissingFieldException("Modified Base Tax Band")).apportionedBandLimit).toCurrencyString)
+            messages(if(isAgent) s"taxCal_breakdown.message.agent.C22201" else s"taxCal_breakdown.message.C22201",viewModel.validatedGrossGiftAidPayments.toCurrencyString,
+                BigDecimal(viewModel.validatedGetModifiedBaseTaxBand.apportionedBandLimit).toCurrencyString)
         )))
     }
 
@@ -111,21 +110,21 @@
     @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22205"))){
         @govukInsetText(InsetText(content = HtmlContent(
             messages(if(isAgent) s"taxCal_breakdown.message.agent.C22205" else s"taxCal_breakdown.message.C22205",
-                BigDecimal(viewModel.lossesAppliedToGeneralIncome.getOrElse(throw MissingFieldException("Losses Applied To General Income"))).toCurrencyString)
+                BigDecimal(viewModel.validatedLossesAppliedToGeneralIncome).toCurrencyString)
         )))
     }
 
     @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22208"))){
         @govukInsetText(InsetText(content = HtmlContent(
-            messages(if(isAgent) s"taxCal_breakdown.message.agent.C22208" else s"taxCal_breakdown.message.C22208",viewModel.giftAidTax.getOrElse(throw MissingFieldException("Gift Aid Tax")).toCurrencyString,
-                BigDecimal(viewModel.getModifiedBaseTaxBand.getOrElse(throw MissingFieldException("Modified Base Tax Band")).apportionedBandLimit).toCurrencyString)
+            messages(if(isAgent) s"taxCal_breakdown.message.agent.C22208" else s"taxCal_breakdown.message.C22208",viewModel.validatedGiftAidTax.toCurrencyString,
+                BigDecimal(viewModel.validatedGetModifiedBaseTaxBand.apportionedBandLimit).toCurrencyString)
         )))
     }
 
     @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22209"))){
         @govukInsetText(InsetText(content = HtmlContent(
-            messages(if(isAgent) s"taxCal_breakdown.message.agent.C22209" else s"taxCal_breakdown.message.C22209",viewModel.giftAidTax.getOrElse(throw MissingFieldException("Gift Aid Tax")).toCurrencyString,
-                BigDecimal(viewModel.getModifiedBaseTaxBand.getOrElse(throw MissingFieldException("Modified Base Tax Band")).apportionedBandLimit).toCurrencyString)
+            messages(if(isAgent) s"taxCal_breakdown.message.agent.C22209" else s"taxCal_breakdown.message.C22209",viewModel.validatedGiftAidTax.toCurrencyString,
+                BigDecimal(viewModel.validatedGetModifiedBaseTaxBand.apportionedBandLimit).toCurrencyString)
         )))
     }
 
@@ -432,26 +431,26 @@
 
             @viewModel.studentLoans.map { studentLoanList =>
                 @studentLoanList.map { studentLoan =>
-                    @if(studentLoan.planType.get == "03"){
+                    @if(studentLoan.validatedPlanType == "03") {
                         <tr>
-                            <td class="govuk-table__cell" id="graduate-repayment-plan">@messages("taxCal_breakdown.table.studentLoanPostGraduatePlan", studentLoan.planType.getOrElse(throw MissingFieldException("Student Loan Type")))</td>
+                            <td class="govuk-table__cell" id="graduate-repayment-plan">@messages("taxCal_breakdown.table.studentLoanPostGraduatePlan", studentLoan.validatedPlanType)</td>
                             <td class="govuk-table__cell govuk-table__cell--numeric">@{
-                                studentLoan.studentLoanRepaymentAmount.getOrElse(throw MissingFieldException("Student Loan Repayment Amount")).toCurrency
-                                }
+                                studentLoan.validatedStudentLoanRepaymentAmount.toCurrency
+                            }
                             </td>
                         </tr>
                     } else {
                         <tr>
-                            <td class="govuk-table__cell" id="student-repayment-plan0X">@messages("taxCal_breakdown.table.studentLoanRepaymentsPlanType0X", studentLoan.planType.getOrElse(throw MissingFieldException("Student Loan Type")))</td>
+                            <td class="govuk-table__cell" id="student-repayment-plan0X">@messages("taxCal_breakdown.table.studentLoanRepaymentsPlanType0X", studentLoan.validatedPlanType)</td>
                             <td class="govuk-table__cell govuk-table__cell--numeric" id="student-repayment-amount">@{
-                                studentLoan.studentLoanRepaymentAmount.getOrElse(throw MissingFieldException("Student Loan Repayment Amount")).toCurrency
-                                }
+                                studentLoan.validatedStudentLoanRepaymentAmount.toCurrency
+                            }
                             </td>
                         </tr>
                     }
                 }
-            }
 
+            }
             @viewModel.totalAnnuityPaymentsTaxCharged.map { amount =>
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">@messages("taxCal_breakdown.table.totalAnnuityPaymentsTaxCharged")</td>

@@ -16,10 +16,12 @@
 
 package models.liabilitycalculation.viewmodels
 
+import exceptions.MissingFieldException
 import models.liabilitycalculation.taxcalculation.{Nic4Bands, TaxBands}
 import models.liabilitycalculation.viewmodels.CalculationSummary.getTaxDue
 import models.liabilitycalculation.{LiabilityCalculationResponse, Messages, ReliefsClaimed, StudentLoan}
 import play.api.Logger
+import cats.implicits._
 
 case class TaxDueSummaryViewModel(
                                    taxRegime: String = "",
@@ -84,6 +86,11 @@ case class TaxDueSummaryViewModel(
       case _ => None
     }
   }
+
+  def validatedGrossGiftAidPayments: BigDecimal = grossGiftAidPayments.getOrElse(throw MissingFieldException("Gross Gift Aid Payments"))
+  def validatedGetModifiedBaseTaxBand: TaxBands = getModifiedBaseTaxBand.getOrElse(throw MissingFieldException("Modified Base Tax Band"))
+  def validatedLossesAppliedToGeneralIncome: Int = lossesAppliedToGeneralIncome.getOrElse(throw MissingFieldException("Losses Applied To General Income"))
+  def validatedGiftAidTax: BigDecimal = giftAidTax.getOrElse(throw MissingFieldException("Gift Aid Tax"))
 }
 
 object TaxDueSummaryViewModel {

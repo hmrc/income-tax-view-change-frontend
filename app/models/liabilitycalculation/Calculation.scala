@@ -16,6 +16,7 @@
 
 package models.liabilitycalculation
 
+import exceptions.MissingFieldException
 import models.liabilitycalculation.taxcalculation.TaxCalculation
 import play.api.libs.json.{Json, OFormat}
 
@@ -152,7 +153,10 @@ case class StudentLoan(planType: Option[String] = None,
                        studentLoanRepaymentAmountNetOfDeductions: Option[BigDecimal] = None,
                        studentLoanApportionedIncomeThreshold: Option[BigDecimal] = None,
                        studentLoanRate: Option[BigDecimal] = None
-                      )
+                      ) {
+  def validatedPlanType: String = planType.getOrElse(throw MissingFieldException("Plan type"))
+  def validatedStudentLoanRepaymentAmount: BigDecimal = studentLoanRepaymentAmount.getOrElse(throw MissingFieldException("Student Loan Repayment Amount"))
+}
 
 object StudentLoan {
   implicit val format: OFormat[StudentLoan] = Json.format[StudentLoan]

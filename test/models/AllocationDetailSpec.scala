@@ -17,6 +17,7 @@
 package models
 
 import enums.ChargeType.{CGT, SL}
+import exceptions.MissingFieldException
 import models.paymentAllocations.AllocationDetail
 import org.scalatest.matchers.should.Matchers
 import testUtils.TestSupport
@@ -99,5 +100,34 @@ class AllocationDetailSpec extends TestSupport with Matchers {
       }
     }
 
+    "calling .validatedTransactionId" should {
+      "throw MissingFieldException" when {
+        "value is missing" in {
+          intercept[MissingFieldException] {
+            allocationDetails(Some("SA Payment on Account 1"), Some("NIC4"), None).copy(transactionId = None).validatedTransactionId.equalsIgnoreCase("id")
+          }
+        }
+      }
+      "return value" when {
+        "value is present" in{
+          allocationDetails(Some("SA Payment on Account 1"), Some("NIC4"), None).validatedTransactionId shouldBe "id"
+        }
+      }
+    }
+
+    "calling .validatedAmount" should {
+      "throw MissingFieldException" when {
+        "value is missing" in {
+          intercept[MissingFieldException] {
+            allocationDetails(Some("SA Payment on Account 1"), Some("NIC4"), None).copy(amount = None).validatedAmount shouldBe BigDecimal(10000.0)
+          }
+        }
+      }
+      "return value" when {
+        "value is present" in{
+          allocationDetails(Some("SA Payment on Account 1"), Some("NIC4"), None).validatedAmount.equals(BigDecimal(10000.0))
+        }
+      }
+    }
   }
 }

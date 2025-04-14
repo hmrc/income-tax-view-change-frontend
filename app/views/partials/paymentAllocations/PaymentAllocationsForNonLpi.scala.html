@@ -16,7 +16,6 @@
 
 @import implicits.ImplicitDateFormatterImpl
 @import implicits.ImplicitCurrencyFormatter._
-@import exceptions.MissingFieldException
 @import models.paymentAllocationCharges._
 @import _root_.implicits.HtmlFormatter.NbspString
 
@@ -27,9 +26,9 @@
 
 @paymentAllocationHref(paymentAllocation: AllocationDetailWithClearingDate, isAgent: Boolean) = @{
     if(isAgent){
-        controllers.routes.ChargeSummaryController.showAgent(paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getTaxYear(implicitDateFormatter), paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).transactionId.getOrElse(throw MissingFieldException("Document ID")))
+        controllers.routes.ChargeSummaryController.showAgent(paymentAllocation.validatedAllocationDetail.getTaxYear(implicitDateFormatter), paymentAllocation.validatedAllocationDetail.validatedTransactionId)
     } else {
-        controllers.routes.ChargeSummaryController.show(paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getTaxYear(implicitDateFormatter), paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).transactionId.getOrElse(throw MissingFieldException("Document ID")))
+        controllers.routes.ChargeSummaryController.show(paymentAllocation.validatedAllocationDetail.getTaxYear(implicitDateFormatter), paymentAllocation.validatedAllocationDetail.validatedTransactionId)
     }
 }
 
@@ -39,13 +38,13 @@
         <tr>
             <td class="govuk-table__cell" id="payment-allocation-@index">
                 <a class="govuk-link" style="display:block" href="@paymentAllocationHref(paymentAllocation, isAgent)">
-                    @messages(paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getPaymentAllocationKeyInPaymentAllocations)
-                    <span class="govuk-visually-hidden">@messages("paymentAllocation.taxYear", (paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getTaxYear(implicitDateFormatter) - 1).toString, paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter).toString)</span>
+                    @messages(paymentAllocation.validatedAllocationDetail.getPaymentAllocationKeyInPaymentAllocations)
+                    <span class="govuk-visually-hidden">@messages("paymentAllocation.taxYear", (paymentAllocation.validatedAllocationDetail.getTaxYear(implicitDateFormatter) - 1).toString, paymentAllocation.validatedAllocationDetail.getTaxYear(implicitDateFormatter).toString)</span>
                 </a>
-                <span class="govuk-body-s" aria-hidden="true">@messages("paymentAllocation.taxYear", (paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getTaxYear(implicitDateFormatter) - 1).toString, paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter).toString)</span>
+                <span class="govuk-body-s" aria-hidden="true">@messages("paymentAllocation.taxYear", (paymentAllocation.validatedAllocationDetail.getTaxYear(implicitDateFormatter) - 1).toString, paymentAllocation.validatedAllocationDetail.getTaxYear(implicitDateFormatter).toString)</span>
             </td>
-            <td class="govuk-table__cell">@paymentAllocation.clearingDate.getOrElse(throw MissingFieldException("Payment Clearing Date")).toLongDateShort.toNonBreaking</td>
-            <td class="govuk-table__cell govuk-table__cell--numeric">@paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).amount.getOrElse(throw MissingFieldException("Payment Amount")).toCurrencyString</td>
+            <td class="govuk-table__cell">@paymentAllocation.validatedClearingDate.toLongDateShort.toNonBreaking</td>
+            <td class="govuk-table__cell govuk-table__cell--numeric">@paymentAllocation.validatedAllocationDetail.validatedAmount.toCurrencyString</td>
         </tr>
     </tbody>
 
