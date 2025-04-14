@@ -30,11 +30,11 @@ agent.base.service_name                                        = Treth Incwm fan
 
 # Header
 header.serviceName                                             = Rheoli’ch Hunanasesiad
-agent.header.serviceName                                       = Rheoli Rheoli’ch Hunanasesiad eich cleient
+agent.header.serviceName                                       = Rheoli’ch Hunanasesiad
 
 # HTML Titles
 htmlTitle                                                       = {0} - Rheoli’ch Hunanasesiad - GOV.UK
-htmlTitle.agent                                                 = {0} - Rheoli Rheoli’ch Hunanasesiad eich cleient - GOV.UK
+htmlTitle.agent                                                 = {0} - Rheoli’ch Hunanasesiad - GOV.UK
 htmlTitle.errorPage                                             = {0} - GOV.UK
 htmlTitle.invalidInput                                          = Gwall: {0} - GOV.UK
 htmlTitle.confirmClient                                         = {0} - GOV.UK

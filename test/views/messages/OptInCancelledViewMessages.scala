@@ -19,7 +19,7 @@ package views.messages
 object OptInCancelledViewMessages {
 
   val titleIndividualContent = "Opt in cancelled - Manage your Self Assessment - GOV.UK"
-  val titleAgentContent = "Opt in cancelled - Manage your client’s Self Assessment - GOV.UK"
+  val titleAgentContent = "Opt in cancelled - Manage your Self Assessment - GOV.UK"
   
   val h1Content = "Opt in cancelled"
   val p1Content = "You will continue to report annually for the 2023 to 2024 tax year."

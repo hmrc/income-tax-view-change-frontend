@@ -151,7 +151,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
       }
 
       s"have the title ${messages("htmlTitle.agent", messages("home.agent.heading"))}" in new TestSetup() {
-        document.title() shouldBe "Your client’s Income Tax - Manage your client’s Self Assessment - GOV.UK"
+        document.title() shouldBe "Your client’s Income Tax - Manage your Self Assessment - GOV.UK"
       }
 
       s"have the page caption You are signed in as a main agent" in new TestSetup {

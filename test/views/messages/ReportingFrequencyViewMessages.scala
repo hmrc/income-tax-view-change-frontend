@@ -19,7 +19,7 @@ package views.messages
 object ReportingFrequencyViewMessages {
 
   val title = "Your reporting frequency - Manage your Self Assessment - GOV.UK"
-  val agentTitle = "Your reporting frequency - Manage your client’s Self Assessment - GOV.UK"
+  val agentTitle = "Your reporting frequency - Manage your Self Assessment - GOV.UK"
   val h1Content = "Your reporting frequency"
   val h2Content = "Manage your reporting frequency for all your businesses"
   val p1Content = "If you are reporting annually or voluntarily reporting quarterly, you may be able to change your reporting frequency for specific tax years."

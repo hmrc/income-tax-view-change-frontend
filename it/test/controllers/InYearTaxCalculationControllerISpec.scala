@@ -89,7 +89,7 @@ class InYearTaxCalculationControllerISpec extends ControllerISpecHelper {
       "/report-quarterly/income-and-expenses/view" + {if(isAgent) "/agents" else ""}
     val title: Boolean => String = isAgent =>
       if(isAgent) {
-        s"Your client’s tax overview 6 April $previousTaxYearString to 5 April $taxYearString - Manage your client’s Self Assessment - GOV.UK"
+        s"Your client’s tax overview 6 April $previousTaxYearString to 5 April $taxYearString - Manage your Self Assessment - GOV.UK"
       } else {
         s"Your tax overview 6 April $previousTaxYearString to 5 April $taxYearString - Manage your Self Assessment - GOV.UK"
       }
@@ -119,7 +119,7 @@ class InYearTaxCalculationControllerISpec extends ControllerISpecHelper {
       "/report-quarterly/income-and-expenses/view" + {if(isAgent) "/agents" else ""}
     val title: Boolean => String = isAgent =>
       if(isAgent) {
-        s"Trosolwg o dreth eich cleient 6 Ebrill $previousTaxYearString i 5 Ebrill $taxYearString - Rheoli Rheoli’ch Hunanasesiad eich cleient - GOV.UK"
+        s"Trosolwg o dreth eich cleient 6 Ebrill $previousTaxYearString i 5 Ebrill $taxYearString - Rheoli’ch Hunanasesiad - GOV.UK"
       } else {
         s"Trosolwg o’ch treth 6 Ebrill $previousTaxYearString i 5 Ebrill $taxYearString - Rheoli’ch Hunanasesiad - GOV.UK"
       }
