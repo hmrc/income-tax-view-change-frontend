@@ -189,7 +189,7 @@
         if(!isOverduePayment) {
             "link"
         } else {
-            if(chargeItem.subTransactionType.contains(Nics2) || chargeItem.isLatePaymentInterest) {
+            if(chargeItem.codingOutStatus.contains(Nics2) || chargeItem.isLatePaymentInterest) {
                 "late-link"
             } else {
                 "late-link2"

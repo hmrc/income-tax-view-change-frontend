@@ -180,7 +180,7 @@
     }
 }
 
-@getExplanationContent = @{(viewModel.chargeItem.transactionType, viewModel.chargeItem.subTransactionType) match {
+@getExplanationContent = @{(viewModel.chargeItem.transactionType, viewModel.chargeItem.codingOutStatus) match {
     case (MfaDebitCharge, _)                                                                                => hmrcAdjustmentExplanation
     case (PoaOneReconciliationDebit, _)  if !viewModel.latePaymentInterestCharge           => reviewAndReconcilePoaOneDebitExplanation
     case (PoaTwoReconciliationDebit, _)  if !viewModel.latePaymentInterestCharge           => reviewAndReconcilePoaTwoDebitExplanation
@@ -274,7 +274,7 @@
 
     @getExplanationContent
 
-    @if(viewModel.chargeItem.subTransactionType.contains(Accepted)){
+    @if(viewModel.chargeItem.codingOutStatus.contains(Accepted)){
         @checkPayeCodePara
         <div id="coding-out-wrapper">
             @govukInsetText(InsetText(content = HtmlContent(codingOutMessageInset)))
@@ -284,7 +284,7 @@
         }
     }
 
-    @if(viewModel.chargeItem.subTransactionType.contains(Cancelled)){
+    @if(viewModel.chargeItem.codingOutStatus.contains(Cancelled)){
         @checkPayeCodePara
         <div id="cancelled-coding-out-wrapper">
             @govukInsetText(InsetText(content = HtmlContent(codingOutCancelledMessageInset)))
@@ -300,7 +300,7 @@
         }
     }
 
-    @if(!viewModel.chargeItem.subTransactionType.contains(Accepted)) {
+    @if(!viewModel.chargeItem.codingOutStatus.contains(Accepted)) {
         @chargeSummaryNotCodingOutAndNotPayeSelfAssessment(
             viewModel.chargeItem,
             viewModel.latePaymentInterestCharge,
@@ -309,7 +309,7 @@
             appConfig)
     }
 
-    @if(viewModel.chargeItem.subTransactionType.contains(Accepted)) {
+    @if(viewModel.chargeItem.codingOutStatus.contains(Accepted)) {
         @chargeSummaryCodingOut(
             viewModel.chargeItem,
             viewModel.taxYearFromCodingOut,
@@ -404,7 +404,7 @@
 
 
 @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit){
-        @if(viewModel.hasPaymentBreakdown && viewModel.chargeItem.subTransactionType == None) {
+        @if(viewModel.hasPaymentBreakdown && viewModel.chargeItem.codingOutStatus == None) {
             @h3(
                 msg = chargeHistoryHeading,
                 classes = "govuk-heading-m",
@@ -449,7 +449,7 @@
                     </tr>
                 }
 
-                @if(viewModel.chargeItem.subTransactionType == Some(Accepted)) {
+                @if(viewModel.chargeItem.codingOutStatus == Some(Accepted)) {
                     <tr>
                         <td class="govuk-table__cell">@{viewModel.chargeItem.documentDate.toLongDateShort.toNonBreaking}</td>
                         <td class="govuk-table__cell">@messages("chargeSummary.codingOutPayHistoryAmount", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)</td>

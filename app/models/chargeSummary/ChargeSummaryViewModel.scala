@@ -76,18 +76,18 @@ case class ChargeSummaryViewModel(
     s"chargeSummary.$messagePrefix${chargeItem.getChargeTypeKey}"
 
   val isBalancingChargeZero: Boolean = chargeItem.transactionType match {
-    case _ if chargeItem.subTransactionType.isDefined => false
+    case _ if chargeItem.codingOutStatus.isDefined => false
     case BalancingCharge if chargeItem.originalAmount == 0 => true
     case _ => false
   }
 
   val codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment: Boolean =
-    chargeItem.subTransactionType.contains(Nics2)
+    chargeItem.codingOutStatus.contains(Nics2)
 
   val chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit: Boolean =
     (chargeHistoryEnabled || paymentAllocations.nonEmpty) && !isBalancingChargeZero && !isCredit
 
-  val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !chargeItem.subTransactionType.contains(Accepted)
+  val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !chargeItem.codingOutStatus.contains(Accepted)
 
 }
 

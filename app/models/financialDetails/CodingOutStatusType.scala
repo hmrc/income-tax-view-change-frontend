@@ -19,25 +19,25 @@ package models.financialDetails
 import enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED, CODING_OUT_CLASS2_NICS}
 import play.api.libs.json._
 
-sealed trait SubTransactionType  {
+sealed trait CodingOutStatusType  {
   val key: String
 }
 
-case object Nics2 extends SubTransactionType {
+case object Nics2 extends CodingOutStatusType {
   override val key = "Nics2"
 }
 
-case object Accepted extends SubTransactionType {
+case object Accepted extends CodingOutStatusType {
   override val key = "Accepted"
 }
 
-case object Cancelled extends SubTransactionType {
+case object Cancelled extends CodingOutStatusType {
   override val key = "Cancelled"
 }
 
-object SubTransactionType {
+object CodingOutStatusType {
 
-  def fromDocumentText(documentText: String): Option[SubTransactionType] = {
+  def fromDocumentText(documentText: String): Option[CodingOutStatusType] = {
     documentText match {
       case CODING_OUT_CLASS2_NICS.name =>
         Some(Nics2)
@@ -49,7 +49,7 @@ object SubTransactionType {
     }
   }
 
-  def fromCodedOutStatus(codedOutStatus: String): Option[SubTransactionType] = {
+  def fromCodedOutStatus(codedOutStatus: String): Option[CodingOutStatusType] = {
     codedOutStatus match {
       case CODING_OUT_ACCEPTED.code => Some(Accepted)
       case CODING_OUT_CANCELLED.code => Some(Cancelled)
@@ -57,7 +57,7 @@ object SubTransactionType {
     }
   }
 
-  def fromCodedOutStatusAndDocumentText(documentText: Option[String], codedOutStatus: Option[String]): Option[SubTransactionType] = {
+  def fromCodedOutStatusAndDocumentText(documentText: Option[String], codedOutStatus: Option[String]): Option[CodingOutStatusType] = {
     (documentText, codedOutStatus) match {
       case (Some(CODING_OUT_CLASS2_NICS.name), _) => Some(Nics2)
       case (Some(CODING_OUT_ACCEPTED.name), _) | (_, Some(CODING_OUT_ACCEPTED.code)) => Some(Accepted)
@@ -66,17 +66,17 @@ object SubTransactionType {
     }
   }
 
-  implicit val write: Writes[SubTransactionType] = (transactionType: SubTransactionType) => {
+  implicit val write: Writes[CodingOutStatusType] = (transactionType: CodingOutStatusType) => {
     JsString(transactionType.key)
   }
 
-  val read: Reads[SubTransactionType] = (JsPath).read[String].collect(JsonValidationError("Could not parse transactionType")) {
+  val read: Reads[CodingOutStatusType] = (JsPath).read[String].collect(JsonValidationError("Could not parse transactionType")) {
     case CODING_OUT_CLASS2_NICS.name => Nics2
     case CODING_OUT_ACCEPTED.name => Accepted
     case CODING_OUT_CANCELLED.name => Cancelled
 
   }
 
-  implicit val format: Format[SubTransactionType] = Format( read, write)
+  implicit val format: Format[CodingOutStatusType] = Format( read, write)
 
 }

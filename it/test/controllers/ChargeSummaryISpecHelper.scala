@@ -176,7 +176,7 @@ trait ChargeSummaryISpecHelper extends ControllerISpecHelper {
     transactionId = "1040000124",
     taxYear = TaxYear.forYearEnd(2018),
     transactionType = MfaDebitCharge,
-    subTransactionType = None,
+    codingOutStatus = None,
     documentDate = LocalDate.of(2018, 3, 29),
     dueDate = Some(LocalDate.parse("2018-03-30")),
     originalAmount = 1200,

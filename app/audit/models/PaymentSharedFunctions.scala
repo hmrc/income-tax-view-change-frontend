@@ -26,7 +26,7 @@ trait PaymentSharedFunctions {
   }
 
   def getChargeType(docDetail: TransactionItem, latePaymentCharge: Boolean): Option[String] =
-    (docDetail.transactionType, docDetail.subTransactionType) match {
+    (docDetail.transactionType, docDetail.codingOutStatus) match {
       case (MfaDebitCharge, _)        => Some("MFADebit")
       case (_, Some(Nics2))           => Some("Class 2 National Insurance")
       case (_, Some(Cancelled))       => Some("Cancelled PAYE Self Assessment (through your PAYE tax code)")

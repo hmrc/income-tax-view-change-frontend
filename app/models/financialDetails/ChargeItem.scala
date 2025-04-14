@@ -30,7 +30,7 @@ case class ChargeItem (
                         transactionId: String,
                         taxYear: TaxYear,
                         transactionType: TransactionType,
-                        subTransactionType: Option[SubTransactionType],
+                        codingOutStatus: Option[CodingOutStatusType],
                         documentDate: LocalDate,
                         dueDate: Option[LocalDate],
                         originalAmount: BigDecimal,
@@ -73,7 +73,7 @@ case class ChargeItem (
   }
 
   def getDueDateForNonZeroBalancingCharge: Option[LocalDate] = {
-    if(transactionType == BalancingCharge && (subTransactionType.isEmpty) && originalAmount == 0.0) {
+    if(transactionType == BalancingCharge && (codingOutStatus.isEmpty) && originalAmount == 0.0) {
       None
     } else {
       dueDate
@@ -107,7 +107,7 @@ case class ChargeItem (
 
   def isCodingOut: Boolean = {
     val codingOutSubTypes = Seq(Nics2, Accepted, Cancelled)
-    subTransactionType.exists(subType => codingOutSubTypes.contains(subType))
+    codingOutStatus.exists(subType => codingOutSubTypes.contains(subType))
   }
 
   def interestIsPaid: Boolean = interestOutstandingAmount match {
@@ -208,7 +208,7 @@ object ChargeItem {
     BalancingCharge, LateSubmissionPenalty, FirstLatePaymentPenalty, SecondLatePaymentPenalty, MfaDebitCharge)
 
   val isAKnownTypeOfCharge: ChargeItem => Boolean = chargeItem => {
-    (chargeItem.transactionType, chargeItem.subTransactionType) match {
+    (chargeItem.transactionType, chargeItem.codingOutStatus) match {
       case (_, Some(Nics2)) => true
       case (x, _) if validChargeTypes.contains(x) => true
       case (_, _) => false
@@ -241,7 +241,7 @@ object ChargeItem {
       transactionId = documentDetail.transactionId,
       taxYear = TaxYear.forYearEnd(documentDetail.taxYear),
       transactionType = chargeType,
-      subTransactionType = SubTransactionType.fromCodedOutStatusAndDocumentText(documentDetail.documentText, codedOutStatus),
+      codingOutStatus = CodingOutStatusType.fromCodedOutStatusAndDocumentText(documentDetail.documentText, codedOutStatus),
       documentDate = documentDetail.documentDate,
       dueDate = documentDetail.documentDueDate,
       originalAmount = documentDetail.originalAmount,
