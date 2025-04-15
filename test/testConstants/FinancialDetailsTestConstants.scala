@@ -1985,6 +1985,24 @@ object FinancialDetailsTestConstants {
       documentDueDate = Some(LocalDate.of(2100, 5, 15)))
   )
 
+  val penaltiesDocumentDetails: List[DocumentDetail] = List(
+    documentDetailModel( transactionId = "LSP",
+      documentDate = LocalDate.of(2018, 3, 29), originalAmount = 100.00,
+      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, latePaymentInterestAmount = None,
+      effectiveDateOfPayment = Some(LocalDate.of(2019, 5, 15)),
+      documentDueDate = Some(LocalDate.of(2100, 5, 15))),
+    documentDetailModel(transactionId = "LPP1",
+      documentDate = LocalDate.of(2018, 3, 29), originalAmount = 100.00,
+      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, latePaymentInterestAmount = None,
+      effectiveDateOfPayment = Some(LocalDate.of(2019, 5, 15)),
+      documentDueDate = Some(LocalDate.of(2100, 5, 15))),
+    documentDetailModel(transactionId = "LPP2",
+      documentDate = LocalDate.of(2018, 3, 29), originalAmount = 100.00,
+      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, latePaymentInterestAmount = None,
+      effectiveDateOfPayment = Some(LocalDate.of(2019, 5, 15)),
+      documentDueDate = Some(LocalDate.of(2100, 5, 15)))
+  )
+
 //  val ReviewAndReconcileDocumentDetailsWithDueDate: List[DocumentDetailWithDueDate] =
 //    ReviewAndReconcileDocumentDetails.map(dd => DocumentDetailWithDueDate(dd, dd.documentDueDate,
 //      isReviewAndReconcilePoaOneDebit = dd.documentDescription.contains("SA POA 1 Reconciliation Debit"),
@@ -2022,6 +2040,19 @@ object FinancialDetailsTestConstants {
       FinancialDetail(taxYear = "2018", mainType = Some("SA POA 1 Reconciliation Debit"), mainTransaction = Some("4911"), transactionId = Some("RARDEBIT01"),
         totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
       FinancialDetail(taxYear = "2018", mainType = Some("SA POA 2 Reconciliation Debit"), mainTransaction = Some("4913"), transactionId = Some("RARDEBIT02"),
+        totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15))))))
+    )
+  )
+
+  val financialDetailsWithAllThreePenalties: FinancialDetailsModel = FinancialDetailsModel(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(6.00), Some(1.00), Some(2.00), Some(4.00), None),
+    documentDetails = penaltiesDocumentDetails,
+    financialDetails = List(
+      FinancialDetail(taxYear = "2018", mainTransaction = Some("4027"), transactionId = Some("LSP"),
+        totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
+      FinancialDetail(taxYear = "2018", mainTransaction = Some("4028"), transactionId = Some("LPP1"),
+        totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
+      FinancialDetail(taxYear = "2018", mainTransaction = Some("4029"), transactionId = Some("LPP2"),
         totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15))))))
     )
   )

@@ -17,15 +17,14 @@
 @import _root_.implicits.ImplicitCurrencyFormatter._
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import models.financialDetails.DocumentDetailWithDueDate
+@import models.financialDetails.SecondLatePaymentPenalty
 @import models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import views.html.partials.{taxYearSummaryBreakdownPartial, taxYearSummaryTabsPartial}
-@import models.liabilitycalculation.viewmodels.TYSClaimToAdjustViewModel
 @import java.time.LocalDate
 @import models.taxyearsummary.TaxYearSummaryChargeItem
-@import models.taxyearsummary.TaxYearSummaryChargeItem._
 @import models.financialDetails.Accepted
 @import models.financialDetails.PoaOneReconciliationDebit
 @import models.financialDetails.PoaTwoReconciliationDebit
@@ -169,10 +168,14 @@
 
 
 @getChargeSummaryHref(chargeItem: TaxYearSummaryChargeItem) = @{
-    if(isAgent){
-        controllers.routes.ChargeSummaryController.showAgent(taxYear, chargeItem.transactionId, chargeItem.isLatePaymentInterest).url
+    if (chargeItem.transactionType == SecondLatePaymentPenalty) {
+        ""
     } else {
-        controllers.routes.ChargeSummaryController.show(taxYear, chargeItem.transactionId, chargeItem.isLatePaymentInterest, origin).url
+        if(isAgent) {
+            controllers.routes.ChargeSummaryController.showAgent(taxYear, chargeItem.transactionId, chargeItem.isLatePaymentInterest).url
+        } else {
+            controllers.routes.ChargeSummaryController.show(taxYear, chargeItem.transactionId, chargeItem.isLatePaymentInterest, origin).url
+        }
     }
 }
 
