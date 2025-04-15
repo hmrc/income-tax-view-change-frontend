@@ -96,7 +96,7 @@
 
     @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22201"))){
         @govukInsetText(InsetText(content = HtmlContent(
-            messages(if(isAgent) s"taxCal_breakdown.message.agent.C22201" else s"taxCal_breakdown.message.C22201",viewModel.validatedGrossGiftAidPayments.toCurrencyString,
+            messages(if(isAgent) s"taxCal_breakdown.message.agent.C22201" else s"taxCal_breakdown.message.C22201",viewModel.grossGiftAidPaymentsActual.toCurrencyString,
                 BigDecimal(viewModel.validatedGetModifiedBaseTaxBand.apportionedBandLimit).toCurrencyString)
         )))
     }

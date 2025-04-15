@@ -87,7 +87,8 @@ case class TaxDueSummaryViewModel(
     }
   }
 
-  def validatedGrossGiftAidPayments: BigDecimal = grossGiftAidPayments.getOrElse(throw MissingFieldException("Gross Gift Aid Payments"))
+  def grossGiftAidPaymentsActual: BigDecimal = grossGiftAidPayments.getOrElse(throw MissingFieldException("Gross Gift Aid Payments"))
+
   def validatedGetModifiedBaseTaxBand: TaxBands = getModifiedBaseTaxBand.getOrElse(throw MissingFieldException("Modified Base Tax Band"))
   def validatedLossesAppliedToGeneralIncome: Int = lossesAppliedToGeneralIncome.getOrElse(throw MissingFieldException("Losses Applied To General Income"))
   def validatedGiftAidTax: BigDecimal = giftAidTax.getOrElse(throw MissingFieldException("Gift Aid Tax"))

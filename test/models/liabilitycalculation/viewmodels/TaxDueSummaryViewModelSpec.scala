@@ -200,14 +200,14 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
         val amount = BigDecimal(1000.0)
         val model = TaxDueSummaryViewModel(grossGiftAidPayments = Some(amount))
 
-        model.validatedGrossGiftAidPayments shouldBe amount
+        model.grossGiftAidPaymentsActual shouldBe amount
       }
 
       "throw MissingFieldException when value is not present" in{
         val model = TaxDueSummaryViewModel()
 
         intercept[MissingFieldException] {
-          model.validatedGrossGiftAidPayments
+          model.grossGiftAidPaymentsActual
         }
       }
     }
