@@ -22,7 +22,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.admin.{IncomeSourcesFs, IncomeSourcesNewJourney, NavBarFs}
+import models.admin.{AccountingMethodJourney, IncomeSourcesFs, IncomeSourcesNewJourney, NavBarFs}
 import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import models.incomeSourceDetails.UIJourneySessionData
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -78,6 +78,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
               "the user has no existing businesses" in {
                 enable(IncomeSourcesFs)
                 enable(IncomeSourcesNewJourney)
+                enable(AccountingMethodJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
