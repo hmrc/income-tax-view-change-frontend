@@ -195,71 +195,71 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
         TaxDueSummaryViewModel(liabilityCalculationModel) shouldBe expectedTaxDueSummaryViewModel
       }
     }
-    "validatedGrossGiftAidPayments" should{
+    "grossGiftAidPaymentsActual" should{
       "return value when value is present" in{
         val amount = BigDecimal(1000.0)
         val model = TaxDueSummaryViewModel(grossGiftAidPayments = Some(amount))
 
-        model.validatedGrossGiftAidPayments shouldBe amount
+        model.grossGiftAidPaymentsActual shouldBe amount
       }
 
       "throw MissingFieldException when value is not present" in{
         val model = TaxDueSummaryViewModel()
 
         intercept[MissingFieldException] {
-          model.validatedGrossGiftAidPayments
+          model.grossGiftAidPaymentsActual
         }
       }
     }
 
-    "validatedGetModifiedBaseTaxBand" should{
+    "getModifiedBaseTaxBandActual" should{
       "return value when value is present" in{
         val taxBand = TaxBands("BRT", BigDecimal(1.0), 1, 1, 1, BigDecimal(1000.0))
 
         val model = TaxDueSummaryViewModel(payPensionsProfitBands = Some(Seq(taxBand)))
 
-        model.validatedGetModifiedBaseTaxBand shouldBe taxBand
+        model.getModifiedBaseTaxBandActual shouldBe taxBand
       }
 
       "throw MissingFieldException when value is not present" in{
         val model = TaxDueSummaryViewModel()
 
         intercept[MissingFieldException] {
-          model.validatedGetModifiedBaseTaxBand
+          model.getModifiedBaseTaxBandActual
         }
       }
     }
 
-    "validatedLossesAppliedToGeneralIncome" should{
+    "lossesAppliedToGeneralIncomeActual" should{
       "return value when value is present" in{
 
         val model = TaxDueSummaryViewModel(lossesAppliedToGeneralIncome = Some(0))
 
-        model.validatedLossesAppliedToGeneralIncome shouldBe 0
+        model.lossesAppliedToGeneralIncomeActual shouldBe 0
       }
 
       "throw MissingFieldException when value is not present" in{
         val model = TaxDueSummaryViewModel()
 
         intercept[MissingFieldException] {
-          model.validatedLossesAppliedToGeneralIncome
+          model.lossesAppliedToGeneralIncomeActual
         }
       }
     }
 
-    "validatedGiftAidTax" should{
+    "giftAidTaxActual" should{
       "return value when value is present" in{
         val amount = BigDecimal(1000.0)
         val model = TaxDueSummaryViewModel(giftAidTax = Some(amount))
 
-        model.validatedGiftAidTax shouldBe amount
+        model.giftAidTaxActual shouldBe amount
       }
 
       "throw MissingFieldException when value is not present" in{
         val model = TaxDueSummaryViewModel()
 
         intercept[MissingFieldException] {
-          model.validatedGiftAidTax
+          model.giftAidTaxActual
         }
       }
     }

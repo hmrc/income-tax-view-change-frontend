@@ -26,38 +26,38 @@ import java.time.LocalDate
 class PaymentAllocationViewModelSpec extends TestSupport with Matchers{
 
 
-  "validatedAllocationDetail" should{
+  "allocationDetailActual" should{
     "return value when value is present" in {
       val allocationDetail = AllocationDetail(None, None, None, None, None, None, None, None)
 
       val allocationDetailWithClearingDate = AllocationDetailWithClearingDate(Some(allocationDetail), None)
 
-      allocationDetailWithClearingDate.validatedAllocationDetail shouldBe allocationDetail
+      allocationDetailWithClearingDate.allocationDetailActual shouldBe allocationDetail
     }
 
     "throw MissingFieldException when value is not present" in {
       val allocationDetailWithClearingDate = AllocationDetailWithClearingDate(None, None)
 
       intercept[MissingFieldException]{
-        allocationDetailWithClearingDate.validatedAllocationDetail
+        allocationDetailWithClearingDate.allocationDetailActual
       }
     }
   }
 
-  "validatedClearingDate" should{
+  "clearingDateActual" should{
     "return value when value is present" in {
       val clearingDate = LocalDate.now()
 
       val allocationDetailWithClearingDate = AllocationDetailWithClearingDate(None, Some((clearingDate)))
 
-      allocationDetailWithClearingDate.validatedClearingDate shouldBe clearingDate
+      allocationDetailWithClearingDate.clearingDateActual shouldBe clearingDate
     }
 
     "throw MissingFieldException when value is not present" in {
       val allocationDetailWithClearingDate = AllocationDetailWithClearingDate(None, None)
 
       intercept[MissingFieldException]{
-        allocationDetailWithClearingDate.validatedClearingDate
+        allocationDetailWithClearingDate.clearingDateActual
       }
     }
   }

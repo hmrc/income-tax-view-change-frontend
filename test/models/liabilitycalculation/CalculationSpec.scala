@@ -22,34 +22,34 @@ import testUtils.TestSupport
 
 class CalculationSpec extends TestSupport with Matchers{
 
-  "validatedPlanType" should{
+  "planTypeActual" should{
     "return value when value is populated" in {
       val studentLoan = StudentLoan(planType = Some("planType"))
 
-      studentLoan.validatedPlanType shouldBe "planType"
+      studentLoan.planTypeActual shouldBe "planType"
     }
 
     "throw MissingFieldException when value is missing" in {
       val studentLoan = StudentLoan()
 
       intercept[MissingFieldException]{
-        studentLoan.validatedPlanType
+        studentLoan.planTypeActual
       }
     }
   }
 
-  "validatedStudentLoanRepaymentAmount" should {
+  "studentLoanRepaymentAmountActual" should {
     "return value when value is populated" in {
       val amount = BigDecimal(10000.0)
       val studentLoan = StudentLoan(studentLoanRepaymentAmount = Some(amount))
 
-      studentLoan.validatedStudentLoanRepaymentAmount shouldBe amount
+      studentLoan.studentLoanRepaymentAmountActual shouldBe amount
     }
     "throw MissingFieldException when value is missing" in {
       val studentLoan = StudentLoan()
 
       intercept[MissingFieldException]{
-        studentLoan.validatedStudentLoanRepaymentAmount
+        studentLoan.studentLoanRepaymentAmountActual
       }
     }
   }

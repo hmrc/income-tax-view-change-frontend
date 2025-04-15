@@ -53,8 +53,8 @@ case class AllocationDetail(transactionId: Option[String],
     to.map(AccountingPeriodModel.determineTaxYearFromPeriodEnd)
   }
 
-  def validatedTransactionId: String = transactionId.getOrElse(throw MissingFieldException("Document ID"))
-  def validatedAmount: BigDecimal = amount.getOrElse(throw MissingFieldException("Payment Amount"))
+  def transactionIdActual: String = transactionId.getOrElse(throw MissingFieldException("Document ID"))
+  def amountActual: BigDecimal = amount.getOrElse(throw MissingFieldException("Payment Amount"))
 }
 
 object AllocationDetail {

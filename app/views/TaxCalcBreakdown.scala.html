@@ -96,8 +96,8 @@
 
     @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22201"))){
         @govukInsetText(InsetText(content = HtmlContent(
-            messages(if(isAgent) s"taxCal_breakdown.message.agent.C22201" else s"taxCal_breakdown.message.C22201",viewModel.validatedGrossGiftAidPayments.toCurrencyString,
-                BigDecimal(viewModel.validatedGetModifiedBaseTaxBand.apportionedBandLimit).toCurrencyString)
+            messages(if(isAgent) s"taxCal_breakdown.message.agent.C22201" else s"taxCal_breakdown.message.C22201",viewModel.grossGiftAidPaymentsActual.toCurrencyString,
+                BigDecimal(viewModel.getModifiedBaseTaxBandActual.apportionedBandLimit).toCurrencyString)
         )))
     }
 
@@ -110,21 +110,21 @@
     @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22205"))){
         @govukInsetText(InsetText(content = HtmlContent(
             messages(if(isAgent) s"taxCal_breakdown.message.agent.C22205" else s"taxCal_breakdown.message.C22205",
-                BigDecimal(viewModel.validatedLossesAppliedToGeneralIncome).toCurrencyString)
+                BigDecimal(viewModel.lossesAppliedToGeneralIncomeActual).toCurrencyString)
         )))
     }
 
     @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22208"))){
         @govukInsetText(InsetText(content = HtmlContent(
-            messages(if(isAgent) s"taxCal_breakdown.message.agent.C22208" else s"taxCal_breakdown.message.C22208",viewModel.validatedGiftAidTax.toCurrencyString,
-                BigDecimal(viewModel.validatedGetModifiedBaseTaxBand.apportionedBandLimit).toCurrencyString)
+            messages(if(isAgent) s"taxCal_breakdown.message.agent.C22208" else s"taxCal_breakdown.message.C22208",viewModel.giftAidTaxActual.toCurrencyString,
+                BigDecimal(viewModel.getModifiedBaseTaxBandActual.apportionedBandLimit).toCurrencyString)
         )))
     }
 
     @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22209"))){
         @govukInsetText(InsetText(content = HtmlContent(
-            messages(if(isAgent) s"taxCal_breakdown.message.agent.C22209" else s"taxCal_breakdown.message.C22209",viewModel.validatedGiftAidTax.toCurrencyString,
-                BigDecimal(viewModel.validatedGetModifiedBaseTaxBand.apportionedBandLimit).toCurrencyString)
+            messages(if(isAgent) s"taxCal_breakdown.message.agent.C22209" else s"taxCal_breakdown.message.C22209",viewModel.giftAidTaxActual.toCurrencyString,
+                BigDecimal(viewModel.getModifiedBaseTaxBandActual.apportionedBandLimit).toCurrencyString)
         )))
     }
 
@@ -431,19 +431,19 @@
 
                 @viewModel.studentLoans.map { studentLoanList =>
                     @studentLoanList.map { studentLoan =>
-                        @if(studentLoan.validatedPlanType == "03") {
+                        @if(studentLoan.planTypeActual == "03") {
                             <tr>
-                                <td class="govuk-table__cell" id="graduate-repayment-plan">@messages("taxCal_breakdown.table.studentLoanPostGraduatePlan", studentLoan.validatedPlanType)</td>
+                                <td class="govuk-table__cell" id="graduate-repayment-plan">@messages("taxCal_breakdown.table.studentLoanPostGraduatePlan", studentLoan.planTypeActual)</td>
                                 <td class="govuk-table__cell govuk-table__cell--numeric">@{
-                                    studentLoan.validatedStudentLoanRepaymentAmount.toCurrency
+                                    studentLoan.studentLoanRepaymentAmountActual.toCurrency
                                 }
                                 </td>
                             </tr>
                         } else {
                             <tr>
-                                <td class="govuk-table__cell" id="student-repayment-plan0X">@messages("taxCal_breakdown.table.studentLoanRepaymentsPlanType0X", studentLoan.validatedPlanType)</td>
+                                <td class="govuk-table__cell" id="student-repayment-plan0X">@messages("taxCal_breakdown.table.studentLoanRepaymentsPlanType0X", studentLoan.planTypeActual)</td>
                                 <td class="govuk-table__cell govuk-table__cell--numeric" id="student-repayment-amount">@{
-                                    studentLoan.validatedStudentLoanRepaymentAmount.toCurrency
+                                    studentLoan.studentLoanRepaymentAmountActual.toCurrency
                                 }
                                 </td>
                             </tr>

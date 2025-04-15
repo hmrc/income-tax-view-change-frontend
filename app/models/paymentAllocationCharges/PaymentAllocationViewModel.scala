@@ -25,8 +25,8 @@ import implicits.ImplicitCurrencyFormatter._
 import java.time.LocalDate
 
 case class AllocationDetailWithClearingDate(allocationDetail: Option[AllocationDetail], clearingDate: Option[LocalDate]) {
-  def validatedAllocationDetail: AllocationDetail = allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail"))
-  def validatedClearingDate: LocalDate = clearingDate.getOrElse(throw MissingFieldException("Payment Clearing Date"))
+  def allocationDetailActual: AllocationDetail = allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail"))
+  def clearingDateActual: LocalDate = clearingDate.getOrElse(throw MissingFieldException("Payment Clearing Date"))
 
 }
 

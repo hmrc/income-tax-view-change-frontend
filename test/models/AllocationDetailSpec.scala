@@ -100,32 +100,32 @@ class AllocationDetailSpec extends TestSupport with Matchers {
       }
     }
 
-    "calling .validatedTransactionId" should {
+    "calling .transactionIdActual" should {
       "throw MissingFieldException" when {
         "value is missing" in {
           intercept[MissingFieldException] {
-            allocationDetails(Some("SA Payment on Account 1"), Some("NIC4"), None).copy(transactionId = None).validatedTransactionId.equalsIgnoreCase("id")
+            allocationDetails(Some("SA Payment on Account 1"), Some("NIC4"), None).copy(transactionId = None).transactionIdActual.equalsIgnoreCase("id")
           }
         }
       }
       "return value" when {
         "value is present" in{
-          allocationDetails(Some("SA Payment on Account 1"), Some("NIC4"), None).validatedTransactionId shouldBe "id"
+          allocationDetails(Some("SA Payment on Account 1"), Some("NIC4"), None).transactionIdActual shouldBe "id"
         }
       }
     }
 
-    "calling .validatedAmount" should {
+    "calling .amountActual" should {
       "throw MissingFieldException" when {
         "value is missing" in {
           intercept[MissingFieldException] {
-            allocationDetails(Some("SA Payment on Account 1"), Some("NIC4"), None).copy(amount = None).validatedAmount shouldBe BigDecimal(10000.0)
+            allocationDetails(Some("SA Payment on Account 1"), Some("NIC4"), None).copy(amount = None).amountActual shouldBe BigDecimal(10000.0)
           }
         }
       }
       "return value" when {
         "value is present" in{
-          allocationDetails(Some("SA Payment on Account 1"), Some("NIC4"), None).validatedAmount.equals(BigDecimal(10000.0))
+          allocationDetails(Some("SA Payment on Account 1"), Some("NIC4"), None).amountActual.equals(BigDecimal(10000.0))
         }
       }
     }
