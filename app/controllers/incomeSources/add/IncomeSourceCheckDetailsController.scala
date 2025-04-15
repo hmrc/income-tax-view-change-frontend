@@ -23,6 +23,7 @@ import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
+import models.admin.AccountingMethodJourney
 import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, UIJourneySessionData}
@@ -86,7 +87,8 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
             viewModel,
             postAction = postAction,
             isAgent,
-            backUrl = backUrl
+            backUrl = backUrl,
+            displayAccountingMethod = isEnabled(AccountingMethodJourney)
           ))
         }
       case None =>
