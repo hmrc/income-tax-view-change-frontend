@@ -2045,7 +2045,7 @@ object FinancialDetailsTestConstants {
   )
 
   val financialDetailsWithAllThreePenalties: FinancialDetailsModel = FinancialDetailsModel(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(6.00), Some(1.00), Some(2.00), Some(4.00), None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(6.00), Some(1.00), Some(2.00), Some(4.00), None, None),
     documentDetails = penaltiesDocumentDetails,
     financialDetails = List(
       FinancialDetail(taxYear = "2018", mainTransaction = Some("4027"), transactionId = Some("LSP"),
