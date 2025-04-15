@@ -40,8 +40,12 @@ case class PaymentAllocationViewModel(paymentAllocationChargeModel: FinancialDet
   def hasDocumentDetailWithCredit: Boolean =
     paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)
 
-  def getEffectiveDateOfPayment: LocalDate =
-    paymentAllocationChargeModel.documentDetails.head.effectiveDateOfPayment.getOrElse(throw MissingFieldException("Effective Date Of Payment"))
+  def getEffectiveDateOfPayment: LocalDate = {
+    val details = paymentAllocationChargeModel.documentDetails.headOption
+      .getOrElse(throw MissingFieldException("Payment Allocation charge document details"))
+
+    details.effectiveDateOfPayment.getOrElse(throw MissingFieldException("Effective Date Of Payment"))
+  }
 
   def getOriginalAmount: String =
     paymentAllocationChargeModel.filteredDocumentDetails.head.originalAmount.abs.toCurrencyString
