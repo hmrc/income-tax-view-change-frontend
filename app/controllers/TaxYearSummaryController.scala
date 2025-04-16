@@ -185,13 +185,13 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
 
         val chargeItemsCodingOutPaye: List[TaxYearSummaryChargeItem] = {
           chargeItemsCodingOut
-            .filter(_.subTransactionType.contains(models.financialDetails.Accepted))
+            .filter(_.codedOutStatus.contains(models.financialDetails.Accepted))
             .filterNot(_.originalAmount <= 0)
         }
 
         val chargeItemsCodingOutNotPaye: List[TaxYearSummaryChargeItem] = {
           chargeItemsCodingOut
-            .filterNot(_.subTransactionType.contains(models.financialDetails.Accepted))
+            .filterNot(_.codedOutStatus.contains(models.financialDetails.Accepted))
             .filterNot(_.originalAmount <= 0)
         }
 
