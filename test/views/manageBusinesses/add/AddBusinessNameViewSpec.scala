@@ -179,7 +179,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
         input.attr("id") shouldBe BusinessNameForm.businessName
         input.attr("name") shouldBe BusinessNameForm.businessName
         input.attr("type") shouldBe "text"
-        input.attr("value") shouldBe (testBusinessName)
+        input.attr("value") shouldBe testBusinessName
       }
       "have a continue button" in new TestSetup(false, false, true) {
         val button: Element = document.selectHead("form").selectHead("button")
@@ -214,7 +214,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
         input.attr("id") shouldBe BusinessNameForm.businessName
         input.attr("name") shouldBe BusinessNameForm.businessName
         input.attr("type") shouldBe "text"
-        input.attr("value") shouldBe ("")
+        input.attr("value") shouldBe ""
 
       }
       "have a continue button" in new TestSetup(true, false, false) {
@@ -250,7 +250,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
         input.attr("id") shouldBe BusinessNameForm.businessName
         input.attr("name") shouldBe BusinessNameForm.businessName
         input.attr("type") shouldBe "text"
-        input.attr("value") shouldBe (testBusinessName)
+        input.attr("value") shouldBe testBusinessName
       }
       "have a continue button" in new TestSetup(true, false, true) {
         val button: Element = document.selectHead("form").selectHead("button")
