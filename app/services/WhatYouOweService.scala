@@ -62,17 +62,18 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       case financialDetails =>
         val financialDetailsModelList = financialDetails.asInstanceOf[List[FinancialDetailsModel]]
         val balanceDetails = financialDetailsModelList.headOption
-          .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
+          .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None, None))
         val codedOutChargeItem = {
           financialDetailsModelList.flatMap(_.toChargeItem)
-            .filter(_.subTransactionType.contains(Accepted))
+            .filter(_.codingOutStatus.contains(Accepted))
             .find(_.taxYear.endYear == (dateService.getCurrentTaxYearEnd - 1))
         }
 
         val whatYouOweChargesList = WhatYouOweChargesList(
           balanceDetails = balanceDetails,
           chargesList = getFilteredChargesList(financialDetailsModelList, isReviewAndReconciledEnabled, isFilterCodedOutPoasEnabled, isPenaltiesEnabled),
-          codedOutDocumentDetail = codedOutChargeItem)
+          codedOutDocumentDetail = codedOutChargeItem,
+          totalAmountCodedOut = balanceDetails.amountCodedOut)
 
         {
           for {
@@ -123,7 +124,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           .flatMap(dd => getChargeItem(financialDetails.financialDetails)(dd.documentDetail))
       })
       .filter(isAKnownTypeOfCharge)
-      .filterNot(_.subTransactionType.contains(Accepted))
+      .filterNot(_.codingOutStatus.contains(Accepted))
       .filterNot(_.isReviewAndReconcileCharge && !isReviewAndReconcileEnabled)
       .filterNot(_.isPenalty && !isPenaltiesEnabled)
       .filter(_.remainingToPayByChargeOrInterest > 0)

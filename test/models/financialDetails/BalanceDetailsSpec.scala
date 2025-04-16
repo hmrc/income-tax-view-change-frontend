@@ -36,8 +36,8 @@ class BalanceDetailsSpec extends UnitSpec {
                           firstPendingAmountRequested: Option[BigDecimal] = None,
                           secondPendingAmountRequested: Option[BigDecimal] = None,
                           allocatedCredit: Option[BigDecimal] = None,
-                          unallocatedCredit: Option[BigDecimal] = None
-                         ): BalanceDetails = BalanceDetails(
+                          unallocatedCredit: Option[BigDecimal] = None,
+                          amountCodedOut: Option[BigDecimal] = None): BalanceDetails = BalanceDetails(
     balanceDueWithin30Days = 1.00,
     overDueAmount = 2.00,
     totalBalance = 3.00,
@@ -45,7 +45,8 @@ class BalanceDetailsSpec extends UnitSpec {
     allocatedCredit,
     firstPendingAmountRequested,
     secondPendingAmountRequested,
-    unallocatedCredit
+    unallocatedCredit,
+    amountCodedOut
   )
 
 

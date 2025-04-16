@@ -20,6 +20,7 @@ import scala.language.implicitConversions
 
 sealed trait CodingOutType {
   val name: String
+  val code: String
 
   implicit def codingOutTypeToString(codingOutType: CodingOutType): String = {
     codingOutType.name
@@ -29,13 +30,16 @@ sealed trait CodingOutType {
 object CodingOutType {
   case object CODING_OUT_ACCEPTED extends CodingOutType {
     override val name: String = "Balancing payment collected through PAYE tax code"
+    override val code: String = "I"
   }
 
   case object CODING_OUT_CANCELLED extends CodingOutType {
     override val name: String = "Cancelled PAYE Self Assessment"
+    override val code: String = "C"
   }
 
   case object CODING_OUT_CLASS2_NICS extends CodingOutType {
     override val name: String = "Class 2 National Insurance"
+    override val code: String = "N/A"
   }
 }

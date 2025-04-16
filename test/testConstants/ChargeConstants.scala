@@ -32,7 +32,7 @@ trait ChargeConstants {
   def chargeItemModel(taxYear: TaxYear = TaxYear.forYearEnd(2018),
                       transactionId: String = id1040000123,
                       transactionType: TransactionType = PoaOneDebit,
-                      subTransactionType: Option[SubTransactionType] = None,
+                      codingOutStatus: Option[CodingOutStatusType] = None,
                       documentDate: LocalDate = LocalDate.of(2018, 3, 29),
                       dueDate: Option[LocalDate] =  Some(LocalDate.of(2019, 5, 15)),
                       originalAmount : BigDecimal = 1400.00,
@@ -49,7 +49,7 @@ trait ChargeConstants {
     transactionId = transactionId,
     taxYear = taxYear,
     transactionType = transactionType,
-    subTransactionType = subTransactionType,
+    codingOutStatus = codingOutStatus,
     documentDate = documentDate,
     dueDate = dueDate,
     originalAmount = originalAmount,
@@ -70,7 +70,7 @@ trait ChargeConstants {
                                               documentDate: List[LocalDate] = List(LocalDate.of(2018, 3, 29), LocalDate.of(2018, 3, 29)),
                                               transactionId: List[String] = List(id1040000124, id1040000125),
                                               transactionTypes: List[ChargeType] = List(PoaOneDebit, PoaTwoDebit),
-                                              subTransactionTypes: List[Option[SubTransactionType]] = List(None, None),
+                                              codingOutStatuses: List[Option[CodingOutStatusType]] = List(None, None),
                                               originalAmount: List[BigDecimal] = List( 43.21, 12.34),
                                               outstandingAmount: List[BigDecimal] = List(50, 75),
                                               outstandingInterest: List[Option[BigDecimal]] = List(None, None),
@@ -90,7 +90,7 @@ trait ChargeConstants {
       ChargeItem(transactionId = transactionId.head,
         taxYear = TaxYear.forYearEnd(taxYear.toInt),
         transactionType = transactionTypes.head,
-        subTransactionType = subTransactionTypes.head,
+        codingOutStatus = codingOutStatuses.head,
         documentDate = documentDate.head,
         dueDate = dueDate.head,
         originalAmount = originalAmount.head,
@@ -110,7 +110,7 @@ trait ChargeConstants {
       ChargeItem(transactionId = transactionId(1),
         taxYear = TaxYear.forYearEnd(taxYear.toInt),
         transactionType = transactionTypes(1),
-        subTransactionType = subTransactionTypes(1),
+        codingOutStatus = codingOutStatuses(1),
         documentDate = documentDate(1),
         dueDate = dueDate(1),
         originalAmount = originalAmount(1),
@@ -214,13 +214,13 @@ trait ChargeConstants {
   val outstandingChargesOverdueData: OutstandingChargesModel = outstandingChargesModel(LocalDate.of(2023, 11, 15))
 
   def whatYouOweDataWithDataDueIn30DaysIt(implicit dateService: DateServiceInterface): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None),
     chargesList = List(
       ChargeItem(
         taxYear = TaxYear.forYearEnd(2021),
         transactionId = "1040000123",
         transactionType = BalancingCharge,
-        subTransactionType = None,
+        codingOutStatus = None,
         outstandingAmount = 2000,
         originalAmount = 2000,
         documentDate = LocalDate.parse("2018-03-29"),
@@ -237,7 +237,7 @@ trait ChargeConstants {
         taxYear = TaxYear.forYearEnd(2021),
         transactionId = "1040000124",
         transactionType = PoaOneDebit,
-        subTransactionType = None,
+        codingOutStatus = None,
         outstandingAmount = 2000,
         originalAmount = 2000,
         documentDate = LocalDate.parse("2018-03-29"),
@@ -254,7 +254,7 @@ trait ChargeConstants {
         taxYear = TaxYear.forYearEnd(2021),
         transactionId = "1040000125",
         transactionType = PoaTwoDebit,
-        subTransactionType = None,
+        codingOutStatus = None,
         outstandingAmount = 2000,
         originalAmount = 2000,
         documentDate = LocalDate.parse("2018-03-29"),
@@ -300,7 +300,7 @@ trait ChargeConstants {
   def chargeItemWithCodingOutNics2Ci(): ChargeItem = ChargeItem(
           transactionId = "CODINGOUT01", taxYear = TaxYear.forYearEnd(2021),
           transactionType = BalancingCharge,
-          subTransactionType = Some(Nics2),
+          codingOutStatus = Some(Nics2),
           outstandingAmount = 12.34,
           originalAmount = 43.21,
           documentDate = LocalDate.of(2018, 3, 29),
@@ -318,7 +318,7 @@ trait ChargeConstants {
   def chargeItemWithCodingOutCancelledPayeSaCi(): ChargeItem = ChargeItem(
     transactionId = "CODINGOUT01", taxYear = TaxYear.forYearEnd(2021),
     transactionType = BalancingCharge,
-    subTransactionType = Some(Cancelled),
+    codingOutStatus = Some(Cancelled),
     outstandingAmount = 12.34,
     originalAmount = 43.21,
     documentDate = LocalDate.of(2018, 3, 29),
@@ -340,7 +340,7 @@ trait ChargeConstants {
     transactionId = id1040000123,
     taxYear = TaxYear.forYearEnd(currentYear.toInt),
     transactionType = PoaOneDebit,
-    subTransactionType = None,
+    codingOutStatus = None,
     outstandingAmount = 1000,
     originalAmount = 43.21,
     documentDate = LocalDate.of(2018, 3, 29),
@@ -362,7 +362,7 @@ trait ChargeConstants {
     transactionId = id1040000124,
     taxYear = TaxYear.forYearEnd(currentYear.toInt),
     transactionType = PoaTwoDebit,
-    subTransactionType = None,
+    codingOutStatus = None,
     outstandingAmount = 400,
     originalAmount = 12.34,
     documentDate = LocalDate.of(2018, 3, 29),
@@ -385,7 +385,7 @@ trait ChargeConstants {
     transactionId = id1040000124,
     taxYear = TaxYear.forYearEnd(currentYear.toInt),
     transactionType = PoaOneDebit,
-    subTransactionType = None,
+    codingOutStatus = None,
     outstandingAmount = 12.34,
     originalAmount = 12.34,
     documentDate = LocalDate.of(2018, 3, 29),
@@ -408,7 +408,7 @@ trait ChargeConstants {
       transactionId = id1040000124,
       taxYear = TaxYear.forYearEnd(currentYear.toInt),
       transactionType = PoaTwoDebit,
-      subTransactionType = None,
+      codingOutStatus = None,
       outstandingAmount = 0,
       originalAmount = 12.34,
       documentDate = LocalDate.of(2018, 3, 29),
@@ -431,7 +431,7 @@ trait ChargeConstants {
     transactionId = id1040000123,
     taxYear = TaxYear.forYearEnd(2030),
     transactionType = PoaOneDebit,
-    subTransactionType = None,
+    codingOutStatus = None,
     outstandingAmount = 2500,
     originalAmount = 4000,
     documentDate = LocalDate.of(2018, 3, 29),
@@ -454,7 +454,7 @@ trait ChargeConstants {
     transactionId = id1040000123,
     taxYear = TaxYear.forYearEnd(2030),
     transactionType = PoaTwoDebit,
-    subTransactionType = None,
+    codingOutStatus = None,
     outstandingAmount = 3500,
     originalAmount = 4000,
     documentDate = LocalDate.of(2018, 3, 29),
@@ -477,7 +477,7 @@ trait ChargeConstants {
     taxYear = TaxYear.forYearEnd(2021),
     transactionId = id1040000124,
     transactionType = BalancingCharge,
-    subTransactionType = Some(Nics2),
+    codingOutStatus = Some(Nics2),
     originalAmount = 43.21,
     outstandingAmount = 43.21,
     documentDate = LocalDate.of(2018, 3, 29),
@@ -497,7 +497,7 @@ trait ChargeConstants {
   val balancingChargeCancelled = ChargeItem(taxYear = TaxYear.forYearEnd(2021),
     transactionId = id1040000125,
     transactionType = BalancingCharge,
-    subTransactionType = Some(Cancelled),
+    codingOutStatus = Some(Cancelled),
     originalAmount = 43.21,
     outstandingAmount = 43.21,
     documentDate = LocalDate.of(2018, 3, 29),
@@ -517,7 +517,7 @@ trait ChargeConstants {
 
   val  balancingChargePaye = balancingChargeNics2.copy(
     transactionId = id1040000126,
-    subTransactionType = Some(Accepted),
+    codingOutStatus = Some(Accepted),
     amountCodedOut = Some(2500.00))
 
   def financialDetailsOverdueWithLpiDunningLockZeroCi(taxYear: TaxYear,
@@ -530,7 +530,7 @@ trait ChargeConstants {
         id1040000124,
         taxYear,
         transactionType = PoaOneDebit,
-        subTransactionType = None,
+        codingOutStatus = None,
         documentDate = LocalDate.of(2018, 3, 29),
         dueDate = Some(fixedDate.minusDays(10)),
         originalAmount = 43.21,
@@ -549,7 +549,7 @@ trait ChargeConstants {
         id1040000125,
         taxYear,
         transactionType = PoaOneDebit,
-        subTransactionType = None,
+        codingOutStatus = None,
         documentDate = LocalDate.of(2018, 3, 29),
         dueDate = Some(fixedDate.minusDays(1)),
         originalAmount = 12.34,
@@ -572,13 +572,13 @@ trait ChargeConstants {
   val staticDateOutstandingChargesOverdueData: OutstandingChargesModel = outstandingChargesModelCi(LocalDate.parse("2022-01-01"))
 
     def whatYouOweWithAZeroOutstandingAmount(firstTransactionType: ChargeType = BalancingCharge)(implicit dateService: DateServiceInterface): WhatYouOweChargesList = WhatYouOweChargesList(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None),
       chargesList = List(
         ChargeItem(
           taxYear = TaxYear.forYearEnd(2021),
           transactionId = "transId1",
           transactionType = firstTransactionType,
-          subTransactionType = None,
+          codingOutStatus = None,
           outstandingAmount = 1000,
           originalAmount = 3400,
           documentDate = LocalDate.parse("2018-03-29"),
@@ -596,7 +596,7 @@ trait ChargeConstants {
           taxYear = TaxYear.forYearEnd(2021),
           transactionId = "transId2",
           transactionType = PoaOneDebit,
-          subTransactionType = None,
+          codingOutStatus = None,
           outstandingAmount = 100,
           originalAmount = 1000,
           documentDate = LocalDate.parse("2018-03-29"),
@@ -614,19 +614,19 @@ trait ChargeConstants {
     )
 
   def whatYouOweDataWithPaidPOAs(dunningLocks: List[Option[String]] = noDunningLocks)(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 0.00, 1.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 0.00, 1.00, None, None, None, None, None, None),
     chargesList = financialDetailsDueIn30DaysCi(dunningLocks).map(_.copy(outstandingAmount = 0.0)),
     outstandingChargesModel = Some(outstandingChargesDueIn30Days)
   )
 
   def whatYouOweDataWithDataDueIn30Days(dunningLocks: List[Option[String]] = noDunningLocks)(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(50.00, 0.00, 50.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(50.00, 0.00, 50.00, None, None, None, None, None, None),
     chargesList = financialDetailsDueIn30DaysCi(dunningLocks),
     outstandingChargesModel = Some(outstandingChargesDueIn30Days)
   )
 
   def whatYouOweDataWithDataDueIn30DaysAvailableCreditZero(dunningLocks: List[Option[String]] = noDunningLocks)(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 0.00, 1.00, Some(0.00), None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 0.00, 1.00, Some(0.00), None, None, None, None, None),
     chargesList = financialDetailsDueIn30DaysCi(dunningLocks),
     outstandingChargesModel = Some(outstandingChargesDueIn30Days)
   )
@@ -741,7 +741,7 @@ trait ChargeConstants {
   )
 
   val whatYouOweDataWithMixedData1: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None),
     chargesList = testFinancialDetailsChargeItems(
       transactionId = List(id1040000123, id1040000124),
       taxYear = fixedDate.getYear.toString,
@@ -758,7 +758,7 @@ trait ChargeConstants {
   )
 
   val whatYouOweDataWithMixedData2: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None),
     chargesList = testFinancialDetailsChargeItems(
       transactionId = List(id1040000123, id1040000124),
       dueDate = List(Some(fixedDate.plusDays(30)), Some(fixedDate.minusDays(1))),
@@ -804,43 +804,43 @@ trait ChargeConstants {
   )
 
   val whatYouOweDataWithMixedData4Unfiltered: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None),
     chargesList = List(financialDetailsWithMixedData4Ci.head,
       financialDetailsWithMixedData4Ci(1)),
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
   val whatYouOweDataWithMixedData4Filtered: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None),
     chargesList = List(financialDetailsWithMixedData4Ci(1)),
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
   val whatYouOweDataWithMixedDate4PenaltiesUnfilered: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None),
     chargesList = financialDetailsWithMixedData4PenaltiesCi.reverse,
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
   val whatYouOweWithReviewReconcileData: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None),
     chargesList = financialDetailsReviewAndReconcileCi,
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
   val whatYouOweWithReviewReconcileDataNotYetDue: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None),
     chargesList = financialDetailsReviewAndReconcileNotYetDueCi,
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
   val whatYouOweReconciliationInterestData: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None),
     chargesList = financialDetailsReviewAndReconcileInterest,
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
   val whatYouOweLatePaymentPenalties: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None),
     chargesList = financialDetailsLatePaymentPenaltiesChargeItem,
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
@@ -869,7 +869,7 @@ trait ChargeConstants {
   )
 
   def whatYouOweDataWithOverdueDataIt(dunningLocks: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(0.00, 3.00, 3.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(0.00, 3.00, 3.00, None, None, None, None, None, None),
     chargesList = testFinancialDetailsChargeItems(
       dueDate = dueDateOverdue,
       dunningLock = dunningLocks,
@@ -881,7 +881,7 @@ trait ChargeConstants {
   )
 
   def whatYouOweDataWithOverdueData(dunningLocks: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(0.00, 3.00, 3.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(0.00, 3.00, 3.00, None, None, None, None, None, None),
     chargesList = testFinancialDetailsChargeItems(
       dueDate = dueDateOverdue,
       dunningLock = dunningLocks,
@@ -895,7 +895,7 @@ trait ChargeConstants {
 
 
   def whatYouOweDataWithOverdueDataAndInterest(dunningLocks: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(0.00, 3.00, 3.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(0.00, 3.00, 3.00, None, None, None, None, None, None),
     chargesList = testFinancialDetailsChargeItems(
       dueDate = dueDateOverdue,
       dunningLock = dunningLocks,
@@ -908,7 +908,7 @@ trait ChargeConstants {
 
 
   def whatYouOweDataWithDataDueInMoreThan30Days(dunningLocks: List[Option[String]] = noDunningLocks, dueDates: List[Option[LocalDate]] = dueDateMoreThan30Days): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(0.00, 2.00, 2.00, Some(BigDecimal(100.00)), None, None, None, Some(BigDecimal(100.00))),
+    balanceDetails = BalanceDetails(0.00, 2.00, 2.00, Some(BigDecimal(100.00)), None, None, None, Some(BigDecimal(100.00)), None),
     chargesList = testFinancialDetailsChargeItems(
       dueDate = dueDates,
       dunningLock = dunningLocks,
@@ -921,7 +921,7 @@ trait ChargeConstants {
 
 
   def whatYouOweDataWithZeroMoneyInAccount(dunningLocks: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(0.00, 2.00, 2.00, None, None, None, None, Some(BigDecimal(0.00))),
+    balanceDetails = BalanceDetails(0.00, 2.00, 2.00, None, None, None, None, Some(BigDecimal(0.00)), None),
     chargesList = testFinancialDetailsChargeItems(
       dueDate = dueDateMoreThan30Days,
       dunningLock = dunningLocks
@@ -953,7 +953,7 @@ trait ChargeConstants {
     transactionId = "CODINGOUT02",
     taxYear = TaxYear.forYearEnd(2021),
     transactionType = BalancingCharge,
-    subTransactionType = Some(Nics2),
+    codingOutStatus = Some(Nics2),
     outstandingAmount = 12.34,
     originalAmount = 43.21,
     documentDate =LocalDate.of(2018, 3, 29),
@@ -973,7 +973,7 @@ trait ChargeConstants {
     transactionId = "CODINGOUT02",
     taxYear = TaxYear.forYearEnd(2021),
     transactionType = BalancingCharge,
-    subTransactionType = Some(Accepted),
+    codingOutStatus = Some(Accepted),
     outstandingAmount = 0.00,
     originalAmount = 43.21,
     documentDate = LocalDate.of(2018, 3, 29),
@@ -993,7 +993,7 @@ trait ChargeConstants {
     taxYear = TaxYear.forYearEnd(2021),
     transactionId = "CODINGOUT02",
     transactionType = BalancingCharge,
-    subTransactionType = Some(Nics2),
+    codingOutStatus = Some(Nics2),
     outstandingAmount = 12.34,
     originalAmount = 43.21,
     documentDate = LocalDate.of(2018, 3, 29),
@@ -1016,7 +1016,7 @@ trait ChargeConstants {
                                              outstandingAmount: BigDecimal,
                                              taxYear: String): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None),
       documentDetails = List(
         DocumentDetail(taxYear.toInt, id1040000124, documentDescription, Some("documentText"), outstandingAmount, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100),
           Some("latePaymentInterestId"), Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), None, Some(100), Some("paymentLotItem"), Some("paymentLot"),
@@ -1039,7 +1039,7 @@ trait ChargeConstants {
                                             interestRate: List[Option[BigDecimal]] = List(Some(100), Some(100)),
                                             latePaymentInterestAmount: List[Option[BigDecimal]] = List(None, None)): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None),
       documentDetails = List(
         DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), interestOutstandingAmount.head, interestRate.head, Some("latePaymentInterestId1"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount.head, effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
         DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), 12.34, LocalDate.of(2018, 3, 29), interestOutstandingAmount(1), interestRate(1), Some("latePaymentInterestId2"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount(1), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
@@ -1051,7 +1051,7 @@ trait ChargeConstants {
     )
 
   val whatYouOwePartialChargesListX: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(balanceDueWithin30Days = 1.00, overDueAmount = 2.00, totalBalance = 3.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(balanceDueWithin30Days = 1.00, overDueAmount = 2.00, totalBalance = 3.00, None, None, None, None, None, None),
     chargesList =  testFinancialDetailsChargeItems(
       dueDate = List(Some(LocalDate.of(2019, 6, 25)), Some(LocalDate.of(2023, 12, 14))),
       documentDate = List(LocalDate.of(2018, 3, 29), LocalDate.of(2018, 3, 29)),
@@ -1093,7 +1093,7 @@ trait ChargeConstants {
   )
 
   val whatYouOwePartialChargesList: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(balanceDueWithin30Days = 1.00, overDueAmount = 2.00, totalBalance = 3.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(balanceDueWithin30Days = 1.00, overDueAmount = 2.00, totalBalance = 3.00, None, None, None, None, None, None),
     chargesList =  testFinancialDetailsChargeItems(
       dueDate = dueDateOverdue,
       dunningLock = oneDunningLock,
@@ -1118,7 +1118,7 @@ trait ChargeConstants {
   )
 
   val whatYouOweDataWithMFADebitsData: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None),
     chargesList = testFinancialDetailsChargeItems(
       transactionId = List(id1040000123, id1040000124),
       dueDate = List(Some(fixedDate.minusDays(1)), Some(fixedDate.plusDays(35))),
@@ -1137,7 +1137,7 @@ trait ChargeConstants {
   )
 
   def whatYouOweDataWithAvailableCredits(dunningLocks: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(0.00, 2.00, 2.00, Some(300.00), None, None, None, Some(BigDecimal(100.00))),
+    balanceDetails = BalanceDetails(0.00, 2.00, 2.00, Some(300.00), None, None, None, Some(BigDecimal(100.00)), None),
     chargesList = testFinancialDetailsChargeItems(
       dueDate = dueDateMoreThan30Days,
       dunningLock = dunningLocks
@@ -1148,13 +1148,13 @@ trait ChargeConstants {
   /// integration tests
 
   def whatYouOweDataWithDataDueIn30DaysIntegration: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None),
     chargesList = List(
       chargeItemModel(
         taxYear = TaxYear.forYearEnd(2021),
         transactionId = "1040000123",
         transactionType = BalancingCharge,
-        subTransactionType = None,
+        codingOutStatus = None,
         outstandingAmount = 2000,
         originalAmount = 2000,
         documentDate = LocalDate.parse("2018-03-29"),
@@ -1205,7 +1205,7 @@ trait ChargeConstants {
             taxYear = TaxYear.forYearEnd(2021),
             transactionId = "1040000123",
             transactionType = BalancingCharge,
-            subTransactionType = Some(Nics2),
+            codingOutStatus = Some(Nics2),
             outstandingAmount = 2000,
             originalAmount = 2000,
             documentDate = LocalDate.parse("2018-03-29"),
@@ -1221,7 +1221,7 @@ trait ChargeConstants {
             taxYear = TaxYear.forYearEnd(2021),
             transactionId = "1040000124",
             transactionType = PoaOneDebit,
-            subTransactionType = None,
+            codingOutStatus = None,
             outstandingAmount = 2000,
             originalAmount = 2000,
             documentDate = LocalDate.parse("2018-03-29"),
@@ -1237,7 +1237,7 @@ trait ChargeConstants {
             taxYear = TaxYear.forYearEnd(2021),
             transactionId = "1040000125",
             transactionType = PoaTwoDebit,
-            subTransactionType = None,
+            codingOutStatus = None,
             outstandingAmount = 2000,
             originalAmount = 2000,
             documentDate = LocalDate.parse("2018-03-29"),
@@ -1253,7 +1253,7 @@ trait ChargeConstants {
 
 
       WhatYouOweChargesList(
-        balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+        balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None),
         chargesList = inScopeChargeList,
         outstandingChargesModel = Some(outstandingChargesOverdueDataIt)
       )
@@ -1261,7 +1261,7 @@ trait ChargeConstants {
 
 
     def whatYouOweDataFullDataWithoutOutstandingCharges()(implicit dateService: DateServiceInterface): WhatYouOweChargesList = WhatYouOweChargesList(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None),
       chargesList = financialDetailsOverdueDataCi()
     )
 

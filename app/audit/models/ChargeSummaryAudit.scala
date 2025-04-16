@@ -112,9 +112,9 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
   }
 
   private def paymentAllocationsChargeHistoryJSon(paymentAllocation: PaymentHistoryAllocations): Seq[JsObject] = {
-    val description = if (chargeItem.subTransactionType.contains(Accepted)) {
+    val description = if (chargeItem.codingOutStatus.contains(Accepted)) {
       Some(getAllocationDescriptionFromKey(Some("codingOut.accepted")))
-    } else if (chargeItem.subTransactionType.contains(Cancelled)) {
+    } else if (chargeItem.codingOutStatus.contains(Cancelled)) {
       Some(getAllocationDescriptionFromKey(Some("codingOut.cancelled")))
     } else {
       Some(getAllocationDescriptionFromKey(paymentAllocation.getPaymentAllocationTextInChargeSummary))

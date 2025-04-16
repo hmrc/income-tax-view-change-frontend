@@ -64,8 +64,11 @@ case class ChargeSummaryViewModel(
   val taxYearFrom = chargeItem.taxYear.startYear
   val taxYearTo = chargeItem.taxYear.endYear
 
-  val taxYearFromCodingOut = s"${chargeItem.taxYear.endYear + 1}"
-  val taxYearToCodingOut = s"${chargeItem.taxYear.endYear + 2}"
+  val taxYearFromBCD = chargeItem.taxYear.previousYear.startYear
+  val taxYearToBCD = chargeItem.taxYear.previousYear.endYear
+
+  val taxYearFromCodingOut = s"${chargeItem.taxYear.nextYear.startYear}"
+  val taxYearToCodingOut = s"${chargeItem.taxYear.nextYear.endYear}"
 
   val messagePrefix = if(latePaymentInterestCharge)"lpi."
   else ""
@@ -73,18 +76,18 @@ case class ChargeSummaryViewModel(
     s"chargeSummary.$messagePrefix${chargeItem.getChargeTypeKey}"
 
   val isBalancingChargeZero: Boolean = chargeItem.transactionType match {
-    case _ if chargeItem.subTransactionType.isDefined => false
+    case _ if chargeItem.codingOutStatus.isDefined => false
     case BalancingCharge if chargeItem.originalAmount == 0 => true
     case _ => false
   }
 
   val codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment: Boolean =
-    chargeItem.subTransactionType.contains(Nics2)
+    chargeItem.codingOutStatus.contains(Nics2)
 
   val chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit: Boolean =
     (chargeHistoryEnabled || paymentAllocations.nonEmpty) && !isBalancingChargeZero && !isCredit
 
-  val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !chargeItem.subTransactionType.contains(Accepted)
+  val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !chargeItem.codingOutStatus.contains(Accepted)
 
 }
 

@@ -27,7 +27,7 @@ object ChargeItemStub {
     transactionId = "1040000124",
     taxYear = TaxYear.forYearEnd(testTaxYear),
     transactionType = chargeType,
-    subTransactionType = None,
+    codingOutStatus = None,
     documentDate = LocalDate.of(2018, 3, 29),
     dueDate = Some(LocalDate.parse("2018-02-14")),
     originalAmount = 10.34,
@@ -44,11 +44,11 @@ object ChargeItemStub {
   )
 
   def chargeItemWithInterest(chargeType: ChargeType = PoaOneDebit,
-                             subTransactionType: Option[SubTransactionType] = None): ChargeItem = ChargeItem(
+                             codingOutStatus: Option[CodingOutStatusType] = None): ChargeItem = ChargeItem(
     transactionId = "1040000124",
     taxYear = TaxYear.forYearEnd(testTaxYear),
     transactionType = chargeType,
-    subTransactionType = subTransactionType,
+    codingOutStatus = codingOutStatus,
     documentDate = LocalDate.of(2018, 3, 29),
     dueDate = Some(LocalDate.of(2023, 7, 1)),
     originalAmount = 123.45,
@@ -65,12 +65,12 @@ object ChargeItemStub {
   )
 
   def chargeItemWithInterestAndOverdue(chargeType: ChargeType = PoaOneDebit,
-                                       subTransactionType: Option[SubTransactionType] = None,
+                                       codingOutStatus: Option[CodingOutStatusType] = None,
                                        dueDate: Option[LocalDate] = Some(LocalDate.of(2017, 7, 1))): ChargeItem = ChargeItem(
     transactionId = "1040000124",
     taxYear = TaxYear.forYearEnd(testTaxYear),
     transactionType = chargeType,
-    subTransactionType = subTransactionType,
+    codingOutStatus = codingOutStatus,
     documentDate = LocalDate.of(2018, 3, 29),
     dueDate = dueDate,
     originalAmount = 123.45,

@@ -50,7 +50,7 @@ trait ChargeSummaryControllerHelper  extends MockAuthActions
           transactionId = "transactionId",
           taxYear = TaxYear(2017, 2018),
           transactionType = transactionType,
-          subTransactionType = None,
+          codingOutStatus = None,
           documentDate = LocalDate.of(2018, 1, 1),
           dueDate = Some(LocalDate.of(2018, 1, 1)),
           originalAmount = 1000,

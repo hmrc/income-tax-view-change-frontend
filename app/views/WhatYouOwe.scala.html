@@ -189,7 +189,7 @@
         if(!isOverduePayment) {
             "link"
         } else {
-            if(chargeItem.subTransactionType.contains(Nics2) || chargeItem.isLatePaymentInterest) {
+            if(chargeItem.codingOutStatus.contains(Nics2) || chargeItem.isLatePaymentInterest) {
                 "late-link"
             } else {
                 "late-link2"
@@ -479,11 +479,11 @@
     </div>
 }
 
-@getCodingOutHref(taxYear: Int, transactionId: String) = @{
+@getCodingOutHref(taxYear: Int) = @{
     if (isAgent) {
-        controllers.routes.ChargeSummaryController.showAgent(taxYear, transactionId, false)
+        controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear)
     } else {
-        controllers.routes.ChargeSummaryController.show(taxYear, transactionId, false, origin = origin)
+        controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin = origin)
     }
 }
 
@@ -494,8 +494,8 @@
         } else {
             @getMessage("credit-overpaid-prefix")
         }
-        <a class="govuk-link" id="coding-out-summary-link" href="@getCodingOutHref(codedOutDocumentDetail.taxYear.endYear, codedOutDocumentDetail.transactionId)">
-            @codedOutDocumentDetail.getAmountCodedOut.toCurrency
+        <a class="govuk-link" id="coding-out-summary-link" href="@getCodingOutHref(codedOutDocumentDetail.taxYear.endYear)">
+            @whatYouOweChargesList.getAmountCodedOut.toCurrency
         </a>
         @getMessage("codingOut-1b")
         <b>@getMessage("codingOut-2", (codedOutDocumentDetail.taxYear.endYear - 1).toString(),
