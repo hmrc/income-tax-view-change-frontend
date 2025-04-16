@@ -80,8 +80,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
 
               result should have(
                 httpStatus(OK),
-                pageTitle(mtdUserRole, "add-business-name.heading"),
-                elementTextByID("business-name-hint > p")(formHint),
+                pageTitle(mtdUserRole, "add-business-name.heading1"),
                 elementTextByID("continue-button")(continueButtonText)
               )
             }
@@ -123,8 +122,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
 
               result should have(
                 httpStatus(OK),
-                pageTitle(mtdUserRole, "add-business-name.heading"),
-                elementTextByID("business-name-hint > p")(formHint),
+                pageTitle(mtdUserRole, "add-business-name.heading1"),
                 elementTextByID("continue-button")(continueButtonText)
               )
             }
