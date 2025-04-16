@@ -80,20 +80,11 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
   }
 
   def getRedirectUrl(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_]): String = {
-    if(isEnabled(AccountingMethodJourney)){
-      ((isAgent, isChange) match {
-        case (_, false) => routes.IncomeSourcesAccountingMethodController.show(SelfEmployment, isAgent)
-        case (false, true) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-        case (true, true) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
-      }).url
-    }
-    else{
-      (if (isAgent) {
-        routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
-      } else {
-        routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      }).url
-    }
+    ((isEnabled(AccountingMethodJourney), isAgent, isChange) match {
+      case (true, _, false) => routes.IncomeSourcesAccountingMethodController.show(SelfEmployment, isAgent)
+      case (_, false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
+      case (_, true, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+    }).url
   }
 
   private def setUpSession(addressLookUpResult: Either[Throwable, BusinessAddressModel])
