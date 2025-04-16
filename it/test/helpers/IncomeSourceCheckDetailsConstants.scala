@@ -53,19 +53,19 @@ object IncomeSourceCheckDetailsConstants {
     businessPostalCode = Some(testBusinessPostCode),
     businessCountryCode = Some(testCountryCode),
     incomeSourcesAccountingMethod = Some(testBusinessAccountingMethod),
-    cashOrAccrualsFlag = "CASH",
+    cashOrAccrualsFlag = Some("CASH"),
     showedAccountingMethod = false
   )
 
   val testUKPropertyViewModel = CheckPropertyViewModel(
     tradingStartDate = testBusinessStartDate,
-    cashOrAccrualsFlag = "CASH",
+    cashOrAccrualsFlag = Some("CASH"),
     incomeSourceType = UkProperty
   )
 
   val testForeignPropertyViewModel = CheckPropertyViewModel(
     tradingStartDate = testBusinessStartDate,
-    cashOrAccrualsFlag = "CASH",
+    cashOrAccrualsFlag = Some("CASH"),
     incomeSourceType = ForeignProperty
   )
 

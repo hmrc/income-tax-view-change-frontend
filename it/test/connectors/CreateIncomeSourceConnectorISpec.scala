@@ -98,7 +98,7 @@ class CreateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
         ),
         typeOfBusiness = None,
         tradingStartDate = "",
-        cashOrAccrualsFlag = "CASH",
+        cashOrAccrualsFlag = Some("CASH"),
         cessationDate = Some(""),
         cessationReason = None
       )

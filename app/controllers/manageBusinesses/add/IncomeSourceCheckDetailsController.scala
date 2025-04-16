@@ -116,7 +116,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     val accountingMethodOpt = sessionData.addIncomeSourceData.flatMap(_.incomeSourcesAccountingMethod)
     val dateStartedOpt = sessionData.addIncomeSourceData.flatMap(_.dateStarted)
     (dateStartedOpt, accountingMethodOpt) match {
-      case (Some(dateStarted), Some(accountingMethod)) =>
+      case (Some(dateStarted), accountingMethod) =>
         Some(CheckPropertyViewModel(
           tradingStartDate = dateStarted,
           cashOrAccrualsFlag = accountingMethod,
@@ -150,7 +150,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         businessPostalCode = address.postcode,
         businessCountryCode = addIncomeSourceData.countryCode,
         incomeSourcesAccountingMethod = Some(incomeSourcesAccountingMethod),
-        cashOrAccrualsFlag = incomeSourcesAccountingMethod,
+        cashOrAccrualsFlag = Some(incomeSourcesAccountingMethod),
         showedAccountingMethod = showAccountingMethodPage
       )
     }
