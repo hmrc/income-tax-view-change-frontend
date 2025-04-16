@@ -54,7 +54,7 @@
 }
 
 @mainTemplate(
-pageTitle = messages("add-business-name.heading"),
+pageTitle = messages("add-business-name.heading1"),
 form = Some(businessNameForm),
 isAgent = isAgent,
 backUrl = Some(backUrl),
@@ -68,13 +68,13 @@ btaNavPartial = user.btaNavPartial) {
 
         <span class="govuk-caption-l">@messages("incomeSources.add.sole-trader")</span>
 
-        <h1 class="govuk-heading-l">@messages("add-business-name.heading1")</h1>
+        @h1(messages("add-business-name.heading1"))
 
         @p(classes="govuk-body") {
             @messages("add-business-name.p1")
         }
 
-        <h2 class="govuk-heading-m">@messages("add-business-name.heading2")</h2>
+        @h2(messages("add-business-name.heading2"))
 
         @p(classes="govuk-body") {
             @messages("add-business-name.p2", "'")
