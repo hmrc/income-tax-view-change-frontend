@@ -46,7 +46,7 @@ class PaymentAllocationViewModelSpec extends TestSupport with Matchers{
 
   "clearingDateActual" should{
     "return value when value is present" in {
-      val clearingDate = LocalDate.now()
+      val clearingDate = LocalDate.parse("2018-08-04")
 
       val allocationDetailWithClearingDate = AllocationDetailWithClearingDate(None, Some((clearingDate)))
 
