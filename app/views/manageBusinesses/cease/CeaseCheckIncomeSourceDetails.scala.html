@@ -24,6 +24,8 @@
 @import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
 @import models.core.AddressModel
 @import play.twirl.api.HtmlFormat
+@import models.core._
+
 
 @this(
     mainTemplate: unifiedLayout,
@@ -51,7 +53,7 @@
     controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(Some(viewModel.incomeSourceId.toHash.hash),
     SelfEmployment,
     isAgent,
-    isChange = true
+    mode = CheckMode
     ).url
 }
 
@@ -70,14 +72,14 @@
             None,
             UkProperty,
             isAgent,
-            isChange = true
+            mode = CheckMode
         ).url
     } else {
         controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(
             None,
             ForeignProperty,
             isAgent,
-            isChange = true
+            mode = CheckMode
         ).url
         }
     }

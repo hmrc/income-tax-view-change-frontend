@@ -23,6 +23,8 @@
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import play.twirl.api.HtmlFormat
+@import models.core._
+
 
 @this(
         mainTemplate: unifiedLayout,
@@ -63,25 +65,25 @@
 
 @changeBusinessNameURL = @{
     if(isAgent) {
-        controllers.manageBusinesses.add.routes.AddBusinessNameController.showAgent(isChange = true).url
+        controllers.manageBusinesses.add.routes.AddBusinessNameController.showAgent(mode = CheckMode).url
     } else {
-        controllers.manageBusinesses.add.routes.AddBusinessNameController.show(isChange = true).url
+        controllers.manageBusinesses.add.routes.AddBusinessNameController.show(mode = CheckMode).url
     }
 }
 
 @changeBusinessTradeURL = @{
     if(isAgent) {
-        controllers.manageBusinesses.add.routes.AddBusinessTradeController.showAgent(isChange = true).url
+        controllers.manageBusinesses.add.routes.AddBusinessTradeController.showAgent(mode = CheckMode).url
     } else {
-        controllers.manageBusinesses.add.routes.AddBusinessTradeController.show(isChange = true).url
+        controllers.manageBusinesses.add.routes.AddBusinessTradeController.show(mode = CheckMode).url
     }
 }
 
 @changeBusinessAddressURL = @{
     if(isAgent) {
-        controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(isChange = true).url
+        controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(mode = CheckMode).url
     } else {
-        controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(isChange = true).url
+        controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(mode = CheckMode).url
     }
 }
 
@@ -97,7 +99,7 @@
 
 
 @changeStartDateURL = @{
-    controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, isChange = true, viewModel.incomeSourceType).url
+    controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, mode = CheckMode, viewModel.incomeSourceType).url
 }
 
 @changeAccountingMethodURL = @{

@@ -23,6 +23,7 @@ import enums.AccountingMethod.fromApiField
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.incomeSources.add.IncomeSourcesAccountingMethodForm
+import models.core.{CheckMode, Mode, NormalMode}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -118,11 +119,11 @@ class IncomeSourcesAccountingMethodController @Inject()(val authActions: AuthAct
   def handleRequest(isAgent: Boolean,
                     incomeSourceType: IncomeSourceType,
                     cashOrAccrualsFlag: Option[String] = None,
-                    isChange: Boolean)
+                    mode: Mode)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
     withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { _ =>
 
-      val backUrl = getBackUrl(isAgent, isChange, incomeSourceType)
+      val backUrl = getBackUrl(isAgent, mode, incomeSourceType)
 
       {
         if (incomeSourceType == SelfEmployment) {
@@ -148,7 +149,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authActions: AuthAct
           incomeSourceType = incomeSourceType,
           form = hasErrors,
           postAction = postAction(isAgent, incomeSourceType),
-          backUrl = getBackUrl(isAgent, isChange = false, incomeSourceType),
+          backUrl = getBackUrl(isAgent, mode = NormalMode, incomeSourceType),
           isAgent = isAgent
         ))),
         validatedInput => {
@@ -185,11 +186,11 @@ class IncomeSourcesAccountingMethodController @Inject()(val authActions: AuthAct
     routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType, isAgent)
   }
 
-  private def getBackUrl(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): String = {
-    ((isAgent, isChange, incomeSourceType) match {
-      case (false, false, SelfEmployment) => routes.AddBusinessAddressController.show(isChange)
-      case (_, false, SelfEmployment) => routes.AddBusinessAddressController.showAgent(isChange)
-      case (_, false, _) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange, incomeSourceType)
+  private def getBackUrl(isAgent: Boolean, mode: Mode, incomeSourceType: IncomeSourceType): String = {
+    ((isAgent, mode, incomeSourceType) match {
+      case (false, NormalMode, SelfEmployment) => routes.AddBusinessAddressController.show(mode)
+      case (_, NormalMode, SelfEmployment) => routes.AddBusinessAddressController.showAgent(mode)
+      case (_, NormalMode, _) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, mode, incomeSourceType)
       case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
       case (_, _, _) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
     }).url
@@ -200,7 +201,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authActions: AuthAct
       handleRequest(
         isAgent,
         incomeSourceType = incomeSourceType,
-        isChange = false
+        mode = NormalMode
       )
   }
 
@@ -222,7 +223,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authActions: AuthAct
             isAgent,
             incomeSourceType = incomeSourceType,
             cashOrAccrualsFlag = accountingMethodOpt,
-            isChange = true
+            mode = CheckMode
           )
         }
     }

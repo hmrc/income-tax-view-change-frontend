@@ -24,7 +24,7 @@ import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import forms.incomeSources.cease.CeaseIncomeSourceEndDateFormProvider
 import models.admin.IncomeSourcesNewJourney
 import models.core.IncomeSourceIdHash.mkFromQueryString
-import models.core.{IncomeSourceId, IncomeSourceIdHash}
+import models.core.{IncomeSourceId, IncomeSourceIdHash, Mode}
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -60,12 +60,12 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
     }
   }
 
-  private def getPostAction(isAgent: Boolean, isChange: Boolean, maybeIncomeSourceId: Option[IncomeSourceId], incomeSourceType: IncomeSourceType
+  private def getPostAction(isAgent: Boolean, mode: Mode, maybeIncomeSourceId: Option[IncomeSourceId], incomeSourceType: IncomeSourceType
                            ): Call = {
 
     val hashedId: Option[String] = maybeIncomeSourceId.map(_.toHash.hash)
 
-    routes.IncomeSourceEndDateController.submit(hashedId, incomeSourceType, isAgent, isChange)
+    routes.IncomeSourceEndDateController.submit(hashedId, incomeSourceType, isAgent, mode)
 
   }
 
@@ -76,7 +76,7 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  def show(id: Option[String], incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean):
+  def show(id: Option[String], incomeSourceType: IncomeSourceType, isAgent: Boolean, mode: Mode):
             Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
             val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
 
@@ -84,11 +84,11 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
         isAgent = isAgent,
         incomeSourceType = incomeSourceType,
         id = incomeSourceIdHashMaybe,
-        isChange = isChange
+        mode = mode
       )
   }
 
-  def handleRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)
+  def handleRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, mode: Mode, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] =
     withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
 
@@ -113,7 +113,7 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
               Future.successful(Ok(
                 incomeSourceEndDate(
                   form = newForm,
-                  postAction = getPostAction(isAgent, isChange, incomeSourceIdMaybe, incomeSourceType),
+                  postAction = getPostAction(isAgent, mode, incomeSourceIdMaybe, incomeSourceType),
                   isAgent = isAgent,
                   backUrl = getBackCall(isAgent).url,
                   incomeSourceType = incomeSourceType
@@ -128,7 +128,7 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
         errorHandler(isAgent).showInternalServerError()
     }
 
-  def submit(id: Option[String], incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean):
+  def submit(id: Option[String], incomeSourceType: IncomeSourceType, isAgent: Boolean, mode: Mode):
               Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
               val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
 
@@ -136,7 +136,7 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
         isAgent = isAgent,
         incomeSourceType = incomeSourceType,
         id = incomeSourceIdHashMaybe,
-        isChange = isChange
+        mode = mode
       )
   }
 
@@ -169,7 +169,7 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
     }
   }
 
-  def handleSubmitRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, incomeSourceType: IncomeSourceType, isChange: Boolean)
+  def handleSubmitRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, incomeSourceType: IncomeSourceType, mode: Mode)
                          (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
 
     val hashCompareResult: Option[Either[Throwable, IncomeSourceId]] = id.map(x => user.incomeSources.compareHashToQueryString(x))
@@ -187,7 +187,7 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
               hasErrors => {
                 Future.successful(BadRequest(incomeSourceEndDate(
                   form = hasErrors,
-                  postAction = getPostAction(isAgent, isChange, incomeSourceIdMaybe, incomeSourceType),
+                  postAction = getPostAction(isAgent, mode, incomeSourceIdMaybe, incomeSourceType),
                   backUrl = getBackCall(isAgent).url,
                   isAgent = isAgent,
                   incomeSourceType = incomeSourceType

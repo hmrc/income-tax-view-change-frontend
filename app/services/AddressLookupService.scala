@@ -19,7 +19,7 @@ package services
 import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.AddressLookupConnector
-import models.core.IncomeSourceId
+import models.core.{IncomeSourceId, Mode}
 import models.incomeSourceDetails.BusinessAddressModel
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
@@ -35,11 +35,11 @@ class AddressLookupService @Inject()(val frontendAppConfig: FrontendAppConfig,
                                     (implicit ec: ExecutionContext) {
   case class AddressError(status: String) extends RuntimeException
 
-  def initialiseAddressJourney(isAgent: Boolean, isChange: Boolean)
+  def initialiseAddressJourney(isAgent: Boolean, mode: Mode)
                               (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[String]]] = {
     addressLookupConnector.initialiseAddressLookup(
       isAgent = isAgent,
-      isChange = isChange
+      mode = mode
     ) map {
       case Left(UnexpectedPostStatusFailure(status)) =>
         Logger("application").info(s"error during initialise $status")

@@ -24,6 +24,7 @@ import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType, SelfEmp
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.incomeSources.add.IncomeSourceReportingMethodForm
 import forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
+import models.core.NormalMode
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -64,9 +65,9 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
 
   lazy val backUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
     (isAgent, incomeSourceType.equals(SelfEmployment)) match {
-      case (false, true) => routes.AddBusinessAddressController.show(false).url
-      case (true, true) => routes.AddBusinessAddressController.showAgent(false).url
-      case (_, _) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange = false, incomeSourceType).url
+      case (false, true) => routes.AddBusinessAddressController.show(NormalMode).url
+      case (true, true) => routes.AddBusinessAddressController.showAgent(NormalMode).url
+      case (_, _) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, mode = NormalMode, incomeSourceType).url
     }
 
   lazy val errorRedirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
