@@ -119,7 +119,8 @@ object FinancialDetailsTestConstants {
             "paymentMethod" -> "paymentMethod",
             "paymentLot" -> "paymentLot",
             "paymentLotItem" -> "paymentLotItem",
-            "paymentId" -> "paymentLot-paymentLotItem"
+            "paymentId" -> "paymentLot-paymentLotItem",
+            "codedOutStatus" -> "I"
           )
         )
       ),
@@ -228,7 +229,8 @@ object FinancialDetailsTestConstants {
             "paymentMethod" -> "paymentMethod",
             "paymentLot" -> "paymentLot",
             "paymentLotItem" -> "paymentLotItem",
-            "paymentId" -> "paymentLot-paymentLotItem"
+            "paymentId" -> "paymentLot-paymentLotItem",
+            "codedOutStatus" -> "I"
           )
         )
       ),
@@ -798,7 +800,8 @@ object FinancialDetailsTestConstants {
           paymentMethod = Some("paymentMethod"),
           paymentLot = Some("paymentLot"),
           paymentLotItem = Some("paymentLotItem"),
-          paymentId = Some("paymentLot-paymentLotItem"))))),
+          paymentId = Some("paymentLot-paymentLotItem"),
+          codedOutStatus = Some("I"))))),
       FinancialDetail(
         taxYear = "2020",
         mainType = Some("SA Balancing Charge"),
