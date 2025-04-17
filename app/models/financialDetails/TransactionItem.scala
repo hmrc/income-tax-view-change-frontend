@@ -26,7 +26,7 @@ trait TransactionItem {
 
   val transactionType: TransactionType
 
-  val subTransactionType: Option[SubTransactionType]
+  val codedOutStatus: Option[CodedOutStatusType]
 
   val taxYear: TaxYear
 
@@ -49,7 +49,7 @@ trait TransactionItem {
   // TODO: duplicate logic, in scope of => https://jira.tools.tax.service.gov.uk/browse/MISUV-8557
   // TODO: We should remove DocumentDetail.getChargeTypeKey and keep this method below as it is tied to ChargeItem
   def getChargeTypeKey: String =
-    (transactionType, subTransactionType) match {
+    (transactionType, codedOutStatus) match {
       case (PoaOneDebit, _) => "paymentOnAccount1.text"
       case (PoaTwoDebit, _) => "paymentOnAccount2.text"
       case (MfaDebitCharge, _) => "hmrcAdjustment.text"

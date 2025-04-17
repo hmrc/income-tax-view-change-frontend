@@ -50,7 +50,7 @@
             @{
                 (if(interestCharge) {
                     chargeItem.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDate
-                } else if(chargeItem.transactionType == models.financialDetails.BalancingCharge && chargeItem.subTransactionType == None) {
+                } else if(chargeItem.transactionType == models.financialDetails.BalancingCharge && chargeItem.codedOutStatus == None) {
                     chargeItem.getDueDateForNonZeroBalancingCharge.map(_.toLongDate).getOrElse(messages("tax-year-summary.na"))
                 } else if (chargeItem.isCredit) {
                     chargeItem.dueDate.map(_.toLongDateShort).getOrElse(messages("chargeSummary.na"))
@@ -73,7 +73,7 @@
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
         @{
-            if (chargeItem.subTransactionType != None) {
+            if (chargeItem.codedOutStatus != None) {
                 messages("chargeSummary.paymentAmountCodingOut")
             } else messages("chargeSummary.paymentAmount")
         }
@@ -92,7 +92,7 @@
             <dt class="govuk-summary-list__key">@messages("chargeSummary.remainingDue")</dt>
             <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
             @{
-                if(chargeItem.subTransactionType == Some(models.financialDetails.Accepted)) {
+                if(chargeItem.codedOutStatus == Some(models.financialDetails.Accepted)) {
                     messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut)
                 } else if(interestCharge) chargeItem.interestRemainingToPay.toCurrency
                 else chargeItem.remainingToPay.toCurrency

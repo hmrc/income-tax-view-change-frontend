@@ -30,7 +30,7 @@ case class ChargeItem (
                         transactionId: String,
                         taxYear: TaxYear,
                         transactionType: TransactionType,
-                        subTransactionType: Option[SubTransactionType],
+                        codedOutStatus: Option[CodedOutStatusType],
                         documentDate: LocalDate,
                         dueDate: Option[LocalDate],
                         originalAmount: BigDecimal,
@@ -73,7 +73,7 @@ case class ChargeItem (
   }
 
   def getDueDateForNonZeroBalancingCharge: Option[LocalDate] = {
-    if(transactionType == BalancingCharge && (subTransactionType.isEmpty) && originalAmount == 0.0) {
+    if(transactionType == BalancingCharge && (codedOutStatus.isEmpty) && originalAmount == 0.0) {
       None
     } else {
       dueDate
@@ -107,7 +107,7 @@ case class ChargeItem (
 
   def isCodingOut: Boolean = {
     val codingOutSubTypes = Seq(Nics2, Accepted, Cancelled)
-    subTransactionType.exists(subType => codingOutSubTypes.contains(subType))
+    codedOutStatus.exists(subType => codingOutSubTypes.contains(subType))
   }
 
   def interestIsPaid: Boolean = interestOutstandingAmount match {
@@ -129,7 +129,7 @@ case class ChargeItem (
   // new Your Self Assessment Charge Summary feature
   def isIncludedInSACSummary: Boolean = {
 
-    val validCharge = (transactionType, subTransactionType) match {
+    val validCharge = (transactionType, codedOutStatus) match {
       case (BalancingCharge, Some(Nics2)) => true
       case (BalancingCharge, None       ) => true
       case (PoaOneDebit,               _) => true
@@ -219,7 +219,7 @@ object ChargeItem {
     BalancingCharge, LateSubmissionPenalty, FirstLatePaymentPenalty, SecondLatePaymentPenalty, MfaDebitCharge)
 
   val isAKnownTypeOfCharge: ChargeItem => Boolean = chargeItem => {
-    (chargeItem.transactionType, chargeItem.subTransactionType) match {
+    (chargeItem.transactionType, chargeItem.codedOutStatus) match {
       case (_, Some(Nics2)) => true
       case (x, _) if validChargeTypes.contains(x) => true
       case (_, _) => false
@@ -250,8 +250,8 @@ object ChargeItem {
       transactionId = documentDetail.transactionId,
       taxYear = TaxYear.forYearEnd(documentDetail.taxYear),
       transactionType = chargeType,
-      subTransactionType = documentDetail.documentText
-        .flatMap(SubTransactionType.fromDocumentText),
+      codedOutStatus = documentDetail.documentText
+        .flatMap(CodedOutStatusType.fromDocumentText),
       documentDate = documentDetail.documentDate,
       dueDate = documentDetail.documentDueDate,
       originalAmount = documentDetail.originalAmount,

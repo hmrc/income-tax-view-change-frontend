@@ -116,7 +116,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       transactionId = "some-id",
       taxYear = TaxYear(2019, 2020),
       transactionType = transactionType,
-      subTransactionType = None,
+      codedOutStatus = None,
       documentDate = LocalDate.of(2018, 8, 6),
       dueDate = Some(LocalDate.of(2018, 8, 6)),
       originalAmount = 1000,
@@ -651,9 +651,9 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     "charge is a balancing payment" when {
 
       val baseBalancing = chargeItemModel(transactionType = BalancingCharge)
-      val baseBalancingNics2 = chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Nics2))
-      val baseBalancingAccepted = chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Accepted), originalAmount = 2500.00)
-      val baseBalancingCancelled = chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Cancelled))
+      val baseBalancingNics2 = chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Nics2))
+      val baseBalancingAccepted = chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Accepted), originalAmount = 2500.00)
+      val baseBalancingCancelled = chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Cancelled))
 
       "is Nics2" should {
 
@@ -725,7 +725,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
            "Coding Out is Disabled" in new TestSetup(
             creditItemCodingOut.copy(
               taxYear = TaxYear.forYearEnd(2019),
-              subTransactionType = None,
+              codedOutStatus = None,
               outstandingAmount = 2500.00,
               originalAmount = 2500.00)
           ) {

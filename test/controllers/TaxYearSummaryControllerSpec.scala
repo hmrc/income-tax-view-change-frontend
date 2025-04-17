@@ -69,8 +69,8 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
   )
 
   val testEmptyChargesList: List[TaxYearSummaryChargeItem] = List.empty
-  val class2NicsChargesList: List[TaxYearSummaryChargeItem] = List(chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Nics2), latePaymentInterestAmount = None)).map(TaxYearSummaryChargeItem.fromChargeItem)
-  val payeChargesList: List[TaxYearSummaryChargeItem] = List(chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Accepted), latePaymentInterestAmount = None)).map(TaxYearSummaryChargeItem.fromChargeItem)
+  val class2NicsChargesList: List[TaxYearSummaryChargeItem] = List(chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Nics2), latePaymentInterestAmount = None)).map(TaxYearSummaryChargeItem.fromChargeItem)
+  val payeChargesList: List[TaxYearSummaryChargeItem] = List(chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Accepted), latePaymentInterestAmount = None)).map(TaxYearSummaryChargeItem.fromChargeItem)
   val taxYearsRefererBackLink: String = "http://www.somedomain.org/report-quarterly/income-and-expenses/view/tax-years"
   val taxYearsBackLink: Boolean => String = isAgent => {
     if (isAgent) {
