@@ -23,6 +23,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, SelfEmployment}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.manageBusinesses.add.BusinessTradeForm
+import models.core.{Mode, NormalMode}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -46,46 +47,46 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
                                            val ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
 
-  private def getBackURL(isAgent: Boolean, isChange: Boolean): String = {
-    ((isAgent, isChange) match {
-      case (_, false) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange = false, SelfEmployment)
+  private def getBackURL(isAgent: Boolean, mode: Mode): String = {
+    ((isAgent, mode) match {
+      case (_, NormalMode) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, mode = NormalMode, SelfEmployment)
       case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
       case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     }).url
   }
 
-  private def getSuccessURL(isAgent: Boolean, isChange: Boolean): String = {
-    ((isAgent, isChange) match {
-      case (false, false) => routes.AddBusinessAddressController.show(isChange)
+  private def getSuccessURL(isAgent: Boolean, mode: Mode): String = {
+    ((isAgent, mode) match {
+      case (false, NormalMode) => routes.AddBusinessAddressController.show(mode)
       case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_, false) => routes.AddBusinessAddressController.showAgent(isChange)
+      case (_, NormalMode) => routes.AddBusinessAddressController.showAgent(mode)
       case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     }).url
   }
 
-  def getPostAction(isAgent: Boolean, isChange: Boolean) = if(isAgent) {
-    controllers.manageBusinesses.add.routes.AddBusinessTradeController.submitAgent(isChange)
+  def getPostAction(isAgent: Boolean, mode: Mode) = if(isAgent) {
+    controllers.manageBusinesses.add.routes.AddBusinessTradeController.submitAgent(mode)
   } else {
-    controllers.manageBusinesses.add.routes.AddBusinessTradeController.submit(isChange)
+    controllers.manageBusinesses.add.routes.AddBusinessTradeController.submit(mode)
   }
 
-  def show(isChange: Boolean): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def show(mode: Mode): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
-      handleRequest(false, isChange)
+      handleRequest(false, mode)
   }
 
-  def showAgent(isChange: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def showAgent(mode: Mode): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit user =>
-      handleRequest(true, isChange)
+      handleRequest(true, mode)
   }
 
-  def handleRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+  def handleRequest(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
       val businessTradeOpt = sessionData.addIncomeSourceData.flatMap(_.businessTrade)
       val filledForm = businessTradeOpt.fold(BusinessTradeForm.form)(businessTrade =>
         BusinessTradeForm.form.fill(BusinessTradeForm(businessTrade)))
-      val backURL = getBackURL(isAgent, isChange)
-      val postAction = getPostAction(isAgent, isChange)
+      val backURL = getBackURL(isAgent, mode)
+      val postAction = getPostAction(isAgent, mode)
 
       Future.successful {
         Ok(addBusinessTradeView(filledForm, postAction, isAgent, backURL))
@@ -98,17 +99,17 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
       errorHandler.showInternalServerError()
   }
 
-  def submit(isChange: Boolean): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def submit(mode: Mode): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit request =>
-      handleSubmitRequest(false, isChange)(implicitly, itvcErrorHandler)
+      handleSubmitRequest(false, mode)(implicitly, itvcErrorHandler)
   }
 
-  def submitAgent(isChange: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def submitAgent(mode: Mode): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit request =>
-      handleSubmitRequest(true, isChange)(implicitly, itvcErrorHandlerAgent)
+      handleSubmitRequest(true, mode)(implicitly, itvcErrorHandlerAgent)
   }
 
-  def handleSubmitRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
+  def handleSubmitRequest(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
       val businessNameOpt = sessionData.addIncomeSourceData.flatMap(_.businessName)
 
@@ -119,9 +120,9 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
               BadRequest(
                 addBusinessTradeView(
                   businessTradeForm = formWithErrors,
-                  postAction = getPostAction(isAgent, isChange),
+                  postAction = getPostAction(isAgent, mode),
                   isAgent = isAgent,
-                  backURL = getBackURL(isAgent, isChange)
+                  backURL = getBackURL(isAgent, mode)
                 )
               )
             },
@@ -136,7 +137,7 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
                   )
               )
             ) flatMap {
-              case true  => Future.successful(Redirect(getSuccessURL(isAgent, isChange)))
+              case true  => Future.successful(Redirect(getSuccessURL(isAgent, mode)))
               case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
             }
         )

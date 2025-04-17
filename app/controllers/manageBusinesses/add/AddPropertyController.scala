@@ -21,6 +21,7 @@ import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import forms.manageBusinesses.add.{AddProprertyForm => form}
+import models.core.NormalMode
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -87,8 +88,8 @@ class AddPropertyController @Inject()(authActions: AuthActions,
                              (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
     val formResponse: Option[String] = validForm.toFormMap(form.response).headOption
-    val ukPropertyUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, isChange = false, UkProperty).url
-    val foreignPropertyUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, isChange = false, ForeignProperty).url
+    val ukPropertyUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, mode = NormalMode, UkProperty).url
+    val foreignPropertyUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, mode = NormalMode, ForeignProperty).url
 
     formResponse match {
       case Some(form.responseUK) => Future.successful(Redirect(ukPropertyUrl))

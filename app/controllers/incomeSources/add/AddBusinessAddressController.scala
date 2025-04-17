@@ -23,7 +23,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import models.core.IncomeSourceId
+import models.core.{IncomeSourceId, Mode}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel, UIJourneySessionData}
 import play.api.Logger
@@ -64,7 +64,7 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
     withIncomeSourcesFS {
       addressLookupService.initialiseAddressJourney(
         isAgent = isAgent,
-        isChange = isChange
+        mode = Mode.isCheckMode(isChange)
       ) map {
         case Right(Some(location)) =>
           Redirect(location)

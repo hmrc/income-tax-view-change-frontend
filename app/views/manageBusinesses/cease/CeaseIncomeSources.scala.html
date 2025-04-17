@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
+@import models.core._
 
 @this(
         mainTemplate: unifiedLayout,
@@ -49,7 +50,7 @@
     controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(Some(incomeSourceIdHash),
         SelfEmployment,
         isAgent,
-        isChange = false
+        mode = NormalMode
         ).url
 }
 
