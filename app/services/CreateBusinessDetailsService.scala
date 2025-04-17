@@ -90,7 +90,7 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
             ),
             typeOfBusiness = Some(viewModel.businessTrade),
             tradingStartDate = viewModel.businessStartDate.get.format(DateTimeFormatter.ISO_LOCAL_DATE),
-            cashOrAccrualsFlag = Some(viewModel.cashOrAccrualsFlag.get.toUpperCase),
+            cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag.map(_.toUpperCase),
             cessationDate = None,
             cessationReason = None
           )
@@ -117,7 +117,7 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
       CreateForeignPropertyIncomeSourceRequest(
         PropertyDetails(
           tradingStartDate = viewModel.tradingStartDate.toString,
-          cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag.getOrElse("none").toUpperCase,
+          cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag.map(_.toUpperCase),
           startDate = viewModel.tradingStartDate.toString
         )
       )
@@ -142,7 +142,7 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
       CreateUKPropertyIncomeSourceRequest(
         PropertyDetails(
           tradingStartDate = viewModel.tradingStartDate.toString,
-          cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag.getOrElse("none").toUpperCase,
+          cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag.map(_.toUpperCase),
           startDate = viewModel.tradingStartDate.toString
         )
       )
