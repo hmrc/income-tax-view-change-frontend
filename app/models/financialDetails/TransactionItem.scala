@@ -50,6 +50,8 @@ trait TransactionItem {
   // TODO: We should remove DocumentDetail.getChargeTypeKey and keep this method below as it is tied to ChargeItem
   def getChargeTypeKey: String =
     (transactionType, codedOutStatus) match {
+      case (PoaOneDebit, Some(Accepted)) => "poa1CodedOut.text"
+      case (PoaTwoDebit, Some(Accepted)) => "poa2CodedOut.text"
       case (PoaOneDebit, _) => "paymentOnAccount1.text"
       case (PoaTwoDebit, _) => "paymentOnAccount2.text"
       case (MfaDebitCharge, _) => "hmrcAdjustment.text"
