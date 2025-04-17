@@ -58,7 +58,7 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
     controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.submit(incomeSourceType)
   }
 
-  class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType) {
+  class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType, showAccountingMethod: Boolean) {
 
     val businessName = "Test Business"
     val businessStartDate = "1 January 2022"
@@ -76,7 +76,9 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
         if (incomeSourceType == SelfEmployment) businessViewModelMax else propertyViewModelMax(incomeSourceType),
         isAgent = isAgent,
         postAction = postAction,
-        backUrl = backUrl)(messages, implicitly)
+        backUrl = backUrl,
+        displayAccountingMethod = showAccountingMethod
+      )(messages, implicitly)
     }
 
     lazy val document: Document = Jsoup.parse(contentAsString(view))
@@ -92,14 +94,14 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
 
   "IncomeSourceCheckDetails" should {
     "render the page correctly" when {
-      def runPageContenttest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
-        "render the heading" in new Setup(false, incomeSourceType) {
+      def runPageContentTest(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
+        "render the heading" in new Setup(false, incomeSourceType, true) {
           document.getElementsByClass("govuk-heading-l").text() shouldBe messages("check-business-details.title")
         }
 
         if (incomeSourceType == SelfEmployment) {
 
-          "render the summary list" in new Setup(isAgent, incomeSourceType) {
+          "render the summary list" in new Setup(isAgent, incomeSourceType, true) {
             document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe messages("check-business-details.business-name")
             document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe messages("check-business-details.start-date")
             document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe messages("check-business-details.business-description")
@@ -114,7 +116,7 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
           }
         }
           else {
-          "render the summary list" in new Setup(isAgent, incomeSourceType) {
+          "render the summary list" in new Setup(isAgent, incomeSourceType, true) {
             document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe getMessage(incomeSourceType, "start-date")
             document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe getMessage(incomeSourceType, "accounting-method")
 
@@ -123,36 +125,72 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
         }
 
         }
-        "render the back link" in new Setup(isAgent, incomeSourceType) {
+        "render the back link" in new Setup(isAgent, incomeSourceType, true) {
           document.getElementById("back-fallback").text() shouldBe messages("base.back")
           document.getElementById("back-fallback").attr("href") shouldBe backUrl
 
         }
-        "render the continue button" in new Setup(isAgent, incomeSourceType) {
+        "render the continue button" in new Setup(isAgent, incomeSourceType, true) {
           document.getElementById("confirm-button").text() shouldBe messages("base.confirm-and-continue")
         }
       }
 
       "individual" when {
         "Self Employment" when {
-          runPageContenttest(isAgent = false, SelfEmployment)
+          runPageContentTest(isAgent = false, SelfEmployment)
         }
         "Uk Property" when {
-          runPageContenttest(isAgent = false, UkProperty)
+          runPageContentTest(isAgent = false, UkProperty)
         }
         "Foreign Property" when {
-          runPageContenttest(isAgent = false, ForeignProperty)
+          runPageContentTest(isAgent = false, ForeignProperty)
         }
       }
       "agent" when {
         "Self Employment" when {
-          runPageContenttest(isAgent = true, SelfEmployment)
+          runPageContentTest(isAgent = true, SelfEmployment)
         }
         "Uk Property" when {
-          runPageContenttest(isAgent = true, UkProperty)
+          runPageContentTest(isAgent = true, UkProperty)
         }
         "Foreign Property" when {
-          runPageContenttest(isAgent = true, ForeignProperty)
+          runPageContentTest(isAgent = true, ForeignProperty)
+        }
+      }
+    }
+
+    "render the page without the accounting method" when {
+      def runPageContentTest(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
+        "render the heading" in new Setup(false, incomeSourceType, true) {
+          document.getElementsByClass("govuk-heading-l").text() shouldBe messages("check-business-details.title")
+        }
+
+        "obfuscate the accounting method" in new Setup(isAgent, incomeSourceType, false) {
+          document.getElementsByClass("govuk-summary-list__value").eq(4).text().length shouldBe 0
+        }
+
+      }
+
+      "individual" when {
+        "Self Employment" when {
+          runPageContentTest(isAgent = false, SelfEmployment)
+        }
+        "Uk Property" when {
+          runPageContentTest(isAgent = false, UkProperty)
+        }
+        "Foreign Property" when {
+          runPageContentTest(isAgent = false, ForeignProperty)
+        }
+      }
+      "agent" when {
+        "Self Employment" when {
+          runPageContentTest(isAgent = true, SelfEmployment)
+        }
+        "Uk Property" when {
+          runPageContentTest(isAgent = true, UkProperty)
+        }
+        "Foreign Property" when {
+          runPageContentTest(isAgent = true, ForeignProperty)
         }
       }
     }
