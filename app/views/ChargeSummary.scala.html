@@ -207,7 +207,7 @@
 
 @codingOutMessage = {
     @p(id=Some("coding-out-message")){
-        @messages("chargeSummary.codingOutMessage", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
+        @messages("chargeSummary.codingOutMessage", viewModel.taxYearFromBCD.toString, viewModel.taxYearToBCD.toString)
     }
 }
 
@@ -279,7 +279,9 @@
         <div id="coding-out-wrapper">
             @govukInsetText(InsetText(content = HtmlContent(codingOutMessageInset)))
         </div>
-        @codingOutMessage
+        @if(viewModel.chargeItem.transactionType == BalancingCharge) {
+            @codingOutMessage
+        }
     }
 
     @if(viewModel.chargeItem.codedOutStatus == Some(Cancelled)){
@@ -287,7 +289,9 @@
         <div id="cancelled-coding-out-wrapper">
             @govukInsetText(InsetText(content = HtmlContent(codingOutCancelledMessageInset)))
         </div>
-        @codingOutMessage
+        @if(viewModel.chargeItem.transactionType == BalancingCharge) {
+            @codingOutMessage
+        }
     }
 
     @if(viewModel.codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment){

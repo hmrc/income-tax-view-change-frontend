@@ -132,8 +132,8 @@ case class ChargeItem (
     val validCharge = (transactionType, codedOutStatus) match {
       case (BalancingCharge, Some(Nics2)) => true
       case (BalancingCharge, None       ) => true
-      case (PoaOneDebit,               _) => true
-      case (PoaTwoDebit,               _) => true
+      case (PoaOneDebit, None           ) => true
+      case (PoaTwoDebit, None           ) => true
       case (LateSubmissionPenalty,     _) => true
       case (FirstLatePaymentPenalty,   _) => true
       case _                              => false
