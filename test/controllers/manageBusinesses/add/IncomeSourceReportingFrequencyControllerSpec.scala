@@ -65,9 +65,9 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
 
   val formData: Map[String, String] = Map("report-quarterly" -> "Yes")
 
-  val title: String = "Your new business is set to report annually - Manage your Income Tax updates - GOV.UK"
+  val title: String = "Your new business is set to report annually - Manage your Self Assessment - GOV.UK"
   val titleError: String = "Error: Your new business is set to report annually - GOV.UK"
-  val titleAgent: String = "Your new business is set to report annually - Manage your client’s Income Tax updates - GOV.UK"
+  val titleAgent: String = "Your new business is set to report annually - Manage your Self Assessment - GOV.UK"
   val heading: String = "Your new business is set to report annually"
   val paragraph1: String = "Because this is a new business, for up to 2 tax years you can submit its income and expenses once a year in your tax return, even if:"
   val reportingFrequencyUlLi1: String = "you are voluntarily opted in or required to report quarterly for your other businesses"

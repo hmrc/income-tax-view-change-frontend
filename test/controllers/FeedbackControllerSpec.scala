@@ -67,7 +67,7 @@ class FeedbackControllerSpec extends MockAuthActions
         val result: Future[Result] = action(fakeRequestWithActiveSession)
         status(result) shouldBe Status.OK
         val document: Document = Jsoup.parse(contentAsString(result))
-        document.title shouldBe "Send your feedback - Manage your Income Tax updates - GOV.UK"
+        document.title shouldBe "Send your feedback - Manage your Self Assessment - GOV.UK"
       }
     }
     testAuthFailures(action)(fakeRequestWithActiveSession)
@@ -82,7 +82,7 @@ class FeedbackControllerSpec extends MockAuthActions
         val result: Future[Result] = action(fakeRequest)
         status(result) shouldBe Status.OK
         val document: Document = Jsoup.parse(contentAsString(result))
-        document.title shouldBe "Send your feedback - Manage your client’s Income Tax updates - GOV.UK"
+        document.title shouldBe "Send your feedback - Manage your Self Assessment - GOV.UK"
       }
       testAuthFailures(action)(fakeRequest)
     }
@@ -170,7 +170,7 @@ class FeedbackControllerSpec extends MockAuthActions
         val result: Future[Result] = action(fakeRequestWithActiveSession)
         status(result) shouldBe Status.OK
         val document: Document = Jsoup.parse(contentAsString(result))
-        document.title shouldBe "Thank you - Manage your Income Tax updates - GOV.UK"
+        document.title shouldBe "Thank you - Manage your Self Assessment - GOV.UK"
       }
     }
     testAuthFailures(action)(fakeRequestWithActiveSession)
@@ -185,7 +185,7 @@ class FeedbackControllerSpec extends MockAuthActions
         val result: Future[Result] = action(fakeRequest)
         status(result) shouldBe Status.OK
         val document: Document = Jsoup.parse(contentAsString(result))
-        document.title shouldBe "Thank you - Manage your client’s Income Tax updates - GOV.UK"
+        document.title shouldBe "Thank you - Manage your Self Assessment - GOV.UK"
       }
       testAuthFailures(action)(fakeRequest)
     }

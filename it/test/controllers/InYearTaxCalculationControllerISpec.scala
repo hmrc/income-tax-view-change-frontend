@@ -89,9 +89,9 @@ class InYearTaxCalculationControllerISpec extends ControllerISpecHelper {
       "/report-quarterly/income-and-expenses/view" + {if(isAgent) "/agents" else ""}
     val title: Boolean => String = isAgent =>
       if(isAgent) {
-        s"Your client’s tax overview 6 April $previousTaxYearString to 5 April $taxYearString - Manage your client’s Income Tax updates - GOV.UK"
+        s"Your client’s tax overview 6 April $previousTaxYearString to 5 April $taxYearString - Manage your Self Assessment - GOV.UK"
       } else {
-        s"Your tax overview 6 April $previousTaxYearString to 5 April $taxYearString - Manage your Income Tax updates - GOV.UK"
+        s"Your tax overview 6 April $previousTaxYearString to 5 April $taxYearString - Manage your Self Assessment - GOV.UK"
       }
     val caption = s"6 April $previousTaxYearString to 5 April $taxYearString"
     val insetTextFull: Boolean => String = isAgent =>
@@ -119,9 +119,9 @@ class InYearTaxCalculationControllerISpec extends ControllerISpecHelper {
       "/report-quarterly/income-and-expenses/view" + {if(isAgent) "/agents" else ""}
     val title: Boolean => String = isAgent =>
       if(isAgent) {
-        s"Trosolwg o dreth eich cleient 6 Ebrill $previousTaxYearString i 5 Ebrill $taxYearString - Rheoli diweddariadau Treth Incwm eich cleient - GOV.UK"
+        s"Trosolwg o dreth eich cleient 6 Ebrill $previousTaxYearString i 5 Ebrill $taxYearString - Rheoli’ch Hunanasesiad - GOV.UK"
       } else {
-        s"Trosolwg o’ch treth 6 Ebrill $previousTaxYearString i 5 Ebrill $taxYearString - Rheoli’ch diweddariadau Treth Incwm - GOV.UK"
+        s"Trosolwg o’ch treth 6 Ebrill $previousTaxYearString i 5 Ebrill $taxYearString - Rheoli’ch Hunanasesiad - GOV.UK"
       }
     val caption = s"6 Ebrill $previousTaxYearString i 5 Ebrill $taxYearString"
     val insetTextFull: Boolean => String = isAgent =>

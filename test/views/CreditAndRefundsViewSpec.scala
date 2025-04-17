@@ -361,7 +361,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
             .get(),
           welshLang = true
         ) {
-          document.title() shouldBe "Hawlio ad-daliad - Rheoli’ch diweddariadau Treth Incwm - GOV.UK"
+          document.title() shouldBe "Hawlio ad-daliad - Rheoli’ch Hunanasesiad - GOV.UK"
           layoutContent.selectHead("h1").text shouldBe "Hawlio ad-daliad"
           document.select("ul#credits-list li:nth-child(1)").text() shouldBe
             "Credyd o £100.00 o flwyddyn dreth gynharach - blwyddyn dreth 2022 i 2023"
