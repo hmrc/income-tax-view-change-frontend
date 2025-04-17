@@ -23,6 +23,7 @@ import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.admin.IncomeSourcesFs
 import models.core.IncomeSourceId.mkIncomeSourceId
+import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -66,14 +67,14 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
     s"${messages("htmlTitle.invalidInput", heading(incomeSourceType))}"
   }
 
-  def getActions(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: Option[String], isChange: Boolean): (Call, Call, Call) = {
+  def getActions(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: Option[String], mode: Mode): (Call, Call, Call) = {
     val manageBusinessesCall = if (isAgent) {
       controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent()
     } else {
       controllers.manageBusinesses.routes.ManageYourBusinessesController.show()
     }
     (manageBusinessesCall,
-      routes.IncomeSourceEndDateController.submit(id = id, incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = isChange),
+      routes.IncomeSourceEndDateController.submit(id = id, incomeSourceType = incomeSourceType, isAgent = isAgent, mode = mode),
       manageBusinessesCall)
   }
 
@@ -81,23 +82,23 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
 
   mtdAllRoles.foreach { mtdRole =>
     incomeSourceTypes.foreach { incomeSourceType =>
-      List(true, false).foreach { isChange =>
+      List(NormalMode, CheckMode).foreach { mode =>
         val isAgent = mtdRole != MTDIndividual
         val optIncomeSourceIdHash = if (incomeSourceType == SelfEmployment) {
           Some(mkIncomeSourceId(testSelfEmploymentId).toHash.hash)
         } else {
           None
         }
-        s"show($incomeSourceType, $isAgent, $isChange)" when {
+        s"show($incomeSourceType, $isAgent, $mode)" when {
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
-          val action = testController.show(optIncomeSourceIdHash, incomeSourceType, isAgent, isChange)
+          val action = testController.show(optIncomeSourceIdHash, incomeSourceType, isAgent, mode)
           s"the user is authenticated as a $mtdRole" should {
             "render the end date page" when {
               "incomeSource feature switch is enabled" in {
                 setupMockSuccess(mtdRole)
                 enable(IncomeSourcesFs)
                 mockBothPropertyBothBusiness()
-                if (isChange) {
+                if (mode == CheckMode) {
                   setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
                 } else {
                   setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
@@ -109,7 +110,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                   isAgent = isAgent,
                   incomeSourceType = incomeSourceType,
                   id = optIncomeSourceIdHash,
-                  isChange = isChange)
+                  mode = mode)
 
                 status(result) shouldBe OK
                 document.title shouldBe title(incomeSourceType, isAgent = isAgent)
@@ -117,7 +118,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                 document.getElementById("back-fallback").attr("href") shouldBe backAction.url
                 document.getElementById("income-source-end-date-form").attr("action") shouldBe postAction.url
 
-                if (isChange) {
+                if (mode == CheckMode) {
                   document.getElementById("value.day").`val`() shouldBe "10"
                   document.getElementById("value.month").`val`() shouldBe "10"
                   document.getElementById("value.year").`val`() shouldBe "2022"
@@ -163,7 +164,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
 
                   setupMockCreateSession(true)
                   setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
-                  val actionNoId = testController.show(None, incomeSourceType, isAgent, isChange)
+                  val actionNoId = testController.show(None, incomeSourceType, isAgent, mode)
                   val result: Future[Result] = actionNoId(fakeRequest)
                   status(result) shouldBe INTERNAL_SERVER_ERROR
                 }
@@ -174,7 +175,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
 
                   setupMockCreateSession(true)
                   setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
-                  val actionIdNotRec = testController.show(Some("12345"), incomeSourceType, isAgent, isChange)
+                  val actionIdNotRec = testController.show(Some("12345"), incomeSourceType, isAgent, mode)
                   val result: Future[Result] = actionIdNotRec(fakeRequest)
                   status(result) shouldBe INTERNAL_SERVER_ERROR
                 }
@@ -184,9 +185,9 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
           testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
         }
 
-        s"submit($incomeSourceType, $isAgent, $isChange)" when {
+        s"submit($incomeSourceType, $isAgent, $mode)" when {
           val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
-          val action = testController.submit(optIncomeSourceIdHash, incomeSourceType, isAgent, isChange)
+          val action = testController.submit(optIncomeSourceIdHash, incomeSourceType, isAgent, mode)
           s"the user is authenticated as a $mtdRole" should {
             "redirect to CheckIncomeSourceDetails" when {
               "form is completed successfully" in {
@@ -199,7 +200,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                 } else {
                   setupMockSetSessionKeyMongo(Right(true))
                 }
-                if (isChange) {
+                if (mode == CheckMode) {
                   setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
                 } else {
                   setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
@@ -332,7 +333,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                     enable(IncomeSourcesFs)
                     mockBothPropertyBothBusiness()
 
-                    val actionMissingId = testController.submit(None, incomeSourceType, isAgent, isChange)
+                    val actionMissingId = testController.submit(None, incomeSourceType, isAgent, mode)
                     val result: Future[Result] = actionMissingId(fakeRequest.withFormUrlEncodedBody("value.day" -> "27", "value.month" -> "8",
                       "value.year" -> "2022"))
 
@@ -343,7 +344,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                     enable(IncomeSourcesFs)
                     mockBothPropertyBothBusiness()
 
-                    val actionInvalidId = testController.submit(Some("12345"), incomeSourceType, isAgent, isChange)
+                    val actionInvalidId = testController.submit(Some("12345"), incomeSourceType, isAgent, mode)
 
                     val result: Future[Result] = actionInvalidId(fakeRequest.withFormUrlEncodedBody("value.day" -> "27", "value.month" -> "8",
                       "value.year" -> "2022"))

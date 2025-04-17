@@ -23,6 +23,7 @@ import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.admin.IncomeSourcesFs
+import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
@@ -78,21 +79,21 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
       None
   }
 
-  def getBackUrl(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): String = ((isAgent, isChange, incomeSourceType) match {
-    case (false, false, SelfEmployment) => routes.AddBusinessNameController.show(isChange = false)
-    case (_, false, SelfEmployment) => routes.AddBusinessNameController.showAgent(isChange = false)
+  def getBackUrl(isAgent: Boolean, mode: Mode, incomeSourceType: IncomeSourceType): String = ((isAgent, mode, incomeSourceType) match {
+    case (false, NormalMode, SelfEmployment) => routes.AddBusinessNameController.show(mode = NormalMode)
+    case (_, NormalMode, SelfEmployment) => routes.AddBusinessNameController.showAgent(mode = NormalMode)
     case (false, _, SelfEmployment) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
     case (_, _, SelfEmployment) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
-    case (false, false, _) => controllers.manageBusinesses.add.routes.AddPropertyController.show(isAgent)
-    case (_, false, _) => controllers.manageBusinesses.add.routes.AddPropertyController.show(isAgent)
+    case (false, NormalMode, _) => controllers.manageBusinesses.add.routes.AddPropertyController.show(isAgent)
+    case (_, NormalMode, _) => controllers.manageBusinesses.add.routes.AddPropertyController.show(isAgent)
     case (false, _, UkProperty) => routes.IncomeSourceCheckDetailsController.show(UkProperty)
     case (_, _, UkProperty) => routes.IncomeSourceCheckDetailsController.showAgent(UkProperty)
     case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(ForeignProperty)
     case (_, _, _) => routes.IncomeSourceCheckDetailsController.showAgent(ForeignProperty)
   }).url
 
-  def getRedirectUrl(incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean): String = (incomeSourceType, isAgent, isChange) match {
-    case (_, _, _) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange, incomeSourceType).url
+  def getRedirectUrl(incomeSourceType: IncomeSourceType, isAgent: Boolean, mode: Mode): String = (incomeSourceType, isAgent, mode) match {
+    case (_, _, _) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, mode, incomeSourceType).url
   }
 
   def getRequest(isAgent: Boolean) = {
@@ -120,9 +121,9 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual
     incomeSourceTypes.foreach { incomeSourceType =>
-      List(true, false).foreach { isChange =>
-        s"show($isAgent, $isChange, $incomeSourceType)" when {
-          val action = testController.show(isAgent, isChange, incomeSourceType)
+      List(NormalMode, CheckMode).foreach { mode =>
+        s"show($isAgent, $mode, $incomeSourceType)" when {
+          val action = testController.show(isAgent, mode, incomeSourceType)
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
           s"the user is authenticated as a $mtdRole" should {
             s"return ${Status.OK}: render the Add ${incomeSourceType.key} start date page" when {
@@ -130,7 +131,7 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
                 setupMockSuccess(mtdRole)
                 enable(IncomeSourcesFs)
                 mockNoIncomeSources()
-                if(isChange) {
+                if(mode == CheckMode) {
                   val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
                   setupMockGetMongo(Right(Some(sessionDataWithDate(journeyType))))
                 } else {
@@ -140,10 +141,10 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
 
                 val document: Document = Jsoup.parse(contentAsString(result))
                 document.title should include(messages(s"${incomeSourceType.startDateMessagesPrefix}.heading"))
-                val backUrl = getBackUrl(isAgent, isChange, incomeSourceType)
+                val backUrl = getBackUrl(isAgent, mode, incomeSourceType)
                 document.getElementById("back-fallback").attr("href") shouldBe backUrl
                 status(result) shouldBe OK
-                if(isChange) {
+                if(mode == CheckMode) {
                   document.getElementById("value.day").attr("value") shouldBe "1"
                   document.getElementById("value.month").attr("value") shouldBe "1"
                   document.getElementById("value.year").attr("value") shouldBe "2022"
@@ -151,8 +152,8 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
                 status(result) shouldBe OK
               }
             }
-            if(isChange) {
-              s"return ${Status.OK}: render the Add Business start date Change page with form filled " when {
+            if(mode == CheckMode) {
+              s"return ${Status.OK}: render the Add Business start date Check page with form filled " when {
                 s"session contains key: $dateStartedField (${incomeSourceType.key})" in {
                   setupMockSuccess(mtdRole)
                   enable(IncomeSourcesFs)
@@ -223,8 +224,8 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
           testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
         }
 
-        s"submit($isAgent, $isChange, $incomeSourceType)" when {
-          val action = testController.submit(isAgent, isChange, incomeSourceType)
+        s"submit($isAgent, $mode, $incomeSourceType)" when {
+          val action = testController.submit(isAgent, mode, incomeSourceType)
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
           s"the user is authenticated as a $mtdRole" should {
             s"redirect to the Add Business Start Date Check page" when {
@@ -244,7 +245,7 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
                 ))
 
                 status(result) shouldBe SEE_OTHER
-                redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = isChange).url)
+                redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType = incomeSourceType, isAgent = isAgent, mode = mode).url)
               }
             }
             s"return ${Status.BAD_REQUEST}" when {

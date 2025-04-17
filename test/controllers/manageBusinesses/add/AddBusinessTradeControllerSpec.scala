@@ -23,6 +23,7 @@ import forms.manageBusinesses.add.BusinessTradeForm
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.admin.IncomeSourcesFs
+import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api
@@ -49,17 +50,17 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
 
   lazy val testAddBusinessTradeController = app.injector.instanceOf[AddBusinessTradeController]
 
-  def getAction(mtdRole: MTDUserRole, isChange: Boolean, isPost: Boolean = false) = mtdRole match {
-    case MTDIndividual if isPost => testAddBusinessTradeController.submit(isChange)
-    case MTDIndividual => testAddBusinessTradeController.show(isChange)
-    case _ if isPost => testAddBusinessTradeController.submitAgent(isChange)
-    case _ => testAddBusinessTradeController.showAgent(isChange)
+  def getAction(mtdRole: MTDUserRole, mode: Mode, isPost: Boolean = false) = mtdRole match {
+    case MTDIndividual if isPost => testAddBusinessTradeController.submit(mode)
+    case MTDIndividual => testAddBusinessTradeController.show(mode)
+    case _ if isPost => testAddBusinessTradeController.submitAgent(mode)
+    case _ => testAddBusinessTradeController.showAgent(mode)
   }
 
-  Seq(true, false).foreach { isChange =>
+  Seq(CheckMode, NormalMode).foreach { mode =>
     mtdAllRoles.foreach { mtdRole =>
-      s"show${if (mtdRole != MTDIndividual) "Agent"}(isChange = $isChange)" when {
-        val action = getAction(mtdRole, isChange)
+      s"show${if (mtdRole != MTDIndividual) "Agent"}(mode = $mode)" when {
+        val action = getAction(mtdRole, mode)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
           "render the AddBusinessTrade page" when {
@@ -136,11 +137,11 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
         }
       }
 
-      s"submit${if (mtdRole != MTDIndividual) "Agent"}(isChange = $isChange)" when {
-        val action = getAction(mtdRole, isChange, true)
+      s"submit${if (mtdRole != MTDIndividual) "Agent"}(mode = $mode)" when {
+        val action = getAction(mtdRole, mode, true)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
         s"the user is authenticated as a $mtdRole" should {
-          if(isChange) {
+          if(mode == CheckMode) {
             "redirect to the IncomeSourceCheckDetailsController page" when {
               "the business trade entered is valid" in {
                 enable(IncomeSourcesFs)
@@ -178,9 +179,9 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
                   BusinessTradeForm.businessTrade -> validBusinessTrade))
                 status(result) mustBe SEE_OTHER
                 val expectedRedirectUrl = if(mtdRole == MTDIndividual) {
-                  controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(isChange).url
+                  controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(mode).url
                 } else {
-                  controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(isChange).url
+                  controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(mode).url
                 }
                 redirectLocation(result) mustBe Some(expectedRedirectUrl)
               }

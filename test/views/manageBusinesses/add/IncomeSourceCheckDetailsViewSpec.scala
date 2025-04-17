@@ -17,6 +17,7 @@
 package views.manageBusinesses.add
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import models.core.NormalMode
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -68,7 +69,7 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
 
     val backUrl: String = if (isAgent) controllers.routes.HomeController.showAgent.url else
       controllers.routes.HomeController.show().url
-    val postAction: Call = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)
+    val postAction: Call = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType = incomeSourceType, isAgent = isAgent, mode = NormalMode)
 
 
     lazy val view: HtmlFormat.Appendable = {
