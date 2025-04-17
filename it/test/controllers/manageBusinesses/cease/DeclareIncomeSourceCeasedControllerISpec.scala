@@ -22,6 +22,7 @@ import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.{IncomeSourcesFs, NavBarFs}
+import models.core.NormalMode
 import models.incomeSourceDetails.CeaseIncomeSourceData.ceaseIncomeSourceDeclare
 import models.incomeSourceDetails.UIJourneySessionData
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -96,7 +97,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ControllerISpecHelper {
                   additionalCookies, body = Map()).futureValue
 
                 val expectedRedirectUrl = controllers.manageBusinesses.cease.routes
-                  .IncomeSourceEndDateController.show(optIdHash, incomeSourceType, mtdUserRole != MTDIndividual, false).url
+                  .IncomeSourceEndDateController.show(optIdHash, incomeSourceType, mtdUserRole != MTDIndividual, NormalMode).url
 
                 result should have(
                   httpStatus(SEE_OTHER),

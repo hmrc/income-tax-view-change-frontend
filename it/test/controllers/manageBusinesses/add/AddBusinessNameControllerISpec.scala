@@ -23,6 +23,7 @@ import enums.{MTDIndividual, MTDUserRole}
 import forms.incomeSources.add.BusinessNameForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.{IncomeSourcesFs, NavBarFs}
+import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData.businessNameField
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -43,8 +44,8 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
   override implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   val journeyType: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, SelfEmployment)
 
-  def backUrl(isChange: Boolean, isAgent: Boolean): String = {
-    if (isChange) {
+  def backUrl(mode: Mode, isAgent: Boolean): String = {
+    if (mode == CheckMode) {
       val incomeSourceController = controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController
       if(isAgent) incomeSourceController.showAgent(SelfEmployment).url else incomeSourceController.show(SelfEmployment).url
     } else {
@@ -53,15 +54,15 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
     }
   }
 
-  def getPath(mtdRole: MTDUserRole, isChange: Boolean): String = {
+  def getPath(mtdRole: MTDUserRole, mode: Mode): String = {
     val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
-    val pathEnd = if(isChange) "/change-business-name" else "/business-name"
+    val pathEnd = if(mode == CheckMode) "/change-business-name" else "/business-name"
     pathStart + "/manage-your-businesses/add-sole-trader" + pathEnd
   }
 
   mtdAllRoles.foreach { case mtdUserRole =>
-    val path = getPath(mtdUserRole, isChange = false)
-    val changePath = getPath(mtdUserRole, isChange = true)
+    val path = getPath(mtdUserRole, mode = NormalMode)
+    val changePath = getPath(mtdUserRole, mode = CheckMode)
     val additionalCookies = getAdditionalCookies(mtdUserRole)
     s"GET $path" when {
       s"a user is a $mtdUserRole" that {
@@ -76,7 +77,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
               lazy val document: Document = Jsoup.parse(result.body)
-              document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl(isChange = false, mtdUserRole != MTDIndividual)
+              document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl(mode = NormalMode, mtdUserRole != MTDIndividual)
 
               result should have(
                 httpStatus(OK),
@@ -119,7 +120,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
               val result = buildGETMTDClient(changePath, additionalCookies).futureValue
 
               lazy val document: Document = Jsoup.parse(result.body)
-              document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl(isChange = true, mtdUserRole != MTDIndividual)
+              document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl(mode = CheckMode, mtdUserRole != MTDIndividual)
 
               result should have(
                 httpStatus(OK),
@@ -168,7 +169,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
               val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue
               result should have(
                 httpStatus(SEE_OTHER),
-                redirectURI(controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = mtdUserRole != MTDIndividual, isChange = false).url)
+                redirectURI(controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = mtdUserRole != MTDIndividual, mode = NormalMode).url)
               )
 
               sessionService.getMongoKeyTyped[String](businessNameField, journeyType).futureValue shouldBe Right(Some(testBusinessName))
