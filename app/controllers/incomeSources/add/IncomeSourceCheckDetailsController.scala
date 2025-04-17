@@ -46,8 +46,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
                                                    val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                                   (implicit val ec: ExecutionContext,
                                                    val mcc: MessagesControllerComponents,
-                                                   val appConfig: FrontendAppConfig) extends FrontendController(mcc)
-  with JourneyChecker with I18nSupport {
+                                                   val appConfig: FrontendAppConfig) extends FrontendController(mcc) with JourneyChecker with I18nSupport {
 
   private lazy val errorRedirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
     if (isAgent) routes.IncomeSourceNotAddedController.showAgent(incomeSourceType).url

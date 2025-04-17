@@ -91,7 +91,7 @@ class ObligationsViewModelSpec extends UnitSpec {
       "there is only one overdue quarterly obligation" in {
         val viewModel = constructObligationsViewModel(quarterlyObligationsDates = Seq(taxYear2024_2025QuarterlyObligationDates))
 
-        val expectedMessageComponents = OverdueObligationsMessageComponents("obligation.inset.single-quarterly-overdue.text", List("2024", "2025"))
+        val expectedMessageComponents = OverdueObligationsMessageComponents("obligation.inset.single.quarterly.overdue.text", List("2024", "2025"))
 
         viewModel.getOverdueObligationsMessageComponents(afterFirstQuarterDeadline, isBusinessHistoric = false) shouldBe expectedMessageComponents
       }
@@ -99,7 +99,7 @@ class ObligationsViewModelSpec extends UnitSpec {
       "there are multiple overdue quarterly obligations in the current tax year" in {
         val viewModel = constructObligationsViewModel(quarterlyObligationsDates = Seq(taxYear2024_2025QuarterlyObligationDates))
 
-        val expectedMessageComponents = OverdueObligationsMessageComponents("obligation.inset.multiple-quarterly-overdue.text", List("2", "6", "2024", "2025"))
+        val expectedMessageComponents = OverdueObligationsMessageComponents("obligation.inset.multiple.quarterly.overdue.text", List("2", "6", "2024", "2025"))
 
         viewModel.getOverdueObligationsMessageComponents(afterSecondQuarterDeadline, isBusinessHistoric = false) shouldBe expectedMessageComponents
       }
@@ -121,7 +121,7 @@ class ObligationsViewModelSpec extends UnitSpec {
           finalDeclarationDates = Seq(taxYear2023_2024FinalDeclaration, taxYear2024_2025FinalDeclaration)
         )
 
-        val expectedMessageComponents = OverdueObligationsMessageComponents("obligation.inset.multiple-tax-years-single-quarterly-overdue.text", Nil)
+        val expectedMessageComponents = OverdueObligationsMessageComponents("obligation.inset.multiple.tax.years.single.quarterly.overdue.text", Nil)
 
         viewModel.getOverdueObligationsMessageComponents(withinFirstQuarter, isBusinessHistoric = false) shouldBe expectedMessageComponents
       }
@@ -132,7 +132,7 @@ class ObligationsViewModelSpec extends UnitSpec {
           finalDeclarationDates = Seq(taxYear2023_2024FinalDeclaration, taxYear2024_2025FinalDeclaration)
         )
 
-        val expectedMessageComponents = OverdueObligationsMessageComponents("obligation.inset.multiple-tax-years-multiple-quarterly-overdue.text", List("6"))
+        val expectedMessageComponents = OverdueObligationsMessageComponents("obligation.inset.multiple.tax.years.multiple.quarterly.overdue.text", List("6"))
 
         viewModel.getOverdueObligationsMessageComponents(afterSecondQuarterDeadline, isBusinessHistoric = false) shouldBe expectedMessageComponents
       }
@@ -140,7 +140,7 @@ class ObligationsViewModelSpec extends UnitSpec {
       "there is only one overdue final declaration" in {
         val viewModel = constructObligationsViewModel(finalDeclarationDates = Seq(taxYear2022_2023FinalDeclaration, taxYear2023_2024FinalDeclaration))
 
-        val expectedMessageComponents = OverdueObligationsMessageComponents("obligation.inset.single-annual-overdue.text", Nil)
+        val expectedMessageComponents = OverdueObligationsMessageComponents("obligation.inset.single.annual.overdue.text", Nil)
 
         viewModel.getOverdueObligationsMessageComponents(withinFirstQuarter, isBusinessHistoric = false) shouldBe expectedMessageComponents
       }
@@ -150,7 +150,7 @@ class ObligationsViewModelSpec extends UnitSpec {
           finalDeclarationDates = Seq(taxYear2022_2023FinalDeclaration, taxYear2023_2024FinalDeclaration, taxYear2024_2025FinalDeclaration)
         )
 
-        val expectedMessageComponents = OverdueObligationsMessageComponents("obligation.inset.single-historic-overdue.text", List("2023", "2024"))
+        val expectedMessageComponents = OverdueObligationsMessageComponents("obligation.inset.single.historic.overdue.text", List("2023", "2024"))
 
         viewModel.getOverdueObligationsMessageComponents(after2023_2024FinalDeclarationDeadline, isBusinessHistoric = true) shouldBe expectedMessageComponents
       }
@@ -161,7 +161,7 @@ class ObligationsViewModelSpec extends UnitSpec {
           quarterlyObligationsDates = Seq(taxYear2023_2024QuarterlyObligationDates, taxYear2024_2025QuarterlyObligationDates)
         )
 
-        val expectedMessageComponents = OverdueObligationsMessageComponents("obligation.inset.multiple-historic-overdue.text", List("8", "2023", "2024"))
+        val expectedMessageComponents = OverdueObligationsMessageComponents("obligation.inset.multiple.historic.overdue.text", List("8", "2023", "2024"))
 
         viewModel.getOverdueObligationsMessageComponents(after2023_2024FinalDeclarationDeadline, isBusinessHistoric = true) shouldBe expectedMessageComponents
       }

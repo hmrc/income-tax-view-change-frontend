@@ -80,7 +80,7 @@ class ReportingMethodSetBackErrorControllerSpec extends MockAuthActions with Moc
           "render the you cannot go back error page" in {
             enable(IncomeSourcesFs)
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             mockMongo(IncomeSourceJourneyType(Add, incomeSourceType))
 
@@ -95,7 +95,7 @@ class ReportingMethodSetBackErrorControllerSpec extends MockAuthActions with Moc
           "redirect to home page" when {
              "feature switch is disabled"in {
                setupMockSuccess(mtdRole)
-               setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
                val result = action(fakeRequest)
 

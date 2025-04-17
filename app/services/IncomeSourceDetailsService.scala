@@ -22,35 +22,25 @@ import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import connectors.BusinessDetailsConnector
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import models.admin.DisplayBusinessStartDate
+import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.core.{AddressModel, IncomeSourceId}
+import models.incomeSourceDetails._
 import models.incomeSourceDetails.viewmodels._
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.duration.Duration
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-@Singleton
-class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: BusinessDetailsConnector,
-                                           implicit val ec: ExecutionContext,
-                                           implicit val appConfig: FrontendAppConfig) extends FeatureSwitching {
-  val cacheExpiry: Duration = Duration(1, "day")
-  val emptyAddress = AddressModel(
-    addressLine1 = "",
-    addressLine2 = Some(""),
-    addressLine3 = Some(""),
-    addressLine4 = Some(""),
-    postCode = Some(""),
-    countryCode = ""
-  )
+class IncomeSourceDetailsService @Inject()(
+                                            businessDetailsConnector: BusinessDetailsConnector
+                                          )(
+                                            implicit val appConfig: FrontendAppConfig,
+                                            val ec: ExecutionContext
+                                          ) extends FeatureSwitching {
 
-  def getIncomeSourceDetails()(implicit hc: HeaderCarrier,
-                               mtdUser: AuthorisedAndEnrolledRequest[_]): Future[IncomeSourceDetailsResponse] = {
+  def getIncomeSourceDetails()(implicit hc: HeaderCarrier, mtdUser: AuthorisedAndEnrolledRequest[_]): Future[IncomeSourceDetailsResponse] = {
     businessDetailsConnector.getIncomeSources()
   }
 
@@ -63,7 +53,8 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
       soleTraderBusinesses = soleTraderBusinesses.map { business =>
         BusinessDetailsViewModel(
           business.tradingName,
-          business.tradingStartDate)
+          business.tradingStartDate
+        )
       },
       ukProperty = ukProperty.map { property =>
         PropertyDetailsViewModel(property.tradingStartDate)
@@ -76,9 +67,10 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
     )
   }
 
-  def getViewIncomeSourceViewModel(sources: IncomeSourceDetailsModel,
-                                   displayBusinessStartDateFS: Boolean
-                                  )(implicit user: MtdItUser[_]): Either[Throwable, ViewIncomeSourcesViewModel] = {
+  def getViewIncomeSourceViewModel(
+                                    sources: IncomeSourceDetailsModel,
+                                    displayBusinessStartDateFS: Boolean
+                                  ): Either[Throwable, ViewIncomeSourcesViewModel] = {
 
     val maybeSoleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
     val soleTraderBusinessesExists = maybeSoleTraderBusinesses.nonEmpty
@@ -155,27 +147,32 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
     }.toEither
   }
 
-  def getCheckCeaseSelfEmploymentDetailsViewModel(sources: IncomeSourceDetailsModel,
-                                                  incomeSourceId: IncomeSourceId,
-                                                  businessEndDate: LocalDate)
-  : Either[Throwable, CheckCeaseIncomeSourceDetailsViewModel] = Try {
-    val soleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
-      .find(m => mkIncomeSourceId(m.incomeSourceId) == incomeSourceId)
+  def getCheckCeaseSelfEmploymentDetailsViewModel(
+                                                   sources: IncomeSourceDetailsModel,
+                                                   incomeSourceId: IncomeSourceId,
+                                                   businessEndDate: LocalDate
+                                                 ): Either[Throwable, CheckCeaseIncomeSourceDetailsViewModel] =
+    Try {
+      val soleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
+        .find(m => mkIncomeSourceId(m.incomeSourceId) == incomeSourceId)
 
-    soleTraderBusinesses.map { business =>
-      CheckCeaseIncomeSourceDetailsViewModel(
-        mkIncomeSourceId(business.incomeSourceId),
-        business.tradingName,
-        business.incomeSource,
-        business.address,
-        businessEndDate,
-        incomeSourceType = SelfEmployment
-      )
-    }.get
-  }.toEither
+      soleTraderBusinesses.map { business =>
+        CheckCeaseIncomeSourceDetailsViewModel(
+          mkIncomeSourceId(business.incomeSourceId),
+          business.tradingName,
+          business.incomeSource,
+          business.address,
+          businessEndDate,
+          incomeSourceType = SelfEmployment
+        )
+      }.get
+    }.toEither
 
-  def getCheckCeasePropertyIncomeSourceDetailsViewModel(sources: IncomeSourceDetailsModel, businessEndDate: LocalDate, incomeSourceType: IncomeSourceType)
-  : Either[Throwable, CheckCeaseIncomeSourceDetailsViewModel] = {
+  def getCheckCeasePropertyIncomeSourceDetailsViewModel(
+                                                         sources: IncomeSourceDetailsModel,
+                                                         businessEndDate: LocalDate,
+                                                         incomeSourceType: IncomeSourceType
+                                                       ): Either[Throwable, CheckCeaseIncomeSourceDetailsViewModel] = {
     val propertyBusiness = incomeSourceType match {
       case UkProperty => sources.properties.filterNot(_.isCeased).find(_.isUkProperty)
       case _ => sources.properties.filterNot(_.isCeased).find(_.isForeignProperty)
@@ -227,32 +224,63 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
     viewModelsForCeasedSEBusinesses ++ viewModelsForCeasedPropertyBusinesses
   }
 
-  def getIncomeSourceFromUser(incomeSourceType: IncomeSourceType, incomeSourceId: IncomeSourceId)(implicit user: MtdItUser[_]): Option[(LocalDate, Option[String])] = {
+  def getIncomeSource(
+                       incomeSourceType: IncomeSourceType,
+                       incomeSourceId: IncomeSourceId,
+                       incomeSourceDetailsModel: IncomeSourceDetailsModel
+                     ): Option[IncomeSourceFromUser] = {
     incomeSourceType match {
       case SelfEmployment =>
-        user.incomeSources.businesses
-          .find(m => mkIncomeSourceId(m.incomeSourceId) == incomeSourceId)
+        incomeSourceDetailsModel.businesses
+          .find((model: BusinessDetailsModel) => IncomeSourceId(model.incomeSourceId) == incomeSourceId)
           .flatMap { addedBusiness =>
             for {
               businessName <- addedBusiness.tradingName
               startDate <- addedBusiness.tradingStartDate
-            } yield (startDate, Some(businessName))
+            } yield IncomeSourceFromUser(startDate, Some(businessName))
           }
       case UkProperty =>
         for {
-          newlyAddedProperty <- user.incomeSources.properties
-            .find(incomeSource =>
+          newlyAddedProperty <-
+            incomeSourceDetailsModel.properties.find(incomeSource =>
               mkIncomeSourceId(incomeSource.incomeSourceId) == incomeSourceId && incomeSource.isUkProperty
             )
           startDate <- newlyAddedProperty.tradingStartDate
-        } yield (startDate, None)
+        } yield IncomeSourceFromUser(startDate, None)
       case ForeignProperty =>
         for {
-          newlyAddedProperty <- user.incomeSources.properties.find(incomeSource =>
+          newlyAddedProperty <- incomeSourceDetailsModel.properties.find(incomeSource =>
             mkIncomeSourceId(incomeSource.incomeSourceId) == incomeSourceId && incomeSource.isForeignProperty
           )
           startDate <- newlyAddedProperty.tradingStartDate
-        } yield (startDate, None)
+        } yield IncomeSourceFromUser(startDate, None)
+      case _ =>
+        None
+    }
+  }
+
+  def getReportingMethod(maybeAddIncomeSourceData: Option[AddIncomeSourceData]): ChosenReportingMethod = {
+    val (reportingMethodTaxYear1, reportingMethodTaxYear2) =
+      (
+        maybeAddIncomeSourceData.flatMap(_.reportingMethodTaxYear1).orElse(None),
+        maybeAddIncomeSourceData.flatMap(_.reportingMethodTaxYear2).orElse(None)
+      )
+
+    (reportingMethodTaxYear1, reportingMethodTaxYear2) match {
+      case (Some("A"), Some("A")) | (None, Some("A")) => ChosenReportingMethod.Annual
+      case (Some("Q"), Some("Q")) | (None, Some("Q")) => ChosenReportingMethod.Quarterly
+      case (Some("A"), Some("Q")) | (Some("Q"), Some("A")) => ChosenReportingMethod.Hybrid
+      case (None, None) => ChosenReportingMethod.DefaultAnnual
+      case _ => ChosenReportingMethod.Unknown
+    }
+  }
+
+  def getLatencyDetailsFromUser(incomeSourceType: IncomeSourceType, incomeSourceDetailsModel: IncomeSourceDetailsModel): Option[LatencyDetails] = {
+    incomeSourceType match {
+      case SelfEmployment => incomeSourceDetailsModel.businesses.flatMap(_.latencyDetails).headOption
+      case UkProperty => incomeSourceDetailsModel.getUKProperty.flatMap(_.latencyDetails)
+      case ForeignProperty => incomeSourceDetailsModel.getForeignProperty.flatMap(_.latencyDetails)
+      case _ => None
     }
   }
 }

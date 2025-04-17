@@ -153,7 +153,7 @@ class ManageObligationsControllerSpec extends MockAuthActions
             "IncomeSources FS is enabled" in {
               enable(IncomeSourcesFs)
               setupMockSuccess(mtdRole)
-              setupMockGetIncomeSourceDetails()(getIncomeSourcesResponse(incomeSourceType))
+              setupMockGetIncomeSourceDetails(getIncomeSourcesResponse(incomeSourceType))
               incomeSourceType match {
                 case SelfEmployment => when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
                 case UkProperty => when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
@@ -187,7 +187,7 @@ class ManageObligationsControllerSpec extends MockAuthActions
                     None,
                     cashOrAccruals = true
                   )), List.empty)
-                setupMockGetIncomeSourceDetails()(source)
+                setupMockGetIncomeSourceDetails(source)
                 setMongoSessionData(testId, changeToA, taxYear, incomeSourceType)
 
                 when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any()))
@@ -207,7 +207,7 @@ class ManageObligationsControllerSpec extends MockAuthActions
             "feature switch is disabled" in {
               disable(IncomeSourcesFs)
               setupMockSuccess(mtdRole)
-              setupMockGetIncomeSourceDetails()(getIncomeSourcesResponse(incomeSourceType))
+              setupMockGetIncomeSourceDetails(getIncomeSourcesResponse(incomeSourceType))
               setMongoSessionData(testId, changeToA, taxYear, incomeSourceType)
 
               val result = action()(fakeRequest)
@@ -225,7 +225,7 @@ class ManageObligationsControllerSpec extends MockAuthActions
             "invalid taxYear in session" in {
               enable(IncomeSourcesFs)
               setupMockSuccess(mtdRole)
-              setupMockGetIncomeSourceDetails()(getIncomeSourcesResponse(incomeSourceType))
+              setupMockGetIncomeSourceDetails(getIncomeSourcesResponse(incomeSourceType))
               incomeSourceType match {
                 case SelfEmployment => when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
                 case UkProperty => when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
@@ -243,7 +243,7 @@ class ManageObligationsControllerSpec extends MockAuthActions
             "invalid changeTo in session" in {
               enable(IncomeSourcesFs)
               setupMockSuccess(mtdRole)
-              setupMockGetIncomeSourceDetails()(getIncomeSourcesResponse(incomeSourceType))
+              setupMockGetIncomeSourceDetails(getIncomeSourcesResponse(incomeSourceType))
               incomeSourceType match {
                 case SelfEmployment => when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
                 case UkProperty => when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
@@ -263,7 +263,7 @@ class ManageObligationsControllerSpec extends MockAuthActions
               "there is no incomeSourceId in session" in {
                 enable(IncomeSourcesFs)
                 setupMockSuccess(mtdRole)
-                setupMockGetIncomeSourceDetails()(getIncomeSourcesResponse(incomeSourceType))
+                setupMockGetIncomeSourceDetails(getIncomeSourcesResponse(incomeSourceType))
                 incomeSourceType match {
                   case SelfEmployment => when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
                   case UkProperty => when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
@@ -326,7 +326,7 @@ class ManageObligationsControllerSpec extends MockAuthActions
 
           setupMockSuccess(mtdRole)
           enable(IncomeSourcesFs)
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           val result = action(fakeRequest)
           redirectLocation(result) shouldBe Some(controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(isAgent).url)

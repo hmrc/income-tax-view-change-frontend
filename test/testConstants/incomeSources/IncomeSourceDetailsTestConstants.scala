@@ -162,7 +162,7 @@ object IncomeSourceDetailsTestConstants {
     }
   }
 
-  val notCompletedUIJourneySessionData: IncomeSourceJourneyType => UIJourneySessionData = journeyType => {
+  def notCompletedUIJourneySessionData(journeyType: IncomeSourceJourneyType): UIJourneySessionData = {
     journeyType.operation.operationType match {
       case "ADD" =>
         UIJourneySessionData(
@@ -197,7 +197,7 @@ object IncomeSourceDetailsTestConstants {
           sessionId = testSessionId,
           journeyType = journeyType.toString,
           ceaseIncomeSourceData = Some(CeaseIncomeSourceData(
-            incomeSourceId = if(journeyType.businessType == SelfEmployment) Some(testSelfEmploymentId) else None,
+            incomeSourceId = if (journeyType.businessType == SelfEmployment) Some(testSelfEmploymentId) else None,
             endDate = Some(LocalDate.of(2022, 10, 10)),
             ceaseIncomeSourceDeclare = Some("true"),
             journeyIsComplete = None

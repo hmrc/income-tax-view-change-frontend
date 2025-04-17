@@ -71,43 +71,43 @@ class ConfirmedOptOutViewUtils @Inject()(
       case (Voluntary | Mandated, Voluntary | Mandated, Annual, CurrentTaxYear) if isMultiYear =>
         Some(
           HtmlFormat.fill(
-            Seq(submitYourTaxReturnHeading, firstParagraph, secondParagraph)
+            Seq(submitYourTaxReturnHeading(), firstParagraph(), secondParagraph())
           )
         )
       case (Voluntary | Mandated, Voluntary | Mandated, Voluntary | Mandated, CurrentTaxYear) if isMultiYear && isPreviousYearCrystallised =>
         Some(
           HtmlFormat.fill(
-            Seq(submitYourTaxReturnHeading, firstParagraph)
+            Seq(submitYourTaxReturnHeading(), firstParagraph())
           )
         )
       case (Voluntary | Mandated, Voluntary | Mandated, Voluntary | Mandated, CurrentTaxYear | NextTaxYear) if isMultiYear =>
         Some(
           HtmlFormat.fill(
-            Seq(submitYourTaxReturnHeading, firstParagraph, secondParagraph)
+            Seq(submitYourTaxReturnHeading(), firstParagraph(), secondParagraph())
           )
         )
       case (Voluntary | Mandated, Annual, Voluntary | Mandated, NextTaxYear) if isMultiYear =>
         Some(
           HtmlFormat.fill(
-            Seq(submitYourTaxReturnHeading, firstParagraph, secondParagraph)
+            Seq(submitYourTaxReturnHeading(), firstParagraph(), secondParagraph())
           )
         )
       case (Annual, Voluntary | Mandated, Voluntary | Mandated, NextTaxYear) if isMultiYear =>
         Some(
           HtmlFormat.fill(
-            Seq(submitYourTaxReturnHeading, firstParagraph, secondParagraph)
+            Seq(submitYourTaxReturnHeading(), firstParagraph(), secondParagraph())
           )
         )
       case (Voluntary | Mandated, Voluntary | Mandated, Annual, CurrentTaxYear) if isMultiYear =>
         Some(
           HtmlFormat.fill(
-            Seq(submitYourTaxReturnHeading, firstParagraph, secondParagraph)
+            Seq(submitYourTaxReturnHeading(), firstParagraph(), secondParagraph())
           )
         )
       case _ =>
         Some(
           HtmlFormat.fill(
-            Seq(submitYourTaxReturnHeading, firstParagraph)
+            Seq(submitYourTaxReturnHeading(), firstParagraph())
           )
         )
     }

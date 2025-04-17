@@ -20,7 +20,6 @@ import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.sessionUtils.SessionKeys
-import forms.agent.ClientsUTRForm
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -40,14 +39,14 @@ class UTRErrorController @Inject()(utrError: UTRError,
 
   def show: Action[AnyContent] = authActions.asAgent().async { implicit user =>
     Future.successful(Ok(utrError(
-        postAction = controllers.agent.routes.UTRErrorController.submit
-      )))
+      postAction = controllers.agent.routes.UTRErrorController.submit
+    )))
   }
 
   def submit: Action[AnyContent] = authActions.asAgent().async { implicit user =>
     Future.successful(
-        Redirect(routes.EnterClientsUTRController.show.url).removingFromSession(SessionKeys.clientUTR)
-      )
+      Redirect(routes.EnterClientsUTRController.show.url).removingFromSession(SessionKeys.clientUTR)
+    )
   }
 
 }

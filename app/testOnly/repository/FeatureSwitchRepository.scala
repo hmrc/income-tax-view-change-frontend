@@ -22,7 +22,7 @@ import org.mongodb.scala.model._
 import play.api.Configuration
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.{Codecs, PlayMongoRepository}
-import uk.gov.hmrc.mongo.transaction.{TransactionConfiguration, Transactions}
+import uk.gov.hmrc.mongo.transaction.Transactions
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -63,8 +63,8 @@ class FeatureSwitchRepository @Inject()(val mongoComponent: MongoComponent,
       .replaceOne(
         filter = equal("name", name),
         replacement = FeatureSwitch(
-          name        = name,
-          isEnabled   = enabled
+          name = name,
+          isEnabled = enabled
         ),
         options = ReplaceOptions().upsert(true)
       )
@@ -76,8 +76,8 @@ class FeatureSwitchRepository @Inject()(val mongoComponent: MongoComponent,
     val switches: List[FeatureSwitch] = featureSwitches.map {
       case (flag, status) =>
         FeatureSwitch(
-          name        = flag,
-          isEnabled   = status
+          name = flag,
+          isEnabled = status
         )
     }.toList
 

@@ -16,9 +16,8 @@
 
 package models.chargeHistory
 
-import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CustomerRequestReason, ReversalReason, UnknownReversalReason}
+import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CustomerRequestReason, ReversalReason}
 import play.api.libs.json.{Format, Json}
-import services.claimToAdjustPoa.ClaimToAdjustHelper
 import services.claimToAdjustPoa.ClaimToAdjustHelper.isPoaDocumentDescription
 
 import java.time.LocalDate

@@ -17,10 +17,9 @@
 package models.paymentAllocationCharges
 
 import exceptions.MissingFieldException
+import implicits.ImplicitCurrencyFormatter._
 import models.financialDetails.DocumentDetail
 import models.paymentAllocations.AllocationDetail
-import implicits.ImplicitDateFormatter
-import implicits.ImplicitCurrencyFormatter._
 
 import java.time.LocalDate
 
