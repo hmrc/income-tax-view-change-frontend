@@ -26,7 +26,7 @@ sealed trait CheckDetailsViewModel{
   val showedAccountingMethod: Boolean
 
   def getAccountingMethodMessageKey: String = {
-    val cashAccountingSelected = cashOrAccruals.getOrElse("NONE").toLowerCase.equals("cash")
+    val cashAccountingSelected = cashOrAccruals.forall(_.toLowerCase.equals("cash"))
 
     if (cashAccountingSelected) {
       "incomeSources.add.accountingMethod.cash"
