@@ -108,10 +108,10 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   }
 
   def getFilteredChargesList(financialDetailsList: List[FinancialDetailsModel],
-                                     isReviewAndReconcileEnabled: Boolean,
-                                     isFilterCodedOutPoasEnabled: Boolean,
-                                     isPenaltiesEnabled: Boolean)
-                                    (implicit user: MtdItUser[_]): List[ChargeItem] = {
+                             isReviewAndReconcileEnabled: Boolean,
+                             isFilterCodedOutPoasEnabled: Boolean,
+                             isPenaltiesEnabled: Boolean)
+                            (implicit user: MtdItUser[_]): List[ChargeItem] = {
 
     def getChargeItem(financialDetails: List[FinancialDetail]): DocumentDetail => Option[ChargeItem] =
       getChargeItemOpt(financialDetails)

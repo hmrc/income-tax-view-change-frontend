@@ -72,25 +72,25 @@ trait MockAuthActions extends
       )
   }
 
-  def setupMockSuccess[X, Y](mtdUserRole: MTDUserRole): Unit = mtdUserRole match {
+  def setupMockSuccess(mtdUserRole: MTDUserRole): Unit = mtdUserRole match {
     case MTDIndividual => setupMockUserAuth
     case MTDPrimaryAgent => setupMockAgentWithClientAuth(false)
     case _ => setupMockAgentWithClientAuth(true)
   }
 
-  def setupMockUserAuth[X, Y]: Unit = {
+  def setupMockUserAuth: Unit = {
     val allEnrolments = getAllEnrolmentsIndividual(true, true)
     val retrievalValue = allEnrolments ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(AffinityGroup.Individual) ~ acceptedConfidenceLevel
     setupMockUserAuthSuccess(retrievalValue)
   }
 
-  def setupMockUserAuthNoSAUtr[X, Y]: Unit = {
+  def setupMockUserAuthNoSAUtr: Unit = {
     val allEnrolments = getAllEnrolmentsIndividual(true, false)
     val retrievalValue = allEnrolments ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(AffinityGroup.Individual) ~ acceptedConfidenceLevel
     setupMockUserAuthSuccess(retrievalValue)
   }
 
-  def setupMockAgentWithClientAuth[X, Y](isSupportingAgent: Boolean): Unit = {
+  def setupMockAgentWithClientAuth(isSupportingAgent: Boolean): Unit = {
     setupMockGetSessionDataSuccess()
     setupMockGetClientDetailsSuccess()
     val allEnrolments = getAllEnrolmentsAgent(true, true)
@@ -98,7 +98,7 @@ trait MockAuthActions extends
     setupMockAgentWithClientAuthSuccess(retrievalValue, testMtditid, isSupportingAgent)
   }
 
-  def setupMockAgentWithClientAuthAndIncomeSources[X, Y](isSupportingAgent: Boolean): Unit = {
+  def setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent: Boolean): Unit = {
     setupMockGetSessionDataSuccess()
     setupMockGetClientDetailsSuccess()
     val allEnrolments = getAllEnrolmentsAgent(true, true)

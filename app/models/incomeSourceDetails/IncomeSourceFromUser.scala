@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,6 @@
 
 package models.incomeSourceDetails
 
-sealed trait ChosenReportingMethod
+import java.time.LocalDate
 
-object ChosenReportingMethod {
-
-  case object Annual extends ChosenReportingMethod
-
-  case object Quarterly extends ChosenReportingMethod
-
-  case object QuarterlyAnnual extends ChosenReportingMethod
-
-  case object AnnualQuarterly extends ChosenReportingMethod
-
-  case object Hybrid extends ChosenReportingMethod
-
-  case object DefaultAnnual extends ChosenReportingMethod
-
-  case object Unknown extends ChosenReportingMethod
-}
+case class IncomeSourceFromUser(startDate: LocalDate, businessName: Option[String])

@@ -17,7 +17,7 @@
 package services
 
 import connectors.RepaymentConnector
-import exceptions.{MissingFieldException, RepaymentStartJourneyAmountIsNoneException, RepaymentStartJourneyException, RepaymentViewJourneyException}
+import exceptions.{RepaymentStartJourneyAmountIsNoneException, RepaymentStartJourneyException, RepaymentViewJourneyException}
 import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
@@ -33,7 +33,7 @@ class RepaymentService @Inject()(val repaymentConnector: RepaymentConnector, imp
     Logger("application").debug("" +
       s"Repayment journey start with nino: $nino and fullAmount: $fullAmount ")
     fullAmount match {
-      case Some(amt)=>
+      case Some(amt) =>
         repaymentConnector.start(nino, math.abs(amt.toDouble)).map {
           case RepaymentJourneyModel(nextUrl) =>
             Right(nextUrl)

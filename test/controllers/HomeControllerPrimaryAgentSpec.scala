@@ -409,7 +409,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           "the user has non-ceased businesses or property and income sources is enabled" in new Setup {
             setupMockAgentWithClientAuth(isSupportingAgent)
             enable(IncomeSourcesFs)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockGetDueDates(Right(futureDueDates))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(FinancialDetailsModel(
@@ -439,7 +439,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           "the user has ceased businesses or property and income sources is enabled" in new Setup {
             setupMockAgentWithClientAuth(isSupportingAgent)
             enable(IncomeSourcesFs)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncomeCeased)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncomeCeased)
             mockGetDueDates(Right(futureDueDates))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(FinancialDetailsModel(
@@ -472,7 +472,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           enable(IncomeSourcesFs)
           enable(IncomeSourcesNewJourney)
           mockGetDueDates(Right(futureDueDates))
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),

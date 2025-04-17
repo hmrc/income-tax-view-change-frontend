@@ -93,7 +93,7 @@ class IncomeSourceNotAddedControllerSpec extends MockAuthActions {
             "when feature switch is disabled" in {
               disable(IncomeSourcesFs)
               setupMockSuccess(mtdRole)
-              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
               val result: Future[Result] = action(fakeRequest)
               status(result) shouldBe SEE_OTHER
