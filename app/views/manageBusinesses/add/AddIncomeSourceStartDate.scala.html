@@ -14,21 +14,22 @@
  * limitations under the License.
  *@
 
-@import views.html.layouts.unifiedLayout
 @import enums.IncomeSourceJourney.IncomeSourceType
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
+@import views.html.components.{h1, p}
+@import views.html.layouts.unifiedLayout
+@import views.viewmodels.govuk.all.{DateViewModel, ErrorSummaryViewModel, FluentDate}
+
 @import java.time.LocalDate
-@import views.viewmodels.govuk.all.ErrorSummaryViewModel
-@import views.viewmodels.govuk.all.DateViewModel
-@import views.viewmodels.govuk.all.FluentDate
 
 @this(
         mainTemplate: unifiedLayout,
         formWithCSRF: FormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
         govukDateInput: GovukDateInput,
-        govukButton: GovukButton
+        govukButton: GovukButton,
+        p: p,
+        h1: h1
 )
 
 
@@ -57,6 +58,15 @@
 
     @formWithCSRF(action = postAction, Symbol("id") -> s"$messagesPrefix-form") {
 
+        <span class="govuk-caption-l">
+            @{ messages(s"incomeSources.add.${incomeSourceType.messagesSuffix}") }
+        </span>
+
+        @h1(msg = getMessage("heading"), size = "l")
+
+        @p(id = Some("business-start-date-description-1")){ @getMessage("hint") }
+        @p(id = Some("business-start-date-description-2")){ @getMessage("hint2") }
+
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(
                 ErrorSummaryViewModel(
@@ -65,18 +75,15 @@
                 )
             )
         }
-        <span class="govuk-caption-l">
-            @{ messages(s"incomeSources.add.${incomeSourceType.messagesSuffix}") }
-        </span>
 
         @govukDateInput(
             DateViewModel(
                 field = form("value"),
                 fieldset = Fieldset(
                     legend = Some(Legend(
-                        content = Text(getMessage("heading")),
-                        classes = "govuk-fieldset__legend--l",
-                        isPageHeading = true
+                        content = Text(getMessage("date-question")),
+                        classes = "govuk-fieldset__legend--m",
+                        isPageHeading = false
                     ))
                 )
             )
@@ -84,12 +91,7 @@
                 Hint(
                     id = Some(s"$messagesPrefix-hint"),
                     content = HtmlContent(
-                        s"""<br>
-                           |<div> ${getMessage("hint")} </div>
-                           |</br>
-                           |<div> ${getMessage("hint2")} </div>
-                           |</br>
-                           |<div> ${messages("dateForm.hint")} </div>""".stripMargin
+                        s"""<div> ${messages("dateForm.hint")} </div>""".stripMargin
                     )
                 )
             )
