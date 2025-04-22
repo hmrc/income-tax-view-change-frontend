@@ -31,7 +31,7 @@
         h1WithCaption: h1WithCaption
 )
 
-@(form: Form[ChooseTaxYearFormModel], isAgent: Boolean, postAction: Call, currentTaxYear: Option[TaxYear], nextTaxYear: Option[TaxYear], incomeSourceType: IncomeSourceType)(implicit user: auth.MtdItUser[_], messages: Messages, dateService: DateServiceInterface)
+@(form: Form[ChooseTaxYearFormModel], isAgent: Boolean, postAction: Call, currentTaxYear: Option[TaxYear], nextTaxYear: Option[TaxYear], incomeSourceType: IncomeSourceType, isChange: Boolean = false)(implicit user: auth.MtdItUser[_], messages: Messages, dateService: DateServiceInterface)
 
 @header = @{
     h1WithCaption(
@@ -41,6 +41,12 @@
         headingId = Some("choose-tax-year-heading"),
         captionId = Some("choose-tax-year-subheading")
     )
+}
+
+@currentOrTyCheckedValue(idOrName: Option[String]) = @{
+    if(idOrName.contains("current-year-checkbox") && isChange) form.get.currentTaxYear.getOrElse(false)
+    else if(idOrName.contains("next-year-checkbox") && isChange) form.get.nextTaxYear.getOrElse(false)
+    else false
 }
 
 @taxYearCheckBox(taxYear: Option[TaxYear], idOrName: Option[String]) =  @{
@@ -53,7 +59,7 @@
                 value = messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox", ty.startYear.toString, ty.endYear.toString)
             ),
             value = "true",
-            checked = if(idOrName.contains("current-year-checkbox")) form.get.currentTaxYear.getOrElse(false) else if(idOrName.contains("next-year-checkbox")) form.get.nextTaxYear.getOrElse(false) else false
+            checked = currentOrTyCheckedValue(idOrName)
         ))
     ).getOrElse(Seq())
 }
