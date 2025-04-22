@@ -17,11 +17,10 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.helpers.injected.ErrorSummary
-@import forms.manageBusinesses.add.ChooseTaxYearForm
 @import models.incomeSourceDetails.TaxYear
 @import enums.IncomeSourceJourney.IncomeSourceType
 @import services.DateServiceInterface
+@import forms.models.ChooseTaxYearFormModel
 
 @this(
         mainTemplate: unifiedLayout,
@@ -32,7 +31,7 @@
         h1WithCaption: h1WithCaption
 )
 
-@(form: Form[ChooseTaxYearForm], isAgent: Boolean, postAction: Call, currentTaxYear: Option[TaxYear], nextTaxYear: Option[TaxYear], incomeSourceType: IncomeSourceType)(implicit user: auth.MtdItUser[_], messages: Messages, dateService: DateServiceInterface)
+@(form: Form[ChooseTaxYearFormModel], isAgent: Boolean, postAction: Call, currentTaxYear: Option[TaxYear], nextTaxYear: Option[TaxYear], incomeSourceType: IncomeSourceType)(implicit user: auth.MtdItUser[_], messages: Messages, dateService: DateServiceInterface)
 
 @header = @{
     h1WithCaption(
@@ -54,7 +53,7 @@
                 value = messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox", ty.startYear.toString, ty.endYear.toString)
             ),
             value = "true",
-            checked = if(idOrName.contains("current-year-checkbox")) form.value.exists(_.currentTaxYear) else if(idOrName.contains("next-year-checkbox")) form.value.exists(_.nextTaxYear) else false
+            checked = if(idOrName.contains("current-year-checkbox")) form.get.currentTaxYear.getOrElse(false) else if(idOrName.contains("next-year-checkbox")) form.get.nextTaxYear.getOrElse(false) else false
         ))
     ).getOrElse(Seq())
 }
@@ -96,7 +95,7 @@
         hint = Some(Hint(content = Text(messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text")))),
         items = taxYearCheckBox(currentTaxYear, Some("current-year-checkbox")) ++ taxYearCheckBox(nextTaxYear, Some("next-year-checkbox")),
         errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
-    ).withFormField(form(ChooseTaxYearForm.chooseTaxYearsCheckbox))
+    ).withFormField(form(form.value.map(_.chooseTaxYear).getOrElse("choose-tax-year")))
 )
     @govukButton(Button(
         content = Text(messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button")),
