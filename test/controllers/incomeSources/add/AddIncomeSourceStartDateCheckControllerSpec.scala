@@ -247,7 +247,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
             }
             if (!isChange) {
               s"return ${Status.SEE_OTHER}: redirect to $incomeSourceType accounting method page, isAgent = $isAgent" when {
-                "Yes is submitted with the form with a valid session" in {
+                "Yes is submitted with the form with a valid session (accounting method FS enabled)" in {
                   setupMockSuccess(mtdRole)
                   enable(IncomeSourcesFs)
                   enable(AccountingMethodJourney)
@@ -269,6 +269,30 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
                       case SelfEmployment if !isAgent => controllers.incomeSources.add.routes.AddBusinessTradeController.show(isChange = false)
                       case SelfEmployment => controllers.incomeSources.add.routes.AddBusinessTradeController.showAgent(isChange = false)
                       case _ => routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent)
+                    }
+                  }.url)
+                }
+                "Yes is submitted with the form with a valid session (accounting method FS disabled)" in {
+                  setupMockSuccess(mtdRole)
+                  enable(IncomeSourcesFs)
+
+                  mockNoIncomeSources()
+                  setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
+                  setupMockSetMongoData(result = true)
+                  setupMockGetMongo(Right(Some(sessionDataWithDate(IncomeSourceJourneyType(Add, incomeSourceType)))))
+
+                  val result = action(fakeRequest
+                    .withFormUrlEncodedBody(
+                      AddIncomeSourceStartDateCheckForm.response -> responseYes
+                    ))
+
+                  status(result) shouldBe SEE_OTHER
+                  redirectLocation(result) shouldBe Some({
+                    incomeSourceType match {
+                      case SelfEmployment if !isAgent => controllers.incomeSources.add.routes.AddBusinessTradeController.show(isChange = false)
+                      case SelfEmployment => controllers.incomeSources.add.routes.AddBusinessTradeController.showAgent(isChange = false)
+                      case _ if !isAgent => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
+                      case _ => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
                     }
                   }.url)
                 }
