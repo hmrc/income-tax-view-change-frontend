@@ -36,19 +36,24 @@ import java.time.LocalDate
 
 class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
 
-  val prefix: String = "business-added"
-  val continueButtonText: String = messagesAPI(s"$prefix.income-sources-button")
-  val viewAllBusinessesLinkText: String = messagesAPI(s"$prefix.view-all-businesses")
-  val day: LocalDate = LocalDate.of(2023, 1, 1)
-  val testObligationsModel: ObligationsModel = ObligationsModel(Seq(GroupedObligationsModel("123", List(SingleObligationModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "EOPS", StatusFulfilled)))))
+  val continueButtonText: String =
+    messagesAPI("business.added.income.sources.button")
 
-  val pageTitle: String = messagesAPI("htmlTitle.agent", {
-    s"${messagesAPI("business-added.uk-property.title")}"
-  })
-  val confirmationPanelContent: String = {
-    s"${messagesAPI("business-added.uk-property.panel.title")} " +
-      s"${messagesAPI("business-added.uk-property.panel.body")}"
-  }
+  val day: LocalDate = LocalDate.of(2023, 1, 1)
+
+  val testObligationsModel: ObligationsModel =
+    ObligationsModel(
+      Seq(GroupedObligationsModel(
+        identification = "123",
+        obligations = List(SingleObligationModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "EOPS", StatusFulfilled))
+      ))
+    )
+
+  val pageTitle: String =
+    messagesAPI("htmlTitle.agent", s"${messagesAPI("business.added.uk-property.title")}")
+
+  val confirmationPanelContent: String =
+    messagesAPI("business.added.uk-property.panel.title") + messagesAPI("business.added.uk-property.panel.body")
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
@@ -58,7 +63,7 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
   }
 
   def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "/income-sources/add" else "/agents/income-sources/add"
+    val pathStart = if (mtdRole == MTDIndividual) "/income-sources/add" else "/agents/income-sources/add"
     incomeSourceType match {
       case SelfEmployment => s"$pathStart/business-added"
       case UkProperty => s"$pathStart/uk-property-added"
@@ -68,10 +73,10 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
 
   def getExpectedPageTitle(incomeSourceType: IncomeSourceType): String = {
     incomeSourceType match {
-      case SelfEmployment => messagesAPI("business-added.sole-trader.title", business1.tradingName.get)
+      case SelfEmployment => messagesAPI("business.added.sole-trader.title", business1.tradingName.get)
       case UkProperty =>
-        s"${messagesAPI("business-added.uk-property.title")}"
-      case _ => messagesAPI("business-added.foreign-property.title")
+        s"${messagesAPI("business.added.uk-property.title")}"
+      case _ => messagesAPI("business.added.foreign-property.title")
     }
   }
 

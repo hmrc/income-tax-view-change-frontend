@@ -51,7 +51,7 @@
     messages: Messages
 )
 
-@{(chargeItem.transactionType, chargeItem.subTransactionType) match {
+@{(chargeItem.transactionType, chargeItem.codedOutStatus) match {
     case (BalancingCharge, Some(Nics2)) => classTwoNICSContent(taxYearFrom, taxYearTo, isAgent)
     case (BalancingCharge, None)        => whatIsABalancingPayment()
     case (PoaOneDebit | PoaTwoDebit, _) => whatIsPaymentOnAccount()

@@ -168,12 +168,12 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   val class2NicsChargesList: List[TaxYearSummaryChargeItem] = List(
     chargeItemModel(transactionType = PoaOneDebit, dueDate = Some(LocalDate.of(2021, 7, 31)), latePaymentInterestAmount = None),
-    chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Nics2), dueDate = Some(LocalDate.of(2021, 7, 30)), latePaymentInterestAmount = None)
+    chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Nics2), dueDate = Some(LocalDate.of(2021, 7, 30)), latePaymentInterestAmount = None)
   ).map(TaxYearSummaryChargeItem.fromChargeItem(_))
 
 
   val payeChargeList: List[TaxYearSummaryChargeItem] = List(
-    chargeItemModel(transactionType = BalancingCharge, dueDate = Some(LocalDate.of(2021, 7, 30)), subTransactionType = Some(Accepted), latePaymentInterestAmount = None)
+    chargeItemModel(transactionType = BalancingCharge, dueDate = Some(LocalDate.of(2021, 7, 30)), codedOutStatus = Some(Accepted), latePaymentInterestAmount = None)
   ).map(TaxYearSummaryChargeItem.fromChargeItem)
 
   val testBalancingPaymentChargeWithZeroValue: List[TaxYearSummaryChargeItem] = List(
@@ -181,19 +181,19 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
 
   val immediatelyRejectedByNps: List[TaxYearSummaryChargeItem] = List(
-    chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Nics2), latePaymentInterestAmount = None),
+    chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Nics2), latePaymentInterestAmount = None),
     chargeItemModel(transactionType = BalancingCharge, interestOutstandingAmount = Some(0.0), latePaymentInterestAmount = None)
   ).map(TaxYearSummaryChargeItem.fromChargeItem)
 
   val rejectedByNpsPartWay: List[TaxYearSummaryChargeItem] = List(
-    chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Nics2), latePaymentInterestAmount = None),
-    chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Cancelled), latePaymentInterestAmount = None)
+    chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Nics2), latePaymentInterestAmount = None),
+    chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Cancelled), latePaymentInterestAmount = None)
   ).map(TaxYearSummaryChargeItem.fromChargeItem)
 
   val codingOutPartiallyCollected: List[TaxYearSummaryChargeItem] = List(
-    chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Nics2), latePaymentInterestAmount = None),
+    chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Nics2), latePaymentInterestAmount = None),
     chargeItemModel(transactionType = BalancingCharge, interestOutstandingAmount = Some(0.0), latePaymentInterestAmount = None),
-    chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Cancelled), latePaymentInterestAmount = None)
+    chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Cancelled), latePaymentInterestAmount = None)
   ).map(TaxYearSummaryChargeItem.fromChargeItem)
 
   val mfaCharges: List[TaxYearSummaryChargeItem] = List(

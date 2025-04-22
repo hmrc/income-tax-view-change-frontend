@@ -114,7 +114,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
     transactionId = "1040000124",
     taxYear = TaxYear.forYearEnd(taxYear),
     transactionType = PoaOneDebit,
-    subTransactionType = None,
+    codedOutStatus = None,
     documentDate = LocalDate.of(2018, 3, 29),
     dueDate = Some(fixedDate),
     originalAmount = 10.34,
@@ -131,11 +131,11 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
   )
   val chargeItemWithCodingOutAccepted: ChargeItem = chargeItemWithNoInterest.copy(
     transactionType = BalancingCharge,
-    subTransactionType = Some(Accepted)
+    codedOutStatus = Some(Accepted)
   )
   val chargeItemWithCodingOutRejected: ChargeItem =  chargeItemWithNoInterest.copy(
     transactionType = BalancingCharge,
-    subTransactionType = Some(Cancelled)
+    codedOutStatus = Some(Cancelled)
   )
   val chargeItemWithInterest: ChargeItem = chargeItemWithNoInterest.copy(
     latePaymentInterestAmount = Some(54.32),

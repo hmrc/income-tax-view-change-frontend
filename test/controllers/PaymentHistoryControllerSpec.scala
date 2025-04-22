@@ -137,7 +137,7 @@ class PaymentHistoryControllerSpec extends MockAuthActions
           mockSingleBISWithCurrentYearAsMigrationYear()
           val result = testController.refundStatus(fakeRequestWithActiveSession)
           status(result) shouldBe Status.OK
-          JsoupParse(result).toHtmlDocument.title() shouldBe s"There is a problem - Manage your Income Tax updates - GOV.UK"
+          JsoupParse(result).toHtmlDocument.title() shouldBe s"There is a problem - Manage your Self Assessment - GOV.UK"
         }
       }
 

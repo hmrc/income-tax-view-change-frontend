@@ -68,7 +68,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends MockAuthActions with Mock
             enable(IncomeSourcesFs)
             setupMockSuccess(mtdRole)
 
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockMongo(IncomeSourceJourneyType(Add, SelfEmployment))
 
             val result = action(fakeRequest)
@@ -82,7 +82,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends MockAuthActions with Mock
           s"redirect to home page" when {
             "the incomeSources is disabled" in {
               setupMockSuccess(mtdRole)
-              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
               val result = action(fakeRequest)
 
@@ -109,7 +109,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends MockAuthActions with Mock
 
             mockNoIncomeSources()
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockMongo(IncomeSourceJourneyType(Add, incomeSourceType))
 
             val result = action(fakeRequest)

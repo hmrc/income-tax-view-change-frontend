@@ -38,7 +38,7 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAn
 import scala.concurrent.Future
 
 
-class AddBusinessAddressControllerSpec  extends MockAuthActions
+class AddBusinessAddressControllerSpec extends MockAuthActions
   with MockSessionService {
 
   val incomeSourceDetailsService: IncomeSourceDetailsService = mock(classOf[IncomeSourceDetailsService])
@@ -63,7 +63,7 @@ class AddBusinessAddressControllerSpec  extends MockAuthActions
 
   def verifySetMongoData(): Unit = {
     val argument: ArgumentCaptor[UIJourneySessionData] = ArgumentCaptor.forClass(classOf[UIJourneySessionData])
-    verify(mockSessionService).setMongoData(argument.capture())(any(), any())
+    verify(mockSessionService).setMongoData(argument.capture())
     argument.getValue.addIncomeSourceData shouldBe testAddIncomeSourceSessionData
   }
 
@@ -80,7 +80,7 @@ class AddBusinessAddressControllerSpec  extends MockAuthActions
             "location redirect is returned by the lookup service" in {
               setupMockSuccess(mtdRole)
               enable(IncomeSourcesFs)
-              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
               when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
                 .thenReturn(Future(Right(Some("Sample location"))))
 
@@ -92,7 +92,7 @@ class AddBusinessAddressControllerSpec  extends MockAuthActions
           "redirect back to the home page" when {
             "incomeSources switch disabled" in {
               setupMockSuccess(mtdRole)
-              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
               val result: Future[Result] = action(fakeRequest)
               status(result) shouldBe SEE_OTHER
@@ -109,7 +109,7 @@ class AddBusinessAddressControllerSpec  extends MockAuthActions
             "no location returned" in {
               enable(IncomeSourcesFs)
               setupMockSuccess(mtdRole)
-              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
               when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
                 .thenReturn(Future(Right(None)))
 
@@ -120,7 +120,7 @@ class AddBusinessAddressControllerSpec  extends MockAuthActions
             "failure returned" in {
               enable(IncomeSourcesFs)
               setupMockSuccess(mtdRole)
-              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
               when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
                 .thenReturn(Future(Left(AddressError("Test status"))))
 
@@ -144,7 +144,7 @@ class AddBusinessAddressControllerSpec  extends MockAuthActions
             "valid data received" in {
               setupMockSuccess(mtdRole)
               enable(IncomeSourcesFs)
-              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
               setupMockGetMongo(Right(Some(UIJourneySessionData("", ""))))
               setupMockSetMongoData(result = true)
@@ -161,7 +161,7 @@ class AddBusinessAddressControllerSpec  extends MockAuthActions
             "no address returned" in {
               setupMockSuccess(mtdRole)
               enable(IncomeSourcesFs)
-              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
               setupMockGetMongo(Right(Some(UIJourneySessionData("", ""))))
               setupMockSetMongoData(result = true)

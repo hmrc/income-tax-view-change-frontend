@@ -79,7 +79,7 @@ class AddressLookupConnectorISpec extends AnyWordSpec with ComponentSpecBase wit
                                        |        "heading": "Enter your business address"
                                        |      },
                                        |      "appLevelLabels": {
-                                       |        "navTitle": "Manage your Income Tax updates"
+                                       |        "navTitle": "Manage your Self Assessment"
                                        |      }
                                        |    },
                                        |    "cy": {
@@ -96,7 +96,7 @@ class AddressLookupConnectorISpec extends AnyWordSpec with ComponentSpecBase wit
                                        |        "heading": "Nodwch gyfeiriad eich busnes"
                                        |      },
                                        |      "appLevelLabels": {
-                                       |        "navTitle": "Rheoli’ch diweddariadau Treth Incwm"
+                                       |        "navTitle": "Rheoli’ch Hunanasesiad"
                                        |      }
                                        |    }
                                        |  }
@@ -165,7 +165,7 @@ class AddressLookupConnectorISpec extends AnyWordSpec with ComponentSpecBase wit
             |        "heading": "Enter your business address"
             |      },
             |      "appLevelLabels": {
-            |        "navTitle": "Manage your client’s Income Tax updates"
+            |        "navTitle": "Manage your Self Assessment"
             |      }
             |    },
             |    "cy": {
@@ -182,7 +182,7 @@ class AddressLookupConnectorISpec extends AnyWordSpec with ComponentSpecBase wit
             |        "heading": "Nodwch gyfeiriad eich busnes"
             |      },
             |      "appLevelLabels": {
-            |        "navTitle": "Rheoli diweddariadau Treth Incwm eich cleient"
+            |        "navTitle": "Rheoli’ch Hunanasesiad"
             |      }
             |    }
             |  }

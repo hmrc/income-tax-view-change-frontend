@@ -38,7 +38,7 @@ class SelectYourReasonViewSpec extends TestSupport {
   val viewWithErrors: Html = selectYourReasonView(formError, TaxYear(fixedDate.getYear, fixedDate.getYear + 1), isAgent = false, NormalMode, useFallbackLink = true)
   val documentWithErrors: Document = Jsoup.parse(viewWithErrors.toString())
 
-  val title = "Select Your Reason - Manage your Income Tax updates - GOV.UK"
+  val title = "Select Your Reason - Manage your Self Assessment - GOV.UK"
   val hiddenCaption = "This section is"
   val caption = "2023 to 2024 tax year"
   val heading = "Select your reason"

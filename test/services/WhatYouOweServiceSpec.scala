@@ -332,7 +332,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
     }
 
     "validate Class 2 National Insurance charges" in {
-      ChargeItem.isAKnownTypeOfCharge(chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Nics2)))
+      ChargeItem.isAKnownTypeOfCharge(chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Nics2)))
     }
 
     "validate Payment on Accounts" in {
@@ -353,9 +353,9 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
       testValidChargeType(
         List(
-          chargeItemModel(transactionType = BalancingCharge, subTransactionType = None),
-          chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Accepted)),
-          chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Cancelled))
+          chargeItemModel(transactionType = BalancingCharge, codedOutStatus = None),
+          chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Accepted)),
+          chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Cancelled))
         ), true)
     }
 

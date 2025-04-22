@@ -54,7 +54,7 @@ class NotMigratedUserControllerSpec extends MockAuthActions
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK
-              JsoupParse(result).toHtmlDocument.title() shouldBe s"How to claim a refund - Manage your ${if(isAgent) "client’s " else ""}Income Tax updates - GOV.UK"
+              JsoupParse(result).toHtmlDocument.title() shouldBe s"How to claim a refund - Manage your Self Assessment - GOV.UK"
             }
           }
           "render the error page" when {

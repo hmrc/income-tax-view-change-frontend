@@ -29,7 +29,7 @@ object TaxYearSummaryChargeItem {
       transactionId = chargeItem.transactionId,
       taxYear = chargeItem.taxYear,
       transactionType = chargeItem.transactionType,
-      subTransactionType = chargeItem.subTransactionType,
+      codedOutStatus = chargeItem.codedOutStatus,
       documentDate = chargeItem.documentDate,
       dueDate = chargeItem.dueDate,
       originalAmount = chargeItem.originalAmount,
@@ -51,7 +51,7 @@ object TaxYearSummaryChargeItem {
       transactionId = chargeItem.transactionId,
       taxYear = chargeItem.taxYear,
       transactionType = chargeItem.transactionType,
-      subTransactionType = chargeItem.subTransactionType,
+      codedOutStatus = chargeItem.codedOutStatus,
       documentDate = chargeItem.documentDate,
       dueDate = if (dueDate.isDefined) dueDate else chargeItem.dueDate,
       originalAmount = chargeItem.originalAmount,
@@ -74,7 +74,7 @@ case class TaxYearSummaryChargeItem(
                                      transactionId: String,
                                      taxYear: TaxYear,
                                      transactionType: TransactionType,
-                                     subTransactionType: Option[SubTransactionType],
+                                     codedOutStatus: Option[CodedOutStatusType],
                                      documentDate: LocalDate,
                                      dueDate: Option[LocalDate],
                                      originalAmount: BigDecimal,
@@ -102,7 +102,7 @@ case class TaxYearSummaryChargeItem(
   }
 
   def getDueDateForNonZeroBalancingCharge: Option[LocalDate] = {
-    if (transactionType == BalancingCharge && (subTransactionType.isEmpty) && originalAmount == 0.0) {
+    if (transactionType == BalancingCharge && (codedOutStatus.isEmpty) && originalAmount == 0.0) {
       None
     } else {
       dueDate
@@ -116,7 +116,7 @@ case class TaxYearSummaryChargeItem(
 
   def isCodingOut: Boolean = {
     val codingOutSubTypes = Seq(Nics2, Accepted, Cancelled)
-    subTransactionType.exists(subType => codingOutSubTypes.contains(subType))
+    codedOutStatus.exists(subType => codingOutSubTypes.contains(subType))
   }
 
   def interestIsPaid: Boolean = interestOutstandingAmount match {

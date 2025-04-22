@@ -49,7 +49,7 @@ class ChooseYearControllerSpec extends MockAuthActions
       s"the user is authenticated as a $mtdRole" should {
         "render the check your answers page" in {
           setupMockSuccess(mtdRole)
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
           mockFetchSavedChosenTaxYear(Some(taxYear2023))
 
@@ -66,7 +66,7 @@ class ChooseYearControllerSpec extends MockAuthActions
       s"the user is authenticated as a $mtdRole" should {
         "redirect to Check Your Answers" in {
           setupMockSuccess(mtdRole)
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
           mockSaveIntent(taxYear2023)
           val result = action(fakeRequest.withFormUrlEncodedBody(
@@ -80,7 +80,7 @@ class ChooseYearControllerSpec extends MockAuthActions
         "return a BadRequest" when {
           "the form is invalid" in {
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
             mockSaveIntent(taxYear2023)
             val result = action(fakeRequest.withFormUrlEncodedBody(
@@ -94,7 +94,7 @@ class ChooseYearControllerSpec extends MockAuthActions
         s"render the error page" when {
           "failed save intent" in {
             setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
             mockSaveIntent(taxYear2023, isSuccessful = false)
 

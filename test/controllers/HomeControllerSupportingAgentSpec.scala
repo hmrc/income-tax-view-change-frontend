@@ -123,7 +123,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           "the user has non-ceased businesses or property and income sources is enabled" in new Setup {
             setupMockAgentWithClientAuth(isSupportingAgent)
             enable(IncomeSourcesFs)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockGetDueDates(Right(futureDueDates))
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
@@ -145,7 +145,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           "the user has ceased businesses or property and income sources is enabled" in new Setup {
             setupMockAgentWithClientAuth(isSupportingAgent)
             enable(IncomeSourcesFs)
-            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncomeCeased)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncomeCeased)
             mockGetDueDates(Right(futureDueDates))
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
@@ -170,7 +170,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           enable(IncomeSourcesFs)
           enable(IncomeSourcesNewJourney)
           mockGetDueDates(Right(futureDueDates))
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
           val result: Future[Result] = controller.showAgent()(fakeRequest)
