@@ -23,8 +23,8 @@ import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesFs
 import models.core.{CheckMode, NormalMode}
+import models.admin.{AccountingMethodJourney, IncomeSourcesFs}
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
@@ -258,6 +258,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
                 "Yes is submitted with the form with a valid session" in {
                   setupMockSuccess(mtdRole)
                   enable(IncomeSourcesFs)
+                  enable(AccountingMethodJourney)
 
                   mockNoIncomeSources()
                   setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
