@@ -155,8 +155,26 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
                   controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(incomeSourceType).url
                 }
                 s"redirect to $checkDetailsUrl" when {
-                  "form response is Yes" in {
+                  "form response is Yes (accounting method FS disabled)" in {
                     enable(IncomeSourcesFs)
+                    disable(NavBarFs)
+                    stubAuthorised(mtdUserRole)
+                    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+
+                    await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
+
+                    val result = buildPOSTMTDPostClient(path, additionalCookies,
+                      body = Map(AddIncomeSourceStartDateCheckForm.response -> Seq(responseYes))).futureValue
+
+                    verifySessionUpdate(incomeSourceType, journeyType)
+                    result should have(
+                      httpStatus(SEE_OTHER),
+                      redirectURI(checkDetailsUrl)
+                    )
+                  }
+                  "form response is Yes (accounting method FS enabled)" in {
+                    enable(IncomeSourcesFs)
+                    enable(AccountingMethodJourney)
                     disable(NavBarFs)
                     stubAuthorised(mtdUserRole)
                     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
