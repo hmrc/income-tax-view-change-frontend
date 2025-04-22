@@ -424,11 +424,11 @@ class ManageYourBusinessesViewSpec extends TestSupport {
   }
 
   def checkTitle(pageDocument: Document): Unit = {
-    pageDocument.title() shouldBe "Your businesses - Manage your Income Tax updates - GOV.UK"
+    pageDocument.title() shouldBe "Your businesses - Manage your Self Assessment - GOV.UK"
   }
 
   def checkAgentTitle(pageDocument: Document): Unit = {
-    pageDocument.title() shouldBe "Your businesses - Manage your client’s Income Tax updates - GOV.UK"
+    pageDocument.title() shouldBe "Your businesses - Manage your Self Assessment - GOV.UK"
   }
 
   def checkSoleTraderComponents(pageDocument: Document): Unit = {

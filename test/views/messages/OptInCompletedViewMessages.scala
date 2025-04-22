@@ -18,7 +18,7 @@ package views.messages
 
 object OptInCompletedViewMessages {
 
-  val titleContent = "Opt in completed - Manage your Income Tax updates - GOV.UK"
+  val titleContent = "Opt in completed - Manage your Self Assessment - GOV.UK"
 
   val panelTitleContent = "Opt in completed"
 

@@ -45,7 +45,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
   val testDate: String = "2020-11-10"
   val prefix: String = "business-ceased.obligation"
   val continueButtonText: String = messagesAPI(s"$prefix.income-sources-button")
-  val htmlTitle = " - Manage your Income Tax updates - GOV.UK"
+  val htmlTitle = " - Manage your Self Assessment - GOV.UK"
   val day: LocalDate = LocalDate.of(2023, 1, 1)
 
   override def beforeEach(): Unit = {
