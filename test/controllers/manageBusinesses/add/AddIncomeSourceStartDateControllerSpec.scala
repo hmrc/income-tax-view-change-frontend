@@ -121,7 +121,7 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual
     incomeSourceTypes.foreach { incomeSourceType =>
-      List(NormalMode, CheckMode).foreach { mode =>
+      List(CheckMode, NormalMode).foreach { mode =>
         s"show($isAgent, $mode, $incomeSourceType)" when {
           val action = testController.show(isAgent, mode, incomeSourceType)
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)

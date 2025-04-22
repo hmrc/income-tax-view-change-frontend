@@ -76,8 +76,6 @@ class AddBusinessNameControllerSpec extends MockAuthActions
               enable(IncomeSourcesFs)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
               if (mode == CheckMode) {
-              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-              if (mode == CheckMode) {
                 setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment)))))
                 setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
                 setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("Test Business Trade")))
@@ -275,4 +273,4 @@ class AddBusinessNameControllerSpec extends MockAuthActions
     }
   }
 }
-}
+

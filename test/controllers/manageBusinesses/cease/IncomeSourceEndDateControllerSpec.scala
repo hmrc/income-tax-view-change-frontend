@@ -82,7 +82,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
 
   mtdAllRoles.foreach { mtdRole =>
     incomeSourceTypes.foreach { incomeSourceType =>
-      List(NormalMode, CheckMode).foreach { mode =>
+      List(CheckMode, NormalMode).foreach { mode =>
         val isAgent = mtdRole != MTDIndividual
         val optIncomeSourceIdHash = if (incomeSourceType == SelfEmployment) {
           Some(mkIncomeSourceId(testSelfEmploymentId).toHash.hash)

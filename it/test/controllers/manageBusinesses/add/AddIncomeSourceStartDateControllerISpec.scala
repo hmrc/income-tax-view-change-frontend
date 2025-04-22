@@ -106,7 +106,7 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
     }
   }
 
-  List(NormalMode, CheckMode).foreach { mode =>
+  List(CheckMode, NormalMode).foreach { mode =>
     List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
       mtdAllRoles.foreach { mtdUserRole =>
         val path = getPath(mtdUserRole, incomeSourceType, mode)
