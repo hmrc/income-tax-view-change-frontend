@@ -21,14 +21,13 @@
 @import views.html.layouts.unifiedLayout
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.insettext.InsetText
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-@import forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
 @import views.html.helpers.injected.ErrorSummary
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import services.DateServiceInterface
+@import forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
 
 
 @this(
@@ -100,7 +99,7 @@
 @formBlock = {
     @formWithCSRF(action = continueAction, Symbol("id") -> "reporting-quarterly-form") {
         @govukRadios(Radios(
-            value = Some(""),
+//            value = form.value.flatMap(_.yesNo),
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
                     content = Text(messages("incomeSources.add.reportingFrequency.form.h1")),
@@ -110,18 +109,18 @@
             items = Seq(
                 RadioItem(
                     id = Some("yes-response"),
-                    value = Some("Yes"),
+                    value = Some("true"),
                     content = Text(messages("radioForm.yes"))
                 ),
                 RadioItem(
                     id = Some("no-response"),
-                    value = Some("No"),
+                    value = Some("false"),
                     content = Text(messages("radioForm.no"))
                 )
             ),
             errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*)))),
             classes = "govuk-radios--inline"
-        ).withFormField(form(IncomeSourceReportingFrequencyForm.reportQuarterlyField)))
+        ).withFormField(form("yes-no-answer")))
 
         @govukButton(Button(
             id = Some("continue-button"),

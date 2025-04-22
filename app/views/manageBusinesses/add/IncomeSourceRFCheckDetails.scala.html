@@ -1,0 +1,173 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import enums.IncomeSourceJourney._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
+@import play.twirl.api.HtmlFormat
+@import models.incomeSourceDetails.viewmodels.ReportingFrequencyCheckDetailsViewModel
+@import services.DateServiceInterface
+
+@this(
+        mainTemplate: unifiedLayout,
+        hmrcPageHeading: HmrcPageHeading,
+        govukSummaryList: GovukSummaryList,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        h1: h1,
+        h2: h2,
+        p: p,
+        link: link,
+        hr: hr,
+        govukTable: GovukTable,
+        govukButton: GovukButton,
+        formWithCSRF: FormWithCSRF
+)
+
+@(
+        viewModel: ReportingFrequencyCheckDetailsViewModel,
+        postAction: Call,
+        isAgent: Boolean,
+        backUrl: String,
+        origin: Option[String] = None
+)(implicit messages: Messages, user: auth.MtdItUser[_], dateService: DateServiceInterface)
+
+@getMessage(key: String, args: String*) = @{
+    viewModel.incomeSourceType match {
+        case SelfEmployment => messages(s"income-sources.check-details-reporting-frequency.$key", args: _*)
+        case UkProperty => messages(s"income-sources.check-details-reporting-frequency-uk.$key", args: _*)
+        case ForeignProperty => messages(s"income-sources.check-details-reporting-frequency-fp.$key", args: _*)
+    }
+}
+
+@changeReportingFrequencyURL = @{
+    controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.show(isAgent = isAgent, isChange = true, incomeSourceType = viewModel.incomeSourceType).url
+
+}
+
+@changeChooseTaxYearURL = @{
+    controllers.manageBusinesses.add.routes.ChooseTaxYearController.show(isAgent = isAgent, isChange = true, incomeSourceType = viewModel.incomeSourceType).url
+}
+
+@extractChangeRFRow = @{
+    viewModel match {
+        case x: ReportingFrequencyCheckDetailsViewModel if x.changeReportingFrequency => messages("income-sources.check-details-reporting-frequency.yes")
+        case x: ReportingFrequencyCheckDetailsViewModel => messages("income-sources.check-details-reporting-frequency.no")
+    }
+}
+
+@currentTaxYearString = @{
+    s"${messages("income-sources.check-details-reporting-frequency.taxYear",
+        s"${dateService.getCurrentTaxYearStart.getYear}",
+        s"${dateService.getCurrentTaxYearEnd}")}"
+}
+
+@nextTaxYearString = @{
+    s"${messages("income-sources.check-details-reporting-frequency.taxYear",
+        s"${dateService.getCurrentTaxYearStart.getYear + 1}",
+        s"${dateService.getCurrentTaxYearEnd + 1}")}"
+}
+
+@extractChooseTaxYearRow = @{
+    viewModel match {
+        case x: ReportingFrequencyCheckDetailsViewModel =>
+            (x.changeReportingFrequency, x.isReportingQuarterlyCurrentYear, x.isReportingQuarterlyForNextYear) match {
+                case (true, true, true) => HtmlContent(s"<div>$currentTaxYearString</div><div>$nextTaxYearString</div>")
+                case (true, true, false) => HtmlContent(currentTaxYearString)
+                case (true, false, true) => HtmlContent(nextTaxYearString)
+                case _ => HtmlContent("")
+            }
+    }
+}
+
+@changeReportingFrequencyRow = @{
+    Seq(
+        SummaryListRow(
+            key = Key(
+                content = Text(messages("income-sources.check-details-reporting-frequency.change-rf-key")),
+            ),
+            value = Value(
+                content = Text(extractChangeRFRow)
+            ),
+            actions = Some(Actions(
+                items = Seq(
+                    ActionItem(
+                        href = changeReportingFrequencyURL,
+                        content = Text(getMessage("change")),
+                        attributes = Map("id" -> "change-reporting-frequency-link")
+                    )
+                )
+            ))
+        )
+    )
+}
+
+@changeChooseTaxYearRow = @{
+    if(viewModel.changeReportingFrequency) {
+        Seq(
+            SummaryListRow(
+                key = Key(
+                    content = Text(messages("income-sources.check-details-reporting-frequency.change-choose-tax-year-key")),
+                ),
+                value = Value(
+                    content = extractChooseTaxYearRow
+                ),
+                actions = Some(Actions(
+                    items = Seq(
+                        ActionItem(
+                            href = changeChooseTaxYearURL,
+                            content = Text(messages("income-sources.check-details-reporting-frequency.change")),
+                            attributes = Map("id" -> "change-choose-tax-year-link")
+                        )
+                    )
+                ))
+            )
+        )
+    } else Seq()
+}
+
+@mainTemplate(
+    pageTitle = getMessage("title"),
+    backUrl = Some(backUrl),
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial) {
+
+    @hmrcPageHeading(PageHeading(
+        text = getMessage("title"),
+        headingClasses = Some("govuk-heading-l"),
+        section = Some(getMessage("heading")),
+        captionClasses = Some("govuk-caption-l")
+    ))
+
+    @formWithCSRF(action = postAction) {
+
+        @govukSummaryList(SummaryList(
+            rows = {
+                changeReportingFrequencyRow ++ changeChooseTaxYearRow
+            },
+            attributes = Map("id" -> "reporting-frequency-check-details-table")
+        ))
+
+        @govukButton(Button(
+            content = Text(messages("base.confirm-and-continue")),
+            attributes = Map("id" -> "confirm-button")
+        ))
+    }
+
+}

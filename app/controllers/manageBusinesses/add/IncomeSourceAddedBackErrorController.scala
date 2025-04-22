@@ -90,7 +90,7 @@ class IncomeSourceAddedBackErrorController @Inject()(val authActions: AuthAction
       _.addIncomeSourceData.map(_.incomeSourceId) match {
         case Some(_) =>
           Future.successful {
-            Redirect(routes.IncomeSourceReportingFrequencyController.show(isAgent, incomeSourceType))
+            Redirect(routes.IncomeSourceReportingFrequencyController.show(isAgent, false, incomeSourceType))
           }
         case None => Logger("application").error(
           "Error: Unable to find id in session")

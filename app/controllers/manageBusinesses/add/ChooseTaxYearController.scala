@@ -18,17 +18,18 @@ package controllers.manageBusinesses.add
 
 import auth.MtdItUser
 import auth.authV2.AuthActions
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import enums.IncomeSourceJourney.IncomeSourceType
-import enums.JourneyType.{IncomeSourceJourneyType, ManageReportingFrequency}
+import config.FrontendAppConfig
+import enums.IncomeSourceJourney.{IncomeSourceType, ReportingFrequencyPages}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.manageBusinesses.add.ChooseTaxYearForm
-import models.incomeSourceDetails.IncomeSourceReportingFrequencySourceData
+import models.incomeSourceDetails.{IncomeSourceReportingFrequencySourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{DateService, SessionService}
+import services.manageBusinesses.IncomeSourceRFService
+import services.{CalculationListService, DateService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.IncomeSourcesUtils
+import utils.JourneyCheckerManageBusinesses
 import views.html.manageBusinesses.add.ChooseTaxYear
 
 import javax.inject.{Inject, Singleton}
@@ -37,81 +38,92 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ChooseTaxYearController @Inject()(authActions: AuthActions,
                                         chooseTaxYear: ChooseTaxYear,
-                                        dateService: DateService,
-                                        sessionService: SessionService,
-                                        val itvcErrorHandler: ItvcErrorHandler,
-                                        val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                        val calculationListService: CalculationListService,
+                                        val incomeSourceRFService: IncomeSourceRFService,
+                                        val sessionService: SessionService)
                                        (implicit val mcc: MessagesControllerComponents,
                                         val ec: ExecutionContext,
-                                        val appConfig: FrontendAppConfig)
-  extends FrontendController(mcc) with I18nSupport with IncomeSourcesUtils {
-
-  private def errorHandler(isAgent: Boolean) = if (isAgent) {
-    itvcErrorHandlerAgent
-  } else {
-    itvcErrorHandler
-  }
+                                        val appConfig: FrontendAppConfig,
+                                        val dateService: DateService)
+  extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses {
 
   def show(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
       implicit user => {
-        handleRequest(isAgent, incomeSourceType)
+        handleRequest(isAgent, isChange, incomeSourceType)
       }
   }
 
-  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
-    withNewIncomeSourcesFS {
+  private def handleRequest(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
+    incomeSourceRFService.redirectChecksForIncomeSourceRF(IncomeSourceJourneyType(Add, incomeSourceType),
+      ReportingFrequencyPages, incomeSourceType, dateService.getCurrentTaxYearEnd, isAgent, isChange) { sessionData =>
+      val filledOrEmptyForm = {
+        if(isChange) {
+          val data: ChooseTaxYearForm = {
+            (displayOptionToChangeForCurrentTy(sessionData), displayOptionToChangeForNextTy(sessionData)) match {
+              case (true, true) => ChooseTaxYearForm(isCheckedForCurrentTy(sessionData), isCheckedForNextTy(sessionData))
+              case (true, false) => ChooseTaxYearForm(isCheckedForCurrentTy(sessionData), None)
+              case (false, true) => ChooseTaxYearForm(None, isCheckedForNextTy(sessionData))
+              case _ => ChooseTaxYearForm(None, None)
+            }
+          }
+          sessionData.incomeSourceReportingFrequencyData.fold(ChooseTaxYearForm())(_ => ChooseTaxYearForm().fillAndValidate(data))
+        } else ChooseTaxYearForm()
+      }
       Future.successful(Ok(chooseTaxYear(
-        ChooseTaxYearForm(),
+        filledOrEmptyForm,
         isAgent,
-        routes.ChooseTaxYearController.submit(isAgent, incomeSourceType),
-        dateService.getCurrentTaxYear,
-        dateService.getCurrentTaxYear.nextYear,
-        incomeSourceType))
-      )
+        routes.ChooseTaxYearController.submit(isAgent, isChange, incomeSourceType),
+        if (displayOptionToChangeForCurrentTy(sessionData)) Some(dateService.getCurrentTaxYear) else None,
+        if (displayOptionToChangeForNextTy(sessionData)) Some(dateService.getNextTaxYear) else None,
+        incomeSourceType)))
     }
-  }.recover {
-    case ex =>
-      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
-      errorHandler(isAgent).showInternalServerError()
   }
 
   def submit(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
       implicit user => {
-        ChooseTaxYearForm().bindFromRequest.fold(
-          formWithError => {
-            Future.successful(BadRequest(chooseTaxYear(
-              formWithError,
-              isAgent,
-              routes.ChooseTaxYearController.submit(isAgent, incomeSourceType),
-              dateService.getCurrentTaxYear,
-              dateService.getCurrentTaxYear.nextYear))
-            )
-          },
-          form => {
-            val journeyType = IncomeSourceJourneyType(ManageReportingFrequency, incomeSourceType)
-
-            sessionService.getMongo(journeyType).flatMap {
-              case Right(Some(sessionData)) =>
-                val updatedSessionData = IncomeSourceReportingFrequencySourceData(form.currentTaxYear, form.nextTaxYear)
-
-                sessionService.setMongoData(sessionData.copy(incomeSourceReportingFrequencyData = Some(updatedSessionData)))
-                Future.successful(Ok(chooseTaxYear(
-                  ChooseTaxYearForm(),
+        val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
+        sessionService.getMongo(journeyType).flatMap {
+          case Right(Some(sessionData)) =>
+            ChooseTaxYearForm().bindFromRequest.fold(
+              formWithError => {
+                Future.successful(BadRequest(chooseTaxYear(
+                  formWithError,
                   isAgent,
-                  routes.ChooseTaxYearController.submit(isAgent, incomeSourceType),
-                  dateService.getCurrentTaxYear,
-                  dateService.getCurrentTaxYear.nextYear)))
-
-              case _ => Future.failed(new Exception(s"failed to retrieve session data for journey ${journeyType.toString}"))
-            }
-          }
-        )
-      }.recover {
-        case ex =>
-          Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
-          errorHandler(isAgent).showInternalServerError()
+                  routes.ChooseTaxYearController.submit(isAgent, isChange, incomeSourceType),
+                  if(displayOptionToChangeForCurrentTy(sessionData)) Some(dateService.getCurrentTaxYear) else None,
+                  if(displayOptionToChangeForNextTy(sessionData)) Some(dateService.getNextTaxYear) else None,
+                  incomeSourceType))
+                )
+              },
+              form => {
+                val updatedSessionData = IncomeSourceReportingFrequencySourceData(
+                  displayOptionToChangeForCurrentTy(sessionData), displayOptionToChangeForNextTy(sessionData),
+                  form.currentTaxYear.contains(true), form.nextTaxYear.contains(true))
+                sessionService.setMongoData(sessionData.copy(incomeSourceReportingFrequencyData = Some(updatedSessionData)))
+                Future.successful(Redirect(controllers.manageBusinesses.add.routes.IncomeSourceRFCheckDetailsController.show(isAgent, incomeSourceType)))
+              }
+            )
+          case _ => Future.failed(new Exception(s"failed to retrieve session data for journey ${journeyType.toString}"))
+        }.recover {
+          case ex =>
+            Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+            incomeSourceRFService.errorHandler(isAgent).showInternalServerError()
+        }
       }
     }
+
+  private def isCheckedForCurrentTy(sessionData: UIJourneySessionData): Option[Boolean] = {
+    Some(displayOptionToChangeForCurrentTy(sessionData) && sessionData.incomeSourceReportingFrequencyData.exists(_.isReportingQuarterlyCurrentYear))
+  }
+
+  private def isCheckedForNextTy(sessionData: UIJourneySessionData): Option[Boolean] =
+    Some(displayOptionToChangeForNextTy(sessionData) && sessionData.incomeSourceReportingFrequencyData.exists(_.isReportingQuarterlyForNextYear))
+
+  private def displayOptionToChangeForCurrentTy(sessionData: UIJourneySessionData): Boolean =
+    sessionData.incomeSourceReportingFrequencyData.exists(_.displayOptionToChangeForCurrentTaxYear)
+
+  private def displayOptionToChangeForNextTy(sessionData: UIJourneySessionData): Boolean =
+    sessionData.incomeSourceReportingFrequencyData.exists(_.displayOptionToChangeForNextTaxYear)
 }

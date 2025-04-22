@@ -68,7 +68,6 @@ class SessionService @Inject()(
       case Some(data: UIJourneySessionData) =>
         incomeSources.operation match {
           case Add => getKeyFromObject[String](data.addIncomeSourceData, key)
-          case ManageReportingFrequency => getKeyFromObject[String](data.addIncomeSourceData, key)
           case Manage => getKeyFromObject[String](data.manageIncomeSourceData, key)
           case Cease => getKeyFromObject[String](data.ceaseIncomeSourceData, key)
         }
@@ -83,7 +82,6 @@ class SessionService @Inject()(
       case Some(data: UIJourneySessionData) =>
         incomeSources.operation match {
           case Add => getKeyFromObject[A](data.addIncomeSourceData, key)
-          case ManageReportingFrequency => getKeyFromObject[A](data.addIncomeSourceData, key)
           case Manage => getKeyFromObject[A](data.manageIncomeSourceData, key)
           case Cease => getKeyFromObject[A](data.ceaseIncomeSourceData, key)
 
@@ -105,7 +103,6 @@ class SessionService @Inject()(
     val keyValueToUpdate = keyAndValue.map { case (key, value) =>
       incomeSources.operation match {
         case Add => (AddIncomeSourceData.getJSONKeyPath(key), value)
-        case ManageReportingFrequency => (AddIncomeSourceData.getJSONKeyPath(key), value)
         case Manage => (ManageIncomeSourceData.getJSONKeyPath(key), value)
         case Cease => (CeaseIncomeSourceData.getJSONKeyPath(key), value)
       }
@@ -123,7 +120,6 @@ class SessionService @Inject()(
     val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, incomeSources.toString)
     val jsonAccessorPath = incomeSources.operation match {
       case Add => AddIncomeSourceData.getJSONKeyPath(key)
-      case ManageReportingFrequency => AddIncomeSourceData.getJSONKeyPath(key)
       case Manage => ManageIncomeSourceData.getJSONKeyPath(key)
       case Cease => CeaseIncomeSourceData.getJSONKeyPath(key)
     }
