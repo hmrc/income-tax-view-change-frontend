@@ -171,11 +171,11 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
     withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
 
-      val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) => {
-        if (isEnabled(IncomeSourcesNewJourney)) {
-          controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.show(isAgent, incomeSourceType).url
-        } else {
-          if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
+      val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>{
+        if(isEnabled(IncomeSourcesNewJourney)){
+          controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.show(isAgent, false, incomeSourceType).url
+        }else{
+          if(isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
         }
       }
 

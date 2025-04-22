@@ -21,6 +21,7 @@
 @import forms.manageBusinesses.add.ChooseTaxYearForm
 @import models.incomeSourceDetails.TaxYear
 @import enums.IncomeSourceJourney.IncomeSourceType
+@import services.DateServiceInterface
 
 @this(
         mainTemplate: unifiedLayout,
@@ -31,7 +32,7 @@
         h1WithCaption: h1WithCaption
 )
 
-@(form: Form[ChooseTaxYearForm], isAgent: Boolean, postAction: Call, currentTaxYear: TaxYear, nextTaxYear: TaxYear, incomeSourceType: IncomeSourceType)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(form: Form[ChooseTaxYearForm], isAgent: Boolean, postAction: Call, currentTaxYear: Option[TaxYear], nextTaxYear: Option[TaxYear], incomeSourceType: IncomeSourceType)(implicit user: auth.MtdItUser[_], messages: Messages, dateService: DateServiceInterface)
 
 @header = @{
     h1WithCaption(
@@ -41,6 +42,21 @@
         headingId = Some("choose-tax-year-heading"),
         captionId = Some("choose-tax-year-subheading")
     )
+}
+
+@taxYearCheckBox(taxYear: Option[TaxYear], idOrName: Option[String]) =  @{
+    taxYear.map(ty =>
+    Seq(
+        CheckboxItem(
+            id = idOrName,
+            name = idOrName,
+            content = Text(
+                value = messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox", ty.startYear.toString, ty.endYear.toString)
+            ),
+            value = "true",
+            checked = if(idOrName.contains("current-year-checkbox")) form.value.exists(_.currentTaxYear) else if(idOrName.contains("next-year-checkbox")) form.value.exists(_.nextTaxYear) else false
+        ))
+    ).getOrElse(Seq())
 }
 
 @mainTemplate(
@@ -74,30 +90,11 @@
                 content = HtmlContent(header),
                 classes = "govuk-fieldset__legend--l",
                 isPageHeading = true
-            ))
+            )),
         )),
         name = "choose-tax-year",
         hint = Some(Hint(content = Text(messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text")))),
-        items = Seq(
-            CheckboxItem(
-                id = Some("current-year-checkbox"),
-                name = Some("current-year-checkbox"),
-                content = Text(
-                    value = messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox", currentTaxYear.startYear.toString, currentTaxYear.endYear.toString)
-                ),
-                value = "true",
-                checked = false
-            ),
-            CheckboxItem(
-                id = Some("next-year-checkbox"),
-                name = Some("next-year-checkbox"),
-                content = Text(
-                    value = messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox", nextTaxYear.startYear.toString, nextTaxYear.endYear.toString)
-                ),
-                value = "true",
-                checked = false
-            )
-        ),
+        items = taxYearCheckBox(currentTaxYear, Some("current-year-checkbox")) ++ taxYearCheckBox(nextTaxYear, Some("next-year-checkbox")),
         errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
     ).withFormField(form(ChooseTaxYearForm.chooseTaxYearsCheckbox))
 )

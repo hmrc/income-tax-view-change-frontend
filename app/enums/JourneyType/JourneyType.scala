@@ -36,10 +36,6 @@ case object Manage extends Operation {
   override val operationType = "MANAGE"
 }
 
-case object ManageReportingFrequency extends Operation {
-  override val operationType = "MANAGE-RF"
-}
-
 case object Cease extends Operation {
   override val operationType = "CEASE"
 }

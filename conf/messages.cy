@@ -2750,3 +2750,14 @@ yourSelfAssessmentChargeSummary.chargeHistory.unknown.text.heading              
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.text.heading                = First late payment penalty
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p = You have received this penalty because you are late paying your Income Tax.
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link = View how your penalty was calculated.
+
+income-sources.check-details-reporting-frequency.heading                        = Unig fasnachwr
+income-sources.check-details-reporting-frequency-uk.heading                     = Eiddo yn y DU
+income-sources.check-details-reporting-frequency-fp.heading                     = Eiddo tramor
+income-sources.check-details-reporting-frequency.title                          = Gwirio’ch manylion
+income-sources.check-details-reporting-frequency.change                         = Newid
+income-sources.check-details-reporting-frequency.yes                            = Iawn
+income-sources.check-details-reporting-frequency.no                             = Na
+income-sources.check-details-reporting-frequency.taxYear                        = {0} i {1}
+income-sources.check-details-reporting-frequency.change-rf-key                  = A ydych am newid i gyflwyno’n chwarterol?
+income-sources.check-details-reporting-frequency.change-choose-tax-year-key     = Pa flwyddyn dreth ydych chi am gyflwyno’n chwarterol ar ei chyfer?

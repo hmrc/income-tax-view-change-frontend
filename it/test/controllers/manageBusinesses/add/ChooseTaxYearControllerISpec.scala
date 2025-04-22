@@ -18,7 +18,7 @@ package controllers.manageBusinesses.add
 
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{IncomeSourceJourneyType, ManageReportingFrequency}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.IncomeSourcesNewJourney
@@ -121,9 +121,9 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-              await(sessionService.createSession(IncomeSourceJourneyType(ManageReportingFrequency, incomeSourceType)))
+              await(sessionService.createSession(IncomeSourceJourneyType(Add, incomeSourceType)))
 
-              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-RF-SE",
+              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
                 addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("incomeSourceId"), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
 
               val result = buildPOSTMTDPostClient(path, additionalCookies, Map("current-year-checkbox" -> Seq("true"), "next-year-checkbox" -> Seq("true"))).futureValue

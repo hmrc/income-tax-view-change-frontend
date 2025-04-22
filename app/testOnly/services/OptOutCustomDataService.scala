@@ -19,7 +19,7 @@ package testOnly.services
 import config.FrontendAppConfig
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.ITSAStatus
-import models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail}
+import models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}
 import play.api.Logger
 import play.api.http.Status.OK
 import play.api.libs.json.{JsValue, Json, Writes}
@@ -62,7 +62,7 @@ class OptOutCustomDataService @Inject()(implicit val appConfig: FrontendAppConfi
       StatusDetail(
         submittedOn = s"${taxYear.endYear}-01-10T06:14:00Z",
         status = status,
-        statusReason = "Sign up - no return available",
+        statusReason = StatusReason.SignupNoReturnAvailable,
         businessIncomePriorTo2Years = None)
 
     def taxYearFormatForITSA(taxYear: TaxYear): String = s"${taxYear.startYear}-${taxYear.endYear.toString.takeRight(2)}"

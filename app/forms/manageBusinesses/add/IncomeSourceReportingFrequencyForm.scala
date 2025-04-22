@@ -16,26 +16,25 @@
 
 package forms.manageBusinesses.add
 
+import forms.mappings.Constraints
+import forms.models.YesNo
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional, text}
-import play.api.i18n.Messages
 
-case class IncomeSourceReportingFrequencyForm(reportingFrequencyQuarterly: Option[String], csrfToken: String)
+case class IncomeSourceReportingFrequencyForm(yesNo: Option[String])
 
-object IncomeSourceReportingFrequencyForm {
-  val reportQuarterlyField: String = "report-quarterly"
+object IncomeSourceReportingFrequencyForm extends Constraints {
   val noResponseErrorMessageKey: String = "incomeSources.add.reportingFrequency.form.no-select.error"
-  val csrfToken: String = "csrfToken"
 
-  def apply()(implicit messages: Messages): Form[IncomeSourceReportingFrequencyForm] = {
-    val noSelectionErrorMessage: String = messages(noResponseErrorMessageKey)
-    val validRadioOptions = Set("Yes", "No")
+  val responseYes = "true"
+  val responseNo = "false"
+  val yesNoAnswer = "yes-no-answer"
 
+  def apply(): Form[IncomeSourceReportingFrequencyForm] = {
     Form[IncomeSourceReportingFrequencyForm](
       mapping(
-        reportQuarterlyField -> optional(text)
-          .verifying(noSelectionErrorMessage, response => response.isDefined && validRadioOptions.contains(response.get)),
-        csrfToken -> text
+        yesNoAnswer -> optional(text)
+          .verifying(noResponseErrorMessageKey, value => value.nonEmpty && (value.contains(responseYes) || value.contains(responseNo)))
       )(IncomeSourceReportingFrequencyForm.apply)(IncomeSourceReportingFrequencyForm.unapply)
     )
   }

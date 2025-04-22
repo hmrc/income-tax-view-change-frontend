@@ -24,6 +24,7 @@ import uk.gov.hmrc.crypto.{Decrypter, Encrypter}
 
 import java.time.{LocalDate, ZoneOffset}
 
+//TODO: Few of these fields needs to be cleaned up when we remove old Income source journey.
 case class AddIncomeSourceData(
                                 businessName:                         Option[String]    = None,
                                 businessTrade:                        Option[String]    = None,
@@ -61,12 +62,13 @@ case class AddIncomeSourceData(
       incomeSourceRFJourneyComplete       .map(SensitiveBoolean)
     )
 
-  def sanitiseDates: AddIncomeSourceData =
+  def sanitiseDates: AddIncomeSourceData = {
     this.copy(
       accountingPeriodStartDate = None,
       accountingPeriodEndDate = None,
       dateStarted = None
     )
+  }
 }
 
 

@@ -16,20 +16,20 @@
 
 package controllers.manageBusinesses.add
 
-import audit.AuditingService
 import auth.MtdItUser
 import auth.authV2.AuthActions
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import config.FrontendAppConfig
 import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import forms.incomeSources.add.IncomeSourceReportingMethodForm
 import forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
 import models.core.NormalMode
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services._
+import services.manageBusinesses.IncomeSourceRFService
 import services.optIn.OptInService
 import services.optout.OptOutService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -44,13 +44,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthActions,
                                                          val updateIncomeSourceService: UpdateIncomeSourceService,
-                                                         val itsaStatusService: ITSAStatusService,
-                                                         val calculationListService: CalculationListService,
-                                                         val auditingService: AuditingService,
                                                          val view: IncomeSourceReportingFrequency,
                                                          val sessionService: SessionService,
-                                                         val itvcErrorHandler: ItvcErrorHandler,
-                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                                         val incomeSourceReportingFrequencyService: IncomeSourceRFService,
                                                          val errorTemplate: ErrorTemplate,
                                                          val optOutService: OptOutService,
                                                          val optInService: OptInService,
@@ -61,71 +57,47 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
                                                          val ec: ExecutionContext
                                                         ) extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses {
 
-  private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-
-  lazy val errorRedirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
-    if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(incomeSourceType).url
-    else routes.IncomeSourceReportingMethodNotSavedController.show(incomeSourceType).url
-
-  lazy val incomeSourceAddedPageUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
-    if (isAgent) routes.IncomeSourceAddedController.showAgent(incomeSourceType).url
-    else routes.IncomeSourceAddedController.show(incomeSourceType).url
-
-  lazy val submitUrl: (Boolean, IncomeSourceType) => Call = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
-    controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.submit(isAgent, incomeSourceType)
+  lazy val submitUrl: (Boolean, Boolean, IncomeSourceType) => Call = (isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType) =>
+    controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.submit(isAgent, isChange, incomeSourceType)
   
   def show(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
       implicit user =>
-        handleGetRequest(isAgent = isAgent, incomeSourceType)
+        handleGetRequest(isAgent, isChange, incomeSourceType)
     }
 
-  def handleGetRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
-    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
-      sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
-        case Some(id) => handleIncomeSourceIdRetrievalSuccess(incomeSourceType, id, sessionData, isAgent = isAgent)
-        case None =>
-          val agentPrefix = if (isAgent) "[Agent]" else ""
-          Logger("application").error(agentPrefix +
-            s"Unable to retrieve incomeSourceId from session data for $incomeSourceType on IncomeSourceReportingFrequency page")
-          Future.successful {
-            errorHandler(isAgent).showInternalServerError()
-          }
-      }
-    }.recover {
-      case ex: Exception =>
-        Logger("application").error(
-          "" +
-            s"Unable to display IncomeSourceReportingMethod page for $incomeSourceType: ${ex.getMessage} ${ex.getCause}")
-        errorHandler(isAgent).showInternalServerError()
+  def handleGetRequest(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
+    incomeSourceReportingFrequencyService.redirectChecksForIncomeSourceRF(IncomeSourceJourneyType(Add, incomeSourceType),
+      AfterSubmissionPage, incomeSourceType, dateService.getCurrentTaxYearEnd, isAgent, isChange) { sessionData =>
+      handleIncomeSourceIdRetrievalSuccess(incomeSourceType, sessionData, isAgent, isChange)
     }
   }
 
 
-  private def handleIncomeSourceIdRetrievalSuccess(incomeSourceType: IncomeSourceType, id: String, sessionData: UIJourneySessionData, isAgent: Boolean)
+  private def handleIncomeSourceIdRetrievalSuccess(incomeSourceType: IncomeSourceType,
+                                                   sessionData: UIJourneySessionData,
+                                                   isAgent: Boolean,
+                                                   isChange: Boolean
+                                                  )
                                                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
     updateIncomeSourceAsAdded(sessionData).flatMap {
       case false => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
         s"Error retrieving data from session, IncomeSourceType: $incomeSourceType")
         Future.successful {
-          errorHandler(isAgent).showInternalServerError()
+          incomeSourceReportingFrequencyService.errorHandler(isAgent).showInternalServerError()
         }
       case true =>
-        itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
-          case true =>
-            Future.successful(Ok(view(
-              continueAction = submitUrl(isAgent, incomeSourceType),
-              isAgent = isAgent,
-              form = IncomeSourceReportingFrequencyForm(),
-              incomeSourceType = incomeSourceType,
-              taxDateService = dateService
-            )))
-          case false =>
-            Future.successful {
-              Redirect(incomeSourceAddedPageUrl(isAgent, incomeSourceType))
-            }
-        }
+        val changeReportingFrequencyOption: Option[Boolean] = sessionData.addIncomeSourceData.flatMap(_.changeReportingFrequency)
+        val filledOrEmptyForm: Form[IncomeSourceReportingFrequencyForm] = changeReportingFrequencyOption.fold(IncomeSourceReportingFrequencyForm())(yesOrNo =>
+          IncomeSourceReportingFrequencyForm().fill(IncomeSourceReportingFrequencyForm(Some(yesOrNo.toString))))
+        Future.successful(Ok(view(
+          continueAction = submitUrl(isAgent, isChange, incomeSourceType),
+          isAgent = isAgent,
+          form = filledOrEmptyForm,
+          incomeSourceType = incomeSourceType,
+          taxDateService = dateService
+        )))
     }
   }
 
@@ -137,33 +109,31 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
     sessionService.setMongoData(uiJourneySessionData)
   }
 
-
   def submit(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
       implicit user =>
-        handleSubmit(isAgent, incomeSourceType)
+        handleSubmit(isAgent, isChange, incomeSourceType)
     }
 
-  private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
+  private def handleSubmit(isAgent: Boolean, isChange: Boolean,
+                           incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
     withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
       sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
-        case Some(id) =>
-          IncomeSourceReportingMethodForm.form.bindFromRequest().fold(
-            invalid => handleInvalidForm(isAgent, incomeSourceType),
-            valid => handleValidForm(isAgent)
-          )
+        case Some(_) => IncomeSourceReportingFrequencyForm().bindFromRequest().fold(
+          _ => handleInvalidForm(isAgent, isChange, incomeSourceType),
+          valid => handleValidForm(isAgent, isChange, valid, incomeSourceType, sessionData))
         case None =>
           val agentPrefix = if (isAgent) "[Agent]" else ""
           Logger("application").error(agentPrefix +
             s"Could not find an incomeSourceId in session data for $incomeSourceType")
           Future.successful {
-            errorHandler(isAgent).showInternalServerError()
+            incomeSourceReportingFrequencyService.errorHandler(isAgent).showInternalServerError()
           }
       }
     }
   }
 
-  private def handleInvalidForm(isAgent: Boolean, incomeSourceType: IncomeSourceType)
+  private def handleInvalidForm(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)
                                (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
 
 
@@ -171,7 +141,7 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
       formWithError => {
         Future(
           BadRequest(view(
-            continueAction = submitUrl(isAgent, incomeSourceType),
+            continueAction = submitUrl(isAgent, isChange, incomeSourceType),
             isAgent = isAgent,
             form = formWithError,
             incomeSourceType = incomeSourceType,
@@ -182,7 +152,7 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
         _ =>
           Future.successful(
             Ok(view(
-              continueAction = submitUrl(isAgent, incomeSourceType),
+              continueAction = submitUrl(isAgent, isChange, incomeSourceType),
               isAgent = isAgent,
               form = IncomeSourceReportingFrequencyForm(),
               incomeSourceType = incomeSourceType,
@@ -193,12 +163,24 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
     )
   }
 
-  private def handleValidForm(isAgent: Boolean): Future[Result] = {
-    if (isAgent) {
-      Future.successful(Redirect(controllers.routes.HomeController.showAgent()))
+  private def handleValidForm(isAgent: Boolean,
+                              isChange: Boolean,
+                              form: IncomeSourceReportingFrequencyForm,
+                              incomeSourceType: IncomeSourceType,
+                              sessionData: UIJourneySessionData
+                             )
+                             (implicit user: MtdItUser[_]): Future[Result] = {
+    val yesOrNo = form.yesNo.exists(_.toBoolean)
+    if(yesOrNo) {
+      val updatedSessionData = sessionData.copy(
+        addIncomeSourceData = sessionData.addIncomeSourceData.map(_.copy(changeReportingFrequency = Some(yesOrNo))))
+      sessionService.setMongoData(updatedSessionData)
+      Future.successful(Redirect(controllers.manageBusinesses.add.routes.ChooseTaxYearController.show(isAgent, false, incomeSourceType)))
     } else {
-      Future.successful(Redirect(controllers.routes.HomeController.show()))
+      sessionService.setMongoData(sessionData.copy(
+        addIncomeSourceData = sessionData.addIncomeSourceData.map(_.copy(changeReportingFrequency = Some(yesOrNo))),
+        incomeSourceReportingFrequencyData = None))
+      Future.successful(Redirect(controllers.manageBusinesses.add.routes.IncomeSourceRFCheckDetailsController.show(isAgent, incomeSourceType)))
     }
   }
-
 }
