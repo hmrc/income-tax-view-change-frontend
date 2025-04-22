@@ -120,15 +120,15 @@ class IncomeSourceRFService@Inject()(val sessionService: SessionService,
         case (true, false, _, _) if isItsaStatusMandatedOrVoluntary(currentTyStatusDetailOpt) =>
           updateChooseTaxYearsModelInSessionData(sessionData, IncomeSourceReportingFrequencySourceData(false, true, false, false)).flatMap(
           codeBlock(_))
-        case (false, _, _, _) if isItsaStatusMandatedOrVoluntary(currentTyStatusDetailOpt) =>
-          updateChooseTaxYearsModelInSessionData(sessionData, IncomeSourceReportingFrequencySourceData(true, true, false, false)).flatMap(
-          codeBlock(_))
         case (_, false, Some(ITSAStatus.Annual), _) if isItsaStatusMandatedOrVoluntary(nextTyStatusDetailOpt) =>
           updateChooseTaxYearsModelInSessionData(sessionData,IncomeSourceReportingFrequencySourceData(false, true, false, false)).flatMap(
           codeBlock(_))
         case (false, _, _, Some(ITSAStatus.Annual)) if isItsaStatusMandatedOrVoluntary(currentTyStatusDetailOpt) =>
           updateChooseTaxYearsModelInSessionData(sessionData, IncomeSourceReportingFrequencySourceData(true, false, false, false)).flatMap(
           codeBlock(_))
+        case (false, _, _, _) if isItsaStatusMandatedOrVoluntary(currentTyStatusDetailOpt) =>
+          updateChooseTaxYearsModelInSessionData(sessionData, IncomeSourceReportingFrequencySourceData(true, true, false, false)).flatMap(
+            codeBlock(_))
         case _ => redirectToIncomeSourceAddedPage(isAgent, incomeSourceType)
       }
     } else redirectToIncomeSourceAddedPage(isAgent, incomeSourceType)
