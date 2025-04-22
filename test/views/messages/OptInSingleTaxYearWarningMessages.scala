@@ -17,8 +17,8 @@
 package views.messages
 
 object OptInSingleTaxYearWarningMessages {
-  val titleContentAgent = "Voluntarily opting in to reporting quarterly for a single tax year - Manage your client’s Income Tax updates - GOV.UK"
-  val titleContent = "Voluntarily opting in to reporting quarterly for a single tax year - Manage your Income Tax updates - GOV.UK"
+  val titleContentAgent = "Voluntarily opting in to reporting quarterly for a single tax year - Manage your Self Assessment - GOV.UK"
+  val titleContent = "Voluntarily opting in to reporting quarterly for a single tax year - Manage your Self Assessment - GOV.UK"
   val h1Content = "Voluntarily opting in to reporting quarterly for a single tax year"
   val p1Content = "Opting in to the current tax year could result in you having overdue quarterly updates."
   val h2VolSubheadingContent = "Voluntarily reporting quarterly and overdue updates"

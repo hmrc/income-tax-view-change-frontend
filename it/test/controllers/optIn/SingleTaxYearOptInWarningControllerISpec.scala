@@ -109,7 +109,7 @@ class SingleTaxYearOptInWarningControllerISpec extends ControllerISpecHelper {
 
         result should have(
           httpStatus(OK),
-          pageTitleCustom("Voluntarily opting in to reporting quarterly for a single tax year - Manage your Income Tax updates - GOV.UK")
+          pageTitleCustom("Voluntarily opting in to reporting quarterly for a single tax year - Manage your Self Assessment - GOV.UK")
         )
       }
     }
@@ -144,7 +144,7 @@ class SingleTaxYearOptInWarningControllerISpec extends ControllerISpecHelper {
 
         result should have(
           httpStatus(BAD_REQUEST),
-          pageTitleCustom("Voluntarily opting in to reporting quarterly for a single tax year - Manage your Income Tax updates - GOV.UK")
+          pageTitleCustom("Voluntarily opting in to reporting quarterly for a single tax year - Manage your Self Assessment - GOV.UK")
         )
 
       }
