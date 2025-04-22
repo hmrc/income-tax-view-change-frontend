@@ -149,8 +149,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     val taxYearHeading: String = messages("taxYears.table.taxYear.heading")
     val balancingCharge: String = messages("chargeSummary.balancingCharge.text")
     val paymentBreakdownNic2: String = messages("chargeSummary.paymentBreakdown.nic2")
-    val codingOutMessage2017To2018: String = messages("chargeSummary.codingOutMessage", 2017, 2018)
-    val codingOutMessage2016To2017WithStringMessagesArgument: String = messages("chargeSummary.codingOutMessage", "2016", "2017")
+    val codingOutMessage2017To2018: String = messages("chargeSummary.codingOutBCDMessage", 2017, 2018)
+    val codingOutMessage2016To2017WithStringMessagesArgument: String = messages("chargeSummary.codingOutBCDMessage", "2016", "2017")
     val chargeSummaryCodingOutHeading2017To2018: String = s"${messages("chargeSummary.codingOut.text")}"
     val chargeSummaryPoa1CodedOutHeading: String = messages("chargeSummary.poa1CodedOut.text")
     val chargeSummaryPoa2CodedOutHeading: String = messages("chargeSummary.poa2CodedOut.text")
