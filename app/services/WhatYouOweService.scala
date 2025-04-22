@@ -65,7 +65,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
         val codedOutChargeItem = {
           financialDetailsModelList.flatMap(_.toChargeItem)
-            .filter(_.subTransactionType.contains(Accepted))
+            .filter(_.codedOutStatus.contains(Accepted))
             .find(_.taxYear.endYear == (dateService.getCurrentTaxYearEnd - 1))
         }
 
@@ -108,10 +108,10 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   }
 
   def getFilteredChargesList(financialDetailsList: List[FinancialDetailsModel],
-                                     isReviewAndReconcileEnabled: Boolean,
-                                     isFilterCodedOutPoasEnabled: Boolean,
-                                     isPenaltiesEnabled: Boolean)
-                                    (implicit user: MtdItUser[_]): List[ChargeItem] = {
+                             isReviewAndReconcileEnabled: Boolean,
+                             isFilterCodedOutPoasEnabled: Boolean,
+                             isPenaltiesEnabled: Boolean)
+                            (implicit user: MtdItUser[_]): List[ChargeItem] = {
 
     def getChargeItem(financialDetails: List[FinancialDetail]): DocumentDetail => Option[ChargeItem] =
       getChargeItemOpt(financialDetails)
@@ -123,7 +123,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           .flatMap(dd => getChargeItem(financialDetails.financialDetails)(dd.documentDetail))
       })
       .filter(isAKnownTypeOfCharge)
-      .filterNot(_.subTransactionType.contains(Accepted))
+      .filterNot(_.codedOutStatus.contains(Accepted))
       .filterNot(_.isReviewAndReconcileCharge && !isReviewAndReconcileEnabled)
       .filterNot(_.isPenalty && !isPenaltiesEnabled)
       .filter(_.remainingToPayByChargeOrInterest > 0)

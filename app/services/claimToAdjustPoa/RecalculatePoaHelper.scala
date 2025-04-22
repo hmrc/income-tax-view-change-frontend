@@ -16,16 +16,16 @@
 
 package services.claimToAdjustPoa
 
-import auth.MtdItUser
 import audit.AuditingService
 import audit.models.AdjustPaymentsOnAccountAuditModel
+import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import controllers.routes.HomeController
 import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoaAmendmentData}
 import models.core.Nino
 import play.api.Logger
-import play.api.i18n.{Lang, Messages,LangImplicits}
+import play.api.i18n.{Lang, LangImplicits, Messages}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
@@ -34,7 +34,7 @@ import utils.ErrorRecovery
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait RecalculatePoaHelper extends  FeatureSwitching with LangImplicits with ErrorRecovery {
+trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with ErrorRecovery {
   private def dataFromSession(poaSessionService: PaymentOnAccountSessionService)(implicit hc: HeaderCarrier, ec: ExecutionContext)
   : Future[PoaAmendmentData] = {
     poaSessionService.getMongo(hc, ec).flatMap {
@@ -47,8 +47,8 @@ trait RecalculatePoaHelper extends  FeatureSwitching with LangImplicits with Err
 
   private def handlePoaAndOtherData(poa: PaymentOnAccountViewModel,
                                     otherData: PoaAmendmentData, nino: Nino, ctaCalculationService: ClaimToAdjustPoaCalculationService, auditingService: AuditingService)
-                                     (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-    implicit val lang : Lang = Lang("en")
+                                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+    implicit val lang: Lang = Lang("en")
     otherData match {
       case PoaAmendmentData(Some(poaAdjustmentReason), Some(amount), _) =>
         ctaCalculationService.recalculate(nino, poa.taxYear, amount, poaAdjustmentReason) map {
@@ -69,7 +69,7 @@ trait RecalculatePoaHelper extends  FeatureSwitching with LangImplicits with Err
               previousPaymentOnAccountAmount = poa.totalAmountOne,
               requestedPaymentOnAccountAmount = amount,
               adjustmentReasonCode = poaAdjustmentReason.code,
-              adjustmentReasonDescription = Messages(poaAdjustmentReason.messagesKey,lang)(lang2Messages),
+              adjustmentReasonDescription = Messages(poaAdjustmentReason.messagesKey, lang)(lang2Messages),
               isDecreased = amount < poa.totalAmountOne
             ))
             Redirect(controllers.claimToAdjustPoa.routes.PoaAdjustedController.show(user.isAgent()))
@@ -99,7 +99,7 @@ trait RecalculatePoaHelper extends  FeatureSwitching with LangImplicits with Err
       }.flatten
     } else {
       Future.successful(
-        Redirect(if (user.isAgent()) HomeController.showAgent else HomeController.show())
+        Redirect(if (user.isAgent()) HomeController.showAgent() else HomeController.show())
       )
     }
   }

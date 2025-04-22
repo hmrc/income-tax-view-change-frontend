@@ -105,7 +105,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends MockAuthActions
             s"income sources feature is enabled" in {
               enable(IncomeSourcesFs)
               setupMockSuccess(mtdRole)
-              setupMockGetIncomeSourceDetails()(ukPlusForeignPropertyAndSoleTraderNoLatency)
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderNoLatency)
 
               val result: Future[Result] = action(fakeRequest)
 
@@ -121,7 +121,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends MockAuthActions
             "when feature switch is disabled" in {
               disable(IncomeSourcesFs)
               setupMockSuccess(mtdRole)
-              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
               val result: Future[Result] = action(fakeRequest)
 

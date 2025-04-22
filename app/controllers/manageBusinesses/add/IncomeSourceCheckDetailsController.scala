@@ -21,12 +21,12 @@ import audit.models.CreateIncomeSourceAuditModel
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import enums.IncomeSourceJourney.{BeforeSubmissionPage, IncomeSourceType, SelfEmployment}
+import enums.IncomeSourceJourney._
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.admin.IncomeSourcesNewJourney
 import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, UIJourneySessionData}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -170,11 +170,11 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
 
-      val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>{
-        if(isEnabled(IncomeSourcesNewJourney)){
+      val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) => {
+        if (isEnabled(IncomeSourcesNewJourney)) {
           controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.show(isAgent, incomeSourceType).url
-        }else{
-          if(isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+        } else {
+          if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
         }
       }
 
@@ -184,19 +184,27 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         case Some(viewModel) =>
           businessDetailsService.createRequest(viewModel) flatMap {
             case Right(CreateIncomeSourceResponse(id)) =>
+
               auditingService.extendedAudit(
                 CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id)))
               )
-              sessionService.setMongoData(
-                sessionData.copy(
-                  addIncomeSourceData =
-                    sessionData.addIncomeSourceData.map(
-                      _.copy(
-                        incomeSourceId = Some(id)
+
+              val saveAddIncomeSourceDataToMongo =
+                for {
+                  result: Boolean <-
+                    sessionService.setMongoData(
+                      sessionData.copy(
+                        addIncomeSourceData =
+                          sessionData.addIncomeSourceData.map(_.copy(
+                            incomeSourceId = Some(id)
+                          ))
                       )
                     )
-                )
-              ) flatMap {
+                } yield {
+                  result
+                }
+
+              saveAddIncomeSourceDataToMongo.flatMap {
                 case true => Future.successful(Redirect(redirectUrl(isAgent, incomeSourceType)))
                 case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
               }

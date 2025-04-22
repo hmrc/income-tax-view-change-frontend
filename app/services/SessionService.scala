@@ -33,19 +33,14 @@ class SessionService @Inject()(
                               ) {
 
   def getMongo(journeyType: JourneyType)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[UIJourneySessionData]]] = {
-    if (config.encryptionIsEnabled)
-      sensitiveUIJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType) map {
-        case Some(data: UIJourneySessionData) =>
-          Right(Some(data))
-        case None => Right(None)
-      }
-    else
-      uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType) map {
-        case Some(data: UIJourneySessionData) =>
-          Right(Some(data))
-        case None => Right(None)
-      }
-
+    hc.sessionId.map(_.value) match {
+      case Some(sessionId) if config.encryptionIsEnabled =>
+        sensitiveUIJourneySessionDataRepository.get(sessionId, journeyType).map(data => Right(data))
+      case Some(sessionId) =>
+        uiJourneySessionDataRepository.get(sessionId, journeyType).map(data => Right(data))
+      case _ =>
+        Future.successful(Left(new Exception("Missing sessionId in HeaderCarrier")))
+    }
   }
 
   def createSession(journeyType: JourneyType)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
@@ -62,7 +57,8 @@ class SessionService @Inject()(
         } catch {
           case err: ClassCastException => Left(err)
         }
-      case None => Right(None)
+      case None =>
+        Right(None)
     }
   }
 
@@ -75,7 +71,8 @@ class SessionService @Inject()(
           case Manage => getKeyFromObject[String](data.manageIncomeSourceData, key)
           case Cease => getKeyFromObject[String](data.ceaseIncomeSourceData, key)
         }
-      case None => Right(None)
+      case None =>
+        Right(None)
     }
   }
 
@@ -93,8 +90,7 @@ class SessionService @Inject()(
     }
   }
 
-  def setMongoData(uiJourneySessionData: UIJourneySessionData)
-                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+  def setMongoData(uiJourneySessionData: UIJourneySessionData): Future[Boolean] = {
     if (config.encryptionIsEnabled)
       sensitiveUIJourneySessionDataRepository.set(uiJourneySessionData)
     else

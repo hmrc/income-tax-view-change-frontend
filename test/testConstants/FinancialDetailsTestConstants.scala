@@ -119,7 +119,8 @@ object FinancialDetailsTestConstants {
             "paymentMethod" -> "paymentMethod",
             "paymentLot" -> "paymentLot",
             "paymentLotItem" -> "paymentLotItem",
-            "paymentId" -> "paymentLot-paymentLotItem"
+            "paymentId" -> "paymentLot-paymentLotItem",
+            "codedOutStatus" -> "I"
           )
         )
       ),
@@ -228,7 +229,8 @@ object FinancialDetailsTestConstants {
             "paymentMethod" -> "paymentMethod",
             "paymentLot" -> "paymentLot",
             "paymentLotItem" -> "paymentLotItem",
-            "paymentId" -> "paymentLot-paymentLotItem"
+            "paymentId" -> "paymentLot-paymentLotItem",
+            "codedOutStatus" -> "I"
           )
         )
       ),
@@ -798,7 +800,8 @@ object FinancialDetailsTestConstants {
           paymentMethod = Some("paymentMethod"),
           paymentLot = Some("paymentLot"),
           paymentLotItem = Some("paymentLotItem"),
-          paymentId = Some("paymentLot-paymentLotItem"))))),
+          paymentId = Some("paymentLot-paymentLotItem"),
+          codedOutStatus = Some("I"))))),
       FinancialDetail(
         taxYear = "2020",
         mainType = Some("SA Balancing Charge"),
@@ -1715,7 +1718,7 @@ object FinancialDetailsTestConstants {
       taxYear = TaxYear.forYearEnd(2021),
       transactionId = "1040000123",
       transactionType = BalancingCharge,
-      subTransactionType = None,
+      codedOutStatus = None,
       outstandingAmount = 2000,
       originalAmount = 2000,
       documentDate = LocalDate.parse("2018-03-29"),
@@ -1744,7 +1747,7 @@ object FinancialDetailsTestConstants {
       taxYear = TaxYear.forYearEnd(2021),
       transactionId = "1040000123",
       transactionType = BalancingCharge,
-      subTransactionType = None,
+      codedOutStatus = None,
       outstandingAmount = 2000,
       originalAmount = 2000,
       documentDate = LocalDate.parse("2018-03-29"),

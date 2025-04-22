@@ -51,7 +51,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetail
   )
     .addFeatureSwitches(List(FeatureSwitch(DisplayBusinessStartDate, true)))
 
-  object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockBusinessDetailsConnector, ec, mockAppConfig)
+  object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockBusinessDetailsConnector)(mockAppConfig, ec)
 
   override def beforeEach(): Unit = {
     super.beforeEach()

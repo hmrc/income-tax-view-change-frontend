@@ -16,6 +16,7 @@
 
 package models.paymentAllocations
 
+import exceptions.MissingFieldException
 import implicits.ImplicitDateFormatter
 import models.core.AccountingPeriodModel
 import models.financialDetails.FinancialDetail
@@ -51,6 +52,9 @@ case class AllocationDetail(transactionId: Option[String],
   def getTaxYearOpt(implicit implicitDateFormatter: ImplicitDateFormatter): Option[Int] = {
     to.map(AccountingPeriodModel.determineTaxYearFromPeriodEnd)
   }
+
+  def transactionIdActual: String = transactionId.getOrElse(throw MissingFieldException("Document ID"))
+  def amountActual: BigDecimal = amount.getOrElse(throw MissingFieldException("Payment Amount"))
 }
 
 object AllocationDetail {

@@ -21,7 +21,6 @@ import play.api.mvc._
 import testOnly.utils.FileUtil.getFileFromPath
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 
 class TestOnlyAssetsController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 
@@ -31,7 +30,7 @@ class TestOnlyAssetsController @Inject()(cc: ControllerComponents) extends Abstr
         Logger("application").info(s"[TestOnlyAssetsController] - can read content")
         Ok(content).as("text/javascript")
       case Left(ex) =>
-        Logger("application").error(s"[TestOnlyAssetsController] - ${filePath} - ${ex}")
+        Logger("application").error(s"[TestOnlyAssetsController] - $filePath - $ex")
         NotFound
     }
   }

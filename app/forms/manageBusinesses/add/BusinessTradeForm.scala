@@ -16,7 +16,6 @@
 
 package forms.manageBusinesses.add
 
-import config.featureswitch._
 import forms.utils.ConstraintUtil.ConstraintUtil
 import forms.validation.CustomConstraints
 import play.api.data.Forms._
@@ -34,7 +33,7 @@ object BusinessTradeForm extends CustomConstraints {
   val MAX_LENGTH = 35
   val permittedChars: Regex = "^[A-Za-z0-9 ,.&'\\\\/-]+$".r
 
-  val tradeEmptyError =  "add-trade.form.error.empty"
+  val tradeEmptyError = "add-trade.form.error.empty"
   val tradeShortError = "add-trade.form.error.short"
   val tradeLongError = "add-trade.form.error.long"
   val tradeInvalidCharError = "add-trade.form.error.invalid"

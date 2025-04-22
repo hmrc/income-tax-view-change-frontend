@@ -372,7 +372,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
           financialDetails = List(poa1FinancialDetails))
 
         chargeItem.transactionType shouldBe PoaOneDebit
-        chargeItem.subTransactionType shouldBe None
+        chargeItem.codedOutStatus shouldBe None
       }
 
       "from Payment on Account 2" in {
@@ -382,7 +382,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
           financialDetails = List(poa2FinancialDetails))
 
         chargeItem.transactionType shouldBe PoaTwoDebit
-        chargeItem.subTransactionType shouldBe None
+        chargeItem.codedOutStatus shouldBe None
       }
 
       "from Balancing Payment Nics2" in {
@@ -392,7 +392,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
           financialDetails = List(balancingNics2FinancialDetails))
 
         chargeItem.transactionType shouldBe BalancingCharge
-        chargeItem.subTransactionType shouldBe Some(Nics2)
+        chargeItem.codedOutStatus shouldBe Some(Nics2)
       }
 
       "from Balancing Payment Accepted" in {
@@ -402,7 +402,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
           financialDetails = List(balancingAcceptedFinancialDetails))
 
         chargeItem.transactionType shouldBe BalancingCharge
-        chargeItem.subTransactionType shouldBe Some(Accepted)
+        chargeItem.codedOutStatus shouldBe Some(Accepted)
       }
 
       "from Balancing Payment Cancelled" in {
@@ -412,7 +412,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
           financialDetails = List(balancingCancelledFinancialDetails))
 
         chargeItem.transactionType shouldBe BalancingCharge
-        chargeItem.subTransactionType shouldBe Some(Cancelled)
+        chargeItem.codedOutStatus shouldBe Some(Cancelled)
       }
 
       "from MFA" in {
@@ -421,7 +421,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
           financialDetails = List(mfaFinancialDetails))
 
         chargeItem.transactionType shouldBe MfaDebitCharge
-        chargeItem.subTransactionType shouldBe None
+        chargeItem.codedOutStatus shouldBe None
       }
 
     "isOverdue calculated correctly" when {
@@ -464,44 +464,44 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
     "getChargeKey" when {
 
         "charge is a POA 1" in {
-          val poa1 = chargeItemModel(transactionType = PoaOneDebit, subTransactionType = None)
+          val poa1 = chargeItemModel(transactionType = PoaOneDebit, codedOutStatus = None)
           val key = poa1.getChargeTypeKey
           key shouldBe "paymentOnAccount1.text"
         }
 
         "charge is a POA 2" in {
-          val poa1 = chargeItemModel(transactionType = PoaTwoDebit, subTransactionType = None)
+          val poa1 = chargeItemModel(transactionType = PoaTwoDebit, codedOutStatus = None)
           val key = poa1.getChargeTypeKey
           key shouldBe "paymentOnAccount2.text"
         }
 
 
         "charge is a HMRC adjustment" in {
-          val poa1 = chargeItemModel(transactionType = MfaDebitCharge, subTransactionType = None)
+          val poa1 = chargeItemModel(transactionType = MfaDebitCharge, codedOutStatus = None)
           val key = poa1.getChargeTypeKey
           key shouldBe "hmrcAdjustment.text"
         }
 
         "charge is a Class 2 National Insurance Balancing Charge" in {
-          val poa1 = chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Nics2))
+          val poa1 = chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Nics2))
           val key = poa1.getChargeTypeKey
           key shouldBe "class2Nic.text"
         }
 
         "charge is a PAYE payment" in {
-          val poa1 = chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Accepted))
+          val poa1 = chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Accepted))
           val key = poa1.getChargeTypeKey
           key shouldBe "codingOut.text"
         }
 
         "charge is a cancelled PAYE SA payment" in {
-          val poa1 = chargeItemModel(transactionType = BalancingCharge, subTransactionType = Some(Cancelled))
+          val poa1 = chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Cancelled))
           val key = poa1.getChargeTypeKey
           key shouldBe "cancelledPayeSelfAssessment.text"
         }
 
         "charge is a balancing charge" in {
-          val poa1 = chargeItemModel(transactionType = BalancingCharge, subTransactionType = None)
+          val poa1 = chargeItemModel(transactionType = BalancingCharge, codedOutStatus = None)
           val key = poa1.getChargeTypeKey
           key shouldBe "balancingCharge.text"
         }

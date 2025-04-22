@@ -43,7 +43,7 @@ class TaxYearsControllerSpec extends MockAuthActions with ImplicitDateFormatter 
           "render the Tax years page" when {
             "income source details contains a business firstAccountingPeriodEndDate" in {
               setupMockSuccess(mtdUserRole)
-              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK
@@ -53,7 +53,7 @@ class TaxYearsControllerSpec extends MockAuthActions with ImplicitDateFormatter 
           "render the error page" when {
             "there is no firstAccountingPeriodEndDate for business or property in incomeSources" in {
               setupMockSuccess(mtdUserRole)
-              setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+              setupMockGetIncomeSourceDetails(businessIncome2018and2019)
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR

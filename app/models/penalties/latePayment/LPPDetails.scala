@@ -17,7 +17,7 @@
 package models.penalties.latePayment
 
 import models.penalties.appealInformation.AppealInformationType
-import play.api.libs.json.{Format, JsResult, JsValue, Json}
+import play.api.libs.json.{Format, JsResult, JsValue}
 import utils.JsonUtils
 
 import java.time.LocalDate
@@ -122,6 +122,6 @@ object LPPDetails extends JsonUtils {
         "principalChargeDueDate" -> o.principalChargeDueDate,
         "principalChargeLatestClearing" -> o.principalChargeLatestClearing,
         "timeToPay" -> o.timeToPay
-    )
+      )
   }
 }

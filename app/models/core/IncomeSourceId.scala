@@ -18,20 +18,17 @@ package models.core
 
 import models.core.IncomeSourceIdHash.mkIncomeSourceIdHash
 
-class IncomeSourceId private(val value: String) extends AnyVal {
+case class IncomeSourceId(value: String) {
+
   def toHash: IncomeSourceIdHash = mkIncomeSourceIdHash(this)
 
   override def toString: String = s"IncomeSourceId: $value"
 }
 
 object IncomeSourceId {
-  def apply(incomeSourceAsString: String): IncomeSourceId = {
-    new IncomeSourceId(incomeSourceAsString)
-  }
+
   def mkIncomeSourceId(incomeSourceAsString: String): IncomeSourceId = {
-
-    new IncomeSourceId(incomeSourceAsString)
-
+    IncomeSourceId(incomeSourceAsString)
   }
 
   def toOption(input: Option[Either[Throwable, IncomeSourceId]]): Option[IncomeSourceId] = {

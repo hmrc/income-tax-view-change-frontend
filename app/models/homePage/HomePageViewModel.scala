@@ -16,7 +16,7 @@
 
 package models.homePage
 
-import models.financialDetails.{DocumentDetail, FinancialDetailsModel, FinancialDetailsResponseModel}
+import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.ITSAStatus
 import models.obligations.NextUpdatesTileViewModel
@@ -56,7 +56,7 @@ object NextPaymentsTileViewModel {
       case fdm: FinancialDetailsModel => fdm
     }
     financialDetailsModels
-      .foldLeft(0)( (acc, c) => c.docDetailsNotDueWithInterest(currentDate) + acc)
+      .foldLeft(0)((acc, c) => c.docDetailsNotDueWithInterest(currentDate) + acc)
   }
 }
 
@@ -74,8 +74,8 @@ case class PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled: Boolea
   private val quarterlyPenaltyThreshold = 4
 
   val penaltiesTagMessageKey: Option[String] = (submissionFrequency, penaltyPoints) match {
-    case ("Annual",    points) if points >= annualPenaltyThreshold    => Some("home.penaltiesAndAppeals.twoPenaltiesTag")
+    case ("Annual", points) if points >= annualPenaltyThreshold => Some("home.penaltiesAndAppeals.twoPenaltiesTag")
     case ("Quarterly", points) if points >= quarterlyPenaltyThreshold => Some("home.penaltiesAndAppeals.fourPenaltiesTag")
-    case _                                                            => None
+    case _ => None
   }
 }

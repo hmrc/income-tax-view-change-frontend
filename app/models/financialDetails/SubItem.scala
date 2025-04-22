@@ -36,7 +36,8 @@ case class SubItem(dueDate: Option[LocalDate] = None,
                    paymentLot: Option[String] = None,
                    paymentLotItem: Option[String] = None,
                    paymentId: Option[String] = None,
-                   transactionId: Option[String] = None)
+                   transactionId: Option[String] = None,
+                   codedOutStatus: Option[String] = None)
 
 object SubItem {
 
@@ -57,6 +58,7 @@ object SubItem {
     paymentMethod <- (JsPath \ "paymentMethod").readNullable[String]
     paymentLot <- (JsPath \ "paymentLot").readNullable[String]
     paymentLotItem <- (JsPath \ "paymentLotItem").readNullable[String]
+    codedOutStatus <- (JsPath \ "codedOutStatus").readNullable[String]
   } yield {
     val id: Option[String] = for {
       pl <- paymentLot
@@ -77,7 +79,8 @@ object SubItem {
       paymentMethod,
       paymentLot,
       paymentLotItem,
-      id
+      id,
+      codedOutStatus = codedOutStatus
     )
   }
 

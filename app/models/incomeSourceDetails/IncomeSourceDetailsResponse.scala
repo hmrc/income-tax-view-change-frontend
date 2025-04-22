@@ -18,21 +18,23 @@ package models.incomeSourceDetails
 
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import models.core.IncomeSourceId.mkIncomeSourceId
-import play.api.{Logger, Logging}
+import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import play.api.libs.json.{Format, JsValue, Json}
+import play.api.{Logger, Logging}
 import services.DateServiceInterface
 
 sealed trait IncomeSourceDetailsResponse {
   def toJson: JsValue
 }
 
-case class IncomeSourceDetailsModel(nino: String,
-                                    mtdbsa: String,
-                                    yearOfMigration: Option[String],
-                                    businesses: List[BusinessDetailsModel],
-                                    properties: List[PropertyDetailsModel]) extends IncomeSourceDetailsResponse with Logging {
+case class IncomeSourceDetailsModel(
+                                     nino: String,
+                                     mtdbsa: String,
+                                     yearOfMigration: Option[String],
+                                     businesses: List[BusinessDetailsModel],
+                                     properties: List[PropertyDetailsModel]
+                                   ) extends IncomeSourceDetailsResponse with Logging {
 
   val hasPropertyIncome: Boolean = properties.nonEmpty
   val hasBusinessIncome: Boolean = businesses.nonEmpty
@@ -115,7 +117,7 @@ case class IncomeSourceDetailsModel(nino: String,
   def areAllBusinessesCeased: Boolean = businesses.forall(_.isCeased) && properties.forall(_.isCeased)
 
   def isAnyOfActiveBusinessesLatent: Boolean = businesses.filterNot(_.isCeased).exists(_.latencyDetails.nonEmpty) ||
-      properties.filterNot(_.isCeased).exists(_.latencyDetails.nonEmpty)
+    properties.filterNot(_.isCeased).exists(_.latencyDetails.nonEmpty)
 
 }
 

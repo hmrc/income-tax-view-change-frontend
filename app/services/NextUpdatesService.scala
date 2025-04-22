@@ -129,21 +129,32 @@ class NextUpdatesService @Inject()(
 
   def getObligationsViewModel(id: String, showPreviousTaxYears: Boolean)
                              (implicit user: MtdItUser[_], ec: ExecutionContext, hc: HeaderCarrier): Future[ObligationsViewModel] = {
-    val processingRes = for {
-      datesList <- getObligationDates(id)
-    } yield {
-      val (finalDeclarationDates, otherObligationDates) = datesList.partition(datesModel => datesModel.isFinalDec)
+    val processingRes =
+      for {
+        datesList <- getObligationDates(id)
+      } yield {
+        val (finalDeclarationDates, otherObligationDates) = datesList.partition(datesModel => datesModel.isFinalDec)
 
-      val quarterlyDates: Seq[DatesModel] = otherObligationDates.filter(datesModel => datesModel.obligationType == "Quarterly")
-        .sortBy(_.inboundCorrespondenceFrom)
+        val quarterlyDates: Seq[DatesModel] =
+          otherObligationDates
+            .filter(datesModel => datesModel.obligationType == "Quarterly")
+            .sortBy(_.inboundCorrespondenceFrom)
 
-      val obligationsGroupedByYear = quarterlyDates.groupBy(datesModel => dateService.getAccountingPeriodEndDate(datesModel.inboundCorrespondenceTo).getYear)
-      val sortedObligationsByYear = obligationsGroupedByYear.toSeq.sortBy(_._1).map(_._2.distinct.sortBy(_.periodKey))
+        val obligationsGroupedByYear =
+          quarterlyDates
+            .groupBy(datesModel => dateService.getAccountingPeriodEndDate(datesModel.inboundCorrespondenceTo).getYear)
 
-      val finalDecDates: Seq[DatesModel] = finalDeclarationDates.distinct.sortBy(_.inboundCorrespondenceFrom)
+        val sortedObligationsByYear =
+          obligationsGroupedByYear
+            .toSeq
+            .sortBy(_._1)
+            .map(_._2.distinct.sortBy(_.periodKey))
 
-      ObligationsViewModel(sortedObligationsByYear, finalDecDates, dateService.getCurrentTaxYearEnd, showPrevTaxYears = showPreviousTaxYears)
-    }
+        val finalDecDates: Seq[DatesModel] = finalDeclarationDates.distinct.sortBy(_.inboundCorrespondenceFrom)
+
+        ObligationsViewModel(sortedObligationsByYear, finalDecDates, dateService.getCurrentTaxYearEnd, showPrevTaxYears = showPreviousTaxYears)
+      }
+
     processingRes
   }
 }

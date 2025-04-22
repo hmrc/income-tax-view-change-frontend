@@ -42,7 +42,7 @@ class CheckOptOutAnswersViewSpec extends TestSupport {
 
   object checkOptOutAnswers {
     val heading: String = "Check your answers"
-    val title: String = s"$heading - Manage your Income Tax updates - GOV.UK"
+    val title: String = s"$heading - Manage your Self Assessment - GOV.UK"
     val optOutTable: String = "Opt out from"
     val optOutTableTaxYears: String = "2019 to 2020 tax year onwards"
     val optOutTableChange: String = "Change"
