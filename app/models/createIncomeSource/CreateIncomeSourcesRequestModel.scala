@@ -73,6 +73,7 @@ object AddressDetails {
 
 final case class PropertyDetails(tradingStartDate: String, cashOrAccrualsFlag: Option[String], startDate: String) {
   require(cashOrAccrualsFlag.nonEmpty, "Accounting method must be provided")
+  require(!cashOrAccrualsFlag.contains(""), "Accounting method must be provided")
   require(cashOrAccrualsFlag.forall(_.matches("^[A-Z]+$")), "Accounting method must be capitalised")
   require(tradingStartDate.nonEmpty, "Trading start date must be provided")
   require(tradingStartDate == startDate, "Trading start date and start date must be the same")
