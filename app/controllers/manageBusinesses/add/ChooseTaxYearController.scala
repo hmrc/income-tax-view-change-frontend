@@ -22,8 +22,10 @@ import config.FrontendAppConfig
 import enums.IncomeSourceJourney.{IncomeSourceType, ReportingFrequencyPages}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.manageBusinesses.add.ChooseTaxYearForm
+import forms.models.ChooseTaxYearFormModel
 import models.incomeSourceDetails.{IncomeSourceReportingFrequencySourceData, UIJourneySessionData}
 import play.api.Logger
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.manageBusinesses.IncomeSourceRFService
@@ -40,6 +42,7 @@ class ChooseTaxYearController @Inject()(authActions: AuthActions,
                                         chooseTaxYear: ChooseTaxYear,
                                         val calculationListService: CalculationListService,
                                         val incomeSourceRFService: IncomeSourceRFService,
+                                        val form: ChooseTaxYearForm,
                                         val sessionService: SessionService)
                                        (implicit val mcc: MessagesControllerComponents,
                                         val ec: ExecutionContext,
@@ -57,18 +60,21 @@ class ChooseTaxYearController @Inject()(authActions: AuthActions,
   private def handleRequest(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
     incomeSourceRFService.redirectChecksForIncomeSourceRF(IncomeSourceJourneyType(Add, incomeSourceType),
       ReportingFrequencyPages, incomeSourceType, dateService.getCurrentTaxYearEnd, isAgent, isChange) { sessionData =>
-      val filledOrEmptyForm = {
+      val filledOrEmptyForm: Form[ChooseTaxYearFormModel] = {
         if(isChange) {
-          val data: ChooseTaxYearForm = {
+          val data: ChooseTaxYearFormModel = {
             (displayOptionToChangeForCurrentTy(sessionData), displayOptionToChangeForNextTy(sessionData)) match {
-              case (true, true) => ChooseTaxYearForm(isCheckedForCurrentTy(sessionData), isCheckedForNextTy(sessionData))
-              case (true, false) => ChooseTaxYearForm(isCheckedForCurrentTy(sessionData), None)
-              case (false, true) => ChooseTaxYearForm(None, isCheckedForNextTy(sessionData))
-              case _ => ChooseTaxYearForm(None, None)
+              case (true, true) => ChooseTaxYearFormModel(isCheckedForCurrentTy(sessionData), isCheckedForNextTy(sessionData))
+              case (true, false) => ChooseTaxYearFormModel(isCheckedForCurrentTy(sessionData), None)
+              case (false, true) => ChooseTaxYearFormModel(None, isCheckedForNextTy(sessionData))
+              case _ => ChooseTaxYearFormModel(None, None)
             }
           }
-          sessionData.incomeSourceReportingFrequencyData.fold(ChooseTaxYearForm())(_ => ChooseTaxYearForm().fillAndValidate(data))
-        } else ChooseTaxYearForm()
+          println(s"\n\n\n\n ######### DATA: ${data.toString} ######## \n\n")
+          println(s"\n\n\n\n ######### DATA: ${displayOptionToChangeForCurrentTy(sessionData)} ######## \n\n")
+          println(s"\n\n\n\n ######### DATA: ${displayOptionToChangeForNextTy(sessionData)} ######## \n\n")
+          sessionData.incomeSourceReportingFrequencyData.fold(form())(_ => form().fill(data))
+        } else form()
       }
       Future.successful(Ok(chooseTaxYear(
         filledOrEmptyForm,
@@ -86,7 +92,7 @@ class ChooseTaxYearController @Inject()(authActions: AuthActions,
         val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
         sessionService.getMongo(journeyType).flatMap {
           case Right(Some(sessionData)) =>
-            ChooseTaxYearForm().bindFromRequest.fold(
+            form().bindFromRequest.fold(
               formWithError => {
                 Future.successful(BadRequest(chooseTaxYear(
                   formWithError,
