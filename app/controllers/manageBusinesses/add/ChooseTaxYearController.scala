@@ -70,9 +70,6 @@ class ChooseTaxYearController @Inject()(authActions: AuthActions,
               case _ => ChooseTaxYearFormModel(None, None)
             }
           }
-          println(s"\n\n\n\n ######### DATA: ${data.toString} ######## \n\n")
-          println(s"\n\n\n\n ######### DATA: ${displayOptionToChangeForCurrentTy(sessionData)} ######## \n\n")
-          println(s"\n\n\n\n ######### DATA: ${displayOptionToChangeForNextTy(sessionData)} ######## \n\n")
           sessionData.incomeSourceReportingFrequencyData.fold(form())(_ => form().fill(data))
         } else form()
       }
@@ -82,7 +79,9 @@ class ChooseTaxYearController @Inject()(authActions: AuthActions,
         routes.ChooseTaxYearController.submit(isAgent, isChange, incomeSourceType),
         if (displayOptionToChangeForCurrentTy(sessionData)) Some(dateService.getCurrentTaxYear) else None,
         if (displayOptionToChangeForNextTy(sessionData)) Some(dateService.getNextTaxYear) else None,
-        incomeSourceType)))
+        incomeSourceType,
+        isChange
+      )))
     }
   }
 
@@ -100,7 +99,9 @@ class ChooseTaxYearController @Inject()(authActions: AuthActions,
                   routes.ChooseTaxYearController.submit(isAgent, isChange, incomeSourceType),
                   if(displayOptionToChangeForCurrentTy(sessionData)) Some(dateService.getCurrentTaxYear) else None,
                   if(displayOptionToChangeForNextTy(sessionData)) Some(dateService.getNextTaxYear) else None,
-                  incomeSourceType))
+                  incomeSourceType,
+                  isChange
+                ))
                 )
               },
               form => {
