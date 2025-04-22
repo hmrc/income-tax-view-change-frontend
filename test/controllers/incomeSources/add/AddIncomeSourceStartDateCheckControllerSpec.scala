@@ -299,30 +299,9 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
               }
             } else {
               s"return ${Status.SEE_OTHER}: redirect to check $incomeSourceType details page, isAgent = $isAgent" when {
-                "Yes is submitted with isUpdate flag set to true (accounting method FS disabled)" in {
+                "Yes is submitted with isUpdate flag set to true" in {
                   setupMockSuccess(mtdRole)
                   enable(IncomeSourcesFs)
-                  mockNoIncomeSources()
-
-                  setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
-                  setupMockGetMongo(Right(Some(sessionDataWithDate(IncomeSourceJourneyType(Add, incomeSourceType)))))
-                  setupMockSetMongoData(result = true)
-
-                  val result = action(fakeRequest
-                    .withFormUrlEncodedBody(
-                      AddIncomeSourceStartDateCheckForm.response -> responseYes
-                    ))
-
-                  status(result) shouldBe SEE_OTHER
-                  //       if (incomeSourceType == SelfEmployment) verifySetMongoData(SelfEmployment)
-                  redirectLocation(result) shouldBe Some({
-                    if (isAgent) routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType) else routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
-                  }.url)
-                }
-                "Yes is submitted with isUpdate flag set to true (accounting method FS enabled)" in {
-                  setupMockSuccess(mtdRole)
-                  enable(IncomeSourcesFs)
-                  enable(AccountingMethodJourney)
                   mockNoIncomeSources()
 
                   setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))

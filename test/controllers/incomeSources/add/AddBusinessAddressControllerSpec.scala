@@ -20,7 +20,7 @@ import enums.IncomeSourceJourney.SelfEmployment
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesFs
+import models.admin.{AccountingMethodJourney, IncomeSourcesFs}
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, BusinessAddressModel, UIJourneySessionData}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -143,6 +143,21 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
             "valid data received" in {
               setupMockSuccess(mtdRole)
               enable(IncomeSourcesFs)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+              setupMockGetMongo(Right(Some(UIJourneySessionData("", ""))))
+              setupMockSetMongoData(result = true)
+              when(mockAddressLookupService.fetchAddress(any())(any()))
+                .thenReturn(Future(Right(testBusinessAddressModel)))
+
+              val result: Future[Result] = action(fakeRequest)
+              status(result) shouldBe SEE_OTHER
+              verifySetMongoData()
+            }
+            "valid data received (accounting method FS enabled)" in {
+              setupMockSuccess(mtdRole)
+              enable(IncomeSourcesFs)
+              enable(AccountingMethodJourney)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
               setupMockGetMongo(Right(Some(UIJourneySessionData("", ""))))
