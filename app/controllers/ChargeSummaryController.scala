@@ -205,11 +205,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
           case Right(_) => Ok {
             if (isEnabled(YourSelfAssessmentCharges) && chargeItem.isIncludedInSACSummary) {
               yourSelfAssessmentChargeSummary(
-                viewModel.copy(
-                  chargeItem = chargeItem.copy(codedOutStatus = Some(FullyCollected), transactionType = PoaOneDebit)
-                ),
-                whatYouOweUrl
-              )
+                viewModel, whatYouOweUrl)
             } else
               chargeSummaryView(viewModel, whatYouOweUrl, saChargesUrl, isEnabled(YourSelfAssessmentCharges))
           }
