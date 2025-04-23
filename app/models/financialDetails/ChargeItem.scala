@@ -25,7 +25,6 @@ import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
 
 import java.time.LocalDate
-import scala.util.Try
 
 case class ChargeItem (
                         transactionId: String,
@@ -254,10 +253,8 @@ object ChargeItem {
     ChargeItem(
       transactionId = documentDetail.transactionId,
       taxYear = TaxYear.forYearEnd(documentDetail.taxYear),
-//      transactionType = chargeType,
-      transactionType = PoaOneDebit,
-//      codedOutStatus = CodedOutStatusType.fromCodedOutStatusAndDocumentText(documentDetail.documentText, codedOutStatus),
-      codedOutStatus = Some(FullyCollected),
+      transactionType = chargeType,
+      codedOutStatus = CodedOutStatusType.fromCodedOutStatusAndDocumentText(documentDetail.documentText, codedOutStatus),
       documentDate = documentDetail.documentDate,
       dueDate = documentDetail.documentDueDate,
       originalAmount = documentDetail.originalAmount,

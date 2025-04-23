@@ -54,7 +54,7 @@ object CodedOutStatusType {
     }
   }
 
-  def fromCodedOutStatusAndDocumentText(documentText: Option[String], codedOutStatus: Option[String]): Option[CodedOutStatusType] =
+  def fromCodedOutStatusAndDocumentText(documentText: Option[String], codedOutStatus: Option[String]): Option[CodedOutStatusType] = {
     (documentText, codedOutStatus) match {
       case (Some(CODING_OUT_CLASS2_NICS.name),     _)                                              => Some(Nics2)
       case (Some(CODING_OUT_ACCEPTED.name),        _) | (_, Some(CODING_OUT_ACCEPTED.code))        => Some(Accepted)
@@ -62,6 +62,7 @@ object CodedOutStatusType {
       case (Some(CODING_OUT_FULLY_COLLECTED.name), _) | (_, Some(CODING_OUT_FULLY_COLLECTED.code)) => Some(FullyCollected)
       case _                                                                                       => None
     }
+  }
 
   implicit val write: Writes[CodedOutStatusType] = (transactionType: CodedOutStatusType) => {
     JsString(transactionType.key)
@@ -74,6 +75,6 @@ object CodedOutStatusType {
     case CODING_OUT_FULLY_COLLECTED.name => FullyCollected
   }
 
-  implicit val format: Format[CodedOutStatusType] = Format(read, write)
+  implicit val format: Format[CodedOutStatusType] = Format( read, write)
 
 }

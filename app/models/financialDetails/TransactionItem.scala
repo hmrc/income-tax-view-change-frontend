@@ -48,7 +48,7 @@ trait TransactionItem {
 
   // TODO: duplicate logic, in scope of => https://jira.tools.tax.service.gov.uk/browse/MISUV-8557
   // TODO: We should remove DocumentDetail.getChargeTypeKey and keep this method below as it is tied to ChargeItem
-  def getChargeTypeKey: String = {
+  def getChargeTypeKey: String =
     (transactionType, codedOutStatus) match {
       case (PoaOneDebit,               Some(FullyCollected)) => "paymentOnAccount1.codingOut.fullyCollected.text"
       case (PoaOneDebit,                                  _) => "paymentOnAccount1.text"
@@ -70,5 +70,4 @@ trait TransactionItem {
         Logger("application").error(s"Missing or non-matching charge type: $error found")
         "unknownCharge"
     }
-  }
 }
