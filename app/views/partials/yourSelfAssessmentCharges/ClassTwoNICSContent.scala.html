@@ -15,6 +15,7 @@
  *@
 
 @import views.html.components._
+@import implicits.HtmlFormatter.EmspString
 
 @this(
         p: p,
@@ -23,9 +24,12 @@
 )
 
 @(
-        taxYearFrom: String,
-        taxYearTo: String,
-        isAgent: Boolean
+        taxYearFrom: Int,
+        taxYearTo: Int,
+        isAgent: Boolean,
+        outstandingAmount: String,
+        isOverdue: Boolean,
+        dueDate: String
 )(
         implicit request: Request[_],
         messages: Messages
@@ -35,6 +39,17 @@
     messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
 }
 
+<h1 class="govuk-heading-m" id="charge-amount-heading"> @{
+ s"${getMessage(
+  if(isOverdue) "overDueCharge"
+  else          "charge"
+ )}\t$outstandingAmount".toEmsp
+}</h1>
+
+@p(id = Some("due-date-text")) {
+ @getMessage("due", dueDate)
+}
+
 @p(id = Some("classTwoNICSContent.p1")) {
-    @getMessage("classTwoNICSContent.p1", taxYearFrom, taxYearTo)
+    @getMessage("classTwoNICSContent.p1", taxYearFrom.toString, taxYearTo.toString)
 }

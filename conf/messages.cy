@@ -2708,6 +2708,19 @@ yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Income Tax
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = Class 4 National Insurance contributions
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount.
 
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.fullyCollected.p5 = Check if your
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.fullyCollected.p6 = PAYE tax code
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.fullyCollected.p7 = has changed for the {0} to {1} tax year.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.fullyCollected.p8 = Collected through your PAYE tax code for {0} to {1} tax year
+
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.fullyCollected.p9 = View
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.fullyCollected.p10 = what you owe
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.fullyCollected.p11 = to check if you have any other charges to pay.
+
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.fullyCollected.p12 = If this tax cannot be collected
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.fullyCollected.p13 = through your PAYE tax code (opens in new tab)
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.fullyCollected.p14 = for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may be charged interest and penalties.
+
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyPoints     = You will get a late submission penalty point every time you send a submission after the deadline. A submission can be a quarterly update or annual tax return.
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.fourPoints        = If you reach 4 points, you’ll have to pay a £200 penalty.
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.avoidInFuture     = To avoid receiving late submission penalty points in the future, and the potential for a financial penalty, you need to send your submissions on time.

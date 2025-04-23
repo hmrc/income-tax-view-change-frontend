@@ -28,6 +28,8 @@
 @import models.financialDetails.ChargeItem
 @import models.financialDetails.Nics2
 @import views.html.partials.yourSelfAssessmentCharges.ClassTwoNICSContent
+@import models.financialDetails.FullyCollected
+@import views.html.partials.yourSelfAssessmentCharges.PaymentOnAccountFullyCollected
 
 @this(
     p: p,
@@ -36,6 +38,7 @@
     whatIsPaymentOnAccount: WhatIsPaymentOnAccount,
     whatIsABalancingPayment: WhatIsABalancingPayment,
     lateSubmissionPenaltyContent: LateSubmissionPenaltyContent,
+    paymentOnAccountFullyCollected: PaymentOnAccountFullyCollected,
     lateSubmissionPenaltyOneContent: LateSubmissionPenaltyOneContent,
     classTwoNICSContent: ClassTwoNICSContent,
     govukDetails: GovukDetails
@@ -43,20 +46,24 @@
 
 @(
     chargeItem: ChargeItem,
-    taxYearFrom: String,
-    taxYearTo: String,
-    isAgent: Boolean
+    taxYearFrom: Int,
+    taxYearTo: Int,
+    isAgent: Boolean,
+    outstandingAmount: String,
+    isOverdue: Boolean,
+    dueDate: String
 )(
     implicit request: Request[_],
     messages: Messages
 )
 
 @{(chargeItem.transactionType, chargeItem.codedOutStatus) match {
-    case (BalancingCharge, Some(Nics2)) => classTwoNICSContent(taxYearFrom, taxYearTo, isAgent)
-    case (BalancingCharge, None)        => whatIsABalancingPayment()
-    case (PoaOneDebit | PoaTwoDebit, _) => whatIsPaymentOnAccount()
-    case (LateSubmissionPenalty, _)     => lateSubmissionPenaltyContent()
-    case (FirstLatePaymentPenalty, _)   => lateSubmissionPenaltyOneContent()
-    case _                              =>
+    case (BalancingCharge,                    Some(Nics2)) => classTwoNICSContent(taxYearFrom, taxYearTo, isAgent, outstandingAmount, isOverdue, dueDate)
+    case (BalancingCharge,                           None) => whatIsABalancingPayment(outstandingAmount, isOverdue, dueDate)
+    case (PoaOneDebit | PoaTwoDebit, Some(FullyCollected)) => paymentOnAccountFullyCollected(outstandingAmount, isOverdue, dueDate, taxYearFrom, taxYearTo)
+    case (PoaOneDebit | PoaTwoDebit,                 None) => whatIsPaymentOnAccount(outstandingAmount, isOverdue, dueDate)
+    case (LateSubmissionPenalty,                        _) => lateSubmissionPenaltyContent(outstandingAmount, isOverdue, dueDate)
+    case (FirstLatePaymentPenalty,                      _) => lateSubmissionPenaltyOneContent(outstandingAmount, isOverdue, dueDate)
+    case _                                                 =>
 }}
 

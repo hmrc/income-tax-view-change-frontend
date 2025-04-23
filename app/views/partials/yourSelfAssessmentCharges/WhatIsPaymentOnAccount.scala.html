@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 @import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
-
+@import implicits.HtmlFormatter.EmspString
 
 @this(
         p: p,
@@ -27,7 +27,11 @@
         govukDetails: GovukDetails
 )
 
-@()(
+@(
+        outstandingAmount: String,
+        isOverdue: Boolean,
+        dueDate: String
+)(
         implicit request: Request[_],
         messages: Messages
 )
@@ -35,6 +39,13 @@
 @getMessage(key: String, args: String*) = @{
     messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
 }
+
+<h1 class="govuk-heading-m" id="charge-amount-heading"> @{
+    s"${getMessage(
+        if(isOverdue) "overDueCharge"
+        else          "charge"
+    )}\t$outstandingAmount".toEmsp
+}</h1>
 
 @govukDetails(Details(
     id      = Some("payment-on-account-details"),
