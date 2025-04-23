@@ -67,13 +67,13 @@ object CodedOutStatusType {
     JsString(transactionType.key)
   }
 
-  val read: Reads[CodedOutStatusType] = (JsPath).read[String].collect(JsonValidationError("Could not parse transactionType")) {
-    case CODING_OUT_CLASS2_NICS.name => Nics2
-    case CODING_OUT_ACCEPTED.name => Accepted
-    case CODING_OUT_CANCELLED.name => Cancelled
-
+  val read: Reads[CodedOutStatusType] = JsPath.read[String].collect(JsonValidationError("Could not parse CodedOutStatusType")) {
+    case CODING_OUT_CLASS2_NICS.name     => Nics2
+    case CODING_OUT_ACCEPTED.name        => Accepted
+    case CODING_OUT_CANCELLED.name       => Cancelled
+    case CODING_OUT_FULLY_COLLECTED.name => FullyCollected
   }
 
-  implicit val format: Format[CodedOutStatusType] = Format( read, write)
+  implicit val format: Format[CodedOutStatusType] = Format(read, write)
 
 }
