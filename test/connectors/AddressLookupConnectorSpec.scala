@@ -19,6 +19,7 @@ package connectors
 import config.featureswitch.FeatureSwitching
 import mocks.MockHttpV2
 import models.admin.IncomeSourcesFs
+import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
 import models.incomeSourceDetails.{Address, BusinessAddressModel}
 import org.scalactic.Fail
@@ -67,7 +68,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           setupMockHttpV2Post(TestAddressLookupConnector.addressLookupInitializeUrl)(HttpResponse(status = ACCEPTED,
             json = JsString(""), headers = Map("Location" -> Seq("Sample location"))))
 
-          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = false, isChange = false)
+          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = false, mode = NormalMode)
           result map {
             case Left(_) => Fail("Error returned from lookup service")
             case Right(PostAddressLookupSuccessResponse(location)) => location shouldBe Some("Sample location")
@@ -81,15 +82,15 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           setupMockHttpV2Post(TestAddressLookupConnector.addressLookupInitializeUrl)(HttpResponse(status = ACCEPTED,
             json = JsString(""), headers = Map("Location" -> Seq("Sample location"))))
 
-          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = true, isChange = false)
+          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = true, mode = NormalMode)
           result map {
             case Left(_) => Fail("Error returned from lookup service")
             case Right(PostAddressLookupSuccessResponse(location)) => location shouldBe Some("Sample location")
           }
         }
       }
-      "return the redirect location when on the change page" when {
-        "location returned from the lookup-service (individual) and isChange = true" in {
+      "return the redirect location when on the Check page" when {
+        "location returned from the lookup-service (individual) and mode = CheckMode" in {
           disableAllSwitches()
           enable(IncomeSourcesFs)
           beforeEach()
@@ -97,13 +98,13 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           setupMockHttpV2Post(TestAddressLookupConnector.addressLookupInitializeUrl)(HttpResponse(status = ACCEPTED,
             json = JsString(""), headers = Map("Location" -> Seq("Sample location"))))
 
-          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = false, isChange = true)
+          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = false, mode = CheckMode)
           result map {
             case Left(_) => Fail("Error returned from lookup service")
             case Right(PostAddressLookupSuccessResponse(location)) => location shouldBe Some("Sample location")
           }
         }
-        "location returned from lookup-service (agent) when isChange = true" in { //this is the only specific agent test, just to test that everything works with both possible json payloads
+        "location returned from lookup-service (agent) when mode = CheckMode" in { //this is the only specific agent test, just to test that everything works with both possible json payloads
           disableAllSwitches()
           enable(IncomeSourcesFs)
           beforeEach()
@@ -111,7 +112,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           setupMockHttpV2Post(TestAddressLookupConnector.addressLookupInitializeUrl)(HttpResponse(status = ACCEPTED,
             json = JsString(""), headers = Map("Location" -> Seq("Sample location"))))
 
-          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = true, isChange = true)
+          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = true, mode = CheckMode)
           result map {
             case Left(_) => Fail("Error returned from lookup service")
             case Right(PostAddressLookupSuccessResponse(location)) => location shouldBe Some("Sample location")
@@ -128,13 +129,13 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           setupMockHttpV2Post(TestAddressLookupConnector.addressLookupInitializeUrl)(HttpResponse(status = OK,
             json = JsString(""), headers = Map.empty))
 
-          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = false, isChange = false)
+          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = false, mode = NormalMode)
           result map {
             case Left(UnexpectedPostStatusFailure(status)) => status shouldBe OK
             case Right(_) => Fail("error should be returned")
           }
         }
-        "non-standard status returned from lookup-service on change page" in {
+        "non-standard status returned from lookup-service on Check page" in {
           disableAllSwitches()
           enable(IncomeSourcesFs)
           beforeEach()
@@ -142,7 +143,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           setupMockHttpV2Post(TestAddressLookupConnector.addressLookupInitializeUrl)(HttpResponse(status = OK,
             json = JsString(""), headers = Map.empty))
 
-          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = false, isChange = true)
+          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = false, mode = CheckMode)
           result map {
             case Left(UnexpectedPostStatusFailure(status)) => status shouldBe OK
             case Right(_) => Fail("error should be returned")

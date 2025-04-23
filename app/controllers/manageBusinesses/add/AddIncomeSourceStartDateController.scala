@@ -23,6 +23,7 @@ import enums.IncomeSourceJourney._
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.incomeSources.add.AddIncomeSourceStartDateFormProvider
 import implicits.ImplicitDateFormatterImpl
+import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -54,32 +55,32 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
 
 
   def show(isAgent: Boolean,
-           isChange: Boolean,
+           mode: Mode,
            incomeSourceType: IncomeSourceType
           ): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
 
     handleShowRequest(
       incomeSourceType = incomeSourceType,
       isAgent = isAgent,
-      isChange = isChange
+      mode = mode
     )
   }
 
   def submit(isAgent: Boolean,
-             isChange: Boolean,
+             mode: Mode,
              incomeSourceType: IncomeSourceType
             ): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
 
     handleSubmitRequest(
       incomeSourceType = incomeSourceType,
       isAgent = isAgent,
-      isChange = isChange
+      mode = mode
     )
   }
 
   private def handleShowRequest(incomeSourceType: IncomeSourceType,
                                 isAgent: Boolean,
-                                isChange: Boolean)
+                                mode: Mode)
                                (implicit user: MtdItUser[_]): Future[Result] = {
 
     val messagesPrefix = incomeSourceType.startDateMessagesPrefix
@@ -90,7 +91,7 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
         case _ => InitialPage
       }
     }) { sessionData =>
-      if (!isChange && incomeSourceType.equals(UkProperty) || !isChange && incomeSourceType.equals(ForeignProperty)) {
+      if (mode == NormalMode && incomeSourceType.equals(UkProperty) || mode == NormalMode && incomeSourceType.equals(ForeignProperty)) {
         lazy val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
         sessionService.createSession(journeyType)
       }
@@ -108,8 +109,8 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
             form = filledForm,
             isAgent = isAgent,
             messagesPrefix = messagesPrefix,
-            backUrl = getBackUrl(incomeSourceType, isAgent, isChange),
-            postAction = getPostAction(incomeSourceType, isAgent, isChange),
+            backUrl = getBackUrl(incomeSourceType, isAgent, mode),
+            postAction = getPostAction(incomeSourceType, isAgent, mode),
             incomeSourceType = incomeSourceType
           )
         )
@@ -125,7 +126,7 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
 
   private def handleSubmitRequest(incomeSourceType: IncomeSourceType,
                                   isAgent: Boolean,
-                                  isChange: Boolean)
+                                  mode: Mode)
                                  (implicit user: MtdItUser[_]): Future[Result] = {
 
     val messagesPrefix = incomeSourceType.startDateMessagesPrefix
@@ -137,13 +138,13 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
             addIncomeSourceStartDate(
               isAgent = isAgent,
               form = formWithErrors,
-              backUrl = getBackUrl(incomeSourceType, isAgent, isChange),
-              postAction = getPostAction(incomeSourceType, isAgent, isChange),
+              backUrl = getBackUrl(incomeSourceType, isAgent, mode),
+              postAction = getPostAction(incomeSourceType, isAgent, mode),
               messagesPrefix = messagesPrefix,
               incomeSourceType = incomeSourceType
             )
           )),
-        formData => handleValidFormData(formData, incomeSourceType, isAgent, isChange)
+        formData => handleValidFormData(formData, incomeSourceType, isAgent, mode)
       )
     }
   }.recover {
@@ -154,7 +155,7 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
       errorHandler.showInternalServerError()
   }
 
-  def handleValidFormData(formData: LocalDate, incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean)
+  def handleValidFormData(formData: LocalDate, incomeSourceType: IncomeSourceType, isAgent: Boolean, mode: Mode)
                          (implicit user: MtdItUser[_]): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = {
       incomeSourceType match {
@@ -184,29 +185,29 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
             )
         }
       ) flatMap {
-        case true => Future.successful(Redirect(getSuccessUrl(incomeSourceType, isAgent, isChange)))
+        case true => Future.successful(Redirect(getSuccessUrl(incomeSourceType, isAgent, mode)))
         case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
       }
     }
   }
 
-  private def getPostAction(incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean): Call = {
-    routes.AddIncomeSourceStartDateController.submit(isAgent, isChange, incomeSourceType)
+  private def getPostAction(incomeSourceType: IncomeSourceType, isAgent: Boolean, mode: Mode): Call = {
+    routes.AddIncomeSourceStartDateController.submit(isAgent, mode, incomeSourceType)
   }
 
-  private def getSuccessUrl(incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean): Call = {
-    routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange, incomeSourceType)
+  private def getSuccessUrl(incomeSourceType: IncomeSourceType, isAgent: Boolean, mode: Mode): Call = {
+    routes.AddIncomeSourceStartDateCheckController.show(isAgent, mode, incomeSourceType)
   }
 
   private def getBackUrl(incomeSourceType: IncomeSourceType,
                          isAgent: Boolean,
-                         isChange: Boolean): String = {
+                         mode: Mode): String = {
 
-    ((isAgent, isChange, incomeSourceType) match {
-      case (true, true, _) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
-      case (false, true, _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
-      case (true, _, SelfEmployment) => controllers.manageBusinesses.add.routes.AddBusinessNameController.showAgent(isChange = isChange)
-      case (_, _, SelfEmployment) => controllers.manageBusinesses.add.routes.AddBusinessNameController.show(isChange = isChange)
+    ((isAgent, mode, incomeSourceType) match {
+      case (true, CheckMode, _) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
+      case (false, CheckMode, _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
+      case (true, _, SelfEmployment) => controllers.manageBusinesses.add.routes.AddBusinessNameController.showAgent(mode = mode)
+      case (_, _, SelfEmployment) => controllers.manageBusinesses.add.routes.AddBusinessNameController.show(mode = mode)
       case (_, _, _) => controllers.manageBusinesses.add.routes.AddPropertyController.show(isAgent = isAgent)
       }).url
   }

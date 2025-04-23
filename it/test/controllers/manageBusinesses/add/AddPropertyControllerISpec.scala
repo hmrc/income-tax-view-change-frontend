@@ -22,14 +22,15 @@ import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import forms.manageBusinesses.add.AddProprertyForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.{IncomeSourcesFs, NavBarFs}
+import models.core.NormalMode
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 
 class AddPropertyControllerISpec extends ControllerISpecHelper {
 
-  val startDateUkPropertyUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = true, incomeSourceType = UkProperty, isChange = false).url
-  val startDateForeignPropertyUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = true, incomeSourceType = ForeignProperty, isChange = false).url
+  val startDateUkPropertyUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = true, incomeSourceType = UkProperty, mode = NormalMode).url
+  val startDateForeignPropertyUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = true, incomeSourceType = ForeignProperty, mode = NormalMode).url
 
   val continueButtonText: String = messagesAPI("base.continue")
 

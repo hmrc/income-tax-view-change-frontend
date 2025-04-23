@@ -18,6 +18,7 @@ package views.manageBusinesses.add
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.incomeSources.add.AddIncomeSourceStartDateFormProvider
+import models.core.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.{Form, FormError}
@@ -117,8 +118,8 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
       case (true, UkProperty) => controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent()
       case (false, ForeignProperty) => controllers.manageBusinesses.add.routes.AddIncomeSourceController.show()
       case (true, ForeignProperty) => controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent()
-      case (false, SelfEmployment) => controllers.manageBusinesses.add.routes.AddBusinessNameController.show(isChange = false)
-      case (true, SelfEmployment) => controllers.manageBusinesses.add.routes.AddBusinessNameController.showAgent(isChange = false)
+      case (false, SelfEmployment) => controllers.manageBusinesses.add.routes.AddBusinessNameController.show(mode = NormalMode)
+      case (true, SelfEmployment) => controllers.manageBusinesses.add.routes.AddBusinessNameController.showAgent(mode = NormalMode)
     }).url
   }
 

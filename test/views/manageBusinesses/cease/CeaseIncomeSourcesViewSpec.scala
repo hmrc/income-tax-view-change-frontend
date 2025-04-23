@@ -19,6 +19,7 @@ package views.manageBusinesses.cease
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import implicits.ImplicitDateFormatter
 import models.core.IncomeSourceId.mkIncomeSourceId
+import models.core.NormalMode
 import models.incomeSourceDetails.viewmodels.{CeaseBusinessDetailsViewModel, CeaseIncomeSourcesViewModel, CeasePropertyDetailsViewModel, CeasedBusinessDetailsViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -77,7 +78,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(Some(incomeSourceId),
         SelfEmployment,
         isAgent,
-        isChange = false
+        mode = NormalMode
       ).url
     }
 

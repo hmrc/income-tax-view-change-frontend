@@ -20,6 +20,7 @@ import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.incomeSources.add.IncomeSourcesAccountingMethodForm
+import models.core.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.Form
@@ -49,11 +50,11 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
 
     val (backUrl, postAction) = incomeSourceType match {
       case SelfEmployment =>
-        (controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = isAgent, isChange = false).url, controllers.manageBusinesses.add.routes.IncomeSourcesAccountingMethodController.submit(SelfEmployment, isAgent))
+        (controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = isAgent, mode = NormalMode).url, controllers.manageBusinesses.add.routes.IncomeSourcesAccountingMethodController.submit(SelfEmployment, isAgent))
       case UkProperty =>
-        (controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = isAgent, isChange = false).url, controllers.manageBusinesses.add.routes.IncomeSourcesAccountingMethodController.submit(UkProperty, isAgent))
+        (controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = isAgent, mode = NormalMode).url, controllers.manageBusinesses.add.routes.IncomeSourcesAccountingMethodController.submit(UkProperty, isAgent))
       case _ =>
-        (controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = isAgent, isChange = false).url, controllers.manageBusinesses.add.routes.IncomeSourcesAccountingMethodController.submit(ForeignProperty, isAgent))
+        (controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = isAgent, mode = NormalMode).url, controllers.manageBusinesses.add.routes.IncomeSourcesAccountingMethodController.submit(ForeignProperty, isAgent))
     }
 
     lazy val view: HtmlFormat.Appendable = incomeSourcesAccountingMethodView(

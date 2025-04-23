@@ -18,6 +18,7 @@ package views.manageBusinesses.add
 
 import enums.IncomeSourceJourney.SelfEmployment
 import forms.manageBusinesses.add.BusinessTradeForm
+import models.core.{CheckMode, NormalMode}
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
@@ -40,10 +41,10 @@ class AddBusinessTradeViewSpec extends ViewSpec {
   }
 
   val backUrl: String = {
-    controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false).url
+    controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = false, mode = NormalMode).url
   }
   val agentBackUrl: String = {
-    controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
+    controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, mode = NormalMode).url
   }
 
   val addBusinessTradeView: AddBusinessTrade = app.injector.instanceOf[AddBusinessTrade]

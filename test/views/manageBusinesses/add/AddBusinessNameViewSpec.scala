@@ -18,6 +18,7 @@ package views.manageBusinesses.add
 
 import enums.IncomeSourceJourney.SelfEmployment
 import forms.incomeSources.add.BusinessNameForm
+import models.core.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.data.{Form, FormError}
@@ -40,13 +41,13 @@ class AddBusinessNameViewSpec extends ViewSpec {
     val postAction: Call = {
       if (isChange) {
         if (isAgent) {
-          controllers.manageBusinesses.add.routes.AddBusinessNameController.submitAgent(isChange = true)
+          controllers.manageBusinesses.add.routes.AddBusinessNameController.submitAgent(mode = CheckMode)
         } else {
-          controllers.manageBusinesses.add.routes.AddBusinessNameController.submit(isChange = true)
+          controllers.manageBusinesses.add.routes.AddBusinessNameController.submit(mode = CheckMode)
         }
       } else {
-        if (isAgent) controllers.manageBusinesses.add.routes.AddBusinessNameController.submitAgent(isChange = false) else
-          controllers.manageBusinesses.add.routes.AddBusinessNameController.submit(isChange = false)
+        if (isAgent) controllers.manageBusinesses.add.routes.AddBusinessNameController.submitAgent(mode = NormalMode) else
+          controllers.manageBusinesses.add.routes.AddBusinessNameController.submit(mode = NormalMode)
       }
     }
 

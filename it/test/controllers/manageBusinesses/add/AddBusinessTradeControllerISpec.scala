@@ -23,6 +23,7 @@ import enums.{MTDIndividual, MTDUserRole}
 import forms.manageBusinesses.add.BusinessTradeForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.{IncomeSourcesFs, NavBarFs}
+import models.core.NormalMode
 import models.incomeSourceDetails.AddIncomeSourceData.businessTradeField
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -175,9 +176,9 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
               sessionService.getMongoKeyTyped[String](businessTradeField, IncomeSourceJourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(testBusinessTrade))
 
               val expectedUrl = if(mtdUserRole == MTDIndividual) {
-                controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(isChange = false).url
+                controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(mode = NormalMode).url
               } else {
-                controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(isChange = false).url
+                controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(mode = NormalMode).url
               }
               result should have(
                 httpStatus(SEE_OTHER),

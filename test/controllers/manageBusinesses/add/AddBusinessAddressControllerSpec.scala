@@ -21,6 +21,7 @@ import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.admin.IncomeSourcesFs
+import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, BusinessAddressModel, UIJourneySessionData}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -42,8 +43,8 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
   val incomeSourceDetailsService: IncomeSourceDetailsService = mock(classOf[IncomeSourceDetailsService])
 
-  val postAction: Call = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None, isChange = false)
-  val postActionChange: Call = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None, isChange = true)
+  val postAction: Call = controllers.manageBusinesses.add.routes.AddBusinessAddressController.submit(None, mode = NormalMode)
+  val postActionCheck: Call = controllers.manageBusinesses.add.routes.AddBusinessAddressController.submit(None, mode = CheckMode)
   val redirectAction: Call = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
   val redirectActionAgent: Call = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
   lazy val mockAddressLookupService: AddressLookupService = mock(classOf[AddressLookupService])
@@ -69,11 +70,11 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
   case class AddressError(status: String) extends RuntimeException
 
 
-  Seq(true, false).foreach { isChange =>
+  Seq(CheckMode, NormalMode).foreach { mode =>
     mtdAllRoles.foreach { mtdRole =>
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
-      s"show${if (mtdRole != MTDIndividual) "Agent"}(isChange = $isChange)" when {
-        val action = if (mtdRole == MTDIndividual) testAddBusinessAddressController.show(isChange) else testAddBusinessAddressController.showAgent(isChange)
+      s"show${if (mtdRole != MTDIndividual) "Agent"}(mode = $mode)" when {
+        val action = if (mtdRole == MTDIndividual) testAddBusinessAddressController.show(mode) else testAddBusinessAddressController.showAgent(mode)
         s"the user is authenticated as a $mtdRole" should {
           "redirect to the address lookup service" when {
             "location redirect is returned by the lookup service" in {
@@ -136,8 +137,8 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
         }
       }
 
-      s"submit${if (mtdRole != MTDIndividual) "Agent"}(isChange = $isChange)" when {
-        val action = if (mtdRole == MTDIndividual) testAddBusinessAddressController.submit(Some("123"), isChange) else testAddBusinessAddressController.agentSubmit(Some("123"), isChange)
+      s"submit${if (mtdRole != MTDIndividual) "Agent"}(mode = $mode)" when {
+        val action = if (mtdRole == MTDIndividual) testAddBusinessAddressController.submit(Some("123"), mode) else testAddBusinessAddressController.agentSubmit(Some("123"), mode)
         s"the user is authenticated as a $mtdRole" should {
           "redirect to add accounting method page" when {
             "valid data received" in {

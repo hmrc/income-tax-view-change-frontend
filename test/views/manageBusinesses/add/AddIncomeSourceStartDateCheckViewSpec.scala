@@ -18,6 +18,7 @@ package views.manageBusinesses.add
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm
+import models.core.{CheckMode, Mode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.FormError
@@ -30,7 +31,7 @@ import java.time.LocalDate
 
 class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
 
-  class Setup(isAgent: Boolean, hasError: Boolean, incomeSourceType: IncomeSourceType, isChange: Boolean = false) {
+  class Setup(isAgent: Boolean, hasError: Boolean, incomeSourceType: IncomeSourceType, mode: Mode = NormalMode) {
 
     val addIncomeSourceStartDateCheck: AddIncomeSourceStartDateCheck = app.injector.instanceOf[AddIncomeSourceStartDateCheck]
     val startDate: String = "2022-06-30"
@@ -48,7 +49,7 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
             postAction = Call("", ""),
             isAgent = isAgent,
             incomeSourceStartDate = formattedStartDate,
-            backUrl = getBackUrl(isAgent, isChange, incomeSourceType),
+            backUrl = getBackUrl(isAgent, mode, incomeSourceType),
             incomeSourceType = incomeSourceType
           )
         )
@@ -70,13 +71,13 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
         document.getElementsByClass("govuk-label govuk-radios__label").eq(1).text() shouldBe messages("radioForm.no")
         document.getElementsByClass("govuk-radios").size() shouldBe 1
       }
-      "render the back link with the correct URL for Normal journey" in new Setup(isAgent, hasError = false, incomeSourceType, isChange = false) {
+      "render the back link with the correct URL for Normal journey" in new Setup(isAgent, hasError = false, incomeSourceType, mode = NormalMode) {
         document.getElementById("back-fallback").text() shouldBe messages("base.back")
-        document.getElementById("back-fallback").attr("href") shouldBe getBackUrl(isAgent, isChange = false, incomeSourceType)
+        document.getElementById("back-fallback").attr("href") shouldBe getBackUrl(isAgent, mode = NormalMode, incomeSourceType)
       }
-      "render the back link with the correct URL for Change journey" in new Setup(isAgent, hasError = false, incomeSourceType, isChange = true) {
+      "render the back link with the correct URL for Check journey" in new Setup(isAgent, hasError = false, incomeSourceType, mode = CheckMode) {
         document.getElementById("back-fallback").text() shouldBe messages("base.back")
-        document.getElementById("back-fallback").attr("href") shouldBe getBackUrl(isAgent, isChange = true, incomeSourceType)
+        document.getElementById("back-fallback").attr("href") shouldBe getBackUrl(isAgent, mode = CheckMode, incomeSourceType)
       }
       "render the continue button" in new Setup(isAgent, hasError = false, incomeSourceType) {
         document.getElementById("continue-button").text() shouldBe messages("base.continue")
@@ -93,9 +94,9 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
     }
   }
 
-  def getBackUrl(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): String = {
+  def getBackUrl(isAgent: Boolean, mode: Mode, incomeSourceType: IncomeSourceType): String = {
     controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController
-      .show(isAgent, isChange, incomeSourceType).url
+      .show(isAgent, mode, incomeSourceType).url
   }
 
   def getCaption(incomeSourceType: IncomeSourceType): String = {

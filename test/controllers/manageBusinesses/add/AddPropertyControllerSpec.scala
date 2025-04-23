@@ -23,6 +23,7 @@ import forms.manageBusinesses.add.AddProprertyForm._
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.admin.IncomeSourcesFs
+import models.core.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api
@@ -113,7 +114,7 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
             ))
 
             status(result) shouldBe SEE_OTHER
-            val redirectUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, isChange = false, UkProperty).url
+            val redirectUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, mode = NormalMode, UkProperty).url
             redirectLocation(result) shouldBe Some(redirectUrl)
           }
           "uk property selected" in {
@@ -127,7 +128,7 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
             ))
 
             status(result) shouldBe SEE_OTHER
-            val redirectUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, isChange = false, ForeignProperty).url
+            val redirectUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, mode = NormalMode, ForeignProperty).url
             redirectLocation(result) shouldBe Some(redirectUrl)
           }
         }

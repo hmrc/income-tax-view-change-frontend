@@ -23,6 +23,7 @@ import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.admin.IncomeSourcesFs
+import models.core.NormalMode
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -154,7 +155,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
 
               status(result) shouldBe Status.SEE_OTHER
               val optId = if(incomeSourceType == SelfEmployment) Some("test-id") else None
-              redirectLocation(result) shouldBe Some(controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(optId, incomeSourceType, isAgent, false).url)
+              redirectLocation(result) shouldBe Some(controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(optId, incomeSourceType, isAgent, NormalMode).url)
               verifySetMongoKey(CeaseIncomeSourceData.ceaseIncomeSourceDeclare, "true", journeyType)
             }
           }

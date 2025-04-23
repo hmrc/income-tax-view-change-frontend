@@ -24,6 +24,7 @@ import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm
 import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm.{responseNo, responseYes}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.{IncomeSourcesFs, NavBarFs}
+import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData.{accountingPeriodEndDateField, accountingPeriodStartDateField, dateStartedField}
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -76,9 +77,9 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
     await(sessionService.deleteSession(Add))
   }
 
-  def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType, isChange: Boolean): String = {
+  def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType, mode: Mode): String = {
     val pathStart = if(mtdRole == MTDIndividual) "/manage-your-businesses" else "/agents/manage-your-businesses"
-    val pathEnd = s"/${if(isChange) "change-" else ""}business-start-date-check"
+    val pathEnd = s"/${if(mode == CheckMode) "change-" else ""}business-start-date-check"
     incomeSourceType match {
       case SelfEmployment => s"$pathStart/add-sole-trader$pathEnd"
       case UkProperty => s"$pathStart/add-uk-property$pathEnd"
@@ -110,10 +111,10 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
       Right{if(incomeSourceType == SelfEmployment) Some(testAccountingPeriodEndDate) else None }
   }
 
-  List(true, false).foreach { isChange =>
+  List(CheckMode, NormalMode).foreach { mode =>
     List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
       mtdAllRoles.foreach { mtdUserRole =>
-        val path = getPath(mtdUserRole, incomeSourceType, isChange)
+        val path = getPath(mtdUserRole, incomeSourceType, mode)
         val additionalCookies = getAdditionalCookies(mtdUserRole)
         s"GET $path" when {
           s"a user is a $mtdUserRole" that {
@@ -147,7 +148,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
           val isAgent = mtdUserRole != MTDIndividual
           s"a user is a $mtdUserRole" that {
             "is authenticated, with a valid enrolment" should {
-              if(isChange) {
+              if(mode == CheckMode) {
                 val checkDetailsUrl = if(isAgent) {
                   controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType).url
                 } else {
@@ -174,9 +175,9 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
                 }
               } else if(incomeSourceType == SelfEmployment) {
                 val addTradeUrl = if(isAgent) {
-                  controllers.manageBusinesses.add.routes.AddBusinessTradeController.showAgent(isChange = false).url
+                  controllers.manageBusinesses.add.routes.AddBusinessTradeController.showAgent(mode = NormalMode).url
                   } else {
-                  controllers.manageBusinesses.add.routes.AddBusinessTradeController.show(isChange = false).url
+                  controllers.manageBusinesses.add.routes.AddBusinessTradeController.show(mode = NormalMode).url
                   }
                 s"redirect to $addTradeUrl" when {
                   "form response is Yes" in {
@@ -220,7 +221,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
                 }
               }
               val expectedUrlForNo = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController
-                .show(isAgent, isChange, incomeSourceType).url
+                .show(isAgent, mode, incomeSourceType).url
               s"redirect to $expectedUrlForNo" when {
                 "form response is No" in {
                   enable(IncomeSourcesFs)
