@@ -53,17 +53,8 @@
     businessNameForm("business-name")
 }
 
-@hintContent = {
-    @p(classes="govuk-hint"){
-        @messages("add-business-name.p1")
-    }
-    @p(classes="govuk-hint"){
-        @messages("add-business-name.p2", "'")
-    }
-}
-
 @mainTemplate(
-pageTitle = messages("add-business-name.heading"),
+pageTitle = messages("add-business-name.heading1"),
 form = Some(businessNameForm),
 isAgent = isAgent,
 backUrl = Some(backUrl),
@@ -77,19 +68,28 @@ btaNavPartial = user.btaNavPartial) {
 
         <span class="govuk-caption-l">@messages("incomeSources.add.sole-trader")</span>
 
+        @h1(messages("add-business-name.heading1"))
+
+        @p(classes="govuk-body") {
+            @messages("add-business-name.p1")
+        }
+
+        @h2(messages("add-business-name.heading2"))
+
+        @p(classes="govuk-body") {
+            @messages("add-business-name.p2", "'")
+        }
+
         @govukInput(
             Input(
                 id = businessName,
                 name = businessName,
                 classes = "govuk-!-width-three-quarters",
-                    label = Label(
-                        isPageHeading = true,
-                        classes = "govuk-label--l",
-                        content = Text(messages("add-business-name.heading"))
-                    ),
-                    hint = Some(Hint(content = HtmlContent(
-                        hintContent
-                    )))
+                label = Label(
+                    isPageHeading = false,
+                    classes = "govuk-visually-hidden",
+                    content = Text(messages("add-business-name.heading1"))
+                )
             ).withFormField(field)
         )
 

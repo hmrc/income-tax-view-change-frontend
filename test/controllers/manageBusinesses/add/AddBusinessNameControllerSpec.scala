@@ -54,7 +54,7 @@ class AddBusinessNameControllerSpec extends MockAuthActions
   val journeyType: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, SelfEmployment)
 
   def getValidationErrorTabTitle(): String = {
-    s"${messages("htmlTitle.invalidInput", messages("add-business-name.heading"))}"
+    s"${messages("htmlTitle.invalidInput", messages("add-business-name.heading1"))}"
   }
 
   def getAction(mtdRole: MTDUserRole, mode: Mode, isPost: Boolean = false) = mtdRole match {
