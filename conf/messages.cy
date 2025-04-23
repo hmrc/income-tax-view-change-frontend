@@ -236,6 +236,8 @@ tax-year-summary.payments.due-date                             = Dyddiad dyledus
 tax-year-summary.payments.amount                               = Swm
 tax-year-summary.payments.paymentOnAccount1.text               = Taliad cyntaf ar gyfrif
 tax-year-summary.payments.paymentOnAccount2.text               = Ail daliad ar gyfrif
+tax-year-summary.payments.paymentOnAccount1.codingOut.fullyCollected.text         = First payment on account collected through PAYE tax code
+tax-year-summary.payments.paymentOnAccount2.codingOut.fullyCollected.text         = Second payment on account collected through PAYE tax code
 tax-year-summary.payments.balancingCharge.text                 = Taliad mantoli
 tax-year-summary.payments.lpi.paymentOnAccount1.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2
 tax-year-summary.payments.lpi.paymentOnAccount2.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
@@ -2715,20 +2717,25 @@ yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText2  = and fi
 
 yourSelfAssessmentChargeSummary.classTwoNICSContent.p1                              = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
 
-yourSelfAssessmentChargeSummary.balancingCharge.text.heading                        = Balancing payment
-yourSelfAssessmentChargeSummary.paymentOnAccount1.text.heading                      = First payment on account
-yourSelfAssessmentChargeSummary.paymentOnAccount2.text.heading                      = Second payment on account
+yourSelfAssessmentChargeSummary.balancingCharge.text.heading                            = Balancing payment
+yourSelfAssessmentChargeSummary.paymentOnAccount1.text.heading                          = First payment on account
+yourSelfAssessmentChargeSummary.paymentOnAccount2.text.heading                          = Second payment on account
+yourSelfAssessmentChargeSummary.paymentOnAccount1.codingOut.fullyCollected.text.heading = First payment on account collected through PAYE tax code
+yourSelfAssessmentChargeSummary.paymentOnAccount2.codingOut.fullyCollected.text.heading = Second payment on account collected through PAYE tax code
+
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.text.heading                  = Late submission penalty
 yourSelfAssessmentChargeSummary.class2Nic.text.heading                              = Class 2 National Insurance
 yourSelfAssessmentChargeSummary.unknown.heading                                     = Unknown
 
-yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.heading          = Balancing payment history
-yourSelfAssessmentChargeSummary.chargeHistory.class2Nic.text.heading                = History of this charge
-yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount1.text.heading        = First payment on account history
-yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount2.text.heading        = Second payment on account history
-yourSelfAssessmentChargeSummary.chargeHistory.lateSubmissionPenalty.text.heading    = Late submission penalty history
-yourSelfAssessmentChargeSummary.chargeHistory.firstLatePaymentPenalty.text.heading  = First late payment penalty history
-yourSelfAssessmentChargeSummary.chargeHistory.unknown.text.heading                  = History of this charge
+yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.heading                            = Balancing payment history
+yourSelfAssessmentChargeSummary.chargeHistory.class2Nic.text.heading                                  = History of this charge
+yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount1.text.heading                          = First payment on account history
+yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount2.text.heading                          = Second payment on account history
+yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount1.codingOut.fullyCollected.text.heading = First payment on account history
+yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount2.codingOut.fullyCollected.text.heading = Second payment on account history
+yourSelfAssessmentChargeSummary.chargeHistory.lateSubmissionPenalty.text.heading                      = Late submission penalty history
+yourSelfAssessmentChargeSummary.chargeHistory.firstLatePaymentPenalty.text.heading                    = First late payment penalty history
+yourSelfAssessmentChargeSummary.chargeHistory.unknown.text.heading                                    = History of this charge
 
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.text.heading                = First late payment penalty
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p = You have received this penalty because you are late paying your Income Tax.

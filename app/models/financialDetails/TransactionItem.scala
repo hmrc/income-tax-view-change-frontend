@@ -48,24 +48,27 @@ trait TransactionItem {
 
   // TODO: duplicate logic, in scope of => https://jira.tools.tax.service.gov.uk/browse/MISUV-8557
   // TODO: We should remove DocumentDetail.getChargeTypeKey and keep this method below as it is tied to ChargeItem
-  def getChargeTypeKey: String =
+  def getChargeTypeKey: String = {
     (transactionType, codedOutStatus) match {
-      case (PoaOneDebit, _) => "paymentOnAccount1.text"
-      case (PoaTwoDebit, _) => "paymentOnAccount2.text"
-      case (MfaDebitCharge, _) => "hmrcAdjustment.text"
-      case (BalancingCharge, Some(Nics2)) => "class2Nic.text"
-      case (BalancingCharge, Some(Accepted)) => "codingOut.text"
-      case (BalancingCharge, Some(Cancelled)) => "cancelledPayeSelfAssessment.text"
-      case (BalancingCharge, _) => "balancingCharge.text"
-      case (PoaOneReconciliationDebit, _) => "reviewAndReconcilePoa1.text"
-      case (PoaTwoReconciliationDebit, _) => "reviewAndReconcilePoa2.text"
-      case (PoaOneReconciliationCredit, _) => "reviewAndReconcilePoa1Credit.text"
-      case (PoaTwoReconciliationCredit, _) => "reviewAndReconcilePoa2Credit.text"
-      case (LateSubmissionPenalty, _) => "lateSubmissionPenalty.text"
-      case (FirstLatePaymentPenalty, _) => "firstLatePaymentPenalty.text"
-      case (SecondLatePaymentPenalty, _) => "secondLatePaymentPenalty.text"
+      case (PoaOneDebit,               Some(FullyCollected)) => "paymentOnAccount1.codingOut.fullyCollected.text"
+      case (PoaOneDebit,                                  _) => "paymentOnAccount1.text"
+      case (PoaTwoDebit,               Some(FullyCollected)) => "paymentOnAccount2.codingOut.fullyCollected.text"
+      case (PoaTwoDebit,                                  _) => "paymentOnAccount2.text"
+      case (MfaDebitCharge,                               _) => "hmrcAdjustment.text"
+      case (BalancingCharge,                    Some(Nics2)) => "class2Nic.text"
+      case (BalancingCharge,                 Some(Accepted)) => "codingOut.text"
+      case (BalancingCharge,                Some(Cancelled)) => "cancelledPayeSelfAssessment.text"
+      case (BalancingCharge,                              _) => "balancingCharge.text"
+      case (PoaOneReconciliationDebit,                    _) => "reviewAndReconcilePoa1.text"
+      case (PoaTwoReconciliationDebit,                    _) => "reviewAndReconcilePoa2.text"
+      case (PoaOneReconciliationCredit,                   _) => "reviewAndReconcilePoa1Credit.text"
+      case (PoaTwoReconciliationCredit,                   _) => "reviewAndReconcilePoa2Credit.text"
+      case (LateSubmissionPenalty,                        _) => "lateSubmissionPenalty.text"
+      case (FirstLatePaymentPenalty,                      _) => "firstLatePaymentPenalty.text"
+      case (SecondLatePaymentPenalty,                     _) => "secondLatePaymentPenalty.text"
       case error =>
         Logger("application").error(s"Missing or non-matching charge type: $error found")
         "unknownCharge"
     }
+  }
 }
