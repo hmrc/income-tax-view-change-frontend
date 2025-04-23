@@ -60,7 +60,7 @@
 @{(chargeItem.transactionType, chargeItem.codedOutStatus) match {
     case (BalancingCharge,                    Some(Nics2)) => classTwoNICSContent(taxYearFrom, taxYearTo, isAgent, outstandingAmount, isOverdue, dueDate)
     case (BalancingCharge,                           None) => whatIsABalancingPayment(outstandingAmount, isOverdue, dueDate)
-    case (PoaOneDebit | PoaTwoDebit, Some(FullyCollected)) => paymentOnAccountFullyCollected(outstandingAmount, isOverdue, dueDate, taxYearFrom, taxYearTo)
+    case (PoaOneDebit | PoaTwoDebit, Some(FullyCollected)) => paymentOnAccountFullyCollected(isAgent, outstandingAmount, isOverdue, dueDate, taxYearFrom, taxYearTo)
     case (PoaOneDebit | PoaTwoDebit,                 None) => whatIsPaymentOnAccount(outstandingAmount, isOverdue, dueDate)
     case (LateSubmissionPenalty,                        _) => lateSubmissionPenaltyContent(outstandingAmount, isOverdue, dueDate)
     case (FirstLatePaymentPenalty,                      _) => lateSubmissionPenaltyOneContent(outstandingAmount, isOverdue, dueDate)

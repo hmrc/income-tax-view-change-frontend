@@ -2718,7 +2718,7 @@ yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.fullyCollected.p10 = what
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.fullyCollected.p11 = to check if you have any other charges to pay.
 
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.fullyCollected.p12 = If this tax cannot be collected
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.fullyCollected.p13 = through your PAYE tax code (opens in new tab)
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.fullyCollected.p13 = through your PAYE tax code
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.fullyCollected.p14 = for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may be charged interest and penalties.
 
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyPoints     = You will get a late submission penalty point every time you send a submission after the deadline. A submission can be a quarterly update or annual tax return.
