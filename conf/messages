@@ -2723,6 +2723,7 @@ yourSelfAssessmentChargeSummary.paymentOnAccount2.codingOut.fullyCollected.text.
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.text.heading                  = Late submission penalty
 yourSelfAssessmentChargeSummary.class2Nic.text.heading                              = Class 2 National Insurance
 yourSelfAssessmentChargeSummary.unknown.heading                                     = Unknown
+yourSelfAssessmentChargeSummary.PaymentAmount                                       = Payment Amount
 
 yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.heading                            = Balancing payment history
 yourSelfAssessmentChargeSummary.chargeHistory.class2Nic.text.heading                                  = History of this charge
