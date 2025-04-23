@@ -16,7 +16,7 @@
 
 package models.financialDetails
 
-import enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED, CODING_OUT_CLASS2_NICS}
+import enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED, CODING_OUT_CLASS2_NICS, CODING_OUT_FULLY_COLLECTED}
 import play.api.libs.json._
 
 sealed trait CodedOutStatusType  {
@@ -35,8 +35,13 @@ case object Cancelled extends CodedOutStatusType {
   override val key = "Cancelled"
 }
 
+case object FullyCollected extends CodedOutStatusType {
+  override val key = "FullyCollected"
+}
+
 object CodedOutStatusType {
 
+  @deprecated
   def fromDocumentText(documentText: String): Option[CodedOutStatusType] = {
     documentText match {
       case CODING_OUT_CLASS2_NICS.name =>
@@ -49,14 +54,14 @@ object CodedOutStatusType {
     }
   }
 
-  def fromCodedOutStatusAndDocumentText(documentText: Option[String], codedOutStatus: Option[String]): Option[CodedOutStatusType] = {
+  def fromCodedOutStatusAndDocumentText(documentText: Option[String], codedOutStatus: Option[String]): Option[CodedOutStatusType] =
     (documentText, codedOutStatus) match {
-      case (Some(CODING_OUT_CLASS2_NICS.name), _) => Some(Nics2)
-      case (Some(CODING_OUT_ACCEPTED.name), _) | (_, Some(CODING_OUT_ACCEPTED.code)) => Some(Accepted)
-      case (Some(CODING_OUT_CANCELLED.name), _) | (_, Some(CODING_OUT_CANCELLED.code)) => Some(Cancelled)
-      case _ => None
+      case (Some(CODING_OUT_CLASS2_NICS.name),     _)                                              => Some(Nics2)
+      case (Some(CODING_OUT_ACCEPTED.name),        _) | (_, Some(CODING_OUT_ACCEPTED.code))        => Some(Accepted)
+      case (Some(CODING_OUT_CANCELLED.name),       _) | (_, Some(CODING_OUT_CANCELLED.code))       => Some(Cancelled)
+      case (Some(CODING_OUT_FULLY_COLLECTED.name), _) | (_, Some(CODING_OUT_FULLY_COLLECTED.code)) => Some(FullyCollected)
+      case _                                                                                       => None
     }
-  }
 
   implicit val write: Writes[CodedOutStatusType] = (transactionType: CodedOutStatusType) => {
     JsString(transactionType.key)
