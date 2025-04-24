@@ -44,8 +44,8 @@
 }
 
 @currentOrTyCheckedValue(idOrName: Option[String]) = @{
-    if(idOrName.contains("current-year-checkbox") && isChange) form.get.currentTaxYear.getOrElse(false)
-    else if(idOrName.contains("next-year-checkbox") && isChange) form.get.nextTaxYear.getOrElse(false)
+    if(idOrName.contains("current-year-checkbox") && isChange) form.value.exists(_.currentTaxYear.contains(true))
+    else if(idOrName.contains("next-year-checkbox") && isChange) form.value.exists(_.nextTaxYear.contains(true))
     else false
 }
 

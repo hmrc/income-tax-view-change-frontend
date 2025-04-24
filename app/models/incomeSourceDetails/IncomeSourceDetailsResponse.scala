@@ -93,6 +93,7 @@ case class IncomeSourceDetailsModel(
   }
 
   def getLatencyDetails(incomeSourceType: IncomeSourceType, id: String): Option[LatencyDetails] = {
+    println(Console.CYAN + getSoleTraderBusiness(id).flatMap(_.latencyDetails) + Console.RESET)
     incomeSourceType match {
       case SelfEmployment => getSoleTraderBusiness(id).flatMap(_.latencyDetails)
       case UkProperty => getUKProperty.flatMap(_.latencyDetails)

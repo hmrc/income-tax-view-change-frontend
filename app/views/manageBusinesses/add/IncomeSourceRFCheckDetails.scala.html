@@ -109,7 +109,7 @@
                 items = Seq(
                     ActionItem(
                         href = changeReportingFrequencyURL,
-                        content = Text(getMessage("change")),
+                        content = Text(messages("income-sources.check-details-reporting-frequency.change")),
                         attributes = Map("id" -> "change-reporting-frequency-link")
                     )
                 )
@@ -143,13 +143,13 @@
 }
 
 @mainTemplate(
-    pageTitle = getMessage("title"),
+    pageTitle = messages("income-sources.check-details-reporting-frequency.title"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
 
     @hmrcPageHeading(PageHeading(
-        text = getMessage("title"),
+        text = messages("income-sources.check-details-reporting-frequency.title"),
         headingClasses = Some("govuk-heading-l"),
         section = Some(getMessage("heading")),
         captionClasses = Some("govuk-caption-l")
