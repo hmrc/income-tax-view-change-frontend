@@ -43,7 +43,7 @@ class IncomeSourceRFCheckDetailsViewSpec extends TestSupport {
     val pageDocument: Document = Jsoup.parse(contentAsString(view(viewModel, postAction, isAgent, backUrl)))
   }
 
-  def runTest(incomeSourceType: IncomeSourceType, changeReportingFrequency: Boolean = true, isReportingQuarterlyCurrentYear: Boolean = false, isReportingQuarterlyForNextYear: Boolean = false): Unit = {
+  def runTest(incomeSourceType: IncomeSourceType, changeReportingFrequency: Boolean = true, isReportingQuarterlyCurrentYear: Boolean = true, isReportingQuarterlyForNextYear: Boolean = true): Unit = {
     "have the correct title" in new Setup(incomeSourceType, changeReportingFrequency, isReportingQuarterlyCurrentYear, isReportingQuarterlyForNextYear) {
       pageDocument.title() shouldBe "Check your answers - Manage your Income Tax updates - GOV.UK"
     }
@@ -63,9 +63,24 @@ class IncomeSourceRFCheckDetailsViewSpec extends TestSupport {
 
     "have the correct summary heading and page contents" in new Setup(incomeSourceType, changeReportingFrequency, isReportingQuarterlyCurrentYear, isReportingQuarterlyForNextYear) {
       pageDocument.getElementsByClass("govuk-summary-list__key").first().text() shouldBe "Do you want to change to report quarterly?"
+
       if (changeReportingFrequency) {
+        pageDocument.getElementsByClass("govuk-summary-list__value").first().text() shouldBe "Yes"
         pageDocument.getElementsByClass("govuk-summary-list__key").last().text() shouldBe "Which tax year do you want to report quarterly for?"
+
+        (isReportingQuarterlyCurrentYear, isReportingQuarterlyForNextYear) match {
+          case (true, false) => pageDocument.getElementsByClass("govuk-summary-list__value").last().text() shouldBe "2023 to 2024"
+          case (false, true) => pageDocument.getElementsByClass("govuk-summary-list__value").last().text() shouldBe "2024 to 2025"
+          case (true, true) => pageDocument.getElementsByClass("govuk-summary-list__value").last().text() shouldBe "2023 to 2024 2024 to 2025"
+        }
+
+        pageDocument.getElementsByClass("govuk-summary-list__actions").last().text() shouldBe "Change"
+        pageDocument.getElementsByClass("govuk-summary-list__actions").last().attr("href") shouldBe ""
+
+      } else {
+        pageDocument.getElementsByClass("govuk-summary-list__value").first().text() shouldBe "No"
       }
+      pageDocument.getElementsByClass("govuk-summary-list__actions").first().text() shouldBe "Change"
 
       pageDocument.getElementById("confirm-button").text() shouldBe "Confirm and continue"
     }
@@ -76,8 +91,16 @@ class IncomeSourceRFCheckDetailsViewSpec extends TestSupport {
       runTest(incomeSourceType = incomeSourceType, changeReportingFrequency = false)
     }
 
-    s"run test for $incomeSourceType with change reporting frequency flag set to true" should {
+    s"run test for $incomeSourceType with change reporting frequency flag set to true with both tax years chosen" should {
       runTest(incomeSourceType = incomeSourceType)
+    }
+
+    s"run test for $incomeSourceType with isReportingQuarterlyCurrentYear flag set to false" should {
+      runTest(incomeSourceType = incomeSourceType, isReportingQuarterlyCurrentYear = false)
+    }
+
+    s"run test for $incomeSourceType with isReportingQuarterlyForNextYear flag set to false" should {
+      runTest(incomeSourceType = incomeSourceType, isReportingQuarterlyForNextYear = false)
     }
   }
 }

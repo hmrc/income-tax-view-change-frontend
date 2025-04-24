@@ -20,7 +20,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import mocks.auth.MockAuthActions
-import mocks.services.MockSessionService
+import mocks.services.{MockIncomeSourceRFService, MockSessionService}
 import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.AddIncomeSourceData
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
@@ -35,13 +35,14 @@ import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services._
+import services.manageBusinesses.IncomeSourceRFService
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.notCompletedUIJourneySessionData
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with MockSessionService {
+class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with MockSessionService with MockIncomeSourceRFService {
 
   lazy val mockITSAStatusService: ITSAStatusService = mock(classOf[ITSAStatusService])
   lazy val mockUpdateIncomeSourceService: UpdateIncomeSourceService = mock(classOf[UpdateIncomeSourceService])
@@ -50,6 +51,7 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
+      api.inject.bind[IncomeSourceRFService].toInstance(mockIncomeSourceRFService),
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[ITSAStatusService].toInstance(mockITSAStatusService),
       api.inject.bind[UpdateIncomeSourceService].toInstance(mockUpdateIncomeSourceService),
@@ -194,6 +196,7 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
   def setupMockCalls(isAgent: Boolean, incomeSourceType: IncomeSourceType, mtdRole: MTDUserRole, scenario: Scenario): Unit = {
     enable(IncomeSourcesNewJourney)
     enable(IncomeSourcesNewJourney)
+    mockRedirectChecksForIncomeSourceRF()
     setupMockSuccess(mtdRole)
     setupMockIncomeSourceDetailsCall(scenario, incomeSourceType)
     setupMockDateServiceCall(scenario)
@@ -226,8 +229,11 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
             s"with New Incomesource FS enabled" in {
               setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
               val thisTaxYear: Int = TAX_YEAR_2023.getYear
+
               val result = action(fakeRequest)
               val document: Document = Jsoup.parse(contentAsString(result))
+
+              println(Console.MAGENTA + document + Console.RESET)
 
               val warningInsetTextMessages: String = getWarningInsetTextMessage(currentTaxYearEnd = thisTaxYear + 1)
 
