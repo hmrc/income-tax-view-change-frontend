@@ -29,21 +29,21 @@
 
     <logger name="uk.gov" level="OFF"/>
 
-    <logger name="application" level="DEBUG"/>
+    <logger name="application" level="OFF"/>
 
-    <logger name="auth" level="DEBUG"/>
-
-
-    <logger name="controllers" level="DEBUG"/>
+    <logger name="auth" level="OFF"/>
 
 
-    <logger name="connector" level="ERROR">
+    <logger name="controllers" level="OFF"/>
+
+
+    <logger name="connector" level="OFF">
         <appender-ref ref="STDOUT"/>
     </logger>
 
 
 
-    <root level="ERROR">
+    <root level="OFF">
         <appender-ref ref="FILE"/>
         <appender-ref ref="STDOUT"/>
     </root>
