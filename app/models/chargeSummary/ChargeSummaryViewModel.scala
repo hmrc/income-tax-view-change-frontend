@@ -64,8 +64,8 @@ case class ChargeSummaryViewModel(
   val taxYearFrom = chargeItem.taxYear.startYear
   val taxYearTo = chargeItem.taxYear.endYear
 
-  val taxYearFromBCD = chargeItem.taxYear.previousYear.startYear
-  val taxYearToBCD = chargeItem.taxYear.previousYear.endYear
+  val taxYearFromCodedOut = chargeItem.taxYear.previousYear.startYear
+  val taxYearToCodedOut = chargeItem.taxYear.previousYear.endYear
 
   val taxYearFromCodingOut = s"${chargeItem.taxYear.nextYear.startYear}"
   val taxYearToCodingOut = s"${chargeItem.taxYear.nextYear.endYear}"
@@ -87,8 +87,12 @@ case class ChargeSummaryViewModel(
   val chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit: Boolean =
     (chargeHistoryEnabled || paymentAllocations.nonEmpty) && !isBalancingChargeZero && !isCredit
 
-  val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !chargeItem.codedOutStatus.contains(Accepted)
+  val hasCodedOutStatus: Boolean = {
 
+    val codingOutStatuses: Seq[CodedOutStatusType] = Seq(Accepted, Nics2, Cancelled, FullyCollected)
+
+    chargeItem.codedOutStatus.exists(codingOutStatuses.contains)
+  }
+
+  val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)
 }
-
-

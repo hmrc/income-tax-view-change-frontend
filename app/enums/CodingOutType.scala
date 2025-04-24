@@ -42,4 +42,9 @@ object CodingOutType {
     override val name: String = "Class 2 National Insurance"
     override val code: String = "N/A"
   }
+
+  case object CODING_OUT_FULLY_COLLECTED extends CodingOutType {
+    override val name: String = "Fully Collected"
+    override val code: String = "F"
+  }
 }
