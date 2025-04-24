@@ -116,8 +116,8 @@ class AddBusinessNameViewSpec extends ViewSpec {
   object AddBusinessNameMessages {
     val heading1: String = messages("add-business-name.heading1")
     val heading2: String = messages("add-business-name.heading2")
-    val paragraph: String = messages("add-business-name.p")
-    val hint: String = messages("add-business-name.hint")
+    val paragraph: String = messages("add-business-name.p1")
+    val hint: String = messages("add-business-name.p2")
     val errorBusinessNameEmpty: String = messages("add-business-name.form.error.required")
     val errorBusinessNameLength: String = messages("add-business-name.form.error.maxLength")
     val errorBusinessNameChar: String = messages("add-business-name.form.error.invalidNameFormat")
