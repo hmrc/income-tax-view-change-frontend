@@ -75,6 +75,6 @@ object CodedOutStatusType {
     case CODING_OUT_FULLY_COLLECTED.name => FullyCollected
   }
 
-  implicit val format: Format[CodedOutStatusType] = Format( read, write)
+  implicit val format: Format[CodedOutStatusType] = Format(read, write)
 
 }
