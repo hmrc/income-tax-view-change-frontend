@@ -134,12 +134,15 @@ class AddBusinessNameViewSpec extends ViewSpec {
       "have a form with the correct attributes" in new TestSetup(false, false, false) {
         document.hasFormWith(testCall.method, postAction.url)
       }
-      "render the question heading, paragraph text, and input field" in new TestSetup(false, false, false) {
+      "render the question heading, paragraph text, hint text, and input field" in new TestSetup(false, false, false) {
         val heading2: Element = document.selectFirst("h2.govuk-heading-m")
         heading2.text shouldBe messages("add-business-name.heading2")
 
         val paragraph1: Element = document.selectFirst("p.govuk-body")
         paragraph1.text shouldBe AddBusinessNameMessages.paragraph1
+
+        val hint: Element = document.selectHead(".govuk-hint")
+        hint.text contains AddBusinessNameMessages.paragraph2
 
         val form: Element = document.selectHead("form")
         val input: Element = form.selectHead("input")
