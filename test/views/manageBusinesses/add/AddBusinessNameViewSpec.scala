@@ -18,6 +18,7 @@ package views.manageBusinesses.add
 
 import enums.IncomeSourceJourney.SelfEmployment
 import forms.incomeSources.add.BusinessNameForm
+import models.core.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.data.{Form, FormError}
@@ -40,13 +41,13 @@ class AddBusinessNameViewSpec extends ViewSpec {
     val postAction: Call = {
       if (isChange) {
         if (isAgent) {
-          controllers.manageBusinesses.add.routes.AddBusinessNameController.submitAgent(isChange = true)
+          controllers.manageBusinesses.add.routes.AddBusinessNameController.submitAgent(mode = CheckMode)
         } else {
-          controllers.manageBusinesses.add.routes.AddBusinessNameController.submit(isChange = true)
+          controllers.manageBusinesses.add.routes.AddBusinessNameController.submit(mode = CheckMode)
         }
       } else {
-        if (isAgent) controllers.manageBusinesses.add.routes.AddBusinessNameController.submitAgent(isChange = false) else
-          controllers.manageBusinesses.add.routes.AddBusinessNameController.submit(isChange = false)
+        if (isAgent) controllers.manageBusinesses.add.routes.AddBusinessNameController.submitAgent(mode = NormalMode) else
+          controllers.manageBusinesses.add.routes.AddBusinessNameController.submit(mode = NormalMode)
       }
     }
 
@@ -113,7 +114,8 @@ class AddBusinessNameViewSpec extends ViewSpec {
   }
 
   object AddBusinessNameMessages {
-    val heading: String = messages("add-business-name.heading")
+    val heading1: String = messages("add-business-name.heading1")
+    val heading2: String = messages("add-business-name.heading2")
     val paragraph1: String = messages("add-business-name.p1")
     val paragraph2: String = messages("add-business-name.p2")
     val errorBusinessNameEmpty: String = messages("add-business-name.form.error.required")
@@ -125,29 +127,25 @@ class AddBusinessNameViewSpec extends ViewSpec {
 
   "AddBusinessNameView - ADD - Individual" when {
     "there is no error on the add page" should {
-      "have the correct heading" in new TestSetup(false, false, false) {
+      "have the correct title heading" in new TestSetup(false, false, false) {
         document.getElementsByClass("govuk-caption-l").text() shouldBe messages("incomeSources.add.sole-trader")
-        document hasPageHeading AddBusinessNameMessages.heading
+        document hasPageHeading AddBusinessNameMessages.heading1
       }
       "have a form with the correct attributes" in new TestSetup(false, false, false) {
         document.hasFormWith(testCall.method, postAction.url)
       }
-      "have an input with associated hint and label" in new TestSetup(false, false, false) {
+      "render the question heading, paragraph text, and input field" in new TestSetup(false, false, false) {
+        val heading2: Element = document.selectFirst("h2.govuk-heading-m")
+        heading2.text shouldBe messages("add-business-name.heading2")
+
+        val paragraph1: Element = document.selectFirst("p.govuk-body")
+        paragraph1.text shouldBe AddBusinessNameMessages.paragraph1
+
         val form: Element = document.selectHead("form")
-        val label: Element = form.selectHead("label")
-        val hint: Element = document.selectHead(".govuk-hint")
-
         val input: Element = form.selectHead("input")
-
-        label.text shouldBe AddBusinessNameMessages.heading
-        label.attr("for") shouldBe input.attr("id")
-        hint.text contains AddBusinessNameMessages.paragraph1
         input.attr("id") shouldBe BusinessNameForm.businessName
         input.attr("name") shouldBe BusinessNameForm.businessName
         input.attr("type") shouldBe "text"
-        input.attr("aria-describedby") shouldBe s"${BusinessNameForm.businessName}-hint"
-        input.attr("value") shouldBe ("")
-
       }
       "have a continue button" in new TestSetup(false, false, false) {
         val button: Element = document.selectHead("form").selectHead("button")
@@ -170,25 +168,19 @@ class AddBusinessNameViewSpec extends ViewSpec {
     "there is no error on the change page" should {
       "have the correct heading" in new TestSetup(false, false, true) {
         document.getElementsByClass("govuk-caption-l").text() shouldBe messages("incomeSources.add.sole-trader")
-        document hasPageHeading AddBusinessNameMessages.heading
+        document hasPageHeading AddBusinessNameMessages.heading1
       }
       "have a form with the correct attributes" in new TestSetup(false, false, true) {
         document.hasFormWith(testChangeCall.method, postAction.url)
       }
-      "have an input with associated hint and label" in new TestSetup(false, false, true) {
+      "render the question heading and input field with pre-filled value" in new TestSetup(false, false, true) {
         val form: Element = document.selectHead("form")
-        val label: Element = form.selectHead("label")
-        val hint: Element = document.selectHead(".govuk-hint")
         val input: Element = form.selectHead("input")
 
-        label.text shouldBe AddBusinessNameMessages.heading
-        label.attr("for") shouldBe input.attr("id")
-        hint.text contains AddBusinessNameMessages.paragraph1
         input.attr("id") shouldBe BusinessNameForm.businessName
         input.attr("name") shouldBe BusinessNameForm.businessName
         input.attr("type") shouldBe "text"
-        input.attr("aria-describedby") shouldBe s"${BusinessNameForm.businessName}-hint"
-        input.attr("value") shouldBe (testBusinessName)
+        input.attr("value") shouldBe testBusinessName
       }
       "have a continue button" in new TestSetup(false, false, true) {
         val button: Element = document.selectHead("form").selectHead("button")
@@ -211,26 +203,19 @@ class AddBusinessNameViewSpec extends ViewSpec {
     "there is no error on the add page" should {
       "have the correct heading" in new TestSetup(true, false, false) {
         document.getElementsByClass("govuk-caption-l").text() shouldBe messages("incomeSources.add.sole-trader")
-        document hasPageHeading AddBusinessNameMessages.heading
+        document hasPageHeading AddBusinessNameMessages.heading1
       }
       "have a form with the correct attributes" in new TestSetup(true, false, false) {
         document.hasFormWith(testCall.method, postAction.url)
       }
-      "have an input with associated hint and label" in new TestSetup(true, false, false) {
+      "render the question heading and input field" in new TestSetup(true, false, false) {
         val form: Element = document.selectHead("form")
-        val label: Element = form.selectHead("label")
-        val hint: Element = document.selectHead(".govuk-hint")
-
         val input: Element = form.selectHead("input")
 
-        label.text shouldBe AddBusinessNameMessages.heading
-        label.attr("for") shouldBe input.attr("id")
-        hint.text contains AddBusinessNameMessages.paragraph1
         input.attr("id") shouldBe BusinessNameForm.businessName
         input.attr("name") shouldBe BusinessNameForm.businessName
         input.attr("type") shouldBe "text"
-        input.attr("aria-describedby") shouldBe s"${BusinessNameForm.businessName}-hint"
-        input.attr("value") shouldBe ("")
+        input.attr("value") shouldBe ""
 
       }
       "have a continue button" in new TestSetup(true, false, false) {
@@ -254,25 +239,19 @@ class AddBusinessNameViewSpec extends ViewSpec {
     "there is no error on the change page" should {
       "have the correct heading" in new TestSetup(true, false, true) {
         document.getElementsByClass("govuk-caption-l").text() shouldBe messages("incomeSources.add.sole-trader")
-        document hasPageHeading AddBusinessNameMessages.heading
+        document hasPageHeading AddBusinessNameMessages.heading1
       }
       "have a form with the correct attributes" in new TestSetup(true, false, true) {
         document.hasFormWith(testChangeCall.method, postAction.url)
       }
-      "have an input with associated hint and label" in new TestSetup(true, false, true) {
+      "render the input field with pre-filled value" in new TestSetup(true, false, true) {
         val form: Element = document.selectHead("form")
-        val label: Element = form.selectHead("label")
-        val hint: Element = document.selectHead(".govuk-hint")
         val input: Element = form.selectHead("input")
 
-        label.text shouldBe AddBusinessNameMessages.heading
-        label.attr("for") shouldBe input.attr("id")
-        hint.text contains AddBusinessNameMessages.paragraph1
         input.attr("id") shouldBe BusinessNameForm.businessName
         input.attr("name") shouldBe BusinessNameForm.businessName
         input.attr("type") shouldBe "text"
-        input.attr("aria-describedby") shouldBe s"${BusinessNameForm.businessName}-hint"
-        input.attr("value") shouldBe (testBusinessName)
+        input.attr("value") shouldBe testBusinessName
       }
       "have a continue button" in new TestSetup(true, false, true) {
         val button: Element = document.selectHead("form").selectHead("button")

@@ -20,6 +20,8 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
+@import models.core._
+
 
 @this(
         mainTemplate: unifiedLayout,
@@ -49,19 +51,19 @@
 
 @addBusinessNameURL = @{
     if(isAgent) {
-        controllers.manageBusinesses.add.routes.AddBusinessNameController.showAgent(isChange = false).url
+        controllers.manageBusinesses.add.routes.AddBusinessNameController.showAgent(mode = NormalMode).url
     }
     else {
-        controllers.manageBusinesses.add.routes.AddBusinessNameController.show(isChange = false).url
+        controllers.manageBusinesses.add.routes.AddBusinessNameController.show(mode = NormalMode).url
     }
 }
 
 @addUKPropertyStartDateURL = @{
-    controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, isChange = false, UkProperty).url
+    controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, mode = NormalMode, UkProperty).url
 }
 
 @addForeignPropertyBusinessStartDateURL = @{
-    controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, isChange = false, ForeignProperty).url
+    controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, mode = NormalMode, ForeignProperty).url
 }
 
 @mainTemplate(pageTitle = getMessage("heading"),

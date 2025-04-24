@@ -1651,7 +1651,8 @@ incomeSources.ceaseUKProperty.checkDetails.confirm               = Cadarnhau ac 
 incomeSources.ceaseUKProperty.checkDetails.change                = Newid
 
 # add Business page
-add-business-name.heading                                         = Beth yw enw’ch busnes?
+add-business-name.heading1                                        = Enw’r busnes
+add-business-name.heading2                                        = Beth yw enw’ch busnes?
 add-business-name.p1                                              = Dyma enw’r busnes a ddefnyddioch i gofrestru ar gyfer Hunanasesiad. Os nad oes enw gwahanol ar eich busnes unig fasnachwr, nodwch eich enw cyntaf ac enw olaf.
 add-business-name.p2                                              = Gall enw’r busnes rydych yn ei nodi gynnwys llythrennau mawr neu fach, atalnodau llawn, comas, digidau, &, {0}, \, /, - yn unig.
 add-business-name.form.error.required                             = Nodwch eich enw neu enw’ch busnes

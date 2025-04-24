@@ -22,6 +22,7 @@ import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.{IncomeSourcesFs, NavBarFs}
+import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -71,9 +72,9 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
     await(sessionService.deleteSession(Add))
   }
 
-  def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType, isChange: Boolean): String = {
+  def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType, mode: Mode): String = {
     val pathStart = if(mtdRole == MTDIndividual) "/manage-your-businesses" else "/agents/manage-your-businesses"
-    val pathEnd = s"/${if(isChange) "change-" else ""}business-start-date"
+    val pathEnd = s"/${if(mode == CheckMode) "change-" else ""}business-start-date"
     incomeSourceType match {
       case SelfEmployment => s"$pathStart/add-sole-trader$pathEnd"
       case UkProperty => s"$pathStart/add-uk-property$pathEnd"
@@ -105,10 +106,10 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
     }
   }
 
-  List(true, false).foreach { isChange =>
+  List(CheckMode, NormalMode).foreach { mode =>
     List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
       mtdAllRoles.foreach { mtdUserRole =>
-        val path = getPath(mtdUserRole, incomeSourceType, isChange)
+        val path = getPath(mtdUserRole, incomeSourceType, mode)
         val additionalCookies = getAdditionalCookies(mtdUserRole)
         s"GET $path" when {
           s"a user is a $mtdUserRole" that {
@@ -146,7 +147,7 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
           s"a user is a $mtdUserRole" that {
             "is authenticated, with a valid enrolment" should {
               val addBusinessStartDateCheckUrl =
-                controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.show(mtdUserRole != MTDIndividual, isChange, incomeSourceType).url
+                controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.show(mtdUserRole != MTDIndividual, mode, incomeSourceType).url
               s"redirect to $addBusinessStartDateCheckUrl" when {
                 "a valid date is submitted" in {
                   enable(IncomeSourcesFs)

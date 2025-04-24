@@ -23,6 +23,7 @@ import forms.incomeSources.add.BusinessNameForm
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.admin.IncomeSourcesFs
+import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
 import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField}
 import org.jsoup.Jsoup
@@ -53,20 +54,20 @@ class AddBusinessNameControllerSpec extends MockAuthActions
   val journeyType: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, SelfEmployment)
 
   def getValidationErrorTabTitle(): String = {
-    s"${messages("htmlTitle.invalidInput", messages("add-business-name.heading"))}"
+    s"${messages("htmlTitle.invalidInput", messages("add-business-name.heading1"))}"
   }
 
-  def getAction(mtdRole: MTDUserRole, isChange: Boolean, isPost: Boolean = false) = mtdRole match {
-    case MTDIndividual if isPost => testAddBusinessNameController.submit(isChange)
-    case MTDIndividual => testAddBusinessNameController.show(isChange)
-    case _ if isPost => testAddBusinessNameController.submitAgent(isChange)
-    case _ => testAddBusinessNameController.showAgent(isChange)
+  def getAction(mtdRole: MTDUserRole, mode: Mode, isPost: Boolean = false) = mtdRole match {
+    case MTDIndividual if isPost => testAddBusinessNameController.submit(mode)
+    case MTDIndividual => testAddBusinessNameController.show(mode)
+    case _ if isPost => testAddBusinessNameController.submitAgent(mode)
+    case _ => testAddBusinessNameController.showAgent(mode)
   }
 
-  Seq(true, false).foreach { isChange =>
+  Seq(CheckMode, NormalMode).foreach { mode =>
     mtdAllRoles.foreach { mtdRole =>
-      s"show${if(mtdRole != MTDIndividual)"Agent"}(isChange = $isChange)" when {
-        val action = getAction(mtdRole, isChange)
+      s"show${if(mtdRole != MTDIndividual)"Agent"}(mode = $mode)" when {
+        val action = getAction(mtdRole, mode)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
           "return 200 OK" when {
@@ -74,7 +75,7 @@ class AddBusinessNameControllerSpec extends MockAuthActions
               setupMockSuccess(mtdRole)
               enable(IncomeSourcesFs)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-              if (isChange) {
+              if (mode == CheckMode) {
                 setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment)))))
                 setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
                 setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("Test Business Trade")))
@@ -147,11 +148,11 @@ class AddBusinessNameControllerSpec extends MockAuthActions
           testMTDAgentAuthFailures(action, mtdRole == MTDSupportingAgent)
         }
       }
-      s"submit${if(mtdRole != MTDIndividual)"Agent"}(isChange = $isChange)" when {
-        val action = getAction(mtdRole, isChange, true)
+      s"submit${if(mtdRole != MTDIndividual)"Agent"}(mode = $mode)" when {
+        val action = getAction(mtdRole, mode, true)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
         s"the user is authenticated as a $mtdRole" should {
-          if(isChange) {
+          if(mode == CheckMode) {
             "return 303 and redirect to check details page" when {
               "the business name entered is valid" in {
                 enable(IncomeSourcesFs)
@@ -189,7 +190,7 @@ class AddBusinessNameControllerSpec extends MockAuthActions
 
                 status(result) mustBe SEE_OTHER
                 redirectLocation(result) mustBe Some(
-                  controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(mtdRole != MTDIndividual, false, SelfEmployment).url
+                  controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(mtdRole != MTDIndividual, NormalMode, SelfEmployment).url
                 )
               }
             }
@@ -243,7 +244,7 @@ class AddBusinessNameControllerSpec extends MockAuthActions
               contentAsString(result) must include("Business name cannot include !, &quot;&quot;, * or ?")
             }
 
-            if (isChange) {
+            if (mode == CheckMode) {
               "show invalid error when business name is same as business trade name" in {
                 enable(IncomeSourcesFs)
                 setupMockSuccess(mtdRole)
@@ -272,3 +273,4 @@ class AddBusinessNameControllerSpec extends MockAuthActions
     }
   }
 }
+
