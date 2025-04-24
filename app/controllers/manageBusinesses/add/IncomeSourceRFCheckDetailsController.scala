@@ -98,7 +98,7 @@ class IncomeSourceRFCheckDetailsController @Inject()(val checkDetailsView: Incom
     withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
 
       val backUrl: String = controllers.manageBusinesses.add.routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent).url
-      val postAction: Call = if (isAgent) controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType) else {
+      val postAction: Call = if (isAgent) controllers.manageBusinesses.add.routes.IncomeSourceRFCheckDetailsController.submit(isAgent, incomeSourceType) else {
         controllers.manageBusinesses.add.routes.IncomeSourceRFCheckDetailsController.submit(isAgent, incomeSourceType)
       }
       Future.successful {
@@ -116,14 +116,9 @@ class IncomeSourceRFCheckDetailsController @Inject()(val checkDetailsView: Incom
   }
 
 
-  def submit(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def submit(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      handleSubmit(isAgent = false, incomeSourceType)
-  }
-
-  def submitAgent(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
-    implicit mtdItUser =>
-      handleSubmit(isAgent = true, incomeSourceType)
+      handleSubmit(isAgent = isAgent, incomeSourceType)
   }
 
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
