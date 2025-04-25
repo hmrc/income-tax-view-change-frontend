@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import models.createIncomeSource._
 import play.api.Logger
 import play.api.http.Status.OK
-import play.api.libs.json.{JsError, JsValue, Json}
+import play.api.libs.json.{JsError, Json}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}

@@ -16,7 +16,7 @@
 
 package models.obligations
 
-import play.api.libs.json.{Format, JsError, JsString, JsSuccess, Reads, Writes}
+import play.api.libs.json._
 
 sealed trait ObligationStatus
 

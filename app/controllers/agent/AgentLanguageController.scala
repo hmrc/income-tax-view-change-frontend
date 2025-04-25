@@ -17,10 +17,11 @@
 package controllers.agent
 
 import config.FrontendAppConfig
-import javax.inject.{Inject, Singleton}
 import play.api.i18n.Lang
 import play.api.mvc.MessagesControllerComponents
 import uk.gov.hmrc.play.language.{LanguageController, LanguageUtils}
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class AgentLanguageController @Inject()(implicit mcc: MessagesControllerComponents,

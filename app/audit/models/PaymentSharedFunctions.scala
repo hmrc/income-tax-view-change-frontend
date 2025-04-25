@@ -16,7 +16,7 @@
 
 package audit.models
 
-import models.financialDetails.{Accepted, BalancingCharge, Cancelled, MfaDebitCharge, Nics2, PoaOneDebit, PoaTwoDebit, TransactionItem}
+import models.financialDetails._
 import services.DateServiceInterface
 
 trait PaymentSharedFunctions {

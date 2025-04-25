@@ -18,8 +18,8 @@ package controllers
 
 import auth.MtdItUser
 import auth.authV2.AuthActions
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitching
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import models.admin.ITSASubmissionIntegration
 import play.api.Logger
 import play.api.i18n.I18nSupport

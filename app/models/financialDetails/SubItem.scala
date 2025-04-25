@@ -16,8 +16,9 @@
 
 package models.financialDetails
 
-import play.api.libs.json._
 import play.api.Logger
+import play.api.libs.json._
+
 import java.time.LocalDate
 
 

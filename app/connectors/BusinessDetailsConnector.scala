@@ -20,7 +20,6 @@ import audit.AuditingService
 import audit.models.IncomeSourceDetailsResponseAuditModel
 import auth.authV2.models.AuthorisedAndEnrolledRequest
 import config.FrontendAppConfig
-import models.core.{NinoResponse, NinoResponseError, NinoResponseSuccess}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.Logger
 import play.api.http.Status

@@ -17,7 +17,6 @@
 package audit
 
 import auth.MtdItUser
-import enums.MTDUserRole
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent

@@ -17,12 +17,11 @@
 package controllers
 
 import config.FrontendAppConfig
-
-import javax.inject.{Inject, Singleton}
 import play.api.i18n.Lang
-import play.api.mvc.{Action, AnyContent, Headers, MessagesControllerComponents, Request, Result}
+import play.api.mvc._
 import uk.gov.hmrc.play.language.{LanguageController, LanguageUtils}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton

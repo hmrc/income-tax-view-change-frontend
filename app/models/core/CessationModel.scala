@@ -16,9 +16,9 @@
 
 package models.core
 
-import java.time.LocalDate
-
 import play.api.libs.json.{Format, Json}
+
+import java.time.LocalDate
 
 case class CessationModel(date: Option[LocalDate], reason: Option[String])
 

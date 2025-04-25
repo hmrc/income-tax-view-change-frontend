@@ -21,9 +21,9 @@ import auth.authV2.models.{AuthUserDetails, AuthorisedUserRequest}
 import com.google.inject.Singleton
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
+import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}
-import play.api.Logger
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._

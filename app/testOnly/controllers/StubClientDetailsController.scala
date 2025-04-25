@@ -17,7 +17,6 @@
 package testOnly.controllers
 
 import config.FrontendAppConfig
-import javax.inject.Inject
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -28,6 +27,7 @@ import testOnly.models.StubClientDetailsModel
 import testOnly.views.html.StubClientDetails
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class StubClientDetailsController @Inject()(stubClientDetails: StubClientDetails,

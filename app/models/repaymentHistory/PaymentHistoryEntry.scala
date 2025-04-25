@@ -16,7 +16,7 @@
 
 package models.repaymentHistory
 
-import models.financialDetails.{BalancingChargeCreditType, CreditType, CutOverCreditType, MfaCreditType, PoaOneReconciliationCredit, PoaTwoReconciliationCredit, RepaymentInterest}
+import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
 import services.DateServiceInterface
 

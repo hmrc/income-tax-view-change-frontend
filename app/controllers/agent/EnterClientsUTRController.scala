@@ -34,7 +34,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import services.agent.ClientDetailsService
 import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound}
 import uk.gov.hmrc.auth.core.Enrolment
-import uk.gov.hmrc.auth.core.retrieve.EmptyRetrieval
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.agent.EnterClientsUTR
 

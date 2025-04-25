@@ -18,8 +18,6 @@ package forms.models
 
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.LocalDate
-
 case class IncomeSourceFormElement(response: String)
 
 object IncomeSourceFormElement {

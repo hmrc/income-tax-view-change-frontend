@@ -16,7 +16,6 @@
 
 package models.incomeSourceDetails.viewmodels.httpparser
 
-import play.api.Logger
 import play.api.http.Status.ACCEPTED
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
