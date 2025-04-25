@@ -16,9 +16,9 @@
 
 package testConstants
 
-import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testNino}
-import play.api.libs.json.{JsValue, Json}
 import models.chargeHistory._
+import play.api.libs.json.{JsValue, Json}
+import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testNino}
 
 import java.time.LocalDate
 

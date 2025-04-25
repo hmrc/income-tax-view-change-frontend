@@ -16,11 +16,11 @@
 
 package models.incomeSourceDetails
 
-import models.core.IncomeSourceIdHash
-import org.scalacheck.{Gen, Properties}
-import IncomeSourceIdHash._
 import models.core.IncomeSourceId._
+import models.core.IncomeSourceIdHash
+import models.core.IncomeSourceIdHash._
 import org.scalacheck.Prop.forAll
+import org.scalacheck.{Gen, Properties}
 
 object IncomeSourceIdHashSpecification extends Properties("IncomeSourceId") {
 

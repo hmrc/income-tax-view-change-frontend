@@ -16,7 +16,7 @@
 
 package models
 
-import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
+import models.financialDetails._
 import models.homePage.NextPaymentsTileViewModel
 import org.scalatest.matchers.should.Matchers
 import testUtils.UnitSpec

@@ -81,7 +81,7 @@
     val serviceName = if (isAgent) Some(messages("agent.header.serviceName"))
         else Some(messages("header.serviceName"))
 
-    val serviceUrl = if (isAgent) controllers.routes.HomeController.showAgent.url
+    val serviceUrl = if (isAgent) controllers.routes.HomeController.showAgent().url
         else controllers.routes.HomeController.show().url
 
     hmrcHeader(Header(

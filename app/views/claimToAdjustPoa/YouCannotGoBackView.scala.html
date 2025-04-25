@@ -49,17 +49,17 @@
 }
 
 @wyoLinkUrl = @{
-    if(isAgent) controllers.routes.WhatYouOweController.showAgent.url
+    if(isAgent) controllers.routes.WhatYouOweController.showAgent().url
     else controllers.routes.WhatYouOweController.show().url
 }
 
 @saChargesUrl = @{
-    if(isAgent) controllers.routes.YourSelfAssessmentChargesController.showAgent.url
+    if(isAgent) controllers.routes.YourSelfAssessmentChargesController.showAgent().url
     else controllers.routes.YourSelfAssessmentChargesController.show().url
 }
 
 @getHomeUrl = @{
-    if(isAgent) controllers.routes.HomeController.showAgent.url
+    if(isAgent) controllers.routes.HomeController.showAgent().url
     else controllers.routes.HomeController.show().url
 }
 

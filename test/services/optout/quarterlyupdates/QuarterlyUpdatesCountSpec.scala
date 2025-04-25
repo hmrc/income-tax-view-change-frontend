@@ -21,16 +21,16 @@ import audit.mocks.MockAuditingService
 import config.FrontendAppConfig
 import connectors.ObligationsConnector
 import connectors.itsastatus.ITSAStatusUpdateConnector
-import mocks.{MockHttp, MockHttpV2}
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService}
+import mocks.{MockHttp, MockHttpV2}
 import org.mockito.Mockito.mock
 import org.scalatest.BeforeAndAfter
 import play.api.Configuration
 import play.mvc.Http.Status
-import repositories.{OptOutSessionDataRepository, UIJourneySessionDataRepository}
+import repositories.OptOutSessionDataRepository
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
-import services.reportingfreq.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
 import services.optout.{OptOutService, OptOutTestSupport}
+import services.reportingfreq.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
 import services.{DateService, NextUpdatesService}
 import testConstants.BaseTestConstants.testNino
 import testConstants.NextUpdatesTestConstants.obligationsDataFromJson

@@ -36,7 +36,6 @@ import audit.AuditingService
 import audit.models._
 import auth.authV2.models.AuthorisedAndEnrolledRequest
 import config.FrontendAppConfig
-import models.core.{NinoResponse, NinoResponseError}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, verify, when}
@@ -48,7 +47,6 @@ import play.api.libs.json.Json
 import play.api.mvc.Request
 import play.mvc.Http.Status
 import testConstants.BaseTestConstants._
-import testConstants.NinoLookupTestConstants.{testNinoModel, testNinoModelJson}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{singleBusinessAndPropertyMigrat2019, singleBusinessIncome}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, SessionId}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig

@@ -31,12 +31,12 @@ import models.taxyearsummary.TaxYearSummaryChargeItem
 import org.jsoup.Jsoup
 import play.api
 import play.api.Application
-import play.api.http.{HeaderNames, Status}
 import play.api.http.Status.INTERNAL_SERVER_ERROR
+import play.api.http.{HeaderNames, Status}
 import play.api.i18n.Lang
 import play.api.test.Helpers.{status, _}
 import services.{CalculationService, ClaimToAdjustService, FinancialDetailsService, NextUpdatesService}
-import testConstants.BaseTestConstants.{taxYear, testMtditid, testTaxYear}
+import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants.{financialDetails, _}

@@ -69,8 +69,8 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
       if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
       else itvcErrorHandler.showInternalServerError()
     } else {
-      if (isAgent) Redirect(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show.url)
-      else Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
+      if (isAgent) Redirect(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url)
+      else Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
     }
   }
 
@@ -172,11 +172,11 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
           }
         }.headOption.getOrElse( ("", ""))
         val whatYouOweUrl = {
-          if (isAgent) controllers.routes.WhatYouOweController.showAgent.url
+          if (isAgent) controllers.routes.WhatYouOweController.showAgent().url
           else controllers.routes.WhatYouOweController.show(origin).url
         }
         val saChargesUrl: String = {
-          if(isAgent) controllers.routes.YourSelfAssessmentChargesController.showAgent.url
+          if(isAgent) controllers.routes.YourSelfAssessmentChargesController.showAgent().url
           else controllers.routes.YourSelfAssessmentChargesController.show(origin).url
       }
 

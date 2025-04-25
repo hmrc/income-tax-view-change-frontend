@@ -45,7 +45,7 @@ case class OptInCompletedViewModel(
   }
 
   val nextUpdatesLink = {
-    if (isAgent) controllers.routes.NextUpdatesController.showAgent.url
+    if (isAgent) controllers.routes.NextUpdatesController.showAgent().url
     else controllers.routes.NextUpdatesController.show().url
   }
 

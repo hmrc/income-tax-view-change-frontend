@@ -16,11 +16,12 @@
 
 package testConstants
 
-import java.time.LocalDate
-import BaseIntegrationTestConstants.{getCurrentTaxYearEnd, otherTestSelfEmploymentId, testIncomeSource, testSelfEmploymentId}
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.BusinessDetailsModel
+import testConstants.BaseIntegrationTestConstants.{getCurrentTaxYearEnd, otherTestSelfEmploymentId, testIncomeSource, testSelfEmploymentId}
 import testConstants.BusinessDetailsIntegrationTestConstants.address
+
+import java.time.LocalDate
 
 
 object PaymentHistoryTestConstraints {

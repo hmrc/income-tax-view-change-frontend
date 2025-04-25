@@ -16,9 +16,9 @@
 
 package testUtils
 
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.wordspec.AnyWordSpecLike
-import org.scalatest.matchers.should.Matchers
 import org.scalatest.OptionValues
+import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 
 trait UnitSpec extends AnyWordSpecLike with Matchers with OptionValues with ScalaFutures

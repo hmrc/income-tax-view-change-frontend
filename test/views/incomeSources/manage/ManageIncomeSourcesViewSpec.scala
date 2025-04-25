@@ -30,7 +30,7 @@ import views.html.incomeSources.manage.ManageIncomeSources
 class ManageIncomeSourcesViewSpec extends TestSupport {
   val manageIncomeSources: ManageIncomeSources = app.injector.instanceOf[ManageIncomeSources]
   val backUrl: String = controllers.routes.HomeController.show().url
-  val backUrlAgent: String = controllers.routes.HomeController.showAgent.url
+  val backUrlAgent: String = controllers.routes.HomeController.showAgent().url
 
   def viewModelMax(displayStartDate: Boolean = true): ViewIncomeSourcesViewModel = ViewIncomeSourcesViewModel(
     viewSoleTraderBusinesses = List(ViewBusinessDetailsViewModel(IncomeSourceId("TestID"), Some("Testing"),Some(testTradeName), Some(testStartDate))),

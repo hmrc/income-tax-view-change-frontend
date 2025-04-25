@@ -18,17 +18,17 @@ package authV2
 
 import auth.MtdItUser
 import auth.authV2.actions.FeatureSwitchRetrievalAction
+import authV2.AuthActionsTestData._
 import models.admin.{FeatureSwitch, NavBarFs}
 import org.mockito.Mockito.when
 import org.scalatest.Assertion
 import play.api
+import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{Result, Results}
 import play.api.test.Helpers._
-import play.api.{Application, Play}
 import services.admin.FeatureSwitchService
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
-import authV2.AuthActionsTestData._
 
 import scala.concurrent.Future
 

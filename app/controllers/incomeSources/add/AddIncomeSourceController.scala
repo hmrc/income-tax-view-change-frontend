@@ -65,7 +65,7 @@ class AddIncomeSourceController @Inject()(val authActions: AuthActions,
         isAgent = true,
         homePageCall = homePageCallAgent,
         sources = mtdItUser.incomeSources,
-        backUrl = controllers.routes.HomeController.showAgent.url
+        backUrl = controllers.routes.HomeController.showAgent().url
       )(implicitly, itvcErrorHandlerAgent)
 
   }

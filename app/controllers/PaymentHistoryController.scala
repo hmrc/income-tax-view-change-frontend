@@ -109,7 +109,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,
-        backUrl = controllers.routes.HomeController.showAgent.url
+        backUrl = controllers.routes.HomeController.showAgent().url
       )
   }
 

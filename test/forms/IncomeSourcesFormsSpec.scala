@@ -16,18 +16,16 @@
 
 package forms
 
+import _root_.models.incomeSourceDetails.TaxYear
 import forms.incomeSources.add.{BusinessNameForm, BusinessTradeForm}
 import forms.incomeSources.cease.UKPropertyEndDateForm
-import generators.IncomeSourceGens.{Day, businessNameGenerator, businessTradeGenerator, dateGenerator}
-import implicits.ImplicitDateFormatter
-import org.scalacheck.Prop.{forAll, propBoolean}
+import generators.IncomeSourceGens.Day
 import org.scalacheck.Properties
 import services.DateServiceInterface
 import testUtils.TestSupport
-import uk.gov.hmrc.play.language.LanguageUtils
-import _root_.models.incomeSourceDetails.TaxYear
+
 import java.time.LocalDate
-import java.time.Month.{APRIL, JANUARY}
+import java.time.Month.APRIL
 
 object IncomeSourcesFormsSpec extends Properties("incomeSourcesForms.validation") with TestSupport {
 

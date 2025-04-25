@@ -16,7 +16,7 @@
 
 package views.manageBusinesses
 
-import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import enums.IncomeSourceJourney.SelfEmployment
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.viewmodels.{CeasedBusinessDetailsViewModel, ViewBusinessDetailsViewModel, ViewIncomeSourcesViewModel, ViewPropertyDetailsViewModel}
 import org.jsoup.Jsoup

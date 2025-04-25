@@ -18,7 +18,7 @@ package views.manageBusinesses.add
 
 import enums.IncomeSourceJourney.SelfEmployment
 import forms.manageBusinesses.add.BusinessTradeForm
-import models.core.{CheckMode, NormalMode}
+import models.core.NormalMode
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec

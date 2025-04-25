@@ -42,12 +42,12 @@ class YouCannotGoBackViewSpec extends TestSupport {
   }
 
   def getHomeControllerLink(isAgent: Boolean): String = {
-    if (isAgent) controllers.routes.HomeController.showAgent.url
+    if (isAgent) controllers.routes.HomeController.showAgent().url
     else controllers.routes.HomeController.show().url
   }
 
   def getWhatYouOweControllerLink(isAgent: Boolean): String = {
-    if (isAgent) controllers.routes.WhatYouOweController.showAgent.url
+    if (isAgent) controllers.routes.WhatYouOweController.showAgent().url
     else controllers.routes.WhatYouOweController.show().url
   }
 
@@ -57,7 +57,7 @@ class YouCannotGoBackViewSpec extends TestSupport {
   }
 
   def getSaChargesUrl(isAgent: Boolean): String = {
-    if (isAgent) controllers.routes.YourSelfAssessmentChargesController.showAgent.url
+    if (isAgent) controllers.routes.YourSelfAssessmentChargesController.showAgent().url
     else controllers.routes.YourSelfAssessmentChargesController.show().url
   }
   def executeTest(isAgent: Boolean): Unit = {

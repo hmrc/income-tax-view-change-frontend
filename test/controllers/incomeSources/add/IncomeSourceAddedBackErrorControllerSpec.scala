@@ -91,7 +91,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends MockAuthActions
               val homeUrl = if (mtdRole == MTDIndividual) {
                 controllers.routes.HomeController.show().url
               } else {
-                controllers.routes.HomeController.showAgent.url
+                controllers.routes.HomeController.showAgent().url
               }
               redirectLocation(result) shouldBe Some(homeUrl)
             }

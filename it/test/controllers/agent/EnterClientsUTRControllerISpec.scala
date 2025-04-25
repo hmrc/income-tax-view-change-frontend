@@ -42,14 +42,14 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
         )
       }
     }
-    s"redirect ($SEE_OTHER) to ${controllers.agent.errors.routes.AgentErrorController.show.url}" when {
+    s"redirect ($SEE_OTHER) to ${controllers.agent.errors.routes.AgentErrorController.show().url}" when {
       "the user is authenticated but doesn't have the agent enrolment" in {
         MTDAgentAuthStub.stubNoAgentEnrolmentError()
         val result = buildGETMTDClient(path).futureValue
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.errors.routes.AgentErrorController.show.url)
+          redirectURI(controllers.agent.errors.routes.AgentErrorController.show().url)
         )
       }
     }
@@ -86,7 +86,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.errors.routes.AgentErrorController.show.url)
+          redirectURI(controllers.agent.errors.routes.AgentErrorController.show().url)
         )
       }
     }
@@ -168,7 +168,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.ConfirmClientUTRController.show.url)
+          redirectURI(controllers.agent.routes.ConfirmClientUTRController.show().url)
         )
       }
 
@@ -196,7 +196,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
         Then("The enter clients utr page is returned with an error")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.ConfirmClientUTRController.show.url)
+          redirectURI(controllers.agent.routes.ConfirmClientUTRController.show().url)
         )
       }
 
@@ -226,7 +226,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
         Then("The enter clients utr page is returned with an error")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.ConfirmClientUTRController.show.url)
+          redirectURI(controllers.agent.routes.ConfirmClientUTRController.show().url)
         )
       }
 
@@ -255,7 +255,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.ConfirmClientUTRController.show.url)
+          redirectURI(controllers.agent.routes.ConfirmClientUTRController.show().url)
         )
       }
     }
@@ -275,7 +275,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
         Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.UTRErrorController.show.url)
+          redirectURI(controllers.agent.routes.UTRErrorController.show().url)
         )
       }
 
@@ -301,7 +301,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
         Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.UTRErrorController.show.url)
+          redirectURI(controllers.agent.routes.UTRErrorController.show().url)
         )
       }
 
@@ -327,7 +327,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.UTRErrorController.show.url)
+          redirectURI(controllers.agent.routes.UTRErrorController.show().url)
         )
       }
     }

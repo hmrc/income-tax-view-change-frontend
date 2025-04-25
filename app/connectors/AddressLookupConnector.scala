@@ -53,8 +53,8 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
     case _ => controllers.manageBusinesses.add.routes.AddBusinessAddressController.agentSubmit(None, mode = mode).url
   }
 
-  lazy val individualFeedbackUrl: String = controllers.feedback.routes.FeedbackController.show.url
-  lazy val agentFeedbackUrl: String = controllers.feedback.routes.FeedbackController.showAgent.url
+  lazy val individualFeedbackUrl: String = controllers.feedback.routes.FeedbackController.show().url
+  lazy val agentFeedbackUrl: String = controllers.feedback.routes.FeedbackController.showAgent().url
 
   lazy val individualEnglishBanner: String = messagesApi.preferred(Seq(Lang("en")))("header.serviceName")
   lazy val agentEnglishBanner: String = messagesApi.preferred(Seq(Lang("en")))("agent.header.serviceName")

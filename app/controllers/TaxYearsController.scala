@@ -80,7 +80,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
   def showAgentTaxYears: Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
     implicit mtdItUser =>
       handleRequest(
-        backUrl = controllers.routes.HomeController.showAgent.url,
+        backUrl = controllers.routes.HomeController.showAgent().url,
         isAgent = true
       )
   }

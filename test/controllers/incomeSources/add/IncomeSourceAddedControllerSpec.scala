@@ -165,7 +165,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions
 
               val result = action(fakeRequest)
               status(result) shouldBe SEE_OTHER
-              val redirectUrl = if (mtdRole != MTDIndividual) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+              val redirectUrl = if (mtdRole != MTDIndividual) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
               redirectLocation(result) shouldBe Some(redirectUrl)
             }
           }

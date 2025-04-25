@@ -65,7 +65,7 @@ class ClientDetailsFailureControllerSpec extends MockAuthActions
         val result = action(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show.url)
+        redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show().url)
       }
     }
 

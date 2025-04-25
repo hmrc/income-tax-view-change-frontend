@@ -26,8 +26,8 @@ class ClientDetailsFailureControllerISpec extends ComponentSpecBase with Feature
 
   val path = "/agents/not-authorised-to-view-client"
 
-  s"GET ${controllers.agent.routes.ClientRelationshipFailureController.show.url}" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
+  s"GET ${controllers.agent.routes.ClientRelationshipFailureController.show().url}" should {
+    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
       "the user is not authenticated" in {
         MTDAgentAuthStub.stubUnauthorised()
 
@@ -48,7 +48,7 @@ class ClientDetailsFailureControllerISpec extends ComponentSpecBase with Feature
         Then(s"Technical difficulties are shown with status OK")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.errors.routes.AgentErrorController.show.url)
+          redirectURI(controllers.agent.errors.routes.AgentErrorController.show().url)
         )
       }
     }

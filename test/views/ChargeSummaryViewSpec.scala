@@ -41,8 +41,8 @@ import java.time.LocalDate
 class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeConstants {
 
   lazy val chargeSummary: ChargeSummary = app.injector.instanceOf[ChargeSummary]
-  val whatYouOweAgentUrl: String = controllers.routes.WhatYouOweController.showAgent.url
-  val SAChargesAgentUrl: String = controllers.routes.YourSelfAssessmentChargesController.showAgent.url
+  val whatYouOweAgentUrl: String = controllers.routes.WhatYouOweController.showAgent().url
+  val SAChargesAgentUrl: String = controllers.routes.YourSelfAssessmentChargesController.showAgent().url
 
   import Messages._
 

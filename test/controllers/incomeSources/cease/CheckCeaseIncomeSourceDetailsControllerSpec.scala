@@ -126,7 +126,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
                 controllers.routes.HomeController.show().url
               }
               else {
-                controllers.routes.HomeController.showAgent.url
+                controllers.routes.HomeController.showAgent().url
               }
               redirectLocation(result) shouldBe Some(homeURL)
 

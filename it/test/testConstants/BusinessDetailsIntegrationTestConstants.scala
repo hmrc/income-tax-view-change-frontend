@@ -16,10 +16,11 @@
 
 package testConstants
 
-import java.time.LocalDate
-import BaseIntegrationTestConstants.{expectedAddress, getCurrentTaxYearEnd, otherTestSelfEmploymentId, testDate, testIncomeSource, testLatencyDetails3, testSelfEmploymentId, testTradeName}
 import models.core.{AccountingPeriodModel, AddressModel, CessationModel}
 import models.incomeSourceDetails.BusinessDetailsModel
+import testConstants.BaseIntegrationTestConstants._
+
+import java.time.LocalDate
 
 object BusinessDetailsIntegrationTestConstants {
   val startYear = getCurrentTaxYearEnd.getYear - 5

@@ -16,7 +16,6 @@
 
 package models.financialDetails
 
-import enums.ChargeType._
 import testUtils.UnitSpec
 
 class CreditTypeSpec extends UnitSpec {

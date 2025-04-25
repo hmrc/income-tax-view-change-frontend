@@ -70,11 +70,11 @@ class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
         credId = user.credId
       ))
 
-      Future.successful(Redirect(controllers.routes.HomeController.showAgent.url).addingToSession(SessionKeys.confirmedClient -> "true"))
+      Future.successful(Redirect(controllers.routes.HomeController.showAgent().url).addingToSession(SessionKeys.confirmedClient -> "true"))
     }
   }
 
-  lazy val backUrl: String = controllers.agent.routes.EnterClientsUTRController.show.url
+  lazy val backUrl: String = controllers.agent.routes.EnterClientsUTRController.show().url
 
   def getSessionDataStorageFS: Boolean = appConfig.isSessionDataStorageEnabled
 

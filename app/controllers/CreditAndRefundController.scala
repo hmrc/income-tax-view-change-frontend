@@ -78,7 +78,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
     authActions.asMTDPrimaryAgent async {
       implicit mtdItUser =>
         handleRequest(
-          backUrl = controllers.routes.HomeController.showAgent.url,
+          backUrl = controllers.routes.HomeController.showAgent().url,
           isAgent = mtdItUser.isAgent()
         ) recover logAndRedirect
     }

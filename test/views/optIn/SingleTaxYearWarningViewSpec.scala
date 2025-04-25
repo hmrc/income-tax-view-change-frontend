@@ -34,7 +34,7 @@ class SingleTaxYearWarningViewSpec extends TestSupport {
 
   def homePageUrl(isAgent: Boolean): String = {
     if (isAgent) {
-      controllers.routes.HomeController.showAgent.url
+      controllers.routes.HomeController.showAgent().url
     } else {
       controllers.routes.HomeController.show().url
     }

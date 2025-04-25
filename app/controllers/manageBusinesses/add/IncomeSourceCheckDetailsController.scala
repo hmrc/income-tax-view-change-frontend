@@ -174,7 +174,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         if (isEnabled(IncomeSourcesNewJourney)) {
           controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.show(isAgent, incomeSourceType).url
         } else {
-          if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+          if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
         }
       }
 

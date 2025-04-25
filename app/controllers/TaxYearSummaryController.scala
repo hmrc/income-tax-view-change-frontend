@@ -290,8 +290,8 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
 
   // Agent back urls
   lazy val agentTaxYearsUrl: String = controllers.routes.TaxYearsController.showAgentTaxYears.url
-  lazy val agentHomeUrl: String = controllers.routes.HomeController.showAgent.url
-  lazy val agentWhatYouOweUrl: String = controllers.routes.WhatYouOweController.showAgent.url
+  lazy val agentHomeUrl: String = controllers.routes.HomeController.showAgent().url
+  lazy val agentWhatYouOweUrl: String = controllers.routes.WhatYouOweController.showAgent().url
 
 
   def formatErrorMessages(liabilityCalc: LiabilityCalculationResponse, messagesProperty: MessagesApi, isAgent: Boolean)

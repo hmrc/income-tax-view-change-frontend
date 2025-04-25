@@ -18,9 +18,9 @@ package services.optout.optoutproposition
 
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, NoStatus, Voluntary}
+import services.optout.OptOutTestSupport._
 import services.optout.{CurrentOptOutTaxYear, NextOptOutTaxYear, OptOutProposition, PreviousOptOutTaxYear}
 import testUtils.UnitSpec
-import services.optout.OptOutTestSupport._
 
 
 class OptOutPropositionYearsToUpdateSpec extends UnitSpec {

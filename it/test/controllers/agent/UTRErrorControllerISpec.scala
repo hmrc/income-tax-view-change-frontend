@@ -45,7 +45,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
         Then(s"Agent error page is shown with status SEE_OTHER")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.errors.routes.AgentErrorController.show.url)
+          redirectURI(controllers.agent.errors.routes.AgentErrorController.show().url)
         )
       }
     }
@@ -85,7 +85,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.errors.routes.AgentErrorController.show.url)
+          redirectURI(controllers.agent.errors.routes.AgentErrorController.show().url)
         )
       }
     }

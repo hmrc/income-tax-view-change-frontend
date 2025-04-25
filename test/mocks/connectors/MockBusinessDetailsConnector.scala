@@ -17,7 +17,6 @@
 package mocks.connectors
 
 import connectors.BusinessDetailsConnector
-import models.core.NinoResponse
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._

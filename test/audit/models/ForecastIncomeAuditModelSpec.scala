@@ -20,7 +20,7 @@ import authV2.AuthActionsTestData.defaultMTDITUser
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import play.api.libs.json.Json
-import testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr}
+import testConstants.BaseTestConstants.{testMtditid, testNino}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 

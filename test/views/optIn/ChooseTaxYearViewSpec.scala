@@ -37,7 +37,7 @@ class ChooseTaxYearViewSpec extends TestSupport {
   val availableOptOutTaxYearsList: List[String] = availableOptOutTaxYear.map(_.toString)
 
   class Setup(isAgent: Boolean = true) {
-    val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
+    val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url
     val model = ChooseTaxYearViewModel(availableOptOutTaxYear, cancelURL = cancelURL, isAgent = isAgent)
     val pageDocument: Document = Jsoup.parse(contentAsString(optInChooseTaxYearView(ChooseTaxYearForm(availableOptOutTaxYearsList), model)))
   }
@@ -50,7 +50,7 @@ class ChooseTaxYearViewSpec extends TestSupport {
     val continueButton: String = messages("optout.chooseOptOutTaxYear.continue")
     val cancelButton: String = messages("optin.confirmOptIn.cancel")
     val cancelButtonHref: String = controllers.routes.NextUpdatesController.show().url
-    val agentCancelButtonHref: String = controllers.routes.NextUpdatesController.showAgent.url
+    val agentCancelButtonHref: String = controllers.routes.NextUpdatesController.showAgent().url
   }
 
   "Opt-out confirm page" should {

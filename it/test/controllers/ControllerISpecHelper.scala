@@ -43,7 +43,7 @@ trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModel
 
   def homeUrl(mtdUserRole: MTDUserRole): String = mtdUserRole match {
     case MTDIndividual => controllers.routes.HomeController.show().url
-    case _ => controllers.routes.HomeController.showAgent.url
+    case _ => controllers.routes.HomeController.showAgent().url
   }
 
   def stubAuthorised(mtdRole: MTDUserRole): Unit = {
@@ -70,20 +70,20 @@ trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModel
 
   def testNoClientDataFailure(requestPath: String, optBody: Option[Map[String, Seq[String]]] = None): Unit = {
     "the user does not have client session data" should {
-      s"redirect ($SEE_OTHER) to ${controllers.agent.routes.EnterClientsUTRController.show.url}" in {
+      s"redirect ($SEE_OTHER) to ${controllers.agent.routes.EnterClientsUTRController.show().url}" in {
         MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
         SessionDataStub.stubGetSessionDataResponseNotFound()
         val result = buildMTDClient(requestPath, optBody = optBody).futureValue
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.EnterClientsUTRController.show.url)
+          redirectURI(controllers.agent.routes.EnterClientsUTRController.show().url)
         )
       }
     }
 
     "the user has client session data but citizen details not found" should {
-      s"redirect ($SEE_OTHER) to ${controllers.agent.routes.EnterClientsUTRController.show.url}" in {
+      s"redirect ($SEE_OTHER) to ${controllers.agent.routes.EnterClientsUTRController.show().url}" in {
         MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
         SessionDataStub.stubGetSessionDataResponseSuccess()
         stubGetCitizenDetails(status = 404)
@@ -91,7 +91,7 @@ trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModel
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.EnterClientsUTRController.show.url)
+          redirectURI(controllers.agent.routes.EnterClientsUTRController.show().url)
         )
       }
     }
@@ -151,13 +151,13 @@ trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModel
   def testIndividualAuthFailures(requestPath: String,
                                  optBody: Option[Map[String, Seq[String]]]): Unit = {
     "does not have HMRC-MTD-IT enrolment" should {
-      s"redirect ($SEE_OTHER) to ${controllers.errors.routes.NotEnrolledController.show.url}" in {
+      s"redirect ($SEE_OTHER) to ${controllers.errors.routes.NotEnrolledController.show().url}" in {
         MTDIndividualAuthStub.stubInsufficientEnrolments()
         val result = buildMTDClient(requestPath, optBody = optBody).futureValue
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.errors.routes.NotEnrolledController.show.url)
+          redirectURI(controllers.errors.routes.NotEnrolledController.show().url)
         )
       }
     }
@@ -180,7 +180,7 @@ trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModel
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.EnterClientsUTRController.show.url)
+          redirectURI(controllers.agent.routes.EnterClientsUTRController.show().url)
         )
       }
     }
@@ -193,7 +193,7 @@ trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModel
                             mtdUserRole: MTDUserRole): Unit = {
     if (mtdUserRole == MTDPrimaryAgent) {
       "does not have arn enrolment" should {
-        s"redirect ($SEE_OTHER) to ${controllers.agent.errors.routes.AgentErrorController.show.url}" in {
+        s"redirect ($SEE_OTHER) to ${controllers.agent.errors.routes.AgentErrorController.show().url}" in {
           SessionDataStub.stubGetSessionDataResponseSuccess()
           stubGetCitizenDetails()
           stubGetBusinessDetails()()
@@ -203,7 +203,7 @@ trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModel
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(controllers.agent.errors.routes.AgentErrorController.show.url)
+            redirectURI(controllers.agent.errors.routes.AgentErrorController.show().url)
           )
         }
       }
@@ -228,7 +228,7 @@ trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModel
       }
     } else {
       "does not have a valid delegated MTD enrolment" should {
-        s"redirect ($SEE_OTHER) to ${controllers.agent.routes.ClientRelationshipFailureController.show.url}" in {
+        s"redirect ($SEE_OTHER) to ${controllers.agent.routes.ClientRelationshipFailureController.show().url}" in {
           SessionDataStub.stubGetSessionDataResponseSuccess()
           stubGetCitizenDetails()
           stubGetBusinessDetails()()
@@ -237,7 +237,7 @@ trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModel
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(controllers.agent.routes.ClientRelationshipFailureController.show.url)
+            redirectURI(controllers.agent.routes.ClientRelationshipFailureController.show().url)
           )
         }
       }

@@ -17,7 +17,6 @@
 package views
 
 import config.featureswitch.FeatureSwitching
-import enums.CodingOutType._
 import implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
 import implicits.ImplicitDateFormatterImpl
 import models.financialDetails._

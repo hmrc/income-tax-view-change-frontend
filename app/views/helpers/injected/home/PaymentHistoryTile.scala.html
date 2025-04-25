@@ -30,7 +30,7 @@
 
 @paymentHistoryControllerURL = @{
     if(isAgent) {
-        controllers.routes.PaymentHistoryController.showAgent.url
+        controllers.routes.PaymentHistoryController.showAgent().url
     } else {
         controllers.routes.PaymentHistoryController.show(viewModel.origin).url
     }

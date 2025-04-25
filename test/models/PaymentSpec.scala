@@ -16,10 +16,9 @@
 
 package models
 
-import testConstants.FinancialDetailsTestConstants._
 import models.financialDetails._
-import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsObject, JsSuccess, Json}
 
 import java.time.LocalDate

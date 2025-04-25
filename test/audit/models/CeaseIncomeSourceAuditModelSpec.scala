@@ -36,7 +36,7 @@ class CeaseIncomeSourceAuditModelSpec extends TestSupport {
     (incomeSourceType, mtdUserRole, isError) match {
       case (SelfEmployment, MTDIndividual, true) => CeaseIncomeSourceAuditModel(incomeSourceType, cessationDate, mkIncomeSourceId(testSelfEmploymentId), Some(failureResponse))
       case (SelfEmployment, MTDIndividual, false) => CeaseIncomeSourceAuditModel(incomeSourceType, cessationDate, mkIncomeSourceId(testSelfEmploymentId), None)
-      case (SelfEmployment, ur, false) => CeaseIncomeSourceAuditModel(incomeSourceType, cessationDate, mkIncomeSourceId(testSelfEmploymentId), None)(agentUserConfirmedClient(ur == MTDSupportingAgent), headerCarrier)
+      case (SelfEmployment, ur, false) => CeaseIncomeSourceAuditModel(incomeSourceType, cessationDate, mkIncomeSourceId(testSelfEmploymentId), None)(agentUserConfirmedClient(ur == MTDSupportingAgent))
       case _ => CeaseIncomeSourceAuditModel(incomeSourceType, cessationDate, mkIncomeSourceId(testPropertyIncomeId), None)
     }
   }

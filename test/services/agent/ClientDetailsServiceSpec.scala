@@ -19,7 +19,7 @@ package services.agent
 import mocks.connectors._
 import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
-import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound, APIError}
+import services.agent.ClientDetailsService.{APIError, BusinessDetailsNotFound, CitizenDetailsNotFound}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 

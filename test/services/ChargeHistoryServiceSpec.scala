@@ -18,7 +18,7 @@ package services
 
 import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CreateReversalReason}
 import mocks.connectors.MockChargeHistoryConnector
-import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
+import models.chargeHistory._
 import models.claimToAdjustPoa.{Increase, MainIncomeLower}
 import models.financialDetails.DocumentDetail
 import play.api.http.Status.INTERNAL_SERVER_ERROR

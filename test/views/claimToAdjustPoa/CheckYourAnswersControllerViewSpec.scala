@@ -16,7 +16,7 @@
 
 package views.claimToAdjustPoa
 
-import controllers.claimToAdjustPoa.routes.{ConfirmationForAdjustingPoaController, EnterPoaAmountController, SelectYourReasonController}
+import controllers.claimToAdjustPoa.routes._
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, SelectYourReason}
 import models.core.CheckMode
 import models.incomeSourceDetails.TaxYear
