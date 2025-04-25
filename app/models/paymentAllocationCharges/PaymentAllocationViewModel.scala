@@ -47,7 +47,7 @@ case class PaymentAllocationViewModel(paymentAllocationChargeModel: FinancialDet
   }
 
   def getOriginalAmount: String =
-    paymentAllocationChargeModel.filteredDocumentDetails.head.originalAmount.abs.toCurrencyString
+    paymentAllocationChargeModel.filteredDocumentDetails.headOption.map(_.originalAmount.abs.toCurrencyString).getOrElse("")
 
   def showPaymentAllocationsTable(): Boolean =
     !(paymentAllocationChargeModel.documentDetails.exists(_.outstandingAmountZero) &&
