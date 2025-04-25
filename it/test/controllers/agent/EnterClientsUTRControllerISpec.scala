@@ -30,7 +30,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
   val path = "/agents/client-utr"
 
   s"GET $path" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
+    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
       "the user is not authenticated" in {
         MTDAgentAuthStub.stubUnauthorised()
 
@@ -38,7 +38,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn.url)
+          redirectURI(controllers.routes.SignInController.signIn().url)
         )
       }
     }
@@ -65,7 +65,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
   }
 
   s"POST ${controllers.agent.routes.EnterClientsUTRController.submit.url}" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
+    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
       "the user is not authenticated" in {
         MTDAgentAuthStub.stubUnauthorised()
 
@@ -73,7 +73,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn.url)
+          redirectURI(controllers.routes.SignInController.signIn().url)
         )
       }
     }

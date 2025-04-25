@@ -33,7 +33,7 @@ class AgentHasConfirmedClientAction @Inject()(implicit val executionContext: Exe
     if(request.clientDetails.exists(_.confirmed)) {
       Future.successful(Right(request))
     } else {
-      Future.successful(Left(Redirect(routes.ConfirmClientUTRController.show)))
+      Future.successful(Left(Redirect(routes.ConfirmClientUTRController.show())))
     }
   }
 }

@@ -24,7 +24,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
 import uk.gov.hmrc.play.partials.{FormPartialRetriever, HeaderCarrierForPartialsConverter}
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
 
 
 @Singleton
@@ -40,7 +39,7 @@ class ItvcHeaderCarrierForPartialsConverter @Inject()(val sessionCookieCrypto: S
 @Singleton
 class FormPartialProvider @Inject()(override val httpGet: HttpClient,
                                     override val headerCarrierForPartialsConverter: HeaderCarrierForPartialsConverter
-                                   )(implicit executionContext: ExecutionContext) extends FormPartialRetriever { }
+                                   ) extends FormPartialRetriever { }
 
 
 

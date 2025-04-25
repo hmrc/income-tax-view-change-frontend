@@ -80,7 +80,7 @@ class StubSchemaController @Inject()(stubSchemaView: StubSchemaView)
   private def view(form: Form[SchemaModel], showSuccess: Boolean = false, errorMessage: Option[String] = None)(implicit request: Request[AnyContent]) =
     stubSchemaView(
       form,
-      testOnly.controllers.routes.StubSchemaController.submit,
+      testOnly.controllers.routes.StubSchemaController.submit(),
       showSuccess,
       errorMessage
     )

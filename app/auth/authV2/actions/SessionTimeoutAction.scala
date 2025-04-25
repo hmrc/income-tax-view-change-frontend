@@ -39,7 +39,7 @@ class SessionTimeoutAction @Inject()(val parser: BodyParsers.Default)(implicit v
       case (Some(_), None) =>
         // Auth session has been wiped by Frontend Bootstrap Filter, hence timed out.
         Logger(getClass).warn("Session Time Out.")
-        Future.successful(Left(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)))
+        Future.successful(Left(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout())))
       case (_, _) =>
         val mtdItUserWithUpdatedHeaders = request.withHeaders(updatedHeaders)
         Future.successful(Right(mtdItUserWithUpdatedHeaders))

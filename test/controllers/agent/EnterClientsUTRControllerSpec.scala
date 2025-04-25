@@ -52,7 +52,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
         val result = testEnterClientsUTRController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
       }
     }
     "the user has timed out" should {
@@ -60,7 +60,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
         val result = testEnterClientsUTRController.show()(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
       }
     }
     "the user does not have an agent reference number" should {
@@ -95,14 +95,14 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
         val result = testEnterClientsUTRController.submit()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
       }
       "the user has timed out" should {
         "redirect to the session timeout page" in {
           val result = testEnterClientsUTRController.submit()(fakeRequestWithTimeoutSession)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+          redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
         }
       }
       "the user does not have an agent reference number" should {

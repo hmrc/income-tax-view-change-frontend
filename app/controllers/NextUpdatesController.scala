@@ -126,7 +126,7 @@ class NextUpdatesController @Inject()(
   def showAgent: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
       getNextUpdates(
-        backUrl = controllers.routes.HomeController.showAgent,
+        backUrl = controllers.routes.HomeController.showAgent(),
         isAgent = true,
         errorHandler = agentItvcErrorHandler,
         origin = None

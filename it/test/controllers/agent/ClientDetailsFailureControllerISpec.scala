@@ -35,7 +35,7 @@ class ClientDetailsFailureControllerISpec extends ComponentSpecBase with Feature
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn.url)
+          redirectURI(controllers.routes.SignInController.signIn().url)
         )
       }
     }

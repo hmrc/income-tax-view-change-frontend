@@ -38,7 +38,7 @@ class ClientRelationshipFailureController @Inject()(clientRelationshipFailure: C
 
   def show: Action[AnyContent] = authActions.asAgent() { implicit user =>
       Ok(clientRelationshipFailure(
-        postAction = routes.EnterClientsUTRController.show
+        postAction = routes.EnterClientsUTRController.show()
       ))
   }
 

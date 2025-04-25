@@ -107,7 +107,7 @@ trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModel
 
     if(mtdUserRole != MTDSupportingAgent) {
       "does not have a valid session" should {
-        s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" in {
+        s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" in {
           if (mtdUserRole != MTDIndividual) {
             SessionDataStub.stubGetSessionDataResponseSuccess()
             stubGetCitizenDetails()
@@ -118,13 +118,13 @@ trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModel
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(controllers.routes.SignInController.signIn.url)
+            redirectURI(controllers.routes.SignInController.signIn().url)
           )
         }
       }
 
       "has an expired bearerToken" should {
-        s"redirect ($SEE_OTHER) to ${controllers.timeout.routes.SessionTimeoutController.timeout.url}" in {
+        s"redirect ($SEE_OTHER) to ${controllers.timeout.routes.SessionTimeoutController.timeout().url}" in {
           if (mtdUserRole != MTDIndividual) {
             SessionDataStub.stubGetSessionDataResponseSuccess()
             stubGetCitizenDetails()
@@ -135,7 +135,7 @@ trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModel
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+            redirectURI(controllers.timeout.routes.SessionTimeoutController.timeout().url)
           )
         }
       }

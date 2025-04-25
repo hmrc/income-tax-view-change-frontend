@@ -52,7 +52,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions
           val result = testConfirmClientUTRController.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
         }
       }
 
@@ -63,7 +63,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions
           val result = testConfirmClientUTRController.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+          redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
         }
       }
 
@@ -133,7 +133,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions
           val result = testConfirmClientUTRController.submit()(fakeRequestWithActiveSession)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
         }
       }
 
@@ -144,7 +144,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions
           val result = testConfirmClientUTRController.submit()(fakeRequestWithActiveSession)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+          redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
         }
       }
 

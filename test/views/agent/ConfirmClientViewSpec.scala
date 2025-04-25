@@ -23,7 +23,7 @@ import views.html.agent.confirmClient
 
 class ConfirmClientViewSpec extends ViewSpec {
 
-  lazy val postAction: Call = controllers.agent.routes.ConfirmClientUTRController.submit
+  lazy val postAction: Call = controllers.agent.routes.ConfirmClientUTRController.submit()
   lazy val backUrl: String = controllers.agent.routes.EnterClientsUTRController.show().url
   lazy val testClientName: Option[String] = Some("Test Name")
   lazy val testClientUTR: Option[String] = Some("1234567890")

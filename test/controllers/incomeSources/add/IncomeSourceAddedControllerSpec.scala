@@ -227,7 +227,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions
       }
 
       s"submit${if (mtdRole != MTDIndividual) "Agent"}(incomeSourceType = $incomeSourceType)" when {
-        val action = if (mtdRole == MTDIndividual) testIncomeSourceAddedController.submit else testIncomeSourceAddedController.agentSubmit
+        val action = if (mtdRole == MTDIndividual) testIncomeSourceAddedController.submit else testIncomeSourceAddedController.agentSubmit()
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
         s"the user is authenticated as a $mtdRole" should {
           "redirect to add income sources" in {

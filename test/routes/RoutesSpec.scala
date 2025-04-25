@@ -32,7 +32,7 @@ class RoutesSpec extends TestSupport {
   // Timeout routes
   "The URL for the SessionTimeoutController.timeout action" should {
     s"be equal to $contextRoute/session-timeout" in {
-      controllers.timeout.routes.SessionTimeoutController.timeout.url shouldBe s"$contextRoute/session-timeout"
+      controllers.timeout.routes.SessionTimeoutController.timeout().url shouldBe s"$contextRoute/session-timeout"
     }
   }
 

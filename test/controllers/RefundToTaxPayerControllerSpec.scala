@@ -170,7 +170,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthActions
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.SEE_OTHER
-              val homeUrl = if(isAgent) routes.HomeController.showAgent else routes.HomeController.show()
+              val homeUrl = if(isAgent) routes.HomeController.showAgent() else routes.HomeController.show()
               redirectLocation(result) shouldBe Some(homeUrl.url)
             }
           }

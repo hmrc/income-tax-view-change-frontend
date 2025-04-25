@@ -288,9 +288,9 @@ class ManageObligationsControllerSpec extends MockAuthActions
     s"submit" when {
       val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
       val action = if (mtdRole == MTDIndividual) {
-        testController.submit
+        testController.submit()
       } else {
-        testController.agentSubmit
+        testController.agentSubmit()
       }
       s"the user is authenticated as a $mtdRole" should {
         "redirect to ManageIncomeSources controller" in {

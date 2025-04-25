@@ -76,9 +76,9 @@ class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
             ))
             case Left(error) =>
               Logger("error").error(s"unable to find client with UTR: ${sessionData.utr} " + error)
-              Left(Redirect(routes.EnterClientsUTRController.show))
+              Left(Redirect(routes.EnterClientsUTRController.show()))
           }
-        case Left(_: SessionDataNotFound) => Future.successful(Left(Redirect(routes.EnterClientsUTRController.show)))
+        case Left(_: SessionDataNotFound) => Future.successful(Left(Redirect(routes.EnterClientsUTRController.show())))
         case Left(_) => Future.successful(Left(errorHandler.showInternalServerError()))
       }
     }

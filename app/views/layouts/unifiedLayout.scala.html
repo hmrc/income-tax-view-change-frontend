@@ -113,7 +113,7 @@
         language = Some(CurrentLanguage().code),
         timeout = Option(900),
         countdown = Option(120),
-        keepAliveUrl = Some(controllers.timeout.routes.SessionTimeoutController.keepAlive.url),
+        keepAliveUrl = Some(controllers.timeout.routes.SessionTimeoutController.keepAlive().url),
         signOutUrl = Some(controllers.routes.SignOutController.signOut.url),
         keepAliveButtonText = Some(messages("button.continue"))
         ))

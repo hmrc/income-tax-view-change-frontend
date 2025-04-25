@@ -39,7 +39,7 @@ class UTRErrorController @Inject()(utrError: UTRError,
 
   def show: Action[AnyContent] = authActions.asAgent().async { implicit user =>
     Future.successful(Ok(utrError(
-      postAction = controllers.agent.routes.UTRErrorController.submit
+      postAction = controllers.agent.routes.UTRErrorController.submit()
     )))
   }
 

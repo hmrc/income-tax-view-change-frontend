@@ -88,7 +88,7 @@ class StubDataController @Inject()(stubDataView: StubDataView)
                   )(implicit request: Request[AnyContent]) =
     stubDataView(
       form,
-      testOnly.controllers.routes.StubDataController.submit,
+      testOnly.controllers.routes.StubDataController.submit(),
       showSuccess,
       errorResponse
     )

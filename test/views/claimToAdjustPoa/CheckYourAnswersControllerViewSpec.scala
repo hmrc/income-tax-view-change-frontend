@@ -104,7 +104,7 @@ class CheckYourAnswersControllerViewSpec extends TestSupport {
   }
 
   def getCancelLinkUrl(isAgent: Boolean): String = {
-    if (isAgent) controllers.routes.HomeController.showAgent
+    if (isAgent) controllers.routes.HomeController.showAgent()
     else         controllers.routes.HomeController.show()
   }.url
 

@@ -50,7 +50,7 @@ class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
     Ok(confirmClient(
       clientName = user.optClientNameAsString,
       clientUtr = user.saUtr,
-      postAction = routes.ConfirmClientUTRController.submit,
+      postAction = routes.ConfirmClientUTRController.submit(),
       backUrl = backUrl
     ))
   }

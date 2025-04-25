@@ -31,7 +31,6 @@ import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
-import scala.language.postfixOps
 
 class IncomeSourceEndDateFormSpec extends AnyWordSpec with Matchers with TestSupport {
   val mockDateService: DateService = app.injector.instanceOf[DateService]

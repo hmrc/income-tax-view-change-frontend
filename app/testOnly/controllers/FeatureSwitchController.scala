@@ -62,7 +62,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
         Ok(
           featureSwitchView(
             switchNames = fss,
-            testOnly.controllers.routes.FeatureSwitchController.submit
+            testOnly.controllers.routes.FeatureSwitchController.submit()
           )
         )
       )
@@ -114,7 +114,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
           (fs, enableState) <- (getEnabledFeatureSwitches ++ getDisabledFeatureSwitches)
         } yield featureSwitchService.set(fs, enableState)
       )
-    } yield Redirect(testOnly.controllers.routes.FeatureSwitchController.show)
+    } yield Redirect(testOnly.controllers.routes.FeatureSwitchController.show())
 
   }
 
@@ -128,7 +128,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
       )
     } yield {
       Logger("application").info(s"Enabled all FSS")
-      Redirect(testOnly.controllers.routes.FeatureSwitchController.show)
+      Redirect(testOnly.controllers.routes.FeatureSwitchController.show())
     }
   }
 }

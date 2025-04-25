@@ -55,7 +55,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
   def show: Action[AnyContent] = authActions.asAgent().async { implicit user =>
     Future.successful(Ok(enterClientsUTR(
       clientUTRForm = ClientsUTRForm.form,
-      postAction = routes.EnterClientsUTRController.submit
+      postAction = routes.EnterClientsUTRController.submit()
     )))
   }
 
@@ -63,7 +63,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
     val utrSafe = utr.filter(_.isDigit).take(10)
     Future.successful(Ok(enterClientsUTR(
       clientUTRForm = ClientsUTRForm.form.fill(utrSafe),
-      postAction = routes.EnterClientsUTRController.submit
+      postAction = routes.EnterClientsUTRController.submit()
     )))
   }
 
@@ -72,7 +72,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
     ClientsUTRForm.form.bindFromRequest().fold(
       hasErrors => Future.successful(BadRequest(enterClientsUTR(
         clientUTRForm = hasErrors,
-        postAction = routes.EnterClientsUTRController.submit
+        postAction = routes.EnterClientsUTRController.submit()
       ))),
       validUTR => {
         clientDetailsService.checkClientDetails(
@@ -82,19 +82,19 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
             checkAgentAuthorisedAndGetRole(clientDetails.mtdItId).flatMap { userRole =>
               val sessionCookies: Seq[(String, String)] = SessionCookieData(clientDetails, validUTR, userRole == MTDSupportingAgent).toSessionCookieSeq
               sendAudit(true, user, validUTR, clientDetails.nino, clientDetails.mtdItId, Some(userRole == MTDSupportingAgent))
-              Future.successful(Redirect(routes.ConfirmClientUTRController.show).addingToSession(sessionCookies: _*))
+              Future.successful(Redirect(routes.ConfirmClientUTRController.show()).addingToSession(sessionCookies: _*))
             }.recover {
               case ex =>
                 Logger("application")
                   .error(s"[EnterClientsUTRController] - ${ex.getMessage} - ${ex.getCause}")
                 sendAudit(false, user, validUTR, clientDetails.nino, clientDetails.mtdItId, None)
-                Redirect(controllers.agent.routes.UTRErrorController.show)
+                Redirect(controllers.agent.routes.UTRErrorController.show())
             }
 
           case Left(CitizenDetailsNotFound | BusinessDetailsNotFound)
           =>
             val sessionValue: Seq[(String, String)] = Seq(SessionKeys.clientUTR -> validUTR)
-            Future.successful(Redirect(routes.UTRErrorController.show).addingToSession(sessionValue: _*))
+            Future.successful(Redirect(routes.UTRErrorController.show()).addingToSession(sessionValue: _*))
           case Left(_)
           =>
             Logger("application").error(s"Error response received from API")
