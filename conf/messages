@@ -1651,8 +1651,13 @@ incomeSources.ceaseUKProperty.checkDetails.confirm               = Confirm and c
 incomeSources.ceaseUKProperty.checkDetails.change                = Change
 
 # add Business page
+# heading is used only in the old journey
+add-business-name.heading                                         = What is the name of your business?
+
+# heading1 and heading 2 are used for the new journey
 add-business-name.heading1                                        = Business name
 add-business-name.heading2                                        = What is your business name?
+
 add-business-name.p1                                              = This is the business name you used to register for Self Assessment. If your sole trader business does not have a separate name, enter your own first and last name.
 add-business-name.p2                                              = The business name you enter can only include upper or lower case letters, full stops, commas, digits, &, {0}, \, /, -.
 add-business-name.form.error.required                             = Enter your name or the name of your business
