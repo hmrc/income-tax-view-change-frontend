@@ -46,7 +46,8 @@
         postAction: Call,
         isAgent: Boolean,
         backUrl: String,
-        origin: Option[String] = None
+        origin: Option[String] = None,
+        displayAccountingMethod: Boolean
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
@@ -236,7 +237,7 @@
 }
 
 @businessAccountingMethodRow = @{
-    if(viewModel.showedAccountingMethod || viewModel.incomeSourceType != SelfEmployment) {
+    if((viewModel.showedAccountingMethod || viewModel.incomeSourceType != SelfEmployment) && displayAccountingMethod) {
         Seq(
             SummaryListRow(
                 key = Key(

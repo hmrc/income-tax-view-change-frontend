@@ -59,7 +59,7 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
     controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.submit(incomeSourceType)
   }
 
-  class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType) {
+  class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType, showAccountingMethod: Boolean) {
 
     val businessName = "Test Business"
     val businessStartDate = "1 January 2022"
@@ -77,7 +77,9 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
         if (incomeSourceType == SelfEmployment) businessViewModelMax else propertyViewModelMax(incomeSourceType),
         isAgent = isAgent,
         postAction = postAction,
-        backUrl = backUrl)(messages, implicitly)
+        backUrl = backUrl,
+        displayAccountingMethod = showAccountingMethod
+      )(messages, implicitly)
     }
 
     lazy val document: Document = Jsoup.parse(contentAsString(view))
@@ -93,13 +95,13 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
   "IncomeSourceCheckDetails" should {
     "render the page correctly" when {
       def runPageContenttest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
-        "render the heading" in new Setup(false, incomeSourceType) {
+        "render the heading" in new Setup(false, incomeSourceType, true) {
           document.getElementsByClass("govuk-heading-l").text() shouldBe "Confirm this information is correct"
         }
 
         if (incomeSourceType == SelfEmployment) {
 
-          "render the summary list" in new Setup(isAgent, incomeSourceType) {
+          "render the summary list" in new Setup(isAgent, incomeSourceType, true) {
             document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe "Business name"
             document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe "Trading start date"
             document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe "Type of trade"
@@ -114,7 +116,7 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
           }
         }
           else {
-          "render the summary list" in new Setup(isAgent, incomeSourceType) {
+          "render the summary list" in new Setup(isAgent, incomeSourceType, true) {
             document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe getStartDateMessage(incomeSourceType)
             document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe "Accounting method"
 
@@ -124,16 +126,16 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
 
         }
 
-        "render the description" in new Setup(isAgent, incomeSourceType) {
+        "render the description" in new Setup(isAgent, incomeSourceType, true) {
           document.getElementById("check-details-description").text() shouldBe "Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so."
         }
 
-        "render the back link" in new Setup(isAgent, incomeSourceType) {
+        "render the back link" in new Setup(isAgent, incomeSourceType, true) {
           document.getElementById("back-fallback").text() shouldBe "Back"
           document.getElementById("back-fallback").attr("href") shouldBe backUrl
 
         }
-        "render the continue button" in new Setup(isAgent, incomeSourceType) {
+        "render the continue button" in new Setup(isAgent, incomeSourceType, true) {
           document.getElementById("confirm-button").text() shouldBe "Confirm and continue"
         }
       }
@@ -158,6 +160,42 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
         }
         "Foreign Property" when {
           runPageContenttest(isAgent = true, ForeignProperty)
+        }
+      }
+    }
+
+    "render the page without the accounting method" when {
+      def runPageContentTest(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
+        "render the heading" in new Setup(false, incomeSourceType, true) {
+          document.getElementsByClass("govuk-heading-l").text() shouldBe "Confirm this information is correct"
+        }
+
+        "obfuscate the accounting method" in new Setup(isAgent, incomeSourceType, false) {
+          document.getElementsByClass("govuk-summary-list__value").eq(4).text().length shouldBe 0
+        }
+
+      }
+
+      "individual" when {
+        "Self Employment" when {
+          runPageContentTest(isAgent = false, SelfEmployment)
+        }
+        "Uk Property" when {
+          runPageContentTest(isAgent = false, UkProperty)
+        }
+        "Foreign Property" when {
+          runPageContentTest(isAgent = false, ForeignProperty)
+        }
+      }
+      "agent" when {
+        "Self Employment" when {
+          runPageContentTest(isAgent = true, SelfEmployment)
+        }
+        "Uk Property" when {
+          runPageContentTest(isAgent = true, UkProperty)
+        }
+        "Foreign Property" when {
+          runPageContentTest(isAgent = true, ForeignProperty)
         }
       }
     }
