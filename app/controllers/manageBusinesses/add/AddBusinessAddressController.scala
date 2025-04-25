@@ -23,8 +23,9 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{CheckMode, IncomeSourceId, Mode, NormalMode}
+import models.admin.AccountingMethodJourney
+import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -78,11 +79,11 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
     }
   }
 
-  def getRedirectUrl(isAgent: Boolean, mode: Mode): String = {
-    ((isAgent, mode) match {
-      case (_, NormalMode) => routes.IncomeSourcesAccountingMethodController.show(SelfEmployment, isAgent)
-      case (false, CheckMode) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (true, CheckMode) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+  def getRedirectUrl(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): String = {
+    ((isEnabled(AccountingMethodJourney), isAgent, mode) match {
+      case (true, _, NormalMode) => routes.IncomeSourcesAccountingMethodController.show(SelfEmployment, isAgent)
+      case (_, false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
+      case (_, true, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     }).url
   }
 

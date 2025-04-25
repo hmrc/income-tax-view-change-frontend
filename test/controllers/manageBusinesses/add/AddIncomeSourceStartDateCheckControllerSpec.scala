@@ -23,8 +23,8 @@ import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesFs
 import models.core.{CheckMode, NormalMode}
+import models.admin.{AccountingMethodJourney, IncomeSourcesFs}
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
@@ -257,6 +257,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
                 "Yes is submitted with the form with a valid session" in {
                   setupMockSuccess(mtdRole)
                   enable(IncomeSourcesFs)
+                  enable(AccountingMethodJourney)
 
                   mockNoIncomeSources()
                   setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
@@ -275,6 +276,31 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
                       case SelfEmployment if !isAgent => routes.AddBusinessTradeController.show(mode = mode)
                       case SelfEmployment => routes.AddBusinessTradeController.showAgent(mode = mode)
                       case _ => routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent)
+                    }
+                  }.url)
+                }
+                "Yes is submitted with the form with a valid session (accounting method FS disabled)" in {
+                  setupMockSuccess(mtdRole)
+                  enable(IncomeSourcesFs)
+
+                  mockNoIncomeSources()
+                  setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
+                  setupMockSetMongoData(result = true)
+                  setupMockGetMongo(Right(Some(sessionDataWithDate(IncomeSourceJourneyType(Add, incomeSourceType)))))
+
+                  val result = action(fakeRequest
+                    .withFormUrlEncodedBody(
+                      AddIncomeSourceStartDateCheckForm.response -> responseYes
+                    ))
+
+                  status(result) shouldBe SEE_OTHER
+                  if (incomeSourceType == SelfEmployment) verifySetMongoData(SelfEmployment)
+                  redirectLocation(result) shouldBe Some({
+                    incomeSourceType match {
+                      case SelfEmployment if !isAgent => routes.AddBusinessTradeController.show(mode = mode)
+                      case SelfEmployment => routes.AddBusinessTradeController.showAgent(mode = mode)
+                      case _ if(isAgent) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
+                      case _ => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
                     }
                   }.url)
                 }

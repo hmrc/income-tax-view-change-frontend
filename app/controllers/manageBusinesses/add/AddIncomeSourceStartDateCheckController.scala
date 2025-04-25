@@ -24,6 +24,7 @@ import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm => form}
 import implicits.ImplicitDateFormatter
 import models.core.{Mode, NormalMode}
+import models.admin.AccountingMethodJourney
 import models.incomeSourceDetails.UIJourneySessionData
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -246,17 +247,16 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authActions: AuthAct
   private def getPostAction(incomeSourceType: IncomeSourceType, isAgent: Boolean, mode: Mode): Call = {
     routes.AddIncomeSourceStartDateCheckController.submit(isAgent, mode, incomeSourceType)
   }
+  
+  private def getSuccessUrl(incomeSourceType: IncomeSourceType, isAgent: Boolean, mode: Mode)
+                           (implicit user: MtdItUser[_]): String = {
 
-  private def getSuccessUrl(incomeSourceType: IncomeSourceType,
-                            isAgent: Boolean,
-                            mode: Mode): String = {
-
-    ((isAgent, mode, incomeSourceType) match {
-      case (true, NormalMode, SelfEmployment) => routes.AddBusinessTradeController.showAgent(mode)
-      case (_, NormalMode, SelfEmployment) => routes.AddBusinessTradeController.show(mode)
-      case (_, NormalMode, _) => routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent)
-      case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
-      case (_, _, _) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
+    ((isEnabled(AccountingMethodJourney), isAgent, mode, incomeSourceType) match {
+      case (_, true, NormalMode, SelfEmployment) => routes.AddBusinessTradeController.showAgent(mode)
+      case (_, _, NormalMode, SelfEmployment) => routes.AddBusinessTradeController.show(mode)
+      case (true, _, NormalMode, _) => routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent)
+      case (_, false, _, _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
+      case (_, _, _, _) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
     }).url
   }
 }
