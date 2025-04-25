@@ -39,7 +39,7 @@ trait IncomeSourcesDataHelper {
     ),
     typeOfBusiness = None,
     tradingStartDate = "",
-    cashOrAccrualsFlag = "CASH",
+    cashOrAccrualsFlag = Some("CASH"),
     cessationDate = Some(""),
     cessationReason = None
   )
@@ -69,7 +69,7 @@ trait IncomeSourcesDataHelper {
       |}""".stripMargin)
 
   val createForeignPropertyRequestObject = CreateForeignPropertyIncomeSourceRequest(PropertyDetails(tradingStartDate = LocalDate.of(2011, 1, 1).toString,
-    cashOrAccrualsFlag = "CASH", startDate = LocalDate.of(2011, 1, 1).toString)
+    cashOrAccrualsFlag = Some("CASH"), startDate = LocalDate.of(2011, 1, 1).toString)
   )
 
   val createForeignPropertyRequestObjectJson = Json.parse("""{
@@ -81,7 +81,7 @@ trait IncomeSourcesDataHelper {
         |}""".stripMargin)
 
   val createUKPropertyRequestObject = CreateUKPropertyIncomeSourceRequest(PropertyDetails(tradingStartDate = LocalDate.of(2011, 1, 1).toString,
-    cashOrAccrualsFlag = "CASH", startDate = LocalDate.of(2011, 1, 1).toString)
+    cashOrAccrualsFlag = Some("CASH"), startDate = LocalDate.of(2011, 1, 1).toString)
   )
 
   val createUKPropertyRequestObjectJson  = Json.parse("""{
@@ -104,11 +104,11 @@ trait IncomeSourcesDataHelper {
     businessAddressLine3 = Some(""),
     businessAddressLine4 = None,
     businessCountryCode = Some("GB"),
-    cashOrAccrualsFlag = "CASH",
+    cashOrAccrualsFlag = Some("CASH"),
     showedAccountingMethod = false
   )
 
-  val createForeignPropertyViewModel = CheckPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = "CASH", incomeSourceType = ForeignProperty)
+  val createForeignPropertyViewModel = CheckPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = Some("CASH"), incomeSourceType = ForeignProperty)
 
-  val createUKPropertyViewModel = CheckPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = "CASH", incomeSourceType = UkProperty)
+  val createUKPropertyViewModel = CheckPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = Some("CASH"), incomeSourceType = UkProperty)
 }

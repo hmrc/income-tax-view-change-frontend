@@ -49,18 +49,18 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
     businessAddressLine4 = Some("Test City"),
     businessCountryCode = Some("GB"),
     incomeSourcesAccountingMethod = Some("cash"),
-    cashOrAccrualsFlag = "CASH",
+    cashOrAccrualsFlag = Some("CASH"),
     showedAccountingMethod = false
   )
 
   val createForeignPropertyViewModel = CheckPropertyViewModel(
     tradingStartDate = LocalDate.of(2022, 1, 1),
-    cashOrAccrualsFlag = "CASH",
+    cashOrAccrualsFlag = Some("CASH"),
     incomeSourceType = ForeignProperty)
 
   val createUKPropertyViewModel = CheckPropertyViewModel(
     tradingStartDate = LocalDate.of(2022, 1, 1),
-    cashOrAccrualsFlag = "CASH",
+    cashOrAccrualsFlag = Some("CASH"),
     incomeSourceType = UkProperty)
 
   def getCreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType, mtdUserRole: MTDUserRole, isError: Boolean): CreateIncomeSourceAuditModel = {

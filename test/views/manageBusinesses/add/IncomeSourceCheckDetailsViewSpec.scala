@@ -45,13 +45,13 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
     businessAddressLine3 = Some("Cbeebies"),
     businessAddressLine4 = None,
     businessCountryCode = Some("United Kingdom"),
-    cashOrAccrualsFlag = "ACCRUALS",
+    cashOrAccrualsFlag = Some("ACCRUALS"),
     showedAccountingMethod = true
   )
 
   def propertyViewModelMax(incomeSourceType: IncomeSourceType): CheckDetailsViewModel = CheckPropertyViewModel(
     tradingStartDate = LocalDate.of(2022, 1, 1),
-    cashOrAccrualsFlag = "ACCRUALS",
+    cashOrAccrualsFlag = Some("ACCRUALS"),
     incomeSourceType = incomeSourceType
   )
 

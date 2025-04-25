@@ -21,12 +21,12 @@ import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import java.time.LocalDate
 
 sealed trait CheckDetailsViewModel{
-  val cashOrAccruals: String
+  val cashOrAccruals: Option[String]
   val incomeSourceType: IncomeSourceType
   val showedAccountingMethod: Boolean
 
   def getAccountingMethodMessageKey: String = {
-    val cashAccountingSelected = cashOrAccruals.toLowerCase.equals("cash")
+    val cashAccountingSelected = cashOrAccruals.forall(_.toLowerCase.equals("cash"))
 
     if (cashAccountingSelected) {
       "incomeSources.add.accountingMethod.cash"
@@ -47,19 +47,19 @@ case class CheckBusinessDetailsViewModel(businessName: Option[String],
                                          businessPostalCode: Option[String],
                                          businessCountryCode: Option[String],
                                          incomeSourcesAccountingMethod: Option[String],
-                                         cashOrAccrualsFlag: String,
+                                         cashOrAccrualsFlag: Option[String],
                                          showedAccountingMethod: Boolean) extends CheckDetailsViewModel {
 
-  override val cashOrAccruals: String = cashOrAccrualsFlag
+  override val cashOrAccruals: Option[String] = cashOrAccrualsFlag
   override val incomeSourceType: IncomeSourceType = SelfEmployment
 
   def countryName: Option[String] = Some("United Kingdom")
 
 }
 
-case class CheckPropertyViewModel(tradingStartDate: LocalDate, cashOrAccrualsFlag: String, incomeSourceType: IncomeSourceType)
+case class CheckPropertyViewModel(tradingStartDate: LocalDate, cashOrAccrualsFlag: Option[String], incomeSourceType: IncomeSourceType)
   extends CheckDetailsViewModel {
 
-  override val cashOrAccruals: String = cashOrAccrualsFlag
+  override val cashOrAccruals: Option[String] = cashOrAccrualsFlag
   override val showedAccountingMethod: Boolean = true
 }
