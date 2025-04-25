@@ -151,7 +151,7 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
                                    (implicit user: MtdItUser[_]): Future[Result] = {
 
     financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
-      case financialDetails@FinancialDetailsModel(_, documentDetails, _) =>
+      case financialDetails@FinancialDetailsModel(_, _, documentDetails, _) =>
 
         val getChargeItem: DocumentDetail => Option[ChargeItem] = getChargeItemOpt(financialDetails = financialDetails.financialDetails)
 

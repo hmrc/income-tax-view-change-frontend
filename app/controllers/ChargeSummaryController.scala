@@ -86,7 +86,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
 
       val paymentsFromAllYears = financialResponses.collect {
         case (_, model: FinancialDetailsModel) => model.filterPayments()
-      }.foldLeft(FinancialDetailsModel(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None), List(), List()))((merged, next) => merged.mergeLists(next))
+      }.foldLeft(FinancialDetailsModel(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None), List(), List(), List()))((merged, next) => merged.mergeLists(next))
 
       val matchingYear: List[FinancialDetailsResponseModel] = financialResponses.collect {
         case (year, response) if year == taxYear => response
