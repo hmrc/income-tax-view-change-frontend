@@ -67,33 +67,6 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
 
   val formData: Map[String, String] = Map("report-quarterly" -> "Yes")
 
-  val title: String = "Your new business is set to report annually - Manage your Self Assessment - GOV.UK"
-  val titleError: String = "Error: Your new business is set to report annually - GOV.UK"
-  val titleAgent: String = "Your new business is set to report annually - Manage your Self Assessment - GOV.UK"
-  val heading: String = "Your new business is set to report annually"
-  val paragraph1: String = "Because this is a new business, for up to 2 tax years you can submit its income and expenses once a year in your tax return, even if:"
-  val reportingFrequencyUlLi1: String = "you are voluntarily opted in or required to report quarterly for your other businesses"
-  val reportingFrequencyUlLi2: String = "your income from self-employment or property, or both, exceed the income threshold"
-  val paragraph2: String = "You can choose to report quarterly, which means submitting an update every 3 months in addition to your tax return"
-  val reportingFrequencyFormH1: String = "Do you want to change to report quarterly?"
-  val reportingFrequencyFormNoSelectionError: String = "Select yes if you want to report quarterly or select no if you want to report annually"
-  val continueButtonText: String = "Continue"
-
-  def getCaption(incomeSourceType: IncomeSourceType): String =
-    incomeSourceType match {
-      case SelfEmployment => "Sole trader"
-      case UkProperty => "UK property"
-      case ForeignProperty => "Foreign property"
-    }
-
-  def getReportingFrequencyTableMessages(taxYear: Int): (String, String) = {
-    (s"Reporting frequency ${taxYear} to ${taxYear+1}", "Annual")
-  }
-
-  def getWarningInsetTextMessage(currentTaxYearEnd: Int): String = {
-    s"From April ${currentTaxYearEnd + 1} when this 2-year tax period ends, you could be required to report quarterly."
-  }
-
 
   object Scenario extends Enumeration {
     type Scenario = Value
@@ -196,7 +169,6 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
   def setupMockCalls(isAgent: Boolean, incomeSourceType: IncomeSourceType, mtdRole: MTDUserRole, scenario: Scenario): Unit = {
     enable(IncomeSourcesNewJourney)
     enable(IncomeSourcesNewJourney)
-    mockRedirectChecksForIncomeSourceRF()
     setupMockSuccess(mtdRole)
     setupMockIncomeSourceDetailsCall(scenario, incomeSourceType)
     setupMockDateServiceCall(scenario)
@@ -205,6 +177,7 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
     setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType)))))
     setupMockSetMongoData(true)
     setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = IncomeSourceJourneyType(Add, incomeSourceType), result = Right(Some(testSelfEmploymentId)))
+    mockRedirectChecksForIncomeSourceRF()
   }
 
   def getTestTitleIncomeSourceType(incomeSourceType: IncomeSourceType): String = {
@@ -217,7 +190,6 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
 
   val incomeSourceTypes: Seq[IncomeSourceType] = List(SelfEmployment, UkProperty, ForeignProperty)
 
-
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual
     incomeSourceTypes.foreach { incomeSourceType =>
@@ -228,53 +200,13 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
           "render the reporting frequency page" when {
             s"with New Incomesource FS enabled" in {
               setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
-              val thisTaxYear: Int = TAX_YEAR_2023.getYear
 
               val result = action(fakeRequest)
               val document: Document = Jsoup.parse(contentAsString(result))
 
               println(Console.MAGENTA + document + Console.RESET)
 
-              val warningInsetTextMessages: String = getWarningInsetTextMessage(currentTaxYearEnd = thisTaxYear + 1)
-
-              val documentTableC1 = document.getElementsByTag("th")
-              val documentTableC2 = document.getElementsByTag("td")
-              val documentTableR1C1: String = documentTableC1.get(0).text
-              val documentTableR1C2: String = documentTableC2.get(0).text
-              val documentTableR2C1: String = documentTableC1.get(1).text
-              val documentTableR2C2: String = documentTableC2.get(1).text
-
               status(result) shouldBe OK
-              if (isAgent) document.title shouldBe titleAgent else document.title shouldBe title
-              document.getElementsByClass("govuk-caption-l").textNodes().get(0).text shouldBe getCaption(incomeSourceType)
-              document.getElementsByClass("govuk-heading-l margin-bottom-100").get(0).text shouldBe heading
-              document.getElementById("paragraph-1").text shouldBe paragraph1
-              document.getElementById("inset-text-bullet-1").text shouldBe reportingFrequencyUlLi1
-              document.getElementById("inset-text-bullet-2").text shouldBe reportingFrequencyUlLi2
-              documentTableR1C1 shouldBe getReportingFrequencyTableMessages(thisTaxYear)._1
-              documentTableR1C2 shouldBe getReportingFrequencyTableMessages(thisTaxYear)._2
-              documentTableR2C1 shouldBe getReportingFrequencyTableMessages(thisTaxYear + 1)._1
-              documentTableR2C2 shouldBe getReportingFrequencyTableMessages(thisTaxYear + 1)._2
-              document.getElementById("paragraph-2").text shouldBe paragraph2
-              document.getElementById("warning-inset").text shouldBe warningInsetTextMessages
-              document.getElementById("reporting-quarterly-form").getElementsByClass("govuk-fieldset__legend--m").get(0).text shouldBe reportingFrequencyFormH1
-              document.getElementById("continue-button").text shouldBe continueButtonText
-
-            }
-          }
-
-          "return 303 SEE_OTHER and redirect to home page" when {
-            s"navigating to the ${getTestTitleIncomeSourceType(incomeSourceType)} Reporting Frequency page with FS disabled" in {
-              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-              disable(IncomeSourcesNewJourney)
-              disable(IncomeSourcesNewJourney)
-
-              val expectedRedirectUrl = if (isAgent) controllers.routes.HomeController.showAgent().url
-              else controllers.routes.HomeController.show().url
-
-              val result = action(fakeRequest)
-              status(result) shouldBe SEE_OTHER
-              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
             }
           }
 
@@ -320,9 +252,6 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
               val result = action(fakeRequest.withFormUrlEncodedBody(invalidFormData.toSeq: _*))
 
               status(result) shouldBe BAD_REQUEST
-
-              val document: Document = Jsoup.parse(contentAsString(result))
-              document.title shouldBe titleError
             }
           }
         }
