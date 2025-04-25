@@ -23,6 +23,7 @@ import enums.IncomeSourceJourney.{BeforeSubmissionPage, IncomeSourceType, SelfEm
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm => form}
 import implicits.ImplicitDateFormatter
+import models.admin.AccountingMethodJourney
 import models.incomeSourceDetails.UIJourneySessionData
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -244,16 +245,15 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authActions: AuthAct
     routes.AddIncomeSourceStartDateCheckController.submit(isAgent, isChange, incomeSourceType)
   }
 
-  private def getSuccessUrl(incomeSourceType: IncomeSourceType,
-                            isAgent: Boolean,
-                            isChange: Boolean): String = {
+  private def getSuccessUrl(incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean)
+                           (implicit user: MtdItUser[_]): String = {
 
-    ((isAgent, isChange, incomeSourceType) match {
-      case (true, false, SelfEmployment) => routes.AddBusinessTradeController.showAgent(isChange)
-      case (_, false, SelfEmployment) => routes.AddBusinessTradeController.show(isChange)
-      case (_, false, _) => routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent)
-      case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
-      case (_, _, _) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
+    ((isEnabled(AccountingMethodJourney), isAgent, isChange, incomeSourceType) match {
+      case (_, true, false, SelfEmployment) => routes.AddBusinessTradeController.showAgent(isChange)
+      case (_, _, false, SelfEmployment) => routes.AddBusinessTradeController.show(isChange)
+      case (true, _, false, _) => routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent)
+      case (_, false, _, _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
+      case (_, _, _, _) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
     }).url
   }
 }
