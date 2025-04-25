@@ -47,4 +47,15 @@ object CodingOutType {
     override val name: String = "Fully Collected"
     override val code: String = "F"
   }
+
+  case object CODING_OUT_PARTLY_COLLECTED extends CodingOutType {
+    override val name: String = "Partly Collected"
+    override val code: String = "P"
+  }
+
+  case object CODING_OUT_NOT_COLLECTED extends CodingOutType {
+    override val name: String = "Not Collected"
+    override val code: String = "N"
+  }
+
 }
