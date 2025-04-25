@@ -298,8 +298,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
                   if (incomeSourceType == SelfEmployment) verifySetMongoData(SelfEmployment)
                   redirectLocation(result) shouldBe Some({
                     incomeSourceType match {
-                      case SelfEmployment if !isAgent => routes.AddBusinessTradeController.show(isChange = isChange)
-                      case SelfEmployment => routes.AddBusinessTradeController.showAgent(isChange = isChange)
+                      case SelfEmployment if !isAgent => routes.AddBusinessTradeController.show(mode = mode)
+                      case SelfEmployment => routes.AddBusinessTradeController.showAgent(mode = mode)
                       case _ if(isAgent) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
                       case _ => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
                     }
