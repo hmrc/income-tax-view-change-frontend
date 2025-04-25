@@ -45,12 +45,6 @@ trait MockBusinessDetailsConnector extends UnitSpec with BeforeAndAfterEach {
   def verifyMockIncomeSourceDetailsResponse(noOfCalls: Int): Future[IncomeSourceDetailsResponse] =
     verify(mockBusinessDetailsConnector, times(noOfCalls)).getIncomeSources()(ArgumentMatchers.any(), ArgumentMatchers.any())
 
-  def setupNinoLookupResponse(mtdRef: String)(response: NinoResponse): Unit =
-    when(mockBusinessDetailsConnector
-      .getNino(
-        ArgumentMatchers.eq(mtdRef))(ArgumentMatchers.any()))
-      .thenReturn(Future.successful(response))
-
   def setupBusinessDetails(nino: String)(response: Future[IncomeSourceDetailsResponse]): Unit = {
     when(mockBusinessDetailsConnector.getBusinessDetails(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
       .thenReturn(response)

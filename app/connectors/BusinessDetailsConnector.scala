@@ -148,38 +148,4 @@ class BusinessDetailsConnector @Inject()(
           IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
       }
   }
-
-  def getNino(mtdRef: String)(implicit headerCarrier: HeaderCarrier): Future[NinoResponse] = {
-
-    val url = getNinoLookupUrl(mtdRef)
-    Logger("application").debug(s"GET $url")
-
-    httpClient
-      .get(url"$url")
-      .execute[HttpResponse]
-      .map { response =>
-        response.status match {
-          case OK =>
-            Logger("application").debug(s"RESPONSE status: ${response.status}, json: ${response.json}")
-            response.json.validate[NinoResponseSuccess]
-              .fold(
-                invalid => {
-                  Logger("application").error(s"Json Validation Error - $invalid")
-                  NinoResponseError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Nino Response")
-                },
-                valid => valid
-              )
-          case status if status >= 500 =>
-            Logger("application").error(s"RESPONSE status: ${response.status}, body: ${response.body}")
-            NinoResponseError(response.status, response.body)
-          case _ =>
-            Logger("application").warn(s"RESPONSE status: ${response.status}, body: ${response.body}")
-            NinoResponseError(response.status, response.body)
-        }
-      } recover {
-      case ex =>
-        Logger("application").error(s"Unexpected future failed error, ${ex.getMessage}")
-        NinoResponseError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
-    }
-  }
 }

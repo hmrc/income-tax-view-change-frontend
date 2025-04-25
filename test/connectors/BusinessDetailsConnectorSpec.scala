@@ -281,69 +281,6 @@ class BusinessDetailsConnectorSpec extends BaseConnectorSpec {
           }
         }
 
-        ".getNino()" should {
-
-          val successResponse = HttpResponse(status = Status.OK, json = testNinoModelJson, headers = Map.empty)
-          val successResponseBadJson = HttpResponse(status = Status.OK, json = Json.parse("{}"), headers = Map.empty)
-          val badResponse = HttpResponse(Status.BAD_REQUEST, body = "Error Message")
-
-          "return a Nino model when successful JSON is received" in new Setup {
-
-            when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
-
-            when(mockRequestBuilder.withBody(any())(any(), any(), any()))
-              .thenReturn(mockRequestBuilder)
-
-            when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
-              .thenReturn(Future(successResponse))
-
-            val result: Future[NinoResponse] = connector.getNino(testMtditid)
-            result.futureValue shouldBe testNinoModel
-          }
-
-          "return NinoResponseError model in case of bad/malformed JSON response" in new Setup {
-
-            when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
-
-            when(mockRequestBuilder.withBody(any())(any(), any(), any()))
-              .thenReturn(mockRequestBuilder)
-
-            when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
-              .thenReturn(Future(successResponseBadJson))
-
-            val result: Future[NinoResponse] = connector.getNino(testMtditid)
-            result.futureValue shouldBe NinoResponseError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Nino Response")
-          }
-
-          "return NinoResponseError model in case of failure" in new Setup {
-
-            when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
-
-            when(mockRequestBuilder.withBody(any())(any(), any(), any()))
-              .thenReturn(mockRequestBuilder)
-
-            when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
-              .thenReturn(Future(badResponse))
-
-            val result: Future[NinoResponse] = connector.getNino(testMtditid)
-            result.futureValue shouldBe NinoResponseError(Status.BAD_REQUEST, "Error Message")
-          }
-
-          "return NinoResponseError model in case of future failed scenario" in new Setup {
-
-            when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
-
-            when(mockRequestBuilder.withBody(any())(any(), any(), any()))
-              .thenReturn(mockRequestBuilder)
-
-            when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
-              .thenReturn(Future.failed(new Exception("unknown error")))
-
-            val result: Future[NinoResponse] = connector.getNino(testMtditid)
-            result.futureValue shouldBe NinoResponseError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, unknown error")
-          }
-        }
-
     ".modifyHeaderCarrier()" should {
 
       "add test header when path matches certain patterns" should {
