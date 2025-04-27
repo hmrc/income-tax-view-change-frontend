@@ -68,21 +68,23 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
   def executeTest(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
     s"${if (isAgent) "Agent" else "Individual"}: AddIncomeSourceStartDateView - $incomeSourceType" should {
       "render the heading" in new Setup(isAgent, "Standard", incomeSourceType) {
-        val heading = incomeSourceType match {
-          case SelfEmployment => "When did your business start trading?"
-          case UkProperty => "When did your UK property business start?"
-          case ForeignProperty => "When did your foreign property business start?"
-        }
+        val heading = "Business start date"
 
-        document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe heading
+        document.getElementsByClass("govuk-heading-l").first().text() shouldBe heading
       }
-      "render the hint" in new Setup(isAgent, "Standard", incomeSourceType) {
-        val hintText = incomeSourceType match {
+
+      "render the description for the business start date" in new Setup(isAgent, "Standard", incomeSourceType) {
+        val descriptionText = incomeSourceType match {
           case SelfEmployment => "This is the date we’ll use to calculate your Class 2 National Insurance charge, if appropriate."
           case UkProperty => "This is the date you first received rental income from this UK property business, such as letting or renting out a property or land."
           case ForeignProperty => "This is the date you first received rental income from this foreign property business, such as letting or renting out a property or land."
         }
-        document.getElementById("value-hint").text() shouldBe s"The date your business started trading can be today, in the past or up to 7 days in the future. $hintText For example, 27 3 2020"
+
+        document.getElementById("business-start-date-description-1").text() shouldBe "The date your business started trading can be today, in the past or up to 7 days in the future."
+        document.getElementById("business-start-date-description-2").text() shouldBe descriptionText
+      }
+      "render the hint" in new Setup(isAgent, "Standard", incomeSourceType) {
+        document.getElementById("value-hint").text() shouldBe "For example, 27 3 2020"
       }
       "render the date form" in new Setup(isAgent, "Standard", incomeSourceType) {
         document.getElementsByClass("govuk-label govuk-date-input__label").eq(0).text() shouldBe "Day"

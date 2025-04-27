@@ -126,13 +126,21 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
                   val result = buildGETMTDClient(path, additionalCookies).futureValue
                   IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-                  val expectedHintText: String =  messagesAPI(s"${getPrefix(incomeSourceType)}.hint") + " " + messagesAPI(s"${getPrefix(incomeSourceType)}.hint2") + " " +
-                    messagesAPI("dateForm.hint")
+                  val expectedHintText: String = "For example, 27 3 2020"
+
+                  val descriptionStart = "The date your business started trading can be today, in the past or up to 7 days in the future."
+                  val descriptionEnd = incomeSourceType match {
+                    case SelfEmployment => "This is the date we’ll use to calculate your Class 2 National Insurance charge, if appropriate."
+                    case UkProperty => "This is the date you first received rental income from this UK property business, such as letting or renting out a property or land."
+                    case ForeignProperty => "This is the date you first received rental income from this foreign property business, such as letting or renting out a property or land."
+                  }
 
                   result should have(
                     httpStatus(OK),
                     pageTitle(mtdUserRole, s"${getPrefix(incomeSourceType)}.heading"),
                     elementTextByID("value-hint")(expectedHintText),
+                    elementTextByID("business-start-date-description-1")(descriptionStart),
+                    elementTextByID("business-start-date-description-2")(descriptionEnd),
                     elementTextByID("continue-button")(continueButtonText)
                   )
                 }

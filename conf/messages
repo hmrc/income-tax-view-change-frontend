@@ -1512,7 +1512,8 @@ notmigrated.agent.content_extra                                 = This will be a
 notmigrated.user.link_title                                     = Self Assessment online account
 notmigrated.agent.link_title                                    = Self Assessment for Agents Account
 
-incomeSources.add.UKPropertyStartDate.heading                   = When did your UK property business start?
+incomeSources.add.UKPropertyStartDate.heading                   = Business start date
+incomeSources.add.UKPropertyStartDate.date-question             = When did your UK property business start?
 incomeSources.add.UKPropertyStartDate.hint                      = The date your business started trading can be today, in the past or up to 7 days in the future.
 incomeSources.add.UKPropertyStartDate.hint2                     = This is the date you first received rental income from this UK property business, such as letting or renting out a property or land.
 incomeSources.add.UKPropertyStartDate.invalid                   = The date must be a real date
@@ -1602,7 +1603,8 @@ incomeSources.cease.endDate.foreignProperty.beforeEarliestDate     = The date yo
 incomeSources.cease.endDate.ukProperty.hint-1                      = This is the date you last received rental income or made an expense related to your UK property business.
 incomeSources.cease.endDate.foreignProperty.hint-1                 = This is the date you last received rental income or made an expense related to your foreign property business.
 
-incomeSources.add.foreignProperty.startDate.heading                  = When did your foreign property business start?
+incomeSources.add.foreignProperty.startDate.heading                  = Business start date
+incomeSources.add.foreignProperty.startDate.date-question            = When did your foreign property business start?
 incomeSources.add.foreignProperty.startDate.hint                     = The date your business started trading can be today, in the past or up to 7 days in the future.
 incomeSources.add.foreignProperty.startDate.hint2                    = This is the date you first received rental income from this foreign property business, such as letting or renting out a property or land.
 incomeSources.add.foreignProperty.startDate.hintExample              = For example, 27 3 2020
@@ -1653,8 +1655,13 @@ incomeSources.ceaseUKProperty.checkDetails.confirm               = Confirm and c
 incomeSources.ceaseUKProperty.checkDetails.change                = Change
 
 # add Business page
+# heading is used only in the old journey
+add-business-name.heading                                         = What is the name of your business?
+
+# heading1 and heading 2 are used for the new journey
 add-business-name.heading1                                        = Business name
 add-business-name.heading2                                        = What is your business name?
+
 add-business-name.p1                                              = This is the business name you used to register for Self Assessment. If your sole trader business does not have a separate name, enter your own first and last name.
 add-business-name.p2                                              = The business name you enter can only include upper or lower case letters, full stops, commas, digits, &, {0}, \, /, -.
 add-business-name.form.error.required                             = Enter your name or the name of your business
@@ -1663,7 +1670,8 @@ add-business-name.form.error.invalidNameFormat                    = Business nam
 add-business-name.form.error.invalidName                          = Trade and business name cannot be the same
 
 # add Business start date
-add-business-start-date.heading                      = When did your business start trading?
+add-business-start-date.heading                      = Business start date
+add-business-start-date.date-question                = When did your business start trading?
 add-business-start-date.hint                         = The date your business started trading can be today, in the past or up to 7 days in the future.
 add-business-start-date.hint2                        = This is the date we’ll use to calculate your Class 2 National Insurance charge, if appropriate.
 add-business-start-date.day                          = Day
