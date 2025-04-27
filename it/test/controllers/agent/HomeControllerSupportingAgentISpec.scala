@@ -31,7 +31,7 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2CessationReason, b2TradingStart}
+import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
 import testConstants.NextUpdatesIntegrationTestConstants.currentDate
 import testConstants.messages.HomeMessages.{overdue, overdueUpdates}
 import uk.gov.hmrc.auth.core.retrieve.Name
@@ -55,7 +55,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
       Some(getCurrentTaxYearEnd),
       Some(b2TradingStart),
       None,
-      Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason))),
+      Some(CessationModel(Some(b2CessationDate))),
       address = Some(address),
       cashOrAccruals = false
     )),

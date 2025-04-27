@@ -20,7 +20,7 @@ import play.api.libs.json.{Format, Json}
 
 import java.time.LocalDate
 
-case class CessationModel(date: Option[LocalDate], reason: Option[String])
+case class CessationModel(date: Option[LocalDate])
 
 object CessationModel {
   implicit val format: Format[CessationModel] = Json.format[CessationModel]
