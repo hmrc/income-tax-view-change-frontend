@@ -17,8 +17,7 @@
 package models.financialDetails
 
 import enums.CodingOutType._
-import testConstants.FinancialDetailsTestConstants.{documentDetailBalancingCharge,
-  documentDetailClass2Nic, documentDetailPOA2, documentDetailPaye, fullDocumentDetailModel}
+import testConstants.FinancialDetailsTestConstants.{documentDetailBalancingCharge, documentDetailClass2Nic, documentDetailPOA2, documentDetailPaye, fullDocumentDetailModel}
 import testUtils.UnitSpec
 
 import java.time.LocalDate

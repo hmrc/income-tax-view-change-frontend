@@ -24,7 +24,7 @@ import views.html.agent.errorPages.UTRError
 
 class UTRErrorViewSpec extends ViewSpec {
 
-  lazy val postAction: Call = controllers.agent.routes.UTRErrorController.submit
+  lazy val postAction: Call = controllers.agent.routes.UTRErrorController.submit()
   lazy val testClientUtr: String = "1234567890"
 
   val utrError: UTRError = app.injector.instanceOf[UTRError]

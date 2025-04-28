@@ -50,7 +50,7 @@
 
 @taxYearsControllerURL = @{
     if(isAgent) {
-        controllers.routes.TaxYearsController.showAgentTaxYears.url
+        controllers.routes.TaxYearsController.showAgentTaxYears().url
     } else {
         controllers.routes.TaxYearsController.showTaxYears(viewModel.origin).url
     }

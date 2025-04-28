@@ -17,7 +17,6 @@
 package mocks.connectors
 
 import connectors.GetPenaltyDetailsConnector
-import models.penalties.GetPenaltyDetails
 import models.penalties.GetPenaltyDetailsParser.GetPenaltyDetailsResponse
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any

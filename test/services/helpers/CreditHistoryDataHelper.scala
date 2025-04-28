@@ -20,7 +20,6 @@ package services.helpers
 import enums.ChargeType.NIC4_WALES
 import models.creditDetailModel._
 import models.financialDetails._
-import models.incomeSourceDetails.{TaxYear, TaxYearRange}
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import testConstants.BusinessDetailsTestConstants.fixedDate
 

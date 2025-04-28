@@ -18,7 +18,6 @@ package mocks.auth
 
 import auth.FrontendAuthorisedFunctions
 import authV2.AuthActionsTestData.delegatedEnrolmentPredicate
-import controllers.agent.AuthUtils._
 import forms.IncomeSourcesFormsSpec.AuthRetrievals
 import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfterEach, Suite}

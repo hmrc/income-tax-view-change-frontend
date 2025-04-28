@@ -18,7 +18,7 @@ package mocks.connectors
 
 import connectors.ClaimToAdjustPoaConnector
 import models.claimToAdjustPoa.ClaimToAdjustPoaRequest
-import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.{ClaimToAdjustPoaError, ClaimToAdjustPoaResponse, UnexpectedError}
+import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.ClaimToAdjustPoaResponse
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}

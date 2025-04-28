@@ -16,19 +16,14 @@
 
 package config
 
-import play.api.mvc.RequestHeader
-import play.twirl.api.Html
 import uk.gov.hmrc.auth.core.PlayAuthConnector
-import uk.gov.hmrc.crypto.PlainText
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
 import uk.gov.hmrc.play.partials.{FormPartialRetriever, HeaderCarrierForPartialsConverter}
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.duration.DurationLong
-import scala.concurrent.{Await, ExecutionContext}
 
 
 @Singleton
@@ -44,7 +39,7 @@ class ItvcHeaderCarrierForPartialsConverter @Inject()(val sessionCookieCrypto: S
 @Singleton
 class FormPartialProvider @Inject()(override val httpGet: HttpClient,
                                     override val headerCarrierForPartialsConverter: HeaderCarrierForPartialsConverter
-                                   )(implicit executionContext: ExecutionContext) extends FormPartialRetriever { }
+                                   ) extends FormPartialRetriever { }
 
 
 

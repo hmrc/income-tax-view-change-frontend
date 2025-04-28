@@ -152,7 +152,7 @@ trait MockAuthActions extends
         val result = action(fakeRequest)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
       }
     }
 
@@ -163,7 +163,7 @@ trait MockAuthActions extends
         val result = action(fakeRequest)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
       }
     }
 
@@ -174,7 +174,7 @@ trait MockAuthActions extends
         val result = action(fakeRequest)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.errors.routes.NotEnrolledController.show.url)
+        redirectLocation(result) shouldBe Some(controllers.errors.routes.NotEnrolledController.show().url)
       }
     }
 
@@ -213,7 +213,7 @@ trait MockAuthActions extends
           val result = action(fakeRequest)
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
         }
       }
 
@@ -226,7 +226,7 @@ trait MockAuthActions extends
           val result = action(fakeRequest)
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+          redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
         }
       }
 
@@ -239,7 +239,7 @@ trait MockAuthActions extends
           val result = action(fakeRequest)
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show.url)
+          redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show().url)
         }
       }
     }
@@ -253,7 +253,7 @@ trait MockAuthActions extends
           val result = action(fakeRequest)
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.agent.routes.ClientRelationshipFailureController.show.url)
+          redirectLocation(result) shouldBe Some(controllers.agent.routes.ClientRelationshipFailureController.show().url)
         }
       }
     }

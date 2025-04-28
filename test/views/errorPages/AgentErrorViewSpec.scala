@@ -57,7 +57,7 @@ class AgentErrorViewSpec extends ViewSpec {
     s"have a sign out button stating: ${messages("base.sign-out")}" in new Setup(agentErrorView) {
       val signoutLinkButton = layoutContent.select("a[class=govuk-button]")
       signoutLinkButton.text shouldBe messages("base.sign-out")
-      signoutLinkButton.attr("href") shouldBe controllers.routes.SignOutController.signOut.url
+      signoutLinkButton.attr("href") shouldBe controllers.routes.SignOutController.signOut().url
     }
 
   }

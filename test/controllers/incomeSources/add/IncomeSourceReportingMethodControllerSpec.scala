@@ -320,7 +320,7 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions
               setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
               disable(IncomeSourcesFs)
 
-              val expectedRedirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url
+              val expectedRedirectUrl = if (isAgent) controllers.routes.HomeController.showAgent().url
               else controllers.routes.HomeController.show().url
 
               val result = action(fakeRequest)
@@ -399,7 +399,7 @@ class IncomeSourceReportingMethodControllerSpec extends MockAuthActions
               setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
               disable(IncomeSourcesFs)
 
-              val expectedRedirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+              val expectedRedirectUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
 
               val result = action(fakeRequest.withFormUrlEncodedBody(formData.toSeq: _*))
               status(result) shouldBe SEE_OTHER

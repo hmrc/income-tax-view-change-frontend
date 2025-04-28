@@ -27,7 +27,7 @@ import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObli
 import models.taxyearsummary.TaxYearSummaryChargeItem
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsObject, Json}
-import testConstants.BaseTestConstants.{taxYear, testArn, testCredId, testMtditid, testNino, testSaUtr}
+import testConstants.BaseTestConstants.{taxYear, testMtditid, testNino}
 import testConstants.BusinessDetailsTestConstants.{address, testIncomeSource}
 import testConstants.ChargeConstants
 import testUtils.TestSupport

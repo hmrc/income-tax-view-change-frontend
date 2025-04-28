@@ -18,8 +18,8 @@ package views
 
 import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import org.jsoup.nodes.Element
-import testUtils.ViewSpec
 import org.scalatest.prop.TableDrivenPropertyChecks._
+import testUtils.ViewSpec
 import views.html.ForecastIncomeSummary
 
 class ForecastIncomeBreakdownViewSpec extends ViewSpec {

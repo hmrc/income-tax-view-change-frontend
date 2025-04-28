@@ -16,7 +16,6 @@
 
 package services
 
-import auth.MtdItUser
 import auth.authV2.models.AuthorisedAndEnrolledRequest
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching

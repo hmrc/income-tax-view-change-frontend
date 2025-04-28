@@ -20,7 +20,6 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import testConstants.BaseTestConstants.testSelfEmploymentId
 import testUtils.TestSupport
 import views.html.incomeSources.manage.ReportingMethodChangeError
 

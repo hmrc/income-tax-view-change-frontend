@@ -21,7 +21,7 @@ import authV2.AuthActionsTestData.defaultMTDITUser
 import config.featureswitch.FeatureSwitching
 import enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CLASS2_NICS}
 import implicits.ImplicitDateFormatter
-import models.financialDetails.{BalanceDetails, ChargeItem, DocumentDetail, WhatYouOweChargesList, YourSelfAssessmentChargesViewModel}
+import models.financialDetails.{BalanceDetails, DocumentDetail, WhatYouOweChargesList, YourSelfAssessmentChargesViewModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.outstandingCharges.OutstandingChargesModel
@@ -34,7 +34,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
 import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.{dueDateOverdue, fixedDate, futureFixedDate, noDunningLocks, oneDunningLock, outstandingChargesModel, twoDunningLocks}
+import testConstants.FinancialDetailsTestConstants.{futureFixedDate, noDunningLocks, oneDunningLock, outstandingChargesModel, twoDunningLocks}
 import testUtils.{TestSupport, ViewSpec}
 import views.html.YourSelfAssessmentCharges
 

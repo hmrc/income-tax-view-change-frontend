@@ -23,7 +23,7 @@ import play.api.http.Status
 import play.api.i18n.Lang
 import play.api.libs.json._
 import testConstants.NewCalcBreakdownUnitTestConstants._
-import testUtils.{TestSupport, UnitSpec}
+import testUtils.TestSupport
 
 import scala.io.Source
 

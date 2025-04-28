@@ -19,7 +19,6 @@ package controllers.manageBusinesses.manage
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
-import forms.incomeSources.manage.ConfirmReportingMethodForm
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
@@ -118,7 +117,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               val expectedEndpoint = if (mtdRole == MTDIndividual) {
                 controllers.routes.HomeController.show().url
               } else {
-                controllers.routes.HomeController.showAgent.url
+                controllers.routes.HomeController.showAgent().url
               }
 
               status(result) shouldBe Status.SEE_OTHER
@@ -139,7 +138,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               val expectedEndpoint = if (mtdRole == MTDIndividual) {
                 controllers.routes.HomeController.show().url
               } else {
-                controllers.routes.HomeController.showAgent.url
+                controllers.routes.HomeController.showAgent().url
               }
 
               status(result) shouldBe Status.SEE_OTHER
@@ -312,7 +311,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               val expectedEndpoint = if (mtdRole == MTDIndividual) {
                 controllers.routes.HomeController.show().url
               } else {
-                controllers.routes.HomeController.showAgent.url
+                controllers.routes.HomeController.showAgent().url
               }
 
               status(result) shouldBe Status.SEE_OTHER
@@ -335,7 +334,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               val expectedEndpoint = if (mtdRole == MTDIndividual) {
                 controllers.routes.HomeController.show().url
               } else {
-                controllers.routes.HomeController.showAgent.url
+                controllers.routes.HomeController.showAgent().url
               }
 
               status(result) shouldBe Status.SEE_OTHER

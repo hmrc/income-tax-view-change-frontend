@@ -24,9 +24,9 @@ import models.admin.ReportingFrequencyPage
 import models.optout.{OptOutMultiYearViewModel, OptOutOneYearViewModel}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.DateServiceInterface
 import services.optIn.OptInService
 import services.optout.OptOutService
-import services.DateServiceInterface
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewUtils.ReportingFrequencyViewUtils
 import views.html.ReportingFrequencyView

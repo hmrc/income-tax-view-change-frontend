@@ -16,8 +16,8 @@
 
 package forms.agent
 
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.{Form, FormError}
 
 class ClientsUTRFormSpec extends AnyWordSpec with Matchers {

@@ -18,7 +18,7 @@ package models.citizenDetails
 
 import models.readNullable
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{Json, OWrites, Reads, _}
+import play.api.libs.json._
 
 sealed trait CitizenDetailsResponseModel
 

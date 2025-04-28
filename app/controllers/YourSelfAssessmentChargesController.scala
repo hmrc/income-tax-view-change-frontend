@@ -22,7 +22,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config._
 import config.featureswitch._
-import enums.GatewayPage.{WhatYouOwePage, YourSelfAssessmentChargeSummaryPage}
+import enums.GatewayPage.YourSelfAssessmentChargeSummaryPage
 import forms.utils.SessionKeys.gatewayPage
 import models.admin._
 import models.core.Nino
@@ -120,7 +120,7 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
   def showAgent: Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
     implicit mtdItUser =>
       handleRequest(
-        backUrl = controllers.routes.HomeController.showAgent.url,
+        backUrl = controllers.routes.HomeController.showAgent().url,
         itvcErrorHandler = itvcErrorHandlerAgent
       )
   }
