@@ -33,7 +33,7 @@ sealed trait FinancialDetailsResponseModel
 // TODO-[1]: make balanceDetails private val -> apply re-design and fix test failures where needed
 // TODO-[2]: make financialDetails private val -> ~
 case class FinancialDetailsModel(balanceDetails: BalanceDetails,
-                                 codingDetails: List[CodingDetails],
+                                 codingDetails: List[CodingDetails] = List(),
                                  private val documentDetails: List[DocumentDetail],
                                  financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
 

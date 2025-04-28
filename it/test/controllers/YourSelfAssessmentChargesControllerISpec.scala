@@ -231,6 +231,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
 
                 val mixedJson = Json.obj(
                   "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+                  "codingDetails" -> Json.arr(),
                   "documentDetails" -> Json.arr(
                     documentDetailJson(3400.00, 1000.00, testTaxYear - 1, "ITSA- POA 1", transactionId = "transId1"),
                     documentDetailJson(1000.00, 100.00, testTaxYear - 1, "ITSA- POA 1", transactionId = "transId2", dueDate = testDate.plusDays(1).toString),
@@ -446,6 +447,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
 
                   val mixedJson = Json.obj(
                     "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+                    "codingDetails" -> Json.arr(),
                     "documentDetails" -> Json.arr(
                     ),
                     "financialDetails" -> Json.arr(
@@ -487,6 +489,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                     propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
                   val mixedJson = Json.obj(
                     "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+                    "codingDetails" -> Json.arr(),
                     "documentDetails" -> Json.arr(
                       documentDetailJson(3400.00, 1000.00, testTaxYear, transactionId = "transId1"),
                       documentDetailJson(1000.00, 0, testTaxYear, transactionId = "transId2"),
@@ -566,7 +569,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                     propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
                   IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
                     testValidFinancialDetailsModelJsonCodingOut(2000, 2000, testTaxYear.toString,
-                      testDate.toString, 0, (getCurrentTaxYearEnd.getYear - 1).toString, 2000))
+                      testDate.toString, 0, (testTaxYear - 1).toString, 2000))
                   IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                     "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
@@ -733,6 +736,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
                     val mixedJson = Json.obj(
                       "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00, "availableCredit" -> 300.00),
+                      "codingDetails" -> Json.arr(),
                       "documentDetails" -> Json.arr(
                         documentDetailJson(3400.00, 1000.00, testTaxYear, "ITSA- POA 1", transactionId = "transId1"),
                         documentDetailJson(1000.00, 100.00, testTaxYear, "ITSA- POA 1", transactionId = "transId2"),

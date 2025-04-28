@@ -60,6 +60,7 @@ trait ChargeSummaryISpecHelper extends ControllerISpecHelper {
       "overDueAmount" -> 2.00,
       "totalBalance" -> 3.00
     ),
+    "codingDetails" -> Json.arr(),
     "documentDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> testTaxYear,
@@ -94,6 +95,7 @@ trait ChargeSummaryISpecHelper extends ControllerISpecHelper {
       "overDueAmount" -> 2.00,
       "totalBalance" -> 3.00
     ),
+    "codingDetails" -> Json.arr(),
     "documentDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> testTaxYear,
