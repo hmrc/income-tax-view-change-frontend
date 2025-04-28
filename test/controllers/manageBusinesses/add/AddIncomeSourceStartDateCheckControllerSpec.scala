@@ -80,8 +80,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
   val uiJourneySessionDataUK: UIJourneySessionData = UIJourneySessionData("session-123456", "ADD-UK", Some(addIncomeSourceDataProperty))
   val uiJourneySessionDataFP: UIJourneySessionData = UIJourneySessionData("session-123456", "ADD-FP", Some(addIncomeSourceDataProperty))
 
-  def getValidationErrorTabTitle(): String = {
-    s"${messages("htmlTitle.invalidInput", messages("dateForm.check.heading"))}"
+  def getValidationErrorTabTitle: String = {
+    s"${messages("htmlTitle.invalidInput", messages("radioForm.checkDate.heading.withDate", "11 November 2022"))}"
   }
 
   def uiJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = incomeSourceType match {
@@ -338,7 +338,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
                 status(result) shouldBe BAD_REQUEST
 
                 val document: Document = Jsoup.parse(contentAsString(result))
-                document.title shouldBe getValidationErrorTabTitle()
+                document.title shouldBe getValidationErrorTabTitle
               }
             }
             s"redirect to home page" when {

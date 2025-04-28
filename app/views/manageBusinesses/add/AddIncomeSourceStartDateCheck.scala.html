@@ -47,7 +47,7 @@
 @pageHasErrors = @{form.hasErrors}
 
 @mainTemplate(
-    pageTitle = messages("dateForm.check.heading"),
+    pageTitle = messages("radioForm.checkDate.heading.withDate", incomeSourceStartDate),
     form = Some(form),
     backUrl = Some(backUrl),
     isAgent = isAgent,
