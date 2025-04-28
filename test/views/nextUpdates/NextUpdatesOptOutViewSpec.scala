@@ -16,7 +16,6 @@
 
 package views.nextUpdates
 
-import auth.MtdItUser
 import config.FrontendAppConfig
 import models.admin.{FeatureSwitch, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear

@@ -16,13 +16,12 @@
 
 package mocks.views
 
+import models.chargeSummary.ChargeSummaryViewModel
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
-import org.mockito.Mockito.mock
 import play.twirl.api.Html
 import views.html.ChargeSummary
-import models.chargeSummary.ChargeSummaryViewModel
 
 trait MockChargeSummary extends BeforeAndAfterEach {
   self: Suite =>

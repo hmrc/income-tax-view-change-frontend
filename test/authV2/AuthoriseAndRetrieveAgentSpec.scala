@@ -20,17 +20,17 @@ import audit.AuditingService
 import auth.FrontendAuthorisedFunctions
 import auth.authV2.actions._
 import auth.authV2.models.AuthorisedUserRequest
+import authV2.AuthActionsTestData._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.Assertion
 import play.api
+import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{Result, Results}
 import play.api.test.Helpers._
-import play.api.{Application, Play}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, Enrolments, InsufficientEnrolments, MissingBearerToken}
-import authV2.AuthActionsTestData._
 
 import scala.concurrent.Future
 

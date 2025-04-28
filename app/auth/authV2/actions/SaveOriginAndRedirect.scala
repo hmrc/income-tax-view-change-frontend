@@ -16,13 +16,12 @@
 
 package auth.authV2.actions
 
-import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import forms.utils.SessionKeys
 import models.OriginEnum
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Request, Result}
 import play.api.mvc.Results.Redirect
+import play.api.mvc.{Request, Result}
 
 import scala.concurrent.Future
 

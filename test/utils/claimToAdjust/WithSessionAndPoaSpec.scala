@@ -22,24 +22,24 @@ import cats.data.EitherT
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
-import models.admin.{AdjustPaymentsOnAccount, FeatureSwitch, ReportingFrequencyPage}
-import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoaAmendmentData, WhatYouNeedToKnowViewModel}
-import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
+import models.admin.{AdjustPaymentsOnAccount, FeatureSwitch}
+import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoaAmendmentData}
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, spy, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.Result
 import play.api.mvc.Results.Ok
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
+import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.WhatYouNeedToKnow
-import org.jsoup.nodes.Document
-import play.api.test.FakeRequest
-import testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 
 import scala.concurrent.{ExecutionContext, Future}
 

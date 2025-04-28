@@ -22,7 +22,9 @@ val hmrcMongoVersion = "2.4.0"
 val currentScalaVersion = "2.13.16"
 val playVersion = "play-30"
 
-scalacOptions += "-feature"
+scalacOptions ++= Seq(
+  "-feature",
+  "-Wconf:src=target/.*:silent")
 
 val compile = Seq(
   ws,

@@ -17,10 +17,10 @@
 package testOnly.controllers
 
 import controllers.BaseController
-import javax.inject.{Inject, Singleton}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import testOnly.views.html.TestBTAPartial
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton

@@ -100,7 +100,7 @@ class ReportingMethodSetBackErrorControllerSpec extends MockAuthActions with Moc
                val result = action(fakeRequest)
 
                status(result) shouldBe SEE_OTHER
-               val homeUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+               val homeUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
                redirectLocation(result) shouldBe Some(homeUrl)
              }
           }

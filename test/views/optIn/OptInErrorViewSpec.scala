@@ -42,9 +42,9 @@ class OptInErrorViewSpec extends TestSupport {
     val optInHomeTotal: String = optInHomeBullet1 ++ " " ++ optInHomeBullet2
 
     val nextUpdatesLink: String = controllers.routes.NextUpdatesController.show().url
-    val nextUpdatesLinkAgent: String = controllers.routes.NextUpdatesController.showAgent.url
+    val nextUpdatesLinkAgent: String = controllers.routes.NextUpdatesController.showAgent().url
     val homePageLink: String = controllers.routes.HomeController.show().url
-    val homePageLinkAgent: String = controllers.routes.HomeController.showAgent.url
+    val homePageLinkAgent: String = controllers.routes.HomeController.showAgent().url
 
   }
 

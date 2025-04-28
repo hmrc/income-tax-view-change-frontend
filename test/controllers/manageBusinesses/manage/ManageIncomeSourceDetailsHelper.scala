@@ -22,7 +22,6 @@ import mocks.auth.MockAuthActions
 import mocks.connectors.MockBusinessDetailsConnector
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockSessionService}
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.TaxYear
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api

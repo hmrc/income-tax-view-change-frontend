@@ -16,11 +16,11 @@
 
 package models
 
-import testConstants.BaseTestConstants._
-import testConstants.PaymentDataTestConstants._
 import models.core.PaymentDataModel
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.Json
+import testConstants.BaseTestConstants._
+import testConstants.PaymentDataTestConstants._
 import testUtils.UnitSpec
 
 class PaymentDataModelSpec extends UnitSpec with Matchers {

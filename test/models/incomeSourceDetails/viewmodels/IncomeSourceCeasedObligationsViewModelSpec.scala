@@ -17,9 +17,7 @@
 package models.incomeSourceDetails.viewmodels
 
 import enums.IncomeSourceJourney.SelfEmployment
-import forms.IncomeSourcesFormsSpec.currentDate
 import models.incomeSourceDetails.TaxYear
-import play.api.mvc.Call
 import services.DateServiceInterface
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.{quarterlyDatesYearOneSimple, quarterlyObligationDatesFull}
 import testUtils.UnitSpec

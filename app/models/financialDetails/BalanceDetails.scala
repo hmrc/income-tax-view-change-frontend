@@ -18,8 +18,6 @@ package models.financialDetails
 
 import play.api.libs.json.{Json, Reads, Writes}
 
-import scala.math.abs
-
 case class BalanceDetails(balanceDueWithin30Days: BigDecimal,
                           overDueAmount: BigDecimal,
                           totalBalance: BigDecimal,

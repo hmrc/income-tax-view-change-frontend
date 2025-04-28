@@ -22,12 +22,10 @@ import _root_.helpers.servicemocks.BtaNavBarPartialConnectorStub.testNavLinkJson
 import models.btaNavBar.{NavContent, NavLinks}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-
-
 import play.api.test.Injecting
 
-import scala.concurrent.duration._
 import scala.concurrent.Future
+import scala.concurrent.duration._
 
 class NavBarEnumFsConnectorISpec extends AnyWordSpec with ComponentSpecBase with Injecting {
 

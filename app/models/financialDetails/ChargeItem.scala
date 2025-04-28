@@ -20,7 +20,6 @@ import exceptions.{CouldNotCreateChargeItemException, MissingFieldException}
 import models.financialDetails.ChargeType.{poaOneReconciliationDebit, poaTwoReconciliationDebit}
 import models.financialDetails.YourSelfAssessmentChargesViewModel.getDisplayDueDate
 import models.incomeSourceDetails.TaxYear
-import models.outstandingCharges.OutstandingChargeModel
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
 

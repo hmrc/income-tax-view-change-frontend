@@ -49,7 +49,7 @@ class PoaAdjustedViewSpec extends TestSupport{
 
   def whatYouOweUrl(isAgent: Boolean): String = {
     if(isAgent) {
-      controllers.routes.WhatYouOweController.showAgent.url
+      controllers.routes.WhatYouOweController.showAgent().url
     } else {
       controllers.routes.WhatYouOweController.show().url
     }
@@ -57,7 +57,7 @@ class PoaAdjustedViewSpec extends TestSupport{
 
   def saChargesUrl(isAgent: Boolean): String = {
     if(isAgent) {
-      controllers.routes.YourSelfAssessmentChargesController.showAgent.url
+      controllers.routes.YourSelfAssessmentChargesController.showAgent().url
     } else {
       controllers.routes.YourSelfAssessmentChargesController.show().url
     }

@@ -101,7 +101,7 @@ class DeclarePropertyCeasedControllerSpec extends MockAuthActions with MockSessi
               disable(IncomeSourcesFs)
               mockPropertyIncomeSource()
               val result = action(fakeRequest)
-              val expectedRedirectUrl: String = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+              val expectedRedirectUrl: String = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
               redirectLocation(result) shouldBe Some(expectedRedirectUrl)
 
             }
@@ -170,7 +170,7 @@ class DeclarePropertyCeasedControllerSpec extends MockAuthActions with MockSessi
               mockPropertyIncomeSource()
 
               val result = action(fakeRequest.withFormUrlEncodedBody(validFormData.toSeq: _*))
-              val expectedRedirectUrl: String = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+              val expectedRedirectUrl: String = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
 
               status(result) shouldBe Status.SEE_OTHER
               redirectLocation(result) shouldBe Some(expectedRedirectUrl)

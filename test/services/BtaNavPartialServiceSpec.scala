@@ -17,9 +17,9 @@
 package services
 
 import models.btaNavBar._
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.should.Matchers
 import play.api.i18n.{Lang, Messages}
 import testUtils.TestSupport
 

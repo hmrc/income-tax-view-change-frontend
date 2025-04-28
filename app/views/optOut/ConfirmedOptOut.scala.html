@@ -104,7 +104,7 @@
         @p(id = Some("view-upcoming-updates")) {
             @link(
                 id = Some("view-upcoming-updates-link"),
-                link = if(isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url,
+                link = if(isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url,
                 messageKey = "optout.confirmedOptOut.viewUpcomingDeadlines.text"
             )
         }

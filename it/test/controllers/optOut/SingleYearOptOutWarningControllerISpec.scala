@@ -19,8 +19,8 @@ package controllers.optOut
 import controllers.ControllerISpecHelper
 import enums.MTDIndividual
 import forms.optOut.ConfirmOptOutSingleTaxYearForm
-import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDIndividualAuthStub}
 import helpers.OptOutSessionRepositoryHelper
+import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDIndividualAuthStub}
 import models.admin.{IncomeSourcesFs, NavBarFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._

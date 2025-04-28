@@ -16,13 +16,11 @@
 
 package testConstants.claimToAdjustPoa
 
+import models.chargeHistory.ChargeHistoryModel
 import models.claimToAdjustPoa.{PaymentOnAccountViewModel, WhatYouNeedToKnowViewModel}
 import models.core.NormalMode
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
-import controllers.claimToAdjustPoa.SelectYourReasonController
-import controllers.claimToAdjustPoa.routes.SelectYourReasonController
-import models.chargeHistory.ChargeHistoryModel
 
 import java.time.LocalDate
 

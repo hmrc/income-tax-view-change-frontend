@@ -28,7 +28,6 @@ import models.creditsandrefunds.{CreditAndRefundViewModel, CreditsModel}
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{CreditService, RepaymentService}
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -79,7 +78,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
     authActions.asMTDPrimaryAgent async {
       implicit mtdItUser =>
         handleRequest(
-          backUrl = controllers.routes.HomeController.showAgent.url,
+          backUrl = controllers.routes.HomeController.showAgent().url,
           isAgent = mtdItUser.isAgent()
         ) recover logAndRedirect
     }

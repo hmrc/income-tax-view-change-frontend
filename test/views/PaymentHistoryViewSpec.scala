@@ -17,7 +17,6 @@
 package views
 
 import config.FrontendAppConfig
-import forms.IncomeSourcesFormsSpec.currentDate
 import implicits.ImplicitCurrencyFormatter._
 import implicits.ImplicitDateFormatter
 import models.financialDetails._

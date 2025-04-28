@@ -23,13 +23,12 @@ import implicits.ImplicitDateParser
 import models.core.IncomeSourceId
 import models.updateIncomeSource.UpdateIncomeSourceResponseError
 import play.api.libs.json.{JsObject, JsValue, Json}
-import uk.gov.hmrc.http.HeaderCarrier
 import utils.Utilities.JsonUtil
 
 case class CeaseIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
                                        cessationDate: String,
                                        incomeSourceId: IncomeSourceId,
-                                       updateIncomeSourceErrorResponse: Option[UpdateIncomeSourceResponseError])(implicit user: MtdItUser[_], hc: HeaderCarrier)
+                                       updateIncomeSourceErrorResponse: Option[UpdateIncomeSourceResponseError])(implicit user: MtdItUser[_])
   extends ExtendedAuditModel with ImplicitDateParser {
 
   private val isSuccessful = updateIncomeSourceErrorResponse.isEmpty

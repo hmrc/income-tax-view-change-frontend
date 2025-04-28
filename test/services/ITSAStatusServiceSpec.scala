@@ -18,14 +18,11 @@ package services
 
 import mocks.connectors.MockITSAStatusConnector
 import models.incomeSourceDetails.TaxYear
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import testConstants.BaseTestConstants.{testMtdItUser, testNino}
 import testConstants.BusinessDetailsTestConstants.{testLatencyDetails3, testLatencyDetails4, testLatencyDetails5}
 import testConstants.ITSAStatusTestConstants._
 import testUtils.TestSupport
-
-import scala.concurrent.Future
 
 class ITSAStatusServiceSpec extends TestSupport with MockITSAStatusConnector {
   val mockDateService: DateService = mock(classOf[DateService])

@@ -16,7 +16,6 @@
 
 package views.optOut
 
-import models.admin.ReportingFrequencyPage
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
@@ -30,7 +29,7 @@ class OptOutCancelledViewSpec extends TestSupport {
 
   def nextUpdatesUrl(isAgent: Boolean): String = {
     if (isAgent) {
-      controllers.routes.NextUpdatesController.showAgent.url
+      controllers.routes.NextUpdatesController.showAgent().url
     } else {
       controllers.routes.NextUpdatesController.show().url
     }
@@ -38,7 +37,7 @@ class OptOutCancelledViewSpec extends TestSupport {
 
   def homePageUrl(isAgent: Boolean): String = {
     if (isAgent) {
-      controllers.routes.HomeController.showAgent.url
+      controllers.routes.HomeController.showAgent().url
     } else {
       controllers.routes.HomeController.show().url
     }

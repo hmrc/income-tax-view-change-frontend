@@ -16,11 +16,11 @@
 
 package models.incomeSourceDetails
 
-import uk.gov.hmrc.crypto.Sensitive.{SensitiveBoolean, SensitiveInstant, SensitiveString}
-import uk.gov.hmrc.crypto.{Decrypter, Encrypter}
-import uk.gov.hmrc.crypto.json.JsonEncryption
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import uk.gov.hmrc.crypto.Sensitive.{SensitiveBoolean, SensitiveInstant, SensitiveString}
+import uk.gov.hmrc.crypto.json.JsonEncryption
+import uk.gov.hmrc.crypto.{Decrypter, Encrypter}
 
 import java.time.{LocalDate, ZoneOffset}
 

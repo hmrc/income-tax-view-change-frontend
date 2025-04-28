@@ -18,8 +18,8 @@ package testConstants
 
 import controllers.ForecastIncomeSummaryControllerTestConstants.taxableIncome
 import enums.{MTDIndividual, MTDUserRole}
-import models.liabilitycalculation.taxcalculation._
 import models.liabilitycalculation._
+import models.liabilitycalculation.taxcalculation._
 
 object NewCalcBreakdownItTestConstants {
 

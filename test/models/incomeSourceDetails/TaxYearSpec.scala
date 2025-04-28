@@ -17,9 +17,7 @@
 package models.incomeSourceDetails
 
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
-import org.mockito.Mockito._
-import play.api.libs.json.{JsError, JsNumber, JsString, JsSuccess, Json}
-import services.DateService
+import play.api.libs.json._
 import testUtils.{TestSupport, UnitSpec}
 
 import java.time.LocalDate

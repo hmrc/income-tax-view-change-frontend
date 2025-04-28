@@ -31,12 +31,11 @@ import models.taxyearsummary.TaxYearSummaryChargeItem
 import org.jsoup.Jsoup
 import play.api
 import play.api.Application
-import play.api.http.{HeaderNames, Status}
 import play.api.http.Status.INTERNAL_SERVER_ERROR
-import play.api.i18n.Lang
+import play.api.http.{HeaderNames, Status}
 import play.api.test.Helpers.{status, _}
 import services.{CalculationService, ClaimToAdjustService, FinancialDetailsService, NextUpdatesService}
-import testConstants.BaseTestConstants.{taxYear, testMtditid, testTaxYear}
+import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants.{financialDetails, _}
@@ -74,7 +73,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
   val taxYearsRefererBackLink: String = "http://www.somedomain.org/report-quarterly/income-and-expenses/view/tax-years"
   val taxYearsBackLink: Boolean => String = isAgent => {
     if (isAgent) {
-      controllers.routes.TaxYearsController.showAgentTaxYears.url
+      controllers.routes.TaxYearsController.showAgentTaxYears().url
     } else {
       controllers.routes.TaxYearsController.showTaxYears(None).url
     }
@@ -624,7 +623,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
-                val errorMessageVariableValues = testController.formatErrorMessages(liabilityCalculationModelErrorMessagesForIndividual, messagesApi, isAgent = false)(Lang("GB"), messages)
+                val errorMessageVariableValues = testController.formatErrorMessages(liabilityCalculationModelErrorMessagesForIndividual, messagesApi, isAgent = false)(messages)
                 val calcOverview: CalculationSummary = CalculationSummary(errorMessageVariableValues)
 
                 val expectedContent: String = taxYearSummaryView(
@@ -724,7 +723,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
         s"the $mtdUserRole is authenticated" that {
           "has liability Calculation error messages" should {
             "filter out the variable value from messages" in {
-              val actual = testController.formatErrorMessages(liabilityCalculationModelErrorMessagesForIndividual, messagesApi, isAgent = isAgent)(Lang("GB"), messages)
+              val actual = testController.formatErrorMessages(liabilityCalculationModelErrorMessagesForIndividual, messagesApi, isAgent = isAgent)(messages)
 
               actual shouldBe liabilityCalculationModelErrorMessagesForIndividual.copy(messages = Some(Messages(
                 errors = Some(List(

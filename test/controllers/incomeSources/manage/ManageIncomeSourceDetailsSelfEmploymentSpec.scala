@@ -22,13 +22,9 @@ import enums.MTDIndividual
 import models.admin.IncomeSourcesFs
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.test.Helpers._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{emptyUIJourneySessionData, notCompletedUIJourneySessionData}
-
-import scala.concurrent.Future
 
 class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDetailsHelper {
 
@@ -193,7 +189,7 @@ class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDet
 
             status(result) shouldBe Status.SEE_OTHER
             val homeUrl = if (isAgent) {
-              controllers.routes.HomeController.showAgent.url
+              controllers.routes.HomeController.showAgent().url
             } else {
               controllers.routes.HomeController.show().url
             }

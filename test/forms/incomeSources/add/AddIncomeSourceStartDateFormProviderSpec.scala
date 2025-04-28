@@ -16,8 +16,7 @@
 
 package forms.incomeSources.add
 
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import forms.models.DateFormElement
+import enums.IncomeSourceJourney.SelfEmployment
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.{Form, FormError}

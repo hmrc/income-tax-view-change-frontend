@@ -53,8 +53,8 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
     case _ => controllers.manageBusinesses.add.routes.AddBusinessAddressController.agentSubmit(None, mode = mode).url
   }
 
-  lazy val individualFeedbackUrl: String = controllers.feedback.routes.FeedbackController.show.url
-  lazy val agentFeedbackUrl: String = controllers.feedback.routes.FeedbackController.showAgent.url
+  lazy val individualFeedbackUrl: String = controllers.feedback.routes.FeedbackController.show().url
+  lazy val agentFeedbackUrl: String = controllers.feedback.routes.FeedbackController.showAgent().url
 
   lazy val individualEnglishBanner: String = messagesApi.preferred(Seq(Lang("en")))("header.serviceName")
   lazy val agentEnglishBanner: String = messagesApi.preferred(Seq(Lang("en")))("agent.header.serviceName")
@@ -72,11 +72,11 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
             "timeoutConfig" -> JsObject(
               Seq(
                 "timeoutAmount" -> JsNumber(3600),
-                "timeoutUrl" -> JsString(appConfig.itvcFrontendEnvironment + controllers.timeout.routes.SessionTimeoutController.timeout.url),
-                "timeoutKeepAliveUrl" -> JsString(appConfig.itvcFrontendEnvironment + controllers.timeout.routes.SessionTimeoutController.keepAlive.url)
+                "timeoutUrl" -> JsString(appConfig.itvcFrontendEnvironment + controllers.timeout.routes.SessionTimeoutController.timeout().url),
+                "timeoutKeepAliveUrl" -> JsString(appConfig.itvcFrontendEnvironment + controllers.timeout.routes.SessionTimeoutController.keepAlive().url)
               )
             ),
-            "signOutHref" -> JsString(appConfig.itvcFrontendEnvironment + controllers.routes.SignOutController.signOut.url),
+            "signOutHref" -> JsString(appConfig.itvcFrontendEnvironment + controllers.routes.SignOutController.signOut().url),
             "accessibilityFooterUrl" -> JsString(appConfig.itvcFrontendEnvironment + "/accessibility-statement/income-tax-view-change?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview"),
             "selectPageConfig" -> JsObject(
               Seq(

@@ -19,7 +19,7 @@ package forms.incomeSources.add
 import forms.manageBusinesses.add.ChooseTaxYearForm
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import play.api.data.{Form, FormError}
+import play.api.data.FormError
 
 class ChooseTaxYearFormSpec extends AnyWordSpec with Matchers {
 

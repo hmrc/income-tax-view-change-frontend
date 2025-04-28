@@ -20,7 +20,7 @@ import mocks.connectors.MockCalculationListConnector
 import models.calculationList.CalculationListErrorModel
 import models.core.Nino
 import org.mockito.Mockito.{mock, when}
-import play.api.http.Status.{IM_A_TEAPOT, NOT_FOUND, NO_CONTENT}
+import play.api.http.Status.{IM_A_TEAPOT, NOT_FOUND}
 import testConstants.BaseTestConstants.{testNino, testTaxYear, testTaxYearRange}
 import testConstants.CalculationListTestConstants
 import testUtils.TestSupport

@@ -16,9 +16,9 @@
 
 package testConstants
 
-import java.time.LocalDate
-
 import play.api.libs.json.{JsValue, Json}
+
+import java.time.LocalDate
 
 object OutstandingChargesIntegrationTestConstants {
 

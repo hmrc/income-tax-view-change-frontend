@@ -43,7 +43,7 @@ class SessionService @Inject()(
     }
   }
 
-  def createSession(journeyType: JourneyType)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+  def createSession(journeyType: JourneyType)(implicit hc: HeaderCarrier): Future[Boolean] = {
     setMongoData(UIJourneySessionData(hc.sessionId.get.value, journeyType.toString, None))
   }
 

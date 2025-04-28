@@ -18,18 +18,17 @@ package testOnly.controllers
 
 import config.FrontendAppConfig
 import controllers.BaseController
-
-import javax.inject.{Inject, Singleton}
+import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
-import play.api.Logger
 import testOnly.connectors.DynamicStubConnector
 import testOnly.forms.StubDataForm
 import testOnly.models.DataModel
 import testOnly.views.html.StubDataView
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -89,7 +88,7 @@ class StubDataController @Inject()(stubDataView: StubDataView)
                   )(implicit request: Request[AnyContent]) =
     stubDataView(
       form,
-      testOnly.controllers.routes.StubDataController.submit,
+      testOnly.controllers.routes.StubDataController.submit(),
       showSuccess,
       errorResponse
     )

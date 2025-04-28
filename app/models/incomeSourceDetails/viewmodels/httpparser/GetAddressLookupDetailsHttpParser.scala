@@ -17,7 +17,6 @@
 package models.incomeSourceDetails.viewmodels.httpparser
 
 import models.incomeSourceDetails.BusinessAddressModel
-import play.api.Logger
 import play.api.http.Status.{NOT_FOUND, OK}
 import play.api.libs.json.JsSuccess
 import uk.gov.hmrc.http.HttpReads
