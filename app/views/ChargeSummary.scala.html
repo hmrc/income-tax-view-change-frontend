@@ -18,7 +18,7 @@
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import models.financialDetails.ChargeType
 @import models.chargeSummary.ChargeSummaryViewModel
-@import models.financialDetails.{Accepted, BalancingCharge, Cancelled, MfaDebitCharge, PoaOneDebit, PoaOneReconciliationDebit, PoaOneReconciliationCredit, PoaTwoDebit, PoaTwoReconciliationDebit, PoaTwoReconciliationCredit, TransactionType}
+@import models.financialDetails.{Accepted, BalancingCharge, FullyCollected, Cancelled, MfaDebitCharge, PoaOneDebit, PoaOneReconciliationDebit, PoaOneReconciliationCredit, PoaTwoDebit, PoaTwoReconciliationDebit, PoaTwoReconciliationCredit, TransactionType}
 @import services.DateServiceInterface
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
@@ -29,7 +29,6 @@
 @import _root_.implicits.HtmlFormatter.NbspString
 
 @import java.time.LocalDate
-@import models.financialDetails.FullyCollected
 
 
 @this(
@@ -276,7 +275,7 @@
 
     @getExplanationContent
 
-    @if(viewModel.chargeItem.codedOutStatus.contains(Accepted)){
+    @if(viewModel.chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)){
         @checkPayeCodePara
         <div id="coding-out-wrapper">
             @govukInsetText(InsetText(content = HtmlContent(codingOutMessageInset)))
