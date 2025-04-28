@@ -213,12 +213,6 @@
     }
 }
 
-@codingOutFullyCollectedPOAMessage = {
-    @p(id=Some("coding-out-fully-collected-poa-message")){
-        @messages("chargeSummary.codingOutBCDMessage", viewModel.taxYearFromBCD.toString, viewModel.taxYearToBCD.toString)
-    }
-}
-
 @codingOutMessageInset = {
     @p(id = Some("coding-out-notice")) {
         @messages("chargeSummary.codingOutInset-1")
@@ -300,13 +294,6 @@
         @if(viewModel.chargeItem.transactionType == BalancingCharge) {
             @codingOutBCDMessage
         }
-    }
-
-    @if(viewModel.chargeItem.codedOutStatus.contains(FullyCollected)){
-        @checkPayeCodePara
-        <div id="cancelled-coding-out-wrapper">
-            @govukInsetText(InsetText(content = HtmlContent(codingOutFullyCollectedPOAMessage)))
-        </div>
     }
 
     @if(viewModel.codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment){
