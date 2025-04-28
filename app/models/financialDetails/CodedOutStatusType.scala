@@ -76,5 +76,4 @@ object CodedOutStatusType {
   }
 
   implicit val format: Format[CodedOutStatusType] = Format(read, write)
-
 }
