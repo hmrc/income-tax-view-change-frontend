@@ -16,10 +16,9 @@
 
 package controllers
 
-import models.admin.{CreditsRefundsRepay, IncomeSourcesFs, IncomeSourcesNewJourney, ReportingFrequencyPage, ReviewAndReconcilePoa}
+import models.admin._
 import models.financialDetails._
-import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.{ITSAStatus, StatusDetail}
+import models.itsaStatus.ITSAStatus
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -30,7 +29,7 @@ import play.api.test.Helpers._
 import play.api.test.Injecting
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, businessesAndPropertyIncomeCeased}
 
-import java.time.{LocalDate, Month}
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Injecting {

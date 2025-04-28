@@ -126,7 +126,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends MockAuthActions
               val result: Future[Result] = action(fakeRequest)
 
               status(result) shouldBe SEE_OTHER
-              redirectLocation(result) mustBe (if (isAgent) Some(routes.HomeController.showAgent.url) else Some(routes.HomeController.show().url))
+              redirectLocation(result) mustBe (if (isAgent) Some(routes.HomeController.showAgent().url) else Some(routes.HomeController.show().url))
             }
           }
         }

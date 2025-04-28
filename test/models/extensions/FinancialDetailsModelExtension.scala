@@ -16,7 +16,7 @@
 
 package models.extensions
 
-import enums.{Poa1Charge, Poa1ReconciliationDebit, Poa2Charge, Poa2ReconciliationDebit, TRMAmendCharge, TRMNewCharge}
+import enums._
 import models.financialDetails.{DocumentDetail, FinancialDetailsModel}
 
 import java.time.LocalDate

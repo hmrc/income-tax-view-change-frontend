@@ -17,10 +17,9 @@
 package services.optout.optoutproposition
 
 import models.itsaStatus.ITSAStatus._
-import services.optout.{CurrentOptOutTaxYear, NextOptOutTaxYear, OptOutProposition, OptOutTaxYear, PreviousOptOutTaxYear}
-import testUtils.UnitSpec
-
 import services.optout.OptOutTestSupport._
+import services.optout.{CurrentOptOutTaxYear, NextOptOutTaxYear, OptOutProposition, PreviousOptOutTaxYear}
+import testUtils.UnitSpec
 
 class OptOutPropositionYearsToOfferSpec extends UnitSpec {
 

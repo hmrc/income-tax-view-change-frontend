@@ -76,7 +76,7 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
     val host = if (appConfig.relativeIVUpliftParams) "" else appConfig.itvcFrontendEnvironment
     val origin = request.getQueryString(SessionKeys.origin)
     val completionUrl: String = s"$host${controllers.routes.UpliftSuccessController.success(origin).url}"
-    val failureUrl: String = s"$host${controllers.errors.routes.UpliftFailedController.show.url}"
+    val failureUrl: String = s"$host${controllers.errors.routes.UpliftFailedController.show().url}"
     s"${appConfig.ivUrl}/uplift?origin=ITVC&confidenceLevel=$requiredConfidenceLevel&completionURL=${URLEncoder.encode(completionUrl, "UTF-8")}&failureURL=${URLEncoder.encode(failureUrl, "UTF-8")}"
   }
 

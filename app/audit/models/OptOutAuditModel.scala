@@ -20,7 +20,6 @@ import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.ITSAStatus
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import services.optout.OptOutProposition
 import uk.gov.hmrc.auth.core.AffinityGroup

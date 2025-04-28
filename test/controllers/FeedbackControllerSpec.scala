@@ -100,7 +100,7 @@ class FeedbackControllerSpec extends MockAuthActions
           when(mockFeedbackConnector.submit(any())(any())).thenReturn(Future.successful(Right(())))
           val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(fields.toSeq: _*))
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.feedback.routes.FeedbackController.thankYou.url)
+          redirectLocation(result) shouldBe Some(controllers.feedback.routes.FeedbackController.thankYou().url)
         }
       }
       "return a BadRequest" when {
@@ -136,7 +136,7 @@ class FeedbackControllerSpec extends MockAuthActions
           when(mockFeedbackConnector.submit(any())(any())).thenReturn(Future.successful(Right(())))
           val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(fields.toSeq: _*))
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.feedback.routes.FeedbackController.thankYouAgent.url)
+          redirectLocation(result) shouldBe Some(controllers.feedback.routes.FeedbackController.thankYouAgent().url)
         }
       }
       "return a BadRequest" when {
@@ -199,7 +199,7 @@ class FeedbackControllerSpec extends MockAuthActions
         val result: Future[Result] = action(fakeRequest)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
       }
     }
 
@@ -208,7 +208,7 @@ class FeedbackControllerSpec extends MockAuthActions
         val result: Future[Result] = action(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
       }
     }
   }

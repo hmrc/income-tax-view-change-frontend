@@ -18,11 +18,11 @@ package connectors
 
 import audit.AuditingService
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, when}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
 
 import scala.concurrent.Future
 

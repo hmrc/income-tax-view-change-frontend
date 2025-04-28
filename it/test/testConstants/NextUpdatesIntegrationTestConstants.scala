@@ -16,10 +16,11 @@
 
 package testConstants
 
-import java.time.LocalDate
-import BaseIntegrationTestConstants._
-import models.obligations.{SingleObligationModel, GroupedObligationsModel, StatusFulfilled}
+import models.obligations.{GroupedObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.libs.json.{JsValue, Json}
+import testConstants.BaseIntegrationTestConstants._
+
+import java.time.LocalDate
 
 object NextUpdatesIntegrationTestConstants {
   def successResponse(obligationsModel: GroupedObligationsModel): JsValue = {

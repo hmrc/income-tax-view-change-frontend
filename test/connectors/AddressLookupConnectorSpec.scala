@@ -24,7 +24,6 @@ import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpPar
 import models.incomeSourceDetails.{Address, BusinessAddressModel}
 import org.scalactic.Fail
 import play.api.http.Status.{ACCEPTED, OK}
-import play.api.i18n.MessagesApi
 import play.api.libs.json._
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse

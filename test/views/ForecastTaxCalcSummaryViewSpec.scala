@@ -16,9 +16,7 @@
 
 package views
 
-import exceptions.MissingFieldException
 import models.liabilitycalculation.EndOfYearEstimate
-import org.jsoup.select.Elements
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testNavHtml, testTaxYear}

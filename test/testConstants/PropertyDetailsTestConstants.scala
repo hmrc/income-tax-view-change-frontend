@@ -37,9 +37,9 @@ object PropertyDetailsTestConstants {
 
   val testPropertyAccountingPeriod = AccountingPeriodModel(LocalDate.of(2017, 4, 6), LocalDate.of(2018, 4, 5))
 
-  val testPropertyCessation = CessationModel(Some(LocalDate.of(2018, 1, 1)), Some("It was a stupid idea anyway"))
-  val testPropertyCessation2 = CessationModel(Some(LocalDate.of(2023, 6, 6)), Some("It was a stupid idea anyway"))
-  val testPropertyCessation3 = CessationModel(Some(LocalDate.of(2020, 2, 2)), Some("It was a stupid idea anyway"))
+  val testPropertyCessation = CessationModel(Some(LocalDate.of(2018, 1, 1)))
+  val testPropertyCessation2 = CessationModel(Some(LocalDate.of(2023, 6, 6)))
+  val testPropertyCessation3 = CessationModel(Some(LocalDate.of(2020, 2, 2)))
   val testCeaseDate = Some(LocalDate.of(2022, 1, 1))
   val testStartDate = LocalDate.of(2022, 1, 1)
   val testStartDate2 = LocalDate.of(2021, 1, 1)
@@ -244,7 +244,7 @@ object PropertyDetailsTestConstants {
       incomeSourceType = if (incomeSourceType == UkProperty) Some(ukIncomeType) else Some(foreignIncomeType),
       tradingStartDate = Some(testStartDate),
       contextualTaxYear = None,
-      cessation = Some(CessationModel(date = testCeaseDate, reason = Some("01"))),
+      cessation = Some(CessationModel(date = testCeaseDate)),
       latencyDetails = None,
       quarterTypeElection = Some(quarterTypeElectionStandard),
       cashOrAccruals = true

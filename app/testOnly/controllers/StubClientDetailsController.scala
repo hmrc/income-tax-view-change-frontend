@@ -17,7 +17,6 @@
 package testOnly.controllers
 
 import config.FrontendAppConfig
-import javax.inject.Inject
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -28,6 +27,7 @@ import testOnly.models.StubClientDetailsModel
 import testOnly.views.html.StubClientDetails
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class StubClientDetailsController @Inject()(stubClientDetails: StubClientDetails,
@@ -48,7 +48,7 @@ class StubClientDetailsController @Inject()(stubClientDetails: StubClientDetails
   def show: Action[AnyContent] = Action { implicit req =>
     Ok(stubClientDetails(
       clientDetailsForm = form,
-      postAction = testOnly.controllers.routes.StubClientDetailsController.submit
+      postAction = testOnly.controllers.routes.StubClientDetailsController.submit()
     ))
   }
 
@@ -63,11 +63,11 @@ class StubClientDetailsController @Inject()(stubClientDetails: StubClientDetails
     StubClientDetailsForm.clientDetailsForm.bindFromRequest().fold(
       hasErrors => Future.successful(BadRequest(stubClientDetails(
         clientDetailsForm = hasErrors,
-        postAction = testOnly.controllers.routes.StubClientDetailsController.submit
+        postAction = testOnly.controllers.routes.StubClientDetailsController.submit()
       ))), { data =>
         matchingStubConnector.stubClient(data) map { response =>
           Logger("application").info(s"matching stub, status: ${response.status}, body: ${response.body}")
-          Redirect(controllers.agent.routes.EnterClientsUTRController.show)
+          Redirect(controllers.agent.routes.EnterClientsUTRController.show())
         }
       }
     )

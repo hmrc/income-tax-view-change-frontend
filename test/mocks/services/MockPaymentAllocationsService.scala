@@ -21,7 +21,6 @@ import models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocatio
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.mockito.Mockito.mock
 import services.PaymentAllocationsService
 import testUtils.UnitSpec
 

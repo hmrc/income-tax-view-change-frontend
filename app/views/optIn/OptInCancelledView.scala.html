@@ -36,7 +36,7 @@
 
 @nextUpdatesUrl = @{
     if(isAgent) {
-        controllers.routes.NextUpdatesController.showAgent.url
+        controllers.routes.NextUpdatesController.showAgent().url
     } else {
         controllers.routes.NextUpdatesController.show().url
     }
@@ -44,7 +44,7 @@
 
 @homePageUrl = @{
     if(isAgent) {
-        controllers.routes.HomeController.showAgent.url
+        controllers.routes.HomeController.showAgent().url
     } else {
         controllers.routes.HomeController.show().url
     }

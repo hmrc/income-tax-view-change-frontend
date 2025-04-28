@@ -31,7 +31,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
 
   val path = "/agents/confirm-client-details"
 
-  s"GET ${controllers.agent.routes.ConfirmClientUTRController.show.url}" when {
+  s"GET ${controllers.agent.routes.ConfirmClientUTRController.show().url}" when {
     s"a user is a primary agent (session data isSupportingAgent = false)" that {
       val isSupportingAgent = false
       val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, false)
@@ -101,7 +101,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(controllers.routes.HomeController.showAgent.url)
+            redirectURI(controllers.routes.HomeController.showAgent().url)
           )
           AuditStub.verifyAuditEvent(ConfirmClientDetailsAuditModel(clientName = "Issac Newton", nino = testNino, mtditid = testMtditid, arn = testArn,
             saUtr = testSaUtr, isSupportingAgent = isSupportingAgent, credId = Some(credId)))
@@ -156,7 +156,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(controllers.routes.HomeController.showAgent.url)
+            redirectURI(controllers.routes.HomeController.showAgent().url)
           )
           AuditStub.verifyAuditEvent(ConfirmClientDetailsAuditModel(clientName = "Issac Newton", nino = testNino, mtditid = testMtditid, arn = testArn,
             saUtr = testSaUtr, isSupportingAgent = isSupportingAgent, credId = Some(credId)))

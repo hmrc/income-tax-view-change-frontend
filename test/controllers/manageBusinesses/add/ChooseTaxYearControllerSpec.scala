@@ -28,7 +28,6 @@ import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.Result
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.{DateService, SessionService}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
 
@@ -79,7 +78,7 @@ class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService w
               val homeUrl = if (mtdRole == MTDIndividual) {
                 controllers.routes.HomeController.show().url
               } else {
-                controllers.routes.HomeController.showAgent.url
+                controllers.routes.HomeController.showAgent().url
               }
 
               status(result) shouldBe SEE_OTHER

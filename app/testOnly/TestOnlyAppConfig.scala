@@ -17,9 +17,10 @@
 package testOnly
 
 import config.FrontendAppConfig
-import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class TestOnlyAppConfig @Inject()(servicesConfig: ServicesConfig, config: Configuration) extends FrontendAppConfig(servicesConfig, config) {

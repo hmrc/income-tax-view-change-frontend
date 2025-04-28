@@ -20,7 +20,6 @@ import auth.MtdItUser
 import authV2.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import config.FrontendAppConfig
 import config.featureswitch._
-import exceptions.MissingFieldException
 import models.homePage._
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus
@@ -43,7 +42,7 @@ import scala.util.Try
 
 class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
-  lazy val backUrl: String = controllers.agent.routes.ConfirmClientUTRController.show.url
+  lazy val backUrl: String = controllers.agent.routes.ConfirmClientUTRController.show().url
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
@@ -197,7 +196,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
         }
         "has a link to check what your client owes" in new TestSetup {
           val link: Option[Elements] = getElementById("payments-tile").map(_.select("a"))
-          link.map(_.attr("href")) shouldBe Some(controllers.routes.WhatYouOweController.showAgent.url)
+          link.map(_.attr("href")) shouldBe Some(controllers.routes.WhatYouOweController.showAgent().url)
           link.map(_.text) shouldBe Some("Check what your client owes")
         }
       }
@@ -284,7 +283,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
         }
         "has a link to the tax years page" in new TestSetup {
           val link: Option[Element] = getElementById("returns-tile").map(_.select("a").last)
-          link.map(_.attr("href")) shouldBe Some(controllers.routes.TaxYearsController.showAgentTaxYears.url)
+          link.map(_.attr("href")) shouldBe Some(controllers.routes.TaxYearsController.showAgentTaxYears().url)
           link.map(_.text) shouldBe Some("View all tax years")
         }
       }
@@ -300,22 +299,22 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
         "has payment and refund history link when CreditsRefundsRepay OFF / PaymentHistoryRefunds ON" in new TestSetup(creditAndRefundEnabled = false, paymentHistoryEnabled = true) {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
-          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent.url)
+          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent().url)
           link.map(_.text) shouldBe Some("Payment and refund history")
         }
         "has payment and credit history link when CreditsRefundsRepay ON / PaymentHistoryRefunds OFF" in new TestSetup(creditAndRefundEnabled = true, paymentHistoryEnabled = false) {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
-          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent.url)
+          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent().url)
           link.map(_.text) shouldBe Some("Payment and credit history")
         }
         "has payment, credit and refund history link when CreditsRefundsRepay ON / PaymentHistoryRefunds ON" in new TestSetup(creditAndRefundEnabled = true, paymentHistoryEnabled = true) {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
-          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent.url)
+          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent().url)
           link.map(_.text) shouldBe Some("Payment, credit and refund history")
         }
         "has payment history link when CreditsRefundsRepay OFF / PaymentHistoryRefunds OFF" in new TestSetup(paymentHistoryEnabled = false, creditAndRefundEnabled = false) {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
-          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent.url)
+          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent().url)
           link.map(_.text) shouldBe Some("Payment history")
         }
 

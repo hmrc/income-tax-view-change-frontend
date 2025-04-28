@@ -39,13 +39,13 @@ class UTRErrorController @Inject()(utrError: UTRError,
 
   def show: Action[AnyContent] = authActions.asAgent().async { implicit user =>
     Future.successful(Ok(utrError(
-      postAction = controllers.agent.routes.UTRErrorController.submit
+      postAction = controllers.agent.routes.UTRErrorController.submit()
     )))
   }
 
   def submit: Action[AnyContent] = authActions.asAgent().async { implicit user =>
     Future.successful(
-      Redirect(routes.EnterClientsUTRController.show.url).removingFromSession(SessionKeys.clientUTR)
+      Redirect(routes.EnterClientsUTRController.show().url).removingFromSession(SessionKeys.clientUTR)
     )
   }
 

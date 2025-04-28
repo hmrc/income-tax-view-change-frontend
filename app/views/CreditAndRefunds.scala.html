@@ -48,7 +48,7 @@ govukInsetText : GovukInsetText
 
 @getWhatYouOwe(isAgent: Boolean) = @{
     if(isAgent) {
-        controllers.routes.WhatYouOweController.showAgent.url
+        controllers.routes.WhatYouOweController.showAgent().url
     } else {
         controllers.routes.WhatYouOweController.show().url
     }
@@ -56,7 +56,7 @@ govukInsetText : GovukInsetText
 
 @checkSACharges(isAgent: Boolean) = @{
     if(isAgent) {
-        controllers.routes.YourSelfAssessmentChargesController.showAgent.url
+        controllers.routes.YourSelfAssessmentChargesController.showAgent().url
     } else {
         controllers.routes.YourSelfAssessmentChargesController.show().url
     }

@@ -28,7 +28,7 @@ import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{DateServiceInterface, NextUpdatesService, SessionService}
+import services.{NextUpdatesService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyChecker
@@ -45,8 +45,7 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
                                                         val sessionService: SessionService)
                                                        (implicit val appConfig: FrontendAppConfig,
                                                         val mcc: MessagesControllerComponents,
-                                                        val ec: ExecutionContext,
-                                                        dateService: DateServiceInterface)
+                                                        val ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with JourneyChecker {
 
   private def getBusinessName(incomeSourceId: IncomeSourceId)(implicit user: MtdItUser[_]): Option[String] = {
@@ -55,7 +54,8 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
       .flatMap(_.tradingName)
   }
 
-  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
+                           (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
       updateMongoCeased(incomeSourceType)
       val incomeSourceDetails: Future[(Either[Throwable, Option[String]], IncomeSourceType)] = incomeSourceType match {

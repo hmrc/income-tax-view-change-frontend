@@ -193,7 +193,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions with ImplicitDa
 
             val result = testManageYourBusinessesController.showAgent()(fakeRequest)
             status(result) shouldBe Status.SEE_OTHER
-            redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+            redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent().url)
           }
         }
 

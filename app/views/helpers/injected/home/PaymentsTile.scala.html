@@ -58,7 +58,7 @@
 @checkWhatYouOweLink = @{
     if(isAgent) {
         link(
-            link = controllers.routes.WhatYouOweController.showAgent.url,
+            link = controllers.routes.WhatYouOweController.showAgent().url,
             messageKey = "home.agent.payments.view"
         )
     } else {
@@ -72,7 +72,7 @@
 @checkYourSelfAssessmentChargesLink = @{
     if(isAgent) {
         link(
-            link = controllers.routes.YourSelfAssessmentChargesController.showAgent.url,
+            link = controllers.routes.YourSelfAssessmentChargesController.showAgent().url,
             messageKey = "home.agent.payments.selfAssessment.view"
         )
     } else {

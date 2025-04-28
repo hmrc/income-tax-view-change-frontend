@@ -16,7 +16,7 @@
 
 package controllers
 
-import enums.{MTDPrimaryAgent, MTDSupportingAgent}
+import enums.MTDPrimaryAgent
 import models.admin.{CreditsRefundsRepay, IncomeSourcesFs, IncomeSourcesNewJourney, ReviewAndReconcilePoa}
 import models.financialDetails._
 import org.jsoup.Jsoup

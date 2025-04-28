@@ -32,8 +32,8 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.OptOutSessionDataRepository
 import services.NextUpdatesService
 import services.optout.OptOutProposition.createOptOutProposition
-import testUtils.{TestSupport, UnitSpec}
-import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
+import testUtils.TestSupport
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 

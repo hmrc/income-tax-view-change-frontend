@@ -63,7 +63,7 @@ class CeaseIncomeSourceControllerSpec extends MockAuthActions
             val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
               controllers.routes.HomeController.show().url
             } else {
-              controllers.routes.HomeController.showAgent.url
+              controllers.routes.HomeController.showAgent().url
             }
 
             status(result) shouldBe Status.SEE_OTHER

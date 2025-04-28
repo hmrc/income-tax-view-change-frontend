@@ -19,7 +19,6 @@ package mocks.services
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.mockito.Mockito.mock
 import services.agent.ClientDetailsService
 import services.agent.ClientDetailsService.{ClientDetails, ClientDetailsFailure}
 import testConstants.BaseTestConstants.{testMtditid, testNino}

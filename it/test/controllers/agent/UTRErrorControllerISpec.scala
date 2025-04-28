@@ -25,14 +25,14 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
   val path = "/agents/cannot-view-client"
 
   s"GET $path" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
+    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
       "the user is not authenticated" in {
         MTDAgentAuthStub.stubUnauthorised()
         val result = buildGETMTDClient(path).futureValue
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn.url)
+          redirectURI(controllers.routes.SignInController.signIn().url)
         )
       }
     }
@@ -45,7 +45,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
         Then(s"Agent error page is shown with status SEE_OTHER")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.errors.routes.AgentErrorController.show.url)
+          redirectURI(controllers.agent.errors.routes.AgentErrorController.show().url)
         )
       }
     }
@@ -66,14 +66,14 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
   }
 
   s"POST $path" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
+    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
       "the user is not authenticated" in {
         MTDAgentAuthStub.stubUnauthorised()
         val result = buildPOSTMTDPostClient(path, body = Map.empty).futureValue
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn.url)
+          redirectURI(controllers.routes.SignInController.signIn().url)
         )
       }
     }
@@ -85,7 +85,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.errors.routes.AgentErrorController.show.url)
+          redirectURI(controllers.agent.errors.routes.AgentErrorController.show().url)
         )
       }
     }

@@ -21,7 +21,7 @@ import helpers.{ComponentSpecBase, WiremockHelper}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, NOT_FOUND}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.{JsArray, Json}
 import testConstants.BaseIntegrationTestConstants.testNino
 
