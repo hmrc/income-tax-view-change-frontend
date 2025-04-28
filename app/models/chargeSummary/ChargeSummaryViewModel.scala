@@ -88,6 +88,7 @@ case class ChargeSummaryViewModel(
     (chargeHistoryEnabled || paymentAllocations.nonEmpty) && !isBalancingChargeZero && !isCredit
 
   val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)
+
 }
 
 
