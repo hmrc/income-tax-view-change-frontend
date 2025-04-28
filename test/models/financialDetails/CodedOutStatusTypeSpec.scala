@@ -29,12 +29,16 @@ class CodedOutStatusTypeSpec extends UnitSpec{
         resultCancelled shouldBe Some(Cancelled)
         val resultNics2 = CodedOutStatusType.fromCodedOutStatusAndDocumentText(Some("Class 2 National Insurance"), None)
         resultNics2 shouldBe Some(Nics2)
+        val resultFullyCollected = CodedOutStatusType.fromCodedOutStatusAndDocumentText(Some("Fully Collected"), None)
+        resultFullyCollected shouldBe Some(FullyCollected)
       }
       "codedOutStatus corresponds to a known type" in {
         val resultAccepted = CodedOutStatusType.fromCodedOutStatusAndDocumentText(None, Some("I"))
         resultAccepted shouldBe Some(Accepted)
         val resultCancelled = CodedOutStatusType.fromCodedOutStatusAndDocumentText(None, Some("C"))
         resultCancelled shouldBe Some(Cancelled)
+        val resultFullyCollected = CodedOutStatusType.fromCodedOutStatusAndDocumentText(None, Some("F"))
+        resultFullyCollected shouldBe Some(FullyCollected)
       }
     }
     "return None" when {

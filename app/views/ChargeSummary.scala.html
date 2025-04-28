@@ -18,7 +18,7 @@
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import models.financialDetails.ChargeType
 @import models.chargeSummary.ChargeSummaryViewModel
-@import models.financialDetails.{Accepted, BalancingCharge, Cancelled, MfaDebitCharge, PoaOneDebit, PoaOneReconciliationDebit, PoaOneReconciliationCredit, PoaTwoDebit, PoaTwoReconciliationDebit, PoaTwoReconciliationCredit, TransactionType}
+@import models.financialDetails.{Accepted, BalancingCharge, FullyCollected, Cancelled, MfaDebitCharge, PoaOneDebit, PoaOneReconciliationDebit, PoaOneReconciliationCredit, PoaTwoDebit, PoaTwoReconciliationDebit, PoaTwoReconciliationCredit, TransactionType}
 @import services.DateServiceInterface
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
@@ -29,6 +29,7 @@
 @import _root_.implicits.HtmlFormatter.NbspString
 
 @import java.time.LocalDate
+
 
 @this(
     mainTemplate: unifiedLayout,
@@ -274,7 +275,7 @@
 
     @getExplanationContent
 
-    @if(viewModel.chargeItem.codedOutStatus.contains(Accepted)){
+    @if(viewModel.chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)){
         @checkPayeCodePara
         <div id="coding-out-wrapper">
             @govukInsetText(InsetText(content = HtmlContent(codingOutMessageInset)))
@@ -300,7 +301,7 @@
         }
     }
 
-    @if(!viewModel.chargeItem.codedOutStatus.contains(Accepted)) {
+    @if(!viewModel.chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)) {
         @chargeSummaryNotCodingOutAndNotPayeSelfAssessment(
             viewModel.chargeItem,
             viewModel.latePaymentInterestCharge,
@@ -309,7 +310,7 @@
             appConfig)
     }
 
-    @if(viewModel.chargeItem.codedOutStatus.contains(Accepted)) {
+    @if(viewModel.chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)) {
         @chargeSummaryCodingOut(
             viewModel.chargeItem,
             viewModel.taxYearFromCodingOut,
@@ -450,6 +451,14 @@
                 }
 
                 @if(viewModel.chargeItem.codedOutStatus == Some(Accepted)) {
+                    <tr>
+                        <td class="govuk-table__cell">@{viewModel.chargeItem.documentDate.toLongDateShort.toNonBreaking}</td>
+                        <td class="govuk-table__cell">@messages("chargeSummary.codingOutPayHistoryAmount", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@{viewModel.chargeItem.originalAmount.toCurrency}</td>
+                    </tr>
+                }
+
+                @if(viewModel.chargeItem.codedOutStatus == Some(FullyCollected)) {
                     <tr>
                         <td class="govuk-table__cell">@{viewModel.chargeItem.documentDate.toLongDateShort.toNonBreaking}</td>
                         <td class="govuk-table__cell">@messages("chargeSummary.codingOutPayHistoryAmount", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)</td>

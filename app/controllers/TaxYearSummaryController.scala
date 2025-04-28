@@ -22,6 +22,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import enums.CodingOutType.CODING_OUT_FULLY_COLLECTED
 import enums.GatewayPage.TaxYearSummaryPage
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import implicits.ImplicitDateFormatter
@@ -151,7 +152,7 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
                                    (implicit user: MtdItUser[_]): Future[Result] = {
 
     financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
-      case financialDetails@FinancialDetailsModel(_, documentDetails, _) =>
+      case financialDetails@FinancialDetailsModel(_, documentDetails, fd) =>
 
         val getChargeItem: DocumentDetail => Option[ChargeItem] = getChargeItemOpt(financialDetails = financialDetails.financialDetails)
 
@@ -189,13 +190,20 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
             .filterNot(_.originalAmount <= 0)
         }
 
+        val chargeItemsCodingOutFullyCollectedPoa: List[TaxYearSummaryChargeItem] =
+          chargeItemsNoPayments
+            .filter(_.isCodingOutFullyCollectedPoa(fd))
+            .flatMap(dd => getChargeItem(dd)
+              .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, dd.getDueDate())))
+            .filter(x => x.transactionType == PoaOneDebit || x.transactionType == PoaTwoDebit)
+
         val chargeItemsCodingOutNotPaye: List[TaxYearSummaryChargeItem] = {
           chargeItemsCodingOut
             .filterNot(_.codedOutStatus.contains(models.financialDetails.Accepted))
             .filterNot(_.originalAmount <= 0)
         }
 
-        f(chargeItemsNoCodingOut ++ chargeItemsLpi ++ chargeItemsCodingOutPaye ++ chargeItemsCodingOutNotPaye)
+        f(chargeItemsNoCodingOut ++ chargeItemsLpi ++ chargeItemsCodingOutPaye ++ chargeItemsCodingOutNotPaye ++ chargeItemsCodingOutFullyCollectedPoa)
       case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
       case _ if isAgent =>
         Logger("application").error(s"[Agent]Could not retrieve financial details for year: $taxYear")
