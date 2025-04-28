@@ -40,7 +40,7 @@
 @(isAgent: Boolean, viewModel: WhatYouNeedToKnowViewModel)(implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_])
 
 @getHomePageUrl = @{
-    if (isAgent) controllers.routes.HomeController.showAgent.url
+    if (isAgent) controllers.routes.HomeController.showAgent().url
     else         controllers.routes.HomeController.show().url
 }
 

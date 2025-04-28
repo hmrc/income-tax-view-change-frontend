@@ -247,7 +247,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   private def variableViewModelPropertyBusiness(incomeSource: PropertyDetailsModel,
                                                 latencyYearsQuarterly: LatencyYearsQuarterly,
                                                 latencyYearsCrystallised: LatencyYearsCrystallised,
-                                                incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
+                                                incomeSourceType: IncomeSourceType): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
       incomeSource = None,

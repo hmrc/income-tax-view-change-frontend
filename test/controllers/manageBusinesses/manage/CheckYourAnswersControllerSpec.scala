@@ -88,7 +88,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
               val result: Future[Result] = action(fakeRequest)
               status(result) shouldBe Status.SEE_OTHER
               val homeUrl = if (isAgent) {
-                controllers.routes.HomeController.showAgent.url
+                controllers.routes.HomeController.showAgent().url
               } else {
                 controllers.routes.HomeController.show().url
               }
@@ -184,7 +184,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
               val result: Future[Result] = action(fakeRequest)
               status(result) shouldBe Status.SEE_OTHER
               val homeUrl = if (isAgent) {
-                controllers.routes.HomeController.showAgent.url
+                controllers.routes.HomeController.showAgent().url
               } else {
                 controllers.routes.HomeController.show().url
               }

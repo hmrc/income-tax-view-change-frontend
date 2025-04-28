@@ -135,7 +135,7 @@ class IncomeSourceReportingMethodController @Inject()(val authActions: AuthActio
     }
   }
 
-  private def updateIncomeSourceAsAdded(sessionData: UIJourneySessionData)(implicit hc: HeaderCarrier): Future[Boolean] = {
+  private def updateIncomeSourceAsAdded(sessionData: UIJourneySessionData): Future[Boolean] = {
     val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
     val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(incomeSourceAdded = Some(true))
     val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))

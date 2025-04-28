@@ -16,7 +16,7 @@
 
 package views.claimToAdjustPoa
 
-import controllers.claimToAdjustPoa.routes.{ConfirmationForAdjustingPoaController, EnterPoaAmountController, SelectYourReasonController}
+import controllers.claimToAdjustPoa.routes._
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, SelectYourReason}
 import models.core.CheckMode
 import models.incomeSourceDetails.TaxYear
@@ -104,7 +104,7 @@ class CheckYourAnswersControllerViewSpec extends TestSupport {
   }
 
   def getCancelLinkUrl(isAgent: Boolean): String = {
-    if (isAgent) controllers.routes.HomeController.showAgent
+    if (isAgent) controllers.routes.HomeController.showAgent()
     else         controllers.routes.HomeController.show()
   }.url
 

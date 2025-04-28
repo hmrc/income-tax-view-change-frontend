@@ -16,7 +16,7 @@
 
 package testConstants
 
-import models.obligations.{SingleObligationModel, ObligationsErrorModel, GroupedObligationsModel, ObligationsModel, StatusFulfilled}
+import models.obligations._
 import play.api.libs.json.{JsValue, Json}
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testNino, testPropertyIncomeId, testSelfEmploymentId, testSelfEmploymentId2}
 

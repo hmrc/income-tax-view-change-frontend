@@ -76,7 +76,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 mockCreditHistoryService(chargesList)
 
                 val backUrl = if (isAgent) {
-                  routes.PaymentHistoryController.showAgent.url
+                  routes.PaymentHistoryController.showAgent().url
                 } else {
                   routes.PaymentHistoryController.show().url
                 }
@@ -109,7 +109,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 mockCreditHistoryService(chargesList)
 
                 val backUrl = if (isAgent) {
-                  routes.PaymentHistoryController.showAgent.url
+                  routes.PaymentHistoryController.showAgent().url
                 } else {
                   routes.PaymentHistoryController.show().url
                 }
@@ -196,7 +196,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 mockCreditHistoryService(chargesList)
 
                 val backUrl = if (isAgent) {
-                  routes.PaymentHistoryController.showAgent.url
+                  routes.PaymentHistoryController.showAgent().url
                 } else {
                   routes.PaymentHistoryController.show().url
                 }

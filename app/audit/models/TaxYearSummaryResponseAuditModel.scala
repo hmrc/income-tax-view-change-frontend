@@ -19,7 +19,6 @@ package audit.models
 import audit.Utilities.userAuditDetails
 import auth.MtdItUser
 import implicits.ImplicitDateParser
-import models.financialDetails._
 import models.liabilitycalculation.Messages
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.obligations.ObligationWithIncomeType

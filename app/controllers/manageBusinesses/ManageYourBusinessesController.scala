@@ -57,7 +57,7 @@ class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageY
     handleRequest(
       sources = user.incomeSources,
       isAgent = true,
-      backUrl = controllers.routes.HomeController.showAgent.url
+      backUrl = controllers.routes.HomeController.showAgent().url
     )(user, itvcErrorHandlerAgent)
   }
 

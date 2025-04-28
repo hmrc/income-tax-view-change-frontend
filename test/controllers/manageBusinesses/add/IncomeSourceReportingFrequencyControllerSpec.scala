@@ -263,7 +263,7 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
               disable(IncomeSourcesFs)
               disable(IncomeSourcesNewJourney)
 
-              val expectedRedirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url
+              val expectedRedirectUrl = if (isAgent) controllers.routes.HomeController.showAgent().url
               else controllers.routes.HomeController.show().url
 
               val result = action(fakeRequest)
@@ -299,7 +299,7 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
               disable(IncomeSourcesFs)
               disable(IncomeSourcesNewJourney)
 
-              val expectedRedirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+              val expectedRedirectUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
 
               val result = action(fakeRequest.withFormUrlEncodedBody(formData.toSeq: _*))
               status(result) shouldBe SEE_OTHER

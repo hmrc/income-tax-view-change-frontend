@@ -17,7 +17,6 @@
 package models.financialDetails
 
 import models.financialDetails.FinancialDetail.Types._
-import models.financialDetails.ReviewAndReconcileUtils.{poaOneReviewAndReconcileCredit, poaTwoReviewAndReconcileCredit}
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
 

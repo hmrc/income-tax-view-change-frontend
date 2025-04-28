@@ -17,8 +17,8 @@
 package models.sessionData
 
 import models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostResponseReads, SessionDataPostSuccess}
-import play.api.http.Status.{CONFLICT, CREATED, INTERNAL_SERVER_ERROR, OK}
-import play.api.libs.json.{JsValue, Json}
+import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR, OK}
+import play.api.libs.json.Json
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.HttpResponse
 

@@ -17,7 +17,6 @@
 package models.paymentAllocations
 
 import exceptions.MissingFieldException
-import implicits.ImplicitDateFormatter
 import models.core.AccountingPeriodModel
 import models.financialDetails.FinancialDetail
 import play.api.Logger
@@ -43,13 +42,13 @@ case class AllocationDetail(transactionId: Option[String],
       }
   }
 
-  def getTaxYear(implicit implicitDateFormatter: ImplicitDateFormatter): Int = {
+  def getTaxYear: Int = {
 
     AccountingPeriodModel.determineTaxYearFromPeriodEnd(
       to.getOrElse(throw new Exception("Missing tax period end date")))
   }
 
-  def getTaxYearOpt(implicit implicitDateFormatter: ImplicitDateFormatter): Option[Int] = {
+  def getTaxYearOpt: Option[Int] = {
     to.map(AccountingPeriodModel.determineTaxYearFromPeriodEnd)
   }
 

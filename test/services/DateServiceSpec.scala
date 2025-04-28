@@ -18,12 +18,10 @@ package services
 
 import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
-import config.{FrontendAppConfig, TimeMachine}
+import config.FrontendAppConfig
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import org.mockito.Mockito.{mock, reset, when}
-import play.api.test.FakeRequest
-import testConstants.BaseTestConstants.{testMtditid, testNino}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
+import org.mockito.Mockito.{mock, reset}
+import testConstants.BaseTestConstants.testNino
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 

@@ -25,7 +25,7 @@ import views.html.agent.errorPages.ClientRelationshipFailure
 
 class ClientDetailsFailureViewSpec extends ViewSpec {
 
-  lazy val postAction: Call = controllers.agent.routes.EnterClientsUTRController.show
+  lazy val postAction: Call = controllers.agent.routes.EnterClientsUTRController.show()
 
   val clientRelationshipFailure: ClientRelationshipFailure = app.injector.instanceOf[ClientRelationshipFailure]
 

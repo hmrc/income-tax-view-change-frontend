@@ -81,7 +81,7 @@ class ChooseTaxYearController @Inject()(authActions: AuthActions,
 
   def submit(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user => {
-      ChooseTaxYearForm().bindFromRequest.fold(
+      ChooseTaxYearForm().bindFromRequest().fold(
         formWithError => {
           Future.successful(BadRequest(chooseTaxYear(
             formWithError,

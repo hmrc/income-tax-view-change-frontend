@@ -104,14 +104,14 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
   def showAgent(repaymentRequestNumber: String): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
     implicit mtdItUser =>
       handleRequest(
-        backUrl = controllers.routes.PaymentHistoryController.showAgent.url,
+        backUrl = controllers.routes.PaymentHistoryController.showAgent().url,
         itvcErrorHandler = itvcErrorHandlerAgent,
         repaymentRequestNumber = repaymentRequestNumber
       )
   }
 
   lazy val homeUrl: Boolean => String = isAgent => if (isAgent) {
-    controllers.routes.HomeController.showAgent.url
+    controllers.routes.HomeController.showAgent().url
   } else {
     controllers.routes.HomeController.show().url
   }

@@ -16,13 +16,11 @@
 
 package mocks.services
 
-import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.mockito.Mockito.mock
 import services.FinancialDetailsService
 import testConstants.BaseTestConstants.{testNino, testTaxYear}
 import testConstants.FinancialDetailsTestConstants._

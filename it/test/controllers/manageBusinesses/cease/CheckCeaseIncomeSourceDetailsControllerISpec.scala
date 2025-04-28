@@ -308,7 +308,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
 
             AuditStub.verifyAuditContainsDetail(
               CeaseIncomeSourceAuditModel(SelfEmployment, testEndDate2022, mkIncomeSourceId(testSelfEmploymentId), None)
-              (getTestUser(mtdUserRole, businessOnlyResponse), hc).detail)
+              (getTestUser(mtdUserRole, businessOnlyResponse)).detail)
           }
         }
         testAuthFailures(selfEmploymentPath, mtdUserRole, optBody = Some(Map.empty))
@@ -338,7 +338,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
 
             AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(
               UkProperty, testEndDate2022, mkIncomeSourceId(testPropertyIncomeId), None)
-            (getTestUser(mtdUserRole, ukPropertyOnlyResponse), hc).detail)
+            (getTestUser(mtdUserRole, ukPropertyOnlyResponse)).detail)
           }
         }
         testAuthFailures(ukPropertyPath, mtdUserRole, optBody = Some(Map.empty))
@@ -367,7 +367,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
             )
             AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(
               ForeignProperty, testEndDate2022, mkIncomeSourceId(testPropertyIncomeId), None)
-            (getTestUser(mtdUserRole, foreignPropertyOnlyResponse), hc).detail)
+            (getTestUser(mtdUserRole, foreignPropertyOnlyResponse)).detail)
           }
         }
         testAuthFailures(foreignPropertyPath, mtdUserRole, optBody = Some(Map.empty))

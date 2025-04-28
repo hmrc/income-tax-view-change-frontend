@@ -18,7 +18,7 @@ package mocks.services
 
 import models.incomeSourceDetails.TaxYear
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.{any, matches}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
 import services.optIn.OptInService

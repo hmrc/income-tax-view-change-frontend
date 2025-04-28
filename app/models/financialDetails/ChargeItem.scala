@@ -20,7 +20,6 @@ import exceptions.{CouldNotCreateChargeItemException, MissingFieldException}
 import models.financialDetails.ChargeType.{poaOneReconciliationDebit, poaTwoReconciliationDebit}
 import models.financialDetails.YourSelfAssessmentChargesViewModel.getDisplayDueDate
 import models.incomeSourceDetails.TaxYear
-import models.outstandingCharges.OutstandingChargeModel
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
 
@@ -132,8 +131,8 @@ case class ChargeItem (
     val validCharge = (transactionType, codedOutStatus) match {
       case (BalancingCharge, Some(Nics2)) => true
       case (BalancingCharge, None       ) => true
-      case (PoaOneDebit,               _) => true
-      case (PoaTwoDebit,               _) => true
+      case (PoaOneDebit, None           ) => true
+      case (PoaTwoDebit, None           ) => true
       case (LateSubmissionPenalty,     _) => true
       case (FirstLatePaymentPenalty,   _) => true
       case _                              => false

@@ -18,15 +18,11 @@ package audit
 
 import audit.models.ExtendedAuditModel
 import config.FrontendAppConfig
-import org.junit.Ignore
 import org.mockito.Mockito.mock
-import org.mockito.invocation.Invocation
 import org.scalatest.PrivateMethodTester
 import play.api.libs.json.{JsValue, Json}
 import testUtils.TestSupport
-import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
-
-import scala.concurrent.Future
+import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
 
 class AuditServiceSpec extends TestSupport with PrivateMethodTester {

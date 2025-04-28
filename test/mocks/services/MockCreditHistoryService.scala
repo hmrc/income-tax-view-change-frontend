@@ -23,7 +23,6 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import services.CreditHistoryService
 import services.CreditHistoryService.CreditHistoryError
-
 import testUtils.UnitSpec
 
 import scala.concurrent.Future

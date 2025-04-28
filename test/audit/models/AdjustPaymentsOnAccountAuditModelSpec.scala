@@ -16,7 +16,7 @@
 
 package audit.models
 
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup

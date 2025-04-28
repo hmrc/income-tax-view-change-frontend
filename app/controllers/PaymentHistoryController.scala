@@ -21,7 +21,7 @@ import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch._
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.GatewayPage.PaymentHistoryPage
 import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatter
@@ -109,7 +109,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,
-        backUrl = controllers.routes.HomeController.showAgent.url
+        backUrl = controllers.routes.HomeController.showAgent().url
       )
   }
 

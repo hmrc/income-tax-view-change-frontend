@@ -22,6 +22,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import enums.CodingOutType.CODING_OUT_FULLY_COLLECTED
 import enums.GatewayPage.TaxYearSummaryPage
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import implicits.ImplicitDateFormatter
@@ -64,7 +65,7 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
                                          val ec: ExecutionContext)
   extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ImplicitDateFormatter with TransactionUtils {
 
-  private def showForecast(calculationSummary: Option[CalculationSummary])(implicit user: MtdItUser[_]): Boolean = {
+  private def showForecast(calculationSummary: Option[CalculationSummary]): Boolean = {
     val isCrystallised = calculationSummary.flatMap(_.crystallised).contains(true)
     val forecastDataPresent = calculationSummary.flatMap(_.forecastIncome).isDefined
     calculationSummary.isDefined && !isCrystallised && forecastDataPresent
@@ -87,7 +88,7 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
           formatErrorMessages(
             liabilityCalc,
             messagesApi,
-            isAgent)(Lang("GB"), messagesApi.preferred(lang))))
+            isAgent)(messagesApi.preferred(lang))))
 
         val taxYearSummaryViewModel: TaxYearSummaryViewModel = TaxYearSummaryViewModel(
           calculationSummary,
@@ -151,7 +152,7 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
                                    (implicit user: MtdItUser[_]): Future[Result] = {
 
     financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
-      case financialDetails@FinancialDetailsModel(_, documentDetails, _) =>
+      case financialDetails@FinancialDetailsModel(_, documentDetails, fd) =>
 
         val getChargeItem: DocumentDetail => Option[ChargeItem] = getChargeItemOpt(financialDetails = financialDetails.financialDetails)
 
@@ -189,13 +190,20 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
             .filterNot(_.originalAmount <= 0)
         }
 
+        val chargeItemsCodingOutFullyCollectedPoa: List[TaxYearSummaryChargeItem] =
+          chargeItemsNoPayments
+            .filter(_.isCodingOutFullyCollectedPoa(fd))
+            .flatMap(dd => getChargeItem(dd)
+              .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, dd.getDueDate())))
+            .filter(x => x.transactionType == PoaOneDebit || x.transactionType == PoaTwoDebit)
+
         val chargeItemsCodingOutNotPaye: List[TaxYearSummaryChargeItem] = {
           chargeItemsCodingOut
             .filterNot(_.codedOutStatus.contains(models.financialDetails.Accepted))
             .filterNot(_.originalAmount <= 0)
         }
 
-        f(chargeItemsNoCodingOut ++ chargeItemsLpi ++ chargeItemsCodingOutPaye ++ chargeItemsCodingOutNotPaye)
+        f(chargeItemsNoCodingOut ++ chargeItemsLpi ++ chargeItemsCodingOutPaye ++ chargeItemsCodingOutNotPaye ++ chargeItemsCodingOutFullyCollectedPoa)
       case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
       case _ if isAgent =>
         Logger("application").error(s"[Agent]Could not retrieve financial details for year: $taxYear")
@@ -289,13 +297,13 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
   def homeUrl(origin: Option[String]): String = controllers.routes.HomeController.show(origin).url
 
   // Agent back urls
-  lazy val agentTaxYearsUrl: String = controllers.routes.TaxYearsController.showAgentTaxYears.url
-  lazy val agentHomeUrl: String = controllers.routes.HomeController.showAgent.url
-  lazy val agentWhatYouOweUrl: String = controllers.routes.WhatYouOweController.showAgent.url
+  lazy val agentTaxYearsUrl: String = controllers.routes.TaxYearsController.showAgentTaxYears().url
+  lazy val agentHomeUrl: String = controllers.routes.HomeController.showAgent().url
+  lazy val agentWhatYouOweUrl: String = controllers.routes.WhatYouOweController.showAgent().url
 
 
   def formatErrorMessages(liabilityCalc: LiabilityCalculationResponse, messagesProperty: MessagesApi, isAgent: Boolean)
-                         (implicit lang: Lang, messages: Messages): LiabilityCalculationResponse = {
+                         (implicit messages: Messages): LiabilityCalculationResponse = {
 
     if (liabilityCalc.messages.isDefined) {
       val errorMessages = liabilityCalc.messages.get.getErrorMessageVariables(messagesProperty, isAgent)

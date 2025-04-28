@@ -27,7 +27,7 @@ class RemoveClientDetailsSessionsControllerISpec extends ControllerISpecHelper {
 
   val path = "/agents/remove-client-sessions"
 
-  s"GET ${controllers.agent.routes.EnterClientsUTRController.show.url}" when {
+  s"GET ${controllers.agent.routes.EnterClientsUTRController.show().url}" when {
     s"a user is a primary agent (session data isSupportingAgent = false)" that {
       val isSupportingAgent = false
       val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
@@ -52,7 +52,7 @@ class RemoveClientDetailsSessionsControllerISpec extends ControllerISpecHelper {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(controllers.agent.routes.EnterClientsUTRController.show.url)
+            redirectURI(controllers.agent.routes.EnterClientsUTRController.show().url)
           )
 
         }
@@ -85,7 +85,7 @@ class RemoveClientDetailsSessionsControllerISpec extends ControllerISpecHelper {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(controllers.agent.routes.EnterClientsUTRController.show.url)
+            redirectURI(controllers.agent.routes.EnterClientsUTRController.show().url)
           )
 
         }

@@ -16,7 +16,6 @@
 
 package views.incomeSources.manage
 
-import enums.IncomeSourceJourney.UkProperty
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import org.jsoup.nodes.Element

@@ -23,8 +23,8 @@ import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.agent.sessionUtils
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
 import implicits.ImplicitDateFormatterImpl
-import models.admin.FeatureSwitchName.allFeatureSwitches
 import models.admin.FeatureSwitchName
+import models.admin.FeatureSwitchName.allFeatureSwitches
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, TaxYearRange}
 import org.apache.pekko.actor.ActorSystem
 import org.jsoup.Jsoup

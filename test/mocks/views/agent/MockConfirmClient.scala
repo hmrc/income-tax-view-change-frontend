@@ -17,9 +17,8 @@
 package mocks.views.agent
 
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
-import org.mockito.Mockito.mock
 import play.twirl.api.Html
 import views.html.agent.confirmClient
 

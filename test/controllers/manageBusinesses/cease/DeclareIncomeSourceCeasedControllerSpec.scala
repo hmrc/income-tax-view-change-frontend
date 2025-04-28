@@ -104,7 +104,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
               disable(IncomeSourcesFs)
               mockBothPropertyBothBusiness()
               val result = action(fakeRequest)
-              val expectedRedirectUrl: String = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+              val expectedRedirectUrl: String = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
               redirectLocation(result) shouldBe Some(expectedRedirectUrl)
             }
           }
@@ -168,7 +168,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
               mockBothPropertyBothBusiness()
 
               val result = action(fakeRequest.withFormUrlEncodedBody(validFormData.toSeq: _*))
-              val expectedRedirectUrl: String = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+              val expectedRedirectUrl: String = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
 
               status(result) shouldBe Status.SEE_OTHER
               redirectLocation(result) shouldBe Some(expectedRedirectUrl)

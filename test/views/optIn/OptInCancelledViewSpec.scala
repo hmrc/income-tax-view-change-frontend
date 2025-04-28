@@ -29,7 +29,7 @@ class OptInCancelledViewSpec extends TestSupport {
 
   def nextUpdatesUrl(isAgent: Boolean): String = {
     if (isAgent) {
-      controllers.routes.NextUpdatesController.showAgent.url
+      controllers.routes.NextUpdatesController.showAgent().url
     } else {
       controllers.routes.NextUpdatesController.show().url
     }
@@ -37,7 +37,7 @@ class OptInCancelledViewSpec extends TestSupport {
 
   def homePageUrl(isAgent: Boolean): String = {
     if (isAgent) {
-      controllers.routes.HomeController.showAgent.url
+      controllers.routes.HomeController.showAgent().url
     } else {
       controllers.routes.HomeController.show().url
     }

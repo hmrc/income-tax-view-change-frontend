@@ -32,7 +32,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2CessationReason, b2TradingStart}
+import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
 import testConstants.NextUpdatesIntegrationTestConstants._
 import testConstants.OutstandingChargesIntegrationTestConstants.{validOutStandingChargeResponseJsonWithAciAndBcdCharges, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges}
 import testConstants.messages.HomeMessages._
@@ -56,7 +56,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
       Some(getCurrentTaxYearEnd),
       Some(b2TradingStart),
       None,
-      Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason))),
+      Some(CessationModel(Some(b2CessationDate))),
       address = Some(address),
       cashOrAccruals = false
     )),
