@@ -130,15 +130,13 @@ case class ChargeItem (
   def isIncludedInSACSummary: Boolean = {
 
     val validCharge = (transactionType, codedOutStatus) match {
-      case (BalancingCharge,      Some(Nics2)) => true
-      case (BalancingCharge,             None) => true
-      case (PoaOneDebit, Some(FullyCollected)) => true
-      case (PoaOneDebit,                    _) => true
-      case (PoaTwoDebit, Some(FullyCollected)) => true
-      case (PoaTwoDebit,                    _) => true
-      case (LateSubmissionPenalty,          _) => true
-      case (FirstLatePaymentPenalty,        _) => true
-      case _                                   => false
+      case (BalancingCharge, Some(Nics2)) => true
+      case (BalancingCharge, None       ) => true
+      case (PoaOneDebit, None           ) => true
+      case (PoaTwoDebit, None           ) => true
+      case (LateSubmissionPenalty,     _) => true
+      case (FirstLatePaymentPenalty,   _) => true
+      case _                              => false
     }
 
     validCharge && !isLatePaymentInterest

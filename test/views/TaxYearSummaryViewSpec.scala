@@ -183,6 +183,11 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     chargeItemModel(transactionType = PoaTwoDebit, codedOutStatus = Some(codedOutStatus), latePaymentInterestAmount = None)
   ).map(TaxYearSummaryChargeItem.fromChargeItem)
 
+  val testPaymentsOnAccountCodedOut: List[TaxYearSummaryChargeItem] = List(
+    chargeItemModel(transactionType = PoaOneDebit, codedOutStatus = Some(Accepted), latePaymentInterestAmount = None),
+    chargeItemModel(transactionType = PoaTwoDebit, codedOutStatus = Some(Accepted), latePaymentInterestAmount = None)
+  ).map(TaxYearSummaryChargeItem.fromChargeItem)
+
 
   val immediatelyRejectedByNps: List[TaxYearSummaryChargeItem] = List(
     chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Nics2), latePaymentInterestAmount = None),
@@ -796,24 +801,6 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         val paymentTypeText2: Element = layoutContent.getElementById("paymentTypeLink-1")
         val paymentTabRow2: Element = layoutContent.getElementById("payments-table").getElementsByClass("govuk-table__row").get(2)
         paymentTabRow2.getElementsByClass("govuk-table__cell").first().text() shouldBe "N/A"
-        paymentTabRow2.getElementsByClass("govuk-table__cell").get(1).text() shouldBe BigDecimal(1400).toCurrencyString
-        paymentTypeText2.text shouldBe codedOutPoa2
-        paymentTypeText2.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
-          testYear, fullDocumentDetailModel.transactionId).url
-      }
-
-      "display payments on account on the payments table when coding out is fully collected" in new Setup(testPaymentOnAccountChargesCodedOutFullyCollectedView()) {
-        val paymentTypeText1: Element = layoutContent.getElementById("paymentTypeLink-0")
-        val paymentTabRow1: Element = layoutContent.getElementById("payments-table").getElementsByClass("govuk-table__row").get(1)
-        paymentTabRow1.getElementsByClass("govuk-table__cell").first().text() shouldBe "15 May 2019"
-        paymentTabRow1.getElementsByClass("govuk-table__cell").get(1).text() shouldBe BigDecimal(1400).toCurrencyString
-        paymentTypeText1.text shouldBe codedOutPoa1
-        paymentTypeText1.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
-          testYear, fullDocumentDetailModel.transactionId).url
-
-        val paymentTypeText2: Element = layoutContent.getElementById("paymentTypeLink-1")
-        val paymentTabRow2: Element = layoutContent.getElementById("payments-table").getElementsByClass("govuk-table__row").get(2)
-        paymentTabRow2.getElementsByClass("govuk-table__cell").first().text() shouldBe "15 May 2019"
         paymentTabRow2.getElementsByClass("govuk-table__cell").get(1).text() shouldBe BigDecimal(1400).toCurrencyString
         paymentTypeText2.text shouldBe codedOutPoa2
         paymentTypeText2.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
