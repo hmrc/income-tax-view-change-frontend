@@ -159,10 +159,10 @@ class FinancialDetailsConnector @Inject()(
       .map { response =>
         response.status match {
           case OK =>
-            Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
+            Logger("application").info(s"Status: ${response.status}, json: ${response.json}")
             response.json.validate[FinancialDetailsModel].fold(
               invalid => {
-                Logger("application").error(s"Json Validation Error: $invalid")
+                Logger("application").error(s"Json Validation Error: $invalid ")
                 FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing FinancialDetails Data Response")
               },
               valid => valid
@@ -278,11 +278,18 @@ class FinancialDetailsConnector @Inject()(
       }
   }
 
+  /*
+  {"taxpayerDetails":{"idType":"NINO","idNumber":"AA888888A","regimeType":"ITSA"},
+  "balanceDetails":{"balanceDueWithin30Days":-99999999999.99,"nxtPymntDateChrgsDueIn30Days":"1920-02-29","balanceNotDuein30Days":-99999999999.99,"nextPaymntDateBalnceNotDue":"1920-02-29","overDueAmount":-99999999999.99,"earlistPymntDateOverDue":"1920-02-29","totalBalance":-99999999999.99},"codingDetails":[],
+  "documentDetails":[{"taxYear":9999,"transactionId":"601111111111","documentDate":"2019-01-31","documentText":"documentText","documentDescription":"Payment","originalAmount":-10000,"outstandingAmount":-9000,"paymentLot":"081203010066","paymentLotItem":"000001","effectiveDateOfPayment":"2019-01-31"}],
+  "financialDetails":[{"taxYear":"2018","transactionId":"601111111111","chargeReference":"XM002610011594","originalAmount":-10000,"outstandingAmount":-9000,"clearedAmount":-1000,"items":[{"id":"081203010066-000001","subItem":"001","dueDate":"2019-01-31","amount":-10000,"outgoingPaymentMethod":"outgoing Payment","paymentReference":"GF235688","paymentAmount":-10000,"paymentMethod":"Payment","clearingSAPDocument":"3350000253"}]}]}
+   */
   def getFinancialDetailsByDocumentId(
                                        nino: Nino,
                                        documentNumber: String
                                      )(implicit headerCarrier: HeaderCarrier): Future[FinancialDetailsWithDocumentDetailsResponse] = {
     val url = getFinancialDetailsByDocumentIdUrl(nino.value, documentNumber)
+    println(s"Here is error: AA")
     httpV2
       .get(url"$url")
       .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
@@ -290,6 +297,7 @@ class FinancialDetailsConnector @Inject()(
       .map { response =>
         response.status match {
           case OK =>
+            println(s"Here is error: CC => ${response.json}")
             response.json.validate[FinancialDetailsWithDocumentDetailsModel].fold(
               invalid => {
                 Logger("application").error(s"Json validation error parsing calculation response, error $invalid")
@@ -298,9 +306,11 @@ class FinancialDetailsConnector @Inject()(
               valid => valid
             )
           case status if status >= INTERNAL_SERVER_ERROR =>
+            println(s"Here is error: BB")
             Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
             FinancialDetailsWithDocumentDetailsErrorModel(response.status, response.body)
-          case _ =>
+          case ex =>
+            println(s"Here is error: $ex")
             Logger("application").warn(s"Response status: ${response.status}, body: ${response.body}")
             FinancialDetailsWithDocumentDetailsErrorModel(response.status, response.body)
         }
