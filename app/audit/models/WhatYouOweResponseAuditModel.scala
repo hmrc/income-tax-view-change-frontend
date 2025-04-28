@@ -101,7 +101,7 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
 
   private def codingOut(chargeItem: CodingOutDetails): JsObject = {
       Json.obj(
-        "amountCodedOut" -> chargeItem.codedOutAmount,
+        "amountCodedOut" -> chargeItem.amountCodedOut,
         "endTaxYear" -> chargeItem.codingTaxYear.endYear.toString
       )
   }

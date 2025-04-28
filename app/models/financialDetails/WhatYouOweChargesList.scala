@@ -107,4 +107,4 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
   }
 }
 
-case class CodingOutDetails(codedOutAmount: BigDecimal, codingTaxYear: TaxYear)
+case class CodingOutDetails(amountCodedOut: BigDecimal, codingTaxYear: TaxYear)
