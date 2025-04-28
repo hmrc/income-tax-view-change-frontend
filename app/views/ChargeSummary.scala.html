@@ -285,7 +285,7 @@
     @if(viewModel.chargeItem.codedOutStatus.contains(Accepted)){
         @checkPayeCodePara
         <div id="coding-out-wrapper">
-            @govukInsetText(InsetText(content = HtmlContent(codingOutBCDMessage)))
+            @govukInsetText(InsetText(content = HtmlContent(codingOutMessageInset)))
         </div>
         @if(viewModel.chargeItem.transactionType == BalancingCharge) {
             @codingOutBCDMessage
