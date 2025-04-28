@@ -287,6 +287,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     val interestLinkFullText: String = messages("chargeSummary.interestLocks.text")
     val interestLinkFullTextAgent: String = messages("chargeSummary.interestLocks.text-agent")
     val cancelledPAYESelfAssessment: String = messages("whatYouOwe.cancelled-paye-sa.heading")
+    val incomeTax: String = messages("chargeSummary.check-paye-tax-code-1")
 
     def dunningLockBannerText(formattedAmount: String, date: String) =
       s"$dunningLockBannerLink ${messages("chargeSummary.dunning.locks.banner.note", s"$formattedAmount", s"$date")}"
@@ -660,6 +661,29 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
               document.select(".govuk-table").size() shouldBe 1
               document.select(".govuk-table tbody tr").size() shouldBe 1
               document.select(".govuk-table tbody tr").get(0).text() shouldBe s"29 Mar 2018 ${messages("chargeSummary.codingOutPayHistoryAmount", "2018", "2019")} £2,500.00"
+            }
+          }
+        }
+
+        "coding out is cancelled" should {
+          "display the coded out details" when {
+
+            val codedOutPoaItem = chargeItemModel(transactionType = PoaTwoDebit, codedOutStatus = Some(Cancelled))
+            disable(FilterCodedOutPoas)
+
+            "Coding Out is Enabled" in new TestSetup(codedOutPoaItem) {
+              document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
+              document.select("h1").text() shouldBe cancelledSaPayeHeading
+              document.select("#charge-explanation > p:nth-child(1)").text() shouldBe poaTextParagraph
+              document.select("#charge-explanation>:nth-child(2)").text() shouldBe poaTextBullets
+              document.select("#charge-explanation > p:nth-child(3)").text() shouldBe poaTextP2
+              document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2018)
+              document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
+              document.select("#cancelled-coding-out-notice").text() shouldBe cancelledPayeTaxCodeInsetText
+              document.select(".govuk-table").size() shouldBe 1
+              document.select(".govuk-table tbody tr").size() shouldBe 1
+              document.select(".govuk-table tbody tr").get(0).text() shouldBe
+                s"29 Mar 2018 ${messages("chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text", "2018", "2019")} £1,400.00"
             }
           }
         }
