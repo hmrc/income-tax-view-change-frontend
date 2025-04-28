@@ -207,9 +207,15 @@
     }
 }
 
-@codingOutMessage = {
+@codingOutBCDMessage = {
     @p(id=Some("coding-out-message")){
-        @messages("chargeSummary.codingOutMessage", viewModel.taxYearFromCodedOut.toString, viewModel.taxYearToCodedOut.toString)
+        @messages("chargeSummary.codingOutBCDMessage", viewModel.taxYearFromBCD.toString, viewModel.taxYearToBCD.toString)
+    }
+}
+
+@codingOutFullyCollectedPOAMessage = {
+    @p(id=Some("coding-out-fully-collected-poa-message")){
+        @messages("chargeSummary.codingOutBCDMessage", viewModel.taxYearFromBCD.toString, viewModel.taxYearToBCD.toString)
     }
 }
 
@@ -279,10 +285,10 @@
     @if(viewModel.chargeItem.codedOutStatus.contains(Accepted)){
         @checkPayeCodePara
         <div id="coding-out-wrapper">
-            @govukInsetText(InsetText(content = HtmlContent(codingOutMessageInset)))
+            @govukInsetText(InsetText(content = HtmlContent(codingOutBCDMessage)))
         </div>
         @if(viewModel.chargeItem.transactionType == BalancingCharge) {
-            @codingOutMessage
+            @codingOutBCDMessage
         }
     }
 
@@ -299,7 +305,7 @@
     @if(viewModel.chargeItem.codedOutStatus.contains(FullyCollected)){
         @checkPayeCodePara
         <div id="cancelled-coding-out-wrapper">
-            @govukInsetText(InsetText(content = HtmlContent(codingOutMessageInset)))
+            @govukInsetText(InsetText(content = HtmlContent(codingOutFullyCollectedPOAMessage)))
         </div>
     }
 

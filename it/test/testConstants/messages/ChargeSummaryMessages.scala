@@ -28,7 +28,7 @@ object ChargeSummaryMessages extends ComponentSpecBase {
   val codingOutInsetPara: String = s"${messagesAPI("chargeSummary.codingOutInset-1")} ${messagesAPI("chargeSummary.codingOutInset-2")}" +
     s" ${messagesAPI("pagehelp.opensInNewTabText")} ${messagesAPI("chargeSummary.codingOutInset-3")}"
   def codingOutMessage(from: Int, to: Int): String = messagesAPI("chargeSummary.codingOutBCDMessage", from, to)
-  def codingOutMessageWithStringMessagesArgument(from: Int, to: Int): String = messagesAPI("chargeSummary.codingOutMessage", from.toString, to.toString)
+  def codingOutMessageWithStringMessagesArgument(from: Int, to: Int): String = messagesAPI("chargeSummary.codingOutBCDMessage", from.toString, to.toString)
 
   val paymentprocessingbullet1: String = s"${messagesAPI("chargeSummary.payments-bullet1-1")} ${messagesAPI("chargeSummary.payments-bullet1-2")} ${messagesAPI("pagehelp.opensInNewTabText")} ${messagesAPI("chargeSummary.payments-bullet2")}"
   val paymentprocessingbullet1Agent: String = s"${messagesAPI("chargeSummary.payments-bullet1-1")} ${messagesAPI("chargeSummary.payments-bullet1-2-agent")} ${messagesAPI("pagehelp.opensInNewTabText")} ${messagesAPI("chargeSummary.payments-bullet2-agent")}"
