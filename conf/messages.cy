@@ -1157,7 +1157,7 @@ chargeSummary.paymentAllocations.bcd.cgt                        = Taliad wedi’
 chargeSummary.paymentAllocations.mfaDebit                       = Taliad wedi’i roi tuag at addasiad CThEF
 
 chargeSummary.codingOutHeader                                      = Taliad Hunanasesiad (drwy’ch cod treth TWE)
-chargeSummary.codingOutBCDMessage                                  = Dyma’r dreth sy’n weddill y mae angen i chi ei thalu ar gyfer blwyddyn dreth {0} i {1}.
+chargeSummary.codingOutMessage                                     = Dyma’r dreth sy’n weddill y mae angen i chi ei thalu ar gyfer blwyddyn dreth {0} i {1}.
 chargeSummary.codingOutRemainingToPay                              = (Casglwyd hyn drwy’ch cod treth TWE ar gyfer blwyddyn dreth {0} i {1})
 chargeSummary.codingOutInset-1                                     = Os na ellir casglu’r dreth hon
 chargeSummary.codingOutInset-2                                     = drwy’ch cod treth TWE
