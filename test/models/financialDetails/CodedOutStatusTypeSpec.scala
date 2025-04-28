@@ -52,4 +52,6 @@ class CodedOutStatusTypeSpec extends UnitSpec{
       }
     }
   }
+
+
 }
