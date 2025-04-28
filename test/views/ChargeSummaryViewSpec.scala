@@ -20,7 +20,7 @@ import config.featureswitch.FeatureSwitching
 import enums.ChargeType._
 import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CreateReversalReason, CustomerRequestReason}
 import exceptions.MissingFieldException
-import models.admin.ReviewAndReconcilePoa
+import models.admin.{FilterCodedOutPoas, ReviewAndReconcilePoa}
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails._
@@ -41,8 +41,8 @@ import java.time.LocalDate
 class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeConstants {
 
   lazy val chargeSummary: ChargeSummary = app.injector.instanceOf[ChargeSummary]
-  val whatYouOweAgentUrl: String = controllers.routes.WhatYouOweController.showAgent.url
-  val SAChargesAgentUrl: String = controllers.routes.YourSelfAssessmentChargesController.showAgent.url
+  val whatYouOweAgentUrl: String = controllers.routes.WhatYouOweController.showAgent().url
+  val SAChargesAgentUrl: String = controllers.routes.YourSelfAssessmentChargesController.showAgent().url
 
   import Messages._
 
@@ -149,9 +149,11 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     val taxYearHeading: String = messages("taxYears.table.taxYear.heading")
     val balancingCharge: String = messages("chargeSummary.balancingCharge.text")
     val paymentBreakdownNic2: String = messages("chargeSummary.paymentBreakdown.nic2")
-    val codingOutMessage2017To2018: String = messages("chargeSummary.codingOutMessage", 2017, 2018)
-    val codingOutMessage2017To2018WithStringMessagesArgument: String = messages("chargeSummary.codingOutMessage", "2017", "2018")
+    val codingOutMessage2017To2018: String = messages("chargeSummary.codingOutBCDMessage", 2017, 2018)
+    val codingOutMessage2016To2017WithStringMessagesArgument: String = messages("chargeSummary.codingOutBCDMessage", "2016", "2017")
     val chargeSummaryCodingOutHeading2017To2018: String = s"${messages("chargeSummary.codingOut.text")}"
+    val chargeSummaryPoa1CodedOutHeading: String = messages("chargeSummary.poa1CodedOut.text")
+    val chargeSummaryPoa2CodedOutHeading: String = messages("chargeSummary.poa2CodedOut.text")
     val insetPara: String = s"${messages("chargeSummary.codingOutInset-1")} ${messages("chargeSummary.codingOutInset-2")} ${messages("pagehelp.opensInNewTabText")} ${messages("chargeSummary.codingOutInset-3")}"
     val paymentBreakdownInterestLocksCharging: String = messages("chargeSummary.paymentBreakdown.interestLocks.charging")
 
@@ -271,7 +273,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     val cancelledPayeTaxCodeInsetText = s"${messages("chargeSummary.cancelledPayeInset-1")} ${messages("chargeSummary.cancelledPayeInset-2")} ${messages("pagehelp.opensInNewTabText")}. ${messages("chargeSummary.cancelledPayeInset-3")}"
     val cancellledPayeTaxCodeInsetLink = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
 
-    def remainingTaxYouOwe(year: Int) = messages("chargeSummary.codingOutMessage", year - 1, year)
+    def remainingTaxYouOwe(year: Int) = messages("chargeSummary.codingOutBCDMessage", year - 1, year)
 
     val balancingChargeRequest: String = messages("chargeSummary.chargeHistory.request.balancingCharge.text")
     val dunningLockBannerHeader: String = messages("chargeSummary.dunning.locks.banner.title")
@@ -491,6 +493,27 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         document.select("tbody tr td:nth-child(2)").text() shouldBe paymentOnAccountInterestCreated(1)
         document.select("tbody tr td:nth-child(3)").text() shouldBe "£100.00"
       }
+
+      "charge is coded out" when {
+        "coding out is accepted" should {
+          "display the coded out details" when {
+
+            val codedOutPoaItem = chargeItemModel(transactionType = PoaOneDebit, codedOutStatus = Some(Accepted), originalAmount = 2500.00)
+            disable(FilterCodedOutPoas)
+            "Coding Out is Enabled" in new TestSetup(codedOutPoaItem) {
+              document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
+              document.select("h1").text() shouldBe chargeSummaryPoa1CodedOutHeading
+              document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2018)
+              document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
+              document.select("#coding-out-notice").text() shouldBe insetPara
+              document.select("#coding-out-notice-link").attr("href") shouldBe cancellledPayeTaxCodeInsetLink
+              document.select(".govuk-table").size() shouldBe 1
+              document.select(".govuk-table tbody tr").size() shouldBe 1
+              document.select(".govuk-table tbody tr").get(0).text() shouldBe s"29 Mar 2018 ${messages("chargeSummary.codingOutPayHistoryAmount", "2018", "2019")} £2,500.00"
+            }
+          }
+        }
+      }
     }
 
     "charge is a POA2" when {
@@ -572,6 +595,27 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         }
         "not have this extra poa charge content if there is no such charge" in new TestSetup(chargeItem = basePoaTwoDebit) {
           document.doesNotHave(Selectors.id("poa-extra-charge-content"))
+        }
+      }
+
+      "charge is coded out" when {
+        "coding out is accepted" should {
+          "display the coded out details" when {
+
+            val codedOutPoaItem = chargeItemModel(transactionType = PoaTwoDebit, codedOutStatus = Some(Accepted), originalAmount = 2500.00)
+            disable(FilterCodedOutPoas)
+            "Coding Out is Enabled" in new TestSetup(codedOutPoaItem) {
+              document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
+              document.select("h1").text() shouldBe chargeSummaryPoa2CodedOutHeading
+              document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2018)
+              document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
+              document.select("#coding-out-notice").text() shouldBe insetPara
+              document.select("#coding-out-notice-link").attr("href") shouldBe cancellledPayeTaxCodeInsetLink
+              document.select(".govuk-table").size() shouldBe 1
+              document.select(".govuk-table tbody tr").size() shouldBe 1
+              document.select(".govuk-table tbody tr").get(0).text() shouldBe s"29 Mar 2018 ${messages("chargeSummary.codingOutPayHistoryAmount", "2018", "2019")} £2,500.00"
+            }
+          }
         }
       }
     }
@@ -699,11 +743,11 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
             document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2018)
             document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
             document.select("#coding-out-notice").text() shouldBe insetPara
-            document.select("#coding-out-message").text() shouldBe codingOutMessage2017To2018WithStringMessagesArgument
+            document.select("#coding-out-message").text() shouldBe codingOutMessage2016To2017WithStringMessagesArgument
             document.select("#coding-out-notice-link").attr("href") shouldBe cancellledPayeTaxCodeInsetLink
             document.select(".govuk-table").size() shouldBe 1
             document.select(".govuk-table tbody tr").size() shouldBe 1
-            document.select(".govuk-table tbody tr").get(0).text() shouldBe s"29 Mar 2018 ${messages("chargeSummary.codingOutPayHistoryAmount", "2019", "2020")} £2,500.00"
+            document.select(".govuk-table tbody tr").get(0).text() shouldBe s"29 Mar 2018 ${messages("chargeSummary.codingOutPayHistoryAmount", "2018", "2019")} £2,500.00"
           }
         }
 
@@ -715,10 +759,10 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
             document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
             document.select("h1").text() shouldBe chargeSummaryCodingOutHeading2017To2018
             document.select("#coding-out-notice").text() shouldBe insetPara
-            document.select("#coding-out-message").text() shouldBe codingOutMessage2017To2018WithStringMessagesArgument
+            document.select("#coding-out-message").text() shouldBe codingOutMessage2016To2017WithStringMessagesArgument
             document.select("#coding-out-notice-link").attr("href") shouldBe cancellledPayeTaxCodeInsetLink
             document.selectById("paymentAmount").text() shouldBe "Payment amount £2,500.00"
-            document.selectById("codingOutRemainingToPay").text() shouldBe messages("chargeSummary.codingOutRemainingToPay", "2019", "2020")
+            document.selectById("codingOutRemainingToPay").text() shouldBe messages("chargeSummary.codingOutRemainingToPay", "2018", "2019")
             document.select(".govuk-table tbody tr").size() shouldBe 1
           }
 

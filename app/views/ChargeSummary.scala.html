@@ -205,9 +205,9 @@
     }
 }
 
-@codingOutMessage = {
+@codingOutBCDMessage = {
     @p(id=Some("coding-out-message")){
-        @messages("chargeSummary.codingOutMessage", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
+        @messages("chargeSummary.codingOutBCDMessage", viewModel.taxYearFromBCD.toString, viewModel.taxYearToBCD.toString)
     }
 }
 
@@ -274,20 +274,24 @@
 
     @getExplanationContent
 
-    @if(viewModel.chargeItem.codedOutStatus == Some(Accepted)){
+    @if(viewModel.chargeItem.codedOutStatus.contains(Accepted)){
         @checkPayeCodePara
         <div id="coding-out-wrapper">
             @govukInsetText(InsetText(content = HtmlContent(codingOutMessageInset)))
         </div>
-        @codingOutMessage
+        @if(viewModel.chargeItem.transactionType == BalancingCharge) {
+            @codingOutBCDMessage
+        }
     }
 
-    @if(viewModel.chargeItem.codedOutStatus == Some(Cancelled)){
+    @if(viewModel.chargeItem.codedOutStatus.contains(Cancelled)){
         @checkPayeCodePara
         <div id="cancelled-coding-out-wrapper">
             @govukInsetText(InsetText(content = HtmlContent(codingOutCancelledMessageInset)))
         </div>
-        @codingOutMessage
+        @if(viewModel.chargeItem.transactionType == BalancingCharge) {
+            @codingOutBCDMessage
+        }
     }
 
     @if(viewModel.codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment){
