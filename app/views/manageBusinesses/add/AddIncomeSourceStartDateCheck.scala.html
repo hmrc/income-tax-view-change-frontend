@@ -69,10 +69,8 @@
         <div class="govuk-form-group govuk-form-group--error">
         }
 
-        @h1(msg = messages("radioForm.checkDate.heading"), size = "l", id = Some("start-date-heading"))
-        @p(id=Some("start-date-value")){
-            @incomeSourceStartDate
-        }
+        @h1(msg = messages("radioForm.checkDate.heading.withDate", incomeSourceStartDate), size = "l", id = Some("start-date-heading"))
+
 
         @govukRadios(Radios(
             items = Seq(
