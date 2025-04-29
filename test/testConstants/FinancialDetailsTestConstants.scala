@@ -52,6 +52,7 @@ object FinancialDetailsTestConstants {
       "overDueAmount" -> 2.00,
       "totalBalance" -> 3.00
     ),
+    "codingDetails" -> Json.arr(),
     "documentDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> 2019,
@@ -162,6 +163,7 @@ object FinancialDetailsTestConstants {
       "overDueAmount" -> 2.00,
       "totalBalance" -> 3.00
     ),
+    "codingDetails" -> Json.arr(),
     "documentDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> 2019,

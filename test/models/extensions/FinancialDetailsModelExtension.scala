@@ -26,14 +26,14 @@ trait FinancialDetailsModelExtension {
   implicit class FinancialDetailsModelConversion(fdm: FinancialDetailsModel) {
     def documentDetailsFilterByTaxYear(taxYear: Int): List[DocumentDetail] = {
       fdm match {
-        case FinancialDetailsModel(_, documentDetails, _) =>
+        case FinancialDetailsModel(_, _, documentDetails, _) =>
           documentDetails.filter(_.taxYear == taxYear)
       }
     }
 
     def getAllDueDates: List[LocalDate] = {
       fdm match {
-        case FinancialDetailsModel(_, documentDetails, _) =>
+        case FinancialDetailsModel(_, _, documentDetails, _) =>
           documentDetails.flatMap(_.getDueDate())
       }
     }

@@ -333,7 +333,7 @@ object IncomeSourceIntegrationTestConstants {
     "balanceDueWithin30Days" -> 0.00,
     "overDueAmount" -> 0.00,
     "totalBalance" -> 0.00
-  ), "documentDetails" -> Json.arr(), "financialDetails" -> Json.arr())
+  ), "codingDetails" -> Json.arr(), "documentDetails" -> Json.arr(), "financialDetails" -> Json.arr())
 
   def propertyOnlyResponseWithMigrationData(year: Int,
                                             yearOfMigration: Option[String]): IncomeSourceDetailsModel = IncomeSourceDetailsModel(
@@ -347,6 +347,7 @@ object IncomeSourceIntegrationTestConstants {
   def testValidFinancialDetailsModelJsonSingleCharge(originalAmount: BigDecimal, outstandingAmount: BigDecimal,
                                                      taxYear: String = "2018", dueDate: String = "2018-02-14"): JsValue = Json.obj(
     "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+    "codingDetails" -> Json.arr(),
     "documentDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> taxYear,
@@ -442,6 +443,7 @@ object IncomeSourceIntegrationTestConstants {
       "overDueAmount" -> 2.00,
       "totalBalance" -> 3.00
     ),
+    "codingDetails" -> Json.arr(),
     "documentDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> taxYear.toInt,
@@ -571,6 +573,7 @@ object IncomeSourceIntegrationTestConstants {
       "overDueAmount" -> 2.00,
       "totalBalance" -> 3.00
     ),
+    "codingDetails" -> Json.arr(),
     "documentDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> taxYear.toInt,
@@ -690,6 +693,7 @@ object IncomeSourceIntegrationTestConstants {
                                                          taxYear: String = "2018", dueDate: String = "2018-04-14",
                                                          latePaymentInterestAmount: Option[BigDecimal] = Some(0)): JsValue = Json.obj(
     "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+    "codingDetails" -> Json.arr(),
     "documentDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> taxYear.toInt,
@@ -781,6 +785,7 @@ object IncomeSourceIntegrationTestConstants {
                                             taxYear: String = "2018", dueDate: String = "2018-04-14",
                                             latePaymentInterestAmount: BigDecimal = 0, interestDueDate: String = "2019-01-01"): JsValue = Json.obj(
     "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+    "codingDetails" -> Json.arr(),
     "documentDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> taxYear.toInt,
@@ -870,6 +875,7 @@ object IncomeSourceIntegrationTestConstants {
       "overDueAmount" -> 2.00,
       "totalBalance" -> 3.00
     ),
+    "codingDetails" -> Json.arr(),
     "documentDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> "2018".toInt,
@@ -910,6 +916,9 @@ object IncomeSourceIntegrationTestConstants {
                                                   latePaymentInterestAmount: BigDecimal = 0,
                                                   payeSaTaxYear: String = "2018", amountCodedOut: BigDecimal = 0): JsValue = Json.obj(
     "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+    "codingDetails" -> Json.arr(Json.obj(
+      "coded" -> Json.arr(Json.obj("amount" -> amountCodedOut, "initiationDate" -> s"$payeSaTaxYear-04-20"))
+    )),
     "documentDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> taxYear.toInt,
@@ -1054,6 +1063,7 @@ object IncomeSourceIntegrationTestConstants {
       "overDueAmount" -> 2.00,
       "totalBalance" -> 3.00
     ),
+    "codingDetails" -> Json.arr(),
     "documentDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> taxYear.toInt,
@@ -1220,6 +1230,7 @@ object IncomeSourceIntegrationTestConstants {
       "firstPendingAmountRequested" -> 3.00,
       "secondPendingAmountRequested" -> 2.00
     ),
+    "codingDetails" -> Json.arr(),
     "documentDetails" -> Json.arr(
       documentDetailsPayment("PAYID01", -500.0, LocalDate.of(taxYear.toInt, 3, 29)),
       Json.obj(
@@ -1398,6 +1409,7 @@ object IncomeSourceIntegrationTestConstants {
       "firstPendingAmountRequested" -> 3.00,
       "secondPendingAmountRequested" -> 2.00
     ),
+    "codingDetails" -> Json.arr(),
     "documentDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> taxYear.toInt,
@@ -1545,6 +1557,7 @@ object IncomeSourceIntegrationTestConstants {
       "overDueAmount" -> 2.00,
       "totalBalance" -> 3.00
     ),
+    "codingDetails" -> Json.arr(),
     "documentDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> taxYear.toInt,
@@ -1661,6 +1674,7 @@ object IncomeSourceIntegrationTestConstants {
       "overDueAmount" -> 2.00,
       "totalBalance" -> 3.00
     ),
+    "codingDetails" -> Json.arr(),
     "documentDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> taxYear.toInt,

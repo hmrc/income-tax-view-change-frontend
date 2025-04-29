@@ -227,6 +227,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+              codingDetails = List(CodingDetails(Some(Seq(CodedEntry(2500.00, LocalDate.parse("2020-04-20")))))),
               documentDetails = List(dd1, dd2, dd3),
               financialDetails = List(
                 FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000124), None, Some("ABCD1234"), Some("type"), Some(100), Some(100),
@@ -243,7 +244,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
               balancingChargeNics2.copy(dueDate = Some(LocalDate.parse("2021-08-24"))),
               balancingChargeCancelled.copy(dueDate =Some(LocalDate.parse("2021-08-25")))),
             outstandingChargesModel = None,
-            codedOutDocumentDetail = Some(balancingChargePaye)
+            codedOutDetails = Some(balancingCodedOut)
           )
         }
         "not return PoA charges if they have an amount coded out and filtering FS enabled" in {

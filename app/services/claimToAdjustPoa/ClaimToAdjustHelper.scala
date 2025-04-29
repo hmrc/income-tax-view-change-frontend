@@ -227,7 +227,7 @@ trait ClaimToAdjustHelper {
   protected def getFinancialDetailAndChargeRefModel(financialDetailModel: Option[FinancialDetailsModel]): Either[Throwable, FinancialDetailAndChargeRefMaybe] = {
     financialDetailModel match {
       case Some(
-      FinancialDetailsModel(_, documentDetails, FinancialDetail(_, _, _, _, _, chargeReference, _, _, _, _, _, _, _, _) :: _)) =>
+      FinancialDetailsModel(_, _, documentDetails, FinancialDetail(_, _, _, _, _, chargeReference, _, _, _, _, _, _, _, _) :: _)) =>
         Right(FinancialDetailAndChargeRefMaybe(documentDetails, chargeReference))
       case _ =>
         Left(new Exception("Failed to retrieve non-crystallised financial details"))

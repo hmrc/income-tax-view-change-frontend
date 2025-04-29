@@ -18,7 +18,7 @@ package audit.models
 
 import audit.Utilities._
 import auth.MtdItUser
-import models.financialDetails.{ChargeItem, WhatYouOweChargesList}
+import models.financialDetails.{ChargeItem, CodingOutDetails, WhatYouOweChargesList}
 import models.outstandingCharges.OutstandingChargesModel
 import play.api.libs.json._
 import services.DateServiceInterface
@@ -37,7 +37,7 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
     whatYouOweChargesList.chargesList.map(documentDetails) ++ whatYouOweChargesList.outstandingChargesModel.map(outstandingChargeDetails)
 
   override val detail: JsValue = {
-    (whatYouOweChargesList.codedOutDocumentDetail.map(chargeItem => Json.obj("codingOut" -> codingOut(chargeItem)))) match {
+    (whatYouOweChargesList.codedOutDetails.map(chargeItem => Json.obj("codingOut" -> codingOut(chargeItem)))) match {
       case Some(codingOutJson) => userAuditDetails(user) ++
         balanceDetailsJson ++
         Json.obj("charges" -> docDetailsListJson) ++
@@ -99,10 +99,10 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
     ("dueDate", outstandingCharge.bcdChargeType.map(_.relevantDueDate)) ++
     ("accruingInterest", outstandingCharge.aciChargeType.map(_.chargeAmount))
 
-  private def codingOut(chargeItem: ChargeItem): JsObject = {
+  private def codingOut(chargeItem: CodingOutDetails): JsObject = {
       Json.obj(
         "amountCodedOut" -> chargeItem.amountCodedOut,
-        "endTaxYear" -> chargeItem.taxYear.endYear.toString
+        "endTaxYear" -> chargeItem.codingTaxYear.endYear.toString
       )
   }
 }
