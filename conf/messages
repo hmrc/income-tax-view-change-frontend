@@ -1158,6 +1158,7 @@ chargeSummary.paymentAllocations.bcd.cgt                           = Payment all
 chargeSummary.paymentAllocations.mfaDebit                          = Payment put towards HMRC adjustment
 
 chargeSummary.codingOutHeader                                      = Self Assessment payment (through your PAYE tax code)
+chargeSummary.codingOutMessage                                     = This is the remaining tax you owe for the {0} to {1} tax year.
 chargeSummary.codingOutBCDMessage                                  = This is the remaining tax you owe for the {0} to {1} tax year.
 chargeSummary.codingOutRemainingToPay                              = (Collected through your PAYE tax code for {0} to {1} tax year)
 chargeSummary.codingOutInset-1                                     = If this tax cannot be collected

@@ -178,6 +178,11 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   val testBalancingPaymentChargeWithZeroValue: List[TaxYearSummaryChargeItem] = List(
     chargeItemModel(transactionType = BalancingCharge, originalAmount = 0.0, latePaymentInterestAmount = None)).map(TaxYearSummaryChargeItem.fromChargeItem)
 
+  def testPaymentsOnAccountCodedOut(codedOutStatus: CodedOutStatusType): List[TaxYearSummaryChargeItem] = List(
+    chargeItemModel(transactionType = PoaOneDebit, codedOutStatus = Some(codedOutStatus), latePaymentInterestAmount = None),
+    chargeItemModel(transactionType = PoaTwoDebit, codedOutStatus = Some(codedOutStatus), latePaymentInterestAmount = None)
+  ).map(TaxYearSummaryChargeItem.fromChargeItem)
+
   val testPaymentsOnAccountCodedOut: List[TaxYearSummaryChargeItem] = List(
     chargeItemModel(transactionType = PoaOneDebit, codedOutStatus = Some(Accepted), latePaymentInterestAmount = None),
     chargeItemModel(transactionType = PoaTwoDebit, codedOutStatus = Some(Accepted), latePaymentInterestAmount = None)
@@ -254,8 +259,12 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   def testBalancingPaymentChargeWithZeroValueView(isAgent: Boolean = false): Html = taxYearSummaryView(
     testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testBalancingPaymentChargeWithZeroValue, testObligationsModel, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
-  def testPaymentOnAccountChargesCodedOutView(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testPaymentsOnAccountCodedOut, testObligationsModel, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
+  def testPaymentOnAccountChargesCodedOutAcceptedView(isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testPaymentsOnAccountCodedOut(Accepted), testObligationsModel, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
+
+  def testPaymentOnAccountChargesCodedOutFullyCollectedView(isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testPaymentsOnAccountCodedOut(FullyCollected), testObligationsModel, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
+
 
   def immediatelyRejectedByNpsView(isAgent: Boolean = false): Html = taxYearSummaryView(
     testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), immediatelyRejectedByNps, testObligationsModel, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
@@ -780,7 +789,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         paymentTypeLinkOption.isEmpty shouldBe true
       }
 
-      "display payments on account on the payments table when coding out is accepted" in new Setup(testPaymentOnAccountChargesCodedOutView()) {
+      "display payments on account on the payments table when coding out is accepted" in new Setup(testPaymentOnAccountChargesCodedOutAcceptedView()) {
         val paymentTypeText1: Element = layoutContent.getElementById("paymentTypeLink-0")
         val paymentTabRow1: Element = layoutContent.getElementById("payments-table").getElementsByClass("govuk-table__row").get(1)
         paymentTabRow1.getElementsByClass("govuk-table__cell").first().text() shouldBe "N/A"

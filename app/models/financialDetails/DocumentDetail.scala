@@ -140,6 +140,16 @@ case class DocumentDetail(taxYear: Int,
     }
   }
 
+  def isCodingOutFullyCollectedPoa(financialDetails: List[FinancialDetail]): Boolean = {
+    financialDetails.exists { financialDetail =>
+      financialDetail.items.exists { subItems =>
+        subItems.exists { subItem =>
+          subItem.codedOutStatus.contains(CODING_OUT_FULLY_COLLECTED.code)
+        }
+      }
+    }
+  }
+
   // TODO: duplicate logic, in scope of => https://jira.tools.tax.service.gov.uk/browse/MISUV-8557
   def getChargeTypeKey: String = documentDescription match {
     case Some(Poa1Charge.key) => "paymentOnAccount1.text"
