@@ -74,20 +74,20 @@ object IncomeSourceDetailsTestConstants {
   val ukPlusForeignPropertyAndSoleTrader2023WithUnknowns = IncomeSourceDetailsModel(testNino, testMtditid, Some("2023"), List(businessWithLatencyAndUnknowns), List(ukPropertyWithLatencyDetailsAndUnknowns, foreignPropertyWithLatencyDetailsAndUnknowns))
   val twoActiveUkPropertyBusinesses = IncomeSourceDetailsModel(testNino, testMtditid, Some("2023"), List(), List(ukPropertyDetails2, ukPropertyDetails))
   val addressModel1: Option[AddressModel] = Some(AddressModel(
-    addressLine1 = "Line 1",
+    addressLine1 = Some("Line 1"),
     addressLine2 = Some("Line 2"),
     addressLine3 = Some("Line 3"),
     addressLine4 = Some("Line 4"),
     postCode = Some("LN1 1NL"),
-    countryCode = "NI"
+    countryCode = Some("NI")
   ))
   val addressModel2: Option[AddressModel] = Option(AddressModel(
-    addressLine1 = "A Line 1",
+    addressLine1 = Some("A Line 1"),
     addressLine2 = None,
     addressLine3 = Some("A Line 3"),
     addressLine4 = None,
     postCode = Some("LN2 2NL"),
-    countryCode = "GB"
+    countryCode = Some("GB")
   ))
 
   val foreignPropertyAndCeasedBusinessesIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), List(ceasedBusiness2), List(foreignPropertyDetails, ceasedUKPropertyDetailsCessation2020, ceasedForeignPropertyDetailsCessation2023))

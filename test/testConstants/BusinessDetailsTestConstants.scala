@@ -37,7 +37,7 @@ object BusinessDetailsTestConstants {
   val year2024: Int = 2024
 
   val fixedDate : LocalDate = LocalDate.of(2023, 12, 15)
-  val address = AddressModel("8 Test", Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), "United Kingdom")
+  val address = AddressModel(Some("8 Test"), Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), Some("United Kingdom"))
   val businessIncomeSourceId = "1234"
 
   val getCurrentTaxYearEnd: LocalDate = {
@@ -56,12 +56,12 @@ object BusinessDetailsTestConstants {
   val testTradeNameOption: Option[String] = Some("nextUpdates.business")
   val testTradeNameOption2: Option[String] = Some("nextUpdates.business2")
   val testBizAddress = AddressModel(
-    addressLine1 = "64 Zoo Lane",
+    addressLine1 = Some("64 Zoo Lane"),
     addressLine2 = Some("Happy Place"),
     addressLine3 = Some("Magical Land"),
     addressLine4 = Some("England"),
     postCode = Some("ZL1 064"),
-    countryCode = "UK"
+    countryCode = Some("UK")
   )
   val testContactDetails = ContactDetailsModel(Some("123456789"), Some("0123456789"), Some("8008135"), Some("google@chuckNorris.com"))
   val testCessation = CessationModel(Some(LocalDate.of(year2018, Month.JANUARY, 1)))
