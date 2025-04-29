@@ -323,7 +323,7 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-three-quarters">
                 @h1(msg = getMessage("heading"), id = Some("page-heading"))
-                @if(viewModel.whatYouOweChargesList.isChargesListEmpty && viewModel.whatYouOweChargesList.codedOutDocumentDetail.isEmpty) {
+                @if(viewModel.whatYouOweChargesList.isChargesListEmpty && viewModel.whatYouOweChargesList.codedOutDetails.isEmpty) {
                     @p(id = Some("no-payments-due"))(Html(getNoPaymentsDueText))
 
                     @getClaimToAdjustPoaSection
@@ -556,9 +556,9 @@
 
                         @getClaimToAdjustPoaSection
 
-                        @viewModel.whatYouOweChargesList.codedOutDocumentDetail.map { codedOutDocumentDetail =>
+                        @viewModel.whatYouOweChargesList.codedOutDetails.map { codingOutDetails =>
                             <div id="coding-out-wrapper">
-                                @govukInsetText(InsetText(content = HtmlContent(codingOutInsetContent(codedOutDocumentDetail))))
+                                @govukInsetText(InsetText(content = HtmlContent(codingOutInsetContent(codingOutDetails))))
                             </div>
                         }
                         @if(viewModel.whatYouOweChargesList.isChargesListEmpty) {
@@ -600,27 +600,27 @@
         </div>
     }
 
-    @getCodingOutHref(taxYear: Int, transactionId: String) = @{
+    @getCodingOutHref(taxYear: Int) = @{
         if(user.isAgent()) {
-            controllers.routes.ChargeSummaryController.showAgent(taxYear, transactionId, false)
+            controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear)
         } else {
-            controllers.routes.ChargeSummaryController.show(taxYear, transactionId, false, origin = origin)
+            controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin = origin)
         }
     }
 
-    @codingOutInsetContent(codedOutDocumentDetail: ChargeItem) = {
+    @codingOutInsetContent(codingOutDetails: CodingOutDetails) = {
     @p(id = Some("coding-out-notice"), classes = "govuk-body coding-out-notice") {
         @if(user.isAgent()) {
             @getMessage("codingOut-1a")
         } else {
             @getMessage("credit-overpaid-prefix")
         }
-        <a class="govuk-link" id="coding-out-summary-link" href="@getCodingOutHref(codedOutDocumentDetail.taxYear.endYear, codedOutDocumentDetail.transactionId)">
-        @codedOutDocumentDetail.getAmountCodedOut.toCurrency
+        <a class="govuk-link" id="coding-out-summary-link" href="@getCodingOutHref(codingOutDetails.codingTaxYear.endYear)">
+        @codingOutDetails.amountCodedOut.toCurrency
         </a>
         @getMessage("codingOut-1b")
-        <b>@getMessage("codingOut-2", (codedOutDocumentDetail.taxYear.endYear - 1).toString(),
-            codedOutDocumentDetail.taxYear.endYear.toString)</b>
+        <b>@getMessage("codingOut-2", (codingOutDetails.codingTaxYear.endYear - 1).toString(),
+            codingOutDetails.codingTaxYear.endYear.toString)</b>
         @if(user.isAgent()) {
             @getMessage("codingOut-3")
         } else {

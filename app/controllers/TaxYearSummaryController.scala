@@ -22,7 +22,6 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import enums.CodingOutType.CODING_OUT_FULLY_COLLECTED
 import enums.GatewayPage.TaxYearSummaryPage
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import implicits.ImplicitDateFormatter
@@ -152,7 +151,7 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
                                    (implicit user: MtdItUser[_]): Future[Result] = {
 
     financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
-      case financialDetails@FinancialDetailsModel(_, documentDetails, fd) =>
+      case financialDetails@FinancialDetailsModel(_, _, documentDetails, fd) =>
 
         val getChargeItem: DocumentDetail => Option[ChargeItem] = getChargeItemOpt(financialDetails = financialDetails.financialDetails)
 

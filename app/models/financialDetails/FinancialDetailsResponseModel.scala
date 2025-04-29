@@ -33,6 +33,7 @@ sealed trait FinancialDetailsResponseModel
 // TODO-[1]: make balanceDetails private val -> apply re-design and fix test failures where needed
 // TODO-[2]: make financialDetails private val -> ~
 case class FinancialDetailsModel(balanceDetails: BalanceDetails,
+                                 codingDetails: List[CodingDetails] = List(),
                                  private val documentDetails: List[DocumentDetail],
                                  financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
 
@@ -101,6 +102,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     val filteredDocuments = documentDetails.filter(document => document.paymentLot.isDefined && document.paymentLotItem.isDefined)
     FinancialDetailsModel(
       balanceDetails,
+      codingDetails,
       filteredDocuments,
       financialDetails.filter(financial => filteredDocuments.map(_.transactionId).contains(financial.transactionId.get))
     )
@@ -147,7 +149,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   }
 
   def mergeLists(financialDetailsModel: FinancialDetailsModel): FinancialDetailsModel = {
-    FinancialDetailsModel(balanceDetails, documentDetails ++ financialDetailsModel.documentDetails,
+    FinancialDetailsModel(balanceDetails, codingDetails, documentDetails ++ financialDetailsModel.documentDetails,
       financialDetails ++ financialDetailsModel.financialDetails)
   }
 

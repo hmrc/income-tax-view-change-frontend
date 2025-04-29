@@ -420,8 +420,8 @@ object FinancialDetailsIntegrationTestConstants  extends ComponentSpecBase {
   )
 
   val financialDetailsWithMFADebits: FinancialDetailsModel = FinancialDetailsModel(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    List(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    documentDetails = List(
       DocumentDetail(
         taxYear = currentDate.getYear,
         transactionId = "testMFA1",
@@ -446,7 +446,7 @@ object FinancialDetailsIntegrationTestConstants  extends ComponentSpecBase {
         interestEndDate = None,
         effectiveDateOfPayment = Some(LocalDate.of(2021, 4, 22))
       )),
-    List(
+    financialDetails = List(
       FinancialDetail(
         taxYear = currentDate.getYear.toString,
         transactionId = Some("testMFA1"),
