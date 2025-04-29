@@ -50,9 +50,10 @@ class IncomeSourceRFService@Inject()(val sessionService: SessionService,
   private val currentTy: TaxYear = dateService.getCurrentTaxYear
   private val nextTy: TaxYear = dateService.getNextTaxYear
 
-  private def redirectToIncomeSourceAddedPage(isAgent: Boolean, incomeSourceType: IncomeSourceType): Future[Result] =
+  private def redirectToIncomeSourceAddedPage(isAgent: Boolean, incomeSourceType: IncomeSourceType): Future[Result] = {
     if (isAgent) Future.successful(Redirect(routes.IncomeSourceAddedController.showAgent(incomeSourceType)))
     else Future.successful(Redirect(routes.IncomeSourceAddedController.show(incomeSourceType)))
+  }
 
   private def isItsaStatusMandatedOrVoluntary(itsaStatusDetail: Option[StatusDetail]): Boolean = {
     itsaStatusDetail.exists(_.isMandatedOrVoluntary)
@@ -68,13 +69,8 @@ class IncomeSourceRFService@Inject()(val sessionService: SessionService,
 
   private def isCrystallisedForCurrTyAndNextTy(implicit user: MtdItUser[_],
                                                hc: HeaderCarrier): Future[(Boolean, Boolean)] = {
-    println(Console.MAGENTA + "Hello" + Console.RESET)
-    println(Console.MAGENTA + currentTy + Console.RESET)
-    println(Console.MAGENTA + nextTy + Console.RESET)
     calculationListService.determineTaxYearCrystallised(currentTy.endYear) flatMap { isCrystallisedForCurrTy =>
-      println(Console.MAGENTA + "Hi" + Console.RESET)
       calculationListService.determineTaxYearCrystallised(nextTy.endYear) map { isCrystallisedForNextTy =>
-        println(Console.MAGENTA + "Help" + Console.RESET)
         (isCrystallisedForCurrTy, isCrystallisedForNextTy)
       }
     }
@@ -84,8 +80,8 @@ class IncomeSourceRFService@Inject()(val sessionService: SessionService,
                                                      incomeSourceReportingFrequencySourceData: IncomeSourceReportingFrequencySourceData
                                                      )
                                                     (implicit hc: HeaderCarrier): Future[UIJourneySessionData] = {
-
     val updatedSessionData: UIJourneySessionData = sessionData.copy(incomeSourceReportingFrequencyData = Some(incomeSourceReportingFrequencySourceData))
+
     sessionService.setMongoData(updatedSessionData).flatMap {
       case true => Future.successful(updatedSessionData)
       case _ =>
@@ -104,7 +100,6 @@ class IncomeSourceRFService@Inject()(val sessionService: SessionService,
       (nextTyStatus.exists(_.status == ITSAStatus.NoStatus)
         && currentTyStatus.exists(cys => cys.status == ITSAStatus.Annual && cys.statusReason == StatusReason.Rollover)) ||
       (isItsaStatusAnnual(currentTyStatus) && isItsaStatusAnnual(nextTyStatus))
-
   }
 
   private def redirectToRFPageChecks(latencyDetails: Option[LatencyDetails],
@@ -132,11 +127,14 @@ class IncomeSourceRFService@Inject()(val sessionService: SessionService,
           updateChooseTaxYearsModelInSessionData(sessionData, IncomeSourceReportingFrequencySourceData(true, false, false, false)).flatMap(
           codeBlock(_))
         case (false, _, _, _) if isItsaStatusMandatedOrVoluntary(currentTyStatusDetailOpt) =>
-          updateChooseTaxYearsModelInSessionData(sessionData, IncomeSourceReportingFrequencySourceData(true, true, false, false)).flatMap(
-            codeBlock(_))
+          updateChooseTaxYearsModelInSessionData(sessionData, IncomeSourceReportingFrequencySourceData(true, true, false, false)).flatMap{a =>
+            codeBlock(a)
+          }
         case _ => redirectToIncomeSourceAddedPage(isAgent, incomeSourceType)
       }
-    } else redirectToIncomeSourceAddedPage(isAgent, incomeSourceType)
+    } else {
+      redirectToIncomeSourceAddedPage(isAgent, incomeSourceType)
+    }
   }
 
   def redirectChecksForIncomeSourceRF(incomeSourceJourneyType: IncomeSourceJourneyType,
@@ -149,26 +147,20 @@ class IncomeSourceRFService@Inject()(val sessionService: SessionService,
                                      (implicit user: MtdItUser[_],
                                       hc: HeaderCarrier): Future[Result] = {
     withSessionDataAndNewIncomeSourcesFS(incomeSourceJourneyType, journeyState) { sessionData =>
+
       if(isChange) {
-        println(Console.MAGENTA + "Test 1" + Console.RESET)
         codeBlock(sessionData)
       } else {
         sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
           case Some(id) =>
-            println(Console.MAGENTA + "Test A" + Console.RESET)
-            println(Console.CYAN + user.incomeSources + Console.RESET)
             val latencyDetails = user.incomeSources.getLatencyDetails(incomeSourceType, id)
-            println(Console.MAGENTA + latencyDetails + Console.RESET)
             isCrystallisedForCurrTyAndNextTy flatMap { isCrystallisedForCTy1AndNTy2 =>
-              println(Console.MAGENTA + "Bye" + Console.RESET)
               itsaStatusService.getStatusTillAvailableFutureYears(TaxYear(currentTaxYearEnd - 1, currentTaxYearEnd)).flatMap {
                 statusTaxYearMap =>
                   if (redirectToCompletionPageConditions(statusTaxYearMap.get(currentTy), statusTaxYearMap.get(nextTy),
                     isCrystallisedForCTy1AndNTy2._1, isCrystallisedForCTy1AndNTy2._2, latencyDetails)) {
-                    println(Console.MAGENTA + "Test 2" + Console.RESET)
                     redirectToIncomeSourceAddedPage(isAgent, incomeSourceType)
                   } else {
-                    println(Console.MAGENTA + "Test 3" + Console.RESET)
                     redirectToRFPageChecks(latencyDetails, statusTaxYearMap.get(currentTy), statusTaxYearMap.get(nextTy),
                       isCrystallisedForCTy1AndNTy2._1, isCrystallisedForCTy1AndNTy2._2, incomeSourceType, isAgent, sessionData)(codeBlock)
                   }

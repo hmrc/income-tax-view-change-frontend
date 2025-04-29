@@ -24,25 +24,36 @@ import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockSessionService}
 import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
-import models.itsaStatus.ITSAStatus.Annual
+import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
+import models.itsaStatus.StatusReason.{Rollover, SignupReturnAvailable, StatusReason}
+import models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
+import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Result, Results}
+import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import services.DateService
 import services.optIn.OptInServiceSpec.statusDetailWith
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{addedIncomeSourceUIJourneySessionData, completedUIJourneySessionData, emptyUIJourneySessionData, noIncomeDetails, notCompletedUIJourneySessionData, singleBusinessIncomeWithLatency2019}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{addedIncomeSourceUIJourneySessionData, completedUIJourneySessionData, emptyUIJourneySessionData, noIncomeDetails, notCompletedUIJourneySessionData, singleBusinessIncome2023, singleBusinessIncomeWithLatency2019}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class IncomeSourceRFServiceSpec extends TestSupport
   with MockSessionService
   with MockITSAStatusService
   with MockCalculationListService
-  with MockDateService
   with AuthActionsSpecHelper {
+
+  object mockDateService extends DateService() {
+    override def getCurrentDate: LocalDate = LocalDate.parse(s"2022-04-01")
+
+    override def getCurrentTaxYearEnd: Int = 2023
+  }
 
   val incomeSourceRFService = new IncomeSourceRFService(
     mockSessionService,
@@ -54,82 +65,127 @@ class IncomeSourceRFServiceSpec extends TestSupport
     mockAppConfig
   )
 
-  val incomeSourceType = SelfEmployment
-  val incomeSourceJourneyType = IncomeSourceJourneyType(Add, incomeSourceType)
-  val journeyState = AfterSubmissionPage
-  val currentTaxYearEnd = mockDateService.getCurrentTaxYearEnd
-  val isAgent = false
-  val isChange = false
-  def journeySessionCodeBlock: UIJourneySessionData => Future[Result] = (_) => Future.successful(Results.Ok("Successful"))
-
-  val forYearEnd = 2023
-  val currentTaxYear = TaxYear.forYearEnd(forYearEnd)
-  val nextTaxYear = currentTaxYear.nextYear
-
-  val testUser: MtdItUser[_] = defaultMTDITUser(Some(Individual), singleBusinessIncomeWithLatency2019)
   implicit val hc: HeaderCarrier = mock(classOf[HeaderCarrier])
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
-    setupMockGetCurrentTaxYearEnd(2023)
+  class Setup(withLatency: Boolean, CYStatus: ITSAStatus, CYStatusReason: StatusReason, NYStatus: ITSAStatus, NYStatusReason: StatusReason, isCYCrystallised: Boolean = false) {
+    enable(IncomeSourcesNewJourney)
+
+    setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment)))))
+    setupMockSetMongoData(true)
+
+    when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.eq(2023))(any(), any())).thenReturn(Future.successful(isCYCrystallised))
+    when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.eq(2024))(any(), any())).thenReturn(Future.successful(false))
+
+    when(mockITSAStatusService.getStatusTillAvailableFutureYears(any())(any(), any(), any()))
+      .thenReturn(Future.successful(
+        Map(TaxYear.forYearEnd(2023) -> StatusDetail("", CYStatus, CYStatusReason), TaxYear.forYearEnd(2024) -> StatusDetail("", NYStatus, NYStatusReason))
+      ))
+
+    val testUser = if (withLatency) defaultMTDITUser(Some(Individual), singleBusinessIncome2023) else defaultMTDITUser(Some(Individual), singleBusinessIncomeWithLatency2019)
+    def journeySessionCodeBlock: UIJourneySessionData => Future[Result] = (_) => Future.successful(Results.SeeOther("Successful"))
+
   }
 
   "redirectChecksForIncomeSourceRF" should {
     "redirect to the income source added page" when {
-      "business latency status is unknown" in {
-
-      }
-      "business is annual for CY and the status reason for CY is Rollover" in {
-        setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(incomeSourceJourneyType))))
-        enable(IncomeSourcesNewJourney)
-
-        when(mockITSAStatusService.getStatusTillAvailableFutureYears(any())(any(), any(), any()))
-          .thenReturn(Future.successful(
-            Map(currentTaxYear -> statusDetailWith(Annual), nextTaxYear -> statusDetailWith(Annual))
-          ))
-
-        setupMockGetCurrentTaxYearEnd(2023)
-        setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
-
-        when(mockDateService.getCurrentTaxYear).thenReturn(TaxYear(2025, 2056))
-        when(mockDateService.getNextTaxYear).thenReturn(TaxYear(2026, 2027))
-
-
-        when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.anyInt())(any(), any())).thenReturn(Future.successful(false))
-
+      "business latency status is unknown" in new Setup(false, NoStatus, SignupReturnAvailable, Annual, SignupReturnAvailable) {
         val result = incomeSourceRFService.redirectChecksForIncomeSourceRF(
-          incomeSourceJourneyType,
-          journeyState,
-          incomeSourceType,
-          currentTaxYearEnd,
-          isAgent,
-          isChange
+          IncomeSourceJourneyType(Add, SelfEmployment),
+          AfterSubmissionPage,
+          SelfEmployment,
+          mockDateService.getCurrentTaxYearEnd,
+          false,
+          false
         )(journeySessionCodeBlock)(testUser, hc)
 
-        result.value shouldBe ""
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/manage-your-businesses/add-sole-trader/business-added")
+      }
 
+      "business is annual for CY and the status reason for CY is Rollover" in new Setup(false, Annual, Rollover, Annual, SignupReturnAvailable) {
+        val result = incomeSourceRFService.redirectChecksForIncomeSourceRF(
+          IncomeSourceJourneyType(Add, SelfEmployment),
+          AfterSubmissionPage,
+          SelfEmployment,
+          mockDateService.getCurrentTaxYearEnd,
+          false,
+          false
+        )(journeySessionCodeBlock)(testUser, hc)
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/manage-your-businesses/add-sole-trader/business-added")
       }
     }
-    "redirect to reporting frequency page" when {
-      "business is in latency for CY & CY+1 and CY is crystallised" in {
+    "redirect to the url within the codeblock returned" when {
+      "business is in latency for CY & CY+1 and CY is crystallised" in new Setup(true, Voluntary, SignupReturnAvailable, Voluntary, SignupReturnAvailable, true) {
+        val result = incomeSourceRFService.redirectChecksForIncomeSourceRF(
+          IncomeSourceJourneyType(Add, SelfEmployment),
+          AfterSubmissionPage,
+          SelfEmployment,
+          mockDateService.getCurrentTaxYearEnd,
+          false,
+          false
+        )(journeySessionCodeBlock)(testUser, hc)
 
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some("Successful")
       }
-      "business is in latency for CY & CY+1 and CY is NOT crystallised" in {
 
+      "business is in latency for CY & CY+1 and CY is NOT crystallised" in new Setup(true, Voluntary, SignupReturnAvailable, Voluntary, SignupReturnAvailable) {
+        val result = incomeSourceRFService.redirectChecksForIncomeSourceRF(
+          IncomeSourceJourneyType(Add, SelfEmployment),
+          AfterSubmissionPage,
+          SelfEmployment,
+          mockDateService.getCurrentTaxYearEnd,
+          false,
+          false
+        )(journeySessionCodeBlock)(testUser, hc)
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some("Successful")
       }
-      "business is annual for CY and the status reason is NOT Rollover" in {
 
+      "business is annual for CY and the status reason is NOT Rollover" in new Setup(true, Annual, SignupReturnAvailable, Voluntary, SignupReturnAvailable) {
+        val result = incomeSourceRFService.redirectChecksForIncomeSourceRF(
+          IncomeSourceJourneyType(Add, SelfEmployment),
+          AfterSubmissionPage,
+          SelfEmployment,
+          mockDateService.getCurrentTaxYearEnd,
+          false,
+          false
+        )(journeySessionCodeBlock)(testUser, hc)
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some("Successful")
       }
-      "business is annual for CY and mandated or voluntary for CY+1" in {
 
+      "business is annual for CY and mandated or voluntary for CY+1" in new Setup(true, Annual, SignupReturnAvailable, Mandated, SignupReturnAvailable) {
+        val result = incomeSourceRFService.redirectChecksForIncomeSourceRF(
+          IncomeSourceJourneyType(Add, SelfEmployment),
+          AfterSubmissionPage,
+          SelfEmployment,
+          mockDateService.getCurrentTaxYearEnd,
+          false,
+          false
+        )(journeySessionCodeBlock)(testUser, hc)
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some("Successful")
       }
-      "business is mandated/voluntary for CY and annual for CY+1" in {
 
+      "business is mandated/voluntary for CY and annual for CY+1" in new Setup(true, Mandated, SignupReturnAvailable, Annual, SignupReturnAvailable) {
+        val result = incomeSourceRFService.redirectChecksForIncomeSourceRF(
+          IncomeSourceJourneyType(Add, SelfEmployment),
+          AfterSubmissionPage,
+          SelfEmployment,
+          mockDateService.getCurrentTaxYearEnd,
+          false,
+          false
+        )(journeySessionCodeBlock)(testUser, hc)
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some("Successful")
       }
     }
   }
-
-
-
 }

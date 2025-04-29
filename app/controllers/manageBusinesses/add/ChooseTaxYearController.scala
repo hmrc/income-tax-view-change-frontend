@@ -73,6 +73,7 @@ class ChooseTaxYearController @Inject()(authActions: AuthActions,
           sessionData.incomeSourceReportingFrequencyData.fold(form())(_ => form().fill(data))
         } else form()
       }
+
       Future.successful(Ok(chooseTaxYear(
         filledOrEmptyForm,
         isAgent,

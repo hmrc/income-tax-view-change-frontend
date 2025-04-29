@@ -97,18 +97,13 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
   def withSessionDataAndNewIncomeSourcesFS(incomeSources: IncomeSourceJourneyType, journeyState: JourneyState)
                                           (codeBlock: UIJourneySessionData => Future[Result])
                                           (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+
     withNewIncomeSourcesFS {
-      println(Console.CYAN + sessionService.getMongo(incomeSources) + Console.RESET)
       sessionService.getMongo(incomeSources).flatMap {
         case Right(Some(data: UIJourneySessionData)) if showCannotGoBackErrorPage(data, incomeSources, journeyState) =>
-          println(Console.GREEN + "1" + Console.RESET)
-          println(Console.GREEN + useDefaultRedirect(data, incomeSources, journeyState) + Console.RESET)
           redirectUrl(incomeSources, useDefaultRedirect(data, incomeSources, journeyState))(user)
-        case Right(Some(data: UIJourneySessionData)) =>
-          println(Console.GREEN + "2" + Console.RESET)
-          codeBlock(data)
+        case Right(Some(data: UIJourneySessionData)) => codeBlock(data)
         case Right(None) =>
-          println(Console.GREEN + "3" + Console.RESET)
           if (journeyState == InitialPage) {
             sessionService.createSession(incomeSources).flatMap { _ =>
               val data = UIJourneySessionData(hc.sessionId.get.value, incomeSources.toString)
@@ -129,25 +124,12 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
     val incomeSourceCreatedJourneyComplete = data.addIncomeSourceData.flatMap(_.incomeSourceCreatedJourneyComplete).getOrElse(false)
     val incomeSourceAdded = data.addIncomeSourceData.flatMap(_.incomeSourceAdded).getOrElse(false)
     (incomeSources.operation, journeyState) match {
-      case (_, CannotGoBackPage) =>
-        println(Console.MAGENTA + "A" + Console.RESET)
-        false
-      case (Add, BeforeSubmissionPage) | (Add, InitialPage) =>
-        println(Console.MAGENTA + "B" + Console.RESET)
-         incomeSourceCreatedJourneyComplete || incomeSourceAdded
-      case (Add, ReportingFrequencyPages) =>
-        println(Console.MAGENTA + "C" + Console.RESET)
-        (incomeSourceCreatedJourneyComplete || incomeSourceAdded) &&
-        data.addIncomeSourceData.flatMap(_.incomeSourceRFJourneyComplete).getOrElse(false)
-      case (Add, _) =>
-        println(Console.MAGENTA + "D" + Console.RESET)
-        incomeSourceCreatedJourneyComplete
-      case (Manage, _) =>
-        println(Console.MAGENTA + "E" + Console.RESET)
-        data.manageIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
-      case (Cease, _) =>
-        println(Console.MAGENTA + "F" + Console.RESET)
-        data.ceaseIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
+      case (_, CannotGoBackPage) => false
+      case (Add, BeforeSubmissionPage) | (Add, InitialPage) => incomeSourceCreatedJourneyComplete || incomeSourceAdded
+      case (Add, ReportingFrequencyPages) => (incomeSourceCreatedJourneyComplete || incomeSourceAdded) && data.addIncomeSourceData.flatMap(_.incomeSourceRFJourneyComplete).getOrElse(false)
+      case (Add, _) => incomeSourceCreatedJourneyComplete
+      case (Manage, _) => data.manageIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
+      case (Cease, _) => data.ceaseIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
       case _ => false
     }
   }

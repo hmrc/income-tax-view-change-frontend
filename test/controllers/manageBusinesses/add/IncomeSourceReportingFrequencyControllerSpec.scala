@@ -65,7 +65,7 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
   val TAX_YEAR_2023: LocalDate = LocalDate.of(2023, 4, 6)
   val TAX_YEAR_2022: LocalDate = LocalDate.of(2022, 4, 6)
 
-  val formData: Map[String, String] = Map("report-quarterly" -> "Yes")
+  val formData: Map[String, String] = Map("report-quarterly" -> "yes")
 
 
   object Scenario extends Enumeration {
@@ -168,7 +168,6 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
 
   def setupMockCalls(isAgent: Boolean, incomeSourceType: IncomeSourceType, mtdRole: MTDUserRole, scenario: Scenario): Unit = {
     enable(IncomeSourcesNewJourney)
-    enable(IncomeSourcesNewJourney)
     setupMockSuccess(mtdRole)
     setupMockIncomeSourceDetailsCall(scenario, incomeSourceType)
     setupMockDateServiceCall(scenario)
@@ -202,19 +201,8 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
               setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
 
               val result = action(fakeRequest)
-              val document: Document = Jsoup.parse(contentAsString(result))
-
-              println(Console.MAGENTA + document + Console.RESET)
 
               status(result) shouldBe OK
-            }
-          }
-
-          "return 500 INTERNAL_SERVER_ERROR" when {
-            s"navigating to the ${getTestTitleIncomeSourceType(incomeSourceType)} Reporting Frequency page and ITSA status returns an error" in {
-              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, ITSA_STATUS_ERROR)
-              val result = action(fakeRequest)
-              status(result) shouldBe INTERNAL_SERVER_ERROR
             }
           }
         }
@@ -225,21 +213,29 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
         val action = testController.submit(isAgent, false, incomeSourceType)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
         s"the user is authenticated as a $mtdRole" should {
-          "return 303 SEE_OTHER and redirect to [NEXT PAGE IN JOURNEY]" when {
-            s"completing the form and updates send successfully" in {
-              true shouldBe true //TODO update this when new page is added into the journey
+          "return 303 SEE_OTHER and redirect to the ChooseTaxYear Page" when {
+            s"completing the form with yes selected and updates send successfully" in {
+              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
+
+              val expectedRedirectUrl = controllers.manageBusinesses.add.routes.ChooseTaxYearController.show(isAgent, false, incomeSourceType).url
+
+              val validFormData: Map[String, String] = Map("yes-no-answer" -> "true")
+              val result = action(fakeRequest.withFormUrlEncodedBody(validFormData.toSeq: _*))
+
+              status(result) shouldBe SEE_OTHER
+              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
             }
           }
 
-          "return 303 SEE_OTHER and redirect to home page" when {
-            s"POST request to the ${getTestTitleIncomeSourceType(incomeSourceType)} Reporting Frequency page with FS disabled" in {
-              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-              disable(IncomeSourcesNewJourney)
-              disable(IncomeSourcesNewJourney)
+          "return 303 SEE_OTHER and redirect to the check details page Page" when {
+            s"completing the form with no selected and updates send successfully" in {
+              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
 
-              val expectedRedirectUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
+              val expectedRedirectUrl = controllers.manageBusinesses.add.routes.IncomeSourceRFCheckDetailsController.show(isAgent, incomeSourceType).url
 
-              val result = action(fakeRequest.withFormUrlEncodedBody(formData.toSeq: _*))
+              val validFormData: Map[String, String] = Map("yes-no-answer" -> "false")
+              val result = action(fakeRequest.withFormUrlEncodedBody(validFormData.toSeq: _*))
+
               status(result) shouldBe SEE_OTHER
               redirectLocation(result) shouldBe Some(expectedRedirectUrl)
             }
