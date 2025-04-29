@@ -188,6 +188,11 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     chargeItemModel(transactionType = PoaTwoDebit, codedOutStatus = Some(Accepted), latePaymentInterestAmount = None)
   ).map(TaxYearSummaryChargeItem.fromChargeItem)
 
+  val testPaymentsOnAccountCodedOutCancelled: List[TaxYearSummaryChargeItem] = List(
+    chargeItemModel(transactionType = PoaOneDebit, codedOutStatus = Some(Cancelled), latePaymentInterestAmount = None, dueDate = Some(LocalDate.of(2040, 3, 31)), lpiWithDunningLock = None),
+    chargeItemModel(transactionType = PoaTwoDebit, codedOutStatus = Some(Cancelled), latePaymentInterestAmount = None, dueDate = Some(LocalDate.of(2040, 3, 31)), lpiWithDunningLock = None)
+  ).map(TaxYearSummaryChargeItem.fromChargeItem)
+
 
   val immediatelyRejectedByNps: List[TaxYearSummaryChargeItem] = List(
     chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Nics2), latePaymentInterestAmount = None),
@@ -265,6 +270,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   def testPaymentOnAccountChargesCodedOutFullyCollectedView(isAgent: Boolean = false): Html = taxYearSummaryView(
     testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testPaymentsOnAccountCodedOut(FullyCollected), testObligationsModel, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
+
+  def testPaymentOnAccountChargesCodedOutCancelledView(isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), testPaymentsOnAccountCodedOutCancelled, testObligationsModel, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
 
   def immediatelyRejectedByNpsView(isAgent: Boolean = false): Html = taxYearSummaryView(
     testYear, TaxYearSummaryViewModel(Some(modelComplete(Some(false))), immediatelyRejectedByNps, testObligationsModel, ctaViewModel = emptyCTAModel), "testBackURL", isAgent, ctaLink = ctaLink)
@@ -803,6 +811,24 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         paymentTabRow2.getElementsByClass("govuk-table__cell").first().text() shouldBe "N/A"
         paymentTabRow2.getElementsByClass("govuk-table__cell").get(1).text() shouldBe BigDecimal(1400).toCurrencyString
         paymentTypeText2.text shouldBe codedOutPoa2
+        paymentTypeText2.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
+          testYear, fullDocumentDetailModel.transactionId).url
+      }
+
+      "display payments on account on the payments table when coding out is cancelled" in new Setup(testPaymentOnAccountChargesCodedOutCancelledView()) {
+        val paymentTypeText1: Element = layoutContent.getElementById("paymentTypeLink-0")
+        val paymentTabRow1: Element = layoutContent.getElementById("payments-table").getElementsByClass("govuk-table__row").get(1)
+        paymentTabRow1.getElementsByClass("govuk-table__cell").first().text() shouldBe "31 Mar 2040"
+        paymentTabRow1.getElementsByClass("govuk-table__cell").get(1).text() shouldBe BigDecimal(1400).toCurrencyString
+        paymentTypeText1.text() shouldBe cancelledPaye
+        paymentTypeText1.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
+          testYear, fullDocumentDetailModel.transactionId).url
+
+        val paymentTypeText2: Element = layoutContent.getElementById("paymentTypeLink-1")
+        val paymentTabRow2: Element = layoutContent.getElementById("payments-table").getElementsByClass("govuk-table__row").get(2)
+        paymentTabRow2.getElementsByClass("govuk-table__cell").first().text() shouldBe "31 Mar 2040"
+        paymentTabRow2.getElementsByClass("govuk-table__cell").get(1).text() shouldBe BigDecimal(1400).toCurrencyString
+        paymentTypeText2.text() shouldBe cancelledPaye
         paymentTypeText2.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
       }

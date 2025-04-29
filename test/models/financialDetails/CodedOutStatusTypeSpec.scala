@@ -31,6 +31,10 @@ class CodedOutStatusTypeSpec extends UnitSpec{
         resultNics2 shouldBe Some(Nics2)
         val resultFullyCollected = CodedOutStatusType.fromCodedOutStatusAndDocumentText(Some("Fully Collected"), None)
         resultFullyCollected shouldBe Some(FullyCollected)
+        val resultNotCollected = CodedOutStatusType.fromCodedOutStatusAndDocumentText(Some("Not Collected"), None)
+        resultNotCollected shouldBe Some(Cancelled)
+        val resultPartlyCollected = CodedOutStatusType.fromCodedOutStatusAndDocumentText(Some("Partly Collected"), None)
+        resultPartlyCollected shouldBe Some(Cancelled)
       }
       "codedOutStatus corresponds to a known type" in {
         val resultAccepted = CodedOutStatusType.fromCodedOutStatusAndDocumentText(None, Some("I"))
@@ -39,6 +43,10 @@ class CodedOutStatusTypeSpec extends UnitSpec{
         resultCancelled shouldBe Some(Cancelled)
         val resultFullyCollected = CodedOutStatusType.fromCodedOutStatusAndDocumentText(None, Some("F"))
         resultFullyCollected shouldBe Some(FullyCollected)
+        val resultNotCollected = CodedOutStatusType.fromCodedOutStatusAndDocumentText(None, Some("N"))
+        resultNotCollected shouldBe Some(Cancelled)
+        val resultPartlyCollected = CodedOutStatusType.fromCodedOutStatusAndDocumentText(None, Some("P"))
+        resultPartlyCollected shouldBe Some(Cancelled)
       }
     }
     "return None" when {

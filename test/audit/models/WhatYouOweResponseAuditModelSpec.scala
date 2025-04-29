@@ -125,7 +125,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport with ChargeConstants 
             "outstandingAmount" -> 123456.67
           )
         ),
-        "codingOut" -> Json.obj( "amountCodedOut" -> 2500,
+        "codingOut" -> Json.obj("amountCodedOut" -> 100,
           "endTaxYear" -> "2022")
       )
     }
