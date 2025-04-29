@@ -16,7 +16,7 @@
 
 package models.financialDetails
 
-import enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED, CODING_OUT_CLASS2_NICS, CODING_OUT_FULLY_COLLECTED}
+import enums.CodingOutType._
 import play.api.libs.json._
 
 sealed trait CodedOutStatusType  {
@@ -60,7 +60,10 @@ object CodedOutStatusType {
       case (Some(CODING_OUT_ACCEPTED.name),        _) | (_, Some(CODING_OUT_ACCEPTED.code))        => Some(Accepted)
       case (Some(CODING_OUT_CANCELLED.name),       _) | (_, Some(CODING_OUT_CANCELLED.code))       => Some(Cancelled)
       case (Some(CODING_OUT_FULLY_COLLECTED.name), _) | (_, Some(CODING_OUT_FULLY_COLLECTED.code)) => Some(FullyCollected)
-      case _                                                                                       => None
+      case (Some(CODING_OUT_NOT_COLLECTED.name), _) | (_, Some(CODING_OUT_NOT_COLLECTED.code)) => Some(Cancelled)
+      case (Some(CODING_OUT_PARTLY_COLLECTED.name), _) | (_, Some(CODING_OUT_PARTLY_COLLECTED.code)) => Some(Cancelled)
+      case (Some(CODING_OUT_CLASS2_NICS.name), _) => Some(Nics2)
+      case _ => None
     }
   }
 
@@ -73,6 +76,8 @@ object CodedOutStatusType {
     case CODING_OUT_ACCEPTED.name        => Accepted
     case CODING_OUT_CANCELLED.name       => Cancelled
     case CODING_OUT_FULLY_COLLECTED.name => FullyCollected
+    case CODING_OUT_NOT_COLLECTED.name => Cancelled
+    case CODING_OUT_PARTLY_COLLECTED.name => Cancelled
   }
 
   implicit val format: Format[CodedOutStatusType] = Format(read, write)

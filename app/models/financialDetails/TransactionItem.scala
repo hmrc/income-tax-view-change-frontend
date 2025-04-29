@@ -54,6 +54,8 @@ trait TransactionItem {
       case (PoaOneDebit, Some(FullyCollected))  => "poa1CodedOut.text"
       case (PoaTwoDebit, Some(Accepted))        => "poa2CodedOut.text"
       case (PoaTwoDebit, Some(FullyCollected))  => "poa2CodedOut.text"
+      case (PoaOneDebit, Some(Cancelled)) => "cancelledPayeSelfAssessment.text"
+      case (PoaTwoDebit, Some(Cancelled)) => "cancelledPayeSelfAssessment.text"
       case (PoaOneDebit, _)                     => "paymentOnAccount1.text"
       case (PoaTwoDebit, _)                     => "paymentOnAccount2.text"
       case (MfaDebitCharge, _)                  => "hmrcAdjustment.text"
