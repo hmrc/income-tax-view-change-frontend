@@ -64,8 +64,8 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
         val balanceDetails = financialDetailsModelList.headOption
           .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
 
-        val codingListMaybe: Option[Seq[CodedEntry]] = financialDetailsModelList.find(_.codingDetails.exists(_.coded.nonEmpty)).flatMap(_.codingDetails.find(_.coded.nonEmpty).flatMap(_.coded))
-        val codingOutDetailsList: Seq[CodingOutDetails] = codingListMaybe.getOrElse(Seq.empty).map(y=> CodingOutDetails(y.amount, TaxYear.getTaxYear(y.initiationDate)))
+        val codedListMaybe: Option[Seq[CodedEntry]] = financialDetailsModelList.sortBy(_.codingDetails.flatMap(_.coded).size).lastOption.flatMap(_.codingDetails.find(_.coded.nonEmpty).flatMap(_.coded))
+        val codingOutDetailsList: Seq[CodingOutDetails] = codedListMaybe.getOrElse(Seq.empty).map(y=> CodingOutDetails(y.amount, TaxYear.getTaxYear(y.initiationDate)))
         val codingOutDetailsLastYear: Option[CodingOutDetails] = codingOutDetailsList.find(_.codingTaxYear == dateService.getCurrentTaxYear.previousYear)
 
         val whatYouOweChargesList = WhatYouOweChargesList(
