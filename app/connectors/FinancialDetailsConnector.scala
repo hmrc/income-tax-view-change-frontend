@@ -282,7 +282,6 @@ class FinancialDetailsConnector @Inject()(
                                        documentNumber: String
                                      )(implicit headerCarrier: HeaderCarrier): Future[FinancialDetailsWithDocumentDetailsResponse] = {
     val url = getFinancialDetailsByDocumentIdUrl(nino.value, documentNumber)
-    println(s"Here is error: AA")
     httpV2
       .get(url"$url")
       .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
@@ -290,7 +289,6 @@ class FinancialDetailsConnector @Inject()(
       .map { response =>
         response.status match {
           case OK =>
-            println(s"Here is error: CC => ${response.json}")
             response.json.validate[FinancialDetailsWithDocumentDetailsModel].fold(
               invalid => {
                 Logger("application").error(s"Json validation error parsing calculation response, error $invalid")
@@ -299,11 +297,9 @@ class FinancialDetailsConnector @Inject()(
               valid => valid
             )
           case status if status >= INTERNAL_SERVER_ERROR =>
-            println(s"Here is error: BB")
             Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
             FinancialDetailsWithDocumentDetailsErrorModel(response.status, response.body)
-          case ex =>
-            println(s"Here is error: $ex")
+          case _ =>
             Logger("application").warn(s"Response status: ${response.status}, body: ${response.body}")
             FinancialDetailsWithDocumentDetailsErrorModel(response.status, response.body)
         }

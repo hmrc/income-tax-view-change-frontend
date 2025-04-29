@@ -110,6 +110,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   def getAllocationsToCharge(charge: FinancialDetail): Option[PaymentHistoryAllocations] = {
 
     def hasDocumentDetailForPayment(transactionId: String): Boolean = {
+
       documentDetails
         .find(_.transactionId == transactionId)
         .exists(documentDetail => {
