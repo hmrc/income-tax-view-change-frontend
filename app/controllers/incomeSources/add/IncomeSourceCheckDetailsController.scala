@@ -49,7 +49,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
                                                    val mcc: MessagesControllerComponents,
                                                    val appConfig: FrontendAppConfig) extends FrontendController(mcc) with JourneyChecker with I18nSupport {
 
-  private lazy val errorRedirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
+  def errorRedirectUrl(isAgent: Boolean, incomeSourceType: IncomeSourceType): String =
     if (isAgent) routes.IncomeSourceNotAddedController.showAgent(incomeSourceType).url
     else routes.IncomeSourceNotAddedController.show(incomeSourceType).url
 
@@ -192,13 +192,13 @@ private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(i
               )
             ) flatMap {
               case true => Future.successful(Redirect(redirectUrl(isAgent, incomeSourceType)))
-              case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
+              case false => Future(Redirect(errorRedirectUrl(isAgent, incomeSourceType)))
             }
           case Left(ex) =>
             auditingService.extendedAudit(
               CreateIncomeSourceAuditModel(incomeSourceType, viewModel, Some(enums.FailureCategory.ApiFailure), Some(ex.getMessage), None)
             )
-            Future.failed(ex)
+            Future(Redirect(errorRedirectUrl(isAgent, incomeSourceType)))
         }
       case None =>
         val agentPrefix = if (isAgent) "[Agent]" else ""
