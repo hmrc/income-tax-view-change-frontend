@@ -62,16 +62,12 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
   
   def show(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-      implicit user =>
-        println(Console.YELLOW + "Rawr 1" + Console.RESET)
-        handleGetRequest(isAgent, isChange, incomeSourceType)
+      implicit user => handleGetRequest(isAgent, isChange, incomeSourceType)
     }
 
   def handleGetRequest(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
-    println(Console.YELLOW + "Rawr 1B" + Console.RESET)
     incomeSourceReportingFrequencyService.redirectChecksForIncomeSourceRF(IncomeSourceJourneyType(Add, incomeSourceType),
       AfterSubmissionPage, incomeSourceType, dateService.getCurrentTaxYearEnd, isAgent, isChange) { sessionData =>
-      println(Console.YELLOW + "Rawr 2" + Console.RESET)
       handleIncomeSourceIdRetrievalSuccess(incomeSourceType, sessionData, isAgent, isChange)
     }
   }
@@ -83,8 +79,6 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
                                                    isChange: Boolean
                                                   )
                                                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-    println(Console.YELLOW + "Rawr 3" + Console.RESET)
-
     updateIncomeSourceAsAdded(sessionData).flatMap {
       case false => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
         s"Error retrieving data from session, IncomeSourceType: $incomeSourceType")
