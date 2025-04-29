@@ -60,12 +60,11 @@ object CodedOutStatusType {
       case (Some(CODING_OUT_ACCEPTED.name),        _) | (_, Some(CODING_OUT_ACCEPTED.code))        => Some(Accepted)
       case (Some(CODING_OUT_CANCELLED.name),       _) | (_, Some(CODING_OUT_CANCELLED.code))       => Some(Cancelled)
       case (Some(CODING_OUT_FULLY_COLLECTED.name), _) | (_, Some(CODING_OUT_FULLY_COLLECTED.code)) => Some(FullyCollected)
-      case _                                                                                       => None
+      case (Some(CODING_OUT_NOT_COLLECTED.name), _) | (_, Some(CODING_OUT_NOT_COLLECTED.code)) => Some(Cancelled)
+      case (Some(CODING_OUT_PARTLY_COLLECTED.name), _) | (_, Some(CODING_OUT_PARTLY_COLLECTED.code)) => Some(Cancelled)
       case (Some(CODING_OUT_CLASS2_NICS.name), _) => Some(Nics2)
       case (Some(CODING_OUT_ACCEPTED.name), _) | (_, Some(CODING_OUT_ACCEPTED.code)) => Some(Accepted)
       case (Some(CODING_OUT_CANCELLED.name), _) | (_, Some(CODING_OUT_CANCELLED.code)) => Some(Cancelled)
-      case (Some(CODING_OUT_NOT_COLLECTED.name), _) | (_, Some(CODING_OUT_NOT_COLLECTED.code)) => Some(Cancelled)
-      case (Some(CODING_OUT_PARTLY_COLLECTED.name), _) | (_, Some(CODING_OUT_PARTLY_COLLECTED.code)) => Some(Cancelled)
       case _ => None
     }
   }
