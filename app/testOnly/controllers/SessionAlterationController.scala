@@ -19,6 +19,7 @@ package testOnly.controllers
 import forms.utils.SessionKeys.calculationId
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+
 import javax.inject.Inject
 
 class SessionAlterationController @Inject()

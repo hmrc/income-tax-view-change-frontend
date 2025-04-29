@@ -17,10 +17,9 @@
 package authV2
 
 import auth.MtdItUser
-import auth.authV2.models.{AgentClientDetails, AuthUserDetails, AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest, AuthorisedUserRequest}
-import controllers.agent.AuthUtils.{agentIdentifier, mtdEnrolmentName, primaryAgentAuthRule, secondaryAgentAuthRule, secondaryAgentEnrolmentName}
+import auth.authV2.models._
+import controllers.agent.AuthUtils._
 import controllers.agent.sessionUtils.SessionKeys
-import controllers.agent.sessionUtils.SessionKeys.clientNino
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import forms.IncomeSourcesFormsSpec.fakeRequestWithClientDetails
 import models.admin.FeatureSwitch

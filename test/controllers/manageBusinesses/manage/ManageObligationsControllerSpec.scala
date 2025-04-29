@@ -213,7 +213,7 @@ class ManageObligationsControllerSpec extends MockAuthActions
               val result = action()(fakeRequest)
               status(result) shouldBe SEE_OTHER
               val homeUrl = if (isAgent) {
-                controllers.routes.HomeController.showAgent.url
+                controllers.routes.HomeController.showAgent().url
               } else {
                 controllers.routes.HomeController.show().url
               }

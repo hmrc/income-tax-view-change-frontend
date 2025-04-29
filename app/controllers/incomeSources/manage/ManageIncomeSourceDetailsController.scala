@@ -159,8 +159,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   }
 
   private def getQuarterType(latencyDetails: Option[LatencyDetails],
-                             quarterTypeElection: Option[QuarterTypeElection])
-                            (implicit user: MtdItUser[_]): Option[QuarterReportingType] = {
+                             quarterTypeElection: Option[QuarterTypeElection]): Option[QuarterReportingType] = {
     quarterTypeElection.flatMap(quarterTypeElection => {
       latencyDetails match {
         case Some(latencyDetails: LatencyDetails) =>
@@ -192,7 +191,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   }
 
   private def variableViewModelSEBusiness(incomeSource: BusinessDetailsModel, itsaStatus: Boolean, crystallisationTaxYear1: Option[Boolean],
-                                          crystallisationTaxYear2: Option[Boolean])(implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
+                                          crystallisationTaxYear2: Option[Boolean]): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
       incomeSource = incomeSource.incomeSource,
@@ -218,7 +217,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                                                 itsaStatus: Boolean,
                                                 crystallisationTaxYear1: Option[Boolean],
                                                 crystallisationTaxYear2: Option[Boolean],
-                                                incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): ManageIncomeSourceDetailsViewModel = {
+                                                incomeSourceType: IncomeSourceType): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
       incomeSource = None,

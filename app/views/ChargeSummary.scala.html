@@ -18,7 +18,7 @@
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import models.financialDetails.ChargeType
 @import models.chargeSummary.ChargeSummaryViewModel
-@import models.financialDetails.{Accepted, BalancingCharge, Cancelled, MfaDebitCharge, PoaOneDebit, PoaOneReconciliationDebit, PoaOneReconciliationCredit, PoaTwoDebit, PoaTwoReconciliationDebit, PoaTwoReconciliationCredit, TransactionType}
+@import models.financialDetails.{Accepted, BalancingCharge, FullyCollected, Cancelled, MfaDebitCharge, PoaOneDebit, PoaOneReconciliationDebit, PoaOneReconciliationCredit, PoaTwoDebit, PoaTwoReconciliationDebit, PoaTwoReconciliationCredit, TransactionType}
 @import services.DateServiceInterface
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
@@ -29,6 +29,7 @@
 @import _root_.implicits.HtmlFormatter.NbspString
 
 @import java.time.LocalDate
+
 
 @this(
     mainTemplate: unifiedLayout,
@@ -205,9 +206,9 @@
     }
 }
 
-@codingOutMessage = {
+@codingOutBCDMessage = {
     @p(id=Some("coding-out-message")){
-        @messages("chargeSummary.codingOutMessage", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
+        @messages("chargeSummary.codingOutBCDMessage", viewModel.taxYearFromBCD.toString, viewModel.taxYearToBCD.toString)
     }
 }
 
@@ -274,20 +275,24 @@
 
     @getExplanationContent
 
-    @if(viewModel.chargeItem.codedOutStatus == Some(Accepted)){
+    @if(viewModel.chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)){
         @checkPayeCodePara
         <div id="coding-out-wrapper">
             @govukInsetText(InsetText(content = HtmlContent(codingOutMessageInset)))
         </div>
-        @codingOutMessage
+        @if(viewModel.chargeItem.transactionType == BalancingCharge) {
+            @codingOutBCDMessage
+        }
     }
 
-    @if(viewModel.chargeItem.codedOutStatus == Some(Cancelled)){
+    @if(viewModel.chargeItem.codedOutStatus.contains(Cancelled)){
         @checkPayeCodePara
         <div id="cancelled-coding-out-wrapper">
             @govukInsetText(InsetText(content = HtmlContent(codingOutCancelledMessageInset)))
         </div>
-        @codingOutMessage
+        @if(viewModel.chargeItem.transactionType == BalancingCharge) {
+            @codingOutBCDMessage
+        }
     }
 
     @if(viewModel.codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment){
@@ -296,7 +301,7 @@
         }
     }
 
-    @if(!viewModel.chargeItem.codedOutStatus.contains(Accepted)) {
+    @if(!viewModel.chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)) {
         @chargeSummaryNotCodingOutAndNotPayeSelfAssessment(
             viewModel.chargeItem,
             viewModel.latePaymentInterestCharge,
@@ -305,7 +310,7 @@
             appConfig)
     }
 
-    @if(viewModel.chargeItem.codedOutStatus.contains(Accepted)) {
+    @if(viewModel.chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)) {
         @chargeSummaryCodingOut(
             viewModel.chargeItem,
             viewModel.taxYearFromCodingOut,
@@ -446,6 +451,14 @@
                 }
 
                 @if(viewModel.chargeItem.codedOutStatus == Some(Accepted)) {
+                    <tr>
+                        <td class="govuk-table__cell">@{viewModel.chargeItem.documentDate.toLongDateShort.toNonBreaking}</td>
+                        <td class="govuk-table__cell">@messages("chargeSummary.codingOutPayHistoryAmount", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@{viewModel.chargeItem.originalAmount.toCurrency}</td>
+                    </tr>
+                }
+
+                @if(viewModel.chargeItem.codedOutStatus == Some(FullyCollected)) {
                     <tr>
                         <td class="govuk-table__cell">@{viewModel.chargeItem.documentDate.toLongDateShort.toNonBreaking}</td>
                         <td class="govuk-table__cell">@messages("chargeSummary.codingOutPayHistoryAmount", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)</td>

@@ -17,9 +17,10 @@
 package services
 
 import config.FrontendAppConfig
-import javax.inject.Inject
 import models.btaNavBar.{ListLinks, NavContent, NavLinks}
 import play.api.i18n.{Lang, Messages}
+
+import javax.inject.Inject
 
 class BtaNavBarService @Inject()()(implicit val appConfig: FrontendAppConfig) {
 

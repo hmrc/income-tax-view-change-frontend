@@ -37,7 +37,7 @@ class RemoveClientDetailsSessionsController @Inject()(val authActions: AuthActio
 
 
   def show: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient { implicit user =>
-    Redirect(controllers.agent.routes.EnterClientsUTRController.show.url)
+    Redirect(controllers.agent.routes.EnterClientsUTRController.show().url)
       .removingFromSession(
         SessionKeys.clientFirstName,
         SessionKeys.clientLastName,

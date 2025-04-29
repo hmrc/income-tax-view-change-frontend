@@ -18,7 +18,6 @@ package controllers.claimToAdjustPoa
 
 import controllers.agent.sessionUtils
 import enums.{MTDIndividual, MTDSupportingAgent}
-import forms.adjustPoa.EnterPoaAmountForm
 import generators.PoaGenerator
 import mocks.auth.MockAuthActions
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
@@ -29,7 +28,6 @@ import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import play.api
 import play.api.Application
@@ -159,7 +157,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 val result = action(fakeRequest)
                 status(result) shouldBe SEE_OTHER
                 val expectedRedirectUrl = if (isAgent) {
-                  controllers.routes.HomeController.showAgent.url
+                  controllers.routes.HomeController.showAgent().url
                 } else {
                   controllers.routes.HomeController.show().url
                 }

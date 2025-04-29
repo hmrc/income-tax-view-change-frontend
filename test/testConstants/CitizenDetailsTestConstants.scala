@@ -18,7 +18,7 @@ package testConstants
 
 import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
 import play.api.libs.json.{JsValue, Json}
-import BaseTestConstants._
+import testConstants.BaseTestConstants._
 
 object CitizenDetailsTestConstants {
   val testValidCitizenDetailsModelJson: JsValue = Json.obj(

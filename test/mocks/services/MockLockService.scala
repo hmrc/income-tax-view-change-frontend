@@ -19,8 +19,8 @@ package mocks.services
 import testUtils.TestSupport
 import uk.gov.hmrc.mongo.lock.{LockService, MongoLockRepository}
 
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.{Duration, FiniteDuration, MILLISECONDS}
+import scala.concurrent.{ExecutionContext, Future}
 
 trait MockLockService extends LockService with TestSupport {
   lazy val mockMongoLockRepository: MongoLockRepository = app.injector.instanceOf[MongoLockRepository]

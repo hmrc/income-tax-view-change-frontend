@@ -18,9 +18,9 @@ package models.creditsandrefunds
 
 import exceptions.MissingFieldException
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryStatus, RepaymentItem, TotalInterest}
-import scala.util.Try
 
 import java.time.LocalDate
+import scala.util.Try
 
 case class RefundToTaxPayerViewModel(
                                       amountApprovedForRepayment: Option[BigDecimal],

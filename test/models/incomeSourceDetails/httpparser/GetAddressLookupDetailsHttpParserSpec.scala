@@ -16,8 +16,8 @@
 
 package models.incomeSourceDetails.httpparser
 
-import models.incomeSourceDetails.{Address, BusinessAddressModel}
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser._
+import models.incomeSourceDetails.{Address, BusinessAddressModel}
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.Helpers.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import testUtils.UnitSpec

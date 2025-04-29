@@ -21,7 +21,6 @@ import authV2.AuthActionsTestData.defaultMTDITUser
 import config.featureswitch.FeatureSwitching
 import mocks.connectors.MockFinancialDetailsConnector
 import models.financialDetails.FinancialDetailsErrorModel
-import models.incomeSourceDetails.TaxYear
 import services.CreditHistoryService.CreditHistoryError
 import services.helpers.CreditHistoryDataHelper
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.oldUserDetails

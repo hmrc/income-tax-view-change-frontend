@@ -17,11 +17,11 @@
 package mocks.connectors
 
 import connectors.SessionDataConnector
+import models.sessionData.SessionDataGetResponse.SessionGetResponse
 import models.sessionData.SessionDataPostResponse.SessionDataPostResponse
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
-import models.sessionData.SessionDataGetResponse.SessionGetResponse
 import testUtils.UnitSpec
 
 import scala.concurrent.Future

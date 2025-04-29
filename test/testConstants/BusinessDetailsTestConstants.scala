@@ -64,9 +64,9 @@ object BusinessDetailsTestConstants {
     countryCode = "UK"
   )
   val testContactDetails = ContactDetailsModel(Some("123456789"), Some("0123456789"), Some("8008135"), Some("google@chuckNorris.com"))
-  val testCessation = CessationModel(Some(LocalDate.of(year2018, Month.JANUARY, 1)), Some("It was a stupid idea anyway"))
-  val testCessation2 = CessationModel(Some(LocalDate.of(year2019, Month.JANUARY, 1)), Some("It was a stupid idea anyway"))
-  val testCessation3 = CessationModel(Some(LocalDate.of(year2022, Month.JANUARY, 1)), Some("It was a stupid idea anyway"))
+  val testCessation = CessationModel(Some(LocalDate.of(year2018, Month.JANUARY, 1)))
+  val testCessation2 = CessationModel(Some(LocalDate.of(year2019, Month.JANUARY, 1)))
+  val testCessation3 = CessationModel(Some(LocalDate.of(year2022, Month.JANUARY, 1)))
   val testStartDate = LocalDate.parse("2022-01-01")
   val testStartDate2005 = LocalDate.parse("2005-01-01")
   val testStartDate2 = LocalDate.parse("2021-01-01")

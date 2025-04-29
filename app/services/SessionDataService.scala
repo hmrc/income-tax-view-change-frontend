@@ -18,10 +18,10 @@ package services
 
 import connectors.SessionDataConnector
 import controllers.agent.sessionUtils.SessionKeys
+import models.sessionData.SessionDataGetResponse.{SessionDataGetSuccess, SessionDataNotFound, SessionGetResponse}
 import models.sessionData.SessionDataModel
 import models.sessionData.SessionDataPostResponse.SessionDataPostResponse
 import play.api.mvc.Request
-import models.sessionData.SessionDataGetResponse.{SessionDataGetSuccess, SessionDataNotFound, SessionGetResponse}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject

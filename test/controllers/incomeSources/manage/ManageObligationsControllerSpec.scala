@@ -205,7 +205,7 @@ class ManageObligationsControllerSpec extends MockAuthActions
               val result = action()(fakeRequest)
               status(result) shouldBe SEE_OTHER
               val homeUrl = if (isAgent) {
-                controllers.routes.HomeController.showAgent.url
+                controllers.routes.HomeController.showAgent().url
               } else {
                 controllers.routes.HomeController.show().url
               }
@@ -288,9 +288,9 @@ class ManageObligationsControllerSpec extends MockAuthActions
     s"submit" when {
       val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
       val action = if (mtdRole == MTDIndividual) {
-        testController.submit
+        testController.submit()
       } else {
-        testController.agentSubmit
+        testController.agentSubmit()
       }
       s"the user is authenticated as a $mtdRole" should {
         "redirect to ManageIncomeSources controller" in {

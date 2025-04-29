@@ -18,8 +18,8 @@ package forms.validation
 
 import forms.FeedbackForm
 import forms.validation.models.{FieldError, SummaryError}
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.{Field, Form, FormError}
 
 class ErrorMessageHelperSpec extends AnyWordSpec with Matchers {

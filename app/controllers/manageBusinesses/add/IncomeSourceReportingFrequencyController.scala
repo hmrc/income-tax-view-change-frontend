@@ -139,7 +139,7 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
     }
   }
 
-  private def updateIncomeSourceAsAdded(sessionData: UIJourneySessionData)(implicit hc: HeaderCarrier): Future[Boolean] = {
+  private def updateIncomeSourceAsAdded(sessionData: UIJourneySessionData): Future[Boolean] = {
     val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
     val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(incomeSourceAdded = Some(true))
     val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
@@ -202,9 +202,9 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
     )
   }
 
-  private def handleValidForm(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+  private def handleValidForm(isAgent: Boolean): Future[Result] = {
     if (isAgent) {
-      Future.successful(Redirect(controllers.routes.HomeController.showAgent))
+      Future.successful(Redirect(controllers.routes.HomeController.showAgent()))
     } else {
       Future.successful(Redirect(controllers.routes.HomeController.show()))
     }

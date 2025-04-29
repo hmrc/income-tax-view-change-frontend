@@ -70,9 +70,9 @@ class FeedbackControllerISpec extends ControllerISpecHelper {
           val res = buildPOSTMTDPostClient(feedbackPath, Map.empty, formData).futureValue
 
           val expectedRedirectLocation = if (isAgent) {
-            controllers.feedback.routes.FeedbackController.thankYouAgent.url
+            controllers.feedback.routes.FeedbackController.thankYouAgent().url
           } else {
-            controllers.feedback.routes.FeedbackController.thankYou.url
+            controllers.feedback.routes.FeedbackController.thankYou().url
           }
 
           res should have(

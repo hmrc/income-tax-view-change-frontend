@@ -41,7 +41,7 @@ import scala.util.Try
 
 class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
-  lazy val backUrl: String = controllers.agent.routes.ConfirmClientUTRController.show.url
+  lazy val backUrl: String = controllers.agent.routes.ConfirmClientUTRController.show().url
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 

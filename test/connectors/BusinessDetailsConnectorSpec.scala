@@ -36,7 +36,6 @@ import audit.AuditingService
 import audit.models._
 import auth.authV2.models.AuthorisedAndEnrolledRequest
 import config.FrontendAppConfig
-import models.core.{NinoResponse, NinoResponseError}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, verify, when}
@@ -48,7 +47,6 @@ import play.api.libs.json.Json
 import play.api.mvc.Request
 import play.mvc.Http.Status
 import testConstants.BaseTestConstants._
-import testConstants.NinoLookupTestConstants.{testNinoModel, testNinoModelJson}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{singleBusinessAndPropertyMigrat2019, singleBusinessIncome}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, SessionId}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -278,69 +276,6 @@ class BusinessDetailsConnectorSpec extends BaseConnectorSpec {
             val result: Future[IncomeSourceDetailsResponse] = connector.getIncomeSources()
             result.futureValue shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error, unknown error")
 
-          }
-        }
-
-        ".getNino()" should {
-
-          val successResponse = HttpResponse(status = Status.OK, json = testNinoModelJson, headers = Map.empty)
-          val successResponseBadJson = HttpResponse(status = Status.OK, json = Json.parse("{}"), headers = Map.empty)
-          val badResponse = HttpResponse(Status.BAD_REQUEST, body = "Error Message")
-
-          "return a Nino model when successful JSON is received" in new Setup {
-
-            when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
-
-            when(mockRequestBuilder.withBody(any())(any(), any(), any()))
-              .thenReturn(mockRequestBuilder)
-
-            when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
-              .thenReturn(Future(successResponse))
-
-            val result: Future[NinoResponse] = connector.getNino(testMtditid)
-            result.futureValue shouldBe testNinoModel
-          }
-
-          "return NinoResponseError model in case of bad/malformed JSON response" in new Setup {
-
-            when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
-
-            when(mockRequestBuilder.withBody(any())(any(), any(), any()))
-              .thenReturn(mockRequestBuilder)
-
-            when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
-              .thenReturn(Future(successResponseBadJson))
-
-            val result: Future[NinoResponse] = connector.getNino(testMtditid)
-            result.futureValue shouldBe NinoResponseError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Nino Response")
-          }
-
-          "return NinoResponseError model in case of failure" in new Setup {
-
-            when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
-
-            when(mockRequestBuilder.withBody(any())(any(), any(), any()))
-              .thenReturn(mockRequestBuilder)
-
-            when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
-              .thenReturn(Future(badResponse))
-
-            val result: Future[NinoResponse] = connector.getNino(testMtditid)
-            result.futureValue shouldBe NinoResponseError(Status.BAD_REQUEST, "Error Message")
-          }
-
-          "return NinoResponseError model in case of future failed scenario" in new Setup {
-
-            when(mockHttpClientV2.get(any())(any())).thenReturn(mockRequestBuilder)
-
-            when(mockRequestBuilder.withBody(any())(any(), any(), any()))
-              .thenReturn(mockRequestBuilder)
-
-            when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
-              .thenReturn(Future.failed(new Exception("unknown error")))
-
-            val result: Future[NinoResponse] = connector.getNino(testMtditid)
-            result.futureValue shouldBe NinoResponseError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, unknown error")
           }
         }
 

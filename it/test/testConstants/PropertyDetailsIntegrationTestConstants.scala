@@ -187,7 +187,7 @@ object PropertyDetailsIntegrationTestConstants {
     incomeSourceType = foreignPropertyIncomeType,
     tradingStartDate = propertyTradingStartDate,
     contextualTaxYear = None,
-    cessation = Some(CessationModel(Some(LocalDate.of(endYear, 12, 31)), Some("Ceased Reason"))),
+    cessation = Some(CessationModel(Some(LocalDate.of(endYear, 12, 31)))),
     cashOrAccruals = false,
     latencyDetails = Some(testLatencyDetails3)
   )

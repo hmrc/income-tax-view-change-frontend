@@ -22,7 +22,7 @@ import org.jsoup.nodes.Document
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
-import testUtils.{TestSupport, ViewSpec}
+import testUtils.ViewSpec
 import views.html.manageBusinesses.add.IncomeSourceReportingMethodNotSaved
 
 class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {

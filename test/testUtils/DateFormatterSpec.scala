@@ -16,12 +16,9 @@
 
 package testUtils
 
-import java.time.LocalDate
-
 import implicits.ImplicitDateFormatter
-import javax.inject.Inject
-import play.api.i18n.{Lang, Messages}
-import uk.gov.hmrc.play.language.LanguageUtils
+
+import java.time.LocalDate
 
 class DateFormatterSpec extends TestSupport with ImplicitDateFormatter {
 

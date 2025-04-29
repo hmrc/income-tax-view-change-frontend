@@ -16,9 +16,9 @@
 
 package implicits
 
-import java.text.DecimalFormat
-
 import play.twirl.api.Html
+
+import java.text.DecimalFormat
 
 trait ImplicitCurrencyFormatter {
   implicit class CurrencyFormatter(x: BigDecimal) {

@@ -19,7 +19,7 @@ package connectors
 import _root_.helpers.{ComponentSpecBase, WiremockHelper}
 import auth.authV2.models.AuthorisedAndEnrolledRequest
 import enums.MTDIndividual
-import models.core.{AccountingPeriodModel, AddressModel, NinoResponseError, NinoResponseSuccess}
+import models.core.{AccountingPeriodModel, AddressModel}
 import models.incomeSourceDetails._
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
@@ -205,57 +205,6 @@ class BusinessDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
           val result = connector.getIncomeSources()(hc, mtdItUser = testAuthorisedAndEnrolled).futureValue
 
           result shouldBe IncomeSourceDetailsError(status = INTERNAL_SERVER_ERROR, reason = responseBody)
-
-          WiremockHelper.verifyGet(uri = url)
-        }
-      }
-    }
-
-    ".getNino()" when {
-
-      "OK - 200" should {
-
-        "return a successful response with the correct Nino response for the given mtdRef" in {
-
-          val fakeNino = "AB123456A"
-          val mtdRef = "XAITSA123456"
-
-          val url = s"/income-tax-view-change/nino-lookup/$mtdRef"
-
-          val expectedResponse: NinoResponseSuccess =
-            NinoResponseSuccess(nino = fakeNino)
-
-          val requestBody =
-            Json.toJson(expectedResponse).toString()
-
-          WiremockHelper.stubGet(url, OK, requestBody)
-
-          val result = connector.getNino(mtdRef).futureValue
-
-          result shouldBe expectedResponse
-
-          WiremockHelper.verifyGet(uri = url)
-        }
-      }
-
-      "INTERNAL_SERVER_ERROR - 500" should {
-
-        "return NinoResponseError with some response body" in {
-
-          val mtdRef = "XAITSA123456"
-
-          val url = s"/income-tax-view-change/nino-lookup/$mtdRef"
-
-          val responseBody =
-            """{
-              |"message": "fake value"
-              |}""".stripMargin
-
-          WiremockHelper.stubGet(url, INTERNAL_SERVER_ERROR, responseBody)
-
-          val result = connector.getNino(mtdRef).futureValue
-
-          result shouldBe NinoResponseError(status = INTERNAL_SERVER_ERROR, reason = responseBody)
 
           WiremockHelper.verifyGet(uri = url)
         }

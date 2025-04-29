@@ -34,7 +34,7 @@
 
 @nextUpdatesControllerURL = @{
     if(isAgent) {
-        controllers.routes.NextUpdatesController.showAgent.url
+        controllers.routes.NextUpdatesController.showAgent().url
     } else {
         controllers.routes.NextUpdatesController.show(optOrigin).url
     }

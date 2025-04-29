@@ -100,7 +100,7 @@ object RepaymentHistoryUtils {
   private def filterPayment(payment: Payment,
                             isAgent: Boolean,
                             reviewAndReconcileEnabled: Boolean
-                           )(implicit messages: Messages, dateservice: DateServiceInterface): Either[Throwable, PaymentHistoryEntry] = {
+                           )(implicit dateservice: DateServiceInterface): Either[Throwable, PaymentHistoryEntry] = {
 
     val hasCredit = payment.credit.isDefined
     val hasLot = payment.lot.isDefined && payment.lotItem.isDefined
@@ -117,7 +117,8 @@ object RepaymentHistoryUtils {
     }
   }
 
-  private def paymentToHMRCEntry(payment: Payment, isAgent: Boolean)(implicit messages: Messages, dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
+  private def paymentToHMRCEntry(payment: Payment, isAgent: Boolean)
+                                (implicit dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
     Logger("application").info("json:" + Json.prettyPrint(Json.toJson(payment)))
     PaymentHistoryEntry(
       date = payment.dueDate.getOrElse(throw MissingFieldException("Payment Due Date")),
@@ -129,7 +130,7 @@ object RepaymentHistoryUtils {
     )
   }
 
-  private def mfaCreditEntry(payment: Payment, isAgent: Boolean)(implicit messages: Messages, dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
+  private def mfaCreditEntry(payment: Payment, isAgent: Boolean)(implicit dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
     PaymentHistoryEntry(
       date = payment.documentDate,
       creditType = MfaCreditType,
@@ -139,7 +140,8 @@ object RepaymentHistoryUtils {
     )
   }
 
-  private def creditEntry(payment: Payment, isAgent: Boolean, isPoaReconciliationCredit: Boolean = false)(implicit messages: Messages, dateServiceInterface: DateServiceInterface): Either[Throwable, PaymentHistoryEntry] = {
+  private def creditEntry(payment: Payment, isAgent: Boolean, isPoaReconciliationCredit: Boolean = false)
+                         (implicit dateServiceInterface: DateServiceInterface): Either[Throwable, PaymentHistoryEntry] = {
     for {
       creditType <- payment.creditType.toRight(MissingFieldException("Credit type"))
       dueDate <- payment.dueDate.toRight(MissingFieldException(s"Payment Due Date - ${creditType.getClass.getSimpleName}"))

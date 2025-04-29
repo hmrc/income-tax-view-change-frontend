@@ -18,7 +18,7 @@ package testConstants
 
 import models.core.PaymentDataModel
 import play.api.libs.json.{JsValue, Json}
-import BaseTestConstants._
+import testConstants.BaseTestConstants._
 
 object PaymentDataTestConstants {
 

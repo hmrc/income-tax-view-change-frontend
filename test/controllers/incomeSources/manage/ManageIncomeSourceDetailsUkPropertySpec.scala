@@ -170,7 +170,7 @@ class ManageIncomeSourceDetailsUkPropertyISpec extends ManageIncomeSourceDetails
 
             status(result) shouldBe Status.SEE_OTHER
             val homeUrl = if (isAgent) {
-              controllers.routes.HomeController.showAgent.url
+              controllers.routes.HomeController.showAgent().url
             } else {
               controllers.routes.HomeController.show().url
             }

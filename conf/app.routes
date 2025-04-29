@@ -102,7 +102,7 @@ GET         /agents/:taxYear/allowances-and-deductions                    contro
 
 #TaxYears
 GET         /tax-years                                                    controllers.TaxYearsController.showTaxYears(origin: Option[String] ?= None)
-GET         /agents/tax-years                                             controllers.TaxYearsController.showAgentTaxYears
+GET         /agents/tax-years                                             controllers.TaxYearsController.showAgentTaxYears()
 
 #Payment
 GET         /payment                                                      controllers.PaymentController.paymentHandoff(amountInPence: Long, origin: Option[String] ?= None)
@@ -125,34 +125,34 @@ GET         /tax-years/:taxYear/charge                                    contro
 GET         /agents/tax-years/:taxYear/charge                             controllers.ChargeSummaryController.showAgent(taxYear: Int, id: String, isInterestCharge: Boolean ?= false)
 
 #Feedback Routes
-GET         /feedback                                                     controllers.feedback.FeedbackController.show
+GET         /feedback                                                     controllers.feedback.FeedbackController.show()
 GET         /agents/feedback                                              controllers.feedback.FeedbackController.showAgent()
-POST        /feedback                                                     controllers.feedback.FeedbackController.submit
-POST        /agents/feedback                                              controllers.feedback.FeedbackController.submitAgent
-GET         /thankyou                                                     controllers.feedback.FeedbackController.thankYou
-GET         /agents/thankyou                                              controllers.feedback.FeedbackController.thankYouAgent
+POST        /feedback                                                     controllers.feedback.FeedbackController.submit()
+POST        /agents/feedback                                              controllers.feedback.FeedbackController.submitAgent()
+GET         /thankyou                                                     controllers.feedback.FeedbackController.thankYou()
+GET         /agents/thankyou                                              controllers.feedback.FeedbackController.thankYouAgent()
 
 #Timeout Routes
-GET         /session-timeout                                              controllers.timeout.SessionTimeoutController.timeout
-GET         /keep-alive                                                   controllers.timeout.SessionTimeoutController.keepAlive
+GET         /session-timeout                                              controllers.timeout.SessionTimeoutController.timeout()
+GET         /keep-alive                                                   controllers.timeout.SessionTimeoutController.keepAlive()
 
 #Sign Out Routes
-GET         /sign-out                                                     controllers.SignOutController.signOut
+GET         /sign-out                                                     controllers.SignOutController.signOut()
 
 #Sign In Routes
-GET         /sign-in                                                      controllers.SignInController.signIn
+GET         /sign-in                                                      controllers.SignInController.signIn()
 
 #Not Enrolled
-GET         /cannot-access-service                                        controllers.errors.NotEnrolledController.show
+GET         /cannot-access-service                                        controllers.errors.NotEnrolledController.show()
 
 #Uplift Failed
-GET         /cannot-view-page                                             controllers.errors.UpliftFailedController.show
+GET         /cannot-view-page                                             controllers.errors.UpliftFailedController.show()
 
 #Uplift Success
 GET         /uplift-success                                               controllers.UpliftSuccessController.success(origin: Option[String])
 
 #BTA Partial
-GET         /partial                                                      controllers.bta.BTAPartialController.setupPartial
+GET         /partial                                                      controllers.bta.BTAPartialController.setupPartial()
 
 #CalculationId details poller
 GET         /calculation/:taxYear/submitted                               controllers.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = false, origin: Option[String] ?= None)
@@ -164,7 +164,7 @@ GET         /language/:lang                                               contro
 #Payment history
 GET         /payment-refund-history                                       controllers.PaymentHistoryController.show(origin: Option[String] ?= None)
 GET         /agents/payment-refund-history                                controllers.PaymentHistoryController.showAgent()
-GET         /refund-status                                                controllers.PaymentHistoryController.refundStatus
+GET         /refund-status                                                controllers.PaymentHistoryController.refundStatus()
 
 
 #InYear Tax
@@ -185,7 +185,7 @@ GET         /switch-to-welsh                                              contro
 GET         /switch-to-english                                            controllers.ItvcLanguageController.switchToEnglish(fragment: Option[String])
 
 #custom not found
-GET         /custom-not-found                                             controllers.errors.NotFoundDocumentIDLookupController.show
+GET         /custom-not-found                                             controllers.errors.NotFoundDocumentIDLookupController.show()
 
 #Forecast income summary
 GET         /:taxYear/forecast-income                                     controllers.ForecastIncomeSummaryController.show(taxYear: Int, origin: Option[String] ?= None)

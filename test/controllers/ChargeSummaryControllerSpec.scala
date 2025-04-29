@@ -17,7 +17,7 @@
 package controllers
 
 import enums.{MTDIndividual, MTDSupportingAgent}
-import models.admin.{ChargeHistory, PenaltiesAndAppeals, ReviewAndReconcilePoa, YourSelfAssessmentCharges}
+import models.admin.{ChargeHistory, ReviewAndReconcilePoa, YourSelfAssessmentCharges}
 import models.financialDetails.PoaTwoReconciliationCredit
 import models.repaymentHistory.RepaymentHistoryUtils
 import play.api
@@ -521,9 +521,9 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               val result: Future[Result] = action("fakeId")(fakeRequest)
 
               val notFoundDocumentIDUrl = if(isAgent) {
-                controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show.url
+                controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url
               } else {
-                controllers.errors.routes.NotFoundDocumentIDLookupController.show.url
+                controllers.errors.routes.NotFoundDocumentIDLookupController.show().url
               }
               status(result) shouldBe Status.SEE_OTHER
               redirectLocation(result) shouldBe Some(notFoundDocumentIDUrl)

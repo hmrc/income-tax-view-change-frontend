@@ -16,15 +16,14 @@
 
 package views.html.helpers.injected.obligations
 
-import testConstants.BaseTestConstants.testMtdItUser
-import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
-import testConstants.NextUpdatesTestConstants.{crystallisedObligation, twoObligationsSuccessModel}
-import models.obligations.{DeadlineViewModel, ObligationWithIncomeType, GroupedObligationsModel, NextUpdatesViewModel,
-  ObligationType, ObligationsModel, QuarterlyObligation}
+import models.obligations._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import testConstants.BaseTestConstants.testMtdItUser
+import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
+import testConstants.NextUpdatesTestConstants.{crystallisedObligation, twoObligationsSuccessModel}
 import testUtils.TestSupport
 
 import java.time.LocalDate

@@ -16,6 +16,8 @@
 
 @import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import exceptions.MissingFieldException
+@import models.financialDetails.FullyCollected
+@import models.financialDetails.Accepted
 
 @this()
 
@@ -37,7 +39,7 @@
 
 <p id = "codingOutRemainingToPay" class="govuk-body govuk-!-margin-bottom-6" style="color:#505a5f;">
     @{
-        if (chargeItem.codedOutStatus == Some(models.financialDetails.Accepted)) {
+        if (chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)) {
             messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut)
         } else if (latePaymentInterestCharge) chargeItem.interestRemainingToPay.toCurrency
         else chargeItem.remainingToPay.toCurrency

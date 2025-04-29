@@ -41,7 +41,7 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
     QuarterlyUpdatesCountForTaxYearModel(Seq())
 
   class Setup(isAgent: Boolean = true) {
-    val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent.url else controllers.routes.NextUpdatesController.show().url
+    val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url
     val pageDocument: Document = Jsoup.parse(contentAsString(optOutChooseTaxYearView(ConfirmOptOutMultiTaxYearChoiceForm(availableOptOutTaxYearsList), availableOptOutTaxYear, submissionsCountForTaxYearModel, isAgent, cancelURL)))
   }
   class SetupNoSubmissions(isAgent: Boolean = true) extends Setup{
@@ -58,7 +58,7 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
     val confirmOptOutURLAgent: String = controllers.optOut.routes.ConfirmOptOutController.show(isAgent = true).url
     val cancelButton: String = messages("optout.chooseOptOutTaxYear.cancel")
     val cancelButtonHref: String = controllers.routes.NextUpdatesController.show().url
-    val cancelButtonAgentHref: String = controllers.routes.NextUpdatesController.showAgent.url
+    val cancelButtonAgentHref: String = controllers.routes.NextUpdatesController.showAgent().url
     val continueButton: String = messages("optout.chooseOptOutTaxYear.continue")
     val warningInsertMessage: String = messages("optout.chooseOptOutTaxYear.submissions.deleted")
     val warningInsertClass: String = "govuk-inset-text"
