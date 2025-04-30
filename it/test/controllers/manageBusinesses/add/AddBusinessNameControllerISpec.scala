@@ -23,6 +23,7 @@ import enums.{MTDIndividual, MTDUserRole}
 import forms.incomeSources.add.BusinessNameForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.{IncomeSourcesNewJourney, NavBarFs}
+import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData.businessNameField
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

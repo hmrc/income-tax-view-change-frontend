@@ -24,7 +24,6 @@ import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockITSAStatusService, MockNextUpdatesService, MockSessionService}
 import models.admin.IncomeSourcesNewJourney
-import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -633,21 +632,9 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
     }
   }
 
-  def sessionDataCompletedJourney(journeyType: IncomeSourceJourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceCreatedJourneyComplete = Some(true))))
+  ".showAgent()" when {
 
-  incomeSourceTypes.foreach { incomeSourceType =>
-    mtdAllRoles.foreach { mtdRole =>
-      s"show${if (mtdRole != MTDIndividual) "Agent"}(incomeSourceType = ${incomeSourceType.key})" when {
-        val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
-        val action = if (mtdRole == MTDIndividual) testIncomeSourceAddedController.show(incomeSourceType) else testIncomeSourceAddedController.showAgent(incomeSourceType)
-        s"the user is authenticated as a $mtdRole" should {
-          "render the income source added page" when {
-            "FS enabled with newly added income source and obligations view model without choosing reporting methods" in {
-              disableAllSwitches()
-              enable(IncomeSourcesNewJourney)
-              setupMockSuccess(mtdRole)
-              mockIncomeSource(incomeSourceType)
-              mockISDS(incomeSourceType)
+    Seq(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
 
       s"the user is authenticated as a MTDPrimaryAgent - $incomeSourceType" should {
 
@@ -667,12 +654,9 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
                 latencyIndicator2 = "Q"
               )
 
-            "FS enabled with newly added income source and obligations view model with an overall annual chosen reporting method" in {
-              disableAllSwitches()
-              enable(IncomeSourcesNewJourney)
-              setupMockSuccess(mtdRole)
-              mockIncomeSource(incomeSourceType)
-              mockISDS(incomeSourceType)
+            disableAllSwitches()
+            enable(IncomeSourcesNewJourney)
+            setupMockSuccess(MTDPrimaryAgent)
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -692,12 +676,8 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
             when(mockDateService.getCurrentDate)
               .thenReturn(LocalDate.of(2024, 2, 6))
 
-            "FS enabled with newly added income source and obligations view model with an overall quarterly chosen reporting method" in {
-              disableAllSwitches()
-              enable(IncomeSourcesNewJourney)
-              setupMockSuccess(mtdRole)
-              mockIncomeSource(incomeSourceType)
-              mockISDS(incomeSourceType)
+            when(mockDateService.getAccountingPeriodEndDate(any()))
+              .thenReturn(LocalDate.of(2024, 4, 5))
 
             when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any()))
               .thenReturn(Future(viewModel))
@@ -722,39 +702,12 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
                 )
               )
 
-              val result = action(fakeRequest)
-              status(result) shouldBe OK
-            }
-
-            "FS enabled with newly added income source and obligations view model with an overall hybrid chosen reporting method" in {
-              disableAllSwitches()
-              enable(IncomeSourcesNewJourney)
-              setupMockSuccess(mtdRole)
-              mockIncomeSource(incomeSourceType)
-              mockISDS(incomeSourceType)
-
-              when(mockDateService.getCurrentTaxYearStart).thenReturn(LocalDate.of(2023, 4, 6))
-              when(mockDateService.getCurrentDate).thenReturn(LocalDate.of(2024, 2, 6))
-              when(mockDateService.getAccountingPeriodEndDate(any())).thenReturn(LocalDate.of(2024, 4, 5))
-
-              when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(
-                Future(IncomeSourcesObligationsTestConstants.viewModel))
-
-              when(mockNextUpdatesService.getOpenObligations()(any(), any())).
-                thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
-
-              mockMongo(incomeSourceType, Some("A"), Some("Q"))
-
-              val result = action(fakeRequest)
-              status(result) shouldBe OK
-            }
+            val fakeRequest = fakeGetRequestBasedOnMTDUserType(MTDPrimaryAgent)
+            val result = testIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequest)
+            status(result) shouldBe OK
           }
 
-          "return 303 SEE_OTHER" when {
-            "Income Sources FS is disabled" in {
-              disable(IncomeSourcesNewJourney)
-              setupMockSuccess(mtdRole)
-              mockIncomeSource(incomeSourceType)
+          "IncomeSources FeatureSwitch ENABLED with newly added IncomeSource and ObligationsViewModel with an overall annual chosen reporting method" in {
 
             val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
             val taxYearStartDate = LocalDate.of(2023, 4, 6)
@@ -820,52 +773,12 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
             val result = testIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequest)
             status(result) shouldBe OK
           }
-          "return 500 ISE" when {
-            "Income source start date was not retrieved" in {
-              enable(IncomeSourcesNewJourney)
-              setupMockSuccess(mtdRole)
-              mockIncomeSource(incomeSourceType)
-              setupMockGetSessionKeyMongoTyped[String](Right(Some(testSelfEmploymentId)))
-              mockFailure()
-              mockMongo(incomeSourceType, None, None)
-              val result = action(fakeRequest)
-              status(result) shouldBe INTERNAL_SERVER_ERROR
-            }
-            "Income source id is invalid" in {
-              enable(IncomeSourcesNewJourney)
-              setupMockSuccess(mtdRole)
-              mockIncomeSource(incomeSourceType)
-              setupMockGetSessionKeyMongoTyped[String](Right(Some(testSelfEmploymentId)))
-              mockISDS(incomeSourceType)
-              mockMongo(incomeSourceType, None, None)
-              when(mockNextUpdatesService.getOpenObligations()(any(), any())).
-                thenReturn(Future(testObligationsModel))
 
-              val result = action(fakeRequest)
-              status(result) shouldBe INTERNAL_SERVER_ERROR
-            }
-            if (incomeSourceType == SelfEmployment) {
-              "Supplied business has no name" in {
-                disableAllSwitches()
-                enable(IncomeSourcesNewJourney)
-                setupMockSuccess(mtdRole)
-                val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel(testNino, "", Some("2022"), List(BusinessDetailsModel(
-                  testSelfEmploymentId,
-                  incomeSource = Some(testIncomeSource),
-                  None,
-                  None,
-                  None,
-                  Some(LocalDate.of(2022, 1, 1)),
-                  None,
-                  cashOrAccruals = false
-                )), List.empty)
-                setupMockGetSessionKeyMongoTyped[String](Right(Some(testSelfEmploymentId)))
-                setupMockGetIncomeSourceDetails()(sources)
-                when(mockNextUpdatesService.getOpenObligations()(any(), any())).
-                  thenReturn(Future(testObligationsModel))
-                mockProperty()
-                mockMongo(incomeSourceType, None, None)
-                setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = IncomeSourceJourneyType(Add, incomeSourceType), result = Right(Some(testSelfEmploymentId)))
+          "IncomeSources FeatureSwitch ENABLED with newly added IncomeSource and ObligationsViewModel with an overall quarterly chosen reporting method" in {
+
+            val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
+            val taxYearStartDate = LocalDate.of(2023, 4, 6)
+
             val testLatencyDetails =
               LatencyDetails(
                 latencyEndDate = LocalDate.of(year2019, 1, 1),
@@ -875,12 +788,9 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
                 latencyIndicator2 = "Q"
               )
 
-            "FS enabled with newly added income source and obligations view model with an overall unknown chosen reporting method" in {
-              disableAllSwitches()
-              enable(IncomeSourcesNewJourney)
-              setupMockSuccess(mtdRole)
-              mockIncomeSource(incomeSourceType)
-              mockISDS(incomeSourceType)
+            disableAllSwitches()
+            enable(IncomeSourcesNewJourney)
+            setupMockSuccess(MTDPrimaryAgent)
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))

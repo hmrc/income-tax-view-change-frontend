@@ -162,7 +162,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
                 result should have(
                   httpStatus(SEE_OTHER),
-                  redirectURI(controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.show(isAgent = mtdUserRole != MTDIndividual, incomeSourceType).url)
+                  redirectURI(controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.show(isAgent = mtdUserRole != MTDIndividual, false, incomeSourceType).url)
                 )
               }
             }

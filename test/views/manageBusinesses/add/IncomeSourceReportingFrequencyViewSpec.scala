@@ -42,7 +42,7 @@ class IncomeSourceReportingFrequencyViewSpec extends TestSupport with MockDateSe
       case ForeignProperty => "Foreign property"
     }
 
-    val title: String = "Your new business is set to report annually - Manage your Income Tax updates - GOV.UK"
+    val title: String = "Your new business is set to report annually - Manage your Self Assessment - GOV.UK"
     val titleError: String = "Error: Your new business is set to report annually - GOV.UK"
     val titleAgent: String = "Your new business is set to report annually - Manage your client’s Income Tax updates - GOV.UK"
     val heading: String = "Your new business is set to report annually"

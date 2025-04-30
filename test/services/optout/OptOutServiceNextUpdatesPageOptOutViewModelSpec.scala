@@ -22,7 +22,7 @@ import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.{ITSAStatus, StatusDetail}
+import models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
 import models.optout.{OptOutMultiYearViewModel, OptOutOneYearViewModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
@@ -75,9 +75,9 @@ class OptOutServiceNextUpdatesPageOptOutViewModelSpec extends UnitSpec
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
         val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
-          previousTaxYear -> StatusDetail("", ITSAStatus.Voluntary, ""),
-          currentTaxYear -> StatusDetail("", ITSAStatus.Mandated, ""),
-          nextTaxYear -> StatusDetail("", ITSAStatus.Mandated, ""),
+          previousTaxYear -> StatusDetail("", ITSAStatus.Voluntary, StatusReason.Rollover),
+          currentTaxYear -> StatusDetail("", ITSAStatus.Mandated, StatusReason.Rollover),
+          nextTaxYear -> StatusDetail("", ITSAStatus.Mandated, StatusReason.Rollover),
         )
         when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousTaxYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
         when(mockCalculationListService.isTaxYearCrystallised(previousTaxYear)).thenReturn(Future.successful(false))
@@ -110,9 +110,9 @@ class OptOutServiceNextUpdatesPageOptOutViewModelSpec extends UnitSpec
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
         val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
-          previousTaxYear -> StatusDetail("", ITSAStatus.Voluntary, ""),
-          currentTaxYear -> StatusDetail("", ITSAStatus.Voluntary, ""),
-          nextTaxYear -> StatusDetail("", ITSAStatus.Voluntary, ""),
+          previousTaxYear -> StatusDetail("", ITSAStatus.Voluntary, StatusReason.Rollover),
+          currentTaxYear -> StatusDetail("", ITSAStatus.Voluntary, StatusReason.Rollover),
+          nextTaxYear -> StatusDetail("", ITSAStatus.Voluntary, StatusReason.Rollover),
         )
         when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousTaxYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
         when(mockCalculationListService.isTaxYearCrystallised(previousTaxYear)).thenReturn(Future.successful(false))

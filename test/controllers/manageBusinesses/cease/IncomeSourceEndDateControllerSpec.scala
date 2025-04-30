@@ -17,7 +17,7 @@
 package controllers.manageBusinesses.cease
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{Cease, IncomeSourceJourneyType}
+import enums.JourneyType.{Cease, IncomeSourceJourneyType, JourneyType}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
@@ -82,7 +82,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
 
   mtdAllRoles.foreach { mtdRole =>
     incomeSourceTypes.foreach { incomeSourceType =>
-      List(CheckMode, NormalMode).foreach { mode =>
+      List(NormalMode, CheckMode).foreach { mode =>
         val isAgent = mtdRole != MTDIndividual
         val optIncomeSourceIdHash = if (incomeSourceType == SelfEmployment) {
           Some(mkIncomeSourceId(testSelfEmploymentId).toHash.hash)
@@ -218,7 +218,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
             "display date errors" when {
               "form is errored out with before trading start date error" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
                 mockBothPropertyBothBusiness()
                 setupMockCreateSession(true)
                 if (incomeSourceType == SelfEmployment) {
@@ -253,7 +253,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
               }
               "form is errored out with future date error" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
                 mockBothPropertyBothBusiness()
                 setupMockCreateSession(true)
                 if (incomeSourceType == SelfEmployment) {
@@ -289,7 +289,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
               "form is errored out with earliest date error for SelfEmployment" in {
                 if (incomeSourceType == SelfEmployment) {
                   setupMockSuccess(mtdRole)
-                  enable(IncomeSourcesFs)
+                  enable(IncomeSourcesNewJourney)
                   mockSoleTraderWithStartDate2005()
                   setupMockCreateSession(true)
                   if (incomeSourceType == SelfEmployment) {
@@ -387,5 +387,4 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
     }
   }
 }
-
 

@@ -77,15 +77,15 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
   def show(id: Option[String], incomeSourceType: IncomeSourceType, isAgent: Boolean, mode: Mode):
-            Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+  Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
     val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
 
-      handleRequest(
-        isAgent = isAgent,
-        incomeSourceType = incomeSourceType,
-        id = incomeSourceIdHashMaybe,
-        mode = mode
-      )
+    handleRequest(
+      isAgent = isAgent,
+      incomeSourceType = incomeSourceType,
+      id = incomeSourceIdHashMaybe,
+      mode = mode
+    )
   }
 
   def handleRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, mode: Mode, incomeSourceType: IncomeSourceType)
@@ -107,8 +107,8 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
               val dateStartedOpt = sessionData.ceaseIncomeSourceData.flatMap(_.endDate)
               val newForm = dateStartedOpt match {
                 case Some(date) =>
-                  form(incomeSourceType, incomeSourceIdMaybe.map(_.value)).fill(date)
-                case None => form(incomeSourceType, incomeSourceIdMaybe.map(_.value))
+                  form(incomeSourceType, incomeSourceIdMaybe.map(_.value), isEnabled(IncomeSourcesNewJourney)).fill(date)
+                case None => form(incomeSourceType, incomeSourceIdMaybe.map(_.value), isEnabled(IncomeSourcesNewJourney))
               }
               Future.successful(Ok(
                 incomeSourceEndDate(
@@ -129,15 +129,15 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
     }
 
   def submit(id: Option[String], incomeSourceType: IncomeSourceType, isAgent: Boolean, mode: Mode):
-              Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+  Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
     val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
 
-      handleSubmitRequest(
-        isAgent = isAgent,
-        incomeSourceType = incomeSourceType,
-        id = incomeSourceIdHashMaybe,
-        mode = mode
-      )
+    handleSubmitRequest(
+      isAgent = isAgent,
+      incomeSourceType = incomeSourceType,
+      id = incomeSourceIdHashMaybe,
+      mode = mode
+    )
   }
 
   private def handleValidatedInput(validatedInput: LocalDate,
@@ -184,7 +184,7 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
             case (SelfEmployment, None) =>
               Future.failed(new Exception(s"Missing income source ID for hash: <$id>"))
             case _ =>
-              form(incomeSourceType, incomeSourceIdMaybe.map(_.value)).bindFromRequest().fold(
+              form(incomeSourceType, incomeSourceIdMaybe.map(_.value), isEnabled(IncomeSourcesNewJourney)).bindFromRequest().fold(
                 hasErrors => {
                   Future.successful(BadRequest(incomeSourceEndDate(
                     form = hasErrors,

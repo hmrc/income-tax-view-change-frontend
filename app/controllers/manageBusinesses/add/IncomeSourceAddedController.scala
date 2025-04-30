@@ -58,52 +58,74 @@ class IncomeSourceAddedController @Inject()(
       controllers.routes.NextUpdatesController.show().url
     }
 
-  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                           (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
+
+  def getManageBusinessUrl(isAgent: Boolean) =
+    if (isAgent) {
+      controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+    } else {
+      controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+    }
+
+  def getReportingFrequencyUrl(isAgent: Boolean) =
+    // TODO the below link will need to change to the new entry point for the opt in/out journeys once the page is made
+    if (isAgent) {
+      controllers.routes.NextUpdatesController.showAgent().url
+    } else {
+      controllers.routes.NextUpdatesController.show().url
+    }
+
+  private def getIncomeSourceIdFromSession(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[IncomeSourceId]] = {
+
+    sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType)).flatMap {
+      case Right(Some(sessionData)) =>
+        val incomeSourceId: Option[IncomeSourceId] = sessionData.addIncomeSourceData.flatMap(_.incomeSourceId.map(id => IncomeSourceId(id)))
+        Future(incomeSourceId)
+      case _ =>
+        Future(None)
+    }
+  }
+
+  private def handleRequest(
+                             isAgent: Boolean,
+                             incomeSourceType: IncomeSourceType
+                           )(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
+
+    val errorView = errorHandler.showInternalServerError()
+    val agentPrefix = if (isAgent) "[Agent]" else ""
+
     withNewIncomeSourcesFS {
       sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType)).flatMap {
+
         case Right(Some(sessionData)) =>
-          (for {
-            incomeSourceIdModel <- sessionData.addIncomeSourceData.flatMap(_.incomeSourceId.map(IncomeSourceId(_)))
-            (startDate, businessName) <- incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceIdModel)
-          } yield {
-            val reportingMethod: ChosenReportingMethod = getReportingMethod(sessionData.addIncomeSourceData)
-            if (reportingMethod != ChosenReportingMethod.Unknown) {
-              handleSuccess(
-                isAgent = isAgent,
-                businessName = businessName,
-                incomeSourceType = incomeSourceType,
-                incomeSourceId = incomeSourceIdModel,
-                showPreviousTaxYears = startDate.isBefore(dateService.getCurrentTaxYearStart),
-                sessionData = sessionData,
-                reportingMethod = reportingMethod
-              )
-            } else {
-              Logger("application").error(
-                s"${if (isAgent) "[Agent]" else ""}" + s"retrieved an unknown case for chosen reporting method: $reportingMethod")
-              Future.successful {
-                errorHandler.showInternalServerError()
-              }
-            }
-          }) getOrElse {
-            Logger("application").error(
-              s"${if (isAgent) "[Agent]" else ""}" + s"could not find incomeSource for IncomeSourceType: $incomeSourceType")
-            Future.successful {
-              errorHandler.showInternalServerError()
+          lazy val result: Future[Result] = {
+            for {
+              incomeSourceId: Option[IncomeSourceId] <- getIncomeSourceIdFromSession(incomeSourceType)
+              incomeSourceFromUser: Option[IncomeSourceFromUser] <- Future(incomeSourceId.flatMap(id => incomeSourceDetailsService.getIncomeSource(incomeSourceType, id, user.incomeSources)))
+              showPreviousTaxYears: Boolean = incomeSourceFromUser.exists(_.startDate.isBefore(dateService.getCurrentTaxYearStart))
+              showView: Result <-
+                (incomeSourceId, incomeSourceFromUser) match {
+                  case (Some(incomeSourceId), Some(incomeSource)) =>
+                    handleSuccess(
+                      isAgent = isAgent,
+                      businessName = incomeSource.businessName,
+                      incomeSourceType = incomeSourceType,
+                      incomeSourceId = incomeSourceId,
+                      showPreviousTaxYears = showPreviousTaxYears,
+                      sessionData = sessionData
+                    )
+                  case _ =>
+                    Future(errorView)
+                }
+            } yield {
+              showView
             }
           }
+
+          result
         case _ =>
-          val agentPrefix = if (isAgent) "[Agent]" else ""
-          Logger("application").error(agentPrefix + s"Unable to retrieve Mongo session data for $incomeSourceType")
-          Future.successful {
-            errorHandler.showInternalServerError()
-          }
+          logger.error(agentPrefix + s"Unable to retrieve Mongo session data for $incomeSourceType")
+          Future(errorView)
       }
-    } recover {
-      case ex: Exception =>
-        Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" +
-          s"Error getting IncomeSourceAdded page: - ${ex.getMessage} - ${ex.getCause}, IncomeSourceType: $incomeSourceType")
-        errorHandler.showInternalServerError()
     }
   }
 

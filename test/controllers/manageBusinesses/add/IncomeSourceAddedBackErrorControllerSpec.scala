@@ -90,7 +90,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends MockAuthActions with Mock
               val homeUrl = if (mtdRole == MTDIndividual) {
                 controllers.routes.HomeController.show().url
               } else {
-                controllers.routes.HomeController.showAgent().url
+                controllers.routes.HomeController.showAgent.url
               }
               redirectLocation(result) shouldBe Some(homeUrl)
             }
@@ -115,7 +115,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends MockAuthActions with Mock
             val result = action(fakeRequest)
 
             status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.show(mtdRole != MTDIndividual, incomeSourceType).url)
+            redirectLocation(result) shouldBe Some(controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.show(mtdRole != MTDIndividual, false, incomeSourceType).url)
           }
         }
         testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)

@@ -326,7 +326,7 @@ class ManageObligationsControllerSpec extends MockAuthActions
 
           setupMockSuccess(mtdRole)
           enable(IncomeSourcesNewJourney)
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           val result = action(fakeRequest)
           redirectLocation(result) shouldBe Some(controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(isAgent).url)

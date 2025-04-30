@@ -81,7 +81,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
             "location redirect is returned by the lookup service" in {
               setupMockSuccess(mtdRole)
               enable(IncomeSourcesNewJourney)
-              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
               when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
                 .thenReturn(Future(Right(Some("Sample location"))))
@@ -147,7 +147,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
               setupMockSuccess(mtdRole)
               enable(IncomeSourcesNewJourney)
               enable(AccountingMethodJourney)
-              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
               setupMockGetMongo(Right(Some(UIJourneySessionData("", ""))))
               setupMockSetMongoData(result = true)
@@ -164,7 +164,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
             "no address returned" in {
               setupMockSuccess(mtdRole)
               enable(IncomeSourcesNewJourney)
-              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
               setupMockGetMongo(Right(Some(UIJourneySessionData("", ""))))
               setupMockSetMongoData(result = true)
