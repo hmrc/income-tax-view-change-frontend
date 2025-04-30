@@ -57,7 +57,7 @@ class BusinessDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
               contextualTaxYear = None,
               cessation = None,
               cashOrAccruals = true,
-              address = Some(AddressModel("8 Test", Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), "United Kingdom")),
+              address = Some(AddressModel(Some("8 Test"), Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), Some("United Kingdom"))),
               latencyDetails = Some(LatencyDetails(LocalDate.of(2019, 1, 1), "2018", "A", "2019", "Q")),
               quarterTypeElection = None
             )
@@ -139,7 +139,7 @@ class BusinessDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
               contextualTaxYear = None,
               cessation = None,
               cashOrAccruals = true,
-              address = Some(AddressModel("8 Test", Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), "United Kingdom")),
+              address = Some(AddressModel(Some("8 Test"), Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), Some("United Kingdom"))),
               latencyDetails = Some(LatencyDetails(LocalDate.of(2019, 1, 1), "2018", "A", "2019", "Q")),
               quarterTypeElection = None
             )

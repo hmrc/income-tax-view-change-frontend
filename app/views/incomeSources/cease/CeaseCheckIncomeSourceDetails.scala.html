@@ -98,7 +98,7 @@ messages(s"$messagesPrefix.$key", args: _*)
 
 @getLongAddressFromBusinessAddressDetails(address: AddressModel) = @{
     val nonEmptyFields = List(
-        Some(address.addressLine1),
+        address.addressLine1,
         address.addressLine2,
         address.addressLine3,
         address.addressLine4,
