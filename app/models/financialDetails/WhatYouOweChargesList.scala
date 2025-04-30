@@ -17,6 +17,7 @@
 package models.financialDetails
 
 import exceptions.MissingFieldException
+import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import services.DateServiceInterface
 
@@ -24,7 +25,7 @@ import java.time.LocalDate
 
 case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: List[ChargeItem] = List(),
                                  outstandingChargesModel: Option[OutstandingChargesModel] = None,
-                                 codedOutDocumentDetail: Option[ChargeItem] = None)(implicit val dateService: DateServiceInterface) {
+                                 codedOutDetails: Option[CodingOutDetails] = None)(implicit val dateService: DateServiceInterface) {
 
   lazy val overdueChargeList: List[ChargeItem] = chargesList.filter(x => x.isOverdue())
 
@@ -105,3 +106,5 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
     }
   }
 }
+
+case class CodingOutDetails(amountCodedOut: BigDecimal, codingTaxYear: TaxYear)

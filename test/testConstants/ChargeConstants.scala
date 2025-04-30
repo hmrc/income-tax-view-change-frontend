@@ -21,7 +21,7 @@ import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import services.{DateService, DateServiceInterface}
-import testConstants.FinancialDetailsTestConstants.{currentYear, dueDateDueIn30Days, dueDateMoreThan30Days, dueDateOverdue, financialDetailsReviewAndReconcileInterest, fixedDate, futureFixedDate, id1040000123, id1040000124, id1040000125, id1040000126, noDunningLocks, oneDunningLock, outstandingChargesDueIn30Days, outstandingChargesDueInMoreThan30Days, outstandingChargesModel, testFinancialDetailsModelWithChargesOfSameType}
+import testConstants.FinancialDetailsTestConstants.{currentYear, dueDateDueIn30Days, dueDateMoreThan30Days, dueDateOverdue, fixedDate, futureFixedDate, id1040000123, id1040000124, id1040000125, id1040000126, noDunningLocks, oneDunningLock, outstandingChargesDueIn30Days, outstandingChargesDueInMoreThan30Days, outstandingChargesModel, testFinancialDetailsModelWithChargesOfSameType}
 
 import java.time.LocalDate
 
@@ -520,6 +520,8 @@ trait ChargeConstants {
     codedOutStatus = Some(Accepted),
     amountCodedOut = Some(2500.00))
 
+  val balancingCodedOut: CodingOutDetails = CodingOutDetails(2500.00, TaxYear.forYearEnd(2021))
+
   def financialDetailsOverdueWithLpiDunningLockZeroCi(taxYear: TaxYear,
                                                       latePaymentInterest: Option[BigDecimal],
                                                       dunningLock: Boolean,
@@ -949,6 +951,10 @@ trait ChargeConstants {
     false,
     None)
 
+  val codedOutDetailsA: CodingOutDetails = CodingOutDetails(100.00, TaxYear.forYearEnd(2022))
+
+  val codedOutDetails: CodingOutDetails = CodingOutDetails(43.21, TaxYear.forYearEnd(2021))
+
   val codedOutDocumentDetailCi: ChargeItem = ChargeItem(
     transactionId = "CODINGOUT02",
     taxYear = TaxYear.forYearEnd(2021),
@@ -967,7 +973,6 @@ trait ChargeConstants {
     dunningLock = false,
     dueDate = None,
     poaRelevantAmount = None)
-
 
   val codedOutDocumentDetailPayeSACi: ChargeItem = ChargeItem(
     transactionId = "CODINGOUT02",
@@ -1089,7 +1094,7 @@ trait ChargeConstants {
       taxYear = TaxYear.forYearEnd(fixedDate.getYear)
     )),
     outstandingChargesModel = Some(outstandingChargesOverdueData),
-    codedOutDocumentDetail = Some(codedOutChargeItemsA)
+    codedOutDetails = Some(codedOutDetailsA)
   )
 
   val whatYouOwePartialChargesList: WhatYouOweChargesList = WhatYouOweChargesList(
@@ -1114,7 +1119,7 @@ trait ChargeConstants {
       outstandingAmount = 125,
       taxYear = TaxYear.forYearEnd(fixedDate.getYear),
     )),
-    codedOutDocumentDetail = Some(codedOutChargeItemsA)
+    codedOutDetails = Some(codedOutDetailsA)
   )
 
   val whatYouOweDataWithMFADebitsData: WhatYouOweChargesList = WhatYouOweChargesList(

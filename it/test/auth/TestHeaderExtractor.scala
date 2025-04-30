@@ -18,6 +18,7 @@ package auth
 
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
+
 import javax.inject.Singleton
 
 @Singleton

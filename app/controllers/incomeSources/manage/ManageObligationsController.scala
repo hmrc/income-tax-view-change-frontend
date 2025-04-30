@@ -29,7 +29,7 @@ import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{IncomeSourceDetailsService, NextUpdatesService, SessionService}
+import services.{NextUpdatesService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.IncomeSourcesUtils

@@ -129,7 +129,7 @@ class OptInCompletedViewModelSpec extends UnitSpec {
           annualWithFollowingYearMandated = true,
         )
 
-      model.nextUpdatesLink shouldBe controllers.routes.NextUpdatesController.showAgent.url
+      model.nextUpdatesLink shouldBe controllers.routes.NextUpdatesController.showAgent().url
     }
 
     "the isAgent flag is false, the non agent user NextUpdate url is set" in {

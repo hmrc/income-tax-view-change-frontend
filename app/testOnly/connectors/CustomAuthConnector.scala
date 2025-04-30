@@ -19,18 +19,18 @@ package testOnly.connectors
 import play.api.Logger
 import play.api.http.Status.{CREATED, TOO_MANY_REQUESTS}
 import play.api.libs.json._
+import testOnly.models.Nino
+import testOnly.utils.FileUtil._
+import testOnly.utils.LoginUtil._
+import testOnly.utils.UserRepository
 import uk.gov.hmrc.auth.core.PlayAuthConnector
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps, TooManyRequestException}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.{Inject, Singleton}
 import scala.collection.Seq
 import scala.concurrent.{ExecutionContext, Future}
-import testOnly.models.Nino
-import testOnly.utils.FileUtil._
-import testOnly.utils.LoginUtil._
-import testOnly.utils.UserRepository
-import uk.gov.hmrc.http.client.HttpClientV2
 
 case class EnrolmentData(name: String, state: String, taxIdentifier: scala.Seq[TaxIdentifierData])
 

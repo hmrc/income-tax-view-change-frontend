@@ -112,7 +112,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
   def showAgent: Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
     implicit mtdItUser =>
       handleRequest(
-        backUrl = controllers.routes.HomeController.showAgent.url,
+        backUrl = controllers.routes.HomeController.showAgent().url,
         itvcErrorHandler = itvcErrorHandlerAgent,
         isAgent = true
       )

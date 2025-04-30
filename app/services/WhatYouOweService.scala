@@ -63,16 +63,15 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
         val financialDetailsModelList = financialDetails.asInstanceOf[List[FinancialDetailsModel]]
         val balanceDetails = financialDetailsModelList.headOption
           .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
-        val codedOutChargeItem = {
-          financialDetailsModelList.flatMap(_.toChargeItem)
-            .filter(_.codedOutStatus.contains(Accepted))
-            .find(_.taxYear.endYear == (dateService.getCurrentTaxYearEnd - 1))
-        }
+
+        val codedListMaybe: Option[Seq[CodedEntry]] = financialDetailsModelList.sortBy(_.codingDetails.flatMap(_.coded).size).lastOption.flatMap(_.codingDetails.find(_.coded.nonEmpty).flatMap(_.coded))
+        val codingOutDetailsList: Seq[CodingOutDetails] = codedListMaybe.getOrElse(Seq.empty).map(y=> CodingOutDetails(y.amount, TaxYear.getTaxYear(y.initiationDate)))
+        val codingOutDetailsLastYear: Option[CodingOutDetails] = codingOutDetailsList.find(_.codingTaxYear == dateService.getCurrentTaxYear.previousYear)
 
         val whatYouOweChargesList = WhatYouOweChargesList(
           balanceDetails = balanceDetails,
           chargesList = getFilteredChargesList(financialDetailsModelList, isReviewAndReconciledEnabled, isFilterCodedOutPoasEnabled, isPenaltiesEnabled),
-          codedOutDocumentDetail = codedOutChargeItem)
+          codedOutDetails = codingOutDetailsLastYear)
 
         {
           for {
@@ -110,8 +109,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   def getFilteredChargesList(financialDetailsList: List[FinancialDetailsModel],
                              isReviewAndReconcileEnabled: Boolean,
                              isFilterCodedOutPoasEnabled: Boolean,
-                             isPenaltiesEnabled: Boolean)
-                            (implicit user: MtdItUser[_]): List[ChargeItem] = {
+                             isPenaltiesEnabled: Boolean): List[ChargeItem] = {
 
     def getChargeItem(financialDetails: List[FinancialDetail]): DocumentDetail => Option[ChargeItem] =
       getChargeItemOpt(financialDetails)

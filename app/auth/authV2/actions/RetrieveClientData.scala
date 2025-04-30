@@ -22,9 +22,9 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.routes
 import controllers.agent.sessionUtils.SessionKeys
 import models.sessionData.SessionDataGetResponse.SessionDataNotFound
+import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}
-import play.api.Logger
 import services.SessionDataService
 import services.agent.ClientDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -76,9 +76,9 @@ class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
             ))
             case Left(error) =>
               Logger("error").error(s"unable to find client with UTR: ${sessionData.utr} " + error)
-              Left(Redirect(routes.EnterClientsUTRController.show))
+              Left(Redirect(routes.EnterClientsUTRController.show()))
           }
-        case Left(_: SessionDataNotFound) => Future.successful(Left(Redirect(routes.EnterClientsUTRController.show)))
+        case Left(_: SessionDataNotFound) => Future.successful(Left(Redirect(routes.EnterClientsUTRController.show())))
         case Left(_) => Future.successful(Left(errorHandler.showInternalServerError()))
       }
     }

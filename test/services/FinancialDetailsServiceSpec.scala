@@ -19,7 +19,6 @@ package services
 import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import config.featureswitch.FeatureSwitching
-import enums.ChargeType.NIC4_WALES
 import enums.CodingOutType._
 import mocks.connectors.MockFinancialDetailsConnector
 import models.core.AccountingPeriodModel

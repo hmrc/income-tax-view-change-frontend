@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,23 @@
  * limitations under the License.
  */
 
-package models.core
+package models.financialDetails
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Json, Reads, Writes}
 
 import java.time.LocalDate
 
-case class CessationModel(date: Option[LocalDate])
+case class CodingDetails(coded: Option[Seq[CodedEntry]])
 
-object CessationModel {
-  implicit val format: Format[CessationModel] = Json.format[CessationModel]
+case class CodedEntry(amount: BigDecimal,
+                      initiationDate: LocalDate)
+
+object CodingDetails {
+  implicit val writes: Writes[CodingDetails] = Json.writes[CodingDetails]
+  implicit val reads: Reads[CodingDetails] = Json.reads[CodingDetails]
+}
+
+object CodedEntry {
+  implicit val writes: Writes[CodedEntry] = Json.writes[CodedEntry]
+  implicit val reads: Reads[CodedEntry] = Json.reads[CodedEntry]
 }

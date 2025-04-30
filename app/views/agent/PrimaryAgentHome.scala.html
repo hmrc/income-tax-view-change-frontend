@@ -97,7 +97,7 @@ viewModel: HomePageViewModel
             }
 
             @p(classes = "govuk-body margin-bottom-sixty", id = Some("changeClientLink")) {
-                @link(controllers.agent.routes.RemoveClientDetailsSessionsController.show.url, "govuk-link--no-visited-state", "home.agent.changeClientLink")
+                @link(controllers.agent.routes.RemoveClientDetailsSessionsController.show().url, "govuk-link--no-visited-state", "home.agent.changeClientLink")
             }
             @if(viewModel.nextPaymentsTileViewModel.reviewAndReconcileEnabled && viewModel.nextPaymentsTileViewModel.paymentsAccruingInterestCount > 0) {
                 <div id="accrues-interest-warning" class="grid-row">

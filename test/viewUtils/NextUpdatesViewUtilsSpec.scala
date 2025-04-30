@@ -19,7 +19,6 @@ package viewUtils
 import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
 import models.admin.{FeatureSwitch, ReportingFrequencyPage}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}

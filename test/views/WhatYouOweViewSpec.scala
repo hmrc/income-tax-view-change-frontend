@@ -321,44 +321,44 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = List(chargeItemWithCodingOutNics2Ci()),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = Some(codedOutDocumentDetailCi)
+    codedOutDetails = Some(codedOutDetails)
   )
 
   val whatYouOweDataNoCharges: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = List(),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = None
+    codedOutDetails = None
   )
 
   val whatYouOweDataWithCodingOutFullyCollected: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = List(chargeItemWithCodingOutNics2Ci()),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = Some(codedOutDocumentDetailFullyCollectedCi)
+    codedOutDetails = Some(CodingOutDetails(0.00, TaxYear.forYearEnd(2021)))
   )
 
   val whatYouOweDataWithMFADebits: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = List(financialDetailsMFADebitsCi.head),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = None
+    codedOutDetails = None
   )
 
   val whatYouOweDataWithCodingOutFuture: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = List(chargeItemWithCodingOutNics2Ci()),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = Some(codedOutDocumentDetailCi)
+    codedOutDetails = Some(codedOutDetails)
   )
 
-  val whatYouOweDataCodingOutWithoutAmountCodingOut: WhatYouOweChargesList = whatYouOweDataWithCodingOutNics2.copy(codedOutDocumentDetail = None)
+  val whatYouOweDataCodingOutWithoutAmountCodingOut: WhatYouOweChargesList = whatYouOweDataWithCodingOutNics2.copy(codedOutDetails = None)
 
   val whatYouOweDataWithCancelledPayeSa: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = List(chargeItemWithCodingOutCancelledPayeSaCi()),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = None
+    codedOutDetails = None
   )
 
   val noChargesModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
@@ -366,7 +366,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val whatYouOweDataWithPayeSA: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None),
     chargesList =  List(chargeItemWithCodingOutNics2Ci()),
-    codedOutDocumentDetail = Some(codedOutDocumentDetailPayeSACi)
+    codedOutDetails = Some(codedOutDetails)
   )
 
   val noUtrModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
@@ -1107,7 +1107,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       "have coding out message displayed at the bottom of the page" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2) {
         Option(pageDocument.getElementById("coding-out-summary-link")).isDefined shouldBe true
         pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
-          "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02"
+          "/report-quarterly/income-and-expenses/view/tax-year-summary/2021"
         pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString)
       }
       "have a class 2 Nics overdue entry" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2) {
@@ -1139,7 +1139,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       "only show coding out content under header" in new TestSetup(charges = whatYouOweDataWithCodingOutFullyCollected) {
         pageDocument.getElementById("coding-out-notice").text() shouldBe codingOutNoticeFullyCollected
         pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
-          "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02"
+          "/report-quarterly/income-and-expenses/view/tax-year-summary/2021"
         pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString)
       }
     }

@@ -16,7 +16,7 @@
 
 package models.extensions
 
-import enums.{Poa1Charge, Poa1ReconciliationDebit, Poa2Charge, Poa2ReconciliationDebit, TRMAmendCharge, TRMNewCharge}
+import enums._
 import models.financialDetails.{DocumentDetail, FinancialDetailsModel}
 
 import java.time.LocalDate
@@ -26,14 +26,14 @@ trait FinancialDetailsModelExtension {
   implicit class FinancialDetailsModelConversion(fdm: FinancialDetailsModel) {
     def documentDetailsFilterByTaxYear(taxYear: Int): List[DocumentDetail] = {
       fdm match {
-        case FinancialDetailsModel(_, documentDetails, _) =>
+        case FinancialDetailsModel(_, _, documentDetails, _) =>
           documentDetails.filter(_.taxYear == taxYear)
       }
     }
 
     def getAllDueDates: List[LocalDate] = {
       fdm match {
-        case FinancialDetailsModel(_, documentDetails, _) =>
+        case FinancialDetailsModel(_, _, documentDetails, _) =>
           documentDetails.flatMap(_.getDueDate())
       }
     }

@@ -216,7 +216,7 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
                 val result = action(fakeRequest)
 
                 status(result) shouldBe SEE_OTHER
-                val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+                val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
                 redirectLocation(result) shouldBe Some(redirectUrl)
               }
             }
@@ -298,7 +298,7 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
                 val result = action(fakeRequest)
 
                 status(result) shouldBe SEE_OTHER
-                val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+                val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
                 redirectLocation(result) shouldBe Some(redirectUrl)
               }
             }

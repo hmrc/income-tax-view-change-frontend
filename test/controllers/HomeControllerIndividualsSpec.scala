@@ -16,10 +16,9 @@
 
 package controllers
 
-import models.admin.{CreditsRefundsRepay, IncomeSourcesFs, IncomeSourcesNewJourney, ReportingFrequencyPage, ReviewAndReconcilePoa}
+import models.admin._
 import models.financialDetails._
-import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.{ITSAStatus, StatusDetail}
+import models.itsaStatus.ITSAStatus
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -30,7 +29,7 @@ import play.api.test.Helpers._
 import play.api.test.Injecting
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, businessesAndPropertyIncomeCeased}
 
-import java.time.{LocalDate, Month}
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Injecting {
@@ -297,7 +296,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           mockSingleBusinessIncomeSource()
           mockGetDueDates(Right(futureDueDates))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
-            .thenReturn(Future.successful(List(FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None), List(), List()))))
+            .thenReturn(Future.successful(List(FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None), List(), List(), List()))))
           when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)

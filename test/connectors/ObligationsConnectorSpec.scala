@@ -35,7 +35,7 @@ package connectors
 import audit.mocks.MockAuditingService
 import audit.models._
 import config.FrontendAppConfig
-import mocks.{MockHttp, MockHttpV2}
+import mocks.MockHttpV2
 import models.obligations.{ObligationsErrorModel, ObligationsModel, ObligationsResponseModel}
 import play.api.Configuration
 import play.api.http.Status.{FORBIDDEN, NOT_FOUND}

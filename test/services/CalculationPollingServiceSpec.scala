@@ -17,22 +17,14 @@
 package services
 
 import config.FrontendAppConfig
-import mocks.services.{LockServiceDidNotAcquireMongoLock, MockCalculationService, MockLockService}
+import mocks.services.{LockServiceDidNotAcquireMongoLock, MockCalculationService}
 import models.liabilitycalculation._
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{doAnswer, mock, when}
 import org.scalatest.time.{Seconds, Span}
 import play.api.http.Status
 import testConstants.BaseTestConstants._
 import testUtils.TestSupport
-import uk.gov.hmrc.mongo.lock.{Lock, LockService, MongoLockRepository}
-import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
+import uk.gov.hmrc.mongo.lock.{LockService, MongoLockRepository}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-
-import java.time.Instant
-import scala.concurrent.{ExecutionContext, Future}
-import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration, MILLISECONDS}
 @deprecated("Being moved to submission team", "MISUV-8977")
 class CalculationPollingServiceSpec extends TestSupport with MockCalculationService {
   val liabilityCalculationSuccessResponse: LiabilityCalculationResponse = LiabilityCalculationResponse(

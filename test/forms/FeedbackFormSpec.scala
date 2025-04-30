@@ -16,8 +16,8 @@
 
 package forms
 
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.{Form, FormError}
 
 class FeedbackFormSpec extends AnyWordSpec with Matchers {

@@ -17,8 +17,8 @@
 package auth.authV2.models
 
 import auth.authV2.Constants
-import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Enrolment, Enrolments}
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
+import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment, Enrolments}
 
 case class AuthUserDetails(enrolments: Enrolments,
                            affinityGroup: Option[AffinityGroup],

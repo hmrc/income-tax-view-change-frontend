@@ -16,18 +16,14 @@
 
 package views.claimToAdjustPoa
 
-import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
-import models.core.NormalMode
+import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.WhatYouNeedToKnow
-import controllers.claimToAdjustPoa.routes._
-import models.claimToAdjustPoa.WhatYouNeedToKnowViewModel
-import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
 
 class WhatYouNeedToKnowViewSpec extends TestSupport {
 

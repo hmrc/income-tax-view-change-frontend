@@ -17,9 +17,8 @@
 package mocks.services
 
 import org.mockito.ArgumentMatchers
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
-import org.mockito.Mockito.mock
 import play.api.cache.AsyncCacheApi
 import testUtils.UnitSpec
 

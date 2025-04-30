@@ -64,7 +64,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       ceaseIncomeSources(
         viewModel,
         true,
-        controllers.routes.HomeController.showAgent.url)(implicitly, agentUserConfirmedClient())
+        controllers.routes.HomeController.showAgent().url)(implicitly, agentUserConfirmedClient())
     } else {
       ceaseIncomeSources(
         viewModel,

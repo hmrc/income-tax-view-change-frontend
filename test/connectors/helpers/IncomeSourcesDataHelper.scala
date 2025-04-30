@@ -16,9 +16,9 @@
 
 package connectors.helpers
 
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import models.createIncomeSource._
-import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
+import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckPropertyViewModel}
 import play.api.libs.json.{JsValue, Json}
 
 import java.time.LocalDate

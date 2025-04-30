@@ -16,11 +16,9 @@
 
 package services
 
-import connectors.GetPenaltyDetailsConnector
 import mocks.connectors.MockPenaltyDetailsConnector
-import models.penalties.GetPenaltyDetailsParser.{GetPenaltyDetailsFailureResponse, GetPenaltyDetailsResponse, GetPenaltyDetailsSuccessResponse}
+import models.penalties.GetPenaltyDetailsParser.{GetPenaltyDetailsFailureResponse, GetPenaltyDetailsSuccessResponse}
 import play.api.http.Status.INTERNAL_SERVER_ERROR
-import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import testConstants.PenaltiesTestConstants.getPenaltyDetails
 import testUtils.TestSupport
 

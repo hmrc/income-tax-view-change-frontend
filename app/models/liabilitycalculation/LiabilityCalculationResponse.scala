@@ -22,7 +22,6 @@ import play.api.libs.json._
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import scala.util.matching.Regex
 
 
 sealed trait LiabilityCalculationResponseModel

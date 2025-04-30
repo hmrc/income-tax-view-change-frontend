@@ -136,7 +136,7 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
                   val expectedUrl = if (mtdUserRole == MTDIndividual) {
                     controllers.routes.HomeController.show().url
                   } else {
-                    controllers.routes.HomeController.showAgent.url
+                    controllers.routes.HomeController.showAgent().url
                   }
                   result should have(
                     httpStatus(SEE_OTHER),

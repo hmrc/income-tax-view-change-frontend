@@ -39,7 +39,7 @@ class ClientDetailsFailureControllerSpec extends MockAuthActions
   lazy val testController = app.injector.instanceOf[ClientRelationshipFailureController]
 
   "show" when {
-    val action = testController.show
+    val action = testController.show()
     "the user is not authenticated" should {
       "redirect them to sign in" in {
         setupMockAgentAuthException()
@@ -47,7 +47,7 @@ class ClientDetailsFailureControllerSpec extends MockAuthActions
         val result = action(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
       }
     }
     "the user has timed out" should {
@@ -55,7 +55,7 @@ class ClientDetailsFailureControllerSpec extends MockAuthActions
         val result = action(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
       }
     }
     "the user does not have an agent reference number" should {
@@ -65,7 +65,7 @@ class ClientDetailsFailureControllerSpec extends MockAuthActions
         val result = action(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show.url)
+        redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show().url)
       }
     }
 

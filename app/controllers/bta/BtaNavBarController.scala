@@ -17,7 +17,6 @@
 package controllers.bta
 
 import connectors.BtaNavBarPartialConnector
-import javax.inject.Inject
 import play.api.Logging
 import play.api.i18n.Messages
 import play.api.mvc.{MessagesControllerComponents, Request}
@@ -28,6 +27,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.navBar.BtaNavBar
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class BtaNavBarController @Inject()(BtaNavBarPartialConnector: BtaNavBarPartialConnector,

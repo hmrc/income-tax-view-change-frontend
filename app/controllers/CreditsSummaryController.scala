@@ -60,7 +60,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
 
   lazy val agentCreditAndRefundUrl: String = controllers.routes.CreditAndRefundController.showAgent().url
 
-  lazy val agentPaymentHistoryHomeUrl: String = controllers.routes.PaymentHistoryController.showAgent.url
+  lazy val agentPaymentHistoryHomeUrl: String = controllers.routes.PaymentHistoryController.showAgent().url
 
   private def getBackURL(referer: Option[String], origin: Option[String], calendarYear: Int): String = {
     referer.map(URI.create(_).getPath) match {

@@ -21,7 +21,7 @@ import authV2.AuthActionsTestData.defaultMTDITUser
 import config.featureswitch.FeatureSwitching
 import enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CLASS2_NICS}
 import implicits.ImplicitDateFormatter
-import models.financialDetails.{BalanceDetails, ChargeItem, DocumentDetail, WhatYouOweChargesList, YourSelfAssessmentChargesViewModel}
+import models.financialDetails.{BalanceDetails, CodingOutDetails, DocumentDetail, WhatYouOweChargesList, YourSelfAssessmentChargesViewModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.outstandingCharges.OutstandingChargesModel
@@ -34,7 +34,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
 import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.{dueDateOverdue, fixedDate, futureFixedDate, noDunningLocks, oneDunningLock, outstandingChargesModel, twoDunningLocks}
+import testConstants.FinancialDetailsTestConstants.{futureFixedDate, noDunningLocks, oneDunningLock, outstandingChargesModel, twoDunningLocks}
 import testUtils.{TestSupport, ViewSpec}
 import views.html.YourSelfAssessmentCharges
 
@@ -314,35 +314,35 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = List(chargeItemWithCodingOutNics2Ci()),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = Some(codedOutDocumentDetailCi)
+    codedOutDetails = Some(codedOutDetails)
   )
 
   val whatYouOweDataNoCharges: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = List(),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = None
+    codedOutDetails = None
   )
 
   val whatYouOweDataWithCodingOutFullyCollected: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = List(chargeItemWithCodingOutNics2Ci()),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = Some(codedOutDocumentDetailFullyCollectedCi)
+    codedOutDetails = Some(CodingOutDetails(0.00, TaxYear.forYearEnd(2021)))
   )
 
   val whatYouOweDataWithMFADebits: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = List(financialDetailsMFADebitsCi.head),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = None
+    codedOutDetails = None
   )
 
   val whatYouOweDataWithCodingOutFuture: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = List(chargeItemWithCodingOutNics2Ci()),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = Some(codedOutDocumentDetailCi)
+    codedOutDetails = Some(codedOutDetails)
   )
 
   val whatYouOweDataWithDueDateWithin30Days: WhatYouOweChargesList = WhatYouOweChargesList(
@@ -350,30 +350,30 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
     chargesList = List(poa1WithFutureDueDate.copy(dueDate = Some(fixedDate.plusDays(25)), taxYear = TaxYear.forYearEnd(2023)),
       poa2WithFutureDueDate.copy(dueDate = Some(fixedDate.plusDays(26)), taxYear = TaxYear.forYearEnd(2023))),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = None
+    codedOutDetails = None
   )
 
   val whatYouOweDataWithDueDateInFuture: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = List(poa1WithFutureDueDate, poa2WithFutureDueDate),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = None
+    codedOutDetails = None
   )
 
   val whatYouOweWithDataOverdueAndFuture: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = List(poa1WithFutureDueDate, poa1, poa2WithFutureDueDate.copy(dueDate = Some(fixedDate.plusDays(26)), taxYear = TaxYear.forYearEnd(2023))),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = None
+    codedOutDetails = None
   )
 
-  val whatYouOweDataCodingOutWithoutAmountCodingOut: WhatYouOweChargesList = whatYouOweDataWithCodingOutNics2.copy(codedOutDocumentDetail = None)
+  val whatYouOweDataCodingOutWithoutAmountCodingOut: WhatYouOweChargesList = whatYouOweDataWithCodingOutNics2.copy(codedOutDetails = None)
 
   val whatYouOweDataWithCancelledPayeSa: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = List(chargeItemWithCodingOutCancelledPayeSaCi()),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = None
+    codedOutDetails = None
   )
 
   val noChargesModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
@@ -381,7 +381,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
   val whatYouOweDataWithPayeSA: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None),
     chargesList =  List(chargeItemWithCodingOutNics2Ci()),
-    codedOutDocumentDetail = Some(codedOutDocumentDetailPayeSACi)
+    codedOutDetails = Some(codedOutDetails)
   )
 
   val noUtrModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
@@ -914,7 +914,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       "have coding out message displayed at the bottom of the page" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2) {
         Option(pageDocument.getElementById("coding-out-summary-link")).isDefined shouldBe true
         pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
-          "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02"
+          "/report-quarterly/income-and-expenses/view/tax-year-summary/2021"
         pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString)
       }
       "have a class 2 Nics overdue entry" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2) {
@@ -933,7 +933,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       "only show coding out content under header" in new TestSetup(charges = whatYouOweDataWithCodingOutFullyCollected) {
         pageDocument.getElementById("coding-out-notice").text() shouldBe codingOutNoticeFullyCollected
         pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
-          "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02"
+          "/report-quarterly/income-and-expenses/view/tax-year-summary/2021"
         pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString)
       }
     }

@@ -16,10 +16,11 @@
 
 package testConstants
 
-import java.time.LocalDate
-import BaseIntegrationTestConstants.{expectedAddress, getCurrentTaxYearEnd, otherTestSelfEmploymentId, testDate, testIncomeSource, testLatencyDetails3, testSelfEmploymentId, testTradeName}
 import models.core.{AccountingPeriodModel, AddressModel, CessationModel}
 import models.incomeSourceDetails.BusinessDetailsModel
+import testConstants.BaseIntegrationTestConstants._
+
+import java.time.LocalDate
 
 object BusinessDetailsIntegrationTestConstants {
   val startYear = getCurrentTaxYearEnd.getYear - 5
@@ -39,7 +40,6 @@ object BusinessDetailsIntegrationTestConstants {
   val b1AccountingMethod = false
 
   val b2CessationDate = LocalDate.of(endYear, 12, 31)
-  val b2CessationReason = "It really, really was a bad idea"
   val b2TradingStart = LocalDate.parse("2018-01-01")
   val b2TradingName = "secondBusiness"
   val b3TradingName = "thirdBusiness"
@@ -123,7 +123,7 @@ object BusinessDetailsIntegrationTestConstants {
     firstAccountingPeriodEndDate = Some(b2AccountingEnd),
     tradingStartDate = Some(b2TradingStart),
     contextualTaxYear = None,
-    cessation = Some(CessationModel(Some(LocalDate.of(2020, 1, 1)), None)),
+    cessation = Some(CessationModel(Some(LocalDate.of(2020, 1, 1)))),
     address = Some(address),
     cashOrAccruals = false
   )
@@ -171,7 +171,7 @@ object BusinessDetailsIntegrationTestConstants {
     firstAccountingPeriodEndDate = Some(b2AccountingEnd),
     tradingStartDate = Some(b2TradingStart),
     contextualTaxYear = None,
-    cessation = Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason))),
+    cessation = Some(CessationModel(Some(b2CessationDate))),
     address = Some(address),
     cashOrAccruals = false
   )

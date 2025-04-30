@@ -16,8 +16,8 @@
 
 package connectors
 
-import _root_.helpers.{ComponentSpecBase, WiremockHelper}
 import _root_.helpers.servicemocks.AuditStub
+import _root_.helpers.{ComponentSpecBase, WiremockHelper}
 import com.github.tomakehurst.wiremock.client.WireMock
 import models.core.NormalMode
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure

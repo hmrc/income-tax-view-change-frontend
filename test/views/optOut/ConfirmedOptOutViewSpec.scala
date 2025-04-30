@@ -93,7 +93,7 @@ class ConfirmedOptOutViewSpec extends TestSupport {
       revisedDeadlinesBlock.getElementById("revised-deadlines-heading").text() shouldBe ConfirmedOptOutMessages.yourRevisedDeadlinesHeading
       revisedDeadlinesBlock.getElementById("revised-deadlines-p1").text() shouldBe ConfirmedOptOutMessages.yourRevisedDeadlinesContentP1
       revisedDeadlinesBlock.getElementById("your-reporting-frequency-block").text() shouldBe ""
-      revisedDeadlinesBlock.getElementById("view-upcoming-updates-link").attr("href") shouldBe controllers.routes.NextUpdatesController.showAgent.url
+      revisedDeadlinesBlock.getElementById("view-upcoming-updates-link").attr("href") shouldBe controllers.routes.NextUpdatesController.showAgent().url
     }
 
     "Individual - revised deadlines with reporting frequency content" in new Setup(isAgent = false, showReportingFrequencyContent = true) {
@@ -109,7 +109,7 @@ class ConfirmedOptOutViewSpec extends TestSupport {
       revisedDeadlinesBlock.getElementById("revised-deadlines-heading").text() shouldBe ConfirmedOptOutMessages.yourRevisedDeadlinesHeading
       revisedDeadlinesBlock.getElementById("revised-deadlines-p1").text() shouldBe ConfirmedOptOutMessages.yourRevisedDeadlinesContentP1
       revisedDeadlinesBlock.getElementById("your-reporting-frequency-block").text() shouldBe ConfirmedOptOutMessages.yourRevisedDeadlinesContentP2
-      revisedDeadlinesBlock.getElementById("view-upcoming-updates-link").attr("href") shouldBe controllers.routes.NextUpdatesController.showAgent.url
+      revisedDeadlinesBlock.getElementById("view-upcoming-updates-link").attr("href") shouldBe controllers.routes.NextUpdatesController.showAgent().url
     }
 
     "have the correct reporting updates content" when {

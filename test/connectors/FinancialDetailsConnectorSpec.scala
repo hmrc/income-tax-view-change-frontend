@@ -20,7 +20,6 @@ import audit.AuditingService
 import audit.models.{AuditModel, ExtendedAuditModel}
 import config.FrontendAppConfig
 import models.financialDetails._
-import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesResponseModel}
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsResponse}
 import models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsResponse}
 import org.mockito.ArgumentMatchers.any
@@ -33,7 +32,6 @@ import play.api.mvc.Request
 import play.mvc.Http.Status
 import testConstants.BaseTestConstants._
 import testConstants.FinancialDetailsTestConstants._
-import testConstants.OutstandingChargesTestConstants._
 import testConstants.PaymentAllocationsTestConstants._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig

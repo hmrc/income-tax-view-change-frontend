@@ -256,6 +256,8 @@ tax-year-summary.section                                           = Section
 tax-year-summary.amount                                            = Amount
 tax-year-summary.payments.class2Nic.text                           = Class 2 National Insurance
 tax-year-summary.payments.codingOut.text                           = Balancing payment collected through PAYE tax code
+tax-year-summary.payments.poa1CodedOut.text                        = First payment on account collected through PAYE tax code
+tax-year-summary.payments.poa2CodedOut.text                        = Second payment on account collected through PAYE tax code
 tax-year-summary.na                                                = N/A
 tax-year-summary.forecast_tab.insetText                            = This is an estimate of your tax bill for the whole year to 5 April {0}. It will be updated throughout the year as more information is provided.
 tax-year-summary.forecast_total_title                              = 6 April {0} to 5 April {1} forecast
@@ -991,6 +993,8 @@ chargeSummary.reviewAndReconcilePoa2Credit.text				       = Second payment on ac
 chargeSummary.balancingCharge.text  							   = Balancing payment
 chargeSummary.class2Nic.text                                       = Class 2 National Insurance
 chargeSummary.codingOut.text                                       = Balancing payment collected through PAYE tax code
+chargeSummary.poa1CodedOut.text                                    = First payment on account collected through PAYE tax code
+chargeSummary.poa2CodedOut.text                                    = Second payment on account collected through PAYE tax code
 chargeSummary.cancelledPayeSelfAssessment.text                     = Cancelled PAYE Self Assessment (through your PAYE tax code)
 chargeSummary.hmrcAdjustment.text                                  = HMRC adjustment
 chargeSummary.dueDate											   = Due date
@@ -1155,6 +1159,7 @@ chargeSummary.paymentAllocations.mfaDebit                          = Payment put
 
 chargeSummary.codingOutHeader                                      = Self Assessment payment (through your PAYE tax code)
 chargeSummary.codingOutMessage                                     = This is the remaining tax you owe for the {0} to {1} tax year.
+chargeSummary.codingOutBCDMessage                                  = This is the remaining tax you owe for the {0} to {1} tax year.
 chargeSummary.codingOutRemainingToPay                              = (Collected through your PAYE tax code for {0} to {1} tax year)
 chargeSummary.codingOutInset-1                                     = If this tax cannot be collected
 chargeSummary.codingOutInset-2                                     = through your PAYE tax code
@@ -1508,7 +1513,8 @@ notmigrated.agent.content_extra                                 = This will be a
 notmigrated.user.link_title                                     = Self Assessment online account
 notmigrated.agent.link_title                                    = Self Assessment for Agents Account
 
-incomeSources.add.UKPropertyStartDate.heading                   = When did your UK property business start?
+incomeSources.add.UKPropertyStartDate.heading                   = Business start date
+incomeSources.add.UKPropertyStartDate.date-question             = When did your UK property business start?
 incomeSources.add.UKPropertyStartDate.hint                      = The date your business started trading can be today, in the past or up to 7 days in the future.
 incomeSources.add.UKPropertyStartDate.hint2                     = This is the date you first received rental income from this UK property business, such as letting or renting out a property or land.
 incomeSources.add.UKPropertyStartDate.invalid                   = The date must be a real date
@@ -1598,7 +1604,8 @@ incomeSources.cease.endDate.foreignProperty.beforeEarliestDate     = The date yo
 incomeSources.cease.endDate.ukProperty.hint-1                      = This is the date you last received rental income or made an expense related to your UK property business.
 incomeSources.cease.endDate.foreignProperty.hint-1                 = This is the date you last received rental income or made an expense related to your foreign property business.
 
-incomeSources.add.foreignProperty.startDate.heading                  = When did your foreign property business start?
+incomeSources.add.foreignProperty.startDate.heading                  = Business start date
+incomeSources.add.foreignProperty.startDate.date-question            = When did your foreign property business start?
 incomeSources.add.foreignProperty.startDate.hint                     = The date your business started trading can be today, in the past or up to 7 days in the future.
 incomeSources.add.foreignProperty.startDate.hint2                    = This is the date you first received rental income from this foreign property business, such as letting or renting out a property or land.
 incomeSources.add.foreignProperty.startDate.hintExample              = For example, 27 3 2020
@@ -1649,8 +1656,13 @@ incomeSources.ceaseUKProperty.checkDetails.confirm               = Confirm and c
 incomeSources.ceaseUKProperty.checkDetails.change                = Change
 
 # add Business page
+# heading is used only in the old journey
+add-business-name.heading                                         = What is the name of your business?
+
+# heading1 and heading 2 are used for the new journey
 add-business-name.heading1                                        = Business name
 add-business-name.heading2                                        = What is your business name?
+
 add-business-name.p1                                              = This is the business name you used to register for Self Assessment. If your sole trader business does not have a separate name, enter your own first and last name.
 add-business-name.p2                                              = The business name you enter can only include upper or lower case letters, full stops, commas, digits, &, {0}, \, /, -.
 add-business-name.form.error.required                             = Enter your name or the name of your business
@@ -1659,7 +1671,8 @@ add-business-name.form.error.invalidNameFormat                    = Business nam
 add-business-name.form.error.invalidName                          = Trade and business name cannot be the same
 
 # add Business start date
-add-business-start-date.heading                      = When did your business start trading?
+add-business-start-date.heading                      = Business start date
+add-business-start-date.date-question                = When did your business start trading?
 add-business-start-date.hint                         = The date your business started trading can be today, in the past or up to 7 days in the future.
 add-business-start-date.hint2                        = This is the date we’ll use to calculate your Class 2 National Insurance charge, if appropriate.
 add-business-start-date.day                          = Day

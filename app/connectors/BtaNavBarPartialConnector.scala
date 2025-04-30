@@ -17,14 +17,13 @@
 package connectors
 
 import config.FrontendAppConfig
-
-import javax.inject.{Inject, Singleton}
 import models.btaNavBar.NavContent
 import play.api.Logger
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpReadsInstances, HttpResponse}
 
 import java.net.{URI, URL}
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 

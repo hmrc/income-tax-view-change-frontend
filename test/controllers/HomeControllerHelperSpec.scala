@@ -18,7 +18,7 @@ package controllers
 
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
 import mocks.auth.MockAuthActions
-import mocks.services.{MockClientDetailsService, MockDateService, MockFinancialDetailsService, MockITSAStatusService, MockNextUpdatesService, MockWhatYouOweService}
+import mocks.services._
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail}
@@ -31,8 +31,7 @@ import play.api.http.Status
 import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.agent.ClientDetailsService
-import services.{DateService, FinancialDetailsService, ITSAStatusService, NextUpdatesService, WhatYouOweService}
+import services._
 
 import java.time.{LocalDate, Month}
 import scala.concurrent.Future

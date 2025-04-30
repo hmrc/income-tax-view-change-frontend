@@ -117,7 +117,7 @@ class IncomeSourceAddedController @Inject()(val authActions: AuthActions,
   }
 
 
-  private def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+  private def handleSubmitRequest(isAgent: Boolean): Future[Result] = {
     val redirectUrl = if (isAgent) routes.AddIncomeSourceController.showAgent().url else routes.AddIncomeSourceController.show().url
     Future.successful(Redirect(redirectUrl))
   }

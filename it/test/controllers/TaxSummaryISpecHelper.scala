@@ -42,8 +42,8 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
   val emptyCTAModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = false, poaTaxYear = None)
 
   val financialDetailsSuccess: FinancialDetailsModel = FinancialDetailsModel(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    List(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    documentDetails = List(
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear,
         transactionId = "testTransactionId",
@@ -58,7 +58,7 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
         effectiveDateOfPayment = Some(LocalDate.of(2021, 4, 23)),
         documentDueDate = Some(LocalDate.of(2021, 4, 23))
       )),
-    List(
+    financialDetails = List(
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         mainType = Some("SA Payment on Account 1"),
@@ -70,8 +70,8 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
   )
 
   val immediatelyRejectedByNps: FinancialDetailsModel = FinancialDetailsModel(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    List(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    documentDetails = List(
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear,
         transactionId = "testTransactionId",
@@ -97,7 +97,7 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
         effectiveDateOfPayment = Some(LocalDate.of(2021, 1, 23))
       )
     ),
-    List(
+    financialDetails = List(
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         mainType = Some("SA Balancing Charge"),
@@ -116,8 +116,8 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
   )
 
   val rejectedByNpsPartWay: FinancialDetailsModel = FinancialDetailsModel(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    List(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    documentDetails = List(
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear,
         transactionId = "testTransactionId",
@@ -145,7 +145,7 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
         documentDueDate = Some(LocalDate.of(2021, 4, 23))
       )
     ),
-    List(
+    financialDetails = List(
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         mainType = Some("SA Balancing Charge"),
@@ -164,8 +164,8 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
   )
 
   val codingOutPartiallyCollected: FinancialDetailsModel = FinancialDetailsModel(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    List(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    documentDetails = List(
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear,
         transactionId = "testTransactionId1",
@@ -203,7 +203,7 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
         documentDueDate = Some(LocalDate.of(2022, 1, 31))
       )
     ),
-    List(
+    financialDetails = List(
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         mainType = Some("SA Balancing Charge"),
@@ -229,8 +229,8 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
   )
 
   val financialDetailsDunningLockSuccess: FinancialDetailsModel = FinancialDetailsModel(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    List(DocumentDetail(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    documentDetails = List(DocumentDetail(
       taxYear = getCurrentTaxYearEnd.getYear,
       transactionId = "testDunningTransactionId",
       documentDescription = Some("ITSA- POA 1"),
@@ -257,7 +257,7 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
         effectiveDateOfPayment = Some(LocalDate.of(2021, 4, 23)),
         documentDueDate = Some(LocalDate.of(2021, 4, 23))
       )),
-    List(
+    financialDetails = List(
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         transactionId = Some("testDunningTransactionId"),
@@ -276,8 +276,8 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
   )
 
   val financialDetailsMFADebits: FinancialDetailsModel = FinancialDetailsModel(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    List(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    documentDetails = List(
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear,
         transactionId = "testMFA1",
@@ -304,7 +304,7 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
         effectiveDateOfPayment = Some(LocalDate.of(2021, 4, 22)),
         documentDueDate = Some(LocalDate.of(2021, 4, 22))
       )),
-    List(
+    financialDetails = List(
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         transactionId = Some("testMFA1"),

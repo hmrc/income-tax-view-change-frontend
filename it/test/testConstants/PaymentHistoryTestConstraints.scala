@@ -16,11 +16,12 @@
 
 package testConstants
 
-import java.time.LocalDate
-import BaseIntegrationTestConstants.{getCurrentTaxYearEnd, otherTestSelfEmploymentId, testIncomeSource, testSelfEmploymentId}
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.BusinessDetailsModel
+import testConstants.BaseIntegrationTestConstants.{getCurrentTaxYearEnd, otherTestSelfEmploymentId, testIncomeSource, testSelfEmploymentId}
 import testConstants.BusinessDetailsIntegrationTestConstants.address
+
+import java.time.LocalDate
 
 
 object PaymentHistoryTestConstraints {
@@ -38,7 +39,6 @@ object PaymentHistoryTestConstraints {
   val b1AddressLine5 = "ZL1 064"
   val b1CountryCode = "UK"
   val b2CessationDate = LocalDate.of(2018, 12, 31)
-  val b2CessationReason = "It really, really was a bad idea"
   val b2TradingStart = "2018-01-01"
   val b2TradingName = "secondBusiness"
   val b2AccountingStart = LocalDate.of(2018, 1, 1)

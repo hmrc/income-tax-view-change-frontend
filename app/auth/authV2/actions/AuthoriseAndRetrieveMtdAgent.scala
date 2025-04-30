@@ -101,13 +101,13 @@ class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: AuthorisedFunc
     throwable match {
       case _: BearerTokenExpired =>
         logger.warn("Bearer Token Timed Out.")
-        Future.successful(Left(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)))
+        Future.successful(Left(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout())))
       case _: InsufficientEnrolments =>
         logger.error(s"missing delegated enrolment. Redirect to agent error page.")
-        Future.successful(Left(Redirect(controllers.agent.routes.ClientRelationshipFailureController.show)))
+        Future.successful(Left(Redirect(controllers.agent.routes.ClientRelationshipFailureController.show())))
       case authorisationException: AuthorisationException =>
         logger.error(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
-        Future.successful(Left(Redirect(controllers.routes.SignInController.signIn)))
+        Future.successful(Left(Redirect(controllers.routes.SignInController.signIn())))
       case ex =>
         logger.error(s"Unexpected error from Auth. Error message = ${ex.getMessage}")
         Future.successful(Left(errorHandler.showInternalServerError()))

@@ -204,6 +204,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                   IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, Json.obj(
                     "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+                    "codingDetails" -> Json.arr(),
                     "documentDetails" -> Json.arr(
                       Json.obj("taxYear" -> 2018,
                         "transactionId" -> "1040001234",
@@ -244,6 +245,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                   IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, Json.obj(
                     "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+                    "codingDetails" -> Json.arr(),
                     "documentDetails" -> Json.arr(
                       Json.obj("taxYear" -> 2018,
                         "transactionId" -> "CODINGOUT01",
@@ -268,7 +270,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                     httpStatus(OK),
                     pageTitle(mtdUserRole, "tax-year-summary.payments.codingOut.text"),
                     elementTextBySelector("#coding-out-notice")(codingOutInsetPara),
-                    elementTextBySelector("#coding-out-message")(codingOutMessageWithStringMessagesArgument(2017, 2018))
+                    elementTextBySelector("#coding-out-message")(codingOutMessageWithStringMessagesArgument(2016, 2017))
                   )
                 }
               }

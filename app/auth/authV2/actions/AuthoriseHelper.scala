@@ -37,13 +37,13 @@ trait AuthoriseHelper extends FeatureSwitching {
   def logAndRedirect[A](): PartialFunction[Throwable, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
     case _: BearerTokenExpired =>
       logger.warn("Bearer Token Timed Out.")
-      Future.successful(Left(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)))
+      Future.successful(Left(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout())))
     case insufficientEnrolments: InsufficientEnrolments =>
       logger.error(s"Insufficient enrolments: ${insufficientEnrolments.msg}")
-      Future.successful(Left(Redirect(controllers.errors.routes.NotEnrolledController.show)))
+      Future.successful(Left(Redirect(controllers.errors.routes.NotEnrolledController.show())))
     case authorisationException: AuthorisationException =>
       logger.error(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
-      Future.successful(Left(Redirect(controllers.routes.SignInController.signIn)))
+      Future.successful(Left(Redirect(controllers.routes.SignInController.signIn())))
     // No catch all block at end - bubble up to global error handler
     // See investigation: https://github.com/hmrc/income-tax-view-change-frontend/pull/2432
   }
@@ -53,7 +53,7 @@ trait AuthoriseHelper extends FeatureSwitching {
     implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
     case _ ~ _ ~ _ ~ Some(Agent) ~ _ =>
       logger.error(s"Agent on endpoint for individuals")
-      Future.successful(Left(Redirect(controllers.agent.routes.EnterClientsUTRController.show)))
+      Future.successful(Left(Redirect(controllers.agent.routes.EnterClientsUTRController.show())))
   }
 
   def redirectIfNotAgent[A]()(

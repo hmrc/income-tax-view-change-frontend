@@ -29,7 +29,7 @@
 @paragraph = {
     @messages("timeout.signIn.1")
     @link(
-        link = controllers.routes.SignInController.signIn.url,
+        link = controllers.routes.SignInController.signIn().url,
         messageKey = "timeout.signIn.2",
 
         id = Some("sign-in-link"),
