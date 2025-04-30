@@ -62,7 +62,7 @@ class ViewAllCeasedBusinessesController @Inject()(val viewAllCeasedBusinesses: V
     lazy val errorHandler = if(isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     withNewIncomeSourcesFS {
-      incomeSourceDetailsService.getCeaseIncomeSourceViewModel(sources) match {
+      incomeSourceDetailsService.getCeaseIncomeSourceViewModel(sources, isEnabled(DisplayBusinessStartDate)) match {
         case Right(viewModel) =>
           sessionService.deleteSession(Manage).map { _ =>
             Ok(viewAllCeasedBusinesses(

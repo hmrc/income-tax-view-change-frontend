@@ -193,7 +193,7 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
                   result should have(
                     httpStatus(BAD_REQUEST),
                     elementTextByID("value-error")(messagesAPI("base.error-prefix") + ": " +
-                      messagesAPI(s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.error.invalid"))
+                      messagesAPI(s"dateForm.error.invalid"))
                   )
 
                   sessionService.getMongoKey(dateCeasedField, IncomeSourceJourneyType(Cease, incomeSourceType)).futureValue shouldBe Right(None)
@@ -209,4 +209,3 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
     }
   }
 }
-

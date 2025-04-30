@@ -65,7 +65,7 @@ class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageY
                    (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
 
     withNewIncomeSourcesFS {
-      incomeSourceDetailsService.getViewIncomeSourceViewModel(sources) match {
+      incomeSourceDetailsService.getViewIncomeSourceViewModel(sources, isEnabled(DisplayBusinessStartDate)) match {
         case Right(viewModel) =>
           Future(hc.sessionId.get).flatMap { sessionId =>
             sessionService.clearSession(sessionId.value).map { _ =>

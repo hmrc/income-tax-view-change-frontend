@@ -115,7 +115,7 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
 
               val result: Future[Result] = action(fakeRequest)
 
-              val redirectUrl = if (mtdRole != MTDIndividual) controllers.routes.HomeController.showAgent().url
+              val redirectUrl = if (mtdRole != MTDIndividual) controllers.routes.HomeController.showAgent.url
               else controllers.routes.HomeController.show().url
 
               status(result) shouldBe SEE_OTHER
@@ -195,7 +195,7 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
               val result: Future[Result] = action(fakeRequest)
 
               val redirectUrl: (Boolean, IncomeSourceType, String) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType, id: String) =>
-                routes.IncomeSourceReportingFrequencyController.show(isAgent, incomeSourceType).url
+                routes.IncomeSourceReportingFrequencyController.show(isAgent, false, incomeSourceType).url
 
               status(result) shouldBe SEE_OTHER
               redirectLocation(result) shouldBe Some(redirectUrl(mtdRole != MTDIndividual, incomeSourceType, testSelfEmploymentId))

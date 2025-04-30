@@ -21,22 +21,19 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.data.validation.{Constraint, Valid}
+import play.api.i18n.Messages
 import services.DateServiceInterface
 
 import java.time.LocalDate
 
 class CeaseIncomeSourceEndDateFormProvider extends Mappings {
 
-<<<<<<< HEAD
-  def apply(incomeSourceType: IncomeSourceType, id: Option[String] = None, newIncomeSourceJourney: Boolean)
-           (implicit user: MtdItUser[_], dateService: DateServiceInterface): Form[LocalDate] = {
-=======
-  def apply(incomeSourceType: IncomeSourceType, id: Option[String] = None)(implicit messages: Messages, user: MtdItUser[_], dateService: DateServiceInterface): Form[LocalDate] = {
->>>>>>> 5bb064202 (Fixing Feature switch and adding change urls. Also some cleanups)
+  def apply(incomeSourceType: IncomeSourceType, id: Option[String] = None, newIncomeSourceJourney: Boolean)(implicit messages: Messages, user: MtdItUser[_], dateService: DateServiceInterface): Form[LocalDate] = {
 
     val messagePrefix = incomeSourceType.endDateMessagePrefix
     val dateFormPrefix = "dateForm.error"
-    val invalidMessage = s"$messagePrefix.error.invalid"
+    val invalidMessage = if (newIncomeSourceJourney) "dateForm.error.invalid" else
+      s"$messagePrefix.error.invalid"
 
     def dateMustBeAfterBusinessStartDate(incomeSourceType: IncomeSourceType): String =
       s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.beforeStartDate"

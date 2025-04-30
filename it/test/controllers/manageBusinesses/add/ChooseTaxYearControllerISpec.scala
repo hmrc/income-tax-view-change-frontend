@@ -91,7 +91,7 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
     repository.set(UIJourneySessionData(
       testSessionId,
       "IncomeSourceReportingFrequencyJourney",
-      incomeSourceReportingFrequencyData = Some(IncomeSourceReportingFrequencySourceData(false, false)))
+      incomeSourceReportingFrequencyData = Some(IncomeSourceReportingFrequencySourceData(false, false, false, false)))
     )
   }
 

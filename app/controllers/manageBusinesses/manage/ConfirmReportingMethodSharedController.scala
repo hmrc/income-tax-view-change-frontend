@@ -24,6 +24,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.ReportingMethod
+import forms.incomeSources.manage.ConfirmReportingMethodForm
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import models.incomeSourceDetails.{LatencyYear, ManageIncomeSourceData, TaxYear, UIJourneySessionData}
@@ -177,32 +178,15 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   private def handleSubmitRequest(taxYear: String, changeTo: String, isAgent: Boolean, maybeIncomeSourceId: Option[IncomeSourceId],
                                   incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
 
-    val incomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, maybeIncomeSourceId.map(m => m.value))
-    val (_, successCall) = getRedirectCalls(taxYear, isAgent, changeTo, incomeSourceId, incomeSourceType)
+    withNewIncomeSourcesFS {
+      val incomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, maybeIncomeSourceId.map(m => m.value))
+      val (_, successCall) = getRedirectCalls(taxYear, isAgent, changeTo, incomeSourceId, incomeSourceType)
 
-    (getTaxYearModel(taxYear), getReportingMethod(changeTo)) match {
-      case (Some(taxYearModel), Some(reportingMethod)) =>
-        ConfirmReportingMethodForm(changeTo).bindFromRequest().fold(
-          formWithErrors => {
-            Future.successful(
-              BadRequest(
-                confirmReportingMethod(
-                  isAgent = isAgent,
-                  form = formWithErrors,
-                  backUrl = backCall.url,
-                  newReportingMethod = reportingMethod,
-                  taxYearEndYear = taxYearModel.endYear.toString,
-                  taxYearStartYear = taxYearModel.startYear.toString,
-                  postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
-                  isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear)
-                )
-              )
-            )
-          },
-          _ => Future.successful(Redirect(successCall))
-        )
-      case (None, _) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse taxYear: $taxYear"))
-      case (_, None) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse reporting method: $changeTo"))
+      (getTaxYearModel(taxYear), getReportingMethod(changeTo)) match {
+        case (Some(_), Some(_)) => Future.successful(Redirect(successCall))
+        case (None, _) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse taxYear: $taxYear"))
+        case (_, None) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse reporting method: $changeTo"))
+      }
     }
   }
 
@@ -210,6 +194,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     Set("annual", "quarterly")
       .find(_ == reportingMethod.toLowerCase)
   }
+
 
   private def getRedirectCalls(taxYear: String,
                                isAgent: Boolean,

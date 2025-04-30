@@ -39,8 +39,10 @@ class ChooseTaxYearViewSpec extends TestSupport {
       case UkProperty => "UK property"
       case ForeignProperty => "Foreign property"
     }
-    val postAction: Call = controllers.manageBusinesses.add.routes.ChooseTaxYearController.submit(false, incomeSourceType)
-    val pageDocument: Document = Jsoup.parse(contentAsString(view(form, isAgent = false, postAction, TaxYear(2023, 2024), TaxYear(2024, 2025), incomeSourceType)))
+    //TODO: Defaulting to false but need to add tests for isChange true
+    val postAction: Call = controllers.manageBusinesses.add.routes.ChooseTaxYearController.submit(false, false, incomeSourceType)
+    val pageDocument: Document = Jsoup.parse(contentAsString(view(form, isAgent = false, postAction, Some(TaxYear(2023, 2024)),
+      Some(TaxYear(2024, 2025)), incomeSourceType)))
   }
 
   val incomeSourceTypes: Seq[IncomeSourceType] = List(SelfEmployment, UkProperty, ForeignProperty)

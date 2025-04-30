@@ -45,7 +45,7 @@ class IncomeSourceRFCheckDetailsViewSpec extends TestSupport {
 
   def runTest(incomeSourceType: IncomeSourceType, changeReportingFrequency: Boolean = true, isReportingQuarterlyCurrentYear: Boolean = true, isReportingQuarterlyForNextYear: Boolean = true): Unit = {
     "have the correct title" in new Setup(incomeSourceType, changeReportingFrequency, isReportingQuarterlyCurrentYear, isReportingQuarterlyForNextYear) {
-      pageDocument.title() shouldBe "Check your answers - Manage your Income Tax updates - GOV.UK"
+      pageDocument.title() shouldBe "Check your answers - Manage your Self Assessment - GOV.UK"
     }
     "have the correct heading" in new Setup(incomeSourceType, changeReportingFrequency, isReportingQuarterlyCurrentYear, isReportingQuarterlyForNextYear) {
       pageDocument.select("h1").text() shouldBe "Check your answers"

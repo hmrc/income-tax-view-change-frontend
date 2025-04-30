@@ -23,6 +23,7 @@ import forms.incomeSources.add.BusinessNameForm
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.admin.IncomeSourcesNewJourney
+import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
 import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField}
 import org.jsoup.Jsoup
@@ -73,8 +74,8 @@ class AddBusinessNameControllerSpec extends MockAuthActions
             "feature switch is enabled" in {
               setupMockSuccess(mtdRole)
               enable(IncomeSourcesNewJourney)
-              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-              if (isChange) {
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+              if (mode == CheckMode) {
                 setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment)))))
                 setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
                 setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("Test Business Trade")))

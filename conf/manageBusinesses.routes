@@ -14,19 +14,12 @@ GET          /agents/manage-your-businesses/ceased-businesses                   
 
 ##################################################################    Add    ###########################################################################
 
-<<<<<<< HEAD
 GET          /manage-your-businesses/add/new-income-sources                       controllers.manageBusinesses.add.AddIncomeSourceController.show()
 GET          /agents/manage-your-businesses/add/new-income-sources                controllers.manageBusinesses.add.AddIncomeSourceController.showAgent()
 GET          /manage-your-businesses/add-sole-trader/business-name                controllers.manageBusinesses.add.AddBusinessNameController.show(mode: Mode = NormalMode)
 GET          /agents/manage-your-businesses/add-sole-trader/business-name         controllers.manageBusinesses.add.AddBusinessNameController.showAgent(mode: Mode = NormalMode)
 POST         /manage-your-businesses/add-sole-trader/business-name                controllers.manageBusinesses.add.AddBusinessNameController.submit(mode: Mode = NormalMode)
 POST         /agents/manage-your-businesses/add-sole-trader/business-name         controllers.manageBusinesses.add.AddBusinessNameController.submitAgent(mode: Mode = NormalMode)
-=======
-GET          /manage-your-businesses/add-sole-trader/business-name                controllers.manageBusinesses.add.AddBusinessNameController.show(isChange: Boolean = false)
-GET          /agents/manage-your-businesses/add-sole-trader/business-name         controllers.manageBusinesses.add.AddBusinessNameController.showAgent(isChange: Boolean = false)
-POST         /manage-your-businesses/add-sole-trader/business-name                controllers.manageBusinesses.add.AddBusinessNameController.submit(isChange: Boolean = false)
-POST         /agents/manage-your-businesses/add-sole-trader/business-name         controllers.manageBusinesses.add.AddBusinessNameController.submitAgent(isChange: Boolean = false)
->>>>>>> 5bb064202 (Fixing Feature switch and adding change urls. Also some cleanups)
 
 GET          /manage-your-businesses/add-sole-trader/business-address                         controllers.manageBusinesses.add.AddBusinessAddressController.show(mode: Mode = NormalMode)
 GET          /agents/manage-your-businesses/add-sole-trader/business-address                  controllers.manageBusinesses.add.AddBusinessAddressController.showAgent(mode: Mode = NormalMode)
