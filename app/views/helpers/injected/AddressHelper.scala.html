@@ -19,7 +19,7 @@
 @this()
 @(address: AddressModel)(implicit messages: Messages)
 
-@defining(List(Option(address.addressLine1), address.addressLine2, address.addressLine3, address.addressLine4, address.postCode).flatten) { addressLines =>
+@defining(List(address.addressLine1, address.addressLine2, address.addressLine3, address.addressLine4, address.postCode).flatten) { addressLines =>
 
 <dt id="business-address" class="cya-question">
     @messages("business.businessAddress")
