@@ -240,9 +240,9 @@ tax-year-summary.payments.balancingCharge.text                 = Taliad mantoli
 tax-year-summary.payments.lpi.paymentOnAccount1.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2
 tax-year-summary.payments.lpi.paymentOnAccount2.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
 tax-year-summary.payments.lpi.balancingCharge.text             = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
-tax-year-summary.payments.firstLatePaymentPenalty.text         = First late payment penalty
+tax-year-summary.payments.firstLatePaymentPenalty.text         = Cosb gyntaf am dalu’n hwyr
 tax-year-summary.payments.secondLatePaymentPenalty.text        = Second late payment penalty
-tax-year-summary.payments.lateSubmissionPenalty.text           = Late submission penalty
+tax-year-summary.payments.lateSubmissionPenalty.text           = Cosb am gyflwyno’n hwyr
 tax-year-summary.payments.cancelledPayeSelfAssessment.text     = Hunanasesiad TWE wedi’i ganslo (trwy eich cod treth TWE)
 tax-year-summary.payments.hmrcAdjustment.text                  = Addasiad CThEF
 tax-year-summary.payments.overdue                              = Yn hwyr
@@ -899,11 +899,11 @@ whatYouOwe.interestChargesWarning                               = Bydd taliadau 
 
 ## Your Self Assessment Charges
 
-selfAssessmentCharges.heading                                      = Your Self Assessment charges
-selfAssessmentCharges.important                                    = Important
-selfAssessmentCharges.important-p1                                 = This is the total amount of overdue tax you need to pay. Any interest will increase daily until the overdue amount is paid.
-selfAssessmentCharges.important-p2                                 = You can
-selfAssessmentCharges.important-p2-link-text                       = pay the total amount needed now.
+selfAssessmentCharges.heading                                      = Eich taliadau Hunanasesiad
+selfAssessmentCharges.important                                    = Pwysig
+selfAssessmentCharges.important-p1                                 = Dyma gyfanswm y dreth orddyledus y mae angen i chi ei dalu. Bydd unrhyw log yn cynyddu yn ddyddiol hyd nes y bydd y swm gorddyledus yn cael ei dalu.
+selfAssessmentCharges.important-p2                                 = Gallwch
+selfAssessmentCharges.important-p2-link-text                       = dalu’r cyfanswm nawr.
 selfAssessmentCharges.charges-due-in-30-days                       = Charges due in 30 days
 selfAssessmentCharges.charges-due-now-with-amount                  = Charges due now: {0}
 selfAssessmentCharges.no-payments-due                              = Nid oes gennych taliadau sy’n ddyledus.
@@ -912,11 +912,11 @@ selfAssessmentCharges.charges-due-now                              = Charges due
 selfAssessmentCharges.charges-to-pay-later                         = Charges to pay later
 selfAssessmentCharges.tableHead.due-date                           = Dyddiad dyledus
 selfAssessmentCharges.tableHead.tax-year                           = Blwyddyn dreth
-selfAssessmentCharges.tableHead.type-of-charge                     = Type of charge
-selfAssessmentCharges.tableHead.estimated-interest                 = Estimated interest
-selfAssessmentCharges.tableHead.amount                             = Amount
+selfAssessmentCharges.tableHead.type-of-charge                     = Math o dâl
+selfAssessmentCharges.tableHead.estimated-interest                 = Amcangyfrif o’r llog
+selfAssessmentCharges.tableHead.amount                             = Swm
 selfAssessmentCharges.no-charges-due                               = No charges due today
-selfAssessmentCharges.pay-upcoming-charges                         = pay your upcoming Self Assessment charges before the due date.
+selfAssessmentCharges.pay-upcoming-charges                         = Gallwch dalu eich taliadau Hunanasesiad sydd ar y gweill cyn y dyddiad dyledus.
 selfAssessmentCharges.tax-year-summary.taxYear                                = {0} i {1}
 selfAssessmentCharges.paymentOnAccount1.text							      = Taliad cyntaf ar gyfrif
 selfAssessmentCharges.paymentOnAccount2.text							      = Ail daliad ar gyfrif
@@ -927,8 +927,8 @@ selfAssessmentCharges.lpi.reviewAndReconcilePoa2.text                         = 
 selfAssessmentCharges.hmrcAdjustment.text                                     = Addasiad CThEF
 selfAssessmentCharges.lpi.paymentOnAccount1.text                              = Llog am dalu’n hwyr ar y taliad ar gyfrif cyntaf
 selfAssessmentCharges.lpi.paymentOnAccount2.text                              = Llog am dalu’n hwyr ar yr ail daliad ar gyfrif
-selfAssessmentCharges.lateSubmissionPenalty.text                              = Late submission penalty
-selfAssessmentCharges.firstLatePaymentPenalty.text                            = First late payment penalty
+selfAssessmentCharges.lateSubmissionPenalty.text                              = Cosb am gyflwyno’n hwyr
+selfAssessmentCharges.firstLatePaymentPenalty.text                            = Cosb gyntaf am dalu’n hwyr
 selfAssessmentCharges.secondLatePaymentPenalty.text                           = Second late payment penalty
 selfAssessmentCharges.lpi.lateSubmissionPenalty.text                          = Interest for late submission penalty
 selfAssessmentCharges.lpi.balancingCharge.text                                = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
@@ -938,12 +938,12 @@ selfAssessmentCharges.balancingCharge.interest.line2.text                     = 
 selfAssessmentCharges.pre-mtd-digital                                         = (Cyn y cynllun Troi Treth yn Ddigidol)
 selfAssessmentCharges.pre-mtd-year                                            = {0} i {1}
 selfAssessmentCharges.taxYear                                                 = Blwyddyn dreth
-selfAssessmentCharges.table.total-amount                                      = Total amount: {0}
+selfAssessmentCharges.table.total-amount                                      = Cyfanswm: {0}
 selfAssessmentCharges.payNow                                                  = Gwneud taliad
-selfAssessmentCharges.overdue-inset-text-1                                    = Payments you make may take up to 3 working days depending on the payment method you use. Payments must reach HMRC by the due date to avoid any late payment interest or penalty.
-selfAssessmentCharges.overdue-inset-text-2                                    = Any payments you make will go toward overdue charges in the order they were due.
-selfAssessmentCharges.payment-plan-1                                          = If you cannot pay your tax bill in full, you may be able to
-selfAssessmentCharges.payment-plan-link-text                                  = set up a Self Assessment payment plan
+selfAssessmentCharges.overdue-inset-text-1                                    = Gall taliadau a wnewch gymryd hyd at 3 diwrnod gwaith i’w prosesu, yn dibynnu ar y dull talu rydych yn ei ddefnyddio. Mae’n rhaid i daliadau ddod i law CThEF erbyn y dyddiad dyledus er mwyn osgoi unrhyw log neu gosbau am dalu’n hwyr.
+selfAssessmentCharges.overdue-inset-text-2                                    = Bydd unrhyw daliadau a wnewch yn mynd tuag at dalu taliadau gorddyledus yn y drefn yr oeddent yn ddyledus.
+selfAssessmentCharges.payment-plan-1                                          = Os na allwch dalu’ch bil treth yn llawn, gallwch drefnu
+selfAssessmentCharges.payment-plan-link-text                                  = cynllun talu ar gyfer Hunanasesiad (yn agor tab newydd)
 selfAssessmentCharges.sa-note                                                 = Mae gennych daliadau’n ddyledus o hyd ar gyfer eich blynyddoedd treth Hunanasesiad blaenorol. Er mwyn bwrw golwg dros y taliadau hyn sydd heb eu talu, mae angen i chi fynd i’ch
 selfAssessmentCharges.sa-note-agent-1                                         = Mae’n bosibl y bydd gan eich cleient daliadau sy’n ddyledus o hyd ar gyfer blynyddoedd treth Hunanasesiad blaenorol
 selfAssessmentCharges.sa-note-agent-2                                         = Er mwyn bwrw golwg dros flynyddoedd treth eich cleient cyn iddo gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fewngofnodi i’ch
@@ -2671,66 +2671,66 @@ reporting.frequency.latency.details.section.text.para3.text.1       = Neges test
 reporting.frequency.latency.details.section.text.para3.link.text    = pob busnes
 reporting.frequency.latency.details.section.text.para3.text.2       =
 
-yourSelfAssessmentChargeSummary.tax-year                            = {0} to {1} tax year
-yourSelfAssessmentChargeSummary.overDueCharge                       = Overdue charge:
-yourSelfAssessmentChargeSummary.charge                              = Charge:
-yourSelfAssessmentChargeSummary.due                                 = Due {0}
+yourSelfAssessmentChargeSummary.tax-year                            = {0} i {1} Blwyddyn dreth
+yourSelfAssessmentChargeSummary.overDueCharge                       = Tâl gorddyledus:
+yourSelfAssessmentChargeSummary.charge                              = Tâl:
+yourSelfAssessmentChargeSummary.due                                 = Yn ddyledus {0}
 yourSelfAssessmentChargeSummary.chargeReference                     = Charge Reference: {0}
 
-yourSelfAssessmentChargeSummary.whatIsABalancingPayment.linkText    = What is a balancing payment?
-yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p1          = A balancing payment is the tax you still need to pay for a tax year. This happens if you:
-yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p2          = did not have any tax to pay during the year (for example, if your last Self Assessment tax bill was under £1,000)
-yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p3          = owe more than what you paid during the year (for example, through payments on account or PAYE)
-yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p4          = You’ll also need to make a balancing payment if you owe anything for Capital Gains Tax or student loans.
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.linkText    = Beth yw taliad mantoli?
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p1          = Taliad mantoli yw’r dreth sydd dal gennych i’w thalu ar gyfer blwyddyn dreth. Mae hyn yn digwydd os yw’r canlynol yn wir:
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p2          = nid oedd gennych unrhyw dreth i’w thalu yn ystod y flwyddyn (er enghraifft, roedd eich bil treth Hunanasesiad diwethaf yn llai na £1,000)
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p3          = mae arnoch fwy na’r swm y gwnaethoch ei dalu yn ystod y flwyddyn (er enghraifft, drwy daliadau ar gyfrif neu TWE)
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p4          = Hefyd, mae angen i chi wneud taliad mantoli os oes gennych unrhyw ddyledion Treth Enillion Cyfalaf neu fenthyciadau myfyrwyr.
 
 yourSelfAssessmentChargeSummary.interestOnCharge.heading                = Interest on your {0}
-yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = The amount of Interest you have to pay will increase every day until you pay the overdue charge.
-yourSelfAssessmentChargeSummary.table.daysOverdue                       = {0} to {1}
+yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = Bydd swm y llog sy’n ddyledus yn cynyddu hyd nes y bydd y swm gorddyledus yn cael ei dalu.
+yourSelfAssessmentChargeSummary.table.daysOverdue                       = {0} i {1}
 yourSelfAssessmentChargeSummary.table.totalInterestToDate               = Total interest to date
 yourSelfAssessmentChargeSummary.table.head.amountInterestIsAppliedTo    = Amount interest is applied to
 yourSelfAssessmentChargeSummary.table.head.daysOverdue                  = Days overdue
 yourSelfAssessmentChargeSummary.table.head.interestRate                 = Interest rate
-yourSelfAssessmentChargeSummary.table.head.amount                       = Amount
+yourSelfAssessmentChargeSummary.table.head.amount                       = Swm
 
-yourSelfAssessmentChargeSummary.howIsInterestCalculated.linkText    = How is interest calculated?
-yourSelfAssessmentChargeSummary.howIsInterestCalculated.p1          = Multiply the amount the interest is applied to by the number of days overdue (period).
-yourSelfAssessmentChargeSummary.howIsInterestCalculated.p2          = Divide that answer by 365 (days).
-yourSelfAssessmentChargeSummary.howIsInterestCalculated.p3          = Multiply that answer by 0.0725 (7.25%).
-yourSelfAssessmentChargeSummary.howIsInterestCalculated.p4          = In this example, the amount the interest is applied to is £5000, and the number of days overdue is 50.
-yourSelfAssessmentChargeSummary.howIsInterestCalculated.p5          = 5,000 x 50 = 250,000
-yourSelfAssessmentChargeSummary.howIsInterestCalculated.p6          = 250,000 / 365 = 684.93
-yourSelfAssessmentChargeSummary.howIsInterestCalculated.p7          = 684.93 x 0.0725 = 49.66
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.linkText    = Sut mae’r llog yn cael ei gyfrifo?
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p1          = Lluoswch y swm y mae’r llog yn berthnasol iddo â nifer y dyddiau gorddyledus.
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p2          = Rhannwch yr ateb hwnnw gyda 365 (dyddiau).
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p3          = Lluoswch swm yr ateb diweddaraf â chyfradd llog bresennol y DU ynghyd â 2.5%.
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p4          = Yn yr enghraifft hon, y swm y mae’r llog yn berthnasol iddo yw £5000, nifer y dyddiau gorddyledus yw 50, a’r gyfradd llog yw 11.5% (0.115).
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p5          = £5,000 x 50 = £250,000
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p6          = £250,000 / 365 = £684.93
+yourSelfAssessmentChargeSummary.howIsInterestCalculated.p7          = £684.93 x 0.115 = £78.77
 
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.linkText     = What is payment on account?
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = Payments on account are two advance payments made towards your next tax bill. They pay for:
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Income Tax
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = Class 4 National Insurance contributions
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.linkText     = Beth yw ‘taliad ar gyfrif’?
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = Mae taliadau ar gyfrif yn ddau daliad ymlaen llaw a wneir tuag at eich bil treth nesaf. Maent yn talu am y canlynol:
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Treth Incwm
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = Mae CThEF yn amcangyfrif cyfanswm y bil yn seiliedig ar eich bil treth o’r flwyddyn flaenorol. Mae pob taliad yn hanner y swm hwnnw.
 
-yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyPoints     = You will get a late submission penalty point every time you send a submission after the deadline. A submission can be a quarterly update or annual tax return.
-yourSelfAssessmentChargeSummary.lateSubmissionPenalty.fourPoints        = If you reach 4 points, you’ll have to pay a £200 penalty.
-yourSelfAssessmentChargeSummary.lateSubmissionPenalty.avoidInFuture     = To avoid receiving late submission penalty points in the future, and the potential for a financial penalty, you need to send your submissions on time.
-yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText1  = You can
-yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText   = view the details about your penalty
-yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText2  = and find out how to appeal.
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyPoints     = Byddwch yn cael pwynt cosb am gyflwyno’n hwyr pob tro y byddwch yn hwyr wrth gyflwyno. Gall cyflwyniad fod yn ddiweddariad chwarterol neu’n ddatganiad treth blynyddol.
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.fourPoints        = Os byddwch yn cyrraedd 4 o bwyntiau, bydd angen i chi dalu cosb o £200.
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.avoidInFuture     = Er mwyn osgoi cael pwyntiau cosb am gyflwyno’n hwyr yn y dyfodol, a’r posibilrwydd o gael cosb ariannol, mae angen i chi anfon eich cyflwyniadau mewn pryd.
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText1  = Gallwch
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText   = weld y manylion ynglŷn â’ch cosb
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText2  = a dysgu sut i apelio.
 
 yourSelfAssessmentChargeSummary.classTwoNICSContent.p1                              = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
 
-yourSelfAssessmentChargeSummary.balancingCharge.text.heading                        = Balancing payment
-yourSelfAssessmentChargeSummary.paymentOnAccount1.text.heading                      = First payment on account
-yourSelfAssessmentChargeSummary.paymentOnAccount2.text.heading                      = Second payment on account
-yourSelfAssessmentChargeSummary.lateSubmissionPenalty.text.heading                  = Late submission penalty
+yourSelfAssessmentChargeSummary.balancingCharge.text.heading                        = Taliad mantoli
+yourSelfAssessmentChargeSummary.paymentOnAccount1.text.heading                      = Taliad cyntaf ar gyfrif
+yourSelfAssessmentChargeSummary.paymentOnAccount2.text.heading                      = Ail daliad ar gyfrif
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.text.heading                  = Cosb am gyflwyno’n hwyr
 yourSelfAssessmentChargeSummary.class2Nic.text.heading                              = Class 2 National Insurance
 yourSelfAssessmentChargeSummary.unknown.heading                                     = Unknown
 
-yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.heading          = Balancing payment history
+yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.heading          = Hanes eich taliad mantoli
 yourSelfAssessmentChargeSummary.chargeHistory.class2Nic.text.heading                = History of this charge
-yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount1.text.heading        = First payment on account history
-yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount2.text.heading        = Second payment on account history
+yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount1.text.heading        = Hanes eich taliad ar gyfrif cyntaf
+yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount2.text.heading        = Hanes eich ail daliad ar gyfrif
 yourSelfAssessmentChargeSummary.chargeHistory.lateSubmissionPenalty.text.heading    = Late submission penalty history
-yourSelfAssessmentChargeSummary.chargeHistory.firstLatePaymentPenalty.text.heading  = First late payment penalty history
+yourSelfAssessmentChargeSummary.chargeHistory.firstLatePaymentPenalty.text.heading  = Hanes eich cosb gyntaf am dalu’n hwyr
 yourSelfAssessmentChargeSummary.chargeHistory.unknown.text.heading                  = History of this charge
 
-yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.text.heading                = First late payment penalty
-yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p = You have received this penalty because you are late paying your Income Tax.
-yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link = View how your penalty was calculated.
+yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.text.heading                = Cosb gyntaf am dalu’n hwyr
+yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p = Rydych wedi cael y gosb hon oherwydd eich bod yn hwyr wrth dalu eich Treth Incwm.
+yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link = Gweld sut y cyfrifwyd eich cosb.
