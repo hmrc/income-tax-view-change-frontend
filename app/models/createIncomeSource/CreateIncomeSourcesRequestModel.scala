@@ -30,7 +30,6 @@ object CreateIncomeSourceRequest {
 
 final case class CreateBusinessIncomeSourceRequest(businessDetails: List[BusinessDetails]) extends CreateIncomeSourceRequest {
   require(businessDetails.length == 1, "Only single business can be created at a time")
-  require(businessDetails.head.cashOrAccrualsFlag.nonEmpty, "Accounting method must be provided")
   require(businessDetails.head.cashOrAccrualsFlag.forall(_.matches("^[A-Z]+$")), "Accounting method must be capitalised")
 }
 
