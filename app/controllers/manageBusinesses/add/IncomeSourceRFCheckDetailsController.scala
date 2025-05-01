@@ -20,7 +20,7 @@ import audit.AuditingService
 import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.MtdItUser
 import auth.authV2.AuthActions
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.incomeSources.add.routes
 import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType, ReportingFrequencyPages}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
@@ -55,6 +55,7 @@ class IncomeSourceRFCheckDetailsController @Inject()(val checkDetailsView: Incom
                                                     ) extends FrontendController(mcc)
   with JourneyCheckerManageBusinesses with I18nSupport {
 
+  private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
   private lazy val errorRedirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
     if (isAgent) routes.IncomeSourceNotAddedController.showAgent(incomeSourceType).url
@@ -135,7 +136,7 @@ class IncomeSourceRFCheckDetailsController @Inject()(val checkDetailsView: Incom
           val agentPrefix = if (isAgent) "[Agent]" else ""
           Logger("application").error(agentPrefix +
           s"Unable to retrieve incomeSourceId from session data for $incomeSourceType on IncomeSourceReportingFrequency page")
-          Future.successful(incomeSourceRFService.errorHandler(isAgent).showInternalServerError())
+          Future.successful(errorHandler(isAgent).showInternalServerError())
       }
     }
   }
