@@ -133,7 +133,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
 
                   result should have(
                     httpStatus(OK),
-                    pageTitle(mtdUserRole,"dateForm.check.heading"),
+                    pageTitle(mtdUserRole, messagesAPI("radioForm.checkDate.heading.withDate", "10 October 2022")),
                     elementTextByID("continue-button")(continueButtonText)
                   )
                 }

@@ -1549,6 +1549,9 @@ radioForm.checkDate.heading                                         = A yw’r d
 radioForm.yes                                                       = Iawn
 radioForm.no                                                        = Na
 
+# New journey only - business start date check page with dynamic date in heading
+radioForm.checkDate.heading.withDate                                = Ai {0} yw’r dyddiad cywir?
+
 #Generic income sources messages
 incomeSources.generic.unknown                                       = Anhysbys
 

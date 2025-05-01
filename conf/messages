@@ -1551,6 +1551,9 @@ radioForm.checkDate.heading                                         = Is this da
 radioForm.yes                                                       = Yes
 radioForm.no                                                        = No
 
+# New journey only - business start date check page with dynamic date in heading
+radioForm.checkDate.heading.withDate                                = Is {0} the correct date?
+
 #Generic income sources messages
 incomeSources.generic.unknown                                       = Unknown
 
