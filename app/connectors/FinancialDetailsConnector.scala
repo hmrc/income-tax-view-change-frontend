@@ -158,7 +158,7 @@ class FinancialDetailsConnector @Inject()(
       .map { response =>
         response.status match {
           case OK =>
-            Logger("application").info(s"Status: ${response.status}, json: ${response.json}")
+            Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
             response.json.validate[FinancialDetailsModel].fold(
               invalid => {
                 Logger("application").error(s"Json Validation Error: $invalid ")
