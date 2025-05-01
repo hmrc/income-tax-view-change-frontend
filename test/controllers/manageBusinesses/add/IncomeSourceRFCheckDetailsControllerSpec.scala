@@ -16,19 +16,25 @@
 
 package controllers.manageBusinesses.add
 
+import controllers.incomeSources.add.routes
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockIncomeSourceRFService, MockSessionService}
 import models.admin.IncomeSourcesNewJourney
-import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
+import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData, UIJourneySessionData}
+import models.updateIncomeSource.UpdateIncomeSourceResponseError
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.Application
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.manageBusinesses.IncomeSourceRFService
-import services.{DateService, SessionService}
+import services.{DateService, SessionService, UpdateIncomeSourceService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+
+import scala.concurrent.Future
 
 class IncomeSourceRFCheckDetailsControllerSpec
   extends MockAuthActions
@@ -36,11 +42,14 @@ class IncomeSourceRFCheckDetailsControllerSpec
   with MockSessionService
   with MockIncomeSourceRFService {
 
+  lazy val mockUpdateIncomeSourceService = mock(classOf[UpdateIncomeSourceService])
+
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[IncomeSourceRFService].toInstance(mockIncomeSourceRFService),
       api.inject.bind[DateService].toInstance(mockDateService),
-      api.inject.bind[SessionService].toInstance(mockSessionService)
+      api.inject.bind[SessionService].toInstance(mockSessionService),
+      api.inject.bind[UpdateIncomeSourceService].toInstance(mockUpdateIncomeSourceService)
     ).build()
 
   lazy val testController = app.injector.instanceOf[IncomeSourceRFCheckDetailsController]
@@ -75,6 +84,7 @@ class IncomeSourceRFCheckDetailsControllerSpec
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRedirectChecksForIncomeSourceRF()
+            setupMockGetCurrentTaxYearEnd(2025)
 
             enable(IncomeSourcesNewJourney)
 
@@ -93,6 +103,44 @@ class IncomeSourceRFCheckDetailsControllerSpec
             val redirectUrl = s"/report-quarterly/income-and-expenses/view$redirectUrlCentre/income-sources/add/$addedUrl"
 
             redirectLocation(result) shouldBe Some(redirectUrl)
+          }
+
+          "return an error if the session data contains errors for updating the income source" in {
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+            mockRedirectChecksForIncomeSourceRF()
+            setupMockGetCurrentTaxYearEnd(2025)
+
+            enable(IncomeSourcesNewJourney)
+
+            setupMockGetMongo(Right(Some(UIJourneySessionData(
+              "",
+              "",
+              Some(AddIncomeSourceData(incomeSourceId = Some("ID"))),
+              incomeSourceReportingFrequencyData = Some(IncomeSourceReportingFrequencySourceData(true, true, true, true))))
+            ))
+
+            when(mockUpdateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any())).thenReturn(Future.successful(UpdateIncomeSourceResponseError("", "")))
+
+            val result = action(fakeRequest)
+            status(result) shouldBe SEE_OTHER
+
+            val redirectUrl = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(incomeSource).url else routes.IncomeSourceNotAddedController.show(incomeSource).url
+
+            redirectLocation(result) shouldBe Some(redirectUrl)
+          }
+
+          "return an error if the session data doesn't retrieve the income source id" in {
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+            mockRedirectChecksForIncomeSourceRF()
+
+            setupMockGetMongo(Right(Some(UIJourneySessionData("", "", Some(AddIncomeSourceData(incomeSourceId = None))))))
+
+            enable(IncomeSourcesNewJourney)
+
+            val result = action(fakeRequest)
+            status(result) shouldBe INTERNAL_SERVER_ERROR
           }
         }
       }

@@ -62,7 +62,7 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
         handleRequest(
           sources = mtdItUser.incomeSources,
           isAgent = true,
-          backUrl = controllers.routes.HomeController.showAgent.url
+          backUrl = controllers.routes.HomeController.showAgent().url
         )
       }
   }
