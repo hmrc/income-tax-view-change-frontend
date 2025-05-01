@@ -21,8 +21,6 @@ import models.readNullableList
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Json, OWrites, Reads, __}
 
-import scala.util.Try
-
 sealed trait FinancialDetailsWithDocumentDetailsResponse
 
 
@@ -31,11 +29,8 @@ case class FinancialDetailsWithDocumentDetailsModel(
                                                      financialDetails: List[FinancialDetail]
                                                    ) extends FinancialDetailsWithDocumentDetailsResponse {
 
-  // TODO: apply proper fix
-  val filteredDocumentDetails = Try {
-    documentDetails.filter(_.paymentLot == financialDetails.head.items.get.head.paymentLot)
-      .filter(_.paymentLotItem == financialDetails.head.items.get.head.paymentLotItem)
-  }.toOption.getOrElse( List.empty )
+  val filteredDocumentDetails = documentDetails.filter(_.paymentLot == financialDetails.head.items.get.head.paymentLot)
+    .filter(_.paymentLotItem == financialDetails.head.items.get.head.paymentLotItem)
 
 }
 
