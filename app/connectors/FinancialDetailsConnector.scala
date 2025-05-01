@@ -161,7 +161,7 @@ class FinancialDetailsConnector @Inject()(
             Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
             response.json.validate[FinancialDetailsModel].fold(
               invalid => {
-                Logger("application").error(s"Json Validation Error: $invalid")
+                Logger("application").error(s"Json Validation Error: $invalid ")
                 FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing FinancialDetails Data Response")
               },
               valid => valid
