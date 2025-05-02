@@ -22,7 +22,7 @@ import models.itsaStatus.ITSAStatus.ITSAStatus
 import models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail}
 import play.api.Logger
 import play.api.http.Status.OK
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json, Writes}
 import services.DateServiceInterface
 import testOnly.models.{DataModel, Nino}
 import testOnly.utils.OptOutCustomDataUploadHelper
@@ -91,12 +91,59 @@ class OptOutCustomDataService @Inject()(implicit val appConfig: FrontendAppConfi
         cyItsaStatusResponse,
         cyMinusOneItsaStatusResponse)
 
-    val payload: DataModel = DataModel(
+    val ifPayload: DataModel = DataModel(
       _id = s"/income-tax/$nino/person-itd/itsa-status/${taxYear.addYears(-1).formatAsShortYearRange}?futureYears=true&history=false",
       schemaId = "getITSAStatusSuccess", method = "GET", status = OK, response = Some(Json.toJson(itsaStatusCombined))
     )
 
-    dynamicStubService.addData(dataModel = payload)
+    dynamicStubService.addData(dataModel = ifPayload)
 
+    implicit val hipStatusDetailWriter: Writes[StatusDetail] = new Writes[StatusDetail] {
+      override def writes(statusDetail: StatusDetail): JsValue = {
+        Json.obj(
+          "submittedOn" -> statusDetail.submittedOn,
+          "status" -> Json.toJson(statusDetail.status match {
+            case ITSAStatus.NoStatus => "00"
+            case ITSAStatus.Mandated => "01"
+            case ITSAStatus.Voluntary => "02"
+            case ITSAStatus.Annual => "03"
+            case ITSAStatus.NonDigital => "04"
+            case ITSAStatus.Dormant => "05"
+            case ITSAStatus.Exempt => "99"
+            case _ => ""
+          }),
+          "statusReason" -> Json.toJson(statusDetail.statusReason match {
+            case "Sign up - return available" => "00"
+            case "Sign up - no return available" => "01"
+            case "ITSA final declaration" => "02"
+            case "ITSA Q4 declaration" => "03"
+            case "CESA SA return" => "04"
+            case "Complex" => "05"
+            case "Ceased income source" => "06"
+            case "Reinstated income source" => "07"
+            case "Rollover" => "08"
+            case "Income Source Latency Changes" => "09"
+            case "MTD ITSA Opt-Out" => "10"
+            case "MTD ITSA Opt-In" => "11"
+            case "Digitally Exempt" => "12"
+            case _ => statusDetail.statusReason
+          })
+        ) ++ (statusDetail.businessIncomePriorTo2Years match {
+          case Some(value) => Json.obj("businessIncomePriorTo2Years" -> value)
+          case None => Json.obj()
+        })
+      }
+    }
+
+    implicit val hipStatusResponseWrites = Json.writes[ITSAStatusResponseModel]
+    val hipWriter = implicitly[Writes[List[ITSAStatusResponseModel]]]
+
+
+    val hipPayload: DataModel = DataModel(
+      _id = s"/itsd/person-itd/itsa-status/$nino?taxYear=${taxYear.addYears(-1).formatAsShortYearRange}&futureYears=true&history=false",
+      schemaId = "getHIPITSAStatusSuccess", method = "GET", status = OK, response = Some(Json.toJson(itsaStatusCombined)(hipWriter))
+    )
+
+    dynamicStubService.addData(dataModel = hipPayload)
   }
 }
