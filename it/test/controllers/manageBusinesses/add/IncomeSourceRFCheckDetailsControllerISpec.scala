@@ -108,7 +108,7 @@ class IncomeSourceRFCheckDetailsControllerISpec extends ControllerISpecHelper {
 
               val result = buildPOSTMTDPostClient(path, additionalCookies, Map("current-year-checkbox" -> Seq("true"), "next-year-checkbox" -> Seq("true"))).futureValue
 
-              val redirectUri = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType).url else controllers.incomeSources.add.routes.IncomeSourceAddedController.show(incomeSourceType).url
+              val redirectUri = if (isAgent) controllers.manageBusinesses.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType).url else controllers.manageBusinesses.add.routes.IncomeSourceAddedController.show(incomeSourceType).url
 
               result should have(
                 httpStatus(SEE_OTHER),
