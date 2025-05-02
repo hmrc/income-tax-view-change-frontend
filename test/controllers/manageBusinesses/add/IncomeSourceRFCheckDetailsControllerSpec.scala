@@ -16,7 +16,7 @@
 
 package controllers.manageBusinesses.add
 
-import controllers.incomeSources.add.routes
+import controllers.manageBusinesses.add.routes
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
@@ -95,12 +95,12 @@ class IncomeSourceRFCheckDetailsControllerSpec
 
             val redirectUrlCentre = if (isAgent) "/agents" else ""
             val addedUrl = incomeSource match {
-              case SelfEmployment => "business-added"
-              case UkProperty => "uk-property-added"
-              case ForeignProperty => "foreign-property-added"
+              case SelfEmployment => "add-sole-trader/business-added"
+              case UkProperty => "add-uk-property/uk-property-added"
+              case ForeignProperty => "add-foreign-property/foreign-property-added"
             }
 
-            val redirectUrl = s"/report-quarterly/income-and-expenses/view$redirectUrlCentre/income-sources/add/$addedUrl"
+            val redirectUrl = s"/report-quarterly/income-and-expenses/view$redirectUrlCentre/manage-your-businesses/$addedUrl"
 
             redirectLocation(result) shouldBe Some(redirectUrl)
           }
