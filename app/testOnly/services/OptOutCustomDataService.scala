@@ -98,7 +98,7 @@ class OptOutCustomDataService @Inject()(implicit val appConfig: FrontendAppConfi
 
     dynamicStubService.addData(dataModel = ifPayload)
 
-    implicit val hipStatusDetailWriter = new Writes[StatusDetail] {
+    implicit val hipStatusDetailWriter: Writes[StatusDetail] = new Writes[StatusDetail] {
       override def writes(statusDetail: StatusDetail): JsValue = {
         Json.obj(
           "submittedOn" -> statusDetail.submittedOn,
@@ -127,7 +127,7 @@ class OptOutCustomDataService @Inject()(implicit val appConfig: FrontendAppConfi
             case "MTD ITSA Opt-In" => "11"
             case "Digitally Exempt" => "12"
             case _ => statusDetail.statusReason
-          }),
+          })
         ) ++ (statusDetail.businessIncomePriorTo2Years match {
           case Some(value) => Json.obj("businessIncomePriorTo2Years" -> value)
           case None => Json.obj()
