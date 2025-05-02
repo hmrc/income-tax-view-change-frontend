@@ -125,6 +125,7 @@ class OptOutCustomDataService @Inject()(implicit val appConfig: FrontendAppConfi
             case "Income Source Latency Changes" => "09"
             case "MTD ITSA Opt-Out" => "10"
             case "MTD ITSA Opt-In" => "11"
+            case "Digitally Exempt" => "12"
             case _ => statusDetail.statusReason
           }),
         ) ++ (statusDetail.businessIncomePriorTo2Years match {
