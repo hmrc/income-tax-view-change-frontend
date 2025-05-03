@@ -234,6 +234,6 @@ private def handleErrorGettingDueDates(isAgent: Boolean)(implicit user: MtdItUse
   }
 
   private def mainChargeIsNotPaidFilter: PartialFunction[ChargeItem, ChargeItem]  = {
-    case x if x.remainingToPayByChargeOrInterest > 0 => x
+    case x if x.remainingToPayByChargeOrInterestWhenChargeIsPaid  => x
   }
 }

@@ -130,6 +130,6 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
   }
 
   private def mainChargeIsPaidFilter: PartialFunction[ChargeItem, ChargeItem]  = {
-    case x if x.remainingToPayByChargeOrInterestWhenChargeIsPaid > 0 => x
+    case x if x.remainingToPayByChargeOrInterestWhenChargeIsPaid  => x
   }
 }

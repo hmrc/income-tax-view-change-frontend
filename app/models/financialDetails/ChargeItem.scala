@@ -121,9 +121,9 @@ case class ChargeItem (
     else remainingToPay
   }
 
-  def remainingToPayByChargeOrInterestWhenChargeIsPaid: BigDecimal = {
-    if (isLatePaymentInterest || !interestIsPaid) interestRemainingToPay
-    else remainingToPay
+  def remainingToPayByChargeOrInterestWhenChargeIsPaid: Boolean = {
+    if (isLatePaymentInterest || !interestIsPaid) true
+    else false
   }
 
   // this method is used to filter charges down to those currently allowed for the
