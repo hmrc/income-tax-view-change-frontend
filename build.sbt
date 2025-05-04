@@ -114,6 +114,8 @@ lazy val microservice = Project(appName, file("."))
   .settings(resolvers ++= Seq(
     Resolver.jcenterRepo
   ))
+  .settings(semanticdbEnabled := true,
+    semanticdbVersion := scalafixSemanticdb.revision)
 
 lazy val it = project
   .dependsOn(microservice % "test->test")
