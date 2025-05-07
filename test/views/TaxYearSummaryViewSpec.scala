@@ -139,7 +139,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   val modelWithErrorMessages = modelComplete(Some(false))
     .copy(messages = Some(Messages(
       errors = Some(List(
-        Message("C15015", messages("tax-year-summary.message.C15015"))
+        Message("C15015", "you’ve claimed to carry forward a loss to set against general income of the next year. You also need to make the claim in the same year the loss arose.")
       ))
     )))
 
@@ -314,64 +314,65 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
   object TaxYearSummaryMessages {
-    val heading: String = messages("tax-year-summary.heading")
-    val title: String = messages("htmlTitle", heading)
-    val agentTitle: String = messages("htmlTitle.agent", heading)
-    val secondaryHeading: String = messages("tax-year-summary.heading-secondary", s"${testYear - 1}", s"$testYear")
-    val calculationDate: String = messages("tax-year-summary.calculation-date")
+    val heading: String = "Tax year summary"
+    val title: String = "Tax year summary - Manage your Self Assessment - GOV.UK"
+    val agentTitle: String = "Tax year summary - Manage your Self Assessment - GOV.UK"
+    val secondaryHeading: String = "6 April {0} to 5 April {1}"
+    val calculationDate: String = "Calculation date"
     val calcDate: String = "1 January 2020"
     val estimate: String = s"6 April ${testYear - 1} to 1 January 2020 estimate"
-    val totalDue: String = messages("tax-year-summary.total-due")
+    val totalDue: String = "Total tax bill"
     val taxDue: String = "£4.04"
     val calDateFrom: String = implicitDateFormatter.longDate(LocalDate.of(testYear - 1, 1, 1)).toLongDate
     val calDateTo: String = implicitDateFormatter.longDate(LocalDate.of(testYear, 1, 1)).toLongDate
-    val calcDateInfo: String = messages("tax-year-summary.calc-from-last-time")
-    val calcEstimateInfo: String = messages("tax-year-summary.calc-estimate-info")
-    val taxCalculation: String = messages("tax-year-summary.tax-calculation.date", calDateFrom, calDateTo)
-    val taxCalculationHeading: String = messages("tax-year-summary.tax-calculation")
-    val taxCalculationTab: String = messages("tax-year-summary.tax-calculation")
-    val taxCalculationNoData: String = messages("tax-year-summary.tax-calculation.no-calc")
-    val forecastNoData: String = messages("forecast_taxCalc.noForecast.heading")
-    val forecastNoDataNote: String = messages("forecast_taxCalc.noForecast.text")
-    val unattendedCalcPara: String = s"! Warning ${messages("tax-year-summary.tax-calculation.unattended-calc")}"
-    val taxCalculationNoDataNote: String = messages("tax-year-summary.tax-calculation.no-calc.note")
-    val charges: String = messages("tax-year-summary.charges")
-    val updates: String = messages("tax-year-summary.updates")
-    val income: String = messages("tax-year-summary.income")
-    val section: String = messages("tax-year-summary.section")
-    val allowancesAndDeductions: String = messages("tax-year-summary.deductions")
-    val totalIncomeDue: String = messages("tax-year-summary.taxable-income")
-    val incomeTaxNationalInsuranceDue: String = messages("tax-year-summary.tax-due")
-    val chargeType: String = messages("tax-year-summary.payments.charge-type")
-    val dueDate: String = messages("tax-year-summary.payments.due-date")
-    val amount: String = messages("tax-year-summary.payments.amount")
-    val paymentOnAccount1: String = messages("tax-year-summary.payments.paymentOnAccount1.text")
-    val paymentOnAccount2: String = messages("tax-year-summary.payments.paymentOnAccount2.text")
+    val calcDateInfo: String = "This is not your final tax bill, it’s only based on figures we’ve already received."
+    val calcEstimateInfo: String = "This is a year to date estimate based on figures we’ve already received."
+    val taxCalculation: String = s"$calDateFrom to $calDateTo"
+    val taxCalculationHeading: String = "Calculation"
+    val taxCalculationTab: String = "Calculation"
+    val taxCalculationNoData: String = "No calculation yet"
+    val forecastNoData: String = "No forecast yet"
+    val forecastNoDataNote: String = "You will be able to see your forecast for the whole year once you have sent an update."
+    val unattendedCalcPara: String = s"! Warning We’ve updated the calculation for you. Check your record-keeping software for more details."
+    val taxCalculationNoDataNote: String = "You will be able to see your latest tax year calculation here once you have sent an update."
+    val charges: String = "Charges"
+    val updates: String = "Updates"
+    val income: String = "Income"
+    val section: String = "Section"
+    val allowancesAndDeductions: String = "Allowances and deductions"
+    val totalIncomeDue: String = "Total income on which tax is due"
+    val incomeTaxNationalInsuranceDue: String = "Self Assessment tax amount"
+    val chargeType: String = "Charge type"
+    val dueDate: String = "Due date"
+    val amount: String = "Amount"
+    val paymentOnAccount1: String = "First payment on account"
+    val paymentOnAccount2: String = "Second payment on account"
     val unpaid: String = "Unpaid"
     val paid: String = "Paid"
     val partPaid: String = "Part paid"
-    val noPaymentsDue: String = messages("tax-year-summary.payments.no-payments")
-    val updateType: String = messages("updateTab.updateType")
-    val updateIncomeSource: String = messages("updateTab.incomeSource")
-    val updateDateSubmitted: String = messages("updateTab.dateSubmitted")
-    val lpiPaymentOnAccount1: String = messages("tax-year-summary.payments.lpi.paymentOnAccount1.text")
-    val lpiPaymentOnAccount2: String = messages("tax-year-summary.payments.lpi.paymentOnAccount2.text")
-    val lpiRemainingBalance: String = messages("tax-year-summary.payments.lpi.balancingCharge.text")
-    val paymentUnderReview: String = messages("tax-year-summary.payments.paymentUnderReview")
-    val taxYearSummaryClass2Nic: String = messages("tax-year-summary.payments.class2Nic.text")
-    val remainingBalance: String = messages("tax-year-summary.payments.balancingCharge.text")
-    val codedOutPoa1: String = messages("tax-year-summary.payments.poa1CodedOut.text")
-    val codedOutPoa2: String = messages("tax-year-summary.payments.poa2CodedOut.text")
-    val payeSA: String = messages("tax-year-summary.payments.codingOut.text")
-    val hmrcAdjustment: String = messages("tax-year-summary.payments.hmrcAdjustment.text")
-    val cancelledPaye: String = messages("tax-year-summary.payments.cancelledPayeSelfAssessment.text")
-    val na: String = messages("tax-year-summary.na")
-    val messageHeader: String = messages("tax-year-summary.message.header")
-    val messageAction: String = "! Warning " + messages("tax-year-summary.message.action")
-    val messageError1: String = messages("tax-year-summary.message.C15015")
-    val messageError2: String = messages("tax-year-summary.message.C15016")
-    val claimToAdjustPoaParagraph: String = messages("tax-year-summary.adjust-poa-paragraph")
-    val claimToAdjustPoaLinkText: String = messages("tax-year-summary.adjust-poa")
+    val noPaymentsDue: String = "No payments currently due."
+    val updateType: String = "Update type"
+    val updateIncomeSource: String = "Income source"
+    val updateDateSubmitted: String = "Date submitted"
+    val lpiPaymentOnAccount1: String = "Late payment interest on first payment on account"
+    val lpiPaymentOnAccount2: String = "Late payment interest on second payment on account"
+    val lpiRemainingBalance: String = "Late payment interest on balancing payment"
+    val paymentUnderReview: String = "Payment under review"
+    val taxYearSummaryClass2Nic: String = "Class 2 National Insurance"
+    val remainingBalance: String = "Balancing payment"
+    val codedOutPoa1: String = "First payment on account collected through PAYE tax code"
+    val codedOutPoa2: String = "Second payment on account collected through PAYE tax code"
+    val payeSA: String = "Balancing payment collected through PAYE tax code"
+    val hmrcAdjustment: String = "HMRC adjustment"
+    val cancelledPaye: String = "Cancelled PAYE Self Assessment (through your PAYE tax code)"
+    val na: String = "N/A"
+    val messageHeader: String = "We cannot show this calculation because:"
+    val messageAction: String = "! Warning You need to amend and resubmit your return."
+    val messageError1: String = "you’ve claimed to carry forward a loss to set against general income of the next year. You also need to make the claim in the same year the loss arose."
+    val messageError2: String = "you are using cash basis accounting. This means that you cannot claim to set losses against other taxable income."
+    val updateDescription: String = "A quarterly update covers income and expenses for the tax year so far."
+    val claimToAdjustPoaParagraph: String = "You can reduce both payments on account if you expect the total of your Income Tax and Class 4 National Insurance contributions to be different from the total amount of your current payments on account."
+    val claimToAdjustPoaLinkText: String = "Adjust payments on account"
     val claimToAdjustPoaLinkIndividual: String = "/report-quarterly/income-and-expenses/view/adjust-poa/start"
     val claimToAdjustPoaLinkAgent: String = "/report-quarterly/income-and-expenses/view/agents/adjust-poa/start"
 
@@ -379,17 +380,17 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
     def incomeType(incomeType: String): String = {
       incomeType match {
-        case "Property" => messages("updateTab.obligationType.property")
-        case "Business" => messages("updateTab.obligationType.business")
-        case "Crystallisation" => messages("updateTab.obligationType.crystallised")
-        case other => other
+        case "Property" => "Property income"
+        case "Business" => "Business"
+        case "Crystallisation" => "All income sources"
+        case _ => "Business income"
       }
     }
 
     def updateType(updateType: String): String = {
       updateType match {
-        case "Quarterly" => messages("updateTab.updateType.quarterly")
-        case "Crystallisation" => messages("updateTab.updateType.crystallised")
+        case "Quarterly" => "Quarterly update"
+        case "Crystallisation" => "Final declaration"
         case _ => updateType
       }
     }
@@ -461,7 +462,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       }
 
       "not have a paragraph explaining the calc date for a crystallised year" in new Setup(crystallisedView()) {
-        layoutContent.getOptionalSelector("p.govuk-body") shouldBe None
+        Option(document.getElementById("no-calc-data-note")) shouldBe None
       }
 
       "display relevant paragraph and link relating to claim to adjust PoA" in new Setup(poaView()) {
@@ -535,73 +536,73 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         calculationContent.child(0).text shouldBe messageHeader
         calculationContent.child(2).text shouldBe messageAction
 
-        errorMessageList.child(0).text shouldBe messages("tax-year-summary.message.C15014", dateService.getCurrentDate.toLongDate)
-        errorMessageList.child(1).text shouldBe messages("tax-year-summary.message.C55014", dateService.getCurrentDate.toLongDate)
-        errorMessageList.child(2).text shouldBe messages("tax-year-summary.message.C15015")
-        errorMessageList.child(3).text shouldBe messages("tax-year-summary.message.C15016")
-        errorMessageList.child(4).text shouldBe messages("tax-year-summary.message.C15102")
-        errorMessageList.child(5).text shouldBe messages("tax-year-summary.message.C15103")
-        errorMessageList.child(6).text shouldBe s"${messages("tax-year-summary.message.C15104.1")} ${messages("tax-year-summary.message.C15104.2")} ${messages("tax-year-summary.message.C15104.3")}"
-        errorMessageList.child(7).text shouldBe messages("tax-year-summary.message.C15105")
-        errorMessageList.child(8).text shouldBe s"${messages("tax-year-summary.message.C15322.1")} ${messages("tax-year-summary.message.C15322.2")} ${messages("tax-year-summary.message.C15322.3")} ${messages("tax-year-summary.message.C15322.4")}"
-        errorMessageList.child(9).text shouldBe messages("tax-year-summary.message.C15323")
-        errorMessageList.child(10).text shouldBe messages("tax-year-summary.message.C15325")
-        errorMessageList.child(11).text shouldBe messages("tax-year-summary.message.C15523")
-        errorMessageList.child(12).text shouldBe messages("tax-year-summary.message.C15524")
-        errorMessageList.child(13).text shouldBe messages("tax-year-summary.message.C15506")
-        errorMessageList.child(14).text shouldBe messages("tax-year-summary.message.C15507", "1000")
-        errorMessageList.child(15).text shouldBe messages("tax-year-summary.message.C15510", "50")
-        errorMessageList.child(16).text shouldBe messages("tax-year-summary.message.C15518")
-        errorMessageList.child(17).text shouldBe messages("tax-year-summary.message.C15530")
-        errorMessageList.child(18).text shouldBe messages("tax-year-summary.message.C15319")
-        errorMessageList.child(19).text shouldBe messages("tax-year-summary.message.C15320")
-        errorMessageList.child(20).text shouldBe messages("tax-year-summary.message.C15522")
-        errorMessageList.child(21).text shouldBe messages("tax-year-summary.message.C15531")
-        errorMessageList.child(22).text shouldBe messages("tax-year-summary.message.C15324")
-        errorMessageList.child(23).text shouldBe messages("tax-year-summary.message.C55316")
-        errorMessageList.child(24).text shouldBe messages("tax-year-summary.message.C55317")
-        errorMessageList.child(25).text shouldBe messages("tax-year-summary.message.C55318")
-        errorMessageList.child(26).text shouldBe messages("tax-year-summary.message.C55501")
-        errorMessageList.child(27).text shouldBe messages("tax-year-summary.message.C55502")
-        errorMessageList.child(28).text shouldBe messages("tax-year-summary.message.C55503")
-        errorMessageList.child(29).text shouldBe messages("tax-year-summary.message.C55508")
-        errorMessageList.child(30).text shouldBe messages("tax-year-summary.message.C55008", dateService.getCurrentDate.toLongDate)
-        errorMessageList.child(31).text shouldBe messages("tax-year-summary.message.C55011", dateService.getCurrentDate.toLongDate)
-        errorMessageList.child(32).text shouldBe messages("tax-year-summary.message.C55009")
-        errorMessageList.child(33).text shouldBe messages("tax-year-summary.message.C55010")
-        errorMessageList.child(34).text shouldBe messages("tax-year-summary.message.C55012", dateService.getCurrentDate.toLongDate)
-        errorMessageList.child(35).text shouldBe messages("tax-year-summary.message.C55013", dateService.getCurrentDate.toLongDate)
-        errorMessageList.child(36).text shouldBe messages("tax-year-summary.message.C55009")
-        errorMessageList.child(37).text shouldBe messages("tax-year-summary.message.C55511")
-        errorMessageList.child(38).text shouldBe messages("tax-year-summary.message.C55519")
-        errorMessageList.child(39).text shouldBe messages("tax-year-summary.message.C55515")
-        errorMessageList.child(40).text shouldBe messages("tax-year-summary.message.C55516")
-        errorMessageList.child(41).text shouldBe messages("tax-year-summary.message.C55517")
-        errorMessageList.child(42).text shouldBe messages("tax-year-summary.message.C55520")
-        errorMessageList.child(43).text shouldBe messages("tax-year-summary.message.C95005")
-        errorMessageList.child(44).text shouldBe messages("tax-year-summary.message.C159014")
-        errorMessageList.child(45).text shouldBe messages("tax-year-summary.message.C159015")
-        errorMessageList.child(46).text shouldBe messages("tax-year-summary.message.C159016")
-        errorMessageList.child(47).text shouldBe messages("tax-year-summary.message.C159018")
-        errorMessageList.child(48).text shouldBe messages("tax-year-summary.message.C159019")
-        errorMessageList.child(49).text shouldBe messages("tax-year-summary.message.C159026")
-        errorMessageList.child(50).text shouldBe messages("tax-year-summary.message.C159027")
-        errorMessageList.child(51).text shouldBe s"${messages("tax-year-summary.message.C159028.1")} ${messages("tax-year-summary.message.C159028.2")} ${messages("tax-year-summary.message.C159028.3")} ${messages("tax-year-summary.message.C159028.4")}"
-        errorMessageList.child(52).text shouldBe messages("tax-year-summary.message.C159030")
-        errorMessageList.child(53).text shouldBe messages("tax-year-summary.message.C159102")
-        errorMessageList.child(54).text shouldBe messages("tax-year-summary.message.C159106")
-        errorMessageList.child(55).text shouldBe messages("tax-year-summary.message.C159110", "50")
-        errorMessageList.child(56).text shouldBe messages("tax-year-summary.message.C159115")
-        errorMessageList.child(57).text shouldBe messages("tax-year-summary.message.C159500")
-        errorMessageList.child(58).text shouldBe messages("tax-year-summary.message.C559099")
-        errorMessageList.child(59).text shouldBe messages("tax-year-summary.message.C559100")
-        errorMessageList.child(60).text shouldBe messages("tax-year-summary.message.C559101")
-        errorMessageList.child(61).text shouldBe messages("tax-year-summary.message.C559103")
-        errorMessageList.child(62).text shouldBe messages("tax-year-summary.message.C559107")
-        errorMessageList.child(63).text shouldBe messages("tax-year-summary.message.C559104")
-        errorMessageList.child(64).text shouldBe messages("tax-year-summary.message.C559105")
-        errorMessageList.child(65).text shouldBe messages("tax-year-summary.message.C559113")
-        errorMessageList.child(66).text shouldBe messages("tax-year-summary.message.C559114")
+        errorMessageList.child(0).text shouldBe s"a quarterly update cannot end after the accounting period end date of ${dateService.getCurrentDate.toLongDate}."
+        errorMessageList.child(1).text shouldBe s"a quarterly update cannot end after the accounting period end date of ${dateService.getCurrentDate.toLongDate}."
+        errorMessageList.child(2).text shouldBe "you’ve claimed to carry forward a loss to set against general income of the next year. You also need to make the claim in the same year the loss arose."
+        errorMessageList.child(3).text shouldBe "you are using cash basis accounting. This means that you cannot claim to set losses against other taxable income."
+        errorMessageList.child(4).text shouldBe "the total amount of one-off Gift Aid payments is more than the total Gift Aid payments you’ve made."
+        errorMessageList.child(5).text shouldBe "gift Aid payments made this year treated as paid in the previous year are more than the total Gift Aid payments you’ve made."
+        errorMessageList.child(6).text shouldBe s"the value of qualifying investments you’ve gifted to non-UK charities are more than the value of these items you’ve gifted to charity: qualifying shares and securities qualifying land and buildings"
+        errorMessageList.child(7).text shouldBe "gift Aid payments to non-UK charities are more than the total Gift Aid payments you’ve made."
+        errorMessageList.child(8).text shouldBe s"the amount of Trading Income Allowance you’ve claimed is more than allowed. The amount you claim cannot be more than the total of: your turnover other business income not included in turnover balancing charge on the sale of assets or cessation of business and goods and services for your own use"
+        errorMessageList.child(9).text shouldBe "the amount of Trading Income Allowance you’ve claimed is more than the limit."
+        errorMessageList.child(10).text shouldBe "you’ve claimed consolidated expenses. This means that you cannot claim any further expenses."
+        errorMessageList.child(11).text shouldBe "you’ve claimed consolidated expenses. This means that you cannot claim any further expenses."
+        errorMessageList.child(12).text shouldBe "you’ve claimed consolidated expenses. This means that you cannot claim any further expenses."
+        errorMessageList.child(13).text shouldBe "the amount of Property Income Allowance you’ve claimed is more than the limit."
+        errorMessageList.child(14).text shouldBe "you’ve claimed 1000 in Property Income Allowance but this is more than turnover for your UK property."
+        errorMessageList.child(15).text shouldBe "the Rent a Room relief claimed for a jointly let property cannot be more than 50% of the Rent a Room limit."
+        errorMessageList.child(16).text shouldBe "the amount of Rent a Room relief you’ve claimed is more than the limit."
+        errorMessageList.child(17).text shouldBe "you are using cash basis accounting. This means that you cannot claim to set losses against general income."
+        errorMessageList.child(18).text shouldBe "your non-allowable business entertainment costs must be the same as the allowable business entertainment costs."
+        errorMessageList.child(19).text shouldBe "you’ve claimed Trading Income Allowance. This means that you cannot claim any further expenses."
+        errorMessageList.child(20).text shouldBe "the amount of Annual Investment Allowance you’ve claimed for your UK property is more than the limit."
+        errorMessageList.child(21).text shouldBe "the amount of Annual Investment Allowance you’ve claimed for your foreign property is more than the limit."
+        errorMessageList.child(22).text shouldBe "the amount of Annual Investment Allowance you’ve claimed is more than the limit."
+        errorMessageList.child(23).text shouldBe "you cannot submit details for combined expenses for self-employment. This is because your cumulative turnover is more than the limit."
+        errorMessageList.child(24).text shouldBe "a Class 4 exemption cannot be applied. This is because the individual is 16 or older on 6 April of the current tax year."
+        errorMessageList.child(25).text shouldBe "a Class 4 exemption cannot be applied. This is because the individual’s age is less than their State Pension age on 6 April of the current tax year."
+        errorMessageList.child(26).text shouldBe "the amount you’ve claimed for private use adjustment for your UK furnished holiday lettings is more than the total allowable expenses."
+        errorMessageList.child(27).text shouldBe "the amount you’ve claimed for private use adjustment for your UK unfurnished holiday lettings is more than the total allowable expenses."
+        errorMessageList.child(28).text shouldBe "you cannot submit details for combined expenses for your UK property. This is because your cumulative turnover is more than the limit."
+        errorMessageList.child(29).text shouldBe "you’ve claimed Property Income Allowance for your UK unfurnished holiday lettings. This means that you cannot claim any further expenses."
+        errorMessageList.child(30).text shouldBe s"the update must align to the accounting period start date of ${dateService.getCurrentDate.toLongDate}."
+        errorMessageList.child(31).text shouldBe s"the update must align to the accounting period start date of ${dateService.getCurrentDate.toLongDate}."
+        errorMessageList.child(32).text shouldBe "updates cannot include gaps."
+        errorMessageList.child(33).text shouldBe "updates cannot include overlaps."
+        errorMessageList.child(34).text shouldBe s"the update must align to the accounting period end date of ${dateService.getCurrentDate.toLongDate}."
+        errorMessageList.child(35).text shouldBe s"the update must align to the accounting period end date of ${dateService.getCurrentDate.toLongDate}."
+        errorMessageList.child(36).text shouldBe "updates cannot include gaps."
+        errorMessageList.child(37).text shouldBe "the Rent a Room threshold has been limited to the amount of rents received."
+        errorMessageList.child(38).text shouldBe "the Rent a Room threshold has been limited to the amount of rents received."
+        errorMessageList.child(39).text shouldBe "deducted tax cannot be applied against UK property income unless you are a non-resident landlord."
+        errorMessageList.child(40).text shouldBe "deducted tax cannot be applied against UK property income unless you are a non-resident landlord."
+        errorMessageList.child(41).text shouldBe "the amount of tax deducted is more than the total amount of rent you’ve received."
+        errorMessageList.child(42).text shouldBe "the amount of tax deducted is more than the total amount of rent you’ve received."
+        errorMessageList.child(43).text shouldBe "you must provide final confirmation of income and expenses for all business sources."
+        errorMessageList.child(44).text shouldBe "the amount of relief claimed for Subscriptions for Venture Capital Trust shares is more than the limit."
+        errorMessageList.child(45).text shouldBe "the amount of relief claimed for Subscriptions for shares under the Enterprise Investment Scheme is more than the limit."
+        errorMessageList.child(46).text shouldBe "the amount of relief claimed for Subscriptions for shares under the Enterprise Investment Scheme where the companies are not knowledge intensive is more than the limit."
+        errorMessageList.child(47).text shouldBe "the amount of relief claimed for Subscriptions for shares under the Seed Enterprise Investment Scheme is more than the limit."
+        errorMessageList.child(48).text shouldBe "the amount claimed for Social Investment Tax Relief is more than the limit."
+        errorMessageList.child(49).text shouldBe "the total amount of tax taken off in employment is more than your taxable pay."
+        errorMessageList.child(50).text shouldBe "the total amount of tax taken off in employment is more than your taxable pay."
+        errorMessageList.child(51).text shouldBe s"the total tax taken off your employment must be less than the total taxable pay including: tips other payments lump sums"
+        errorMessageList.child(52).text shouldBe "your total redundancy compensation amount from employment is more than the lump sum limit."
+        errorMessageList.child(53).text shouldBe "the amount of Annual Investment Allowance you’ve claimed for your EEA furnished holiday lettings or foreign property is more than the limit."
+        errorMessageList.child(54).text shouldBe "the amount of Property Allowance you’ve claimed for your foreign property is more than the limit."
+        errorMessageList.child(55).text shouldBe "the amount you’ve claimed for Tax taken off State Pension lump sum is more than 50% of the amount entered for State Pension lump sum."
+        errorMessageList.child(56).text shouldBe "you are using cash basis accounting. This means that they cannot claim Annual Investment Allowance for your UK property."
+        errorMessageList.child(57).text shouldBe "you are using cash basis accounting. This means that you cannot claim Annual Investment Allowance for your self-employment."
+        errorMessageList.child(58).text shouldBe "you cannot submit details for combined expenses for your EEA furnished holiday lettings and foreign property. This is because your cumulative turnover is more than the limit."
+        errorMessageList.child(59).text shouldBe "you’ve claimed Property Income Allowance for your EEA furnished holiday lettings. This means that you cannot claim for private use adjustment."
+        errorMessageList.child(60).text shouldBe "the amount you’ve claimed for private use adjustment for your EEA furnished holiday lettings is more than the total allowable expenses."
+        errorMessageList.child(61).text shouldBe "you’ve claimed Property Income Allowance. This means that you cannot claim any further expenses."
+        errorMessageList.child(62).text shouldBe "you’ve claimed Property Income Allowance. This means that you cannot claim any further expenses."
+        errorMessageList.child(63).text shouldBe "you’ve claimed Property Income Allowance for your foreign property. This means that you cannot claim for private use adjustment."
+        errorMessageList.child(64).text shouldBe "the amount you’ve claimed for private use adjustment for your foreign property is more than the total allowable expenses."
+        errorMessageList.child(65).text shouldBe "for your foreign property, you need to submit either consolidated or detailed expenses but not both."
+        errorMessageList.child(66).text shouldBe "for your EEA furnished holiday lettings, you need to submit either consolidated or detailed expenses but not both."
 
       }
 
@@ -838,20 +839,21 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         testObligationsModel.allDeadlinesWithSource(previous = true).groupBy[LocalDate] { nextUpdateWithIncomeType =>
           nextUpdateWithIncomeType.obligation.due
         }.toList.sortBy(_._1)(localDateOrdering).reverse.foreach { case (due: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
-          layoutContent.selectHead(s"#table-default-content-$due").text shouldBe messages("updateTab.due", due.toLongDate)
+          layoutContent.selectHead(s"#table-default-content-$due").text shouldBe s"Due ${due.toLongDate}"
           val sectionContent = layoutContent.selectHead(s"#updates")
           obligations.zip(1 to obligations.length).foreach {
             case (testObligation, index) =>
               val divAccordion = sectionContent.selectHead(s"div:nth-of-type($index)")
+              document.getElementById("update-tab-description").text() shouldBe updateDescription
 
               divAccordion.selectHead("caption").text shouldBe
-                "Quarterly period from " + messages("updateTab.dateToDate", testObligation.obligation.start.toLongDateShort, testObligation.obligation.end.toLongDateShort)
+                s"The update period from ${testObligation.obligation.start.toLongDateShort} to ${testObligation.obligation.end.toLongDateShort}"
               divAccordion.selectHead("thead").selectNth("th", 1).text shouldBe updateType
               divAccordion.selectHead("thead").selectNth("th", 2).text shouldBe updateIncomeSource
               divAccordion.selectHead("thead").selectNth("th", 3).text shouldBe updateDateSubmitted
               val row = divAccordion.selectHead("tbody").selectHead("tr")
               row.selectNth("th", 1).text shouldBe updateType(testObligation.obligation.obligationType)
-              row.selectNth("td", 1).text shouldBe incomeType(messages(testObligation.incomeType))
+              row.selectNth("td", 1).text shouldBe incomeType(testObligation.incomeType)
               row.selectNth("td", 2).text shouldBe testObligation.obligation.dateReceived.map(_.toLongDateShort).getOrElse("")
           }
         }
