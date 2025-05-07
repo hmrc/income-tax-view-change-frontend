@@ -79,6 +79,7 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
         dunningLock = whatYouOweChargesList.hasDunningLock,
         reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
         penaltiesEnabled = isEnabled(PenaltiesAndAppeals),
+        LPP2Url = appConfig.incomeTaxPenaltiesFrontendCalculation,
         creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
         earliestTaxYearAndAmountByDueDate = earliestTaxYearAndAmount,
         claimToAdjustViewModel = ctaViewModel
