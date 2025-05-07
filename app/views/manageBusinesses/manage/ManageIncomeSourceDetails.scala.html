@@ -45,6 +45,7 @@
         viewModel: ManageIncomeSourceDetailsViewModel,
         isAgent: Boolean,
         showStartDate: Boolean,
+        showOptInOptOutContentUpdateR17: Boolean,
         backUrl: String
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
@@ -244,9 +245,15 @@
     ))
 
     @if(viewModel.shouldShowInsetText) {
+        @if(showOptInOptOutContentUpdateR17) {
         <div class="govuk-inset-text">
-          @messages("incomeSources.manage.business-manage-details.insetText", viewModel.latencyDetails.get.taxYear2)
+            @messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.insetText", viewModel.latencyDetails.get.taxYear2)
         </div>
+        } else {
+        <div class="govuk-inset-text">
+            @messages("incomeSources.manage.business-manage-details.insetText", viewModel.latencyDetails.get.taxYear2)
+        </div>
+        }
     }
 
     @p(id = Some("reportingFrequency")){
@@ -301,9 +308,20 @@
                         )
                     ))
                 ++ getQuarterlyType
-                ++ {
-            if(viewModel.latencyDetails.isDefined) getTaxYears else Seq.empty
-        },
+                ++ (
+                (if (viewModel.latencyDetails.isDefined) getTaxYears else Seq.empty) ++
+                (if (showOptInOptOutContentUpdateR17) {
+                    Seq(
+                        SummaryListRow(
+                            key = Key(content = Text(" ")),
+                            value = Value(content = HtmlContent("<p>Using Making Tax Digital for Income Tax</p>"))
+                        )
+                    )
+                } else {
+                    Seq.empty
+                })
+            )
+        ,
         attributes = Map("id" -> "manage-details-table")),
     )
 
