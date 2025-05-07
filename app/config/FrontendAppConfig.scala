@@ -110,6 +110,10 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val paymentsUrl: String = servicesConfig.baseUrl("pay-api")
 
+  lazy val incomeTaxPenaltiesUrl: String = servicesConfig.baseUrl("income-tax-penalties-frontend")
+
+  lazy val firstLatePaymentPenaltyUrl: String = s"$incomeTaxPenaltiesUrl/penalties/income-tax"
+
   lazy val enterSurveyUrl: String = servicesConfig.getString("enter-survey.url")
 
   lazy val paymentHistoryLimit: Int = config.get[Int]("payment-history.number-of-years")

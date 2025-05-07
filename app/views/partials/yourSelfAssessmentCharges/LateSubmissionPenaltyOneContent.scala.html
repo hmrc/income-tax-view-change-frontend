@@ -18,7 +18,8 @@
 
 @this(
         p: p,
-        link: link
+        link: link,
+        appConfig: config.FrontendAppConfig,
 )
 
 @()(
@@ -35,6 +36,6 @@
 }
 
 @link(
-    link = "/penalties/income-tax",
+    link = appConfig.firstLatePaymentPenaltyUrl,
     messageKey = "yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link"
 )

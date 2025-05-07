@@ -156,7 +156,7 @@
     val linkText = getMessage(s"${lpi}${chargeTypeKey}")
     val taxYear = chargeItem.taxYear
     val linkHref = if (chargeItem.isLPP2) {
-        Call("GET", "penalties/income-tax") //to be implemented once we get Urls from Penalty Reform
+        Call("GET", appConfig.firstLatePaymentPenaltyUrl)
     } else {
         if(user.isAgent()) {
         controllers.routes.ChargeSummaryController.showAgent(taxYear.endYear,
