@@ -89,7 +89,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
         result shouldBe Right(CreateBusinessIncomeSourceRequest(
           List(BusinessDetails("2022-11-11", "2022-11-11", "someBusinessName",
             AddressDetails("businessAddressLine1", None, None, None, Some("GB"), Some("SE15 4ER")),
-            Some("someBusinessTrade"), "2022-11-11", "CASH", None, None))))
+            Some("someBusinessTrade"), "2022-11-11", Some("CASH"), None, None))))
       }
     }
 
@@ -105,7 +105,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
 
       val viewModel = CheckPropertyViewModel(
         tradingStartDate = LocalDate.of(2011, 1, 1),
-        cashOrAccrualsFlag = "CASH",
+        cashOrAccrualsFlag = Some("CASH"),
         incomeSourceType = ForeignProperty
       )
       val result = UnderTestCreateBusinessDetailsService.createForeignProperty(viewModel)
@@ -134,7 +134,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
       // set cashOrAccruals field to empty to cause failure
       val viewModel = CheckPropertyViewModel(
         tradingStartDate = LocalDate.of(2011, 1, 1),
-        cashOrAccrualsFlag = "",
+        cashOrAccrualsFlag = Some(""),
         incomeSourceType = ForeignProperty
       )
       val result = UnderTestCreateBusinessDetailsService.createForeignProperty(viewModel)
@@ -156,7 +156,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
 
       val viewModel = CheckPropertyViewModel(
         tradingStartDate = LocalDate.of(2011, 1, 1),
-        cashOrAccrualsFlag = "CASH",
+        cashOrAccrualsFlag = Some("CASH"),
         incomeSourceType = UkProperty
       )
       val result = UnderTestCreateBusinessDetailsService.createUKProperty(viewModel)
@@ -171,7 +171,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
         })
       val viewModel = CheckPropertyViewModel(
         tradingStartDate = LocalDate.of(2011, 1, 1),
-        cashOrAccrualsFlag = "CASH",
+        cashOrAccrualsFlag = Some("CASH"),
         incomeSourceType = UkProperty
       )
       val result = UnderTestCreateBusinessDetailsService.createUKProperty(viewModel)
@@ -190,7 +190,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
       // set cashOrAccrualsFlag field as empty to cause failure
       val viewModel = CheckPropertyViewModel(
         tradingStartDate = LocalDate.of(2011, 1, 1),
-        cashOrAccrualsFlag = "",
+        cashOrAccrualsFlag = Some(""),
         incomeSourceType = UkProperty
       )
       val result = UnderTestCreateBusinessDetailsService.createUKProperty(viewModel)
