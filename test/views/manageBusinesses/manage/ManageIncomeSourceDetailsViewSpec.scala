@@ -358,7 +358,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         selfEmploymentViewModel,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled
+        showStartDate = startDateEnabled,
+        showOptInOptOutContentUpdateR17 = false,
       )(messages, implicitly)
     }
 
@@ -381,7 +382,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         selfEmploymentViewModelWithUnknowns,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled
+        showStartDate = startDateEnabled,
+        showOptInOptOutContentUpdateR17 = false,
       )(messages, implicitly)
     }
 
@@ -405,7 +407,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         selfEmploymentViewModelOneYearCrystallised,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled
+        showStartDate = startDateEnabled,
+        showOptInOptOutContentUpdateR17 = false,
       )(messages, implicitly)
     }
 
@@ -420,7 +423,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         selfEmploymentViewModelCYUnknown,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled
+        showStartDate = startDateEnabled,
+        showOptInOptOutContentUpdateR17 = false,
       )(messages, implicitly)
     }
 
@@ -444,7 +448,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         ukViewModel,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled
+        showStartDate = startDateEnabled,
+        showOptInOptOutContentUpdateR17 = false,
       )(messages, implicitly)
     }
 
@@ -466,7 +471,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         ukViewModelUnknowns,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled
+        showStartDate = startDateEnabled,
+        showOptInOptOutContentUpdateR17 = false,
       )(messages, implicitly)
     }
 
@@ -489,7 +495,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         ukPropertyViewModelOneYearCrystallised,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled
+        showStartDate = startDateEnabled,
+        showOptInOptOutContentUpdateR17 = false,
       )(messages, implicitly)
     }
 
@@ -504,7 +511,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         ukPropertyViewModelCYUnknown,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled
+        showStartDate = startDateEnabled,
+        showOptInOptOutContentUpdateR17 = false,
       )(messages, implicitly)
     }
 
@@ -528,7 +536,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         foreignViewModel,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled
+        showStartDate = startDateEnabled,
+        showOptInOptOutContentUpdateR17 = false,
       )(messages, implicitly)
     }
 
@@ -550,7 +559,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         foreignViewModelUnknowns,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled
+        showStartDate = startDateEnabled,
+        showOptInOptOutContentUpdateR17 = false,
       )(messages, implicitly)
     }
 
@@ -572,7 +582,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         foreignPropertyViewModelOneYearCrystallised,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled
+        showStartDate = startDateEnabled,
+        showOptInOptOutContentUpdateR17 = false,
       )(messages, implicitly)
     }
 
@@ -587,12 +598,27 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         foreignPropertyLatencyYearTwoUnknown,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled
+        showStartDate = startDateEnabled,
+        showOptInOptOutContentUpdateR17 = false,
       )(messages, implicitly)
     }
 
     lazy val document: Document = Jsoup.parse(contentAsString(view))
 
+  }
+
+  class SelfEmploymentSetupWithOptInContentR17(isAgent: Boolean, error: Boolean = false, startDateEnabled: Boolean = true) {
+    lazy val view: HtmlFormat.Appendable = {
+      manageIncomeSourceDetailsView(
+        selfEmploymentViewModel,
+        isAgent,
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled,
+        showOptInOptOutContentUpdateR17 = true,
+      )(messages, implicitly)
+    }
+
+    lazy val document: Document = Jsoup.parse(contentAsString(view))
   }
 
 
@@ -683,6 +709,14 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
     "Don't display start date if DisplayBusinessStartDate is disabled" in new SelfEmploymentSetup(false, startDateEnabled = false) {
       Option(document.getElementById("manage-details-table")).mkString("").contains("Date started") shouldBe false
+    }
+
+    "render the correct inset text when OptInOptOutContentUpdateR17 feature is enabled" in new SelfEmploymentSetupWithOptInContentR17(false) {
+      val insetText = document.getElementsByClass("govuk-inset-text").text()
+
+      insetText should include(
+        messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.insetText", "2024")
+      )
     }
   }
   "ManageSelfEmployment - Agent" should {
