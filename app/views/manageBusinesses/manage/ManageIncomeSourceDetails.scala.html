@@ -246,7 +246,7 @@
 
     @if(viewModel.shouldShowInsetText) {
         @if(showOptInOptOutContentUpdateR17) {
-        <div class="govuk-inset-text">
+        <div class="govuk-body">
             @messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.insetText", viewModel.latencyDetails.get.taxYear2)
         </div>
         } else {
@@ -256,10 +256,21 @@
         }
     }
 
-    @p(id = Some("reportingFrequency")){
-        @link(link = reportingFrequencyURL(isAgent),
-            messageKey = getMessage("reportingFrequency"),
-            id = Some("reportingFrequency-link"))
+    @p(id = Some("reportingFrequency")) {
+        @if(showOptInOptOutContentUpdateR17) {
+            @messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyPrefix")
+            @link(
+                link = reportingFrequencyURL(isAgent),
+                messageKey = messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyLink"),
+                id = Some("reportingFrequency-link")
+            ).
+        } else {
+            @link(
+                link = reportingFrequencyURL(isAgent),
+                messageKey = getMessage("reportingFrequency"),
+                id = Some("reportingFrequency-link")
+            )
+        }
     }
 
     @govukSummaryList(SummaryList(

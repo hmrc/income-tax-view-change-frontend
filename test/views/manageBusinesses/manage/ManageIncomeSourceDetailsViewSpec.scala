@@ -22,7 +22,7 @@ import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
 import models.incomeSourceDetails.{LatencyYearsCrystallised, LatencyYearsQuarterly, QuarterTypeCalendar, QuarterTypeStandard}
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.testSelfEmploymentId
@@ -718,6 +718,13 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.insetText", "2024")
       )
     }
+
+    "render the updated reporting frequency sentence when OptInOptOutContentUpdateR17 feature is enabled" in new SelfEmploymentSetupWithOptInContentR17(false) {
+      document.getElementById("reportingFrequency").text should include(messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyPrefix"))
+      document.getElementById("reportingFrequency-link").text shouldBe messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyLink")
+      document.getElementById("reportingFrequency-link").attr("href") shouldBe reportingFrequencyLink(false)
+    }
+
   }
   "ManageSelfEmployment - Agent" should {
     "render the heading" in new SelfEmploymentSetup(true) {
