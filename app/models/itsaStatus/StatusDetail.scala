@@ -17,7 +17,7 @@
 package models.itsaStatus
 
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
-import models.itsaStatus.StatusReason.{Rollover, StatusReason}
+import models.itsaStatus.StatusReason.StatusReason
 import play.api.libs.json.{Format, Json, Reads, Writes}
 
 case class StatusDetail(submittedOn: String,
@@ -65,6 +65,8 @@ object StatusReason extends Enumeration {
   val IncomeSourceLatencyChanges = Value("Income Source Latency Changes")
   val Rollover = Value("Rollover")
   val MtdItsaOptOut = Value("MTD ITSA Opt-Out")
+  val MtdItsaOptIn = Value("MTD ITSA Opt-In")
+  val DigitallyExempt = Value("Digitally Exempt")
 
   implicit val statusReasonReads: Reads[StatusReason] = Reads.enumNameReads(StatusReason)
   implicit val statusReasonWrite: Writes[StatusReason] = Writes.enumNameWrites

@@ -281,7 +281,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
                 }
                 "Yes is submitted with the form with a valid session (accounting method FS disabled)" in {
                   setupMockSuccess(mtdRole)
-                  enable(IncomeSourcesFs)
+                  enable(IncomeSourcesNewJourney)
 
                   mockNoIncomeSources()
                   setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))

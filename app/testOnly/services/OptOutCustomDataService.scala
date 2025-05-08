@@ -113,20 +113,20 @@ class OptOutCustomDataService @Inject()(implicit val appConfig: FrontendAppConfi
             case _ => ""
           }),
           "statusReason" -> Json.toJson(statusDetail.statusReason match {
-            case "Sign up - return available" => "00"
-            case "Sign up - no return available" => "01"
-            case "ITSA final declaration" => "02"
-            case "ITSA Q4 declaration" => "03"
-            case "CESA SA return" => "04"
-            case "Complex" => "05"
-            case "Ceased income source" => "06"
-            case "Reinstated income source" => "07"
-            case "Rollover" => "08"
-            case "Income Source Latency Changes" => "09"
-            case "MTD ITSA Opt-Out" => "10"
-            case "MTD ITSA Opt-In" => "11"
-            case "Digitally Exempt" => "12"
-            case _ => statusDetail.statusReason
+            case StatusReason.SignupReturnAvailable => "00"
+            case StatusReason.SignupNoReturnAvailable => "01"
+            case StatusReason.ItsaFinalDeclaration => "02"
+            case StatusReason.ItsaQ4lDeclaration => "03"
+            case StatusReason.CesaSaReturn => "04"
+            case StatusReason.Complex => "05"
+            case StatusReason.CeasedIncomeSource => "06"
+            case StatusReason.ReinstatedIncomeSource => "07"
+            case StatusReason.Rollover => "08"
+            case StatusReason.IncomeSourceLatencyChanges => "09"
+            case StatusReason.MtdItsaOptOut => "10"
+            case StatusReason.MtdItsaOptIn => "11"
+            case StatusReason.DigitallyExempt => "12"
+            case _ => ""
           })
         ) ++ (statusDetail.businessIncomePriorTo2Years match {
           case Some(value) => Json.obj("businessIncomePriorTo2Years" -> value)
