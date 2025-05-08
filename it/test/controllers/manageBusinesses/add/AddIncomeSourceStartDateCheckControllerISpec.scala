@@ -223,7 +223,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
                     )
                   }
                   "form response is Yes (accounting method FS disabled)" in {
-                    enable(IncomeSourcesFs)
+                    enable(IncomeSourcesNewJourney)
                     disable(NavBarFs)
                     stubAuthorised(mtdUserRole)
                     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
