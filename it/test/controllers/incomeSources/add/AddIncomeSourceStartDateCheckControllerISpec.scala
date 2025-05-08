@@ -23,7 +23,7 @@ import enums.{MTDIndividual, MTDUserRole}
 import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm
 import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm.{responseNo, responseYes}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSourcesFs, NavBarFs}
+import models.admin.{AccountingMethodJourney, IncomeSourcesFs, NavBarFs}
 import models.incomeSourceDetails.AddIncomeSourceData.{accountingPeriodEndDateField, accountingPeriodStartDateField, dateStartedField}
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -200,9 +200,13 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
                 }
               } else {
                 val accountingMethodUrl = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent).url
+                val checkDetailsUrl =
+                  if(isAgent) controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType).url
+                  else controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(incomeSourceType).url
                 s"redirect to $accountingMethodUrl" when {
-                  "form response is Yes" in {
+                  "form response is Yes (accounting method FS enabled)" in {
                     enable(IncomeSourcesFs)
+                    enable(AccountingMethodJourney)
                     disable(NavBarFs)
                     stubAuthorised(mtdUserRole)
                     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
@@ -216,6 +220,23 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
                     result should have(
                       httpStatus(SEE_OTHER),
                       redirectURI(accountingMethodUrl)
+                    )
+                  }
+                  "form response is Yes (accounting method FS disabled)" in {
+                    enable(IncomeSourcesFs)
+                    disable(NavBarFs)
+                    stubAuthorised(mtdUserRole)
+                    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+
+                    await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
+
+                    val result = buildPOSTMTDPostClient(path, additionalCookies,
+                      body = Map(AddIncomeSourceStartDateCheckForm.response -> Seq(responseYes))).futureValue
+
+                    verifySessionUpdate(incomeSourceType, journeyType)
+                    result should have(
+                      httpStatus(SEE_OTHER),
+                      redirectURI(checkDetailsUrl)
                     )
                   }
                 }

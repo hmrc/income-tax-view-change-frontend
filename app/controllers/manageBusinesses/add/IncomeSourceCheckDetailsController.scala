@@ -23,7 +23,7 @@ import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import models.admin.IncomeSourcesNewJourney
+import models.admin.{AccountingMethodJourney, IncomeSourcesNewJourney}
 import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, UIJourneySessionData}
@@ -88,7 +88,8 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
             viewModel,
             postAction = postAction,
             isAgent,
-            backUrl = backUrl
+            backUrl = backUrl,
+            displayAccountingMethod = isEnabled(AccountingMethodJourney)
           ))
         }
       case None =>
@@ -116,7 +117,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     val accountingMethodOpt = sessionData.addIncomeSourceData.flatMap(_.incomeSourcesAccountingMethod)
     val dateStartedOpt = sessionData.addIncomeSourceData.flatMap(_.dateStarted)
     (dateStartedOpt, accountingMethodOpt) match {
-      case (Some(dateStarted), Some(accountingMethod)) =>
+      case (Some(dateStarted), accountingMethod) =>
         Some(CheckPropertyViewModel(
           tradingStartDate = dateStarted,
           cashOrAccrualsFlag = accountingMethod,
@@ -137,7 +138,6 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         accountingPeriodEndDate <- addIncomeSourceData.accountingPeriodEndDate
         businessTrade <- addIncomeSourceData.businessTrade
         businessAddressLine1 <- address.lines.headOption
-        incomeSourcesAccountingMethod <- addIncomeSourceData.incomeSourcesAccountingMethod
       } yield CheckBusinessDetailsViewModel(
         businessName = addIncomeSourceData.businessName,
         businessStartDate = addIncomeSourceData.dateStarted,
@@ -149,8 +149,8 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         businessAddressLine4 = address.lines.lift(3),
         businessPostalCode = address.postcode,
         businessCountryCode = addIncomeSourceData.countryCode,
-        incomeSourcesAccountingMethod = Some(incomeSourcesAccountingMethod),
-        cashOrAccrualsFlag = incomeSourcesAccountingMethod,
+        incomeSourcesAccountingMethod = addIncomeSourceData.incomeSourcesAccountingMethod,
+        cashOrAccrualsFlag = addIncomeSourceData.incomeSourcesAccountingMethod,
         showedAccountingMethod = showAccountingMethodPage
       )
     }
