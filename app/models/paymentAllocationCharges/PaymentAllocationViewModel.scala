@@ -47,7 +47,8 @@ case class PaymentAllocationViewModel(paymentAllocationChargeModel: FinancialDet
   }
 
   def getOriginalAmount: String =
-    paymentAllocationChargeModel.filteredDocumentDetails.headOption.map(_.originalAmount.abs.toCurrencyString).getOrElse("")
+    paymentAllocationChargeModel.filteredDocumentDetails.headOption.map(_.originalAmount.abs.toCurrencyString)
+      .getOrElse(throw new Error("paymentLotItem and/or paymentLot are missing"))
 
   def showPaymentAllocationsTable(): Boolean =
     !(paymentAllocationChargeModel.documentDetails.exists(_.outstandingAmountZero) &&
