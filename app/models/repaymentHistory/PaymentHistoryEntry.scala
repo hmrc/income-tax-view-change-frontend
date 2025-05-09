@@ -23,7 +23,7 @@ import services.DateServiceInterface
 import java.time.LocalDate
 
 case class PaymentHistoryEntry(date: LocalDate,
-                               creditType: CreditType,
+                               creditType: TransactionType,
                                amount: Option[BigDecimal],
                                transactionId: Option[String] = None,
                                linkUrl: String,
