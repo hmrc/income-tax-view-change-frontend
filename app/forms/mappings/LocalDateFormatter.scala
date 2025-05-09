@@ -18,6 +18,7 @@ package forms.mappings
 
 import play.api.data.FormError
 import play.api.data.format.Formatter
+import play.api.i18n.Messages
 
 import java.time.{LocalDate, Month}
 import scala.util.{Failure, Success, Try}
@@ -28,9 +29,13 @@ private[mappings] class LocalDateFormatter(
                                             twoRequiredKey: String,
                                             requiredKey: String,
                                             args: Seq[String] = Seq.empty
-                                          ) extends Formatter[LocalDate] with Formatters {
+                                          )(implicit messages: Messages) extends Formatter[LocalDate] with Formatters {
 
-  private val fieldKeys: List[String] = List("day", "month", "year")
+  private val fieldKeys = Map(
+    "day" -> messages("date.error.day"),
+    "month" -> messages("date.error.month"),
+    "year" -> messages("date.error.year")
+  )
 
   private def toDate(key: String, day: Int, month: Int, year: Int): Either[Seq[FormError], LocalDate] =
     Try(LocalDate.of(year, month, day)) match {
@@ -62,9 +67,8 @@ private[mappings] class LocalDateFormatter(
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
 
     val fields = fieldKeys.map {
-      field =>
-        field -> data.get(s"$key.$field").filter(_.nonEmpty)
-    }.toMap
+      field => field._2 -> data.get(s"$key.${field._1}").filter(_.nonEmpty)
+    }
 
     lazy val missingFields = fields
       .withFilter(_._2.isEmpty)

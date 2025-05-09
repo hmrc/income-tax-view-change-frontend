@@ -21,7 +21,7 @@ import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import forms.incomeSources.add.AddIncomeSourceStartDateFormProvider
+import forms.manageBusinesses.add.AddIncomeSourceStartDateFormProvider
 import implicits.ImplicitDateFormatterImpl
 import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
