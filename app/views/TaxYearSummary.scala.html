@@ -290,6 +290,7 @@
 
 @updatesContent = {
         @h2(msg = messages("tax-year-summary.updates"), classes = "govuk-heading-l")
+        @p(id=Some("update-tab-description"))(Html(messages("updateTab.desc")))
         @groupedObligations.map { case (due, dueObligations) =>
 
         <div class="govuk-tax-years-updates-table">
@@ -307,7 +308,7 @@
                         @if(quarterlyTypeName.isEmpty) {
                             @messages("paymentDue.tax-year", obligations.head.obligation.start.getYear.toString, obligations.head.obligation.end.getYear.toString)</caption>
                         } else {
-                            @messages("updateTab.quarterlyDateToDate", obligations.head.obligation.start.toLongDateShort, obligations.head.obligation.end.toLongDateShort)</caption>
+                            @messages("updateTab.updatePeriodDateToDate", obligations.head.obligation.start.toLongDateShort, obligations.head.obligation.end.toLongDateShort)</caption>
                         }
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
