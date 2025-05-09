@@ -2130,6 +2130,12 @@ incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.insetTe
 incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyPrefix       =   Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
 incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyLink         =   bwrw golwg dros a newid eich rhwymedigaethau adrodd ar gyfer eich holl fusnesau
 
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage = Defnyddio Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer {0} i {1}
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage.yes  = Iawn
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage.no  = Na
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.signup = Cofrestru
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.optOut = Optio allan
+
 incomeSources.manage.uk-property-manage-details.uk-property-section              =   Eiddo yn y DU
 incomeSources.manage.uk-property-manage-details.accounting-method                =   Dull cyfrifyddu
 
