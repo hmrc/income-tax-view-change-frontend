@@ -20,7 +20,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.JourneyType.Add
-import models.admin.{DisplayBusinessStartDate, IncomeSourcesFs}
+import models.admin.DisplayBusinessStartDate
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -51,23 +51,26 @@ class AddIncomeSourceController @Inject()(val authActions: AuthActions,
 
   def show(): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
-      handleRequest(
-        isAgent = false,
-        homePageCall = homePageCall,
-        sources = user.incomeSources,
-        backUrl = controllers.routes.HomeController.show().url
-      )(implicitly, itvcErrorHandler)
+      withIncomeSourcesFS {
+        handleRequest(
+          isAgent = false,
+          homePageCall = homePageCall,
+          sources = user.incomeSources,
+          backUrl = controllers.routes.HomeController.show().url
+        )(implicitly, itvcErrorHandler)
+      }
   }
 
   def showAgent(): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
-      handleRequest(
-        isAgent = true,
-        homePageCall = homePageCallAgent,
-        sources = mtdItUser.incomeSources,
-        backUrl = controllers.routes.HomeController.showAgent().url
-      )(implicitly, itvcErrorHandlerAgent)
-
+      withIncomeSourcesFS {
+        handleRequest(
+          isAgent = true,
+          homePageCall = homePageCallAgent,
+          sources = mtdItUser.incomeSources,
+          backUrl = controllers.routes.HomeController.showAgent().url
+        )(implicitly, itvcErrorHandlerAgent)
+      }
   }
 
   def handleRequest(sources: IncomeSourceDetailsModel,
@@ -75,26 +78,22 @@ class AddIncomeSourceController @Inject()(val authActions: AuthActions,
                     isAgent: Boolean,
                     backUrl: String)
                    (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
-    if (!isEnabled(IncomeSourcesFs)) {
-      Future.successful(Redirect(homePageCall))
-    } else {
-      incomeSourceDetailsService.getAddIncomeSourceViewModel(sources, isEnabled(DisplayBusinessStartDate)) match {
-        case Success(viewModel) =>
-          sessionService.deleteSession(Add).map { _ =>
-            Ok(addIncomeSources(
-              sources = viewModel,
-              isAgent = isAgent,
-              backUrl = backUrl
-            ))
-          } recover {
-            case ex: Exception =>
-              Logger("application").error(s"Session Error: ${ex.getMessage} - ${ex.getCause}")
-              errorHandler.showInternalServerError()
-          }
-        case Failure(ex) =>
-          Logger("application").error(s"Error: ${ex.getMessage} - ${ex.getCause}")
-          Future(errorHandler.showInternalServerError())
-      }
+    incomeSourceDetailsService.getAddIncomeSourceViewModel(sources, isEnabled(DisplayBusinessStartDate)) match {
+      case Success(viewModel) =>
+        sessionService.deleteSession(Add).map { _ =>
+          Ok(addIncomeSources(
+            sources = viewModel,
+            isAgent = isAgent,
+            backUrl = backUrl
+          ))
+        } recover {
+          case ex: Exception =>
+            Logger("application").error(s"Session Error: ${ex.getMessage} - ${ex.getCause}")
+            errorHandler.showInternalServerError()
+        }
+      case Failure(ex) =>
+        Logger("application").error(s"Error: ${ex.getMessage} - ${ex.getCause}")
+        Future(errorHandler.showInternalServerError())
     }
   }
 }

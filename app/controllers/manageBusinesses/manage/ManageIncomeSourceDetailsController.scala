@@ -73,7 +73,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
            incomeSourceType: IncomeSourceType,
            id: Option[String]): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), InitialPage) { _ =>
+      withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Manage, incomeSourceType), InitialPage) { _ =>
         incomeSourceType match {
           case SelfEmployment => id match {
             case Some(realId) => handleSoleTrader(realId, getBackUrl(isAgent), isAgent)
@@ -94,7 +94,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   def showChange(incomeSourceType: IncomeSourceType,
                  isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), InitialPage) { sessionData =>
+      withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Manage, incomeSourceType), InitialPage) { sessionData =>
         val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
         val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => mkIncomeSourceIdHash(IncomeSourceId(id)))
         val backUrl = controllers.manageBusinesses.manage.routes.CheckYourAnswersController.show(isAgent, incomeSourceType).url

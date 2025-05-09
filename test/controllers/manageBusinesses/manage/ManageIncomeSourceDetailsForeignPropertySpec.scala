@@ -19,7 +19,7 @@ package controllers.manageBusinesses.manage
 import enums.IncomeSourceJourney.ForeignProperty
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.MTDIndividual
-import models.admin.{DisplayBusinessStartDate, IncomeSourcesFs}
+import models.admin.{DisplayBusinessStartDate, IncomeSourcesNewJourney}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status
@@ -41,7 +41,7 @@ class ManageIncomeSourceDetailsForeignPropertyISpec extends ManageIncomeSourceDe
         s"the user is authenticated as a $mtdUserRole" should {
           "render the appropriate IncomeSourceDetails page" when {
             "the user has a valid id parameter and no latency information" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               enable(DisplayBusinessStartDate)
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
@@ -66,7 +66,7 @@ class ManageIncomeSourceDetailsForeignPropertyISpec extends ManageIncomeSourceDe
             }
 
             "the user has a valid id parameter, valid latency information and two tax years not crystallised" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               enable(DisplayBusinessStartDate)
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
@@ -93,7 +93,7 @@ class ManageIncomeSourceDetailsForeignPropertyISpec extends ManageIncomeSourceDe
             }
 
             "the user has a valid id parameter, valid latency information and two tax years crystallised" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
 
@@ -119,7 +119,7 @@ class ManageIncomeSourceDetailsForeignPropertyISpec extends ManageIncomeSourceDe
             }
 
             "the user has a valid id parameter, but non eligable itsa status" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               enable(DisplayBusinessStartDate)
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
@@ -147,7 +147,7 @@ class ManageIncomeSourceDetailsForeignPropertyISpec extends ManageIncomeSourceDe
             }
 
             "the user has a valid id parameter, latency expired" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               enable(DisplayBusinessStartDate)
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
@@ -177,7 +177,7 @@ class ManageIncomeSourceDetailsForeignPropertyISpec extends ManageIncomeSourceDe
 
           "redirect to the home page" when {
             "incomeSources FS is disabled" in {
-              disable(IncomeSourcesFs)
+              disable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdUserRole)
               mockBothPropertyBothBusiness()
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, ForeignProperty)))))
@@ -197,7 +197,7 @@ class ManageIncomeSourceDetailsForeignPropertyISpec extends ManageIncomeSourceDe
 
           "render the error page" when {
             "the user has no income source of the called type" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
               mockBusinessIncomeSource()

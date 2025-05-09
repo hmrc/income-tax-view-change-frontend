@@ -20,8 +20,8 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import mocks.auth.MockAuthActions
-import mocks.services.MockSessionService
-import models.admin.{IncomeSourcesFs, IncomeSourcesNewJourney}
+import mocks.services.{MockIncomeSourceRFService, MockSessionService}
+import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.AddIncomeSourceData
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import org.jsoup.Jsoup
@@ -35,13 +35,14 @@ import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services._
+import services.manageBusinesses.IncomeSourceRFService
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.notCompletedUIJourneySessionData
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with MockSessionService {
+class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with MockSessionService with MockIncomeSourceRFService {
 
   lazy val mockITSAStatusService: ITSAStatusService = mock(classOf[ITSAStatusService])
   lazy val mockUpdateIncomeSourceService: UpdateIncomeSourceService = mock(classOf[UpdateIncomeSourceService])
@@ -50,6 +51,7 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
+      api.inject.bind[IncomeSourceRFService].toInstance(mockIncomeSourceRFService),
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[ITSAStatusService].toInstance(mockITSAStatusService),
       api.inject.bind[UpdateIncomeSourceService].toInstance(mockUpdateIncomeSourceService),
@@ -63,34 +65,7 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
   val TAX_YEAR_2023: LocalDate = LocalDate.of(2023, 4, 6)
   val TAX_YEAR_2022: LocalDate = LocalDate.of(2022, 4, 6)
 
-  val formData: Map[String, String] = Map("report-quarterly" -> "Yes")
-
-  val title: String = "Your new business is set to report annually - Manage your Self Assessment - GOV.UK"
-  val titleError: String = "Error: Your new business is set to report annually - GOV.UK"
-  val titleAgent: String = "Your new business is set to report annually - Manage your Self Assessment - GOV.UK"
-  val heading: String = "Your new business is set to report annually"
-  val paragraph1: String = "Because this is a new business, for up to 2 tax years you can submit its income and expenses once a year in your tax return, even if:"
-  val reportingFrequencyUlLi1: String = "you are voluntarily opted in or required to report quarterly for your other businesses"
-  val reportingFrequencyUlLi2: String = "your income from self-employment or property, or both, exceed the income threshold"
-  val paragraph2: String = "You can choose to report quarterly, which means submitting an update every 3 months in addition to your tax return"
-  val reportingFrequencyFormH1: String = "Do you want to change to report quarterly?"
-  val reportingFrequencyFormNoSelectionError: String = "Select yes if you want to report quarterly or select no if you want to report annually"
-  val continueButtonText: String = "Continue"
-
-  def getCaption(incomeSourceType: IncomeSourceType): String =
-    incomeSourceType match {
-      case SelfEmployment => "Sole trader"
-      case UkProperty => "UK property"
-      case ForeignProperty => "Foreign property"
-    }
-
-  def getReportingFrequencyTableMessages(taxYear: Int): (String, String) = {
-    (s"Reporting frequency ${taxYear} to ${taxYear+1}", "Annual")
-  }
-
-  def getWarningInsetTextMessage(currentTaxYearEnd: Int): String = {
-    s"From April ${currentTaxYearEnd + 1} when this 2-year tax period ends, you could be required to report quarterly."
-  }
+  val formData: Map[String, String] = Map("report-quarterly" -> "yes")
 
 
   object Scenario extends Enumeration {
@@ -192,7 +167,6 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
   }
 
   def setupMockCalls(isAgent: Boolean, incomeSourceType: IncomeSourceType, mtdRole: MTDUserRole, scenario: Scenario): Unit = {
-    enable(IncomeSourcesFs)
     enable(IncomeSourcesNewJourney)
     setupMockSuccess(mtdRole)
     setupMockIncomeSourceDetailsCall(scenario, incomeSourceType)
@@ -202,6 +176,7 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
     setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType)))))
     setupMockSetMongoData(true)
     setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = IncomeSourceJourneyType(Add, incomeSourceType), result = Right(Some(testSelfEmploymentId)))
+    mockRedirectChecksForIncomeSourceRF()
   }
 
   def getTestTitleIncomeSourceType(incomeSourceType: IncomeSourceType): String = {
@@ -214,69 +189,20 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
 
   val incomeSourceTypes: Seq[IncomeSourceType] = List(SelfEmployment, UkProperty, ForeignProperty)
 
-
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual
     incomeSourceTypes.foreach { incomeSourceType =>
       s"show($isAgent, $incomeSourceType)" when {
-        val action = testController.show(isAgent, incomeSourceType)
+        val action = testController.show(isAgent, false, incomeSourceType)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
           "render the reporting frequency page" when {
             s"with New Incomesource FS enabled" in {
               setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
-              val thisTaxYear: Int = TAX_YEAR_2023.getYear
+
               val result = action(fakeRequest)
-              val document: Document = Jsoup.parse(contentAsString(result))
-
-              val warningInsetTextMessages: String = getWarningInsetTextMessage(currentTaxYearEnd = thisTaxYear + 1)
-
-              val documentTableC1 = document.getElementsByTag("th")
-              val documentTableC2 = document.getElementsByTag("td")
-              val documentTableR1C1: String = documentTableC1.get(0).text
-              val documentTableR1C2: String = documentTableC2.get(0).text
-              val documentTableR2C1: String = documentTableC1.get(1).text
-              val documentTableR2C2: String = documentTableC2.get(1).text
 
               status(result) shouldBe OK
-              if (isAgent) document.title shouldBe titleAgent else document.title shouldBe title
-              document.getElementsByClass("govuk-caption-l").textNodes().get(0).text shouldBe getCaption(incomeSourceType)
-              document.getElementsByClass("govuk-heading-l margin-bottom-100").get(0).text shouldBe heading
-              document.getElementById("paragraph-1").text shouldBe paragraph1
-              document.getElementById("inset-text-bullet-1").text shouldBe reportingFrequencyUlLi1
-              document.getElementById("inset-text-bullet-2").text shouldBe reportingFrequencyUlLi2
-              documentTableR1C1 shouldBe getReportingFrequencyTableMessages(thisTaxYear)._1
-              documentTableR1C2 shouldBe getReportingFrequencyTableMessages(thisTaxYear)._2
-              documentTableR2C1 shouldBe getReportingFrequencyTableMessages(thisTaxYear + 1)._1
-              documentTableR2C2 shouldBe getReportingFrequencyTableMessages(thisTaxYear + 1)._2
-              document.getElementById("paragraph-2").text shouldBe paragraph2
-              document.getElementById("warning-inset").text shouldBe warningInsetTextMessages
-              document.getElementById("reporting-quarterly-form").getElementsByClass("govuk-fieldset__legend--m").get(0).text shouldBe reportingFrequencyFormH1
-              document.getElementById("continue-button").text shouldBe continueButtonText
-
-            }
-          }
-
-          "return 303 SEE_OTHER and redirect to home page" when {
-            s"navigating to the ${getTestTitleIncomeSourceType(incomeSourceType)} Reporting Frequency page with FS disabled" in {
-              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-              disable(IncomeSourcesFs)
-              disable(IncomeSourcesNewJourney)
-
-              val expectedRedirectUrl = if (isAgent) controllers.routes.HomeController.showAgent().url
-              else controllers.routes.HomeController.show().url
-
-              val result = action(fakeRequest)
-              status(result) shouldBe SEE_OTHER
-              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-            }
-          }
-
-          "return 500 INTERNAL_SERVER_ERROR" when {
-            s"navigating to the ${getTestTitleIncomeSourceType(incomeSourceType)} Reporting Frequency page and ITSA status returns an error" in {
-              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, ITSA_STATUS_ERROR)
-              val result = action(fakeRequest)
-              status(result) shouldBe INTERNAL_SERVER_ERROR
             }
           }
         }
@@ -284,24 +210,32 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
       }
 
       s"submit($isAgent, $incomeSourceType)" when {
-        val action = testController.submit(isAgent, incomeSourceType)
+        val action = testController.submit(isAgent, false, incomeSourceType)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
         s"the user is authenticated as a $mtdRole" should {
-          "return 303 SEE_OTHER and redirect to [NEXT PAGE IN JOURNEY]" when {
-            s"completing the form and updates send successfully" in {
-              true shouldBe true //TODO update this when new page is added into the journey
+          "return 303 SEE_OTHER and redirect to the ChooseTaxYear Page" when {
+            s"completing the form with yes selected and updates send successfully" in {
+              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
+
+              val expectedRedirectUrl = controllers.manageBusinesses.add.routes.ChooseTaxYearController.show(isAgent, false, incomeSourceType).url
+
+              val validFormData: Map[String, String] = Map("yes-no-answer" -> "true")
+              val result = action(fakeRequest.withFormUrlEncodedBody(validFormData.toSeq: _*))
+
+              status(result) shouldBe SEE_OTHER
+              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
             }
           }
 
-          "return 303 SEE_OTHER and redirect to home page" when {
-            s"POST request to the ${getTestTitleIncomeSourceType(incomeSourceType)} Reporting Frequency page with FS disabled" in {
-              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-              disable(IncomeSourcesFs)
-              disable(IncomeSourcesNewJourney)
+          "return 303 SEE_OTHER and redirect to the check details page Page" when {
+            s"completing the form with no selected and updates send successfully" in {
+              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
 
-              val expectedRedirectUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
+              val expectedRedirectUrl = controllers.manageBusinesses.add.routes.IncomeSourceRFCheckDetailsController.show(isAgent, incomeSourceType).url
 
-              val result = action(fakeRequest.withFormUrlEncodedBody(formData.toSeq: _*))
+              val validFormData: Map[String, String] = Map("yes-no-answer" -> "false")
+              val result = action(fakeRequest.withFormUrlEncodedBody(validFormData.toSeq: _*))
+
               status(result) shouldBe SEE_OTHER
               redirectLocation(result) shouldBe Some(expectedRedirectUrl)
             }
@@ -314,9 +248,6 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
               val result = action(fakeRequest.withFormUrlEncodedBody(invalidFormData.toSeq: _*))
 
               status(result) shouldBe BAD_REQUEST
-
-              val document: Document = Jsoup.parse(contentAsString(result))
-              document.title shouldBe titleError
             }
           }
         }

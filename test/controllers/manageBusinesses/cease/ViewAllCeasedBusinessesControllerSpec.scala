@@ -23,7 +23,7 @@ import exceptions.MissingFieldException
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesFs
+import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -57,7 +57,7 @@ class ViewAllCeasedBusinessesControllerSpec extends MockAuthActions
       s"the user is authenticated as a $mtdRole" should {
         "render the view all ceased businesses page" in {
           setupMockSuccess(mtdRole)
-          enable(IncomeSourcesFs)
+          enable(IncomeSourcesNewJourney)
           mockBothIncomeSources()
           setupMockCreateSession(true)
           setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, SelfEmployment)))))
@@ -78,7 +78,7 @@ class ViewAllCeasedBusinessesControllerSpec extends MockAuthActions
         "show error page" when {
           "get incomeSourceCeased details returns an error" in {
             setupMockSuccess(mtdRole)
-            enable(IncomeSourcesFs)
+            enable(IncomeSourcesNewJourney)
             mockBothIncomeSources()
 
             when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any(), any()))

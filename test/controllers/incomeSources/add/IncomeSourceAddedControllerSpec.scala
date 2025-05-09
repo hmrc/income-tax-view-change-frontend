@@ -124,7 +124,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions
     }
   }
 
-  def sessionDataCompletedJourney(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
+  def sessionDataCompletedJourney(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceCreatedJourneyComplete = Some(true))))
 
   incomeSourceTypes.foreach { incomeSourceType =>
     mtdAllRoles.foreach { mtdRole =>

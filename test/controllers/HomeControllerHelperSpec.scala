@@ -18,10 +18,10 @@ package controllers
 
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
 import mocks.auth.MockAuthActions
-import mocks.services._
+import mocks.services.{MockClientDetailsService, MockDateService, MockFinancialDetailsService, MockITSAStatusService, MockNextUpdatesService, MockWhatYouOweService}
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.{ITSAStatus, StatusDetail}
+import models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -31,7 +31,8 @@ import play.api.http.Status
 import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services._
+import services.agent.ClientDetailsService
+import services.{DateService, FinancialDetailsService, ITSAStatusService, NextUpdatesService, WhatYouOweService}
 
 import java.time.{LocalDate, Month}
 import scala.concurrent.Future
@@ -63,7 +64,7 @@ trait HomeControllerHelperSpec extends MockAuthActions
   val updateDateAndOverdueObligations: (LocalDate, Seq[LocalDate]) = (LocalDate.of(updateYear.toInt, Month.JANUARY, 1), futureDueDates)
   val nextPaymentDate: LocalDate = LocalDate.of(nextPaymentYear.toInt, Month.JANUARY, 31)
   val nextPaymentDate2: LocalDate = LocalDate.of(nextPaymentYear2.toInt, Month.JANUARY, 31)
-  val baseStatusDetail: StatusDetail = StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.Annual, "Sign up - return available", Some(8000.25))
+  val baseStatusDetail: StatusDetail = StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.Annual, StatusReason.SignupReturnAvailable, Some(8000.25))
   val staticTaxYear: TaxYear = TaxYear(fixedDate.getYear - 1, fixedDate.getYear)
 
   def setupNextUpdatesTests(dueDates: Seq[LocalDate], mtdUserRole: MTDUserRole = MTDIndividual): Unit = {

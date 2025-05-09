@@ -44,10 +44,10 @@ class IncomeSourceAddedBackErrorController @Inject()(val authActions: AuthAction
 
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = CannotGoBackPage) { data =>
+                   (implicit user: MtdItUser[_]): Future[Result] = withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = CannotGoBackPage) { data =>
     val cannotGoBackRedirectUrl = if (isAgent) controllers.manageBusinesses.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType)
     else controllers.manageBusinesses.add.routes.ReportingMethodSetBackErrorController.show(incomeSourceType)
-    if (data.addIncomeSourceData.exists(addData => addData.journeyIsComplete.contains(true))) {
+    if (data.addIncomeSourceData.exists(addData => addData.incomeSourceCreatedJourneyComplete.contains(true))) {
       Future.successful(Redirect(cannotGoBackRedirectUrl))
     }
     else {
@@ -86,11 +86,11 @@ class IncomeSourceAddedBackErrorController @Inject()(val authActions: AuthAction
 
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                           (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] =
-    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), CannotGoBackPage) {
+    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, incomeSourceType), CannotGoBackPage) {
       _.addIncomeSourceData.map(_.incomeSourceId) match {
         case Some(_) =>
           Future.successful {
-            Redirect(routes.IncomeSourceReportingFrequencyController.show(isAgent, incomeSourceType))
+            Redirect(routes.IncomeSourceReportingFrequencyController.show(isAgent, false, incomeSourceType))
           }
         case None => Logger("application").error(
           "Error: Unable to find id in session")

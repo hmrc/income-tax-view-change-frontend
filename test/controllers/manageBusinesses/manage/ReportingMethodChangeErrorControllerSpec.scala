@@ -20,7 +20,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesFs
+import models.admin.IncomeSourcesNewJourney
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -56,7 +56,7 @@ class ReportingMethodChangeErrorControllerSpec
         s"the user is authenticated as a $mtdRole" should {
           "render the reporting method change error page" when {
             "IncomeSources FS is enabled" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
               mockBothPropertyBothBusiness()
               if (incomeSourceType == SelfEmployment)
@@ -79,7 +79,7 @@ class ReportingMethodChangeErrorControllerSpec
           }
           "redirect to homePage" when {
             "the IncomeSources FS is disabled" in {
-              disable(IncomeSourcesFs)
+              disable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
               mockBothPropertyBothBusiness()
 

@@ -127,13 +127,17 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
 
   def submit(id: Option[String], isChange: Boolean): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
-      val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
-      handleSubmitRequest(isAgent = false, incomeSourceIdMaybe, isChange = isChange)(implicitly, itvcErrorHandler)
+      withIncomeSourcesFS {
+        val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
+        handleSubmitRequest(isAgent = false, incomeSourceIdMaybe, isChange = isChange)(implicitly, itvcErrorHandler)
+      }
   }
 
   def agentSubmit(id: Option[String], isChange: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
-      val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
-      handleSubmitRequest(isAgent = true, incomeSourceIdMaybe, isChange = isChange)(implicitly, itvcErrorHandlerAgent)
+      withIncomeSourcesFS {
+        val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
+        handleSubmitRequest(isAgent = true, incomeSourceIdMaybe, isChange = isChange)(implicitly, itvcErrorHandlerAgent)
+      }
   }
 }

@@ -77,20 +77,20 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
   def show(id: Option[String], incomeSourceType: IncomeSourceType, isAgent: Boolean, mode: Mode):
-            Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
-            val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
+  Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+    val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
 
-      handleRequest(
-        isAgent = isAgent,
-        incomeSourceType = incomeSourceType,
-        id = incomeSourceIdHashMaybe,
-        mode = mode
-      )
+    handleRequest(
+      isAgent = isAgent,
+      incomeSourceType = incomeSourceType,
+      id = incomeSourceIdHashMaybe,
+      mode = mode
+    )
   }
 
   def handleRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, mode: Mode, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] =
-    withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
+    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Cease, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
 
       val hashCompareResult: Option[Either[Throwable, IncomeSourceId]] = id.map(x => user.incomeSources.compareHashToQueryString(x))
 
@@ -129,15 +129,15 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
     }
 
   def submit(id: Option[String], incomeSourceType: IncomeSourceType, isAgent: Boolean, mode: Mode):
-              Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
-              val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
+  Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+    val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
 
-      handleSubmitRequest(
-        isAgent = isAgent,
-        incomeSourceType = incomeSourceType,
-        id = incomeSourceIdHashMaybe,
-        mode = mode
-      )
+    handleSubmitRequest(
+      isAgent = isAgent,
+      incomeSourceType = incomeSourceType,
+      id = incomeSourceIdHashMaybe,
+      mode = mode
+    )
   }
 
   private def handleValidatedInput(validatedInput: LocalDate,
@@ -170,43 +170,44 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
   }
 
   def handleSubmitRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, incomeSourceType: IncomeSourceType, mode: Mode)
-                         (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
+                         (implicit user: MtdItUser[_]): Future[Result] =
+    withNewIncomeSourcesFS {
 
-    val hashCompareResult: Option[Either[Throwable, IncomeSourceId]] = id.map(x => user.incomeSources.compareHashToQueryString(x))
+      val hashCompareResult: Option[Either[Throwable, IncomeSourceId]] = id.map(x => user.incomeSources.compareHashToQueryString(x))
 
-    hashCompareResult match {
-      case Some(Left(exception: Exception)) => Future.failed(exception)
-      case _ =>
-        val incomeSourceIdMaybe: Option[IncomeSourceId] = IncomeSourceId.toOption(hashCompareResult)
+      hashCompareResult match {
+        case Some(Left(exception: Exception)) => Future.failed(exception)
+        case _ =>
+          val incomeSourceIdMaybe: Option[IncomeSourceId] = IncomeSourceId.toOption(hashCompareResult)
 
-        (incomeSourceType, id) match {
-          case (SelfEmployment, None) =>
-            Future.failed(new Exception(s"Missing income source ID for hash: <$id>"))
-          case _ =>
-            form(incomeSourceType, incomeSourceIdMaybe.map(_.value), isEnabled(IncomeSourcesNewJourney)).bindFromRequest().fold(
-              hasErrors => {
-                Future.successful(BadRequest(incomeSourceEndDate(
-                  form = hasErrors,
-                  postAction = getPostAction(isAgent, mode, incomeSourceIdMaybe, incomeSourceType),
-                  backUrl = getBackCall(isAgent).url,
-                  isAgent = isAgent,
-                  incomeSourceType = incomeSourceType
-                )))
-              },
-              validatedInput =>
-                handleValidatedInput(
-                  validatedInput,
-                  incomeSourceType,
-                  incomeSourceIdMaybe,
-                  getRedirectCall(isAgent, incomeSourceType)
-                )
-            )
-        }
+          (incomeSourceType, id) match {
+            case (SelfEmployment, None) =>
+              Future.failed(new Exception(s"Missing income source ID for hash: <$id>"))
+            case _ =>
+              form(incomeSourceType, incomeSourceIdMaybe.map(_.value), isEnabled(IncomeSourcesNewJourney)).bindFromRequest().fold(
+                hasErrors => {
+                  Future.successful(BadRequest(incomeSourceEndDate(
+                    form = hasErrors,
+                    postAction = getPostAction(isAgent, mode, incomeSourceIdMaybe, incomeSourceType),
+                    backUrl = getBackCall(isAgent).url,
+                    isAgent = isAgent,
+                    incomeSourceType = incomeSourceType
+                  )))
+                },
+                validatedInput =>
+                  handleValidatedInput(
+                    validatedInput,
+                    incomeSourceType,
+                    incomeSourceIdMaybe,
+                    getRedirectCall(isAgent, incomeSourceType)
+                  )
+              )
+          }
+      }
+    } recover {
+      case ex: Exception =>
+        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+          s"Error getting IncomeSourceEndDate page: ${ex.getMessage} ${ex.getCause}")
+        errorHandler(isAgent).showInternalServerError()
     }
-  } recover {
-    case ex: Exception =>
-      Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"Error getting IncomeSourceEndDate page: ${ex.getMessage} ${ex.getCause}")
-      errorHandler(isAgent).showInternalServerError()
-  }
 }
