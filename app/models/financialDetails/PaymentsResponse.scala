@@ -53,7 +53,7 @@ case class Payment(reference: Option[String],
                    mainTransaction: Option[String] = None,
                    clearingSAPDocument: Option[String] = None) {
 
-  val creditType: Option[CreditType] = mainTransaction.flatMap(CreditType.fromCode)
+  val creditType: Option[TransactionType] = mainTransaction.flatMap(TransactionType.fromCode)
 
   def credit: Option[BigDecimal] = amount match {
     case None => None
