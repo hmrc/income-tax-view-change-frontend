@@ -2126,7 +2126,7 @@ incomeSources.manage.business-manage-details.reportingFrequency       =   Bwrw g
 incomeSources.manage.business-manage-details.insetText                =   Gan mai busnes newydd yw hwn o hyd, gallwch newid pa mor aml rydych yn cyflwyno adroddiadau ar ei gyfer am hyd at ddwy flwyddyn dreth. O fis Ebrill {0} ymlaen, gallai fod yn ofynnol i chi gyflwyno adroddiadau chwarterol.
 
 # Used when OptInOptOutContentUpdateR17 feature switch is enabled
-incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.insetText      =   Gan mai busnes newydd yw hwn, gallwch benderfynu os ydych am ddefnyddio’r gwasanaeth Troi Treth yn Ddigidol ar gyfer Treth Incwm am hyd at 2 flwyddyn dreth. O fis Ebrill {0} ymlaen, gallai fod yn ofynnol i chi ddefnyddio’r gwasanaeth hwn.
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.paragraph      =   Gan mai busnes newydd yw hwn, gallwch benderfynu os ydych am ddefnyddio’r gwasanaeth Troi Treth yn Ddigidol ar gyfer Treth Incwm am hyd at 2 flwyddyn dreth. O fis Ebrill {0} ymlaen, gallai fod yn ofynnol i chi ddefnyddio’r gwasanaeth hwn.
 incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyPrefix       =   Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
 incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyLink         =   bwrw golwg dros a newid eich rhwymedigaethau adrodd ar gyfer eich holl fusnesau
 
