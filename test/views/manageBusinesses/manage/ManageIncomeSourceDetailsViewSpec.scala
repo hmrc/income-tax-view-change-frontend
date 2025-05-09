@@ -482,7 +482,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   class ukCrystallisedSetup(isAgent: Boolean, error: Boolean = false, startDateEnabled: Boolean = true) {
 
     def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
-     if(isAgent) {
+      if(isAgent) {
         controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.showAgent(taxYear, changeTo, UkProperty).url
       }else{
         controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(taxYear, changeTo, UkProperty).url
@@ -711,11 +711,11 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       Option(document.getElementById("manage-details-table")).mkString("").contains("Date started") shouldBe false
     }
 
-    "render the correct inset text when OptInOptOutContentUpdateR17 feature is enabled" in new SelfEmploymentSetupWithOptInContentR17(false) {
-      val insetText = document.getElementsByClass("govuk-inset-text").text()
+    "render the correct text when OptInOptOutContentUpdateR17 feature is enabled" in new SelfEmploymentSetupWithOptInContentR17(false) {
+      val insetText = document.getElementsByClass("govuk-body").text()
 
       insetText should include(
-        messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.insetText", "2024")
+        messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.paragraph", "2024")
       )
     }
 
@@ -724,6 +724,89 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       document.getElementById("reportingFrequency-link").text shouldBe messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyLink")
       document.getElementById("reportingFrequency-link").attr("href") shouldBe reportingFrequencyLink(false)
     }
+
+    "render the MTD opt-in rows correctly with 'Yes/No' status and 'Opt-out/Sign up' links when OptInOptOutContentUpdateR17 is enabled" in {
+      val TaxYear1 = "2025"
+      val TaxYear2 = "2026"
+
+      val testViewModel = selfEmploymentViewModel.copy(
+        useMTDForTaxYear1 = Some(true),
+        useMTDForTaxYear2 = Some(false),
+        latencyYearsQuarterly = LatencyYearsQuarterly(Some(false), Some(false)),
+        latencyYearsCrystallised = LatencyYearsCrystallised(Some(false), Some(false)),
+        latencyDetails = Some(testLatencyDetails3.copy(
+          taxYear1 = TaxYear1,
+          taxYear2 = TaxYear2
+        ))
+      )
+
+      val view = manageIncomeSourceDetailsView(
+        testViewModel,
+        isAgent = false,
+        showStartDate = true,
+        showOptInOptOutContentUpdateR17 = true,
+        backUrl = backUrl(false)
+      )(messages, implicitly)
+
+      val document = Jsoup.parse(contentAsString(view))
+
+      val expectedRow1 = s"Using Making Tax Digital for Income Tax for ${TaxYear1.toInt - 1} to $TaxYear1"
+      val expectedRow2 = s"Using Making Tax Digital for Income Tax for ${TaxYear2.toInt - 1} to $TaxYear2"
+
+      document.getElementsByClass("govuk-summary-list__key").text() should include(expectedRow1)
+      document.getElementsByClass("govuk-summary-list__key").text() should include(expectedRow2)
+
+      val values = document.getElementsByClass("govuk-summary-list__value").eachText()
+      values should contain("Yes")
+      values should contain("No")
+
+
+      val actionLinks = document.select(".govuk-summary-list__actions a").eachText()
+      actionLinks should contain("Opt out")
+      actionLinks should contain("Sign up")
+    }
+
+    "not render an MTD opt-in row if one of the useMTDForTaxYear value is None " in {
+      val taxYear1 = "2025"
+      val taxYear2 = "2026"
+
+      val testViewModel = selfEmploymentViewModel.copy(
+        useMTDForTaxYear1 = Some(true),
+        useMTDForTaxYear2 = None,
+        latencyYearsQuarterly = LatencyYearsQuarterly(Some(false), Some(false)),
+        latencyYearsCrystallised = LatencyYearsCrystallised(Some(false), Some(false)),
+        latencyDetails = Some(testLatencyDetails3.copy(
+          taxYear1 = taxYear1,
+          taxYear2 = taxYear2
+        ))
+      )
+
+      val view = manageIncomeSourceDetailsView(
+        testViewModel,
+        isAgent = false,
+        showStartDate = true,
+        showOptInOptOutContentUpdateR17 = true,
+        backUrl = backUrl(false)
+      )(messages, implicitly)
+
+      val document = Jsoup.parse(contentAsString(view))
+
+      val allRows = document.getElementsByClass("govuk-summary-list__key").eachText()
+
+      val expectedRow1 = s"Using Making Tax Digital for Income Tax for ${taxYear1.toInt - 1} to $taxYear1"
+      val expectedRow2 = s"Using Making Tax Digital for Income Tax for ${taxYear2.toInt - 1} to $taxYear2"
+
+      allRows should contain(expectedRow1)
+      allRows should not contain(expectedRow2)
+
+      val values = document.getElementsByClass("govuk-summary-list__value").eachText()
+      values should contain("Yes")
+
+      val actions = document.select(".govuk-summary-list__actions a").eachText()
+      actions should contain("Opt out")
+      actions should not contain("Sign up")
+    }
+
 
   }
   "ManageSelfEmployment - Agent" should {

@@ -138,6 +138,58 @@
     }
 }
 
+
+@getMTDUsageRows = @{
+
+    def getActionRow(useMTD: Boolean, taxYear: String, linkId: String) = {
+        val taxYearFormatted = s"${taxYear.toInt - 1}-$taxYear"
+        val changeTo = if (useMTD) "annual" else "quarterly"
+        val actionTextKey =
+            if (useMTD)
+                "incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.optOut"
+            else
+                "incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.signup"
+
+        val changeLink =
+            if (isAgent)
+                controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController
+                .showAgent(taxYearFormatted, changeTo, viewModel.incomeSourceType).url
+            else
+                controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController
+                .show(taxYearFormatted, changeTo, viewModel.incomeSourceType).url
+
+        SummaryListRow(
+            key = Key(Text(
+                messages(
+                    "incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage",
+                    (taxYear.toInt - 1).toString,
+                    taxYear
+                )
+            )),
+            value = Value(Text(
+                if (useMTD)
+                    messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage.yes")
+                else
+                    messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage.no")
+            )),
+            actions = Some(Actions(
+                items = Seq(
+                    ActionItem(
+                        href = changeLink,
+                        content = Text(messages(actionTextKey)),
+                        attributes = Map("id" -> linkId)
+                    )
+                )
+            ))
+        )
+    }
+
+    Seq(
+        viewModel.useMTDForTaxYear1.map(getActionRow(_, viewModel.latencyDetails.get.taxYear1, "sign-up-link-1")),
+        viewModel.useMTDForTaxYear2.map(getActionRow(_, viewModel.latencyDetails.get.taxYear2, "sign-up-link-2"))
+    ).flatten
+}
+
     @getTaxYears = @{
         val taxYearRows = Seq(
             if (!viewModel.latencyYearsCrystallised.firstYear.get) {
@@ -247,7 +299,7 @@
     @if(viewModel.shouldShowInsetText) {
         @if(showOptInOptOutContentUpdateR17) {
         <div class="govuk-body">
-            @messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.insetText", viewModel.latencyDetails.get.taxYear2)
+            @messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.paragraph", viewModel.latencyDetails.get.taxYear2)
         </div>
         } else {
         <div class="govuk-inset-text">
@@ -308,35 +360,39 @@
                             )
                         )
                     } else Seq.empty
-                } ++
-                Seq(
-                    SummaryListRow(
-                        key = Key(
-                            content = Text(getAccountingMethodMessage)
-                        ),
-                        value = Value(
-                            content = Text(messages(viewModel.businessAccountingMethodAsKey(viewModel.isTraditionalAccountingMethod)))
-                        )
-                    ))
-                ++ getQuarterlyType
+                }
                 ++ (
-                (if (viewModel.latencyDetails.isDefined) getTaxYears else Seq.empty) ++
-                (if (showOptInOptOutContentUpdateR17) {
+                if (showOptInOptOutContentUpdateR17) {
+                    Seq.empty
+                } else {
                     Seq(
                         SummaryListRow(
-                            key = Key(content = Text(" ")),
-                            value = Value(content = HtmlContent("<p>Using Making Tax Digital for Income Tax</p>"))
+                            key = Key(
+                            content = Text(getAccountingMethodMessage)
+                            ),
+                            value = Value(
+                            content = Text(messages(viewModel.businessAccountingMethodAsKey(viewModel.isTraditionalAccountingMethod)))
+                            )
                         )
-                    )
-                } else {
-                    Seq.empty
-                })
-            )
-        ,
-        attributes = Map("id" -> "manage-details-table")),
+                    ) ++ getQuarterlyType
+                }
+                )
+                ++(
+                    if (viewModel.latencyDetails.isDefined) {
+                        if (showOptInOptOutContentUpdateR17 &&(viewModel.useMTDForTaxYear1.isDefined || viewModel.useMTDForTaxYear2.isDefined)) {
+                            getMTDUsageRows
+                        } else {
+                            getTaxYears
+                        }
+                    } else Seq.empty
+                ),
+            attributes = Map("id" -> "manage-details-table")
+        )
     )
 
-    @quarterlyTypeInfoMessage
+    @if(!showOptInOptOutContentUpdateR17){
+        @quarterlyTypeInfoMessage
+    }
     <br>
     <br>
 
