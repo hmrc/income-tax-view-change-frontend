@@ -25,6 +25,7 @@ import enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
 import implicits.ImplicitDateFormatterImpl
 import models.admin.FeatureSwitchName
 import models.admin.FeatureSwitchName.allFeatureSwitches
+import models.financialDetails.ChargeItem
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, TaxYearRange}
 import org.apache.pekko.actor.ActorSystem
 import org.jsoup.Jsoup
@@ -327,4 +328,8 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
       Await.result(featureSwitchRepository.setFeatureSwitch(featureSwitch, false), 5.seconds)
     else
       sys.props += featureSwitch.name -> FEATURE_SWITCH_OFF
+
+  def mainChargeIsNotPaidFilter: PartialFunction[ChargeItem, ChargeItem]  = {
+    case x if x.remainingToPayByChargeOrInterest > 0 => x
+  }
 }

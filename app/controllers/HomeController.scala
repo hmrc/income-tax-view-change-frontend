@@ -24,7 +24,7 @@ import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.MTDSupportingAgent
 import models.admin._
-import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
+import models.financialDetails.{ChargeItem, FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
 import models.homePage._
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
@@ -176,7 +176,11 @@ class HomeController @Inject()(val homeView: views.html.Home,
     val chargesList = unpaidCharges collect {
       case fdm: FinancialDetailsModel => fdm
     }
-      whatYouOweService.getFilteredChargesList(chargesList, reviewAndReconcileEnabled, isFilterOutCodedPoasEnabled, penaltiesEnabled).flatMap(_.dueDate)
+      whatYouOweService.getFilteredChargesList(chargesList,
+          reviewAndReconcileEnabled,
+          isFilterOutCodedPoasEnabled,
+          penaltiesEnabled,
+          mainChargeIsNotPaidFilter).flatMap(_.dueDate)
       .sortWith(_ isBefore _)
       .sortBy(_.toEpochDay())
   }
@@ -187,7 +191,8 @@ private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsRespo
     unpaidCharges,
     isReviewAndReconciledEnabled = isEnabled(ReviewAndReconcilePoa),
     isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas),
-    isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals)
+    isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
+    mainChargeIsNotPaidFilter
   ) map {
     case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(outstandingCharges)), _) =>
       outstandingCharges.filter(_.isBalancingChargeDebit)
@@ -226,5 +231,9 @@ private def handleErrorGettingDueDates(isAgent: Boolean)(implicit user: MtdItUse
       .toMap
       .withDefaultValue(ITSAStatus.NoStatus)
     ).map(detail => detail(taxYear))
+  }
+
+  private def mainChargeIsNotPaidFilter: PartialFunction[ChargeItem, ChargeItem]  = {
+    case x if x.remainingToPayByChargeOrInterestWhenChargeIsPaid  => x
   }
 }

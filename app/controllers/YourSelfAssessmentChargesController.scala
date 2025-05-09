@@ -26,7 +26,7 @@ import enums.GatewayPage.YourSelfAssessmentChargeSummaryPage
 import forms.utils.SessionKeys.gatewayPage
 import models.admin._
 import models.core.Nino
-import models.financialDetails.YourSelfAssessmentChargesViewModel
+import models.financialDetails.{ChargeItem, YourSelfAssessmentChargesViewModel}
 import models.incomeSourceDetails.TaxYear
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.taxYearAmount.EarliestDueCharge
@@ -60,14 +60,18 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     for {
-      whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isEnabled(ReviewAndReconcilePoa), isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
+      whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isEnabled(ReviewAndReconcilePoa),
+        isEnabled(FilterCodedOutPoas),
+        isEnabled(PenaltiesAndAppeals),
+        mainChargeIsPaidFilter)
       ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
     } yield {
 
       auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
 
       val hasOverdueCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
-      val hasAccruingInterestReviewAndReconcileCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isNotPaidAndNotOverduePoaReconciliationDebit()(dateService))
+      val hasAccruingInterestReviewAndReconcileCharges: Boolean = whatYouOweChargesList.chargesList
+        .exists(_.isNotPaidAndNotOverduePoaReconciliationDebit()(dateService))
       val earliestTaxYearAndAmount: Option[EarliestDueCharge] =
         whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate
           .map { case (year, amount) => EarliestDueCharge(TaxYear.forYearEnd(year), amount) }
@@ -125,4 +129,7 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
       )
   }
 
+  private def mainChargeIsPaidFilter: PartialFunction[ChargeItem, ChargeItem]  = {
+    case x if x.remainingToPayByChargeOrInterestWhenChargeIsPaid  => x
+  }
 }
