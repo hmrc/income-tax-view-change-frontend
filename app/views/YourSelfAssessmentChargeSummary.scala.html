@@ -100,7 +100,9 @@
         viewModel.chargeItem,
         viewModel.taxYearFrom.toString,
         viewModel.taxYearTo.toString,
-        viewModel.isAgent
+        viewModel.isAgent,
+        viewModel.LSPUrl.getOrElse(""),
+        viewModel.LPPUrl.getOrElse("")
     )
 
     @if(viewModel.chargeItem.hasAccruingInterest) {

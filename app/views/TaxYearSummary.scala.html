@@ -170,7 +170,7 @@
 
 @getChargeSummaryHref(chargeItem: TaxYearSummaryChargeItem) = @{
     if (chargeItem.transactionType == SecondLatePaymentPenalty) {
-        ""
+        viewModel.LPP2Url
     } else {
         if(isAgent) {
             controllers.routes.ChargeSummaryController.showAgent(taxYear, chargeItem.transactionId, chargeItem.isLatePaymentInterest).url

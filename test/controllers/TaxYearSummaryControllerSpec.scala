@@ -132,7 +132,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   testChargesList,
                   testObligtionsModel,
                   showForecastData = true,
-                  ctaViewModel = emptyCTAViewModel
+                  ctaViewModel = emptyCTAViewModel, LPP2Url = ""
                 )
                 val expectedContent: String = taxYearSummaryView(
                   testTaxYear, taxYearSummary,
@@ -165,7 +165,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                     Some(CalculationSummary(liabilityCalculationModelSuccessful)),
                     testChargesList,
                     testObligtionsModel,
-                    ctaViewModel = emptyCTAViewModel
+                    ctaViewModel = emptyCTAViewModel, LPP2Url = ""
                   ),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
@@ -194,7 +194,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                     testChargesList,
                     testObligtionsModel,
                     showForecastData = true,
-                    ctaViewModel = emptyCTAViewModel
+                    ctaViewModel = emptyCTAViewModel, LPP2Url = ""
                   ),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
@@ -405,7 +405,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").text() shouldBe "First late payment penalty"
                 Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-1").attr("href") shouldBe chargeSummaryUrl("LPP1")
                 Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-2").text() shouldBe "Second late payment penalty"
-                Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-2").attr("href") shouldBe ""
+                Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-2").attr("href") shouldBe "http://localhost:9185/penalties/income-tax/calculation"
               }
             }
             "Not show penalties in the charges table" when {
@@ -430,7 +430,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   Some(calcOverview),
                   testChargesList,
                   testObligtionsModel,
-                  ctaViewModel = emptyCTAViewModel),
+                  ctaViewModel = emptyCTAViewModel, LPP2Url = ""),
                 homeBackLink(isAgent),
                 ctaLink = ctaLink(isAgent),
                 isAgent = isAgent).toString
@@ -466,7 +466,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                     Some(calcOverview),
                     class2NicsChargesList,
                     testObligtionsModel,
-                    ctaViewModel = emptyCTAViewModel),
+                    ctaViewModel = emptyCTAViewModel, LPP2Url = ""),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
                   isAgent = isAgent).toString
@@ -499,7 +499,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                     Some(calcOverview),
                     payeChargesList,
                     testObligtionsModel,
-                    ctaViewModel = emptyCTAViewModel),
+                    ctaViewModel = emptyCTAViewModel, LPP2Url = ""),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
                   isAgent = isAgent).toString
@@ -535,7 +535,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                     Some(calcOverview),
                     charges,
                     testObligtionsModel,
-                    ctaViewModel = emptyCTAViewModel
+                    ctaViewModel = emptyCTAViewModel, LPP2Url = ""
                   ),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
@@ -565,7 +565,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                     Some(calcOverview),
                     testEmptyChargesList,
                     testObligtionsModel,
-                    ctaViewModel = emptyCTAViewModel),
+                    ctaViewModel = emptyCTAViewModel, LPP2Url = ""),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
                   isAgent = isAgent
@@ -597,7 +597,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                     testChargesList,
                     testObligtionsModel,
                     showForecastData = true,
-                    ctaViewModel = emptyCTAViewModel),
+                    ctaViewModel = emptyCTAViewModel, LPP2Url = ""),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
                   isAgent = isAgent
@@ -631,7 +631,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                     Some(calcOverview),
                     testChargesList,
                     testObligtionsModel,
-                    ctaViewModel = emptyCTAViewModel),
+                    ctaViewModel = emptyCTAViewModel, LPP2Url = ""),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
                   isAgent = isAgent).toString

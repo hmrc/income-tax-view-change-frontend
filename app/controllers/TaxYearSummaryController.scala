@@ -82,6 +82,7 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
     liabilityCalc match {
       case liabilityCalc: LiabilityCalculationResponse =>
         val lang: Seq[Lang] = Seq(languageUtils.getCurrentLang)
+        val LPP2Url = appConfig.incomeTaxPenaltiesFrontendCalculation
 
         val calculationSummary = Some(CalculationSummary(
           formatErrorMessages(
@@ -94,7 +95,8 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
           chargeItems,
           obligations,
           showForecastData = showForecast(calculationSummary),
-          ctaViewModel = claimToAdjustViewModel
+          ctaViewModel = claimToAdjustViewModel,
+          LPP2Url
         )
         lazy val ctaLink = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = isAgent).url
         auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(
@@ -115,12 +117,15 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
 
         lazy val ctaLink = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = isAgent).url
 
+        val LPP2Url = appConfig.incomeTaxPenaltiesFrontendCalculation
+
         val viewModel = TaxYearSummaryViewModel(
           None,
           chargeItems,
           obligations,
           showForecastData = true,
-          claimToAdjustViewModel)
+          claimToAdjustViewModel,
+          LPP2Url)
 
         auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(
           mtdItUser, messagesApi, viewModel))

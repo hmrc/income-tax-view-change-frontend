@@ -422,7 +422,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
           }
           "has a link to Self Assessment Penalties and Appeals page" in new TestSetup(penaltiesAndAppealsIsEnabled = true) {
             getElementById("sa-penalties-and-appeals-link").map(_.text()) shouldBe Some("Check Self Assessment penalties and appeals")
-            getElementById("sa-penalties-and-appeals-link").map(_.attr("href")) shouldBe Some("")
+            getElementById("sa-penalties-and-appeals-link").map(_.attr("href")) shouldBe Some("http://localhost:9185/penalties/income-tax")
           }
           "has a two-points penalty tag" in new TestSetup(submissionFrequency = "Annual", penaltyPoints = 3) {
             getElementById("penalty-points-tag").map(_.text()) shouldBe Some("2 Penalty points")

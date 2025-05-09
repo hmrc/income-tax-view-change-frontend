@@ -21,7 +21,7 @@
         link: link
 )
 
-@()(
+@(url: String)(
         implicit request: Request[_],
         messages: Messages
 )
@@ -35,6 +35,6 @@
 }
 
 @link(
-    link = "/penalties/income-tax",
+    link = url,
     messageKey = "yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link"
 )
