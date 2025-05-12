@@ -26,6 +26,8 @@ sealed trait IncomeSourceType {
   val addStartDateCheckMessagesPrefix: String
   val endDateMessagePrefix: String
   val reportingMethodChangeErrorPrefix: String
+  val newReportingMethodChangeErrorPrefixAnnual: String
+  val newReportingMethodChangeErrorPrefixQuarterly: String
   val ceaseCheckDetailsPrefix: String
   val ceaseCheckAnswersPrefix: String
   val messagesSuffix: String
@@ -39,6 +41,8 @@ case object SelfEmployment extends IncomeSourceType {
   override val addStartDateCheckMessagesPrefix: String = "add-business-start-date-check"
   override val endDateMessagePrefix: String = "incomeSources.cease.endDate.selfEmployment"
   override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.businessReportingMethodError"
+  override val newReportingMethodChangeErrorPrefixAnnual: String = "manageBusinesses.manage.propertyReportingMethod.form.error.annual"
+  override val newReportingMethodChangeErrorPrefixQuarterly: String = "manageBusinesses.manage.propertyReportingMethod.form.error.quarterly" //TODO double check these don't need to be different error messages
   override val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseBusiness.checkDetails"
   override val ceaseCheckAnswersPrefix: String = "cease-check-answers"
   override val messagesSuffix: String = "sole-trader"
@@ -52,6 +56,8 @@ case object UkProperty extends IncomeSourceType {
   override val addStartDateCheckMessagesPrefix: String = "add-uk-property-start-date-check"
   override val endDateMessagePrefix: String = "incomeSources.cease.endDate.ukProperty"
   override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.uKPropertyReportingMethodError"
+  override val newReportingMethodChangeErrorPrefixAnnual: String = "manageBusinesses.manage.propertyReportingMethod.form.error.annual"
+  override val newReportingMethodChangeErrorPrefixQuarterly: String = "manageBusinesses.manage.propertyReportingMethod.form.error.quarterly"
   override val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseUKProperty.checkDetails"
   override val ceaseCheckAnswersPrefix: String = "cease-check-answers-uk"
   override val messagesSuffix: String = "uk-property"
@@ -65,6 +71,8 @@ case object ForeignProperty extends IncomeSourceType {
   override val addStartDateCheckMessagesPrefix: String = "add-foreign-property-start-date-check"
   override val endDateMessagePrefix: String = "incomeSources.cease.endDate.foreignProperty"
   override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.foreignPropertyReportingMethodError"
+  override val newReportingMethodChangeErrorPrefixAnnual: String = "manageBusinesses.manage.propertyReportingMethod.form.error.annual"
+  override val newReportingMethodChangeErrorPrefixQuarterly: String = "manageBusinesses.manage.propertyReportingMethod.form.error.quarterly"
   override val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseForeignProperty.checkDetails"
   override val ceaseCheckAnswersPrefix: String = "cease-check-answers-fp"
   override val messagesSuffix: String = "foreign-property"
