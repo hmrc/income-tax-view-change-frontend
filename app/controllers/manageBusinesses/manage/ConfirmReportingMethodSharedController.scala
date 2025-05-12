@@ -203,7 +203,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                incomeSourceType: IncomeSourceType
                               ): (Call, Call) = {
 
-    val successCall = routes.CheckYourAnswersController.show(isAgent, incomeSourceType)
+    val successCall = routes.ManageObligationsController.show(isAgent, incomeSourceType)
 
     val backCallId = if (incomeSourceType == SelfEmployment) incomeSourceId.map(v => v.value) else None
     val backCall = routes.ManageIncomeSourceDetailsController.show(isAgent, incomeSourceType, backCallId)

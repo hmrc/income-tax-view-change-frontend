@@ -229,10 +229,10 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               val result = action(fakeRequest)
               val expectedEndpoint = if (mtdRole == MTDIndividual) {
                 controllers.manageBusinesses.manage.routes
-                  .CheckYourAnswersController.show(isAgent = false, incomeSourceType).url
+                  .ManageObligationsController.show(isAgent = false, incomeSourceType).url
               } else {
                 controllers.manageBusinesses.manage.routes
-                  .CheckYourAnswersController.show(isAgent = true, incomeSourceType).url
+                  .ManageObligationsController.show(isAgent = true, incomeSourceType).url
               }
 
               status(result) shouldBe Status.SEE_OTHER
@@ -252,10 +252,10 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               val result = action(fakeRequest)
               val expectedEndpoint = if (mtdRole == MTDIndividual) {
                 controllers.manageBusinesses.manage.routes
-                  .CheckYourAnswersController.show(isAgent = false, incomeSourceType).url
+                  .ManageObligationsController.show(isAgent = false, incomeSourceType).url
               } else {
                 controllers.manageBusinesses.manage.routes
-                  .CheckYourAnswersController.show(isAgent = true, incomeSourceType).url
+                  .ManageObligationsController.show(isAgent = true, incomeSourceType).url
               }
 
               status(result) shouldBe Status.SEE_OTHER

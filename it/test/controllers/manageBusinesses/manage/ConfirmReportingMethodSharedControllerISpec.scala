@@ -66,8 +66,8 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
     pathStart + "/manage-your-businesses/manage" + pathEnd + s"?taxYear=$taxYear&changeTo=$newReportingMethod"
   }
 
-  private lazy val checkYourAnswersController = controllers.manageBusinesses.manage.routes
-    .CheckYourAnswersController
+  private lazy val manageObligationsController = controllers.manageBusinesses.manage.routes
+    .ManageObligationsController
 
   val prefix: String = "manageBusinesses.manage.propertyReportingMethod"
 
@@ -307,7 +307,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
       s"POST $pathSE" when {
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
-            s"redirect to Check your answers" when {
+            s"redirect to business will report (completion) page" when {
               "called with a valid form" in {
                 enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
@@ -324,7 +324,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
                 result should have(
                   httpStatus(SEE_OTHER),
-                  redirectURI(checkYourAnswersController.show(isAgent, SelfEmployment).url)
+                  redirectURI(manageObligationsController.show(isAgent, SelfEmployment).url)
                 )
               }
             }
@@ -379,7 +379,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
       s"POST $pathUK" when {
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
-            s"redirect to Check your answers" when {
+            s"redirect to business will report (completion) page" when {
               "called with a valid form" in {
                 enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
@@ -395,7 +395,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
                 result should have(
                   httpStatus(SEE_OTHER),
-                  redirectURI(checkYourAnswersController.show(isAgent, UkProperty).url)
+                  redirectURI(manageObligationsController.show(isAgent, UkProperty).url)
                 )
               }
             }
@@ -431,7 +431,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
       s"POST $pathFP" when {
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
-            s"redirect to check your answers" when {
+            s"redirect to business will report (completion) page" when {
               "called with a valid form" in {
                 enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
@@ -447,7 +447,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
                 result should have(
                   httpStatus(SEE_OTHER),
-                  redirectURI(checkYourAnswersController.show(isAgent, ForeignProperty).url)
+                  redirectURI(manageObligationsController.show(isAgent, ForeignProperty).url)
                 )
               }
             }

@@ -97,7 +97,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Manage, incomeSourceType), InitialPage) { sessionData =>
         val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
         val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => mkIncomeSourceIdHash(IncomeSourceId(id)))
-        val backUrl = controllers.manageBusinesses.manage.routes.CheckYourAnswersController.show(isAgent, incomeSourceType).url
+        val backUrl = controllers.manageBusinesses.manage.routes.ManageObligationsController.show(isAgent, incomeSourceType).url
         incomeSourceType match {
           case SelfEmployment => incomeSourceIdOpt match {
             case Some(realId) => handleSoleTrader(realId.hash, backUrl, isAgent)
