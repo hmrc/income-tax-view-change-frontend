@@ -141,7 +141,7 @@
 
 @getMTDUsageRows = @{
 
-    def getActionRow(useMTD: Boolean, taxYear: String, linkId: String) = {
+    def getActionRow(useMTD: Boolean, taxYear: String, rowIndex: Int) = {
         val taxYearFormatted = s"${taxYear.toInt - 1}-$taxYear"
         val changeTo = if (useMTD) "annual" else "quarterly"
         val actionTextKey =
@@ -157,6 +157,8 @@
             else
                 controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController
                 .show(taxYearFormatted, changeTo, viewModel.incomeSourceType).url
+
+        val linkId = if (useMTD) s"opt-out-link-$rowIndex" else s"sign-up-link-$rowIndex"
 
         SummaryListRow(
             key = Key(Text(
@@ -185,8 +187,8 @@
     }
 
     Seq(
-        viewModel.useMTDForTaxYear1.map(getActionRow(_, viewModel.latencyDetails.get.taxYear1, "sign-up-link-1")),
-        viewModel.useMTDForTaxYear2.map(getActionRow(_, viewModel.latencyDetails.get.taxYear2, "sign-up-link-2"))
+        viewModel.useMTDForTaxYear1.map(getActionRow(_, viewModel.latencyDetails.get.taxYear1, 1)),
+        viewModel.useMTDForTaxYear2.map(getActionRow(_, viewModel.latencyDetails.get.taxYear2, 2))
     ).flatten
 }
 
