@@ -1259,7 +1259,7 @@ paymentAllocation.paymentAllocations.hmrcAdjustment.text        = Addasiad CThEF
 
 
 ## Tax Years Overview Update Tab ##
-updateTab.desc                                                  = Mae diweddariad chwarterol yn gyfanswm o incwm a threuliau ar gyfer y flwyddyn dreth hyd yn hyn.
+updateTab.desc                                                  = Mae diweddariad chwarterol yn cynnwys incwm a threuliau ar gyfer y flwyddyn dreth hyd yn hyn.
 updateTab.due                                                   = Yn ddyledus erbyn {0}
 updateTab.updateType                                            = Math o ddiweddariad
 updateTab.incomeSource                                          = Ffynhonnell incwm
