@@ -8,9 +8,9 @@ import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 val appName = "income-tax-view-change-frontend"
 
-val bootstrapPlayVersion = "9.7.0"
+val bootstrapPlayVersion = "9.11.0"
 val playPartialsVersion = "9.1.0"
-val playFrontendHMRCVersion = "11.11.0"
+val playFrontendHMRCVersion = "11.13.0"
 val catsVersion = "2.12.0"
 val scalaTestPlusVersion = "7.0.1"
 val pegdownVersion = "1.6.0"
@@ -18,7 +18,7 @@ val jsoupVersion = "1.18.1"
 val mockitoVersion = "5.11.0"
 val scalaMockVersion = "5.2.0"
 val wiremockVersion = "3.0.0-beta-7"
-val hmrcMongoVersion = "2.4.0"
+val hmrcMongoVersion = "2.6.0"
 val currentScalaVersion = "2.13.16"
 val playVersion = "play-30"
 
@@ -33,7 +33,7 @@ val compile = Seq(
   "org.typelevel" %% "cats-core" % catsVersion,
   "uk.gov.hmrc.mongo" %% s"hmrc-mongo-$playVersion" % hmrcMongoVersion,
   "uk.gov.hmrc" %% s"play-frontend-hmrc-$playVersion" % playFrontendHMRCVersion,
-  "uk.gov.hmrc" %% s"crypto-json-$playVersion" % "8.1.0",
+  "uk.gov.hmrc" %% s"crypto-json-$playVersion" % "8.2.0",
   "org.jsoup" % "jsoup" % jsoupVersion,
 )
 
