@@ -101,6 +101,7 @@ class IncomeSourceRFService @Inject()(val sessionService: SessionService,
                                       ): Boolean = {
     (!businessIsInLatency(latencyDetails)) ||
       (isCrystallisedForCurrTy && isCrystallisedForNextTy) ||
+      (isCrystallisedForCurrTy && nextTyStatus.exists(_.status == ITSAStatus.Annual)) ||
       (nextTyStatus.exists(_.status == ITSAStatus.NoStatus)
         && currentTyStatus.exists(cys => cys.status == ITSAStatus.Annual && cys.statusReason == StatusReason.Rollover)) ||
       (isItsaStatusAnnual(currentTyStatus) && isItsaStatusAnnual(nextTyStatus))

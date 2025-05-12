@@ -125,12 +125,12 @@ class IncomeSourceRFCheckDetailsController @Inject()(val checkDetailsView: Incom
     withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, incomeSourceType), ReportingFrequencyPages) { sessionData =>
       sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
         case Some(id) =>
-          val newReportingMethods = sessionData.incomeSourceReportingFrequencyData.map(
-            data => Seq(TaxYearSpecific(dateService.getCurrentTaxYearEnd.toString, data.isReportingQuarterlyCurrentYear))).getOrElse(Seq()) ++
+          val newReportingMethods: Seq[TaxYearSpecific] = sessionData.incomeSourceReportingFrequencyData.map(
+            data => Seq(TaxYearSpecific(dateService.getCurrentTaxYearEnd.toString, !data.isReportingQuarterlyCurrentYear))).getOrElse(Seq()) ++
             sessionData.incomeSourceReportingFrequencyData.map(
-              data => Seq(TaxYearSpecific((dateService.getCurrentTaxYearEnd + 1).toString, data.isReportingQuarterlyForNextYear))).getOrElse(Seq())
+              data => Seq(TaxYearSpecific((dateService.getCurrentTaxYearEnd + 1).toString, !data.isReportingQuarterlyForNextYear))).getOrElse(Seq())
 
-          updateReportingMethod(isAgent, IncomeSourceId(id), incomeSourceType, newReportingMethods)
+          updateReportingMethod(isAgent, IncomeSourceId(id), incomeSourceType, newReportingMethods.filterNot(_.latencyIndicator))
         case _ =>
           val agentPrefix = if (isAgent) "[Agent]" else ""
           Logger("application").error(agentPrefix +

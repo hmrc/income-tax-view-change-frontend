@@ -16,17 +16,16 @@
 
 package services.manageBusinesses
 
-import auth.MtdItUser
 import authV2.AuthActionsSpecHelper
-import authV2.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
+import authV2.AuthActionsTestData.defaultMTDITUser
 import enums.IncomeSourceJourney.{AfterSubmissionPage, SelfEmployment}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockSessionService}
+import mocks.services.{MockCalculationListService, MockITSAStatusService, MockSessionService}
 import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
+import models.itsaStatus.StatusDetail
 import models.itsaStatus.StatusReason.{Rollover, SignupReturnAvailable, StatusReason}
-import models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -34,8 +33,7 @@ import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Result, Results}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.DateService
-import services.optIn.OptInServiceSpec.statusDetailWith
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{addedIncomeSourceUIJourneySessionData, completedUIJourneySessionData, emptyUIJourneySessionData, noIncomeDetails, notCompletedUIJourneySessionData, singleBusinessIncome2023, singleBusinessIncomeWithLatency2019}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{notCompletedUIJourneySessionData, singleBusinessIncome2023, singleBusinessIncomeWithLatency2019}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.HeaderCarrier
@@ -88,7 +86,7 @@ class IncomeSourceRFServiceSpec extends TestSupport
 
   "redirectChecksForIncomeSourceRF" should {
     "redirect to the income source added page" when {
-      "business latency status is unknown" in new Setup(false, NoStatus, SignupReturnAvailable, Annual, SignupReturnAvailable) {
+      "business is not in latency" in new Setup(false, NoStatus, SignupReturnAvailable, Annual, SignupReturnAvailable) {
         val result = incomeSourceRFService.redirectChecksForIncomeSourceRF(
           IncomeSourceJourneyType(Add, SelfEmployment),
           AfterSubmissionPage,
@@ -102,7 +100,21 @@ class IncomeSourceRFServiceSpec extends TestSupport
         redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/manage-your-businesses/add-sole-trader/business-added")
       }
 
-      "business is annual for CY and the status reason for CY is Rollover" in new Setup(false, Annual, Rollover, Annual, SignupReturnAvailable) {
+      "business is in latency and annual for CY and the status reason for CY is Rollover" in new Setup(true, Annual, Rollover, Annual, SignupReturnAvailable) {
+        val result = incomeSourceRFService.redirectChecksForIncomeSourceRF(
+          IncomeSourceJourneyType(Add, SelfEmployment),
+          AfterSubmissionPage,
+          SelfEmployment,
+          mockDateService.getCurrentTaxYearEnd,
+          false,
+          false
+        )(journeySessionCodeBlock)(testUser, hc)
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/manage-your-businesses/add-sole-trader/business-added")
+      }
+
+      "business is crystallised for CY and the CY+1 status is Annual at account level" in new Setup(true, Annual, SignupReturnAvailable, Annual, SignupReturnAvailable, true) {
         val result = incomeSourceRFService.redirectChecksForIncomeSourceRF(
           IncomeSourceJourneyType(Add, SelfEmployment),
           AfterSubmissionPage,
