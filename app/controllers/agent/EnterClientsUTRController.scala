@@ -31,6 +31,7 @@ import models.sessionData.SessionCookieData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import services.ITSAStatusService
 import services.agent.ClientDetailsService
 import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound}
 import uk.gov.hmrc.auth.core.Enrolment
@@ -45,7 +46,8 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                                           clientDetailsService: ClientDetailsService,
                                           val authorisedFunctions: FrontendAuthorisedFunctions,
                                           val authActions: AuthActions,
-                                          val auditingService: AuditingService)
+                                          val auditingService: AuditingService,
+                                          val ITSAStatusService: ITSAStatusService)
                                          (implicit mcc: MessagesControllerComponents,
                                           val appConfig: FrontendAppConfig,
                                           val itvcErrorHandler: AgentItvcErrorHandler,
@@ -80,9 +82,13 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
         ) flatMap {
           case Right(clientDetails) =>
             checkAgentAuthorisedAndGetRole(clientDetails.mtdItId).flatMap { userRole =>
-              val sessionCookies: Seq[(String, String)] = SessionCookieData(clientDetails, validUTR, userRole == MTDSupportingAgent).toSessionCookieSeq
-              sendAudit(true, user, validUTR, clientDetails.nino, clientDetails.mtdItId, Some(userRole == MTDSupportingAgent))
-              Future.successful(Redirect(routes.ConfirmClientUTRController.show()).addingToSession(sessionCookies: _*))
+              ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(clientDetails.nino, _.isMandated).map( mandation => {
+                val mandationStatus = if (mandation) "on" else "off"
+
+                val sessionCookies: Seq[(String, String)] = SessionCookieData(clientDetails, validUTR, userRole == MTDSupportingAgent, mandationStatus).toSessionCookieSeq
+                sendAudit(true, user, validUTR, clientDetails.nino, clientDetails.mtdItId, Some(userRole == MTDSupportingAgent))
+                Redirect(routes.ConfirmClientUTRController.show()).addingToSession(sessionCookies: _*)
+              })
             }.recover {
               case ex =>
                 Logger("application")

@@ -180,7 +180,8 @@ object AuthActionsTestData {
 
   def getSessionCookieData(isSupportingAgent: Boolean, confirmed: Boolean) = {
     val cookieData = SessionCookieData(
-      testMtditid, testNino, testSaUtr, Some(testFirstName), Some(testSecondName), isSupportingAgent
+      testMtditid, testNino, testSaUtr, Some(testFirstName), Some(testSecondName),
+      isSupportingAgent, testMandationStatusOn
     ).toSessionCookieSeq
     if(confirmed) cookieData ++ Seq(SessionKeys.confirmedClient -> "true") else cookieData
   }

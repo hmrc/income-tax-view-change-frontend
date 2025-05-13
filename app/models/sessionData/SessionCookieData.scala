@@ -24,10 +24,11 @@ case class SessionCookieData(mtditid: String,
                              utr: String,
                              clientFirstName: Option[String],
                              clientLastName: Option[String],
-                             isSupportingAgent: Boolean = false
+                             isSupportingAgent: Boolean = false,
+                             mandationStatus: String
                             ) {
   val toSessionDataModel: SessionDataModel = {
-    SessionDataModel(mtditid = mtditid, nino = nino, utr = utr, isSupportingAgent)
+    SessionDataModel(mtditid = mtditid, nino = nino, utr = utr, isSupportingAgent, mandationStatus)
   }
 
   val toSessionCookieSeq: Seq[(String, String)] = {
@@ -35,21 +36,23 @@ case class SessionCookieData(mtditid: String,
       SessionKeys.clientMTDID -> mtditid,
       SessionKeys.clientNino -> nino,
       SessionKeys.clientUTR -> utr,
-      SessionKeys.isSupportingAgent -> isSupportingAgent.toString
+      SessionKeys.isSupportingAgent -> isSupportingAgent.toString,
+      SessionKeys.mandationStatus -> mandationStatus
     ) ++ clientFirstName.map(SessionKeys.clientFirstName -> _) ++ clientLastName.map(SessionKeys.clientLastName -> _)
   }
 }
 
 object SessionCookieData {
 
-  def apply(cd: ClientDetails, utr: String, isSupportingAgent: Boolean): SessionCookieData = {
+  def apply(cd: ClientDetails, utr: String, isSupportingAgent: Boolean, mandationStatus: String): SessionCookieData = {
     SessionCookieData(
       cd.mtdItId,
       cd.nino,
       utr,
       cd.firstName,
       cd.lastName,
-      isSupportingAgent
+      isSupportingAgent,
+      mandationStatus
     )
   }
 }

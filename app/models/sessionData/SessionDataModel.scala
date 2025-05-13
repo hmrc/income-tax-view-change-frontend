@@ -22,7 +22,8 @@ case class SessionDataModel(
                              mtditid: String,
                              nino: String,
                              utr: String,
-                             isSupportingAgent: Boolean = false
+                             isSupportingAgent: Boolean = false,
+                             mandationStatus: String
                            )
 
 object SessionDataModel {

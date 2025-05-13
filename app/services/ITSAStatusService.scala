@@ -16,7 +16,6 @@
 
 package services
 
-import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import connectors.ITSAStatusConnector
@@ -32,10 +31,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
                                   dateService: DateService,
                                   implicit val appConfig: FrontendAppConfig) extends FeatureSwitching {
-  private def getITSAStatusDetail(taxYear: TaxYear, futureYears: Boolean, history: Boolean)
-                                 (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[List[ITSAStatusResponseModel]] = {
+  private def getITSAStatusDetail(taxYear: TaxYear, futureYears: Boolean, history: Boolean, nino: String)
+                                 (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[List[ITSAStatusResponseModel]] = {
     itsaStatusConnector.getITSAStatusDetail(
-      nino = user.nino,
+      nino = nino,
       taxYear = taxYear.formatAsShortYearRange,
       futureYears = futureYears,
       history = history).flatMap {
@@ -50,25 +49,26 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
     itsaStatusResponseModel.itsaStatusDetails.flatMap(statusDetail => statusDetail.headOption)
   }
 
-  def hasMandatedOrVoluntaryStatusCurrentYear(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+  def hasMandatedOrVoluntaryStatusCurrentYear(nino: String, selector: StatusDetail => Boolean = _.isMandatedOrVoluntary)(implicit hc: HeaderCarrier,
+                                                                                                           ec: ExecutionContext): Future[Boolean] = {
     val yearEnd = dateService.getCurrentTaxYearEnd
     val taxYear = TaxYear.forYearEnd(yearEnd)
 
-    getITSAStatusDetail(taxYear, futureYears = false, history = false)
+    getITSAStatusDetail(taxYear, futureYears = false, history = false, nino)
       .map(statusDetail =>
-        statusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary))))
+        statusDetail.exists(_.itsaStatusDetails.exists(_.exists(selector))))
   }
 
-  def hasMandatedOrVoluntaryStatusForLatencyYears(latencyDetails: Option[LatencyDetails])
-                                                 (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[(Boolean, Boolean)] = {
+  def hasMandatedOrVoluntaryStatusForLatencyYears(latencyDetails: Option[LatencyDetails], nino: String)
+                                                 (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[(Boolean, Boolean)] = {
 
     latencyDetails match {
       case Some(details) =>
         val taxYear1 = TaxYear.forYearEnd(details.taxYear1.toInt)
         val taxYear2 = TaxYear.forYearEnd(details.taxYear2.toInt)
 
-        val taxYear1StatusFuture = getITSAStatusDetail(taxYear1, futureYears = false, history = false)
-        val taxYear2StatusFuture = getITSAStatusDetail(taxYear2, futureYears = false, history = false)
+        val taxYear1StatusFuture = getITSAStatusDetail(taxYear1, futureYears = false, history = false, nino)
+        val taxYear2StatusFuture = getITSAStatusDetail(taxYear2, futureYears = false, history = false, nino)
 
         for {
           taxYear1Status <- taxYear1StatusFuture.map(statusDetail =>
@@ -91,10 +91,9 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
   }
 
 
-  def getStatusTillAvailableFutureYears(taxYear: TaxYear)(implicit user: MtdItUser[_],
-                                                          hc: HeaderCarrier,
+  def getStatusTillAvailableFutureYears(taxYear: TaxYear, nino: String)(implicit hc: HeaderCarrier,
                                                           ec: ExecutionContext): Future[Map[TaxYear, StatusDetail]] = {
-    getITSAStatusDetail(taxYear, futureYears = true, history = false).map {
+    getITSAStatusDetail(taxYear, futureYears = true, history = false, nino).map {
       _.map(responseModel => parseTaxYear(responseModel.taxYear) -> getStatusDetail(responseModel)).flatMap {
         case (taxYear, Some(statusDetail)) => Some(taxYear -> statusDetail)
         case _ => None

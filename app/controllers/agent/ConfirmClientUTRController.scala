@@ -27,7 +27,7 @@ import models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, Sessi
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.SessionDataService
+import services.{ITSAStatusService, SessionDataService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.agent.confirmClient
@@ -39,7 +39,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
                                            val authActions: AuthActions,
                                            val auditingService: AuditingService,
-                                           val sessionDataService: SessionDataService)
+                                           val sessionDataService: SessionDataService,
+                                           val ITSAStatusService: ITSAStatusService)
                                           (implicit mcc: MessagesControllerComponents,
                                            val appConfig: FrontendAppConfig,
                                            val itvcErrorHandler: AgentItvcErrorHandler,
@@ -58,20 +59,24 @@ class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
   def submit: Action[AnyContent] = authActions.asMTDAgentWithUnconfirmedClient.async { implicit user =>
     val clientName = user.optClientNameAsString.getOrElse("")
     val names = clientName.split(" ")
-    handleSessionCookies(SessionCookieData(user.mtditid, user.nino, user.saUtr.getOrElse(""),
-      names.headOption, names.lastOption, user.isSupportingAgent)) { _ =>
-      auditingService.extendedAudit(ConfirmClientDetailsAuditModel(
-        clientName = clientName,
-        nino = user.nino,
-        mtditid = user.mtditid,
-        arn = user.arn.getOrElse(""),
-        saUtr = user.saUtr.getOrElse(""),
-        isSupportingAgent = user.isSupportingAgent,
-        credId = user.credId
-      ))
 
-      Future.successful(Redirect(controllers.routes.HomeController.showAgent().url).addingToSession(SessionKeys.confirmedClient -> "true"))
-    }
+   ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(user.nino, _.isMandated).flatMap( mandation => {
+      val mandationStatus = if (mandation) "on" else "off"
+      handleSessionCookies(SessionCookieData(user.mtditid, user.nino, user.saUtr.getOrElse(""),
+        names.headOption, names.lastOption, user.isSupportingAgent, mandationStatus)) { _ =>
+        auditingService.extendedAudit(ConfirmClientDetailsAuditModel(
+          clientName = clientName,
+          nino = user.nino,
+          mtditid = user.mtditid,
+          arn = user.arn.getOrElse(""),
+          saUtr = user.saUtr.getOrElse(""),
+          isSupportingAgent = user.isSupportingAgent,
+          credId = user.credId
+        ))
+        Future.successful(Redirect(controllers.routes.HomeController.showAgent().url).addingToSession(SessionKeys.confirmedClient -> "true"))
+      }
+    })
+
   }
 
   lazy val backUrl: String = controllers.agent.routes.EnterClientsUTRController.show().url
