@@ -239,7 +239,7 @@ object ChargeItem {
       case _ => throw CouldNotCreateChargeItemException(s"Main transaction is not defined for charge ${documentDetail.transactionId}")
     }
 
-    val chargeType = ChargeType.fromCode(mainTransaction) match {
+    val chargeType = TransactionType.fromCode(mainTransaction) match {
       case Some(ct) => ct
       case _ => throw CouldNotCreateChargeItemException(s"Could not identify charge type from $mainTransaction for charge ${documentDetail.transactionId}")
     }
