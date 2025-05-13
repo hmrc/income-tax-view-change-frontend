@@ -24,7 +24,8 @@ case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary
                                    charges: List[TaxYearSummaryChargeItem],
                                    obligations: ObligationsModel,
                                    showForecastData: Boolean = false,
-                                   ctaViewModel: TYSClaimToAdjustViewModel
+                                   ctaViewModel: TYSClaimToAdjustViewModel,
+                                   LPP2Url: String
                                   ) {
 
   def showUpdates: Boolean = {
