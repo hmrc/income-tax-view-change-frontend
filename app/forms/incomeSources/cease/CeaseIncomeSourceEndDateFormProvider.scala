@@ -28,8 +28,7 @@ import java.time.LocalDate
 
 class CeaseIncomeSourceEndDateFormProvider extends Mappings {
 
-  def apply(incomeSourceType: IncomeSourceType, id: Option[String] = None, newIncomeSourceJourney: Boolean)
-           (implicit user: MtdItUser[_], dateService: DateServiceInterface, messages: Messages): Form[LocalDate] = {
+  def apply(incomeSourceType: IncomeSourceType, id: Option[String] = None, newIncomeSourceJourney: Boolean)(implicit messages: Messages, user: MtdItUser[_], dateService: DateServiceInterface): Form[LocalDate] = {
 
     val messagePrefix = incomeSourceType.endDateMessagePrefix
     val dateFormPrefix = "dateForm.error"

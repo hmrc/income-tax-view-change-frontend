@@ -61,32 +61,32 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
   }
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), BeforeSubmissionPage) { sessionData =>
+                   (implicit user: MtdItUser[_]): Future[Result] =
+    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Cease, incomeSourceType), BeforeSubmissionPage) { sessionData =>
+      val messagesPrefix = incomeSourceType.ceaseCheckAnswersPrefix
+      val incomeSourceIdOpt = sessionData.ceaseIncomeSourceData.flatMap(_.incomeSourceId)
+      val endDateOpt = sessionData.ceaseIncomeSourceData.flatMap(_.endDate)
 
-    val messagesPrefix = incomeSourceType.ceaseCheckAnswersPrefix
-    val incomeSourceIdOpt = sessionData.ceaseIncomeSourceData.flatMap(_.incomeSourceId)
-    val endDateOpt = sessionData.ceaseIncomeSourceData.flatMap(_.endDate)
-
-    getViewModel(incomeSourceType, endDateOpt, incomeSourceIdOpt) match {
-      case Some(viewModel) =>
-        Future.successful {
-          Ok(view(
-            viewModel = viewModel,
-            isAgent = isAgent,
-            backUrl = backUrl(isAgent),
-            messagesPrefix = messagesPrefix))
-        }
-      case None =>
-        Future.successful {
-          Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType))
-        }
+      getViewModel(incomeSourceType, endDateOpt, incomeSourceIdOpt) match {
+        case Some(viewModel) =>
+          Future.successful {
+            Ok(view(
+              viewModel = viewModel,
+              isAgent = isAgent,
+              backUrl = backUrl(isAgent),
+              messagesPrefix = messagesPrefix))
+          }
+        case None =>
+          Future.successful {
+            Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType))
+          }
+      }
+    }.recover {
+      case ex: Exception =>
+        Logger("application").error(s"${if (isAgent) "[Agent] "}" +
+          s"Error getting CeaseCheckIncomeSourceDetails page: ${ex.getMessage} - ${ex.getCause}")
+        Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType))
     }
-  }.recover {
-    case ex: Exception =>
-      Logger("application").error(s"${if (isAgent) "[Agent] "}" +
-        s"Error getting CeaseCheckIncomeSourceDetails page: ${ex.getMessage} - ${ex.getCause}")
-      Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType))
-  }
 
   def getViewModel(incomeSourceType: IncomeSourceType, endDateOpt: Option[LocalDate], incomeSourceIdOpt: Option[String])
                   (implicit user: MtdItUser[_]): Option[CheckCeaseIncomeSourceDetailsViewModel] = {
@@ -130,7 +130,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
 
   def handleSubmitRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                          (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
-    withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), BeforeSubmissionPage) { sessionData =>
+    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Cease, incomeSourceType), BeforeSubmissionPage) { sessionData =>
       val incomeSourceIdOpt = sessionData.ceaseIncomeSourceData.flatMap(_.incomeSourceId)
       val endDateOpt = sessionData.ceaseIncomeSourceData.flatMap(_.endDate)
 

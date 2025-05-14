@@ -58,6 +58,7 @@ class IncomeSourceAddedController @Inject()(
       controllers.routes.NextUpdatesController.show().url
     }
 
+
   def getManageBusinessUrl(isAgent: Boolean) =
     if (isAgent) {
       controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
@@ -138,8 +139,10 @@ class IncomeSourceAddedController @Inject()(
                            )(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
 
     lazy val showErrorView = errorHandler.showInternalServerError()
-    val originalAddIncomeSourceSessionData: AddIncomeSourceData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
-    val updatedAddIncomeSourceSessionData: AddIncomeSourceData = originalAddIncomeSourceSessionData.copy(journeyIsComplete = Some(true))
+
+    val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
+    val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(incomeSourceCreatedJourneyComplete = Some(true))
+
     val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
 
     val incomeSourceBeingAddedLatencyDetails: Option[LatencyDetails] =

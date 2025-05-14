@@ -22,6 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.IncomeSourceType
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.IncomeSourcesUtils
 import views.html.manageBusinesses.add.IncomeSourceReportingMethodNotSaved
@@ -40,16 +41,16 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val authActions: A
   with I18nSupport with IncomeSourcesUtils {
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] =
+    withNewIncomeSourcesFS {
+      val action: Call =
+        if (isAgent)
+          controllers.manageBusinesses.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType)
+        else
+          controllers.manageBusinesses.add.routes.IncomeSourceAddedController.show(incomeSourceType)
 
-    val action: Call =
-      if (isAgent)
-        controllers.manageBusinesses.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType)
-      else
-        controllers.manageBusinesses.add.routes.IncomeSourceAddedController.show(incomeSourceType)
-
-    Future.successful(Ok(view(incomeSourceType = incomeSourceType, continueAction = action, isAgent = isAgent)))
-  }
+      Future.successful(Ok(view(incomeSourceType = incomeSourceType, continueAction = action, isAgent = isAgent)))
+    }
 
 
   def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {

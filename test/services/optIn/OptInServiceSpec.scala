@@ -25,7 +25,7 @@ import enums.JourneyType.{Opt, OptInJourney}
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Voluntary}
-import models.itsaStatus.StatusDetail
+import models.itsaStatus.{StatusDetail, StatusReason}
 import models.optin.{MultiYearCheckYourAnswersViewModel, OptInContextData, OptInSessionData}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -45,7 +45,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object OptInServiceSpec {
   def statusDetailWith(status: ITSAStatus): StatusDetail = {
-    StatusDetail("", status = status, statusReason = "", businessIncomePriorTo2Years = None)
+    StatusDetail("", status = status, statusReason = StatusReason.Rollover, businessIncomePriorTo2Years = None)
   }
 }
 

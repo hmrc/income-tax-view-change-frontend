@@ -39,3 +39,8 @@ case object AfterSubmissionPage extends JourneyState {
   //for any page after the first (or only) submission of data to an API
   override val key: String = "AfterSubmission"
 }
+
+case object ReportingFrequencyPages extends JourneyState {
+  //for any page after the first (or only) submission of data to an API
+  override val key: String = "ReportingFrequencyPages"
+}

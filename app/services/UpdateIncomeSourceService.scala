@@ -54,6 +54,4 @@ class UpdateIncomeSourceService @Inject()(updateIncomeSourceConnector: UpdateInc
 
 }
 
-case class UpdateIncomeSourceError(reason: String)
-
 case class UpdateIncomeSourceSuccess(incomeSourceId: String)

@@ -1744,7 +1744,7 @@ object IncomeSourceIntegrationTestConstants {
   lazy val completedUIJourneySessionData: IncomeSourceJourneyType => UIJourneySessionData = (incomeSources: IncomeSourceJourneyType) => {
     incomeSources.operation.operationType match {
       case "ADD" => UIJourneySessionData(testSessionId, incomeSources.toString,
-        addIncomeSourceData = Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
+        addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceCreatedJourneyComplete = Some(true))))
       case "MANAGE" => if (incomeSources.businessType == SelfEmployment) UIJourneySessionData(testSessionId, incomeSources.toString,
         manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId),
           taxYear = Some(2024), reportingMethod = Some("annual"), journeyIsComplete = Some(true))))

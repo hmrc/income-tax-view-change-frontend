@@ -93,7 +93,7 @@ class AddBusinessNameController @Inject()(val authActions: AuthActions,
   }
 
   def handleRequest(isAgent: Boolean, backUrl: String, mode: Mode)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), journeyState = InitialPage) { sessionData =>
+    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, SelfEmployment), journeyState = InitialPage) { sessionData =>
       val businessNameOpt: Option[String] = sessionData.addIncomeSourceData.flatMap(_.businessName)
       val filledForm: Form[BusinessNameForm] = businessNameOpt.fold(BusinessNameForm.form)(name =>
         BusinessNameForm.form.fill(BusinessNameForm(name)))
@@ -121,7 +121,7 @@ class AddBusinessNameController @Inject()(val authActions: AuthActions,
   }
 
   def handleSubmitRequest(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
-    withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), InitialPage) { sessionData =>
+    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, SelfEmployment), InitialPage) { sessionData =>
 
       val businessTradeOpt: Option[String] = sessionData.addIncomeSourceData.flatMap(_.businessTrade)
 

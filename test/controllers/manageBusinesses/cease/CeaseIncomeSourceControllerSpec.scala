@@ -22,7 +22,7 @@ import enums.MTDIndividual
 import exceptions.MissingFieldException
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesFs
+import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -55,7 +55,7 @@ class CeaseIncomeSourceControllerSpec extends MockAuthActions
         "redirect user back to the home page" when {
           "income source is disabled" in {
             setupMockSuccess(mtdRole)
-            disable(IncomeSourcesFs)
+            disable(IncomeSourcesNewJourney)
             mockSingleBISWithCurrentYearAsMigrationYear()
 
             val result = action(fakeRequest)
@@ -73,7 +73,7 @@ class CeaseIncomeSourceControllerSpec extends MockAuthActions
         "Render the cease an income source page" when {
           "income source is enabled" in {
             setupMockSuccess(mtdRole)
-            enable(IncomeSourcesFs)
+            enable(IncomeSourcesNewJourney)
             mockBothIncomeSources()
             setupMockCreateSession(true)
             setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, SelfEmployment)))))
@@ -95,7 +95,7 @@ class CeaseIncomeSourceControllerSpec extends MockAuthActions
         "show error page" when {
           "income source is enabled" in {
             setupMockSuccess(mtdRole)
-            enable(IncomeSourcesFs)
+            enable(IncomeSourcesNewJourney)
             mockBothIncomeSources()
 
             when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any(), any()))

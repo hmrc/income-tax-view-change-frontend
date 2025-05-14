@@ -22,7 +22,7 @@ import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStat
 import mocks.services._
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
-import models.itsaStatus.StatusDetail
+import models.itsaStatus.{StatusDetail, StatusReason}
 import models.optout._
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, same}
@@ -118,9 +118,9 @@ class OptOutServiceSpec
                                currentYear: TaxYear, currentYearStatus: Value,
                                nextYear: TaxYear, nextYearStatus: Value): Unit = {
     val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
-      previousYear -> StatusDetail("", previousYearStatus, ""),
-      currentYear -> StatusDetail("", currentYearStatus, ""),
-      nextYear -> StatusDetail("", nextYearStatus, "")
+      previousYear -> StatusDetail("", previousYearStatus, StatusReason.Rollover),
+      currentYear -> StatusDetail("", currentYearStatus, StatusReason.Rollover),
+      nextYear -> StatusDetail("", nextYearStatus, StatusReason.Rollover)
     )
     when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
   }
