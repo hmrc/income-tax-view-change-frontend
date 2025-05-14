@@ -99,13 +99,16 @@
           @getMessage("due", viewModel.chargeItem.getDueDate.toLongDate)
       }
 
-      @chargeDetails(
-          viewModel.chargeItem,
-          viewModel.taxYearFrom.toString,
-          viewModel.taxYearTo.toString,
-          viewModel.isAgent
-      )
+    @chargeDetails(
+        viewModel.chargeItem,
+        viewModel.taxYearFrom.toString,
+        viewModel.taxYearTo.toString,
+        viewModel.isAgent,
+        viewModel.LSPUrl.getOrElse(""),
+        viewModel.LPPUrl.getOrElse("")
+    )
   }
+
     @if(viewModel.chargeItem.hasAccruingInterest) {
 
         @interestOnYourChargeSection(viewModel.chargeItem)
