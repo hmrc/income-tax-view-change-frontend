@@ -16,6 +16,7 @@
 
 package controllers
 
+import controllers.agent.sessionUtils.SessionKeysV2
 import models.admin._
 import models.financialDetails._
 import models.itsaStatus.ITSAStatus
@@ -80,6 +81,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeysV2.mandationStatus) shouldBe Some("on")
+
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
             document.select("#payments-tile p:nth-child(2)").text shouldBe expectedOverDuePaymentsText
@@ -100,6 +103,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeysV2.mandationStatus) shouldBe Some("on")
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
             document.select("#payments-tile p:nth-child(2)").text shouldBe expectedOverDuePaymentsText
@@ -142,6 +146,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeysV2.mandationStatus) shouldBe Some("on")
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
             document.select("#payments-tile p:nth-child(2)").text shouldBe threeOverduePayments
@@ -188,6 +193,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeysV2.mandationStatus) shouldBe Some("on")
+
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
             document.select("#payments-tile p:nth-child(2)").text shouldBe threeOverduePayments
@@ -225,6 +232,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeysV2.mandationStatus) shouldBe Some("on")
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
             document.select("#accrues-interest-tag").text shouldBe messages("home.payments.daily-interest-charges")
@@ -265,6 +273,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeysV2.mandationStatus) shouldBe Some("on")
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
             document.select("#accrues-interest-tag").text shouldBe ""
@@ -290,6 +299,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.OK
+          session(result).get(SessionKeysV2.mandationStatus) shouldBe Some("on")
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
           document.select("#payments-tile p:nth-child(2)").text shouldBe "No payments due"
@@ -311,6 +321,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.OK
+          session(result).get(SessionKeysV2.mandationStatus) shouldBe Some("on")
+
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
           document.select("#payments-tile p:nth-child(2)").text shouldBe "No payments due"
@@ -337,6 +349,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.OK
+          session(result).get(SessionKeysV2.mandationStatus) shouldBe Some("on")
+
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
           document.select("#payments-tile p:nth-child(2)").text shouldBe "No payments due"
@@ -354,6 +368,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.OK
+          session(result).get(SessionKeysV2.mandationStatus) shouldBe Some("on")
+
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
           document.select("#updates-tile p:nth-child(2)").text() shouldBe "1 January 2100"
@@ -368,6 +384,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.OK
+          session(result).get(SessionKeysV2.mandationStatus) shouldBe Some("on")
+
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
           document.select("#updates-tile p:nth-child(2)").text() shouldBe "Overdue 1 January 2018"
@@ -382,6 +400,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.OK
+          session(result).get(SessionKeysV2.mandationStatus) shouldBe Some("on")
+
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
           document.select("#updates-tile").text() shouldBe messages("home.updates.heading")
@@ -401,6 +421,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
           status(result) shouldBe Status.OK
+          session(result).get(SessionKeysV2.mandationStatus) shouldBe Some("on")
 
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
@@ -429,6 +450,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeysV2.mandationStatus) shouldBe Some("on")
+
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
             document.select("#income-sources-tile h2:nth-child(1)").text() shouldBe messages("home.incomeSources.heading")
@@ -460,6 +483,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeysV2.mandationStatus) shouldBe Some("on")
+
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
             document.select("#income-sources-tile h2:nth-child(1)").text() shouldBe messages("home.incomeSources.heading")
@@ -493,6 +518,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
           status(result) shouldBe Status.OK
+          session(result).get(SessionKeysV2.mandationStatus) shouldBe Some("on")
+
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
           document.select("#income-sources-tile h2:nth-child(1)").text() shouldBe messages("home.incomeSources.newJourneyHeading")
@@ -524,6 +551,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeysV2.mandationStatus) shouldBe Some("on")
+
             val document: Document = Jsoup.parse(contentAsString(result))
             document.getElementById("available-credit").text shouldBe expectedAvailableCreditText("£786.00")
           }
@@ -549,6 +578,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeysV2.mandationStatus) shouldBe Some("on")
+
             val document: Document = Jsoup.parse(contentAsString(result))
             document.getElementById("available-credit").text shouldBe expectedAvailableCreditText("£0.00")
           }
@@ -576,6 +607,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeysV2.mandationStatus) shouldBe Some("on")
+
             val document: Document = Jsoup.parse(contentAsString(result))
             Option(document.getElementById("available-credit")).isDefined shouldBe false
           }
@@ -599,6 +632,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeysV2.mandationStatus) shouldBe Some("on")
+
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
             document.select("#account-settings-tile p:nth-child(2)").text() shouldBe ""
@@ -620,6 +655,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeysV2.mandationStatus) shouldBe Some("on")
+
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
             document.select("#account-settings-tile p:nth-child(2)").text() shouldBe ""
@@ -640,6 +677,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeysV2.mandationStatus) shouldBe Some("on")
+
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
             document.select("#account-settings-tile p:nth-child(2)").text() shouldBe ""

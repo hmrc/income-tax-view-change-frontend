@@ -212,7 +212,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions
               session(result).get(SessionKeys.confirmedClient) shouldBe Some("true")
             }
             else {
-              val sessionDataModel: SessionDataModel = SessionDataModel(testMtditid, testNino, testSaUtr, isSupportingAgent, testMandationStatusOn)
+              val sessionDataModel: SessionDataModel = SessionDataModel(testMtditid, testNino, testSaUtr, isSupportingAgent)
               verify(mockSessionDataService, times(1)).postSessionData(ArgumentMatchers.eq(sessionDataModel))(any())
             }
             verifyExtendedAuditSent(expectedAudit)

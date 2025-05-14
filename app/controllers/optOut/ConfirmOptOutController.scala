@@ -22,6 +22,7 @@ import cats.data.OptionT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
+import controllers.agent.sessionUtils.SessionKeysV2
 import models.optout.{MultiYearOptOutCheckpointViewModel, OneYearOptOutCheckpointViewModel, OptOutCheckpointViewModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -74,7 +75,7 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
       implicit user =>
         optOutService.makeOptOutUpdateRequest().map {
-          case ITSAStatusUpdateResponseSuccess(_) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
+          case ITSAStatusUpdateResponseSuccess(_) => Redirect(routes.ConfirmedOptOutController.show(isAgent)).addingToSession(SessionKeysV2.mandationStatus -> "off")
           case _ => Redirect(routes.OptOutErrorController.show(isAgent))
         }
     }

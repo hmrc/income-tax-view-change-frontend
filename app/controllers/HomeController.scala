@@ -22,7 +22,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.sessionUtils.SessionKeys
+import controllers.agent.sessionUtils.{SessionKeys, SessionKeysV2}
 import enums.MTDSupportingAgent
 import models.admin._
 import models.financialDetails.{ChargeItem, FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
@@ -160,8 +160,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
           origin = origin
         )
 
-        val mandationStatus = if (mandation) SessionKeys.mandationStatus -> "on"
-        else SessionKeys.mandationStatus -> "off"
+        val mandationStatus = if (mandation) SessionKeysV2.mandationStatus -> "on"
+        else SessionKeysV2.mandationStatus -> "off"
 
           auditingService.extendedAudit(HomeAudit(user, paymentsDueMerged, overDuePaymentsCount, nextUpdatesTileViewModel))
           if(user.isAgent()) {

@@ -82,13 +82,9 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
         ) flatMap {
           case Right(clientDetails) =>
             checkAgentAuthorisedAndGetRole(clientDetails.mtdItId).flatMap { userRole =>
-              ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(clientDetails.nino, _.isMandated).map( mandation => {
-                val mandationStatus = if (mandation) "on" else "off"
-
-                val sessionCookies: Seq[(String, String)] = SessionCookieData(clientDetails, validUTR, userRole == MTDSupportingAgent, mandationStatus).toSessionCookieSeq
+                val sessionCookies: Seq[(String, String)] = SessionCookieData(clientDetails, validUTR, userRole == MTDSupportingAgent).toSessionCookieSeq
                 sendAudit(true, user, validUTR, clientDetails.nino, clientDetails.mtdItId, Some(userRole == MTDSupportingAgent))
-                Redirect(routes.ConfirmClientUTRController.show()).addingToSession(sessionCookies: _*)
-              })
+                Future.successful(Redirect(routes.ConfirmClientUTRController.show()).addingToSession(sessionCookies: _*))
             }.recover {
               case ex =>
                 Logger("application")

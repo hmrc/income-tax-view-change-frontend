@@ -27,10 +27,10 @@ class SessionCookieDataSpec extends UnitSpec {
       val testSessionCookieData: SessionCookieData =
         SessionCookieData(mtditid = testMtditid, nino = testNino, utr = testSaUtr,
           clientFirstName = Some(testFirstName), clientLastName = Some(testSecondName),
-          isSupportingAgent = true, mandationStatus = testMandationStatusOn)
+          isSupportingAgent = true)
 
       testSessionCookieData.toSessionDataModel shouldBe SessionDataModel(mtditid = testMtditid, nino = testNino, utr = testSaUtr,
-        isSupportingAgent = true, mandationStatus = testMandationStatusOn)
+        isSupportingAgent = true)
     }
   }
 
@@ -39,7 +39,7 @@ class SessionCookieDataSpec extends UnitSpec {
       "first name and last name are present" in {
         val testSessionCookieData: SessionCookieData = SessionCookieData(
           mtditid = testMtditid, nino = testNino, utr = testSaUtr, clientFirstName = Some(testFirstName),
-          clientLastName = Some(testSecondName), isSupportingAgent = true, mandationStatus = testMandationStatusOn
+          clientLastName = Some(testSecondName), isSupportingAgent = true
         )
 
         val expectedResult: Seq[(String, String)] =
@@ -48,7 +48,6 @@ class SessionCookieDataSpec extends UnitSpec {
             SessionKeys.clientNino -> testNino,
             SessionKeys.clientUTR -> testSaUtr,
             SessionKeys.isSupportingAgent -> "true",
-            SessionKeys.mandationStatus -> testMandationStatusOn,
             SessionKeys.clientFirstName -> testFirstName,
             SessionKeys.clientLastName -> testSecondName
           )
@@ -58,7 +57,7 @@ class SessionCookieDataSpec extends UnitSpec {
       "first name and last name are missing" in {
         val testSessionCookieData: SessionCookieData = SessionCookieData(
           mtditid = testMtditid, nino = testNino, utr = testSaUtr, clientFirstName = None,
-          clientLastName = None, isSupportingAgent = true, mandationStatus = testMandationStatusOn
+          clientLastName = None, isSupportingAgent = true,
         )
 
         val expectedResult: Seq[(String, String)] =
@@ -66,8 +65,7 @@ class SessionCookieDataSpec extends UnitSpec {
             SessionKeys.clientMTDID -> testMtditid,
             SessionKeys.clientNino -> testNino,
             SessionKeys.clientUTR -> testSaUtr,
-            SessionKeys.isSupportingAgent -> "true",
-            SessionKeys.mandationStatus -> testMandationStatusOn
+            SessionKeys.isSupportingAgent -> "true"
           )
 
         testSessionCookieData.toSessionCookieSeq shouldBe expectedResult
@@ -75,7 +73,7 @@ class SessionCookieDataSpec extends UnitSpec {
       "last name is missing" in {
         val testSessionCookieData: SessionCookieData = SessionCookieData(
           mtditid = testMtditid, nino = testNino, utr = testSaUtr, clientFirstName = Some(testFirstName),
-          clientLastName = None, isSupportingAgent = true, mandationStatus = testMandationStatusOn
+          clientLastName = None, isSupportingAgent = true
         )
 
         val expectedResult: Seq[(String, String)] =
@@ -84,7 +82,6 @@ class SessionCookieDataSpec extends UnitSpec {
             SessionKeys.clientNino -> testNino,
             SessionKeys.clientUTR -> testSaUtr,
             SessionKeys.isSupportingAgent -> "true",
-            SessionKeys.mandationStatus -> testMandationStatusOn,
             SessionKeys.clientFirstName -> testFirstName
           )
 
@@ -93,7 +90,7 @@ class SessionCookieDataSpec extends UnitSpec {
       "first name is missing" in {
         val testSessionCookieData: SessionCookieData = SessionCookieData(
           mtditid = testMtditid, nino = testNino, utr = testSaUtr, clientFirstName = None,
-          clientLastName = Some(testSecondName), isSupportingAgent = false, mandationStatus = testMandationStatusOn
+          clientLastName = Some(testSecondName), isSupportingAgent = false
         )
 
         val expectedResult: Seq[(String, String)] =
@@ -102,8 +99,6 @@ class SessionCookieDataSpec extends UnitSpec {
             SessionKeys.clientNino -> testNino,
             SessionKeys.clientUTR -> testSaUtr,
             SessionKeys.isSupportingAgent -> "false",
-            SessionKeys.mandationStatus -> testMandationStatusOn,
-
             SessionKeys.clientLastName -> testSecondName)
 
         testSessionCookieData.toSessionCookieSeq shouldBe expectedResult
