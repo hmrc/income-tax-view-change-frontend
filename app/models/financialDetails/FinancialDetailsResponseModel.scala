@@ -221,6 +221,16 @@ object FinancialDetailsModel {
   def getDueDateForFinancialDetail(financialDetail: FinancialDetail): Option[LocalDate] = {
     financialDetail.items.flatMap(_.headOption.flatMap(_.dueDate))
   }
+
+  def merge(financialResponses: List[(Int, FinancialDetailsResponseModel)]): FinancialDetailsModel = {
+    val defaultFinancialResponse =
+      FinancialDetailsModel(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None), List(), List(), List())
+    financialResponses.collect {
+      case (_, model: FinancialDetailsModel) => model.filterPayments()
+    }.foldLeft(
+      defaultFinancialResponse
+    )((acc, next) => acc.mergeLists(next))
+  }
 }
 
 case class FinancialDetailsErrorModel(code: Int, message: String) extends FinancialDetailsResponseModel

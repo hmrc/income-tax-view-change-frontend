@@ -84,9 +84,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
     financialDetailsService.getAllFinancialDetails.flatMap { financialResponses =>
       Logger("application").debug(s"- financialResponses = $financialResponses")
 
-      val paymentsFromAllYears = financialResponses.collect {
-        case (_, model: FinancialDetailsModel) => model.filterPayments()
-      }.foldLeft(FinancialDetailsModel(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None), List(), List(), List()))((merged, next) => merged.mergeLists(next))
+      val paymentsFromAllYears = FinancialDetailsModel.merge(financialResponses)
 
       val matchingYear: List[FinancialDetailsResponseModel] = financialResponses.collect {
         case (year, response) if year == taxYear => response
@@ -124,7 +122,9 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                                  (implicit user: MtdItUser[_], dateService: DateServiceInterface): Future[Result] = {
 
     val sessionGatewayPage = user.session.get(gatewayPage).map(GatewayPage(_))
+
     val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetailsforTaxYear.findDocumentDetailByIdWithDueDate(id).get
+
     val financialDetailsForCharge = chargeDetailsforTaxYear.financialDetails.filter(_.transactionId.contains(id))
 
     val chargeItem = ChargeItem.fromDocumentPair(
