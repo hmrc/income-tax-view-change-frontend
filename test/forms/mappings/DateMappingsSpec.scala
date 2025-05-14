@@ -160,7 +160,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value", "error.required", List(messages("day")))
+        result.errors must contain only FormError("value", "error.required", List("date.error.day"))
     }
   }
 
@@ -200,7 +200,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value", "error.required", List(messages("month")))
+        result.errors must contain only FormError("value", "error.required", List("date.error.month"))
     }
   }
 
@@ -240,7 +240,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value", "error.required", List(messages("year")))
+        result.errors must contain only FormError("value", "error.required", List("date.error.year"))
     }
   }
 
@@ -284,7 +284,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value", "error.required.two", List(messages("day"), messages("month")))
+        result.errors must contain only FormError("value", "error.required.two", List("date.error.day", "date.error.month"))
     }
   }
 
@@ -309,7 +309,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value", "error.required.two", List(messages("day"), messages("year")))
+        result.errors must contain only FormError("value", "error.required.two", List("date.error.day", "date.error.year"))
     }
   }
 
@@ -334,7 +334,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value", "error.required.two", List(messages("month"), messages("year")))
+        result.errors must contain only FormError("value", "error.required.two", List("date.error.month", "date.error.year"))
     }
   }
 
