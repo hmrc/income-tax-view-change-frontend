@@ -73,7 +73,8 @@ class CeaseIncomeSourceEndDateFormProviderSpec extends AnyWordSpec with Matchers
   }
 
   def setupBindBeforeStartDateTest(incomeSourceType: IncomeSourceType): Unit = {
-    val form: Form[LocalDate] =ceaseEndDateForm(incomeSourceType, setupTestId(incomeSourceType), false)(dateService = mockDateService, user = testUser, messages = messages)
+    val form: Form[LocalDate] = ceaseEndDateForm(incomeSourceType, setupTestId(incomeSourceType), false)(dateService = mockDateService, user = testUser, messages = messages)
+
     val formData = Map("value.day" -> "27", "value.month" -> "8", "value.year" -> "2016")
     val completedForm = form.bind(formData)
 
