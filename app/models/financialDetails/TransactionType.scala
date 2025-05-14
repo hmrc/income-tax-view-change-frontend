@@ -130,34 +130,8 @@ object TransactionType {
   }
 
   implicit val format: Format[TransactionType] = Format( read, write)
-}
-
-object ChargeType {
-
-  //The following are mainTransaction values:
-  // values come from EPID #1138
-  private val balancingCharge = "4910"
-
-  lazy val poaOneReconciliationDebit = "4911"
-  lazy val poaTwoReconciliationDebit = "4913"
-
-  lazy val poaOneReconciliationCredit = "4912"
-  lazy val poaTwoReconciliationCredit = "4914"
-
-  private val poaOneDebit = "4920"
-  private val poaTwoDebit = "4930"
-
-  private val lateSubmissionPenalty = "4027"
-  private val firstLatePaymentPenalty: List[String] = List("4028", "4031")
-  private val secondLatePaymentPenalty: List[String] = List("4029", "4032")
-
-  lazy val penaltyMainTransactions = List(lateSubmissionPenalty) ++ firstLatePaymentPenalty ++ secondLatePaymentPenalty
-
-  private val mfaDebit = Range.inclusive(4000, 4003)
-    .map(_.toString).toList
 
   def fromCode(mainTransaction: String): Option[TransactionType] = {
-
     mainTransaction match {
       case ChargeType.poaOneDebit =>
         Some(PoaOneDebit)
@@ -181,11 +155,51 @@ object ChargeType {
         Some(SecondLatePaymentPenalty)
       case x if ChargeType.mfaDebit.contains(x) =>
         Some(MfaDebitCharge)
-      case code =>
-        // TODO: need to merge this into a single function: https://jira.tools.tax.service.gov.uk/browse/MISUV-9400
-        CreditType.fromCode(code)
+      case CreditType.cutOver =>
+        Some(CutOverCreditType)
+      case CreditType.balancingCharge =>
+        Some(BalancingChargeCreditType)
+      case CreditType.repaymentInterest =>
+        Some(RepaymentInterest)
+      case CreditType.poaOneReconciliationCredit =>
+        Some(PoaOneReconciliationCredit)
+      case CreditType.poaTwoReconciliationCredit =>
+        Some(PoaTwoReconciliationCredit)
+      case x if CreditType.mfaCredit.contains(x) =>
+        Some(MfaCreditType)
+      case x if CreditType.payment.contains(x) =>
+        Some(PaymentType)
+      case _ => None
     }
   }
+
+}
+
+object ChargeType {
+
+  //The following are mainTransaction values:
+  // values come from EPID #1138
+  val balancingCharge = "4910"
+
+  lazy val poaOneReconciliationDebit = "4911"
+  lazy val poaTwoReconciliationDebit = "4913"
+
+  lazy val poaOneReconciliationCredit = "4912"
+  lazy val poaTwoReconciliationCredit = "4914"
+
+  val poaOneDebit = "4920"
+  val poaTwoDebit = "4930"
+
+  val lateSubmissionPenalty = "4027"
+  val firstLatePaymentPenalty: List[String] = List("4028", "4031")
+  val secondLatePaymentPenalty: List[String] = List("4029", "4032")
+
+  lazy val penaltyMainTransactions = List(lateSubmissionPenalty) ++ firstLatePaymentPenalty ++ secondLatePaymentPenalty
+
+  val mfaDebit = Range.inclusive(4000, 4003)
+    .map(_.toString).toList
+
+
 
   implicit val write: Writes[ChargeType] = new Writes[ChargeType] {
     def writes(transactionType: ChargeType): JsValue = {
@@ -212,36 +226,16 @@ object ChargeType {
 object CreditType {
 
   // values come from EPID #1138
-  private val cutOver = "6110"
-  private val balancingCharge = "4905"
-  private val repaymentInterest = "6020"
-  private val mfaCredit = Range.inclusive(4004, 4025)
+  val cutOver = "6110"
+  val balancingCharge = "4905"
+  val repaymentInterest = "6020"
+  val mfaCredit = Range.inclusive(4004, 4025)
     .filterNot(_ == 4010).filterNot(_ == 4020).map(_.toString)
     .toList
-  private val poaOneReconciliationCredit = "4912"
-  private val poaTwoReconciliationCredit = "4914"
+  val poaOneReconciliationCredit = "4912"
+  val poaTwoReconciliationCredit = "4914"
 
-  private val payment = List("0060")
-
-  def fromCode(mainTransaction: String): Option[CreditType] = {
-    mainTransaction match {
-      case CreditType.cutOver =>
-        Some(CutOverCreditType)
-      case CreditType.balancingCharge =>
-        Some(BalancingChargeCreditType)
-      case CreditType.repaymentInterest =>
-        Some(RepaymentInterest)
-      case CreditType.poaOneReconciliationCredit =>
-        Some(PoaOneReconciliationCredit)
-      case CreditType.poaTwoReconciliationCredit =>
-        Some(PoaTwoReconciliationCredit)
-      case x if mfaCredit.contains(x) =>
-        Some(MfaCreditType)
-      case x if payment.contains(x) =>
-        Some(PaymentType)
-      case _ => None
-    }
-  }
+  val payment = List("0060")
 
   implicit val write: Writes[CreditType] = new Writes[CreditType] {
     def writes(transactionType: CreditType): JsValue = {

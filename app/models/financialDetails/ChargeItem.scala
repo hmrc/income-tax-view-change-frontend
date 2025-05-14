@@ -65,7 +65,7 @@ case class ChargeItem (
     lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
 
   def hasAccruingInterest: Boolean =
-    interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0 && !isPaid
+    interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0
 
   def isNotPaidAndNotOverduePoaReconciliationDebit()(implicit dateService: DateServiceInterface): Boolean = {
     Seq(PoaOneReconciliationDebit, PoaTwoReconciliationDebit).contains(transactionType) && !isPaid && !isOverdue()
@@ -109,10 +109,7 @@ case class ChargeItem (
     codedOutStatus.exists(subType => codingOutSubTypes.contains(subType))
   }
 
-  def interestIsPaid: Boolean = interestOutstandingAmount match {
-    case Some(amount) if amount == 0 => true
-    case _ => false
-  }
+  def interestIsPaid: Boolean = interestOutstandingAmount.exists(_ <= 0)
 
   def remainingToPay: BigDecimal = {
     if (isPaid) BigDecimal(0)
@@ -122,6 +119,11 @@ case class ChargeItem (
   def remainingToPayByChargeOrInterest: BigDecimal = {
     if (isLatePaymentInterest) interestRemainingToPay
     else remainingToPay
+  }
+
+  def remainingToPayByChargeOrInterestWhenChargeIsPaid: Boolean = {
+    if (isLatePaymentInterest || !interestIsPaid) true
+    else false
   }
 
   // this method is used to filter charges down to those currently allowed for the
@@ -237,7 +239,7 @@ object ChargeItem {
       case _ => throw CouldNotCreateChargeItemException(s"Main transaction is not defined for charge ${documentDetail.transactionId}")
     }
 
-    val chargeType = ChargeType.fromCode(mainTransaction) match {
+    val chargeType = TransactionType.fromCode(mainTransaction) match {
       case Some(ct) => ct
       case _ => throw CouldNotCreateChargeItemException(s"Could not identify charge type from $mainTransaction for charge ${documentDetail.transactionId}")
     }

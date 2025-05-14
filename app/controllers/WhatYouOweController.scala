@@ -26,6 +26,7 @@ import enums.GatewayPage.WhatYouOwePage
 import forms.utils.SessionKeys.gatewayPage
 import models.admin._
 import models.core.Nino
+import models.financialDetails.ChargeItem
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
@@ -58,7 +59,10 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     for {
-      whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isEnabled(ReviewAndReconcilePoa), isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
+      whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isEnabled(ReviewAndReconcilePoa),
+        isEnabled(FilterCodedOutPoas),
+        isEnabled(PenaltiesAndAppeals),
+        mainChargeIsNotPaidFilter)
       ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
     } yield {
 
@@ -118,4 +122,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
       )
   }
 
+  private def mainChargeIsNotPaidFilter: PartialFunction[ChargeItem, ChargeItem]  = {
+    case x if x.remainingToPayByChargeOrInterest > 0 => x
+  }
 }
