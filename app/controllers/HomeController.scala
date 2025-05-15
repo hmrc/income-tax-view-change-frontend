@@ -73,9 +73,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
   def handleShowRequest(origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-    val test = nextUpdatesService.getDueDates()
-
-    test.flatMap {
+    nextUpdatesService.getDueDates().flatMap {
       case Right(nextUpdatesDueDates: Seq[LocalDate]) if user.usersRole == MTDSupportingAgent =>
         buildHomePageForSupportingAgent(nextUpdatesDueDates)
       case Right(nextUpdatesDueDates: Seq[LocalDate]) => buildHomePage(nextUpdatesDueDates, origin)
