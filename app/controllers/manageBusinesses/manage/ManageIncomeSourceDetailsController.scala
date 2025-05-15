@@ -308,13 +308,28 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     }
   }
 
+  private def getLatencyStatusesBasedOnFeatureSwitch(
+                                  latencyDetails: LatencyDetails
+                                )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[(Boolean, Boolean)] = {
+    if (isEnabled(OptInOptOutContentUpdateR17)) {
+      Future.successful {
+        val taxYear1Status = latencyDetails.latencyIndicator1 == "Q"
+        val taxYear2Status = latencyDetails.latencyIndicator2 == "Q"
+        (taxYear1Status, taxYear2Status)
+      }
+    } else {
+      itsaStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(latencyDetails))
+    }
+  }
+
+
   private def handleLatencyAndCrystallisationDetails(
                                                       desiredIncomeSource: BusinessDetailsModel,
                                                       latencyDetails: LatencyDetails
                                                     )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ManageIncomeSourceDetailsViewModel] = {
 
     for {
-      (latencyYearOneStatus, latencyYearTwoStatus) <- itsaStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(latencyDetails))
+      (latencyYearOneStatus, latencyYearTwoStatus) <- getLatencyStatusesBasedOnFeatureSwitch(latencyDetails)
       crystallisationData <- getCrystallisationInformation(Some(latencyDetails))
     } yield {
       val (maybeUseMTD1, maybeUseMTD2) =
@@ -403,7 +418,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                                                                )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ManageIncomeSourceDetailsViewModel] = {
 
     for {
-      (latencyYearOneStatus, latencyYearTwoStatus) <- itsaStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(latencyDetails))
+      (latencyYearOneStatus, latencyYearTwoStatus) <- getLatencyStatusesBasedOnFeatureSwitch(latencyDetails)
       crystallisationData <- getCrystallisationInformation(Some(latencyDetails))
     } yield {
       val maybeUseMTD1 = if (isEnabled(OptInOptOutContentUpdateR17)) Some(latencyYearOneStatus) else None
