@@ -39,8 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
                                            val authActions: AuthActions,
                                            val auditingService: AuditingService,
-                                           val sessionDataService: SessionDataService,
-                                           val ITSAStatusService: ITSAStatusService)
+                                           val sessionDataService: SessionDataService)
                                           (implicit mcc: MessagesControllerComponents,
                                            val appConfig: FrontendAppConfig,
                                            val itvcErrorHandler: AgentItvcErrorHandler,

@@ -46,8 +46,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                                           clientDetailsService: ClientDetailsService,
                                           val authorisedFunctions: FrontendAuthorisedFunctions,
                                           val authActions: AuthActions,
-                                          val auditingService: AuditingService,
-                                          val ITSAStatusService: ITSAStatusService)
+                                          val auditingService: AuditingService)
                                          (implicit mcc: MessagesControllerComponents,
                                           val appConfig: FrontendAppConfig,
                                           val itvcErrorHandler: AgentItvcErrorHandler,
