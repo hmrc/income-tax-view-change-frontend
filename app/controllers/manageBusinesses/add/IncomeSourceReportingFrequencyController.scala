@@ -122,7 +122,7 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
           errorHandler(isAgent).showInternalServerError()
         }
       case true =>
-        itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
+        itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear(user.nino).flatMap {
           case true =>
             Future.successful(Ok(view(
               continueAction = submitUrl(isAgent, incomeSourceType),

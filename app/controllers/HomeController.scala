@@ -22,6 +22,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import controllers.agent.sessionUtils.{SessionKeys, SessionKeysV2}
 import enums.MTDSupportingAgent
 import models.admin._
 import models.financialDetails.{ChargeItem, FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
@@ -71,7 +72,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
   }
 
   def handleShowRequest(origin: Option[String] = None)
-                       (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] =
+                       (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     nextUpdatesService.getDueDates().flatMap {
       case Right(nextUpdatesDueDates: Seq[LocalDate]) if user.usersRole == MTDSupportingAgent =>
         buildHomePageForSupportingAgent(nextUpdatesDueDates)
@@ -84,14 +85,17 @@ class HomeController @Inject()(val homeView: views.html.Home,
         Logger("application").error(s"Downstream error, ${ex.getMessage} - ${ex.getCause}")
         handleErrorGettingDueDates(user.isAgent())
     }
+  }
 
   private def buildHomePageForSupportingAgent(nextUpdatesDueDates: Seq[LocalDate])
                                              (implicit user: MtdItUser[_]): Future[Result] = {
 
     val currentTaxYear = TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd)
 
+    val clientDetails = user.clientDetails.getOrElse(throw new Exception("Client details are missing from authorised user"))
+    val userNino = clientDetails.nino
     for {
-      currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
+      currentITSAStatus <- getCurrentITSAStatus(currentTaxYear, userNino)
     } yield {
 
       val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(ReportingFrequencyPage))
@@ -123,9 +127,10 @@ class HomeController @Inject()(val homeView: views.html.Home,
       outstandingChargeDueDates = getRelevantDates(outstandingChargesModel)
       overDuePaymentsCount = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
       accruingInterestPaymentsCount = NextPaymentsTileViewModel.paymentsAccruingInterestCount(unpaidCharges, dateService.getCurrentDate)
-      currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
+      currentITSAStatus <- getCurrentITSAStatus(currentTaxYear, user.nino)
       penaltiesAndAppealsTileViewModel = penaltyDetailsService.getPenaltyPenaltiesAndAppealsTileViewModel(isEnabled(PenaltiesAndAppeals))
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
+      mandation <- ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(user.nino, _.isMandated)
     } yield {
 
       val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(ReportingFrequencyPage))
@@ -154,15 +159,19 @@ class HomeController @Inject()(val homeView: views.html.Home,
           dunningLockExists = dunningLockExists,
           origin = origin
         )
+
+        val mandationStatus = if (mandation) SessionKeysV2.mandationStatus -> "on"
+        else SessionKeysV2.mandationStatus -> "off"
+
           auditingService.extendedAudit(HomeAudit(user, paymentsDueMerged, overDuePaymentsCount, nextUpdatesTileViewModel))
           if(user.isAgent()) {
             Ok(primaryAgentHomeView(
               homeViewModel
-            ))
+            )).addingToSession(mandationStatus)
           } else {
             Ok(homeView(
               homeViewModel
-            ))
+            )).addingToSession(mandationStatus)
           }
         case Left(ex: Throwable) =>
           Logger("application").error(s"Unable to create the view model ${ex.getMessage} - ${ex.getCause}")
@@ -226,8 +235,8 @@ private def handleErrorGettingDueDates(isAgent: Boolean)(implicit user: MtdItUse
   errorHandler.showInternalServerError()
 }
 
-  private def getCurrentITSAStatus(taxYear: TaxYear)(implicit user: MtdItUser[_]): Future[ITSAStatus.ITSAStatus] = {
-    ITSAStatusService.getStatusTillAvailableFutureYears(taxYear.previousYear).map(_.view.mapValues(_.status)
+  private def getCurrentITSAStatus(taxYear: TaxYear, nino: String)(implicit hc: HeaderCarrier): Future[ITSAStatus.ITSAStatus] = {
+    ITSAStatusService.getStatusTillAvailableFutureYears(taxYear.previousYear, nino).map(_.view.mapValues(_.status)
       .toMap
       .withDefaultValue(ITSAStatus.NoStatus)
     ).map(detail => detail(taxYear))

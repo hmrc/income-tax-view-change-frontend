@@ -121,7 +121,7 @@ class OptInServiceSpec extends UnitSpec
 
         when(repository.get(hc.sessionId.get.value, Opt(OptInJourney))).thenReturn(Future.successful(None))
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
-        when(mockITSAStatusService.getStatusTillAvailableFutureYears(currentTaxYear.previousYear))
+        when(mockITSAStatusService.getStatusTillAvailableFutureYears(ArgumentMatchers.eq(currentTaxYear.previousYear), any())(any, any))
           .thenReturn(Future.successful(
             Map(currentTaxYear -> statusDetailWith(Annual), nextTaxYear -> statusDetailWith(Annual))
           ))
@@ -134,7 +134,7 @@ class OptInServiceSpec extends UnitSpec
 
         when(repository.get(hc.sessionId.get.value, Opt(OptInJourney))).thenReturn(Future.successful(None))
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
-        when(mockITSAStatusService.getStatusTillAvailableFutureYears(currentTaxYear.previousYear))
+        when(mockITSAStatusService.getStatusTillAvailableFutureYears(ArgumentMatchers.eq(currentTaxYear.previousYear), any())(any, any))
           .thenReturn(Future.successful(
             Map(currentTaxYear -> statusDetailWith(Annual), nextTaxYear -> statusDetailWith(Voluntary))
           ))
@@ -155,7 +155,7 @@ class OptInServiceSpec extends UnitSpec
         val result = service.availableOptInTaxYear()
         result.futureValue shouldBe Seq(currentTaxYear, nextTaxYear)
 
-        verify(mockITSAStatusService, times(0)).getStatusTillAvailableFutureYears(any())(any(), any(), any())
+        verify(mockITSAStatusService, times(0)).getStatusTillAvailableFutureYears(any(), any())(any(), any())
       }
 
       "return tax year ending 2023" in {
@@ -166,7 +166,7 @@ class OptInServiceSpec extends UnitSpec
         val result = service.availableOptInTaxYear()
         result.futureValue shouldBe Seq(currentTaxYear)
 
-        verify(mockITSAStatusService, times(0)).getStatusTillAvailableFutureYears(any())(any(), any(), any())
+        verify(mockITSAStatusService, times(0)).getStatusTillAvailableFutureYears(any(), any())(any(), any())
       }
     }
   }
