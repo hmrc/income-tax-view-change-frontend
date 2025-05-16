@@ -19,7 +19,7 @@ package controllers.manageBusinesses.manage
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.MTDIndividual
-import models.admin.{DisplayBusinessStartDate, IncomeSourcesFs}
+import models.admin.{DisplayBusinessStartDate, IncomeSourcesFs, OptInOptOutContentUpdateR17}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status
@@ -193,6 +193,55 @@ class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDet
             manageDetailsSummaryValues.get(1).text() shouldBe businessWithLatencyAddress
             manageDetailsSummaryValues.get(5).text() shouldBe standard
           }
+
+          "the user has a valid id parameter and OptInOptOutContentUpdateR17 is enabled" in {
+            enable(IncomeSourcesFs)
+            enable(DisplayBusinessStartDate)
+            enable(OptInOptOutContentUpdateR17)
+
+            setupMockSuccess(mtdUserRole)
+            setupMockCreateSession(true)
+
+            setupMockGetCurrentTaxYearEnd(2023)
+            setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, false)
+            setupMockTaxYearNotCrystallised(2023)
+            setupMockTaxYearNotCrystallised(2024)
+
+            mockUkPlusForeignPlusSoleTraderWithLatency()
+
+            setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment)))))
+            setupMockSetSessionKeyMongo(Right(true))
+
+            val result = action(fakeRequest)
+            status(result) shouldBe Status.OK
+
+            val document: Document = Jsoup.parse(contentAsString(result))
+
+            document.title shouldBe title(mtdUserRole)
+            getHeading(document) shouldBe heading
+
+            hasInsetText(document) shouldBe true
+            document.getElementById("reportingFrequency").text() should include(
+              messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyPrefix")
+            )
+
+            val summaryKeys = getManageDetailsSummaryKeys(document).eachText()
+            summaryKeys should contain(
+              messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage", "2022", "2023")
+            )
+            summaryKeys should contain(
+              messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage", "2023", "2024")
+            )
+
+            val summaryValues = getManageDetailsSummaryValues(document).eachText()
+            summaryValues should contain("Yes")
+            summaryValues should contain("No")
+
+            val actions = document.select(".govuk-summary-list__actions a").eachText()
+            actions should contain("Opt out")
+            actions should contain("Sign up")
+          }
+
         }
 
         "redirect to the home page" when {
