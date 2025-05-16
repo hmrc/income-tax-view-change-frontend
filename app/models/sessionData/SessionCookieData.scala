@@ -35,7 +35,8 @@ case class SessionCookieData(mtditid: String,
       SessionKeys.clientMTDID -> mtditid,
       SessionKeys.clientNino -> nino,
       SessionKeys.clientUTR -> utr,
-      SessionKeys.isSupportingAgent -> isSupportingAgent.toString) ++ clientFirstName.map(SessionKeys.clientFirstName -> _) ++ clientLastName.map(SessionKeys.clientLastName -> _)
+      SessionKeys.isSupportingAgent -> isSupportingAgent.toString
+    ) ++ clientFirstName.map(SessionKeys.clientFirstName -> _) ++ clientLastName.map(SessionKeys.clientLastName -> _)
   }
 }
 

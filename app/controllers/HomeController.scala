@@ -92,8 +92,10 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
     val currentTaxYear = TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd)
 
+    val clientDetails = user.clientDetails.getOrElse(throw new Exception("Client details are missing from authorised user"))
+    val userNino = clientDetails.nino
     for {
-      currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
+      currentITSAStatus <- getCurrentITSAStatus(currentTaxYear, userNino)
     } yield {
 
       val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(ReportingFrequencyPage))
@@ -125,7 +127,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       outstandingChargeDueDates = getRelevantDates(outstandingChargesModel)
       overDuePaymentsCount = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
       accruingInterestPaymentsCount = NextPaymentsTileViewModel.paymentsAccruingInterestCount(unpaidCharges, dateService.getCurrentDate)
-      currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
+      currentITSAStatus <- getCurrentITSAStatus(currentTaxYear, user.nino)
       penaltiesAndAppealsTileViewModel = penaltyDetailsService.getPenaltyPenaltiesAndAppealsTileViewModel(isEnabled(PenaltiesAndAppeals))
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
       mandation <- ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(user.nino, _.isMandated)
@@ -233,8 +235,8 @@ private def handleErrorGettingDueDates(isAgent: Boolean)(implicit user: MtdItUse
   errorHandler.showInternalServerError()
 }
 
-  private def getCurrentITSAStatus(taxYear: TaxYear)(implicit user: MtdItUser[_]): Future[ITSAStatus.ITSAStatus] = {
-    ITSAStatusService.getStatusTillAvailableFutureYears(taxYear.previousYear, user.nino).map(_.view.mapValues(_.status)
+  private def getCurrentITSAStatus(taxYear: TaxYear, nino: String)(implicit hc: HeaderCarrier): Future[ITSAStatus.ITSAStatus] = {
+    ITSAStatusService.getStatusTillAvailableFutureYears(taxYear.previousYear, nino).map(_.view.mapValues(_.status)
       .toMap
       .withDefaultValue(ITSAStatus.NoStatus)
     ).map(detail => detail(taxYear))
