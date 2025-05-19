@@ -214,7 +214,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
           }
 
           "render the correct MTD usage content when OptInOptOutContentUpdateR17 is enabled" in {
-            enable(IncomeSourcesFs)
+            enable(IncomeSourcesNewJourney)
             enable(DisplayBusinessStartDate)
             enable(OptInOptOutContentUpdateR17)
             disable(NavBarFs)
