@@ -21,7 +21,7 @@
         link: link
 )
 
-@()(
+@(url: String)(
         implicit request: Request[_],
         messages: Messages
 )
@@ -43,8 +43,8 @@
     @getMessage("lateSubmissionPenalty.penaltyLinkText1")
     @link(
         id = Some("late-submission-penalty-link"),
-        link="",
-        rel= Some("noreferrer noopener"),
+        link = url,
+        rel = Some("noreferrer noopener"),
         messageKey = "yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText"
     )
     @getMessage("lateSubmissionPenalty.penaltyLinkText2")

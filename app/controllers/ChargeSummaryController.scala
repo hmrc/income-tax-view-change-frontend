@@ -180,6 +180,9 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
           else controllers.routes.YourSelfAssessmentChargesController.show(origin).url
       }
 
+      val LSPUrl = if (chargeItem.transactionType == LateSubmissionPenalty) Some(appConfig.incomeTaxPenaltiesFrontend) else None
+      val LPPUrl = if (chargeItem.transactionType == FirstLatePaymentPenalty) Some(appConfig.incomeTaxPenaltiesFrontendCalculation) else None
+
       val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
           currentDate = dateService.getCurrentDate,
           chargeItem = chargeItem,
@@ -198,7 +201,9 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
           adjustmentHistory = chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail),
           poaExtraChargeLink = checkForPoaExtraChargeLink(chargeDetailsforTaxYear, documentDetailWithDueDate, isAgent),
           poaOneChargeUrl = poaOneChargeUrl,
-          poaTwoChargeUrl = poaTwoChargeUrl
+          poaTwoChargeUrl = poaTwoChargeUrl,
+          LSPUrl = LSPUrl,
+          LPPUrl = LPPUrl
         )
 
         mandatoryViewDataPresent(isInterestCharge, documentDetailWithDueDate) match {
