@@ -2121,6 +2121,16 @@ incomeSources.manage.business-manage-details.tradetype                =   Type o
 incomeSources.manage.business-manage-details.reportingFrequency       =   View and change your reporting frequency for all your businesses
 incomeSources.manage.business-manage-details.insetText                =   Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April {0}, you could be required to report quarterly.
 
+# Used when OptInOptOutContentUpdateR17 feature switch is enabled
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.paragraph      =   Because this is still a new business, for up to 2 tax years you can choose if you want to use Making Tax Digital for Income Tax. From April {0}, you could be required to use the service.
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyPrefix       =   Depending on your circumstances, you may be able to
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyLink         =   view and change your reporting obligations for all your businesses
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage = Using Making Tax Digital for Income Tax for {0} to {1}
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage.yes  = Yes
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage.no  = No
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.signup = Sign up
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.optOut = Opt out
+
 incomeSources.manage.uk-property-manage-details.uk-property-section              =   UK property
 incomeSources.manage.uk-property-manage-details.accounting-method                =   Accounting method
 
