@@ -19,7 +19,7 @@ package controllers.manageBusinesses.manage
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.MTDIndividual
-import models.admin.{DisplayBusinessStartDate, IncomeSourcesNewJourney, OptInOptOutContentUpdateR17}
+import models.admin.{DisplayBusinessStartDate, IncomeSourcesFs, IncomeSourcesNewJourney, OptInOptOutContentUpdateR17}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status
