@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package connectors
 
 import config.FrontendAppConfig
@@ -33,7 +32,7 @@ class SelfServeTimeToPayConnector @Inject()(http: HttpClientV2,
                                            )(implicit ec: ExecutionContext) {
   val journeyStartUrl: String = config.setUpAPaymentPlanUrl + "/essttp-backend/sa/itsa/journey/start"
 
-  def startSelfTimeToPayJourney()(implicit hc: HeaderCarrier): Future[SelfServeTimeToPayJourneyResponse] = {
+  def startSelfServeTimeToPayJourney()(implicit hc: HeaderCarrier): Future[SelfServeTimeToPayJourneyResponse] = {
     val body = Json.parse(
       s"""
        {
