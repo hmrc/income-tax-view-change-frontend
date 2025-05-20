@@ -20,7 +20,7 @@ import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import models.admin.{DisplayBusinessStartDate, IncomeSourcesNewJourney, NavBarFs, OptInOptOutContentUpdateR17}
+import models.admin.{AccountingMethodJourney, DisplayBusinessStartDate, IncomeSourcesNewJourney, NavBarFs, OptInOptOutContentUpdateR17}
 import models.incomeSourceDetails.ManageIncomeSourceData.incomeSourceIdField
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -45,6 +45,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
             "URL contains a valid income source ID and user has no latency information" in {
               enable(IncomeSourcesNewJourney)
               enable(DisplayBusinessStartDate)
+              enable(AccountingMethodJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse2)
@@ -74,6 +75,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
             "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
               enable(IncomeSourcesNewJourney)
               enable(DisplayBusinessStartDate)
+              enable(AccountingMethodJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               //enable(TimeMachineAddYear)
@@ -110,6 +112,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
             "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
               enable(IncomeSourcesNewJourney)
               enable(DisplayBusinessStartDate)
+              enable(AccountingMethodJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails2))
@@ -147,6 +150,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
             "URL has valid income source ID and user has latency information, 1st year Annual 2nd year MTD Mandatory | Voluntary and 2 tax years NC" in {
               enable(IncomeSourcesNewJourney)
               enable(DisplayBusinessStartDate)
+              enable(AccountingMethodJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails2))
@@ -184,6 +188,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
             "URL contains a valid income source ID and user has latency information, but itsa status is not mandatory or voluntary" in {
               enable(IncomeSourcesNewJourney)
               enable(DisplayBusinessStartDate)
+              enable(AccountingMethodJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWithUnknownsInLatencyPeriod(latencyDetails))
