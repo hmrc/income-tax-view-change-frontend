@@ -1260,12 +1260,13 @@ paymentAllocation.paymentAllocations.hmrcAdjustment.text        = HMRC adjustmen
 
 
 ##Tax Years Overview Update Tab##
+updateTab.desc                                                  = A quarterly update covers income and expenses for the tax year so far.
 updateTab.due                                                   = Due {0}
 updateTab.updateType                                            = Update type
 updateTab.incomeSource                                          = Income source
 updateTab.dateSubmitted                                         = Date submitted
 updateTab.dateToDate                                            = {0} to {1}
-updateTab.quarterlyDateToDate                                   = Quarterly period from {0} to {1}
+updateTab.updatePeriodDateToDate                                = The update period from {0} to {1}
 updateTab.obligationType.property                               = Property income
 updateTab.obligationType.business                               = Business
 updateTab.obligationType.crystallised                           = All income sources

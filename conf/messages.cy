@@ -1259,12 +1259,13 @@ paymentAllocation.paymentAllocations.hmrcAdjustment.text        = Addasiad CThEF
 
 
 ## Tax Years Overview Update Tab ##
+updateTab.desc                                                  = Mae diweddariad chwarterol yn cynnwys incwm a threuliau ar gyfer y flwyddyn dreth hyd yn hyn.
 updateTab.due                                                   = Yn ddyledus erbyn {0}
 updateTab.updateType                                            = Math o ddiweddariad
 updateTab.incomeSource                                          = Ffynhonnell incwm
 updateTab.dateSubmitted                                         = Dyddiad cyflwyno
 updateTab.dateToDate                                            = {0} i {1}
-updateTab.quarterlyDateToDate                                   = Cyfnod chwarterol o {0} i {1}
+updateTab.updatePeriodDateToDate                                = Y cyfnod diweddaru o {0} i {1}
 updateTab.obligationType.property                               = Incwm o eiddo
 updateTab.obligationType.business                               = Busnes
 updateTab.obligationType.crystallised                           = Pob ffynhonnell incwm
