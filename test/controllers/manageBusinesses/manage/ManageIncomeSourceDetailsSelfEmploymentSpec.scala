@@ -36,9 +36,7 @@ class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDet
       s"the user is authenticated as a $mtdUserRole" should {
         "render the appropriate IncomeSourceDetails page" when {
           "the user has a valid id parameter and no latency information" in {
-            enable(IncomeSourcesNewJourney)
-            enable(DisplayBusinessStartDate)
-            enable(AccountingMethodJourney)
+            enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney)
             setupMockSuccess(mtdUserRole)
             setupMockCreateSession(true)
 
@@ -68,9 +66,7 @@ class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDet
           }
 
           "the user has a valid id parameter, valid latency information and two tax years not crystallised" in {
-            enable(IncomeSourcesNewJourney)
-            enable(DisplayBusinessStartDate)
-            enable(AccountingMethodJourney)
+            enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney)
             setupMockSuccess(mtdUserRole)
             setupMockCreateSession(true)
 
@@ -131,9 +127,7 @@ class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDet
           }
 
           "the user has a valid id parameter, but non eligable itsa status" in {
-            enable(IncomeSourcesNewJourney)
-            enable(DisplayBusinessStartDate)
-            enable(AccountingMethodJourney)
+            enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney)
             setupMockSuccess(mtdUserRole)
             setupMockCreateSession(true)
 
@@ -169,9 +163,7 @@ class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDet
           }
 
           "the user has a valid id parameter, latency expired" in {
-            enable(IncomeSourcesNewJourney)
-            enable(DisplayBusinessStartDate)
-            enable(AccountingMethodJourney)
+            enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney)
             setupMockSuccess(mtdUserRole)
             setupMockCreateSession(true)
 
@@ -199,9 +191,7 @@ class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDet
           }
 
           "the user has a valid id parameter and AccountingMethodJourney is disabled" in {
-            enable(IncomeSourcesNewJourney)
-            enable(DisplayBusinessStartDate)
-            disable(AccountingMethodJourney)
+            enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney)
             disable(OptInOptOutContentUpdateR17)
 
             setupMockSuccess(mtdUserRole)
@@ -226,9 +216,7 @@ class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDet
 
 
           "the user has a valid id parameter and OptInOptOutContentUpdateR17 is enabled" in {
-            enable(IncomeSourcesNewJourney)
-            enable(DisplayBusinessStartDate)
-            enable(OptInOptOutContentUpdateR17)
+            enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, OptInOptOutContentUpdateR17)
 
             setupMockSuccess(mtdUserRole)
             setupMockCreateSession(true)
