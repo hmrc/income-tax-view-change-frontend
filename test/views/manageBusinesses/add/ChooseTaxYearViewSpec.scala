@@ -26,14 +26,15 @@ import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
-import views.html.manageBusinesses.add.ChooseTaxYear
+import views.html.manageBusinesses.add.ChooseTaxYearView
 
 class ChooseTaxYearViewSpec extends TestSupport {
 
-  val view: ChooseTaxYear = app.injector.instanceOf[ChooseTaxYear]
+  val view: ChooseTaxYearView = app.injector.instanceOf[ChooseTaxYearView]
   val chooseTaxYearForm: ChooseTaxYearForm = app.injector.instanceOf[ChooseTaxYearForm]
 
   class Setup(form: Form[ChooseTaxYearFormModel] = chooseTaxYearForm(), incomeSourceType: IncomeSourceType) {
+
     val subHeadingText: String = incomeSourceType match {
       case SelfEmployment => "Sole trader"
       case UkProperty => "UK property"
@@ -49,12 +50,13 @@ class ChooseTaxYearViewSpec extends TestSupport {
 
   incomeSourceTypes.foreach { incomeSourceType =>
     s"add sole trader choose tax year page for incomeSourceType: $incomeSourceType" should {
+
       "have the correct title" in new Setup(incomeSourceType = incomeSourceType) {
-        pageDocument.title() shouldBe "Which tax year do you want to report quarterly for? - Manage your Self Assessment - GOV.UK"
+        pageDocument.title() shouldBe "Which tax year do you want to sign up for? - Manage your Self Assessment - GOV.UK"
       }
 
       "have the correct heading" in new Setup(incomeSourceType = incomeSourceType) {
-        pageDocument.select("h1").text().contains("Which tax year do you want to report quarterly for?") shouldBe true
+        pageDocument.select("h1").text() shouldBe s"$subHeadingText Which tax year do you want to sign up for?"
       }
 
       "have the correct sub-heading" in new Setup(incomeSourceType = incomeSourceType) {
@@ -73,9 +75,9 @@ class ChooseTaxYearViewSpec extends TestSupport {
 
       "have the correct error summary" in new Setup(chooseTaxYearForm().bind(Map("Invalid" -> "Invalid")), incomeSourceType) {
         pageDocument.getElementById("error-summary-title").text() shouldBe "There is a problem"
-        pageDocument.getElementById("error-summary-link").text() shouldBe "Select the tax years you want to report quarterly"
+        pageDocument.getElementById("error-summary-link").text() shouldBe "Select the tax years you want to sign up for"
         pageDocument.getElementById("error-summary-link").attr("href") shouldBe "#current-year-checkbox"
-        pageDocument.getElementById("choose-tax-year-error").text() shouldBe "Error: Select the tax years you want to report quarterly"
+        pageDocument.getElementById("choose-tax-year-error").text() shouldBe "Error: Select the tax years you want to sign up for"
       }
     }
   }

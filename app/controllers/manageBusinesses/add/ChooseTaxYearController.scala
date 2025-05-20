@@ -32,14 +32,14 @@ import services.manageBusinesses.IncomeSourceRFService
 import services.{CalculationListService, DateService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
-import views.html.manageBusinesses.add.ChooseTaxYear
+import views.html.manageBusinesses.add.ChooseTaxYearView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ChooseTaxYearController @Inject()(authActions: AuthActions,
-                                        chooseTaxYear: ChooseTaxYear,
+                                        chooseTaxYearView: ChooseTaxYearView,
                                         val calculationListService: CalculationListService,
                                         val incomeSourceRFService: IncomeSourceRFService,
                                         val form: ChooseTaxYearForm,
@@ -74,7 +74,7 @@ class ChooseTaxYearController @Inject()(authActions: AuthActions,
         } else form()
       }
 
-      Future.successful(Ok(chooseTaxYear(
+      Future.successful(Ok(chooseTaxYearView(
         filledOrEmptyForm,
         isAgent,
         routes.ChooseTaxYearController.submit(isAgent, isChange, incomeSourceType),
@@ -94,7 +94,7 @@ class ChooseTaxYearController @Inject()(authActions: AuthActions,
           case Right(Some(sessionData)) =>
             form().bindFromRequest.fold(
               formWithError => {
-                Future.successful(BadRequest(chooseTaxYear(
+                Future.successful(BadRequest(chooseTaxYearView(
                   formWithError,
                   isAgent,
                   routes.ChooseTaxYearController.submit(isAgent, isChange, incomeSourceType),
