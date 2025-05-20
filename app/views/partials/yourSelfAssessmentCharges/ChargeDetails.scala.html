@@ -21,7 +21,7 @@
 @import models.financialDetails.LateSubmissionPenalty
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
 @import models.financialDetails.FirstLatePaymentPenalty
-@import views.html.partials.yourSelfAssessmentCharges.LateSubmissionPenaltyOneContent
+@import views.html.partials.yourSelfAssessmentCharges.FirstLatePaymentPenaltyContent
 @import views.html.partials.yourSelfAssessmentCharges.LateSubmissionPenaltyContent
 @import views.html.partials.yourSelfAssessmentCharges.WhatIsPaymentOnAccount
 @import views.html.partials.yourSelfAssessmentCharges.WhatIsABalancingPayment
@@ -36,7 +36,7 @@
     whatIsPaymentOnAccount: WhatIsPaymentOnAccount,
     whatIsABalancingPayment: WhatIsABalancingPayment,
     lateSubmissionPenaltyContent: LateSubmissionPenaltyContent,
-    lateSubmissionPenaltyOneContent: LateSubmissionPenaltyOneContent,
+    firstLatePaymentPenaltyContent: FirstLatePaymentPenaltyContent,
     classTwoNICSContent: ClassTwoNICSContent,
     govukDetails: GovukDetails
 )
@@ -45,7 +45,9 @@
     chargeItem: ChargeItem,
     taxYearFrom: String,
     taxYearTo: String,
-    isAgent: Boolean
+    isAgent: Boolean,
+    LSPUrl: String,
+    LPPUrl: String
 )(
     implicit request: Request[_],
     messages: Messages
@@ -55,8 +57,8 @@
     case (BalancingCharge, Some(Nics2)) => classTwoNICSContent(taxYearFrom, taxYearTo, isAgent)
     case (BalancingCharge, None)        => whatIsABalancingPayment()
     case (PoaOneDebit | PoaTwoDebit, _) => whatIsPaymentOnAccount()
-    case (LateSubmissionPenalty, _)     => lateSubmissionPenaltyContent()
-    case (FirstLatePaymentPenalty, _)   => lateSubmissionPenaltyOneContent()
+    case (LateSubmissionPenalty, _)     => lateSubmissionPenaltyContent(LSPUrl)
+    case (FirstLatePaymentPenalty, _)   => firstLatePaymentPenaltyContent(LPPUrl)
     case _                              =>
 }}
 

@@ -62,7 +62,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ControllerISpecHelper {
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
                 await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"ADD-${incomeSourceType.key}",
-                  addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("1234"), incomeSourceAdded = Some(true), journeyIsComplete = None)))))
+                  addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("1234"), incomeSourceAdded = Some(true), incomeSourceCreatedJourneyComplete = None)))))
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 

@@ -165,7 +165,7 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
     }
   }
 
-  "JourneyCheckerClaimToAdjust.withSessionData when not on the initial page" should {
+  "JourneyCheckerClaimToAdjust.withSessionDataAndOldIncomeSourceFS when not on the initial page" should {
     "redirect to the You Cannot Go Back error page" when {
       "showCannotGoBackErrorPage returns true" in {
         setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
@@ -227,7 +227,7 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
       }
     }
   }
-  "JourneyCheckerClaimToAdjust.withSessionData when on the initial page" should {
+  "JourneyCheckerClaimToAdjust.withSessionDataAndOldIncomeSourceFS when on the initial page" should {
     "run the code block and go to the what you need to know page" when {
       "getMongo returns a right containing PoA session data but the journeyComplete flag is set to false" in {
         setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))

@@ -180,7 +180,7 @@ object IncomeSourceDetailsTestConstants {
             incomeSourcesAccountingMethod = Some("cash"),
             reportingMethodTaxYear1 = None,
             reportingMethodTaxYear2 = None,
-            journeyIsComplete = None
+            incomeSourceCreatedJourneyComplete = None
           ))
         )
       case "MANAGE" =>
@@ -213,7 +213,7 @@ object IncomeSourceDetailsTestConstants {
   val completedUIJourneySessionData: IncomeSourceJourneyType => UIJourneySessionData = (journeyType: IncomeSourceJourneyType) => {
     journeyType.operation.operationType match {
       case "ADD" => UIJourneySessionData(testSessionId, journeyType.toString,
-        addIncomeSourceData = Some(notCompletedUIJourneySessionData(journeyType).addIncomeSourceData.get.copy(journeyIsComplete = Some(true))))
+        addIncomeSourceData = Some(notCompletedUIJourneySessionData(journeyType).addIncomeSourceData.get.copy(incomeSourceCreatedJourneyComplete = Some(true))))
       case "MANAGE" => UIJourneySessionData(testSessionId, journeyType.toString,
         manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId),
           taxYear = Some(2023), reportingMethod = Some("annual"), journeyIsComplete = Some(true))))

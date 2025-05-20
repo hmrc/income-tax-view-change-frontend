@@ -57,7 +57,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
            incomeSourceType: IncomeSourceType,
            id: Option[String]): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), InitialPage) { _ =>
+      withSessionDataAndOldIncomeSourceFS(IncomeSourceJourneyType(Manage, incomeSourceType), InitialPage) { _ =>
         incomeSourceType match {
           case SelfEmployment => id match {
             case Some(realId) => handleSoleTrader(realId, isAgent)

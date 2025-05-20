@@ -30,6 +30,7 @@ import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
+import scala.language.postfixOps
 
 class CeaseIncomeSourceEndDateFormProviderSpec extends AnyWordSpec with Matchers with TestSupport {
   val mockDateService: DateService = app.injector.instanceOf[DateService]
@@ -60,7 +61,7 @@ class CeaseIncomeSourceEndDateFormProviderSpec extends AnyWordSpec with Matchers
   }
 
   def setupBindFutureDateTest(incomeSourceType: IncomeSourceType): Unit = {
-    val form: Form[LocalDate] = ceaseEndDateForm(incomeSourceType, setupTestId(incomeSourceType), newIncomeSourceJourney = false)(dateService = mockDateService, user = testUser)
+    val form: Form[LocalDate] = ceaseEndDateForm(incomeSourceType, setupTestId(incomeSourceType), newIncomeSourceJourney = false)(dateService = mockDateService, user = testUser, messages = messages)
     val futureYear = dateService.getCurrentTaxYearEnd + 1
     val formData = Map("value.day" -> "20", "value.month" -> "12", "value.year" -> s"$futureYear")
     val completedForm = form.bind(formData)
@@ -72,7 +73,8 @@ class CeaseIncomeSourceEndDateFormProviderSpec extends AnyWordSpec with Matchers
   }
 
   def setupBindBeforeStartDateTest(incomeSourceType: IncomeSourceType): Unit = {
-    val form: Form[LocalDate] = ceaseEndDateForm(incomeSourceType, setupTestId(incomeSourceType), false)(dateService = mockDateService, user = testUser)
+    val form: Form[LocalDate] = ceaseEndDateForm(incomeSourceType, setupTestId(incomeSourceType), false)(dateService = mockDateService, user = testUser, messages = messages)
+
     val formData = Map("value.day" -> "27", "value.month" -> "8", "value.year" -> "2016")
     val completedForm = form.bind(formData)
 
@@ -83,7 +85,7 @@ class CeaseIncomeSourceEndDateFormProviderSpec extends AnyWordSpec with Matchers
   }
 
   def setupBindBeforeContextualTaxYearTest(incomeSourceType: IncomeSourceType): Unit = {
-    val form: Form[LocalDate] = ceaseEndDateForm(incomeSourceType, setupTestId(incomeSourceType), false)(dateService = mockDateService, user = testUser4)
+    val form: Form[LocalDate] = ceaseEndDateForm(incomeSourceType, setupTestId(incomeSourceType), false)(dateService = mockDateService, user = testUser4, messages = messages)
     val formData = Map("value.day" -> "4", "value.month" -> "4", "value.year" -> "2023")
     val completedForm = form.bind(formData)
 
@@ -95,7 +97,7 @@ class CeaseIncomeSourceEndDateFormProviderSpec extends AnyWordSpec with Matchers
 
   "IncomeSourceEndDate form" should {
     "bind with a valid date" in {
-      val form: Form[LocalDate] = ceaseEndDateForm(SelfEmployment, Some(testSelfEmploymentId), false)(dateService = mockDateService, user = testUser)
+      val form: Form[LocalDate] = ceaseEndDateForm(SelfEmployment, Some(testSelfEmploymentId), false)(dateService = mockDateService, user = testUser, messages = messages)
       val formData = LocalDate.of(2022, 12, 20)
       val completedForm = form.fill(formData)
 
@@ -105,7 +107,7 @@ class CeaseIncomeSourceEndDateFormProviderSpec extends AnyWordSpec with Matchers
       completedForm.errors shouldBe List.empty
     }
     "bind with an invalid date field - Self employment" in {
-      val form: Form[LocalDate] = ceaseEndDateForm(SelfEmployment, Some(testSelfEmploymentId), false)(dateService = mockDateService, user = testUser)
+      val form: Form[LocalDate] = ceaseEndDateForm(SelfEmployment, Some(testSelfEmploymentId), false)(dateService = mockDateService, user = testUser, messages = messages)
       val formData = Map("value.day" -> "yo", "value.month" -> "yo", "value.year" -> "supp")
       val completedForm = form.bind(formData)
 
@@ -115,7 +117,7 @@ class CeaseIncomeSourceEndDateFormProviderSpec extends AnyWordSpec with Matchers
       completedForm.errors shouldBe List(FormError("value", List("incomeSources.cease.endDate.selfEmployment.error.invalid"), List()))
     }
     "bind with an invalid date field - Foreign property" in {
-      val form: Form[LocalDate] = ceaseEndDateForm(ForeignProperty, Some(testSelfEmploymentId), false)(dateService = mockDateService, user = testUser)
+      val form: Form[LocalDate] = ceaseEndDateForm(ForeignProperty, Some(testSelfEmploymentId), false)(dateService = mockDateService, user = testUser, messages = messages)
       val formData = Map("value.day" -> "yo", "value.month" -> "yo", "value.year" -> "supp")
       val completedForm = form.bind(formData)
 
@@ -125,7 +127,7 @@ class CeaseIncomeSourceEndDateFormProviderSpec extends AnyWordSpec with Matchers
       completedForm.errors shouldBe List(FormError("value", List("incomeSources.cease.endDate.foreignProperty.error.invalid"), List()))
     }
     "bind with an invalid date field - UK Property" in {
-      val form: Form[LocalDate] = ceaseEndDateForm(UkProperty, Some(testSelfEmploymentId), false)(dateService = mockDateService, user = testUser)
+      val form: Form[LocalDate] = ceaseEndDateForm(UkProperty, Some(testSelfEmploymentId), false)(dateService = mockDateService, user = testUser, messages = messages)
       val formData = Map("value.day" -> "yo", "value.month" -> "yo", "value.year" -> "supp")
       val completedForm = form.bind(formData)
 
@@ -136,7 +138,7 @@ class CeaseIncomeSourceEndDateFormProviderSpec extends AnyWordSpec with Matchers
     }
     "bind with an invalid date field with new journey FS enabled" in {
       enable(IncomeSourcesNewJourney)
-      val form: Form[LocalDate] = ceaseEndDateForm(UkProperty, Some(testSelfEmploymentId), true)(dateService = mockDateService, user = testUser)
+      val form: Form[LocalDate] = ceaseEndDateForm(UkProperty, Some(testSelfEmploymentId), true)(dateService = mockDateService, user = testUser, messages = messages)
       val formData = Map("value.day" -> "yo", "value.month" -> "yo", "value.year" -> "supp")
       val completedForm = form.bind(formData)
 
@@ -173,7 +175,7 @@ class CeaseIncomeSourceEndDateFormProviderSpec extends AnyWordSpec with Matchers
       setupBindBeforeContextualTaxYearTest(ForeignProperty)
     }
     "give the correct error when binding with a date both before business start date and the 6th of April 2015 - Self Employment" in {
-      val form: Form[LocalDate] = ceaseEndDateForm(SelfEmployment, setupTestId(SelfEmployment), false)(dateService = mockDateService, user = testUser2)
+      val form: Form[LocalDate] = ceaseEndDateForm(SelfEmployment, setupTestId(SelfEmployment), false)(dateService = mockDateService, user = testUser2, messages = messages)
       val formData = Map("value.day" -> "14", "value.month" -> "10", "value.year" -> "2012")
       val completedForm = form.bind(formData)
 
@@ -185,7 +187,7 @@ class CeaseIncomeSourceEndDateFormProviderSpec extends AnyWordSpec with Matchers
       )
     }
     "give the correct error when binding with a date before the 6th of April 2015 - Self Employment" in {
-      val form: Form[LocalDate] = ceaseEndDateForm(SelfEmployment, setupTestId(SelfEmployment), false)(dateService = mockDateService, user = testUser2)
+      val form: Form[LocalDate] = ceaseEndDateForm(SelfEmployment, setupTestId(SelfEmployment), false)(dateService = mockDateService, user = testUser2, messages = messages)
       val formData = Map("value.day" -> "27", "value.month" -> "08", "value.year" -> "2014")
       val completedForm = form.bind(formData)
 
@@ -197,7 +199,7 @@ class CeaseIncomeSourceEndDateFormProviderSpec extends AnyWordSpec with Matchers
       )
     }
     "bind with a date missing day field" in {
-      val form: Form[LocalDate] = ceaseEndDateForm(SelfEmployment, Some(testSelfEmploymentId), false)(dateService = mockDateService, user = testUser)
+      val form: Form[LocalDate] = ceaseEndDateForm(SelfEmployment, Some(testSelfEmploymentId), false)(dateService = mockDateService, user = testUser, messages = messages)
       val formData = Map("value.day" -> "", "value.month" -> "12", "value.year" -> "2016")
       val completedForm = form.bind(formData)
 
@@ -207,7 +209,7 @@ class CeaseIncomeSourceEndDateFormProviderSpec extends AnyWordSpec with Matchers
       completedForm.errors shouldBe List(FormError("value", List("dateForm.error.required"), List("day")))
     }
     "bind with a date missing month field" in {
-      val form: Form[LocalDate] = ceaseEndDateForm(SelfEmployment, Some(testSelfEmploymentId), false)(dateService = mockDateService, user = testUser)
+      val form: Form[LocalDate] = ceaseEndDateForm(SelfEmployment, Some(testSelfEmploymentId), false)(dateService = mockDateService, user = testUser, messages = messages)
       val formData = Map("value.day" -> "20", "value.month" -> "", "value.year" -> "2016")
       val completedForm = form.bind(formData)
 
@@ -217,7 +219,7 @@ class CeaseIncomeSourceEndDateFormProviderSpec extends AnyWordSpec with Matchers
       completedForm.errors shouldBe List(FormError("value", List("dateForm.error.required"), List("month")))
     }
     "bind with a date missing year field" in {
-      val form: Form[LocalDate] = ceaseEndDateForm(SelfEmployment, Some(testSelfEmploymentId), false)(dateService = mockDateService, user = testUser)
+      val form: Form[LocalDate] = ceaseEndDateForm(SelfEmployment, Some(testSelfEmploymentId), false)(dateService = mockDateService, user = testUser, messages = messages)
       val formData = Map("value.day" -> "20", "value.month" -> "12", "value.year" -> "")
       val completedForm = form.bind(formData)
 
@@ -227,7 +229,7 @@ class CeaseIncomeSourceEndDateFormProviderSpec extends AnyWordSpec with Matchers
       completedForm.errors shouldBe List(FormError("value", List("dateForm.error.required"), List("year")))
     }
     "bind with a date missing day and month fields" in {
-      val form: Form[LocalDate] = ceaseEndDateForm(SelfEmployment, Some(testSelfEmploymentId), false)(dateService = mockDateService, user = testUser)
+      val form: Form[LocalDate] = ceaseEndDateForm(SelfEmployment, Some(testSelfEmploymentId), false)(dateService = mockDateService, user = testUser, messages = messages)
       val formData = Map("value.day" -> "", "value.month" -> "", "value.year" -> "2016")
       val completedForm = form.bind(formData)
 
@@ -237,7 +239,7 @@ class CeaseIncomeSourceEndDateFormProviderSpec extends AnyWordSpec with Matchers
       completedForm.errors shouldBe List(FormError("value", List("dateForm.error.required.two"), List("day", "month")))
     }
     "bind with a date missing day and year fields" in {
-      val form: Form[LocalDate] = ceaseEndDateForm(SelfEmployment, Some(testSelfEmploymentId), false)(dateService = mockDateService, user = testUser)
+      val form: Form[LocalDate] = ceaseEndDateForm(SelfEmployment, Some(testSelfEmploymentId), false)(dateService = mockDateService, user = testUser, messages = messages)
       val formData = Map("value.day" -> "", "value.month" -> "12", "value.year" -> "")
       val completedForm = form.bind(formData)
 
@@ -247,7 +249,7 @@ class CeaseIncomeSourceEndDateFormProviderSpec extends AnyWordSpec with Matchers
       completedForm.errors shouldBe List(FormError("value", List("dateForm.error.required.two"), List("day", "year")))
     }
     "bind with a date missing month and year fields" in {
-      val form: Form[LocalDate] = ceaseEndDateForm(SelfEmployment, Some(testSelfEmploymentId), false)(dateService = mockDateService, user = testUser)
+      val form: Form[LocalDate] = ceaseEndDateForm(SelfEmployment, Some(testSelfEmploymentId), false)(dateService = mockDateService, user = testUser, messages = messages)
       val formData = Map("value.day" -> "20", "value.month" -> "", "value.year" -> "")
       val completedForm = form.bind(formData)
 
@@ -257,7 +259,7 @@ class CeaseIncomeSourceEndDateFormProviderSpec extends AnyWordSpec with Matchers
       completedForm.errors shouldBe List(FormError("value", List("dateForm.error.required.two"), List("month", "year")))
     }
     "bind with a date missing day, month and year fields" in {
-      val form: Form[LocalDate] = ceaseEndDateForm(SelfEmployment, Some(testSelfEmploymentId), false)(dateService = mockDateService, user = testUser)
+      val form: Form[LocalDate] = ceaseEndDateForm(SelfEmployment, Some(testSelfEmploymentId), false)(dateService = mockDateService, user = testUser, messages = messages)
       val formData = Map("value.day" -> "", "value.month" -> "", "value.year" -> "")
       val completedForm = form.bind(formData)
 
@@ -268,4 +270,3 @@ class CeaseIncomeSourceEndDateFormProviderSpec extends AnyWordSpec with Matchers
     }
   }
 }
-

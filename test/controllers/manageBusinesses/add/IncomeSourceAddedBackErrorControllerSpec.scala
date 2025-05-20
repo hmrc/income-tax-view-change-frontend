@@ -21,7 +21,7 @@ import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesFs
+import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
 import play.api
@@ -65,7 +65,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends MockAuthActions with Mock
         val action = if (mtdRole == MTDIndividual) testIncomeSourceAddedBackErrorController.show(incomeSourceType) else testIncomeSourceAddedBackErrorController.showAgent(incomeSourceType)
         s"the user is authenticated as a $mtdRole" should {
           s"render the you cannot go back error page" in {
-            enable(IncomeSourcesFs)
+            enable(IncomeSourcesNewJourney)
             setupMockSuccess(mtdRole)
 
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -90,7 +90,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends MockAuthActions with Mock
               val homeUrl = if (mtdRole == MTDIndividual) {
                 controllers.routes.HomeController.show().url
               } else {
-                controllers.routes.HomeController.showAgent().url
+                controllers.routes.HomeController.showAgent.url
               }
               redirectLocation(result) shouldBe Some(homeUrl)
             }
@@ -105,7 +105,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends MockAuthActions with Mock
         s"the user is authenticated as a $mtdRole" should {
           s"return ${Status.SEE_OTHER} and redirect to $incomeSourceType reporting method page" in {
             disableAllSwitches()
-            enable(IncomeSourcesFs)
+            enable(IncomeSourcesNewJourney)
 
             mockNoIncomeSources()
             setupMockSuccess(mtdRole)
@@ -115,7 +115,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends MockAuthActions with Mock
             val result = action(fakeRequest)
 
             status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.show(mtdRole != MTDIndividual, incomeSourceType).url)
+            redirectLocation(result) shouldBe Some(controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.show(mtdRole != MTDIndividual, false, incomeSourceType).url)
           }
         }
         testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)

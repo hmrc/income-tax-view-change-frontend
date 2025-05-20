@@ -408,7 +408,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
           "has a heading" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesEnabled = true, incomeSourcesNewJourneyEnabled = true) {
             getElementById("income-sources-tile").map(_.select("h2").first().text()) shouldBe Some("Your businesses")
           }
-          "has a link to AddIncomeSourceController.show()" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesEnabled = true, incomeSourcesNewJourneyEnabled = true) {
+          "has a link to ManageYourBusinessController.show()" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesEnabled = true, incomeSourcesNewJourneyEnabled = true) {
             getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some("Add, manage or cease a business or income source")
             getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url)
           }
@@ -422,7 +422,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
           }
           "has a link to Self Assessment Penalties and Appeals page" in new TestSetup(penaltiesAndAppealsIsEnabled = true) {
             getElementById("sa-penalties-and-appeals-link").map(_.text()) shouldBe Some("Check Self Assessment penalties and appeals")
-            getElementById("sa-penalties-and-appeals-link").map(_.attr("href")) shouldBe Some("")
+            getElementById("sa-penalties-and-appeals-link").map(_.attr("href")) shouldBe Some("http://localhost:9185/penalties/income-tax")
           }
           "has a two-points penalty tag" in new TestSetup(submissionFrequency = "Annual", penaltyPoints = 3) {
             getElementById("penalty-points-tag").map(_.text()) shouldBe Some("2 Penalty points")

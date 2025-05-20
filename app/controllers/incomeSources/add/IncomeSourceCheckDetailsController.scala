@@ -74,7 +74,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
   private def handleRequest(sources: IncomeSourceDetailsModel,
                             isAgent: Boolean,
                             incomeSourceType: IncomeSourceType)
-                           (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
+                           (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = withSessionDataAndOldIncomeSourceFS(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
     val backUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent).url
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType) else {
       controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.submit(incomeSourceType)
@@ -155,63 +155,62 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     }
   }
 
-
-def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
-  implicit user =>
-    handleSubmit(isAgent = false, incomeSourceType)
-}
-
-def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
-  implicit mtdItUser =>
-    handleSubmit(isAgent = true, incomeSourceType)
-}
-
-private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
-  withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
-
-    val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
-      routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url
-
-    val viewModel = getViewModel(incomeSourceType, sessionData)
-
-    viewModel match {
-      case Some(viewModel) =>
-        businessDetailsService.createRequest(viewModel) flatMap {
-          case Right(CreateIncomeSourceResponse(id)) =>
-            auditingService.extendedAudit(
-              CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id)))
-            )
-            sessionService.setMongoData(
-              sessionData.copy(
-                addIncomeSourceData =
-                  sessionData.addIncomeSourceData.map(
-                    _.copy(
-                      incomeSourceId = Some(id)
-                    )
-                  )
-              )
-            ) flatMap {
-              case true => Future.successful(Redirect(redirectUrl(isAgent, incomeSourceType)))
-              case false => Future(Redirect(errorRedirectUrl(isAgent, incomeSourceType)))
-            }
-          case Left(ex) =>
-            auditingService.extendedAudit(
-              CreateIncomeSourceAuditModel(incomeSourceType, viewModel, Some(enums.FailureCategory.ApiFailure), Some(ex.getMessage), None)
-            )
-            Future(Redirect(errorRedirectUrl(isAgent, incomeSourceType)))
-        }
-      case None =>
-        val agentPrefix = if (isAgent) "[Agent]" else ""
-        Logger("application").error(agentPrefix +
-          s"Unable to construct view model for $incomeSourceType")
-        Future.successful {
-          Redirect(errorRedirectUrl(isAgent, incomeSourceType))
-        }
-    }
+  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
+    implicit user =>
+      handleSubmit(isAgent = false, incomeSourceType)
   }
-}.recover {
-  case ex: Exception =>
-    Logger("application").error(s"${ex.getMessage}")
-    Redirect(errorRedirectUrl(isAgent, incomeSourceType))
-}
+
+  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+    implicit mtdItUser =>
+      handleSubmit(isAgent = true, incomeSourceType)
+  }
+
+  private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
+    withSessionDataAndOldIncomeSourceFS(IncomeSourceJourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
+
+      val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
+        routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url
+
+      val viewModel = getViewModel(incomeSourceType, sessionData)
+
+      viewModel match {
+        case Some(viewModel) =>
+          businessDetailsService.createRequest(viewModel) flatMap {
+            case Right(CreateIncomeSourceResponse(id)) =>
+              auditingService.extendedAudit(
+                CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id)))
+              )
+              sessionService.setMongoData(
+                sessionData.copy(
+                  addIncomeSourceData =
+                    sessionData.addIncomeSourceData.map(
+                      _.copy(
+                        incomeSourceId = Some(id)
+                      )
+                    )
+                )
+              ) flatMap {
+                case true => Future.successful(Redirect(redirectUrl(isAgent, incomeSourceType)))
+                case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
+              }
+            case Left(ex) =>
+              auditingService.extendedAudit(
+                CreateIncomeSourceAuditModel(incomeSourceType, viewModel, Some(enums.FailureCategory.ApiFailure), Some(ex.getMessage), None)
+              )
+              Future.failed(ex)
+          }
+        case None =>
+          val agentPrefix = if (isAgent) "[Agent]" else ""
+          Logger("application").error(agentPrefix +
+            s"Unable to construct view model for $incomeSourceType")
+          Future.successful {
+            Redirect(errorRedirectUrl(isAgent, incomeSourceType))
+          }
+      }
+    }
+  }.recover {
+    case ex: Exception =>
+      Logger("application").error(s"${ex.getMessage}")
+      Redirect(errorRedirectUrl(isAgent, incomeSourceType))
+  }
 }

@@ -76,36 +76,37 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
   private def handleRequest(sources: IncomeSourceDetailsModel,
                             isAgent: Boolean,
                             incomeSourceType: IncomeSourceType)
-                           (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
-    val backUrl: String = controllers.manageBusinesses.add.routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent).url
-    val postAction: Call = if (isAgent) controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType) else {
-      controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.submit(incomeSourceType)
-    }
-    getViewModel(incomeSourceType, sessionData)(user) match {
-      case Some(viewModel) =>
-        Future.successful {
-          Ok(checkDetailsView(
-            viewModel,
-            postAction = postAction,
-            isAgent,
-            backUrl = backUrl,
-            displayAccountingMethod = isEnabled(AccountingMethodJourney)
-          ))
-        }
-      case None =>
+                           (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] =
+    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
+      val backUrl: String = controllers.manageBusinesses.add.routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent).url
+      val postAction: Call = if (isAgent) controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType) else {
+        controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.submit(incomeSourceType)
+      }
+      getViewModel(incomeSourceType, sessionData)(user) match {
+        case Some(viewModel) =>
+          Future.successful {
+            Ok(checkDetailsView(
+              viewModel,
+              postAction = postAction,
+              isAgent,
+              backUrl = backUrl,
+              displayAccountingMethod = isEnabled(AccountingMethodJourney)
+            ))
+          }
+        case None =>
+          val agentPrefix = if (isAgent) "[Agent]" else ""
+          Logger("application").error(agentPrefix +
+            s"Unable to construct view model for $incomeSourceType")
+          Future.successful {
+            errorHandler.showInternalServerError()
+          }
+      }
+    }.recover {
+      case ex: Throwable =>
         val agentPrefix = if (isAgent) "[Agent]" else ""
         Logger("application").error(agentPrefix +
-          s"Unable to construct view model for $incomeSourceType")
-        Future.successful {
-          errorHandler.showInternalServerError()
-        }
-    }
-  }.recover {
-    case ex: Throwable =>
-      val agentPrefix = if (isAgent) "[Agent]" else ""
-      Logger("application").error(agentPrefix +
-        s"Unexpected exception ${ex.getMessage} - ${ex.getCause}")
-      errorHandler.showInternalServerError()
+          s"Unexpected exception ${ex.getMessage} - ${ex.getCause}")
+        errorHandler.showInternalServerError()
   }
 
   private def getViewModel(incomeSourceType: IncomeSourceType, sessionData: UIJourneySessionData)
@@ -168,13 +169,13 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
   }
 
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
-    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
+    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
 
       val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) => {
         if (isEnabled(IncomeSourcesNewJourney)) {
-          controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.show(isAgent, incomeSourceType).url
+          controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.show(isAgent, isChange = false, incomeSourceType).url
         } else {
-          if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
+          if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
         }
       }
 

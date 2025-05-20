@@ -81,7 +81,7 @@ class DeclareIncomeSourceCeasedController @Inject()(val authActions: AuthActions
 
   def handleRequest(id: Option[String], isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
-    withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), journeyState = InitialPage) { _ =>
+    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Cease, incomeSourceType), journeyState = InitialPage) { _ =>
 
       (incomeSourceType, id, getBusinessName(user, id)) match {
         case (SelfEmployment, None, _) =>
@@ -109,22 +109,22 @@ class DeclareIncomeSourceCeasedController @Inject()(val authActions: AuthActions
     }
 
   def handleSubmitRequest(id: Option[String], isAgent: Boolean, mode: Mode, incomeSourceType: IncomeSourceType)
-                         (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
-
-    sessionService.setMongoKey(
-        key = CeaseIncomeSourceData.ceaseIncomeSourceDeclare,
-        value = "true",
-        incomeSources = IncomeSourceJourneyType(Cease, incomeSourceType)
-      )
-      .flatMap {
-        case Right(_) => Future.successful(Redirect(redirectAction(id, isAgent, mode, incomeSourceType)))
-        case Left(exception) => Future.failed(exception)
-      }
-  } recover {
-    case ex: Exception =>
-      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
-      showInternalServerError()
-  }
+                         (implicit user: MtdItUser[_]): Future[Result] =
+    withNewIncomeSourcesFS {
+      sessionService.setMongoKey(
+          key = CeaseIncomeSourceData.ceaseIncomeSourceDeclare,
+          value = "true",
+          incomeSources = IncomeSourceJourneyType(Cease, incomeSourceType)
+        )
+        .flatMap {
+          case Right(_) => Future.successful(Redirect(redirectAction(id, isAgent, mode, incomeSourceType)))
+          case Left(exception) => Future.failed(exception)
+        }
+    } recover {
+      case ex: Exception =>
+        Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+        showInternalServerError()
+    }
 
   private val postAction: (Option[String], Boolean, IncomeSourceType) => Call = (id, isAgent, incomeSourceType) =>
     if (isAgent) routes.DeclareIncomeSourceCeasedController.submitAgent(id, incomeSourceType)

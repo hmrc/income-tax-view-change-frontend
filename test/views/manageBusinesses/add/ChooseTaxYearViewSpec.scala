@@ -18,6 +18,7 @@ package views.manageBusinesses.add
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.manageBusinesses.add.ChooseTaxYearForm
+import forms.models.ChooseTaxYearFormModel
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -30,15 +31,18 @@ import views.html.manageBusinesses.add.ChooseTaxYear
 class ChooseTaxYearViewSpec extends TestSupport {
 
   val view: ChooseTaxYear = app.injector.instanceOf[ChooseTaxYear]
+  val chooseTaxYearForm: ChooseTaxYearForm = app.injector.instanceOf[ChooseTaxYearForm]
 
-  class Setup(form: Form[ChooseTaxYearForm] = ChooseTaxYearForm(), incomeSourceType: IncomeSourceType) {
+  class Setup(form: Form[ChooseTaxYearFormModel] = chooseTaxYearForm(), incomeSourceType: IncomeSourceType) {
     val subHeadingText: String = incomeSourceType match {
       case SelfEmployment => "Sole trader"
       case UkProperty => "UK property"
       case ForeignProperty => "Foreign property"
     }
-    val postAction: Call = controllers.manageBusinesses.add.routes.ChooseTaxYearController.submit(false, incomeSourceType)
-    val pageDocument: Document = Jsoup.parse(contentAsString(view(form, isAgent = false, postAction, TaxYear(2023, 2024), TaxYear(2024, 2025), incomeSourceType)))
+    //TODO: Defaulting to false but need to add tests for isChange true
+    val postAction: Call = controllers.manageBusinesses.add.routes.ChooseTaxYearController.submit(false, false, incomeSourceType)
+    val pageDocument: Document = Jsoup.parse(contentAsString(view(form, isAgent = false, postAction, Some(TaxYear(2023, 2024)),
+      Some(TaxYear(2024, 2025)), incomeSourceType)))
   }
 
   val incomeSourceTypes: Seq[IncomeSourceType] = List(SelfEmployment, UkProperty, ForeignProperty)
@@ -67,7 +71,7 @@ class ChooseTaxYearViewSpec extends TestSupport {
         pageDocument.getElementById("continue-button").attr("href") shouldBe ""
       }
 
-      "have the correct error summary" in new Setup(ChooseTaxYearForm().bind(Map("Invalid" -> "Invalid")), incomeSourceType) {
+      "have the correct error summary" in new Setup(chooseTaxYearForm().bind(Map("Invalid" -> "Invalid")), incomeSourceType) {
         pageDocument.getElementById("error-summary-title").text() shouldBe "There is a problem"
         pageDocument.getElementById("error-summary-link").text() shouldBe "Select the tax years you want to report quarterly"
         pageDocument.getElementById("error-summary-link").attr("href") shouldBe "#current-year-checkbox"

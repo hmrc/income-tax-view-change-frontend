@@ -1,5 +1,5 @@
-@*
- * Copyright 2023 HM Revenue & Customs
+/*
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,29 +12,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import views.html.components._
+package forms.models
 
-@this(
-        p: p,
-        link: link
-)
+case class YesNo(isYes: Boolean)
 
-@()(
-        implicit request: Request[_],
-        messages: Messages
-)
-
-@getMessage(key: String, args: String*) = @{
-    messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
+object YesNo {
+  val yesAndNoAnswer = "yes-no-answer"
 }
-
-@p(id = Some("first-payment-penalty-p1")) {
-    @getMessage("firstLatePaymentPenalty.p")
-}
-
-@link(
-    link = "/penalties/income-tax",
-    messageKey = "yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link"
-)

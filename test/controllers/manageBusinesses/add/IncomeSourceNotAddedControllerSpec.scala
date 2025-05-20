@@ -19,7 +19,7 @@ package controllers.manageBusinesses.add
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
-import models.admin.IncomeSourcesFs
+import models.admin.IncomeSourcesNewJourney
 import org.jsoup.Jsoup
 import org.mockito.Mockito.mock
 import play.api
@@ -54,8 +54,6 @@ class IncomeSourceNotAddedControllerSpec extends MockAuthActions {
   lazy val agentErrorUrlUK: String = controllers.manageBusinesses.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = UkProperty).url
   lazy val errorUrlFP: String = controllers.manageBusinesses.add.routes.IncomeSourceNotAddedController.show(incomeSourceType = ForeignProperty).url
   lazy val agentErrorUrlFP: String = controllers.manageBusinesses.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = ForeignProperty).url
-  lazy val addIncomeSource: String = controllers.manageBusinesses.add.routes.AddIncomeSourceController.show().url
-  lazy val addIncomeSourceAgent: String = controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent().url
 
   val incomeSourceTypes: List[IncomeSourceType] = List(SelfEmployment, UkProperty, ForeignProperty)
 
@@ -84,7 +82,7 @@ class IncomeSourceNotAddedControllerSpec extends MockAuthActions {
         s"the user is authenticated as a $mtdRole" should {
           "return 200 and render Income Source Not Added Error Page" when {
             "user is trying to add SE business" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
               mockIncomeSource(incomeSourceType)
 
@@ -100,7 +98,7 @@ class IncomeSourceNotAddedControllerSpec extends MockAuthActions {
 
           "return 303 and show home page" when {
             "when feature switch is disabled" in {
-              disable(IncomeSourcesFs)
+              disable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 

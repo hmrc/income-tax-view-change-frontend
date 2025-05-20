@@ -21,14 +21,14 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.data.validation.{Constraint, Valid}
+import play.api.i18n.Messages
 import services.DateServiceInterface
 
 import java.time.LocalDate
 
 class CeaseIncomeSourceEndDateFormProvider extends Mappings {
 
-  def apply(incomeSourceType: IncomeSourceType, id: Option[String] = None, newIncomeSourceJourney: Boolean)
-           (implicit user: MtdItUser[_], dateService: DateServiceInterface): Form[LocalDate] = {
+  def apply(incomeSourceType: IncomeSourceType, id: Option[String] = None, newIncomeSourceJourney: Boolean)(implicit messages: Messages, user: MtdItUser[_], dateService: DateServiceInterface): Form[LocalDate] = {
 
     val messagePrefix = incomeSourceType.endDateMessagePrefix
     val dateFormPrefix = "dateForm.error"
