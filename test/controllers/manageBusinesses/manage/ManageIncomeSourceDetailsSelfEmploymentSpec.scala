@@ -19,7 +19,7 @@ package controllers.manageBusinesses.manage
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.MTDIndividual
-import models.admin.{DisplayBusinessStartDate, IncomeSourcesNewJourney, OptInOptOutContentUpdateR17}
+import models.admin.{AccountingMethodJourney, DisplayBusinessStartDate, IncomeSourcesNewJourney, OptInOptOutContentUpdateR17}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status
@@ -38,6 +38,7 @@ class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDet
           "the user has a valid id parameter and no latency information" in {
             enable(IncomeSourcesNewJourney)
             enable(DisplayBusinessStartDate)
+            enable(AccountingMethodJourney)
             setupMockSuccess(mtdUserRole)
             setupMockCreateSession(true)
 
@@ -69,6 +70,7 @@ class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDet
           "the user has a valid id parameter, valid latency information and two tax years not crystallised" in {
             enable(IncomeSourcesNewJourney)
             enable(DisplayBusinessStartDate)
+            enable(AccountingMethodJourney)
             setupMockSuccess(mtdUserRole)
             setupMockCreateSession(true)
 
@@ -131,6 +133,7 @@ class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDet
           "the user has a valid id parameter, but non eligable itsa status" in {
             enable(IncomeSourcesNewJourney)
             enable(DisplayBusinessStartDate)
+            enable(AccountingMethodJourney)
             setupMockSuccess(mtdUserRole)
             setupMockCreateSession(true)
 
@@ -168,6 +171,7 @@ class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDet
           "the user has a valid id parameter, latency expired" in {
             enable(IncomeSourcesNewJourney)
             enable(DisplayBusinessStartDate)
+            enable(AccountingMethodJourney)
             setupMockSuccess(mtdUserRole)
             setupMockCreateSession(true)
 
@@ -193,6 +197,33 @@ class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDet
             manageDetailsSummaryValues.get(1).text() shouldBe businessWithLatencyAddress
             manageDetailsSummaryValues.get(5).text() shouldBe standard
           }
+
+          "the user has a valid id parameter and AccountingMethodJourney is disabled" in {
+            enable(IncomeSourcesNewJourney)
+            enable(DisplayBusinessStartDate)
+            disable(AccountingMethodJourney)
+            disable(OptInOptOutContentUpdateR17)
+
+            setupMockSuccess(mtdUserRole)
+            setupMockCreateSession(true)
+
+            setupMockGetCurrentTaxYearEnd(2024)
+            setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, true)
+            mockUkPlusForeignPlusSoleTraderWithLatency()
+            setupMockTaxYearNotCrystallised(2023)
+            setupMockTaxYearNotCrystallised(2024)
+
+            setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment)))))
+            setupMockSetSessionKeyMongo(Right(true))
+
+            val result = action(fakeRequest)
+            status(result) shouldBe Status.OK
+            val document: Document = Jsoup.parse(contentAsString(result))
+
+            val keys = getManageDetailsSummaryKeys(document).eachText()
+            keys should not contain messages("incomeSources.manage.business-manage-details.accounting-method")
+          }
+
 
           "the user has a valid id parameter and OptInOptOutContentUpdateR17 is enabled" in {
             enable(IncomeSourcesNewJourney)

@@ -21,7 +21,7 @@ import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import models.admin.{DisplayBusinessStartDate, OptInOptOutContentUpdateR17}
+import models.admin.{DisplayBusinessStartDate, AccountingMethodJourney, OptInOptOutContentUpdateR17}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.IncomeSourceIdHash.{mkFromQueryString, mkIncomeSourceIdHash}
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
@@ -139,6 +139,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     } yield Ok(view(viewModel = viewModel,
       isAgent = isAgent,
       showStartDate = isEnabled(DisplayBusinessStartDate),
+      showAccountingMethod = isEnabled(AccountingMethodJourney),
       showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
       backUrl = backUrl
     ))
@@ -165,6 +166,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
           viewModel = viewModel,
           isAgent = isAgent,
           showStartDate = isEnabled(DisplayBusinessStartDate),
+          showAccountingMethod = isEnabled(AccountingMethodJourney),
           showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
           backUrl = backUrl
         ))
