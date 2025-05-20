@@ -20,32 +20,30 @@ import forms.manageBusinesses.add.ChooseTaxYearForm
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
+import testUtils.TestSupport
 
-class ChooseTaxYearFormSpec extends AnyWordSpec with Matchers {
+class ChooseTaxYearFormSpec extends AnyWordSpec with Matchers with TestSupport {
 
-  def form(currentYear: String, nextYear: String) = ChooseTaxYearForm().bind(Map(
-    "current-year-checkbox" -> currentYear,
-    "next-year-checkbox" -> nextYear)
-  )
+  val form: ChooseTaxYearForm = app.injector.instanceOf[ChooseTaxYearForm]
 
   "ChooseTaxYearForm" must {
     "return a valid form" when {
       "the current year checkbox is checked" in {
-        val validForm = ChooseTaxYearForm().bind(Map("current-year-checkbox" -> "true"))
+        val validForm = form().bind(Map("current-year-checkbox" -> "true"))
 
         validForm.hasErrors shouldBe false
         validForm.data.get("current-year-checkbox") shouldBe Some("true")
         validForm.data.contains("next-year-checkbox") shouldBe false
       }
       "the next year checkbox is checked" in {
-        val validForm = ChooseTaxYearForm().bind(Map("next-year-checkbox" -> "true"))
+        val validForm = form().bind(Map("next-year-checkbox" -> "true"))
 
         validForm.hasErrors shouldBe false
         validForm.data.get("next-year-checkbox") shouldBe Some("true")
         validForm.data.contains("current-year-checkbox") shouldBe false
       }
       "both checkboxes are checked" in {
-        val validForm = ChooseTaxYearForm().bind(Map(
+        val validForm = form().bind(Map(
           "current-year-checkbox" -> "true",
           "next-year-checkbox" -> "true"
         ))
@@ -57,7 +55,7 @@ class ChooseTaxYearFormSpec extends AnyWordSpec with Matchers {
     }
     "return an error" when {
       "none of the checkboxes are checked/defined" in {
-        val invalidForm = ChooseTaxYearForm().bind(Map(
+        val invalidForm = form().bind(Map(
           "Invalid" -> "Invalid"
         ))
 

@@ -61,7 +61,7 @@ class ViewAllCeasedBusinessesController @Inject()(val viewAllCeasedBusinesses: V
                    (implicit user: MtdItUser[_]): Future[Result] = {
     lazy val errorHandler = if(isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-    withIncomeSourcesFS {
+    withNewIncomeSourcesFS {
       incomeSourceDetailsService.getCeaseIncomeSourceViewModel(sources, isEnabled(DisplayBusinessStartDate)) match {
         case Right(viewModel) =>
           sessionService.deleteSession(Manage).map { _ =>

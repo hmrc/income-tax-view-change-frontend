@@ -19,7 +19,7 @@ package controllers.manageBusinesses.cease
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{DisplayBusinessStartDate, IncomeSourcesFs, NavBarFs}
+import models.admin.{DisplayBusinessStartDate, IncomeSourcesNewJourney, NavBarFs}
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesWithBothPropertiesAndCeasedBusiness}
@@ -52,7 +52,7 @@ class ViewAllCeasedBusinessesControllerISpec extends ControllerISpecHelper {
             "the user has multipleBusinessesWithBothPropertiesAndCeasedBusiness" in {
               stubAuthorised(mtdUserRole)
               disable(NavBarFs)
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               enable(DisplayBusinessStartDate)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
               val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -72,7 +72,7 @@ class ViewAllCeasedBusinessesControllerISpec extends ControllerISpecHelper {
             "DisplayBusinessStartDate FS is disabled" in {
               stubAuthorised(mtdUserRole)
               disable(NavBarFs)
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               disable(DisplayBusinessStartDate)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
               val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -92,7 +92,7 @@ class ViewAllCeasedBusinessesControllerISpec extends ControllerISpecHelper {
             "the user has foreignPropertyAndCeasedBusiness " in {
               stubAuthorised(mtdUserRole)
               disable(NavBarFs)
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               enable(DisplayBusinessStartDate)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
               val result = buildGETMTDClient(path, additionalCookies).futureValue

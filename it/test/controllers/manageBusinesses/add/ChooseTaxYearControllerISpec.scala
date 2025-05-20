@@ -18,15 +18,26 @@ package controllers.manageBusinesses.add
 
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.IncomeSourceCheckDetailsConstants.{testBusinessName, testBusinessStartDate, testBusinessTrade}
+import helpers.WiremockHelper
+import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
+import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.admin.IncomeSourcesNewJourney
-import models.incomeSourceDetails.{IncomeSourceReportingFrequencySourceData, UIJourneySessionData}
+import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData, TaxYear, UIJourneySessionData}
+import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus.Voluntary
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import play.api.libs.json.Json
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository
 import services.{DateService, SessionService}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
+import testConstants.ITSAStatusTestConstants.successITSAStatusResponseJson
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
+
+import java.time.LocalDate
 
 class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
   override val dateService: DateService = app.injector.instanceOf[DateService] //overridden for TYS as implemented with 2023 elsewhere
@@ -52,12 +63,35 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
     }
   }
 
+  val testAddIncomeSourceDataWithStartDate: IncomeSourceType => AddIncomeSourceData = (incomeSourceType: IncomeSourceType) =>
+    if (incomeSourceType.equals(SelfEmployment)) {
+      AddIncomeSourceData(
+        businessName = Some(testBusinessName),
+        businessTrade = Some(testBusinessTrade),
+        dateStarted = Some(testBusinessStartDate),
+        incomeSourceId = Some("ID")
+      )
+    } else {
+      AddIncomeSourceData(
+        businessName = None,
+        businessTrade = None,
+        dateStarted = Some(testBusinessStartDate),
+        incomeSourceId = Some("ID")
+      )
+    }
+
+  def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
+    sessionId = testSessionId,
+    journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
+    addIncomeSourceData = Some(testAddIncomeSourceDataWithStartDate(incomeSourceType)))
+
+
   override def beforeEach(): Unit = {
     super.beforeEach()
     repository.set(UIJourneySessionData(
       testSessionId,
       "IncomeSourceReportingFrequencyJourney",
-      incomeSourceReportingFrequencyData = Some(IncomeSourceReportingFrequencySourceData(false, false)))
+      incomeSourceReportingFrequencyData = Some(IncomeSourceReportingFrequencySourceData(false, false, false, false)))
     )
   }
 
@@ -77,6 +111,8 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
               enable(IncomeSourcesNewJourney)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+              await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
+              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd + 1, ITSAYearStatus(Voluntary, Voluntary, Voluntary))
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -114,21 +150,38 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
         s"a user is a $mtdUserRole" that {
           "is authenticated" should {
             "submit the reporting frequency for the income source" in {
+              val isAgent = !(mtdUserRole == MTDIndividual)
+
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+              await(sessionService.createSession(IncomeSourceJourneyType(Add, incomeSourceType)))
+
+              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
+                addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("incomeSourceId"), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
 
               val result = buildPOSTMTDPostClient(path, additionalCookies, Map("current-year-checkbox" -> Seq("true"), "next-year-checkbox" -> Seq("true"))).futureValue
 
               IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
-                httpStatus(OK)
+                httpStatus(SEE_OTHER),
+                redirectURI(controllers.manageBusinesses.add.routes.IncomeSourceRFCheckDetailsController.show(isAgent, incomeSourceType).url)
               )
             }
 
             "return an error if the form is invalid" in {
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+              val journeyType = incomeSourceType match {
+                case SelfEmployment => "ADD-SE"
+                case UkProperty => "ADD-UK"
+                case ForeignProperty => "ADD-FP"
+              }
+
+              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, journeyType,
+                addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("incomeSourceId"), dateStarted = Some(LocalDate.of(2024, 1, 1)))),
+                incomeSourceReportingFrequencyData = Some(IncomeSourceReportingFrequencySourceData(true, true, false, false)))))
 
               val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map("Invalid" -> Seq("Invalid"))).futureValue
 

@@ -16,7 +16,7 @@
 
 package controllers.manageBusinesses.add
 
-import controllers.incomeSources.add.AddIncomeSourceController
+import controllers.manageBusinesses.add.AddIncomeSourceController
 import enums.{MTDIndividual, MTDSupportingAgent}
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions

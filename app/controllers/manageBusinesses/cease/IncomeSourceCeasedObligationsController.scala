@@ -56,42 +56,52 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
       .flatMap(_.tradingName)
   }
 
+  private def getIncomeSourceType(sessionData: UIJourneySessionData, incomeSourceType: IncomeSourceType)
+                                 (implicit user: MtdItUser[_]): Option[String] = {
+    incomeSourceType match {
+      case SelfEmployment => sessionData.ceaseIncomeSourceData.flatMap(_.incomeSourceId)
+      case UkProperty => user.incomeSources.properties.filter(_.isUkProperty)
+        .map(incomeSource => incomeSource.incomeSourceId).headOption
+      case ForeignProperty => user.incomeSources.properties.filter(_.isForeignProperty)
+        .map(incomeSource => incomeSource.incomeSourceId).headOption
+    }
+  }
+
+  private def getObligationsView(incomeSourceType: IncomeSourceType, incomeSourceId: String,
+                                 endDate: LocalDate, isAgent: Boolean)
+                                (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    val businessName = if (incomeSourceType == SelfEmployment) getBusinessName(IncomeSourceId(incomeSourceId)) else None
+    nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears = false).map {
+      obligationsViewModel =>
+        val incomeSourceCeasedObligationsViewModel = IncomeSourceCeasedObligationsViewModel(obligationsViewModel,
+          incomeSourceType,
+          businessName,
+          endDate,
+          isAgent)(dateService)
+
+        lazy val viewAllBusinessLink =
+          if (isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+          else controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+
+        lazy val viewUpcomingUpdatesLink =
+          if (isAgent) controllers.routes.NextUpdatesController.showAgent.url
+          else controllers.routes.NextUpdatesController.show().url
+
+        Ok(obligationsView(incomeSourceCeasedObligationsViewModel, viewAllBusinessLink, viewUpcomingUpdatesLink))
+    }
+  }
+
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    withIncomeSourcesFS {
-      withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), CannotGoBackPage) { sessionData =>
+    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Cease, incomeSourceType), CannotGoBackPage) { sessionData =>
+      updateMongoCeased(incomeSourceType)
 
-        updateMongoCeased(incomeSourceType)
+      val businessEndDate: Option[LocalDate] = sessionData.ceaseIncomeSourceData.flatMap(_.endDate)
 
-        val incomeSourceId: Option[String] = incomeSourceType match {
-          case SelfEmployment => sessionData.ceaseIncomeSourceData.flatMap(_.incomeSourceId)
-          case UkProperty => user.incomeSources.properties.filter(_.isUkProperty)
-            .map(incomeSource => incomeSource.incomeSourceId).headOption
-          case ForeignProperty => user.incomeSources.properties.filter(_.isForeignProperty)
-            .map(incomeSource => incomeSource.incomeSourceId).headOption
-        }
-
-        val businessEndDate: Option[LocalDate] = sessionData.ceaseIncomeSourceData.flatMap(_.endDate)
-
-        (incomeSourceId, businessEndDate) match {
-          case (Some(incomeSourceId), Some(endDate)) =>
-            val businessName = if (incomeSourceType == SelfEmployment) getBusinessName(IncomeSourceId(incomeSourceId)) else None
-            nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears = false).map {
-              obligationsViewModel =>
-                val incomeSourceCeasedObligationsViewModel = IncomeSourceCeasedObligationsViewModel(obligationsViewModel,
-                  incomeSourceType,
-                  businessName,
-                  endDate,
-                  isAgent)(dateService)
-
-                lazy val viewAllBusinessLink = if (isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url else controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
-                lazy val viewUpcomingUpdatesLink = if (isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url
-
-                Ok(obligationsView(incomeSourceCeasedObligationsViewModel, viewAllBusinessLink, viewUpcomingUpdatesLink))
-            }
-          case (Some(_), None) => Future.failed(new Error(s"cease session data not found for $incomeSourceType"))
-          case (None, Some(_)) => Future.failed(new Error(s"IncomeSourceId not found for $incomeSourceType"))
-          case _ => Future.failed(new Error(s"missing incomeSourceId and endDate for $incomeSourceType"))
-        }
+      (getIncomeSourceType(sessionData, incomeSourceType), businessEndDate) match {
+        case (Some(incomeSourceId), Some(endDate)) => getObligationsView(incomeSourceType, incomeSourceId, endDate, isAgent)
+        case (Some(_), None) => Future.failed(new Error(s"cease session data not found for $incomeSourceType"))
+        case (None, Some(_)) => Future.failed(new Error(s"IncomeSourceId not found for $incomeSourceType"))
+        case _ => Future.failed(new Error(s"missing incomeSourceId and endDate for $incomeSourceType"))
       }
     }
   }.recover {

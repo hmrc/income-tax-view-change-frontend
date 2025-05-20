@@ -2759,4 +2759,15 @@ yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.text.heading            
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p = You have received this penalty because you are late paying your Income Tax.
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link = View how your penalty was calculated.
 
+income-sources.check-details-reporting-frequency.heading                        = Sole trader
+income-sources.check-details-reporting-frequency-uk.heading                     = UK property
+income-sources.check-details-reporting-frequency-fp.heading                     = Foreign property
+income-sources.check-details-reporting-frequency.title                          = Check your answers
+income-sources.check-details-reporting-frequency.change                         = Change
+income-sources.check-details-reporting-frequency.yes                            = Yes
+income-sources.check-details-reporting-frequency.no                             = No
+income-sources.check-details-reporting-frequency.taxYear                        = {0} to {1}
+income-sources.check-details-reporting-frequency.change-rf-key                  = Do you want to change to report quarterly?
+income-sources.check-details-reporting-frequency.change-choose-tax-year-key     = Which tax year do you want to report quarterly for?
+
 

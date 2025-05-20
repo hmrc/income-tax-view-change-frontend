@@ -16,30 +16,34 @@
 
 package forms.manageBusinesses.add
 
+import forms.mappings.Constraints
+import forms.models.ChooseTaxYearFormModel
 import play.api.data.Form
-import play.api.data.Forms.{boolean, mapping}
+import play.api.data.Forms.{boolean, mapping, optional}
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 
-case class ChooseTaxYearForm(currentTaxYear: Boolean, nextTaxYear: Boolean)
+import javax.inject.Inject
 
-object ChooseTaxYearForm {
+class ChooseTaxYearForm @Inject() extends Constraints {
   val chooseTaxYearsCheckbox = "choose-tax-year"
+  val currentYearCheckbox = "current-year-checkbox"
+  val nextYearCheckbox = "next-year-checkbox"
   val noResponseErrorMessageKey: String = "manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description"
 
-  def apply(): Form[ChooseTaxYearForm] = {
-    Form[ChooseTaxYearForm](
+  def apply(): Form[ChooseTaxYearFormModel] = {
+    Form[ChooseTaxYearFormModel](
       mapping(
-        "current-year-checkbox" -> boolean,
-        "next-year-checkbox" -> boolean
-      )(ChooseTaxYearForm.apply)(ChooseTaxYearForm.unapply)
+        currentYearCheckbox -> optional(boolean),
+        nextYearCheckbox -> optional(boolean)
+      )(ChooseTaxYearFormModel.apply)(ChooseTaxYearFormModel.unapply)
         .verifying(atLeastOneChecked)
     )
   }
 
-  private val atLeastOneChecked: Constraint[ChooseTaxYearForm] =
+  private val atLeastOneChecked: Constraint[ChooseTaxYearFormModel] =
     Constraint("constraints.atLeastOneChecked") {
       data =>
-        if (data.currentTaxYear || data.nextTaxYear) {
+        if (data.currentTaxYear.getOrElse(false) || data.nextTaxYear.getOrElse(false)) {
           Valid
         } else {
           Invalid(Seq(ValidationError(noResponseErrorMessageKey)))

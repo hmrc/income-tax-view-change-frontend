@@ -22,7 +22,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.admin.{IncomeSourcesFs, NavBarFs}
+import models.admin.{IncomeSourcesNewJourney, NavBarFs}
 import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData, UIJourneySessionData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -121,7 +121,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
           "is authenticated, with a valid enrolment" should {
             "render the Check your answers page" when {
               "all session parameters are valid" in {
-                enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
@@ -148,7 +148,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
 
             "redirect to home page" when {
               "Income Sources FS is Disabled" in {
-                disable(IncomeSourcesFs)
+                disable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
@@ -181,7 +181,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
           "is authenticated, with a valid enrolment" should {
             s"redirect to manage obligations" when {
               "submitted with valid session data" in {
-                enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
@@ -200,7 +200,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
 
             "redirect to home page" when {
               "Income Sources FS is disabled" in {
-                disable(IncomeSourcesFs)
+                disable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
