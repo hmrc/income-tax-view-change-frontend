@@ -37,7 +37,7 @@
         govukPanel: GovukPanel
 )
 
-@(source: IncomeSourceCeasedObligationsViewModel, viewAllBusinessLink: String, viewUpcomingUpdatesLink: String)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(source: IncomeSourceCeasedObligationsViewModel, viewAllBusinessLink: String, viewUpcomingUpdatesLink: String, reportingObligationsLink: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 
@@ -71,103 +71,64 @@
     )
 }
 
-@whatYouMustDoHeading = {
-        <h2 id="heading-what-you-must-do" class="govuk-label-wrapper">
-            <label class="govuk-label govuk-label--l govuk-!-margin-top-8">
-                @getMessage("heading2.text")
-            </label>
-        </h2>
+@yourRevisedDeadlinesHeading = {
+    <h2 id="your-revised-deadlines" class="govuk-label-wrapper">
+        <label class="govuk-label govuk-label--l govuk-!-margin-top-8">
+            @getMessage("heading2.text")
+        </label>
+    </h2>
 }
 
-@getNextUpdateDateMessage(key: String, startYear: Int) = {
-    @getMessage(key, startYear.toString, (startYear + 1).toString )
+@getInsetWarning = {
+    @govukInsetText(InsetText(content = HtmlContent(getMessage("inset.text")), id=Some("warning-inset-text")))
 }
 
-@getNextFirstQuarterlyUpdate = {
-    @source.firstQuarterlyUpdate.map{ date =>
-        <li>
-            @getNextUpdateDateMessage("next-update.next-quarterly.text", date.inboundCorrespondenceFrom.getYear)
-            <span class="govuk-body govuk-!-font-weight-bold">@date.inboundCorrespondenceDue.toLongDate</span>
-        </li>
+@p1 = {
+    @p(id=Some("even-if-paragraph")) {
+        @getMessage("p1.text.1")
+        @link(id = Some("p1-link"), link = viewUpcomingUpdatesLink, messageKey = getMessage("p1.link"))
+        @getMessage("p1.text.2")
     }
 }
 
-@getNextFinalDeclarationUpdate(listFormat: Boolean = false) = {
-    @source.finalDeclarationUpdate.map{ date =>
-     @if(listFormat) { <li> }
-        @getNextUpdateDateMessage("next-update.final-declaration.text", date.inboundCorrespondenceFrom.getYear)
-        <span class="govuk-body govuk-!-font-weight-bold">@date.inboundCorrespondenceDue.toLongDate</span>
-     @if(listFormat) { </li> } @if(!listFormat ){.} }
+@p2 = {
+    @p(id=Some("view-your-businesses")) {
+        @link(id = Some("p2-link"), link = viewAllBusinessLink, messageKey = getMessage("p2.link"))
+        @getMessage("p2.text")
+    }
 }
 
-@insetMessage(keys: (String, String)) = @{
-        val messagePartOne = keys._1
-        val messagePartTwo = keys._2
-        s"${messages(messagePartOne, source.numberOfOverdueObligationCount)} " +
-        s"${messages(messagePartTwo, source.currentTaxYear.startYear.toString, source.currentTaxYear.endYear.toString)}"
+@remainingBusinessParagraph = {
+    @p(id=Some("remaining-business")) {
+        @getMessage("remaining-business.text.1")
+        @link(id = Some("remaining-business-link"), link = reportingObligationsLink, messageKey = getMessage("remaining-business.link"))
+        @getMessage("remaining-business.text.2")
+    }
 }
 
-@getInsetWarning(keys: (String, String)) = {
-
-    @govukInsetText(InsetText(content = HtmlContent(insetMessage(keys)), id=Some("warning-inset-text")))
+@allBusinessCeasedParagraph = {
+    @p(id=Some("all-business-ceased")) {
+        @getMessage("all-business-ceased.text.1")
+        @link(id = Some("all-business-ceased-link"), link = reportingObligationsLink, messageKey = getMessage("all-business-ceased.link"), outerMessage = ".")
+    }
 }
-
-@showCapitalGainBlock = {
-  @if(source.incomeSourceType != SelfEmployment) {
-    <div id="capital-gain-block" class="govuk-!-margin-bottom-7">
-        @h3WithHtml(
-            Html(s"""
-                |<label class="govuk-label govuk-label--m govuk-!-margin-bottom-4">
-                |   ${getMessage("capital-gain-tax.text")}
-                |</label>""".stripMargin
-            ),
-            classes = "govuk-label-wrapper"
-        )
-        @p(id=Some("capital-gain-content")){
-            @getMessage("capital-gain-tax.info1.text")
-        }
-        <p>@link(id = Some("capital-gain-more-info-link"), link = "https://www.gov.uk/capital-gains-tax/what-you-pay-it-on", messageKey = "business-ceased.obligation.capital-gain-tax.info2.text", target = Some("_blank"))</p>
-    </div>
-  }
-}
-
 
 @mainTemplate(pageTitle = getPageTitle,
     isAgent = source.isAgent,
     btaNavPartial = user.btaNavPartial) {
 
         @confirmationPanel
-        @whatYouMustDoHeading
+        @yourRevisedDeadlinesHeading
+        @getInsetWarning
+        @p1
 
-        @source.insetWarningMessageKey.map(getInsetWarning(_))
+        @if(source.remainingLatentBusiness) {
+            @remainingBusinessParagraph
+        }else if(source.allBusinessesCeased) {
+            @allBusinessCeasedParagraph
+        }
 
-        <div id="next-upcoming-updates" class="govuk-!-margin-bottom-7">
-            @h3WithHtml(
-                Html(s"""
-                    |<label class="govuk-label--m govuk-!-margin-top-4 govuk-heading-m  govuk-!-margin-bottom-4">
-                    |   ${getMessage("next-update.text")}
-                    |</label>""".stripMargin
-                ),
-                optId = Some("next-upcoming-updates-heading"),
-                classes = "govuk-label-wrapper"
-            )
-            @if(source.firstQuarterlyUpdate.isEmpty && source.finalDeclarationUpdate.size == 1){
-                @p(id=Some("final-declaration-update")){
-                    @getNextFinalDeclarationUpdate()
-                }
-            } else {
-                <ul id="quarterly-and-final-update-list" class="govuk-list govuk-list--bullet">
-                    @getNextFirstQuarterlyUpdate
-                    @getNextFinalDeclarationUpdate(listFormat = true)
-                </ul>
-            }
+        @p2
 
-            <p>@link(id = Some("view-all-updates"),link = viewUpcomingUpdatesLink, messageKey = source.viewUpcomingUpdatesLinkMessageKey)</p>
-        </div>
-
-        @showCapitalGainBlock
-
-        <p>@link(id = Some("view-all-business-link"), link = viewAllBusinessLink, messageKey = "business-ceased.obligation.view-all-business-link.text")</p>
-        <br>
-        <br>
+    <br />
 }
