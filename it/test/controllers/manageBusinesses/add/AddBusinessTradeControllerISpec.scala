@@ -35,7 +35,8 @@ import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesRes
 class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
 
   val pageTitleMsgKey: String = messagesAPI("add-trade.heading")
-  val pageHint: String = messagesAPI("add-trade.trade-info-1") + " " + messagesAPI("add-trade.trade-info-2")
+  val pageBody: String = messagesAPI("add-trade.trade-info-1")
+  val pageHint: String = messagesAPI("add-trade.trade-info-2")
   val button: String = messagesAPI("base.continue")
   val testBusinessName: String = "Test Business Name"
   val testBusinessTrade: String = "Test Business Trade"
@@ -75,6 +76,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
               res should have(
                 httpStatus(OK),
                 pageTitle(mtdUserRole, pageTitleMsgKey),
+                elementTextByID("business-trade-description")(pageBody),
                 elementTextByID("business-trade-hint")(pageHint),
                 elementTextByID("continue-button")(button)
               )
