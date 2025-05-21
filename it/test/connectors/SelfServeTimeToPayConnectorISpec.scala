@@ -28,7 +28,7 @@ class SelfServeTimeToPayConnectorISpec extends AnyWordSpec with ComponentSpecBas
   lazy val connector: SelfServeTimeToPayConnector = app.injector.instanceOf[SelfServeTimeToPayConnector]
 
   "SelfServeTimeToPayConnector" when {
-    ".startSelfTimeToPayJourney()" when {
+    ".startSelfServeTimeToPayJourney()" when {
       "CREATED - 201" should {
         "return a successful response with valid json" in {
 
