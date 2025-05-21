@@ -191,7 +191,8 @@ class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDet
           }
 
           "the user has a valid id parameter and AccountingMethodJourney is disabled" in {
-            enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney)
+            enable(IncomeSourcesNewJourney, DisplayBusinessStartDate)
+            disable(AccountingMethodJourney)
             disable(OptInOptOutContentUpdateR17)
 
             setupMockSuccess(mtdUserRole)
