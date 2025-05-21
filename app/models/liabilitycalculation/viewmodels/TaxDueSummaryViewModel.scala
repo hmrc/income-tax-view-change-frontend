@@ -59,7 +59,8 @@ case class TaxDueSummaryViewModel(
                                    totalAnnuityPaymentsTaxCharged: Option[BigDecimal] = None,
                                    totalRoyaltyPaymentsTaxCharged: Option[BigDecimal] = None,
                                    giftAidTaxChargeWhereBasicRateDiffers: Option[BigDecimal] = None,
-                                   transitionProfitRow: Option[TransitionProfitRow] = None
+                                   transitionProfitRow: Option[TransitionProfitRow] = None,
+                                   finalDeclarationOrTaxReturnIsSubmitted: Boolean = false
                                  ) {
 
   def getRateHeaderKey: String = {
