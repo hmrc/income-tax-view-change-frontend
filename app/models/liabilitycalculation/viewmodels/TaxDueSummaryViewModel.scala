@@ -96,7 +96,7 @@ case class TaxDueSummaryViewModel(
 
 object TaxDueSummaryViewModel {
 
-  def apply(calcResponse: LiabilityCalculationResponse): TaxDueSummaryViewModel = {
+  def apply(calcResponse: LiabilityCalculationResponse, obligations: ObligationsModel): TaxDueSummaryViewModel = {
     calcResponse.calculation match {
       case Some(calc) => TaxDueSummaryViewModel(
         taxRegime = calcResponse.inputs.personalInformation.taxRegime,
