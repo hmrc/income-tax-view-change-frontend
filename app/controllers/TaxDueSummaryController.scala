@@ -47,6 +47,7 @@ class TaxDueSummaryController @Inject()(val authActions: AuthActions,
                                         val calculationService: CalculationService,
                                         val itvcErrorHandler: ItvcErrorHandler,
                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                        val obligationsConnector: ObligationsConnector,
                                         val taxCalcBreakdown: TaxCalcBreakdown,
                                         val auditingService: AuditingService)
                                        (implicit val appConfig: FrontendAppConfig,
