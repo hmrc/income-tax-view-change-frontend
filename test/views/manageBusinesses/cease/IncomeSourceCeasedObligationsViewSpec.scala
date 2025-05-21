@@ -75,7 +75,23 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
   val validForeignPropertyBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(incomeSourceType = ForeignProperty), viewAllBusinessLink, viewUpcomingUpdatesLink, viewReportingObligationsLink)
   val validSoleTreaderBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(businessName = Some("Test Name")), viewAllBusinessLink, viewUpcomingUpdatesLink, viewReportingObligationsLink)
   val validSoleTreaderBusinessWithNoBusinessNameCall: Html = view(incomeSourceCeasedObligationsViewModel, viewAllBusinessLink, viewUpcomingUpdatesLink, viewReportingObligationsLink)
-  val validCallWithData: Html = view(incomeSourceCeasedObligationsViewModel.copy(businessName = Some("Test Name")), viewAllBusinessLink, viewUpcomingUpdatesLink, viewReportingObligationsLink)
+  val validCallWithData: Html = view(
+    incomeSourceCeasedObligationsViewModel.copy(
+      businessName = Some("Test Name")
+    ), viewAllBusinessLink, viewUpcomingUpdatesLink, viewReportingObligationsLink
+  )
+  val validCallWithDataRemainingLatent: Html = view(
+    incomeSourceCeasedObligationsViewModel.copy(
+      businessName = Some("Test Name"),
+      remainingLatentBusiness = true
+    ), viewAllBusinessLink, viewUpcomingUpdatesLink, viewReportingObligationsLink
+  )
+  val validCallWithDataAllCeased: Html = view(
+    incomeSourceCeasedObligationsViewModel.copy(
+      businessName = Some("Test Name"),
+      allBusinessesCeased = true
+    ), viewAllBusinessLink, viewUpcomingUpdatesLink, viewReportingObligationsLink
+  )
 
   val manageYourBusinessShowURL: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
   val viewUpcomingUpdatesURL: String = controllers.routes.NextUpdatesController.show().url
@@ -159,15 +175,34 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
     }
 
 
-    "show first paragraph with updates and deadlines link" in new Setup(validCallWithData) {
+    "show first paragraph with 'updates and deadlines' link" in new Setup(validCallWithData) {
       val p: Element = document.getElementById("even-if-paragraph")
-      val link: Element = document.getElementById("view-all-updates")
-      p.text shouldBe "Because your remaining business is new, it is set to be opted out of Making Tax Digital for Income Tax for up to 2 tax years. You can decide at any time to sign back up on"
-      link.hasCorrectLink("View your overdue and upcoming updates", viewUpcomingUpdatesURL)
+      val link: Element = document.getElementById("p1-link")
+      p.text shouldBe "Even if they are not displayed right away on the updates and deadlines page, your account has been updated."
+      link.hasCorrectLink("updates and deadlines", viewUpcomingUpdatesURL)
     }
-    "show view all your business link" in new Setup(validCallWithData) {
-      val link: Element = document.getElementById("view-all-business-link")
-      link.hasCorrectLink("View all your businesses", manageYourBusinessShowURL)
+
+    "show conditional paragraph with obligations link if remaining latent business" in new Setup(validCallWithDataRemainingLatent) {
+      val p: Element = document.getElementById("remaining-business")
+      val link: Element = document.getElementById("remaining-business-link")
+      p.text shouldBe "Because your remaining business is new, it is set to be opted out of Making Tax Digital for Income Tax for up to 2 tax years." +
+        " You can decide at any time to sign back up on your reporting obligations page."
+      link.hasCorrectLink("your reporting obligations", viewReportingObligationsLink)
+    }
+
+    "show conditional paragraph with obligations link if all businesses are ceased" in new Setup(validCallWithDataAllCeased) {
+      val p: Element = document.getElementById("all-business-ceased")
+      val link: Element = document.getElementById("all-business-ceased-link")
+      p.text shouldBe "In future, any new business you add will be opted out of Making Tax Digital for Income Tax." +
+        " Find out more about your reporting obligations."
+      link.hasCorrectLink("your reporting obligations", viewReportingObligationsLink)
+    }
+
+    "show second paragraph with 'View your businesses' link" in new Setup(validCallWithData) {
+      val p: Element = document.getElementById("view-your-businesses")
+      val link: Element = document.getElementById("p2-link")
+      p.text shouldBe "View your businesses to add, manage or cease a business or income source."
+      link.hasCorrectLink("View your businesses", viewAllBusinessLink)
     }
   }
 }

@@ -2010,6 +2010,7 @@ business-ceased.obligation.panel.body                               = has ceased
 business-ceased.obligation.sole-trader                              = Sole trader business
 business-ceased.obligation.uk-property                              = UK property
 business-ceased.obligation.foreign-property                         = Foreign property
+business-ceased.obligation.heading2.text.incomeSources              = What you must do
 business-ceased.obligation.heading2.text                            = Your revised deadlines
 business-ceased.obligation.inset.text                               = Your deadlines for this business will be available in the next few minutes.
 business-ceased.obligation.p1.text.1                                = Even if they are not displayed right away on the
