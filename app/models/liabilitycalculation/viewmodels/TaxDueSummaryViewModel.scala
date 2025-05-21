@@ -136,7 +136,8 @@ object TaxDueSummaryViewModel {
         giftAidTaxChargeWhereBasicRateDiffers = calc.taxCalculation.flatMap(tc => tc.incomeTax.giftAidTaxChargeWhereBasicRateDiffers),
         transitionProfitRow = TransitionProfitRow(
           calc.taxCalculation.flatMap(_.incomeTax.incomeTaxChargedOnTransitionProfits),
-          calc.transitionProfit.flatMap(_.totalTaxableTransitionProfit))
+          calc.transitionProfit.flatMap(_.totalTaxableTransitionProfit)),
+        finalDeclarationOrTaxReturnIsSubmitted = obligations.isFinalDeclarationOrTaxReturnSubmitted
       )
       case None => TaxDueSummaryViewModel()
     }
