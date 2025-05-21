@@ -46,7 +46,7 @@ import java.time.LocalDate
 
 class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationService
   with MockFinancialDetailsService with MockNextUpdatesService with MockIncomeTaxCalculationConnector
-  with MockClaimToAdjustService with ChargeConstants {
+  with MockClaimToAdjustService with MockObligationsConnector with ChargeConstants {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
