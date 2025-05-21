@@ -21,22 +21,22 @@ import play.api.libs.json._
 sealed trait ObligationStatus
 
 case object StatusOpen extends ObligationStatus {
-  override def toString: String = "Open"
+  override def toString: String = "O"
 }
 
 case object StatusFulfilled extends ObligationStatus {
-  override def toString: String = "Fulfilled"
+  override def toString: String = "F"
 }
 
 object ObligationStatus {
   implicit val obligationStatusWrites: Writes[ObligationStatus] = Writes[ObligationStatus] {
-    case StatusOpen => JsString("Open")
-    case StatusFulfilled => JsString("Fulfilled")
+    case StatusOpen => JsString("O")
+    case StatusFulfilled => JsString("F")
   }
 
   implicit val obligationStatusReads: Reads[ObligationStatus] = Reads[ObligationStatus] {
-    case JsString("Open") => JsSuccess(StatusOpen)
-    case JsString("Fulfilled") => JsSuccess(StatusFulfilled)
+    case JsString("O") => JsSuccess(StatusOpen)
+    case JsString("F") => JsSuccess(StatusFulfilled)
     case _ => JsError("Unknown Obligation Status")
   }
 
