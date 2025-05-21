@@ -2254,15 +2254,17 @@ manageBusinesses.check-answers.change                                    = Newid
 
 # manage business sole trader reporting frequency
 
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading                    = Pa flwyddyn dreth ydych am gofrestru ar ei chyfer?
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.SelfEmployment.subHeading  = Unig fasnachwr
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.UkProperty.subHeading      = Eiddo yn y DU
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.ForeignProperty.subHeading = Eiddo tramor
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text                  = Dewiswch bob un sy’n berthnasol.
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox              = {0} i {1}
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button                     = Parhau
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header               = Mae problem
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description          = Dewiswch y blynyddoedd treth yr ydych am gofrestru ar eu cyfer
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading                                     = Pa flwyddyn dreth ydych chi am gyflwyno’n chwarterol ar ei chyfer?
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading.feature.switched                    = Pa flwyddyn dreth ydych am gofrestru ar ei chyfer?
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.SelfEmployment.subHeading                   = Unig fasnachwr
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.UkProperty.subHeading                       = Eiddo yn y DU
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.ForeignProperty.subHeading                  = Eiddo tramor
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text                                   = Dewiswch bob un sy’n berthnasol.
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox                               = {0} i {1}
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button                                      = Parhau
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header                                = Mae problem
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description                           = Dewiswch y blynyddoedd treth yr hoffech gyflwyno’n chwarterol ar eu cyfer
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description.feature.switched          = Dewiswch y blynyddoedd treth yr ydych am gofrestru ar eu cyfer
 
 #######################################################################################################################
 ## Claim to Adjust POA - Add ##
