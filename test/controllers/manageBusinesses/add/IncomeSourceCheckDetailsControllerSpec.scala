@@ -86,7 +86,6 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
           "render the check details page" when {
             "the session contains full business details and FS enabled" in {
               enable(IncomeSourcesNewJourney)
-              enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
 
               mockNoIncomeSources()
@@ -126,7 +125,6 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
           s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
             s"user has already completed the journey" in {
               enable(IncomeSourcesNewJourney)
-              enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
 
               mockNoIncomeSources()
@@ -141,7 +139,6 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
           }
           s"return ${Status.SEE_OTHER}: redirect to IncomeSourceAddedBackErrorController" when {
             s"user has already added their income source" in {
-              enable(IncomeSourcesNewJourney)
               enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
 
@@ -158,7 +155,6 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
 
           "return 500 INTERNAL_SERVER_ERROR" when {
             "there is session data missing" in {
-              enable(IncomeSourcesNewJourney)
               enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
 
@@ -179,7 +175,6 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
         s"the user is authenticated as a $mtdRole" should {
           "redirect to IncomeSourceReportingFrequencyController" when {
             "data is correct and redirect next page" in {
-              enable(IncomeSourcesNewJourney)
               enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
               mockNoIncomeSources()
@@ -203,7 +198,6 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
           }
           "redirect to custom error page" when {
             "unable to create business" in {
-              enable(IncomeSourcesNewJourney)
               enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
 

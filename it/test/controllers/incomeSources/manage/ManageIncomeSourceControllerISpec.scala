@@ -52,8 +52,7 @@ class ManageIncomeSourceControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "render the View Income Source page" when {
             "the user has multiple businesses and property" in {
-              enable(IncomeSourcesFs)
-              enable(DisplayBusinessStartDate)
+              enable(IncomeSourcesFs, DisplayBusinessStartDate)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
@@ -106,8 +105,7 @@ class ManageIncomeSourceControllerISpec extends ControllerISpecHelper {
             }
 
             "the user has foreign property and ceased business" in {
-              enable(IncomeSourcesFs)
-              enable(DisplayBusinessStartDate)
+              enable(IncomeSourcesFs, DisplayBusinessStartDate)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)

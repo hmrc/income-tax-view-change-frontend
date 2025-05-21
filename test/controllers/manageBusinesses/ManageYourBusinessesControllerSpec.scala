@@ -48,8 +48,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions with ImplicitDa
       "render the manage businesses page" when {
         "the IncomeSources FS in enabled and the DisplayBusinessStartDate FS is enabled" in {
           setupMockUserAuth
-          enable(IncomeSourcesNewJourney)
-          enable(DisplayBusinessStartDate)
+          enable(IncomeSourcesNewJourney, DisplayBusinessStartDate)
           mockBothIncomeSources()
           setupMockCreateSession(true)
           setupMockClearSession(true)
@@ -112,8 +111,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions with ImplicitDa
       "render the error page" when {
         "the call to get income source view model fails" in {
           setupMockUserAuth
-          enable(IncomeSourcesNewJourney)
-          enable(DisplayBusinessStartDate)
+          enable(IncomeSourcesNewJourney, DisplayBusinessStartDate)
           mockBothIncomeSources()
           when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any()))
             .thenReturn(
@@ -126,8 +124,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions with ImplicitDa
 
         "the header carrier is missing the X-sessionId" in {
           setupMockUserAuth
-          enable(IncomeSourcesNewJourney)
-          enable(DisplayBusinessStartDate)
+          enable(IncomeSourcesNewJourney, DisplayBusinessStartDate)
           mockBothIncomeSources()
           setupMockCreateSession(true)
           setupMockClearSession(true)
@@ -162,8 +159,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions with ImplicitDa
         "render the manage businesses page" when {
           "the IncomeSources FS in enabled" in {
             setupMockAgentWithClientAuth(isSupportingAgent)
-            enable(IncomeSourcesNewJourney)
-            enable(DisplayBusinessStartDate)
+            enable(IncomeSourcesNewJourney, DisplayBusinessStartDate)
             mockBothIncomeSources()
             setupMockCreateSession(true)
             setupMockClearSession(true)
@@ -200,8 +196,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions with ImplicitDa
         "render the error page" when {
           "the call to get income source view model fails" in {
             setupMockAgentWithClientAuth(isSupportingAgent)
-            enable(IncomeSourcesNewJourney)
-            enable(DisplayBusinessStartDate)
+            enable(IncomeSourcesNewJourney, DisplayBusinessStartDate)
             mockBothIncomeSources()
             when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any()))
               .thenReturn(
@@ -214,8 +209,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions with ImplicitDa
 
           "the header carrier is missing the X-sessionId" in {
             setupMockAgentWithClientAuth(isSupportingAgent)
-            enable(IncomeSourcesNewJourney)
-            enable(DisplayBusinessStartDate)
+            enable(IncomeSourcesNewJourney, DisplayBusinessStartDate)
             mockBothIncomeSources()
             setupMockCreateSession(true)
             setupMockClearSession(true)

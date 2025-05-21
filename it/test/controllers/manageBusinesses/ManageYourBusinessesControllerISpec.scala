@@ -51,8 +51,7 @@ class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "render the manage your businesses page" when {
             "the income sources is enabled and the user has multiple businesses and uk property with display business start date enabled" in {
-              enable(IncomeSourcesNewJourney)
-              enable(DisplayBusinessStartDate)
+              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
@@ -76,8 +75,7 @@ class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
             }
 
             "the income sources is enabled and the user has foreign property and ceased business with display business start date enabled" in {
-              enable(IncomeSourcesNewJourney)
-              enable(DisplayBusinessStartDate)
+              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)

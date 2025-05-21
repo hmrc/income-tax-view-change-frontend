@@ -223,9 +223,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
             "IncomeSources and IncomeSourcesNewJourney feature switches are enabled" in {
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
-              enable(IncomeSourcesFs)
-              enable(IncomeSourcesNewJourney)
-
+              enable(IncomeSourcesFs, IncomeSourcesNewJourney)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                 status = OK,
                 response = incomeSourceDetailsModel

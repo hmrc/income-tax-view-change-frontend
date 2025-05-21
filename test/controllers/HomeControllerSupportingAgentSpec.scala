@@ -167,8 +167,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
       "render the home page with the Your Businesses tile with link" when {
         "the IncomeSourcesNewJourney is enabled" in new Setup {
           setupMockAgentWithClientAuth(isSupportingAgent)
-          enable(IncomeSourcesFs)
-          enable(IncomeSourcesNewJourney)
+          enable(IncomeSourcesFs, IncomeSourcesNewJourney)
           mockGetDueDates(Right(futureDueDates))
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))

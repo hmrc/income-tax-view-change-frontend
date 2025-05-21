@@ -227,8 +227,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
               }
 
               "FilterCodedOutPoas FS is enabled and there are some not coded out" in {
-                enable(AdjustPaymentsOnAccount)
-                enable(FilterCodedOutPoas)
+                enable(AdjustPaymentsOnAccount, FilterCodedOutPoas)
                 setupMockSuccess(mtdUserRole)
                 mockSingleBusinessIncomeSource()
                 mockCalculationSuccessfulNew(testMtditid)
@@ -315,8 +314,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
               }
 
               "FilterCodedOutPoas FS is enabled and POA charges are coded out" in {
-                enable(AdjustPaymentsOnAccount)
-                enable(FilterCodedOutPoas)
+                enable(AdjustPaymentsOnAccount, FilterCodedOutPoas)
                 setupMockSuccess(mtdUserRole)
                 mockSingleBusinessIncomeSource()
                 mockCalculationSuccessfulNew(testMtditid)
