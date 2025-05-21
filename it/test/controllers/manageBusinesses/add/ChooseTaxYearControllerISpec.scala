@@ -21,20 +21,16 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.IncomeSourceCheckDetailsConstants.{testBusinessName, testBusinessStartDate, testBusinessTrade}
-import helpers.WiremockHelper
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import models.admin.IncomeSourcesNewJourney
-import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData, TaxYear, UIJourneySessionData}
-import models.itsaStatus.ITSAStatus
+import models.admin.{IncomeSourcesNewJourney, OptInOptOutContentUpdateR17}
+import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus.Voluntary
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.libs.json.Json
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository
 import services.{DateService, SessionService}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
-import testConstants.ITSAStatusTestConstants.successITSAStatusResponseJson
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
 import java.time.LocalDate
@@ -47,7 +43,7 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
   val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
   def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "/manage-your-businesses" else "/agents/manage-your-businesses"
+    val pathStart = if (mtdRole == MTDIndividual) "/manage-your-businesses" else "/agents/manage-your-businesses"
     incomeSourceType match {
       case SelfEmployment => s"$pathStart/add-sole-trader/choose-taxyear"
       case UkProperty => s"$pathStart/add-uk-property/choose-taxyear"
@@ -104,41 +100,91 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
     mtdAllRoles.foreach { case mtdUserRole =>
       val path = getPath(mtdUserRole, incomeSourceType)
       val additionalCookies = getAdditionalCookies(mtdUserRole)
+
+
       s"GET $path" when {
+
         s"a user is a $mtdUserRole" that {
+
           "is authenticated" when {
-            "income sources new journey is enabled" in {
-              enable(IncomeSourcesNewJourney)
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-              await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
-              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd + 1, ITSAYearStatus(Voluntary, Voluntary, Voluntary))
 
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
+            "OptInOptOutContentUpdateR17 is enabled" when {
 
-              result should have(
-                httpStatus(OK),
-                elementTextByID("choose-tax-year-heading")(s"Which tax year do you want to sign up for?"),
-                elementTextByID("choose-tax-year-subheading")(getSubheading(incomeSourceType)),
-                elementTextBySelector("[for='current-year-checkbox']")(s"${currentTaxYear - 1} to $currentTaxYear"),
-                elementTextBySelector("[for='next-year-checkbox']")(s"$currentTaxYear to ${currentTaxYear + 1}"),
-                elementTextByID("continue-button")("Continue"),
-              )
+              "income sources new journey is enabled" in {
+
+                enable(OptInOptOutContentUpdateR17)
+                enable(IncomeSourcesNewJourney)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+                await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd + 1, ITSAYearStatus(Voluntary, Voluntary, Voluntary))
+
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+                result should have(
+                  httpStatus(OK),
+                  elementTextByID("choose-tax-year-heading")(s"Which tax year do you want to sign up for?"),
+                  elementTextByID("choose-tax-year-subheading")(getSubheading(incomeSourceType)),
+                  elementTextBySelector("[for='current-year-checkbox']")(s"${currentTaxYear - 1} to $currentTaxYear"),
+                  elementTextBySelector("[for='next-year-checkbox']")(s"$currentTaxYear to ${currentTaxYear + 1}"),
+                  elementTextByID("continue-button")("Continue"),
+                )
+              }
+
+              "income sources new journey is disabled" in {
+                disable(IncomeSourcesNewJourney)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  if (mtdUserRole == MTDIndividual) redirectURI("/report-quarterly/income-and-expenses/view") else redirectURI("/report-quarterly/income-and-expenses/view/agents/client-income-tax")
+                )
+              }
             }
 
-            "income sources new journey is disabled" in {
-              disable(IncomeSourcesNewJourney)
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+            "OptInOptOutContentUpdateR17 is disabled" when {
 
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
+              "income sources new journey is enabled" in {
 
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+                disable(OptInOptOutContentUpdateR17)
+                enable(IncomeSourcesNewJourney)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+                await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd + 1, ITSAYearStatus(Voluntary, Voluntary, Voluntary))
 
-              result should have(
-                httpStatus(SEE_OTHER),
-                if (mtdUserRole == MTDIndividual) redirectURI("/report-quarterly/income-and-expenses/view") else redirectURI("/report-quarterly/income-and-expenses/view/agents/client-income-tax")
-              )
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+                result should have(
+                  httpStatus(OK),
+                  elementTextByID("choose-tax-year-heading")(s"Which tax year do you want to report quarterly?"),
+                  elementTextByID("choose-tax-year-subheading")(getSubheading(incomeSourceType)),
+                  elementTextBySelector("[for='current-year-checkbox']")(s"${currentTaxYear - 1} to $currentTaxYear"),
+                  elementTextBySelector("[for='next-year-checkbox']")(s"$currentTaxYear to ${currentTaxYear + 1}"),
+                  elementTextByID("continue-button")("Continue"),
+                )
+              }
+
+              "income sources new journey is disabled" in {
+
+                disable(IncomeSourcesNewJourney)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  if (mtdUserRole == MTDIndividual) redirectURI("/report-quarterly/income-and-expenses/view") else redirectURI("/report-quarterly/income-and-expenses/view/agents/client-income-tax")
+                )
+              }
             }
           }
         }
@@ -146,60 +192,129 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
           "current-year-checkbox" -> Seq("Test")
         )))
       }
+
       s"POST $path" when {
+
         s"a user is a $mtdUserRole" that {
+
           "is authenticated" should {
-            "submit the reporting frequency for the income source" in {
-              val isAgent = !(mtdUserRole == MTDIndividual)
 
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+            "OptInOptOutContentUpdateR17 is enabled" when {
 
-              await(sessionService.createSession(IncomeSourceJourneyType(Add, incomeSourceType)))
+              "submit the reporting frequency for the income source" in {
+                val isAgent = !(mtdUserRole == MTDIndividual)
 
-              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-                addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("incomeSourceId"), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
+                enable(OptInOptOutContentUpdateR17)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-              val result = buildPOSTMTDPostClient(path, additionalCookies, Map("current-year-checkbox" -> Seq("true"), "next-year-checkbox" -> Seq("true"))).futureValue
+                await(sessionService.createSession(IncomeSourceJourneyType(Add, incomeSourceType)))
 
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
+                  addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("incomeSourceId"), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
 
-              result should have(
-                httpStatus(SEE_OTHER),
-                redirectURI(controllers.manageBusinesses.add.routes.IncomeSourceRFCheckDetailsController.show(isAgent, incomeSourceType).url)
-              )
-            }
+                val result = buildPOSTMTDPostClient(path, additionalCookies, Map("current-year-checkbox" -> Seq("true"), "next-year-checkbox" -> Seq("true"))).futureValue
 
-            "return an error if the form is invalid" in {
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-              val journeyType = incomeSourceType match {
-                case SelfEmployment => "ADD-SE"
-                case UkProperty => "ADD-UK"
-                case ForeignProperty => "ADD-FP"
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(controllers.manageBusinesses.add.routes.IncomeSourceRFCheckDetailsController.show(isAgent, incomeSourceType).url)
+                )
               }
 
-              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, journeyType,
-                addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("incomeSourceId"), dateStarted = Some(LocalDate.of(2024, 1, 1)))),
-                incomeSourceReportingFrequencyData = Some(IncomeSourceReportingFrequencySourceData(true, true, false, false)))))
+              "return an error if the form is invalid" in {
 
-              val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map("Invalid" -> Seq("Invalid"))).futureValue
+                enable(OptInOptOutContentUpdateR17)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+                val journeyType = incomeSourceType match {
+                  case SelfEmployment => "ADD-SE"
+                  case UkProperty => "ADD-UK"
+                  case ForeignProperty => "ADD-FP"
+                }
 
-              result should have(
-                httpStatus(BAD_REQUEST),
-                elementTextByID("choose-tax-year-heading")(s"Which tax year do you want to sign up for?"),
-                elementTextByID("choose-tax-year-subheading")(getSubheading(incomeSourceType)),
-                elementTextBySelector("[for='current-year-checkbox']")(s"${currentTaxYear - 1} to $currentTaxYear"),
-                elementTextBySelector("[for='next-year-checkbox']")(s"$currentTaxYear to ${currentTaxYear + 1}"),
-                elementTextByID("continue-button")("Continue"),
-                elementTextByID("error-summary-title")("There is a problem"),
-                elementTextByID("error-summary-link")("Select the tax years you want to sign up for")
-              )
+                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, journeyType,
+                  addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("incomeSourceId"), dateStarted = Some(LocalDate.of(2024, 1, 1)))),
+                  incomeSourceReportingFrequencyData = Some(IncomeSourceReportingFrequencySourceData(true, true, false, false)))))
+
+                val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map("Invalid" -> Seq("Invalid"))).futureValue
+
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+                result should have(
+                  httpStatus(BAD_REQUEST),
+                  elementTextByID("choose-tax-year-heading")(s"Which tax year do you want to sign up for?"),
+                  elementTextByID("choose-tax-year-subheading")(getSubheading(incomeSourceType)),
+                  elementTextBySelector("[for='current-year-checkbox']")(s"${currentTaxYear - 1} to $currentTaxYear"),
+                  elementTextBySelector("[for='next-year-checkbox']")(s"$currentTaxYear to ${currentTaxYear + 1}"),
+                  elementTextByID("continue-button")("Continue"),
+                  elementTextByID("error-summary-title")("There is a problem"),
+                  elementTextByID("error-summary-link")("Select the tax years you want to sign up for")
+                )
+              }
+            }
+
+            "OptInOptOutContentUpdateR17 is disabled" when {
+
+              "submit the reporting frequency for the income source" in {
+                val isAgent = !(mtdUserRole == MTDIndividual)
+
+                disable(OptInOptOutContentUpdateR17)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+                await(sessionService.createSession(IncomeSourceJourneyType(Add, incomeSourceType)))
+
+                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
+                  addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("incomeSourceId"), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
+
+                val result = buildPOSTMTDPostClient(path, additionalCookies, Map("current-year-checkbox" -> Seq("true"), "next-year-checkbox" -> Seq("true"))).futureValue
+
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(controllers.manageBusinesses.add.routes.IncomeSourceRFCheckDetailsController.show(isAgent, incomeSourceType).url)
+                )
+              }
+
+              "return an error if the form is invalid" in {
+
+                disable(OptInOptOutContentUpdateR17)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+                val journeyType = incomeSourceType match {
+                  case SelfEmployment => "ADD-SE"
+                  case UkProperty => "ADD-UK"
+                  case ForeignProperty => "ADD-FP"
+                }
+
+                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, journeyType,
+                  addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("incomeSourceId"), dateStarted = Some(LocalDate.of(2024, 1, 1)))),
+                  incomeSourceReportingFrequencyData = Some(IncomeSourceReportingFrequencySourceData(true, true, false, false)))))
+
+                val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map("Invalid" -> Seq("Invalid"))).futureValue
+
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+                result should have(
+                  httpStatus(BAD_REQUEST),
+                  elementTextByID("choose-tax-year-heading")(s"Which tax year do you want to report quarterly?"),
+                  elementTextByID("choose-tax-year-subheading")(getSubheading(incomeSourceType)),
+                  elementTextBySelector("[for='current-year-checkbox']")(s"${currentTaxYear - 1} to $currentTaxYear"),
+                  elementTextBySelector("[for='next-year-checkbox']")(s"$currentTaxYear to ${currentTaxYear + 1}"),
+                  elementTextByID("continue-button")("Continue"),
+                  elementTextByID("error-summary-title")("There is a problem"),
+                  elementTextByID("error-summary-link")("Select the tax years you want to report quarterly")
+                )
+              }
             }
           }
         }
+
         testAuthFailures(path, mtdUserRole, Some(Map(
           "current-year-checkbox" -> Seq("Test")
         )))
