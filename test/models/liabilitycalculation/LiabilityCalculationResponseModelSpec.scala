@@ -143,15 +143,15 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
 
     "call getModifiedBaseTaxBand" should {
       "return expected TaxBand" in {
-        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionPB)
+        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionPB, testObligationsModel)
           .getModifiedBaseTaxBand shouldBe Some(TaxBands("BRT", BigDecimal("20"), 12500, 12500, 12500, BigDecimal("5000.99")))
-        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionSB)
+        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionSB, testObligationsModel)
           .getModifiedBaseTaxBand shouldBe Some(TaxBands("BRT", BigDecimal("20"), 12510, 12520, 12530, BigDecimal("5001.99")))
-        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionDB)
+        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionDB, testObligationsModel)
           .getModifiedBaseTaxBand shouldBe Some(TaxBands("BRT", BigDecimal("21"), 12700, 12800, 12900, BigDecimal("5123.99")))
-        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionLS)
+        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionLS, testObligationsModel)
           .getModifiedBaseTaxBand shouldBe Some(TaxBands("BRT", BigDecimal("30"), 13500, 15500, 16500, BigDecimal("7000.99")))
-        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionGLP)
+        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionGLP, testObligationsModel)
           .getModifiedBaseTaxBand shouldBe Some(TaxBands("BRT", BigDecimal("50"), 32500, 42500, 52500, BigDecimal("7000.99")))
       }
     }
