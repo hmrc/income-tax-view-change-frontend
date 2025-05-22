@@ -1415,6 +1415,19 @@ incomeSources.add.reportingFrequency.form.no-select.error           = Dewiswch �
 incomeSources.add.reportingFrequency.table.c1                       = Amlder cyflwyno {0} i {1}
 incomeSources.add.reportingFrequency.table.c2                       = Blynyddol
 
+incomeSources.add.reportingFrequency.r17.sole-trader                    = Unig fasnachwr
+incomeSources.add.reportingFrequency.r17.uk-property                    = Eiddo yn y DU
+incomeSources.add.reportingFrequency.r17.foreign-property               = Eiddo tramor
+incomeSources.add.reportingFrequency.r17.title                          = Mae’ch busnes newydd wedi optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+incomeSources.add.reportingFrequency.r17.h1                             = Mae’ch busnes newydd wedi optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+incomeSources.add.reportingFrequency.r17.p1                             = Gan mai busnes newydd yw hwn, gallwch gyflwyno ei incwm a’i dreuliau unwaith y flwyddyn yn eich Ffurflen Dreth, am hyd at 2 flwyddyn dreth, hyd yn oed os yw’r canlynol yn wir:
+incomeSources.add.reportingFrequency.r17.p2                             = Gallwch ddewis cofrestru busnes newydd hwn i gynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Byddai hyn yn golygu cyflwyno diweddariad bob 3 mis yn ychwanegol at eich Ffurflen Dreth.
+incomeSources.add.reportingFrequency.r17.inset                          = O fis Ebrill {0} pan fydd y cyfnod treth 2 flynedd hwn yn dod i ben, efallai y bydd yn ofynnol i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer y busnes newydd hwn.
+incomeSources.add.reportingFrequency.r17.form.h1                        = A ydych am gofrestru’r busnes newydd hwn gyda’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm?
+incomeSources.add.reportingFrequency.r17.li1                            = rydych wedi cofrestru’n wirfoddol neu os yw’n ofynnol i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer eich busnesau eraill
+incomeSources.add.reportingFrequency.r17.li2                            = mae cyfanswm eich incwm gros o hunangyflogaeth neu eiddo, neu’r ddau, yn fwy na’r trothwy o £50,000
+incomeSources.add.reportingFrequency.r17.form.no-select.error           = Dewiswch ‘Iawn’ os ydych am gofrestru’r busnes newydd hwn â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+
 #######################################################################################################################
 ## Income Sources - Cease ##
 #######################################################################################################################
