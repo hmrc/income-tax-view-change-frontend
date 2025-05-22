@@ -98,7 +98,7 @@ class CreateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
         ),
         typeOfBusiness = None,
         tradingStartDate = "",
-        cashOrAccrualsFlag = Some("CASH"),
+        cashOrAccrualsFlag = "CASH",
         cessationDate = Some(""),
         cessationReason = None
       )
@@ -108,7 +108,7 @@ class CreateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
   val createForeignPropertyRequest: CreateForeignPropertyIncomeSourceRequest = CreateForeignPropertyIncomeSourceRequest(
     PropertyDetails(
       "01-02-2023",
-      Some("CASH"),
+      "CASH",
       "01-02-2023"
     )
   )
@@ -116,7 +116,7 @@ class CreateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
   val createUKPropertyRequest: CreateUKPropertyIncomeSourceRequest = CreateUKPropertyIncomeSourceRequest(
     PropertyDetails(
       "01-02-2023",
-      Some("CASH"),
+      "CASH",
       "01-02-2023"
     )
   )

@@ -72,7 +72,8 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     }
   }
 
-  def convertToCreateBusinessIncomeSourceRequest(viewModel: CheckBusinessDetailsViewModel): Either[Throwable, CreateBusinessIncomeSourceRequest] = {
+  def convertToCreateBusinessIncomeSourceRequest(viewModel: CheckBusinessDetailsViewModel)
+                                                (implicit user: MtdItUser[_]): Either[Throwable, CreateBusinessIncomeSourceRequest] = {
     Try {
       CreateBusinessIncomeSourceRequest(
         List(
@@ -90,7 +91,7 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
             ),
             typeOfBusiness = Some(viewModel.businessTrade),
             tradingStartDate = viewModel.businessStartDate.get.format(DateTimeFormatter.ISO_LOCAL_DATE),
-            cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag.map(_.toUpperCase),
+            cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag.map(_.toUpperCase).getOrElse(user.incomeSources.getBusinessCashOrAccruals().head.toString),
             cessationDate = None,
             cessationReason = None
           )
@@ -117,7 +118,7 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
       CreateForeignPropertyIncomeSourceRequest(
         PropertyDetails(
           tradingStartDate = viewModel.tradingStartDate.toString,
-          cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag.map(_.toUpperCase),
+          cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag.map(_.toUpperCase).getOrElse(throw new Exception("Cash Or Accrual does not exists")),
           startDate = viewModel.tradingStartDate.toString
         )
       )
@@ -142,7 +143,7 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
       CreateUKPropertyIncomeSourceRequest(
         PropertyDetails(
           tradingStartDate = viewModel.tradingStartDate.toString,
-          cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag.map(_.toUpperCase),
+          cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag.map(_.toUpperCase).getOrElse(throw new Exception("Cash Or Accrual does not exists")),
           startDate = viewModel.tradingStartDate.toString
         )
       )

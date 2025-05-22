@@ -39,7 +39,7 @@ trait IncomeSourcesDataHelper {
     ),
     typeOfBusiness = None,
     tradingStartDate = "",
-    cashOrAccrualsFlag = Some("CASH"),
+    cashOrAccrualsFlag = "CASH",
     cessationDate = Some(""),
     cessationReason = None
   )
@@ -69,7 +69,7 @@ trait IncomeSourcesDataHelper {
       |}""".stripMargin)
 
   val createForeignPropertyRequestObject = CreateForeignPropertyIncomeSourceRequest(PropertyDetails(tradingStartDate = LocalDate.of(2011, 1, 1).toString,
-    cashOrAccrualsFlag = Some("CASH"), startDate = LocalDate.of(2011, 1, 1).toString)
+    cashOrAccrualsFlag = "CASH", startDate = LocalDate.of(2011, 1, 1).toString)
   )
 
   val createForeignPropertyRequestObjectJson = Json.parse("""{
@@ -81,7 +81,7 @@ trait IncomeSourcesDataHelper {
         |}""".stripMargin)
 
   val createUKPropertyRequestObject = CreateUKPropertyIncomeSourceRequest(PropertyDetails(tradingStartDate = LocalDate.of(2011, 1, 1).toString,
-    cashOrAccrualsFlag = Some("CASH"), startDate = LocalDate.of(2011, 1, 1).toString)
+    cashOrAccrualsFlag = "CASH", startDate = LocalDate.of(2011, 1, 1).toString)
   )
 
   val createUKPropertyRequestObjectJson  = Json.parse("""{

@@ -89,7 +89,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
         result shouldBe Right(CreateBusinessIncomeSourceRequest(
           List(BusinessDetails("2022-11-11", "2022-11-11", "someBusinessName",
             AddressDetails("businessAddressLine1", None, None, None, Some("GB"), Some("SE15 4ER")),
-            Some("someBusinessTrade"), "2022-11-11", Some("CASH"), None, None))))
+            Some("someBusinessTrade"), "2022-11-11", "CASH", None, None))))
       }
     }
 

@@ -37,9 +37,9 @@ class CreateIncomeSourcesRequestModelSpec extends TestSupport with IncomeSources
 
   "PropertyDetails" should {
     "check require fields" in {
-      Try(PropertyDetails("", Some("CASH"), "")).failed.get.getMessage shouldBe "requirement failed: Trading start date must be provided"
-      Try(PropertyDetails("2022-01-01", Some(""), "2022-01-01")).failed.get.getMessage shouldBe "requirement failed: Accounting method must be capitalised"
-      Try(PropertyDetails("2022-01-02", Some("CASH"), "2022-01-01")).failed.get.getMessage shouldBe "requirement failed: Trading start date and start date must be the same"
+      Try(PropertyDetails("", "CASH", "")).failed.get.getMessage shouldBe "requirement failed: Trading start date must be provided"
+      Try(PropertyDetails("2022-01-01", "cash", "2022-01-01")).failed.get.getMessage shouldBe "requirement failed: Accounting method must be capitalised"
+      Try(PropertyDetails("2022-01-02", "CASH", "2022-01-01")).failed.get.getMessage shouldBe "requirement failed: Trading start date and start date must be the same"
     }
   }
 
