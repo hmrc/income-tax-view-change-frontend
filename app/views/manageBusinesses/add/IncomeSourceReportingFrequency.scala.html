@@ -46,20 +46,28 @@
     govukButton: GovukButton,
 )
 
-@(isAgent: Boolean = false, continueAction: Call, form: Form[IncomeSourceReportingFrequencyForm], incomeSourceType: IncomeSourceType, taxDateService: DateServiceInterface)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(isAgent: Boolean = false, continueAction: Call, form: Form[IncomeSourceReportingFrequencyForm], incomeSourceType: IncomeSourceType, taxDateService: DateServiceInterface, isR17ContentEnabled: Boolean)(implicit user: auth.MtdItUser[_], messages: Messages)
+
+@getMessage(key: String, args: String*) = @{
+    if(isR17ContentEnabled) {
+        messages(s"incomeSources.add.reportingFrequency.r17.$key", args: _*)
+    } else {
+        messages(s"incomeSources.add.reportingFrequency.$key", args: _*)
+    }
+}
 
 @getCaptionMessage = @{
     incomeSourceType match {
-        case SelfEmployment => messages(s"incomeSources.add.reportingFrequency.sole-trader")
-        case UkProperty => messages(s"incomeSources.add.reportingFrequency.uk-property")
-        case ForeignProperty => messages(s"incomeSources.add.reportingFrequency.foreign-property")
+        case SelfEmployment => getMessage("sole-trader")
+        case UkProperty => getMessage("uk-property")
+        case ForeignProperty => getMessage("foreign-property")
     }
 }
 
 @quarterlyUpdatesWarningBlock() = {
     @govukInsetText(InsetText(
-        id=Some("warning-inset"),
-        content = HtmlContent(messages("incomeSources.add.reportingFrequency.inset", (taxDateService.getCurrentTaxYearEnd + 1).toString))
+        id = Some("warning-inset"),
+        content = HtmlContent(getMessage("inset", (taxDateService.getCurrentTaxYearEnd + 1).toString))
     ))
 }
 
@@ -99,10 +107,9 @@
 @formBlock = {
     @formWithCSRF(action = continueAction, Symbol("id") -> "reporting-quarterly-form") {
         @govukRadios(Radios(
-//            value = form.value.flatMap(_.yesNo),
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
-                    content = Text(messages("incomeSources.add.reportingFrequency.form.h1")),
+                    content = Text(getMessage("form.h1")),
                     classes = "govuk-fieldset__legend--m"
                 ))
             )),
@@ -120,7 +127,7 @@
             ),
             errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*)))),
             classes = "govuk-radios--inline"
-        ).withFormField(form("yes-no-answer")))
+        ).withFormField(form("reporting-quarterly-form")))
 
         @govukButton(Button(
             id = Some("continue-button"),
@@ -130,39 +137,45 @@
 }
 
 @mainTemplate(
-        pageTitle = messages("incomeSources.add.reportingFrequency.title"),
+        pageTitle = getMessage("title"),
         isAgent = isAgent,
         form = Some(form),
         backUrl = None,
         btaNavPartial = user.btaNavPartial
     ) {
 
+    @errorSummary(
+        form = form
+    )
+
     @hmrcPageHeading(PageHeading(
-        text = messages("incomeSources.add.reportingFrequency.h1"),
+        text = getMessage("h1"),
         headingClasses = Some("govuk-heading-l margin-bottom-100"),
         section = Some(getCaptionMessage),
         captionClasses = Some("govuk-caption-l")
     ))
 
     @p(id = Some("paragraph-1")){
-        @messages("incomeSources.add.reportingFrequency.p1")
+        @getMessage("p1")
     }
 
     @p(id = Some("reporting-frequency-ul")) {
         <ul class="govuk-list govuk-list--bullet">
             <li id="inset-text-bullet-1">
-            @messages("incomeSources.add.reportingFrequency.li1")
+            @getMessage("li1")
             </li>
             <li id="inset-text-bullet-2">
-            @messages("incomeSources.add.reportingFrequency.li2")
+            @getMessage("li2")
             </li>
         </ul>
     }
 
-    @reportingFrequencyTable()
+    @if(!isR17ContentEnabled) {
+        @reportingFrequencyTable()
+    }
 
     @p(id = Some("paragraph-2")){
-        @messages("incomeSources.add.reportingFrequency.p2")
+        @getMessage("p2")
     }
 
     @quarterlyUpdatesWarningBlock()
