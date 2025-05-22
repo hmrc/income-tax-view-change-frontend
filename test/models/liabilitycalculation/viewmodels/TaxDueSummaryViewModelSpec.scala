@@ -136,7 +136,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
           transitionProfitRow = TransitionProfitRow(Some(700.00), Some(3000.00))
         )
 
-        TaxDueSummaryViewModel(liabilityCalculationModelSuccessful) shouldBe expectedTaxDueSummaryViewModel
+        TaxDueSummaryViewModel(liabilityCalculationModelSuccessful, testObligationsModel) shouldBe expectedTaxDueSummaryViewModel
       }
 
       "create a full TaxDueSummaryViewModel when there is a full Calculation for Income tax and CGT " in {
