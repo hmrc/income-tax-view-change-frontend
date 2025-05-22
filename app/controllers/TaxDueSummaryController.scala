@@ -64,21 +64,30 @@ class TaxDueSummaryController @Inject()(val authActions: AuthActions,
                    )
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
-    calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
-      case liabilityCalc: LiabilityCalculationResponse =>
-        val viewModel = TaxDueSummaryViewModel(liabilityCalc)
-        auditingService.extendedAudit(TaxDueResponseAuditModel(user, viewModel, taxYear))
-        val fallbackBackUrl = getFallbackUrl(user.session.get(calcPagesBackPage),
-          isAgent, liabilityCalc.metadata.crystallised.getOrElse(false), taxYear, origin)
-        val startAVRTYear = 2024
-        Ok(taxCalcBreakdown(viewModel, taxYear, startAVRTYear, backUrl = fallbackBackUrl, isAgent = isAgent, btaNavPartial = user.btaNavPartial))
-      case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NO_CONTENT =>
-        Logger("application").info("No calculation data returned from downstream. Not Found.")
-        itvcErrorHandler.showInternalServerError()
-      case _: LiabilityCalculationError =>
-        Logger("application").error(
-          s"[$taxYear] No new calc deductions data error found. Downstream error")
-        itvcErrorHandler.showInternalServerError()
+    calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).flatMap { liabilityCalc =>
+      val taxYearModel = TaxYear.makeTaxYearWithEndYear(taxYear)
+      obligationsConnector.getAllObligationsDateRange(taxYearModel.toFinancialYearStart, taxYearModel.toFinancialYearEnd).map { obligations =>
+        (liabilityCalc, obligations) match {
+          case (liabilityCalc: LiabilityCalculationResponse, obligations: ObligationsModel) =>
+            val viewModel = TaxDueSummaryViewModel(liabilityCalc, obligations)
+            auditingService.extendedAudit(TaxDueResponseAuditModel(user, viewModel, taxYear))
+            val fallbackBackUrl = getFallbackUrl(user.session.get(calcPagesBackPage),
+              isAgent, liabilityCalc.metadata.crystallised.getOrElse(false), taxYear, origin)
+            val startAVRTYear = 2024
+            Ok(taxCalcBreakdown(viewModel, taxYear, startAVRTYear, backUrl = fallbackBackUrl, isAgent = isAgent, btaNavPartial = user.btaNavPartial))
+          case (calcErrorResponse: LiabilityCalculationError, _) if calcErrorResponse.status == NO_CONTENT =>
+            Logger("application").info("No calculation data returned from downstream. Not Found.")
+            itvcErrorHandler.showInternalServerError()
+          case (_: LiabilityCalculationError, _) =>
+            Logger("application").error(
+              s"[$taxYear] No new calc deductions data error found. Downstream error")
+            itvcErrorHandler.showInternalServerError()
+          case (_, _: ObligationsErrorModel) =>
+            Logger("application").error(
+              s"[$taxYear] Failed to retrieve obligations. Downstream error")
+            itvcErrorHandler.showInternalServerError()
+        }
+      }
     }
   }
 
