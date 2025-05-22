@@ -2250,15 +2250,17 @@ manageBusinesses.check-answers.change                                    = Chang
 
 # manage business choose reporting methods for years
 
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading                    = Which tax year do you want to report quarterly for?
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.SelfEmployment.subHeading  = Sole trader
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.UkProperty.subHeading      = UK property
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.ForeignProperty.subHeading = Foreign property
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text                  = Select all that apply.
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox              = {0} to {1}
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button                     = Continue
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header               = There is a problem
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description          = Select the tax years you want to report quarterly
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading                                  = Which tax year do you want to report quarterly for?
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading.feature.switched                 = Which tax year do you want to sign up for?
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.SelfEmployment.subHeading                = Sole trader
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.UkProperty.subHeading                    = UK property
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.ForeignProperty.subHeading               = Foreign property
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text                                = Select all that apply.
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox                            = {0} to {1}
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button                                   = Continue
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header                             = There is a problem
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description                        = Select the tax years you want to report quarterly
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description.feature.switched       = Select the tax years you want to sign up for
 
 
 #######################################################################################################################

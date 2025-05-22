@@ -31,11 +31,20 @@
         h1WithCaption: h1WithCaption
 )
 
-@(form: Form[ChooseTaxYearFormModel], isAgent: Boolean, postAction: Call, currentTaxYear: Option[TaxYear], nextTaxYear: Option[TaxYear], incomeSourceType: IncomeSourceType, isChange: Boolean = false)(implicit user: auth.MtdItUser[_], messages: Messages, dateService: DateServiceInterface)
+@(
+    form: Form[ChooseTaxYearFormModel],
+    isAgent: Boolean,
+    postAction: Call,
+    currentTaxYear: Option[TaxYear],
+    nextTaxYear: Option[TaxYear],
+    incomeSourceType: IncomeSourceType,
+    isChange: Boolean = false,
+    isOptInOptOutContentUpdateR17: Boolean
+)(implicit user: auth.MtdItUser[_], messages: Messages, dateService: DateServiceInterface)
 
 @header = @{
     h1WithCaption(
-        heading = messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading"),
+        heading = if(isOptInOptOutContentUpdateR17) messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading.feature.switched") else messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading"),
         captionMsg = messages(s"manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.$incomeSourceType.subHeading"),
         size = "l",
         headingId = Some("choose-tax-year-heading"),
@@ -65,7 +74,7 @@
 }
 
 @mainTemplate(
-    pageTitle = messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading"),
+    pageTitle = if(isOptInOptOutContentUpdateR17) messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading.feature.switched") else messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading"),
     isAgent = isAgent,
     backUrl = Some("#"),
     btaNavPartial = user.btaNavPartial) {
@@ -79,7 +88,11 @@
                 <div class="govuk-error-summary__body">
                     <ul class="govuk-list govuk-error-summary__list">
                         <li>
-                            <a id="error-summary-link" href="#current-year-checkbox">@messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description")</a>
+                            @if(isOptInOptOutContentUpdateR17) {
+                                <a id="error-summary-link" href="#current-year-checkbox">@messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description.feature.switched")</a>
+                            } else {
+                                <a id="error-summary-link" href="#current-year-checkbox">@messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description")</a>
+                            }
                         </li>
                     </ul>
                 </div>
