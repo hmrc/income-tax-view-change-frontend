@@ -27,7 +27,7 @@ class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
   "IncomeSourceCeasedObligationsViewModel apply" when {
     "provided with Obligation view model" should {
       "return IncomeSourceCeasedObligationsViewModel when there are two businesses, one with latency" in {
-        val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business2, business1), Nil)
+        val incomeSourceDetailsModel = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business2, business1), Nil)
 
         val expectedViewModel = IncomeSourceCeasedObligationsViewModel(
           incomeSourceType = SelfEmployment,
@@ -41,14 +41,14 @@ class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
           incomeSourceType = SelfEmployment,
           businessName = Some("Business Name"),
           isAgent = false,
-          incomeSourceDetailsModel = singleBusinessIncome
+          incomeSourceDetailsModel = incomeSourceDetailsModel
         )
 
         appliedViewModel shouldBe expectedViewModel
       }
 
       "return IncomeSourceCeasedObligationsViewModel when there is one business with no latency" in {
-        val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1NoLatency), Nil)
+        val incomeSourceDetailsModel = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1NoLatency), Nil)
 
         val expectedViewModel = IncomeSourceCeasedObligationsViewModel(
           incomeSourceType = SelfEmployment,
@@ -62,14 +62,14 @@ class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
           incomeSourceType = SelfEmployment,
           businessName = Some("Business Name"),
           isAgent = false,
-          incomeSourceDetailsModel = singleBusinessIncome
+          incomeSourceDetailsModel = incomeSourceDetailsModel
         )
 
         appliedViewModel shouldBe expectedViewModel
       }
 
       "return IncomeSourceCeasedObligationsViewModel when there is one business with latency" in {
-        val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
+        val incomeSourceDetailsModel = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
         val expectedViewModel = IncomeSourceCeasedObligationsViewModel(
           incomeSourceType = SelfEmployment,
@@ -83,14 +83,14 @@ class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
           incomeSourceType = SelfEmployment,
           businessName = Some("Business Name"),
           isAgent = false,
-          incomeSourceDetailsModel = singleBusinessIncome
+          incomeSourceDetailsModel = incomeSourceDetailsModel
         )
 
         appliedViewModel shouldBe expectedViewModel
       }
 
       "return IncomeSourceCeasedObligationsViewModel when there is one business left that is ceased" in {
-        val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(ceasedBusiness), Nil)
+        val incomeSourceDetailsModel = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(ceasedBusiness), Nil)
 
         val expectedViewModel = IncomeSourceCeasedObligationsViewModel(
           incomeSourceType = SelfEmployment,
@@ -104,7 +104,7 @@ class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
           incomeSourceType = SelfEmployment,
           businessName = Some("Business Name"),
           isAgent = false,
-          incomeSourceDetailsModel = singleBusinessIncome
+          incomeSourceDetailsModel = incomeSourceDetailsModel
         )
 
         appliedViewModel shouldBe expectedViewModel
