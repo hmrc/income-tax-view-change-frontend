@@ -45,6 +45,7 @@
         viewModel: ManageIncomeSourceDetailsViewModel,
         isAgent: Boolean,
         showStartDate: Boolean,
+        showAccountingMethod: Boolean,
         showOptInOptOutContentUpdateR17: Boolean,
         backUrl: String
 )(implicit messages: Messages, user: auth.MtdItUser[_])
@@ -364,20 +365,21 @@
                     } else Seq.empty
                 }
                 ++ (
-                if (showOptInOptOutContentUpdateR17) {
-                    Seq.empty
-                } else {
-                    Seq(
-                        SummaryListRow(
-                            key = Key(
-                            content = Text(getAccountingMethodMessage)
-                            ),
-                            value = Value(
-                            content = Text(messages(viewModel.businessAccountingMethodAsKey(viewModel.isTraditionalAccountingMethod)))
+                    if (showAccountingMethod) {
+                        Seq(
+                            SummaryListRow(
+                                key = Key(
+                                content = Text(getAccountingMethodMessage)
+                                ),
+                                value = Value(
+                                    content = Text(messages(viewModel.businessAccountingMethodAsKey(viewModel.isTraditionalAccountingMethod)))
+                                )
                             )
                         )
-                    ) ++ getQuarterlyType
-                }
+                    } else Seq.empty
+                )
+                ++ (
+                    if (showOptInOptOutContentUpdateR17) Seq.empty else getQuarterlyType
                 )
                 ++(
                     if (viewModel.latencyDetails.isDefined) {

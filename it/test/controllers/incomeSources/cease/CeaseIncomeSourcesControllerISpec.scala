@@ -53,8 +53,7 @@ class CeaseIncomeSourcesControllerISpec extends ControllerISpecHelper {
             "Income source details are enabled for UK property" in {
               stubAuthorised(mtdUserRole)
               disable(NavBarFs)
-              enable(IncomeSourcesFs)
-              enable(DisplayBusinessStartDate)
+              enable(IncomeSourcesFs, DisplayBusinessStartDate)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -100,8 +99,7 @@ class CeaseIncomeSourcesControllerISpec extends ControllerISpecHelper {
 
             "Income source details are enabled for for foreign property" in {
               stubAuthorised(mtdUserRole)
-              enable(IncomeSourcesFs)
-              enable(DisplayBusinessStartDate)
+              enable(IncomeSourcesFs, DisplayBusinessStartDate)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 

@@ -530,8 +530,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
               "IncomeSources and IncomeSourcesNewJourney feature switches are enabled" in {
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
-                enable(IncomeSourcesFs)
-                enable(IncomeSourcesNewJourney)
+                enable(IncomeSourcesFs, IncomeSourcesNewJourney)
 
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
