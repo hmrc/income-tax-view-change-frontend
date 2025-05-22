@@ -60,7 +60,7 @@ class TaxCalculationDetailsResponseAuditModelSpec extends AnyWordSpecLike with M
   def taxCalculationDetailsResponseAuditModelMinimal(userType: Option[AffinityGroup] = Some(Individual)): TaxDueResponseAuditModel =
     TaxDueResponseAuditModel(
       mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, None, Nil, Nil)),
-      viewModel = TaxDueSummaryViewModel(liabilityCalculationModelDeductionsMinimal()),
+      viewModel = TaxDueSummaryViewModel(liabilityCalculationModelDeductionsMinimal(), testObligationsModel),
       taxYear = testTaxYear
     )
 
