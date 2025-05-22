@@ -134,7 +134,8 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
             taxTakenOffTradingIncome = Some(563.12)
           ),
           giftAidTaxChargeWhereBasicRateDiffers = Some(6565.99),
-          transitionProfitRow = TransitionProfitRow(Some(700.00), Some(3000.00))
+          transitionProfitRow = TransitionProfitRow(Some(700.00), Some(3000.00)),
+          finalDeclarationOrTaxReturnIsSubmitted = true
         )
 
         TaxDueSummaryViewModel(liabilityCalculationModelSuccessful, testObligationsModel) shouldBe expectedTaxDueSummaryViewModel
