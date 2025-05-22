@@ -64,7 +64,8 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
           totalStudentLoansRepaymentAmount = None, saUnderpaymentsCodedOut = None,
           totalIncomeTaxAndNicsDue = Some(0),
           totalTaxDeducted = None,
-          taxDeductedAtSource = TaxDeductedAtSourceViewModel(None, None, None, None, None, None, None, None, None)
+          taxDeductedAtSource = TaxDeductedAtSourceViewModel(None, None, None, None, None, None, None, None, None),
+          finalDeclarationOrTaxReturnIsSubmitted = true
         )
     }
 
