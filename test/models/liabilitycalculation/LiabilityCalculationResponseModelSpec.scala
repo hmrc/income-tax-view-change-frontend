@@ -136,7 +136,7 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
   "LiabilityCalculationResponse conversion to TaxDueSummaryViewModel" when {
     "there is no calculation in response" should {
       "convert to empty model" in {
-        val model: TaxDueSummaryViewModel = TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulWithNoCalc)
+        val model: TaxDueSummaryViewModel = TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulWithNoCalc, testObligationsModel)
         model shouldBe TaxDueSummaryViewModel()
       }
     }
