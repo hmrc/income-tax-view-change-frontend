@@ -20,6 +20,7 @@ import authV2.AuthActionsTestData.defaultMTDITUser
 import forms.IncomeSourcesFormsSpec.commonAuditDetails
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
+import models.obligations._
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsObject, Json}
