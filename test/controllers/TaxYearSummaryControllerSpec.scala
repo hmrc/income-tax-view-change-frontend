@@ -19,7 +19,7 @@ package controllers
 import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import mocks.auth.MockAuthActions
-import mocks.connectors.MockIncomeTaxCalculationConnector
+import mocks.connectors.{MockIncomeTaxCalculationConnector, MockObligationsConnector}
 import mocks.services.{MockCalculationService, MockClaimToAdjustService, MockFinancialDetailsService, MockNextUpdatesService}
 import models.admin._
 import models.financialDetails._
