@@ -26,6 +26,23 @@ import testUtils.UnitSpec
 
 class TaxDueSummaryViewModelSpec extends UnitSpec {
 
+  val testObligationsModel: ObligationsModel = ObligationsModel(Seq(
+    GroupedObligationsModel(
+      identification = "testId",
+      obligations = List(
+        SingleObligationModel(
+          start = getCurrentTaxYearEnd.minusMonths(3),
+          end = getCurrentTaxYearEnd,
+          due = getCurrentTaxYearEnd,
+          obligationType = "Quarterly",
+          dateReceived = Some(fixedDate),
+          periodKey = "Quarterly",
+          StatusFulfilled
+        )
+      )
+    )
+  ))
+
   "TaxDueSummaryViewModel model" when {
     "create a minimal TaxDueSummaryViewModel when there is a minimal Calculation response" in {
       TaxDueSummaryViewModel(liabilityCalculationModelDeductionsMinimal()) shouldBe
