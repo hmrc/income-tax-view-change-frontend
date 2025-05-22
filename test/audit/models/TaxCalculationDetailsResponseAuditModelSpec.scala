@@ -53,7 +53,7 @@ class TaxCalculationDetailsResponseAuditModelSpec extends AnyWordSpecLike with M
   val taxCalculationDetailsResponseAuditModelFull: TaxDueResponseAuditModel =
     TaxDueResponseAuditModel(
       mtdItUser = defaultMTDITUser(Some(Individual), IncomeSourceDetailsModel(testNino, testMtditid, None, Nil, Nil)),
-      viewModel = TaxDueSummaryViewModel(liabilityCalculationModelSuccessful),
+      viewModel = TaxDueSummaryViewModel(liabilityCalculationModelSuccessful, testObligationsModel),
       taxYear = testTaxYear
     )
 
