@@ -162,7 +162,7 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
 
                 result should have(
                   httpStatus(OK),
-                  elementTextByID("choose-tax-year-heading")(s"Which tax year do you want to report quarterly?"),
+                  elementTextByID("choose-tax-year-heading")(s"Which tax year do you want to report quarterly for?"),
                   elementTextByID("choose-tax-year-subheading")(getSubheading(incomeSourceType)),
                   elementTextBySelector("[for='current-year-checkbox']")(s"${currentTaxYear - 1} to $currentTaxYear"),
                   elementTextBySelector("[for='next-year-checkbox']")(s"$currentTaxYear to ${currentTaxYear + 1}"),
@@ -302,7 +302,7 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
 
                 result should have(
                   httpStatus(BAD_REQUEST),
-                  elementTextByID("choose-tax-year-heading")(s"Which tax year do you want to report quarterly?"),
+                  elementTextByID("choose-tax-year-heading")(s"Which tax year do you want to report quarterly for?"),
                   elementTextByID("choose-tax-year-subheading")(getSubheading(incomeSourceType)),
                   elementTextBySelector("[for='current-year-checkbox']")(s"${currentTaxYear - 1} to $currentTaxYear"),
                   elementTextBySelector("[for='next-year-checkbox']")(s"$currentTaxYear to ${currentTaxYear + 1}"),

@@ -2249,7 +2249,7 @@ manageBusinesses.check-answers.change                                    = Chang
 
 # manage business choose reporting methods for years
 
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading                                  = Which tax year do you want to report quarterly?
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading                                  = Which tax year do you want to report quarterly for?
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading.feature.switched                 = Which tax year do you want to sign up for?
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.SelfEmployment.subHeading                = Sole trader
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.UkProperty.subHeading                    = UK property
