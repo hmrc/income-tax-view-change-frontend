@@ -211,7 +211,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
             taxCalculation = Some(liabilityCalculationModelSuccessful.calculation.get.taxCalculation.get.copy(
               totalIncomeTaxAndNicsAndCgt = Some(taxDue))))))
 
-        TaxDueSummaryViewModel(liabilityCalculationModel) shouldBe expectedTaxDueSummaryViewModel
+        TaxDueSummaryViewModel(liabilityCalculationModel, testObligationsModel) shouldBe expectedTaxDueSummaryViewModel
       }
     }
     "grossGiftAidPaymentsActual" should{
