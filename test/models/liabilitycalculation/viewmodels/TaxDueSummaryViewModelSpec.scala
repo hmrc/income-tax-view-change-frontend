@@ -45,7 +45,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
 
   "TaxDueSummaryViewModel model" when {
     "create a minimal TaxDueSummaryViewModel when there is a minimal Calculation response" in {
-      TaxDueSummaryViewModel(liabilityCalculationModelDeductionsMinimal()) shouldBe
+      TaxDueSummaryViewModel(liabilityCalculationModelDeductionsMinimal(), testObligationsModel) shouldBe
         TaxDueSummaryViewModel(
           taxRegime = "UK",
           messages = None, lossesAppliedToGeneralIncome = None,
