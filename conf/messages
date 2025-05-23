@@ -2786,4 +2786,5 @@ income-sources.check-details-reporting-frequency.taxYear                        
 income-sources.check-details-reporting-frequency.change-rf-key                  = Do you want to change to report quarterly?
 income-sources.check-details-reporting-frequency.change-choose-tax-year-key     = Which tax year do you want to report quarterly for?
 
-
+income-sources.check-details-reporting-frequency.r17.change-rf-key              = Do you want to sign this new business up to Making Tax Digital for Income Tax?
+income-sources.check-details-reporting-frequency.r17.change-choose-tax-year-key = Which tax years do you want to sign up for?
