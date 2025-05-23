@@ -115,7 +115,7 @@ class IncomeSourceReportingMethodController @Inject()(val authActions: AuthActio
           errorHandler(isAgent).showInternalServerError()
         }
       case true =>
-        itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear(user.nino).flatMap {
+        itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear().flatMap {
           case true =>
             getViewModel(incomeSourceType, IncomeSourceId(id)).map {
               case Some(viewModel) =>

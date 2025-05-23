@@ -160,7 +160,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
   private def getITSAStatusesFrom(currentYear: TaxYear)(implicit user: MtdItUser[_],
                                                         hc: HeaderCarrier,
                                                         ec: ExecutionContext): Future[Map[TaxYear, ITSAStatus]] = {
-    itsaStatusService.getStatusTillAvailableFutureYears(currentYear.previousYear, user.nino).map(_.view.mapValues(_.status).toMap.withDefaultValue(ITSAStatus.NoStatus))
+    itsaStatusService.getStatusTillAvailableFutureYears(currentYear.previousYear).map(_.view.mapValues(_.status).toMap.withDefaultValue(ITSAStatus.NoStatus))
     //todo is passing currentYear.previousYear correct here?
   }
 

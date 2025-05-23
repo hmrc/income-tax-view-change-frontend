@@ -74,7 +74,7 @@ class IncomeSourceRFServiceSpec extends TestSupport
     when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.eq(2023))(any(), any())).thenReturn(Future.successful(isCYCrystallised))
     when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.eq(2024))(any(), any())).thenReturn(Future.successful(false))
 
-    when(mockITSAStatusService.getStatusTillAvailableFutureYears(any(), any())(any(), any()))
+    when(mockITSAStatusService.getStatusTillAvailableFutureYears(any())(any(), any(), any()))
       .thenReturn(Future.successful(
         Map(TaxYear.forYearEnd(2023) -> StatusDetail("", CYStatus, CYStatusReason), TaxYear.forYearEnd(2024) -> StatusDetail("", NYStatus, NYStatusReason))
       ))

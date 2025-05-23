@@ -180,7 +180,7 @@ class IncomeSourceRFService @Inject()(val sessionService: SessionService,
       } else {
         for {
           crystallisationStatus <- isCrystallisedForCurrTyAndNextTy
-          statusTaxYearMap <- itsaStatusService.getStatusTillAvailableFutureYears(TaxYear(currentTaxYearEnd - 1, currentTaxYearEnd), extractNino(user))
+          statusTaxYearMap <- itsaStatusService.getStatusTillAvailableFutureYears(TaxYear(currentTaxYearEnd - 1, currentTaxYearEnd))
           accountLevelITSAStatusCurrentTaxYear = statusTaxYearMap.get(currentTy)
           accountLevelITSAStatusNextTaxYear = statusTaxYearMap.get(nextTy)
           someIncomeSourceId <- Future(sessionData.addIncomeSourceData.flatMap(_.incomeSourceId))
@@ -202,13 +202,5 @@ class IncomeSourceRFService @Inject()(val sessionService: SessionService,
         }
       }
     }
-  }
-
-  private def extractNino(user: MtdItUser[_]): String = {
-    if (user.isAgent())
-      user.clientDetails.map(_.nino)
-        .getOrElse(throw new Exception("Client details are missing from authorised user"))
-    else
-      user.nino
   }
 }

@@ -84,7 +84,7 @@ class OptOutService @Inject()(
                                                          hc: HeaderCarrier,
                                                          ec: ExecutionContext): Future[Map[TaxYear, ITSAStatus]] =
     itsaStatusService
-      .getStatusTillAvailableFutureYears(previousYear, user.nino)
+      .getStatusTillAvailableFutureYears(previousYear)
       .map(_.view.mapValues(_.status)
         .toMap
         .withDefaultValue(ITSAStatus.NoStatus)

@@ -79,7 +79,7 @@ class OptOutServiceNextUpdatesPageOptOutViewModelSpec extends UnitSpec
           currentTaxYear -> StatusDetail("", ITSAStatus.Mandated, StatusReason.Rollover),
           nextTaxYear -> StatusDetail("", ITSAStatus.Mandated, StatusReason.Rollover),
         )
-        when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousTaxYear, taxableEntityId)).thenReturn(Future.successful(taxYearStatusDetailMap))
+        when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousTaxYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
         when(mockCalculationListService.isTaxYearCrystallised(previousTaxYear)).thenReturn(Future.successful(false))
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
@@ -114,7 +114,7 @@ class OptOutServiceNextUpdatesPageOptOutViewModelSpec extends UnitSpec
           currentTaxYear -> StatusDetail("", ITSAStatus.Voluntary, StatusReason.Rollover),
           nextTaxYear -> StatusDetail("", ITSAStatus.Voluntary, StatusReason.Rollover),
         )
-        when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousTaxYear, taxableEntityId)).thenReturn(Future.successful(taxYearStatusDetailMap))
+        when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousTaxYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
         when(mockCalculationListService.isTaxYearCrystallised(previousTaxYear)).thenReturn(Future.successful(false))
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))

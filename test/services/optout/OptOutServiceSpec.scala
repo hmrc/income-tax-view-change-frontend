@@ -123,7 +123,7 @@ class OptOutServiceSpec
       currentYear -> StatusDetail("", currentYearStatus, StatusReason.Rollover),
       nextYear -> StatusDetail("", nextYearStatus, StatusReason.Rollover)
     )
-    when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousYear, nino)).thenReturn(Future.successful(taxYearStatusDetailMap))
+    when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.successful(taxYearStatusDetailMap))
   }
 
   private def stubCrystallisedStatus(taxYear: TaxYear, crystallisedStatus: Boolean): Unit = {
@@ -428,7 +428,7 @@ class OptOutServiceSpec
 
           stubCurrentTaxYear(currentYear)
 
-          when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousYear, testNino)).thenReturn(Future.failed(new RuntimeException("some api error")))
+          when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.failed(new RuntimeException("some api error")))
 
           stubCrystallisedStatus(previousYear, false)
 

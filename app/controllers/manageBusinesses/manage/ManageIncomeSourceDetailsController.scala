@@ -318,7 +318,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
         (taxYear1Status, taxYear2Status)
       }
     } else {
-      itsaStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(latencyDetails), extractNino(user))
+      itsaStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(latencyDetails))
     }
   }
 
@@ -446,13 +446,5 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
           )
       }
     }
-  }
-
-  private def extractNino(user: MtdItUser[_]): String = {
-    if (user.isAgent)
-      user.clientDetails.map(_.nino)
-        .getOrElse(throw new Exception("Client details are missing from authorised user"))
-    else
-      user.nino
   }
 }
