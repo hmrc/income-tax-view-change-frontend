@@ -16,12 +16,10 @@
 
 package mocks.services
 
-import enums.IncomeSourceJourney.{IncomeSourceType, JourneyState}
-import enums.JourneyType.IncomeSourceJourneyType
-import org.mockito.ArgumentMatchers.{any, matches}
-import org.mockito.Mockito.{mock, reset, when}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import play.api.mvc.{Result, Results}
+import play.api.mvc.Results
 import services.manageBusinesses.IncomeSourceRFService
 import testUtils.UnitSpec
 

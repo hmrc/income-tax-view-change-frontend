@@ -82,6 +82,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(financialDetailsModels.flatMap(_.asChargeItems))
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
@@ -101,7 +102,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any(), any())(any(), any()))
               .thenReturn(Future.successful(oneOverdueBCDPaymentInWhatYouOweChargesList))
             setupMockGetFilteredChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList.chargesList)
-
+            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -143,7 +144,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(financialDetailsModels.flatMap(_.asChargeItems))
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
-
+            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
@@ -189,7 +190,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(financialDetailsModels.flatMap(_.asChargeItems).take(3))
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
-
+            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
@@ -226,7 +227,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
-
+            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
@@ -264,7 +265,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
-
+            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
@@ -288,7 +289,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
-
+          setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
           status(result) shouldBe Status.OK
@@ -308,7 +309,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
-
+          setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
           status(result) shouldBe Status.OK
@@ -333,7 +334,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
-
+          setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
           status(result) shouldBe Status.OK
@@ -349,7 +350,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           setupNextUpdatesTests(futureDueDates, agentType)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
-
+          setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
           status(result) shouldBe Status.OK
@@ -362,7 +363,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           setupNextUpdatesTests(overdueDueDates, agentType)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
-
+          setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
           status(result) shouldBe Status.OK
@@ -375,7 +376,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           setupNextUpdatesTests(Seq(), agentType)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
-
+          setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
           status(result) shouldBe Status.OK
@@ -394,7 +395,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
-
+          setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           val result: Future[Result] = controller.showAgent()(fakeRequest)
           status(result) shouldBe Status.OK
 
@@ -421,6 +422,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             val result: Future[Result] = controller.showAgent()(fakeRequest)
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
@@ -451,6 +453,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             val result: Future[Result] = controller.showAgent()(fakeRequest)
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
@@ -482,6 +485,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           val result: Future[Result] = controller.showAgent()(fakeRequest)
           status(result) shouldBe Status.OK
           val document: Document = Jsoup.parse(contentAsString(result))
@@ -511,7 +515,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
-
+            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
@@ -536,7 +540,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
-
+            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
@@ -563,7 +567,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
-
+            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK

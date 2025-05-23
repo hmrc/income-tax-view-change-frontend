@@ -25,12 +25,12 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.AuthUtils._
 import controllers.agent.sessionUtils.SessionKeys
-import enums.{MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
+import enums._
 import forms.agent.ClientsUTRForm
 import models.sessionData.SessionCookieData
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import play.api.mvc._
 import services.agent.ClientDetailsService
 import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound}
 import uk.gov.hmrc.auth.core.Enrolment
@@ -80,9 +80,9 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
         ) flatMap {
           case Right(clientDetails) =>
             checkAgentAuthorisedAndGetRole(clientDetails.mtdItId).flatMap { userRole =>
-              val sessionCookies: Seq[(String, String)] = SessionCookieData(clientDetails, validUTR, userRole == MTDSupportingAgent).toSessionCookieSeq
-              sendAudit(true, user, validUTR, clientDetails.nino, clientDetails.mtdItId, Some(userRole == MTDSupportingAgent))
-              Future.successful(Redirect(routes.ConfirmClientUTRController.show()).addingToSession(sessionCookies: _*))
+                val sessionCookies: Seq[(String, String)] = SessionCookieData(clientDetails, validUTR, userRole == MTDSupportingAgent).toSessionCookieSeq
+                sendAudit(true, user, validUTR, clientDetails.nino, clientDetails.mtdItId, Some(userRole == MTDSupportingAgent))
+                Future.successful(Redirect(routes.ConfirmClientUTRController.show()).addingToSession(sessionCookies: _*))
             }.recover {
               case ex =>
                 Logger("application")

@@ -63,7 +63,7 @@ class OptOutServiceSpec
   val taxYear2022_2023 = TaxYear.forYearEnd(2023)
   val taxYear2023_2024 = taxYear2022_2023.nextYear
   val taxYear2024_2025 = taxYear2023_2024.nextYear
-
+  val testNino = "AB123456C"
   val taxYear: TaxYear = TaxYear.forYearEnd(2021)
   val previousTaxYear: TaxYear = taxYear.previousYear
   val crystallised: Boolean = true
@@ -88,7 +88,8 @@ class OptOutServiceSpec
                          previousYearCrystallisedStatus: Boolean,
                          previousYearStatus: Value,
                          currentYearStatus: Value,
-                         nextYearStatus: Value): Unit = {
+                         nextYearStatus: Value,
+                         nino: String): Unit = {
 
     val (previousYear, currentYear, nextYear) = taxYears(currentTaxYear)
 
@@ -97,7 +98,7 @@ class OptOutServiceSpec
     stubItsaStatuses(
       previousYear, previousYearStatus,
       currentYear, currentYearStatus,
-      nextYear, nextYearStatus)
+      nextYear, nextYearStatus, nino)
 
     stubCrystallisedStatus(previousYear, previousYearCrystallisedStatus)
 
@@ -116,7 +117,7 @@ class OptOutServiceSpec
 
   private def stubItsaStatuses(previousYear: TaxYear, previousYearStatus: Value,
                                currentYear: TaxYear, currentYearStatus: Value,
-                               nextYear: TaxYear, nextYearStatus: Value): Unit = {
+                               nextYear: TaxYear, nextYearStatus: Value, nino: String): Unit = {
     val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
       previousYear -> StatusDetail("", previousYearStatus, StatusReason.Rollover),
       currentYear -> StatusDetail("", currentYearStatus, StatusReason.Rollover),
@@ -305,7 +306,8 @@ class OptOutServiceSpec
           previousYearCrystallisedStatus = false,
           previousYearStatus = Voluntary,
           currentYearStatus = NoStatus,
-          nextYearStatus = NoStatus)
+          nextYearStatus = NoStatus,
+          nino = testNino)
 
         val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -323,7 +325,8 @@ class OptOutServiceSpec
           previousYearCrystallisedStatus = true,
           previousYearStatus = Voluntary,
           currentYearStatus = NoStatus,
-          nextYearStatus = NoStatus)
+          nextYearStatus = NoStatus,
+          nino = testNino)
 
         val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -340,7 +343,8 @@ class OptOutServiceSpec
           previousYearCrystallisedStatus = false,
           previousYearStatus = NoStatus,
           currentYearStatus = Voluntary,
-          nextYearStatus = Mandated)
+          nextYearStatus = Mandated,
+          nino = testNino)
 
         val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -357,7 +361,8 @@ class OptOutServiceSpec
           previousYearCrystallisedStatus = false,
           previousYearStatus = NoStatus,
           currentYearStatus = NoStatus,
-          nextYearStatus = Voluntary)
+          nextYearStatus = Voluntary,
+          nino = testNino)
 
         val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -374,7 +379,8 @@ class OptOutServiceSpec
             previousYearCrystallisedStatus = false,
             previousYearStatus = Voluntary,
             currentYearStatus = Mandated,
-            nextYearStatus = Mandated)
+            nextYearStatus = Mandated,
+            nino = testNino)
 
           val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -396,7 +402,8 @@ class OptOutServiceSpec
               previousYearCrystallisedStatus = false,
               previousYearStatus = Mandated,
               currentYearStatus = Voluntary,
-              nextYearStatus = Mandated)
+              nextYearStatus = Mandated,
+              nino = testNino)
 
             val response = service.nextUpdatesPageOptOutViewModels()
 
@@ -442,7 +449,8 @@ class OptOutServiceSpec
           stubItsaStatuses(
             previousYear, NoStatus,
             currentYear, NoStatus,
-            nextYear, Voluntary)
+            nextYear, Voluntary,
+           testNino)
 
           when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.failed(new RuntimeException("some api error")))
 
@@ -653,7 +661,8 @@ class OptOutServiceSpec
             previousYearCrystallisedStatus = false,
             previousYearStatus = Mandated,
             currentYearStatus = Annual,
-            nextYearStatus = Voluntary
+            nextYearStatus = Voluntary,
+            nino = testNino
           )
 
           when(mockRepository.fetchSavedIntent()).thenReturn(Future.successful(None))
@@ -683,7 +692,8 @@ class OptOutServiceSpec
           previousYearCrystallisedStatus = false,
           previousYearStatus = NoStatus,
           currentYearStatus = Voluntary,
-          nextYearStatus = Voluntary
+          nextYearStatus = Voluntary,
+          nino = testNino
         )
 
         when(mockRepository.fetchSavedIntent()).thenReturn(Future.successful(Some(taxYear)))

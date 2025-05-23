@@ -20,7 +20,7 @@ import audit.models.EnterClientUTRAuditModel
 import controllers.agent.sessionUtils.SessionKeys
 import forms.agent.ClientsUTRForm
 import mocks.auth.MockAuthActions
-import mocks.services.MockClientDetailsService
+import mocks.services.{MockClientDetailsService, MockITSAStatusService}
 import mocks.views.agent.MockEnterClientsUTR
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{times, verify}
@@ -35,7 +35,8 @@ import views.html.agent.EnterClientsUTR
 
 class EnterClientsUTRControllerSpec extends MockAuthActions
   with MockEnterClientsUTR
-  with MockClientDetailsService {
+  with MockClientDetailsService
+  with MockITSAStatusService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
@@ -119,7 +120,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
         "the utr entered is valid, there is a client/primary agent relationship and the POST request to session data service is successful" in {
           val validUTR: String = "1234567890"
           setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
-
+          setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           mockClientDetails(validUTR)(
             response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
           )
@@ -145,7 +146,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
         "the utr entered is valid, there is a client/secondary agent relationship and the POST request to session data service is successful" in {
           val validUTR: String = "1234567890"
           setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
-
+          setupMockHasMandatedOrVoluntaryStatusCurrentYearDefaultParam(true)
           mockClientDetails(validUTR)(
             response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
           )
@@ -175,6 +176,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
           val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
 
           setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
+          setupMockHasMandatedOrVoluntaryStatusCurrentYearDefaultParam(true)
 
           mockClientDetails(validUTR)(
             response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))

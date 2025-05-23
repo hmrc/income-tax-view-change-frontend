@@ -121,7 +121,7 @@ class OptInServiceSpec extends UnitSpec
 
         when(repository.get(hc.sessionId.get.value, Opt(OptInJourney))).thenReturn(Future.successful(None))
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
-        when(mockITSAStatusService.getStatusTillAvailableFutureYears(currentTaxYear.previousYear))
+        when(mockITSAStatusService.getStatusTillAvailableFutureYears(ArgumentMatchers.eq(currentTaxYear.previousYear))(any, any, any))
           .thenReturn(Future.successful(
             Map(currentTaxYear -> statusDetailWith(Annual), nextTaxYear -> statusDetailWith(Annual))
           ))
@@ -134,7 +134,7 @@ class OptInServiceSpec extends UnitSpec
 
         when(repository.get(hc.sessionId.get.value, Opt(OptInJourney))).thenReturn(Future.successful(None))
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
-        when(mockITSAStatusService.getStatusTillAvailableFutureYears(currentTaxYear.previousYear))
+        when(mockITSAStatusService.getStatusTillAvailableFutureYears(ArgumentMatchers.eq(currentTaxYear.previousYear))(any, any, any))
           .thenReturn(Future.successful(
             Map(currentTaxYear -> statusDetailWith(Annual), nextTaxYear -> statusDetailWith(Voluntary))
           ))
