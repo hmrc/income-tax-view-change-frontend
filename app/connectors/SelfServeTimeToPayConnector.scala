@@ -23,6 +23,7 @@ import play.api.http.Status.CREATED
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -55,9 +56,9 @@ class SelfServeTimeToPayConnector @Inject()(http: HttpClientV2,
             valid => valid
           )
         case response => if (response.status >= 400) {
-          Logger("application").error(s"Payment journey start error with response code: ${response.status} and body: ${response.body}")
+          Logger("application").error(s"Self Serve Time To Pay journey start error with response code: ${response.status} and body: ${response.body}")
         } else {
-          Logger("application").warn(s"Payment journey start error with response code: ${response.status} and body: ${response.body}")
+          Logger("application").warn(s"Self Serve Time To Pay journey start error with response code: ${response.status} and body: ${response.body}")
         }
           SelfServeTimeToPayJourneyErrorResponse(response.status, response.body)
       }

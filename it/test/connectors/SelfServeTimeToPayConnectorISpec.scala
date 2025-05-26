@@ -17,9 +17,9 @@
 package connectors
 
 import _root_.helpers.{ComponentSpecBase, WiremockHelper}
-import models.core.{SelfServeTimeToPayJourneyResponse, SelfServeTimeToPayJourneyResponseModel}
+import models.core.{SelfServeTimeToPayJourneyErrorResponse, SelfServeTimeToPayJourneyResponse, SelfServeTimeToPayJourneyResponseModel}
 import org.scalatest.wordspec.AnyWordSpec
-import play.api.http.Status.CREATED
+import play.api.http.Status.{CREATED, INTERNAL_SERVER_ERROR}
 import play.api.libs.json.Json
 
 
@@ -27,25 +27,64 @@ class SelfServeTimeToPayConnectorISpec extends AnyWordSpec with ComponentSpecBas
 
   lazy val connector: SelfServeTimeToPayConnector = app.injector.instanceOf[SelfServeTimeToPayConnector]
 
+  val url = s"/essttp-backend/sa/itsa/journey/start"
+
+  val requestBody = Json.parse(
+    s"""
+     {
+      "returnUrl": "/report-quarterly/income-and-expenses/view",
+      "backUrl": "/report-quarterly/income-and-expenses/view/your-self-assessment-charges"
+     }
+    """.stripMargin
+  )
+
   "SelfServeTimeToPayConnector" when {
     ".startSelfServeTimeToPayJourney()" when {
       "CREATED - 201" should {
         "return a successful response with valid json" in {
 
-          val url = s"/essttp-backend/sa/itsa/journey/start"
           val json = Json.toJson(SelfServeTimeToPayJourneyResponseModel("journeyId", "nextUrl")).toString()
-          val requestBody = Json.parse(
-            s"""
-       {
-        "returnUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view",
-        "backUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/your-self-assessment-charges"
-       }
-      """.stripMargin
-          )
+
           val expectedResponse: SelfServeTimeToPayJourneyResponse =
             SelfServeTimeToPayJourneyResponseModel("journeyId", "nextUrl")
 
           WiremockHelper.stubPostWithRequest(url, requestBody, CREATED, json)
+
+          val result: SelfServeTimeToPayJourneyResponse = connector.startSelfServeTimeToPayJourney().futureValue
+
+          result shouldBe expectedResponse
+
+          WiremockHelper.verifyPost(
+            uri = s"/essttp-backend/sa/itsa/journey/start"
+          )
+        }
+      }
+
+      "CREATED - 201" should {
+        "return a successful response with invalid json" in {
+
+          val expectedResponse: SelfServeTimeToPayJourneyResponse =
+            SelfServeTimeToPayJourneyErrorResponse(CREATED, "Invalid Json")
+
+          WiremockHelper.stubPostWithRequest(url, requestBody, CREATED, "{}")
+
+          val result: SelfServeTimeToPayJourneyResponse = connector.startSelfServeTimeToPayJourney().futureValue
+
+          result shouldBe expectedResponse
+
+          WiremockHelper.verifyPost(
+            uri = s"/essttp-backend/sa/itsa/journey/start"
+          )
+        }
+      }
+
+      "INTERNAL_SERVER_ERROR - 500" should {
+        "return PaymentJourneyErrorResponse" in {
+
+          val expectedResponse: SelfServeTimeToPayJourneyResponse =
+            SelfServeTimeToPayJourneyErrorResponse(INTERNAL_SERVER_ERROR, "Error Message")
+
+          WiremockHelper.stubPostWithRequest(url, requestBody, INTERNAL_SERVER_ERROR, "Error Message")
 
           val result: SelfServeTimeToPayJourneyResponse = connector.startSelfServeTimeToPayJourney().futureValue
 
