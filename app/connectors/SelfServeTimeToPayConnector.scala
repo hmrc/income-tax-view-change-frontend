@@ -42,6 +42,7 @@ class SelfServeTimeToPayConnector @Inject()(http: HttpClientV2,
        }
       """.stripMargin
     )
+
     http
       .post(url"$journeyStartUrl")
       .withBody(body)
