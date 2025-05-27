@@ -100,10 +100,9 @@ case class DocumentDetail(taxYear: Int,
   }
 
   def isCodingOutDocumentDetail: Boolean =
-    (isPayeSelfAssessment, isCancelledPayeSelfAssessment, isClass2Nic) match {
-      case (true, _, _) => true
-      case (_, true, _) => true
-      case (_, _, true) => true
+    (isPayeSelfAssessment, isCancelledPayeSelfAssessment) match {
+      case (true, _) => true
+      case (_, true) => true
       case _ => false
     }
 
