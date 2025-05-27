@@ -106,7 +106,7 @@ case class DocumentDetail(taxYear: Int,
       case _ => false
     }
 
-  def isNotCodingOutDocumentDetail: Boolean = !isClass2Nic && !isPayeSelfAssessment && !isCancelledPayeSelfAssessment
+  def isNotCodingOutDocumentDetail: Boolean = !isPayeSelfAssessment && !isCancelledPayeSelfAssessment
 
   def isClass2Nic: Boolean = documentText match {
     case Some(documentText) if documentText == CODING_OUT_CLASS2_NICS.name => true
