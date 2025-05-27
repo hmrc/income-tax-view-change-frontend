@@ -602,6 +602,8 @@ taxCal_breakdown.table.totalRoyaltyPaymentsTaxCharged               = Treth sy�
 taxCal_breakdown.table.giftAidTaxReductionWhereBasicRateDiffers     = Gostyngiad treth ar y gwahaniaeth yn y gyfradd sylfaenol
 taxCal_breakdown.table.giftAidTaxChargeWhereBasicRateDiffers        = Tâl treth ar y gwahaniaeth yn y gyfradd sylfaenol
 
+taxCal_breakdown.table.highIncomeBenefitCharge                      = Tâl treth Budd-dal Plant Incwm Uchel
+
 taxCal_breakdown.message.static1                                = Mae’r cyfrifiad hwn ond yn seiliedig ar yr wybodaeth y mae CThEF wedi’i chael am eich incwm a’ch treuliau hyd yma. Gallai hyn newid wrth i ni gael rhagor o wybodaeth amdanoch yn ystod y flwyddyn dreth.
 taxCal_breakdown.message.C22201                                 = Cynyddwyd eich terfyn ar gyfer y Gyfradd Sylfaenol gan {0} i {1} ar gyfer taliadau Rhodd Cymorth.
 taxCal_breakdown.message.C22202                                 = Mae’r dreth sy’n ddyledus ar daliadau Rhodd Cymorth yn fwy na’r Dreth Incwm a godwyd arnoch, felly rydych yn agored i dalu treth Rhodd Cymorth.
