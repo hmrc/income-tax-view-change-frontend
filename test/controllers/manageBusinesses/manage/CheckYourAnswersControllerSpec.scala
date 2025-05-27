@@ -22,7 +22,7 @@ import enums.MTDIndividual
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesFs
+import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.ManageIncomeSourceData
 import models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import org.mockito.ArgumentMatchers.any
@@ -63,7 +63,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
         s"the user is authenticated as a $mtdRole" should {
           "render the check your answers page" when {
             "the session contains all relevant data" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
               mockBothPropertyBothBusinessWithLatency()
 
@@ -83,7 +83,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
           "redirect to the home page" when {
             "IncomeSources FS is disabled" in {
               setupMockSuccess(mtdRole)
-              disable(IncomeSourcesFs)
+              disable(IncomeSourcesNewJourney)
               mockBothPropertyBothBusinessWithLatency()
               val result: Future[Result] = action(fakeRequest)
               status(result) shouldBe Status.SEE_OTHER
@@ -98,7 +98,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
 
           "redirect to the Cannot Go Back page" when {
             "the journey is complete" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
@@ -122,7 +122,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
           "redirect to the manage obligations page" when {
             "the reporting method is updated to annual" in {
               setupMockSuccess(mtdRole)
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))
@@ -150,7 +150,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
 
             "the reporting method is updated to quarterly" in {
               setupMockSuccess(mtdRole)
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))
@@ -179,7 +179,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
           "redirect to the home page" when {
             "IncomeSources FS is disabled" in {
               setupMockSuccess(mtdRole)
-              disable(IncomeSourcesFs)
+              disable(IncomeSourcesNewJourney)
               mockBothPropertyBothBusinessWithLatency()
               val result: Future[Result] = action(fakeRequest)
               status(result) shouldBe Status.SEE_OTHER
@@ -195,7 +195,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
           "redirect to ReportingMethodChangeErrorController" when {
             "UpdateIncomeSourceService returns a UpdateIncomeSourceResponseError response" in {
               setupMockSuccess(mtdRole)
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))

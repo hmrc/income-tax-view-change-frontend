@@ -32,7 +32,9 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
                                               latencyYearsCrystallised: LatencyYearsCrystallised,
                                               latencyDetails: Option[LatencyDetails],
                                               incomeSourceType: IncomeSourceType,
-                                              quarterReportingType: Option[QuarterReportingType]
+                                              quarterReportingType: Option[QuarterReportingType],
+                                              useMTDForTaxYear1: Option[Boolean] = None,
+                                              useMTDForTaxYear2: Option[Boolean] = None
                                              ) {
 
   def latencyValueAsKey(latencyIndicator: String): String = {

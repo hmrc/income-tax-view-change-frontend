@@ -30,6 +30,7 @@ import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
+import scala.language.postfixOps
 
 class CeaseIncomeSourceEndDateFormProviderSpec extends AnyWordSpec with Matchers with TestSupport {
   val mockDateService: DateService = app.injector.instanceOf[DateService]
@@ -73,6 +74,7 @@ class CeaseIncomeSourceEndDateFormProviderSpec extends AnyWordSpec with Matchers
 
   def setupBindBeforeStartDateTest(incomeSourceType: IncomeSourceType): Unit = {
     val form: Form[LocalDate] = ceaseEndDateForm(incomeSourceType, setupTestId(incomeSourceType), false)(dateService = mockDateService, user = testUser, messages = messages)
+
     val formData = Map("value.day" -> "27", "value.month" -> "8", "value.year" -> "2016")
     val completedForm = form.bind(formData)
 
@@ -268,4 +270,3 @@ class CeaseIncomeSourceEndDateFormProviderSpec extends AnyWordSpec with Matchers
     }
   }
 }
-

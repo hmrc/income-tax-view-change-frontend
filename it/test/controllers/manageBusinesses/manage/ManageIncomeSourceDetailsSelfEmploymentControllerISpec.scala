@@ -20,7 +20,7 @@ import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import models.admin.{DisplayBusinessStartDate, IncomeSourcesFs, NavBarFs}
+import models.admin.{AccountingMethodJourney, DisplayBusinessStartDate, IncomeSourcesNewJourney, NavBarFs, OptInOptOutContentUpdateR17}
 import models.incomeSourceDetails.ManageIncomeSourceData.incomeSourceIdField
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -43,8 +43,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
         "is authenticated, with a valid enrolment" should {
           "render the Manage Self Employment business page" when {
             "URL contains a valid income source ID and user has no latency information" in {
-              enable(IncomeSourcesFs)
-              enable(DisplayBusinessStartDate)
+              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse2)
@@ -72,8 +71,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
             }
 
             "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
-              enable(IncomeSourcesFs)
-              enable(DisplayBusinessStartDate)
+              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               //enable(TimeMachineAddYear)
@@ -108,8 +106,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
             }
 
             "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
-              enable(IncomeSourcesFs)
-              enable(DisplayBusinessStartDate)
+              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails2))
@@ -145,8 +142,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
             }
 
             "URL has valid income source ID and user has latency information, 1st year Annual 2nd year MTD Mandatory | Voluntary and 2 tax years NC" in {
-              enable(IncomeSourcesFs)
-              enable(DisplayBusinessStartDate)
+              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails2))
@@ -182,8 +178,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
             }
 
             "URL contains a valid income source ID and user has latency information, but itsa status is not mandatory or voluntary" in {
-              enable(IncomeSourcesFs)
-              enable(DisplayBusinessStartDate)
+              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWithUnknownsInLatencyPeriod(latencyDetails))
@@ -211,6 +206,39 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(5)", "dd")("Cash basis accounting")
               )
             }
+          }
+
+          "render the correct MTD usage content when OptInOptOutContentUpdateR17 is enabled" in {
+            enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, OptInOptOutContentUpdateR17)
+            disable(NavBarFs)
+            stubAuthorised(mtdUserRole)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails2))
+            CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+            CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+
+            await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
+
+            val result = buildGETMTDClient(path, additionalCookies).futureValue
+            sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
+
+            result should have(
+              httpStatus(OK),
+              pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
+              elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Business name"),
+              elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessTradingName),
+              elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Address"),
+              elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(addressAsString),
+              elementTextBySelectorList("#manage-details-table", "div:nth-of-type(3)", "dt")("Date started"),
+              elementTextBySelectorList("#manage-details-table", "div:nth-of-type(3)", "dd")(businessStartDate),
+              elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dt")("Type of trade"),
+              elementTextBySelectorList("#manage-details-table", "div:nth-of-type(5)", "dt")("Using Making Tax Digital for Income Tax for 2022 to 2023"),
+              elementTextBySelectorList("#manage-details-table", "div:nth-of-type(6)", "dt")("Using Making Tax Digital for Income Tax for 2023 to 2024"),
+
+              elementTextBySelectorList("#manage-details-table", "div:nth-of-type(5)", "dd")("No"),
+              elementTextBySelectorList("#manage-details-table", "div:nth-of-type(6)", "dd")("Yes"),
+              elementTextByID("sign-up-link-1")("Sign up"),
+              elementTextByID("opt-out-link-2")("Opt out")
+            )
           }
         }
         testAuthFailures(path, mtdUserRole)

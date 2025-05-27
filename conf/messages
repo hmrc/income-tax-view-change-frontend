@@ -1260,12 +1260,13 @@ paymentAllocation.paymentAllocations.hmrcAdjustment.text        = HMRC adjustmen
 
 
 ##Tax Years Overview Update Tab##
+updateTab.desc                                                  = A quarterly update covers income and expenses for the tax year so far.
 updateTab.due                                                   = Due {0}
 updateTab.updateType                                            = Update type
 updateTab.incomeSource                                          = Income source
 updateTab.dateSubmitted                                         = Date submitted
 updateTab.dateToDate                                            = {0} to {1}
-updateTab.quarterlyDateToDate                                   = Quarterly period from {0} to {1}
+updateTab.updatePeriodDateToDate                                = The update period from {0} to {1}
 updateTab.obligationType.property                               = Property income
 updateTab.obligationType.business                               = Business
 updateTab.obligationType.crystallised                           = All income sources
@@ -1398,6 +1399,19 @@ incomeSources.add.reportingFrequency.li2                            = your incom
 incomeSources.add.reportingFrequency.form.no-select.error           = Select yes if you want to report quarterly or select no if you want to report annually
 incomeSources.add.reportingFrequency.table.c1                       = Reporting frequency {0} to {1}
 incomeSources.add.reportingFrequency.table.c2                       = Annual
+
+incomeSources.add.reportingFrequency.r17.sole-trader                    = Sole trader
+incomeSources.add.reportingFrequency.r17.uk-property                    = UK property
+incomeSources.add.reportingFrequency.r17.foreign-property               = Foreign property
+incomeSources.add.reportingFrequency.r17.title                          = Your new business is opted out of Making Tax Digital for Income Tax
+incomeSources.add.reportingFrequency.r17.h1                             = Your new business is opted out of Making Tax Digital for Income Tax
+incomeSources.add.reportingFrequency.r17.p1                             = Because this is a new business, for up to 2 tax years you can submit its income and expenses once a year in your tax return, even if:
+incomeSources.add.reportingFrequency.r17.p2                             = You can choose to sign this new business up to Making Tax Digital for Income Tax. This would mean submitting an update every 3 months in addition to your tax return.
+incomeSources.add.reportingFrequency.r17.inset                          = From April {0} when this 2-year tax period ends, you could be required to use Making Tax Digital for Income Tax for this new business.
+incomeSources.add.reportingFrequency.r17.form.h1                        = Do you want to sign this new business up to Making Tax Digital for Income Tax?
+incomeSources.add.reportingFrequency.r17.li1                            = you are voluntarily signed up or required to use Making Tax Digital for Income Tax for your other businesses
+incomeSources.add.reportingFrequency.r17.li2                            = your total gross income from self-employment or property, or both, exceed the £50,000 threshold
+incomeSources.add.reportingFrequency.r17.form.no-select.error           = Select yes if you want to sign this new business up to Making Tax Digital for Income Tax
 
 
 incomeSources.add.error.standardError                            = Sorry, there is a problem with the service
@@ -2121,6 +2135,16 @@ incomeSources.manage.business-manage-details.tradetype                =   Type o
 incomeSources.manage.business-manage-details.reportingFrequency       =   View and change your reporting frequency for all your businesses
 incomeSources.manage.business-manage-details.insetText                =   Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April {0}, you could be required to report quarterly.
 
+# Used when OptInOptOutContentUpdateR17 feature switch is enabled
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.paragraph      =   Because this is still a new business, for up to 2 tax years you can choose if you want to use Making Tax Digital for Income Tax. From April {0}, you could be required to use the service.
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyPrefix       =   Depending on your circumstances, you may be able to
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyLink         =   view and change your reporting obligations for all your businesses
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage = Using Making Tax Digital for Income Tax for {0} to {1}
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage.yes  = Yes
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage.no  = No
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.signup = Sign up
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.optOut = Opt out
+
 incomeSources.manage.uk-property-manage-details.uk-property-section              =   UK property
 incomeSources.manage.uk-property-manage-details.accounting-method                =   Accounting method
 
@@ -2239,15 +2263,17 @@ manageBusinesses.check-answers.change                                    = Chang
 
 # manage business choose reporting methods for years
 
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading                    = Which tax year do you want to report quarterly for?
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.SelfEmployment.subHeading  = Sole trader
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.UkProperty.subHeading      = UK property
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.ForeignProperty.subHeading = Foreign property
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text                  = Select all that apply.
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox              = {0} to {1}
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button                     = Continue
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header               = There is a problem
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description          = Select the tax years you want to report quarterly
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading                                  = Which tax year do you want to report quarterly for?
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading.feature.switched                 = Which tax year do you want to sign up for?
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.SelfEmployment.subHeading                = Sole trader
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.UkProperty.subHeading                    = UK property
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.ForeignProperty.subHeading               = Foreign property
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text                                = Select all that apply.
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox                            = {0} to {1}
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button                                   = Continue
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header                             = There is a problem
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description                        = Select the tax years you want to report quarterly
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description.feature.switched       = Select the tax years you want to sign up for
 
 
 #######################################################################################################################
@@ -2748,5 +2774,16 @@ yourSelfAssessmentChargeSummary.chargeHistory.unknown.text.heading              
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.text.heading                = First late payment penalty
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p = You have received this penalty because you are late paying your Income Tax.
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link = View how your penalty was calculated.
+
+income-sources.check-details-reporting-frequency.heading                        = Sole trader
+income-sources.check-details-reporting-frequency-uk.heading                     = UK property
+income-sources.check-details-reporting-frequency-fp.heading                     = Foreign property
+income-sources.check-details-reporting-frequency.title                          = Check your answers
+income-sources.check-details-reporting-frequency.change                         = Change
+income-sources.check-details-reporting-frequency.yes                            = Yes
+income-sources.check-details-reporting-frequency.no                             = No
+income-sources.check-details-reporting-frequency.taxYear                        = {0} to {1}
+income-sources.check-details-reporting-frequency.change-rf-key                  = Do you want to change to report quarterly?
+income-sources.check-details-reporting-frequency.change-choose-tax-year-key     = Which tax year do you want to report quarterly for?
 
 

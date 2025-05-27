@@ -20,7 +20,7 @@ import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSourcesFs, NavBarFs}
+import models.admin.{IncomeSourcesNewJourney, NavBarFs}
 import models.incomeSourceDetails.{ManageIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -61,7 +61,7 @@ class ReportingMethodErrorControllerISpec extends ControllerISpecHelper {
           "is authenticated, with a valid enrolment" should {
             "render the reporting method error page" when {
               "the income sources is enabled" in {
-                enable(IncomeSourcesFs)
+                enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
@@ -80,7 +80,7 @@ class ReportingMethodErrorControllerISpec extends ControllerISpecHelper {
 
             "redirect to the home page" when {
               "the income sources feature switch is disabled" in {
-                disable(IncomeSourcesFs)
+                disable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
@@ -103,7 +103,7 @@ class ReportingMethodErrorControllerISpec extends ControllerISpecHelper {
             "render the error page" when {
               if (incomeSourceType == SelfEmployment) {
                 "the Income Source Id does not exist" in {
-                  enable(IncomeSourcesFs)
+                  enable(IncomeSourcesNewJourney)
                   disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
                   await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
@@ -119,7 +119,7 @@ class ReportingMethodErrorControllerISpec extends ControllerISpecHelper {
                 }
               } else {
                 "the user does not have a property Income Source" in {
-                  enable(IncomeSourcesFs)
+                  enable(IncomeSourcesNewJourney)
                   disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)

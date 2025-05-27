@@ -16,33 +16,43 @@
 
 package forms.manageBusinesses.add
 
+import config.FrontendAppConfig
+import config.featureswitch.FeatureSwitching
+import forms.mappings.Constraints
+import forms.models.ChooseTaxYearFormModel
 import play.api.data.Form
-import play.api.data.Forms.{boolean, mapping}
+import play.api.data.Forms.{boolean, mapping, optional}
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 
-case class ChooseTaxYearForm(currentTaxYear: Boolean, nextTaxYear: Boolean)
+import javax.inject.Inject
 
-object ChooseTaxYearForm {
-  val chooseTaxYearsCheckbox = "choose-tax-year"
-  val noResponseErrorMessageKey: String = "manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description"
+class ChooseTaxYearForm @Inject()(val appConfig: FrontendAppConfig) extends Constraints with FeatureSwitching {
 
-  def apply(): Form[ChooseTaxYearForm] = {
-    Form[ChooseTaxYearForm](
-      mapping(
-        "current-year-checkbox" -> boolean,
-        "next-year-checkbox" -> boolean
-      )(ChooseTaxYearForm.apply)(ChooseTaxYearForm.unapply)
-        .verifying(atLeastOneChecked)
-    )
-  }
+  private val currentYearCheckbox = "current-year-checkbox"
+  private val nextYearCheckbox = "next-year-checkbox"
 
-  private val atLeastOneChecked: Constraint[ChooseTaxYearForm] =
+  private def atLeastOneChecked(isOptInOptOutContentUpdateR17: Boolean): Constraint[ChooseTaxYearFormModel] =
     Constraint("constraints.atLeastOneChecked") {
       data =>
-        if (data.currentTaxYear || data.nextTaxYear) {
+        if (data.currentTaxYear.getOrElse(false) || data.nextTaxYear.getOrElse(false)) {
           Valid
         } else {
-          Invalid(Seq(ValidationError(noResponseErrorMessageKey)))
+          Invalid(Seq(ValidationError(noResponseErrorMessageKey(isOptInOptOutContentUpdateR17))))
         }
     }
+
+  def noResponseErrorMessageKey(isOptInOptOutContentUpdateR17: Boolean): String = {
+    if (isOptInOptOutContentUpdateR17) "manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description.feature.switched"
+    else "manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description"
+  }
+
+  def apply(isOptInOptOutContentUpdateR17: Boolean): Form[ChooseTaxYearFormModel] = {
+    Form[ChooseTaxYearFormModel](
+      mapping(
+        currentYearCheckbox -> optional(boolean),
+        nextYearCheckbox -> optional(boolean)
+      )(ChooseTaxYearFormModel.apply)(ChooseTaxYearFormModel.unapply)
+        .verifying(atLeastOneChecked(isOptInOptOutContentUpdateR17))
+    )
+  }
 }

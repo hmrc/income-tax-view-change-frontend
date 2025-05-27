@@ -61,7 +61,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
            changeTo: String,
            incomeSourceType: IncomeSourceType
           ): Action[AnyContent] = authActions.asMTDIndividual.async { implicit user =>
-    withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
+    withSessionDataAndOldIncomeSourceFS(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
       val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
       val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
       handleShowRequest(taxYear, changeTo, isAgent = false, incomeSourceType, incomeSourceIdOpt)
@@ -72,7 +72,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
            changeTo: String,
            incomeSourceType: IncomeSourceType
           ): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async { implicit user =>
-    withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
+    withSessionDataAndOldIncomeSourceFS(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
       val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
       val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
       handleShowRequest(taxYear, changeTo, isAgent = true, incomeSourceType, incomeSourceIdOpt)
@@ -84,7 +84,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
              incomeSourceType: IncomeSourceType
             ): Action[AnyContent] = authActions.asMTDIndividual.async { implicit user =>
 
-    withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), BeforeSubmissionPage) { sessionData =>
+    withSessionDataAndOldIncomeSourceFS(IncomeSourceJourneyType(Manage, incomeSourceType), BeforeSubmissionPage) { sessionData =>
       val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
       val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
       handleSubmitRequest(taxYear, changeTo, isAgent = false, incomeSourceIdOpt, incomeSourceType)
@@ -96,7 +96,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
              incomeSourceType: IncomeSourceType
             ): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async { implicit user =>
 
-    withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), BeforeSubmissionPage) { sessionData =>
+    withSessionDataAndOldIncomeSourceFS(IncomeSourceJourneyType(Manage, incomeSourceType), BeforeSubmissionPage) { sessionData =>
       val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
       val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
       handleSubmitRequest(taxYear, changeTo, isAgent = true, incomeSourceIdOpt, incomeSourceType)
@@ -233,7 +233,7 @@ user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
           )
         Future.successful(Redirect(errorCall))
       case _: UpdateIncomeSourceResponseModel =>
-        withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) {
+        withSessionDataAndOldIncomeSourceFS(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) {
           uiJourneySessionData =>
             val newUIJourneySessionData = {
               uiJourneySessionData.copy(manageIncomeSourceData =

@@ -1259,12 +1259,13 @@ paymentAllocation.paymentAllocations.hmrcAdjustment.text        = Addasiad CThEF
 
 
 ## Tax Years Overview Update Tab ##
+updateTab.desc                                                  = Mae diweddariad chwarterol yn cynnwys incwm a threuliau ar gyfer y flwyddyn dreth hyd yn hyn.
 updateTab.due                                                   = Yn ddyledus erbyn {0}
 updateTab.updateType                                            = Math o ddiweddariad
 updateTab.incomeSource                                          = Ffynhonnell incwm
 updateTab.dateSubmitted                                         = Dyddiad cyflwyno
 updateTab.dateToDate                                            = {0} i {1}
-updateTab.quarterlyDateToDate                                   = Cyfnod chwarterol o {0} i {1}
+updateTab.updatePeriodDateToDate                                = Y cyfnod diweddaru o {0} i {1}
 updateTab.obligationType.property                               = Incwm o eiddo
 updateTab.obligationType.business                               = Busnes
 updateTab.obligationType.crystallised                           = Pob ffynhonnell incwm
@@ -1413,6 +1414,19 @@ incomeSources.add.reportingFrequency.li2                            = mae’ch i
 incomeSources.add.reportingFrequency.form.no-select.error           = Dewiswch ‘Iawn’ os hoffech chi gyflwyno’n chwarterol neu dewiswch ‘Na’ os hoffech chi gyflwyno’n flynyddol
 incomeSources.add.reportingFrequency.table.c1                       = Amlder cyflwyno {0} i {1}
 incomeSources.add.reportingFrequency.table.c2                       = Blynyddol
+
+incomeSources.add.reportingFrequency.r17.sole-trader                    = Unig fasnachwr
+incomeSources.add.reportingFrequency.r17.uk-property                    = Eiddo yn y DU
+incomeSources.add.reportingFrequency.r17.foreign-property               = Eiddo tramor
+incomeSources.add.reportingFrequency.r17.title                          = Mae’ch busnes newydd wedi optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+incomeSources.add.reportingFrequency.r17.h1                             = Mae’ch busnes newydd wedi optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+incomeSources.add.reportingFrequency.r17.p1                             = Gan mai busnes newydd yw hwn, gallwch gyflwyno ei incwm a’i dreuliau unwaith y flwyddyn yn eich Ffurflen Dreth, am hyd at 2 flwyddyn dreth, hyd yn oed os yw’r canlynol yn wir:
+incomeSources.add.reportingFrequency.r17.p2                             = Gallwch ddewis cofrestru busnes newydd hwn i gynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Byddai hyn yn golygu cyflwyno diweddariad bob 3 mis yn ychwanegol at eich Ffurflen Dreth.
+incomeSources.add.reportingFrequency.r17.inset                          = O fis Ebrill {0} pan fydd y cyfnod treth 2 flynedd hwn yn dod i ben, efallai y bydd yn ofynnol i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer y busnes newydd hwn.
+incomeSources.add.reportingFrequency.r17.form.h1                        = A ydych am gofrestru’r busnes newydd hwn gyda’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm?
+incomeSources.add.reportingFrequency.r17.li1                            = rydych wedi cofrestru’n wirfoddol neu os yw’n ofynnol i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer eich busnesau eraill
+incomeSources.add.reportingFrequency.r17.li2                            = mae cyfanswm eich incwm gros o hunangyflogaeth neu eiddo, neu’r ddau, yn fwy na’r trothwy o £50,000
+incomeSources.add.reportingFrequency.r17.form.no-select.error           = Dewiswch ‘Iawn’ os ydych am gofrestru’r busnes newydd hwn â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
 
 #######################################################################################################################
 ## Income Sources - Cease ##
@@ -2125,6 +2139,17 @@ incomeSources.manage.business-manage-details.tradetype                =   Math o
 incomeSources.manage.business-manage-details.reportingFrequency       =   Bwrw golwg dros a newid amlder eich adroddiadau ar gyfer eich holl fusnesau
 incomeSources.manage.business-manage-details.insetText                =   Gan mai busnes newydd yw hwn o hyd, gallwch newid pa mor aml rydych yn cyflwyno adroddiadau ar ei gyfer am hyd at ddwy flwyddyn dreth. O fis Ebrill {0} ymlaen, gallai fod yn ofynnol i chi gyflwyno adroddiadau chwarterol.
 
+# Used when OptInOptOutContentUpdateR17 feature switch is enabled
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.paragraph      =   Gan mai busnes newydd yw hwn, gallwch benderfynu os ydych am ddefnyddio’r gwasanaeth Troi Treth yn Ddigidol ar gyfer Treth Incwm am hyd at 2 flwyddyn dreth. O fis Ebrill {0} ymlaen, gallai fod yn ofynnol i chi ddefnyddio’r gwasanaeth hwn.
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyPrefix       =   Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyLink         =   bwrw golwg dros a newid eich rhwymedigaethau adrodd ar gyfer eich holl fusnesau
+
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage = Defnyddio Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer {0} i {1}
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage.yes  = Iawn
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage.no  = Na
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.signup = Cofrestru
+incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.optOut = Optio allan
+
 incomeSources.manage.uk-property-manage-details.uk-property-section              =   Eiddo yn y DU
 incomeSources.manage.uk-property-manage-details.accounting-method                =   Dull cyfrifyddu
 
@@ -2243,15 +2268,17 @@ manageBusinesses.check-answers.change                                    = Newid
 
 # manage business sole trader reporting frequency
 
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading                    = Pa flwyddyn dreth ydych chi am gyflwyno’n chwarterol ar ei chyfer?
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.SelfEmployment.subHeading  = Unig fasnachwr
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.UkProperty.subHeading      = Eiddo yn y DU
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.ForeignProperty.subHeading = Eiddo tramor
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text                  = Dewiswch bob un sy’n berthnasol.
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox              = {0} i {1}
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button                     = Parhau
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header               = Mae problem
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description          = Dewiswch y blynyddoedd treth yr hoffech gyflwyno’n chwarterol ar eu cyfer
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading                                     = Pa flwyddyn dreth ydych chi am gyflwyno’n chwarterol ar ei chyfer?
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading.feature.switched                    = Pa flwyddyn dreth ydych am gofrestru ar ei chyfer?
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.SelfEmployment.subHeading                   = Unig fasnachwr
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.UkProperty.subHeading                       = Eiddo yn y DU
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.ForeignProperty.subHeading                  = Eiddo tramor
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text                                   = Dewiswch bob un sy’n berthnasol.
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox                               = {0} i {1}
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button                                      = Parhau
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header                                = Mae problem
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description                           = Dewiswch y blynyddoedd treth yr hoffech gyflwyno’n chwarterol ar eu cyfer
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description.feature.switched          = Dewiswch y blynyddoedd treth yr ydych am gofrestru ar eu cyfer
 
 #######################################################################################################################
 ## Claim to Adjust POA - Add ##
@@ -2750,3 +2777,14 @@ yourSelfAssessmentChargeSummary.chargeHistory.unknown.text.heading              
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.text.heading                = Cosb gyntaf am dalu’n hwyr
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p = Rydych wedi cael y gosb hon oherwydd eich bod yn hwyr wrth dalu eich Treth Incwm.
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link = Gweld sut y cyfrifwyd eich cosb.
+
+income-sources.check-details-reporting-frequency.heading                        = Unig fasnachwr
+income-sources.check-details-reporting-frequency-uk.heading                     = Eiddo yn y DU
+income-sources.check-details-reporting-frequency-fp.heading                     = Eiddo tramor
+income-sources.check-details-reporting-frequency.title                          = Gwirio’ch manylion
+income-sources.check-details-reporting-frequency.change                         = Newid
+income-sources.check-details-reporting-frequency.yes                            = Iawn
+income-sources.check-details-reporting-frequency.no                             = Na
+income-sources.check-details-reporting-frequency.taxYear                        = {0} i {1}
+income-sources.check-details-reporting-frequency.change-rf-key                  = A ydych am newid i gyflwyno’n chwarterol?
+income-sources.check-details-reporting-frequency.change-choose-tax-year-key     = Pa flwyddyn dreth ydych chi am gyflwyno’n chwarterol ar ei chyfer?

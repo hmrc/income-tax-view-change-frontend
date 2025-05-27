@@ -156,8 +156,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
             }
             "valid data received (accounting method FS enabled)" in {
               setupMockSuccess(mtdRole)
-              enable(IncomeSourcesFs)
-              enable(AccountingMethodJourney)
+              enable(IncomeSourcesFs, AccountingMethodJourney)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
               setupMockGetMongo(Right(Some(UIJourneySessionData("", ""))))

@@ -528,8 +528,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
             disable(NavBarFs)
             MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
-            enable(IncomeSourcesFs)
-            enable(IncomeSourcesNewJourney)
+            enable(IncomeSourcesFs, IncomeSourcesNewJourney)
 
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,

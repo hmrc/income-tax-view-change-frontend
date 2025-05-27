@@ -19,7 +19,7 @@ package controllers.manageBusinesses
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{DisplayBusinessStartDate, IncomeSourcesFs, NavBarFs}
+import models.admin.{DisplayBusinessStartDate, IncomeSourcesNewJourney, NavBarFs}
 import play.api.http.Status.{OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesAndUkProperty}
@@ -51,8 +51,7 @@ class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "render the manage your businesses page" when {
             "the income sources is enabled and the user has multiple businesses and uk property with display business start date enabled" in {
-              enable(IncomeSourcesFs)
-              enable(DisplayBusinessStartDate)
+              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
@@ -76,8 +75,7 @@ class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
             }
 
             "the income sources is enabled and the user has foreign property and ceased business with display business start date enabled" in {
-              enable(IncomeSourcesFs)
-              enable(DisplayBusinessStartDate)
+              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
@@ -95,7 +93,7 @@ class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
             }
 
             "the income sources is enabled and the user has multiple businesses and uk property with display business start date disabled" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               disable(DisplayBusinessStartDate)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
@@ -120,7 +118,7 @@ class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
             }
 
             "the income sources is enabled and the user has foreign property and ceased business with display business start date disabled" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               disable(DisplayBusinessStartDate)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
@@ -141,7 +139,7 @@ class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
 
           "redirect to the home page" when {
             "the income sources feature switch is disabled" in {
-              disable(IncomeSourcesFs)
+              disable(IncomeSourcesNewJourney)
               disable(NavBarFs)
               enable(DisplayBusinessStartDate)
               stubAuthorised(mtdUserRole)

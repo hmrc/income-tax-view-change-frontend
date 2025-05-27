@@ -20,10 +20,14 @@ import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
+import helpers.WiremockHelper
+import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import models.admin.{IncomeSourcesFs, IncomeSourcesNewJourney, NavBarFs}
+import models.admin.{IncomeSourcesNewJourney, NavBarFs}
 import models.incomeSourceDetails._
+import models.itsaStatus.ITSAStatus.Voluntary
 import play.api.http.Status.OK
+import play.api.libs.json.Json
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.{DateService, SessionService}
 import testConstants.BaseIntegrationTestConstants._
@@ -108,6 +112,8 @@ class IncomeSourceReportingFrequencyControllerISpec extends ControllerISpecHelpe
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   override def beforeEach(): Unit = {
     super.beforeEach()
+    ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd + 1, ITSAYearStatus(Voluntary, Voluntary, Voluntary))
+
     await(sessionService.deleteSession(Add))
   }
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
@@ -142,13 +148,12 @@ class IncomeSourceReportingFrequencyControllerISpec extends ControllerISpecHelpe
               val taxYear1TYS: String = s"Reporting frequency $taxYear1 to $taxYear2"
               val taxYear2TYS: String = s"Reporting frequency $taxYear2 to ${taxYear2+1}"
               "user is within latency period (before 23/24) - tax year 1 not crystallised" in {
-                enable(IncomeSourcesFs)
                 enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
-                ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYear1YYYYtoYY)
+
                 CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants
                   .successResponseNonCrystallised.toString())
 
@@ -163,7 +168,6 @@ class IncomeSourceReportingFrequencyControllerISpec extends ControllerISpecHelpe
                 sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
               }
               "user is within latency period (before 23/24) - tax year 1 crystallised" in {
-                enable(IncomeSourcesFs)
                 enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
@@ -184,7 +188,6 @@ class IncomeSourceReportingFrequencyControllerISpec extends ControllerISpecHelpe
                 sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
               }
               "user is within latency period (after 23/24) - tax year 1 not crystallised" in {
-                enable(IncomeSourcesFs)
                 enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
@@ -203,7 +206,6 @@ class IncomeSourceReportingFrequencyControllerISpec extends ControllerISpecHelpe
                 sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
               }
               "user is within latency period (after 23/24) - tax year 1 crystallised" in {
-                enable(IncomeSourcesFs)
                 enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)

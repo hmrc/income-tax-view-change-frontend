@@ -49,7 +49,7 @@ class DeclarePropertyCeasedController @Inject()(val authActions: AuthActions,
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
-    withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), journeyState = InitialPage) { _ =>
+    withSessionDataAndOldIncomeSourceFS(IncomeSourceJourneyType(Cease, incomeSourceType), journeyState = InitialPage) { _ =>
 
       val backUrl: String = if (isAgent) controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url else
         controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url

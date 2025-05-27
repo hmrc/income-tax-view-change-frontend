@@ -42,20 +42,21 @@ class IncomeSourceNotAddedController @Inject()(val authActions: AuthActions,
 
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
+                   (implicit user: MtdItUser[_]): Future[Result] =
+    withNewIncomeSourcesFS {
 
-    val incomeSourceRedirect: Call =
-      if (isAgent)
-        controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent()
-      else
-        controllers.manageBusinesses.add.routes.AddIncomeSourceController.show()
+      val incomeSourceRedirect: Call =
+        if (isAgent)
+          controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent()
+        else
+          controllers.manageBusinesses.routes.ManageYourBusinessesController.show()
 
-    Future.successful(Ok(incomeSourceNotAddedError(
-      isAgent,
-      incomeSourceType = incomeSourceType,
-      continueAction = incomeSourceRedirect
-    )))
-  }
+      Future.successful(Ok(incomeSourceNotAddedError(
+        isAgent,
+        incomeSourceType = incomeSourceType,
+        continueAction = incomeSourceRedirect
+      )))
+    }
 
   def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>

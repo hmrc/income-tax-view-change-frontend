@@ -55,7 +55,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authActions: AuthAct
                                                cashOrAccrualsFlag: Option[String])
                                               (implicit user: MtdItUser[_],
                                                backUrl: String, postAction: Call): Future[Result] = {
-    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
+    withSessionDataAndOldIncomeSourceFS(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
       val cashOrAccrualsRecords = user.incomeSources.getBusinessCashOrAccruals()
       if (cashOrAccrualsRecords.distinct.size > 1) {
         Logger("application").error(s"${if (isAgent) "[Agent]"}" +
@@ -120,7 +120,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authActions: AuthAct
                     cashOrAccrualsFlag: Option[String] = None,
                     isChange: Boolean)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
-    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { _ =>
+    withSessionDataAndOldIncomeSourceFS(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { _ =>
 
       val backUrl = getBackUrl(isAgent, isChange, incomeSourceType)
 
@@ -142,7 +142,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authActions: AuthAct
 
 
   def handleSubmitRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
-    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
+    withSessionDataAndOldIncomeSourceFS(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
       IncomeSourcesAccountingMethodForm(incomeSourceType).bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(view(
           incomeSourcesType = incomeSourceType,
@@ -216,7 +216,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authActions: AuthAct
   def changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] =
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
       implicit user =>
-        withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
+        withSessionDataAndOldIncomeSourceFS(IncomeSourceJourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
           val accountingMethodOpt = sessionData.addIncomeSourceData.flatMap(_.incomeSourcesAccountingMethod)
           handleRequest(
             isAgent,

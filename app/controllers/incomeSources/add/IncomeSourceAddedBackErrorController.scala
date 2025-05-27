@@ -44,18 +44,19 @@ class IncomeSourceAddedBackErrorController @Inject()(val authActions: AuthAction
 
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = CannotGoBackPage) { data =>
-    val cannotGoBackRedirectUrl = if (isAgent) controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType)
-    else controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(incomeSourceType)
-    if (data.addIncomeSourceData.exists(addData => addData.journeyIsComplete.contains(true))) {
-      Future.successful(Redirect(cannotGoBackRedirectUrl))
+                   (implicit user: MtdItUser[_]): Future[Result] =
+    withSessionDataAndOldIncomeSourceFS(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = CannotGoBackPage) { data =>
+      val cannotGoBackRedirectUrl = if (isAgent) controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType)
+      else controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(incomeSourceType)
+      if (data.addIncomeSourceData.exists(addData => addData.incomeSourceCreatedJourneyComplete.contains(true))) {
+        Future.successful(Redirect(cannotGoBackRedirectUrl))
+      }
+      else {
+        val postAction = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.submitAgent(incomeSourceType)
+        else controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.submit(incomeSourceType)
+        Future.successful(Ok(cannotGoBackError(isAgent, incomeSourceType, postAction)))
+      }
     }
-    else {
-      val postAction = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.submitAgent(incomeSourceType)
-      else controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.submit(incomeSourceType)
-      Future.successful(Ok(cannotGoBackError(isAgent, incomeSourceType, postAction)))
-    }
-  }
 
   def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
@@ -86,7 +87,7 @@ class IncomeSourceAddedBackErrorController @Inject()(val authActions: AuthAction
 
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                           (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] =
-    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), CannotGoBackPage) {
+    withSessionDataAndOldIncomeSourceFS(IncomeSourceJourneyType(Add, incomeSourceType), CannotGoBackPage) {
       _.addIncomeSourceData.map(_.incomeSourceId) match {
         case Some(_) =>
           Future.successful {

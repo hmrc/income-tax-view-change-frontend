@@ -52,9 +52,6 @@
 
 @hintContent = {
     @p(classes="govuk-hint"){
-        @messages("add-trade.trade-info-1")
-    }
-    @p(classes="govuk-hint"){
         @messages("add-trade.trade-info-2")
     }
 }
@@ -67,21 +64,23 @@ btaNavPartial = user.btaNavPartial) {
 
     @errorSummary(form = businessTradeForm)
 
-    <span class="govuk-caption-l", id="caption">@messages("incomeSources.add.sole-trader")</span>
     @form(action = postAction, Symbol("id") -> "business-trade-form") {
+
+        <span class="govuk-caption-l", id="caption">
+            @messages("incomeSources.add.sole-trader")
+        </span>
+
+        @h1(messages("add-trade.heading"), size = "l")
+
+        @p(id=Some("business-trade-description"),classes="govuk-body"){
+            @messages("add-trade.trade-info-1")
+        }
 
         @govukInput(
             Input(
                 id = businessTrade,
                 name = businessTrade,
                 classes = "govuk-input--width-30",
-                label = Label(
-                    isPageHeading = true,
-                    classes = "govuk-label--l",
-                    content = Text(
-                        messages("add-trade.heading")
-                    )
-                ),
                 hint = Some(Hint(content = HtmlContent(
                     hintContent
                 )))

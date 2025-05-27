@@ -22,7 +22,7 @@ import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import forms.manageBusinesses.add.BusinessTradeForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSourcesFs, NavBarFs}
+import models.admin.{IncomeSourcesNewJourney, NavBarFs}
 import models.core.NormalMode
 import models.incomeSourceDetails.AddIncomeSourceData.businessTradeField
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
@@ -35,7 +35,8 @@ import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesRes
 class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
 
   val pageTitleMsgKey: String = messagesAPI("add-trade.heading")
-  val pageHint: String = messagesAPI("add-trade.trade-info-1") + " " + messagesAPI("add-trade.trade-info-2")
+  val pageBody: String = messagesAPI("add-trade.trade-info-1")
+  val pageHint: String = messagesAPI("add-trade.trade-info-2")
   val button: String = messagesAPI("base.continue")
   val testBusinessName: String = "Test Business Name"
   val testBusinessTrade: String = "Test Business Trade"
@@ -62,7 +63,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "render the Add Business trade page for an Agent" when {
             "Income Sources FS enabled" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
@@ -75,6 +76,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
               res should have(
                 httpStatus(OK),
                 pageTitle(mtdUserRole, pageTitleMsgKey),
+                elementTextByID("business-trade-description")(pageBody),
                 elementTextByID("business-trade-hint")(pageHint),
                 elementTextByID("continue-button")(button)
               )
@@ -82,7 +84,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
           }
           "303 SEE_OTHER - redirect to home page" when {
             "Income Sources FS disabled" in {
-              disable(IncomeSourcesFs)
+              disable(IncomeSourcesNewJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -110,7 +112,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "render the Add Business trade page for an Agent" when {
             "Income Sources FS enabled" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
@@ -129,7 +131,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
           }
           "303 SEE_OTHER - redirect to home page" when {
             "Income Sources FS disabled" in {
-              disable(IncomeSourcesFs)
+              disable(IncomeSourcesNewJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -157,7 +159,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           s"303 SEE_OTHER and redirect to add business address" when {
             "User is authorised and business trade is valid" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -187,7 +189,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
             }
           }
           "show error when form is filled incorrectly" in {
-            enable(IncomeSourcesFs)
+            enable(IncomeSourcesNewJourney)
             disable(NavBarFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
@@ -222,7 +224,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           s"303 SEE_OTHER and redirect to Check details" when {
             "User is authorised and business trade is valid" in {
-              enable(IncomeSourcesFs)
+              enable(IncomeSourcesNewJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -253,7 +255,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
             }
           }
           "show error when form is filled incorrectly" in {
-            enable(IncomeSourcesFs)
+            enable(IncomeSourcesNewJourney)
             disable(NavBarFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)

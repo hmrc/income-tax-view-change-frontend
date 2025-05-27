@@ -111,6 +111,7 @@ object ITSAStatusDetailsStub extends ComponentSpecBase {
       s"${taxYear - 1}-${shortTaxYear(taxYear)}" -> yearStatus.currentYear.toString,
       s"${previousYear - 1}-${shortTaxYear(previousYear)}" -> yearStatus.previousYear.toString
     )
+
     WiremockHelper.stubGet(getUrl(s"${shortTaxYear(previousYear) - 1}-${shortTaxYear(previousYear)}", futureYears = true), OK,
 
       taxYearToStatus.foldLeft(JsArray()) {

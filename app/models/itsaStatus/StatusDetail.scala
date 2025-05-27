@@ -17,11 +17,12 @@
 package models.itsaStatus
 
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
+import models.itsaStatus.StatusReason.StatusReason
 import play.api.libs.json.{Format, Json, Reads, Writes}
 
 case class StatusDetail(submittedOn: String,
                         status: ITSAStatus,
-                        statusReason: String,
+                        statusReason: StatusReason,
                         businessIncomePriorTo2Years: Option[BigDecimal] = None) {
 
   def isVoluntary: Boolean = status == Voluntary
@@ -49,4 +50,24 @@ object ITSAStatus extends Enumeration {
 
   implicit val itsaStatusReads: Reads[ITSAStatus] = Reads.enumNameReads(ITSAStatus)
   implicit val itsaStatusWrite: Writes[ITSAStatus] = Writes.enumNameWrites
+}
+
+object StatusReason extends Enumeration {
+  type StatusReason = Value
+  val SignupReturnAvailable = Value("Sign up - return available")
+  val SignupNoReturnAvailable = Value("Sign up - no return available")
+  val ItsaFinalDeclaration = Value("ITSA final declaration")
+  val ItsaQ4lDeclaration = Value("ITSA Q4 declaration")
+  val CesaSaReturn = Value("CESA SA return")
+  val Complex = Value("Complex")
+  val CeasedIncomeSource = Value("Ceased income source")
+  val ReinstatedIncomeSource = Value("Reinstated income source")
+  val IncomeSourceLatencyChanges = Value("Income Source Latency Changes")
+  val Rollover = Value("Rollover")
+  val MtdItsaOptOut = Value("MTD ITSA Opt-Out")
+  val MtdItsaOptIn = Value("MTD ITSA Opt-In")
+  val DigitallyExempt = Value("Digitally Exempt")
+
+  implicit val statusReasonReads: Reads[StatusReason] = Reads.enumNameReads(StatusReason)
+  implicit val statusReasonWrite: Writes[StatusReason] = Writes.enumNameWrites
 }

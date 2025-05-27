@@ -98,7 +98,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
     s"${messages("htmlTitle.invalidInput", messages("dateForm.check.heading"))}"
   }
 
-  def sessionDataCompletedJourney(journeyType: IncomeSourceJourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
+  def sessionDataCompletedJourney(journeyType: IncomeSourceJourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceCreatedJourneyComplete = Some(true))))
 
   def sessionDataISAdded(journeyType: IncomeSourceJourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceAdded = Some(true))))
 
@@ -249,8 +249,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
               s"return ${Status.SEE_OTHER}: redirect to $incomeSourceType accounting method page, isAgent = $isAgent" when {
                 "Yes is submitted with the form with a valid session (accounting method FS enabled)" in {
                   setupMockSuccess(mtdRole)
-                  enable(IncomeSourcesFs)
-                  enable(AccountingMethodJourney)
+                  enable(IncomeSourcesFs, AccountingMethodJourney)
 
                   mockNoIncomeSources()
                   setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))

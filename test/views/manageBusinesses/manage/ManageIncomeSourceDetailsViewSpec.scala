@@ -358,7 +358,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         selfEmploymentViewModel,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled
+        showStartDate = startDateEnabled,
+        showAccountingMethod = true,
+        showOptInOptOutContentUpdateR17 = false,
       )(messages, implicitly)
     }
 
@@ -381,7 +383,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         selfEmploymentViewModelWithUnknowns,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled
+        showStartDate = startDateEnabled,
+        showAccountingMethod = true,
+        showOptInOptOutContentUpdateR17 = false,
       )(messages, implicitly)
     }
 
@@ -405,7 +409,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         selfEmploymentViewModelOneYearCrystallised,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled
+        showStartDate = startDateEnabled,
+        showAccountingMethod = true,
+        showOptInOptOutContentUpdateR17 = false,
       )(messages, implicitly)
     }
 
@@ -420,7 +426,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         selfEmploymentViewModelCYUnknown,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled
+        showStartDate = startDateEnabled,
+        showAccountingMethod = true,
+        showOptInOptOutContentUpdateR17 = false,
       )(messages, implicitly)
     }
 
@@ -444,7 +452,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         ukViewModel,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled
+        showStartDate = startDateEnabled,
+        showAccountingMethod = true,
+        showOptInOptOutContentUpdateR17 = false,
       )(messages, implicitly)
     }
 
@@ -466,7 +476,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         ukViewModelUnknowns,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled
+        showStartDate = startDateEnabled,
+        showAccountingMethod = true,
+        showOptInOptOutContentUpdateR17 = false,
       )(messages, implicitly)
     }
 
@@ -476,7 +488,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   class ukCrystallisedSetup(isAgent: Boolean, error: Boolean = false, startDateEnabled: Boolean = true) {
 
     def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
-     if(isAgent) {
+      if(isAgent) {
         controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.showAgent(taxYear, changeTo, UkProperty).url
       }else{
         controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(taxYear, changeTo, UkProperty).url
@@ -489,7 +501,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         ukPropertyViewModelOneYearCrystallised,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled
+        showStartDate = startDateEnabled,
+        showAccountingMethod = true,
+        showOptInOptOutContentUpdateR17 = false,
       )(messages, implicitly)
     }
 
@@ -504,7 +518,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         ukPropertyViewModelCYUnknown,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled
+        showStartDate = startDateEnabled,
+        showAccountingMethod = true,
+        showOptInOptOutContentUpdateR17 = false,
       )(messages, implicitly)
     }
 
@@ -528,7 +544,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         foreignViewModel,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled
+        showStartDate = startDateEnabled,
+        showAccountingMethod = true,
+        showOptInOptOutContentUpdateR17 = false,
       )(messages, implicitly)
     }
 
@@ -550,7 +568,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         foreignViewModelUnknowns,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled
+        showStartDate = startDateEnabled,
+        showAccountingMethod = true,
+        showOptInOptOutContentUpdateR17 = false,
       )(messages, implicitly)
     }
 
@@ -572,7 +592,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         foreignPropertyViewModelOneYearCrystallised,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled
+        showStartDate = startDateEnabled,
+        showAccountingMethod = true,
+        showOptInOptOutContentUpdateR17 = false,
       )(messages, implicitly)
     }
 
@@ -587,12 +609,29 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         foreignPropertyLatencyYearTwoUnknown,
         isAgent,
         backUrl = backUrl(isAgent),
-        showStartDate = startDateEnabled
+        showStartDate = startDateEnabled,
+        showAccountingMethod = true,
+        showOptInOptOutContentUpdateR17 = false,
       )(messages, implicitly)
     }
 
     lazy val document: Document = Jsoup.parse(contentAsString(view))
 
+  }
+
+  class SelfEmploymentSetupWithOptInContentR17(isAgent: Boolean, error: Boolean = false, startDateEnabled: Boolean = true) {
+    lazy val view: HtmlFormat.Appendable = {
+      manageIncomeSourceDetailsView(
+        selfEmploymentViewModel,
+        isAgent,
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled,
+        showAccountingMethod = true,
+        showOptInOptOutContentUpdateR17 = true,
+      )(messages, implicitly)
+    }
+
+    lazy val document: Document = Jsoup.parse(contentAsString(view))
   }
 
 
@@ -640,6 +679,23 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
 
     }
+
+    "not display the accounting method row when showAccountingMethod is false" in {
+      val view = manageIncomeSourceDetailsView(
+        selfEmploymentViewModel,
+        isAgent = false,
+        backUrl = backUrl(false),
+        showStartDate = true,
+        showAccountingMethod = false,
+        showOptInOptOutContentUpdateR17 = false
+      )(messages, implicitly)
+
+      val document = Jsoup.parse(contentAsString(view))
+      val summaryKeys = document.getElementsByClass("govuk-summary-list__key").eachText()
+
+      summaryKeys should not contain isTraditionalAccountingMethod
+    }
+
     "render the whole page with unknowns and no change links or inset text" in new SelfEmploymentUnknownsSetup(false) {
       document.getElementsByClass("govuk-inset-text").text() shouldBe ""
 
@@ -684,6 +740,106 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     "Don't display start date if DisplayBusinessStartDate is disabled" in new SelfEmploymentSetup(false, startDateEnabled = false) {
       Option(document.getElementById("manage-details-table")).mkString("").contains("Date started") shouldBe false
     }
+
+    "render the correct text when OptInOptOutContentUpdateR17 feature is enabled" in new SelfEmploymentSetupWithOptInContentR17(false) {
+      val insetText = document.getElementsByClass("govuk-body").text()
+
+      insetText should include(
+        messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.paragraph", "2024")
+      )
+    }
+
+    "render the updated reporting frequency sentence when OptInOptOutContentUpdateR17 feature is enabled" in new SelfEmploymentSetupWithOptInContentR17(false) {
+      document.getElementById("reportingFrequency").text should include(messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyPrefix"))
+      document.getElementById("reportingFrequency-link").text shouldBe messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyLink")
+      document.getElementById("reportingFrequency-link").attr("href") shouldBe reportingFrequencyLink(false)
+    }
+
+    "render the MTD opt-in rows correctly with 'Yes/No' status and 'Opt-out/Sign up' links when OptInOptOutContentUpdateR17 is enabled" in {
+      val TaxYear1 = "2025"
+      val TaxYear2 = "2026"
+
+      val testViewModel = selfEmploymentViewModel.copy(
+        useMTDForTaxYear1 = Some(true),
+        useMTDForTaxYear2 = Some(false),
+        latencyYearsQuarterly = LatencyYearsQuarterly(Some(false), Some(false)),
+        latencyYearsCrystallised = LatencyYearsCrystallised(Some(false), Some(false)),
+        latencyDetails = Some(testLatencyDetails3.copy(
+          taxYear1 = TaxYear1,
+          taxYear2 = TaxYear2
+        ))
+      )
+
+      val view = manageIncomeSourceDetailsView(
+        testViewModel,
+        isAgent = false,
+        showStartDate = true,
+        showAccountingMethod = true,
+        showOptInOptOutContentUpdateR17 = true,
+        backUrl = backUrl(false)
+      )(messages, implicitly)
+
+      val document = Jsoup.parse(contentAsString(view))
+
+      val expectedRow1 = s"Using Making Tax Digital for Income Tax for ${TaxYear1.toInt - 1} to $TaxYear1"
+      val expectedRow2 = s"Using Making Tax Digital for Income Tax for ${TaxYear2.toInt - 1} to $TaxYear2"
+
+      document.getElementsByClass("govuk-summary-list__key").text() should include(expectedRow1)
+      document.getElementsByClass("govuk-summary-list__key").text() should include(expectedRow2)
+
+      val values = document.getElementsByClass("govuk-summary-list__value").eachText()
+      values should contain("Yes")
+      values should contain("No")
+
+
+      val actionLinks = document.select(".govuk-summary-list__actions a").eachText()
+      actionLinks should contain("Opt out")
+      actionLinks should contain("Sign up")
+    }
+
+    "not render an MTD opt-in row if one of the useMTDForTaxYear value is None " in {
+      val taxYear1 = "2025"
+      val taxYear2 = "2026"
+
+      val testViewModel = selfEmploymentViewModel.copy(
+        useMTDForTaxYear1 = Some(true),
+        useMTDForTaxYear2 = None,
+        latencyYearsQuarterly = LatencyYearsQuarterly(Some(false), Some(false)),
+        latencyYearsCrystallised = LatencyYearsCrystallised(Some(false), Some(false)),
+        latencyDetails = Some(testLatencyDetails3.copy(
+          taxYear1 = taxYear1,
+          taxYear2 = taxYear2
+        ))
+      )
+
+      val view = manageIncomeSourceDetailsView(
+        testViewModel,
+        isAgent = false,
+        showStartDate = true,
+        showAccountingMethod = true,
+        showOptInOptOutContentUpdateR17 = true,
+        backUrl = backUrl(false)
+      )(messages, implicitly)
+
+      val document = Jsoup.parse(contentAsString(view))
+
+      val allRows = document.getElementsByClass("govuk-summary-list__key").eachText()
+
+      val expectedRow1 = s"Using Making Tax Digital for Income Tax for ${taxYear1.toInt - 1} to $taxYear1"
+      val expectedRow2 = s"Using Making Tax Digital for Income Tax for ${taxYear2.toInt - 1} to $taxYear2"
+
+      allRows should contain(expectedRow1)
+      allRows should not contain(expectedRow2)
+
+      val values = document.getElementsByClass("govuk-summary-list__value").eachText()
+      values should contain("Yes")
+
+      val actions = document.select(".govuk-summary-list__actions a").eachText()
+      actions should contain("Opt out")
+      actions should not contain("Sign up")
+    }
+
+
   }
   "ManageSelfEmployment - Agent" should {
     "render the heading" in new SelfEmploymentSetup(true) {
@@ -770,6 +926,23 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       expandableInfo.getElementById("expandable-more-info-link").text() shouldBe expandableInfoContentP3 + " " + opensInNewTabText
       expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
     }
+
+    "not display the accounting method row when showAccountingMethod is false" in {
+      val view = manageIncomeSourceDetailsView(
+        ukViewModel,
+        isAgent = false,
+        backUrl = backUrl(false),
+        showStartDate = true,
+        showAccountingMethod = false,
+        showOptInOptOutContentUpdateR17 = false
+      )(messages, implicitly)
+
+      val document = Jsoup.parse(contentAsString(view))
+      val summaryKeys = document.getElementsByClass("govuk-summary-list__key").eachText()
+
+      summaryKeys should not contain ukAccountingMethod
+    }
+
     "render the whole page with unknowns and no change links or inset text" in new ukSetupUnknowns(false) {
       document.getElementsByClass("govuk-inset-text").text() shouldBe ""
 
@@ -896,6 +1069,23 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       expandableInfo.getElementById("expandable-more-info-link").text() shouldBe expandableInfoContentP3 + " " + opensInNewTabText
       expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
     }
+
+    "not display the accounting method row when showAccountingMethod is false" in {
+      val view = manageIncomeSourceDetailsView(
+        foreignViewModel,
+        isAgent = false,
+        backUrl = backUrl(false),
+        showStartDate = true,
+        showAccountingMethod = false,
+        showOptInOptOutContentUpdateR17 = false
+      )(messages, implicitly)
+
+      val document = Jsoup.parse(contentAsString(view))
+      val summaryKeys = document.getElementsByClass("govuk-summary-list__key").eachText()
+
+      summaryKeys should not contain foreignAccountingMethod
+    }
+
     "render the whole page with unknowns and no change links or inset text" in new foreignSetupUnknowns(false) {
       document.getElementsByClass("govuk-inset-text").text() shouldBe ""
 

@@ -17,10 +17,10 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.helpers.injected.ErrorSummary
-@import forms.manageBusinesses.add.ChooseTaxYearForm
 @import models.incomeSourceDetails.TaxYear
 @import enums.IncomeSourceJourney.IncomeSourceType
+@import services.DateServiceInterface
+@import forms.models.ChooseTaxYearFormModel
 
 @this(
         mainTemplate: unifiedLayout,
@@ -31,11 +31,20 @@
         h1WithCaption: h1WithCaption
 )
 
-@(form: Form[ChooseTaxYearForm], isAgent: Boolean, postAction: Call, currentTaxYear: TaxYear, nextTaxYear: TaxYear, incomeSourceType: IncomeSourceType)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(
+    form: Form[ChooseTaxYearFormModel],
+    isAgent: Boolean,
+    postAction: Call,
+    currentTaxYear: Option[TaxYear],
+    nextTaxYear: Option[TaxYear],
+    incomeSourceType: IncomeSourceType,
+    isChange: Boolean = false,
+    isOptInOptOutContentUpdateR17: Boolean
+)(implicit user: auth.MtdItUser[_], messages: Messages, dateService: DateServiceInterface)
 
 @header = @{
     h1WithCaption(
-        heading = messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading"),
+        heading = if(isOptInOptOutContentUpdateR17) messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading.feature.switched") else messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading"),
         captionMsg = messages(s"manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.$incomeSourceType.subHeading"),
         size = "l",
         headingId = Some("choose-tax-year-heading"),
@@ -43,8 +52,29 @@
     )
 }
 
+@currentOrTyCheckedValue(idOrName: Option[String]) = @{
+    if(idOrName.contains("current-year-checkbox") && isChange) form.value.exists(_.currentTaxYear.contains(true))
+    else if(idOrName.contains("next-year-checkbox") && isChange) form.value.exists(_.nextTaxYear.contains(true))
+    else false
+}
+
+@taxYearCheckBox(taxYear: Option[TaxYear], idOrName: Option[String]) =  @{
+    taxYear.map(ty =>
+    Seq(
+        CheckboxItem(
+            id = idOrName,
+            name = idOrName,
+            content = Text(
+                value = messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox", ty.startYear.toString, ty.endYear.toString)
+            ),
+            value = "true",
+            checked = currentOrTyCheckedValue(idOrName)
+        ))
+    ).getOrElse(Seq())
+}
+
 @mainTemplate(
-    pageTitle = messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading"),
+    pageTitle = if(isOptInOptOutContentUpdateR17) messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading.feature.switched") else messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading"),
     isAgent = isAgent,
     backUrl = Some("#"),
     btaNavPartial = user.btaNavPartial) {
@@ -58,7 +88,11 @@
                 <div class="govuk-error-summary__body">
                     <ul class="govuk-list govuk-error-summary__list">
                         <li>
-                            <a id="error-summary-link" href="#current-year-checkbox">@messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description")</a>
+                            @if(isOptInOptOutContentUpdateR17) {
+                                <a id="error-summary-link" href="#current-year-checkbox">@messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description.feature.switched")</a>
+                            } else {
+                                <a id="error-summary-link" href="#current-year-checkbox">@messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description")</a>
+                            }
                         </li>
                     </ul>
                 </div>
@@ -74,32 +108,13 @@
                 content = HtmlContent(header),
                 classes = "govuk-fieldset__legend--l",
                 isPageHeading = true
-            ))
+            )),
         )),
         name = "choose-tax-year",
         hint = Some(Hint(content = Text(messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.text")))),
-        items = Seq(
-            CheckboxItem(
-                id = Some("current-year-checkbox"),
-                name = Some("current-year-checkbox"),
-                content = Text(
-                    value = messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox", currentTaxYear.startYear.toString, currentTaxYear.endYear.toString)
-                ),
-                value = "true",
-                checked = false
-            ),
-            CheckboxItem(
-                id = Some("next-year-checkbox"),
-                name = Some("next-year-checkbox"),
-                content = Text(
-                    value = messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.form.checkbox", nextTaxYear.startYear.toString, nextTaxYear.endYear.toString)
-                ),
-                value = "true",
-                checked = false
-            )
-        ),
+        items = taxYearCheckBox(currentTaxYear, Some("current-year-checkbox")) ++ taxYearCheckBox(nextTaxYear, Some("next-year-checkbox")),
         errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
-    ).withFormField(form(ChooseTaxYearForm.chooseTaxYearsCheckbox))
+    ).withFormField(form(form.value.map(_.chooseTaxYear).getOrElse("choose-tax-year")))
 )
     @govukButton(Button(
         content = Text(messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button")),

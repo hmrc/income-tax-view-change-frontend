@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import enums.IncomeSourceJourney.{IncomeSourceType, InitialPage, SelfEmployment}
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import forms.incomeSources.cease.CeaseIncomeSourceEndDateFormProvider
-import models.admin.IncomeSourcesNewJourney
+import models.admin.IncomeSourcesFs
 import models.core.IncomeSourceIdHash.mkFromQueryString
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import models.incomeSourceDetails.CeaseIncomeSourceData
@@ -127,7 +127,7 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
 
   def handleRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] =
-    withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), journeyState = InitialPage) { sessionData =>
+    withSessionDataAndOldIncomeSourceFS(IncomeSourceJourneyType(Cease, incomeSourceType), journeyState = InitialPage) { sessionData =>
 
       val hashCompareResult: Option[Either[Throwable, IncomeSourceId]] = id.map(x => user.incomeSources.compareHashToQueryString(x))
 
@@ -144,8 +144,8 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
               val dateStartedOpt = sessionData.ceaseIncomeSourceData.flatMap(_.endDate)
               val newForm = dateStartedOpt match {
                 case Some(date) =>
-                  form(incomeSourceType, incomeSourceIdMaybe.map(_.value), isEnabled(IncomeSourcesNewJourney)).fill(date)
-                case None => form(incomeSourceType, incomeSourceIdMaybe.map(_.value), isEnabled(IncomeSourcesNewJourney))
+                  form(incomeSourceType, incomeSourceIdMaybe.map(_.value), false).fill(date)
+                case None => form(incomeSourceType, incomeSourceIdMaybe.map(_.value), false)
               }
               Future.successful(Ok(
                 incomeSourceEndDate(
@@ -251,7 +251,7 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
           case (SelfEmployment, None) =>
             Future.failed(new Exception(s"Missing income source ID for hash: <$id>"))
           case _ =>
-            form(incomeSourceType, incomeSourceIdMaybe.map(_.value), isEnabled(IncomeSourcesNewJourney)).bindFromRequest().fold(
+            form(incomeSourceType, incomeSourceIdMaybe.map(_.value), false).bindFromRequest().fold(
               hasErrors => {
                 Future.successful(BadRequest(incomeSourceEndDate(
                   form = hasErrors,

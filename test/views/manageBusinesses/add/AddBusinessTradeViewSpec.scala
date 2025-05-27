@@ -67,14 +67,11 @@ class AddBusinessTradeViewSpec extends ViewSpec {
       "have a form with the correct attributes" in new Setup(pageWithoutError) {
         layoutContent.hasFormWith(testCall.method, testCall.url)
       }
-      "have an input with associated hint and label" in new Setup(pageWithoutError) {
+      "have an input with associated hint" in new Setup(pageWithoutError) {
         val form: Element = layoutContent.selectHead("form")
-        val label: Element = form.selectHead("label")
         val input: Element = form.selectHead("input")
 
         layoutContent.getElementById("caption").text() shouldBe AddBusinessTradeMessages.title
-        label.text shouldBe AddBusinessTradeMessages.heading
-        label.attr("for") shouldBe input.attr("id")
         input.attr("id") shouldBe BusinessTradeForm.businessTrade
         input.attr("name") shouldBe BusinessTradeForm.businessTrade
         input.attr("type") shouldBe "text"

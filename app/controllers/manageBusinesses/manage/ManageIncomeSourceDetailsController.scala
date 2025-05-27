@@ -21,7 +21,7 @@ import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import models.admin.DisplayBusinessStartDate
+import models.admin.{DisplayBusinessStartDate, AccountingMethodJourney, OptInOptOutContentUpdateR17}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.IncomeSourceIdHash.{mkFromQueryString, mkIncomeSourceIdHash}
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
@@ -73,7 +73,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
            incomeSourceType: IncomeSourceType,
            id: Option[String]): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), InitialPage) { _ =>
+      withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Manage, incomeSourceType), InitialPage) { _ =>
         incomeSourceType match {
           case SelfEmployment => id match {
             case Some(realId) => handleSoleTrader(realId, getBackUrl(isAgent), isAgent)
@@ -94,7 +94,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   def showChange(incomeSourceType: IncomeSourceType,
                  isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), InitialPage) { sessionData =>
+      withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Manage, incomeSourceType), InitialPage) { sessionData =>
         val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
         val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => mkIncomeSourceIdHash(IncomeSourceId(id)))
         val backUrl = controllers.manageBusinesses.manage.routes.CheckYourAnswersController.show(isAgent, incomeSourceType).url
@@ -139,6 +139,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     } yield Ok(view(viewModel = viewModel,
       isAgent = isAgent,
       showStartDate = isEnabled(DisplayBusinessStartDate),
+      showAccountingMethod = isEnabled(AccountingMethodJourney),
+      showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
       backUrl = backUrl
     ))
 
@@ -164,6 +166,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
           viewModel = viewModel,
           isAgent = isAgent,
           showStartDate = isEnabled(DisplayBusinessStartDate),
+          showAccountingMethod = isEnabled(AccountingMethodJourney),
+          showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
           backUrl = backUrl
         ))
       }.recover {
@@ -227,7 +231,9 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   private def variableViewModelSEBusiness(
                                            incomeSource: BusinessDetailsModel,
                                            latencyYearsQuarterly: LatencyYearsQuarterly,
-                                           latencyYearsCrystallised: LatencyYearsCrystallised
+                                           latencyYearsCrystallised: LatencyYearsCrystallised,
+                                           useMTDForTaxYear1: Option[Boolean] = None,
+                                           useMTDForTaxYear2: Option[Boolean] = None
                                          ): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
@@ -240,14 +246,18 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       latencyYearsCrystallised = latencyYearsCrystallised,
       latencyDetails = incomeSource.latencyDetails,
       incomeSourceType = SelfEmployment,
-      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection)
+      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection),
+      useMTDForTaxYear1 = useMTDForTaxYear1,
+      useMTDForTaxYear2 = useMTDForTaxYear2
     )
   }
 
   private def variableViewModelPropertyBusiness(incomeSource: PropertyDetailsModel,
                                                 latencyYearsQuarterly: LatencyYearsQuarterly,
                                                 latencyYearsCrystallised: LatencyYearsCrystallised,
-                                                incomeSourceType: IncomeSourceType): ManageIncomeSourceDetailsViewModel = {
+                                                incomeSourceType: IncomeSourceType,
+                                                useMTDForTaxYear1: Option[Boolean] = None,
+                                                useMTDForTaxYear2: Option[Boolean] = None): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
       incomeSource = None,
@@ -259,7 +269,9 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       latencyYearsCrystallised = latencyYearsCrystallised,
       latencyDetails = incomeSource.latencyDetails,
       incomeSourceType = incomeSourceType,
-      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection)
+      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection),
+      useMTDForTaxYear1 = useMTDForTaxYear1,
+      useMTDForTaxYear2 = useMTDForTaxYear2
     )
   }
 
@@ -298,40 +310,67 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     }
   }
 
+  private def getLatencyStatusesBasedOnFeatureSwitch(
+                                  latencyDetails: LatencyDetails
+                                )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[(Boolean, Boolean)] = {
+    if (isEnabled(OptInOptOutContentUpdateR17)) {
+      Future.successful {
+        val taxYear1Status = latencyDetails.latencyIndicator1 == "Q"
+        val taxYear2Status = latencyDetails.latencyIndicator2 == "Q"
+        (taxYear1Status, taxYear2Status)
+      }
+    } else {
+      itsaStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(latencyDetails))
+    }
+  }
+
+
   private def handleLatencyAndCrystallisationDetails(
                                                       desiredIncomeSource: BusinessDetailsModel,
                                                       latencyDetails: LatencyDetails
                                                     )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ManageIncomeSourceDetailsViewModel] = {
 
     for {
-      (latencyYearOneStatus, latencyYearTwoStatus) <- itsaStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(latencyDetails))
+      (latencyYearOneStatus, latencyYearTwoStatus) <- getLatencyStatusesBasedOnFeatureSwitch(latencyDetails)
       crystallisationData <- getCrystallisationInformation(Some(latencyDetails))
-    } yield crystallisationData match {
-      case None =>
-        variableViewModelSEBusiness(
-          incomeSource = desiredIncomeSource,
-          latencyYearsQuarterly = LatencyYearsQuarterly(
-            firstYear = Some(latencyYearOneStatus),
-            secondYear = Some(latencyYearTwoStatus)
-          ),
-          latencyYearsCrystallised = LatencyYearsCrystallised(
-            firstYear = None,
-            secondYear = None
-          )
-        )
+    } yield {
+      val (maybeUseMTD1, maybeUseMTD2) =
+        if (isEnabled(OptInOptOutContentUpdateR17))
+          (Some(latencyYearOneStatus), Some(latencyYearTwoStatus))
+        else
+          (None, None)
 
-      case Some(crystallisationList: List[Boolean]) =>
-        variableViewModelSEBusiness(
-          incomeSource = desiredIncomeSource,
-          latencyYearsQuarterly = LatencyYearsQuarterly(
-            firstYear = Some(latencyYearOneStatus),
-            secondYear = Some(latencyYearTwoStatus)
-          ),
-          latencyYearsCrystallised = LatencyYearsCrystallised(
-            firstYear = crystallisationList.headOption,
-            secondYear = crystallisationList.lastOption
+      crystallisationData match {
+        case None =>
+          variableViewModelSEBusiness(
+            incomeSource = desiredIncomeSource,
+            latencyYearsQuarterly = LatencyYearsQuarterly(
+              firstYear = Some(latencyYearOneStatus),
+              secondYear = Some(latencyYearTwoStatus)
+            ),
+            latencyYearsCrystallised = LatencyYearsCrystallised(
+              firstYear = None,
+              secondYear = None
+            ),
+            useMTDForTaxYear1 = maybeUseMTD1,
+            useMTDForTaxYear2 = maybeUseMTD2
           )
-        )
+
+        case Some(crystallisationList: List[Boolean]) =>
+          variableViewModelSEBusiness(
+            incomeSource = desiredIncomeSource,
+            latencyYearsQuarterly = LatencyYearsQuarterly(
+              firstYear = Some(latencyYearOneStatus),
+              secondYear = Some(latencyYearTwoStatus)
+            ),
+            latencyYearsCrystallised = LatencyYearsCrystallised(
+              firstYear = crystallisationList.headOption,
+              secondYear = crystallisationList.lastOption
+            ),
+            useMTDForTaxYear1 = maybeUseMTD1,
+            useMTDForTaxYear2 = maybeUseMTD2
+          )
+      }
     }
   }
 
@@ -381,23 +420,33 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                                                                )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ManageIncomeSourceDetailsViewModel] = {
 
     for {
-      (latencyYearOneStatus, latencyYearTwoStatus) <- itsaStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(latencyDetails))
+      (latencyYearOneStatus, latencyYearTwoStatus) <- getLatencyStatusesBasedOnFeatureSwitch(latencyDetails)
       crystallisationData <- getCrystallisationInformation(Some(latencyDetails))
-    } yield crystallisationData match {
-      case None =>
-        variableViewModelPropertyBusiness(
-          incomeSource = desiredIncomeSource,
-          latencyYearsQuarterly = LatencyYearsQuarterly(Some(latencyYearOneStatus), Some(latencyYearTwoStatus)),
-          latencyYearsCrystallised = LatencyYearsCrystallised(None, None),
-          incomeSourceType = incomeSourceType
-        )
-      case Some(crystallisationList: List[Boolean]) =>
-        variableViewModelPropertyBusiness(
-          incomeSource = desiredIncomeSource,
-          latencyYearsQuarterly = LatencyYearsQuarterly(Some(latencyYearOneStatus), Some(latencyYearTwoStatus)),
-          latencyYearsCrystallised = LatencyYearsCrystallised(crystallisationList.headOption, crystallisationList.lastOption),
-          incomeSourceType = incomeSourceType
-        )
+    } yield {
+      val maybeUseMTD1 = if (isEnabled(OptInOptOutContentUpdateR17)) Some(latencyYearOneStatus) else None
+      val maybeUseMTD2 = if (isEnabled(OptInOptOutContentUpdateR17)) Some(latencyYearTwoStatus) else None
+
+      crystallisationData match {
+        case None =>
+          variableViewModelPropertyBusiness(
+            incomeSource = desiredIncomeSource,
+            latencyYearsQuarterly = LatencyYearsQuarterly(Some(latencyYearOneStatus), Some(latencyYearTwoStatus)),
+            latencyYearsCrystallised = LatencyYearsCrystallised(None, None),
+            incomeSourceType = incomeSourceType,
+            useMTDForTaxYear1 = maybeUseMTD1,
+            useMTDForTaxYear2 = maybeUseMTD2
+          )
+
+        case Some(crystallisationList: List[Boolean]) =>
+          variableViewModelPropertyBusiness(
+            incomeSource = desiredIncomeSource,
+            latencyYearsQuarterly = LatencyYearsQuarterly(Some(latencyYearOneStatus), Some(latencyYearTwoStatus)),
+            latencyYearsCrystallised = LatencyYearsCrystallised(crystallisationList.headOption, crystallisationList.lastOption),
+            incomeSourceType = incomeSourceType,
+            useMTDForTaxYear1 = maybeUseMTD1,
+            useMTDForTaxYear2 = maybeUseMTD2
+          )
+      }
     }
   }
 }
