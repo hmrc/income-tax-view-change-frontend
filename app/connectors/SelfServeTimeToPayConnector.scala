@@ -29,7 +29,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SelfServeTimeToPayConnector @Inject()(http: HttpClientV2,
-                                            config: FrontendAppConfig,
+                                            config: FrontendAppConfig
                                            )(implicit ec: ExecutionContext) {
   val journeyStartUrl: String = config.setUpAPaymentPlanUrl + "/essttp-backend/sa/itsa/journey/start"
 
