@@ -19,6 +19,7 @@ package connectors
 import config.FrontendAppConfig
 import models.core.{SelfServeTimeToPayJourneyErrorResponse, SelfServeTimeToPayJourneyResponse, SelfServeTimeToPayJourneyResponseModel}
 import play.api.Logger
+import play.api.http.Status
 import play.api.http.Status.CREATED
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
@@ -63,5 +64,9 @@ class SelfServeTimeToPayConnector @Inject()(http: HttpClientV2,
         }
           SelfServeTimeToPayJourneyErrorResponse(response.status, response.body)
       }
+  }.recover {
+    case ex: Exception =>
+      Logger("application").error(s"Unexpected future failed error, ${ex.getMessage}")
+      SelfServeTimeToPayJourneyErrorResponse(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
   }
 }
