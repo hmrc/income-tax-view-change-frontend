@@ -2235,15 +2235,25 @@ manageBusinesses.type-of-property.foreign                                = Busne
 manageBusinesses.type-of-property.error                                  = Dewiswch opsiwn
 
 # manage income sources reporting method
-manageBusinesses.manage.propertyReportingMethod.heading.annual             = Newidiadau i adrodd blynyddol ar gyfer blwyddyn dreth {0} i {1}
-manageBusinesses.manage.propertyReportingMethod.heading.quarterly          = Newid i gyflwyno adroddiadau’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
-manageBusinesses.manage.propertyReportingMethod.subHeading.UkProperty      = Eiddo yn y DU
-manageBusinesses.manage.propertyReportingMethod.subHeading.ForeignProperty = Eiddo tramor
-manageBusinesses.manage.propertyReportingMethod.subHeading.SelfEmployment  = Unig fasnachwr
-manageBusinesses.manage.propertyReportingMethod.description.annual         = Os byddwch yn newid i adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth drwy’ch meddalwedd sy’n cydweddu neu’ch cyfrif ar-lein CThEF.
-manageBusinesses.manage.propertyReportingMethod.description.quarterly      = Bydd newid i adrodd yn chwarterol yn golygu y bydd angen i chi gyflwyno’ch diweddariadau chwarterol drwy feddalwedd sy’n cydweddu.
-manageBusinesses.manage.propertyReportingMethod.inset.quarterly            = Os ydych wedi cyflwyno unrhyw incwm a threuliau i CThEF ar gyfer y flwyddyn dreth hon, byddant yn cael eu dileu o’n cofnodion. Gwnewch yn siŵr eich bod yn cadw’r wybodaeth hon yn ddiogel oherwydd y bydd angen i chi ei chynnwys yn eich diweddariadau chwarterol.
-manageBusinesses.manage.propertyReportingMethod.confirm                    = Cadarnhau a chadw
+manageBusinesses.manage.propertyReportingMethod.heading.annual                  = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer y flwyddyn dreth {0} i {1}
+manageBusinesses.manage.propertyReportingMethod.heading.quarterly               = Cofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer y flwyddyn dreth {0} i {1}
+manageBusinesses.manage.propertyReportingMethod.description.annual              = Bydd hyn yn golygu nad oes angen i chi gyflwyno diweddariadau chwarterol mwyach trwy feddalwedd sy’n cydweddu ar gyfer y ffynhonnell incwm hon.
+manageBusinesses.manage.propertyReportingMethod.inset.annual                    = Os ydych eisoes wedi cyflwyno i CThEF unrhyw ddiweddariadau chwarterol ar gyfer y busnes newydd hwn ar gyfer y flwyddyn dreth hon, bydd angen i chi ailgyflwyno’r wybodaeth hon yn eich Ffurflen Dreth.
+manageBusinesses.manage.propertyReportingMethod.description.quarterly.CYplus    = Bydd hyn yn golygu bod angen i chi gyflwyno diweddariadau chwarterol trwy feddalwedd sy’n cydweddu ar gyfer y ffynhonnell incwm hon.
+manageBusinesses.manage.propertyReportingMethod.ul.description                  = Bydd hyn yn golygu’r canlynol:
+manageBusinesses.manage.propertyReportingMethod.ul.el1                          = angen cyflwyno diweddariadau chwarterol argyfer y ffynhonnell incwm hon
+manageBusinesses.manage.propertyReportingMethod.ul.el2                          = gallech gael o leiaf un diweddariad chwarterolsy’n hwyr
+manageBusinesses.manage.propertyReportingMethod.inset.quarterly                 = Os ydych eisoes wedi cyflwyno i CThEF unrhyw ddiweddariadau chwarterol ar gyfer y busnes newydd hwn ar gyfer y flwyddyn dreth hon, bydd angen i chi ailgyflwyno’r wybodaeth hon yn eich Ffurflen Dreth.
+manageBusinesses.manage.propertyReportingMethod.form.heading                    = A ydych am gofrestru ar gyfer y flwyddyn dreth {0} i {1}?
+manageBusinesses.manage.propertyReportingMethod.form.error.annual               = Dewiswch ‘Iawn’ os ydych am optio’r busnes newydd hwn allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+manageBusinesses.manage.propertyReportingMethod.form.error.quarterly            = Dewiswch ‘Iawn’ os ydych am gofrestru’r busnes newydd hwn â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+
+manageBusinesses.manage.propertyReportingMethod.subHeading.UkProperty           = Eiddo yn y DU
+manageBusinesses.manage.propertyReportingMethod.subHeading.ForeignProperty      = Eiddo tramor
+manageBusinesses.manage.propertyReportingMethod.subHeading.SelfEmployment       = Unig fasnachwr
+manageBusinesses.manage.propertyReportingMethod.description.quarterly           = Bydd newid i adrodd yn chwarterol yn golygu y bydd angen i chi gyflwyno’ch diweddariadau chwarterol drwy feddalwedd sy’n cydweddu.
+manageBusinesses.manage.propertyReportingMethod.inset.quarterly                 = Os ydych wedi cyflwyno unrhyw incwm a threuliau i CThEF ar gyfer y flwyddyn dreth hon, byddant yn cael eu dileu o’n cofnodion. Gwnewch yn siŵr eich bod yn cadw’r wybodaeth hon yn ddiogel oherwydd y bydd angen i chi ei chynnwys yn eich diweddariadau chwarterol.
+manageBusinesses.manage.propertyReportingMethod.confirm                         = Cadarnhau a chadw
 
 
 # credits
