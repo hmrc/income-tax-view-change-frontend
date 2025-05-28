@@ -19,8 +19,10 @@ package views.manageBusinesses.manage
 import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import forms.incomeSources.manage.{ChangeReportingMethodForm, ConfirmReportingMethodForm}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.data.{Form, FormError}
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
@@ -45,6 +47,14 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
 
     private lazy val manageIncomeSourceDetailsController = controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController
 
+    val testChangeToAnnual = "annual"
+
+    val testChangeToQuarterly = "quarterly"
+
+    val formFieldName = "incomeSources.manage.propertyReportingMethod"
+
+    val formErrorMessage = "incomeSources.manage.propertyReportingMethod.error" //TODO these will need changing to the correct messages
+
     val selfEmploymentId = incomeSourceType match {
       case SelfEmployment => Some(testSelfEmploymentId)
       case _ => None
@@ -63,6 +73,8 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     val pageInset = "If you have submitted any income and expenses for this tax year to HMRC, this will be deleted from our records. So make sure you keep hold of this information because you will need to include it in your quarterly updates."
     val pageConfirm = "Confirm and save"
 
+    def form(changeTo: String): Form[ConfirmReportingMethodForm] = ConfirmReportingMethodForm(changeTo)
+
     lazy val view: HtmlFormat.Appendable =
       confirmReportingMethodView(
         postAction = Call("POST", "/"),
@@ -72,7 +84,8 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
         taxYearEndYear = testTaxYearEndYear,
         newReportingMethod = newReportingMethod,
         isCurrentTaxYear = true,
-        incomeSourceType = incomeSourceType
+        incomeSourceType = incomeSourceType,
+        form = form(testChangeToQuarterly).withError(FormError(formFieldName, formErrorMessage))
       )
 
     lazy val document: Document = {

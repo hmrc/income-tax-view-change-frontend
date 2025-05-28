@@ -66,7 +66,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
            incomeSourceType: IncomeSourceType
           ): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
     withNewIncomeSourcesFS {
-      withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
+      withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
         val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
         val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
         handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, incomeSourceIdOpt)
@@ -80,7 +80,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
              incomeSourceType: IncomeSourceType
             ): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
     withNewIncomeSourcesFS {
-      withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), BeforeSubmissionPage) { sessionData =>
+      withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Manage, incomeSourceType), BeforeSubmissionPage) { sessionData =>
         val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
         val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
         handleSubmitRequest(taxYear, changeTo, isAgent, incomeSourceIdOpt, incomeSourceType)

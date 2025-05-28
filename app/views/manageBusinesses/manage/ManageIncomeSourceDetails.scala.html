@@ -147,13 +147,7 @@
             else
                 "incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.signup"
 
-        val changeLink =
-            if (isAgent)
-                controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController
-                .showAgent(taxYearFormatted, changeTo, viewModel.incomeSourceType).url
-            else
-                controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController
-                .show(taxYearFormatted, changeTo, viewModel.incomeSourceType).url
+        val changeLink = controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(isAgent, taxYearFormatted, changeTo, viewModel.incomeSourceType).url
 
         val linkId = if (useMTD) s"opt-out-link-$rowIndex" else s"sign-up-link-$rowIndex"
 

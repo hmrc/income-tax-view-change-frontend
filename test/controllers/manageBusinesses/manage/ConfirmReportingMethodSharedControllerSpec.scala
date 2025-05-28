@@ -43,10 +43,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
 
   lazy val testConfirmReportingMethodSharedController = app.injector.instanceOf[ConfirmReportingMethodSharedController]
 
-  val individual: Boolean = true
-  val agent: Boolean = false
-
-
   trait SetupGET {
     val taxYear: String = "2022-2023"
     val changeTo: String = "annual"
@@ -54,9 +50,9 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
     val mtdRole: MTDUserRole
 
     lazy val action = if (mtdRole == MTDIndividual) {
-      testConfirmReportingMethodSharedController.show(taxYear, changeTo, incomeSourceType)
+      testConfirmReportingMethodSharedController.show(isAgent = false, taxYear, changeTo, incomeSourceType)
     } else {
-      testConfirmReportingMethodSharedController.showAgent(taxYear, changeTo, incomeSourceType)
+      testConfirmReportingMethodSharedController.show(isAgent = true, taxYear, changeTo, incomeSourceType)
     }
   }
 
@@ -204,9 +200,9 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
     val mtdRole: MTDUserRole
 
     lazy val action = if (mtdRole == MTDIndividual) {
-      testConfirmReportingMethodSharedController.submit(taxYear, changeTo, incomeSourceType)
+      testConfirmReportingMethodSharedController.submit(isAgent = false, taxYear, changeTo, incomeSourceType)
     } else {
-      testConfirmReportingMethodSharedController.submitAgent(taxYear, changeTo, incomeSourceType)
+      testConfirmReportingMethodSharedController.submit(isAgent = true, taxYear, changeTo, incomeSourceType)
     }
   }
 
