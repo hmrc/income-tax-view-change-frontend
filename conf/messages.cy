@@ -2108,7 +2108,7 @@ incomeSources.add.manageObligations.foreign-property                  =   eiddo 
 incomeSources.add.manageObligations.heading                           =   Yr hyn y mae’n rhaid i chi ei wneud
 
 ## used when OptInOptOutContentUpdateR17 enabled
-incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.panel.body = {0} wedi’i {1} cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer blwyddyn dreth {2} i {3}
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.title = {0} wedi’i {1} cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer blwyddyn dreth {2} i {3}
 
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.panel.title                       = {0}
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.panel.body = wedi’i {0} cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer blwyddyn dreth {1} i {2}
