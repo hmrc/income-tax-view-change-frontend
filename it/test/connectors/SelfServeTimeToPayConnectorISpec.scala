@@ -43,19 +43,20 @@ class SelfServeTimeToPayConnectorISpec extends AnyWordSpec with ComponentSpecBas
       "CREATED - 201" should {
         "return a successful response with valid json" in {
 
-          val json = Json.toJson(SelfServeTimeToPayJourneyResponseModel("journeyId", "nextUrl")).toString()
+          val json = Json.toJson(SelfServeTimeToPayJourneyResponseModel("journeyId", "nextUrl"))
 
           val expectedResponse: SelfServeTimeToPayJourneyResponse =
             SelfServeTimeToPayJourneyResponseModel("journeyId", "nextUrl")
 
-          WiremockHelper.stubPostWithRequest(url, requestBody, CREATED, json)
+          WiremockHelper.stubPostWithRequest(url, requestBody, CREATED, json.toString())
 
           val result: SelfServeTimeToPayJourneyResponse = connector.startSelfServeTimeToPayJourney().futureValue
 
           result shouldBe expectedResponse
 
-          WiremockHelper.verifyPost(
-            uri = s"/essttp-backend/sa/itsa/journey/start"
+          WiremockHelper.verifyPostContainingJson(
+            uri = s"/essttp-backend/sa/itsa/journey/start",
+            bodyPart = Some(Json.toJson(requestBody))
           )
         }
       }
@@ -72,8 +73,10 @@ class SelfServeTimeToPayConnectorISpec extends AnyWordSpec with ComponentSpecBas
 
           result shouldBe expectedResponse
 
-          WiremockHelper.verifyPost(
-            uri = s"/essttp-backend/sa/itsa/journey/start"
+          WiremockHelper.verifyPostContainingJson(
+            uri = s"/essttp-backend/sa/itsa/journey/start",
+            bodyPart = Some(Json.toJson(requestBody))
+
           )
         }
       }
@@ -90,8 +93,10 @@ class SelfServeTimeToPayConnectorISpec extends AnyWordSpec with ComponentSpecBas
 
           result shouldBe expectedResponse
 
-          WiremockHelper.verifyPost(
-            uri = s"/essttp-backend/sa/itsa/journey/start"
+          WiremockHelper.verifyPostContainingJson(
+            uri = s"/essttp-backend/sa/itsa/journey/start",
+            bodyPart = Some(Json.toJson(requestBody))
+
           )
         }
       }
