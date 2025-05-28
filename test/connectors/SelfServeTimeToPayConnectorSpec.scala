@@ -31,6 +31,7 @@ class SelfServeTimeToPayConnectorSpec extends BaseConnectorSpec {
     json = Json.toJson(SelfServeTimeToPayJourneyResponseModel("journeyId", "http://www.redirect-url.com")), headers = Map.empty)
   val successResponseBadJson = HttpResponse(status = Status.CREATED, json = Json.parse("{}"), headers = Map.empty)
   val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
+  val internalServerError = HttpResponse(status = Status.INTERNAL_SERVER_ERROR, body = "Unexpected future failed error, Unknown error")
 
   object TestSelfServeTimeToPayConnector extends SelfServeTimeToPayConnector(mockHttpClientV2, appConfig)
 
@@ -93,7 +94,7 @@ class SelfServeTimeToPayConnectorSpec extends BaseConnectorSpec {
           .thenReturn(mockRequestBuilder)
 
         when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
-          .thenReturn(Future.failed(new Exception("Unknown error")))
+          .thenReturn(Future(internalServerError))
 
         val result = TestSelfServeTimeToPayConnector.startSelfServeTimeToPayJourney().futureValue
         result shouldBe SelfServeTimeToPayJourneyErrorResponse(500, "Unexpected future failed error, Unknown error")
