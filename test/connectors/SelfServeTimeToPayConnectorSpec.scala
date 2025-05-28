@@ -18,7 +18,7 @@ package connectors
 
 import models.core.{SelfServeTimeToPayJourneyErrorResponse, SelfServeTimeToPayJourneyResponseModel}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{times, verify, when}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
@@ -48,6 +48,8 @@ class SelfServeTimeToPayConnectorSpec extends BaseConnectorSpec {
           .thenReturn(Future(successResponse))
         val result = TestSelfServeTimeToPayConnector.startSelfServeTimeToPayJourney().futureValue
         result shouldBe SelfServeTimeToPayJourneyResponseModel("journeyId", "http://www.redirect-url.com")
+        verify(mockHttpClientV2, times(1)).post(any())(any())
+
       }
     }
 
@@ -64,6 +66,8 @@ class SelfServeTimeToPayConnectorSpec extends BaseConnectorSpec {
 
         val result = TestSelfServeTimeToPayConnector.startSelfServeTimeToPayJourney().futureValue
         result shouldBe SelfServeTimeToPayJourneyErrorResponse(400, "Error Message")
+        verify(mockHttpClientV2, times(1)).post(any())(any())
+
       }
 
       "a 201 response with invalid json is received" in {
@@ -77,6 +81,24 @@ class SelfServeTimeToPayConnectorSpec extends BaseConnectorSpec {
 
         val result = TestSelfServeTimeToPayConnector.startSelfServeTimeToPayJourney().futureValue
         result shouldBe SelfServeTimeToPayJourneyErrorResponse(201, "Invalid Json")
+        verify(mockHttpClientV2, times(1)).post(any())(any())
+
+      }
+
+      "a 500 response in case of future failed scenario" in {
+
+        when(mockHttpClientV2.post(any())(any())).thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.withBody(any())(any(), any(), any()))
+          .thenReturn(mockRequestBuilder)
+
+        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+          .thenReturn(Future.failed(new Exception("Unknown error")))
+
+        val result = TestSelfServeTimeToPayConnector.startSelfServeTimeToPayJourney().futureValue
+        result shouldBe SelfServeTimeToPayJourneyErrorResponse(500, "Unexpected future failed error, Unknown error")
+        verify(mockHttpClientV2, times(1)).post(any())(any())
+
       }
     }
   }
