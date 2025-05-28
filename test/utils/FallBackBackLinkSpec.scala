@@ -16,7 +16,7 @@
 
 package utils
 
-import enums.GatewayPage.{NoMatch, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage}
+import enums.GatewayPage.{NoMatch, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage, YourSelfAssessmentChargeSummaryPage}
 import testUtils.TestSupport
 
 class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
@@ -107,6 +107,15 @@ class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
       "return Agent What You Owe link" in {
         val url = getChargeSummaryBackUrl(Some(WhatYouOwePage), testTaxYear, None, isAgent = true)
         url shouldBe "/report-quarterly/income-and-expenses/view/agents/what-your-client-owes"
+      }
+
+      "return Your Self Assessment charges link" in {
+        val url = getChargeSummaryBackUrl(Some(YourSelfAssessmentChargeSummaryPage), testTaxYear, None, isAgent = false)
+        url shouldBe "/report-quarterly/income-and-expenses/view/your-self-assessment-charges"
+      }
+      "return Agent Your Self Assessmnet charges link" in {
+        val url = getChargeSummaryBackUrl(Some(YourSelfAssessmentChargeSummaryPage), testTaxYear, None, isAgent = true)
+        url shouldBe "/report-quarterly/income-and-expenses/view/agents/your-self-assessment-charges"
       }
 
       "return homepage link if NoMatchPage" in {

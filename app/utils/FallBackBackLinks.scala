@@ -17,7 +17,7 @@
 package utils
 
 import controllers.routes._
-import enums.GatewayPage.{GatewayPage, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage}
+import enums.GatewayPage.{GatewayPage, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage, YourSelfAssessmentChargeSummaryPage}
 
 trait FallBackBackLinks {
 
@@ -51,6 +51,7 @@ trait FallBackBackLinks {
     (gatewayPageOpt match {
       case Some(TaxYearSummaryPage) => TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).withFragment("payments")
       case Some(WhatYouOwePage) => WhatYouOweController.showAgent()
+      case Some(YourSelfAssessmentChargeSummaryPage) => YourSelfAssessmentChargesController.showAgent()
       case Some(PaymentHistoryPage) => PaymentHistoryController.showAgent()
       case _ => HomeController.showAgent()
     }).path
@@ -59,6 +60,7 @@ trait FallBackBackLinks {
     (gatewayPageOpt match {
       case Some(TaxYearSummaryPage) => TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).withFragment("payments")
       case Some(WhatYouOwePage) => WhatYouOweController.show(origin)
+      case Some(YourSelfAssessmentChargeSummaryPage) => YourSelfAssessmentChargesController.show(origin)
       case Some(PaymentHistoryPage) => PaymentHistoryController.show(origin)
       case _ => HomeController.show(origin)
     }).path
