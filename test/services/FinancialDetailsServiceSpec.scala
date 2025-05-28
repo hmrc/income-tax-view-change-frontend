@@ -406,14 +406,17 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
             interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_ACCEPTED)),
           documentDetailModel(transactionId = "transid3", outstandingAmount = 0).copy(
             interestOutstandingAmount = Some(0), documentDescription = Some("TRM Amend Charge"), documentText = Some(CODING_OUT_CANCELLED)),
+          documentDetailModel(transactionId = "transid4", outstandingAmount = 0).copy(
+            interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_CLASS2_NICS))
         ), financialDetails = List(
           fullFinancialDetailModel,
           fullFinancialDetailModel,
         ))
         val financialDetail = getFinancialDetailSuccess(documentDetails = List(
           fullDocumentDetailModel.copy(outstandingAmount = 300.00),
-          fullDocumentDetailModel.copy(outstandingAmount = 400.00)
+          fullDocumentDetailModel.copy(outstandingAmount = 400.00),
         ), financialDetails = List(
+          fullFinancialDetailModel,
           fullFinancialDetailModel,
           fullFinancialDetailModel
         ))
@@ -423,8 +426,20 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
 
         val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails()(mtdUser(2), headerCarrier, ec)
 
+        val expectedFinancialDetailCodingOut = getFinancialDetailSuccess(documentDetails = List(
+          documentDetailModel(transactionId = "transid1", outstandingAmount = 200.00).copy(
+            interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_CLASS2_NICS)),
+          documentDetailModel(taxYear = 2021, transactionId = "transid2", outstandingAmount = 0).copy(
+            interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_ACCEPTED)),
+          documentDetailModel(transactionId = "transid3", outstandingAmount = 0).copy(
+            interestOutstandingAmount = Some(0), documentDescription = Some("TRM Amend Charge"), documentText = Some(CODING_OUT_CANCELLED)),
+        ), financialDetails = List(
+          fullFinancialDetailModel,
+          fullFinancialDetailModel,
+        ))
+
         result.futureValue shouldBe List(
-          financialDetailCodingOut,
+          expectedFinancialDetailCodingOut,
           financialDetail
         )
       }
