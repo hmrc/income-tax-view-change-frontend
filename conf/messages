@@ -765,7 +765,7 @@ obligations.quarterlyUpdates                                       = Quarterly u
 obligations.finalDeclarationUpdate                                 = Final declaration
 
 ## Next updates Page ##
-nextUpdates.heading                                                = Next updates
+nextUpdates.heading                                                = Your updates and deadlines
 nextUpdates.sub-heading                                            = Updates due by
 nextUpdates.dropdown.info                                          = What are the update types?
 nextUpdates.info                                       			   = All updates need to be sent using your record keeping software by each date shown.
@@ -793,13 +793,9 @@ nextUpdates.business            							       = Business income
 
 nextUpdates.optOutOneYear.p.message                                = You are currently reporting quarterly on a voluntary basis for the {0} to {1} tax year. You can choose to
 nextUpdates.optOutOneYear.p.link                                   = opt out of quarterly updates and report annually instead.
-nextUpdates.optOutOneYear.reportingFrequency.p.message             = Depending on your circumstances, you may be able to
-nextUpdates.optOutOneYear.reportingFrequency.p.link                = view and change your reporting frequency.
 
-nextUpdates.optOutMultiYear.p.message                              = You are currently reporting quarterly on a voluntary basis. You can choose to
-nextUpdates.optOutMultiYear.p.link                                 = opt out of quarterly updates and report annually instead.
-nextUpdates.optOutMultiYear.reportingFrequency.p.message           = Depending on your circumstances, you may be able to
-nextUpdates.optOutMultiYear.reportingFrequency.p.link              = view and change your reporting frequency.
+nextUpdates.reporting.obligations.p.message                        = Depending on your circumstances,
+nextUpdates.reporting.obligations.p.link                           = you may be able to view and change your reporting obligations.
 
 sections.open.all												   = Show all sections
 sections.close.all												   = Hide all sections
