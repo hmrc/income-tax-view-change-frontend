@@ -39,4 +39,8 @@ trait MockDateService extends UnitSpec with BeforeAndAfterEach {
     when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
   }
 
+  def setupMockGetCurrentTaxYearStart(startDate: java.time.LocalDate): Unit = {
+    when(mockDateService.getCurrentTaxYearStart).thenReturn(startDate)
+  }
+
 }
