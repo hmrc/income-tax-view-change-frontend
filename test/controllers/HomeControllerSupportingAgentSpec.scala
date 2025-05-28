@@ -182,7 +182,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         }
       }
 
-      "render the home page with an Account Settings tile" that {
+      "render the home page with a Reporting Obligations tile" that {
         "states that the user is reporting annually" when {
           "Reporting Frequency FS is enabled and the current ITSA status is annually" in new Setup {
             enable(ReportingFrequencyPage)
@@ -197,7 +197,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
-            document.select("#account-settings-tile p:nth-child(2)").text() shouldBe ""
+            document.select("#reporting-obligations-tile p:nth-child(2)").text() shouldBe ""
           }
         }
         "states that the user is reporting quarterly" when {
@@ -214,7 +214,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
-            document.select("#account-settings-tile p:nth-child(2)").text() shouldBe ""
+            document.select("#reporting-obligations-tile p:nth-child(2)").text() shouldBe ""
           }
 
           "Reporting Frequency FS is enabled and the current ITSA status is mandated" in new Setup {
@@ -229,7 +229,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
-            document.select("#account-settings-tile p:nth-child(2)").text() shouldBe ""
+            document.select("#reporting-obligations-tile p:nth-child(2)").text() shouldBe ""
           }
         }
       }
@@ -282,7 +282,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         document.getElementById("returns-tile") shouldBe null
       }
 
-      "render the home page without an account settings tile" in new Setup {
+      "render the home page without a reporting obligations tile" in new Setup {
         disable(ReportingFrequencyPage)
         setupMockAgentWithClientAuth(true)
         mockGetDueDates(Right(overdueDueDates))
@@ -296,7 +296,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         document.title shouldBe homePageTitle
         document.select("h1").text() shouldBe homePageHeading
         document.getElementsByClass("govuk-caption-xl").text() shouldBe homePageCaption
-        document.getElementById("account-settings-tile") shouldBe null
+        document.getElementById("reporting-obligations-tile") shouldBe null
       }
     }
 

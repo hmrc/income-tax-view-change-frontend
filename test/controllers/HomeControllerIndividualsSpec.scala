@@ -567,7 +567,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         }
       }
 
-      "render the home page with an Account Settings tile" that {
+      "render the home page with a Reporting Obligations tile" that {
         "states that the user is reporting annually" when {
           "Reporting Frequency FS is enabled and the current ITSA status is annually" in new Setup {
             enable(ReportingFrequencyPage)
@@ -585,7 +585,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
-            document.select("#account-settings-tile p:nth-child(2)").text() shouldBe ""
+            document.select("#reporting-obligations-tile p:nth-child(2)").text() shouldBe ""
           }
         }
         "states that the user is reporting quarterly" when {
@@ -605,7 +605,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
-            document.select("#account-settings-tile p:nth-child(2)").text() shouldBe ""
+            document.select("#reporting-obligations-tile p:nth-child(2)").text() shouldBe ""
           }
 
           "Reporting Frequency FS is enabled and the current ITSA status is mandated" in new Setup {
@@ -624,7 +624,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
-            document.select("#account-settings-tile p:nth-child(2)").text() shouldBe ""
+            document.select("#reporting-obligations-tile p:nth-child(2)").text() shouldBe ""
           }
         }
       }
