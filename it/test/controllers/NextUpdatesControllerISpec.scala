@@ -293,7 +293,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         Then("the quarterly updates info sections")
         res should have(
-          elementTextBySelector("#what-the-user-can-do")(expectedValue = "Depending on your circumstances, you may be able to view and change your reporting obligations. (opens in new tab)")
+          elementTextBySelector("#what-the-user-can-do")(expectedValue = "Depending on your circumstances, you may be able to view and change your reporting obligations.")
         )
 
       }
@@ -325,7 +325,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         Then("the quarterly updates info sections")
         res should have(
-          elementTextBySelector("#what-the-user-can-do")(expectedValue = "Depending on your circumstances, you may be able to view and change your reporting obligations. (opens in new tab)")
+          elementTextBySelector("#what-the-user-can-do")(expectedValue = "Depending on your circumstances, you may be able to view and change your reporting obligations.")
         )
       }
     }

@@ -119,7 +119,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
     val updatesInSoftwareDesc: String = s"${messages("nextUpdates.updates.software.dec1")} ${messages("nextUpdates.updates.software.dec2")} ${messages("pagehelp.opensInNewTabText")} ${messages("nextUpdates.updates.software.dec3")}"
     val info: String = s"${messages("nextUpdates.previousYears.textOne")} ${messages("nextUpdates.previousYears.link")} ${messages("nextUpdates.previousYears.textTwo")}"
     val oneYearOptOutMessage: String = s"${messages("nextUpdates.optOutOneYear.p.message", "2023", "2024")} ${messages("nextUpdates.optOutOneYear.p.link")}"
-    val reportingObligationsLink: String = "Depending on your circumstances, you may be able to view and change your reporting obligations. (opens in new tab)"
+    val reportingObligationsLink: String = "Depending on your circumstances, you may be able to view and change your reporting obligations."
   }
 
   val confirmOptOutLink = "/report-quarterly/income-and-expenses/view/optout/review-confirm-taxyear"
