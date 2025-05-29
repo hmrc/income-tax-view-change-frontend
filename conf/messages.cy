@@ -2121,9 +2121,9 @@ incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.afterLink 
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para2 = Ar gyfer y busnes newydd hwn mae’n bosibl bod gennych ddiweddariadau hwyr ar gyfer blwyddyn dreth 2024 i 2025. Mae’n rhaid i chi gyflwyno’r diweddariadau hyn, ynghyd â’r holl incwm a threuliau sydd eu hangen, drwy ddefnyddio’ch meddalwedd sy’n cydweddu.
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.manage.link = Bwrw golwg dros eich busnes
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.manage.afterLink = er mwyn ychwanegu, rheoli neu ddod â busnes neu ffynhonnell incwm i ben.
-incomeSources.add.manageObligations.sole-trader                       =   y busnes unig fasnachwr
-incomeSources.add.manageObligations.uk-property                       =   eiddo yn y DU
-incomeSources.add.manageObligations.foreign-property                  =   eiddo tramor
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.sole-trader                       =   y busnes unig fasnachwr
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.uk-property                       =   eiddo yn y DU
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.foreign-property                  =   eiddo tramor
 
 # manage journey manage income source
 incomeSources.manage.quarterly-period                                 =   Cyfnod chwarterol
