@@ -62,6 +62,15 @@ class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
         url shouldBe "/report-quarterly/income-and-expenses/view/agents/what-your-client-owes"
       }
 
+      "return Your Self Assessment charges link" in {
+        val url = getPaymentAllocationBackUrl(Some(YourSelfAssessmentChargeSummaryPage), None, None, isAgent = false)
+        url shouldBe "/report-quarterly/income-and-expenses/view/your-self-assessment-charges"
+      }
+      "return Agent Your Self Assessment charges link" in {
+        val url = getPaymentAllocationBackUrl(Some(YourSelfAssessmentChargeSummaryPage), None, None, isAgent = true)
+        url shouldBe "/report-quarterly/income-and-expenses/view/agents/your-self-assessment-charges"
+      }
+
       "return homepage link if NoMatchPage" in {
         val url = getPaymentAllocationBackUrl(Some(NoMatch), None, None, isAgent = false)
         url shouldBe "/report-quarterly/income-and-expenses/view"

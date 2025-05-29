@@ -30,6 +30,7 @@ trait FallBackBackLinks {
       case (Some(TaxYearSummaryPage), Some(taxYear)) => TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).withFragment("payments")
       case (Some(TaxYearSummaryPage), None) => HomeController.show(origin)
       case (Some(WhatYouOwePage), _) => WhatYouOweController.show(origin)
+      case (Some(YourSelfAssessmentChargeSummaryPage), _) => YourSelfAssessmentChargesController.show(origin)
       case (Some(PaymentHistoryPage), _) => PaymentHistoryController.show(origin)
       case _ => HomeController.show(origin)
     }).path
@@ -39,6 +40,7 @@ trait FallBackBackLinks {
       case (Some(TaxYearSummaryPage), Some(taxYear)) => TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).withFragment("payments")
       case (Some(TaxYearSummaryPage), None) => HomeController.showAgent()
       case (Some(WhatYouOwePage), _) => WhatYouOweController.showAgent()
+      case (Some(YourSelfAssessmentChargeSummaryPage), _) => YourSelfAssessmentChargesController.showAgent()
       case (Some(PaymentHistoryPage), _) => PaymentHistoryController.showAgent()
       case _ => HomeController.showAgent()
     }).path
