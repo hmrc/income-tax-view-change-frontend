@@ -97,14 +97,14 @@ class HomeController @Inject()(val homeView: views.html.Home,
       val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(ReportingFrequencyPage))
       val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, isEnabled(IncomeSourcesFs),
         isEnabled(IncomeSourcesNewJourney))
-      val accountSettingsTileViewModel = AccountSettingsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
+      val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
 
       auditingService.extendedAudit(HomeAudit.applySupportingAgent(user, nextUpdatesTileViewModel))
       Ok(
         supportingAgentHomeView(
           yourBusinessesTileViewModel,
           nextUpdatesTileViewModel,
-          accountSettingsTileViewModel
+          yourReportingObligationsTileViewModel
         )
       )
     }
@@ -138,7 +138,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
       val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear, isEnabled(ITSASubmissionIntegration))
 
-      val accountSettingsTileViewModel = AccountSettingsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
+      val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
 
       NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount, accruingInterestPaymentsCount, isEnabled(ReviewAndReconcilePoa), isEnabled(YourSelfAssessmentCharges)).verify match {
 
@@ -149,7 +149,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
           nextUpdatesTileViewModel = nextUpdatesTileViewModel,
           paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
           yourBusinessesTileViewModel = yourBusinessesTileViewModel,
-          accountSettingsTileViewModel = accountSettingsTileViewModel,
+          yourReportingObligationsTileViewModel = yourReportingObligationsTileViewModel,
           penaltiesAndAppealsTileViewModel = penaltiesAndAppealsTileViewModel,
           dunningLockExists = dunningLockExists,
           origin = origin

@@ -110,7 +110,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
     val yourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome, incomeSourcesEnabled, incomeSourcesNewJourneyEnabled)
 
-    val accountSettingsTileViewModel = AccountSettingsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), reportingFrequencyEnabled, currentITSAStatus)
+    val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), reportingFrequencyEnabled, currentITSAStatus)
 
     val penaltiesAndAppealsTileViewModel = PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled, submissionFrequency, penaltyPoints)
 
@@ -121,7 +121,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
       nextPaymentsTileViewModel = nextPaymentsTileViewModel,
       paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
       yourBusinessesTileViewModel = yourBusinessesTileViewModel,
-      accountSettingsTileViewModel = accountSettingsTileViewModel,
+      yourReportingObligationsTileViewModel = yourReportingObligationsTileViewModel,
       penaltiesAndAppealsTileViewModel = penaltiesAndAppealsTileViewModel,
       dunningLockExists = dunningLockExists
     )
@@ -324,30 +324,32 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
       }
 
 
-      "have an Account Settings tile" when {
-        "the reporting frequency page FS is enabled" which {
+      "have a Reporting Obligations tile" when {
+        "the reporting obligations page FS is enabled" which {
           "has a heading" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true) {
-            getElementById("account-settings-tile").map(_.select("h2").first().text()) shouldBe Some("Your account settings")
+            getElementById("reporting-obligations-tile").map(_.select("h2").first().text()) shouldBe Some("Your reporting obligations")
           }
           "has text for reporting quarterly(voluntary)" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true, currentITSAStatus = ITSAStatus.Voluntary) {
-            getElementById("current-itsa-status").map(_.text()) shouldBe Some(s"Reporting quarterly for $currentTaxYear to ${currentTaxYear + 1} tax year")
+            getElementById("current-itsa-status").map(_.text()) shouldBe Some(s"For the $currentTaxYear to ${currentTaxYear + 1} tax year you need to:")
+            document.getElementsByClass("govuk-list govuk-list--bullet").text() shouldBe "use Making Tax Digital for Income Tax submit a tax return"
           }
           "has text for reporting quarterly(mandated)" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true, currentITSAStatus = ITSAStatus.Mandated) {
-            getElementById("current-itsa-status").map(_.text()) shouldBe Some(s"Reporting quarterly for $currentTaxYear to ${currentTaxYear + 1} tax year")
+            getElementById("current-itsa-status").map(_.text()) shouldBe Some(s"For the $currentTaxYear to ${currentTaxYear + 1} tax year you need to:")
+            document.getElementsByClass("govuk-list govuk-list--bullet").text() shouldBe "use Making Tax Digital for Income Tax submit a tax return"
           }
           "has text for reporting annually" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true, currentITSAStatus = ITSAStatus.Annual) {
-            getElementById("current-itsa-status").map(_.text()) shouldBe Some(s"Reporting annually for $currentTaxYear to ${currentTaxYear + 1} tax year")
+            getElementById("current-itsa-status").map(_.text()) shouldBe Some(s"For the $currentTaxYear to ${currentTaxYear + 1} tax year you need to submit a tax return")
           }
 
-          "has a link to the reporting frequency page" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true) {
-            getElementById("reporting-frequency-link").map(_.text()) shouldBe Some("Manage your reporting frequency")
-            getElementById("reporting-frequency-link").map(_.attr("href")) shouldBe Some(controllers.routes.ReportingFrequencyPageController.show(true).url)
+          "has a link to the reporting obligations page" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true) {
+            getElementById("reporting-obligations-link").map(_.text()) shouldBe Some("View and manage your reporting obligations")
+            getElementById("reporting-obligations-link").map(_.attr("href")) shouldBe Some(controllers.routes.ReportingFrequencyPageController.show(true).url)
           }
         }
 
-        "the reporting frequency page FS is disabled" which {
-          "does not have the Account Settings tile" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = false) {
-            getElementById("account-settings-tile") shouldBe None
+        "the reporting obligations page FS is disabled" which {
+          "does not have the Reporting Obligations tile" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = false) {
+            getElementById("reporting-obligations-tile") shouldBe None
           }
         }
       }

@@ -159,10 +159,12 @@ home.incomeSources.manageIncomeSource.view                      = Bwrw golwg dro
 home.incomeSources.ceaseIncomeSource.view                       = Dod â ffynhonnell incwm i ben
 home.incomeSources.newJourney.view                              = Ychwanegu, rheoli neu ddod â busnes neu ffynhonnell incwm i ben
 
-home.accountSettings.heading                                    = Gosodiadau eich cyfrif
-home.accountSettings.reportingFrequency.quarterly.text          = Adrodd yn chwarterol ar gyfer blwyddyn dreth {0} i {1}
-home.accountSettings.reportingFrequency.annually.text           = Adrodd yn flynyddol ar gyfer blwyddyn dreth {0} i {1}
-home.accountSettings.reportingFrequency.link                    = Rheoli amlder eich adroddiadau
+home.reportingObligations.heading                               = Eich ymrwymiadau o ran adrodd
+home.reportingObligations.link                                  = Bwrw golwg dros eich ymrwymiadau o ran adrodd, a’u rheoli
+home.reportingObligations.annual.text                           = Ar gyfer y flwyddyn dreth {0} i {1}, bydd angen i chi gyflwyno Ffurflen Dreth
+home.reportingObligations.quarterly.text                        = Ar gyfer y flwyddyn dreth {0} i {1}, bydd angen i chi wneud y canlynol:
+home.reportingObligations.quarterly.bullet1                     = defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+home.reportingObligations.quarterly.bullet2                     = cyflwyno Ffurflen Dreth
 
 home.agent.overdue.message.dunningLock.true                     = Mae gan eich cleient daliadau sy’n hwyr ac mae un neu fwy o’i benderfyniadau treth yn cael eu hadolygu. Mae’n bosibl y codir llog arno ar y rhain hyd nes eu bod wedi’u talu’n llawn.
 home.agent.overdue.message.dunningLock.false                    = Mae arnoch daliadau am fod yn hwyr. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
