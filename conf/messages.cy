@@ -2109,12 +2109,10 @@ incomeSources.add.manageObligations.heading                           =   Yr hyn
 
 ## used when OptInOptOutContentUpdateR17 enabled
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.title = {0} wedi’i {1} cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer blwyddyn dreth {2} i {3}
-
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.panel.title                       = {0}
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.panel.body = wedi’i {0} cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer blwyddyn dreth {1} i {2}
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.panel.signedUp = cofrestru
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.panel.optedOut = optio allan o
-
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.heading = Eich dyddiadau cau sydd wedi’u haddasu
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.inset = Bydd eich dyddiadau cau ar gyfer cyflwyno ar gyfer y busnes hwn ar gael yn y munudau nesaf
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.beforeLink = Hyd yn oed os nad ydynt yn cael eu harddangos ar y dudalen
@@ -2123,6 +2121,9 @@ incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.afterLink 
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para2 = Ar gyfer y busnes newydd hwn mae’n bosibl bod gennych ddiweddariadau hwyr ar gyfer blwyddyn dreth 2024 i 2025. Mae’n rhaid i chi gyflwyno’r diweddariadau hyn, ynghyd â’r holl incwm a threuliau sydd eu hangen, drwy ddefnyddio’ch meddalwedd sy’n cydweddu.
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.manage.link = Bwrw golwg dros eich busnes
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.manage.afterLink = er mwyn ychwanegu, rheoli neu ddod â busnes neu ffynhonnell incwm i ben.
+incomeSources.add.manageObligations.sole-trader                       =   y busnes unig fasnachwr
+incomeSources.add.manageObligations.uk-property                       =   eiddo yn y DU
+incomeSources.add.manageObligations.foreign-property                  =   eiddo tramor
 
 # manage journey manage income source
 incomeSources.manage.quarterly-period                                 =   Cyfnod chwarterol
