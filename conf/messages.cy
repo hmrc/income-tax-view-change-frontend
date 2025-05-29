@@ -2790,3 +2790,6 @@ income-sources.check-details-reporting-frequency.no                             
 income-sources.check-details-reporting-frequency.taxYear                        = {0} i {1}
 income-sources.check-details-reporting-frequency.change-rf-key                  = A ydych am newid i gyflwyno’n chwarterol?
 income-sources.check-details-reporting-frequency.change-choose-tax-year-key     = Pa flwyddyn dreth ydych chi am gyflwyno’n chwarterol ar ei chyfer?
+
+income-sources.check-details-reporting-frequency.r17.change-rf-key              = A ydych am gofrestru’r busnes newydd hwn gyda’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm?
+income-sources.check-details-reporting-frequency.r17.change-choose-tax-year-key = Pa flynyddoedd treth ydych am gofrestru ar eu cyfer?

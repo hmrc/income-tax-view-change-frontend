@@ -23,6 +23,7 @@ import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType, ReportingFrequencyPages}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
+import models.admin.OptInOptOutContentUpdateR17
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels._
@@ -106,7 +107,8 @@ class IncomeSourceRFCheckDetailsController @Inject()(val checkDetailsView: Incom
           ReportingFrequencyCheckDetailsViewModel(incomeSourceType,
             sessionData.incomeSourceReportingFrequencyData.nonEmpty,
             sessionData.incomeSourceReportingFrequencyData.exists(_.isReportingQuarterlyCurrentYear),
-            sessionData.incomeSourceReportingFrequencyData.exists(_.isReportingQuarterlyForNextYear)),
+            sessionData.incomeSourceReportingFrequencyData.exists(_.isReportingQuarterlyForNextYear),
+            isEnabled(OptInOptOutContentUpdateR17)),
           postAction = postAction,
           isAgent,
           backUrl = backUrl
