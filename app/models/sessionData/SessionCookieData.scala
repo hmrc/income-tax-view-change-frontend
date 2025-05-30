@@ -30,6 +30,7 @@ case class SessionCookieData(mtditid: String,
     SessionDataModel(mtditid = mtditid, nino = nino, utr = utr, isSupportingAgent)
   }
 
+  @deprecated("To be decommission after switch to income-tax-session-data")
   val toSessionCookieSeq: Seq[(String, String)] = {
     Seq(
       SessionKeys.clientMTDID -> mtditid,
