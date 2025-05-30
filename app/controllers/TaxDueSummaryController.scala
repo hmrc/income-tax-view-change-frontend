@@ -77,14 +77,20 @@ class TaxDueSummaryController @Inject()(val authActions: AuthActions,
             Ok(taxCalcBreakdown(viewModel, taxYear, startAVRTYear, backUrl = fallbackBackUrl, isAgent = isAgent, btaNavPartial = user.btaNavPartial))
           case (calcErrorResponse: LiabilityCalculationError, _) if calcErrorResponse.status == NO_CONTENT =>
             Logger("application").info("No calculation data returned from downstream. Not Found.")
+            println("\n case (calcErrorResponse: LiabilityCalculationError, _) if calcErrorResponse.status == NO_CONTENT => \n")
             itvcErrorHandler.showInternalServerError()
           case (_: LiabilityCalculationError, _) =>
             Logger("application").error(
               s"[$taxYear] No new calc deductions data error found. Downstream error")
+            println("\n case (_: LiabilityCalculationError, _) => \n")
             itvcErrorHandler.showInternalServerError()
-          case (_, _: ObligationsErrorModel) =>
+          case (a, b: ObligationsErrorModel) =>
             Logger("application").error(
               s"[$taxYear] Failed to retrieve obligations. Downstream error")
+            println("\n case (_, _: ObligationsErrorModel) => \n")
+            println(a, b)
+            println(s"\n taxYearModel.toFinancialYearStart: ${taxYearModel.toFinancialYearStart}")
+            println(s"\n taxYearModel.toFinancialYearEnd: ${taxYearModel.toFinancialYearEnd}")
             itvcErrorHandler.showInternalServerError()
         }
       }

@@ -16,18 +16,22 @@
 
 package controllers
 
+import connectors.ObligationsConnector
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
+import mocks.connectors.MockObligationsConnector
 import mocks.services.MockCalculationService
+import models.incomeSourceDetails.TaxYear
+import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
-import services.CalculationService
+import services.{CalculationService, NextUpdatesService}
 import testConstants.BaseTestConstants.testTaxYear
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 
-class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationService {
+class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationService with MockObligationsConnector {
 
   val testYear: Int = 2020
 
@@ -52,6 +56,21 @@ class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationSe
               setupMockSuccess(mtdUserRole)
               setupMockGetIncomeSourceDetails(businessIncome2018and2019)
               mockCalculationSuccessfulNew("XAIT0000123456")
+
+              val testTaxYear: Int = 2018
+
+              val testTaxYearModel = TaxYear.makeTaxYearWithEndYear(testTaxYear)
+              println(s"${testTaxYearModel.toFinancialYearStart}, ${testTaxYearModel.toFinancialYearEnd}")
+
+              val currentObligations: ObligationsModel = ObligationsModel(Seq(
+                GroupedObligationsModel(
+                  identification = "testId",
+                  obligations = List(
+                    SingleObligationModel(testTaxYearModel.toFinancialYearStart, testTaxYearModel.toFinancialYearEnd, testTaxYearModel.toFinancialYearStart, "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                  ))
+              ))
+              setupMockAllObligationsWithDates(testTaxYearModel.toFinancialYearStart, testTaxYearModel.toFinancialYearEnd)(currentObligations)
+
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK
