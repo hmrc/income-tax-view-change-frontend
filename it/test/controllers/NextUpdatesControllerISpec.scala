@@ -21,7 +21,7 @@ import auth.MtdItUser
 import enums.MTDIndividual
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks._
-import models.admin.OptOutFs
+import models.admin.{OptOutFs, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.obligations.ObligationsModel
@@ -268,7 +268,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
     "one year opt-out scenarios" when {
 
       "show opt-out message if the user has Previous Year as Voluntary, Current Year as NoStatus, Next Year as NoStatus" in {
+
         enable(OptOutFs)
+        enable(ReportingFrequencyPage)
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
@@ -299,7 +301,10 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
       }
 
       "show multi year opt-out message if the user has Previous Year as Voluntary, Current Year as Voluntary, Next Year as Voluntary" in {
+
         enable(OptOutFs)
+        enable(ReportingFrequencyPage)
+
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd

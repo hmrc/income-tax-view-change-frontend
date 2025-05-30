@@ -42,7 +42,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
 
   val linkComponent: link = app.injector.instanceOf[link]
 
-  class Setup(quarterlyUpdateContentShow: Boolean = true, isSupportingAgent: Boolean = false, reportingFrequencyPageFsEnabled: Boolean = false) {
+  class Setup(quarterlyUpdateContentShow: Boolean = true, isSupportingAgent: Boolean = false, reportingFrequencyPageFsEnabled: Boolean = true) {
 
     val user =
       getIndividualUser(FakeRequest())
@@ -80,28 +80,68 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
 
     def oneYearOptOutAnnualView: Document =
       Jsoup.parse(contentAsString(
-        nextUpdatesView(obligationsModel, Some(optOutOneYearViewModel), checks, "testBackURL", isSupportingAgent = isSupportingAgent, reportingFrequencyLink = controllers.routes.ReportingFrequencyPageController.show(false).url)(implicitly, user)
+        nextUpdatesView(
+          obligationsModel,
+          Some(optOutOneYearViewModel),
+          checks,
+          "testBackURL",
+          isSupportingAgent = isSupportingAgent,
+          reportingFrequencyLink = controllers.routes.ReportingFrequencyPageController.show(false).url,
+          reportingFrequencyEnabled = reportingFrequencyPageFsEnabled
+        )(implicitly, user)
       ))
 
     def pageDocumentWithReportingContent: Document =
       Jsoup.parse(contentAsString(
-        nextUpdatesView(obligationsModel, Some(optOutOneYearViewModel), checks, "testBackURL", isSupportingAgent = isSupportingAgent, reportingFrequencyLink = controllers.routes.ReportingFrequencyPageController.show(false).url)(implicitly, user)
+        nextUpdatesView(
+          currentObligations = obligationsModel,
+          optOutViewModel = Some(optOutOneYearViewModel),
+          checks = checks,
+          backUrl = "testBackURL",
+          isSupportingAgent = isSupportingAgent,
+          reportingFrequencyLink = controllers.routes.ReportingFrequencyPageController.show(false).url,
+          reportingFrequencyEnabled = reportingFrequencyPageFsEnabled
+        )(implicitly, user)
       ))
 
     def pageDocumentWithWarning: Document =
       Jsoup.parse(contentAsString(
-        nextUpdatesView(obligationsModel, Some(optOutOneYearViewModelWithMandated), checks, "testBackURL", isSupportingAgent = isSupportingAgent, reportingFrequencyLink = controllers.routes.ReportingFrequencyPageController.show(false).url)(implicitly, user)
+        nextUpdatesView(
+          currentObligations = obligationsModel,
+          optOutViewModel = Some(optOutOneYearViewModelWithMandated),
+          checks = checks,
+          backUrl = "testBackURL",
+          isSupportingAgent = isSupportingAgent,
+          reportingFrequencyLink = controllers.routes.ReportingFrequencyPageController.show(false).url,
+          reportingFrequencyEnabled = reportingFrequencyPageFsEnabled
+        )(implicitly, user)
       ))
 
     def pageDocumentWithWarningWithReportingContent: Document =
       Jsoup.parse(contentAsString(
-        nextUpdatesView(obligationsModel, Some(optOutOneYearViewModelWithMandated), checks, "testBackURL", isSupportingAgent = isSupportingAgent, reportingFrequencyLink = controllers.routes.ReportingFrequencyPageController.show(false).url)(implicitly, user)
+        nextUpdatesView(
+          currentObligations = obligationsModel,
+          optOutViewModel = Some(optOutOneYearViewModelWithMandated),
+          checks = checks,
+          backUrl = "testBackURL",
+          isSupportingAgent = isSupportingAgent,
+          reportingFrequencyLink = controllers.routes.ReportingFrequencyPageController.show(false).url,
+          reportingFrequencyEnabled = reportingFrequencyPageFsEnabled
+        )(implicitly, user)
       ))
 
 
     def pageDocumentMultiYearOptOut: Document =
       Jsoup.parse(contentAsString(
-        nextUpdatesView(obligationsModel, Some(optOutMultiYearViewModel), checks, "testBackURL", isSupportingAgent = isSupportingAgent, reportingFrequencyLink = controllers.routes.ReportingFrequencyPageController.show(false).url)(implicitly, user)
+        nextUpdatesView(
+          currentObligations = obligationsModel,
+          optOutViewModel = Some(optOutMultiYearViewModel),
+          checks = checks,
+          backUrl = "testBackURL",
+          isSupportingAgent = isSupportingAgent,
+          reportingFrequencyLink = controllers.routes.ReportingFrequencyPageController.show(false).url,
+          reportingFrequencyEnabled = reportingFrequencyPageFsEnabled
+        )(implicitly, user)
       ))
   }
 
