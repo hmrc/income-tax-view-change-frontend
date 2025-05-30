@@ -98,6 +98,15 @@ class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationSe
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
             }
+
+            "obligations connector returns an error" in {
+              setupMockAllObligationsWithDates(testTaxYearModel.toFinancialYearStart, testTaxYearModel.toFinancialYearEnd)(obligationsError)
+              setupMockSuccess(mtdUserRole)
+              mockCalculationSuccessfulNew("XAIT0000123456")
+              setupMockGetIncomeSourceDetails(businessIncome2018and2019)
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
           }
         }
       }
