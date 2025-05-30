@@ -63,8 +63,8 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUser[_],
     case "paymentAllocation.paymentAllocations.bcd.sl" => "Student Loans for remaining balance"
     case "paymentAllocation.paymentAllocations.bcd.cgt" => "Capital Gains Tax for remaining balance"
     case "paymentAllocation.paymentAllocations.hmrcAdjustment.text" => "HMRC adjustment"
-    case "paymentOnAccount1.text" => "Late payment interest for payment on account 1 of 2"
-    case "paymentOnAccount2.text" => "Late payment interest for payment on account 2 of 2"
+    case "paymentOnAccount1.text" => "Late payment interest for first payment on account"
+    case "paymentOnAccount2.text" => "Late payment interest for second payment on account"
     case "balancingCharge.text" => "Late payment interest for remaining balance"
     case other =>
       Logger("application").warn("key not found: " + other)
