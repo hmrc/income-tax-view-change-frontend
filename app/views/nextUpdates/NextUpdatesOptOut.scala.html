@@ -42,7 +42,8 @@
 	isAgent: Boolean = false,
 	isSupportingAgent: Boolean = false,
 	origin: Option[String] = None,
-	whatTheUserCanDo: Option[Html]
+	reportingFrequencyLink: String,
+	reportingFrequencyEnabled: Boolean
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @mainTemplate(
@@ -60,8 +61,13 @@
 	    @detailsDropdown("nextUpdates.dropdown.info", detailsContent)
 	}
 
-	@whatTheUserCanDo.map { content =>
-		@p(id = Some("what-the-user-can-do")) { @content }
+	@if(reportingFrequencyEnabled) {
+		@p(id = Some("what-the-user-can-do")) {
+			@messages(
+				"nextUpdates.reporting.obligations.p.message"
+			)
+			@link(link = reportingFrequencyLink, messageKey = "nextUpdates.reporting.obligations.p.link", id= Some("reporting-obligations-link"))
+		}
 	}
 
 	@h2(msg = "nextUpdates.sub-heading")
