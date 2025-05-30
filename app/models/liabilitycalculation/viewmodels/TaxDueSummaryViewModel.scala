@@ -19,7 +19,7 @@ package models.liabilitycalculation.viewmodels
 import exceptions.MissingFieldException
 import models.liabilitycalculation.taxcalculation.{Nic4Bands, TaxBands}
 import models.liabilitycalculation.viewmodels.CalculationSummary.getTaxDue
-import models.liabilitycalculation.{LiabilityCalculationResponse, Messages, ReliefsClaimed, StudentLoan}
+import models.liabilitycalculation._
 import play.api.Logger
 
 case class TaxDueSummaryViewModel(
@@ -58,7 +58,9 @@ case class TaxDueSummaryViewModel(
                                    totalAnnuityPaymentsTaxCharged: Option[BigDecimal] = None,
                                    totalRoyaltyPaymentsTaxCharged: Option[BigDecimal] = None,
                                    giftAidTaxChargeWhereBasicRateDiffers: Option[BigDecimal] = None,
-                                   transitionProfitRow: Option[TransitionProfitRow] = None
+                                   transitionProfitRow: Option[TransitionProfitRow] = None,
+                                   highIncomeChildBenefitCharge: Option[HighIncomeChildBenefitChargeViewModel] = None
+
                                  ) {
 
   def getRateHeaderKey: String = {
@@ -134,7 +136,18 @@ object TaxDueSummaryViewModel {
         giftAidTaxChargeWhereBasicRateDiffers = calc.taxCalculation.flatMap(tc => tc.incomeTax.giftAidTaxChargeWhereBasicRateDiffers),
         transitionProfitRow = TransitionProfitRow(
           calc.taxCalculation.flatMap(_.incomeTax.incomeTaxChargedOnTransitionProfits),
-          calc.transitionProfit.flatMap(_.totalTaxableTransitionProfit))
+          calc.transitionProfit.flatMap(_.totalTaxableTransitionProfit)),
+        highIncomeChildBenefitCharge = calc.highIncomeChildBenefitCharge.map( hicbc=> {
+          HighIncomeChildBenefitChargeViewModel(
+            hicbc.adjustedNetIncome,
+            hicbc.amountOfChildBenefitReceived,
+            hicbc.incomeThreshold,
+            hicbc.childBenefitChargeTaper,
+            hicbc.rate,
+            hicbc.highIncomeBenefitCharge
+          )}
+        )
+
       )
       case None => TaxDueSummaryViewModel()
     }

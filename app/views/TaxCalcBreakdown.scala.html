@@ -283,7 +283,8 @@
     @if(viewModel.giftAidTax.isDefined ||
             viewModel.totalPensionSavingsTaxCharges.isDefined ||
             viewModel.statePensionLumpSumCharges.isDefined ||
-            viewModel.giftAidTaxChargeWhereBasicRateDiffers
+            viewModel.giftAidTaxChargeWhereBasicRateDiffers.isDefined ||
+            viewModel.highIncomeChildBenefitCharge.isDefined
     ) {
         <table class="govuk-table" id="additional-charges-table">
             <caption
@@ -334,6 +335,15 @@
                     <td class="govuk-table__cell govuk-table__cell--numeric">@amount.toCurrency</td>
                 </tr>
             }
+            </tbody>
+
+            <tbody class="govuk-table__body">
+                @viewModel.highIncomeChildBenefitCharge.map { amount =>
+                  <tr class="govuk-table__row">
+                      <td class="govuk-table__cell">@messages("taxCal_breakdown.table.highIncomeBenefitCharge")</td>
+                      <td class="govuk-table__cell govuk-table__cell--numeric">@amount.highIncomeBenefitCharge.toCurrency</td>
+                  </tr>
+                }
             </tbody>
         </table>
     }

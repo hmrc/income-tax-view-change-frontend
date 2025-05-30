@@ -36,6 +36,8 @@ class CalculationService @Inject()(incomeTaxCalculationConnector: IncomeTaxCalcu
 
   def getLiabilityCalculationDetail(mtditid: String, nino: String, taxYear: Int)
                                    (implicit headerCarrier: HeaderCarrier): Future[LiabilityCalculationResponseModel] = {
-    incomeTaxCalculationConnector.getCalculationResponse(mtditid, nino, taxYear.toString)
+    incomeTaxCalculationConnector.getCalculationResponse(mtditid, nino, taxYear.toString).map(value =>{
+      value
+    })
   }
 }
