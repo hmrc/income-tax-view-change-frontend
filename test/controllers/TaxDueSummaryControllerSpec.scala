@@ -22,13 +22,12 @@ import mocks.auth.MockAuthActions
 import mocks.connectors.MockObligationsConnector
 import mocks.services.MockCalculationService
 import models.incomeSourceDetails.TaxYear
-import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import models.obligations.{GroupedObligationsModel, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
-import services.{CalculationService, NextUpdatesService}
-import testConstants.BaseTestConstants.testTaxYear
+import services.CalculationService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 
 class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationService with MockObligationsConnector {
@@ -37,10 +36,26 @@ class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationSe
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[CalculationService].toInstance(mockCalculationService)
+      api.inject.bind[CalculationService].toInstance(mockCalculationService),
+      api.inject.bind[ObligationsConnector].toInstance(mockObligationsConnector)
     ).build()
 
-  lazy val testController = app.injector.instanceOf[TaxDueSummaryController]
+  lazy val testController: TaxDueSummaryController = app.injector.instanceOf[TaxDueSummaryController]
+
+  val testTaxYear: Int = 2018
+
+  val testTaxYearModel: TaxYear = TaxYear.makeTaxYearWithEndYear(testTaxYear)
+
+  val currentObligations: ObligationsModel = ObligationsModel(Seq(
+    GroupedObligationsModel(
+      identification = "testId",
+      obligations = List(
+        SingleObligationModel(testTaxYearModel.toFinancialYearStart, testTaxYearModel.toFinancialYearEnd, testTaxYearModel.toFinancialYearStart, "Quarterly", None, "testPeriodKey", StatusFulfilled)
+      ))
+  ))
+
+  val emptyObligations: ObligationsModel = ObligationsModel(Seq(GroupedObligationsModel(identification = "testId", obligations = List())))
+  val obligationsError: ObligationsErrorModel = ObligationsErrorModel(500, "test error")
 
   mtdAllRoles.foreach { case mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
@@ -57,18 +72,7 @@ class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationSe
               setupMockGetIncomeSourceDetails(businessIncome2018and2019)
               mockCalculationSuccessfulNew("XAIT0000123456")
 
-              val testTaxYear: Int = 2018
 
-              val testTaxYearModel = TaxYear.makeTaxYearWithEndYear(testTaxYear)
-              println(s"${testTaxYearModel.toFinancialYearStart}, ${testTaxYearModel.toFinancialYearEnd}")
-
-              val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                GroupedObligationsModel(
-                  identification = "testId",
-                  obligations = List(
-                    SingleObligationModel(testTaxYearModel.toFinancialYearStart, testTaxYearModel.toFinancialYearEnd, testTaxYearModel.toFinancialYearStart, "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                  ))
-              ))
               setupMockAllObligationsWithDates(testTaxYearModel.toFinancialYearStart, testTaxYearModel.toFinancialYearEnd)(currentObligations)
 
 
@@ -84,6 +88,7 @@ class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationSe
 
           "render the error page" when {
             "given a tax year which can not be found in ETMP" in {
+              setupMockAllObligationsWithDates(testTaxYearModel.toFinancialYearStart, testTaxYearModel.toFinancialYearEnd)(emptyObligations)
               setupMockSuccess(mtdUserRole)
               mockCalculationNotFoundNew("XAIT0000123456")
               setupMockGetIncomeSourceDetails(businessIncome2018and2019)
@@ -92,6 +97,7 @@ class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationSe
             }
 
             "there is a downstream error" in {
+              setupMockAllObligationsWithDates(testTaxYearModel.toFinancialYearStart, testTaxYearModel.toFinancialYearEnd)(emptyObligations)
               setupMockSuccess(mtdUserRole)
               mockCalculationErrorNew("XAIT0000123456")
               setupMockGetIncomeSourceDetails(businessIncome2018and2019)

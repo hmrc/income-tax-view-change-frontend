@@ -28,7 +28,7 @@ import scala.concurrent.Future
 
 trait MockObligationsConnector extends UnitSpec with BeforeAndAfterEach {
 
-  val mockObligationsConnector: ObligationsConnector = mock(classOf[ObligationsConnector])
+  lazy val mockObligationsConnector: ObligationsConnector = mock(classOf[ObligationsConnector])
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -41,9 +41,8 @@ trait MockObligationsConnector extends UnitSpec with BeforeAndAfterEach {
   }
 
   def setupMockAllObligationsWithDates(from: LocalDate, to: LocalDate)(response: ObligationsResponseModel): Unit = {
-    println(from, to, "look here")
     when(mockObligationsConnector.getAllObligationsDateRange(
-      any(), any())(any(), any()))
+      fromDate = matches(from), toDate = matches(to))(any(), any()))
       .thenReturn(Future.successful(response))
   }
 }
