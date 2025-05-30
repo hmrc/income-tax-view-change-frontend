@@ -29,28 +29,30 @@
 @import views.html.partials.yourSelfAssessmentCharges.InterestOnYourChargeSection
 @import views.helpers.ChargeNameLangHelper
 @import views.html.partials.yourSelfAssessmentCharges.ChargeDetails
+@import views.html.partials.chargeSummary.ChargeSummaryHasDunningLocksOrLpiWithDunningLock
 
 @import java.time.LocalDate
 
 @this(
-    mainTemplate: unifiedLayout,
-    appConfig: config.FrontendAppConfig,
-    implicitDateFormatter: ImplicitDateFormatterImpl,
-    h1WithCaption: h1WithCaption,
-    govukTable: GovukTable,
-    p: p,
-    link: link,
-    numberList: numberList,
-    bulletPointList: bulletPointList,
-    h2: h2,
-    govukWarningText: GovukWarningText,
-    govukInsetText: GovukInsetText,
-    govukDetails : GovukDetails,
-    chargeDetails: ChargeDetails,
-    hmrcPageHeading: HmrcPageHeading,
-    interestOnYourChargeSection: InterestOnYourChargeSection,
-    interestOnYourChargeTable: InterestOnYourChargeTable,
-    paymentHistoryTable: PaymentHistoryTable
+        mainTemplate: unifiedLayout,
+        appConfig: config.FrontendAppConfig,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        h1WithCaption: h1WithCaption,
+        govukTable: GovukTable,
+        p: p,
+        link: link,
+        numberList: numberList,
+        bulletPointList: bulletPointList,
+        h2: h2,
+        govukWarningText: GovukWarningText,
+        govukInsetText: GovukInsetText,
+        govukDetails : GovukDetails,
+        chargeDetails: ChargeDetails,
+        hmrcPageHeading: HmrcPageHeading,
+        interestOnYourChargeSection: InterestOnYourChargeSection,
+        interestOnYourChargeTable: InterestOnYourChargeTable,
+        paymentHistoryTable: PaymentHistoryTable,
+        chargeSummaryHasDunningLocksOrLpiWithDunningLock: ChargeSummaryHasDunningLocksOrLpiWithDunningLock
 )
 
 @(
@@ -77,6 +79,10 @@
     isAgent = viewModel.isAgent,
     btaNavPartial = viewModel.btaNavPartial,
     gatewayPage = viewModel.gatewayPage) {
+
+    @if(viewModel.hasDunningLocks || viewModel.chargeItem.hasLpiWithDunningLock) {
+        @chargeSummaryHasDunningLocksOrLpiWithDunningLock(viewModel.chargeItem, viewModel.dueDate, viewModel.latePaymentInterestCharge, appConfig)
+    }
 
     @hmrcPageHeading(PageHeading(
         text = pageHeading,

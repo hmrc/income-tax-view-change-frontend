@@ -1383,6 +1383,18 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         }
       }
     }
+
+    "on the YourSelfAssessmentChargeSummaryPage" should {
+      "display the notification banner when there is a dunning lock present and the yourSelfAssessmentChargesFS is set to 'true'" in new TestSetup(
+        isAgent = false,
+        chargeItem = chargeItemModel(),
+        paymentBreakdown = paymentBreakdownWithDunningLocks,
+        yourSelfAssessmentChargesFS = true
+      ) {
+        document.selectById("dunningLocksBanner")
+          .select(Selectors.h2).text() shouldBe dunningLockBannerHeader
+      }
+    }
   }
 
   "The charge summary view when missing mandatory expected fields" should {
@@ -1556,6 +1568,18 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         document.select("#payment-history-table tr:nth-child(3)").text() shouldBe MFADebitAllocation2
         // allocation link should be to agent payment allocation page
         document.select("#payment-history-table tr:nth-child(3) a").attr("href") shouldBe allocationLinkHref
+      }
+    }
+
+    "on the YourSelfAssessmentChargeSummary page" should {
+      "display the notification banner when there is a dunning lock present and the yourSelfAssessmentChargesFS is set to 'true'" in new TestSetup(
+        isAgent = true,
+        chargeItem = chargeItemModel(),
+        paymentBreakdown = paymentBreakdownWithDunningLocks,
+        yourSelfAssessmentChargesFS = true
+      ) {
+        document.selectById("dunningLocksBanner")
+          .select(Selectors.h2).text() shouldBe dunningLockBannerHeader
       }
     }
   }
