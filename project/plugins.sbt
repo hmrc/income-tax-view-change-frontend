@@ -18,4 +18,6 @@ addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "1.0.0")
 
 addSbtPlugin("io.github.irundaia" % "sbt-sassify" % "1.5.2")
 
+addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.13.0")
+
 addDependencyTreePlugin
