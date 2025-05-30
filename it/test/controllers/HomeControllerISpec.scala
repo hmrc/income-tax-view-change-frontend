@@ -596,7 +596,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
           }
         }
 
-        "display Account Settings tile" when {
+        "display the Reporting Obligations tile" when {
           "Reporting Frequency feature switches are enabled" in {
             disable(NavBarFs)
             MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
@@ -662,8 +662,8 @@ class HomeControllerISpec extends ControllerISpecHelper {
             result should have(
               httpStatus(OK),
               pageTitleInd("home.heading"),
-              elementTextBySelector("#account-settings-tile p:nth-child(2)")("Reporting quarterly for 2022 to 2023 tax year"),
-              elementTextBySelector("#account-settings-tile h2:nth-child(1)")("Your account settings")
+              elementTextBySelector("#reporting-obligations-tile p:nth-child(2)")("For the 2022 to 2023 tax year you need to:"),
+              elementTextBySelector("#reporting-obligations-tile h2:nth-child(1)")("Your reporting obligations")
             )
           }
         }

@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package models.incomeSourceDetails.viewmodels
+package models.core
 
-import enums.IncomeSourceJourney.IncomeSourceType
+import play.api.libs.json.{Json, OFormat}
 
-case class ReportingFrequencyCheckDetailsViewModel(incomeSourceType: IncomeSourceType,
-                                                   changeReportingFrequency: Boolean,
-                                                   isReportingQuarterlyCurrentYear: Boolean,
-                                                   isReportingQuarterlyForNextYear: Boolean,
-                                                   displayR17Content: Boolean)
+trait SelfServeTimeToPayJourneyResponse
 
+case class SelfServeTimeToPayJourneyResponseModel(journeyId: String, nextUrl: String) extends SelfServeTimeToPayJourneyResponse
+
+object SelfServeTimeToPayJourneyResponseModel {
+  implicit val formats: OFormat[SelfServeTimeToPayJourneyResponseModel] = Json.format[SelfServeTimeToPayJourneyResponseModel]
+}
+
+case class SelfServeTimeToPayJourneyErrorResponse(status: Int, message: String) extends SelfServeTimeToPayJourneyResponse

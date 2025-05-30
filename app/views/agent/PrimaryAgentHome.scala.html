@@ -36,7 +36,7 @@
     returnsTile: ReturnsTile,
     incomeSourcesTile: IncomeSourcesTile,
     penaltiesAndAppealsTile: PenaltiesAndAppealsTile,
-    accountSettingsTile: AccountSettingsTile
+    yourReportingObligationsTile: YourReportingObligationsTile
 )
 
 @(
@@ -71,7 +71,7 @@ viewModel: HomePageViewModel
     <div class="grid-row">
         <div class="flex-container govuk-!-padding-0">
             @incomeSourcesTile(viewModel.yourBusinessesTileViewModel, true)
-            @accountSettingsTile(viewModel.accountSettingsTileViewModel, true)
+            @yourReportingObligationsTile(viewModel.yourReportingObligationsTileViewModel, true)
         </div>
     </div>
 
