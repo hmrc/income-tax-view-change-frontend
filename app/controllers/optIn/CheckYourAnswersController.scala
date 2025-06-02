@@ -21,7 +21,6 @@ import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
-import controllers.agent.sessionUtils.SessionKeysV2
 import controllers.optIn.routes.OptInErrorController
 import models.optin.MultiYearCheckYourAnswersViewModel
 import play.api.Logger
@@ -75,7 +74,7 @@ class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
   def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       optInService.makeOptInCall() map {
-        case ITSAStatusUpdateResponseSuccess(_) => redirectToCheckpointPage(isAgent).addingToSession(SessionKeysV2.mandationStatus -> "on")
+        case ITSAStatusUpdateResponseSuccess(_) => redirectToCheckpointPage(isAgent)
         case _ => Redirect(OptInErrorController.show(isAgent))
       }
   }
