@@ -76,4 +76,6 @@ trait ManageIncomeSourceDetailsHelper extends MockAuthActions with MockBusinessD
   def getManageDetailsSummaryKeys(document: Document): Elements =
     manageDetailsTable(document)
       .getElementsByClass("govuk-summary-list__key")
+
+  def hasReportingFrequencyContent(document: Document): Boolean = Option(document.getElementById("reportingFrequency")).isDefined
 }
