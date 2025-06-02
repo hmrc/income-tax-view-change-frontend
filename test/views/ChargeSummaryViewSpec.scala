@@ -246,7 +246,10 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
     def paymentOnAccountCreated(number: Int) = messages(s"chargeSummary.chargeHistory.created.paymentOnAccount$number.text")
 
-    def paymentOnAccountInterestCreated(number: Int) = s"Late payment interest for payment on account $number of 2 created"
+    def firstLatePaymentOnAccountInterestCreated = s"Late payment interest for first payment on account created"
+
+    def secondLatePaymentOnAccountInterestCreated = s"Late payment interest for second payment on account created"
+
 
     val hmrcCreated: String = messages("chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa1.text")
 
@@ -260,7 +263,9 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
     val balancingChargeAmended: String = messages("chargeSummary.chargeHistory.amend.balancingCharge.text")
 
-    def paymentOnAccountRequest(number: Int) = s"Payment on account $number of 2 reduced by taxpayer request"
+    def firstPaymentOnAccountRequest = s"First payment on account reduced by taxpayer request"
+    def secondPaymentOnAccountRequest = s"Second payment on account reduced by taxpayer request"
+
 
     def class2NicTaxYear(year: Int) = messages("chargeSummary.nic2TaxYear", (year - 1).toString, year.toString)
 
@@ -457,7 +462,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           adjustmentHistory = customerRequestAdjustmentHistory
         ) {
           document.select("tbody tr").size() shouldBe 2
-          document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe paymentOnAccountRequest(1)
+          document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe firstPaymentOnAccountRequest
         }
       }
 
@@ -493,7 +498,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       ) {
         document.select("tbody tr").size() shouldBe 1
         document.select("tbody tr td:nth-child(1)").text() shouldBe "15 Jun 2018"
-        document.select("tbody tr td:nth-child(2)").text() shouldBe paymentOnAccountInterestCreated(1)
+        document.select("tbody tr td:nth-child(2)").text() shouldBe firstLatePaymentOnAccountInterestCreated
         document.select("tbody tr td:nth-child(3)").text() shouldBe "£100.00"
       }
 
@@ -582,7 +587,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           adjustmentHistory = customerRequestAdjustmentHistory
         ) {
           document.select("tbody tr").size() shouldBe 2
-          document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe paymentOnAccountRequest(2)
+          document.select("tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe secondPaymentOnAccountRequest
         }
       }
 
@@ -611,7 +616,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           latePaymentInterestCharge = true
         ) {
           document.select("tbody tr").size() shouldBe 1
-          document.select("tbody tr td:nth-child(2)").text() shouldBe paymentOnAccountInterestCreated(2)
+          document.select("tbody tr td:nth-child(2)").text() shouldBe secondLatePaymentOnAccountInterestCreated
         }
 
         "have a link to extra charge if it is a poa with an extra charge" in new TestSetup(chargeItem = basePoaTwoDebit, poaExtraChargeLink = Some("testLink")) {
