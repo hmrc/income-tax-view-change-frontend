@@ -101,6 +101,22 @@ s"${getMessage("table.heading.1")} ${quarterly.head.inboundCorrespondenceFrom.ge
     getUniqueMessage("panel.body", actionOrPeriod, s"${taxYear.startYear}", s"${taxYear.endYear}")
 }
 
+@manageBusinessesControllerURL = @{
+    if(isAgent) {
+        controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+    } else {
+        controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+    }
+}
+
+@nextUpdatesControllerURL = @{
+    if(isAgent) {
+        controllers.routes.NextUpdatesController.showAgent().url
+    } else {
+        controllers.routes.NextUpdatesController.show().url
+    }
+}
+
 
 @mainTemplate(pageTitle = getPageTitle,
 isAgent = isAgent,
@@ -130,7 +146,7 @@ btaNavPartial = user.btaNavPartial) {
             @p() {
                 @messages("incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.beforeLink")
                 @link(
-                    link = controllers.routes.NextUpdatesController.show().url,
+                    link = nextUpdatesControllerURL,
                     classes = "",
                     messageKey = "incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.link",
                     id = None,
@@ -144,9 +160,6 @@ btaNavPartial = user.btaNavPartial) {
                 @messages("incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.afterLink")
             }
 
-            @* This  should be visible only when switching to quarterly and when tax year == CY?? *@
-
-
             @if(changeTo == "quarterly" && isCurrentTaxYear) {
                 @p() {
                     @messages("incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para2", s"${taxYear.startYear}", s"${taxYear.endYear}")
@@ -155,7 +168,7 @@ btaNavPartial = user.btaNavPartial) {
 
             @p() {
                 @link(
-                    link = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url,
+                    link = manageBusinessesControllerURL,
                     classes = "",
                     messageKey = "incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.manage.link",
                     id = None,
