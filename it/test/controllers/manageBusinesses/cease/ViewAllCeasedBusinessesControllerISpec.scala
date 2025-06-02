@@ -52,8 +52,7 @@ class ViewAllCeasedBusinessesControllerISpec extends ControllerISpecHelper {
             "the user has multipleBusinessesWithBothPropertiesAndCeasedBusiness" in {
               stubAuthorised(mtdUserRole)
               disable(NavBarFs)
-              enable(IncomeSourcesNewJourney)
-              enable(DisplayBusinessStartDate)
+              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
               val result = buildGETMTDClient(path, additionalCookies).futureValue
               IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
@@ -92,8 +91,7 @@ class ViewAllCeasedBusinessesControllerISpec extends ControllerISpecHelper {
             "the user has foreignPropertyAndCeasedBusiness " in {
               stubAuthorised(mtdUserRole)
               disable(NavBarFs)
-              enable(IncomeSourcesNewJourney)
-              enable(DisplayBusinessStartDate)
+              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
               val result = buildGETMTDClient(path, additionalCookies).futureValue
               IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)

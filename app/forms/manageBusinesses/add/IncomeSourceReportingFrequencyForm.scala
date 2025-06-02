@@ -24,13 +24,18 @@ import play.api.data.Forms.{mapping, optional, text}
 case class IncomeSourceReportingFrequencyForm(yesNo: Option[String])
 
 object IncomeSourceReportingFrequencyForm extends Constraints {
-  val noResponseErrorMessageKey: String = "incomeSources.add.reportingFrequency.form.no-select.error"
 
   val responseYes = "true"
   val responseNo = "false"
-  val yesNoAnswer = "yes-no-answer"
+  val yesNoAnswer = "reporting-quarterly-form"
 
-  def apply(): Form[IncomeSourceReportingFrequencyForm] = {
+  def apply(isR17ContentEnabled: Boolean): Form[IncomeSourceReportingFrequencyForm] = {
+    val noResponseErrorMessageKey = if (isR17ContentEnabled) {
+      "incomeSources.add.reportingFrequency.r17.form.no-select.error"
+    } else {
+      "incomeSources.add.reportingFrequency.form.no-select.error"
+    }
+
     Form[IncomeSourceReportingFrequencyForm](
       mapping(
         yesNoAnswer -> optional(text)

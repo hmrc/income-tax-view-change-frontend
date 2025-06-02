@@ -219,7 +219,7 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
 
               val expectedRedirectUrl = controllers.manageBusinesses.add.routes.ChooseTaxYearController.show(isAgent, false, incomeSourceType).url
 
-              val validFormData: Map[String, String] = Map("yes-no-answer" -> "true")
+              val validFormData: Map[String, String] = Map("reporting-quarterly-form" -> "true")
               val result = action(fakeRequest.withFormUrlEncodedBody(validFormData.toSeq: _*))
 
               status(result) shouldBe SEE_OTHER
@@ -233,7 +233,7 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
 
               val expectedRedirectUrl = controllers.manageBusinesses.add.routes.IncomeSourceRFCheckDetailsController.show(isAgent, incomeSourceType).url
 
-              val validFormData: Map[String, String] = Map("yes-no-answer" -> "false")
+              val validFormData: Map[String, String] = Map("reporting-quarterly-form" -> "false")
               val result = action(fakeRequest.withFormUrlEncodedBody(validFormData.toSeq: _*))
 
               status(result) shouldBe SEE_OTHER

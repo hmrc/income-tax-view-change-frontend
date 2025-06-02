@@ -205,8 +205,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
                   else controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(incomeSourceType).url
                 s"redirect to $accountingMethodUrl" when {
                   "form response is Yes (accounting method FS enabled)" in {
-                    enable(IncomeSourcesFs)
-                    enable(AccountingMethodJourney)
+                    enable(IncomeSourcesFs, AccountingMethodJourney)
                     disable(NavBarFs)
                     stubAuthorised(mtdUserRole)
                     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))

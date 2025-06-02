@@ -76,8 +76,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
           "is authenticated, with a valid enrolment" should {
             "render the Check Business details page with accounting method" when {
               "the user has no existing businesses" in {
-                enable(IncomeSourcesFs)
-                enable(AccountingMethodJourney)
+                enable(IncomeSourcesFs, AccountingMethodJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)

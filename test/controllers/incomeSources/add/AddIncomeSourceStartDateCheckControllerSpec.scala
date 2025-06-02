@@ -249,8 +249,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
               s"return ${Status.SEE_OTHER}: redirect to $incomeSourceType accounting method page, isAgent = $isAgent" when {
                 "Yes is submitted with the form with a valid session (accounting method FS enabled)" in {
                   setupMockSuccess(mtdRole)
-                  enable(IncomeSourcesFs)
-                  enable(AccountingMethodJourney)
+                  enable(IncomeSourcesFs, AccountingMethodJourney)
 
                   mockNoIncomeSources()
                   setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))

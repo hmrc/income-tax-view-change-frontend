@@ -462,8 +462,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
               "display the Review & Reconcile credit for POA1 when present in the user's financial details" in new Setup(
                 financialDetailsModelWithPoaOneAndTwoWithRarCredits()) {
-                enable(ReviewAndReconcilePoa)
-                enable(ChargeHistory)
+                enable(ReviewAndReconcilePoa, ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 
@@ -481,8 +480,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
               "display the Review & Reconcile credit for POA2 when present in the user's financial details" in new Setup(
                 financialDetailsModelWithPoaOneAndTwoWithRarCredits()) {
-                enable(ReviewAndReconcilePoa)
-                enable(ChargeHistory)
+                enable(ReviewAndReconcilePoa, ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 

@@ -145,8 +145,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
           "redirect to add accounting method page" when {
             "valid data received" in {
               setupMockSuccess(mtdRole)
-              enable(IncomeSourcesNewJourney)
-              enable(AccountingMethodJourney)
+              enable(IncomeSourcesNewJourney, AccountingMethodJourney)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
               setupMockGetMongo(Right(Some(UIJourneySessionData("", ""))))

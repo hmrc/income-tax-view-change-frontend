@@ -169,7 +169,6 @@ class IncomeSourceReportingFrequencyControllerISpec extends ControllerISpecHelpe
               }
               "user is within latency period (before 23/24) - tax year 1 crystallised" in {
                 enable(IncomeSourcesNewJourney)
-                enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
@@ -190,7 +189,6 @@ class IncomeSourceReportingFrequencyControllerISpec extends ControllerISpecHelpe
               }
               "user is within latency period (after 23/24) - tax year 1 not crystallised" in {
                 enable(IncomeSourcesNewJourney)
-                enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
@@ -208,7 +206,6 @@ class IncomeSourceReportingFrequencyControllerISpec extends ControllerISpecHelpe
                 sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
               }
               "user is within latency period (after 23/24) - tax year 1 crystallised" in {
-                enable(IncomeSourcesNewJourney)
                 enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)

@@ -32,7 +32,7 @@ import java.time.LocalDate
 class IncomeSourceReportingFrequencyViewSpec extends TestSupport with MockDateService {
   val view: IncomeSourceReportingFrequency = app.injector.instanceOf[IncomeSourceReportingFrequency]
 
-  class Setup(incomeSourceType: IncomeSourceType) {
+  class Setup(incomeSourceType: IncomeSourceType, hasR17Content: Boolean = false) {
     when(mockDateService.getCurrentTaxYearStart) thenReturn fixedDate
     when(mockDateService.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
 
@@ -42,19 +42,38 @@ class IncomeSourceReportingFrequencyViewSpec extends TestSupport with MockDateSe
       case ForeignProperty => "Foreign property"
     }
 
-    val title: String = "Your new business is set to report annually - Manage your Self Assessment - GOV.UK"
-    val titleError: String = "Error: Your new business is set to report annually - GOV.UK"
-    val titleAgent: String = "Your new business is set to report annually - Manage your client’s Income Tax updates - GOV.UK"
-    val heading: String = "Your new business is set to report annually"
-    val paragraph1: String = "Because this is a new business, for up to 2 tax years you can submit its income and expenses once a year in your tax return, even if:"
-    val reportingFrequencyUlLi1: String = "you are voluntarily opted in or required to report quarterly for your other businesses"
-    val reportingFrequencyUlLi2: String = "your income from self-employment or property, or both, exceed the income threshold"
-    val paragraph2: String = "You can choose to report quarterly, which means submitting an update every 3 months in addition to your tax return"
-    val reportingFrequencyFormH1: String = "Do you want to change to report quarterly?"
-    val reportingFrequencyFormNoSelectionError: String = "Select yes if you want to report quarterly or select no if you want to report annually"
-    val continueButtonText: String = "Continue"
+    val (title, titleError, titleAgent, heading, paragraph1, reportingFrequencyUlLi1, reportingFrequencyUlLi2, paragraph2, reportingFrequencyFormH1, reportingFrequencyFormNoSelectionError, continueButtonText) =
+      if (hasR17Content) {
+        (
+          "Your new business is opted out of Making Tax Digital for Income Tax - Manage your Self Assessment - GOV.UK",
+          "Error: Your new business is opted out of Making Tax Digital for Income Tax - GOV.UK",
+          "Your new business is opted out of Making Tax Digital for Income Tax - Manage your client’s Income Tax updates - GOV.UK",
+          "Your new business is opted out of Making Tax Digital for Income Tax",
+          "Because this is a new business, for up to 2 tax years you can submit its income and expenses once a year in your tax return, even if:",
+          "you are voluntarily signed up or required to use Making Tax Digital for Income Tax for your other businesses",
+          "your total gross income from self-employment or property, or both, exceed the £50,000 threshold",
+          "You can choose to sign this new business up to Making Tax Digital for Income Tax. This would mean submitting an update every 3 months in addition to your tax return.",
+          "Do you want to sign this new business up to Making Tax Digital for Income Tax?",
+          "Select yes if you want to sign this new business up to Making Tax Digital for Income Tax",
+          "Continue"
+        )
+      } else {
+        (
+          "Your new business is set to report annually - Manage your Self Assessment - GOV.UK",
+          "Error: Your new business is set to report annually - GOV.UK",
+          "Your new business is set to report annually - Manage your client’s Income Tax updates - GOV.UK",
+          "Your new business is set to report annually",
+          "Because this is a new business, for up to 2 tax years you can submit its income and expenses once a year in your tax return, even if:",
+          "you are voluntarily opted in or required to report quarterly for your other businesses",
+          "your income from self-employment or property, or both, exceed the income threshold",
+          "You can choose to report quarterly, which means submitting an update every 3 months in addition to your tax return",
+          "Do you want to change to report quarterly?",
+          "Select yes if you want to report quarterly or select no if you want to report annually",
+          "Continue"
+        )
+      }
 
-    val pageDocument: Document = Jsoup.parse(contentAsString(view(false, Call("", ""), IncomeSourceReportingFrequencyForm(), incomeSourceType, mockDateService)))
+    val pageDocument: Document = Jsoup.parse(contentAsString(view(hasR17Content, Call("", ""), IncomeSourceReportingFrequencyForm(false), incomeSourceType, mockDateService, hasR17Content)))
   }
 
   def getReportingFrequencyTableMessages(taxYear: Int): (String, String) = {

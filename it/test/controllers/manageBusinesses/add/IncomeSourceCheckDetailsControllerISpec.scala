@@ -76,9 +76,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
           "is authenticated, with a valid enrolment" should {
             "render the Check Business details page with accounting method" when {
               "the user has no existing businesses" in {
-                enable(IncomeSourcesNewJourney)
-                enable(IncomeSourcesNewJourney)
-                enable(AccountingMethodJourney)
+                enable(IncomeSourcesNewJourney, AccountingMethodJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -137,7 +135,6 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
             "redirect to IncomeSourceReportingFrequencyController" when {
               "user selects 'confirm and continue'" in {
                 enable(IncomeSourcesNewJourney)
-                enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
@@ -170,7 +167,6 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
             "render the error page" when {
               "error in response from API" in {
                 enable(IncomeSourcesNewJourney)
-                enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 val response = List(CreateIncomeSourceErrorResponse(500, "INTERNAL_SERVER_ERROR"))
@@ -201,7 +197,6 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
               }
 
               "user session has no details" in {
-                enable(IncomeSourcesNewJourney)
                 enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)

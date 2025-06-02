@@ -19,9 +19,11 @@ package controllers.manageBusinesses.add
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.FrontendAppConfig
+import config.featureswitch.FeatureSwitching
 import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
+import models.admin.OptInOptOutContentUpdateR17
 import models.core.NormalMode
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
@@ -55,7 +57,7 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
                                                          val dateService: DateService,
                                                          mcc: MessagesControllerComponents,
                                                          val ec: ExecutionContext
-                                                        ) extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses {
+                                                        ) extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses with FeatureSwitching {
 
   lazy val submitUrl: (Boolean, Boolean, IncomeSourceType) => Call = (isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType) =>
     controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.submit(isAgent, isChange, incomeSourceType)
@@ -68,7 +70,7 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
   def handleGetRequest(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
     incomeSourceReportingFrequencyService.redirectChecksForIncomeSourceRF(IncomeSourceJourneyType(Add, incomeSourceType),
       AfterSubmissionPage, incomeSourceType, dateService.getCurrentTaxYearEnd, isAgent, isChange) { sessionData =>
-      handleIncomeSourceIdRetrievalSuccess(incomeSourceType, sessionData, isAgent, isChange)
+      handleIncomeSourceIdRetrievalSuccess(incomeSourceType, sessionData, isAgent, isChange, isEnabled(OptInOptOutContentUpdateR17))
     }
   }
 
@@ -76,7 +78,8 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
   private def handleIncomeSourceIdRetrievalSuccess(incomeSourceType: IncomeSourceType,
                                                    sessionData: UIJourneySessionData,
                                                    isAgent: Boolean,
-                                                   isChange: Boolean
+                                                   isChange: Boolean,
+                                                   isR17ContentEnabled: Boolean
                                                   )
                                                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     updateIncomeSourceAsAdded(sessionData).flatMap {
@@ -87,14 +90,15 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
         }
       case true =>
         val changeReportingFrequencyOption: Option[Boolean] = sessionData.addIncomeSourceData.flatMap(_.changeReportingFrequency)
-        val filledOrEmptyForm: Form[IncomeSourceReportingFrequencyForm] = changeReportingFrequencyOption.fold(IncomeSourceReportingFrequencyForm())(yesOrNo =>
-          IncomeSourceReportingFrequencyForm().fill(IncomeSourceReportingFrequencyForm(Some(yesOrNo.toString))))
+        val filledOrEmptyForm: Form[IncomeSourceReportingFrequencyForm] = changeReportingFrequencyOption.fold(IncomeSourceReportingFrequencyForm(isR17ContentEnabled))(yesOrNo =>
+          IncomeSourceReportingFrequencyForm(isR17ContentEnabled).fill(IncomeSourceReportingFrequencyForm(Some(yesOrNo.toString))))
         Future.successful(Ok(view(
           continueAction = submitUrl(isAgent, isChange, incomeSourceType),
           isAgent = isAgent,
           form = filledOrEmptyForm,
           incomeSourceType = incomeSourceType,
-          taxDateService = dateService
+          taxDateService = dateService,
+          isR17ContentEnabled = isR17ContentEnabled
         )))
     }
   }
@@ -110,15 +114,15 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
   def submit(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
       implicit user =>
-        handleSubmit(isAgent, isChange, incomeSourceType)
+        handleSubmit(isAgent, isChange, incomeSourceType, isEnabled(OptInOptOutContentUpdateR17))
     }
 
   private def handleSubmit(isAgent: Boolean, isChange: Boolean,
-                           incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
+                           incomeSourceType: IncomeSourceType, isR17ContentEnabled: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
       sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
-        case Some(_) => IncomeSourceReportingFrequencyForm().bindFromRequest().fold(
-          _ => handleInvalidForm(isAgent, isChange, incomeSourceType),
+        case Some(_) => IncomeSourceReportingFrequencyForm(isR17ContentEnabled).bindFromRequest().fold(
+          _ => handleInvalidForm(isAgent, isChange, incomeSourceType, isR17ContentEnabled),
           valid => handleValidForm(isAgent, isChange, valid, incomeSourceType, sessionData))
         case None =>
           val agentPrefix = if (isAgent) "[Agent]" else ""
@@ -131,11 +135,11 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
     }
   }
 
-  private def handleInvalidForm(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)
+  private def handleInvalidForm(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType, isR17ContentEnabled: Boolean)
                                (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
 
 
-    IncomeSourceReportingFrequencyForm().bindFromRequest().fold(
+    IncomeSourceReportingFrequencyForm(isR17ContentEnabled).bindFromRequest().fold(
       formWithError => {
         Future(
           BadRequest(view(
@@ -143,7 +147,8 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
             isAgent = isAgent,
             form = formWithError,
             incomeSourceType = incomeSourceType,
-            taxDateService = dateService
+            taxDateService = dateService,
+            isR17ContentEnabled = isR17ContentEnabled
           ))
         )
       }, {
@@ -152,9 +157,10 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
             Ok(view(
               continueAction = submitUrl(isAgent, isChange, incomeSourceType),
               isAgent = isAgent,
-              form = IncomeSourceReportingFrequencyForm(),
+              form = IncomeSourceReportingFrequencyForm(isR17ContentEnabled),
               incomeSourceType = incomeSourceType,
-              taxDateService = dateService
+              taxDateService = dateService,
+              isR17ContentEnabled = isR17ContentEnabled
             ))
           )
       }

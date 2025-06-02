@@ -501,8 +501,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
       "render the home page with the Your Businesses tile with link" when {
         "the IncomeSourcesNewJourney is enabled" in new Setup {
           setupMockUserAuth
-          enable(IncomeSourcesFs)
-          enable(IncomeSourcesNewJourney)
+          enable(IncomeSourcesFs, IncomeSourcesNewJourney)
           mockGetDueDates(Right(futureDueDates))
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
