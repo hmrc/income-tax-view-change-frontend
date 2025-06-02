@@ -47,6 +47,7 @@
         showStartDate: Boolean,
         showAccountingMethod: Boolean,
         showOptInOptOutContentUpdateR17: Boolean,
+        showReportingFrequencyLink: Boolean,
         backUrl: String
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
@@ -311,20 +312,22 @@
         }
     }
 
-    @p(id = Some("reportingFrequency")) {
-        @if(showOptInOptOutContentUpdateR17) {
-            @messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyPrefix")
-            @link(
-                link = reportingFrequencyURL(isAgent),
-                messageKey = messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyLink"),
-                id = Some("reportingFrequency-link"),
-                outerMessage = ".")
-        } else {
-            @link(
-                link = reportingFrequencyURL(isAgent),
-                messageKey = getMessage("reportingFrequency"),
-                id = Some("reportingFrequency-link")
-            )
+    @if(showReportingFrequencyLink) {
+        @p(id = Some("reportingFrequency")) {
+            @if(showOptInOptOutContentUpdateR17) {
+                @messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyPrefix")
+                @link(
+                    link = reportingFrequencyURL(isAgent),
+                    messageKey = messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyLink"),
+                    id = Some("reportingFrequency-link"),
+                    outerMessage = ".")
+            } else {
+                @link(
+                    link = reportingFrequencyURL(isAgent),
+                    messageKey = getMessage("reportingFrequency"),
+                    id = Some("reportingFrequency-link")
+                )
+            }
         }
     }
 
