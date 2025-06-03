@@ -143,55 +143,94 @@
 
 @getMTDUsageRows = @{
 
-    def getActionRow(useMTD: Boolean, taxYear: String, rowIndex: Int) = {
-        val taxYearFormatted = s"${taxYear.toInt - 1}-$taxYear"
-        val changeTo = if (useMTD) "annual" else "quarterly"
-        val actionTextKey =
-            if (useMTD)
-                "incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.optOut"
-            else
-                "incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.signup"
-
-        val changeLink =
-            if (isAgent)
-                controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController
-                .showAgent(taxYearFormatted, changeTo, viewModel.incomeSourceType).url
-            else
-                controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController
-                .show(taxYearFormatted, changeTo, viewModel.incomeSourceType).url
-
-        val linkId = if (useMTD) s"opt-out-link-$rowIndex" else s"sign-up-link-$rowIndex"
-
-        SummaryListRow(
-            key = Key(Text(
-                messages(
-                    "incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage",
-                    (taxYear.toInt - 1).toString,
-                    taxYear
-                )
-            )),
-            value = Value(Text(
-                if (useMTD)
-                    messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage.yes")
-                else
-                    messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage.no")
-            )),
-            actions = Some(Actions(
-                items = Seq(
-                    ActionItem(
-                        href = changeLink,
-                        content = Text(messages(actionTextKey)),
-                        attributes = Map("id" -> linkId)
+    val taxYearRows = Seq(
+        if (!viewModel.latencyYearsCrystallised.firstYear.get) {
+            Some(SummaryListRow(
+                key = Key(
+                    content = Text(
+                        messages(
+                            "incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage",
+                            (viewModel.latencyDetails.get.taxYear1.toInt - 1).toString,
+                            viewModel.latencyDetails.get.taxYear1
+                        )
                     )
-                )
+                ),
+                value = Value(
+                    content = Text(
+                        if (viewModel.latencyDetails.get.latencyIndicator1 == "Q")
+                            messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage.yes")
+                        else
+                            messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage.no")
+                    )
+                ),
+                actions = if (viewModel.latencyYearsQuarterly.firstYear.get) Some(Actions(
+                    items = Seq(
+                        ActionItem(
+                            href = changeReportingMethodUrl(
+                                taxYearValue(viewModel.latencyDetails.get.taxYear1),
+                                changeToValue(viewModel.latencyDetails.get.latencyIndicator1)
+                            ),
+                            content = Text(
+                                messages(
+                                    if (viewModel.latencyDetails.get.latencyIndicator1 == "Q")
+                                        "incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.optOut"
+                                    else
+                                        "incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.signup"
+                                )
+                            ),
+                            attributes = Map(
+                                "id" -> (if (viewModel.latencyDetails.get.latencyIndicator1 == "Q") "opt-out-link-1" else "sign-up-link-1")
+                            )
+                        )
+                    )
+                )) else None
             ))
-        )
-    }
+        } else None,
 
-    Seq(
-        viewModel.useMTDForTaxYear1.map(getActionRow(_, viewModel.latencyDetails.get.taxYear1, 1)),
-        viewModel.useMTDForTaxYear2.map(getActionRow(_, viewModel.latencyDetails.get.taxYear2, 2))
-    ).flatten
+        if (!viewModel.latencyYearsCrystallised.secondYear.get) {
+            Some(SummaryListRow(
+                key = Key(
+                    content = Text(
+                        messages(
+                            "incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage",
+                            (viewModel.latencyDetails.get.taxYear2.toInt - 1).toString,
+                            viewModel.latencyDetails.get.taxYear2
+                        )
+                    )
+                ),
+                value = Value(
+                    content = Text(
+                        if (viewModel.latencyDetails.get.latencyIndicator2 == "Q")
+                            messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage.yes")
+                        else
+                            messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage.no")
+                    )
+                ),
+                actions = if (viewModel.latencyYearsQuarterly.secondYear.get) Some(Actions(
+                    items = Seq(
+                        ActionItem(
+                            href = changeReportingMethodUrl(
+                                taxYearValue(viewModel.latencyDetails.get.taxYear2),
+                                changeToValue(viewModel.latencyDetails.get.latencyIndicator2)
+                            ),
+                            content = Text(
+                                messages(
+                                    if (viewModel.latencyDetails.get.latencyIndicator2 == "Q")
+                                        "incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.optOut"
+                                    else
+                                        "incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.signup"
+                                )
+                            ),
+                            attributes = Map(
+                                "id" -> (if (viewModel.latencyDetails.get.latencyIndicator2 == "Q") "opt-out-link-2" else "sign-up-link-2")
+                            )
+                        )
+                    )
+                )) else None
+            ))
+        } else None
+    )
+    taxYearRows.flatten
 }
 
     @getTaxYears = @{
@@ -384,7 +423,7 @@
                 ++ (getQuarterlyType)
                 ++(
                     if (viewModel.latencyDetails.isDefined) {
-                        if (showOptInOptOutContentUpdateR17 &&(viewModel.useMTDForTaxYear1.isDefined || viewModel.useMTDForTaxYear2.isDefined)) {
+                        if (showOptInOptOutContentUpdateR17) {
                             getMTDUsageRows
                         } else {
                             getTaxYears
