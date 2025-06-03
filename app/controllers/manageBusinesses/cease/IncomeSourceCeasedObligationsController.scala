@@ -84,7 +84,7 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
           else controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
 
         lazy val viewUpcomingUpdatesLink =
-          if (isAgent) controllers.routes.NextUpdatesController.showAgent.url
+          if (isAgent) controllers.routes.NextUpdatesController.showAgent().url
           else controllers.routes.NextUpdatesController.show().url
 
         Ok(obligationsView(incomeSourceCeasedObligationsViewModel, viewAllBusinessLink, viewUpcomingUpdatesLink))

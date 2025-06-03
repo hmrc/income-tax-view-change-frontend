@@ -24,7 +24,7 @@ object SessionKeys {
   val clientFirstName: String = "ClientFirstName"
   val clientLastName: String = "ClientLastName"
   val isSupportingAgent: String = "isSupportingAgent"
-
   val confirmedClient: String = "ConfirmedClient"
+  val mandationStatus: String = "mandation_status"
 
 }

@@ -24,7 +24,6 @@ import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
 import models.admin.OptInOptOutContentUpdateR17
-import models.core.NormalMode
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.data.Form
