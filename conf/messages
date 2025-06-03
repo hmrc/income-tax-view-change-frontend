@@ -2103,7 +2103,7 @@ incomeSources.add.manageObligations.heading                           =   What y
 
 
 # manage journey manage income source
-incomeSources.manage.quarterly-period                                 =   Quarterly period
+incomeSources.manage.quarterly-period                                 =   Update period
 incomeSources.manage.quarterly-period.standard                        =   Standard
 incomeSources.manage.quarterly-period.calendar                        =   Calendar
 incomeSources.manage.quarterly-period.standard.summary                =   What is a standard quarterly period?

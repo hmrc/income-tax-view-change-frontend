@@ -213,6 +213,8 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
             disable(NavBarFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails2))
+            ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2022-23")
+            ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
             CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
             CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 

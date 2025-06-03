@@ -255,7 +255,7 @@ class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDet
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(2023)
-            setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, false)
+            setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, true)
             setupMockTaxYearNotCrystallised(2023)
             setupMockTaxYearNotCrystallised(2024)
 
@@ -286,12 +286,12 @@ class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDet
             )
 
             val summaryValues = getManageDetailsSummaryValues(document).eachText()
-            summaryValues should contain("Yes")
             summaryValues should contain("No")
+            summaryValues should contain("Yes")
 
             val actions = document.select(".govuk-summary-list__actions a").eachText()
-            actions should contain("Opt out")
             actions should contain("Sign up")
+            actions should contain("Opt out")
           }
 
         }

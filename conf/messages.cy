@@ -2107,7 +2107,7 @@ incomeSources.add.manageObligations.heading                           =   Yr hyn
 
 
 # manage journey manage income source
-incomeSources.manage.quarterly-period                                 =   Cyfnod chwarterol
+incomeSources.manage.quarterly-period                                 =   Cyfnod diweddaru
 incomeSources.manage.quarterly-period.standard                        =   Safonol
 incomeSources.manage.quarterly-period.calendar                        =   Calendr
 incomeSources.manage.quarterly-period.standard.summary                =   Beth yw cyfnod chwarterol safonol?
