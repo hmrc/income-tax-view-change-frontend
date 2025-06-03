@@ -81,6 +81,8 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testRetrievedUserName: Name = Name(Some(testUserName), None)
   val testClientName: Name = Name(Some(testFirstName), Some(testSecondName))
   val testPaymentRedirectUrl = "http://localhost:9081/report-quarterly/income-and-expenses/view"
+  val testMandationStatusOn = "on"
+  val testMandationStatusOff = "off"
   lazy val testAuthorisedAndEnrolled: AuthorisedAndEnrolledRequest[_] = defaultAuthorisedAndEnrolledRequest(MTDIndividual, FakeRequest())
 
   lazy val testMtdItUser: MtdItUser[_] = defaultMTDITUser(Some(testUserTypeIndividual), businessesAndPropertyIncome)
