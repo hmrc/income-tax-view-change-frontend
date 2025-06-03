@@ -17,61 +17,40 @@
 package models.incomeSourceDetails.viewmodels
 
 import enums.IncomeSourceJourney.IncomeSourceType
-import models.incomeSourceDetails.TaxYear
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import services.DateServiceInterface
 
 import java.time.LocalDate
 
-case class IncomeSourceCeasedObligationsViewModel(incomeSourceType: IncomeSourceType,
-                                                  firstQuarterlyUpdate: Option[DatesModel],
-                                                  finalDeclarationUpdate: Seq[DatesModel],
-                                                  numberOfOverdueObligationCount: Int,
-                                                  viewUpcomingUpdatesLinkMessageKey: String,
-                                                  businessName: Option[String],
-                                                  insetWarningMessageKey: Option[(String, String)],
-                                                  currentTaxYear: TaxYear,
-                                                  isAgent: Boolean) {
+case class IncomeSourceCeasedObligationsViewModel(
+                                                   incomeSourceType: IncomeSourceType,
+                                                   remainingLatentBusiness: Boolean,
+                                                   allBusinessesCeased: Boolean,
+                                                   businessName: Option[String],
+                                                   isAgent: Boolean
+                                                 ) {
 
 }
 
 object IncomeSourceCeasedObligationsViewModel {
-  def apply(obligationsViewModel: ObligationsViewModel,
-            incomeSourceType: IncomeSourceType,
-            businessName: Option[String],
-            cessationDate: LocalDate,
-            isAgent: Boolean)(implicit dateService: DateServiceInterface): IncomeSourceCeasedObligationsViewModel = {
+  def apply(
+             incomeSourceDetailsModel: IncomeSourceDetailsModel,
+             incomeSourceType: IncomeSourceType,
+             businessName: Option[String],
+             isAgent: Boolean
+           ): IncomeSourceCeasedObligationsViewModel = {
 
-    val flattenQuarterlyObligations = obligationsViewModel.quarterlyObligationsDates.flatten
-    val allObligations = flattenQuarterlyObligations ++ obligationsViewModel.finalDeclarationDates
-    val numberOfOverdueObligationCount = allObligations.count(_.inboundCorrespondenceDue isBefore dateService.getCurrentDate)
+    val remainingLatentBusiness: Boolean =
+      incomeSourceDetailsModel.remainingNoneCeasedBusinesses == 1 && incomeSourceDetailsModel.isAnyOfActiveBusinessesLatent
 
-    val viewFinalDeclarationDates = if (obligationsViewModel.quarterlyObligationsDates.flatten.isEmpty)
-      obligationsViewModel.finalDeclarationDates.take(2)
-    else obligationsViewModel.finalDeclarationDates.take(1)
+    val allBusinessesCeased: Boolean = incomeSourceDetailsModel.areAllBusinessesCeased
 
-    val previousYearStart = dateService.getCurrentTaxYearStart.minusYears(1)
-
-    val insetWarningMessageKey: Option[(String, String)] = (flattenQuarterlyObligations.isEmpty, cessationDate isBefore previousYearStart, numberOfOverdueObligationCount) match {
-      case (_, true, count) if count > 1 => Some(("business-ceased.obligation.inset.multiple.text", "business-ceased.obligation.inset.previous-year.text"))
-      case (_, true, count) if count == 1 => Some(("business-ceased.obligation.inset.single.text", "business-ceased.obligation.inset.previous-year.text"))
-      case (true, _, count) if count > 1 => Some(("business-ceased.obligation.inset.multiple.text", "business-ceased.obligation.inset.annually.text"))
-      case (true, _, count) if count == 1 => Some(("business-ceased.obligation.inset.single.text", "business-ceased.obligation.inset.annually.text"))
-      case (false, _, count) if count > 1 => Some(("business-ceased.obligation.inset.multiple.text", "business-ceased.obligation.inset.quarterly.multiple.text"))
-      case (false, _, count) if count == 1 => Some(("business-ceased.obligation.inset.single.text", "business-ceased.obligation.inset.quarterly.single.text"))
-      case _ => None
-    }
-
-    val viewUpcomingUpdatesLinkMessageKey = if (numberOfOverdueObligationCount == 0) "business-ceased.obligation.view-updates.text" else "business-ceased.obligation.view-updates-overdue.text"
-
-
-    IncomeSourceCeasedObligationsViewModel(incomeSourceType = incomeSourceType,
-      firstQuarterlyUpdate = obligationsViewModel.quarterlyObligationsDates.flatten.headOption,
-      finalDeclarationUpdate = viewFinalDeclarationDates,
-      numberOfOverdueObligationCount = numberOfOverdueObligationCount,
-      viewUpcomingUpdatesLinkMessageKey = viewUpcomingUpdatesLinkMessageKey,
+    IncomeSourceCeasedObligationsViewModel(
+      incomeSourceType = incomeSourceType,
+      remainingLatentBusiness = remainingLatentBusiness,
+      allBusinessesCeased = allBusinessesCeased,
       businessName = businessName,
-      insetWarningMessageKey = insetWarningMessageKey,
-      currentTaxYear = TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd),
-      isAgent = isAgent)
+      isAgent = isAgent
+    )
   }
 }

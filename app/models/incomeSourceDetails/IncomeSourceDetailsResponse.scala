@@ -116,6 +116,8 @@ case class IncomeSourceDetailsModel(
 
   def areAllBusinessesCeased: Boolean = businesses.forall(_.isCeased) && properties.forall(_.isCeased)
 
+  def remainingNoneCeasedBusinesses: Int = businesses.filterNot(_.isCeased).size + properties.filterNot(_.isCeased).size
+
   def isAnyOfActiveBusinessesLatent: Boolean = businesses.filterNot(_.isCeased).exists(_.latencyDetails.nonEmpty) ||
     properties.filterNot(_.isCeased).exists(_.latencyDetails.nonEmpty)
 
