@@ -754,7 +754,6 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
               )
 
               val result = action(fakeRequest)
-              println(fakeRequest)
               status(result) shouldBe Status.OK
               contentAsString(result).contains(messages(s"taxCal_breakdown.message.${if (isAgent) "agent."}static1")) shouldBe true
               contentType(result) shouldBe Some("text/html")
@@ -808,6 +807,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
           "show the Tax Year Summary Page with error messages" when {
             "obligationsConnector has error messages" in {
               val testObligationsErrorModel : ObligationsErrorModel = ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR")
+
               setupMockAllObligationsWithDates(from = LocalDate.of(testTaxYear - 1, 4, 6),
                 to = LocalDate.of(testTaxYear, 4, 5))(response = testObligationsErrorModel)
 
