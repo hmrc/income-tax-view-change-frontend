@@ -131,10 +131,8 @@ btaNavPartial = user.btaNavPartial) {
             )
         )
 
-        <h2 class="govuk-label-wrapper">
-            <label class="govuk-label govuk-label--l govuk-!-margin-top-8">
+        <h2 class="govuk-heading-m">
             @getUniqueMessage("heading")
-            </label>
         </h2>
 
         @if(showOptInOptOutContentUpdateR17) {
@@ -147,15 +145,7 @@ btaNavPartial = user.btaNavPartial) {
                 @messages("incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.beforeLink")
                 @link(
                     link = nextUpdatesControllerURL,
-                    classes = "",
                     messageKey = "incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.link",
-                    id = None,
-                    target = None,
-                    ariaLabel = None,
-                    outerMessage = "",
-                    role = None,
-                    rel = None,
-                    additionalOpenTabMessage = None
                 )
                 @messages("incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.afterLink")
             }
@@ -169,15 +159,7 @@ btaNavPartial = user.btaNavPartial) {
             @p() {
                 @link(
                     link = manageBusinessesControllerURL,
-                    classes = "",
                     messageKey = "incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.manage.link",
-                    id = None,
-                    target = None,
-                    ariaLabel = None,
-                    outerMessage = "",
-                    role = None,
-                    rel = None,
-                    additionalOpenTabMessage = None
                 )
                 @messages("incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.manage.afterLink")
             }
