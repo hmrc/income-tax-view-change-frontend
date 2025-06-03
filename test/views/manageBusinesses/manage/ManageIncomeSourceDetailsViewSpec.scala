@@ -338,8 +338,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     quarterReportingType = None
   )
 
-  def backUrl(isAgent: Boolean): String =
-    controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(isAgent).url
+  def backUrl(isAgent: Boolean): String = if(isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+  else controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
 
   class SelfEmploymentSetup(isAgent: Boolean, error: Boolean = false, startDateEnabled: Boolean = true) {
 

@@ -76,7 +76,7 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
           Ok(
             reportingMethodChangeError(
               isAgent = isAgent,
-              manageIncomeSourcesUrl = getManageIncomeSourcesUrl(isAgent),
+              manageIncomeSourcesUrl = getManageYourBusinessUrl(isAgent),
               manageIncomeSourceDetailsUrl = getManageIncomeSourceDetailsUrl(id, isAgent, incomeSourceType),
               messagesPrefix = incomeSourceType.reportingMethodChangeErrorPrefix
             )
@@ -89,7 +89,9 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
     )
   }
 
-  private def getManageIncomeSourcesUrl(isAgent: Boolean): String = routes.ManageIncomeSourceController.show(isAgent).url
+  private def getManageYourBusinessUrl(isAgent: Boolean): String =
+    if(isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+    else controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
 
   private def getManageIncomeSourceDetailsUrl(incomeSourceId: IncomeSourceId, isAgent: Boolean, incomeSourceType: IncomeSourceType): String = {
     (incomeSourceType match {
