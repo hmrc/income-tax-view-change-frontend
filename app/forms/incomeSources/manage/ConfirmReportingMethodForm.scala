@@ -23,7 +23,7 @@ object ConfirmReportingMethodForm {
 
   val confirmReportingMethod: String = "incomeSources.manage.propertyReportingMethod"
 
-  def noSelectionError(changeTo: String): String = s"$confirmReportingMethod.error.$changeTo"
+  private def noSelectionError(changeTo: String): String = s"$confirmReportingMethod.error.$changeTo"
 
   def apply(changeTo: String): Form[ConfirmReportingMethodForm] = {
 

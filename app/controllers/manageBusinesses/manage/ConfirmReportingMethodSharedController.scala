@@ -37,7 +37,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.manageBusinesses.manage.ConfirmReportingMethod
 
-import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -98,7 +97,11 @@ class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActi
     (getTaxYearModel(taxYear), getReportingMethod(changeTo), maybeIncomeSourceId) match {
       case (Some(taxYearModel), Some(reportingMethod), Some(id)) =>
         validateTaxYearAndReportingMethod(taxYearModel, ReportingMethod(reportingMethod), id, isAgent, changeTo, incomeSourceType)
-      case (_, _, _) => Future.successful(logAndShowError(isAgent, s"[handleShowRequest]: Could not parse the values from session taxYear, changeTo and incomesourceId: $taxYear, $changeTo and $maybeIncomeSourceId"))
+      case (_, _, _) => Future.successful(
+        logAndShowError(isAgent,
+          s"[handleShowRequest]: Could not parse the values from session taxYear, changeTo and incomesourceId: $taxYear, $changeTo and $maybeIncomeSourceId"
+        )
+      )
     }
   }
 
@@ -127,18 +130,17 @@ class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActi
                                                    changeTo: String,
                                                    incomeSourceType: IncomeSourceType
                                                   )(implicit user: MtdItUser[_]): Future[Result] = {
-    val (backCall, _) = getRedirectCalls(taxYearModel.toString, isAgent, changeTo, Some(id), incomeSourceType)
+    val (backCall, _) = getRedirectCalls(isAgent, Some(id), incomeSourceType)
     val journeyType = IncomeSourceJourneyType(Manage, incomeSourceType)
 
     sessionService.getMongo(journeyType).flatMap {
       case Right(Some(sessionData)) =>
 
         val oldManageIncomeSourceSessionData = sessionData.manageIncomeSourceData.getOrElse(ManageIncomeSourceData())
-        val updatedAddIncomeSourceSessionData = oldManageIncomeSourceSessionData.copy(reportingMethod = Some(reportingMethod.name), taxYear = Some(taxYearModel.endYear))
+        val updatedAddIncomeSourceSessionData = oldManageIncomeSourceSessionData.copy(
+          reportingMethod = Some(reportingMethod.name), taxYear = Some(taxYearModel.endYear)
+        )
         val uiJourneySessionData: UIJourneySessionData = sessionData.copy(manageIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
-
-        val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
-        val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
 
         sessionService.setMongoData(uiJourneySessionData).flatMap { _ =>
           val messagesPrefix = incomeSourceType.reportingMethodChangeErrorPrefix
@@ -179,16 +181,17 @@ class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActi
                                                    changeTo: String,
                                                    incomeSourceType: IncomeSourceType
                                                   )(implicit user: MtdItUser[_]): Future[Result] = {
-    val (backCall, _) = getRedirectCalls(taxYearModel.toString, isAgent, changeTo, id, incomeSourceType)
+    val (backCall, _) = getRedirectCalls(isAgent, id, incomeSourceType)
     val journeyType = IncomeSourceJourneyType(Manage, incomeSourceType)
 
     sessionService.getMongo(journeyType).flatMap {
       case Right(Some(sessionData)) =>
 
         val oldManageIncomeSourceSessionData = sessionData.manageIncomeSourceData.getOrElse(ManageIncomeSourceData())
-        val updatedAddIncomeSourceSessionData = oldManageIncomeSourceSessionData.copy(reportingMethod = Some(reportingMethod), taxYear = Some(taxYearModel.endYear))
+        val updatedAddIncomeSourceSessionData = oldManageIncomeSourceSessionData.copy(
+          reportingMethod = Some(reportingMethod), taxYear = Some(taxYearModel.endYear)
+        )
         val uiJourneySessionData: UIJourneySessionData = sessionData.copy(manageIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
-
         val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
         val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
 
@@ -217,7 +220,6 @@ class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActi
                 incomeSourceType = incomeSourceType,
                 maybeIncomeSourceId = incomeSourceIdOpt
               )
-
           )
         }
       case _ => Future.failed(new Exception(s"failed to retrieve session data for ${journeyType.toString}"))
@@ -234,11 +236,14 @@ class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActi
                              )(implicit user: MtdItUser[_]): Future[Result] = {
 
     val formResponse: Option[String] = validForm.toFormMap(ChangeReportingMethodForm.response).headOption
-    val incomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, maybeIncomeSourceId.map(m => m.value))
 
     formResponse match {
-      case Some(ChangeReportingMethodForm.responseNo) => Future(Redirect(routes.ManageIncomeSourceDetailsController.showChange(isAgent = isAgent, incomeSourceType = incomeSourceType).url))
-      case Some(ChangeReportingMethodForm.responseYes) => Future(Redirect(routes.ManageObligationsController.show(isAgent = isAgent, incomeSourceType = incomeSourceType).url))
+      case Some(ChangeReportingMethodForm.responseNo) => Future(Redirect(
+        routes.ManageIncomeSourceDetailsController.showChange(isAgent = isAgent, incomeSourceType = incomeSourceType).url)
+      )
+      case Some(ChangeReportingMethodForm.responseYes) => Future(Redirect(
+        routes.ManageObligationsController.show(isAgent = isAgent, incomeSourceType = incomeSourceType).url)
+      )
       case _ =>
         Logger("application").error(s"Unexpected response, isAgent = $isAgent")
         Future.successful(errorHandler(isAgent).showInternalServerError())
@@ -255,10 +260,17 @@ class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActi
 
     withNewIncomeSourcesFS {
       val incomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, maybeIncomeSourceId.map(m => m.value))
-      val (_, successCall) = getRedirectCalls(taxYear, isAgent, changeTo, incomeSourceId, incomeSourceType)
+      val (_, _) = getRedirectCalls(isAgent, incomeSourceId, incomeSourceType)
 
       (getTaxYearModel(taxYear), getReportingMethod(changeTo)) match {
-        case (Some(taxModel), Some(reportingMethod)) => handleChangeMethodForm(taxYearModel = taxModel, reportingMethod = reportingMethod, id = incomeSourceId, isAgent = isAgent, changeTo = changeTo, incomeSourceType = incomeSourceType)
+        case (Some(taxModel), Some(reportingMethod)) => handleChangeMethodForm(
+          taxYearModel = taxModel,
+          reportingMethod = reportingMethod,
+          id = incomeSourceId,
+          isAgent = isAgent,
+          changeTo = changeTo,
+          incomeSourceType = incomeSourceType
+        )
         case (None, _) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse taxYear: $taxYear"))
         case (_, None) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse reporting method: $changeTo"))
       }
@@ -271,9 +283,7 @@ class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActi
   }
 
 
-  private def getRedirectCalls(taxYear: String,
-                               isAgent: Boolean,
-                               changeTo: String,
+  private def getRedirectCalls(isAgent: Boolean,
                                incomeSourceId: Option[IncomeSourceId],
                                incomeSourceType: IncomeSourceType
                               ): (Call, Call) = {

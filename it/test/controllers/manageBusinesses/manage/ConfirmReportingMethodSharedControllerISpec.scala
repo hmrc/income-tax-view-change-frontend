@@ -21,9 +21,9 @@ import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
-import forms.incomeSources.manage.{ChangeReportingMethodForm, ConfirmReportingMethodForm}
+import forms.incomeSources.manage.ConfirmReportingMethodForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{AdjustPaymentsOnAccount, FilterCodedOutPoas, IncomeSourcesNewJourney, NavBarFs, OptInOptOutContentUpdateR17, OptOutFs}
+import models.admin.{IncomeSourcesNewJourney, NavBarFs}
 import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData, UIJourneySessionData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -72,9 +72,9 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
   val continueButtonText: String = "Continue"
 
-  def mainPageTitle(newReportingMethod: String) = messagesAPI(s"$prefix.heading.$newReportingMethod")
+  def mainPageTitle(newReportingMethod: String): String = messagesAPI(s"$prefix.heading.$newReportingMethod")
 
-  val allReportingMethods = List("annual", "quarterly")
+  val allReportingMethods: Seq[String] = List("annual", "quarterly")
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
