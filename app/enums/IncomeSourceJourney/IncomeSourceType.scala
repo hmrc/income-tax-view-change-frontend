@@ -42,7 +42,7 @@ case object SelfEmployment extends IncomeSourceType {
   override val endDateMessagePrefix: String = "incomeSources.cease.endDate.selfEmployment"
   override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.businessReportingMethodError"
   override val newReportingMethodChangeErrorPrefixAnnual: String = "manageBusinesses.manage.propertyReportingMethod.form.error.annual"
-  override val newReportingMethodChangeErrorPrefixQuarterly: String = "manageBusinesses.manage.propertyReportingMethod.form.error.quarterly" //TODO double check these don't need to be different error messages
+  override val newReportingMethodChangeErrorPrefixQuarterly: String = "manageBusinesses.manage.propertyReportingMethod.form.error.quarterly"
   override val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseBusiness.checkDetails"
   override val ceaseCheckAnswersPrefix: String = "cease-check-answers"
   override val messagesSuffix: String = "sole-trader"
