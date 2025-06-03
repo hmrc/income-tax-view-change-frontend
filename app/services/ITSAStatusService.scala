@@ -35,7 +35,7 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
   private def getITSAStatusDetail(taxYear: TaxYear, futureYears: Boolean, history: Boolean)
                                  (implicit hc: HeaderCarrier, ec: ExecutionContext, user: MtdItUser[_]): Future[List[ITSAStatusResponseModel]] = {
     itsaStatusConnector.getITSAStatusDetail(
-      nino = extractNino(user),
+      nino = user.nino,
       taxYear = taxYear.formatAsShortYearRange,
       futureYears = futureYears,
       history = history).flatMap {
@@ -105,14 +105,6 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
   private def parseTaxYear(taxYear: String) = {
     //item.taxYear has string format as 2021-22
     TaxYear.forYearEnd(taxYear.split("-")(0).toInt + 1)
-  }
-
-  private def extractNino(user: MtdItUser[_]): String = {
-    if (user.isAgent())
-      user.clientDetails.map(_.nino)
-        .getOrElse(throw new Exception("Client details are missing from authorised user"))
-    else
-      user.nino
   }
 }
 
