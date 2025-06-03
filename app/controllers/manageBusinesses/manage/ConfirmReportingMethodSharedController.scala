@@ -34,13 +34,12 @@ import play.api.mvc._
 import services.{DateService, SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import views.html.manageBusinesses.manage.{ConfirmReportingMethod, ManageIncomeSources}
+import views.html.manageBusinesses.manage.ConfirmReportingMethod
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: ManageIncomeSources,
-                                                       val authActions: AuthActions,
+class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActions,
                                                        val updateIncomeSourceService: UpdateIncomeSourceService,
                                                        val confirmReportingMethod: ConfirmReportingMethod,
                                                        val sessionService: SessionService,

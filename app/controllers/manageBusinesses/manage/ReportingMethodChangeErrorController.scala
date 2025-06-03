@@ -31,13 +31,12 @@ import play.api.mvc._
 import services.{SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.IncomeSourcesUtils
-import views.html.manageBusinesses.manage.{ManageIncomeSources, ReportingMethodChangeError}
+import views.html.manageBusinesses.manage.ReportingMethodChangeError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: ManageIncomeSources,
-                                                     val authActions: AuthActions,
+class ReportingMethodChangeErrorController @Inject()(val authActions: AuthActions,
                                                      val updateIncomeSourceService: UpdateIncomeSourceService,
                                                      val reportingMethodChangeError: ReportingMethodChangeError,
                                                      val sessionService: SessionService,
