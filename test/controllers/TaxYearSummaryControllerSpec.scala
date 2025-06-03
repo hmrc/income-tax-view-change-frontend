@@ -16,6 +16,7 @@
 
 package controllers
 
+import connectors.ObligationsConnector
 import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import mocks.auth.MockAuthActions
@@ -35,10 +36,10 @@ import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.http.{HeaderNames, Status}
 import play.api.test.Helpers.{status, _}
 import services.{CalculationService, ClaimToAdjustService, FinancialDetailsService, NextUpdatesService}
-import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
+import testConstants.BaseTestConstants.{testMtditid, testTaxCalculationId, testTaxYear}
 import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.{financialDetails, _}
+import testConstants.FinancialDetailsTestConstants._
 import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelErrorMessagesForIndividual, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
 import views.html.TaxYearSummary
 
@@ -53,6 +54,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
       api.inject.bind[CalculationService].toInstance(mockCalculationService),
       api.inject.bind[FinancialDetailsService].toInstance(mockFinancialDetailsService),
       api.inject.bind[NextUpdatesService].toInstance(mockNextUpdatesService),
+      api.inject.bind[ObligationsConnector].toInstance(mockObligationsConnector),
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService)
     ).build()
 
@@ -555,7 +557,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
             }
 
             "no charges" when {
-              "the finincial charges returns not found" in {
+              "the financial charges returns not found" in {
                 setupMockSuccess(mtdUserRole)
                 mockSingleBusinessIncomeSource()
                 mockCalculationSuccessfulNew(testMtditid)
@@ -720,8 +722,8 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
             }
           }
 
-          /*"show the calculation message" when {
-            "obligation is O" in {
+          "show the calculation message" when {
+            "obligation status is Open" in {
               val testOpenObligationsModel: ObligationsModel = ObligationsModel(Seq(
                 GroupedObligationsModel(
                   identification = "testId",
@@ -742,24 +744,101 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
               setupMockAllObligationsWithDates(from = LocalDate.of(testTaxYear - 1, 4, 6),
                 to = LocalDate.of(testTaxYear, 4, 5))(response = testOpenObligationsModel)
 
+              setupMockSuccess(mtdUserRole)
+              mockSingleBusinessIncomeSource()
+              mockCalculationSuccessfulNew(testMtditid)
+              mockFinancialDetailsSuccess()
+              mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+                toDate = LocalDate.of(testTaxYear, 4, 5))(
+                response = testOpenObligationsModel
+              )
+
+              val result = action(fakeRequest)
+              println(fakeRequest)
+              status(result) shouldBe Status.OK
+              contentAsString(result).contains(messages(s"taxCal_breakdown.message.${if (isAgent) "agent."}static1")) shouldBe true
+              contentType(result) shouldBe Some("text/html")
+              result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
+              result.futureValue.session.get(calcPagesBackPage) shouldBe Some("ITVC")
+
             }
           }
 
           "does not show the calculation message" when {
-            "obligation is F" in {
+            "obligation status is Fulfilled" in {
+              val testFulfilledObligationsModel: ObligationsModel = ObligationsModel(Seq(
+                GroupedObligationsModel(
+                  identification = "testId",
+                  obligations = List(
+                    SingleObligationModel(
+                      start = getCurrentTaxYearEnd.minusMonths(3),
+                      end = getCurrentTaxYearEnd,
+                      due = getCurrentTaxYearEnd,
+                      obligationType = "Quarterly",
+                      dateReceived = Some(fixedDate),
+                      periodKey = "Quarterly",
+                      StatusFulfilled
+                    )
+                  )
+                )
+              ))
 
               setupMockAllObligationsWithDates(from = LocalDate.of(testTaxYear - 1, 4, 6),
-                to = LocalDate.of(testTaxYear, 4, 5))(response = testObligtionsModel)
+                to = LocalDate.of(testTaxYear, 4, 5))(response = testFulfilledObligationsModel)
+
+              setupMockSuccess(mtdUserRole)
+              mockSingleBusinessIncomeSource()
+              mockCalculationSuccessfulNew(testMtditid)
+              mockFinancialDetailsSuccess()
+              mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+                toDate = LocalDate.of(testTaxYear, 4, 5))(
+                response = testFulfilledObligationsModel
+              )
+
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.OK
+              contentAsString(result).contains(messages(s"taxCal_breakdown.message.${if (isAgent) "agent."}static1")) shouldBe false
+              contentType(result) shouldBe Some("text/html")
+              result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
+              result.futureValue.session.get(calcPagesBackPage) shouldBe Some("ITVC")
             }
+
           }
 
           "show the Tax Year Summary Page with error messages" when {
-            "obligationConnector has error messages" in {
-
+            "obligationsConnector has error messages" in {
+              val testObligationsErrorModel : ObligationsErrorModel = ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR")
               setupMockAllObligationsWithDates(from = LocalDate.of(testTaxYear - 1, 4, 6),
-                to = LocalDate.of(testTaxYear, 4, 5))(response = ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR"))
+                to = LocalDate.of(testTaxYear, 4, 5))(response = testObligationsErrorModel)
 
-            } */
+              //disable(NavBarFs)
+              setupMockSuccess(mtdUserRole)
+              mockSingleBusinessIncomeSource()
+              mockCalculationWithErrorMessages(testMtditid)
+              mockFinancialDetailsSuccess()
+              mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+                toDate = LocalDate.of(testTaxYear, 4, 5))(
+                response = testObligationsErrorModel
+              )
+
+//              val expectedContent: String = taxYearSummaryView(
+//                testTaxYear, TaxYearSummaryViewModel(
+//                  Some(CalculationSummary(liabilityCalculationModelSuccessful)),
+//                  testChargesList,
+//                  testObligationsErrorModel,
+//                  ctaViewModel = emptyCTAViewModel, LPP2Url = ""),
+//                taxYearsBackLink(isAgent),
+//                ctaLink = ctaLink(isAgent),
+//                isAgent = isAgent).toString
+
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+              //contentAsString(result) shouldBe expectedContent
+              contentType(result) shouldBe Some("text/html")
+              //result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
+              //result.futureValue.session.get(calcPagesBackPage) shouldBe Some("ITVC")
+            }
+          }
         }
       }
       testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
