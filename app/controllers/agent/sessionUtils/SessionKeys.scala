@@ -16,7 +16,6 @@
 
 package controllers.agent.sessionUtils
 
-@deprecated
 object SessionKeys {
 
   val clientNino: String = "ClientNino"
@@ -26,5 +25,6 @@ object SessionKeys {
   val clientLastName: String = "ClientLastName"
   val isSupportingAgent: String = "isSupportingAgent"
   val confirmedClient: String = "ConfirmedClient"
+  val mandationStatus: String = "mandation_status"
 
 }

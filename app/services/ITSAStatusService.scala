@@ -108,7 +108,7 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
   }
 
   private def extractNino(user: MtdItUser[_]): String = {
-    if (user.isAgent)
+    if (user.isAgent())
       user.clientDetails.map(_.nino)
         .getOrElse(throw new Exception("Client details are missing from authorised user"))
     else
