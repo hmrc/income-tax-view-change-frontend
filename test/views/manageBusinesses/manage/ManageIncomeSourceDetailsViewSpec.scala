@@ -361,6 +361,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
+        showReportingFrequencyLink = true,
       )(messages, implicitly)
     }
 
@@ -386,6 +387,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -412,6 +414,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -429,6 +432,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -455,6 +459,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -479,6 +484,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -504,6 +510,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -521,6 +528,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -547,6 +555,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
+          showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -571,6 +580,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -595,6 +605,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -612,6 +623,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -628,6 +640,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = true,
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -687,7 +700,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         backUrl = backUrl(false),
         showStartDate = true,
         showAccountingMethod = false,
-        showOptInOptOutContentUpdateR17 = false
+        showOptInOptOutContentUpdateR17 = false,
+        showReportingFrequencyLink = true
       )(messages, implicitly)
 
       val document = Jsoup.parse(contentAsString(view))
@@ -760,15 +774,16 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       val TaxYear2 = "2026"
 
       val testViewModel = selfEmploymentViewModel.copy(
-        useMTDForTaxYear1 = Some(true),
-        useMTDForTaxYear2 = Some(false),
-        latencyYearsQuarterly = LatencyYearsQuarterly(Some(false), Some(false)),
+        latencyYearsQuarterly = LatencyYearsQuarterly(Some(true), Some(true)),
         latencyYearsCrystallised = LatencyYearsCrystallised(Some(false), Some(false)),
         latencyDetails = Some(testLatencyDetails3.copy(
-          taxYear1 = TaxYear1,
-          taxYear2 = TaxYear2
+          taxYear1 = "2025",
+          latencyIndicator1 = "Q",
+          taxYear2 = "2026",
+          latencyIndicator2 = "A"
         ))
       )
+
 
       val view = manageIncomeSourceDetailsView(
         testViewModel,
@@ -776,6 +791,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = true,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = true,
+        showReportingFrequencyLink = true,
         backUrl = backUrl(false)
       )(messages, implicitly)
 
@@ -797,20 +813,20 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       actionLinks should contain("Sign up")
     }
 
-    "not render an MTD opt-in row if one of the useMTDForTaxYear value is None " in {
+    "not render an MTD opt-in row if one of the latency years is crystallised" in {
       val taxYear1 = "2025"
       val taxYear2 = "2026"
 
       val testViewModel = selfEmploymentViewModel.copy(
-        useMTDForTaxYear1 = Some(true),
-        useMTDForTaxYear2 = None,
-        latencyYearsQuarterly = LatencyYearsQuarterly(Some(false), Some(false)),
-        latencyYearsCrystallised = LatencyYearsCrystallised(Some(false), Some(false)),
+        latencyYearsQuarterly = LatencyYearsQuarterly(Some(true), Some(true)),
+        latencyYearsCrystallised = LatencyYearsCrystallised(Some(false), Some(true)),
         latencyDetails = Some(testLatencyDetails3.copy(
-          taxYear1 = taxYear1,
-          taxYear2 = taxYear2
+          taxYear1 = "2025", latencyIndicator1 = "Q",
+          taxYear2 = "2026", latencyIndicator2 = "A"
         ))
       )
+
+
 
       val view = manageIncomeSourceDetailsView(
         testViewModel,
@@ -818,6 +834,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = true,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = true,
+        showReportingFrequencyLink = true,
         backUrl = backUrl(false)
       )(messages, implicitly)
 
@@ -934,7 +951,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         backUrl = backUrl(false),
         showStartDate = true,
         showAccountingMethod = false,
-        showOptInOptOutContentUpdateR17 = false
+        showOptInOptOutContentUpdateR17 = false,
+        showReportingFrequencyLink = true
       )(messages, implicitly)
 
       val document = Jsoup.parse(contentAsString(view))
@@ -1077,7 +1095,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         backUrl = backUrl(false),
         showStartDate = true,
         showAccountingMethod = false,
-        showOptInOptOutContentUpdateR17 = false
+        showOptInOptOutContentUpdateR17 = false,
+        showReportingFrequencyLink = true
       )(messages, implicitly)
 
       val document = Jsoup.parse(contentAsString(view))

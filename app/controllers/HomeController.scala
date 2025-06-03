@@ -22,6 +22,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import controllers.agent.sessionUtils.SessionKeys
 import enums.MTDSupportingAgent
 import models.admin._
 import models.financialDetails.{ChargeItem, FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
@@ -71,7 +72,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
   }
 
   def handleShowRequest(origin: Option[String] = None)
-                       (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] =
+                       (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     nextUpdatesService.getDueDates().flatMap {
       case Right(nextUpdatesDueDates: Seq[LocalDate]) if user.usersRole == MTDSupportingAgent =>
         buildHomePageForSupportingAgent(nextUpdatesDueDates)
@@ -84,6 +85,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
         Logger("application").error(s"Downstream error, ${ex.getMessage} - ${ex.getCause}")
         handleErrorGettingDueDates(user.isAgent())
     }
+  }
 
   private def buildHomePageForSupportingAgent(nextUpdatesDueDates: Seq[LocalDate])
                                              (implicit user: MtdItUser[_]): Future[Result] = {
@@ -97,14 +99,14 @@ class HomeController @Inject()(val homeView: views.html.Home,
       val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(ReportingFrequencyPage))
       val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, isEnabled(IncomeSourcesFs),
         isEnabled(IncomeSourcesNewJourney))
-      val accountSettingsTileViewModel = AccountSettingsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
+      val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
 
       auditingService.extendedAudit(HomeAudit.applySupportingAgent(user, nextUpdatesTileViewModel))
       Ok(
         supportingAgentHomeView(
           yourBusinessesTileViewModel,
           nextUpdatesTileViewModel,
-          accountSettingsTileViewModel
+          yourReportingObligationsTileViewModel
         )
       )
     }
@@ -126,6 +128,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
       penaltiesAndAppealsTileViewModel = penaltyDetailsService.getPenaltyPenaltiesAndAppealsTileViewModel(isEnabled(PenaltiesAndAppeals))
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
+      mandation <- ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(_.isMandated)
     } yield {
 
       val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(ReportingFrequencyPage))
@@ -138,7 +141,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
       val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear, isEnabled(ITSASubmissionIntegration))
 
-      val accountSettingsTileViewModel = AccountSettingsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
+      val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
 
       NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount, accruingInterestPaymentsCount, isEnabled(ReviewAndReconcilePoa), isEnabled(YourSelfAssessmentCharges)).verify match {
 
@@ -149,20 +152,24 @@ class HomeController @Inject()(val homeView: views.html.Home,
           nextUpdatesTileViewModel = nextUpdatesTileViewModel,
           paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
           yourBusinessesTileViewModel = yourBusinessesTileViewModel,
-          accountSettingsTileViewModel = accountSettingsTileViewModel,
+          yourReportingObligationsTileViewModel = yourReportingObligationsTileViewModel,
           penaltiesAndAppealsTileViewModel = penaltiesAndAppealsTileViewModel,
           dunningLockExists = dunningLockExists,
           origin = origin
         )
+
+        val mandationStatus = if (mandation) SessionKeys.mandationStatus -> "on"
+        else SessionKeys.mandationStatus -> "off"
+
           auditingService.extendedAudit(HomeAudit(user, paymentsDueMerged, overDuePaymentsCount, nextUpdatesTileViewModel))
           if(user.isAgent()) {
             Ok(primaryAgentHomeView(
               homeViewModel
-            ))
+            )).addingToSession(mandationStatus)
           } else {
             Ok(homeView(
               homeViewModel
-            ))
+            )).addingToSession(mandationStatus)
           }
         case Left(ex: Throwable) =>
           Logger("application").error(s"Unable to create the view model ${ex.getMessage} - ${ex.getCause}")
@@ -226,7 +233,7 @@ private def handleErrorGettingDueDates(isAgent: Boolean)(implicit user: MtdItUse
   errorHandler.showInternalServerError()
 }
 
-  private def getCurrentITSAStatus(taxYear: TaxYear)(implicit user: MtdItUser[_]): Future[ITSAStatus.ITSAStatus] = {
+  private def getCurrentITSAStatus(taxYear: TaxYear)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[ITSAStatus.ITSAStatus] = {
     ITSAStatusService.getStatusTillAvailableFutureYears(taxYear.previousYear).map(_.view.mapValues(_.status)
       .toMap
       .withDefaultValue(ITSAStatus.NoStatus)

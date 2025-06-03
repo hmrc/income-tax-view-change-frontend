@@ -22,7 +22,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import models.admin.OptOutFs
+import models.admin.{OptOutFs, ReportingFrequencyPage}
 import models.obligations._
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -31,7 +31,6 @@ import services.NextUpdatesService
 import services.optout.OptOutService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import viewUtils.NextUpdatesViewUtils
 import views.html.nextUpdates.{NextUpdates, NextUpdatesOptOut, NoNextUpdates}
 
 import javax.inject.{Inject, Singleton}
@@ -46,7 +45,6 @@ class NextUpdatesController @Inject()(
                                        nextUpdatesService: NextUpdatesService,
                                        itvcErrorHandler: ItvcErrorHandler,
                                        optOutService: OptOutService,
-                                       nextUpdatesViewUtils: NextUpdatesViewUtils,
                                        val appConfig: FrontendAppConfig,
                                        val authActions: AuthActions
                                      )
@@ -94,7 +92,8 @@ class NextUpdatesController @Inject()(
                   isAgent = isAgent,
                   isSupportingAgent = user.isSupportingAgent,
                   origin = origin,
-                  nextUpdatesViewUtils.whatTheUserCanDo(optOutOneYearViewModel, isAgent)
+                  reportingFrequencyLink = controllers.routes.ReportingFrequencyPageController.show(isAgent).url,
+                    reportingFrequencyEnabled = isEnabled(ReportingFrequencyPage)
                 )
               )
             }.recoverWith {

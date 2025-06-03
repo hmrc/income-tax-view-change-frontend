@@ -159,10 +159,12 @@ home.incomeSources.manageIncomeSource.view                      = Bwrw golwg dro
 home.incomeSources.ceaseIncomeSource.view                       = Dod â ffynhonnell incwm i ben
 home.incomeSources.newJourney.view                              = Ychwanegu, rheoli neu ddod â busnes neu ffynhonnell incwm i ben
 
-home.accountSettings.heading                                    = Gosodiadau eich cyfrif
-home.accountSettings.reportingFrequency.quarterly.text          = Adrodd yn chwarterol ar gyfer blwyddyn dreth {0} i {1}
-home.accountSettings.reportingFrequency.annually.text           = Adrodd yn flynyddol ar gyfer blwyddyn dreth {0} i {1}
-home.accountSettings.reportingFrequency.link                    = Rheoli amlder eich adroddiadau
+home.reportingObligations.heading                               = Eich ymrwymiadau o ran adrodd
+home.reportingObligations.link                                  = Bwrw golwg dros eich ymrwymiadau o ran adrodd, a’u rheoli
+home.reportingObligations.annual.text                           = Ar gyfer y flwyddyn dreth {0} i {1}, bydd angen i chi gyflwyno Ffurflen Dreth
+home.reportingObligations.quarterly.text                        = Ar gyfer y flwyddyn dreth {0} i {1}, bydd angen i chi wneud y canlynol:
+home.reportingObligations.quarterly.bullet1                     = defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+home.reportingObligations.quarterly.bullet2                     = cyflwyno Ffurflen Dreth
 
 home.agent.overdue.message.dunningLock.true                     = Mae gan eich cleient daliadau sy’n hwyr ac mae un neu fwy o’i benderfyniadau treth yn cael eu hadolygu. Mae’n bosibl y codir llog arno ar y rhain hyd nes eu bod wedi’u talu’n llawn.
 home.agent.overdue.message.dunningLock.false                    = Mae arnoch daliadau am fod yn hwyr. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
@@ -765,7 +767,7 @@ obligations.quarterlyUpdates                                    = Diweddariadau 
 obligations.finalDeclarationUpdate                              = Datganiad terfynol
 
 ## Next updates Page ##
-nextUpdates.heading                                             = Diweddariadau nesaf
+nextUpdates.heading                                             = Eich diweddariadau a’ch dyddiadau cau
 nextUpdates.sub-heading                                         = Diweddariadau’n ddyledus erbyn
 nextUpdates.dropdown.info                                       = Beth yw’r mathau o ddiweddariadau?
 nextUpdates.info                                       			= Mae’n rhaid i bob diweddariad gael ei anfon gan ddefnyddio ein meddalwedd cadw cofnodion erbyn pob dyddiad a ddangosir.
@@ -793,13 +795,9 @@ nextUpdates.business            							    = Incwm busnes
 
 nextUpdates.optOutOneYear.p.message                             = Ar hyn o bryd, rydych yn adrodd bob chwarter ar sail wirfoddol ar gyfer blwyddyn dreth {0} i {1}. Gallwch ddewis
 nextUpdates.optOutOneYear.p.link                                = optio allan o ddiweddariadau bob chwarter ac adrodd yn flynyddol yn lle hynny.
-nextUpdates.optOutOneYear.reportingFrequency.p.message          = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
-nextUpdates.optOutOneYear.reportingFrequency.p.link             = bwrw golwg dros a newid amlder eich adroddiadau.
 
-nextUpdates.optOutMultiYear.p.message                           = Ar hyn o bryd rhydych yn cyflwyno adroddiadau’n chwarterol ar sail wirfoddol. Cadarnhewch eich bod am
-nextUpdates.optOutMultiYear.p.link                              = optio allan o ddiweddariadau chwarterol ac am gyflwyno’n flynyddol yn lle hynny.
-nextUpdates.optOutMultiYear.reportingFrequency.p.message        = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
-nextUpdates.optOutMultiYear.reportingFrequency.p.link           = bwrw golwg dros a newid amlder eich adroddiadau.
+nextUpdates.reporting.obligations.p.message                     = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
+nextUpdates.reporting.obligations.p.link                        = bwrw golwg dros eich ymrwymiadau adrodd.
 
 sections.open.all												= Dangos pob adran
 sections.close.all												= Cuddio pob adran
@@ -1105,11 +1103,11 @@ chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = Creodd
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = Creodd CThEF y swm ychwanegol hwn ar gyfer eich ail daliad ar gyfrif yn seiliedig ar eich Ffurflen Dreth
 chargeSummary.chargeHistory.created.lateSubmissionPenalty.text          = Gwnaeth CThEF greu eich cosb am gyflwyno’n hwyr
 chargeSummary.chargeHistory.created.firstLatePaymentPenalty.text        = Gwnaeth CThEF greu eich cosb am dalu’n hwyr
-chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = Taliad ar gyfrif 1 o 2 wedi’i ostwng oherwydd cais gan y trethdalwr
-chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = Taliad ar gyfrif 2 o 2 wedi’i ostwng oherwydd cais gan y trethdalwr
+chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = Y taliad cyntaf ar gyfrif wedi’i ostwng oherwydd cais gan y trethdalwr
+chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = 	Yr ail daliad ar gyfrif wedi’i ostwng oherwydd cais gan y trethdalwr
 chargeSummary.chargeHistory.request.balancingCharge.text	   	        = Taliad Mantoli wedi’i ostwng oherwydd cais gan y trethdalwr
-chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	        = Taliad ar gyfrif 1 o 2 wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
-chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	        = Taliad ar gyfrif 2 o 2 wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
+chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	        = Y taliad cyntaf ar gyfrif wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
+chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	        = Yr ail daliad ar gyfrif wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
 chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	        = Taliad Mantoli wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
 chargeSummary.chargeHistory.adjustment.paymentOnAccount1.text           = Gwnaethoch ddiweddaru eich taliad ar gyfrif cyntaf
 chargeSummary.chargeHistory.adjustment.paymentOnAccount2.text           = Gwnaethoch ddiweddaru eich ail daliad ar gyfrif
@@ -1123,8 +1121,8 @@ chargeSummary.lpi.balancingCharge.text							   = Llog am dalu’n hwyr ar gyfer
 chargeSummary.lpi.interestPeriod								   = Cyfnod llog
 chargeSummary.lpi.interestPeriod.dates							   = {0} i {1}
 
-chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text          = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o2 wedi’i greu
-chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text          = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o2 wedi’i greu
+chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text          = Llog am dalu’r taliad cyntaf ar gyfrif yn hwyr wedi’i greu
+chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text          = Llog am dalu’r ail daliad ar gyfrif yn hwyr wedi’i greu
 chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa1.text     = CThEF sydd wedi creu’r tâl hwn
 chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa2.text     = CThEF sydd wedi creu’r tâl hwn
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text            = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli wedi’i greu
@@ -1254,8 +1252,8 @@ paymentAllocation.paymentAllocations.bcd.vcnic2                 = Yswiriant Gwla
 paymentAllocation.paymentAllocations.bcd.nic4                   = Yswiriant Gwladol Dosbarth 4 ar gyfer y Taliad Mantoli
 paymentAllocation.paymentAllocations.bcd.sl                     = Benthyciadau Myfyrwyr ar gyfer y Taliad Mantoli
 paymentAllocation.paymentAllocations.bcd.cgt                    = Treth Enillion Cyfalaf ar gyfer y Taliad Mantoli
-paymentAllocation.paymentAllocations.paymentOnAccount1.text     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2 wedi’i greu
-paymentAllocation.paymentAllocations.paymentOnAccount2.text     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2 wedi’i greu
+paymentAllocation.paymentAllocations.paymentOnAccount1.text     = Llog am dalu’r taliad cyntaf ar gyfrif yn hwyr
+paymentAllocation.paymentAllocations.paymentOnAccount2.text     = Llog am dalu’r ail daliad ar gyfrif yn hwyr
 paymentAllocation.paymentAllocations.balancingCharge.text       = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
 paymentAllocation.paymentAllocations.hmrcAdjustment.text        = Addasiad CThEF
 
@@ -2111,7 +2109,7 @@ incomeSources.add.manageObligations.heading                           =   Yr hyn
 
 
 # manage journey manage income source
-incomeSources.manage.quarterly-period                                 =   Cyfnod chwarterol
+incomeSources.manage.quarterly-period                                 =   Cyfnod diweddaru
 incomeSources.manage.quarterly-period.standard                        =   Safonol
 incomeSources.manage.quarterly-period.calendar                        =   Calendr
 incomeSources.manage.quarterly-period.standard.summary                =   Beth yw cyfnod chwarterol safonol?
@@ -2790,3 +2788,6 @@ income-sources.check-details-reporting-frequency.no                             
 income-sources.check-details-reporting-frequency.taxYear                        = {0} i {1}
 income-sources.check-details-reporting-frequency.change-rf-key                  = A ydych am newid i gyflwyno’n chwarterol?
 income-sources.check-details-reporting-frequency.change-choose-tax-year-key     = Pa flwyddyn dreth ydych chi am gyflwyno’n chwarterol ar ei chyfer?
+
+income-sources.check-details-reporting-frequency.r17.change-rf-key              = A ydych am gofrestru’r busnes newydd hwn gyda’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm?
+income-sources.check-details-reporting-frequency.r17.change-choose-tax-year-key = Pa flynyddoedd treth ydych am gofrestru ar eu cyfer?

@@ -58,6 +58,7 @@ class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
   def submit: Action[AnyContent] = authActions.asMTDAgentWithUnconfirmedClient.async { implicit user =>
     val clientName = user.optClientNameAsString.getOrElse("")
     val names = clientName.split(" ")
+
     handleSessionCookies(SessionCookieData(user.mtditid, user.nino, user.saUtr.getOrElse(""),
       names.headOption, names.lastOption, user.isSupportingAgent)) { _ =>
       auditingService.extendedAudit(ConfirmClientDetailsAuditModel(
@@ -71,7 +72,8 @@ class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
       ))
 
       Future.successful(Redirect(controllers.routes.HomeController.showAgent().url).addingToSession(SessionKeys.confirmedClient -> "true"))
-    }
+
+      }
   }
 
   lazy val backUrl: String = controllers.agent.routes.EnterClientsUTRController.show().url

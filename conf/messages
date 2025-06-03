@@ -159,10 +159,12 @@ home.incomeSources.manageIncomeSource.view                      = View and manag
 home.incomeSources.ceaseIncomeSource.view                       = Cease an income source
 home.incomeSources.newJourney.view                              = Add, manage or cease a business or income source
 
-home.accountSettings.heading                                    = Your account settings
-home.accountSettings.reportingFrequency.quarterly.text          = Reporting quarterly for {0} to {1} tax year
-home.accountSettings.reportingFrequency.annually.text           = Reporting annually for {0} to {1} tax year
-home.accountSettings.reportingFrequency.link                    = Manage your reporting frequency
+home.reportingObligations.heading                               = Your reporting obligations
+home.reportingObligations.link                                  = View and manage your reporting obligations
+home.reportingObligations.annual.text                           = For the {0} to {1} tax year you need to submit a tax return
+home.reportingObligations.quarterly.text                        = For the {0} to {1} tax year you need to:
+home.reportingObligations.quarterly.bullet1                     = use Making Tax Digital for Income Tax
+home.reportingObligations.quarterly.bullet2                     = submit a tax return
 
 home.agent.overdue.message.dunningLock.true                     = Your client has overdue payments and one or more of their tax decisions are being reviewed. They may be charged interest on these until they are paid in full.
 home.agent.overdue.message.dunningLock.false                    = You have overdue charges. You may be charged interest on these until they are paid in full.
@@ -765,7 +767,7 @@ obligations.quarterlyUpdates                                       = Quarterly u
 obligations.finalDeclarationUpdate                                 = Final declaration
 
 ## Next updates Page ##
-nextUpdates.heading                                                = Next updates
+nextUpdates.heading                                                = Your updates and deadlines
 nextUpdates.sub-heading                                            = Updates due by
 nextUpdates.dropdown.info                                          = What are the update types?
 nextUpdates.info                                       			   = All updates need to be sent using your record keeping software by each date shown.
@@ -793,13 +795,9 @@ nextUpdates.business            							       = Business income
 
 nextUpdates.optOutOneYear.p.message                                = You are currently reporting quarterly on a voluntary basis for the {0} to {1} tax year. You can choose to
 nextUpdates.optOutOneYear.p.link                                   = opt out of quarterly updates and report annually instead.
-nextUpdates.optOutOneYear.reportingFrequency.p.message             = Depending on your circumstances, you may be able to
-nextUpdates.optOutOneYear.reportingFrequency.p.link                = view and change your reporting frequency.
 
-nextUpdates.optOutMultiYear.p.message                              = You are currently reporting quarterly on a voluntary basis. You can choose to
-nextUpdates.optOutMultiYear.p.link                                 = opt out of quarterly updates and report annually instead.
-nextUpdates.optOutMultiYear.reportingFrequency.p.message           = Depending on your circumstances, you may be able to
-nextUpdates.optOutMultiYear.reportingFrequency.p.link              = view and change your reporting frequency.
+nextUpdates.reporting.obligations.p.message                        = Depending on your circumstances,
+nextUpdates.reporting.obligations.p.link                           = you may be able to view and change your reporting obligations.
 
 sections.open.all												   = Show all sections
 sections.close.all												   = Hide all sections
@@ -1106,11 +1104,11 @@ chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = HMRC c
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = HMRC created this extra amount for your second payment on account based on your tax return
 chargeSummary.chargeHistory.created.lateSubmissionPenalty.text          = HMRC created your late submission penalty
 chargeSummary.chargeHistory.created.firstLatePaymentPenalty.text        = HMRC created your late payment penalty
-chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = Payment on account 1 of 2 reduced by taxpayer request
-chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = Payment on account 2 of 2 reduced by taxpayer request
+chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = First payment on account reduced by taxpayer request
+chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = Second payment on account reduced by taxpayer request
 chargeSummary.chargeHistory.request.balancingCharge.text	   	        = Balancing payment reduced by taxpayer request
-chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	        = Payment on account 1 of 2 reduced due to amended return
-chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	        = Payment on account 2 of 2 reduced due to amended return
+chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	        = First payment on account reduced due to amended return
+chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	        = Second payment on account reduced due to amended return
 chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	        = Balancing payment reduced due to amended return
 chargeSummary.chargeHistory.adjustment.paymentOnAccount1.text           = You updated your first payment on account
 chargeSummary.chargeHistory.adjustment.paymentOnAccount2.text           = You updated your second payment on account
@@ -1124,8 +1122,8 @@ chargeSummary.lpi.balancingCharge.text							   = Late payment interest on balan
 chargeSummary.lpi.interestPeriod								   = Interest period
 chargeSummary.lpi.interestPeriod.dates							   = {0} to {1}
 
-chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text	    = Late payment interest for payment on account 1 of 2 created
-chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text	    = Late payment interest for payment on account 2 of 2 created
+chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text	    = Late payment interest for first payment on account created
+chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text	    = Late payment interest for second payment on account created
 chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa1.text = HMRC created this charge
 chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa2.text = HMRC created this charge
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text	    = Late payment interest on balancing payment created
@@ -1255,8 +1253,8 @@ paymentAllocation.paymentAllocations.bcd.vcnic2                 = Voluntary Clas
 paymentAllocation.paymentAllocations.bcd.nic4                   = Class 4 National Insurance for Balancing payment
 paymentAllocation.paymentAllocations.bcd.sl                     = Student Loans for Balancing payment
 paymentAllocation.paymentAllocations.bcd.cgt                    = Capital Gains Tax for Balancing payment
-paymentAllocation.paymentAllocations.paymentOnAccount1.text     = Late payment interest for payment on account 1 of 2
-paymentAllocation.paymentAllocations.paymentOnAccount2.text     = Late payment interest for payment on account 2 of 2
+paymentAllocation.paymentAllocations.paymentOnAccount1.text     = Late payment interest for first payment on account
+paymentAllocation.paymentAllocations.paymentOnAccount2.text     = Late payment interest for second payment on account
 paymentAllocation.paymentAllocations.balancingCharge.text       = Late payment interest on balancing payment
 paymentAllocation.paymentAllocations.hmrcAdjustment.text        = HMRC adjustment
 
@@ -2107,7 +2105,7 @@ incomeSources.add.manageObligations.heading                           =   What y
 
 
 # manage journey manage income source
-incomeSources.manage.quarterly-period                                 =   Quarterly period
+incomeSources.manage.quarterly-period                                 =   Update period
 incomeSources.manage.quarterly-period.standard                        =   Standard
 incomeSources.manage.quarterly-period.calendar                        =   Calendar
 incomeSources.manage.quarterly-period.standard.summary                =   What is a standard quarterly period?
@@ -2788,4 +2786,5 @@ income-sources.check-details-reporting-frequency.taxYear                        
 income-sources.check-details-reporting-frequency.change-rf-key                  = Do you want to change to report quarterly?
 income-sources.check-details-reporting-frequency.change-choose-tax-year-key     = Which tax year do you want to report quarterly for?
 
-
+income-sources.check-details-reporting-frequency.r17.change-rf-key              = Do you want to sign this new business up to Making Tax Digital for Income Tax?
+income-sources.check-details-reporting-frequency.r17.change-choose-tax-year-key = Which tax years do you want to sign up for?

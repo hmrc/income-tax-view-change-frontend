@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package controllers.agent.sessionUtils
+package models.core
 
-object SessionKeys {
+import play.api.libs.json.{Json, OFormat}
 
-  val clientNino: String = "ClientNino"
-  val clientMTDID: String = "ClientMTDID"
-  val clientUTR: String = "ClientUTR"
-  val clientFirstName: String = "ClientFirstName"
-  val clientLastName: String = "ClientLastName"
-  val isSupportingAgent: String = "isSupportingAgent"
-  val confirmedClient: String = "ConfirmedClient"
-  val mandationStatus: String = "mandation_status"
+trait SelfServeTimeToPayJourneyResponse
 
+case class SelfServeTimeToPayJourneyResponseModel(journeyId: String, nextUrl: String) extends SelfServeTimeToPayJourneyResponse
+
+object SelfServeTimeToPayJourneyResponseModel {
+  implicit val formats: OFormat[SelfServeTimeToPayJourneyResponseModel] = Json.format[SelfServeTimeToPayJourneyResponseModel]
 }
+
+case class SelfServeTimeToPayJourneyErrorResponse(status: Int, message: String) extends SelfServeTimeToPayJourneyResponse

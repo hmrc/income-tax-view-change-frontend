@@ -49,6 +49,14 @@
 )(implicit messages: Messages, user: auth.MtdItUser[_], dateService: DateServiceInterface)
 
 @getMessage(key: String, args: String*) = @{
+    if(viewModel.displayR17Content) {
+        messages(s"income-sources.check-details-reporting-frequency.r17.$key", args: _*)
+    } else {
+        messages(s"income-sources.check-details-reporting-frequency.$key", args: _*)
+    }
+}
+
+@getHeaderMessage(key: String, args: String*) = @{
     viewModel.incomeSourceType match {
         case SelfEmployment => messages(s"income-sources.check-details-reporting-frequency.$key", args: _*)
         case UkProperty => messages(s"income-sources.check-details-reporting-frequency-uk.$key", args: _*)
@@ -100,7 +108,7 @@
     Seq(
         SummaryListRow(
             key = Key(
-                content = Text(messages("income-sources.check-details-reporting-frequency.change-rf-key")),
+                content = Text(getMessage("change-rf-key")),
             ),
             value = Value(
                 content = Text(extractChangeRFRow)
@@ -123,7 +131,7 @@
         Seq(
             SummaryListRow(
                 key = Key(
-                    content = Text(messages("income-sources.check-details-reporting-frequency.change-choose-tax-year-key")),
+                    content = Text(getMessage("change-choose-tax-year-key")),
                 ),
                 value = Value(
                     content = extractChooseTaxYearRow
@@ -151,7 +159,7 @@
     @hmrcPageHeading(PageHeading(
         text = messages("income-sources.check-details-reporting-frequency.title"),
         headingClasses = Some("govuk-heading-l"),
-        section = Some(getMessage("heading")),
+        section = Some(getHeaderMessage("heading")),
         captionClasses = Some("govuk-caption-l")
     ))
 
