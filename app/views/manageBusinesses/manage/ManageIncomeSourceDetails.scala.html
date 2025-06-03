@@ -381,9 +381,7 @@
                         )
                     } else Seq.empty
                 )
-                ++ (
-                    if (showOptInOptOutContentUpdateR17) Seq.empty else getQuarterlyType
-                )
+                ++ (getQuarterlyType)
                 ++(
                     if (viewModel.latencyDetails.isDefined) {
                         if (showOptInOptOutContentUpdateR17 &&(viewModel.useMTDForTaxYear1.isDefined || viewModel.useMTDForTaxYear2.isDefined)) {
