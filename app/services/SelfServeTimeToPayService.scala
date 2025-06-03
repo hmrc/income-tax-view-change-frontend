@@ -30,17 +30,16 @@ class SelfServeTimeToPayService @Inject()(
                                            selfServeTimeToPayConnector: SelfServeTimeToPayConnector
                                          )(implicit ec: ExecutionContext) {
 
-  def startSelfServeTimeToPayJourney()(implicit hc: HeaderCarrier): Future[Either[SelfServeTimeToPayJourneyErrorResponse, SelfServeTimeToPayJourneyResponseModel]] = {
+  def startSelfServeTimeToPayJourney()(implicit hc: HeaderCarrier): Future[Either[SelfServeTimeToPayJourneyErrorResponse,String]] = {
     selfServeTimeToPayConnector.startSelfServeTimeToPayJourney()
       .map {
-        case SelfServeTimeToPayJourneyResponseModel(journeyId, nextUrl) => Logger("application").info(s"Start Self Serve Time To Pay journey started successfully with journeyId: $journeyId")
-          Right(SelfServeTimeToPayJourneyResponseModel(journeyId, nextUrl))
+        case SelfServeTimeToPayJourneyResponseModel(_, nextUrl) => Right(nextUrl)
 
-        case SelfServeTimeToPayJourneyErrorResponse(status, message) => Logger("application").error(s"Start Self Serve Time To Pay journey journey failed with status: $status, message: $message")
+        case SelfServeTimeToPayJourneyErrorResponse(status, message) =>
           Left(SelfServeTimeToPayJourneyErrorResponse(status, message))
       }
       .recover {
-        case ex: Exception => Logger("application").error(s"Unexpected future failed error: ${ex.getMessage}")
+        case ex: Exception =>
           Left(SelfServeTimeToPayJourneyErrorResponse(INTERNAL_SERVER_ERROR, s"Unexpected future failed error"))
       }
   }
