@@ -120,7 +120,7 @@ class ManageIncomeSourceDetailsUkPropertyISpec extends ManageIncomeSourceDetails
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
               setupMockGetCurrentTaxYearEnd(2023)
-              setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, false)
+              setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, true)
               setupMockTaxYearNotCrystallised(2023)
               setupMockTaxYearNotCrystallised(2024)
               mockUkPlusForeignPlusSoleTraderWithLatency()
