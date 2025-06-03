@@ -31,8 +31,6 @@ class SelfServeTimeToPayService @Inject()(
                                          )(implicit ec: ExecutionContext) {
 
   def startSelfServeTimeToPayJourney()(implicit hc: HeaderCarrier): Future[Either[SelfServeTimeToPayJourneyErrorResponse, SelfServeTimeToPayJourneyResponseModel]] = {
-    Logger("application").info("Start Self Serve Time To Pay journey")
-
     selfServeTimeToPayConnector.startSelfServeTimeToPayJourney()
       .map {
         case SelfServeTimeToPayJourneyResponseModel(journeyId, nextUrl) => Logger("application").info(s"Start Self Serve Time To Pay journey started successfully with journeyId: $journeyId")
