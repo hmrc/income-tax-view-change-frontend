@@ -18,9 +18,14 @@ package views.manageBusinesses.manage
 
 import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
+import enums.IncomeSourceJourney.ForeignProperty.{reportingMethodChangeErrorPrefix => foreignFormError}
+import enums.IncomeSourceJourney.SelfEmployment.{reportingMethodChangeErrorPrefix => seFormError}
+import enums.IncomeSourceJourney.UkProperty.{reportingMethodChangeErrorPrefix => ukFormError}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import forms.incomeSources.manage.{ChangeReportingMethodForm, ConfirmReportingMethodForm}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.data.{Form, FormError}
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
@@ -37,13 +42,25 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
   val testUser: MtdItUser[_] = defaultMTDITUser(Some(Individual),
     ukPlusForeignPropertyWithSoleTraderIncomeSource, fakeRequestNoSession)
 
-  val testTaxYear = "2021-2022"
-  val testTaxYearStartYear = "2021"
-  val testTaxYearEndYear = "2022"
-
-  class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType, newReportingMethod: String) {
+  class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType, newReportingMethod: String, isCYPlus: Boolean) {
 
     private lazy val manageIncomeSourceDetailsController = controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController
+
+    val testChangeToAnnual = "annual"
+
+    val testChangeToQuarterly = "quarterly"
+
+    val formFieldName = "incomeSources.manage.propertyReportingMethod"
+
+    val taxYearSet = if(isCYPlus)("2026","2027") else ("2025", "2026")
+
+    def getFormErrorMessage(incomeSourceType: IncomeSourceType): String = {
+      incomeSourceType match {
+        case SelfEmployment => seFormError
+        case ForeignProperty => foreignFormError
+        case UkProperty => ukFormError
+      }
+    }
 
     val selfEmploymentId = incomeSourceType match {
       case SelfEmployment => Some(testSelfEmploymentId)
@@ -51,28 +68,43 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     }
 
     val backUrl = manageIncomeSourceDetailsController.show(isAgent, incomeSourceType, selfEmploymentId).url
-
-    val pageHeading = s"Change to $newReportingMethod reporting for 2021 to 2022 tax year"
     val pageSubHeading = incomeSourceType match {
       case SelfEmployment => "Sole trader"
       case UkProperty => "UK property"
       case ForeignProperty => "Foreign property"
     }
-    val pageDescription = if (newReportingMethod == "quarterly") "Changing to quarterly reporting will mean you need to submit your quarterly updates through compatible software."
-    else "If you change to annual reporting, you can submit your tax return through your HMRC online account or compatible software."
-    val pageInset = "If you have submitted any income and expenses for this tax year to HMRC, this will be deleted from our records. So make sure you keep hold of this information because you will need to include it in your quarterly updates."
-    val pageConfirm = "Confirm and save"
+
+    def getPageHeadingFor(reportingMethod: String, CYPlus: Boolean): String = {
+      (reportingMethod, CYPlus) match {
+        case ("annual", false) => "Opt out of Making Tax Digital for Income Tax for the 2025 to 2026 tax year"
+        case ("annual", true) => "Opt out of Making Tax Digital for Income Tax for the 2026 to 2027 tax year"
+        case ("quarterly", false) => "Signing up to Making Tax Digital for Income Tax for the 2025 to 2026 tax year"
+        case ("quarterly", true) => "Signing up to Making Tax Digital for Income Tax for the 2026 to 2027 tax year"
+      }
+    }
+
+    val pageDescriptionAnnual = "This will mean you no longer need to submit quarterly updates through compatible software for this income source."
+    val pageDescriptionQuarterly = "This will mean you need to submit quarterly updates through compatible software for this income source."
+    val pageInsetAnnual = "If for this tax year you have already submitted to HMRC any quarterly updates for this new business, you will need to resubmit this information in your tax return."
+    val pageUlDescription = "This will mean you:"
+    val pageUl1 = "need to submit quarterly updates for this income source"
+    val pageUl2 = "could have at least one quarterly update overdue"
+    val pageInsetQuarterly = "If for this tax year you have already submitted to HMRC a quarterly update for this new business, you will need to resubmit this information in your next quarterly update."
+    val pageContinue = "Continue"
+
+    def form(changeTo: String): Form[ConfirmReportingMethodForm] = ConfirmReportingMethodForm(changeTo)
 
     lazy val view: HtmlFormat.Appendable =
       confirmReportingMethodView(
         postAction = Call("POST", "/"),
         isAgent = isAgent,
         backUrl = backUrl,
-        taxYearStartYear = testTaxYearStartYear,
-        taxYearEndYear = testTaxYearEndYear,
+        taxYearStartYear = taxYearSet._1,
+        taxYearEndYear = taxYearSet._2,
         newReportingMethod = newReportingMethod,
-        isCurrentTaxYear = true,
-        incomeSourceType = incomeSourceType
+        isCurrentTaxYear = !isCYPlus,
+        incomeSourceType = incomeSourceType,
+        form = form(testChangeToQuarterly).withError(FormError(formFieldName, getFormErrorMessage(incomeSourceType)))
       )
 
     lazy val document: Document = {
@@ -88,29 +120,55 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     val isAgent = mtdRole == "Agent"
 
     s"ConfirmReportingMethodView - $incomeSourceType - $mtdRole - $reportingMethod" should {
-      "render the heading" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType, reportingMethod) {
-        document.getElementsByClass("govuk-heading-l").first().text() shouldBe pageHeading
+      "render the heading" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType, reportingMethod, isCYPlus = false) {
+        document.getElementsByClass("govuk-heading-l").first().text() shouldBe getPageHeadingFor(reportingMethod = reportingMethod, CYPlus = false)
       }
-      "render the back link with the correct URL" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType, reportingMethod) {
+      "render the back link with the correct URL" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType, reportingMethod, isCYPlus = false) {
         document.getElementById("back-fallback").text() shouldBe "Back"
         document.getElementById("back-fallback").attr("href") shouldBe controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = isAgent, incomeSourceType, selfEmploymentId).url
       }
-      "render the sub-heading" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType, reportingMethod) {
+      "render the sub-heading" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType, reportingMethod, isCYPlus = false) {
         document.getElementsByClass("govuk-caption-l").first().text().contains(pageSubHeading) shouldBe true
       }
-      "render the main paragraph" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType, reportingMethod) {
-        document.getElementById("change-reporting-method-description").text() shouldBe pageDescription
+      "render the continue button" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType, reportingMethod, isCYPlus = false) {
+        document.getElementById("continue-button").text() shouldBe pageContinue
       }
-      "render the continue button" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType, reportingMethod) {
-        document.getElementById("confirm-button").text() shouldBe pageConfirm
-      }
-      "render the inset text if the user is quarterly" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType, reportingMethod) {
+      "render the CY quarterly content if user is switching to quarterly else render the annual content" in
+        new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType, reportingMethod, isCYPlus = false) {
         if (reportingMethod == "quarterly") {
-          document.getElementById("change-reporting-method-inset").text() shouldBe pageInset
+          document.getElementById("change-reporting-method-ul-description").text() shouldBe pageUlDescription
+          document.getElementById("change-reporting-method-ul-li1").text() shouldBe pageUl1
+          document.getElementById("change-reporting-method-ul-li2").text() shouldBe pageUl2
+          document.getElementById("change-reporting-method-inset").text() shouldBe pageInsetQuarterly
+
+
+          Option(document.getElementById("change-reporting-method-description-quarterly-CYplus")).isEmpty shouldBe true
         } else {
-          Option(document.getElementById("change-reporting-method-inset")).isEmpty shouldBe true
+          document.getElementById("change-reporting-method-description-annual").text() shouldBe pageDescriptionAnnual
+          document.getElementById("change-reporting-method-inset").text() shouldBe pageInsetAnnual
+
+          Option(document.getElementById("change-reporting-method-description-quarterly-CYplus")).isEmpty shouldBe true
+          Option(document.getElementById("change-reporting-method-ul-description")).isEmpty shouldBe true
+          Option(document.getElementById("change-reporting-method-ul-li1")).isEmpty shouldBe true
+          Option(document.getElementById("change-reporting-method-ul-li2")).isEmpty shouldBe true
         }
       }
+      "render the CY+1 quarterly content if user is switching to quarterly else render the annual content" in
+        new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType, reportingMethod, isCYPlus = true) {
+          if (reportingMethod == "quarterly") {
+            document.getElementById("change-reporting-method-description-quarterly-CYplus").text() shouldBe pageDescriptionQuarterly
+
+            Option(document.getElementById("change-reporting-method-ul-description")).isEmpty shouldBe true
+            Option(document.getElementById("change-reporting-method-ul-li1")).isEmpty shouldBe true
+            Option(document.getElementById("change-reporting-method-ul-li2")).isEmpty shouldBe true
+          } else {
+            document.getElementById("change-reporting-method-description-annual").text() shouldBe pageDescriptionAnnual
+
+            Option(document.getElementById("change-reporting-method-ul-description")).isEmpty shouldBe true
+            Option(document.getElementById("change-reporting-method-ul-li1")).isEmpty shouldBe true
+            Option(document.getElementById("change-reporting-method-ul-li2")).isEmpty shouldBe true
+          }
+        }
     }
   }
 }

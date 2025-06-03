@@ -16,9 +16,13 @@
 
 package controllers.manageBusinesses.manage
 
+import enums.IncomeSourceJourney.UkProperty.{reportingMethodChangeErrorPrefix => ukFormError}
+import enums.IncomeSourceJourney.ForeignProperty.{reportingMethodChangeErrorPrefix => foreignFormError}
+import enums.IncomeSourceJourney.SelfEmployment.{reportingMethodChangeErrorPrefix => seFormError}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
+import forms.incomeSources.manage.ChangeReportingMethodForm
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
@@ -30,7 +34,7 @@ import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Action, AnyContent, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.{DateService, SessionService}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData, propertyIncomeOnly}
 
 import scala.concurrent.Future
 
@@ -46,10 +50,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
 
   lazy val testConfirmReportingMethodSharedController: ConfirmReportingMethodSharedController = app.injector.instanceOf[ConfirmReportingMethodSharedController]
 
-  val individual: Boolean = true
-  val agent: Boolean = false
-
-
   trait SetupGET {
     val taxYear: String = "2022-2023"
     val changeTo: String = "annual"
@@ -57,11 +57,31 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
     val mtdRole: MTDUserRole
 
     lazy val action: Action[AnyContent] = if (mtdRole == MTDIndividual) {
-      testConfirmReportingMethodSharedController.show(taxYear, changeTo, incomeSourceType)
+      testConfirmReportingMethodSharedController.show(isAgent = false, taxYear, changeTo, incomeSourceType)
     } else {
-      testConfirmReportingMethodSharedController.showAgent(taxYear, changeTo, incomeSourceType)
+      testConfirmReportingMethodSharedController.show(isAgent = true, taxYear, changeTo, incomeSourceType)
     }
   }
+
+  def provideFormData(isYesResponse: Boolean, isErrorResponse: Boolean = false, formErrorRequiredFor: IncomeSourceType): (String, String) = {
+
+    val errorMessage = formErrorRequiredFor match {
+      case SelfEmployment => seFormError
+      case ForeignProperty => foreignFormError
+      case UkProperty => ukFormError
+    }
+
+    if (isErrorResponse) {
+      ("", errorMessage)
+    } else {
+      if (isYesResponse) {
+        ("change-reporting-method-check", "Yes")
+      } else {
+        ("change-reporting-method-check", "No")
+      }
+    }
+  }
+
 
   Seq(SelfEmployment, UkProperty, ForeignProperty).foreach { testIncomeSourceType =>
     mtdAllRoles.foreach { testMtdRole =>
@@ -82,7 +102,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
 
               setupMockSetMongoData(true)
 
-              val result: Future[Result] = action(fakeRequest)
+              val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(provideFormData(isYesResponse = true, formErrorRequiredFor = testIncomeSourceType)))
+
               status(result) shouldBe Status.OK
             }
           }
@@ -113,8 +134,9 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
-              val result: Future[Result] = action(fakeRequest)
+              val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(provideFormData(isYesResponse = true, formErrorRequiredFor = testIncomeSourceType)))
               val expectedEndpoint: String = if (mtdRole == MTDIndividual) {
+
                 controllers.routes.HomeController.show().url
               } else {
                 controllers.routes.HomeController.showAgent().url
@@ -140,7 +162,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
 
               setupMockSetMongoData(true)
 
-              val result: Future[Result] = action(fakeRequest)
+              val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(provideFormData(isYesResponse = true, formErrorRequiredFor = testIncomeSourceType)))
+
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
             }
             "taxYear parameter doesn't match latency details " in new SetupGET {
@@ -207,9 +230,9 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
     val mtdRole: MTDUserRole
 
     lazy val action: Action[AnyContent] = if (mtdRole == MTDIndividual) {
-      testConfirmReportingMethodSharedController.submit(taxYear, changeTo, incomeSourceType)
+      testConfirmReportingMethodSharedController.submit(isAgent = false, taxYear, changeTo, incomeSourceType)
     } else {
-      testConfirmReportingMethodSharedController.submitAgent(taxYear, changeTo, incomeSourceType)
+      testConfirmReportingMethodSharedController.submit(isAgent = true, taxYear, changeTo, incomeSourceType)
     }
   }
 
@@ -229,13 +252,14 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
               setupMockSetMongoData(true)
-              val result: Future[Result] = action(fakeRequest)
+
+              val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(provideFormData(isYesResponse = true, formErrorRequiredFor = testIncomeSourceType)))
               val expectedEndpoint: String = if (mtdRole == MTDIndividual) {
                 controllers.manageBusinesses.manage.routes
-                  .CheckYourAnswersController.show(isAgent = false, incomeSourceType).url
+                  .ManageObligationsController.show(isAgent = false, incomeSourceType).url
               } else {
                 controllers.manageBusinesses.manage.routes
-                  .CheckYourAnswersController.show(isAgent = true, incomeSourceType).url
+                  .ManageObligationsController.show(isAgent = true, incomeSourceType).url
               }
 
               status(result) shouldBe Status.SEE_OTHER
@@ -252,13 +276,15 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
               setupMockSetMongoData(true)
-              val result: Future[Result] = action(fakeRequest)
+
+              val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(provideFormData(isYesResponse = true, formErrorRequiredFor = testIncomeSourceType)))
               val expectedEndpoint: String = if (mtdRole == MTDIndividual) {
+
                 controllers.manageBusinesses.manage.routes
-                  .CheckYourAnswersController.show(isAgent = false, incomeSourceType).url
+                  .ManageObligationsController.show(isAgent = false, incomeSourceType).url
               } else {
                 controllers.manageBusinesses.manage.routes
-                  .CheckYourAnswersController.show(isAgent = true, incomeSourceType).url
+                  .ManageObligationsController.show(isAgent = true, incomeSourceType).url
               }
 
               status(result) shouldBe Status.SEE_OTHER

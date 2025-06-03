@@ -21,9 +21,9 @@ import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
-import forms.incomeSources.manage.ConfirmReportingMethodForm
+import forms.incomeSources.manage.{ChangeReportingMethodForm, ConfirmReportingMethodForm}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSourcesNewJourney, NavBarFs}
+import models.admin.{AdjustPaymentsOnAccount, FilterCodedOutPoas, IncomeSourcesNewJourney, NavBarFs, OptInOptOutContentUpdateR17, OptOutFs}
 import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData, UIJourneySessionData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -66,12 +66,11 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
     pathStart + "/manage-your-businesses/manage" + pathEnd + s"?taxYear=$taxYear&changeTo=$newReportingMethod"
   }
 
-  private lazy val checkYourAnswersController = controllers.manageBusinesses.manage.routes
-    .CheckYourAnswersController
+  private lazy val manageObligationsController = controllers.manageBusinesses.manage.routes.ManageObligationsController
 
   val prefix: String = "manageBusinesses.manage.propertyReportingMethod"
 
-  val continueButtonText: String = "Confirm and save"
+  val continueButtonText: String = "Continue"
 
   def mainPageTitle(newReportingMethod: String) = messagesAPI(s"$prefix.heading.$newReportingMethod")
 
@@ -110,7 +109,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, mainPageTitle(reportingMethod)),
-                  elementTextByID("confirm-button")(continueButtonText)
+                  elementTextByID("continue-button")(continueButtonText)
 
                 )
               }
@@ -183,7 +182,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, mainPageTitle(reportingMethod)),
-                  elementTextByID("confirm-button")(continueButtonText)
+                  elementTextByID("continue-button")(continueButtonText)
                 )
               }
             }
@@ -254,7 +253,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, mainPageTitle(reportingMethod)),
-                  elementTextByID("confirm-button")(continueButtonText)
+                  elementTextByID("continue-button")(continueButtonText)
                 )
               }
             }
@@ -307,7 +306,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
       s"POST $pathSE" when {
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
-            s"redirect to Check your answers" when {
+            s"redirect to business will report (completion) page" when {
               "called with a valid form" in {
                 enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
@@ -320,11 +319,13 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
                 await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
-                val result = buildPOSTMTDPostClient(pathSE, additionalCookies, body = Map()).futureValue
+                val formData = Map("change-reporting-method-check" -> Seq("Yes"))
+
+                val result = buildPOSTMTDPostClient(pathSE, additionalCookies, body = formData).futureValue
 
                 result should have(
                   httpStatus(SEE_OTHER),
-                  redirectURI(checkYourAnswersController.show(isAgent, SelfEmployment).url)
+                  redirectURI(manageObligationsController.show(isAgent, SelfEmployment).url)
                 )
               }
             }
@@ -339,7 +340,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
                 IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-                val formData = Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("RANDOM"))
+                val formData = Map("change-reporting-method-check" -> Seq("Yes"))
 
                 val result = buildPOSTMTDPostClient(pathSE, additionalCookies, body = formData).futureValue
 
@@ -379,7 +380,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
       s"POST $pathUK" when {
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
-            s"redirect to Check your answers" when {
+            s"redirect to business will report (completion) page" when {
               "called with a valid form" in {
                 enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
@@ -389,13 +390,13 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
                 await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
-                val formData = Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
+                val formData = Map("change-reporting-method-check" -> Seq("Yes"))
 
                 val result = buildPOSTMTDPostClient(pathUK, additionalCookies, body = formData).futureValue
 
                 result should have(
                   httpStatus(SEE_OTHER),
-                  redirectURI(checkYourAnswersController.show(isAgent, UkProperty).url)
+                  redirectURI(manageObligationsController.show(isAgent, UkProperty).url)
                 )
               }
             }
@@ -431,7 +432,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
       s"POST $pathFP" when {
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
-            s"redirect to check your answers" when {
+            s"redirect to business will report (completion) page" when {
               "called with a valid form" in {
                 enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
@@ -441,13 +442,13 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
                 await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
-                val formData = Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
+                val formData = Map("change-reporting-method-check" -> Seq("Yes"))
 
                 val result = buildPOSTMTDPostClient(pathFP, additionalCookies, body = formData).futureValue
 
                 result should have(
                   httpStatus(SEE_OTHER),
-                  redirectURI(checkYourAnswersController.show(isAgent, ForeignProperty).url)
+                  redirectURI(manageObligationsController.show(isAgent, ForeignProperty).url)
                 )
               }
             }
