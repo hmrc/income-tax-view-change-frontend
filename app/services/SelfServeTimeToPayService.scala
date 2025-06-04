@@ -17,9 +17,9 @@
 package services
 
 import connectors.SelfServeTimeToPayConnector
+import exceptions.SelfServeTimeToPayJourneyException
 import models.core.{SelfServeTimeToPayJourneyErrorResponse, SelfServeTimeToPayJourneyResponseModel}
 import play.api.Logger
-import play.api.http.Status.INTERNAL_SERVER_ERROR
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -30,17 +30,20 @@ class SelfServeTimeToPayService @Inject()(
                                            selfServeTimeToPayConnector: SelfServeTimeToPayConnector
                                          )(implicit ec: ExecutionContext) {
 
-  def startSelfServeTimeToPayJourney()(implicit hc: HeaderCarrier): Future[Either[SelfServeTimeToPayJourneyErrorResponse,String]] = {
+  def startSelfServeTimeToPayJourney()(implicit hc: HeaderCarrier): Future[Either[Throwable, String]] = {
     selfServeTimeToPayConnector.startSelfServeTimeToPayJourney()
       .map {
-        case SelfServeTimeToPayJourneyResponseModel(_, nextUrl) => Right(nextUrl)
+        case SelfServeTimeToPayJourneyResponseModel(_, nextUrl) =>
+          Right(nextUrl)
 
         case SelfServeTimeToPayJourneyErrorResponse(status, message) =>
-          Left(SelfServeTimeToPayJourneyErrorResponse(status, message))
+          Logger("application").error(s"Start self serve time to pay journey failed with status: $status, message: $message ")
+          Left(SelfServeTimeToPayJourneyException(status, message))
       }
       .recover {
         case ex: Exception =>
-          Left(SelfServeTimeToPayJourneyErrorResponse(INTERNAL_SERVER_ERROR, s"Unexpected future failed error"))
+          Logger("application").error(s"Unexpected future failed error")
+          Left(ex)
       }
   }
 }
