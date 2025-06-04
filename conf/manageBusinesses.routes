@@ -265,9 +265,6 @@ GET         /manage-your-businesses/cease-foreign-property/cease-foreign-propert
 GET         /agents/manage-your-businesses/cease-foreign-property/cease-foreign-property-cannot-go-back              controllers.manageBusinesses.cease.IncomeSourceCeasedBackErrorController.showAgent(incomeSourceType: IncomeSourceType = ForeignProperty)
 
 # Income Sources - Manage
-GET          /manage-your-businesses/manage/view-and-manage-income-sources                         controllers.manageBusinesses.manage.ManageIncomeSourceController.show(isAgent: Boolean = false)
-GET          /agents/manage-your-businesses/manage/view-and-manage-income-sources                  controllers.manageBusinesses.manage.ManageIncomeSourceController.show(isAgent: Boolean = true)
-
 GET          /manage-your-businesses/manage/confirm-you-want-to-report                             controllers.manageBusinesses.manage.ConfirmReportingMethodSharedController.show(taxYear: String, changeTo: String, incomeSourceType: IncomeSourceType = SelfEmployment)
 GET          /agents/manage-your-businesses/manage/confirm-you-want-to-report                      controllers.manageBusinesses.manage.ConfirmReportingMethodSharedController.showAgent(taxYear: String, changeTo: String, incomeSourceType:IncomeSourceType = SelfEmployment)
 GET          /manage-your-businesses/manage/confirm-you-want-to-report-uk-property                 controllers.manageBusinesses.manage.ConfirmReportingMethodSharedController.show(taxYear: String, changeTo: String, incomeSourceType: IncomeSourceType = UkProperty)

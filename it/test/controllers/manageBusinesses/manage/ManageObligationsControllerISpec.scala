@@ -185,10 +185,16 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
               val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
-              result should have(
-                httpStatus(SEE_OTHER),
-                redirectURI(routes.ManageIncomeSourceController.show(mtdUserRole != MTDIndividual).url)
-              )
+              if(mtdUserRole != MTDIndividual)
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url)
+                )
+              else
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
+                )
             }
           }
           testAuthFailures(path, mtdUserRole, optBody = Some(Map.empty))
