@@ -2229,25 +2229,38 @@ manageBusinesses.type-of-property.uk                                     = UK pr
 manageBusinesses.type-of-property.foreign                                = Foreign property business
 manageBusinesses.type-of-property.error                                  = Select an option
 
-# manage income sources reporting method
-manageBusinesses.manage.propertyReportingMethod.heading.annual                  = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
-manageBusinesses.manage.propertyReportingMethod.heading.quarterly               = Signing up to Making Tax Digital for Income Tax for the {0} to {1} tax year
-manageBusinesses.manage.propertyReportingMethod.description.annual              = This will mean you no longer need to submit quarterly updates through compatible software for this income source.
-manageBusinesses.manage.propertyReportingMethod.inset.annual                    = If for this tax year you have already submitted to HMRC any quarterly updates for this new business, you will need to resubmit this information in your tax return.
-manageBusinesses.manage.propertyReportingMethod.description.quarterly.CYplus    = This will mean you need to submit quarterly updates through compatible software for this income source.
-manageBusinesses.manage.propertyReportingMethod.ul.description                  = This will mean you:
-manageBusinesses.manage.propertyReportingMethod.ul.el1                          = need to submit quarterly updates for this income source
-manageBusinesses.manage.propertyReportingMethod.ul.el2                          = could have at least one quarterly update overdue
-manageBusinesses.manage.propertyReportingMethod.inset.quarterly                 = If for this tax year you have already submitted to HMRC a quarterly update for this new business, you will need to resubmit this information in your next quarterly update.
-manageBusinesses.manage.propertyReportingMethod.form.heading                    = Do you want to sign up for the {0} to {1} tax year?
-manageBusinesses.manage.propertyReportingMethod.form.error.annual               = Select yes if you want to opt this new business out of Making Tax Digital for Income Tax
-manageBusinesses.manage.propertyReportingMethod.form.error.quarterly            = Select yes if you want to sign this new business up to Making Tax Digital for Income Tax
+# manage income sources reporting method (new - content FS R17 enabled)
+manageBusinesses.manage.propertyReportingMethod.new.heading.annual                  = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
+manageBusinesses.manage.propertyReportingMethod.new.heading.quarterly               = Signing up to Making Tax Digital for Income Tax for the {0} to {1} tax year
+manageBusinesses.manage.propertyReportingMethod.new.description.annual              = This will mean you no longer need to submit quarterly updates through compatible software for this income source.
+manageBusinesses.manage.propertyReportingMethod.new.inset.annual                    = If for this tax year you have already submitted to HMRC any quarterly updates for this new business, you will need to resubmit this information in your tax return.
+manageBusinesses.manage.propertyReportingMethod.new.description.quarterly.CYplus    = This will mean you need to submit quarterly updates through compatible software for this income source.
+manageBusinesses.manage.propertyReportingMethod.new.ul.description                  = This will mean you:
+manageBusinesses.manage.propertyReportingMethod.new.ul.el1                          = need to submit quarterly updates for this income source
+manageBusinesses.manage.propertyReportingMethod.new.ul.el2                          = could have at least one quarterly update overdue
+manageBusinesses.manage.propertyReportingMethod.new.inset.quarterly                 = If for this tax year you have already submitted to HMRC a quarterly update for this new business, you will need to resubmit this information in your next quarterly update.
+manageBusinesses.manage.propertyReportingMethod.new.form.heading                    = Do you want to sign up for the {0} to {1} tax year?
+manageBusinesses.manage.propertyReportingMethod.new.form.error.annual               = Select yes if you want to opt this new business out of Making Tax Digital for Income Tax
+manageBusinesses.manage.propertyReportingMethod.new.form.error.quarterly            = Select yes if you want to sign this new business up to Making Tax Digital for Income Tax
 
-manageBusinesses.manage.propertyReportingMethod.subHeading.UkProperty           = UK property
-manageBusinesses.manage.propertyReportingMethod.subHeading.ForeignProperty      = Foreign property
-manageBusinesses.manage.propertyReportingMethod.subHeading.SelfEmployment       = Sole trader
-manageBusinesses.manage.propertyReportingMethod.description.quarterly           = Changing to quarterly reporting will mean you need to submit your quarterly updates through compatible software.
-manageBusinesses.manage.propertyReportingMethod.confirm                         = Confirm and save
+manageBusinesses.manage.propertyReportingMethod.new.subHeading.UkProperty           = UK property
+manageBusinesses.manage.propertyReportingMethod.new.subHeading.ForeignProperty      = Foreign property
+manageBusinesses.manage.propertyReportingMethod.new.subHeading.SelfEmployment       = Sole trader
+manageBusinesses.manage.propertyReportingMethod.new.description.quarterly           = Changing to quarterly reporting will mean you need to submit your quarterly updates through compatible software.
+manageBusinesses.manage.propertyReportingMethod.new.confirm                         = Confirm and save
+
+
+# manage income sources reporting method (old - content FS R17 disabled)
+manageBusinesses.manage.propertyReportingMethod.heading.annual             = Change to annual reporting for {0} to {1} tax year
+manageBusinesses.manage.propertyReportingMethod.heading.quarterly          = Change to quarterly reporting for {0} to {1} tax year
+manageBusinesses.manage.propertyReportingMethod.subHeading.UkProperty      = UK property
+manageBusinesses.manage.propertyReportingMethod.subHeading.ForeignProperty = Foreign property
+manageBusinesses.manage.propertyReportingMethod.subHeading.SelfEmployment  = Sole trader
+manageBusinesses.manage.propertyReportingMethod.description.annual         = If you change to annual reporting, you can submit your tax return through your HMRC online account or compatible software.
+manageBusinesses.manage.propertyReportingMethod.description.quarterly      = Changing to quarterly reporting will mean you need to submit your quarterly updates through compatible software.
+manageBusinesses.manage.propertyReportingMethod.inset.quarterly            = If you have submitted any income and expenses for this tax year to HMRC, this will be deleted from our records. So make sure you keep hold of this information because you will need to include it in your quarterly updates.
+manageBusinesses.manage.propertyReportingMethod.confirm                    = Confirm and save
+
 
 
 # credits

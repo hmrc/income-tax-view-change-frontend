@@ -43,13 +43,19 @@
     newReportingMethod: String,
     isCurrentTaxYear: Boolean,
     incomeSourceType: IncomeSourceType,
-    form: Form[_]
+    form: Form[_],
+    optInOutContentFSEnabled: Boolean
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
-@prefix = @{ "manageBusinesses.manage.propertyReportingMethod" }
+@prefixOld = @{ "manageBusinesses.manage.propertyReportingMethod" }
+@prefixNew = @{ "manageBusinesses.manage.propertyReportingMethod.new" }
 
 @getMessage(key: String, args: String*) = @{
-    messages(s"$prefix.$key", args: _*)
+    if(optInOutContentFSEnabled){
+        messages(s"$prefixNew.$key", args: _*)
+    }else{
+        messages(s"$prefixOld.$key", args: _*)
+    }
 }
 
 @mainTemplate(pageTitle = getMessage(s"heading.$newReportingMethod"),
@@ -57,78 +63,102 @@
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
 
-    @errorSummary(form)
 
-    @hmrcPageHeading(PageHeading(
-        text = getMessage(s"heading.$newReportingMethod", taxYearStartYear, taxYearEndYear),
-        headingClasses = Some("govuk-heading-l"),
-        section = Some(getMessage(s"subHeading.$incomeSourceType")),
-        captionClasses = Some("govuk-caption-l")
-    ))
+    @if(optInOutContentFSEnabled) {
 
+        @errorSummary(form)
 
-    @if(newReportingMethod == "quarterly") {
-        @if(isCurrentTaxYear) {
-            @p(id = Some("change-reporting-method-ul-description")) {
-                @getMessage("ul.description")
-            }
-            <ul id="change-reporting-method-ul" class="govuk-list govuk-list--bullet">
-                <li id="change-reporting-method-ul-li1">@getMessage("ul.el1")</li>
-                <li id="change-reporting-method-ul-li2">@getMessage("ul.el2")</li>
-            </ul>
-            @govukInsetText(InsetText(
-                id = Some("change-reporting-method-inset"),
-                content = HtmlContent(messages("manageBusinesses.manage.propertyReportingMethod.inset.quarterly"))
-            ))
-        }
-        @if(!isCurrentTaxYear) {
-            @p(id = Some("change-reporting-method-description-quarterly-CYplus")) {
-                @getMessage("description.quarterly.CYplus")
-            }
-        }
-    }
-    @if(newReportingMethod == "annual") {
-        @p(id = Some("change-reporting-method-description-annual")) {@getMessage("description.annual")}
-        @if(isCurrentTaxYear) {
-            @govukInsetText(InsetText(
-                id = Some("change-reporting-method-inset"),
-                content = HtmlContent(messages("manageBusinesses.manage.propertyReportingMethod.inset.annual"))
-            ))
-        }
-    }
-
-
-    @formWithCSRF(action = postAction, Symbol("id") -> "change-reporting-method-form") {
-
-        @govukRadios(Radios(
-            fieldset = Some(Fieldset(
-                legend = Some(Legend(
-                    content = Text(getMessage("form.heading", taxYearStartYear, taxYearEndYear)),
-                    classes = "govuk-fieldset__legend govuk-fieldset__legend--m govuk-radios",
-                    isPageHeading = true
-                ))
-            )),
-            name = "change-reporting-method-check",
-            items = Seq(
-                RadioItem(
-                    id = Some("yes-response"),
-                    content = Text(messages("radioForm.yes")),
-                    value = Some("Yes")
-                ),
-                RadioItem(
-                    id = Some("no-response"),
-                    content = Text(messages("radioForm.no")),
-                    value = Some("No")
-                )
-            ),
-            classes = "govuk-radios--inline",
-            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
-        ).withFormField(form("change-reporting-method-check")))
-
-        @govukButton(Button(
-            content = Text(messages("base.continue")),
-            attributes = Map("id" -> "continue-button")
+        @hmrcPageHeading(PageHeading(
+            text = getMessage(s"heading.$newReportingMethod", taxYearStartYear, taxYearEndYear),
+            headingClasses = Some("govuk-heading-l"),
+            section = Some(getMessage(s"subHeading.$incomeSourceType")),
+            captionClasses = Some("govuk-caption-l")
         ))
-    }
 
+        @if(newReportingMethod == "quarterly") {
+            @if(isCurrentTaxYear) {
+                @p(id = Some("change-reporting-method-ul-description")) {
+                    @getMessage("ul.description")
+                }
+                <ul id="change-reporting-method-ul" class="govuk-list govuk-list--bullet">
+                    <li id="change-reporting-method-ul-li1">@getMessage("ul.el1")</li>
+                    <li id="change-reporting-method-ul-li2">@getMessage("ul.el2")</li>
+                </ul>
+                @govukInsetText(InsetText(
+                    id = Some("change-reporting-method-inset"),
+                    content = HtmlContent(getMessage("inset.quarterly"))
+                ))
+            }
+            @if(!isCurrentTaxYear) {
+                @p(id = Some("change-reporting-method-description-quarterly-CYplus")) {
+                    @getMessage("description.quarterly.CYplus")
+                }
+            }
+        }
+        @if(newReportingMethod == "annual") {
+            @p(id = Some("change-reporting-method-description-annual")) {
+                @getMessage("description.annual")
+            }
+            @if(isCurrentTaxYear) {
+                @govukInsetText(InsetText(
+                    id = Some("change-reporting-method-inset"),
+                    content = HtmlContent(getMessage("inset.annual"))
+                ))
+            }
+        }
+
+        @formWithCSRF(action = postAction, Symbol("id") -> "change-reporting-method-form") {
+
+            @govukRadios(Radios(
+                fieldset = Some(Fieldset(
+                    legend = Some(Legend(
+                        content = Text(getMessage("form.heading", taxYearStartYear, taxYearEndYear)),
+                        classes = "govuk-fieldset__legend govuk-fieldset__legend--m govuk-radios",
+                        isPageHeading = true
+                    ))
+                )),
+                name = "change-reporting-method-check",
+                items = Seq(
+                    RadioItem(
+                        id = Some("yes-response"),
+                        content = Text(messages("radioForm.yes")),
+                        value = Some("Yes")
+                    ),
+                    RadioItem(
+                        id = Some("no-response"),
+                        content = Text(messages("radioForm.no")),
+                        value = Some("No")
+                    )
+                ),
+                classes = "govuk-radios--inline",
+                errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args: _*))))
+            ).withFormField(form("change-reporting-method-check")))
+
+            @govukButton(Button(
+                content = Text(messages("base.continue")),
+                attributes = Map("id" -> "continue-button")
+            ))
+        }
+    }else{
+        @formWithCSRF(action = postAction, Symbol("id") -> s"$prefixOld-form") {
+
+            @hmrcPageHeading(PageHeading(
+                text = getMessage(s"heading.$newReportingMethod", taxYearStartYear, taxYearEndYear),
+                headingClasses = Some("govuk-heading-l"),
+                section = Some(getMessage(s"subHeading.$incomeSourceType")),
+                captionClasses = Some("govuk-caption-l")
+            ))
+
+            @p(id = Some("change-reporting-method-description")){@getMessage(s"description.$newReportingMethod")}
+
+            @if(newReportingMethod == "quarterly") {
+                @govukInsetText(InsetText(id=Some("change-reporting-method-inset"), content = HtmlContent(messages("manageBusinesses.manage.propertyReportingMethod.inset.quarterly"))))
+            }
+
+            @govukButton(Button(
+                content = Text(messages("manageBusinesses.manage.propertyReportingMethod.confirm")),
+                attributes = Map("id" -> "confirm-button")
+            ))
+        }
+    }
 }

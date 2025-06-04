@@ -25,6 +25,7 @@ import enums.IncomeSourceJourney._
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.ReportingMethod
 import forms.incomeSources.manage.ChangeReportingMethodForm
+import models.admin.OptInOptOutContentUpdateR17
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import models.incomeSourceDetails.{LatencyYear, ManageIncomeSourceData, TaxYear, UIJourneySessionData}
@@ -130,7 +131,7 @@ class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActi
                                                    changeTo: String,
                                                    incomeSourceType: IncomeSourceType
                                                   )(implicit user: MtdItUser[_]): Future[Result] = {
-    val (backCall, _) = getRedirectCalls(isAgent, Some(id), incomeSourceType)
+    val (backCall, _) = getRedirectCalls(isAgent, Some(id), incomeSourceType, isEnabled(OptInOptOutContentUpdateR17))
     val journeyType = IncomeSourceJourneyType(Manage, incomeSourceType)
 
     sessionService.getMongo(journeyType).flatMap {
@@ -156,7 +157,8 @@ class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActi
                 postAction = getPostAction(taxYearModel.toString, changeTo, isAgent, incomeSourceType),
                 isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear),
                 incomeSourceType = incomeSourceType,
-                form = form
+                form = form,
+                optInOutContentFSEnabled = isEnabled(OptInOptOutContentUpdateR17)
               )
             )
           )
@@ -181,9 +183,8 @@ class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActi
                                                    changeTo: String,
                                                    incomeSourceType: IncomeSourceType
                                                   )(implicit user: MtdItUser[_]): Future[Result] = {
-    val (backCall, _) = getRedirectCalls(isAgent, id, incomeSourceType)
+    val (backCall, _) = getRedirectCalls(isAgent, id, incomeSourceType, isEnabled(OptInOptOutContentUpdateR17))
     val journeyType = IncomeSourceJourneyType(Manage, incomeSourceType)
-
     sessionService.getMongo(journeyType).flatMap {
       case Right(Some(sessionData)) =>
 
@@ -209,7 +210,8 @@ class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActi
                   postAction = getPostAction(taxYearModel.toString, changeTo, isAgent, incomeSourceType),
                   isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear),
                   incomeSourceType = incomeSourceType,
-                  form = formWithErrors
+                  form = formWithErrors,
+                  optInOutContentFSEnabled = isEnabled(OptInOptOutContentUpdateR17)
                 )
               )
             },
@@ -260,17 +262,23 @@ class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActi
 
     withNewIncomeSourcesFS {
       val incomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, maybeIncomeSourceId.map(m => m.value))
-      val (_, _) = getRedirectCalls(isAgent, incomeSourceId, incomeSourceType)
+      val (_, successCall) = getRedirectCalls(isAgent, incomeSourceId, incomeSourceType, isEnabled(OptInOptOutContentUpdateR17))
 
       (getTaxYearModel(taxYear), getReportingMethod(changeTo)) match {
-        case (Some(taxModel), Some(reportingMethod)) => handleChangeMethodForm(
-          taxYearModel = taxModel,
-          reportingMethod = reportingMethod,
-          id = incomeSourceId,
-          isAgent = isAgent,
-          changeTo = changeTo,
-          incomeSourceType = incomeSourceType
-        )
+        case (Some(taxModel), Some(reportingMethod)) => {
+          if(isEnabled(OptInOptOutContentUpdateR17)) {
+            handleChangeMethodForm(
+              taxYearModel = taxModel,
+              reportingMethod = reportingMethod,
+              id = incomeSourceId,
+              isAgent = isAgent,
+              changeTo = changeTo,
+              incomeSourceType = incomeSourceType
+            )
+          }else{
+            Future.successful (Redirect(successCall))
+          }
+        }
         case (None, _) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse taxYear: $taxYear"))
         case (_, None) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse reporting method: $changeTo"))
       }
@@ -285,10 +293,12 @@ class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActi
 
   private def getRedirectCalls(isAgent: Boolean,
                                incomeSourceId: Option[IncomeSourceId],
-                               incomeSourceType: IncomeSourceType
+                               incomeSourceType: IncomeSourceType,
+                               optInOptOutContentUpdateR17: Boolean
                               ): (Call, Call) = {
 
-    val successCall = routes.ManageObligationsController.show(isAgent, incomeSourceType)
+    val successCall = if(optInOptOutContentUpdateR17) routes.ManageObligationsController.show(isAgent, incomeSourceType)
+      else routes.CheckYourAnswersController.show(isAgent, incomeSourceType)
 
     val backCallId = if (incomeSourceType == SelfEmployment) incomeSourceId.map(v => v.value) else None
     val backCall = routes.ManageIncomeSourceDetailsController.show(isAgent, incomeSourceType, backCallId)
