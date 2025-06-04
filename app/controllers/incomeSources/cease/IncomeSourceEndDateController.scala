@@ -22,7 +22,6 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import enums.IncomeSourceJourney.{IncomeSourceType, InitialPage, SelfEmployment}
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import forms.incomeSources.cease.CeaseIncomeSourceEndDateFormProvider
-import models.admin.IncomeSourcesFs
 import models.core.IncomeSourceIdHash.mkFromQueryString
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import models.incomeSourceDetails.CeaseIncomeSourceData

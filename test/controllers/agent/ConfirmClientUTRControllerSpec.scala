@@ -30,7 +30,7 @@ import play.api
 import play.api.Application
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.{testArn, testCredId, testMandationStatusOn, testMtditid, testNino, testSaUtr}
+import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
 import views.html.agent.confirmClient
 

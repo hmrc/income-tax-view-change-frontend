@@ -329,7 +329,10 @@ class ManageObligationsControllerSpec extends MockAuthActions
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           val result = action(fakeRequest)
-          redirectLocation(result) shouldBe Some(controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(isAgent).url)
+          if(isAgent)
+            redirectLocation(result) shouldBe Some(controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url)
+          else
+            redirectLocation(result) shouldBe Some(controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
         }
       }
       testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)

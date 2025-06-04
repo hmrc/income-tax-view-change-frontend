@@ -17,7 +17,7 @@
 package models.sessionData
 
 import controllers.agent.sessionUtils.SessionKeys
-import testConstants.BaseTestConstants.{testFirstName, testMandationStatusOn, testMtditid, testNino, testSaUtr, testSecondName}
+import testConstants.BaseTestConstants.{testFirstName, testMtditid, testNino, testSaUtr, testSecondName}
 import testUtils.UnitSpec
 
 class SessionCookieDataSpec extends UnitSpec {
