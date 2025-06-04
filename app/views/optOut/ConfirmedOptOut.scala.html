@@ -100,7 +100,10 @@
 @revisedDeadlinesBlock = {
     <div id="revised-deadlines" class="govuk-!-margin-bottom-7 govuk-!-margin-top-8">
         @h2(msg = "optout.confirmedOptOut.yourRevisedDeadlines.h2", optId = Some("revised-deadlines-heading"))
-        <p id="revised-deadlines-p1" class="govuk-body">@Html(messages("optout.confirmedOptOut.yourRevisedDeadlines.desc1", viewModel.startYear, viewModel.endYear, viewModel.nextYear))</p>
+@*        <p id="revised-deadlines-p1" class="govuk-body">@Html(messages("optout.confirmedOptOut.yourRevisedDeadlines.desc1", viewModel.startYear, viewModel.endYear, viewModel.nextYear))</p>*@
+        @p(id = Some("revised-deadlines-p1")){
+            @Html(messages("optout.confirmedOptOut.yourRevisedDeadlines.desc1", viewModel.startYear, viewModel.endYear, viewModel.nextYear))
+        }
         @p(id = Some("view-upcoming-updates")) {
             @link(
                 id = Some("view-upcoming-updates-link"),
