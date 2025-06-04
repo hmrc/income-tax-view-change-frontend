@@ -131,11 +131,10 @@ btaNavPartial = user.btaNavPartial) {
             )
         )
 
-        <h2 class="govuk-heading-m">
-            @getUniqueMessage("heading")
-        </h2>
-
         @if(showOptInOptOutContentUpdateR17) {
+            <h2 class="govuk-heading-m">
+                @getUniqueMessage("heading")
+            </h2>
 
             @govukInsetText(InsetText(
                 content = Text(getUniqueMessage("inset"))
@@ -165,6 +164,12 @@ btaNavPartial = user.btaNavPartial) {
             }
 
         } else {
+
+            <h2 class="govuk-label-wrapper">
+                <label class="govuk-label govuk-label--l govuk-!-margin-top-8">
+                @getUniqueMessage("heading")
+                </label>
+            </h2>
 
             @if(sources.quarterlyObligationsDates.nonEmpty) {
                 <div class="box-simple" id="quarterly">
