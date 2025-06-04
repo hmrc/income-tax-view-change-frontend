@@ -116,7 +116,7 @@ class ChooseTaxYearController @Inject()(authActions: AuthActions,
           case Right(Some(sessionData)) =>
             val chooseTaxYearForm = form(isEnabled(OptInOptOutContentUpdateR17))
             chooseTaxYearForm
-              .bindFromRequest
+              .bindFromRequest()
               .fold(
                 formWithError => {
                   Future.successful(BadRequest(
