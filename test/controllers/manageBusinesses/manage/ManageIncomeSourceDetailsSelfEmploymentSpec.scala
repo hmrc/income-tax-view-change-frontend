@@ -129,6 +129,36 @@ class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDet
             manageDetailsSummaryKeys.eq(7).text().contains(reportingMethod)
           }
 
+          "valid latency information and two tax years not crystallised and ITSA status for TY2 is Annual" in {
+            enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+            setupMockSuccess(mtdUserRole)
+            setupMockCreateSession(true)
+
+            setupMockGetCurrentTaxYearEnd(2023)
+            setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, false)
+            mockUkPlusForeignPlusSoleTraderWithLatency()
+            setupMockTaxYearNotCrystallised(2023)
+            setupMockTaxYearNotCrystallised(2024)
+
+            setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment)))))
+            setupMockSetSessionKeyMongo(Right(true))
+
+            val result = action(fakeRequest)
+            status(result) shouldBe Status.OK
+            val document: Document = Jsoup.parse(contentAsString(result))
+            document.title shouldBe title(mtdUserRole)
+            getHeading(document) shouldBe heading
+            hasChangeFirstYearReportingMethodLink(document) shouldBe false
+            hasChangeSecondYearReportingMethodLink(document) shouldBe false
+            hasInsetText(document) shouldBe true
+            val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
+            val manageDetailsSummaryKeys = getManageDetailsSummaryKeys(document)
+            manageDetailsSummaryKeys.get(1).text() shouldBe "Address"
+            manageDetailsSummaryValues.get(1).text() shouldBe businessWithLatencyAddress
+            manageDetailsSummaryValues.eq(5).isEmpty
+            manageDetailsSummaryValues.eq(6).isEmpty
+          }
+
           "the user has a valid id parameter, valid latency information and two tax years crystallised" in {
             enable(IncomeSourcesNewJourney, ReportingFrequencyPage)
             setupMockSuccess(mtdUserRole)

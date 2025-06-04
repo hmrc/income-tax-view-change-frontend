@@ -120,7 +120,7 @@ class ManageIncomeSourceDetailsForeignPropertyISpec extends ManageIncomeSourceDe
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
               setupMockGetCurrentTaxYearEnd(2023)
-              setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, false)
+              setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, true)
               setupMockTaxYearNotCrystallised(2023)
               setupMockTaxYearNotCrystallised(2024)
               mockUkPlusForeignPlusSoleTraderWithLatency()
@@ -180,6 +180,32 @@ class ManageIncomeSourceDetailsForeignPropertyISpec extends ManageIncomeSourceDe
               val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
               manageDetailsSummaryValues.get(2).text() shouldBe annuallyGracePeriod
               manageDetailsSummaryValues.get(3).text() shouldBe annuallyGracePeriod
+            }
+
+            "valid latency information and two tax years not crystallised and ITSA status for TY2 is Annual" in {
+              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+              setupMockSuccess(mtdUserRole)
+              setupMockCreateSession(true)
+
+              setupMockGetCurrentTaxYearEnd(2023)
+              setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, false)
+              mockUkPlusForeignPlusSoleTraderWithLatency()
+              setupMockTaxYearNotCrystallised(2023)
+              setupMockTaxYearNotCrystallised(2024)
+
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, ForeignProperty)))))
+
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.OK
+              val document: Document = Jsoup.parse(contentAsString(result))
+              document.title shouldBe title(mtdUserRole)
+              getHeading(document) shouldBe heading
+              hasChangeFirstYearReportingMethodLink(document) shouldBe false
+              hasChangeSecondYearReportingMethodLink(document) shouldBe false
+              hasInsetText(document) shouldBe true
+              val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
+              manageDetailsSummaryValues.eq(2).size() shouldBe 0
+              manageDetailsSummaryValues.eq(3).size() shouldBe 0
             }
 
             "the user has a valid id parameter, valid latency information and two tax years crystallised" in {
