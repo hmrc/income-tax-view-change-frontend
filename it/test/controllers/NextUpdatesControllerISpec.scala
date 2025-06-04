@@ -21,7 +21,7 @@ import auth.MtdItUser
 import enums.MTDIndividual
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks._
-import models.admin.OptOutFs
+import models.admin.{OptOutFs, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.obligations.ObligationsModel
@@ -268,7 +268,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
     "one year opt-out scenarios" when {
 
       "show opt-out message if the user has Previous Year as Voluntary, Current Year as NoStatus, Next Year as NoStatus" in {
+
         enable(OptOutFs)
+        enable(ReportingFrequencyPage)
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
@@ -293,13 +295,16 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         Then("the quarterly updates info sections")
         res should have(
-          elementTextBySelector("#what-the-user-can-do")(expectedValue = "You are currently reporting quarterly on a voluntary basis for the 2021 to 2022 tax year. You can choose to opt out of quarterly updates and report annually instead.")
+          elementTextBySelector("#what-the-user-can-do")(expectedValue = "Depending on your circumstances, you may be able to view and change your reporting obligations.")
         )
 
       }
 
       "show multi year opt-out message if the user has Previous Year as Voluntary, Current Year as Voluntary, Next Year as Voluntary" in {
+
         enable(OptOutFs)
+        enable(ReportingFrequencyPage)
+
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
@@ -325,7 +330,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         Then("the quarterly updates info sections")
         res should have(
-          elementTextBySelector("#what-the-user-can-do")(expectedValue = "You are currently reporting quarterly on a voluntary basis. You can choose to opt out of quarterly updates and report annually instead.")
+          elementTextBySelector("#what-the-user-can-do")(expectedValue = "Depending on your circumstances, you may be able to view and change your reporting obligations.")
         )
       }
     }

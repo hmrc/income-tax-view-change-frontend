@@ -49,7 +49,6 @@ object SessionCookieData {
       utr,
       cd.firstName,
       cd.lastName,
-      isSupportingAgent
-    )
+      isSupportingAgent)
   }
 }
