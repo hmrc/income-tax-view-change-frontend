@@ -423,7 +423,7 @@
                 )
                 ++ (getQuarterlyType)
                 ++(
-                    if (viewModel.latencyDetails.isDefined) {
+                    if (viewModel.shouldShowTaxYears) {
                         if (showOptInOptOutContentUpdateR17) {
                             getMTDUsageRows
                         } else {
