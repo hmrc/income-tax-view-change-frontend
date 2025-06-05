@@ -21,12 +21,11 @@ import enums.IncomeSourceJourney.SelfEmployment.{reportingMethodChangeErrorPrefi
 import enums.IncomeSourceJourney.UkProperty.{reportingMethodChangeErrorPrefix => ukFormError}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
-import forms.incomeSources.manage.ConfirmReportingMethodForm
+import enums.{MTDIndividual, MTDUserRole}
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.{IncomeSourcesNewJourney, OptInOptOutContentUpdateR17, OptOutFs}
+import models.admin.{IncomeSourcesNewJourney, OptInOptOutContentUpdateR17}
 import play.api
 import play.api.Application
 import play.api.http.Status
@@ -35,7 +34,6 @@ import play.api.mvc.{Action, AnyContent, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.{DateService, SessionService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData}
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import scala.concurrent.Future
 

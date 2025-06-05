@@ -22,15 +22,14 @@ import enums.IncomeSourceJourney.ForeignProperty.{reportingMethodChangeErrorPref
 import enums.IncomeSourceJourney.SelfEmployment.{reportingMethodChangeErrorPrefix => seFormError}
 import enums.IncomeSourceJourney.UkProperty.{reportingMethodChangeErrorPrefix => ukFormError}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import forms.incomeSources.manage.{ChangeReportingMethodForm, ConfirmReportingMethodForm}
-import models.admin.OptInOptOutContentUpdateR17
+import forms.incomeSources.manage.ConfirmReportingMethodForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.{Form, FormError}
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.{calendarYear2018, testSelfEmploymentId}
+import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPlusForeignPropertyWithSoleTraderIncomeSource
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
