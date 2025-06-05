@@ -25,6 +25,8 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
+import org.scalatest.Assertion
 import play.api.data.{Form, FormError}
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
@@ -91,6 +93,8 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     val pageUl1 = "need to submit quarterly updates for this income source"
     val pageUl2 = "could have at least one quarterly update overdue"
     val pageInsetQuarterly = "If for this tax year you have already submitted to HMRC a quarterly update for this new business, you will need to resubmit this information in your next quarterly update."
+    val pageFormHeadingSignUp = s"Do you want to sign up for the ${taxYearSet._1} to ${taxYearSet._2} tax year?"
+    val pageFormHeadingOptOut = s"Do you want to opt out of the ${taxYearSet._1} to ${taxYearSet._2} tax year?"
     val pageContinue = "Continue"
 
 
@@ -132,51 +136,53 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
 
     s"ConfirmReportingMethodView (new content - R17 content feature switch enabled) - $incomeSourceType - $mtdRole - $reportingMethod" should {
       "render the heading" in new Setup(
-        isAgent = isAgent,
-        incomeSourceType = incomeSourceType,
+        isAgent,
+        incomeSourceType,
         reportingMethod,
         isCYPlus = false,
-        true
+        contentFeatureSwitchEnabled = true
       ) {
         document.getElementsByClass("govuk-heading-l").first().text() shouldBe getPageHeadingFor(reportingMethod = reportingMethod, CYPlus = false)
       }
 
       "render the back link with the correct URL" in new Setup(
-        isAgent = isAgent,
-        incomeSourceType = incomeSourceType,
-        reportingMethod, isCYPlus = false,
-        true
+        isAgent,
+        incomeSourceType,
+        reportingMethod,
+        isCYPlus = false,
+        contentFeatureSwitchEnabled = true
       ) {
         document.getElementById("back-fallback").text() shouldBe "Back"
         document.getElementById("back-fallback").attr("href") shouldBe controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = isAgent, incomeSourceType, selfEmploymentId).url
       }
 
       "render the sub-heading" in new Setup(
-        isAgent = isAgent,
-        incomeSourceType = incomeSourceType,
+        isAgent,
+        incomeSourceType,
         reportingMethod,
         isCYPlus = false,
-        true
+        contentFeatureSwitchEnabled = true
       ) {
         document.getElementsByClass("govuk-caption-l").first().text().contains(pageSubHeading) shouldBe true
       }
 
       "render the continue button" in new Setup(
-        isAgent = isAgent,
-        incomeSourceType = incomeSourceType,
+        isAgent,
+        incomeSourceType,
         reportingMethod,
         isCYPlus = false,
-        true
+        contentFeatureSwitchEnabled = true
       ) {
         document.getElementById("continue-button").text() shouldBe pageContinue
       }
 
       "render the CY quarterly content if user is switching to quarterly else render the annual content" in
-        new Setup(isAgent = isAgent,
-          incomeSourceType = incomeSourceType,
+        new Setup(
+          isAgent,
+          incomeSourceType,
           reportingMethod,
           isCYPlus = false,
-          true
+          contentFeatureSwitchEnabled = true
         ) {
         if (reportingMethod == "quarterly") {
           document.getElementById("change-reporting-method-ul-description").text() shouldBe pageUlDescription
@@ -198,11 +204,12 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       }
 
       "render the CY+1 quarterly content if user is switching to quarterly else render the annual content" in
-        new Setup(isAgent = isAgent,
-          incomeSourceType = incomeSourceType,
+        new Setup(
+          isAgent,
+          incomeSourceType,
           reportingMethod,
           isCYPlus = true,
-          true
+          contentFeatureSwitchEnabled = true
         ) {
           if (reportingMethod == "quarterly") {
             document.getElementById("change-reporting-method-description-quarterly-CYplus").text() shouldBe pageDescriptionQuarterly
@@ -216,6 +223,20 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
             Option(document.getElementById("change-reporting-method-ul-description")).isEmpty shouldBe true
             Option(document.getElementById("change-reporting-method-ul-li1")).isEmpty shouldBe true
             Option(document.getElementById("change-reporting-method-ul-li2")).isEmpty shouldBe true
+          }
+        }
+      "render the correct form heading" in
+        new Setup(
+          isAgent = isAgent,
+          incomeSourceType,
+          reportingMethod,
+          isCYPlus = true,
+          true
+        ) {
+          if(reportingMethod == "quarterly") {
+            document.getElementsByClass("govuk-fieldset__heading").select("h1").text() shouldBe pageFormHeadingSignUp
+          }else{
+            document.getElementsByClass("govuk-fieldset__heading").select("h1").text() shouldBe pageFormHeadingOptOut
           }
         }
     }

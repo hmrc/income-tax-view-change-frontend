@@ -2239,7 +2239,8 @@ manageBusinesses.manage.propertyReportingMethod.new.ul.description              
 manageBusinesses.manage.propertyReportingMethod.new.ul.el1                          = need to submit quarterly updates for this income source
 manageBusinesses.manage.propertyReportingMethod.new.ul.el2                          = could have at least one quarterly update overdue
 manageBusinesses.manage.propertyReportingMethod.new.inset.quarterly                 = If for this tax year you have already submitted to HMRC a quarterly update for this new business, you will need to resubmit this information in your next quarterly update.
-manageBusinesses.manage.propertyReportingMethod.new.form.heading                    = Do you want to sign up for the {0} to {1} tax year?
+manageBusinesses.manage.propertyReportingMethod.new.form.heading.signUp             = Do you want to sign up for the {0} to {1} tax year?
+manageBusinesses.manage.propertyReportingMethod.new.form.heading.optOut             = Do you want to opt out of the {0} to {1} tax year?
 manageBusinesses.manage.propertyReportingMethod.new.form.error.annual               = Select yes if you want to opt this new business out of Making Tax Digital for Income Tax
 manageBusinesses.manage.propertyReportingMethod.new.form.error.quarterly            = Select yes if you want to sign this new business up to Making Tax Digital for Income Tax
 

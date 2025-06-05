@@ -22,6 +22,8 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import enums.IncomeSourceJourney.IncomeSourceType
+@import views.viewmodels.govuk.all.ErrorSummaryViewModel
+
 
 @this(mainTemplate: unifiedLayout,
     govukButton: GovukButton,
@@ -31,7 +33,7 @@
     p: p,
     govukInsetText: GovukInsetText,
     govukRadios : GovukRadios,
-    errorSummary: ErrorSummary
+    govukErrorSummary: GovukErrorSummary
 )
 
 @(
@@ -57,6 +59,13 @@
         messages(s"$prefixOld.$key", args: _*)
     }
 }
+@getNewFormHeading = @{
+    if(newReportingMethod == "quarterly"){
+        getMessage("form.heading.signUp", taxYearStartYear, taxYearEndYear)
+    }else{
+        getMessage("form.heading.optOut", taxYearStartYear, taxYearEndYear)
+    }
+}
 
 @mainTemplate(pageTitle = getMessage(s"heading.$newReportingMethod"),
     backUrl = Some(backUrl),
@@ -66,7 +75,9 @@
 
     @if(optInOutContentFSEnabled) {
 
-        @errorSummary(form)
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form, mapping = Map("change-reporting-method-check" -> "yes-response")))
+        }
 
         @hmrcPageHeading(PageHeading(
             text = getMessage(s"heading.$newReportingMethod", taxYearStartYear, taxYearEndYear),
@@ -112,7 +123,7 @@
             @govukRadios(Radios(
                 fieldset = Some(Fieldset(
                     legend = Some(Legend(
-                        content = Text(getMessage("form.heading", taxYearStartYear, taxYearEndYear)),
+                        content = Text(getNewFormHeading),
                         classes = "govuk-fieldset__legend govuk-fieldset__legend--m govuk-radios",
                         isPageHeading = true
                     ))
