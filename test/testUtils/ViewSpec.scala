@@ -43,6 +43,10 @@ trait ViewSpec extends TestSupport {
     def findElementById(id: String): Option[Element] = {
       Option(document.getElementById(id))
     }
+
+    def paragraphText: String = document.select("p").text()
+    def panelText: String = document.getElementsByClass("govuk-panel").text()
+    def firstH2Text: String = layoutContent.getElementsByTag("h2").first().text()
   }
 
   object Selectors {
