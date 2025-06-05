@@ -14,12 +14,12 @@
  * limitations under the License.
  *@
 
-@import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
-@import exceptions.MissingFieldException
 @import models.financialDetails.FullyCollected
 @import models.financialDetails.Accepted
+@import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import views.html.components.p
 
-@this()
+@this(p: p)
 
 @(
     chargeItem: models.financialDetails.ChargeItem,
@@ -28,20 +28,20 @@
     latePaymentInterestCharge: Boolean
 )(implicit messages: Messages)
 
-<p id="paymentAmount" class="govuk-body govuk-!-margin-bottom-1 govuk-!-margin-top-5">
+@p(id = Some("paymentAmount"), classes = "govuk-body govuk-!-margin-bottom-1 govuk-!-margin-top-5"){
     <strong class="govuk-body govuk-!-font-weight-bold govuk-!-margin-right-8">
         @messages("chargeSummary.paymentAmountCodingOut")
     </strong>
     @{
         chargeItem.originalAmount.toCurrency
     }
-</p>
+}
 
-<p id = "codingOutRemainingToPay" class="govuk-body govuk-!-margin-bottom-6" style="color:#505a5f;">
+@p(id = Some("codingOutRemainingToPay"), classes = "govuk-body govuk-!-margin-bottom-6"){
     @{
         if (chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)) {
             messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut)
         } else if (latePaymentInterestCharge) chargeItem.interestRemainingToPay.toCurrency
         else chargeItem.remainingToPay.toCurrency
     }
-</p>
+}

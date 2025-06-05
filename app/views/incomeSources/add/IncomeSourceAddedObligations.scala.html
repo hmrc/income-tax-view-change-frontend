@@ -164,16 +164,16 @@
         @if(sources.showPrevTaxYears) {
             <div class="box-simple" id="prevYears">
                 <div class="page_headers govuk-heading-m"> @getMessage("previous.tax.years.heading") </div>
-                <p class="govuk-body">
-                @{
-                    val head = getMessage("previous.tax.years.t1")
-                    val to = getMessage("to")
-                    val fromYear = sources.currentTaxYear - 1
-                    val toYear = sources.currentTaxYear
+                @p(){
+                    @{
+                        val head = getMessage("previous.tax.years.t1")
+                        val to = getMessage("to")
+                        val fromYear = sources.currentTaxYear - 1
+                        val toYear = sources.currentTaxYear
 
-                    s"""$head $fromYear $to $toYear."""
+                        s"""$head $fromYear $to $toYear."""
+                    }
                 }
-                </p>
             </div>
         }
 

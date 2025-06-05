@@ -105,6 +105,26 @@
     }
 }
 
+@insetTextContentFirstAttempt = {
+    @h2(getMessage("insetText.h2"), classes = "govuk-heading-s")
+    @p(){
+        @getMessage("insetText.firstAttempt.para1")
+    }
+    @p(){
+        @getMessage("insetText.firstAttempt.para2")
+    }
+}
+
+@insetTextContentSecondAttempt = {
+    @h2(getMessage("insetText.h2"), classes = "govuk-heading-s")
+    @p(){
+        @getMessage("insetText.secondAttempt.para1")
+    }
+    @p(){
+        @getMessage("insetText.secondAttempt.para2")
+    }
+}
+
 
 @mainTemplate(pageTitle = getMessage("heading"),
     backUrl = Some("/"),
@@ -166,20 +186,12 @@
     @if(viewModel.partiallyPaidAndNotAdjusted) {
         @govukInsetText(InsetText(
             id = Some("insetText-firstAttempt"),
-            content = HtmlContent(s"""
-                    |<h2 class=govuk-heading-s>${getMessage("insetText.h2")}</h2>
-                    |<p class=govuk-body>${getMessage("insetText.firstAttempt.para1")}</p>
-                    |<p class=govuk-body>${getMessage("insetText.firstAttempt.para2")}</p>
-                    |""".stripMargin)
+            content = HtmlContent(insetTextContentFirstAttempt)
         ))
     } else { @if(viewModel.partiallyPaidAndPreviouslyAdjusted) {
         @govukInsetText(InsetText(
             id = Some("insetText-secondAttempt"),
-            content = HtmlContent(s"""
-                    |<h2 class=govuk-heading-s>${getMessage("insetText.h2")}</h2>
-                    |<p class=govuk-body>${getMessage("insetText.secondAttempt.para1")}</p>
-                    |<p class=govuk-body>${getMessage("insetText.secondAttempt.para2")}</p>
-                    |""".stripMargin)
+            content = HtmlContent(insetTextContentSecondAttempt)
         ))
     }}
 

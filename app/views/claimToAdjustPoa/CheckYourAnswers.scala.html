@@ -24,6 +24,7 @@
 @import models.claimToAdjustPoa.SelectYourReason
 @import models.claimToAdjustPoa.Increase
 @import views.html.components.link
+@import views.html.components.p
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 
 @this(
@@ -31,6 +32,7 @@
         mainTemplate: unifiedLayout,
         hmrcPageHeading: HmrcPageHeading,
         link: link,
+        p: p,
         govukSummaryList : GovukSummaryList,
         formWithCSRF: FormWithCSRF
 )
@@ -76,6 +78,16 @@
     }
 }
 
+@content = {
+        @p(){
+            @getMessage("summary-list-1.value", adjustedFirstPoaAmount.toCurrencyString)
+        }
+
+        @p(){
+            @getMessage("summary-list-2.value", adjustedSecondPoaAmount.toCurrencyString)
+        }
+    }
+
 @mainTemplate(
     pageTitle = getMessage("heading"),
     backUrl = Some("/"),
@@ -109,11 +121,7 @@
         } ++ Seq(
             SummaryListRow(
                 key = Key(Text(getMessage("summary-list-2.key"))),
-                value = Value(HtmlContent(s"""
-                    |<p class=govuk-body>${getMessage("summary-list-1.value", adjustedFirstPoaAmount.toCurrencyString)}</p>
-                    |<p class=govuk-body>${getMessage("summary-list-2.value", adjustedSecondPoaAmount.toCurrencyString)}</p>
-                    |""".stripMargin
-                )),
+                value = Value(HtmlContent(content)),
                 actions = Some(Actions(
                     items = Seq(ActionItem(
                         href = changePoaAmountUrl,
