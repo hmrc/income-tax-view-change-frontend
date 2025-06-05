@@ -571,7 +571,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                     propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
                   IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
                     testValidFinancialDetailsModelJsonCodingOut(2000, 2000, testTaxYear.toString,
-                      testDate.toString, 0, (testTaxYear - 1).toString, amountCodedOut = 43.21))
+                      testDate.toString, 0, (testTaxYear - 1).toString, totalLiabilityAmount = 43.21))
                   IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                     "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 

@@ -914,10 +914,11 @@ object IncomeSourceIntegrationTestConstants {
   def testValidFinancialDetailsModelJsonCodingOut(originalAmount: BigDecimal, outstandingAmount: BigDecimal,
                                                   taxYear: String = "2018", dueDate: String = "2018-04-14",
                                                   latePaymentInterestAmount: BigDecimal = 0,
-                                                  payeSaTaxYear: String = "2018", amountCodedOut: BigDecimal = 0): JsValue = Json.obj(
+                                                  payeSaTaxYear: String = "2018", totalLiabilityAmount: BigDecimal = 0): JsValue = Json.obj(
     "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
     "codingDetails" -> Json.arr(Json.obj(
-      "coded" -> Json.arr(Json.obj("amount" -> amountCodedOut, "initiationDate" -> s"$payeSaTaxYear-04-20"))
+      "totalLiabilityAmount" -> totalLiabilityAmount,
+      "taxYearReturn" -> taxYear
     )),
     "documentDetails" -> Json.arr(
       Json.obj(
@@ -939,7 +940,7 @@ object IncomeSourceIntegrationTestConstants {
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
-        "amountCodedOut" -> amountCodedOut,
+        "amountCodedOut" -> totalLiabilityAmount,
         "effectiveDateOfPayment" -> dueDate,
         "documentDueDate" -> dueDate
       ),
