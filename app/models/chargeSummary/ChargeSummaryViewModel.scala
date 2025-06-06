@@ -41,6 +41,7 @@ case class ChargeSummaryViewModel(
                                    gatewayPage: Option[GatewayPage] = None,
                                    adjustmentHistory: AdjustmentHistoryModel,
                                    poaExtraChargeLink: Option[String] = None,
+                                   sstpJourneyStartUrl: String,
                                    poaOneChargeUrl: String,
                                    poaTwoChargeUrl: String,
                                    LSPUrl: Option[String],
