@@ -624,6 +624,14 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           document.select("#poa-extra-charge-link").attr("href") shouldBe "testLink"
           document.select("#poa-extra-charge-link").text() shouldBe poaExtraChargeTextLink
         }
+
+        "have a link to extra charge if it is a poa with an extra charge and YourSelfAssessmentCharges FS is 'true'" in new TestSetup(
+          chargeItem = basePoaTwoDebit, poaExtraChargeLink = Some("testLink"), yourSelfAssessmentChargesFS = true) {
+          document.select("#poa-extra-charge-content").text() shouldBe s"$poaExtraChargeText1 $poaExtraChargeTextLink $poaExtraChargeText2"
+          document.select("#poa-extra-charge-link").attr("href") shouldBe "testLink"
+          document.select("#poa-extra-charge-link").text() shouldBe poaExtraChargeTextLink
+        }
+
         "not have this extra poa charge content if there is no such charge" in new TestSetup(chargeItem = basePoaTwoDebit) {
           document.doesNotHave(Selectors.id("poa-extra-charge-content"))
         }
