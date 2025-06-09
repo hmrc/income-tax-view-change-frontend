@@ -62,6 +62,7 @@ case class TaxDueSummaryViewModel(
                                    finalDeclarationOrTaxReturnIsSubmitted: Boolean = false,
                                    transitionProfitRow: Option[TransitionProfitRow] = None,
                                    highIncomeChildBenefitCharge: Option[HighIncomeChildBenefitChargeViewModel] = None
+
                                  ) {
 
   def getRateHeaderKey: String = {
@@ -149,6 +150,7 @@ object TaxDueSummaryViewModel {
             hicbc.highIncomeBenefitCharge
           )}
         )
+
       )
       case None => TaxDueSummaryViewModel()
     }
