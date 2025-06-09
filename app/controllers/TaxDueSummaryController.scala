@@ -79,12 +79,10 @@ class TaxDueSummaryController @Inject()(val authActions: AuthActions,
             Logger("application").info("No calculation data returned from downstream. Not Found.")
             itvcErrorHandler.showInternalServerError()
           case (_: LiabilityCalculationError, _) =>
-            Logger("application").error(
-              s"[$taxYear] No new calc deductions data error found. Downstream error")
+            Logger("application").error(s"[$taxYear] No new calc deductions data error found. Downstream error")
             itvcErrorHandler.showInternalServerError()
           case (_, _: ObligationsErrorModel) =>
-            Logger("application").error(
-              s"[$taxYear] Failed to retrieve obligations. Downstream error")
+            Logger("application").error(s"[$taxYear] Failed to retrieve obligations. Downstream error")
             itvcErrorHandler.showInternalServerError()
         }
       }
