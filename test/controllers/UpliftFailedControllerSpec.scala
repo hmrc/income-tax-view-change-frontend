@@ -23,6 +23,7 @@ import org.jsoup.Jsoup
 import play.api.http.{HttpEntity, Status}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
+import testConstants.BaseTestConstants.expectedJourneyId
 import testUtils.TestSupport
 import views.html.errorPages.UpliftFailed
 
@@ -30,7 +31,6 @@ import scala.concurrent.ExecutionContext
 
 class UpliftFailedControllerSpec extends TestSupport with MockAuditingService {
 
-  val expectedJourneyId: String = "testJourneyId"
   val upliftFailureTitle: String = messages("upliftFailure.title")
 
   object TestUpliftFailedController extends UpliftFailedController(

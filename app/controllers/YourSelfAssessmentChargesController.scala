@@ -65,13 +65,13 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
         isEnabled(FilterCodedOutPoas),
         isEnabled(PenaltiesAndAppeals),
         mainChargeIsPaidFilter)
-      selServeTimeToPayStartUrl <- selfServeTimeToPayService.startSelfServeTimeToPayJourney()
+      selfServeTimeToPayStartUrl <- selfServeTimeToPayService.startSelfServeTimeToPayJourney()
       ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
     } yield {
 
-      selServeTimeToPayStartUrl match {
+      selfServeTimeToPayStartUrl match {
         case Left(ex) =>
-          Logger("application").error(s"Unable to retrieve selServeTimeToPayStartUrl: ${ex.getMessage} - ${ex.getCause}")
+          Logger("application").error(s"Unable to retrieve selfServeTimeToPayStartUrl: ${ex.getMessage} - ${ex.getCause}")
           itvcErrorHandler.showInternalServerError()
         case Right(startUrl) =>
           auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
@@ -93,7 +93,7 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
             LPP2Url = appConfig.incomeTaxPenaltiesFrontendCalculation,
             creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
             earliestTaxYearAndAmountByDueDate = earliestTaxYearAndAmount,
-            selServeTimeToPayStartUrl = startUrl,
+            selfServeTimeToPayStartUrl = startUrl,
             claimToAdjustViewModel = ctaViewModel
           )
           Ok(view(
