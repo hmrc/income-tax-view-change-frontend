@@ -19,7 +19,7 @@
 @import exceptions.MissingFieldException
 @import models.homePage.YourBusinessesTileViewModel
 @import models.obligations.NextUpdatesTileViewModel
-@import models.homePage.AccountSettingsTileViewModel
+@import models.homePage.YourReportingObligationsTileViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
 @import views.html.helpers.injected.home._
@@ -36,13 +36,13 @@
     govukWarningText : GovukWarningText,
     updatesTile: UpdatesTile,
     incomeSourcesTile: IncomeSourcesTile,
-    accountSettingsTile: AccountSettingsTile
+    yourReportingObligationsTile: YourReportingObligationsTile
 )
 
 @(
     yourBusinessesTileViewModel: YourBusinessesTileViewModel,
     nextUpdatesTileViewModel: NextUpdatesTileViewModel,
-    accountSettingsTileViewModel: AccountSettingsTileViewModel
+    yourReportingObligationsTileViewModel: YourReportingObligationsTileViewModel
 )(
   	implicit request: Request[_],
 	messages: Messages,
@@ -64,7 +64,7 @@
     </div>
     <div class="grid-row">
         <div class="flex-container govuk-!-padding-0">
-            @accountSettingsTile(accountSettingsTileViewModel, true)
+            @yourReportingObligationsTile(yourReportingObligationsTileViewModel, true)
         </div>
     </div>
 }

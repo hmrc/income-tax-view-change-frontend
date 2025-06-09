@@ -37,17 +37,22 @@ trait MockITSAStatusService extends UnitSpec with BeforeAndAfterEach {
   }
 
   def setupMockGetStatusTillAvailableFutureYears(taxYear: TaxYear)(out: Future[Map[TaxYear, StatusDetail]]): Unit = {
-    when(mockITSAStatusService.getStatusTillAvailableFutureYears(ArgumentMatchers.eq(taxYear))(any(), any(), any()))
+    when(mockITSAStatusService.getStatusTillAvailableFutureYears(ArgumentMatchers.eq(taxYear))(any, any, any))
       .thenReturn(out)
   }
 
   def setupMockHasMandatedOrVoluntaryStatusCurrentYear(response: Boolean): Unit = {
-    when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
+    when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(
+      ArgumentMatchers.any[StatusDetail => Boolean]())(any(), any(), any()))
       .thenReturn(Future.successful(response))
   }
 
+  def setupMockHasMandatedOrVoluntaryStatusCurrentYearDefaultParam(response: Boolean): Unit = {
+    when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(ArgumentMatchers.eq(_.isMandatedOrVoluntary))(any(), any(), any())).thenReturn(Future.successful(response))
+  }
+
   def setupMockHasMandatedOrVoluntaryStatusForLatencyYears(taxYear1Status: Boolean, taxYear2Status: Boolean): Unit = {
-    when(mockITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(any[Option[LatencyDetails]]())(any(), any(), any()))
+    when(mockITSAStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(any[Option[LatencyDetails]])(any(), any(), any()))
       .thenReturn(Future.successful((taxYear1Status, taxYear2Status)))
   }
 

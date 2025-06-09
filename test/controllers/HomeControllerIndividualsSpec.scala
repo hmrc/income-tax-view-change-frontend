@@ -16,6 +16,7 @@
 
 package controllers
 
+import controllers.agent.sessionUtils.SessionKeys
 import models.admin._
 import models.financialDetails._
 import models.itsaStatus.ITSAStatus
@@ -76,9 +77,12 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(financialDetails.flatMap(_.asChargeItems))
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeys.mandationStatus) shouldBe Some("on")
+
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
             document.select("#payments-tile p:nth-child(2)").text shouldBe expectedOverDuePaymentsText
@@ -95,9 +99,11 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockGetFilteredChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
+            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeys.mandationStatus) shouldBe Some("on")
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
             document.select("#payments-tile p:nth-child(2)").text shouldBe expectedOverDuePaymentsText
@@ -135,10 +141,12 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(financialDetails.flatMap(_.asChargeItems))
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeys.mandationStatus) shouldBe Some("on")
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
             document.select("#payments-tile p:nth-child(2)").text shouldBe threeOverduePayments
@@ -181,10 +189,12 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(financialDetails.flatMap(_.asChargeItems).take(3))
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
-
+            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeys.mandationStatus) shouldBe Some("on")
+
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
             document.select("#payments-tile p:nth-child(2)").text shouldBe threeOverduePayments
@@ -218,10 +228,11 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
-
+            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeys.mandationStatus) shouldBe Some("on")
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
             document.select("#accrues-interest-tag").text shouldBe messages("home.payments.daily-interest-charges")
@@ -257,10 +268,12 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeys.mandationStatus) shouldBe Some("on")
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
             document.select("#accrues-interest-tag").text shouldBe ""
@@ -281,10 +294,12 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.OK
+          session(result).get(SessionKeys.mandationStatus) shouldBe Some("on")
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
           document.select("#payments-tile p:nth-child(2)").text shouldBe "No payments due"
@@ -301,10 +316,13 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.OK
+          session(result).get(SessionKeys.mandationStatus) shouldBe Some("on")
+
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
           document.select("#payments-tile p:nth-child(2)").text shouldBe "No payments due"
@@ -326,10 +344,13 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.OK
+          session(result).get(SessionKeys.mandationStatus) shouldBe Some("on")
+
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
           document.select("#payments-tile p:nth-child(2)").text shouldBe "No payments due"
@@ -342,10 +363,13 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           setupNextUpdatesTests(futureDueDates)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
+          setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.OK
+          session(result).get(SessionKeys.mandationStatus) shouldBe Some("on")
+
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
           document.select("#updates-tile p:nth-child(2)").text() shouldBe "1 January 2100"
@@ -355,10 +379,13 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           setupNextUpdatesTests(overdueDueDates)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
+          setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.OK
+          session(result).get(SessionKeys.mandationStatus) shouldBe Some("on")
+
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
           document.select("#updates-tile p:nth-child(2)").text() shouldBe "Overdue 1 January 2018"
@@ -368,10 +395,13 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           setupNextUpdatesTests(Seq())
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
+          setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.OK
+          session(result).get(SessionKeys.mandationStatus) shouldBe Some("on")
+
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
           document.select("#updates-tile").text() shouldBe messages("home.updates.heading")
@@ -387,9 +417,11 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
           status(result) shouldBe Status.OK
+          session(result).get(SessionKeys.mandationStatus) shouldBe Some("on")
 
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
@@ -414,9 +446,12 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeys.mandationStatus) shouldBe Some("on")
+
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
             document.select("#income-sources-tile h2:nth-child(1)").text() shouldBe messages("home.incomeSources.heading")
@@ -445,8 +480,11 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeys.mandationStatus) shouldBe Some("on")
+
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
             document.select("#income-sources-tile h2:nth-child(1)").text() shouldBe messages("home.incomeSources.heading")
@@ -476,8 +514,11 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
           setupMockGetFilteredChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList.chargesList)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
           status(result) shouldBe Status.OK
+          session(result).get(SessionKeys.mandationStatus) shouldBe Some("on")
+
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
           document.select("#income-sources-tile h2:nth-child(1)").text() shouldBe messages("home.incomeSources.newJourneyHeading")
@@ -505,10 +546,12 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
-
+            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeys.mandationStatus) shouldBe Some("on")
+
             val document: Document = Jsoup.parse(contentAsString(result))
             document.getElementById("available-credit").text shouldBe expectedAvailableCreditText("£786.00")
           }
@@ -530,10 +573,12 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
-
+            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeys.mandationStatus) shouldBe Some("on")
+
             val document: Document = Jsoup.parse(contentAsString(result))
             document.getElementById("available-credit").text shouldBe expectedAvailableCreditText("£0.00")
           }
@@ -557,17 +602,19 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
-
+            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeys.mandationStatus) shouldBe Some("on")
+
             val document: Document = Jsoup.parse(contentAsString(result))
             Option(document.getElementById("available-credit")).isDefined shouldBe false
           }
         }
       }
 
-      "render the home page with an Account Settings tile" that {
+      "render the home page with a Reporting Obligations tile" that {
         "states that the user is reporting annually" when {
           "Reporting Frequency FS is enabled and the current ITSA status is annually" in new Setup {
             enable(ReportingFrequencyPage)
@@ -576,6 +623,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             mockGetDueDates(Right(Seq.empty))
+            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             mockSingleBusinessIncomeSource()
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
@@ -583,9 +631,11 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeys.mandationStatus) shouldBe Some("on")
+
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
-            document.select("#account-settings-tile p:nth-child(2)").text() shouldBe ""
+            document.select("#reporting-obligations-tile p:nth-child(2)").text() shouldBe ""
           }
         }
         "states that the user is reporting quarterly" when {
@@ -597,15 +647,18 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
+            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeys.mandationStatus) shouldBe Some("on")
+
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
-            document.select("#account-settings-tile p:nth-child(2)").text() shouldBe ""
+            document.select("#reporting-obligations-tile p:nth-child(2)").text() shouldBe ""
           }
 
           "Reporting Frequency FS is enabled and the current ITSA status is mandated" in new Setup {
@@ -614,6 +667,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Mandated))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
+            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
@@ -622,9 +676,11 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.OK
+            session(result).get(SessionKeys.mandationStatus) shouldBe Some("on")
+
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe homePageTitle
-            document.select("#account-settings-tile p:nth-child(2)").text() shouldBe ""
+            document.select("#reporting-obligations-tile p:nth-child(2)").text() shouldBe ""
           }
         }
       }

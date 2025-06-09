@@ -19,6 +19,7 @@ package controllers.agent
 import audit.models.ConfirmClientDetailsAuditModel
 import controllers.agent.sessionUtils.SessionKeys
 import mocks.auth.MockAuthActions
+import mocks.services.MockITSAStatusService
 import mocks.views.agent.MockConfirmClient
 import models.sessionData.SessionDataModel
 import models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
@@ -34,7 +35,8 @@ import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
 import views.html.agent.confirmClient
 
 class ConfirmClientUTRControllerSpec extends MockAuthActions
-  with MockConfirmClient {
+  with MockConfirmClient
+  with MockITSAStatusService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
@@ -195,6 +197,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions
             setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent)
 
             setupMockPostSessionData(Right(SessionDataPostSuccess(OK)))
+            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
 
             val result = testConfirmClientUTRController.submit()(fakeRequest)
 

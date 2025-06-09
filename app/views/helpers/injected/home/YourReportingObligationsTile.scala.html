@@ -1,0 +1,66 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import java.time.LocalDate
+@import models.homePage.YourReportingObligationsTileViewModel
+@import models.itsaStatus.ITSAStatus
+
+@this(
+    home_tile: home_tile,
+    p: p,
+    bulletList: bulletPointList,
+    link: link
+)
+
+@(yourReportingObligationsTileViewModel: YourReportingObligationsTileViewModel, isAgent: Boolean)(implicit messages: Messages)
+
+@reportingObligationsURL = @{
+    controllers.routes.ReportingFrequencyPageController.show(isAgent).url
+}
+
+@reportingObligationsLink = @{
+    link(
+        link = reportingObligationsURL,
+        messageKey = "home.reportingObligations.link",
+        id = Some("reporting-obligations-link")
+    )
+}
+
+@bulletPoints = @{
+    if(yourReportingObligationsTileViewModel.currentYearITSAStatus == ITSAStatus.Mandated || yourReportingObligationsTileViewModel.currentYearITSAStatus == ITSAStatus.Voluntary) {
+        bulletList(
+                messages("home.reportingObligations.quarterly.bullet1"),
+                messages("home.reportingObligations.quarterly.bullet2")
+        )
+    }
+}
+
+@ITSAText = @{
+    if(yourReportingObligationsTileViewModel.currentYearITSAStatus == ITSAStatus.Annual) {
+        messages("home.reportingObligations.annual.text", yourReportingObligationsTileViewModel.currentTaxYear.startYear.toString, yourReportingObligationsTileViewModel.currentTaxYear.endYear.toString)
+    } else if (yourReportingObligationsTileViewModel.currentYearITSAStatus == ITSAStatus.Voluntary || yourReportingObligationsTileViewModel.currentYearITSAStatus == ITSAStatus.Mandated) {
+        messages("home.reportingObligations.quarterly.text", yourReportingObligationsTileViewModel.currentTaxYear.startYear.toString, yourReportingObligationsTileViewModel.currentTaxYear.endYear.toString)
+    }
+}
+
+@if(yourReportingObligationsTileViewModel.reportingObligationsEnabled) {
+    @home_tile("reporting-obligations-tile", messages("home.reportingObligations.heading")) {
+        @p(id = Some("current-itsa-status")) {@ITSAText}
+        @p(id = Some("reporting-obligations-bullet-points")) {@bulletPoints}
+        @p(classes = "govuk-!-margin-bottom-4") {@reportingObligationsLink}
+    }
+}

@@ -153,6 +153,7 @@ class ManageObligationsController @Inject()(val authActions: AuthActions,
 
 
   def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { _ =>
-    Future.successful(Redirect(controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(isAgent)))
+    if(isAgent) Future.successful(Redirect(controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent()))
+    else Future.successful(Redirect(controllers.manageBusinesses.routes.ManageYourBusinessesController.show()))
   }
 }

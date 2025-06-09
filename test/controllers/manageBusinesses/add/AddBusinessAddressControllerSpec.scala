@@ -22,7 +22,7 @@ import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.admin.IncomeSourcesNewJourney
 import models.core.{CheckMode, NormalMode}
-import models.admin.{AccountingMethodJourney, IncomeSourcesFs}
+import models.admin.AccountingMethodJourney
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, BusinessAddressModel, UIJourneySessionData}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any

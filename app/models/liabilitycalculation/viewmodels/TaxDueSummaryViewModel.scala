@@ -19,7 +19,7 @@ package models.liabilitycalculation.viewmodels
 import exceptions.MissingFieldException
 import models.liabilitycalculation.taxcalculation.{Nic4Bands, TaxBands}
 import models.liabilitycalculation.viewmodels.CalculationSummary.getTaxDue
-import models.liabilitycalculation.{LiabilityCalculationResponse, Messages, ReliefsClaimed, StudentLoan}
+import models.liabilitycalculation._
 import models.obligations.ObligationsModel
 import play.api.Logger
 
@@ -60,7 +60,9 @@ case class TaxDueSummaryViewModel(
                                    totalRoyaltyPaymentsTaxCharged: Option[BigDecimal] = None,
                                    giftAidTaxChargeWhereBasicRateDiffers: Option[BigDecimal] = None,
                                    transitionProfitRow: Option[TransitionProfitRow] = None,
-                                   finalDeclarationOrTaxReturnIsSubmitted: Boolean = false
+                                   finalDeclarationOrTaxReturnIsSubmitted: Boolean = false,
+                                   transitionProfitRow: Option[TransitionProfitRow] = None,
+                                   highIncomeChildBenefitCharge: Option[HighIncomeChildBenefitChargeViewModel] = None
                                  ) {
 
   def getRateHeaderKey: String = {
@@ -137,7 +139,17 @@ object TaxDueSummaryViewModel {
         transitionProfitRow = TransitionProfitRow(
           calc.taxCalculation.flatMap(_.incomeTax.incomeTaxChargedOnTransitionProfits),
           calc.transitionProfit.flatMap(_.totalTaxableTransitionProfit)),
-        finalDeclarationOrTaxReturnIsSubmitted = obligations.isFinalDeclarationOrTaxReturnSubmitted
+        finalDeclarationOrTaxReturnIsSubmitted = obligations.isFinalDeclarationOrTaxReturnSubmitted,
+        highIncomeChildBenefitCharge = calc.highIncomeChildBenefitCharge.map( hicbc=> {
+          HighIncomeChildBenefitChargeViewModel(
+            hicbc.adjustedNetIncome,
+            hicbc.amountOfChildBenefitReceived,
+            hicbc.incomeThreshold,
+            hicbc.childBenefitChargeTaper,
+            hicbc.rate,
+            hicbc.highIncomeBenefitCharge
+          )}
+        )
       )
       case None => TaxDueSummaryViewModel()
     }
