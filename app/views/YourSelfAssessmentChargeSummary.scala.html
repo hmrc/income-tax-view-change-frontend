@@ -115,6 +115,14 @@
     )
   }
 
+    @if(viewModel.poaExtraChargeLink.isDefined){
+        @p(id = Some("poa-extra-charge-content")) {
+            @messages("chargeSummary.extraCharge.text1")
+            @link(id = Some("poa-extra-charge-link"), link = viewModel.poaExtraChargeLink.getOrElse(""), messageKey = "chargeSummary.extraCharge.linkText")
+            @messages("chargeSummary.extraCharge.text2")
+        }
+    }
+
     @if(viewModel.chargeItem.hasAccruingInterest) {
 
         @interestOnYourChargeSection(viewModel.chargeItem)
