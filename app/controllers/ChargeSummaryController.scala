@@ -33,7 +33,7 @@ import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{ChargeHistoryService, DateServiceInterface, FinancialDetailsService, SelfServeTimeToPayService}
+import services.{ChargeHistoryService, DateServiceInterface, FinancialDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -54,7 +54,6 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                         val chargeSummaryView: ChargeSummary,
                                         val yourSelfAssessmentChargeSummary: YourSelfAssessmentChargeSummary,
-                                        val selfServeTimeToPayService: SelfServeTimeToPayService,
                                         val chargeHistoryService: ChargeHistoryService)
                                        (implicit val appConfig: FrontendAppConfig,
                                         dateService: DateServiceInterface,
@@ -146,14 +145,10 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
         .filter(_.messageKeyByTypes.isDefined)
         .flatMap(chargeFinancialDetail => paymentsForAllYears.getAllocationsToCharge(chargeFinancialDetail))
 
-    for {
-      chargeHistoryResponse      <- chargeHistoryService.chargeHistoryResponse(isInterestCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment, chargeReference, isEnabled(ChargeHistory))
-      selfServeTimeToPayResponse <- selfServeTimeToPayService.startSelfServeTimeToPayJourney()
-    } yield (chargeHistoryResponse, selfServeTimeToPayResponse) match {
-      case (Left(_), _)                           => onError("Invalid response from charge history", isAgent, showInternalServerError = true)
-      case (_, Left(ex))                          => onError(ex.getMessage, isAgent, showInternalServerError = true)
-      case (Right(chargeHistory), Right(sstpJourneyStartUrl)) =>
 
+    chargeHistoryService.chargeHistoryResponse(isInterestCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment,
+      chargeReference, isEnabled(ChargeHistory)).map {
+      case Right(chargeHistory) =>
         auditChargeSummary(chargeItem, paymentBreakdown,
           chargeHistory, paymentAllocations, isInterestCharge, isMFADebit, taxYear)
 
@@ -205,7 +200,6 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
           isAgent = isAgent,
           adjustmentHistory = chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail),
           poaExtraChargeLink = checkForPoaExtraChargeLink(chargeDetailsforTaxYear, documentDetailWithDueDate, isAgent),
-          sstpJourneyStartUrl = sstpJourneyStartUrl,
           poaOneChargeUrl = poaOneChargeUrl,
           poaTwoChargeUrl = poaTwoChargeUrl,
           LSPUrl = LSPUrl,
@@ -221,6 +215,8 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
           }
           case Left(ec) => onError(s"Invalid response from charge history: ${ec.message}", isAgent, showInternalServerError = true)
         }
+      case _ =>
+        onError("Invalid response from charge history", isAgent, showInternalServerError = true)
     }
   }
 
