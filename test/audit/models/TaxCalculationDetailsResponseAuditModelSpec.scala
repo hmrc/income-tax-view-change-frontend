@@ -17,6 +17,7 @@
 package audit.models
 
 import authV2.AuthActionsTestData.defaultMTDITUser
+import controllers.constants.IncomeSourceAddedControllerConstants.testObligationsModel
 import forms.IncomeSourcesFormsSpec.commonAuditDetails
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
@@ -34,23 +35,6 @@ class TaxCalculationDetailsResponseAuditModelSpec extends AnyWordSpecLike with M
 
   val transactionName: String = "tax-calculation-response"
   val auditType: String = "TaxCalculationDetailsResponse"
-
-  val testObligationsModel: ObligationsModel = ObligationsModel(Seq(
-    GroupedObligationsModel(
-      identification = "testId",
-      obligations = List(
-        SingleObligationModel(
-          start = getCurrentTaxYearEnd.minusMonths(3),
-          end = getCurrentTaxYearEnd,
-          due = getCurrentTaxYearEnd,
-          obligationType = "Quarterly",
-          dateReceived = Some(fixedDate),
-          periodKey = "Quarterly",
-          StatusFulfilled
-        )
-      )
-    )
-  ))
 
   val taxCalculationDetailsResponseAuditModelFull: TaxDueResponseAuditModel =
     TaxDueResponseAuditModel(
