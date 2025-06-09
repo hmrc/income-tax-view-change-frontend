@@ -16,6 +16,7 @@
 
 package models.liabilitycalculation
 
+import controllers.constants.IncomeSourceAddedControllerConstants.testObligationsModel
 import models.helpers.LiabilityCalculationDataHelper
 import models.liabilitycalculation.taxcalculation.TaxBands
 import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
@@ -30,23 +31,6 @@ import testUtils.TestSupport
 import scala.io.Source
 
 class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelper with TestSupport {
-
-  val testObligationsModel: ObligationsModel = ObligationsModel(Seq(
-    GroupedObligationsModel(
-      identification = "testId",
-      obligations = List(
-        SingleObligationModel(
-          start = getCurrentTaxYearEnd.minusMonths(3),
-          end = getCurrentTaxYearEnd,
-          due = getCurrentTaxYearEnd,
-          obligationType = "Quarterly",
-          dateReceived = Some(fixedDate),
-          periodKey = "Quarterly",
-          StatusFulfilled
-        )
-      )
-    )
-  ))
 
   "LastTaxCalculationResponseMode model" when {
 

@@ -16,6 +16,7 @@
 
 package models.liabilitycalculation.viewmodels
 
+import controllers.constants.IncomeSourceAddedControllerConstants.testObligationsModel
 import exceptions.MissingFieldException
 import models.liabilitycalculation.taxcalculation.{BusinessAssetsDisposalsAndInvestorsRel, CgtTaxBands, Nic4Bands, TaxBands}
 import models.liabilitycalculation.{Message, Messages, ReliefsClaimed, StudentLoan}
@@ -25,23 +26,6 @@ import testConstants.NewCalcBreakdownUnitTestConstants._
 import testUtils.UnitSpec
 
 class TaxDueSummaryViewModelSpec extends UnitSpec {
-
-  val testObligationsModel: ObligationsModel = ObligationsModel(Seq(
-    GroupedObligationsModel(
-      identification = "testId",
-      obligations = List(
-        SingleObligationModel(
-          start = getCurrentTaxYearEnd.minusMonths(3),
-          end = getCurrentTaxYearEnd,
-          due = getCurrentTaxYearEnd,
-          obligationType = "Quarterly",
-          dateReceived = Some(fixedDate),
-          periodKey = "Quarterly",
-          StatusFulfilled
-        )
-      )
-    )
-  ))
 
   "TaxDueSummaryViewModel model" when {
     "create a minimal TaxDueSummaryViewModel when there is a minimal Calculation response" in {
