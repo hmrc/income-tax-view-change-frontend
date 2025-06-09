@@ -24,10 +24,11 @@ import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{AnnualReportingMethod, QuarterlyReportingMethod}
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
+import models.admin.OptInOptOutContentUpdateR17
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{IncomeSourceDetailsService, NextUpdatesService, SessionService}
+import services.{DateService, IncomeSourceDetailsService, NextUpdatesService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
@@ -42,7 +43,8 @@ class ManageObligationsController @Inject()(val authActions: AuthActions,
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
                                             val obligationsView: ManageObligations,
                                             val sessionService: SessionService,
-                                            nextUpdatesService: NextUpdatesService)
+                                            nextUpdatesService: NextUpdatesService,
+                                            val dateService: DateService)
                                            (implicit val ec: ExecutionContext,
                                             val mcc: MessagesControllerComponents,
                                             val appConfig: FrontendAppConfig) extends FrontendController(mcc)
@@ -100,7 +102,16 @@ class ManageObligationsController @Inject()(val authActions: AuthActions,
           case Some(incomeSourceId) =>
             val addedBusinessName: String = getBusinessName(incomeSourceType, Some(incomeSourceId))
             nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears = false) map { viewModel =>
-              Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, successPostUrl(isAgent)))
+              Ok(obligationsView(
+                sources = viewModel,
+                businessName = addedBusinessName,
+                taxYear = years,
+                changeTo = changeTo,
+                isAgent = isAgent,
+                postAction = successPostUrl(isAgent),
+                showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
+                isCurrentTaxYear = dateService.getCurrentTaxYearStart.getYear == years.startYear
+              ))
             }
           case None => showError(isAgent, s"Unable to retrieve income source ID for $incomeSourceType")
         }

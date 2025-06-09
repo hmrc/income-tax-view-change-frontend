@@ -43,6 +43,7 @@ class ManageObligationsViewSpec extends ViewSpec {
     val prevYearsHeading: String = "Previous tax years"
     val prevYearsText: String = "You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than"
     val buttonText: String = "Your income sources"
+    val headingR17 = "Your revised deadlines"
   }
 
   val view: ManageObligations = app.injector.instanceOf[ManageObligations]
@@ -66,43 +67,35 @@ class ManageObligationsViewSpec extends ViewSpec {
   val emptyViewModel: ObligationsViewModel = ObligationsViewModel(Seq.empty, Seq.empty, 2023, showPrevTaxYears = false)
 
 
-  val validSECallWithName: Html = view(viewModelWithAllData, "test name", taxYear, quarterly, isAgent = false, testCall)
-  val validSECallNoName: Html = view(viewModelWithAllData, "Not Found", taxYear, annually, isAgent = false, testCall)
-  val validUKCall: Html = view(viewModelWithAllData, "UK property", taxYear, quarterly, isAgent = false, testCall)
-  val validFPCall: Html = view(viewModelWithAllData, "Foreign property", taxYear, annually, isAgent = false, testCall)
-  val validCallNoData: Html = view(emptyViewModel, "test name", taxYear, quarterly, isAgent = false, testCall)
+  val validSECallWithName: Html = view(viewModelWithAllData, "test name", taxYear, quarterly, isAgent = false, testCall, showOptInOptOutContentUpdateR17 = false, isCurrentTaxYear = false)
+  val validSECallNoName: Html = view(viewModelWithAllData, "Not Found", taxYear, annually, isAgent = false, testCall, showOptInOptOutContentUpdateR17 = false, isCurrentTaxYear = false)
+  val validUKCall: Html = view(viewModelWithAllData, "UK property", taxYear, quarterly, isAgent = false, testCall, showOptInOptOutContentUpdateR17 = false, isCurrentTaxYear = false)
+  val validFPCall: Html = view(viewModelWithAllData, "Foreign property", taxYear, annually, isAgent = false, testCall, showOptInOptOutContentUpdateR17 = false, isCurrentTaxYear = false)
+  val validCallNoData: Html = view(emptyViewModel, "test name", taxYear, quarterly, isAgent = false, testCall, showOptInOptOutContentUpdateR17 = false, isCurrentTaxYear = false)
+  val quarterlyCy: Html = view(viewModelWithAllData, "test name", TaxYear(2024, 2025), "quarterly", isAgent = false, testCall, showOptInOptOutContentUpdateR17 = true, isCurrentTaxYear = true)
+  val quarterlyCyPlus1: Html = view(viewModelWithAllData, "test name", TaxYear(2025, 2026), "quarterly", isAgent = false, testCall, showOptInOptOutContentUpdateR17 = true, isCurrentTaxYear = false)
+  val annualCy: Html = view(viewModelWithAllData, "test name", TaxYear(2024, 2025), "annual", isAgent = false, testCall, showOptInOptOutContentUpdateR17 = true, isCurrentTaxYear = false)
+  val annualCyPlus1: Html = view(viewModelWithAllData, "test name", TaxYear(2025, 2026), "annual", isAgent = false, testCall, showOptInOptOutContentUpdateR17 = true, isCurrentTaxYear = false)
 
   //Testing banner for each mode/scenario, obligations are displayed the same for each so will only be tested once
 
   "Manage Obligations page" should {
     "Display the correct banner and heading" when {
       "Called on self employment with a name" in new Setup(validSECallWithName) {
-        val panel = document.getElementsByClass("govuk-panel").first()
-        panel.text() shouldBe "test name will report quarterly for the tax year 2023 to 2024"
-
-        val heading: Element = layoutContent.getElementsByTag("h2").first()
-        heading.text shouldBe ManageObligationsMessages.h2
+        panelText shouldBe "test name will report quarterly for the tax year 2023 to 2024"
+        firstH2Text shouldBe ManageObligationsMessages.h2
       }
       "Called on self employment with no name" in new Setup(validSECallNoName) {
-        val panel = document.getElementsByClass("govuk-panel").first()
-        panel.text() shouldBe "Sole trader business will report annually for the tax year 2023 to 2024"
-
-        val heading: Element = layoutContent.getElementsByTag("h2").first()
-        heading.text shouldBe ManageObligationsMessages.h2
+        panelText shouldBe "Sole trader business will report annually for the tax year 2023 to 2024"
+        firstH2Text shouldBe ManageObligationsMessages.h2
       }
       "Called on UK property" in new Setup(validUKCall) {
-        val panel = document.getElementsByClass("govuk-panel").first()
-        panel.text() shouldBe "UK property will report quarterly for the tax year 2023 to 2024"
-
-        val heading: Element = layoutContent.getElementsByTag("h2").first()
-        heading.text shouldBe ManageObligationsMessages.h2
+        panelText shouldBe "UK property will report quarterly for the tax year 2023 to 2024"
+        firstH2Text shouldBe ManageObligationsMessages.h2
       }
       "Called on foreign property" in new Setup(validFPCall) {
-        val panel = document.getElementsByClass("govuk-panel").first()
-        panel.text() shouldBe "Foreign property will report annually for the tax year 2023 to 2024"
-
-        val heading: Element = layoutContent.getElementsByTag("h2").first()
-        heading.text shouldBe ManageObligationsMessages.h2
+        panelText shouldBe "Foreign property will report annually for the tax year 2023 to 2024"
+        firstH2Text shouldBe ManageObligationsMessages.h2
       }
     }
     "Not display a back button" in new Setup(validSECallWithName) {
@@ -148,6 +141,40 @@ class ManageObligationsViewSpec extends ViewSpec {
     "Not display any obligation sections when user has no obligations" in new Setup(validCallNoData) {
       Option(layoutContent.getElementById("quarterly")) shouldBe None
       Option(layoutContent.getElementById("prevyears")) shouldBe None
+    }
+
+    "render OptInOptOutContentUpdateR17 content correctly" when {
+      "panel body includes 'signed up to' when user switches to Quarterly" in new Setup(quarterlyCy) {
+        panelText should include("signed up to")
+      }
+
+      "panel body includes 'opted out of' when user switches to Annual" in new Setup(annualCy) {
+        panelText should include("opted out of")
+      }
+
+      "user switches to Quarterly in CY with overdue updates" in new Setup(quarterlyCy) {
+        paragraphText should include("Even if they are not displayed right away")
+        paragraphText should include("you may have overdue updates")
+        paragraphText should include("View your businesses to add")
+      }
+
+      "user switches to Quarterly in CY+1" in new Setup(quarterlyCyPlus1) {
+        paragraphText should include("Even if they are not displayed right away")
+        paragraphText should not include("you may have overdue updates")
+        paragraphText should include("View your businesses to add")
+      }
+
+      "user switches to Annual in CY" in new Setup(annualCy) {
+        paragraphText should include("Even if they are not displayed right away")
+        paragraphText should not include("you may have overdue updates")
+        paragraphText should include("View your businesses to add")
+      }
+
+      "user switches to Annual in CY+1" in new Setup(annualCyPlus1) {
+        paragraphText should include("Even if they are not displayed right away")
+        paragraphText should not include("you may have overdue updates")
+        paragraphText should include("View your businesses to add")
+      }
     }
   }
 }
