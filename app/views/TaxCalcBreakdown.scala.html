@@ -91,9 +91,12 @@
     </div>
 
     @if(!viewModel.finalDeclarationOrTaxReturnIsSubmitted){
-        @govukInsetText(InsetText(content = HtmlContent(
-            messages(if(isAgent) "taxCal_breakdown.message.agent.static1" else "taxCal_breakdown.message.static1")
-        )))
+        @govukInsetText(InsetText(
+            id = Some("calculation-may-change"),
+            content = HtmlContent(
+                messages(if(isAgent) "taxCal_breakdown.message.agent.static1" else "taxCal_breakdown.message.static1")
+            )
+        ))
     }
 
     @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22201"))){

@@ -23,20 +23,74 @@ import mocks.auth.MockAuthActions
 import mocks.connectors.MockObligationsConnector
 import mocks.services.MockCalculationService
 import models.incomeSourceDetails.TaxYear
-import models.obligations.ObligationsErrorModel
+import models.obligations.{GroupedObligationsModel, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled, StatusOpen}
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
 import services.CalculationService
-import testConstants.BaseTestConstants.testTaxYear
+import testConstants.BaseTestConstants.{testSelfEmploymentId, testTaxYear}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
+
+import java.time.LocalDate
 
 class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationService with MockObligationsConnector {
 
   val testYear: Int = 2020
 
   val testTaxYearModel: TaxYear = TaxYear.makeTaxYearWithEndYear(testTaxYear)
+
+  val testOpenObligationsModel: ObligationsModel =
+    ObligationsModel(
+      Seq(
+        GroupedObligationsModel(testSelfEmploymentId,
+          List(
+            SingleObligationModel(
+              start = LocalDate.of(2022, 7, 1),
+              end = LocalDate.of(2022, 7, 2),
+              due = LocalDate.of(2022, 8, 2),
+              obligationType = "Quarterly",
+              dateReceived = None,
+              periodKey = "#001",
+              status = StatusOpen
+            ),
+            SingleObligationModel(
+              start = LocalDate.of(2022, 7, 1),
+              end = LocalDate.of(2022, 7, 2),
+              due = LocalDate.of(2022, 8, 2),
+              obligationType = "Quarterly",
+              dateReceived = None,
+              periodKey = "#002",
+              status = StatusOpen
+            )
+          ))
+      ))
+
+    val testFulfilledObligationsModel: ObligationsModel =
+      ObligationsModel(
+        Seq(
+          GroupedObligationsModel(testSelfEmploymentId,
+            List(
+              SingleObligationModel(
+                start = LocalDate.of(2022, 7, 1),
+                end = LocalDate.of(2022, 7, 2),
+                due = LocalDate.of(2022, 8, 2),
+                obligationType = "Quarterly",
+                dateReceived = None,
+                periodKey = "#001",
+                status = StatusFulfilled
+              ),
+              SingleObligationModel(
+                start = LocalDate.of(2022, 7, 1),
+                end = LocalDate.of(2022, 7, 2),
+                due = LocalDate.of(2022, 8, 2),
+                obligationType = "Quarterly",
+                dateReceived = None,
+                periodKey = "#002",
+                status = StatusFulfilled
+              )
+            ))
+        ))
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
@@ -71,6 +125,34 @@ class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationSe
               contentType(result) shouldBe Some("text/html")
               charset(result) shouldBe Some("utf-8")
               document.title() shouldBe messages("htmlTitle" + {if(isAgent) ".agent" else ""}, messages("taxCal_breakdown.heading"))
+            }
+          }
+          "render the payment allocation page with the calculation-may-change message" when {
+            "the user has open obligations" in {
+              setupMockSuccess(mtdUserRole)
+              setupMockGetIncomeSourceDetails(businessIncome2018and2019)
+              mockCalculationSuccessfulNew("XAIT0000123456")
+              setupMockAllObligationsWithDates(testTaxYearModel.toFinancialYearStart, testTaxYearModel.toFinancialYearEnd)(testOpenObligationsModel)
+
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.OK
+
+              lazy val document = result.toHtmlDocument
+              Option(document.getElementById("calculation-may-change")).isDefined shouldBe true
+            }
+          }
+          "not render the payment allocation page with the calculation-may-change message" when {
+            "the user has fulfilled obligations" in {
+              setupMockSuccess(mtdUserRole)
+              setupMockGetIncomeSourceDetails(businessIncome2018and2019)
+              mockCalculationSuccessfulNew("XAIT0000123456")
+              setupMockAllObligationsWithDates(testTaxYearModel.toFinancialYearStart, testTaxYearModel.toFinancialYearEnd)(testFulfilledObligationsModel)
+
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.OK
+
+              lazy val document = result.toHtmlDocument
+              Option(document.getElementById("calculation-may-change")).isDefined shouldBe false
             }
           }
 
