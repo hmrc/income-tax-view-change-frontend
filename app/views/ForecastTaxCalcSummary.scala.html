@@ -15,15 +15,13 @@
  *@
 
 @import implicits.ImplicitCurrencyFormatter._
-@import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
+@import models.liabilitycalculation.EndOfYearEstimate
+@import views.html.components.h1WithCaption
 @import views.html.layouts.unifiedLayout
-@import views.html.components._
-@import exceptions.MissingFieldException
 
 
 @this(mainTemplate: unifiedLayout,
-    h1WithCaption: h1WithCaption,
-    p: p
+    h1WithCaption: h1WithCaption
 )
 
 @(endOfYearEstimateModel: EndOfYearEstimate, taxYear: Int, backUrl: String, isAgent: Boolean = false, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
