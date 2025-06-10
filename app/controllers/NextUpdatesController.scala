@@ -22,7 +22,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import models.admin.{OptOutFs, ReportingFrequencyPage}
+import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage}
 import models.obligations._
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -82,19 +82,25 @@ class NextUpdatesController @Inject()(
 
             val optOutSetup = {
               for {
-                checks <- optOutService.nextUpdatesPageOptOutChecks()
-              } yield Ok(
+                (checks, optOutOneYearViewModel) <- optOutService.nextUpdatesPageOptOutViewModels()
+              } yield {
+                viewModel.allDeadlines.map(a => a.standardQuarters.map(b => println(Console.YELLOW + b.obligation + Console.RESET)))
+
+                Ok(
                 nextUpdatesOptOutView(
-                  currentObligations = viewModel,
+                  viewModel = viewModel,
+                  optOutViewModel = optOutOneYearViewModel,
                   checks = checks,
                   backUrl = backUrl.url,
                   isAgent = isAgent,
                   isSupportingAgent = user.isSupportingAgent,
                   origin = origin,
                   reportingFrequencyLink = controllers.routes.ReportingFrequencyPageController.show(isAgent).url,
-                    reportingFrequencyEnabled = isEnabled(ReportingFrequencyPage)
+                  reportingFrequencyEnabled = isEnabled(ReportingFrequencyPage),
+                  optInOptOutContentR17Enabled = isEnabled(OptInOptOutContentUpdateR17)
                 )
               )
+              }
             }.recoverWith {
               case ex =>
                 Logger("application").error(s"Failed to retrieve quarterly reporting content checks: ${ex.getMessage}")

@@ -1,0 +1,178 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import implicits.ImplicitDateFormatterImpl
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import models.obligations.NextUpdatesViewModel
+@import java.time.LocalDate
+@import models.obligations._
+
+@this(
+        govukTabs: GovukTabs,
+        h2: h2,
+        p: p,
+        detailsDropdown: detailsDropdown,
+        bulletList: bulletPointList,
+        link: link,
+        govukTable: GovukTable,
+        implicitDateFormatter: ImplicitDateFormatterImpl
+)
+
+@(isAgent: Boolean, viewModel: NextUpdatesViewModel)(implicit messages: Messages)
+
+@import implicitDateFormatter.longDate
+
+@getQuarterlyMessage(key: String, args: String*) = @{
+    messages(s"nextUpdates.r17.tab.quarterly.$key", args: _*)
+}
+
+@currentTaxYearStart = @{ viewModel.currentTaxYear.startYear.toString }
+@currentTaxYearEnd = @{ viewModel.currentTaxYear.endYear.toString }
+@nextTaxYearEnd = @{ viewModel.currentTaxYear.addYears(1).endYear.toString }
+
+
+@govukTabs(Tabs(
+    id = Some("updates-and-deadlines-tabs"),
+    items = Seq(
+        TabItem(
+            id = Some("current-year-tab"),
+            label = getQuarterlyMessage("label", currentTaxYearStart, currentTaxYearEnd),
+            panel = TabPanel(
+                content = HtmlContent(currentYearTabContentQuarterly)
+            )
+        ),
+        TabItem(
+            id = Some("next-year-tab"),
+            label = getQuarterlyMessage("ny.label", currentTaxYearEnd, nextTaxYearEnd),
+            panel = TabPanel(
+                content = HtmlContent(nextYearTabContentQuarterly)
+            )
+        )
+    )
+))
+
+@currentYearTabContentQuarterly = {
+    @h2(getQuarterlyMessage("heading", currentTaxYearStart, currentTaxYearEnd), classes = "govuk-heading-l", optId = Some("current-year-heading"))
+    @p(id = Some("current-year-desc")){ @getQuarterlyMessage("text") }
+    @h2(getQuarterlyMessage("subheading"), optId = Some("current-year-quarterly-heading"))
+    @p(id = Some("current-year-quarterly-desc")){ @getQuarterlyMessage("text2") }
+
+    @detailsDropdown(getQuarterlyMessage("dropdown.heading"), quarterlyDropdownContent)
+
+    @quarterlyUpdatesTable
+
+    @p(id = Some("current-year-tax-year-summary-desc")) {
+        @getQuarterlyMessage("link.text1")
+        @link(link = taxYearSummaryLink, messageKey = getQuarterlyMessage("link.text2"))
+        @getQuarterlyMessage("link.text3")
+    }
+    @h2(getQuarterlyMessage("subheading2"), optId = Some("current-year-return-due-heading"))
+    @p(id = Some("current-year-return-due-desc")) {
+        @getQuarterlyMessage("text3")
+        @link(link = getQuarterlyMessage("compatibleSoftware.link"), target = Some("_blank"), messageKey = getQuarterlyMessage("text4"))
+    }
+
+    <p id="current-year-return-due-date" class="govuk-body">@getQuarterlyMessage("text5", currentTaxYearStart, currentTaxYearEnd)  <strong class="govuk-!-font-weight-bold">@getQuarterlyMessage("text6", nextTaxYearEnd)</strong></p>
+}
+
+@nextYearTabContentQuarterly = {
+    @h2(getQuarterlyMessage("ny.heading", currentTaxYearEnd, nextTaxYearEnd), classes = "govuk-heading-l", optId = Some("next-year-heading"))
+    @p(id = Some("next-year-desc")){
+        @getQuarterlyMessage("ny.text1", currentTaxYearEnd, nextTaxYearEnd)
+        @link(link = getQuarterlyMessage("compatibleSoftware.link"), target = Some("_blank"), messageKey = getQuarterlyMessage("ny.text2"))
+    }
+    @p(id = Some("next-year-desc2")){ @getQuarterlyMessage("ny.text3") }
+}
+
+@quarterlyDropdownContent = {
+    @p(id = Some("current-year-dropdown-desc")){@getQuarterlyMessage("dropdown.text1")}
+    @bulletList(
+        itemMsgKeys =
+            getQuarterlyMessage("dropdown.text2"),
+            getQuarterlyMessage("dropdown.text3"),
+    )
+    @p(id = Some("current-year-dropdown-desc2")) {
+        @getQuarterlyMessage("dropdown.text4")
+        @link(link = getQuarterlyMessage("compatibleSoftware.link"), target = Some("_blank"), messageKey = getQuarterlyMessage("dropdown.link.text"))
+    }
+}
+
+@quarterlyUpdatesTable = {
+    @govukTable(Table(
+        head = Some(List(
+            HeadCell(
+                content = Text(getQuarterlyMessage("table.heading.row1")),
+                attributes = Map("id" -> "table-head-name-deadline")),
+            HeadCell(
+                content = Text(getQuarterlyMessage("table.heading.row2")),
+                attributes = Map("id" -> "table-head-name-period")),
+            HeadCell(
+                content = Text(getQuarterlyMessage("table.heading.row3")),
+                attributes = Map("id" -> "table-head-name-updates-due"))
+        )),
+        rows = quarterlyUpdatesRows,
+        attributes = Map("id" -> "quarterly-updates-table"),
+    ))
+}
+
+@quarterlyUpdatesRows = @{
+    viewModel.allDeadlines.map { case DeadlineViewModel(obligationType: ObligationType, bothQuarters: Boolean, deadlineDate: LocalDate, standardObligations: Seq[ObligationWithIncomeType], calendarObligations: Seq[ObligationWithIncomeType]) =>
+        val allValidObligations = getObligations(bothQuarters, standardObligations, calendarObligations)
+
+        Seq(
+            TableRow(
+                content = Text(deadlineDate.toLongDateShort),
+                attributes = Map("id" -> s"quarterly-deadline-date"),
+                classes = "govuk-!-font-weight-bold"
+            ),
+            TableRow(
+                content = Text(allValidObligations.headOption.map(obl => periodMessage(obl.obligation)).getOrElse("")),
+                attributes = Map("id" -> s"quarterly-period")
+            ),
+            TableRow(
+                content = HtmlContent(buildIncomeSourceRow(allValidObligations)),
+                attributes = Map("id" -> s"quarterly-income-sources")
+            )
+        )
+    }
+}
+
+@getObligations(bothQuarters: Boolean, standardObligations: Seq[ObligationWithIncomeType], calendarObligations: Seq[ObligationWithIncomeType]) = @{
+    if (bothQuarters) {
+        standardObligations ++ calendarObligations
+    }
+    else if (standardObligations.nonEmpty) standardObligations else calendarObligations
+}
+
+@periodMessage(obligation: SingleObligationModel) = @{
+    getQuarterlyMessage("table.heading.period", obligation.start.toLongDateShort, obligation.end.toLongDateShort)
+}
+
+@buildIncomeSourceRow(obligations: Seq[ObligationWithIncomeType]) = @{
+    obligations.map { obl =>
+      obl.incomeType
+    }.mkString("<br>")
+}
+
+@taxYearSummaryLink = @{
+    if (isAgent) {
+        controllers.routes.TaxYearsController.showAgentTaxYears().url
+    } else {
+        controllers.routes.TaxYearsController.showTaxYears().url
+    }
+}

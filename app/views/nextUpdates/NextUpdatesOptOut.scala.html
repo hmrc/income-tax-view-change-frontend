@@ -15,7 +15,7 @@
  *@
 
 @import models.obligations.NextUpdatesViewModel
-@import views.html.helpers.injected.obligations.NextUpdatesHelper
+@import views.html.helpers.injected.obligations._
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import models.optout.NextUpdatesQuarterlyReportingContentChecks
@@ -30,18 +30,20 @@
 	p: p,
 	link: link,
 	detailsDropdown: detailsDropdown,
-	nextUpdatesHelper: NextUpdatesHelper
+	nextUpdatesHelper: NextUpdatesHelper,
+	nextUpdatesHelperR17: NextUpdatesHelperR17
 )
 
 @(
-	currentObligations: NextUpdatesViewModel,
+	viewModel: NextUpdatesViewModel,
 	checks:NextUpdatesQuarterlyReportingContentChecks,
 	backUrl: String,
 	isAgent: Boolean = false,
 	isSupportingAgent: Boolean = false,
 	origin: Option[String] = None,
 	reportingFrequencyLink: String,
-	reportingFrequencyEnabled: Boolean
+	reportingFrequencyEnabled: Boolean,
+	optInOptOutContentR17Enabled: Boolean
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @mainTemplate(
@@ -55,8 +57,10 @@
 
 	@h1(msg = messages("nextUpdates.heading"))
 
-	@checks.showUpdateTypeDetailsSection.map { _ =>
-	    @detailsDropdown("nextUpdates.dropdown.info", detailsContent)
+	@if(!optInOptOutContentR17Enabled) {
+		@checks.showUpdateTypeDetailsSection.map { _ =>
+			@detailsDropdown("nextUpdates.dropdown.info", detailsContent)
+		}
 	}
 
 	@if(reportingFrequencyEnabled) {
@@ -68,33 +72,36 @@
 		}
 	}
 
-	@h2(msg = "nextUpdates.sub-heading")
+	@if(optInOptOutContentR17Enabled) {
+		@nextUpdatesHelperR17(isAgent, viewModel)
+	} else {
+		@h2(msg = "nextUpdates.sub-heading")
+		@nextUpdatesHelper(viewModel)
 
-	@nextUpdatesHelper(currentObligations)
+		@if(!isSupportingAgent){
+			@p(){
+				@messages("nextUpdates.previousYears.textOne")
+				@if(isAgent) {
+					@link(link = controllers.routes.TaxYearsController.showAgentTaxYears().url, messageKey = "nextUpdates.previousYears.link")
+				}
+				@if(!isAgent) {
+					@link(link = controllers.routes.TaxYearsController.showTaxYears(origin).url, messageKey = "nextUpdates.previousYears.link")
+				}
+				@messages("nextUpdates.previousYears.textTwo")
+			}
+		}
 
-	@if(!isSupportingAgent){
-		@p(){
-			@messages("nextUpdates.previousYears.textOne")
-			@if(isAgent) {
-				@link(link = controllers.routes.TaxYearsController.showAgentTaxYears().url, messageKey = "nextUpdates.previousYears.link")
+		@checks.showUseCompatibleSoftwareSection.map { _ =>
+			@h3(messages("nextUpdates.updates.software.heading"), optId = Some("updates-software-heading"))
+			@p(){
+				<div id="updates-software-link" class="govuk-body app-get-help-link">
+					@messages("nextUpdates.updates.software.dec1")
+					@link(link = messages("nextUpdates.updates.software.link"), target = Some("_blank"), messageKey = "nextUpdates.updates.software.dec2")
+					@messages("nextUpdates.updates.software.dec3")
+				</div>
 			}
-			@if(!isAgent) {
-				@link(link = controllers.routes.TaxYearsController.showTaxYears(origin).url, messageKey = "nextUpdates.previousYears.link")
-			}
-			@messages("nextUpdates.previousYears.textTwo")
 		}
 	}
-
-	@checks.showUseCompatibleSoftwareSection.map { _ =>
-	    @h3(messages("nextUpdates.updates.software.heading"), optId = Some("updates-software-heading"))
-	    @p(){
-            <div id="updates-software-link" class="govuk-body app-get-help-link">
-                @messages("nextUpdates.updates.software.dec1")
-                @link(link = messages("nextUpdates.updates.software.link"), target = Some("_blank"), messageKey = "nextUpdates.updates.software.dec2")
-                @messages("nextUpdates.updates.software.dec3")
-            </div>
-        }
-    }
 }
 
 @detailsContent = {

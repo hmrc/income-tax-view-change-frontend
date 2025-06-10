@@ -73,14 +73,16 @@ class NextUpdatesService @Inject()(
   }
 
 
-  def getNextUpdatesViewModel(obligationsModel: ObligationsModel)(implicit user: MtdItUser[_]): NextUpdatesViewModel = NextUpdatesViewModel {
-    obligationsModel.obligationsByDate.map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
+  def getNextUpdatesViewModel(obligationsModel: ObligationsModel)(implicit user: MtdItUser[_]): NextUpdatesViewModel = {
+    val allDeadlines = obligationsModel.obligationsByDate.map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
       if (obligations.headOption.map(_.obligation.obligationType).contains("Quarterly")) {
         val obligationsByType = obligationsModel.groupByQuarterPeriod(obligations)
         DeadlineViewModel(QuarterlyObligation, standardAndCalendar = true, date, obligationsByType.getOrElse(Some(QuarterTypeStandard), Seq.empty), obligationsByType.getOrElse(Some(QuarterTypeCalendar), Seq.empty))
       }
       else DeadlineViewModel(EopsObligation, standardAndCalendar = false, date, obligations, Seq.empty)
     }.filter(deadline => deadline.obligationType != EopsObligation)
+
+    NextUpdatesViewModel(allDeadlines, dateService.getCurrentTaxYear)
   }
 
   def getOpenObligations()(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsResponseModel] = {
