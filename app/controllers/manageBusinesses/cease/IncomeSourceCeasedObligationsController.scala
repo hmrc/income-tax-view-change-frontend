@@ -22,6 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.routes
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
+import models.admin.ReportingFrequencyPage
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.IncomeSourceCeasedObligationsViewModel
@@ -103,7 +104,7 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
             incomeSourceCeasedObligationsViewModel,
             viewAllBusinessLink(isAgent),
             viewUpcomingUpdatesLink(isAgent),
-            viewReportingObligationsLink(isAgent)
+            if(isEnabled(ReportingFrequencyPage)) Some(viewReportingObligationsLink(isAgent)) else None
           )))
         case (Some(_), None) => Future.failed(new Error(s"cease session data not found for $incomeSourceType"))
         case (None, Some(_)) => Future.failed(new Error(s"IncomeSourceId not found for $incomeSourceType"))

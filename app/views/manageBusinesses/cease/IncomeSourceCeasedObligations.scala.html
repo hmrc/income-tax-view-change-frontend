@@ -37,7 +37,7 @@
         govukPanel: GovukPanel
 )
 
-@(source: IncomeSourceCeasedObligationsViewModel, viewAllBusinessLink: String, viewUpcomingUpdatesLink: String, reportingObligationsLink: String)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(source: IncomeSourceCeasedObligationsViewModel, viewAllBusinessLink: String, viewUpcomingUpdatesLink: String, reportingObligationsLink: Option[String])(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 
@@ -101,15 +101,21 @@
 @remainingBusinessParagraph = {
     @p(id=Some("remaining-business")) {
         @getMessage("remaining-business.text.1")
-        @link(id = Some("remaining-business-link"), link = reportingObligationsLink, messageKey = getMessage("remaining-business.link"))
-        @getMessage("remaining-business.text.2")
+        @reportingObligationsLink.map { rfLink =>
+            @getMessage("remaining-business.text.2")
+            @link(id = Some("remaining-business-link"), link = rfLink, messageKey = getMessage("remaining-business.link"))
+            @getMessage("remaining-business.text.3")
+        }
     }
 }
 
 @allBusinessCeasedParagraph = {
     @p(id=Some("all-business-ceased")) {
         @getMessage("all-business-ceased.text.1")
-        @link(id = Some("all-business-ceased-link"), link = reportingObligationsLink, messageKey = getMessage("all-business-ceased.link"), outerMessage = ".")
+        @reportingObligationsLink.map { rfLink =>
+            @getMessage("all-business-ceased.text.2")
+            @link(id = Some("all-business-ceased-link"), link = rfLink, messageKey = getMessage("all-business-ceased.text.2.link"), outerMessage = ".")
+        }
     }
 }
 
