@@ -2113,6 +2113,23 @@ incomeSources.add.manageObligations.uk-property                       =   UK pro
 incomeSources.add.manageObligations.foreign-property                  =   Foreign property
 incomeSources.add.manageObligations.heading                           =   What you must do
 
+## used when OptInOptOutContentUpdateR17 enabled
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.title = {0} has been {1} Making Tax Digital for Income Tax for the {2} to {3} tax year
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.panel.title                       = {0}
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.panel.body = has been {0} Making Tax Digital for Income Tax for the {1} to {2} tax year
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.panel.signedUp = signed up to
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.panel.optedOut = opted out of
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.heading = Your revised deadlines
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.inset = Your deadlines for this business will be available in the next few minutes.
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.beforeLink = Even if they are not displayed right away on the
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.link = updates and deadlines
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.afterLink = page, your account has been updated.
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para2 = For this new business you may have overdue updates for the {0} to {1} tax year. You must submit these updates with all required income and expenses through your compatible software.
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.manage.link = View your businesses
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.manage.afterLink = to add, manage or cease a business or income source.
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.sole-trader                       =   Sole trader business
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.uk-property                       =   UK property
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.foreign-property                  =   Foreign property
 
 # manage journey manage income source
 incomeSources.manage.quarterly-period                                 =   Update period

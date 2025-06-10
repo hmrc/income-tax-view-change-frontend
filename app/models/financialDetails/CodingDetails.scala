@@ -16,21 +16,23 @@
 
 package models.financialDetails
 
+import models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{Json, Reads, Writes}
 
 import java.time.LocalDate
 
-case class CodingDetails(coded: Option[Seq[CodedEntry]])
+case class CodingDetails(totalLiabilityAmount: Option[BigDecimal],
+                         taxYearReturn: Option[String]) {
 
-case class CodedEntry(amount: BigDecimal,
-                      initiationDate: LocalDate)
+  def toCodingOutDetails: Option[CodingOutDetails] = {
+    (totalLiabilityAmount, taxYearReturn) match {
+      case (Some(amount), Some(year)) => Some(CodingOutDetails(amount, TaxYear.makeTaxYearWithEndYear(year.toInt)))
+      case _ => None
+    }
+  }
+}
 
 object CodingDetails {
   implicit val writes: Writes[CodingDetails] = Json.writes[CodingDetails]
   implicit val reads: Reads[CodingDetails] = Json.reads[CodingDetails]
-}
-
-object CodedEntry {
-  implicit val writes: Writes[CodedEntry] = Json.writes[CodedEntry]
-  implicit val reads: Reads[CodedEntry] = Json.reads[CodedEntry]
 }
