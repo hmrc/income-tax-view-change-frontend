@@ -19,12 +19,12 @@ package services
 import connectors.SelfServeTimeToPayConnector
 import exceptions.SelfServeTimeToPayJourneyException
 import mocks.MockHttp
-import models.core.{SelfServeTimeToPayJourneyErrorResponse, SelfServeTimeToPayJourneyResponse, SelfServeTimeToPayJourneyResponseModel}
+import models.core.{SelfServeTimeToPayJourneyErrorResponse, SelfServeTimeToPayJourneyResponseModel}
 import org.mockito.Mockito.{mock, when}
 import testUtils.TestSupport
 import org.mockito.ArgumentMatchers.any
 import play.api.http.Status.INTERNAL_SERVER_ERROR
-import testConstants.BaseTestConstants.expectedJourneyId
+import testConstants.BaseTestConstants.{expectedJourneyId, testSetUpPaymentPlanUrl}
 
 import scala.concurrent.Future
 
@@ -36,20 +36,21 @@ class SelfServeTimeToPayServiceSpec extends TestSupport with MockHttp {
   "SelfServeTimeToPayService" should {
     "startSelfServeTimeToPayJourney" when {
       "return Right when connector returns successful response" in {
-        val expectedNextUrl = "http://localhost:9215/set-up-a-payment-plan/sa-payment-plan"
 
-         when(selfServeTimeToPayConnector.startSelfServeTimeToPayJourney()(any()))
-                    .thenReturn(Future{
-                      SelfServeTimeToPayJourneyResponseModel(expectedJourneyId,expectedNextUrl)})
-        testService.startSelfServeTimeToPayJourney().futureValue shouldBe Right(expectedNextUrl)
+        when(selfServeTimeToPayConnector.startSelfServeTimeToPayJourney()(any()))
+          .thenReturn(Future {
+            SelfServeTimeToPayJourneyResponseModel(expectedJourneyId, testSetUpPaymentPlanUrl)
+          })
+        testService.startSelfServeTimeToPayJourney().futureValue shouldBe Right(testSetUpPaymentPlanUrl)
       }
     }
     "return a Left" when {
       "startSelfServeTimeToPayJourney failed to start" in {
 
         when(selfServeTimeToPayConnector.startSelfServeTimeToPayJourney()(any()))
-          .thenReturn(Future{
-            SelfServeTimeToPayJourneyErrorResponse(INTERNAL_SERVER_ERROR, "Error message")})
+          .thenReturn(Future {
+            SelfServeTimeToPayJourneyErrorResponse(INTERNAL_SERVER_ERROR, "Error message")
+          })
         testService.startSelfServeTimeToPayJourney().futureValue shouldBe Left(SelfServeTimeToPayJourneyException(INTERNAL_SERVER_ERROR, "Error message"))
       }
     }

@@ -160,7 +160,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       creditAndRefundEnabled = true,
       earliestTaxYearAndAmountByDueDate = Some(EarliestDueCharge(TaxYear(2024, 2025), BigDecimal(100.00))),
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),
-      selfServeTimeToPayStartUrl = ???
+      selfServeTimeToPayStartUrl = "testStartUrl"
     )
 
     val html: HtmlFormat.Appendable = yourSelfAssessmentChargesView(
@@ -210,7 +210,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       creditAndRefundEnabled = true,
       earliestTaxYearAndAmountByDueDate = Some(EarliestDueCharge(TaxYear(2024, 2025), BigDecimal(100.00))),
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),
-      selfServeTimeToPayStartUrl = ???)
+      selfServeTimeToPayStartUrl = "testStartUrl" )
     val html: HtmlFormat.Appendable = yourSelfAssessmentChargesView(
       viewModel
     )(FakeRequest(), agentUser, implicitly, dateService)
@@ -1088,7 +1088,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       "display the payment plan content and link in the section" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
         val paymentPlan = pageDocument.getElementById("payment-plan")
         paymentPlan.text() shouldBe paymentPlanText
-        paymentPlan.select("a").attr("href") shouldBe "https://www.gov.uk/difficulties-paying-hmrc"
+        paymentPlan.select("a").attr("href") shouldBe "testStartUrl"
       }
 
       "adjust payments on account link is present with correct href" when {
