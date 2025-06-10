@@ -78,13 +78,12 @@ case class ObligationsModel(obligations: Seq[GroupedObligationsModel]) extends O
     if (dayOfMonth < 6) QuarterTypeCalendar else QuarterTypeStandard
   }
 
-  def isFinalDeclarationOrTaxReturnSubmitted: Boolean = {
+  def isFinalDeclarationOrTaxReturnSubmitted: Boolean =
     obligations.exists(
       _.obligations.exists(
         _.status == StatusFulfilled
       )
     )
-  }
 
   def groupByQuarterPeriod(obligations: Seq[ObligationWithIncomeType]): Map[Option[QuarterReportingType], Seq[ObligationWithIncomeType]] = {
     obligations.groupBy { obligation =>
