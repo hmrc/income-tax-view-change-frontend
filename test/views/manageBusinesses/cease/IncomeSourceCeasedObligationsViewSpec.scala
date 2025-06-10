@@ -67,7 +67,7 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
     isAgent = false,
     incomeSourceType = SelfEmployment,
     businessName = None,
-    remainingLatentBusiness = false,
+    isLastActiveBusinessAndIsInLatency = false,
     allBusinessesCeased = false
   )
 
@@ -83,7 +83,7 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
   val validCallWithDataRemainingLatent: Html = view(
     incomeSourceCeasedObligationsViewModel.copy(
       businessName = Some("Test Name"),
-      remainingLatentBusiness = true
+      isLastActiveBusinessAndIsInLatency = true
     ), viewAllBusinessLink, viewUpcomingUpdatesLink, Some(viewReportingObligationsLink)
   )
   val validCallWithDataAllCeased: Html = view(
@@ -95,7 +95,7 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
   val validCallWithDataRemainingLatentWithNoRfLink: Html = view(
     incomeSourceCeasedObligationsViewModel.copy(
       businessName = Some("Test Name"),
-      remainingLatentBusiness = true
+      isLastActiveBusinessAndIsInLatency = true
     ), viewAllBusinessLink, viewUpcomingUpdatesLink, None
   )
   val validCallWithDataAllCeasedWithNoRfLink: Html = view(

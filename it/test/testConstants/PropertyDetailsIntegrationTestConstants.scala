@@ -192,4 +192,19 @@ object PropertyDetailsIntegrationTestConstants {
     latencyDetails = Some(testLatencyDetails3)
   )
 
+  val ceasedUkProperty: PropertyDetailsModel = PropertyDetailsModel(
+    incomeSourceId = testPropertyIncomeId,
+    accountingPeriod = Some(AccountingPeriodModel(
+      start = propertyAccountingStartLocalDate,
+      end = propertyAccounringEndLocalDate
+    )),
+    firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
+    incomeSourceType = ukPropertyIncomeType,
+    tradingStartDate = propertyTradingStartDate,
+    contextualTaxYear = None,
+    cessation = Some(CessationModel(Some(LocalDate.of(endYear, 12, 31)))),
+    cashOrAccruals = false,
+    latencyDetails = Some(testLatencyDetails3)
+  )
+
 }

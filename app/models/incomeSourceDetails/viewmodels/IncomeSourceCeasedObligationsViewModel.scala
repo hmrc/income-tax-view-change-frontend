@@ -24,7 +24,7 @@ import java.time.LocalDate
 
 case class IncomeSourceCeasedObligationsViewModel(
                                                    incomeSourceType: IncomeSourceType,
-                                                   remainingLatentBusiness: Boolean,
+                                                   isLastActiveBusinessAndIsInLatency: Boolean,
                                                    allBusinessesCeased: Boolean,
                                                    businessName: Option[String],
                                                    isAgent: Boolean
@@ -40,14 +40,14 @@ object IncomeSourceCeasedObligationsViewModel {
              isAgent: Boolean
            ): IncomeSourceCeasedObligationsViewModel = {
 
-    val remainingLatentBusiness: Boolean =
-      incomeSourceDetailsModel.remainingNoneCeasedBusinesses == 1 && incomeSourceDetailsModel.isAnyOfActiveBusinessesLatent
+    val isLastActiveBusinessAndIsInLatency: Boolean =
+      incomeSourceDetailsModel.remainingActiveBusinessesCount == 1 && incomeSourceDetailsModel.isAnyOfActiveBusinessesLatent
 
     val allBusinessesCeased: Boolean = incomeSourceDetailsModel.areAllBusinessesCeased
 
     IncomeSourceCeasedObligationsViewModel(
       incomeSourceType = incomeSourceType,
-      remainingLatentBusiness = remainingLatentBusiness,
+      isLastActiveBusinessAndIsInLatency = isLastActiveBusinessAndIsInLatency,
       allBusinessesCeased = allBusinessesCeased,
       businessName = businessName,
       isAgent = isAgent

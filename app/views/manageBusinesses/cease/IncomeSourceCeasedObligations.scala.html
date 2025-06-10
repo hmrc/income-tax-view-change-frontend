@@ -128,7 +128,7 @@
         @getInsetWarning
         @p1
 
-        @if(source.remainingLatentBusiness) {
+        @if(source.isLastActiveBusinessAndIsInLatency) {
             @remainingBusinessParagraph
         }else if(source.allBusinessesCeased) {
             @allBusinessCeasedParagraph

@@ -33,7 +33,7 @@ class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
           incomeSourceType = SelfEmployment,
           businessName = Some("Business Name"),
           isAgent = false,
-          remainingLatentBusiness = false,
+          isLastActiveBusinessAndIsInLatency = false,
           allBusinessesCeased = false
         )
 
@@ -54,7 +54,7 @@ class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
           incomeSourceType = SelfEmployment,
           businessName = Some("Business Name"),
           isAgent = false,
-          remainingLatentBusiness = false,
+          isLastActiveBusinessAndIsInLatency = false,
           allBusinessesCeased = false
         )
 
@@ -75,7 +75,7 @@ class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
           incomeSourceType = SelfEmployment,
           businessName = Some("Business Name"),
           isAgent = false,
-          remainingLatentBusiness = true,
+          isLastActiveBusinessAndIsInLatency = true,
           allBusinessesCeased = false
         )
 
@@ -96,7 +96,7 @@ class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
           incomeSourceType = SelfEmployment,
           businessName = Some("Business Name"),
           isAgent = false,
-          remainingLatentBusiness = false,
+          isLastActiveBusinessAndIsInLatency = false,
           allBusinessesCeased = true
         )
 
