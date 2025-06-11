@@ -38,7 +38,6 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
                                       val appConfig: FrontendAppConfig)
                                      (implicit ec: ExecutionContext) {
 
-  @deprecated("Use getPaymentHistoryV2 instead", "MISUV-8845")
   def getPaymentHistory(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentHistoryError.type, List[Payment]]] = {
 
     val orderedTaxYears: List[Int] = user.incomeSources.orderedTaxYearsByYearOfMigration.reverse.take(appConfig.paymentHistoryLimit)
