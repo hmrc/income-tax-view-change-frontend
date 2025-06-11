@@ -241,4 +241,9 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
     WiremockHelper.stubPost("/income-tax-view-change/submit-claim-to-adjust-poa", status, response)
   }
 
+  //payment-plan
+  val selfServeTimeToPayjourneyStartUrl: String = "/essttp-backend/sa/itsa/journey/start"
+  def stubPostStartSelfServeTimeToPayJourney()(status: Int, response: JsValue): StubMapping = {
+    WiremockHelper.stubPost(selfServeTimeToPayjourneyStartUrl, status, response.toString())
+  }
 }
