@@ -33,7 +33,6 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
                                         implicit val dateService: DateServiceInterface)
                                        (implicit val appConfig: FrontendAppConfig) {
 
-  @deprecated("Use getFinancialDetailsV2 instead", "MISUV-8845")
   def getFinancialDetails(taxYear: Int, nino: String)(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
     financialDetailsConnector.getFinancialDetails(taxYear, nino)
   }
@@ -42,7 +41,6 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
     financialDetailsConnector.getFinancialDetailsByTaxYearRange(taxYearRange, nino)
   }
 
-  @deprecated("Use getAllFinancialDetailsV2 instead", "MISUV-8845")
   def getAllFinancialDetails(implicit user: MtdItUser[_],
                              hc: HeaderCarrier, ec: ExecutionContext): Future[List[(Int, FinancialDetailsResponseModel)]] = {
     Logger("application").debug(
@@ -82,7 +80,6 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
     }
   }
 
-  @deprecated("Use getUnpaidFinancialDetailsV2 instead", "MISUV-8845")
   def getAllUnpaidFinancialDetails()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[List[FinancialDetailsResponseModel]] = {
     getAllFinancialDetails.map { chargesWithYears =>
       chargesWithYears.flatMap {
