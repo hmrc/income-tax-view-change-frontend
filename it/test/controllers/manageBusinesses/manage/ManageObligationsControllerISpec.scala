@@ -21,7 +21,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.Manage
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSourcesNewJourney, NavBarFs}
+import models.admin.{IncomeSourcesNewJourney, NavBarFs, OptInOptOutContentUpdateR17}
 import models.incomeSourceDetails.viewmodels.ObligationsViewModel
 import models.incomeSourceDetails.{ManageIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -64,14 +64,30 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
     }
   }
 
-  def getExpectedHeading(incomeSourceType: IncomeSourceType, isAnnualChange: Boolean): String = {
-    val changeToKey = if(isAnnualChange) "annually" else "quarterly"
-    val tradingNameOrProperyMessage = incomeSourceType match {
+  def getExpectedHeading(
+                          incomeSourceType: IncomeSourceType,
+                          isAnnualChange: Boolean,
+                          useOptInOptOutR17: Boolean
+                        ): String = {
+    val tradingNameOrPropertyMessage = incomeSourceType match {
       case SelfEmployment => business1.tradingName.getOrElse("")
       case _ => messagesAPI(s"$prefix.${incomeSourceType.messagesSuffix}")
     }
-    messagesAPI(s"$prefix.title", tradingNameOrProperyMessage, changeToKey, "2023", "2024")
+
+    val (messageKey, changeVerb) =
+      if (useOptInOptOutR17) {
+        val verb = if (isAnnualChange) messagesAPI(s"$prefix.OptInOptOutContentUpdateR17.panel.optedOut")
+        else messagesAPI(s"$prefix.OptInOptOutContentUpdateR17.panel.signedUp")
+        (s"$prefix.OptInOptOutContentUpdateR17.title", verb)
+      } else {
+        val frequency = if (isAnnualChange) "annually" else "quarterly"
+        (s"$prefix.title", frequency)
+      }
+
+    messagesAPI(messageKey, tradingNameOrPropertyMessage, changeVerb, "2023", "2024")
   }
+
+
 
   def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
     val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
@@ -109,7 +125,7 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
 
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, getExpectedHeading(incomeSourceType, true)),
+                  pageTitle(mtdUserRole, getExpectedHeading(incomeSourceType, isAnnualChange = true, useOptInOptOutR17 = false)),
                   elementTextByID("continue-button")(continueButtonText)
                 )
               }
@@ -130,10 +146,55 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
 
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, getExpectedHeading(incomeSourceType, false)),
+                  pageTitle(mtdUserRole, getExpectedHeading(incomeSourceType, isAnnualChange = false, useOptInOptOutR17 = false)),
                   elementTextByID("continue-button")(continueButtonText)
                 )
               }
+
+              "valid url parameters provided and change to is annual when OptInOptOutContentUpdateR17 is enabled" in {
+                enable(IncomeSourcesNewJourney,OptInOptOutContentUpdateR17)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+
+                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"MANAGE-${incomeSourceType.key}",
+                  manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId), Some(annual), Some(2024), Some(true))))))
+                IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
+
+                val pathWithValidQueryParams = path + s"?changeTo=$annual&taxYear=$taxYear"
+                val result = buildGETMTDClient(pathWithValidQueryParams, additionalCookies).futureValue
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+
+
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, getExpectedHeading(incomeSourceType, isAnnualChange = true, useOptInOptOutR17 = true)
+                  ),
+                )
+              }
+
+              "valid url parameters provided and change to is quarterly when OptInOptOutContentUpdateR17 is enabled" in {
+                enable(IncomeSourcesNewJourney,OptInOptOutContentUpdateR17)
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+
+                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"MANAGE-${incomeSourceType.key}",
+                  manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId), Some(quarterly), Some(2024), Some(true))))))
+                IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
+
+                val pathWithValidQueryParams = path + s"?changeTo=$quarterly&taxYear=$taxYear"
+                val result = buildGETMTDClient(pathWithValidQueryParams, additionalCookies).futureValue
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, getExpectedHeading(incomeSourceType, isAnnualChange = false, useOptInOptOutR17 = true)
+                  ),
+                )
+              }
+
             }
 
             "redirect to the home page" when {
@@ -185,10 +246,16 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
               val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
-              result should have(
-                httpStatus(SEE_OTHER),
-                redirectURI(routes.ManageIncomeSourceController.show(mtdUserRole != MTDIndividual).url)
-              )
+              if(mtdUserRole != MTDIndividual)
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url)
+                )
+              else
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
+                )
             }
           }
           testAuthFailures(path, mtdUserRole, optBody = Some(Map.empty))

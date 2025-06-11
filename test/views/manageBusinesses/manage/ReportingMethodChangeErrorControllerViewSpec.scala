@@ -27,8 +27,6 @@ class ReportingMethodChangeErrorControllerViewSpec extends TestSupport {
 
   private lazy val manageIncomeSourceDetailsController = controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController
 
-  private lazy val manageIncomeSourceController = controllers.manageBusinesses.manage.routes.ManageIncomeSourceController
-
   val reportingMethodChangeErrorView: ReportingMethodChangeError = app.injector.instanceOf[ReportingMethodChangeError]
 
   val testBusinessId = "000000"
@@ -91,7 +89,8 @@ class ReportingMethodChangeErrorControllerViewSpec extends TestSupport {
   }
 
   def getManageIncomeSourcesUrl(isAgent: Boolean): String = {
-    manageIncomeSourceController.show(isAgent).url
+    if(isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+    else controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
   }
 
   for {

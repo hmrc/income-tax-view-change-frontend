@@ -1,0 +1,52 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.creditsandrefunds.CreditAndRefundViewModel
+@import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import views.html.components.{h2, p}
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.insettext.InsetText
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+
+@this(
+        h2: h2,
+        p: p,
+        govukInsetText: GovukInsetText
+)
+@(viewModel: CreditAndRefundViewModel)(implicit request: Request[_], messages: Messages)
+
+@h2(msg = messages("credit-and-refund.how-much-can-i-claim"), classes = "govuk-heading-l")
+
+@p() {
+    <span class="govuk-!-font-weight-bold">@messages("credit-and-refund.the-most-you-can-claim", viewModel.availableCredit.toCurrencyString)</span>
+    @messages("credit-and-refund.does-not-include-refunds")
+}
+
+@if(viewModel.allocatedCredit != 0) {
+    @if(viewModel.allocatedCredit >= viewModel.availableCredit) {
+        @govukInsetText(InsetText(
+            content = Text(messages("credit-and-refund.if-you-claim-back-any"))
+        ))
+    } else {
+        @govukInsetText(InsetText(
+            content = Text(messages("credit-and-refund.if-you-claim-back-more", (viewModel.availableCredit - viewModel.allocatedCredit).toCurrencyString))
+        ))
+    }
+}
+
+@p() {
+    @messages("credit-and-refund.cover-future-bill")
+}

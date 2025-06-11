@@ -31,13 +31,12 @@ import play.api.mvc._
 import services.{SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.IncomeSourcesUtils
-import views.html.manageBusinesses.manage.{ManageIncomeSources, ReportingMethodChangeError}
+import views.html.manageBusinesses.manage.ReportingMethodChangeError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: ManageIncomeSources,
-                                                     val authActions: AuthActions,
+class ReportingMethodChangeErrorController @Inject()(val authActions: AuthActions,
                                                      val updateIncomeSourceService: UpdateIncomeSourceService,
                                                      val reportingMethodChangeError: ReportingMethodChangeError,
                                                      val sessionService: SessionService,
@@ -76,7 +75,7 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
           Ok(
             reportingMethodChangeError(
               isAgent = isAgent,
-              manageIncomeSourcesUrl = getManageIncomeSourcesUrl(isAgent),
+              manageIncomeSourcesUrl = getManageYourBusinessUrl(isAgent),
               manageIncomeSourceDetailsUrl = getManageIncomeSourceDetailsUrl(id, isAgent, incomeSourceType),
               messagesPrefix = incomeSourceType.reportingMethodChangeErrorPrefix
             )
@@ -89,7 +88,9 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
     )
   }
 
-  private def getManageIncomeSourcesUrl(isAgent: Boolean): String = routes.ManageIncomeSourceController.show(isAgent).url
+  private def getManageYourBusinessUrl(isAgent: Boolean): String =
+    if(isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+    else controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
 
   private def getManageIncomeSourceDetailsUrl(incomeSourceId: IncomeSourceId, isAgent: Boolean, incomeSourceType: IncomeSourceType): String = {
     (incomeSourceType match {

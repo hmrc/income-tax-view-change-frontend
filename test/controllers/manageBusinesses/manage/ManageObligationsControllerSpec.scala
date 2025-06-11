@@ -20,10 +20,10 @@ import enums.IncomeSourceJourney._
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
-import mocks.services.{MockClientDetailsService, MockNextUpdatesService, MockSessionService}
-import models.admin.IncomeSourcesNewJourney
+import mocks.services.{MockClientDetailsService, MockDateService, MockNextUpdatesService, MockSessionService}
+import models.admin.{IncomeSourcesNewJourney, OptInOptOutContentUpdateR17}
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, ManageIncomeSourceData, PropertyDetailsModel}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, ManageIncomeSourceData, PropertyDetailsModel, TaxYear}
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -31,7 +31,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{NextUpdatesService, SessionService}
+import services.{DateService, NextUpdatesService, SessionService}
 import testConstants.BaseTestConstants.{testNino, testPropertyIncomeId}
 import testConstants.BusinessDetailsTestConstants.testIncomeSource
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, emptyUIJourneySessionData, foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}
@@ -44,7 +44,8 @@ import scala.concurrent.Future
 class ManageObligationsControllerSpec extends MockAuthActions
   with MockClientDetailsService
   with MockNextUpdatesService
-  with MockSessionService {
+  with MockSessionService
+  with MockDateService {
 
   lazy val mockIncomeSourcesUtils: IncomeSourcesUtils = mock(classOf[IncomeSourcesUtils])
 
@@ -52,7 +53,8 @@ class ManageObligationsControllerSpec extends MockAuthActions
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[NextUpdatesService].toInstance(mockNextUpdatesService),
-      api.inject.bind[IncomeSourcesUtils].toInstance(mockIncomeSourcesUtils)
+      api.inject.bind[IncomeSourcesUtils].toInstance(mockIncomeSourcesUtils),
+      api.inject.bind[DateService].toInstance(mockDateService)
     ).build()
 
   lazy val testController = app.injector.instanceOf[ManageObligationsController]
@@ -149,11 +151,41 @@ class ManageObligationsControllerSpec extends MockAuthActions
         def action = testController.show(isAgent, incomeSourceType)
 
         s"the user is authenticated as a $mtdRole" should {
+          "render the page with OptInOptOutContentUpdateR17 enabled and current tax year" in {
+            enable(IncomeSourcesNewJourney, OptInOptOutContentUpdateR17)
+
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails(getIncomeSourcesResponse(incomeSourceType))
+            setupMockGetCurrentTaxYear(TaxYear.forYearEnd(2024))
+            setupMockGetCurrentTaxYearStart(LocalDate.of(2024, 4, 6))
+
+            incomeSourceType match {
+              case SelfEmployment => when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
+              case UkProperty => when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
+                .thenReturn(Some(propertyDetailsModelUK))
+              case _ => when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
+                .thenReturn(Some(propertyDetailsModelForeign))
+            }
+
+            setMongoSessionData(testId, changeToQ, taxYear, incomeSourceType)
+            when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any()))
+              .thenReturn(Future(obligationsViewModel))
+            when(mockNextUpdatesService.getOpenObligations()(any(), any()))
+              .thenReturn(Future(testObligationsModel))
+
+            val result = action()(fakeRequest)
+            status(result) shouldBe OK
+            contentAsString(result) should include("signed up to")
+            contentAsString(result) should include("Your revised deadlines")
+            contentAsString(result) should include("Your deadlines for this business will be available in the next few minutes.")
+          }
           "render the reporting method change error page" when {
             "IncomeSources FS is enabled" in {
               enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
               setupMockGetIncomeSourceDetails(getIncomeSourcesResponse(incomeSourceType))
+              setupMockGetCurrentTaxYear(TaxYear.forYearEnd(2024))
+              setupMockGetCurrentTaxYearStart(LocalDate.of(2024, 4, 6))
               incomeSourceType match {
                 case SelfEmployment => when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
                 case UkProperty => when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
@@ -188,6 +220,8 @@ class ManageObligationsControllerSpec extends MockAuthActions
                     cashOrAccruals = true
                   )), List.empty)
                 setupMockGetIncomeSourceDetails(source)
+                setupMockGetCurrentTaxYear(TaxYear.forYearEnd(2024))
+                setupMockGetCurrentTaxYearStart(LocalDate.of(2024, 4, 6))
                 setMongoSessionData(testId, changeToA, taxYear, incomeSourceType)
 
                 when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any()))
@@ -329,7 +363,10 @@ class ManageObligationsControllerSpec extends MockAuthActions
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           val result = action(fakeRequest)
-          redirectLocation(result) shouldBe Some(controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(isAgent).url)
+          if(isAgent)
+            redirectLocation(result) shouldBe Some(controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url)
+          else
+            redirectLocation(result) shouldBe Some(controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)
         }
       }
       testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)

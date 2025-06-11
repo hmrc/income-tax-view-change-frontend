@@ -24,7 +24,7 @@ import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.core.{CheckMode, NormalMode}
-import models.admin.{AccountingMethodJourney, IncomeSourcesFs, IncomeSourcesNewJourney}
+import models.admin.{AccountingMethodJourney, IncomeSourcesNewJourney}
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup

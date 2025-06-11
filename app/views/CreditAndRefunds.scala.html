@@ -15,183 +15,64 @@
  *@
 
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import _root_.implicits.ImplicitCurrencyFormatter._
-@import models.financialDetails.DocumentDetailWithDueDate
-@import models.financialDetails._
 @import auth.MtdItUser
-@import views.html.layouts.unifiedLayout
-@import views.html.components._
-@import exceptions.MissingFieldException
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import cats.instances.string._
-@import cats.syntax.eq._
 @import models.creditsandrefunds.CreditAndRefundViewModel
-@import models.creditsandrefunds.{CreditRow, CreditViewRow, RefundRow, PaymentCreditRow}
-@import views.html.components.creditandrefund._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
+@import views.html.partials.creditAndRefunds._
 
 @this(
-mainTemplate: unifiedLayout,
-implicitDateFormatter: ImplicitDateFormatterImpl,
-appConfig: config.FrontendAppConfig,
-h1: h1,
-h2: h2,
-p: p,
-link: link,
-paymentViewRow: paymentViewRow,
-creditViewRow: creditViewRow,
-refundViewRow: refundViewRow,
-govukInsetText : GovukInsetText
+        mainTemplate: unifiedLayout,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        appConfig: config.FrontendAppConfig,
+        h1: h1,
+        h2: h2,
+        p: p,
+        govukButton: GovukButton,
+        link: link,
+        govukInsetText: GovukInsetText,
+        howMuchCanIClaim: HowMuchCanIClaim,
+        reservedContent: ReservedContent,
+        creditAndRefundList: CreditAndRefundList,
+        availableCreditContent: AvailableCreditContent
 )
 @(viewModel: CreditAndRefundViewModel,
-    isAgent: Boolean = false, backUrl: String, yourSelfAssessmentChargesFS: Boolean)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
-@import implicitDateFormatter.longDate
-
-@getWhatYouOwe(isAgent: Boolean) = @{
-    if(isAgent) {
-        controllers.routes.WhatYouOweController.showAgent().url
-    } else {
-        controllers.routes.WhatYouOweController.show().url
-    }
-}
-
-@checkSACharges(isAgent: Boolean) = @{
-    if(isAgent) {
-        controllers.routes.YourSelfAssessmentChargesController.showAgent().url
-    } else {
-        controllers.routes.YourSelfAssessmentChargesController.show().url
-    }
-}
-
-@getAvailableCreditContent = {
-    @p(classes = "govuk-body govuk-!-font-size-27 govuk-body govuk-!-font-weight-bold", id=Some("available-to-claim")) {
-        @messages("credit-and-refund.available-to-claim", viewModel.availableCredit.toCurrencyString)
-    }
-}
-
-@renderCreditRow(creditRow: CreditRow) = {
-    @creditRow match {
-        case PaymentCreditRow(amount, date) => {
-            @paymentViewRow(amount, date)
-        }
-        case CreditViewRow(amount, creditType, taxYear) => {
-            @creditViewRow(amount, creditType, taxYear)
-        }
-        case RefundRow(amount) => {
-            @refundViewRow(amount)
-        }
-    }
-}
-
-@getCreditAndRefundListContent = {
-    <details class="govuk-details">
-        <summary class="govuk-details__summary">
-            <span class="govuk-details__summary-text">
-                @messages("credit-and-refund.subHeading-source")
-            </span>
-        </summary>
-        <div class="govuk-details__text">
-            @if(viewModel.creditRows.size == 1) {
-                <div id="credits-list">
-                    @renderCreditRow(viewModel.creditRows.head)
-                </div>
-            } else {
-                <ul class="govuk-list govuk-list--bullet" id="credits-list">
-                    @for(credit <- viewModel.creditRows) {
-                        <li>
-                            @renderCreditRow(credit)
-                        </li>
-                    }
-                </ul>
-            }
-        </div>
-    </details>
-}
-
-@getReservedContent = {
-    @p(){
-        @if(viewModel.allocatedCredit != viewModel.availableCredit) {
-            @messages("credit-and-refund.upcoming-allocated-credit-1", viewModel.allocatedCredit.toCurrencyString)
-        } else {
-            @messages("credit-and-refund.upcoming-allocated-credit-1-all", viewModel.allocatedCredit.toCurrencyString)
-        }
-        @if(yourSelfAssessmentChargesFS) {
-            @link(
-                link = checkSACharges(isAgent),
-                messageKey = "credit-and-refund.selfAssessment.upcoming-allocated-credit-2"
-            )
-            @messages("credit-and-refund.selfAssessment.upcoming-allocated-credit-3")
-        } else {
-            @link(
-                link = getWhatYouOwe(isAgent),
-                messageKey = "credit-and-refund.upcoming-allocated-credit-2"
-            )
-            @messages("credit-and-refund.upcoming-allocated-credit-3")
-        }
-
-
-    }
-}
-
-@getHowMuchCanIClaimContent = {
-    @h2(msg = messages("credit-and-refund.how-much-can-i-claim"), classes = "govuk-heading-l")
-
-    @p(){
-        <span class="govuk-!-font-weight-bold">@messages("credit-and-refund.the-most-you-can-claim", viewModel.availableCredit.toCurrencyString)</span>
-        @messages("credit-and-refund.does-not-include-refunds")
-    }
-
-    @if(viewModel.allocatedCredit != 0) {
-        @if(viewModel.allocatedCredit >= viewModel.availableCredit) {
-            @govukInsetText(InsetText(
-                content = Text(messages("credit-and-refund.if-you-claim-back-any"))
-            ))
-        } else {
-            @govukInsetText(InsetText(
-                content = Text(messages("credit-and-refund.if-you-claim-back-more", (viewModel.availableCredit - viewModel.allocatedCredit).toCurrencyString))
-            ))
-        }
-    }
-
-    @p() {
-        @messages("credit-and-refund.cover-future-bill")
-    }
-}
-
+        isAgent: Boolean = false,
+        backUrl: String,
+        yourSelfAssessmentChargesFS: Boolean)(implicit request: Request[_],
+        user: MtdItUser[_],
+        messages: Messages)
 
 @mainTemplate(
     pageTitle = messages("credit-and-refund.heading"),
     backUrl = Some(backUrl),
-    isAgent = isAgent,
-    useFallbackBackLink = true
+    isAgent = isAgent
 ) {
 
     @h1(msg = messages("credit-and-refund.heading"))
 
-    @if(viewModel.hasCreditOrRefunds){
-        @getAvailableCreditContent
+    @if(viewModel.hasCreditOrRefunds) {
+        @availableCreditContent(viewModel)
+        @creditAndRefundList(viewModel)
 
-        @getCreditAndRefundListContent
-
-        @if(viewModel.availableCredit != 0){
-
-            @if(viewModel.allocatedCredit != 0) {
-                @getReservedContent
+        @if(viewModel.hasAvailableCredit) {
+            @if(viewModel.hasAllocatedCredit) {
+                @reservedContent(viewModel, yourSelfAssessmentChargesFS, isAgent)
             }
-
-            @getHowMuchCanIClaimContent
+            @howMuchCanIClaim(viewModel)
         }
     } else {
-        @p(){
+        @p() {
             @messages("credit-and-refund.no-credit")
         }
     }
 
     @if(!isAgent) {
-        <div class="govuk-button-group">
-            @if(viewModel.availableCredit != 0){
-                @link(link = s"${controllers.routes.CreditAndRefundController.startRefund().url}",
-                messageKey = "credit-and-refund.claim-refund-btn", classes = "govuk-button", role=Some("button"))
-            }
-        </div>
+        @govukButton(Button(
+            content = Text(messages("credit-and-refund.claim-refund-btn")),
+            attributes = Map("id" -> "continue-button"),
+            href = Some(s"${controllers.routes.CreditAndRefundController.startRefund().url}")
+        ))
     }
 }

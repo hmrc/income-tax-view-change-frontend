@@ -604,6 +604,8 @@ taxCal_breakdown.table.totalRoyaltyPaymentsTaxCharged               = Treth sy�
 taxCal_breakdown.table.giftAidTaxReductionWhereBasicRateDiffers     = Gostyngiad treth ar y gwahaniaeth yn y gyfradd sylfaenol
 taxCal_breakdown.table.giftAidTaxChargeWhereBasicRateDiffers        = Tâl treth ar y gwahaniaeth yn y gyfradd sylfaenol
 
+taxCal_breakdown.table.highIncomeBenefitCharge                      = Tâl treth Budd-dal Plant Incwm Uchel
+
 taxCal_breakdown.message.static1                                = Mae’r cyfrifiad hwn ond yn seiliedig ar yr wybodaeth y mae CThEF wedi’i chael am eich incwm a’ch treuliau hyd yma. Gallai hyn newid wrth i ni gael rhagor o wybodaeth amdanoch yn ystod y flwyddyn dreth.
 taxCal_breakdown.message.C22201                                 = Cynyddwyd eich terfyn ar gyfer y Gyfradd Sylfaenol gan {0} i {1} ar gyfer taliadau Rhodd Cymorth.
 taxCal_breakdown.message.C22202                                 = Mae’r dreth sy’n ddyledus ar daliadau Rhodd Cymorth yn fwy na’r Dreth Incwm a godwyd arnoch, felly rydych yn agored i dalu treth Rhodd Cymorth.
@@ -765,7 +767,7 @@ obligations.quarterlyUpdates                                    = Diweddariadau 
 obligations.finalDeclarationUpdate                              = Datganiad terfynol
 
 ## Next updates Page ##
-nextUpdates.heading                                             = Diweddariadau nesaf
+nextUpdates.heading                                             = Eich diweddariadau a’ch dyddiadau cau
 nextUpdates.sub-heading                                         = Diweddariadau’n ddyledus erbyn
 nextUpdates.dropdown.info                                       = Beth yw’r mathau o ddiweddariadau?
 nextUpdates.info                                       			= Mae’n rhaid i bob diweddariad gael ei anfon gan ddefnyddio ein meddalwedd cadw cofnodion erbyn pob dyddiad a ddangosir.
@@ -793,13 +795,9 @@ nextUpdates.business            							    = Incwm busnes
 
 nextUpdates.optOutOneYear.p.message                             = Ar hyn o bryd, rydych yn adrodd bob chwarter ar sail wirfoddol ar gyfer blwyddyn dreth {0} i {1}. Gallwch ddewis
 nextUpdates.optOutOneYear.p.link                                = optio allan o ddiweddariadau bob chwarter ac adrodd yn flynyddol yn lle hynny.
-nextUpdates.optOutOneYear.reportingFrequency.p.message          = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
-nextUpdates.optOutOneYear.reportingFrequency.p.link             = bwrw golwg dros a newid amlder eich adroddiadau.
 
-nextUpdates.optOutMultiYear.p.message                           = Ar hyn o bryd rhydych yn cyflwyno adroddiadau’n chwarterol ar sail wirfoddol. Cadarnhewch eich bod am
-nextUpdates.optOutMultiYear.p.link                              = optio allan o ddiweddariadau chwarterol ac am gyflwyno’n flynyddol yn lle hynny.
-nextUpdates.optOutMultiYear.reportingFrequency.p.message        = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
-nextUpdates.optOutMultiYear.reportingFrequency.p.link           = bwrw golwg dros a newid amlder eich adroddiadau.
+nextUpdates.reporting.obligations.p.message                     = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
+nextUpdates.reporting.obligations.p.link                        = bwrw golwg dros eich ymrwymiadau adrodd.
 
 sections.open.all												= Dangos pob adran
 sections.close.all												= Cuddio pob adran
@@ -1105,11 +1103,11 @@ chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = Creodd
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = Creodd CThEF y swm ychwanegol hwn ar gyfer eich ail daliad ar gyfrif yn seiliedig ar eich Ffurflen Dreth
 chargeSummary.chargeHistory.created.lateSubmissionPenalty.text          = Gwnaeth CThEF greu eich cosb am gyflwyno’n hwyr
 chargeSummary.chargeHistory.created.firstLatePaymentPenalty.text        = Gwnaeth CThEF greu eich cosb am dalu’n hwyr
-chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = Taliad ar gyfrif 1 o 2 wedi’i ostwng oherwydd cais gan y trethdalwr
-chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = Taliad ar gyfrif 2 o 2 wedi’i ostwng oherwydd cais gan y trethdalwr
+chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = Y taliad cyntaf ar gyfrif wedi’i ostwng oherwydd cais gan y trethdalwr
+chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = 	Yr ail daliad ar gyfrif wedi’i ostwng oherwydd cais gan y trethdalwr
 chargeSummary.chargeHistory.request.balancingCharge.text	   	        = Taliad Mantoli wedi’i ostwng oherwydd cais gan y trethdalwr
-chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	        = Taliad ar gyfrif 1 o 2 wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
-chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	        = Taliad ar gyfrif 2 o 2 wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
+chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	        = Y taliad cyntaf ar gyfrif wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
+chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	        = Yr ail daliad ar gyfrif wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
 chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	        = Taliad Mantoli wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
 chargeSummary.chargeHistory.adjustment.paymentOnAccount1.text           = Gwnaethoch ddiweddaru eich taliad ar gyfrif cyntaf
 chargeSummary.chargeHistory.adjustment.paymentOnAccount2.text           = Gwnaethoch ddiweddaru eich ail daliad ar gyfrif
@@ -1123,8 +1121,8 @@ chargeSummary.lpi.balancingCharge.text							   = Llog am dalu’n hwyr ar gyfer
 chargeSummary.lpi.interestPeriod								   = Cyfnod llog
 chargeSummary.lpi.interestPeriod.dates							   = {0} i {1}
 
-chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text          = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o2 wedi’i greu
-chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text          = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o2 wedi’i greu
+chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text          = Llog am dalu’r taliad cyntaf ar gyfrif yn hwyr wedi’i greu
+chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text          = Llog am dalu’r ail daliad ar gyfrif yn hwyr wedi’i greu
 chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa1.text     = CThEF sydd wedi creu’r tâl hwn
 chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa2.text     = CThEF sydd wedi creu’r tâl hwn
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text            = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli wedi’i greu
@@ -1254,8 +1252,8 @@ paymentAllocation.paymentAllocations.bcd.vcnic2                 = Yswiriant Gwla
 paymentAllocation.paymentAllocations.bcd.nic4                   = Yswiriant Gwladol Dosbarth 4 ar gyfer y Taliad Mantoli
 paymentAllocation.paymentAllocations.bcd.sl                     = Benthyciadau Myfyrwyr ar gyfer y Taliad Mantoli
 paymentAllocation.paymentAllocations.bcd.cgt                    = Treth Enillion Cyfalaf ar gyfer y Taliad Mantoli
-paymentAllocation.paymentAllocations.paymentOnAccount1.text     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2 wedi’i greu
-paymentAllocation.paymentAllocations.paymentOnAccount2.text     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2 wedi’i greu
+paymentAllocation.paymentAllocations.paymentOnAccount1.text     = Llog am dalu’r taliad cyntaf ar gyfrif yn hwyr
+paymentAllocation.paymentAllocations.paymentOnAccount2.text     = Llog am dalu’r ail daliad ar gyfrif yn hwyr
 paymentAllocation.paymentAllocations.balancingCharge.text       = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
 paymentAllocation.paymentAllocations.hmrcAdjustment.text        = Addasiad CThEF
 
@@ -2109,9 +2107,26 @@ incomeSources.add.manageObligations.uk-property                       =   eiddo 
 incomeSources.add.manageObligations.foreign-property                  =   eiddo tramor
 incomeSources.add.manageObligations.heading                           =   Yr hyn y mae’n rhaid i chi ei wneud
 
+## used when OptInOptOutContentUpdateR17 enabled
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.title = {0} wedi’i {1} cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer blwyddyn dreth {2} i {3}
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.panel.title                       = {0}
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.panel.body = wedi’i {0} cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer blwyddyn dreth {1} i {2}
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.panel.signedUp = cofrestru
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.panel.optedOut = optio allan o
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.heading = Eich dyddiadau cau sydd wedi’u haddasu
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.inset = Bydd eich dyddiadau cau ar gyfer cyflwyno ar gyfer y busnes hwn ar gael yn y munudau nesaf
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.beforeLink = Hyd yn oed os nad ydynt yn cael eu harddangos ar y dudalen
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.link = diweddariadau a dyddiadau cau
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.afterLink = ar unwaith, mae’ch cyfrif wedi’i ddiweddaru.
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para2 = Ar gyfer y busnes newydd hwn mae’n bosibl bod gennych ddiweddariadau hwyr ar gyfer blwyddyn dreth 2024 i 2025. Mae’n rhaid i chi gyflwyno’r diweddariadau hyn, ynghyd â’r holl incwm a threuliau sydd eu hangen, drwy ddefnyddio’ch meddalwedd sy’n cydweddu.
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.manage.link = Bwrw golwg dros eich busnes
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.manage.afterLink = er mwyn ychwanegu, rheoli neu ddod â busnes neu ffynhonnell incwm i ben.
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.sole-trader                       =   y busnes unig fasnachwr
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.uk-property                       =   eiddo yn y DU
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.foreign-property                  =   eiddo tramor
 
 # manage journey manage income source
-incomeSources.manage.quarterly-period                                 =   Cyfnod chwarterol
+incomeSources.manage.quarterly-period                                 =   Cyfnod diweddaru
 incomeSources.manage.quarterly-period.standard                        =   Safonol
 incomeSources.manage.quarterly-period.calendar                        =   Calendr
 incomeSources.manage.quarterly-period.standard.summary                =   Beth yw cyfnod chwarterol safonol?
