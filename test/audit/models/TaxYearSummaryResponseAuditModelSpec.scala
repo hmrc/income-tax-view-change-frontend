@@ -47,9 +47,9 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
 
   def calculationSummary(forecastIncome: Option[Int] = None,
                          forecastIncomeTaxAndNics: Option[BigDecimal] = None,
-                         forecastAllowancesAndDeductions: Option[BigDecimal] = None): CalculationSummary = CalculationSummary(
+                         forecastAllowancesAndDeductions: Option[Int] = None): CalculationSummary = CalculationSummary(
     timestamp = Some("2017-07-06T12:34:56.789Z".toZonedDateTime.toLocalDate),
-    crystallised = Some(false),
+    crystallised = false,
     unattendedCalc = false,
     taxDue = 2010.00,
     income = 199505,
@@ -57,14 +57,16 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     totalTaxableIncome = 198500,
     forecastIncome = forecastIncome,
     forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
-    forecastAllowancesAndDeductions = forecastAllowancesAndDeductions
+    forecastAllowancesAndDeductions = forecastAllowancesAndDeductions,
+    periodFrom = LocalDate.of(2022, 1, 1),
+    periodTo = LocalDate.of(2023, 1, 1)
   )
 
   def unattendedCalcSummary(forecastIncome: Option[Int] = None,
                             forecastIncomeTaxAndNics: Option[BigDecimal] = None,
-                            forecastAllowancesAndDeductions: Option[BigDecimal] = None): CalculationSummary = CalculationSummary(
+                            forecastAllowancesAndDeductions: Option[Int] = None): CalculationSummary = CalculationSummary(
     timestamp = Some("2017-07-06T12:34:56.789Z".toZonedDateTime.toLocalDate),
-    crystallised = Some(false),
+    crystallised = false,
     unattendedCalc = true,
     taxDue = 2010.00,
     income = 199505,
@@ -72,7 +74,9 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     totalTaxableIncome = 198500,
     forecastIncome = forecastIncome,
     forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
-    forecastAllowancesAndDeductions = forecastAllowancesAndDeductions
+    forecastAllowancesAndDeductions = forecastAllowancesAndDeductions,
+    periodFrom = LocalDate.of(2022, 1, 1),
+    periodTo = LocalDate.of(2023, 1, 1)
   )
 
   def payments(hasDunningLock: Boolean): List[ChargeItem] = {
@@ -243,7 +247,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
                                        paymentHasADunningLock: Boolean = false,
                                        forecastIncome: Option[Int] = None,
                                        forecastIncomeTaxAndNics: Option[BigDecimal] = None,
-                                       forecastAllowancesAndDeductions: Option[BigDecimal] = None,
+                                       forecastAllowancesAndDeductions: Option[Int] = None,
                                        messages: Option[Messages] = None): TaxYearSummaryResponseAuditModel =
     TaxYearSummaryResponseAuditModel(
       mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, None, business, Nil)),
@@ -264,7 +268,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
                                                  paymentHasADunningLock: Boolean = false,
                                                  forecastIncome: Option[Int] = None,
                                                  forecastIncomeTaxAndNics: Option[BigDecimal] = None,
-                                                 forecastAllowancesAndDeductions: Option[BigDecimal] = None): TaxYearSummaryResponseAuditModel =
+                                                 forecastAllowancesAndDeductions: Option[Int] = None): TaxYearSummaryResponseAuditModel =
     TaxYearSummaryResponseAuditModel(
       mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, None, business, Nil)),
       messagesApi = messagesApi,

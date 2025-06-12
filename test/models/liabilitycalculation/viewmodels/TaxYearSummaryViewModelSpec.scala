@@ -44,14 +44,14 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ChargeConstants with Moc
     deductions = 2.02,
     totalTaxableIncome = 3,
     taxDue = 4.04,
-    crystallised = Some(true),
+    crystallised = true,
     unattendedCalc = true,
     forecastIncome = Some(12500),
     forecastIncomeTaxAndNics = Some(5000.99),
-    forecastAllowancesAndDeductions = Some(4200.00),
+    forecastAllowancesAndDeductions = Some(4200),
     forecastTotalTaxableIncome = Some(8300),
-    periodFrom = Some(LocalDate.of(2020 - 1, 1, 1)),
-    periodTo = Some(LocalDate.of(2021, 1, 1))
+    periodFrom = LocalDate.of(2020 - 1, 1, 1),
+    periodTo = LocalDate.of(2021, 1, 1)
   )
 
   val testCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = true, poaTaxYear = Some(TaxYear(2024, 2025)))

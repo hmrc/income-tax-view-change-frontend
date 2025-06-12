@@ -84,7 +84,7 @@ class TaxDueSummaryController @Inject()(val authActions: AuthActions,
 
         auditingService.extendedAudit(TaxDueResponseAuditModel(user, viewModel, taxYear))
 
-        val fallbackBackUrl = getFallbackUrl(user.session.get(calcPagesBackPage), isAgent, liabilityCalc.metadata.crystallised.getOrElse(false), taxYear, origin)
+        val fallbackBackUrl = getFallbackUrl(user.session.get(calcPagesBackPage), isAgent, liabilityCalc.metadata.isCalculationCrystallised, taxYear, origin)
 
         val startAVRTYear = 2024
 

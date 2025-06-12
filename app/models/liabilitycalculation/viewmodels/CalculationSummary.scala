@@ -22,7 +22,7 @@ import models.liabilitycalculation.{LiabilityCalculationResponse, Messages}
 import java.time.LocalDate
 
 case class CalculationSummary(timestamp: Option[LocalDate],
-                              crystallised: Option[Boolean],
+                              crystallised: Boolean,
                               unattendedCalc: Boolean,
                               taxDue: BigDecimal,
                               income: Int,
@@ -30,10 +30,10 @@ case class CalculationSummary(timestamp: Option[LocalDate],
                               totalTaxableIncome: Int,
                               forecastIncome: Option[Int] = None,
                               forecastIncomeTaxAndNics: Option[BigDecimal] = None,
-                              forecastAllowancesAndDeductions: Option[BigDecimal] = None,
+                              forecastAllowancesAndDeductions: Option[Int] = None,
                               forecastTotalTaxableIncome: Option[Int] = None,
-                              periodFrom: Option[LocalDate] = None,
-                              periodTo: Option[LocalDate] = None,
+                              periodFrom: LocalDate,
+                              periodTo: LocalDate,
                               messages: Option[Messages] = None) {
 
 }
@@ -48,8 +48,8 @@ object CalculationSummary extends ImplicitDateParser {
     }
   }
 
-  private def isUnattendedCalc(calculationReason: Option[String]): Boolean = calculationReason match {
-    case Some("unattendedCalculation") => true
+  private def isUnattendedCalc(calculationReason: String): Boolean = calculationReason match {
+    case "unattendedCalculation" => true
     case _ => false
   }
 
@@ -63,7 +63,7 @@ object CalculationSummary extends ImplicitDateParser {
 
     CalculationSummary(
       timestamp = calc.metadata.calculationTimestamp.map(_.toZonedDateTime.toLocalDate),
-      crystallised = calc.metadata.crystallised,
+      crystallised = calc.metadata.isCalculationCrystallised,
       unattendedCalc = isUnattendedCalc(calc.metadata.calculationReason),
       taxDue = getTaxDue(calc),
       income = calc.calculation.flatMap(c => c.taxCalculation.map(_.incomeTax.totalIncomeReceivedFromAllSources)).getOrElse(0),

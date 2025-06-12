@@ -47,7 +47,15 @@ case class Metadata(calculationTimestamp: Option[String],
                     calculationType: String,
                     calculationReason: String,
                     periodFrom: LocalDate,
-                    periodTo: LocalDate)
+                    periodTo: LocalDate) {
+
+  def isCalculationCrystallised: Boolean = {
+    calculationType match {
+      case "DF" => true
+      case _ => false
+    }
+  }
+}
 
 object Metadata {
   implicit val format: OFormat[Metadata] = Json.format[Metadata]

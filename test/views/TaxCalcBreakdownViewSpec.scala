@@ -219,7 +219,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       val taxDueSummaryViewModel = TaxDueSummaryViewModel(
         taxRegime = "Scotland",
         payPensionsProfitBands = Some(taxBands23AndLess),
-        transitionProfitRow = TransitionProfitRow(Some(700.00), Some(3500.00))
+        transitionProfitRow = TransitionProfitRow(Some(700.00), Some(3500))
       )
       lazy val view = taxCalcBreakdown(taxDueSummaryViewModel, taxYear2017, backUrl)
 
@@ -307,7 +307,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       val taxDueSummaryViewModel = TaxDueSummaryViewModel(
         taxRegime = "Scotland",
         payPensionsProfitBands = Some(taxBands23AndLess),
-        transitionProfitRow = TransitionProfitRow(Some(700.00), Some(3500.00))
+        transitionProfitRow = TransitionProfitRow(Some(700.00), Some(3500))
       )
       lazy val view = taxCalcBreakdown(taxDueSummaryViewModel, taxYear2017, backUrl)
 
@@ -336,7 +336,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       val taxDueSummaryViewModel = TaxDueSummaryViewModel(
         taxRegime = "Scotland",
         payPensionsProfitBands = Some(taxBands24AndUp),
-        transitionProfitRow = TransitionProfitRow(Some(700.00), Some(3500.00))
+        transitionProfitRow = TransitionProfitRow(Some(700.00), Some(3500))
       )
       lazy val view = taxCalcBreakdown(taxDueSummaryViewModel, taxYear2024, backUrl)
 

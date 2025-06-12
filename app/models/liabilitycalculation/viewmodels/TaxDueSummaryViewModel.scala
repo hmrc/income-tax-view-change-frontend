@@ -158,7 +158,7 @@ object TaxDueSummaryViewModel {
 }
 
 object TransitionProfitRow {
-  def apply(incomeTaxCharged: Option[BigDecimal], totalTaxableProfit: Option[BigDecimal]): Option[TransitionProfitRow] = {
+  def apply(incomeTaxCharged: Option[BigDecimal], totalTaxableProfit: Option[Int]): Option[TransitionProfitRow] = {
 
     (incomeTaxCharged, totalTaxableProfit) match {
       case (Some(tax), Some(profit)) => Some(TransitionProfitRow(incomeTaxCharged = tax, totalTaxableProfit = profit))

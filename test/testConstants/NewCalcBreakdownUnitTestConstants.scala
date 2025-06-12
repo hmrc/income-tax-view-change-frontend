@@ -27,7 +27,7 @@ object NewCalcBreakdownUnitTestConstants {
 
   val liabilityCalculationModelError: LiabilityCalculationError = LiabilityCalculationError(432, "someerrorhere")
 
-  def liabilityCalculationModelDeductionsMinimal(calculationReason: Option[String] = None): LiabilityCalculationResponse = LiabilityCalculationResponse(
+  def liabilityCalculationModelDeductionsMinimal(calculationReason: String): LiabilityCalculationResponse = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
       taxRegime = "UK", class2VoluntaryContributions = None
     )),
@@ -36,10 +36,10 @@ object NewCalcBreakdownUnitTestConstants {
       allowancesAndDeductions = Some(AllowancesAndDeductions()))),
     metadata = Metadata(
       calculationTimestamp = None,
-      crystallised = None,
+      calculationType = "IY",
       calculationReason = calculationReason,
-      periodFrom = None,
-      periodTo = None)
+      periodFrom = LocalDate.of(2022, 1, 1),
+      periodTo = LocalDate.of(2023, 1, 1))
   )
 
   val liabilityCalculationModelSuccessful: LiabilityCalculationResponse = LiabilityCalculationResponse(
@@ -88,19 +88,17 @@ object NewCalcBreakdownUnitTestConstants {
       incomeSummaryTotals = Some(IncomeSummaryTotals(
         totalSelfEmploymentProfit = Some(12500),
         totalPropertyProfit = Some(12500),
-        totalFHLPropertyProfit = Some(12500),
-        totalForeignPropertyProfit = Some(12500),
-        totalEeaFhlProfit = Some(12500)
+        totalForeignPropertyProfit = Some(12500)
       )),
       marriageAllowanceTransferredIn = Some(MarriageAllowanceTransferredIn(amount = Some(5000.99))),
       studentLoans = Some(Seq(StudentLoan(
-        planType = Some("01"),
-        studentLoanTotalIncomeAmount = Some(BigDecimal(5000.99)),
-        studentLoanChargeableIncomeAmount = Some(BigDecimal(5000.99)),
-        studentLoanRepaymentAmount = Some(BigDecimal(5000.99)),
-        studentLoanRepaymentAmountNetOfDeductions = Some(BigDecimal(5000.99)),
-        studentLoanApportionedIncomeThreshold = Some(BigDecimal(1500)),
-        studentLoanRate = Some(BigDecimal(20))
+        planType = "01",
+        studentLoanTotalIncomeAmount = BigDecimal(5000.99),
+        studentLoanChargeableIncomeAmount = BigDecimal(5000.99),
+        studentLoanRepaymentAmount = BigDecimal(5000.99),
+        studentLoanRepaymentAmountNetOfDeductions = BigDecimal(5000.99),
+        studentLoanApportionedIncomeThreshold = 1500,
+        studentLoanRate = BigDecimal(20)
       ))),
       reliefs = Some(Reliefs(reliefsClaimed = Some(Seq(ReliefsClaimed(
         `type` = "vctSubscriptions",
@@ -259,7 +257,7 @@ object NewCalcBreakdownUnitTestConstants {
           ))),
         totalEstimatedIncome = Some(12500),
         totalTaxableIncome = Some(8300),
-        totalAllowancesAndDeductions = Some(4200.00),
+        totalAllowancesAndDeductions = Some(4200),
         incomeTaxAmount = Some(5000.99),
         nic2 = Some(5000.99),
         nic4 = Some(5000.99),
@@ -291,17 +289,17 @@ object NewCalcBreakdownUnitTestConstants {
         totalTaxPaid = Some(5000.99),
         totalPensionChargesDue = Some(5000.99)
       )),
-      transitionProfit = Some(TransitionProfit(totalTaxableTransitionProfit = Some(3000.00))))),
+      transitionProfit = Some(TransitionProfit(totalTaxableTransitionProfit = Some(3000))))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      crystallised = Some(true),
-      calculationReason = Some("customerRequest"),
-      periodFrom = Some(LocalDate.of(2018, 1, 1)),
-      periodTo = Some(LocalDate.of(2019, 1, 1))
+      calculationType = "IY",
+      calculationReason = "customerRequest",
+      periodFrom = LocalDate.of(2018, 1, 1),
+      periodTo = LocalDate.of(2019, 1, 1)
     )
   )
 
-  val liabilityCalculationModelErrorMessagesForIndividual = liabilityCalculationModelDeductionsMinimal().copy(messages = Some(Messages(
+  val liabilityCalculationModelErrorMessagesForIndividual = liabilityCalculationModelDeductionsMinimal(calculationReason = "customerRequest").copy(messages = Some(Messages(
     errors = Some(List(
       Message("C55012", "the update must align to the accounting period end date of 05/01/2023."),
       Message("C15507", "you’ve claimed £2000 in Property Income Allowance but this is more than turnover for your UK property."),
@@ -310,7 +308,7 @@ object NewCalcBreakdownUnitTestConstants {
     ))
   )))
 
-  val liabilityCalculationModelErrorMessagesForAgent = liabilityCalculationModelDeductionsMinimal().copy(messages = Some(Messages(
+  val liabilityCalculationModelErrorMessagesForAgent = liabilityCalculationModelDeductionsMinimal(calculationReason = "customerRequest").copy(messages = Some(Messages(
     errors = Some(List(
       Message("C55012", "the update must align to the accounting period end date of 05/01/2023."),
       Message("C15507", "your client claimed £2000 in Property Income Allowance but this is more than turnover for their UK property."),
@@ -322,9 +320,10 @@ object NewCalcBreakdownUnitTestConstants {
   val liabilityCalculationModelSuccessfulNotCrystallised = liabilityCalculationModelSuccessful.copy(metadata =
     Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      crystallised = Some(false),
-      periodFrom = Some(LocalDate.of(2018, 1, 1)),
-      periodTo = Some(LocalDate.of(2019, 1, 1))
+      calculationType = "IY",
+      calculationReason = "customerRequest",
+      periodFrom = LocalDate.of(2018, 1, 1),
+      periodTo = LocalDate.of(2019, 1, 1)
     )
 
   )
@@ -371,9 +370,7 @@ object NewCalcBreakdownUnitTestConstants {
       incomeSummaryTotals = Some(IncomeSummaryTotals(
         totalSelfEmploymentProfit = Some(12500),
         totalPropertyProfit = Some(12500),
-        totalFHLPropertyProfit = Some(12500),
-        totalForeignPropertyProfit = Some(12500),
-        totalEeaFhlProfit = Some(12500)
+        totalForeignPropertyProfit = Some(12500)
       )),
       marriageAllowanceTransferredIn = Some(MarriageAllowanceTransferredIn(amount = Some(5000.99))),
       reliefs = Some(Reliefs(reliefsClaimed = None,
@@ -480,11 +477,13 @@ object NewCalcBreakdownUnitTestConstants {
         specialWithholdingTaxOrUkTaxPaid = Some(5000.99),
         inYearAdjustmentCodedInLaterTaxYear = Some(5000.99)
       )),
-      transitionProfit = Some(TransitionProfit(totalTaxableTransitionProfit = Some(12500.00))))),
+      transitionProfit = Some(TransitionProfit(totalTaxableTransitionProfit = Some(12500))))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      crystallised = Some(true),
-      calculationReason = Some("customerRequest"))
+      calculationType = "IY",
+      calculationReason = "customerRequest",
+      periodFrom = LocalDate.of(2018, 1, 1),
+      periodTo = LocalDate.of(2019, 1, 1))
   )
 
   val taxDueSummaryViewModelStandard = TaxDueSummaryViewModel(

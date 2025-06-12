@@ -20,12 +20,16 @@ import models.liabilitycalculation.viewmodels.CalculationSummary
 import play.api.libs.json.{JsObject, Json}
 import testUtils.UnitSpec
 
+import java.time.LocalDate
+
 class ViewInYearTaxEstimateAuditModelSpec extends UnitSpec {
 
   val taxDue = 1000.00
   val income = 500
   val deductions = 800.00
   val totalTaxable = 300
+  val periodFrom = LocalDate.of(2022, 1, 1)
+  val periodTo = LocalDate.of(2023, 1, 1)
   
   val taxYear = 2022
   
@@ -33,7 +37,7 @@ class ViewInYearTaxEstimateAuditModelSpec extends UnitSpec {
   val mtditid = "1234567890"
   val individual = "individual"
 
-  val taxCalc: CalculationSummary = CalculationSummary(None, None, false, taxDue, income, deductions, totalTaxable)
+  val taxCalc: CalculationSummary = CalculationSummary(None, crystallised = true, unattendedCalc = false, taxDue, income, deductions, totalTaxable, periodFrom = periodFrom, periodTo = periodTo)
   
   val viewInYearBodyNormal: ViewInYearTaxEstimateAuditBody = ViewInYearTaxEstimateAuditBody(income, deductions, totalTaxable, taxDue)
   val viewInYearBodyApplyModel: ViewInYearTaxEstimateAuditBody = ViewInYearTaxEstimateAuditBody(taxCalc)

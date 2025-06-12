@@ -19,6 +19,8 @@ package models.helpers
 import models.liabilitycalculation._
 import models.liabilitycalculation.taxcalculation._
 
+import java.time.LocalDate
+
 trait LiabilityCalculationDataHelper {
 
   val pensionsProfit = PayPensionsProfit(
@@ -560,9 +562,7 @@ trait LiabilityCalculationDataHelper {
     incomeSummaryTotals = Some(IncomeSummaryTotals(
       totalSelfEmploymentProfit = Some(12500),
       totalPropertyProfit = Some(12500),
-      totalFHLPropertyProfit = Some(12500),
-      totalForeignPropertyProfit = Some(12500),
-      totalEeaFhlProfit = Some(12500)
+      totalForeignPropertyProfit = Some(12500)
     )),
     marriageAllowanceTransferredIn = Some(MarriageAllowanceTransferredIn(amount = Some(5000.99))),
     reliefs = Some(Reliefs(reliefsClaimed = Some(Seq(ReliefsClaimed(
@@ -637,8 +637,10 @@ trait LiabilityCalculationDataHelper {
     calculation = Some(calculationResult),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      crystallised = Some(true),
-      calculationReason = Some("customerRequest"))
+      calculationType = "IY",
+      calculationReason = "customerRequest",
+      periodFrom = LocalDate.of(2022, 1, 1),
+      periodTo = LocalDate.of(2023, 1, 1))
   )
 
   val liabilityCalculationModelSuccessfulConversionSB = LiabilityCalculationResponse(
@@ -653,8 +655,10 @@ trait LiabilityCalculationDataHelper {
     calculation = Some(calculationResult.copy(taxCalculation = Some(taxCalculationResultSB))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      crystallised = Some(true),
-      calculationReason = Some("customerRequest"))
+      calculationType = "IY",
+      calculationReason = "customerRequest",
+      periodFrom = LocalDate.of(2022, 1, 1),
+      periodTo = LocalDate.of(2023, 1, 1))
   )
   val liabilityCalculationModelSuccessfulConversionDB = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
@@ -668,8 +672,10 @@ trait LiabilityCalculationDataHelper {
     calculation = Some(calculationResult.copy(taxCalculation = Some(taxCalculationResultDB))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      crystallised = Some(true),
-      calculationReason = Some("customerRequest"))
+      calculationType = "IY",
+      calculationReason = "customerRequest",
+      periodFrom = LocalDate.of(2022, 1, 1),
+      periodTo = LocalDate.of(2023, 1, 1))
   )
   val liabilityCalculationModelSuccessfulConversionLS = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
@@ -683,8 +689,10 @@ trait LiabilityCalculationDataHelper {
     calculation = Some(calculationResult.copy(taxCalculation = Some(taxCalculationResultLS))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      crystallised = Some(true),
-      calculationReason = Some("customerRequest"))
+      calculationType = "IY",
+      calculationReason = "customerRequest",
+      periodFrom = LocalDate.of(2022, 1, 1),
+      periodTo = LocalDate.of(2023, 1, 1))
   )
   val liabilityCalculationModelSuccessfulConversionGLP = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
@@ -698,8 +706,10 @@ trait LiabilityCalculationDataHelper {
     calculation = Some(calculationResult.copy(taxCalculation = Some(taxCalculationResultGLP))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      crystallised = Some(true),
-      calculationReason = Some("customerRequest"))
+      calculationType = "IY",
+      calculationReason = "customerRequest",
+      periodFrom = LocalDate.of(2022, 1, 1),
+      periodTo = LocalDate.of(2023, 1, 1))
   )
 
   val liabilityCalculationModelSuccessfulWithNoCalc = liabilityCalculationModelSuccessfulConversionPB.copy(

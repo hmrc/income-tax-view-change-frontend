@@ -27,10 +27,10 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
 
   "CalculationSummary model" when {
     "create a minimal CalculationSummary when there is a minimal Calculation response" in {
-      CalculationSummary(liabilityCalculationModelDeductionsMinimal()) shouldBe
+      CalculationSummary(liabilityCalculationModelDeductionsMinimal(calculationReason = "customerRequest")) shouldBe
         CalculationSummary(
           timestamp = None,
-          crystallised = None,
+          crystallised = true,
           unattendedCalc = false,
           taxDue = 0.0,
           income = 0,
@@ -39,8 +39,8 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
           forecastIncome = None,
           forecastIncomeTaxAndNics = None,
           forecastAllowancesAndDeductions = None,
-          periodFrom = None,
-          periodTo = None
+          periodFrom = LocalDate.of(2022, 1, 1),
+          periodTo = LocalDate.of(2023, 1, 1)
         )
     }
 
@@ -49,7 +49,7 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
       "create a full CalculationSummary when there is a full Calculation" in {
         val expectedCalculationSummary = CalculationSummary(
           timestamp = Some("2019-02-15T09:35:15.094Z".toZonedDateTime.toLocalDate),
-          crystallised = Some(true),
+          crystallised = true,
           unattendedCalc = false,
           taxDue = 5000.99,
           income = 12500,
@@ -57,10 +57,10 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
           totalTaxableIncome = 12500,
           forecastIncome = Some(12500),
           forecastIncomeTaxAndNics = Some(5000.99),
-          forecastAllowancesAndDeductions = Some(4200.00),
+          forecastAllowancesAndDeductions = Some(4200),
           forecastTotalTaxableIncome = Some(8300),
-          periodFrom = Some(LocalDate.of(2018, 1, 1)),
-          periodTo = Some(LocalDate.of(2019, 1, 1)),
+          periodFrom = LocalDate.of(2018, 1, 1),
+          periodTo = LocalDate.of(2019, 1, 1),
           messages = Some(Messages(
             info = Some(Seq(Message(id = "C22211", text = "info msg text1"))),
             warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
@@ -75,7 +75,7 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
         "incomeTaxNicAndCgtAmount is not available then take incomeTaxNicAmount as forecastIncomeTaxAndNics" in {
           val expectedCalculationSummary = CalculationSummary(
             timestamp = Some("2019-02-15T09:35:15.094Z".toZonedDateTime.toLocalDate),
-            crystallised = Some(true),
+            crystallised = true,
             unattendedCalc = false,
             taxDue = 5000.99,
             income = 12500,
@@ -83,10 +83,10 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
             totalTaxableIncome = 12500,
             forecastIncome = Some(12500),
             forecastIncomeTaxAndNics = Some(6000.99),
-            forecastAllowancesAndDeductions = Some(4200.00),
+            forecastAllowancesAndDeductions = Some(4200),
             forecastTotalTaxableIncome = Some(8300),
-            periodFrom = Some(LocalDate.of(2018, 1, 1)),
-            periodTo = Some(LocalDate.of(2019, 1, 1)),
+            periodFrom = LocalDate.of(2018, 1, 1),
+            periodTo = LocalDate.of(2019, 1, 1),
             messages = Some(Messages(
               info = Some(Seq(Message(id = "C22211", text = "info msg text1"))),
               warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
@@ -109,7 +109,7 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
           val taxDue = 6000
           val expectedCalculationSummary = CalculationSummary(
             timestamp = Some("2019-02-15T09:35:15.094Z".toZonedDateTime.toLocalDate),
-            crystallised = Some(true),
+            crystallised = true,
             unattendedCalc = false,
             taxDue = taxDue,
             income = 12500,
@@ -117,10 +117,10 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
             totalTaxableIncome = 12500,
             forecastIncome = Some(12500),
             forecastIncomeTaxAndNics = Some(5000.99),
-            forecastAllowancesAndDeductions = Some(4200.00),
+            forecastAllowancesAndDeductions = Some(4200),
             forecastTotalTaxableIncome = Some(8300),
-            periodFrom = Some(LocalDate.of(2018, 1, 1)),
-            periodTo = Some(LocalDate.of(2019, 1, 1)),
+            periodFrom = LocalDate.of(2018, 1, 1),
+            periodTo = LocalDate.of(2019, 1, 1),
             messages = Some(Messages(
               info = Some(Seq(Message(id = "C22211", text = "info msg text1"))),
               warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
@@ -143,7 +143,7 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
         CalculationSummary(liabilityCalculationModelErrorMessagesForIndividual) shouldBe
           CalculationSummary(
             timestamp = None,
-            crystallised = None,
+            crystallised = false,
             unattendedCalc = false,
             taxDue = 0.0,
             income = 0,
@@ -152,8 +152,8 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
             forecastIncome = None,
             forecastIncomeTaxAndNics = None,
             forecastAllowancesAndDeductions = None,
-            periodFrom = None,
-            periodTo = None,
+            periodFrom = LocalDate.of(2022, 1, 1),
+            periodTo = LocalDate.of(2023, 1, 1),
             messages = Some(Messages(
               errors = Some(List(
                 Message("C55012", "the update must align to the accounting period end date of 05/01/2023."),
@@ -167,15 +167,17 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
     }
 
     "return unattendedCalc as true when calculationReason is 'unattendedCalculation'" in {
-      CalculationSummary(liabilityCalculationModelDeductionsMinimal(calculationReason = Some("unattendedCalculation"))) shouldBe
+      CalculationSummary(liabilityCalculationModelDeductionsMinimal(calculationReason = "unattendedCalculation")) shouldBe
         CalculationSummary(
           timestamp = None,
-          crystallised = None,
+          crystallised = true,
           unattendedCalc = true,
           taxDue = 0.0,
           income = 0,
           deductions = 0.0,
-          totalTaxableIncome = 0
+          totalTaxableIncome = 0,
+          periodFrom = LocalDate.of(2022, 1, 1),
+          periodTo = LocalDate.of(2023, 1, 1)
         )
     }
   }

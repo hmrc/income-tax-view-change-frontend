@@ -28,6 +28,7 @@ import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import testConstants.NewCalcBreakdownUnitTestConstants._
 import testUtils.TestSupport
 
+import java.time.LocalDate
 import scala.io.Source
 
 class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelper with TestSupport {
@@ -41,8 +42,10 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
         calculation = None,
         metadata = Metadata(
           calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-          crystallised = Some(true),
-          calculationReason = Some("customerRequest"))
+          calculationType = "IY",
+          calculationReason = "customerRequest",
+          periodFrom = LocalDate.of(2022, 1, 1),
+          periodTo = LocalDate.of(2023, 1, 1))
       )
       val expectedJson =
         s"""

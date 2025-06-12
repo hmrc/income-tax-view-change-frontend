@@ -153,8 +153,8 @@ case class StudentLoan(planType: String,
                        studentLoanApportionedIncomeThreshold: Int,
                        studentLoanRate: BigDecimal
                       ) {
-  def planTypeActual: String = planType.getOrElse(throw MissingFieldException("Plan type"))
-  def studentLoanRepaymentAmountActual: BigDecimal = studentLoanRepaymentAmount.getOrElse(throw MissingFieldException("Student Loan Repayment Amount"))
+  def planTypeActual: String = planType
+  def studentLoanRepaymentAmountActual: BigDecimal = studentLoanRepaymentAmount
 }
 
 object StudentLoan {
