@@ -20,6 +20,7 @@ import exceptions.MissingFieldException
 import models.liabilitycalculation.taxcalculation.{Nic4Bands, TaxBands}
 import models.liabilitycalculation.viewmodels.CalculationSummary.getTaxDue
 import models.liabilitycalculation._
+import models.obligations.ObligationsModel
 import play.api.Logger
 
 case class TaxDueSummaryViewModel(
@@ -58,6 +59,7 @@ case class TaxDueSummaryViewModel(
                                    totalAnnuityPaymentsTaxCharged: Option[BigDecimal] = None,
                                    totalRoyaltyPaymentsTaxCharged: Option[BigDecimal] = None,
                                    giftAidTaxChargeWhereBasicRateDiffers: Option[BigDecimal] = None,
+                                   finalDeclarationOrTaxReturnIsSubmitted: Boolean = false,
                                    transitionProfitRow: Option[TransitionProfitRow] = None,
                                    highIncomeChildBenefitCharge: Option[HighIncomeChildBenefitChargeViewModel] = None
 
@@ -96,7 +98,7 @@ case class TaxDueSummaryViewModel(
 
 object TaxDueSummaryViewModel {
 
-  def apply(calcResponse: LiabilityCalculationResponse): TaxDueSummaryViewModel = {
+  def apply(calcResponse: LiabilityCalculationResponse, obligations: ObligationsModel): TaxDueSummaryViewModel = {
     calcResponse.calculation match {
       case Some(calc) => TaxDueSummaryViewModel(
         taxRegime = calcResponse.inputs.personalInformation.taxRegime,
@@ -137,6 +139,7 @@ object TaxDueSummaryViewModel {
         transitionProfitRow = TransitionProfitRow(
           calc.taxCalculation.flatMap(_.incomeTax.incomeTaxChargedOnTransitionProfits),
           calc.transitionProfit.flatMap(_.totalTaxableTransitionProfit)),
+        finalDeclarationOrTaxReturnIsSubmitted = obligations.isFinalDeclarationOrTaxReturnSubmitted,
         highIncomeChildBenefitCharge = calc.highIncomeChildBenefitCharge.map( hicbc=> {
           HighIncomeChildBenefitChargeViewModel(
             hicbc.adjustedNetIncome,

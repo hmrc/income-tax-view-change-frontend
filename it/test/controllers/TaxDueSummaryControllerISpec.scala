@@ -26,6 +26,7 @@ import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
 import play.api.http.Status._
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.IncomeSourcesObligationsIntegrationTestConstants.testObligationsModel
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 import testConstants.NewCalcDataIntegrationTestConstants._
 import testConstants.messages.TaxDueSummaryMessages._
@@ -64,7 +65,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper with FeatureSwi
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                 IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
 
-                verifyAuditEvent(TaxDueResponseAuditModel(testUser(mtdUserRole), TaxDueSummaryViewModel(liabilityCalculationModelSuccessful), testYearInt))
+                verifyAuditEvent(TaxDueResponseAuditModel(testUser(mtdUserRole), TaxDueSummaryViewModel(liabilityCalculationModelSuccessful, testObligationsModel), testYearInt))
 
                 res should have(
                   httpStatus(OK),

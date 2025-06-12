@@ -16,9 +16,12 @@
 
 package models.liabilitycalculation.viewmodels
 
+import controllers.constants.IncomeSourceAddedControllerConstants.testObligationsModel
 import exceptions.MissingFieldException
 import models.liabilitycalculation.taxcalculation.{BusinessAssetsDisposalsAndInvestorsRel, CgtTaxBands, Nic4Bands, TaxBands}
 import models.liabilitycalculation.{Message, Messages, ReliefsClaimed, StudentLoan}
+import models.obligations._
+import testConstants.BusinessDetailsTestConstants.{fixedDate, getCurrentTaxYearEnd}
 import testConstants.NewCalcBreakdownUnitTestConstants._
 import testUtils.UnitSpec
 
@@ -26,7 +29,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
 
   "TaxDueSummaryViewModel model" when {
     "create a minimal TaxDueSummaryViewModel when there is a minimal Calculation response" in {
-      TaxDueSummaryViewModel(liabilityCalculationModelDeductionsMinimal()) shouldBe
+      TaxDueSummaryViewModel(liabilityCalculationModelDeductionsMinimal(), testObligationsModel) shouldBe
         TaxDueSummaryViewModel(
           taxRegime = "UK",
           messages = None, lossesAppliedToGeneralIncome = None,
@@ -45,7 +48,8 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
           totalStudentLoansRepaymentAmount = None, saUnderpaymentsCodedOut = None,
           totalIncomeTaxAndNicsDue = Some(0),
           totalTaxDeducted = None,
-          taxDeductedAtSource = TaxDeductedAtSourceViewModel(None, None, None, None, None, None, None, None, None)
+          taxDeductedAtSource = TaxDeductedAtSourceViewModel(None, None, None, None, None, None, None, None, None),
+          finalDeclarationOrTaxReturnIsSubmitted = true
         )
     }
 
@@ -114,10 +118,11 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
             taxTakenOffTradingIncome = Some(563.12)
           ),
           giftAidTaxChargeWhereBasicRateDiffers = Some(6565.99),
-          transitionProfitRow = TransitionProfitRow(Some(700.00), Some(3000.00))
+          transitionProfitRow = TransitionProfitRow(Some(700.00), Some(3000.00)),
+          finalDeclarationOrTaxReturnIsSubmitted = true
         )
 
-        TaxDueSummaryViewModel(liabilityCalculationModelSuccessful) shouldBe expectedTaxDueSummaryViewModel
+        TaxDueSummaryViewModel(liabilityCalculationModelSuccessful, testObligationsModel) shouldBe expectedTaxDueSummaryViewModel
       }
 
       "create a full TaxDueSummaryViewModel when there is a full Calculation for Income tax and CGT " in {
@@ -184,7 +189,8 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
             taxTakenOffTradingIncome = Some(563.12)
           ),
           giftAidTaxChargeWhereBasicRateDiffers = Some(6565.99),
-          transitionProfitRow = TransitionProfitRow(Some(700.00), Some(3000.00))
+          transitionProfitRow = TransitionProfitRow(Some(700.00), Some(3000.00)),
+          finalDeclarationOrTaxReturnIsSubmitted = true
         )
 
         val liabilityCalculationModel = liabilityCalculationModelSuccessful.copy(
@@ -192,7 +198,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
             taxCalculation = Some(liabilityCalculationModelSuccessful.calculation.get.taxCalculation.get.copy(
               totalIncomeTaxAndNicsAndCgt = Some(taxDue))))))
 
-        TaxDueSummaryViewModel(liabilityCalculationModel) shouldBe expectedTaxDueSummaryViewModel
+        TaxDueSummaryViewModel(liabilityCalculationModel, testObligationsModel) shouldBe expectedTaxDueSummaryViewModel
       }
     }
     "grossGiftAidPaymentsActual" should{

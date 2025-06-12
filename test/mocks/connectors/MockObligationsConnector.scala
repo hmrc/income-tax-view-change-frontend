@@ -28,7 +28,7 @@ import scala.concurrent.Future
 
 trait MockObligationsConnector extends UnitSpec with BeforeAndAfterEach {
 
-  val mockObligationsConnector: ObligationsConnector = mock(classOf[ObligationsConnector])
+  lazy val mockObligationsConnector: ObligationsConnector = mock(classOf[ObligationsConnector])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

@@ -22,10 +22,13 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import connectors.ObligationsConnector
 import forms.utils.SessionKeys.calcPagesBackPage
 import implicits.ImplicitDateFormatter
+import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels._
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
+import models.obligations.{ObligationsErrorModel, ObligationsModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -44,6 +47,7 @@ class TaxDueSummaryController @Inject()(val authActions: AuthActions,
                                         val calculationService: CalculationService,
                                         val itvcErrorHandler: ItvcErrorHandler,
                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                        val obligationsConnector: ObligationsConnector,
                                         val taxCalcBreakdown: TaxCalcBreakdown,
                                         val auditingService: AuditingService)
                                        (implicit val appConfig: FrontendAppConfig,
@@ -60,21 +64,38 @@ class TaxDueSummaryController @Inject()(val authActions: AuthActions,
                    )
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
-    calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
-      case liabilityCalc: LiabilityCalculationResponse =>
-        val viewModel = TaxDueSummaryViewModel(liabilityCalc)
-        auditingService.extendedAudit(TaxDueResponseAuditModel(user, viewModel, taxYear))
-        val fallbackBackUrl = getFallbackUrl(user.session.get(calcPagesBackPage),
-          isAgent, liabilityCalc.metadata.crystallised.getOrElse(false), taxYear, origin)
-        val startAVRTYear = 2024
-        Ok(taxCalcBreakdown(viewModel, taxYear, startAVRTYear, backUrl = fallbackBackUrl, isAgent = isAgent, btaNavPartial = user.btaNavPartial))
-      case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NO_CONTENT =>
+    for {
+      liabilityCalc <- calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear)
+      taxYearModel   = TaxYear.makeTaxYearWithEndYear(taxYear)
+      obligations   <- obligationsConnector.getAllObligationsDateRange(taxYearModel.toFinancialYearStart, taxYearModel.toFinancialYearEnd)
+    } yield (liabilityCalc, obligations) match {
+      case (calcErrorResponse: LiabilityCalculationError, _) if calcErrorResponse.status == NO_CONTENT =>
         Logger("application").info("No calculation data returned from downstream. Not Found.")
         itvcErrorHandler.showInternalServerError()
-      case _: LiabilityCalculationError =>
-        Logger("application").error(
-          s"[$taxYear] No new calc deductions data error found. Downstream error")
+      case (_: LiabilityCalculationError, _) =>
+        Logger("application").error(s"[$taxYear] No new calc deductions data error found. Downstream error")
         itvcErrorHandler.showInternalServerError()
+      case (_, _: ObligationsErrorModel) =>
+        Logger("application").error(s"[$taxYear] Failed to retrieve obligations. Downstream error")
+        itvcErrorHandler.showInternalServerError()
+      case (liabilityCalc: LiabilityCalculationResponse, obligations: ObligationsModel) =>
+
+        val viewModel = TaxDueSummaryViewModel(liabilityCalc, obligations)
+
+        auditingService.extendedAudit(TaxDueResponseAuditModel(user, viewModel, taxYear))
+
+        val fallbackBackUrl = getFallbackUrl(user.session.get(calcPagesBackPage), isAgent, liabilityCalc.metadata.crystallised.getOrElse(false), taxYear, origin)
+
+        val startAVRTYear = 2024
+
+        Ok(taxCalcBreakdown(
+          viewModel,
+          taxYear,
+          startAVRTYear,
+          backUrl = fallbackBackUrl,
+          isAgent = isAgent,
+          btaNavPartial = user.btaNavPartial
+        ))
     }
   }
 

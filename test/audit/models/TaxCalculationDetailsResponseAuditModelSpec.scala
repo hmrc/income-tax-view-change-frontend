@@ -17,13 +17,16 @@
 package audit.models
 
 import authV2.AuthActionsTestData.defaultMTDITUser
+import controllers.constants.IncomeSourceAddedControllerConstants.testObligationsModel
 import forms.IncomeSourcesFormsSpec.commonAuditDetails
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
+import models.obligations._
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsObject, Json}
 import testConstants.BaseTestConstants._
+import testConstants.BusinessDetailsTestConstants.{fixedDate, getCurrentTaxYearEnd}
 import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelDeductionsMinimal, liabilityCalculationModelSuccessful}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
@@ -36,14 +39,14 @@ class TaxCalculationDetailsResponseAuditModelSpec extends AnyWordSpecLike with M
   val taxCalculationDetailsResponseAuditModelFull: TaxDueResponseAuditModel =
     TaxDueResponseAuditModel(
       mtdItUser = defaultMTDITUser(Some(Individual), IncomeSourceDetailsModel(testNino, testMtditid, None, Nil, Nil)),
-      viewModel = TaxDueSummaryViewModel(liabilityCalculationModelSuccessful),
+      viewModel = TaxDueSummaryViewModel(liabilityCalculationModelSuccessful, testObligationsModel),
       taxYear = testTaxYear
     )
 
   def taxCalculationDetailsResponseAuditModelMinimal(userType: Option[AffinityGroup] = Some(Individual)): TaxDueResponseAuditModel =
     TaxDueResponseAuditModel(
       mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, None, Nil, Nil)),
-      viewModel = TaxDueSummaryViewModel(liabilityCalculationModelDeductionsMinimal()),
+      viewModel = TaxDueSummaryViewModel(liabilityCalculationModelDeductionsMinimal(), testObligationsModel),
       taxYear = testTaxYear
     )
 
