@@ -111,9 +111,7 @@ object GiftAid {
 case class IncomeSummaryTotals(
                                 totalSelfEmploymentProfit: Option[Int] = None,
                                 totalPropertyProfit: Option[Int] = None,
-                                totalFHLPropertyProfit: Option[Int] = None,
-                                totalForeignPropertyProfit: Option[Int] = None,
-                                totalEeaFhlProfit: Option[Int] = None
+                                totalForeignPropertyProfit: Option[Int] = None
                               )
 
 object IncomeSummaryTotals {
@@ -147,13 +145,13 @@ object StateBenefitsIncome {
   implicit val format: OFormat[StateBenefitsIncome] = Json.format[StateBenefitsIncome]
 }
 
-case class StudentLoan(planType: Option[String] = None,
-                       studentLoanTotalIncomeAmount: Option[BigDecimal] = None,
-                       studentLoanChargeableIncomeAmount: Option[BigDecimal] = None,
-                       studentLoanRepaymentAmount: Option[BigDecimal] = None,
-                       studentLoanRepaymentAmountNetOfDeductions: Option[BigDecimal] = None,
-                       studentLoanApportionedIncomeThreshold: Option[BigDecimal] = None,
-                       studentLoanRate: Option[BigDecimal] = None
+case class StudentLoan(planType: String,
+                       studentLoanTotalIncomeAmount: BigDecimal,
+                       studentLoanChargeableIncomeAmount: BigDecimal,
+                       studentLoanRepaymentAmount: BigDecimal,
+                       studentLoanRepaymentAmountNetOfDeductions: BigDecimal,
+                       studentLoanApportionedIncomeThreshold: Int,
+                       studentLoanRate: BigDecimal
                       ) {
   def planTypeActual: String = planType.getOrElse(throw MissingFieldException("Plan type"))
   def studentLoanRepaymentAmountActual: BigDecimal = studentLoanRepaymentAmount.getOrElse(throw MissingFieldException("Student Loan Repayment Amount"))
@@ -171,7 +169,7 @@ object PensionSavingsTaxCharges {
   implicit val format: OFormat[PensionSavingsTaxCharges] = Json.format[PensionSavingsTaxCharges]
 }
 
-case class TransitionProfit(totalTaxableTransitionProfit: Option[BigDecimal] = None)
+case class TransitionProfit(totalTaxableTransitionProfit: Option[Int] = None)
 
 object TransitionProfit {
   implicit val format: OFormat[TransitionProfit] = Json.format[TransitionProfit]
