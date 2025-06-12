@@ -61,6 +61,7 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val chargeReference: String = "XD000024425799"
   val testArn = "XAIT0000123456"
   val testCredId = "testCredId"
+  val expectedJourneyId: String = "testJourneyId"
   val testUserTypeIndividual = AffinityGroup.Individual
   val testUserTypeAgent = AffinityGroup.Agent
   val testUserType: AffinityGroup = testUserTypeIndividual
@@ -83,6 +84,8 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testPaymentRedirectUrl = "http://localhost:9081/report-quarterly/income-and-expenses/view"
   val testMandationStatusOn = "on"
   val testMandationStatusOff = "off"
+  val testSetUpPaymentPlanUrl = "http://localhost:9215/set-up-a-payment-plan/sa-payment-plan"
+
   lazy val testAuthorisedAndEnrolled: AuthorisedAndEnrolledRequest[_] = defaultAuthorisedAndEnrolledRequest(MTDIndividual, FakeRequest())
 
   lazy val testMtdItUser: MtdItUser[_] = defaultMTDITUser(Some(testUserTypeIndividual), businessesAndPropertyIncome)

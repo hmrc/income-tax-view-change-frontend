@@ -21,6 +21,7 @@ import auth.MtdItUser
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin._
+import models.core.SelfServeTimeToPayJourneyResponseModel
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
 import play.api.http.Status._
@@ -105,12 +106,13 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
   }
 
   def getPath(mtdRole: MTDUserRole): String = {
-    if(mtdRole == MTDIndividual) {
+    if (mtdRole == MTDIndividual) {
       "/your-self-assessment-charges"
     } else {
       "/agents/your-self-assessment-charges"
     }
   }
+
   mtdAllRoles.foreach { mtdUserRole =>
     val path = getPath(mtdUserRole)
     val additionalCookies = getAdditionalCookies(mtdUserRole)
@@ -130,7 +132,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                   testValidFinancialDetailsModelJsonCodingOut(2000, 2000, (testTaxYear - 1).toString, testDate.plusYears(1).toString))
                 IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-
+                IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("some-id", "nextUrl")))
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
                 AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweFinancialDetailsEmptyBCDCharge, testDateService).detail)
@@ -152,7 +154,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                   testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString))
                 IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
-
+                IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("some-id", "nextUrl")))
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
                 AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweDataWithDataDueIn30DaysIt, dateService).detail)
@@ -187,7 +189,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                   financialDetailsResponseJson)
                 IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-
+                IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("some-id", "nextUrl")))
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
                 val whatYouOweChargesList = {
@@ -247,7 +249,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                 IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
                 IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, testValidOutStandingChargeResponseJsonWithAciAndBcdCharges)
-
+                IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("some-id", "nextUrl")))
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -262,14 +264,14 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "selfAssessmentCharges.heading"),
                   isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
-                  
+
                   isElementVisibleById("due-0")(expectedValue = true),
                   isElementVisibleById("due-1")(expectedValue = true),
                   isElementVisibleById("due-2")(expectedValue = false),
                   isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
                   isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
                   isElementVisibleById("overdue-payment-text")(expectedValue = true),
-                  
+
                 )
               }
 
@@ -284,6 +286,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                   financialDetailsResponseJson)
                 IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+                IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("some-id", "nextUrl")))
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -321,6 +324,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                   financialDetailsResponseJson)
                 IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+                IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("some-id", "nextUrl")))
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -359,6 +363,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                   financialDetailsResponseJson)
                 IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+                IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("some-id", "nextUrl")))
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -392,6 +397,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
 
                   IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06",
                     s"$testTaxYear-04-05")(OK, testEmptyFinancialDetailsModelJson)
+                  IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("some-id", "nextUrl")))
 
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -420,6 +426,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                     s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, testEmptyFinancialDetailsModelJson)
                   IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                     "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+                  IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("some-id", "nextUrl")))
 
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -457,6 +464,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                   IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                     "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
                   IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
+                  IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("some-id", "nextUrl")))
 
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -504,6 +512,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                   IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                     "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
                   IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
+                  IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("some-id", "nextUrl")))
 
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -517,13 +526,13 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                     httpStatus(OK),
                     pageTitle(mtdUserRole, "selfAssessmentCharges.heading"),
                     isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
-                    
+
                     isElementVisibleById(s"payment-button")(expectedValue = mtdUserRole == MTDIndividual),
                     isElementVisibleById(s"no-payments-due")(expectedValue = false),
                     isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
                     isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
                     isElementVisibleById("overdue-payment-text")(expectedValue = true),
-                    
+
                   )
                 }
               }
@@ -537,6 +546,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                     testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.plusYears(1).toString))
                   IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                     "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+                  IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("some-id", "nextUrl")))
 
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -556,7 +566,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                     isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
                     isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
                     isElementVisibleById("overdue-payment-text")(expectedValue = true),
-                    
+
                   )
                 }
               }
@@ -572,6 +582,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                       testDate.toString, 0, (testTaxYear - 1).toString, 2000))
                   IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                     "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+                  IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("some-id", "nextUrl")))
 
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -590,7 +601,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                     isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
                     isElementVisibleById("coding-out-notice")(expectedValue = true),
                     isElementVisibleById("overdue-payment-text")(expectedValue = true),
-                    
+
                   )
                 }
               }
@@ -602,6 +613,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                   testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, isClass2Nic = true))
                 IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
+                IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("some-id", "nextUrl")))
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -615,14 +627,14 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "selfAssessmentCharges.heading"),
                   isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
-                  
+
                   isElementVisibleById("due-0")(expectedValue = true),
                   isElementVisibleById("due-1")(expectedValue = true),
                   isElementVisibleById("payment-button")(expectedValue = mtdUserRole == MTDIndividual),
                   isElementVisibleById("sa-note-migrated")(expectedValue = true),
                   isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
                   isElementVisibleById("overdue-payment-text")(expectedValue = true),
-                  
+
                 )
               }
 
@@ -633,6 +645,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                   testValidFinancialDetailsModelMFADebitsJson(2000, 2000, testTaxYear.toString, testDate.plusYears(1).toString))
                 IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+                IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("some-id", "nextUrl")))
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -659,6 +672,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                       testValidFinancialDetailsModelJson(2000, 2000, (testTaxYearPoa - 1).toString, testDate.toString))
                     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 2}-04-06", s"${testTaxYearPoa - 1}-04-05")(OK,
                       testValidFinancialDetailsModelJson(2000, 2000, (testTaxYearPoa - 1).toString, testDate.toString))
+                    IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("some-id", "nextUrl")))
 
                     val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -677,6 +691,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                       testValidFinancialDetailsModelJson(2000, 0, (testTaxYearPoa - 1).toString, testDate.toString))
                     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 2}-04-06", s"${testTaxYearPoa - 1}-04-05")(OK,
                       testValidFinancialDetailsModelJson(2000, 0, (testTaxYearPoa - 1).toString, testDate.toString))
+                    IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("some-id", "nextUrl")))
 
                     val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -698,6 +713,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                       testEmptyFinancialDetailsModelJson)
                     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 2}-04-06", s"${testTaxYearPoa - 1}-04-05")(OK,
                       testEmptyFinancialDetailsModelJson)
+                    IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("some-id", "nextUrl")))
 
                     val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -717,6 +733,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                       testValidFinancialDetailsModelJson(2000, 2000, (testTaxYearPoa - 1).toString, testDate.toString))
                     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 2}-04-06", s"${testTaxYearPoa - 1}-04-05")(OK,
                       testValidFinancialDetailsModelJson(2000, 2000, (testTaxYearPoa - 1).toString, testDate.toString))
+                    IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("some-id", "nextUrl")))
 
                     val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -752,6 +769,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
                     IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                       "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
+                    IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("some-id", "nextUrl")))
 
                     val res = buildGETMTDClient(path, additionalCookies).futureValue
                     res should have(
@@ -759,9 +777,9 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                       pageTitle(mtdUserRole, "selfAssessmentCharges.heading"),
                       isElementVisibleById(s"money-in-your-account")(expectedValue = true),
                       elementTextBySelector("#money-in-your-account")(
-                        messagesAPI(s"whatYouOwe.moneyOnAccount${if(mtdUserRole != MTDIndividual) "-agent" else ""}") + " " +
+                        messagesAPI(s"whatYouOwe.moneyOnAccount${if (mtdUserRole != MTDIndividual) "-agent" else ""}") + " " +
                           messagesAPI("whatYouOwe.moneyOnAccount-1") + " £300.00" + " " +
-                          messagesAPI(s"whatYouOwe.moneyOnAccount${if(mtdUserRole != MTDIndividual) "-agent" else ""}-2") + " " +
+                          messagesAPI(s"whatYouOwe.moneyOnAccount${if (mtdUserRole != MTDIndividual) "-agent" else ""}-2") + " " +
                           messagesAPI("whatYouOwe.moneyOnAccount-3") + "."
                       )
                     )
@@ -779,6 +797,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                   s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
                 IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(INTERNAL_SERVER_ERROR, testOutstandingChargesErrorModelJson)
+                IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("some-id", "nextUrl")))
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -799,6 +818,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                   s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
                 IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
+                IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("some-id", "nextUrl")))
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 

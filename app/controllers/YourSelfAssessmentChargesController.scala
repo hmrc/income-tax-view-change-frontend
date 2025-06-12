@@ -33,7 +33,7 @@ import models.taxYearAmount.EarliestDueCharge
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{ClaimToAdjustService, DateServiceInterface, WhatYouOweService}
+import services.{ClaimToAdjustService, DateServiceInterface, SelfServeTimeToPayService, WhatYouOweService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.YourSelfAssessmentCharges
@@ -44,6 +44,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions,
                                                     val whatYouOweService: WhatYouOweService,
                                                     val claimToAdjustService: ClaimToAdjustService,
+                                                    val selfServeTimeToPayService: SelfServeTimeToPayService,
                                                     val itvcErrorHandler: ItvcErrorHandler,
                                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                     val auditingService: AuditingService,
@@ -64,34 +65,42 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
         isEnabled(FilterCodedOutPoas),
         isEnabled(PenaltiesAndAppeals),
         mainChargeIsPaidFilter)
+      selfServeTimeToPayStartUrl <- selfServeTimeToPayService.startSelfServeTimeToPayJourney()
       ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
     } yield {
 
-      auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
+      selfServeTimeToPayStartUrl match {
+        case Left(ex) =>
+          Logger("application").error(s"Unable to retrieve selfServeTimeToPayStartUrl: ${ex.getMessage} - ${ex.getCause}")
+          itvcErrorHandler.showInternalServerError()
+        case Right(startUrl) =>
+          auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
 
-      val hasOverdueCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
-      val hasAccruingInterestReviewAndReconcileCharges: Boolean = whatYouOweChargesList.chargesList
-        .exists(_.isNotPaidAndNotOverduePoaReconciliationDebit()(dateService))
-      val earliestTaxYearAndAmount: Option[EarliestDueCharge] =
-        whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate
-          .map { case (year, amount) => EarliestDueCharge(TaxYear.forYearEnd(year), amount) }
+          val hasOverdueCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
+          val hasAccruingInterestReviewAndReconcileCharges: Boolean = whatYouOweChargesList.chargesList
+            .exists(_.isNotPaidAndNotOverduePoaReconciliationDebit()(dateService))
+          val earliestTaxYearAndAmount: Option[EarliestDueCharge] =
+            whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate
+              .map { case (year, amount) => EarliestDueCharge(TaxYear.forYearEnd(year), amount) }
 
-      val viewModel: YourSelfAssessmentChargesViewModel = YourSelfAssessmentChargesViewModel(
-        hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
-        whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
-        backUrl = backUrl,
-        dunningLock = whatYouOweChargesList.hasDunningLock,
-        reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
-        penaltiesEnabled = isEnabled(PenaltiesAndAppeals),
-        LPP2Url = appConfig.incomeTaxPenaltiesFrontendCalculation,
-        creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
-        earliestTaxYearAndAmountByDueDate = earliestTaxYearAndAmount,
-        claimToAdjustViewModel = ctaViewModel
-      )
-      Ok(view(
-        viewModel = viewModel,
-        origin = origin)(user, user, messages, dateService)
-      ).addingToSession(gatewayPage -> YourSelfAssessmentChargeSummaryPage.name)
+          val viewModel: YourSelfAssessmentChargesViewModel = YourSelfAssessmentChargesViewModel(
+            hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
+            whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
+            backUrl = backUrl,
+            dunningLock = whatYouOweChargesList.hasDunningLock,
+            reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
+            penaltiesEnabled = isEnabled(PenaltiesAndAppeals),
+            LPP2Url = appConfig.incomeTaxPenaltiesFrontendCalculation,
+            creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
+            earliestTaxYearAndAmountByDueDate = earliestTaxYearAndAmount,
+            selfServeTimeToPayStartUrl = startUrl,
+            claimToAdjustViewModel = ctaViewModel
+          )
+          Ok(view(
+            viewModel = viewModel,
+            origin = origin)(user, user, messages, dateService)
+          ).addingToSession(gatewayPage -> YourSelfAssessmentChargeSummaryPage.name)
+      }
     }
   } recover {
     case ex: Exception =>

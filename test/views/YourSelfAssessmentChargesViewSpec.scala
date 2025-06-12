@@ -40,7 +40,7 @@ import views.html.YourSelfAssessmentCharges
 
 import java.time.LocalDate
 
-class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec with ChargeConstants{
+class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec with ChargeConstants {
 
   val yourSelfAssessmentChargesView: YourSelfAssessmentCharges = app.injector.instanceOf[YourSelfAssessmentCharges]
 
@@ -52,7 +52,9 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
   val bannerText1: String = messages("selfAssessmentCharges.important-p1")
   val bannerText2: String = messages("selfAssessmentCharges.important-p2")
   val bannerLinkText: String = messages("selfAssessmentCharges.important-p2-link-text")
+
   def bannerDueNow(amount: String): String = messages("selfAssessmentCharges.charges-due-now-with-amount", amount)
+
   val saLink: String = s"${messages("selfAssessmentCharges.sa-link")} ${messages("pagehelp.opensInNewTabText")}"
   val saNote: String = s"${messages("selfAssessmentCharges.sa-note")} $saLink."
   val saNoteAgent: String = s"${messages("selfAssessmentCharges.sa-note-agent-1")}. ${messages("selfAssessmentCharges.sa-note-agent-2")} ${messages("selfAssessmentCharges.sa-link-agent")} ${messages("pagehelp.opensInNewTabText")}. ${messages("selfAssessmentCharges.sa-note-agent-3")}"
@@ -63,7 +65,9 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
   val taxYear: String = messages("selfAssessmentCharges.tableHead.tax-year")
   val amountDue: String = messages("selfAssessmentCharges.tableHead.amount")
   val estimatedInterest: String = messages("selfAssessmentCharges.tableHead.estimated-interest")
+
   def totalAmount(amount: String): String = messages("selfAssessmentCharges.table.total-amount", amount)
+
   val paymentProcessingText: String = s"${messages("selfAssessmentCharges.overdue-inset-text-1")} ${messages("selfAssessmentCharges.overdue-inset-text-2")}"
   val paymentPlanText: String = s"${messages("selfAssessmentCharges.payment-plan-1")} ${messages("selfAssessmentCharges.payment-plan-link-text")} (opens in new tab)."
   val poa1Text: String = messages("selfAssessmentCharges.paymentOnAccount1.text")
@@ -155,12 +159,13 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       LPP2Url = "testUrl",
       creditAndRefundEnabled = true,
       earliestTaxYearAndAmountByDueDate = Some(EarliestDueCharge(TaxYear(2024, 2025), BigDecimal(100.00))),
-      claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel)
+      claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),
+      selfServeTimeToPayStartUrl = "testStartUrl"
     )
 
     val html: HtmlFormat.Appendable = yourSelfAssessmentChargesView(
       viewModel
-      )(FakeRequest(), individualUser, implicitly, dateService)
+    )(FakeRequest(), individualUser, implicitly, dateService)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def findElementById(id: String): Option[Element] = {
@@ -204,7 +209,8 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       LPP2Url = "testUrl",
       creditAndRefundEnabled = true,
       earliestTaxYearAndAmountByDueDate = Some(EarliestDueCharge(TaxYear(2024, 2025), BigDecimal(100.00))),
-      claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel))
+      claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),
+      selfServeTimeToPayStartUrl = "testStartUrl" )
     val html: HtmlFormat.Appendable = yourSelfAssessmentChargesView(
       viewModel
     )(FakeRequest(), agentUser, implicitly, dateService)
@@ -226,7 +232,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
   def whatYouOweDataWithOverdueLPI(latePaymentInterest: List[Option[BigDecimal]],
                                    dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = financialDetailsOverdueWithLpi(latePaymentInterest, dunningLock ),
+    chargesList = financialDetailsOverdueWithLpi(latePaymentInterest, dunningLock),
     outstandingChargesModel = Some(outstandingChargesOverdueDataIt)
   )
 
@@ -382,7 +388,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
 
   val whatYouOweDataWithPayeSA: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None),
-    chargesList =  List(chargeItemWithCodingOutNics2Ci()),
+    chargesList = List(chargeItemWithCodingOutNics2Ci()),
     codedOutDetails = Some(codedOutDetails)
   )
 
@@ -423,8 +429,8 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       "the user overdue charges" should {
 
         "display the overdue charges banner" in new TestSetup(charges = whatYouOweDataWithOverdueDataAndInterest()) {
-            pageDocument.getElementById("overdue-banner").text() shouldBe List(bannerTitle,
-              bannerDueNow("£3.00"), bannerText1, bannerText2, bannerLinkText).mkString(" ")
+          pageDocument.getElementById("overdue-banner").text() shouldBe List(bannerTitle,
+            bannerDueNow("£3.00"), bannerText1, bannerText2, bannerLinkText).mkString(" ")
         }
 
         "display the charges due now tab, with correct table header, charges and total" in new TestSetup(charges = whatYouOweDataWithOverdueDataAndInterest()) {
@@ -781,7 +787,6 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
           pageDocument.getElementById("overdue-payment-text").text() shouldBe paymentProcessingText
 
 
-
           val within30DaysTab: Element = pageDocument.getElementById("charges-due-in-30-days")
 
           val chargesDueSoonTableHead: Element = within30DaysTab.getElementById("due-in-30-days-payments-table-head")
@@ -797,7 +802,6 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
           chargesDueSoonTableRow1.select("td").last().text() shouldBe "£3,500.00"
 
           within30DaysTab.getElementById("payment-button") shouldBe null
-
 
 
           val beyond30DaysTab: Element = pageDocument.getElementById("charges-due-later")
@@ -819,63 +823,63 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       }
     }
 
-//    "the user has charges and access viewer with mixed dates and ACI value of zero" should {
-//
-//      s"have the mtd payments, bullets and table header and data with Balancing Payment data with no hyperlink" in new TestSetup(
-//        charges = whatYouOweDataWithWithAciValueZeroAndOverdue) {
-//        val remainingBalanceHeader: Element = pageDocument.select("tr").first()
-//        remainingBalanceHeader.select("th").first().text() shouldBe dueDate
-//        remainingBalanceHeader.select("th").get(1).text() shouldBe chargeType
-//        remainingBalanceHeader.select("th").get(2).text() shouldBe taxYear
-//        remainingBalanceHeader.select("th").last().text() shouldBe amountDue
-//
-//        val remainingBalanceTable: Element = pageDocument.select("tr").get(1)
-//        remainingBalanceTable.select("td").first().text() shouldBe fixedDate.minusDays(15).toLongDate
-//        remainingBalanceTable.select("td").get(1).text() shouldBe preMTDRemainingBalance
-//        remainingBalanceTable.select("td").get(2).text() shouldBe preMtdPayments(
-//          (fixedDate.getYear - 2).toString, (fixedDate.getYear - 1).toString)
-//        remainingBalanceTable.select("td").last().text() shouldBe "£123,456.67"
-//
-//      }
-//      s"have overdue table header and data with hyperlink" in new TestSetup(charges = whatYouOweDataTestActiveWithMixedData2(List(None, None, None, None))) {
-//        val overdueTableHeader: Element = pageDocument.select("tr").get(0)
-//        overdueTableHeader.select("th").first().text() shouldBe dueDate
-//        overdueTableHeader.select("th").get(1).text() shouldBe chargeType
-//        overdueTableHeader.select("th").get(2).text() shouldBe taxYear
-//        overdueTableHeader.select("th").last().text() shouldBe amountDue
-//        val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(2)
-//        overduePaymentsTableRow1.select("td").first().text() shouldBe fixedDate.minusDays(1).toLongDate
-//        overduePaymentsTableRow1.select("td").get(1).text() shouldBe poa2Text + s" 1"
-//        overduePaymentsTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
-//        overduePaymentsTableRow1.select("td").last().text() shouldBe "£75.00"
-//
-//        val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(3)
-//        dueWithInThirtyDaysTableRow1.select("td").first().text() shouldBe fixedDate.plusDays(30).toLongDate
-//        dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe poa1Text + s" 2"
-//        dueWithInThirtyDaysTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
-//        dueWithInThirtyDaysTableRow1.select("td").last().text() shouldBe "£50.00"
-//
-//        pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
-//          fixedDate.getYear, "1040000125").url
-//        pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
-//          fixedDate.getYear).url
-//
-//        pageDocument.getElementById("due-1-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
-//          fixedDate.getYear, "1040000123").url
-//        findElementById("due-1-overdue") shouldBe None
-//        pageDocument.getElementById("taxYearSummary-link-1").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
-//          fixedDate.getYear).url
-//      }
-//
-//      s"have payment data with button" in new TestSetup(charges = whatYouOweDataWithWithAciValueZeroAndOverdue) {
-//
-//        pageDocument.getElementById("payment-button").text shouldBe payNow
-//
-//        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
-//
-//      }
-//
-//    }
+    //    "the user has charges and access viewer with mixed dates and ACI value of zero" should {
+    //
+    //      s"have the mtd payments, bullets and table header and data with Balancing Payment data with no hyperlink" in new TestSetup(
+    //        charges = whatYouOweDataWithWithAciValueZeroAndOverdue) {
+    //        val remainingBalanceHeader: Element = pageDocument.select("tr").first()
+    //        remainingBalanceHeader.select("th").first().text() shouldBe dueDate
+    //        remainingBalanceHeader.select("th").get(1).text() shouldBe chargeType
+    //        remainingBalanceHeader.select("th").get(2).text() shouldBe taxYear
+    //        remainingBalanceHeader.select("th").last().text() shouldBe amountDue
+    //
+    //        val remainingBalanceTable: Element = pageDocument.select("tr").get(1)
+    //        remainingBalanceTable.select("td").first().text() shouldBe fixedDate.minusDays(15).toLongDate
+    //        remainingBalanceTable.select("td").get(1).text() shouldBe preMTDRemainingBalance
+    //        remainingBalanceTable.select("td").get(2).text() shouldBe preMtdPayments(
+    //          (fixedDate.getYear - 2).toString, (fixedDate.getYear - 1).toString)
+    //        remainingBalanceTable.select("td").last().text() shouldBe "£123,456.67"
+    //
+    //      }
+    //      s"have overdue table header and data with hyperlink" in new TestSetup(charges = whatYouOweDataTestActiveWithMixedData2(List(None, None, None, None))) {
+    //        val overdueTableHeader: Element = pageDocument.select("tr").get(0)
+    //        overdueTableHeader.select("th").first().text() shouldBe dueDate
+    //        overdueTableHeader.select("th").get(1).text() shouldBe chargeType
+    //        overdueTableHeader.select("th").get(2).text() shouldBe taxYear
+    //        overdueTableHeader.select("th").last().text() shouldBe amountDue
+    //        val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(2)
+    //        overduePaymentsTableRow1.select("td").first().text() shouldBe fixedDate.minusDays(1).toLongDate
+    //        overduePaymentsTableRow1.select("td").get(1).text() shouldBe poa2Text + s" 1"
+    //        overduePaymentsTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
+    //        overduePaymentsTableRow1.select("td").last().text() shouldBe "£75.00"
+    //
+    //        val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(3)
+    //        dueWithInThirtyDaysTableRow1.select("td").first().text() shouldBe fixedDate.plusDays(30).toLongDate
+    //        dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe poa1Text + s" 2"
+    //        dueWithInThirtyDaysTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
+    //        dueWithInThirtyDaysTableRow1.select("td").last().text() shouldBe "£50.00"
+    //
+    //        pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
+    //          fixedDate.getYear, "1040000125").url
+    //        pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
+    //          fixedDate.getYear).url
+    //
+    //        pageDocument.getElementById("due-1-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
+    //          fixedDate.getYear, "1040000123").url
+    //        findElementById("due-1-overdue") shouldBe None
+    //        pageDocument.getElementById("taxYearSummary-link-1").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
+    //          fixedDate.getYear).url
+    //      }
+    //
+    //      s"have payment data with button" in new TestSetup(charges = whatYouOweDataWithWithAciValueZeroAndOverdue) {
+    //
+    //        pageDocument.getElementById("payment-button").text shouldBe payNow
+    //
+    //        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
+    //
+    //      }
+    //
+    //    }
 
 
     "AdjustPaymentsOnAccount is enabled" when {
@@ -887,7 +891,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
         "POA is paid off fully should display link with additional content" in new TestSetup(
           charges = whatYouOweDataWithPaidPOAs(),
           adjustPaymentsOnAccountFSEnabled = true,
-          claimToAdjustViewModel = Some(poaModel) ) {
+          claimToAdjustViewModel = Some(poaModel)) {
           pageDocument.getElementById("adjust-poa-link").text() shouldBe messages("selfAssessmentCharges.adjust-poa.paid-2", "2024", "2025")
           pageDocument.getElementById("adjust-poa-link").attr("href") shouldBe claimToAdjustLink(false)
           Option(pageDocument.getElementById("adjust-paid-poa-content")).isDefined shouldBe true
@@ -896,7 +900,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
         "POA is not paid off fully should display link" in new TestSetup(
           charges = whatYouOweDataWithZeroMoneyInAccount(),
           adjustPaymentsOnAccountFSEnabled = true,
-          claimToAdjustViewModel = Some(poaModel) ) {
+          claimToAdjustViewModel = Some(poaModel)) {
           pageDocument.getElementById("adjust-poa-link").text() shouldBe messages("selfAssessmentCharges.adjust-poa", "2024", "2025")
           pageDocument.getElementById("adjust-poa-link").attr("href") shouldBe claimToAdjustLink(false)
           Option(pageDocument.getElementById("adjust-paid-poa-content")) shouldBe None
@@ -906,7 +910,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       "user has no POA that can be adjusted should not display link" in new TestSetup(
         charges = whatYouOweDataNoCharges,
         adjustPaymentsOnAccountFSEnabled = true,
-        claimToAdjustViewModel = Some(WYOClaimToAdjustViewModel(true, None)) ) {
+        claimToAdjustViewModel = Some(WYOClaimToAdjustViewModel(true, None))) {
         Option(pageDocument.getElementById("adjust-poa-link")) shouldBe None
         Option(pageDocument.getElementById("adjust-paid-poa-content")) shouldBe None
       }
@@ -956,12 +960,12 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       s"have the title '${ //TODO: Also deals with future charges, re-implement after charges due in 30 days tab is done
         messages("htmlTitle.agent", messages("selfAssessmentCharges.heading"))
       }'" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()(dateService)) {
-      pageDocument.title() shouldBe messages("htmlTitle.agent", messages("selfAssessmentCharges.heading"))
-      pageDocument.getElementById("due-30-days-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(fixedDate.getYear, "1040000124").url
-      pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(fixedDate.getYear).url
-    }
+        pageDocument.title() shouldBe messages("htmlTitle.agent", messages("selfAssessmentCharges.heading"))
+        pageDocument.getElementById("due-30-days-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(fixedDate.getYear, "1040000124").url
+        pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(fixedDate.getYear).url
+      }
 
-    "not have button Pay now with no chagres" in new AgentTestSetup(charges = noChargesModel) {
+      "not have button Pay now with no chagres" in new AgentTestSetup(charges = noChargesModel) {
         findAgentElementById("payment-button") shouldBe None
       }
       "not have button Pay now with charges" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
@@ -1003,7 +1007,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
         "POA is paid off fully should display link with additional content" in new AgentTestSetup(
           charges = whatYouOweDataWithPaidPOAs(),
           adjustPaymentsOnAccountFSEnabled = true,
-          claimToAdjustViewModel = Some(poaModel) ) {
+          claimToAdjustViewModel = Some(poaModel)) {
           pageDocument.getElementById("adjust-poa-link").text() shouldBe messages("selfAssessmentCharges.adjust-poa.paid-2", "2024", "2025")
           pageDocument.getElementById("adjust-poa-link").attr("href") shouldBe claimToAdjustLink(true)
           Option(pageDocument.getElementById("adjust-paid-poa-content")).isDefined shouldBe true
@@ -1012,7 +1016,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
         "POA is not paid off fully should display link" in new AgentTestSetup(
           charges = whatYouOweDataWithZeroMoneyInAccount(),
           adjustPaymentsOnAccountFSEnabled = true,
-          claimToAdjustViewModel = Some(poaModel) ) {
+          claimToAdjustViewModel = Some(poaModel)) {
           pageDocument.getElementById("adjust-poa-link").text() shouldBe messages("selfAssessmentCharges.adjust-poa", "2024", "2025")
           pageDocument.getElementById("adjust-poa-link").attr("href") shouldBe claimToAdjustLink(true)
           Option(pageDocument.getElementById("adjust-paid-poa-content")) shouldBe None
@@ -1022,7 +1026,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       "user has no POA that can be adjusted should not display link" in new AgentTestSetup(
         charges = whatYouOweDataNoCharges,
         adjustPaymentsOnAccountFSEnabled = true,
-        claimToAdjustViewModel = Some(WYOClaimToAdjustViewModel(true, None)) ) {
+        claimToAdjustViewModel = Some(WYOClaimToAdjustViewModel(true, None))) {
         Option(pageDocument.getElementById("adjust-poa-link")) shouldBe None
         Option(pageDocument.getElementById("adjust-paid-poa-content")) shouldBe None
       }
@@ -1084,7 +1088,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       "display the payment plan content and link in the section" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
         val paymentPlan = pageDocument.getElementById("payment-plan")
         paymentPlan.text() shouldBe paymentPlanText
-        paymentPlan.select("a").attr("href") shouldBe "https://www.gov.uk/difficulties-paying-hmrc"
+        paymentPlan.select("a").attr("href") shouldBe "testStartUrl"
       }
 
       "adjust payments on account link is present with correct href" when {
@@ -1115,7 +1119,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
     "display the correct type of charge in 30-day section" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
       val charge = pageDocument.select("#charges-due-in-30-days tbody tr").get(0).select("td").get(1).text()
 
-        charge.startsWith(poa1Text) ||
+      charge.startsWith(poa1Text) ||
         charge.startsWith(poa2Text) ||
         charge.startsWith(remainingBalance) shouldBe true
     }
