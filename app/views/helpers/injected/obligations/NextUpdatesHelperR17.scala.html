@@ -33,7 +33,7 @@
         implicitDateFormatter: ImplicitDateFormatterImpl
 )
 
-@(isAgent: Boolean, viewModel: NextUpdatesViewModel, optOutProposition: OptOutProposition)(implicit messages: Messages)
+@(isAgent: Boolean, viewModel: NextUpdatesViewModel, optOutProposition: OptOutProposition)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
     
@@ -44,6 +44,13 @@
 @currentTaxYearStart = @{ optOutProposition.currentTaxYear.taxYear.startYear.toString }
 @currentTaxYearEnd = @{ optOutProposition.currentTaxYear.taxYear.endYear.toString }
 @nextTaxYearEnd = @{ optOutProposition.currentTaxYear.taxYear.nextYear.endYear.toString }
+@isCurrentYearQuarterly = @{ optOutProposition.isCurrentYearQuarterly && !user.incomeSources.areAllBusinessesCeased }
+@isNextYearQuarterly = @{ optOutProposition.isNextYearQuarterly && !user.incomeSources.areAllBusinessesCeased }
+
+@currentYearLabel = @{ if(!isCurrentYearQuarterly) getMessage("annual.label", currentTaxYearStart, currentTaxYearEnd) else getMessage("quarterly.label", currentTaxYearStart, currentTaxYearEnd) }
+@nextYearLabel = @{ if(!isNextYearQuarterly) getMessage("annual.ny.label", currentTaxYearEnd, nextTaxYearEnd) else getMessage("quarterly.ny.label", currentTaxYearEnd, nextTaxYearEnd) }
+@currentYearTab = @{ if(!isCurrentYearQuarterly) currentYearTabContentAnnual else currentYearTabContentQuarterly }
+@nextYearTab = @{ if(!isNextYearQuarterly) nextYearTabContentAnnual else nextYearTabContentQuarterly }
 
 @govukTabs(Tabs(
     id = Some("updates-and-deadlines-tabs"),
@@ -65,10 +72,6 @@
     )
 ))
 
-@currentYearLabel = @{ if(!optOutProposition.isCurrentYearQuarterly) getMessage("annual.label", currentTaxYearStart, currentTaxYearEnd) else getMessage("quarterly.label", currentTaxYearStart, currentTaxYearEnd) }
-@nextYearLabel = @{ if(!optOutProposition.isNextYearQuarterly) getMessage("annual.ny.label", currentTaxYearEnd, nextTaxYearEnd) else getMessage("quarterly.ny.label", currentTaxYearEnd, nextTaxYearEnd) }
-@currentYearTab = @{ if(!optOutProposition.isCurrentYearQuarterly) currentYearTabContentAnnual else currentYearTabContentQuarterly }
-@nextYearTab = @{ if(!optOutProposition.isNextYearQuarterly) nextYearTabContentAnnual else nextYearTabContentQuarterly }
 
 @currentYearTabContentQuarterly = {
     @h2(getMessage("quarterly.heading", currentTaxYearStart, currentTaxYearEnd), classes = "govuk-heading-l", optId = Some("current-year-heading"))

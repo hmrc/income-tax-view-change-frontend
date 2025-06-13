@@ -21,6 +21,7 @@ import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, Voluntary}
 import models.obligations._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.optout.OptOutProposition
@@ -43,7 +44,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
       nextYearItsaStatus = nextYearStatus
     )
 
-    val html: HtmlFormat.Appendable = nextUpdatesHelper(isAgent, currentObligations, optOutProposition)(implicitly)
+    val html: HtmlFormat.Appendable = nextUpdatesHelper(isAgent, currentObligations, optOutProposition)(implicitly, getIndividualUser(FakeRequest()))
 
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
