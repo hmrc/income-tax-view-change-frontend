@@ -28,6 +28,8 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{DateService, SessionService}
+import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyChecker
 import views.html.errorPages.CustomNotFoundError
@@ -53,14 +55,14 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
   extends FrontendController(mcc) with I18nSupport with JourneyChecker {
 
 
-  def show(isAgent: Boolean,
+  def show(isAgent: AffinityGroup,
            isChange: Boolean,
            incomeSourceType: IncomeSourceType
-          ): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+          ): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent == Agent).async { implicit user =>
 
     handleShowRequest(
       incomeSourceType = incomeSourceType,
-      isAgent = isAgent,
+      isAgent = isAgent == Agent,
       isChange = isChange
     )
   }
