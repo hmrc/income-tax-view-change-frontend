@@ -23,7 +23,6 @@ import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResp
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
-import models.optout.{OptOutMultiYearViewModel, OptOutOneYearViewModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfter
@@ -90,9 +89,9 @@ class OptOutServiceNextUpdatesPageOptOutViewModelSpec extends UnitSpec
           ITSAStatusUpdateResponseSuccess()
         ))
 
-        val result = service.nextUpdatesPageOptOutViewModels()
+        val result = service.nextUpdatesPageChecksAndProposition()
 
-        result.futureValue._2.get.isInstanceOf[OptOutOneYearViewModel] shouldBe true
+        result.futureValue._2.isInstanceOf[OptOutProposition] shouldBe true
       }
     }
 
@@ -125,9 +124,9 @@ class OptOutServiceNextUpdatesPageOptOutViewModelSpec extends UnitSpec
           ITSAStatusUpdateResponseSuccess()
         ))
 
-        val result = service.nextUpdatesPageOptOutViewModels()
+        val result = service.nextUpdatesPageChecksAndProposition()
 
-        result.futureValue._2.get.isInstanceOf[OptOutMultiYearViewModel] shouldBe true
+        result.futureValue._2.isInstanceOf[OptOutProposition] shouldBe true
       }
     }
   }

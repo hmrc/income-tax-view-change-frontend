@@ -21,7 +21,7 @@ import auth.MtdItUser
 import enums.MTDIndividual
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks._
-import models.admin.{OptOutFs, ReportingFrequencyPage}
+import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.obligations.ObligationsModel
@@ -182,7 +182,6 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
       }
 
       "the user has a Opt Out Feature Switch Enabled" in {
-        
         enable(OptOutFs)
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
@@ -231,6 +230,62 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
       }
 
+      "the user has a Opt Out R17 Feature Switch Enabled" in {
+        enable(OptOutFs)
+        enable(ReportingFrequencyPage)
+        enable(OptInOptOutContentUpdateR17)
+
+        MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
+
+        val currentTaxYear = dateService.getCurrentTaxYearEnd
+        val previousYear = currentTaxYear - 1
+
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+
+        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(taxYear = dateService.getCurrentTaxYear)
+        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+
+
+        val res = buildGETMTDClient(path).futureValue
+
+        AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
+
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
+        IncomeTaxViewChangeStub.verifyGetObligations(testNino)
+
+        Then("the view displays the correct title, username and links")
+        res should have(
+          httpStatus(OK),
+          pageTitleIndividual("nextUpdates.heading")
+        )
+
+        Then("the page displays the quarterly updates table")
+        res should have(
+          elementTextByID("current-year-quarterly-table-heading")(expectedValue = "Upcoming deadlines"),
+          elementTextByID("table-head-name-deadline")(expectedValue = "Deadline"),
+          elementTextByID("table-head-name-period")(expectedValue = "Period"),
+          elementTextByID("table-head-name-updates-due")(expectedValue = "Income source updates due"),
+          elementTextByID("quarterly-deadline-date-0")(expectedValue = "1 Jan 2018"),
+          elementTextByID("quarterly-period-0")(expectedValue = "6 Apr 2017 to 5 Jul 2017"),
+          elementTextByID("quarterly-income-sources-0")(expectedValue = "Property business"),
+        )
+
+        Then("the quarterly updates info sections")
+        res should have(
+          elementTextByID("current-year-desc")(expectedValue = "This page shows your upcoming due dates and any missed deadlines."),
+          elementTextByID("current-year-quarterly-heading")(expectedValue = "Quarterly updates due"),
+          elementTextByID("current-year-quarterly-desc")(expectedValue = "Every 3 months an update is due for each of your property and sole trader income sources."),
+          elementTextByClass("govuk-details__summary-text")(expectedValue = "Find out more about quarterly updates"),
+          elementTextByID("current-year-dropdown-desc")(expectedValue = "Each quarterly update is a running total of income and expenses for the tax year so far. It combines:"),
+          elementTextByClass("govuk-list govuk-list--bullet")(expectedValue = "new information and corrections made since the last update any information you’ve already provided that has not changed"),
+          elementTextByID("current-year-dropdown-desc2")(expectedValue = "This is done using software compatible with Making Tax Digital for Income Tax (opens in new tab)")
+        )
+      }
+
       "the user has a Opt Out Feature Switch Disabled" in {
         disable(OptOutFs)
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
@@ -267,7 +322,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
     "one year opt-out scenarios" when {
 
-      "show opt-out message if the user has Previous Year as Voluntary, Current Year as NoStatus, Next Year as NoStatus" in {
+      "show opt-out message if reporting frequency FS is enabled" in {
 
         enable(OptOutFs)
         enable(ReportingFrequencyPage)
@@ -298,40 +353,6 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           elementTextBySelector("#what-the-user-can-do")(expectedValue = "Depending on your circumstances, you may be able to view and change your reporting obligations.")
         )
 
-      }
-
-      "show multi year opt-out message if the user has Previous Year as Voluntary, Current Year as Voluntary, Next Year as Voluntary" in {
-
-        enable(OptOutFs)
-        enable(ReportingFrequencyPage)
-
-        MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
-
-        val currentTaxYear = dateService.getCurrentTaxYearEnd
-        val previousYear = currentTaxYear - 1
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
-
-        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
-        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
-        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
-        CalculationListStub.stubGetLegacyCalculationList(testNino,
-          previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
-
-        val res = buildGETMTDClient(path).futureValue
-
-        AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
-
-        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
-        IncomeTaxViewChangeStub.verifyGetObligations(testNino)
-
-        Then("the quarterly updates info sections")
-        res should have(
-          elementTextBySelector("#what-the-user-can-do")(expectedValue = "Depending on your circumstances, you may be able to view and change your reporting obligations.")
-        )
       }
     }
 
