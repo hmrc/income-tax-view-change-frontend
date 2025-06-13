@@ -243,6 +243,16 @@ object IncomeSourceIntegrationTestConstants {
     yearOfMigration = Some("2018")
   )
 
+  val allCeasedBusinesses: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
+    testMtdItId,
+    businesses = List(
+      ceasedBusiness1
+    ),
+    properties = List(),
+    yearOfMigration = Some("2018")
+  )
+
   val foreignAndSoleTraderCeasedBusiness: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     testNino,
     testMtdItId,
@@ -298,6 +308,26 @@ object IncomeSourceIntegrationTestConstants {
     yearOfMigration = Some("2018")
   )
 
+  val businessOnlyResponseWithLatency: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
+    testMtdItId,
+    businesses = List(
+      business1.copy(latencyDetails = Some(testLatencyDetails3))
+    ),
+    properties = List(),
+    yearOfMigration = Some("2018")
+  )
+
+  val businessOnlyResponseAllCeased: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
+    testMtdItId,
+    businesses = List(
+      ceasedBusiness1
+    ),
+    properties = List(),
+    yearOfMigration = Some("2018")
+  )
+
   val propertyOnlyResponse: IncomeSourceDetailsModel =
     IncomeSourceDetailsModel(
       testNino,
@@ -315,11 +345,43 @@ object IncomeSourceIntegrationTestConstants {
     yearOfMigration = Some("2018")
   )
 
+  val ukPropertyOnlyResponseWithLatency: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
+    testMtdItId,
+    businesses = List(),
+    properties = List(ukProperty.copy(latencyDetails = Some(testLatencyDetails3))),
+    yearOfMigration = Some("2018")
+  )
+
+  val ukPropertyOnlyResponseAllCeased: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
+    testMtdItId,
+    businesses = List(),
+    properties = List(ceasedUkProperty),
+    yearOfMigration = Some("2018")
+  )
+
   val foreignPropertyOnlyResponse: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     testNino,
     testMtdItId,
     businesses = List(),
     properties = List(foreignProperty),
+    yearOfMigration = Some("2018")
+  )
+
+  val foreignPropertyOnlyResponseWithLatency: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
+    testMtdItId,
+    businesses = List(),
+    properties = List(foreignProperty.copy(latencyDetails = Some(testLatencyDetails3))),
+    yearOfMigration = Some("2018")
+  )
+
+  val foreignPropertyOnlyResponseAllCeased: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
+    testMtdItId,
+    businesses = List(),
+    properties = List(ceasedForeignProperty),
     yearOfMigration = Some("2018")
   )
 

@@ -19,8 +19,10 @@ package controllers.manageBusinesses.cease
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import controllers.routes
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
+import models.admin.ReportingFrequencyPage
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.IncomeSourceCeasedObligationsViewModel
@@ -28,7 +30,7 @@ import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{DateServiceInterface, NextUpdatesService, SessionService}
+import services.{NextUpdatesService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
@@ -46,8 +48,7 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
                                                         val sessionService: SessionService)
                                                        (implicit val appConfig: FrontendAppConfig,
                                                         val mcc: MessagesControllerComponents,
-                                                        val ec: ExecutionContext,
-                                                        dateService: DateServiceInterface)
+                                                        val ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses {
 
   private def getBusinessName(incomeSourceId: IncomeSourceId)(implicit user: MtdItUser[_]): Option[String] = {
@@ -67,28 +68,20 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
     }
   }
 
-  private def getObligationsView(incomeSourceType: IncomeSourceType, incomeSourceId: String,
-                                 endDate: LocalDate, isAgent: Boolean)
-                                (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    val businessName = if (incomeSourceType == SelfEmployment) getBusinessName(IncomeSourceId(incomeSourceId)) else None
-    nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears = false).map {
-      obligationsViewModel =>
-        val incomeSourceCeasedObligationsViewModel = IncomeSourceCeasedObligationsViewModel(obligationsViewModel,
-          incomeSourceType,
-          businessName,
-          endDate,
-          isAgent)(dateService)
+  def viewAllBusinessLink(isAgent: Boolean): String = if (isAgent) {
+    controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+  } else {
+    controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+  }
 
-        lazy val viewAllBusinessLink =
-          if (isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
-          else controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+  def viewUpcomingUpdatesLink(isAgent: Boolean): String = if (isAgent) {
+    controllers.routes.NextUpdatesController.showAgent().url
+  } else {
+    controllers.routes.NextUpdatesController.show().url
+  }
 
-        lazy val viewUpcomingUpdatesLink =
-          if (isAgent) controllers.routes.NextUpdatesController.showAgent().url
-          else controllers.routes.NextUpdatesController.show().url
-
-        Ok(obligationsView(incomeSourceCeasedObligationsViewModel, viewAllBusinessLink, viewUpcomingUpdatesLink))
-    }
+  private def viewReportingObligationsLink(isAgent: Boolean): String = {
+    routes.ReportingFrequencyPageController.show(isAgent).url
   }
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
@@ -98,7 +91,21 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
       val businessEndDate: Option[LocalDate] = sessionData.ceaseIncomeSourceData.flatMap(_.endDate)
 
       (getIncomeSourceType(sessionData, incomeSourceType), businessEndDate) match {
-        case (Some(incomeSourceId), Some(endDate)) => getObligationsView(incomeSourceType, incomeSourceId, endDate, isAgent)
+        case (Some(incomeSourceId), Some(_)) =>
+          val businessName = if (incomeSourceType == SelfEmployment) getBusinessName(IncomeSourceId(incomeSourceId)) else None
+          val incomeSourceCeasedObligationsViewModel = IncomeSourceCeasedObligationsViewModel(
+            user.incomeSources,
+            incomeSourceType,
+            businessName,
+            isAgent
+          )
+
+          Future.successful(Ok(obligationsView(
+            incomeSourceCeasedObligationsViewModel,
+            viewAllBusinessLink(isAgent),
+            viewUpcomingUpdatesLink(isAgent),
+            if(isEnabled(ReportingFrequencyPage)) Some(viewReportingObligationsLink(isAgent)) else None
+          )))
         case (Some(_), None) => Future.failed(new Error(s"cease session data not found for $incomeSourceType"))
         case (None, Some(_)) => Future.failed(new Error(s"IncomeSourceId not found for $incomeSourceType"))
         case _ => Future.failed(new Error(s"missing incomeSourceId and endDate for $incomeSourceType"))
@@ -124,7 +131,14 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
   private def updateMongoCeased(incomeSourceType: IncomeSourceType)(implicit hc: HeaderCarrier): Future[Boolean] = {
     sessionService.getMongo(IncomeSourceJourneyType(Cease, incomeSourceType)).flatMap {
       case Right(Some(sessionData)) =>
-        val oldCeaseIncomeSourceSessionData = sessionData.ceaseIncomeSourceData.getOrElse(CeaseIncomeSourceData(incomeSourceId = Some(CeaseIncomeSourceData.incomeSourceIdField), endDate = None, ceaseIncomeSourceDeclare = None, journeyIsComplete = None))
+        val oldCeaseIncomeSourceSessionData = sessionData.ceaseIncomeSourceData.getOrElse(
+          CeaseIncomeSourceData(
+            incomeSourceId = Some(CeaseIncomeSourceData.incomeSourceIdField),
+            endDate = None,
+            ceaseIncomeSourceDeclare = None,
+            journeyIsComplete = None
+          )
+        )
         val updatedCeaseIncomeSourceSessionData = oldCeaseIncomeSourceSessionData.copy(journeyIsComplete = Some(true))
         val uiJourneySessionData: UIJourneySessionData = sessionData.copy(ceaseIncomeSourceData = Some(updatedCeaseIncomeSourceSessionData))
 

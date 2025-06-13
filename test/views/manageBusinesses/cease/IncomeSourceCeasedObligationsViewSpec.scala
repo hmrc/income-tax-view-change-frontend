@@ -34,7 +34,7 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
     val h1SelfEmployment: String = "Test Name"
     val h1SelfEmploymentIfEmpty: String = "Sole trader business"
     val headingBase: String = "has ceased"
-    val h2Content: String = "What you must do"
+    val h2Content: String = "Your revised deadlines"
     val quarterlyHeading: String = "Send quarterly updates"
     val quarterlyText: String = "You must send quarterly updates of your income and expenses using compatible software by the following deadlines:"
     val finalDecHeading: String = "Submit final declarations and pay your tax"
@@ -61,41 +61,49 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
 
   val viewAllBusinessLink = "/report-quarterly/income-and-expenses/view/manage-your-businesses"
   val viewUpcomingUpdatesLink = "/report-quarterly/income-and-expenses/view/next-updates"
+  val viewReportingObligationsLink = "/report-quarterly/income-and-expenses/view/reporting-frequency"
 
-  val viewModelWithAllData: ObligationsViewModel = ObligationsViewModel(
-    quarterlyObligationDatesFull,
-    Seq(finalDeclarationDates, finalDeclarationDates2),
-    2023,
-    showPrevTaxYears = true
-  )
-
-  val viewModelAnnualObligation: ObligationsViewModel = viewModelWithAllData.copy(quarterlyObligationsDates = Seq.empty)
-
-  val incomeSourceCeasedObligationsViewModel: IncomeSourceCeasedObligationsViewModel = IncomeSourceCeasedObligationsViewModel(obligationsViewModel = viewModelWithAllData,
+  val incomeSourceCeasedObligationsViewModel: IncomeSourceCeasedObligationsViewModel = IncomeSourceCeasedObligationsViewModel(
     isAgent = false,
     incomeSourceType = SelfEmployment,
-    cessationDate = cessationDate,
-    businessName = None)
+    businessName = None,
+    isLastActiveBusinessAndIsInLatency = false,
+    allBusinessesCeased = false
+  )
 
-  val validUKPropertyBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(incomeSourceType = UkProperty), viewAllBusinessLink, viewUpcomingUpdatesLink)
-  val validForeignPropertyBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(incomeSourceType = ForeignProperty), viewAllBusinessLink, viewUpcomingUpdatesLink)
-  val validSoleTreaderBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(businessName = Some("Test Name")), viewAllBusinessLink, viewUpcomingUpdatesLink)
-  val validSoleTreaderBusinessWithNoBusinessNameCall: Html = view(incomeSourceCeasedObligationsViewModel, viewAllBusinessLink, viewUpcomingUpdatesLink)
-  val validCallWithData: Html = view(incomeSourceCeasedObligationsViewModel.copy(businessName = Some("Test Name")), viewAllBusinessLink, viewUpcomingUpdatesLink)
-  val validCallWithNoQuarterlyDataOnlyOneFinalUpdate: Html = view(
-    IncomeSourceCeasedObligationsViewModel(
-      obligationsViewModel = viewModelAnnualObligation.copy(finalDeclarationDates = Seq(finalDeclarationDates)),
-      isAgent = false,
-      incomeSourceType = SelfEmployment,
-      cessationDate = cessationDate,
-      businessName = Some("Test Name")), viewAllBusinessLink, viewUpcomingUpdatesLink)
-  val validCallWithNoQuarterlyDataMultipleFinalUpdates: Html = view(
-    IncomeSourceCeasedObligationsViewModel(
-      obligationsViewModel = viewModelAnnualObligation,
-      isAgent = false,
-      incomeSourceType = SelfEmployment,
-      cessationDate = cessationDate,
-      businessName = Some("Test Name")), viewAllBusinessLink, viewUpcomingUpdatesLink)
+  val validUKPropertyBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(incomeSourceType = UkProperty), viewAllBusinessLink, viewUpcomingUpdatesLink, Some(viewReportingObligationsLink))
+  val validForeignPropertyBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(incomeSourceType = ForeignProperty), viewAllBusinessLink, viewUpcomingUpdatesLink, Some(viewReportingObligationsLink))
+  val validSoleTreaderBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(businessName = Some("Test Name")), viewAllBusinessLink, viewUpcomingUpdatesLink, Some(viewReportingObligationsLink))
+  val validSoleTreaderBusinessWithNoBusinessNameCall: Html = view(incomeSourceCeasedObligationsViewModel, viewAllBusinessLink, viewUpcomingUpdatesLink, Some(viewReportingObligationsLink))
+  val validCallWithData: Html = view(
+    incomeSourceCeasedObligationsViewModel.copy(
+      businessName = Some("Test Name")
+    ), viewAllBusinessLink, viewUpcomingUpdatesLink, Some(viewReportingObligationsLink)
+  )
+  val validCallWithDataRemainingLatent: Html = view(
+    incomeSourceCeasedObligationsViewModel.copy(
+      businessName = Some("Test Name"),
+      isLastActiveBusinessAndIsInLatency = true
+    ), viewAllBusinessLink, viewUpcomingUpdatesLink, Some(viewReportingObligationsLink)
+  )
+  val validCallWithDataAllCeased: Html = view(
+    incomeSourceCeasedObligationsViewModel.copy(
+      businessName = Some("Test Name"),
+      allBusinessesCeased = true
+    ), viewAllBusinessLink, viewUpcomingUpdatesLink, Some(viewReportingObligationsLink)
+  )
+  val validCallWithDataRemainingLatentWithNoRfLink: Html = view(
+    incomeSourceCeasedObligationsViewModel.copy(
+      businessName = Some("Test Name"),
+      isLastActiveBusinessAndIsInLatency = true
+    ), viewAllBusinessLink, viewUpcomingUpdatesLink, None
+  )
+  val validCallWithDataAllCeasedWithNoRfLink: Html = view(
+    incomeSourceCeasedObligationsViewModel.copy(
+      businessName = Some("Test Name"),
+      allBusinessesCeased = true
+    ), viewAllBusinessLink, viewUpcomingUpdatesLink, None
+  )
 
   val manageYourBusinessShowURL: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
   val viewUpcomingUpdatesURL: String = controllers.routes.NextUpdatesController.show().url
@@ -166,55 +174,62 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
     "Not display a back button" in new Setup(validCallWithData) {
       Option(document.getElementById("back")).isDefined shouldBe false
     }
-    "show what you must do heading" in new Setup(validCallWithData) {
-      val heading: Element = document.getElementById("heading-what-you-must-do")
-      heading.text() shouldBe "What you must do"
+    "show 'Your revised deadlines' heading" in new Setup(validCallWithData) {
+      val heading: Element = document.getElementById("your-revised-deadlines")
+      heading.text() shouldBe "Your revised deadlines"
     }
-    "show warning messages" when {
-      "view model has inset warning messages" in new Setup(validCallWithData) {
+    "show warning message" when {
+      "view model has inset warning message for deadlines in a few minutes" in new Setup(validCallWithData) {
         document.getElementsByClass("govuk-inset-text").size() shouldBe 1
-        document.getElementById("warning-inset-text").text shouldBe "You have 7 overdue updates. You must submit these updates with all required income and expenses through your record keeping software."
+        document.getElementById("warning-inset-text").text shouldBe
+          "Your deadlines for this business will be available in the next few minutes."
       }
-      "view model has no inset warning messages" in new Setup(validCallWithNoQuarterlyDataOnlyOneFinalUpdate) {
-        document.getElementsByClass("govuk-inset-text").size() shouldBe 0
-      }
-    }
-    "show next upcoming update" when {
-      "quarterly updates are present" in new Setup(validCallWithData) {
-        val quarterlyAndFinalUpdateList: Element = document.getElementById("quarterly-and-final-update-list")
-
-        document.getElementById("next-upcoming-updates-heading").text() shouldBe IncomeSourceCeasedMessages.yourNextUpComingUpdatesHeading
-        quarterlyAndFinalUpdateList.child(0).text shouldBe s"Your next quarterly update for tax year 2022 to 2023 is due by 5 May 2022"
-        quarterlyAndFinalUpdateList.child(1).text shouldBe s"Your final declaration for tax year 2023 to 2024 is due by 17 December 2023"
-      }
-      "quarterly updates are not present then only show final declaration" in new Setup(validCallWithNoQuarterlyDataOnlyOneFinalUpdate) {
-        document.getElementById("next-upcoming-updates-heading").text() shouldBe IncomeSourceCeasedMessages.yourNextUpComingUpdatesHeading
-        document.getElementById("final-declaration-update").text shouldBe s"Your final declaration for tax year 2023 to 2024 is due by 17 December 2023 ."
-      }
-      "quarterly updates are not present then only show two final declaration if present" in new Setup(validCallWithNoQuarterlyDataMultipleFinalUpdates) {
-        val quarterlyAndFinalUpdateList: Element = document.getElementById("quarterly-and-final-update-list")
-        document.getElementById("next-upcoming-updates-heading").text() shouldBe IncomeSourceCeasedMessages.yourNextUpComingUpdatesHeading
-        quarterlyAndFinalUpdateList.child(0).text shouldBe s"Your final declaration for tax year 2023 to 2024 is due by 17 December 2023"
-        quarterlyAndFinalUpdateList.child(1).text shouldBe s"Your final declaration for tax year 2024 to 2025 is due by 17 December 2024"
-      }
-    }
-    "show view all update link" in new Setup(validCallWithData) {
-      val link: Element = document.getElementById("view-all-updates")
-      link.hasCorrectLink("View your overdue and upcoming updates", viewUpcomingUpdatesURL)
-    }
-    "show view all your business link" in new Setup(validCallWithData) {
-      val link: Element = document.getElementById("view-all-business-link")
-      link.hasCorrectLink("View all your businesses", manageYourBusinessShowURL)
     }
 
-    "show capital gain tax" in new Setup(validUKPropertyBusinessCall) {
-      val capitalGainBlock: Element = document.getElementById("capital-gain-block")
-      val capitalGainContent: Element = capitalGainBlock.getElementById("capital-gain-content")
-      val capitalGainMoreInfoLink: Element = capitalGainBlock.getElementById("capital-gain-more-info-link")
 
-      capitalGainBlock.getElementsByClass("govuk-label-wrapper").get(0).text() shouldBe "Capital gain tax"
-      capitalGainContent.text() shouldBe "If you’ve sold property, you may need to pay Capital Gains Tax."
-      capitalGainMoreInfoLink hasCorrectLink("Check what you need to pay Capital Gains Tax on (opens in new tab)", "https://www.gov.uk/capital-gains-tax/what-you-pay-it-on")
+    "show first paragraph with 'updates and deadlines' link" in new Setup(validCallWithData) {
+      val p: Element = document.getElementById("even-if-paragraph")
+      val link: Element = document.getElementById("p1-link")
+      p.text shouldBe "Even if they are not displayed right away on the updates and deadlines page, your account has been updated."
+      link.hasCorrectLink("updates and deadlines", viewUpcomingUpdatesURL)
+    }
+
+    "show conditional paragraph with obligations link if remaining latent business and Reporting frequency FS is ON" in new Setup(
+      validCallWithDataRemainingLatent) {
+      val p: Element = document.getElementById("remaining-business")
+      val link: Element = document.getElementById("remaining-business-link")
+      p.text shouldBe "Because your remaining business is new, it is set to be opted out of Making Tax Digital for Income Tax for up to 2 tax years." +
+        " You can decide at any time to sign back up on your reporting obligations page."
+      link.hasCorrectLink("your reporting obligations", viewReportingObligationsLink)
+    }
+
+    "show conditional paragraph with obligations link if remaining latent business and Reporting frequency FS is OFF" in new Setup(
+      validCallWithDataRemainingLatentWithNoRfLink) {
+      val p: Element = document.getElementById("remaining-business")
+      p.text shouldBe "Because your remaining business is new, it is set to be opted out of Making Tax Digital for Income Tax for up to 2 tax years."
+    }
+
+    "show conditional paragraph with obligations link if all businesses are ceased and Reporting frequency FS is ON" in new Setup(
+      validCallWithDataAllCeased) {
+      val p: Element = document.getElementById("all-business-ceased")
+      val link: Element = document.getElementById("all-business-ceased-link")
+      p.text shouldBe "In future, any new business you add will be opted out of Making Tax Digital for Income Tax." +
+        " Find out more about your reporting obligations."
+      link.hasCorrectLink("your reporting obligations", viewReportingObligationsLink)
+    }
+
+    "show conditional paragraph with obligations link if all businesses are ceased and Reporting frequency FS is OFF" in new Setup(
+      validCallWithDataAllCeasedWithNoRfLink) {
+      val p: Element = document.getElementById("all-business-ceased")
+      p.text shouldBe "In future, any new business you add will be opted out of Making Tax Digital for Income Tax."
+    }
+
+
+    "show second paragraph with 'View your businesses' link" in new Setup(validCallWithData) {
+      val p: Element = document.getElementById("view-your-businesses")
+      val link: Element = document.getElementById("p2-link")
+      p.text shouldBe "View your businesses to add, manage or cease a business or income source."
+      link.hasCorrectLink("View your businesses", viewAllBusinessLink)
     }
   }
 }
