@@ -71,7 +71,7 @@
         }
     } else {
         @breakdownPartial(model, taxYear, isFinalCalc = false, isAgent)
-        @if(!model.crystallised.contains(true)) {
+        @if(model.crystallised == false) {
             @govukInsetText(InsetText(content = HtmlContent(
             p(id=Some("calc-estimate-info"))(content = Html(messages("tax-year-summary.calc-estimate-info")))
             )))
@@ -421,7 +421,7 @@
     )
 
     @viewModel.calculationSummary.map { model =>
-        @if(!model.crystallised.contains(true) && !model.messages.isDefined) {
+        @if(model.crystallised == false && !model.messages.isDefined) {
             @govukInsetText(InsetText(content = HtmlContent(
                 p(id=Some("calc-date-info"))(content = Html(
                     messages(if(isAgent) "tax-year-summary.agent.calc-from-last-time" else "tax-year-summary.calc-from-last-time",
@@ -443,7 +443,7 @@
                 </div>
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key dt-cell-width">
-                    @if(model.crystallised.contains(true)) {
+                    @if(model.crystallised == true) {
                         @messages("tax-year-summary.total-due")
                     } else {
                         @{
