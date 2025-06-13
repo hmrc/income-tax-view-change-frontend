@@ -16,8 +16,6 @@
 
 package models.obligations
 
-import models.incomeSourceDetails.TaxYear
-
 import java.time.LocalDate
 
 case class NextUpdatesViewModel(allDeadlines: Seq[DeadlineViewModel])
