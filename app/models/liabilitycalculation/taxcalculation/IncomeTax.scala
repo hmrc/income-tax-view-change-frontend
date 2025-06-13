@@ -33,8 +33,6 @@ case class IncomeTax(
                       totalPensionSavingsTaxCharges: Option[BigDecimal] = None,
                       statePensionLumpSumCharges: Option[BigDecimal] = None,
                       payeUnderpaymentsCodedOut: Option[BigDecimal] = None,
-                      totalAnnuityPaymentsTaxCharged: Option[BigDecimal] = None,
-                      totalRoyaltyPaymentsTaxCharged: Option[BigDecimal] = None,
                       giftAidTaxChargeWhereBasicRateDiffers: Option[BigDecimal] = None,
                       incomeTaxChargedOnTransitionProfits: Option[BigDecimal] = None
                     ) {

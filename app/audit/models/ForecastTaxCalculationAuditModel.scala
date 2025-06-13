@@ -32,7 +32,7 @@ case class ForecastTaxCalculationAuditModel(user: MtdItUser[_], endOfYearEstimat
 
   private val totalEstimatedIncome: Option[Int] = endOfYearEstimate.totalEstimatedIncome
   private val totalTaxableIncome: Option[Int] = endOfYearEstimate.totalTaxableIncome
-  private val totalAllowancesAndDeductions: Option[BigDecimal] = endOfYearEstimate.totalAllowancesAndDeductions
+  private val totalAllowancesAndDeductions: Option[Int] = endOfYearEstimate.totalAllowancesAndDeductions
   private val totalIncomeTax: Option[BigDecimal] = endOfYearEstimate.incomeTaxAmount
   private val class4NationalInsurance: Option[BigDecimal] = endOfYearEstimate.nic2
   private val class2NationalInsurance: Option[BigDecimal] = endOfYearEstimate.nic4

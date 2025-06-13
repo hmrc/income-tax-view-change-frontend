@@ -24,6 +24,8 @@ import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Injecting
 
+import java.time.LocalDate
+
 class IncomeTaxCalculationConnectorISpec extends AnyWordSpec with ComponentSpecBase with Injecting {
 
   lazy val connector: IncomeTaxCalculationConnector = app.injector.instanceOf[IncomeTaxCalculationConnector]
@@ -48,8 +50,10 @@ class IncomeTaxCalculationConnectorISpec extends AnyWordSpec with ComponentSpecB
       |  },
       |  "metadata": {
       |    "calculationTimestamp": "2024-02-15T09:35:15.094Z",
-      |    "crystallised": false,
-      |    "calculationReason": "customerRequest"
+      |    "calculationType": "IY",
+      |    "calculationReason": "customerRequest",
+      |    "periodFrom": "2022-01-01",
+      |    "periodTo": "2023-01-01"
       |  }
       |}
       |""".stripMargin
@@ -62,7 +66,7 @@ class IncomeTaxCalculationConnectorISpec extends AnyWordSpec with ComponentSpecB
 
           val result = connector.getCalculationResponse(mtditid, nino, taxYear).futureValue
 
-          result shouldBe LiabilityCalculationResponse(Inputs(PersonalInformation("UK", None)), Metadata(Some("2024-02-15T09:35:15.094Z"), Some(false), Some("customerRequest"), None, None), None, None)
+          result shouldBe LiabilityCalculationResponse(Inputs(PersonalInformation("UK", None)), Metadata(Some("2024-02-15T09:35:15.094Z"), "IY", "customerRequest", LocalDate.of(2022, 1, 1), LocalDate.of(2023, 1, 1)), None, None)
           WiremockHelper.verifyGet(s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear")
         }
 
@@ -92,7 +96,7 @@ class IncomeTaxCalculationConnectorISpec extends AnyWordSpec with ComponentSpecB
 
           val result = connector.getCalculationResponseByCalcId(mtditid, nino, calculationId, taxYear.toInt).futureValue
 
-          result shouldBe LiabilityCalculationResponse(Inputs(PersonalInformation("UK", None)), Metadata(Some("2024-02-15T09:35:15.094Z"), Some(false), Some("customerRequest"), None, None), None, None)
+          result shouldBe LiabilityCalculationResponse(Inputs(PersonalInformation("UK", None)), Metadata(Some("2024-02-15T09:35:15.094Z"), "IY", "customerRequest", LocalDate.of(2022, 1, 1), LocalDate.of(2023, 1, 1)), None, None)
           WiremockHelper.verifyGet(s"/income-tax-calculation/income-tax/nino/$nino/calc-id/$calculationId/calculation-details?taxYear=$taxYear")
         }
 

@@ -25,6 +25,8 @@ import testConstants.BaseTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.mongo.lock.{LockService, MongoLockRepository}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
+import java.time.LocalDate
 @deprecated("Being moved to submission team", "MISUV-8977")
 class CalculationPollingServiceSpec extends TestSupport with MockCalculationService {
   val liabilityCalculationSuccessResponse: LiabilityCalculationResponse = LiabilityCalculationResponse(
@@ -32,7 +34,12 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
       taxRegime = "UK", class2VoluntaryContributions = None
     )),
     messages = None,
-    metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), Some(false), Some("customerRequest")),
+    metadata = Metadata(
+      calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
+      calculationType = "IY",
+      calculationReason = "customerRequest",
+      periodFrom = LocalDate.of(2018, 1, 1),
+      periodTo = LocalDate.of(2019, 1, 1)),
     calculation = None)
 
   val liabilityCalculationNoContentResponse: LiabilityCalculationError = LiabilityCalculationError(Status.NO_CONTENT, "no content")

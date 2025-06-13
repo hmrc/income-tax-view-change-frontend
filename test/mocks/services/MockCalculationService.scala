@@ -62,7 +62,7 @@ trait MockCalculationService extends UnitSpec with BeforeAndAfterEach {
     setupMockGetCalculationNew(mtditid, nino, taxYear)(liabilityCalculationModelSuccessfulNotCrystallised)
 
   def mockCalculationSuccessMinimalNew(mtditid: String = "XAIT00000000015", taxYear: Int = testTaxYear): Unit =
-    setupMockGetCalculationNew(mtditid, testNino, taxYear)(liabilityCalculationModelDeductionsMinimal())
+    setupMockGetCalculationNew(mtditid, testNino, taxYear)(liabilityCalculationModelDeductionsMinimal(calculationReason = "customerRequest"))
 
   def mockCalculationErrorNew(mtditid: String = "XAIT00000000015", nino: String = testNino, year: Int = testTaxYear): Unit =
     setupMockGetCalculationNew(mtditid, nino, year)(LiabilityCalculationError(500, "Internal server error"))

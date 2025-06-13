@@ -29,7 +29,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
 
   "TaxDueSummaryViewModel model" when {
     "create a minimal TaxDueSummaryViewModel when there is a minimal Calculation response" in {
-      TaxDueSummaryViewModel(liabilityCalculationModelDeductionsMinimal(), testObligationsModel) shouldBe
+      TaxDueSummaryViewModel(liabilityCalculationModelDeductionsMinimal(calculationReason = "customerRequest"), testObligationsModel) shouldBe
         TaxDueSummaryViewModel(
           taxRegime = "UK",
           messages = None, lossesAppliedToGeneralIncome = None,
@@ -68,7 +68,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
           grossGiftAidPayments = Some(12500),
           giftAidTax = Some(5000.99),
           marriageAllowanceTransferredInAmount = Some(5000.99),
-          studentLoans = Some(List(StudentLoan(Some("01"), Some(5000.99), Some(5000.99), Some(5000.99), Some(5000.99), Some(1500), Some(20)))),
+          studentLoans = Some(List(StudentLoan("01", 5000.99, 5000.99, 5000.99, 5000.99, 1500, 20))),
           reliefsClaimed = Some(List(ReliefsClaimed("vctSubscriptions", Some(5000.99)),
             ReliefsClaimed("deficiencyRelief", Some(5000.99)))),
           totalResidentialFinanceCostsRelief = Some(5000.99),
@@ -118,7 +118,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
             taxTakenOffTradingIncome = Some(563.12)
           ),
           giftAidTaxChargeWhereBasicRateDiffers = Some(6565.99),
-          transitionProfitRow = TransitionProfitRow(Some(700.00), Some(3000.00)),
+          transitionProfitRow = TransitionProfitRow(Some(700.00), Some(3000)),
           finalDeclarationOrTaxReturnIsSubmitted = true
         )
 
@@ -139,7 +139,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
           grossGiftAidPayments = Some(12500),
           giftAidTax = Some(5000.99),
           marriageAllowanceTransferredInAmount = Some(5000.99),
-          studentLoans = Some(List(StudentLoan(Some("01"), Some(5000.99), Some(5000.99), Some(5000.99), Some(5000.99), Some(1500), Some(20)))),
+          studentLoans = Some(List(StudentLoan("01", 5000.99, 5000.99, 5000.99, 5000.99, 1500, 20))),
           reliefsClaimed = Some(List(ReliefsClaimed("vctSubscriptions", Some(5000.99)),
             ReliefsClaimed("deficiencyRelief", Some(5000.99)))),
           totalResidentialFinanceCostsRelief = Some(5000.99),
@@ -189,7 +189,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
             taxTakenOffTradingIncome = Some(563.12)
           ),
           giftAidTaxChargeWhereBasicRateDiffers = Some(6565.99),
-          transitionProfitRow = TransitionProfitRow(Some(700.00), Some(3000.00)),
+          transitionProfitRow = TransitionProfitRow(Some(700.00), Some(3000)),
           finalDeclarationOrTaxReturnIsSubmitted = true
         )
 
@@ -274,12 +274,12 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
   "TransitionProfitRow" when {
     "incomeTaxCharged and totalTaxableProfit are available" should {
       "return TransitionProfitRow" in {
-        TransitionProfitRow(Some(BigDecimal(300.00)), Some(BigDecimal(300.00))).get shouldBe TransitionProfitRow(300.00, 300.00)
+        TransitionProfitRow(Some(BigDecimal(300.00)), Some(300)).get shouldBe TransitionProfitRow(300.00, 300.00)
       }
     }
     "only one field is available" should {
       "return None" in {
-        TransitionProfitRow(None, Some(BigDecimal(300.00))) shouldBe None
+        TransitionProfitRow(None, Some(300)) shouldBe None
         TransitionProfitRow(Some(BigDecimal(300.00)), None) shouldBe None
       }
     }

@@ -24,33 +24,30 @@ class CalculationSpec extends TestSupport with Matchers{
 
   "planTypeActual" should{
     "return value when value is populated" in {
-      val studentLoan = StudentLoan(planType = Some("planType"))
+      val studentLoan = StudentLoan(planType = "planType",
+        studentLoanTotalIncomeAmount = 12000.11,
+        studentLoanChargeableIncomeAmount = 4500.11,
+        studentLoanRepaymentAmount = 1300.56,
+        studentLoanRepaymentAmountNetOfDeductions = 500.56,
+        studentLoanApportionedIncomeThreshold = 450,
+        studentLoanRate = 123.44)
 
       studentLoan.planTypeActual shouldBe "planType"
-    }
-
-    "throw MissingFieldException when value is missing" in {
-      val studentLoan = StudentLoan()
-
-      intercept[MissingFieldException]{
-        studentLoan.planTypeActual
-      }
     }
   }
 
   "studentLoanRepaymentAmountActual" should {
     "return value when value is populated" in {
       val amount = BigDecimal(10000.0)
-      val studentLoan = StudentLoan(studentLoanRepaymentAmount = Some(amount))
+      val studentLoan = StudentLoan(planType = "planType",
+        studentLoanTotalIncomeAmount = 12000.11,
+        studentLoanChargeableIncomeAmount = 4500.11,
+        studentLoanRepaymentAmount = amount,
+        studentLoanRepaymentAmountNetOfDeductions = 500.56,
+        studentLoanApportionedIncomeThreshold = 450,
+        studentLoanRate = 123.44)
 
       studentLoan.studentLoanRepaymentAmountActual shouldBe amount
-    }
-    "throw MissingFieldException when value is missing" in {
-      val studentLoan = StudentLoan()
-
-      intercept[MissingFieldException]{
-        studentLoan.studentLoanRepaymentAmountActual
-      }
     }
   }
 }

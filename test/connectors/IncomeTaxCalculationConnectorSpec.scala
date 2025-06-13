@@ -23,6 +23,7 @@ import play.api.libs.json.{JsObject, Json}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class IncomeTaxCalculationConnectorSpec extends TestSupport with MockHttpV2 {
@@ -48,12 +49,12 @@ class IncomeTaxCalculationConnectorSpec extends TestSupport with MockHttpV2 {
   val calculation: LiabilityCalculationResponse = LiabilityCalculationResponse(
     inputs = Inputs(PersonalInformation(taxRegime = "UK", class2VoluntaryContributions = None)),
     messages = None,
-    metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), Some(false), Some("customerRequest")),
+    metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), "IY", "customerRequest", LocalDate.of(2022, 1, 1), LocalDate.of(2023, 1, 1)),
     calculation = None)
   val calculationJson: JsObject = Json.obj("inputs" -> Json.obj("personalInformation" ->
     Json.obj("taxRegime" -> "UK")),
-    "metadata" -> Json.obj("calculationTimestamp" -> "2019-02-15T09:35:15.094Z", "crystallised" -> false,
-    "calculationReason" -> "customerRequest"))
+    "metadata" -> Json.obj("calculationTimestamp" -> "2019-02-15T09:35:15.094Z", "calculationType" -> "IY",
+    "calculationReason" -> "customerRequest", "periodFrom" -> "2022-01-01", "periodTo" -> "2023-01-01"))
 
   "IncomeTaxCalculationConnector.getCalculationResponse" should {
     "return a calculation" when {

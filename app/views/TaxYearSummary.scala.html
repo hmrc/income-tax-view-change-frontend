@@ -71,7 +71,7 @@
         }
     } else {
         @breakdownPartial(model, taxYear, isFinalCalc = false, isAgent)
-        @if(!model.crystallised.contains(true)) {
+        @if(model.crystallised == false) {
             @govukInsetText(InsetText(content = HtmlContent(
             p(id=Some("calc-estimate-info"))(content = Html(messages("tax-year-summary.calc-estimate-info")))
             )))
@@ -353,7 +353,7 @@
     val forecastTotalTaxableIncome = viewModel.calculationSummary.flatMap(model => model.forecastTotalTaxableIncome).getOrElse(0).toCurrencyString
     val forecastIncomeAndNics = viewModel.calculationSummary.flatMap(model => model.forecastIncomeTaxAndNics).get.toCurrencyString
 
-    val forecastDeductions = viewModel.calculationSummary.flatMap(model => model.forecastAllowancesAndDeductions).getOrElse(BigDecimal(0)).toCurrencyString
+    val forecastDeductions = viewModel.calculationSummary.flatMap(model => model.forecastAllowancesAndDeductions).getOrElse(0).toCurrencyString
     govukTable(Table(
         rows = Seq(
             Seq(
@@ -421,7 +421,7 @@
     )
 
     @viewModel.calculationSummary.map { model =>
-        @if(!model.crystallised.contains(true) && !model.messages.isDefined) {
+        @if(model.crystallised == false && !model.messages.isDefined) {
             @govukInsetText(InsetText(content = HtmlContent(
                 p(id=Some("calc-date-info"))(content = Html(
                     messages(if(isAgent) "tax-year-summary.agent.calc-from-last-time" else "tax-year-summary.calc-from-last-time",
@@ -443,15 +443,13 @@
                 </div>
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key dt-cell-width">
-                    @if(model.crystallised.contains(true)) {
+                    @if(model.crystallised == true) {
                         @messages("tax-year-summary.total-due")
                     } else {
                         @{
-                            if ( !model.periodFrom.isEmpty && !model.periodTo.isEmpty ){
-                                val calculationDateFrom = implicitDateFormatter.longDate(model.periodFrom.get).toLongDate
-                                val calculationDateTo = implicitDateFormatter.longDate(model.periodTo.get).toLongDate
+                                val calculationDateFrom = implicitDateFormatter.longDate(model.periodFrom).toLongDate
+                                val calculationDateTo = implicitDateFormatter.longDate(model.periodTo).toLongDate
                                 messages("tax-year-summary.tax-calculation.date", calculationDateFrom, calculationDateTo)
-                            }
                         }
                     }
                     </dt>
