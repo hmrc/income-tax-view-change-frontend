@@ -44,10 +44,18 @@ object LiabilityCalculationResponse {
 }
 
 case class Metadata(calculationTimestamp: Option[String],
-                    crystallised: Option[Boolean] = Some(false),
+                    calculationType: String,
                     calculationReason: Option[String] = None,
                     periodFrom: Option[LocalDate] = None,
-                    periodTo: Option[LocalDate] = None)
+                    periodTo: Option[LocalDate] = None) {
+
+  def isCalculationCrystallised: Boolean = {
+    calculationType match {
+      case "DF" | "crystallisation" => true
+      case _ => false
+    }
+  }
+}
 
 object Metadata {
   implicit val format: OFormat[Metadata] = Json.format[Metadata]
