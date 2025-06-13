@@ -41,6 +41,8 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
     val testBusinessOnlyUser: MtdItUser[_] = getTestUser(MTDIndividual, businessOnlyResponse)
 
+    val ceasedBusinessUser: MtdItUser[_] = getTestUser(MTDIndividual, foreignAndSoleTraderCeasedBusiness)
+
     testAuthFailures(path, mtdUserRole)
 
     "renderViewNextUpdates" when {
@@ -283,6 +285,48 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           elementTextByID("current-year-dropdown-desc")(expectedValue = "Each quarterly update is a running total of income and expenses for the tax year so far. It combines:"),
           elementTextByClass("govuk-list govuk-list--bullet")(expectedValue = "new information and corrections made since the last update any information you’ve already provided that has not changed"),
           elementTextByID("current-year-dropdown-desc2")(expectedValue = "This is done using software compatible with Making Tax Digital for Income Tax (opens in new tab)")
+        )
+      }
+
+      "the user has a Opt Out R17 Feature Switch Enabled - All ceased businesses" in {
+        enable(OptOutFs)
+        enable(ReportingFrequencyPage)
+        enable(OptInOptOutContentUpdateR17)
+
+        MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
+
+        val currentTaxYear = dateService.getCurrentTaxYearEnd
+        val previousYear = currentTaxYear - 1
+
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignAndSoleTraderCeasedBusiness)
+
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+
+        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(taxYear = dateService.getCurrentTaxYear)
+        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+
+
+        val res = buildGETMTDClient(path).futureValue
+
+        AuditStub.verifyAuditEvent(NextUpdatesAuditModel(ceasedBusinessUser))
+
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
+        IncomeTaxViewChangeStub.verifyGetObligations(testNino)
+
+        Then("the view displays the correct title, username and links")
+        res should have(
+          httpStatus(OK),
+          pageTitleIndividual("nextUpdates.heading")
+        )
+
+        Then("the annual info sections")
+        res should have(
+          elementTextByID("current-year-desc")(expectedValue = "This page shows your upcoming due dates and any missed deadlines."),
+          elementTextByID("current-year-subheading")(expectedValue = "Tax return due"),
+          elementTextByID("current-year-compatible-software-desc")(expectedValue = "As you are opted out of Making Tax Digital for Income Tax, you can find out here how you file your Self Assessment tax return (opens in new tab)"),
+          elementTextByID("current-year-return-due-date")(expectedValue = "Your return for the 2022 to 2023 tax year is due by 31 January 2024.")
         )
       }
 
