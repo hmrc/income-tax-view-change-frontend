@@ -90,9 +90,9 @@ class OptOutServiceNextUpdatesPageOptOutViewChecksSpec extends UnitSpec
           ITSAStatusUpdateResponseSuccess()
         ))
 
-        val result = service.nextUpdatesPageOptOutChecks()
+        val result = service.nextUpdatesPageChecksAndProposition()
 
-        result.futureValue shouldBe a[NextUpdatesQuarterlyReportingContentChecks]
+        result.futureValue._2.isInstanceOf[OptOutProposition] shouldBe true
       }
     }
 
@@ -125,9 +125,9 @@ class OptOutServiceNextUpdatesPageOptOutViewChecksSpec extends UnitSpec
           ITSAStatusUpdateResponseSuccess()
         ))
 
-        val result = service.nextUpdatesPageOptOutChecks()
+        val result = service.nextUpdatesPageChecksAndProposition()
 
-        result.futureValue shouldBe a[NextUpdatesQuarterlyReportingContentChecks]
+        result.futureValue._2.isInstanceOf[OptOutProposition] shouldBe true
       }
     }
   }

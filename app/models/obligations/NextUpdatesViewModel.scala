@@ -20,7 +20,7 @@ import models.incomeSourceDetails.TaxYear
 
 import java.time.LocalDate
 
-case class NextUpdatesViewModel(allDeadlines: Seq[DeadlineViewModel], currentTaxYear: TaxYear)
+case class NextUpdatesViewModel(allDeadlines: Seq[DeadlineViewModel])
 
 case class DeadlineViewModel(obligationType: ObligationType,
                              standardAndCalendar: Boolean,

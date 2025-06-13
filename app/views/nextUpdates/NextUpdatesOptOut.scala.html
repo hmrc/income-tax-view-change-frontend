@@ -15,12 +15,11 @@
  *@
 
 @import models.obligations.NextUpdatesViewModel
-@import views.html.helpers.injected.obligations._
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
 @import models.optout.NextUpdatesQuarterlyReportingContentChecks
-@import models.optout.OptOutOneYearViewModel
-@import models.optout.OptOutMultiYearViewModel
+@import views.html.components._
+@import views.html.helpers.injected.obligations._
+@import views.html.layouts.unifiedLayout
+@import services.optout.OptOutProposition
 
 @this(
 	mainTemplate: unifiedLayout,
@@ -37,6 +36,7 @@
 @(
 	viewModel: NextUpdatesViewModel,
 	checks:NextUpdatesQuarterlyReportingContentChecks,
+	optOutProposition: OptOutProposition,
 	backUrl: String,
 	isAgent: Boolean = false,
 	isSupportingAgent: Boolean = false,
@@ -51,9 +51,7 @@
 	backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial,
-	origin = origin,
-	useFallbackBackLink = true
-) {
+	origin = origin) {
 
 	@h1(msg = messages("nextUpdates.heading"))
 
@@ -73,7 +71,7 @@
 	}
 
 	@if(optInOptOutContentR17Enabled) {
-		@nextUpdatesHelperR17(isAgent, viewModel)
+		@nextUpdatesHelperR17(isAgent, viewModel, optOutProposition)
 	} else {
 		@h2(msg = "nextUpdates.sub-heading")
 		@nextUpdatesHelper(viewModel)

@@ -295,145 +295,42 @@ class OptOutServiceSpec
 
   }
 
-  ".nextUpdatesPageOneYearOptOutViewModel" when {
-
-    "PY is Voluntary, CY is NoStatus, NY is NoStatus and PY is NOT finalised" should {
-
-      "offer PY as OptOut Option" in {
-
-        stubOptOut(
-          currentTaxYear = taxYear2023_2024,
-          previousYearCrystallisedStatus = false,
-          previousYearStatus = Voluntary,
-          currentYearStatus = NoStatus,
-          nextYearStatus = NoStatus,
-          nino = testNino)
-
-        val response = service.nextUpdatesPageOptOutChecks()
-
-        response.futureValue shouldBe NextUpdatesQuarterlyReportingContentChecks(
-          currentYearItsaStatus = false,
-          previousYearItsaStatus = true,
-          previousYearCrystallisedStatus = false
-        )
-
-      }
-    }
-
-    "PY is Voluntary, CY is NoStatus NY is NoStatus and PY is finalised" should {
-
-      "offer No OptOut Option" in {
-
-        stubOptOut(
-          currentTaxYear = taxYear2023_2024,
-          previousYearCrystallisedStatus = true,
-          previousYearStatus = Voluntary,
-          currentYearStatus = NoStatus,
-          nextYearStatus = NoStatus,
-          nino = testNino)
-
-        val response = service.nextUpdatesPageOptOutChecks()
-
-        response.futureValue shouldBe NextUpdatesQuarterlyReportingContentChecks(
-          currentYearItsaStatus = false,
-          previousYearItsaStatus = true,
-          previousYearCrystallisedStatus = true
-        )
-      }
-    }
-
-    "PY is NoStatus, CY is Voluntary, NY is Mandated" should {
-
-      "offer CY OptOut Option" in {
-
-        stubOptOut(
-          currentTaxYear = taxYear2023_2024,
-          previousYearCrystallisedStatus = false,
-          previousYearStatus = NoStatus,
-          currentYearStatus = Voluntary,
-          nextYearStatus = Mandated,
-          nino = testNino)
-
-        val response = service.nextUpdatesPageOptOutChecks()
-
-        response.futureValue shouldBe NextUpdatesQuarterlyReportingContentChecks(
-          currentYearItsaStatus = true,
-          previousYearItsaStatus = false,
-          previousYearCrystallisedStatus = false
-        )
-      }
-    }
-
-    "PY is NoStatus, CY is NoStatus, NY is Voluntary" should {
-
-      "offer NY OptOut Option" in {
-
-        stubOptOut(
-          currentTaxYear = taxYear2023_2024,
-          previousYearCrystallisedStatus = false,
-          previousYearStatus = NoStatus,
-          currentYearStatus = NoStatus,
-          nextYearStatus = Voluntary,
-          nino = testNino)
-
-        val response = service.nextUpdatesPageOptOutChecks()
-
-        response.futureValue shouldBe NextUpdatesQuarterlyReportingContentChecks(
-          currentYearItsaStatus = false,
-          previousYearItsaStatus = false,
-          previousYearCrystallisedStatus = false
-        )
-      }
-    }
-
-    "Single Year OptOut" when {
-      "PY : PY is Voluntary, CY is Mandated, NY is Mandated and PY is NOT crystallised" should {
-        "offer PY OptOut Option with a warning as following year (CY) is Mandated " in {
-
-          stubOptOut(
-            currentTaxYear = taxYear2023_2024,
-            previousYearCrystallisedStatus = false,
-            previousYearStatus = Voluntary,
-            currentYearStatus = Mandated,
-            nextYearStatus = Mandated,
-            nino = testNino)
-
-          val response = service.nextUpdatesPageOptOutChecks()
-
-          response.futureValue shouldBe NextUpdatesQuarterlyReportingContentChecks(
-            currentYearItsaStatus = true,
-            previousYearItsaStatus = true,
-            previousYearCrystallisedStatus = false
-          )
-        }
-        "CY : PY is Mandated, CY is Voluntary, NY is Mandated " should {
-          "offer CY OptOut Option with a warning as following year (NY) is Mandated " in {
+  ".nextUpdatesPageChecksAndProposition" when {
+      "fetching the opt out proposition for CY-1, CY and CY+1" should {
+          "parse the downstream data correctly and return the ITSA Status and Crystallisation Status for each tax year" in {
 
             stubOptOut(
               currentTaxYear = taxYear2023_2024,
               previousYearCrystallisedStatus = false,
-              previousYearStatus = Mandated,
+              previousYearStatus = Annual,
               currentYearStatus = Voluntary,
               nextYearStatus = Mandated,
               nino = testNino)
 
-            val response = service.nextUpdatesPageOptOutChecks()
+            val response = service.nextUpdatesPageChecksAndProposition()
 
-            response.futureValue shouldBe NextUpdatesQuarterlyReportingContentChecks(
+            response.futureValue._1 shouldBe NextUpdatesQuarterlyReportingContentChecks(
               currentYearItsaStatus = true,
               previousYearItsaStatus = true,
               previousYearCrystallisedStatus = false
             )
-          }
-        }
-      }
 
+            val model = response.futureValue._2
+            model match {
+              case m: OptOutProposition =>
+                m.previousTaxYear shouldBe PreviousOptOutTaxYear(Annual, taxYear2023_2024.previousYear, crystallised = false)
+                m.currentTaxYear shouldBe CurrentOptOutTaxYear(Voluntary, taxYear2023_2024)
+                m.nextTaxYear shouldBe NextOptOutTaxYear(Mandated, taxYear2023_2024.nextYear, CurrentOptOutTaxYear(Voluntary, taxYear2023_2024))
+              case _ => fail("model should be OptOutProposition")
+            }
+          }
+      }
 
       "getStatusTillAvailableFutureYears api call fail" should {
 
         "return default response" in {
 
-          val (previousYear, currentYear, nextYear) = taxYears(currentYear = taxYear2023_2024)
+          val (previousYear, currentYear, _) = taxYears(currentYear = taxYear2023_2024)
 
           stubCurrentTaxYear(currentYear)
 
@@ -441,7 +338,7 @@ class OptOutServiceSpec
 
           stubCrystallisedStatus(previousYear, crystallisedStatus = false)
 
-          val response = service.nextUpdatesPageOptOutChecks()
+          val response = service.nextUpdatesPageChecksAndProposition()
 
           response.failed.futureValue.getMessage shouldBe apiError
         }
@@ -463,11 +360,11 @@ class OptOutServiceSpec
 
           when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.failed(new RuntimeException("some api error")))
 
-          val response = service.nextUpdatesPageOptOutChecks()
+          val response = service.nextUpdatesPageChecksAndProposition()
 
           response.failed.futureValue.getMessage shouldBe apiError
         }
-      }
+
     }
 
     ".nextUpdatesPageOptOutViewModels" when {
@@ -485,8 +382,7 @@ class OptOutServiceSpec
             previousYearItsaStatus = false,
             previousYearCrystallisedStatus = crystallised)
 
-          val result = service.nextUpdatesPageOptOutChecks()
-          result.futureValue shouldBe expected
+          service.nextUpdatesPageChecksAndProposition().futureValue._1 shouldBe expected
         }
       }
 
@@ -496,7 +392,8 @@ class OptOutServiceSpec
           setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.successful(yearToStatus))
           setupMockGetCurrentTaxYear(taxYear)
 
-          service.nextUpdatesPageOptOutChecks().failed.map { ex =>
+          service.nextUpdatesPageChecksAndProposition().failed.map { ex =>
+
             ex shouldBe a[RuntimeException]
             ex.getMessage shouldBe error.getMessage
           }
@@ -509,7 +406,7 @@ class OptOutServiceSpec
           setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.failed(error))
           setupMockGetCurrentTaxYear(taxYear)
 
-          service.nextUpdatesPageOptOutChecks().failed.map { ex =>
+          service.nextUpdatesPageChecksAndProposition().failed.map { ex =>
             ex shouldBe a[RuntimeException]
             ex.getMessage shouldBe error.getMessage
           }
