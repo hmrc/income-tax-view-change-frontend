@@ -292,7 +292,7 @@ object NewCalcBreakdownUnitTestConstants {
       transitionProfit = Some(TransitionProfit(totalTaxableTransitionProfit = Some(3000))))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      calculationType = "IY",
+      calculationType = "DF",
       calculationReason = "customerRequest",
       periodFrom = LocalDate.of(2018, 1, 1),
       periodTo = LocalDate.of(2019, 1, 1)

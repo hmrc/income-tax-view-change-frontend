@@ -53,8 +53,10 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
            |  "inputs" : { "personalInformation" : { "taxRegime" : "UK" } },
            |  "metadata" : {
            |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
-           |    "crystallised" : true,
-           |    "calculationReason" : "customerRequest"
+           |    "calculationType" : "IY",
+           |    "calculationReason" : "customerRequest",
+           |    "periodFrom" : "2022-01-01",
+           |    "periodTo" : "2023-01-01"
            |  }
            |}
            |""".stripMargin.trim

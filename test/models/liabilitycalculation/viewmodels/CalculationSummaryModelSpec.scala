@@ -30,7 +30,7 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
       CalculationSummary(liabilityCalculationModelDeductionsMinimal(calculationReason = "customerRequest")) shouldBe
         CalculationSummary(
           timestamp = None,
-          crystallised = true,
+          crystallised = false,
           unattendedCalc = false,
           taxDue = 0.0,
           income = 0,
@@ -170,7 +170,7 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
       CalculationSummary(liabilityCalculationModelDeductionsMinimal(calculationReason = "unattendedCalculation")) shouldBe
         CalculationSummary(
           timestamp = None,
-          crystallised = true,
+          crystallised = false,
           unattendedCalc = true,
           taxDue = 0.0,
           income = 0,

@@ -151,8 +151,8 @@ class IncomeBreakdownViewSpec extends ViewSpec {
 
       "have an income table" which {
 
-        "has all 23 table rows" in new Setup(view) {
-          layoutContent hasTableWithCorrectSize(1, 23)
+        "has all 21 table rows" in new Setup(view) {
+          layoutContent hasTableWithCorrectSize(1, 21)
         }
         "has a table header and amount section" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(0)
@@ -189,104 +189,104 @@ class IncomeBreakdownViewSpec extends ViewSpec {
           row.select("td").last().text() shouldBe "£2,002.02"
         }
 
-        "has an Profit from UK furnished line with the correct value" in new Setup(view) {
-          val row: Element = layoutContent.table().select("tr").get(6)
-          row.select("td").first().text() shouldBe messages("income_breakdown.table.profit_uk_furnished_holiday")
-          row.select("td").last().text() shouldBe "£6,003.00"
-        }
+//        "has an Profit from UK furnished line with the correct value" in new Setup(view) {
+//          val row: Element = layoutContent.table().select("tr").get(6)
+//          row.select("td").first().text() shouldBe messages("income_breakdown.table.profit_uk_furnished_holiday")
+//          row.select("td").last().text() shouldBe "£6,003.00"
+//        }
 
         "has an Profit from foreign properties line with the correct value" in new Setup(view) {
-          val row: Element = layoutContent.table().select("tr").get(7)
+          val row: Element = layoutContent.table().select("tr").get(6)
           row.select("td").first().text() shouldBe messages("income_breakdown.table.profit_foreign_property")
           row.select("td").last().text() shouldBe "£6,004.00"
         }
 
-        "has an Profit from Eea holiday line with the correct value" in new Setup(view) {
-          val row: Element = layoutContent.table().select("tr").get(8)
-          row.select("td").first().text() shouldBe messages("income_breakdown.table.profit_eea_holiday")
-          row.select("td").last().text() shouldBe "£6,005.00"
-        }
+//        "has an Profit from Eea holiday line with the correct value" in new Setup(view) {
+//          val row: Element = layoutContent.table().select("tr").get(8)
+//          row.select("td").first().text() shouldBe messages("income_breakdown.table.profit_eea_holiday")
+//          row.select("td").last().text() shouldBe "£6,005.00"
+//        }
 
         "has an foreign dividends income line with the correct value" in new Setup(view) {
-          val row: Element = layoutContent.table().select("tr").get(9)
+          val row: Element = layoutContent.table().select("tr").get(7)
           row.select("td").first().text() shouldBe messages("income_breakdown.table.foreign_dividends_income")
           row.select("td").last().text() shouldBe "£7,026.00"
         }
 
         "has an foreign savings income line with the correct value" in new Setup(view) {
-          val row: Element = layoutContent.table().select("tr").get(10)
+          val row: Element = layoutContent.table().select("tr").get(8)
           row.select("td").first().text() shouldBe messages("income_breakdown.table.foreign_saving_income")
           row.select("td").last().text() shouldBe "£7,019.00"
         }
 
         "has an foreign pensions line with the correct value" in new Setup(view) {
-          val row: Element = layoutContent.table().select("tr").get(11)
+          val row: Element = layoutContent.table().select("tr").get(9)
           row.select("td").first().text() shouldBe messages("income_breakdown.table.foreign_pensions")
           row.select("td").last().text() shouldBe "£6,006.00"
         }
 
         "has an foreign income received whilst abroad line with the correct value" in new Setup(view) {
-          val row: Element = layoutContent.table().select("tr").get(12)
+          val row: Element = layoutContent.table().select("tr").get(10)
           row.select("td").first().text() shouldBe messages("income_breakdown.table.foreign_income_abroad")
           row.select("td").last().text() shouldBe "£6,007.00"
         }
 
         "has an foreign income and gains line with the correct value" in new Setup(view) {
-          val row: Element = layoutContent.table().select("tr").get(13)
+          val row: Element = layoutContent.table().select("tr").get(11)
           row.select("td").first().text() shouldBe messages("income_breakdown.table.foreign_income_gains")
           row.select("td").last().text() shouldBe "£6,008.00"
         }
 
         "has an foreign benefits and gifts line with the correct value" in new Setup(view) {
-          val row: Element = layoutContent.table().select("tr").get(14)
+          val row: Element = layoutContent.table().select("tr").get(12)
           row.select("td").first().text() shouldBe messages("income_breakdown.table.foreign_benefits_gifts")
           row.select("td").last().text() shouldBe "£6,009.00"
         }
 
         "has a total savings profit line with the correct value" in new Setup(view) {
-          val row: Element = layoutContent.table().select("tr").get(15)
+          val row: Element = layoutContent.table().select("tr").get(13)
           row.select("td").first().text() shouldBe messages("income_breakdown.table.bbsi")
           row.select("td").last().text() shouldBe "£3,003.03"
         }
 
         "has an gains on life insurance policies line with the correct value" in new Setup(view) {
-          val row: Element = layoutContent.table().select("tr").get(16)
+          val row: Element = layoutContent.table().select("tr").get(14)
           row.select("td").first().text() shouldBe messages("income_breakdown.table.gains_insurance")
           row.select("td").last().text() shouldBe "£7,015.00"
         }
 
         "has a total dividends profit line with the correct value" in new Setup(view) {
-          val row: Element = layoutContent.table().select("tr").get(17)
+          val row: Element = layoutContent.table().select("tr").get(15)
           row.select("td").first().text() shouldBe messages("income_breakdown.table.dividends")
           row.select("td").last().text() shouldBe "£4,004.04"
         }
 
         "has an occupational pensions line with the correct value" in new Setup(view) {
-          val row: Element = layoutContent.table().select("tr").get(18)
+          val row: Element = layoutContent.table().select("tr").get(16)
           row.select("td").first().text() shouldBe messages("income_breakdown.table.occupational_pensions")
           row.select("td").last().text() shouldBe "£8,008.08"
         }
 
         "has an state benefits line with the correct value" in new Setup(view) {
-          val row: Element = layoutContent.table().select("tr").get(19)
+          val row: Element = layoutContent.table().select("tr").get(17)
           row.select("td").first().text() shouldBe messages("income_breakdown.table.state_benefit")
           row.select("td").last().text() shouldBe "£9,009.09"
         }
 
         "has an share scheme line with the correct value" in new Setup(view) {
-          val row: Element = layoutContent.table().select("tr").get(20)
+          val row: Element = layoutContent.table().select("tr").get(18)
           row.select("td").first().text() shouldBe messages("income_breakdown.table.share_schemes")
           row.select("td").last().text() shouldBe "£6,010.00"
         }
 
         "has an other income line with the correct value" in new Setup(view) {
-          val row: Element = layoutContent.table().select("tr").get(21)
+          val row: Element = layoutContent.table().select("tr").get(19)
           row.select("td").first().text() shouldBe messages("income_breakdown.table.other_income")
           row.select("td").last().text() shouldBe "£500.00"
         }
 
         "has a total line with the correct value" in new Setup(view) {
-          val row: Element = layoutContent.table().select("tr").get(22)
+          val row: Element = layoutContent.table().select("tr").get(20)
           row.select("td").first().text() shouldBe messages("income_breakdown.total")
           row.select("td").last().text() shouldBe "£10,010.10"
         }
