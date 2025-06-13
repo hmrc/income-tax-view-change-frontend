@@ -39,7 +39,10 @@ object NewCalcDataIntegrationTestConstants {
       |  },
       |  "metadata" : {
       |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
-      |    "crystallised" : true
+      |    "calculationType" : "DF",
+      |    "calculationReason": "customerRequest",
+      |    "periodFrom": "2022-01-01",
+      |    "periodTo": "2023-01-01"
       |  },
       |  "calculation": {
       |  }
@@ -56,7 +59,10 @@ object NewCalcDataIntegrationTestConstants {
       |  },
       |  "metadata" : {
       |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
-      |    "crystallised" : true
+      |    "calculationType" : "DF",
+      |    "calculationReason": "customerRequest",
+      |    "periodFrom": "2022-01-01",
+      |    "periodTo": "2023-01-01"
       |  },
       |  "calculation": {
       |    "giftAid": {
@@ -77,7 +83,10 @@ object NewCalcDataIntegrationTestConstants {
       |  },
       |  "metadata" : {
       |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
-      |    "crystallised" : true
+      |    "calculationType" : "DF",
+      |    "calculationReason": "customerRequest",
+      |    "periodFrom": "2022-01-01",
+      |    "periodTo": "2023-01-01"
       |  },
       |  "calculation": {
       |    "taxCalculation": {
@@ -103,7 +112,10 @@ object NewCalcDataIntegrationTestConstants {
       |  },
       |  "metadata" : {
       |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
-      |    "crystallised" : true
+      |    "calculationType" : "DF",
+      |    "calculationReason": "customerRequest",
+      |    "periodFrom": "2022-01-01",
+      |    "periodTo": "2023-01-01"
       |  },
       |  "calculation": {
       |    "taxCalculation": {
@@ -135,7 +147,10 @@ object NewCalcDataIntegrationTestConstants {
       |  },
       |  "metadata" : {
       |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
-      |    "crystallised" : true
+      |    "calculationType" : "DF",
+      |    "calculationReason": "customerRequest",
+      |    "periodFrom": "2022-01-01",
+      |    "periodTo": "2023-01-01"
       |  },
       |  "calculation": {
       |    "taxCalculation": {
@@ -168,7 +183,10 @@ object NewCalcDataIntegrationTestConstants {
       |  },
       |  "metadata" : {
       |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
-      |    "crystallised" : true
+      |    "calculationType" : "DF",
+      |    "calculationReason": "customerRequest",
+      |    "periodFrom": "2022-01-01",
+      |    "periodTo": "2023-01-01"
       |  },
       |  "calculation": {
       |    "taxCalculation": {
@@ -198,7 +216,10 @@ object NewCalcDataIntegrationTestConstants {
       |  },
       |  "metadata" : {
       |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
-      |    "crystallised" : true
+      |    "calculationType" : "DF",
+      |    "calculationReason": "customerRequest",
+      |    "periodFrom": "2022-01-01",
+      |    "periodTo": "2023-01-01"
       |  },
       |  "calculation": {
       |    "taxCalculation": {
