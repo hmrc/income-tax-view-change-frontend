@@ -147,7 +147,7 @@ class OptOutService @Inject()(
 
   def nextUpdatesPageOptOutChecks()(implicit user: MtdItUser[_],
                                     hc: HeaderCarrier,
-                                    ec: ExecutionContext): Future[(NextUpdatesQuarterlyReportingContentChecks)] = {
+                                    ec: ExecutionContext): Future[NextUpdatesQuarterlyReportingContentChecks] = {
     for {
       proposition <- fetchOptOutProposition()
       _ <- repository.initialiseOptOutJourney(proposition)

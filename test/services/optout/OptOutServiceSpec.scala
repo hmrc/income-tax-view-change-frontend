@@ -58,11 +58,11 @@ class OptOutServiceSpec
   val mockNextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
   val mockRepository: OptOutSessionDataRepository = mock(classOf[OptOutSessionDataRepository])
 
-  val mockAuditingService = mock(classOf[AuditingService])
+  val mockAuditingService: AuditingService = mock(classOf[AuditingService])
 
-  val taxYear2022_2023 = TaxYear.forYearEnd(2023)
-  val taxYear2023_2024 = taxYear2022_2023.nextYear
-  val taxYear2024_2025 = taxYear2023_2024.nextYear
+  val taxYear2022_2023: TaxYear = TaxYear.forYearEnd(2023)
+  val taxYear2023_2024: TaxYear = taxYear2022_2023.nextYear
+  val taxYear2024_2025: TaxYear = taxYear2023_2024.nextYear
   val testNino = "AB123456C"
   val taxYear: TaxYear = TaxYear.forYearEnd(2021)
   val previousTaxYear: TaxYear = taxYear.previousYear
@@ -439,7 +439,7 @@ class OptOutServiceSpec
 
           when(mockITSAStatusService.getStatusTillAvailableFutureYears(previousYear)).thenReturn(Future.failed(new RuntimeException("some api error")))
 
-          stubCrystallisedStatus(previousYear, false)
+          stubCrystallisedStatus(previousYear, crystallisedStatus = false)
 
           val response = service.nextUpdatesPageOptOutChecks()
 
