@@ -309,9 +309,13 @@ class OptOutServiceSpec
           nextYearStatus = NoStatus,
           nino = testNino)
 
-        val response = service.nextUpdatesPageOptOutViewModels()
+        val response = service.nextUpdatesPageOptOutChecks()
 
-        response.futureValue._2 shouldBe Some(OptOutOneYearViewModel(taxYear2022_2023, None))
+        response.futureValue shouldBe NextUpdatesQuarterlyReportingContentChecks(
+          currentYearItsaStatus = false,
+          previousYearItsaStatus = true,
+          previousYearCrystallisedStatus = false
+        )
 
       }
     }
@@ -328,9 +332,13 @@ class OptOutServiceSpec
           nextYearStatus = NoStatus,
           nino = testNino)
 
-        val response = service.nextUpdatesPageOptOutViewModels()
+        val response = service.nextUpdatesPageOptOutChecks()
 
-        response.futureValue._2 shouldBe None
+        response.futureValue shouldBe NextUpdatesQuarterlyReportingContentChecks(
+          currentYearItsaStatus = false,
+          previousYearItsaStatus = true,
+          previousYearCrystallisedStatus = true
+        )
       }
     }
 
@@ -346,9 +354,13 @@ class OptOutServiceSpec
           nextYearStatus = Mandated,
           nino = testNino)
 
-        val response = service.nextUpdatesPageOptOutViewModels()
+        val response = service.nextUpdatesPageOptOutChecks()
 
-        response.futureValue._2 shouldBe Some(OptOutOneYearViewModel(taxYear2023_2024, Some(OneYearOptOutFollowedByMandated)))
+        response.futureValue shouldBe NextUpdatesQuarterlyReportingContentChecks(
+          currentYearItsaStatus = true,
+          previousYearItsaStatus = false,
+          previousYearCrystallisedStatus = false
+        )
       }
     }
 
@@ -364,9 +376,13 @@ class OptOutServiceSpec
           nextYearStatus = Voluntary,
           nino = testNino)
 
-        val response = service.nextUpdatesPageOptOutViewModels()
+        val response = service.nextUpdatesPageOptOutChecks()
 
-        response.futureValue._2 shouldBe Some(OptOutOneYearViewModel(taxYear2024_2025, Some(NextYearOptOut)))
+        response.futureValue shouldBe NextUpdatesQuarterlyReportingContentChecks(
+          currentYearItsaStatus = false,
+          previousYearItsaStatus = false,
+          previousYearCrystallisedStatus = false
+        )
       }
     }
 
@@ -382,17 +398,13 @@ class OptOutServiceSpec
             nextYearStatus = Mandated,
             nino = testNino)
 
-          val response = service.nextUpdatesPageOptOutViewModels()
+          val response = service.nextUpdatesPageOptOutChecks()
 
-          val model = response.futureValue._2.get
-
-          model match {
-            case m: OptOutOneYearViewModel =>
-              m.oneYearOptOutTaxYear shouldBe taxYear2022_2023
-              m.showWarning shouldBe true
-            case _ => fail("model should be OptOutOneYearViewModel")
-          }
-
+          response.futureValue shouldBe NextUpdatesQuarterlyReportingContentChecks(
+            currentYearItsaStatus = true,
+            previousYearItsaStatus = true,
+            previousYearCrystallisedStatus = false
+          )
         }
         "CY : PY is Mandated, CY is Voluntary, NY is Mandated " should {
           "offer CY OptOut Option with a warning as following year (NY) is Mandated " in {
@@ -405,16 +417,13 @@ class OptOutServiceSpec
               nextYearStatus = Mandated,
               nino = testNino)
 
-            val response = service.nextUpdatesPageOptOutViewModels()
+            val response = service.nextUpdatesPageOptOutChecks()
 
-            val model = response.futureValue._2.get
-            model match {
-              case m: OptOutOneYearViewModel =>
-                m.oneYearOptOutTaxYear shouldBe taxYear2023_2024
-                m.showWarning shouldBe true
-              case _ => fail("model should be OptOutOneYearViewModel")
-            }
-
+            response.futureValue shouldBe NextUpdatesQuarterlyReportingContentChecks(
+              currentYearItsaStatus = true,
+              previousYearItsaStatus = true,
+              previousYearCrystallisedStatus = false
+            )
           }
         }
       }
@@ -432,7 +441,7 @@ class OptOutServiceSpec
 
           stubCrystallisedStatus(previousYear, false)
 
-          val response = service.nextUpdatesPageOptOutViewModels()
+          val response = service.nextUpdatesPageOptOutChecks()
 
           response.failed.futureValue.getMessage shouldBe apiError
         }
@@ -454,7 +463,7 @@ class OptOutServiceSpec
 
           when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.failed(new RuntimeException("some api error")))
 
-          val response = service.nextUpdatesPageOptOutViewModels()
+          val response = service.nextUpdatesPageOptOutChecks()
 
           response.failed.futureValue.getMessage shouldBe apiError
         }
@@ -476,7 +485,8 @@ class OptOutServiceSpec
             previousYearItsaStatus = false,
             previousYearCrystallisedStatus = crystallised)
 
-          service.nextUpdatesPageOptOutViewModels().futureValue._1 shouldBe expected
+          val result = service.nextUpdatesPageOptOutChecks()
+          result.futureValue shouldBe expected
         }
       }
 
@@ -486,7 +496,7 @@ class OptOutServiceSpec
           setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.successful(yearToStatus))
           setupMockGetCurrentTaxYear(taxYear)
 
-          service.nextUpdatesPageOptOutViewModels().failed.map { ex =>
+          service.nextUpdatesPageOptOutChecks().failed.map { ex =>
             ex shouldBe a[RuntimeException]
             ex.getMessage shouldBe error.getMessage
           }
@@ -499,7 +509,7 @@ class OptOutServiceSpec
           setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.failed(error))
           setupMockGetCurrentTaxYear(taxYear)
 
-          service.nextUpdatesPageOptOutViewModels().failed.map { ex =>
+          service.nextUpdatesPageOptOutChecks().failed.map { ex =>
             ex shouldBe a[RuntimeException]
             ex.getMessage shouldBe error.getMessage
           }
