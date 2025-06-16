@@ -637,7 +637,7 @@ trait LiabilityCalculationDataHelper {
     calculation = Some(calculationResult),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      crystallised = Some(true),
+      calculationType = "crystallisation",
       calculationReason = Some("customerRequest"))
   )
 
@@ -653,7 +653,7 @@ trait LiabilityCalculationDataHelper {
     calculation = Some(calculationResult.copy(taxCalculation = Some(taxCalculationResultSB))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      crystallised = Some(true),
+      calculationType = "crystallisation",
       calculationReason = Some("customerRequest"))
   )
   val liabilityCalculationModelSuccessfulConversionDB = LiabilityCalculationResponse(
@@ -668,7 +668,7 @@ trait LiabilityCalculationDataHelper {
     calculation = Some(calculationResult.copy(taxCalculation = Some(taxCalculationResultDB))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      crystallised = Some(true),
+      calculationType = "crystallisation",
       calculationReason = Some("customerRequest"))
   )
   val liabilityCalculationModelSuccessfulConversionLS = LiabilityCalculationResponse(
@@ -683,7 +683,7 @@ trait LiabilityCalculationDataHelper {
     calculation = Some(calculationResult.copy(taxCalculation = Some(taxCalculationResultLS))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      crystallised = Some(true),
+      calculationType = "crystallisation",
       calculationReason = Some("customerRequest"))
   )
   val liabilityCalculationModelSuccessfulConversionGLP = LiabilityCalculationResponse(
@@ -698,7 +698,7 @@ trait LiabilityCalculationDataHelper {
     calculation = Some(calculationResult.copy(taxCalculation = Some(taxCalculationResultGLP))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      crystallised = Some(true),
+      calculationType = "crystallisation",
       calculationReason = Some("customerRequest"))
   )
 

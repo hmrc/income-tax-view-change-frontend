@@ -44,7 +44,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ChargeConstants with Moc
     deductions = 2.02,
     totalTaxableIncome = 3,
     taxDue = 4.04,
-    crystallised = Some(true),
+    crystallised = true,
     unattendedCalc = true,
     forecastIncome = Some(12500),
     forecastIncomeTaxAndNics = Some(5000.99),

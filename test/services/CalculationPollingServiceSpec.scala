@@ -32,7 +32,7 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
       taxRegime = "UK", class2VoluntaryContributions = None
     )),
     messages = None,
-    metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), Some(false), Some("customerRequest")),
+    metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), "inYear", Some("customerRequest")),
     calculation = None)
 
   val liabilityCalculationNoContentResponse: LiabilityCalculationError = LiabilityCalculationError(Status.NO_CONTENT, "no content")

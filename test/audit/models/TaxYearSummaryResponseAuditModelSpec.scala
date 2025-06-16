@@ -49,7 +49,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
                          forecastIncomeTaxAndNics: Option[BigDecimal] = None,
                          forecastAllowancesAndDeductions: Option[BigDecimal] = None): CalculationSummary = CalculationSummary(
     timestamp = Some("2017-07-06T12:34:56.789Z".toZonedDateTime.toLocalDate),
-    crystallised = Some(false),
+    crystallised = false,
     unattendedCalc = false,
     taxDue = 2010.00,
     income = 199505,
@@ -64,7 +64,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
                             forecastIncomeTaxAndNics: Option[BigDecimal] = None,
                             forecastAllowancesAndDeductions: Option[BigDecimal] = None): CalculationSummary = CalculationSummary(
     timestamp = Some("2017-07-06T12:34:56.789Z".toZonedDateTime.toLocalDate),
-    crystallised = Some(false),
+    crystallised = false,
     unattendedCalc = true,
     taxDue = 2010.00,
     income = 199505,
