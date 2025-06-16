@@ -193,8 +193,7 @@
 }
 
 @buildIncomeSourceRow(obligations: Seq[ObligationWithIncomeType]) = @{
-    obligations.map { obl => messages(obl.incomeType)
-    }.mkString("<br>")
+    Html(obligations.map(obl => messages(obl.incomeType)).map(msg => s"<div>$msg</div>").mkString)
 }
 
 @taxYearSummaryLink = @{
