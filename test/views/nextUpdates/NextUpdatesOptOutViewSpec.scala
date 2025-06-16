@@ -82,7 +82,6 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       Jsoup.parse(contentAsString(
         nextUpdatesView(
           obligationsModel,
-          Some(optOutOneYearViewModel),
           checks,
           "testBackURL",
           isSupportingAgent = isSupportingAgent,
@@ -95,7 +94,6 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       Jsoup.parse(contentAsString(
         nextUpdatesView(
           currentObligations = obligationsModel,
-          optOutViewModel = Some(optOutOneYearViewModel),
           checks = checks,
           backUrl = "testBackURL",
           isSupportingAgent = isSupportingAgent,
@@ -108,7 +106,6 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       Jsoup.parse(contentAsString(
         nextUpdatesView(
           currentObligations = obligationsModel,
-          optOutViewModel = Some(optOutOneYearViewModelWithMandated),
           checks = checks,
           backUrl = "testBackURL",
           isSupportingAgent = isSupportingAgent,
@@ -121,7 +118,6 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       Jsoup.parse(contentAsString(
         nextUpdatesView(
           currentObligations = obligationsModel,
-          optOutViewModel = Some(optOutOneYearViewModelWithMandated),
           checks = checks,
           backUrl = "testBackURL",
           isSupportingAgent = isSupportingAgent,
@@ -135,7 +131,6 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       Jsoup.parse(contentAsString(
         nextUpdatesView(
           currentObligations = obligationsModel,
-          optOutViewModel = Some(optOutMultiYearViewModel),
           checks = checks,
           backUrl = "testBackURL",
           isSupportingAgent = isSupportingAgent,
