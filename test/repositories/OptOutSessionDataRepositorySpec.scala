@@ -117,8 +117,8 @@ class OptOutSessionDataRepositorySpec extends UnitSpec
     }
   }
 
-  "OptOutService.recallOptOutInitialState" should {
-    "retrieve the intent year only" in {
+  "OptOutService.recallOptOutPropositionWithIntent" should {
+    "retrieve the opt out proposition with no intent if the user hasn't selected a year" in {
 
       when(hc.sessionId).thenReturn(Some(SessionId("123")))
 
@@ -134,12 +134,38 @@ class OptOutSessionDataRepositorySpec extends UnitSpec
             nextYearITSAStatus = "U")),
           selectedOptOutYear = None))
       )
+
       when(repository.get(any(), any())).thenReturn(Future.successful(Some(data)))
 
-      val initialState = optOutRepository.recallOptOutProposition()
+      val initialState = optOutRepository.recallOptOutPropositionWithIntent()
 
       initialState.futureValue.isDefined shouldBe true
-      initialState.futureValue.get shouldBe createOptOutProposition(taxYear2023_2024, true, Voluntary, Voluntary, NoStatus)
+      initialState.futureValue.get shouldBe (createOptOutProposition(taxYear2023_2024, true, Voluntary, Voluntary, NoStatus), None)
+    }
+
+    "retrieve the opt out proposition with an intent if a tax year has been selected" in {
+
+      when(hc.sessionId).thenReturn(Some(SessionId("123")))
+
+      val data = UIJourneySessionData(
+        sessionId = hc.sessionId.get.value,
+        journeyType = OptOutJourney.toString,
+        optOutSessionData = Some(OptOutSessionData(Some(
+          OptOutContextData(
+            currentYear = "2023-2024",
+            crystallisationStatus = true,
+            previousYearITSAStatus = "V",
+            currentYearITSAStatus = "V",
+            nextYearITSAStatus = "U")),
+          selectedOptOutYear = Some("2023-2024")))
+      )
+
+      when(repository.get(any(), any())).thenReturn(Future.successful(Some(data)))
+
+      val initialState = optOutRepository.recallOptOutPropositionWithIntent()
+
+      initialState.futureValue.isDefined shouldBe true
+      initialState.futureValue.get shouldBe (createOptOutProposition(taxYear2023_2024, true, Voluntary, Voluntary, NoStatus), Some(TaxYear(2023, 2024)))
     }
   }
 

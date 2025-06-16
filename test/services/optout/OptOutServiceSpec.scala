@@ -534,10 +534,9 @@ class OptOutServiceSpec
           when(mockNextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(optOutTaxYear.taxYear))(any(), any()))
             .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(optOutTaxYear.taxYear, 0)))
 
-          when(mockRepository.recallOptOutProposition()).thenReturn(
+          when(mockRepository.recallOptOutPropositionWithIntent()).thenReturn(
             Future.successful(Some(
-              createOptOutProposition(CY, crystallisedPY, statusPY, statusCY, statusNY))))
-          when(mockRepository.fetchSavedIntent()).thenReturn(Future.successful(Some(optOutTaxYear.taxYear)))
+              createOptOutProposition(CY, crystallisedPY, statusPY, statusCY, statusNY), Some(optOutTaxYear.taxYear))))
 
           val response = service.optOutCheckPointPageViewModel()
 
@@ -578,9 +577,9 @@ class OptOutServiceSpec
 
           stubCurrentTaxYear(CY)
 
-          when(mockRepository.recallOptOutProposition()).thenReturn(Future.successful(Some(
-            createOptOutProposition(CY, crystallisedPY, statusPY, statusCY, statusNY))))
-          when(mockRepository.fetchSavedIntent()).thenReturn(Future.successful(Some(intent)))
+          when(mockRepository.recallOptOutPropositionWithIntent()).thenReturn(Future.successful(Some(
+            createOptOutProposition(CY, crystallisedPY, statusPY, statusCY, statusNY), Some(intent)
+          )))
 
           val response = service.optOutCheckPointPageViewModel()
 
@@ -628,8 +627,8 @@ class OptOutServiceSpec
 
           stubCurrentTaxYear(CY)
 
-          when(mockRepository.recallOptOutProposition()).thenReturn(Future.successful(Some(
-            createOptOutProposition(CY, crystallisedPY, statusPY, statusCY, statusNY))))
+          when(mockRepository.recallOptOutPropositionWithIntent()).thenReturn(Future.successful(Some(
+            createOptOutProposition(CY, crystallisedPY, statusPY, statusCY, statusNY), None)))
 
           val response = service.optOutConfirmedPageViewModel()
 

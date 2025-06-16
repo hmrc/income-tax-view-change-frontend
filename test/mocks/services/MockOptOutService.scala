@@ -17,6 +17,7 @@
 package mocks.services
 
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponse
+import models.incomeSourceDetails.TaxYear
 import models.optout._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
@@ -65,7 +66,7 @@ trait MockOptOutService extends UnitSpec with BeforeAndAfterEach {
       .thenReturn(out)
   }
 
-  def mockRecallOptOutProposition(out: Future[OptOutProposition]): Unit = {
-    when(mockOptOutService.recallOptOutProposition()(any(), any())).thenReturn(out)
+  def mockRecallOptOutPropositionWithIntent(out: Future[(OptOutProposition, Option[TaxYear])]): Unit = {
+    when(mockOptOutService.recallOptOutPropositionWithIntent()(any(), any())).thenReturn(out)
   }
 }

@@ -47,15 +47,14 @@ class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutCho
   def show(isAgent: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       for {
-        optOutProposition <- optOutService.recallOptOutProposition()
+        (optOutProposition, intentTaxYear) <- optOutService.recallOptOutPropositionWithIntent()
         submissionCountForTaxYear <- optOutService.getQuarterlyUpdatesCountForOfferedYears(optOutProposition)
-        intent <- repository.fetchSavedIntent()
       } yield {
         val taxYearsList = optOutProposition.availableTaxYearsForOptOut.map(_.toString).toList
         val cancelUrl =
           if (isAgent) controllers.optOut.routes.OptOutCancelledController.showAgent().url
           else controllers.optOut.routes.OptOutCancelledController.show().url
-        val form = intent match {
+        val form = intentTaxYear match {
           case Some(savedIntent) =>
             ConfirmOptOutMultiTaxYearChoiceForm(taxYearsList).fill(ConfirmOptOutMultiTaxYearChoiceForm(Some(savedIntent.toString)))
           case None =>
@@ -68,7 +67,7 @@ class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutCho
   def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       for {
-        optOutProposition <- optOutService.recallOptOutProposition()
+        (optOutProposition, _) <- optOutService.recallOptOutPropositionWithIntent()
         quarterlyUpdatesCountModel <- optOutService.getQuarterlyUpdatesCountForOfferedYears(optOutProposition)
         cancelUrl =
           if (isAgent) controllers.optOut.routes.OptOutCancelledController.showAgent().url

@@ -73,10 +73,10 @@ class OptOutService @Inject()(
       )
   }
 
-  def recallOptOutProposition()(implicit hc: HeaderCarrier,
-                                ec: ExecutionContext): Future[OptOutProposition] = {
+  def recallOptOutPropositionWithIntent()(implicit hc: HeaderCarrier,
+                                          ec: ExecutionContext): Future[(OptOutProposition, Option[TaxYear])] = {
 
-    OptionT(repository.recallOptOutProposition()).
+    OptionT(repository.recallOptOutPropositionWithIntent()).
       getOrElseF(Future.failed(new RuntimeException("Failed to recall Opt Out journey initial state")))
   }
 
@@ -89,24 +89,24 @@ class OptOutService @Inject()(
         .toMap
         .withDefaultValue(ITSAStatus.NoStatus)
       )
-
   def makeOptOutUpdateRequest()(implicit user: MtdItUser[_],
                                 hc: HeaderCarrier,
                                 ec: ExecutionContext): Future[ITSAStatusUpdateResponse] = {
-    recallOptOutProposition().flatMap { proposition =>
+    recallOptOutPropositionWithIntent().flatMap { case (proposition, intentTaxYear) =>
       proposition
         .optOutPropositionType
         .map {
           case _: OneYearOptOutProposition =>
             makeOptOutUpdateRequest(proposition, proposition.availableTaxYearsForOptOut.head)
           case _: MultiYearOptOutProposition =>
-            OptionT(repository.fetchSavedIntent())
-              .map(intentTaxYear => makeOptOutUpdateRequest(proposition, intentTaxYear))
-              .flatMap(responsesFuture => OptionT.liftF(responsesFuture))
-              .getOrElse(ITSAStatusUpdateResponseFailure.defaultFailure())
-        }.getOrElse {
-          Future(ITSAStatusUpdateResponseFailure.defaultFailure())
-        }
+            intentTaxYear match {
+              case Some(taxYear) => makeOptOutUpdateRequest(proposition, taxYear)
+              case _ => Future(ITSAStatusUpdateResponseFailure.defaultFailure())
+            }
+          case _ => Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
+
+    }.getOrElse {
+        Future(ITSAStatusUpdateResponseFailure.defaultFailure())}
     }
   }
 
@@ -171,7 +171,7 @@ class OptOutService @Inject()(
   }
 
   def recallNextUpdatesPageOptOutViewModel()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutViewModel]] = {
-    recallOptOutProposition().map { proposition =>
+    recallOptOutPropositionWithIntent().map { case (proposition, _) =>
       proposition.optOutPropositionType.map {
         case p: OneYearOptOutProposition => OptOutOneYearViewModel(oneYearOptOutTaxYear = p.intent.taxYear, state = p.state())
         case _: MultiYearOptOutProposition => OptOutMultiYearViewModel()
@@ -197,18 +197,17 @@ class OptOutService @Inject()(
     }
 
     for {
-      proposition <- recallOptOutProposition()
-      intent <- repository.fetchSavedIntent()
+      (proposition, intent) <- recallOptOutPropositionWithIntent()
       propositionType = proposition.optOutPropositionType
       quarterlyUpdatesCount <- getQuarterlyUpdatesCount(propositionType)
     } yield processPropositionType(propositionType.get, intent, quarterlyUpdatesCount)
   }
 
   def optOutConfirmedPageViewModel()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[ConfirmedOptOutViewModel]] = {
-    recallOptOutProposition().flatMap { proposition =>
+    recallOptOutPropositionWithIntent().flatMap { case (proposition, intent) =>
       proposition.optOutPropositionType match {
         case Some(p: OneYearOptOutProposition) => Future.successful(Some(ConfirmedOptOutViewModel(optOutTaxYear = p.intent.taxYear, state = p.state())))
-        case Some(p: MultiYearOptOutProposition) => repository.fetchSavedIntent().map(_.map(taxYear => ConfirmedOptOutViewModel(taxYear, p.state())))
+        case Some(p: MultiYearOptOutProposition) => Future.successful(intent.map(ConfirmedOptOutViewModel(_, p.state())))
         case _ => Future.successful(None)
       }
     }

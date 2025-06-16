@@ -38,21 +38,36 @@ class OptOutSessionDataRepository @Inject()(val repository: UIJourneySessionData
       getOrElse(false)
   }
 
-  def recallOptOutProposition()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutProposition]] = {
-    repository.get(hc.sessionId.get.value, Opt(OptOutJourney)) map { sessionData =>
+  def recallOptOutPropositionWithIntent()
+                                       (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[(OptOutProposition, Option[TaxYear])]] = {
+    repository.get(hc.sessionId.get.value, Opt(OptOutJourney)).map { sessionData =>
+      def buildResult(
+                       contextData: OptOutContextData,
+                       selectedOptOutYear: Option[String]
+                     ): Option[(OptOutProposition, Option[TaxYear])] = {
+        val currentYearOpt = TaxYear.getTaxYearModel(contextData.currentYear)
+        currentYearOpt.map { currentYear =>
+          val proposition = createOptOutProposition(
+            currentYear,
+            contextData.crystallisationStatus,
+            stringToStatus(contextData.previousYearITSAStatus),
+            stringToStatus(contextData.currentYearITSAStatus),
+            stringToStatus(contextData.nextYearITSAStatus)
+          )
+          val selectedTaxYear = selectedOptOutYear match {
+            case Some(year) => TaxYear.getTaxYearModel(year)
+            case None => None
+          }
+          (proposition, selectedTaxYear)
+        }
+      }
+
       for {
         data <- sessionData
         optOutData <- data.optOutSessionData
         contextData <- optOutData.optOutContextData
-        currentYear <- TaxYear.getTaxYearModel(contextData.currentYear)
-      }
-      yield createOptOutProposition(
-        currentYear,
-        contextData.crystallisationStatus,
-        stringToStatus(contextData.previousYearITSAStatus),
-        stringToStatus(contextData.currentYearITSAStatus),
-        stringToStatus(contextData.nextYearITSAStatus))
-    }
+      } yield buildResult(contextData, optOutData.selectedOptOutYear)
+    }.map(_.flatten)
   }
 
   def fetchSavedIntent()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[TaxYear]] = {
