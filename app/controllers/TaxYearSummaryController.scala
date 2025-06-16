@@ -65,7 +65,7 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
   extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ImplicitDateFormatter with TransactionUtils {
 
   private def showForecast(calculationSummary: Option[CalculationSummary]): Boolean = {
-    val isCrystallised = calculationSummary.map(_.crystallised).contains(true)
+    val isCrystallised = calculationSummary.exists(_.crystallised)
     val forecastDataPresent = calculationSummary.flatMap(_.forecastIncome).isDefined
     calculationSummary.isDefined && !isCrystallised && forecastDataPresent
   }
