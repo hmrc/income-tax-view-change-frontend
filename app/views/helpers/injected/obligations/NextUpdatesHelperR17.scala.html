@@ -33,7 +33,7 @@
         implicitDateFormatter: ImplicitDateFormatterImpl
 )
 
-@(isAgent: Boolean, viewModel: NextUpdatesViewModel, optOutProposition: OptOutProposition)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(isAgent: Boolean, viewModel: NextUpdatesViewModel, optOutProposition: OptOutProposition, isSupportingAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
     
@@ -85,11 +85,15 @@
 
     @quarterlyUpdatesTable
 
-    @p(id = Some("current-year-tax-year-summary-desc")) {
-        @getMessage("quarterly.link.text1")
-        @link(link = taxYearSummaryLink, messageKey = getMessage("quarterly.link.text2"), id = Some("tax-year-summary-link"))
-        @getMessage("quarterly.link.text3")
+    @if(!isSupportingAgent) {
+        @p(id = Some("current-year-tax-year-summary-desc")) {
+            @getMessage("quarterly.link.text1")
+            @link(link = taxYearSummaryLink, messageKey = getMessage("quarterly.link.text2"), id = Some("tax-year-summary-link"))
+            @getMessage("quarterly.link.text3")
+        }
     }
+
+
     @h2(getMessage("quarterly.subheading2"), optId = Some("current-year-return-due-heading"))
     @p(id = Some("current-year-return-due-desc")) {
         @getMessage("quarterly.text3")

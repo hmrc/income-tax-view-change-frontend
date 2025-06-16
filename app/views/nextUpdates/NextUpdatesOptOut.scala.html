@@ -71,7 +71,7 @@
 	}
 
 	@if(optInOptOutContentR17Enabled) {
-		@nextUpdatesHelperR17(isAgent, viewModel, optOutProposition)
+		@nextUpdatesHelperR17(isAgent, viewModel, optOutProposition, isSupportingAgent)
 	} else {
 		@h2(msg = "nextUpdates.sub-heading")
 		@nextUpdatesHelper(viewModel)
