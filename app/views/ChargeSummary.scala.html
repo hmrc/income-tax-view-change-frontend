@@ -83,15 +83,15 @@
             @p(id = Some("lpi-poa4")){@messages("chargeSummary.lpi.paymentsOnAccount.poa2")}
         }
         @if((viewModel.chargeItem.transactionType == PoaOneDebit | viewModel.chargeItem.transactionType == PoaTwoDebit) && viewModel.latePaymentInterestCharge) {
-            @p(id = Some("lpi-poa5")) {
-                @messages("chargeSummary.lpi.paymentsOnAccount.textOne")
-                <a class="govuk-link" href="https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate">@messages("chargeSummary.lpi.paymentsOnAccount.linkText")</a>
-                @messages("chargeSummary.lpi.paymentsOnAccount.textTwo")
-            }
-            @p(id = Some("lpi-poa6")) {
-                @messages("chargeSummary.lpi.paymentsOnAccount.p3")
-                <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.lpi.paymentsOnAccount.p3LinkText")</a><br><br>
-            }
+        <p id = Some("lpi-poa5") class = "govuk-body">
+            @messages("chargeSummary.lpi.paymentsOnAccount.textOne")
+            <a class="govuk-link" href="https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate">@messages("chargeSummary.lpi.paymentsOnAccount.linkText")</a>
+            @messages("chargeSummary.lpi.paymentsOnAccount.textTwo")
+        </p>
+        <p id = Some("lpi-poa6") class = "govuk-body govuk-!-margin-bottom-8">
+            @messages("chargeSummary.lpi.paymentsOnAccount.p3")
+            <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.lpi.paymentsOnAccount.p3LinkText")</a>
+        </p>
         }
     </div>
 }
