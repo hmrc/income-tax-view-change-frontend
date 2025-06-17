@@ -46,6 +46,7 @@
     taxYearSummaryLink: TaxYearSummaryLink,
     codingOutInsetContent: CodingOutInsetContent,
     paymentTypeEntry: PaymentTypeEntry,
+    availableCreditInAccount: AvailableCreditInAccount,
     unallocatedCreditParagraphContent: UnallocatedCreditParagraphContent,
     saNoteParagraph: SaNoteParagraph
 )
@@ -417,25 +418,12 @@
 
                 @if(viewModel.creditAndRefundEnabled) {
                     @viewModel.whatYouOweChargesList.availableCredit.map { ac =>
-                        @availableCreditInAccount(ac.toCurrencyString)
+                        @availableCreditInAccount(
+                            ac.toCurrencyString,
+                            viewModel.creditAndRefundsControllerUrl
+                        )
                     }
                 }
             </div>
-        </div>
-    }
-
-    @availableCreditInAccount(availableCredit: String) = {
-        <div class="govuk-body" id="money-in-your-account">
-        @if(user.isAgent()) {
-            @h2(msg = messages("whatYouOwe.moneyOnAccount-agent"))
-            @messages("whatYouOwe.moneyOnAccount-1") @availableCredit
-            @messages("whatYouOwe.moneyOnAccount-agent-2")
-            @link(link = viewModel.creditAndRefundsControllerUrl, messageKey = "whatYouOwe.moneyOnAccount-3", outerMessage = ".", rel = Some("noreferrer noopener"))
-        } else {
-            @h2(msg = messages("whatYouOwe.moneyOnAccount"))
-            @messages("whatYouOwe.moneyOnAccount-1") @availableCredit
-            @messages("whatYouOwe.moneyOnAccount-2")
-            @link(link = viewModel.creditAndRefundsControllerUrl, messageKey = "whatYouOwe.moneyOnAccount-3", outerMessage = ".", rel = Some("noreferrer noopener"))
-        }
         </div>
     }
