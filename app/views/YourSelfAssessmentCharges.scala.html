@@ -82,22 +82,6 @@
         id = Some("unallocated-credit-link")).toString()))
     }
 
-    @creditAndRefundsControllerURL = @{
-        if(user.incomeSources.yearOfMigration.isDefined) {
-            if(user.isAgent()) {
-                controllers.routes.CreditAndRefundController.showAgent().url
-            } else {
-                controllers.routes.CreditAndRefundController.show().url
-            }
-        } else {
-            if(user.isAgent()) {
-                controllers.routes.NotMigratedUserController.showAgent().url
-            } else {
-                controllers.routes.NotMigratedUserController.show().url
-            }
-        }
-    }
-
     @dunningLockParagraph = {
     @if(viewModel.dunningLock || viewModel.hasLpiWithDunningLock) {
         <div id="payment-under-review-info">
@@ -570,12 +554,12 @@
             @h2(msg = messages("whatYouOwe.moneyOnAccount-agent"))
             @messages("whatYouOwe.moneyOnAccount-1") @availableCredit
             @messages("whatYouOwe.moneyOnAccount-agent-2")
-            @link(link = creditAndRefundsControllerURL, messageKey = "whatYouOwe.moneyOnAccount-3", outerMessage = ".", rel = Some("noreferrer noopener"))
+            @link(link = viewModel.creditAndRefundsControllerUrl, messageKey = "whatYouOwe.moneyOnAccount-3", outerMessage = ".", rel = Some("noreferrer noopener"))
         } else {
             @h2(msg = messages("whatYouOwe.moneyOnAccount"))
             @messages("whatYouOwe.moneyOnAccount-1") @availableCredit
             @messages("whatYouOwe.moneyOnAccount-2")
-            @link(link = creditAndRefundsControllerURL, messageKey = "whatYouOwe.moneyOnAccount-3", outerMessage = ".", rel = Some("noreferrer noopener"))
+            @link(link = viewModel.creditAndRefundsControllerUrl, messageKey = "whatYouOwe.moneyOnAccount-3", outerMessage = ".", rel = Some("noreferrer noopener"))
         }
         </div>
     }
