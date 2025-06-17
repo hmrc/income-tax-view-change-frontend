@@ -48,6 +48,7 @@
     paymentTypeEntry: PaymentTypeEntry,
     availableCreditInAccount: AvailableCreditInAccount,
     unallocatedCreditParagraphContent: UnallocatedCreditParagraphContent,
+    chargesDueNotificationBanner: ChargesDueNotificationBanner,
     saNoteParagraph: SaNoteParagraph
 )
 
@@ -151,8 +152,11 @@
     ) {
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-three-quarters">
+
                 @h1(msg = getMessage("heading"), id = Some("page-heading"))
+
                 @if(viewModel.whatYouOweChargesList.isChargesListEmpty && viewModel.whatYouOweChargesList.codedOutDetails.isEmpty) {
+
                     @p(id = Some("no-payments-due"))(Html(getNoPaymentsDueText))
 
                     @claimToAdjustPoaSection(
@@ -161,36 +165,19 @@
                     )
 
                     @saNoteParagraph()
+
                 } else {
                     <div>
                         @if(viewModel.whatYouOweChargesList.chargesList.nonEmpty || viewModel.whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
 
                             @if(ChargeItem.overdueOrAccruingInterestChargeList(viewModel.whatYouOweChargesList) || viewModel.whatYouOweChargesList.overdueOutstandingCharges.nonEmpty) {
-                                <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner" id="overdue-banner">
-                                    <div class="govuk-notification-banner__header">
-                                        <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
-                                        @getMessage("important")
-                                        </h2>
-                                    </div>
-                                    <div class="govuk-notification-banner__content" id="overdue-important-warning">
-                                        @h3(
-                                            msg = getMessage("charges-due-now-with-amount", viewModel.whatYouOweChargesList.balanceDetails.overDueAmount.toCurrencyString),
-                                            classes = "govuk-notification-banner__heading"
-                                        )
-                                        <p class="govuk-body">
-                                        <div>
-                                            @getMessage("important-p1")
-                                        </div>
-                                        <br>
-                                        <div>
-                                            @getMessage("important-p2")
-                                            <a class="govuk-notification-banner__link"
-                                            href=@controllers.routes.PaymentController.paymentHandoff(viewModel.whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.get._2.toPence, origin).url>
-                                                <b>@getMessage("important-p2-link-text")</b></a>
-                                        </div>
-                                        </p>
-                                    </div>
-                                </div>
+
+                                @chargesDueNotificationBanner(
+                                    viewModel.whatYouOweChargesList.balanceDetails.overDueAmount.toCurrencyString,
+                                    viewModel.whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.get._2.toPence,
+                                    origin
+                                )
+
                             } else {
                         @h2(msg = "selfAssessmentCharges.no-charges-due")
                         <p class="govuk-body">
