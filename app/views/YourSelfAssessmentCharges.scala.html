@@ -49,6 +49,7 @@
     availableCreditInAccount: AvailableCreditInAccount,
     unallocatedCreditParagraphContent: UnallocatedCreditParagraphContent,
     chargesDueNotificationBanner: ChargesDueNotificationBanner,
+    noChargesDueContent: NoChargesDueContent,
     saNoteParagraph: SaNoteParagraph
 )
 
@@ -179,18 +180,11 @@
                                 )
 
                             } else {
-                        @h2(msg = "selfAssessmentCharges.no-charges-due")
-                        <p class="govuk-body">
-                            @getMessage("adjust-poa.paid-1")
-                            @viewModel.whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.fold(Html("")) { case (_, amount) =>
-                            @link(
-                            link = controllers.routes.PaymentController.paymentHandoff(amount.toPence, origin).url,
-                            messageKey = getMessage("pay-upcoming-charges"),
-                            id = Some("pay-upcoming-charges-link")
-                            )
-                            }
-                        </p>
-                        <br>
+
+                                @noChargesDueContent(
+                                    viewModel.whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate,
+                                    origin
+                                )
                         }
 
                         <div class="govuk-tabs" data-module="govuk-tabs" id="self-assessment-charges-tabs">
