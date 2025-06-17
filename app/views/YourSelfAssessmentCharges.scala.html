@@ -29,6 +29,7 @@
 @import views.html.partials.yourSelfAssessmentCharges.SaNoteParagraph
 @import views.html.partials.yourSelfAssessmentCharges.UnallocatedCreditParagraphContent
 @import views.html.partials.yourSelfAssessmentCharges.DunningLockParagraph
+@import views.html.partials.yourSelfAssessmentCharges.PaymentPlanSection
 
 @this(
     mainTemplate: unifiedLayout,
@@ -43,6 +44,7 @@
     govukWarningText: GovukWarningText,
     govukInsetText: GovukInsetText,
     dunningLockParagraph: DunningLockParagraph,
+    paymentPlanSection: PaymentPlanSection,
     unallocatedCreditParagraphContent: UnallocatedCreditParagraphContent,
     saNoteParagraph: SaNoteParagraph
 )
@@ -237,18 +239,6 @@
                 case None => Html("")
             }
         }
-    }
-
-    @getPaymentPlanSection = {
-        <p class="govuk-body" id="payment-plan">
-            @getMessage("payment-plan-1")
-            @link(
-                link = viewModel.selfServeTimeToPayStartUrl,
-                messageKey = getMessage("payment-plan-link-text"),
-                id = Some("payment-plan-link"),
-                target = Some("_blank"),
-                outerMessage = ".")
-        </p>
     }
 
     @mainTemplate(
@@ -486,7 +476,7 @@
                             }
                             </div>
 
-                            @getPaymentPlanSection
+                            @paymentPlanSection(viewModel.selfServeTimeToPayStartUrl)
                         }
 
                         @if(!viewModel.whatYouOweChargesList.isChargesListEmpty && viewModel.dunningLock && viewModel.hasLpiWithDunningLock) {
