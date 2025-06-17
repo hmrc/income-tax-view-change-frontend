@@ -39,8 +39,12 @@
 @if(hasDunningLock || hasLpiWithDunningLock) {
     @p(id = Some("payment-under-review-info")) {
         @getMessage("dunningLock.text", "")
-        @link(link = "https://www.gov.uk/tax-appeals", messageKey = getPrefix("dunningLock.link"),
-            id = Some("disagree-with-tax-appeal-link"), rel = Some("noreferrer noopener"), target = Some("_blank"),
+        @link(
+            id = Some("disagree-with-tax-appeal-link"),
+            link = "https://www.gov.uk/tax-appeals",
+            messageKey = getPrefix("dunningLock.link"),
+            rel = Some("noreferrer noopener"),
+            target = Some("_blank"),
             additionalOpenTabMessage = Some(".")
         )
     }
