@@ -28,14 +28,14 @@
     implicit messages: Messages
 )
 
-    @p(id = Some("unallocated-credit-note"))(
-        Html(
-            messages("whatYouOwe.credit-overpaid-prefix") +
-                link(
-                    link = creditAndRefundUrl,
-                    outerMessage = messages("whatYouOwe.unallocated-credit-note"),
-                    messageKey = messages("whatYouOwe.credit-overpaid-amount", amount),
-                    id = Some("unallocated-credit-link")
-                ).toString()
-        )
+@p(id = Some("unallocated-credit-note"))(
+    Html(
+        messages("whatYouOwe.credit-overpaid-prefix") +
+            link(
+                link = creditAndRefundUrl,
+                outerMessage = messages("whatYouOwe.unallocated-credit-note"),
+                messageKey = messages("whatYouOwe.credit-overpaid-amount", amount),
+                id = Some("unallocated-credit-link")
+            ).toString()
     )
+)
