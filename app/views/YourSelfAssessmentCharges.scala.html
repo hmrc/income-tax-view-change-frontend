@@ -26,23 +26,32 @@
 @import models.financialDetails.MfaDebitCharge
 @import services.DateServiceInterface
 @import _root_.implicits.HtmlFormatter.NbspString
+@import views.html.partials.yourSelfAssessmentCharges.SaNoteParagraph
 
 @this(
-        mainTemplate: unifiedLayout,
-        implicitDateFormatter: ImplicitDateFormatterImpl,
-        appConfig: config.FrontendAppConfig,
-        h1: h1,
-        h2: h2,
-        h3: h3,
-        p: p,
-        link: link,
-        detailsDropdown: detailsDropdown,
-        govukWarningText: GovukWarningText,
-        govukInsetText: GovukInsetText
+    mainTemplate: unifiedLayout,
+    implicitDateFormatter: ImplicitDateFormatterImpl,
+    appConfig: config.FrontendAppConfig,
+    h1: h1,
+    h2: h2,
+    h3: h3,
+    p: p,
+    link: link,
+    detailsDropdown: detailsDropdown,
+    govukWarningText: GovukWarningText,
+    govukInsetText: GovukInsetText,
+    saNoteParagraph: SaNoteParagraph
 )
 
-@(viewModel: YourSelfAssessmentChargesViewModel,
-        origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages, dateService: DateServiceInterface)
+@(
+    viewModel: YourSelfAssessmentChargesViewModel,
+    origin: Option[String] = None
+)(
+    implicit request: Request[_],
+    user: MtdItUser[_],
+    messages: Messages,
+    dateService: DateServiceInterface
+)
 
     @import implicitDateFormatter.longDate
 
@@ -56,35 +65,6 @@
 
     @getPrefix(key: String) = @{
         s"whatYouOwe.$key"
-    }
-
-    @saNoteParagraphContent(utr: String) = {
-    @if(user.isAgent()) {
-        @p(id = Some("sa-note-migrated"))(Html(getMessage("sa-note-agent-1") + ". " + getMessage("sa-note-agent-2") +
-                link(link = appConfig.saForAgents,
-                    outerMessage = ". " + getMessage("sa-note-agent-3"),
-                    messageKey = getPrefix("sa-link-agent"),
-                    id = Some("sa-note-migrated-link"),
-                    rel = Some("noreferrer noopener"),
-                    target = Some("_blank")
-                ).toString())
-        )
-    } else {
-        @p(id = Some("sa-note-migrated"))(Html(getMessage("sa-note") +
-                link(link = appConfig.saViewLandPService(utr), outerMessage = ".",
-                    messageKey = getPrefix("sa-link"), id = Some("sa-note-migrated-link"),
-                    rel = Some("noreferrer noopener"), target = Some("_blank")).toString())
-        )
-    }
-    @p(id = Some("outstanding-charges-note-migrated"))(content = Html(getMessage("outstanding-charges-note")))
-    }
-
-    @saNoteParagraph = {
-    @user.saUtr.map { utr =>
-        <div id="payments-due-note">
-            @govukInsetText(InsetText(content = HtmlContent(saNoteParagraphContent(utr))))
-        </div>
-    }
     }
 
     @creditAndRefundUrl = @{
@@ -328,7 +308,7 @@
 
                     @getClaimToAdjustPoaSection
 
-                    @saNoteParagraph
+                    @saNoteParagraph()
                 } else {
                     <div>
                         @if(viewModel.whatYouOweChargesList.chargesList.nonEmpty || viewModel.whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
@@ -562,12 +542,12 @@
                             </div>
                         }
                         @if(viewModel.whatYouOweChargesList.isChargesListEmpty) {
-                            @saNoteParagraph
+                            @saNoteParagraph()
                         }
 
                     </div>
                     @if(!viewModel.whatYouOweChargesList.isChargesListEmpty) {
-                        @saNoteParagraph
+                        @saNoteParagraph()
                     }
                     @viewModel.whatYouOweChargesList.availableCredit.map { availableCreditAmt =>
                         @unallocatedCreditParagraphContent(availableCreditAmt.toCurrencyString)
