@@ -39,6 +39,11 @@ case class YourSelfAssessmentChargesViewModel(hasOverdueOrAccruingInterestCharge
                                               claimToAdjustViewModel: WYOClaimToAdjustViewModel)(implicit val dateService: DateServiceInterface) {
   lazy val currentTaxYear: TaxYear = dateService.getCurrentTaxYear
 
+  def creditAndRefundUrl(implicit user: MtdItUser[_]): String = {
+    if(user.isAgent()) CreditAndRefundController.showAgent()
+    else               CreditAndRefundController.show()
+  }.url
+
   def creditAndRefundsControllerUrl(implicit user: MtdItUser[_]): String =
     (user.isAgent() match {
       case true if user.incomeSources.yearOfMigration.isDefined  => CreditAndRefundController.showAgent()

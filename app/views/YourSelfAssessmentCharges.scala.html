@@ -67,16 +67,8 @@
         s"whatYouOwe.$key"
     }
 
-    @creditAndRefundUrl = @{
-        if(user.isAgent()) {
-            controllers.routes.CreditAndRefundController.showAgent().url
-        } else {
-            controllers.routes.CreditAndRefundController.show().url
-        }
-    }
-
     @unallocatedCreditParagraphContent(amount: String) = {
-    @p(id = Some("unallocated-credit-note"))(Html(messages("whatYouOwe.credit-overpaid-prefix") + link(link = creditAndRefundUrl,
+    @p(id = Some("unallocated-credit-note"))(Html(messages("whatYouOwe.credit-overpaid-prefix") + link(link = viewModel.creditAndRefundUrl,
         outerMessage = messages("whatYouOwe.unallocated-credit-note"),
         messageKey = messages("whatYouOwe.credit-overpaid-amount", amount),
         id = Some("unallocated-credit-link")).toString()))
