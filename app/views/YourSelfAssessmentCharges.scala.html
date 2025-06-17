@@ -27,6 +27,7 @@
 @import services.DateServiceInterface
 @import _root_.implicits.HtmlFormatter.NbspString
 @import views.html.partials.yourSelfAssessmentCharges.SaNoteParagraph
+@import views.html.partials.yourSelfAssessmentCharges.UnallocatedCreditParagraphContent
 
 @this(
     mainTemplate: unifiedLayout,
@@ -40,6 +41,7 @@
     detailsDropdown: detailsDropdown,
     govukWarningText: GovukWarningText,
     govukInsetText: GovukInsetText,
+    unallocatedCreditParagraphContent: UnallocatedCreditParagraphContent,
     saNoteParagraph: SaNoteParagraph
 )
 
@@ -65,13 +67,6 @@
 
     @getPrefix(key: String) = @{
         s"whatYouOwe.$key"
-    }
-
-    @unallocatedCreditParagraphContent(amount: String) = {
-    @p(id = Some("unallocated-credit-note"))(Html(messages("whatYouOwe.credit-overpaid-prefix") + link(link = viewModel.creditAndRefundUrl,
-        outerMessage = messages("whatYouOwe.unallocated-credit-note"),
-        messageKey = messages("whatYouOwe.credit-overpaid-amount", amount),
-        id = Some("unallocated-credit-link")).toString()))
     }
 
     @dunningLockParagraph = {
@@ -526,7 +521,10 @@
                         @saNoteParagraph()
                     }
                     @viewModel.whatYouOweChargesList.availableCredit.map { availableCreditAmt =>
-                        @unallocatedCreditParagraphContent(availableCreditAmt.toCurrencyString)
+                        @unallocatedCreditParagraphContent(
+                            availableCreditAmt.toCurrencyString,
+                            viewModel.creditAndRefundUrl
+                        )
                     }
 
                 }
