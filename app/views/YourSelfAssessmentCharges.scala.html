@@ -489,8 +489,8 @@
                             @getPaymentPlanSection
                         }
 
-                        @if(!viewModel.whatYouOweChargesList.isChargesListEmpty) {
-                            @dunningLockParagraph(viewModel.dunningLock, viewModel.hasLpiWithDunningLock)
+                        @if(!viewModel.whatYouOweChargesList.isChargesListEmpty && viewModel.dunningLock && viewModel.hasLpiWithDunningLock) {
+                            @dunningLockParagraph()
                         }
 
                         @getClaimToAdjustPoaSection

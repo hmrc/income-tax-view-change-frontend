@@ -21,10 +21,7 @@
     link: link
 )
 
-@(
-    hasDunningLock: Boolean,
-    hasLpiWithDunningLock: Boolean
-)(
+@()(
     implicit messages: Messages
 )
 
@@ -36,16 +33,14 @@
     s"whatYouOwe.$key"
 }
 
-@if(hasDunningLock || hasLpiWithDunningLock) {
-    @p(id = Some("payment-under-review-info")) {
-        @getMessage("dunningLock.text", "")
-        @link(
-            id = Some("disagree-with-tax-appeal-link"),
-            link = "https://www.gov.uk/tax-appeals",
-            messageKey = getPrefix("dunningLock.link"),
-            rel = Some("noreferrer noopener"),
-            target = Some("_blank"),
-            additionalOpenTabMessage = Some(".")
-        )
-    }
+@p(id = Some("payment-under-review-info")) {
+    @getMessage("dunningLock.text", "")
+    @link(
+        id = Some("disagree-with-tax-appeal-link"),
+        link = "https://www.gov.uk/tax-appeals",
+        messageKey = getPrefix("dunningLock.link"),
+        rel = Some("noreferrer noopener"),
+        target = Some("_blank"),
+        additionalOpenTabMessage = Some(".")
+    )
 }
