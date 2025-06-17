@@ -67,14 +67,14 @@ class OptOutServiceMakeOptOutUpdateRequestSpec
 
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
-        when(repository.recallOptOutProposition()).thenReturn(
+        when(repository.recallOptOutPropositionWithIntent()).thenReturn(
           Future(Some(
             createOptOutProposition(
               currentYear = currentTaxYear,
               previousYearCrystallised = false,
               previousYearItsaStatus = Voluntary,
               currentYearItsaStatus = Mandated,
-              nextYearItsaStatus = Mandated))))
+              nextYearItsaStatus = Mandated), None)))
 
         when(optOutConnector.optOut(any(), any())(any[HeaderCarrier]))
           .thenReturn(
@@ -97,9 +97,9 @@ class OptOutServiceMakeOptOutUpdateRequestSpec
         val currentTaxYear: TaxYear = TaxYear.forYearEnd(currentYear)
         val previousTaxYear: TaxYear = currentTaxYear.previousYear
 
-        when(repository.recallOptOutProposition())
+        when(repository.recallOptOutPropositionWithIntent())
           .thenReturn(Future(Some(
-            createOptOutProposition(currentTaxYear, false, ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)))
+            createOptOutProposition(currentTaxYear, false, ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus), None))
           )
 
         when(optOutConnector.optOut(previousTaxYear, taxableEntityId))
@@ -123,16 +123,14 @@ class OptOutServiceMakeOptOutUpdateRequestSpec
 
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
-        when(repository.recallOptOutProposition()).thenReturn(
+        when(repository.recallOptOutPropositionWithIntent()).thenReturn(
           Future(Some(
             createOptOutProposition(
               currentYear = currentTaxYear,
               previousYearCrystallised = false,
               previousYearItsaStatus = Voluntary,
               currentYearItsaStatus = Voluntary,
-              nextYearItsaStatus = Voluntary))))
-
-        when(repository.fetchSavedIntent()).thenReturn(Future(Some(previousTaxYear)))
+              nextYearItsaStatus = Voluntary), Some(previousTaxYear))))
 
         when(optOutConnector.optOut(any(), any())(any[HeaderCarrier]))
           .thenReturn(
@@ -155,16 +153,14 @@ class OptOutServiceMakeOptOutUpdateRequestSpec
 
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
-        when(repository.fetchSavedIntent()).thenReturn(Future(Some(previousTaxYear)))
-
-        when(repository.recallOptOutProposition()).thenReturn(
+        when(repository.recallOptOutPropositionWithIntent()).thenReturn(
           Future(Some(
             createOptOutProposition(
               currentYear = currentTaxYear,
               previousYearCrystallised = false,
               previousYearItsaStatus = Voluntary,
               currentYearItsaStatus = Voluntary,
-              nextYearItsaStatus = Voluntary)))
+              nextYearItsaStatus = Voluntary), Some(previousTaxYear)))
         )
 
         when(optOutConnector.optOut(any(), any())(any[HeaderCarrier]))
@@ -199,8 +195,8 @@ class OptOutServiceMakeOptOutUpdateRequestSpec
           ITSAStatusUpdateResponseSuccess()
         ))
 
-        when(repository.recallOptOutProposition()).thenReturn(Future.successful(Some(
-          createOptOutProposition(currentTaxYear, false, ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus))))
+        when(repository.recallOptOutPropositionWithIntent()).thenReturn(Future.successful(Some(
+          createOptOutProposition(currentTaxYear, false, ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus), None)))
 
         val result = service.makeOptOutUpdateRequest()
 
