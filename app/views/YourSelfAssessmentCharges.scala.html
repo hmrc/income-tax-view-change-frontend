@@ -138,17 +138,9 @@
             linkSuffix = getLinkSuffix(), index = index)
     }
 
-    @getReturnHref(year: Int) = @{
-        if(user.isAgent()) {
-            controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(year).url
-        } else {
-            controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(year, origin).url
-        }
-    }
-
     @taxYearSummaryLink(year: Int, index: Int, id: String) = {
         <a class="govuk-link" id="@id-@index"
-        href="@getReturnHref(year)">
+        href="@viewModel.taxYearSummaryUrl(year, origin)">
             @getMessage("tax-year-summary.taxYear", (year - 1).toString, year.toString).toNonBreaking
             <span class="govuk-visually-hidden">@getMessage("taxYear")</span>
         </a>

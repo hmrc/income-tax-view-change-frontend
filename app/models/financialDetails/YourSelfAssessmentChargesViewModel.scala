@@ -52,6 +52,12 @@ case class YourSelfAssessmentChargesViewModel(hasOverdueOrAccruingInterestCharge
       case false                                                 => NotMigratedUserController.show()
     }).url
 
+  def taxYearSummaryUrl(year: Int, origin: Option[String])(implicit user: MtdItUser[_]): String = {
+    if(user.isAgent()) TaxYearSummaryController.renderAgentTaxYearSummaryPage(year)
+    else               TaxYearSummaryController.renderTaxYearSummaryPage(year, origin)
+  }.url
+
+
   lazy val currentDate: LocalDate = dateService.getCurrentDate
 
   def overdueChargesWithIndex: List[(ChargeItem, Int)] = {
