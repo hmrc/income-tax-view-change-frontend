@@ -1,0 +1,71 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import models.incomeSourceDetails.TaxYear
+@import auth.MtdItUser
+
+@this(
+    p: p,
+    link: link
+)
+
+@(
+    hasUnpaidPOAs: Boolean,
+    claimToAdjustTaxYear: Option[TaxYear]
+)(
+    implicit messages: Messages,
+    user: MtdItUser[_],
+)
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"selfAssessmentCharges.$key", args: _*)
+}
+
+@{
+    if(hasUnpaidPOAs) {
+        claimToAdjustTaxYear match {
+            case Some(value) =>
+                p(id = Some("adjust-poa-content"))(
+                    link(
+                        link = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url,
+                        messageKey = getMessage("adjust-poa", value.startYear.toString, value.endYear.toString),
+                        id = Some("adjust-poa-link"))
+                )
+            case None => Html("")
+        }
+    } else {
+        claimToAdjustTaxYear match {
+            case Some(value) =>
+                p(id = Some("adjust-paid-poa-content"))(Html(
+                    s"""
+                    ${getMessage("adjust-poa.paid-1", value.startYear.toString, value.endYear.toString)}
+                    ${
+                        link(
+                            link = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url,
+                            messageKey = getMessage("adjust-poa.paid-2", value.startYear.toString, value.endYear.toString),
+                            id = Some("adjust-poa-link"))
+                    }
+                    ${getMessage("adjust-poa.paid-3", value.startYear.toString, value.endYear.toString)}
+                    <span class="govuk-!-font-weight-bold">
+                        ${getMessage("adjust-poa.paid-4", (value.endYear + 1).toString)}
+                    </span>
+                    ${getMessage("adjust-poa.paid-5")}
+                """))
+            case None => Html("")
+        }
+    }
+}
