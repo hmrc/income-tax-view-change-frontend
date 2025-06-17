@@ -16,13 +16,16 @@
 
 package controllers.manageBusinesses.manage
 
+import enums.IncomeSourceJourney.ForeignProperty.{reportingMethodChangeErrorPrefix => foreignFormError}
+import enums.IncomeSourceJourney.SelfEmployment.{reportingMethodChangeErrorPrefix => seFormError}
+import enums.IncomeSourceJourney.UkProperty.{reportingMethodChangeErrorPrefix => ukFormError}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesNewJourney
+import models.admin.{IncomeSourcesNewJourney, OptInOptOutContentUpdateR17}
 import play.api
 import play.api.Application
 import play.api.http.Status
@@ -46,10 +49,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
 
   lazy val testConfirmReportingMethodSharedController: ConfirmReportingMethodSharedController = app.injector.instanceOf[ConfirmReportingMethodSharedController]
 
-  val individual: Boolean = true
-  val agent: Boolean = false
-
-
   trait SetupGET {
     val taxYear: String = "2022-2023"
     val changeTo: String = "annual"
@@ -57,11 +56,27 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
     val mtdRole: MTDUserRole
 
     lazy val action: Action[AnyContent] = if (mtdRole == MTDIndividual) {
-      testConfirmReportingMethodSharedController.show(taxYear, changeTo, incomeSourceType)
+      testConfirmReportingMethodSharedController.show(isAgent = false, taxYear, changeTo, incomeSourceType)
     } else {
-      testConfirmReportingMethodSharedController.showAgent(taxYear, changeTo, incomeSourceType)
+      testConfirmReportingMethodSharedController.show(isAgent = true, taxYear, changeTo, incomeSourceType)
     }
   }
+
+  def provideFormData(isYesResponse: Option[Boolean], formErrorRequiredFor: IncomeSourceType): (String, String) = {
+
+    val errorMessage = formErrorRequiredFor match {
+      case SelfEmployment => seFormError
+      case ForeignProperty => foreignFormError
+      case UkProperty => ukFormError
+    }
+
+    isYesResponse match {
+      case None => ("", errorMessage)
+      case Some(true) => ("change-reporting-method-check", "Yes")
+      case _ => ("change-reporting-method-check", "No")
+    }
+  }
+
 
   Seq(SelfEmployment, UkProperty, ForeignProperty).foreach { testIncomeSourceType =>
     mtdAllRoles.foreach { testMtdRole =>
@@ -69,12 +84,32 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(testMtdRole).withMethod("GET")
         s"the user is authenticated as s$testMtdRole" should {
           s"return ${Status.OK}" when {
-            "all query parameters are valid" in new SetupGET {
+            "all query parameters are valid (OptInOptOutContentUpdateR17 FS enabled)" in new SetupGET {
               override val incomeSourceType: IncomeSourceType = testIncomeSourceType
               override val mtdRole: MTDUserRole = testMtdRole
 
               setupMockSuccess(mtdRole)
               enable(IncomeSourcesNewJourney)
+              enable(OptInOptOutContentUpdateR17)
+              mockBothPropertyBothBusinessWithLatency()
+
+              setupMockCreateSession(true)
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
+
+              setupMockSetMongoData(true)
+
+              val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                provideFormData(isYesResponse = Some(true), formErrorRequiredFor = testIncomeSourceType))
+              )
+              status(result) shouldBe Status.OK
+            }
+            "all query parameters are valid (OptInOptOutContentUpdateR17 FS disabled)" in new SetupGET {
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
+
+              setupMockSuccess(mtdRole)
+              enable(IncomeSourcesNewJourney)
+              disable(OptInOptOutContentUpdateR17)
               mockBothPropertyBothBusinessWithLatency()
 
               setupMockCreateSession(true)
@@ -83,7 +118,29 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               setupMockSetMongoData(true)
 
               val result: Future[Result] = action(fakeRequest)
+
               status(result) shouldBe Status.OK
+            }
+          }
+          s"return ${Status.BAD_REQUEST}" when {
+            "No selection was made in the form" in new SetupPOST {
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
+
+              setupMockSuccess(mtdRole)
+              enable(IncomeSourcesNewJourney)
+              enable(OptInOptOutContentUpdateR17)
+              mockBothPropertyBothBusinessWithLatency()
+
+              setupMockCreateSession(true)
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
+
+              setupMockSetMongoData(true)
+
+              val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                provideFormData(isYesResponse = None, formErrorRequiredFor = testIncomeSourceType))
+              )
+              status(result) shouldBe Status.BAD_REQUEST
             }
           }
           "redirect to the Cannot Go Back page" when {
@@ -113,7 +170,10 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
-              val result: Future[Result] = action(fakeRequest)
+
+              val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                provideFormData(isYesResponse = Some(true), formErrorRequiredFor = testIncomeSourceType))
+              )
               val expectedEndpoint: String = if (mtdRole == MTDIndividual) {
                 controllers.routes.HomeController.show().url
               } else {
@@ -140,7 +200,10 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
 
               setupMockSetMongoData(true)
 
-              val result: Future[Result] = action(fakeRequest)
+              val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                provideFormData(isYesResponse = Some(true), formErrorRequiredFor = testIncomeSourceType))
+              )
+
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
             }
             "taxYear parameter doesn't match latency details " in new SetupGET {
@@ -207,9 +270,9 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
     val mtdRole: MTDUserRole
 
     lazy val action: Action[AnyContent] = if (mtdRole == MTDIndividual) {
-      testConfirmReportingMethodSharedController.submit(taxYear, changeTo, incomeSourceType)
+      testConfirmReportingMethodSharedController.submit(isAgent = false, taxYear, changeTo, incomeSourceType)
     } else {
-      testConfirmReportingMethodSharedController.submitAgent(taxYear, changeTo, incomeSourceType)
+      testConfirmReportingMethodSharedController.submit(isAgent = true, taxYear, changeTo, incomeSourceType)
     }
   }
 
@@ -218,25 +281,52 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
       s"submit${if (testMtdRole != MTDIndividual) "Agent"}($testIncomeSourceType)" when {
         val fakeRequest = fakePostRequestBasedOnMTDUserType(testMtdRole).withMethod("POST")
         s"the user is authenticated as s$testMtdRole" should {
-          s"return ${Status.SEE_OTHER} and redirect to the Manage Obligations page for a property" when {
+          s"return ${Status.SEE_OTHER} and redirect to the Manage Obligations page for a property (OptInOptOutContentUpdateR17 FS enabled)" when {
             "the user's property reporting method is updated to annual" in new SetupPOST {
               override val incomeSourceType: IncomeSourceType = testIncomeSourceType
               override val mtdRole: MTDUserRole = testMtdRole
 
               setupMockSuccess(mtdRole)
               enable(IncomeSourcesNewJourney)
+              enable(OptInOptOutContentUpdateR17)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
               setupMockSetMongoData(true)
-              val result: Future[Result] = action(fakeRequest)
-              val expectedEndpoint: String = if (mtdRole == MTDIndividual) {
-                controllers.manageBusinesses.manage.routes
-                  .CheckYourAnswersController.show(isAgent = false, incomeSourceType).url
-              } else {
-                controllers.manageBusinesses.manage.routes
-                  .CheckYourAnswersController.show(isAgent = true, incomeSourceType).url
-              }
+
+              val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                provideFormData(isYesResponse = Some(true), formErrorRequiredFor = testIncomeSourceType))
+              )
+
+              val expectedEndpoint: String = controllers.manageBusinesses.manage.routes.ManageObligationsController.show(
+                isAgent = mtdRole != MTDIndividual,
+                incomeSourceType
+              ).url
+
+              status(result) shouldBe Status.SEE_OTHER
+              redirectLocation(result) shouldBe
+                Some(expectedEndpoint)
+            }
+            "the user's property reporting method is updated to annual (OptInOptOutContentUpdateR17 FS disabled)" in new SetupPOST {
+              override val incomeSourceType: IncomeSourceType = testIncomeSourceType
+              override val mtdRole: MTDUserRole = testMtdRole
+
+              setupMockSuccess(mtdRole)
+              enable(IncomeSourcesNewJourney)
+              disable(OptInOptOutContentUpdateR17)
+              mockBothPropertyBothBusiness()
+              setupMockCreateSession(true)
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
+              setupMockSetMongoData(true)
+
+              val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                provideFormData(isYesResponse = Some(true), formErrorRequiredFor = testIncomeSourceType))
+              )
+
+              val expectedEndpoint: String = controllers.manageBusinesses.manage.routes.CheckYourAnswersController.show(
+                isAgent = mtdRole != MTDIndividual,
+                incomeSourceType
+              ).url
 
               status(result) shouldBe Status.SEE_OTHER
               redirectLocation(result) shouldBe
@@ -248,18 +338,20 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               override val changeTo: String = "quarterly"
               setupMockSuccess(mtdRole)
               enable(IncomeSourcesNewJourney)
+              enable(OptInOptOutContentUpdateR17)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
               setupMockSetMongoData(true)
-              val result: Future[Result] = action(fakeRequest)
-              val expectedEndpoint: String = if (mtdRole == MTDIndividual) {
-                controllers.manageBusinesses.manage.routes
-                  .CheckYourAnswersController.show(isAgent = false, incomeSourceType).url
-              } else {
-                controllers.manageBusinesses.manage.routes
-                  .CheckYourAnswersController.show(isAgent = true, incomeSourceType).url
-              }
+
+              val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                provideFormData(isYesResponse = Some(true), formErrorRequiredFor = testIncomeSourceType))
+              )
+              
+              val expectedEndpoint: String = controllers.manageBusinesses.manage.routes.ManageObligationsController.show(
+                isAgent = mtdRole != MTDIndividual,
+                incomeSourceType
+              ).url
 
               status(result) shouldBe Status.SEE_OTHER
               redirectLocation(result) shouldBe
