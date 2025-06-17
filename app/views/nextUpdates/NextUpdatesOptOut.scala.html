@@ -19,7 +19,6 @@
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import models.optout.NextUpdatesQuarterlyReportingContentChecks
-@import models.optout.OptOutViewModel
 @import models.optout.OptOutOneYearViewModel
 @import models.optout.OptOutMultiYearViewModel
 
@@ -36,7 +35,6 @@
 
 @(
 	currentObligations: NextUpdatesViewModel,
-	optOutViewModel: Option[OptOutViewModel],
 	checks:NextUpdatesQuarterlyReportingContentChecks,
 	backUrl: String,
 	isAgent: Boolean = false,
