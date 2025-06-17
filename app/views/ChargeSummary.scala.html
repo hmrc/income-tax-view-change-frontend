@@ -18,7 +18,7 @@
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import models.financialDetails.ChargeType
 @import models.chargeSummary.ChargeSummaryViewModel
-@import models.financialDetails.{Accepted, BalancingCharge, FullyCollected, Cancelled, MfaDebitCharge, PoaOneDebit, PoaOneReconciliationDebit, PoaOneReconciliationCredit, PoaTwoDebit, PoaTwoReconciliationDebit, PoaTwoReconciliationCredit, TransactionType}
+@import models.financialDetails.{Accepted, BalancingCharge, FullyCollected, Cancelled, MfaDebitCharge, PoaOneDebit, PoaOneReconciliationDebit, PoaOneReconciliationCredit, PoaTwoDebit, PoaTwoReconciliationDebit, PoaTwoReconciliationCredit, FirstLatePaymentPenalty, LateSubmissionPenalty}
 @import services.DateServiceInterface
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
@@ -181,6 +181,41 @@
     }
 }
 
+@firstLatePaymentPenaltyExplanation = {
+    @p(id = Some("first-payment-penalty-p1")) {
+        @messages("chargeSummary.firstLatePaymentPenalty.p")
+    }
+
+    @link(
+        link = viewModel.LPPUrl.getOrElse(""),
+        messageKey = "chargeSummary.firstLatePaymentPenalty.link"
+    )
+    <div class="govuk-!-margin-bottom-3"></div>
+}
+
+@lateSubmissionPenaltyExplaination = {
+
+@p(id = Some("LSP-content-1")) {
+    @messages("chargeSummary.lateSubmissionPenalty.penaltyPoints")
+}
+@p(id = Some("LSP-content-2")) {
+    @messages("chargeSummary.lateSubmissionPenalty.fourPoints")
+}
+@p(id = Some("LSP-content-3")) {
+    @messages("chargeSummary.lateSubmissionPenalty.avoidInFuture")
+}
+@p(id = Some("LSP-content-4")) {
+    @messages("chargeSummary.lateSubmissionPenalty.penaltyLinkText1")
+    @link(
+        id = Some("chargeSummary.late-submission-penalty-link"),
+        link = viewModel.LSPUrl.getOrElse(""),
+        rel = Some("noreferrer noopener"),
+        messageKey = "chargeSummary.lateSubmissionPenalty.penaltyLinkText"
+    )
+    @messages("chargeSummary.lateSubmissionPenalty.penaltyLinkText2")
+}
+}
+
 @getExplanationContent = @{(viewModel.chargeItem.transactionType, viewModel.chargeItem.codedOutStatus) match {
     case (MfaDebitCharge, _)                                                                                => hmrcAdjustmentExplanation
     case (PoaOneReconciliationDebit, _)  if !viewModel.latePaymentInterestCharge           => reviewAndReconcilePoaOneDebitExplanation
@@ -193,6 +228,8 @@
     case (PoaTwoReconciliationCredit, _)                                                   => reviewAndReconcilePoaCreditExplanation(PoaTwoDebit)
     case (BalancingCharge, None) if !viewModel.latePaymentInterestCharge                                    => balancingChargeExplanation
     case (BalancingCharge, None)                                                                            => getBalancingPaymentsExplanationContent
+    case (FirstLatePaymentPenalty, _)                                                                       => firstLatePaymentPenaltyExplanation
+    case (LateSubmissionPenalty, _)                                                                         => lateSubmissionPenaltyExplaination
     case _                                                                                                  =>
 }
 }

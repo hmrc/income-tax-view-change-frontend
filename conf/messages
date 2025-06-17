@@ -854,6 +854,9 @@ whatYouOwe.lpi.balancingCharge.text                                = Late paymen
 whatYouOwe.balancingCharge.text  							       = Balancing payment
 whatYouOwe.balancingCharge.interest.line1.text                     = Interest on Balancing payment
 whatYouOwe.balancingCharge.interest.line2.text                     = {0} to {1}
+whatYouOwe.lateSubmissionPenalty.text                              = Late submission penalty
+whatYouOwe.firstLatePaymentPenalty.text                            = First late payment penalty
+whatYouOwe.secondLatePaymentPenalty.text                           = Second late payment penalty
 whatYouOwe.payments-due                                            = Payments Due
 whatYouOwe.over-due                                                = Overdue
 whatYouOwe.over-due.interest.line1                                 = Interest for late payment
@@ -996,6 +999,8 @@ chargeSummary.codingOut.text                                       = Balancing p
 chargeSummary.poa1CodedOut.text                                    = First payment on account collected through PAYE tax code
 chargeSummary.poa2CodedOut.text                                    = Second payment on account collected through PAYE tax code
 chargeSummary.cancelledPayeSelfAssessment.text                     = Cancelled PAYE Self Assessment (through your PAYE tax code)
+chargeSummary.lateSubmissionPenalty.text                           = Late submission penalty
+chargeSummary.firstLatePaymentPenalty.text                         = First late payment penalty
 chargeSummary.hmrcAdjustment.text                                  = HMRC adjustment
 chargeSummary.dueDate											   = Due date
 chargeSummary.paymentAmount   									   = Amount
@@ -1051,6 +1056,16 @@ chargeSummary.definition.balancingcharge.bullet2                   = owe more th
 chargeSummary.definition.balancingcharge.p2                        = You’ll also need to make a balancing payment if you owe anything for Capital Gains Tax or student loans.
 
 chargeSummary.definition.hmrcadjustment                            = HMRC has added this charge after an adjustment to your tax return.
+
+chargeSummary.firstLatePaymentPenalty.p = You have received this penalty because you are late paying your Income Tax.
+chargeSummary.firstLatePaymentPenalty.link = View how your penalty was calculated.
+
+chargeSummary.lateSubmissionPenalty.penaltyPoints     = You will get a late submission penalty point every time you send a submission after the deadline. A submission can be a quarterly update or annual tax return.
+chargeSummary.lateSubmissionPenalty.fourPoints        = If you reach 4 points, you’ll have to pay a £200 penalty.
+chargeSummary.lateSubmissionPenalty.avoidInFuture     = To avoid receiving late submission penalty points in the future, and the potential for a financial penalty, you need to send your submissions on time.
+chargeSummary.lateSubmissionPenalty.penaltyLinkText1  = You can
+chargeSummary.lateSubmissionPenalty.penaltyLinkText   = view the details about your penalty
+chargeSummary.lateSubmissionPenalty.penaltyLinkText2  = and find out how to appeal.
 
 chargeSummary.paymentBreakdown.heading   						   = Payment breakdown
 chargeSummary.paymentBreakdown.incomeTax   						   = Income Tax
