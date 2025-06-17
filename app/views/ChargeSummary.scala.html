@@ -145,7 +145,7 @@
 }
 
 @getBalancingPaymentsExplanationContent = {
-    <div>
+    <div class = "govuk-body govuk-!-margin-bottom-8">
         @p(id = Some("lpi-bcd1")){@messages("chargeSummary.lpi.balancingCharge.p1")}
         @p(id = Some("lpi-bcd2")) {
             @messages("chargeSummary.lpi.balancingCharge.textOne")
@@ -154,7 +154,7 @@
         }
         @p(id = Some("lpi-bcd3")) {
             @messages("chargeSummary.lpi.balancingCharge.p3")
-            <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.lpi.balancingCharge.p3LinkText")</a><br><br>
+            <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.lpi.balancingCharge.p3LinkText")</a>
         }
     </div>
 }
