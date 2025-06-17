@@ -28,6 +28,7 @@
 @import _root_.implicits.HtmlFormatter.NbspString
 @import views.html.partials.yourSelfAssessmentCharges.SaNoteParagraph
 @import views.html.partials.yourSelfAssessmentCharges.UnallocatedCreditParagraphContent
+@import views.html.partials.yourSelfAssessmentCharges.DunningLockParagraph
 
 @this(
     mainTemplate: unifiedLayout,
@@ -41,6 +42,7 @@
     detailsDropdown: detailsDropdown,
     govukWarningText: GovukWarningText,
     govukInsetText: GovukInsetText,
+    dunningLockParagraph: DunningLockParagraph,
     unallocatedCreditParagraphContent: UnallocatedCreditParagraphContent,
     saNoteParagraph: SaNoteParagraph
 )
@@ -67,20 +69,6 @@
 
     @getPrefix(key: String) = @{
         s"whatYouOwe.$key"
-    }
-
-    @dunningLockParagraph = {
-    @if(viewModel.dunningLock || viewModel.hasLpiWithDunningLock) {
-        <div id="payment-under-review-info">
-        @p() {
-            @getMessage("dunningLock.text", "")
-            @link(link = "https://www.gov.uk/tax-appeals", messageKey = getPrefix("dunningLock.link"),
-                id = Some("disagree-with-tax-appeal-link"), rel = Some("noreferrer noopener"), target = Some("_blank"),
-                additionalOpenTabMessage = Some(".")
-            )
-        }
-        </div>
-    }
     }
 
     @tableHead(headId: String, showInterest: Boolean) = {
@@ -502,7 +490,7 @@
                         }
 
                         @if(!viewModel.whatYouOweChargesList.isChargesListEmpty) {
-                            @dunningLockParagraph
+                            @dunningLockParagraph(viewModel.dunningLock, viewModel.hasLpiWithDunningLock)
                         }
 
                         @getClaimToAdjustPoaSection
