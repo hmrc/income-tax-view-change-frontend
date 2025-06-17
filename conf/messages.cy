@@ -842,6 +842,9 @@ whatYouOwe.lpi.reviewAndReconcilePoa1.text                      = Llog ar y tali
 whatYouOwe.lpi.reviewAndReconcilePoa2.text                      = Llog ar yr ail daliad ar gyfrif: swm ychwanegol
 whatYouOwe.hmrcAdjustment.text                                  = Addasiad CThEF
 whatYouOwe.balancingCharge.text  							    = Taliad mantoli
+whatYouOwe.lateSubmissionPenalty.text                              = Cosb am gyflwyno’n hwyr
+whatYouOwe.firstLatePaymentPenalty.text                            = Cosb gyntaf am dalu’n hwyr
+whatYouOwe.secondLatePaymentPenalty.text                           = Ail gosb am dalu’n hwyr
 whatYouOwe.payments-due                                         = Taliadau treth incwm
 whatYouOwe.payments-made                                        = Ynglŷn ag unrhyw daliadau a wnaed gennych:
 whatYouOwe.payments-made-agent                                  = O ran unrhyw daliadau a wneir gan eich cleient:
@@ -994,6 +997,8 @@ chargeSummary.class2Nic.text                                    = Yswiriant Gwla
 chargeSummary.codingOut.text                                    = Taliad mantoli a gesglir drwy’r cod treth TWE
 chargeSummary.poa1CodedOut.text                                 = Taliad ar gyfrif cyntaf sy’n cael ei gasglu drwy god treth TWE
 chargeSummary.poa2CodedOut.text                                 = Ail daliad ar gyfrif sy’n cael ei gasglu drwy god treth TWE
+chargeSummary.lateSubmissionPenalty.text                        = Cosb am gyflwyno’n hwyr
+chargeSummary.firstLatePaymentPenalty.text                      = Cosb gyntaf am dalu’n hwyr
 chargeSummary.cancelledPayeSelfAssessment.text                  = Hunanasesiad TWE wedi’i ganslo (trwy eich cod treth TWE)
 chargeSummary.hmrcAdjustment.text                               = Addasiad CThEF
 chargeSummary.dueDate                                           = Dyddiad dyledus
@@ -1050,6 +1055,16 @@ chargeSummary.definition.balancingcharge.bullet2                   = mae’r dre
 chargeSummary.definition.balancingcharge.p2                        = Bydd angen hefyd i chi wneud taliad mantoli os oes arnoch unrhyw beth o ran Treth Enillion Cyfalaf neu fenthyciadau myfyrwyr.
 
 chargeSummary.definition.hmrcadjustment                            = Mae CThEF wedi ychwanegu’r tâl hwn ar ôl addasiad i’ch Ffurflen Dreth.
+
+chargeSummary.firstLatePaymentPenalty.p = Rydych wedi cael y gosb hon oherwydd eich bod yn hwyr wrth dalu eich Treth Incwm.
+chargeSummary.firstLatePaymentPenalty.link = Gweld sut y cyfrifwyd eich cosb.
+
+chargeSummary.lateSubmissionPenalty.penaltyPoints     = Byddwch yn cael pwynt cosb am gyflwyno’n hwyr pob tro y byddwch yn hwyr wrth gyflwyno. Gall cyflwyniad fod yn ddiweddariad chwarterol neu’n ddatganiad treth blynyddol.
+chargeSummary.lateSubmissionPenalty.fourPoints        = Os byddwch yn cyrraedd 4 o bwyntiau, bydd angen i chi dalu cosb o £200.
+chargeSummary.lateSubmissionPenalty.avoidInFuture     = Er mwyn osgoi cael pwyntiau cosb am gyflwyno’n hwyr yn y dyfodol, a’r posibilrwydd o gael cosb ariannol, mae angen i chi anfon eich cyflwyniadau mewn pryd.
+chargeSummary.lateSubmissionPenalty.penaltyLinkText1  = Gallwch
+chargeSummary.lateSubmissionPenalty.penaltyLinkText   = weld y manylion ynglŷn â’ch cosb
+chargeSummary.lateSubmissionPenalty.penaltyLinkText2  = a dysgu sut i apelio.
 
 chargeSummary.paymentBreakdown.heading   						   = Dadansoddiad o’r taliad
 chargeSummary.paymentBreakdown.incomeTax   						   = Treth Incwm
