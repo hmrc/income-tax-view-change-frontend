@@ -81,7 +81,8 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
         isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
         creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
         origin = origin,
-        claimToAdjustViewModel = ctaViewModel)(user, user, messages, dateService)
+        claimToAdjustViewModel = ctaViewModel,
+        LPP2Url = appConfig.incomeTaxPenaltiesFrontendCalculation)(user, user, messages, dateService)
       ).addingToSession(gatewayPage -> WhatYouOwePage.name)
     }
   } recover {
