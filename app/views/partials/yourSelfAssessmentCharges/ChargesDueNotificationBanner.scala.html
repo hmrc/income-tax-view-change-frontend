@@ -16,10 +16,14 @@
 
 @import views.html.components._
 @import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukNotificationBanner
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.notificationbanner.NotificationBanner
 
 @this(
     p: p,
     h3: h3,
+    govukNotificationBanner: GovukNotificationBanner,
     link: link
 )
 
@@ -31,28 +35,26 @@
     implicit messages: Messages
 )
 
-<div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner" id="overdue-banner">
-    <div class="govuk-notification-banner__header">
-        <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
-        @getMessage("important")
-        </h2>
-    </div>
-    <div class="govuk-notification-banner__content" id="overdue-important-warning">
-        @h3(
-            msg = getMessage("charges-due-now-with-amount", overDueAmount),
-            classes = "govuk-notification-banner__heading"
-        )
-        <p class="govuk-body">
-    <div>
-        @getMessage("important-p1")
-    </div>
-        <br>
-        <div>
-            @getMessage("important-p2")
-            <a class="govuk-notification-banner__link"
-            href=@controllers.routes.PaymentController.paymentHandoff(earliestTaxYearAmount, origin).url>
-                <b>@getMessage("important-p2-link-text")</b></a>
-        </div>
-    </p>
-    </div>
-</div>
+@govukNotificationBanner(NotificationBanner(
+    attributes = Map("id" -> "overdue-banner"),
+    content = HtmlContent(html)
+))
+
+@html = {
+
+    @h3(
+        msg = getMessage("charges-due-now-with-amount", overDueAmount),
+        classes = "govuk-notification-banner__heading"
+    )
+
+    @p()(Html(getMessage("important-p1")))
+
+    @getMessage("important-p2")
+
+    @link(
+        link = controllers.routes.PaymentController.paymentHandoff(earliestTaxYearAmount, origin).url,
+        isBold = true,
+        classes = "govuk-notification-banner__link govuk-!-margin-bottom-4 govuk-!-display-inline-block",
+        messageKey = getMessage("important-p2-link-text")
+    )
+}
