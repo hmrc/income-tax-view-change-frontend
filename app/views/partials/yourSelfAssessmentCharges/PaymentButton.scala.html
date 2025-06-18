@@ -15,6 +15,7 @@
  *@
 
 @import views.html.components.link
+@import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
 
 @this(
     link: link
@@ -26,14 +27,6 @@
 )(
     implicit messages: Messages
 )
-
-@getMessage(key: String, args: String*) = @{
-    messages(s"selfAssessmentCharges.$key", args: _*)
-}
-
-@getPrefix(key: String) = @{
-    s"whatYouOwe.$key"
-}
 
 <div id="payment-button">
     @link(

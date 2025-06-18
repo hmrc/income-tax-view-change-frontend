@@ -16,6 +16,7 @@
 
 @import views.html.components._
 @import implicits.HtmlFormatter.NbspString
+@import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
 
 @this(
     p: p,
@@ -30,10 +31,6 @@
 )(
     implicit messages: Messages
 )
-
-@getMessage(key: String, args: String*) = @{
-    messages(s"selfAssessmentCharges.$key", args: _*)
-}
 
 <a class="govuk-link" id="@id-@index" href="@taxYearSummaryUrl">
     @getMessage("tax-year-summary.taxYear", (year - 1).toString, year.toString).toNonBreaking

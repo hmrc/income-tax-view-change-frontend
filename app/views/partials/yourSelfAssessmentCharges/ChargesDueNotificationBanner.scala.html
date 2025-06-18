@@ -15,6 +15,7 @@
  *@
 
 @import views.html.components._
+@import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
 
 @this(
     p: p,
@@ -29,10 +30,6 @@
 )(
     implicit messages: Messages
 )
-
-@getMessage(key: String, args: String*) = @{
-    messages(s"selfAssessmentCharges.$key", args: _*)
-}
 
 <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner" id="overdue-banner">
     <div class="govuk-notification-banner__header">

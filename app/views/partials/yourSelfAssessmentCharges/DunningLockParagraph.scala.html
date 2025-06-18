@@ -15,6 +15,7 @@
  *@
 
 @import views.html.components._
+@import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
 
 @this(
     p: p,
@@ -24,14 +25,6 @@
 @()(
     implicit messages: Messages
 )
-
-@getMessage(key: String, args: String*) = @{
-    messages(s"selfAssessmentCharges.$key", args: _*)
-}
-
-@getPrefix(key: String) = @{
-    s"whatYouOwe.$key"
-}
 
 @p(id = Some("payment-under-review-info")) {
     @getMessage("dunningLock.text", "")

@@ -17,6 +17,7 @@
 @import views.html.components._
 @import models.incomeSourceDetails.TaxYear
 @import auth.MtdItUser
+@import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
 
 @this(
     p: p,
@@ -30,10 +31,6 @@
     implicit messages: Messages,
     user: MtdItUser[_],
 )
-
-@getMessage(key: String, args: String*) = @{
-    messages(s"selfAssessmentCharges.$key", args: _*)
-}
 
 @{
     if(hasUnpaidPOAs) {

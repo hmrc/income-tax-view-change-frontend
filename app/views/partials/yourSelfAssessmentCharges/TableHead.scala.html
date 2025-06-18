@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.insettext.InsetText
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
 @import _root_.implicits.HtmlFormatter.NbspString
+@import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
 
 @this(
     p: p,
@@ -36,10 +37,6 @@
     user: MtdItUser[_],
     messages: Messages
 )
-
-@getMessage(key: String, args: String*) = @{
-    messages(s"selfAssessmentCharges.$key", args: _*)
-}
 
 <thead class="govuk-table__head" id="@headId">
     <tr class="govuk-table__row">

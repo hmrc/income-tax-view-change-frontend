@@ -16,6 +16,7 @@
 
 @import views.html.components._
 @import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
 
 @this(
     p: p,
@@ -29,10 +30,6 @@
 )(
     implicit messages: Messages
 )
-
-@getMessage(key: String, args: String*) = @{
-    messages(s"selfAssessmentCharges.$key", args: _*)
-}
 
 @h2(msg = "selfAssessmentCharges.no-charges-due")
 <p class="govuk-body">

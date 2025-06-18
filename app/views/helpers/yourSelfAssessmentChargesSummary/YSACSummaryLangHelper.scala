@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,29 +12,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import views.html.components._
-@import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
+package views.helpers.yourSelfAssessmentChargesSummary
 
-@this(
-    p: p,
-    link: link
-)
+import play.api.i18n.Messages
 
-@(
-    selfServeTimeToPayStartUrl: String
-)(
-    implicit messages: Messages
-)
+object YSACSummaryLangHelper {
 
-@p(id = Some("payment-plan")) {
-    @getMessage("payment-plan-1")
-    @link(
-        link = selfServeTimeToPayStartUrl,
-        messageKey = getMessage("payment-plan-link-text"),
-        id = Some("payment-plan-link"),
-        target = Some("_blank"),
-        outerMessage = "."
-    )
+  def getMessage(key: String, args: String*)(implicit messages: Messages): String =
+    messages(s"selfAssessmentCharges.$key", args: _*)
+
+  def getPrefix(key: String)(implicit messages: Messages): String =
+    s"whatYouOwe.$key"
 }

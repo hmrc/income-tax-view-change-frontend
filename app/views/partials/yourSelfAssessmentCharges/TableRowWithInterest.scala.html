@@ -27,6 +27,7 @@
 @import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import implicits.ImplicitDateFormatterImpl
 @import services.DateServiceInterface
+@import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
 
 @this(
     p: p,
@@ -52,10 +53,6 @@
     messages: Messages,
     dateService: DateServiceInterface
 )
-
-@getMessage(key: String, args: String*) = @{
-    messages(s"selfAssessmentCharges.$key", args: _*)
-}
 
 @import implicitDateFormatter.longDate
 

@@ -18,6 +18,7 @@
 @import models.financialDetails.CodingOutDetails
 @import auth.MtdItUser
 @import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
 
 @this(
     p: p,
@@ -31,10 +32,6 @@
     implicit messages: Messages,
     user: MtdItUser[_]
 )
-
-@getMessage(key: String, args: String*) = @{
-    messages(s"selfAssessmentCharges.$key", args: _*)
-}
 
 @getCodingOutHref(taxYear: Int) = @{
     if(user.isAgent()) {

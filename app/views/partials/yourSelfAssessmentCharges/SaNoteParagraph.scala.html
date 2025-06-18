@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.insettext.InsetText
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
+@import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
 
 @this(
     p: p,
@@ -32,14 +33,6 @@
     user: MtdItUser[_],
     messages: Messages
 )
-
-@getMessage(key: String, args: String*) = @{
-    messages(s"selfAssessmentCharges.$key", args: _*)
-}
-
-@getPrefix(key: String) = @{
-    s"whatYouOwe.$key"
-}
 
 @saNoteParagraphContent(utr: String) = {
     @if(user.isAgent()) {

@@ -27,6 +27,7 @@
 @import services.DateServiceInterface
 @import views.html.partials.yourSelfAssessmentCharges.PaymentButton
 @import views.html.partials.yourSelfAssessmentCharges.OverduePaymentInsetText
+@import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
 
 @this(
     p: p,
@@ -49,14 +50,6 @@
     messages: Messages,
     dateService: DateServiceInterface
 )
-
-@getMessage(key: String, args: String*) = @{
-    messages(s"selfAssessmentCharges.$key", args: _*)
-}
-
-@getPrefix(key: String) = @{
-    s"whatYouOwe.$key"
-}
 
 @import implicitDateFormatter.longDate
 

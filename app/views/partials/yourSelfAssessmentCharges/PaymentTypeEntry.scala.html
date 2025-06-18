@@ -20,6 +20,7 @@
 @import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import models.financialDetails.ChargeItem
 @import models.financialDetails.Nics2
+@import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
 
 @this(
     p: p,
@@ -37,10 +38,6 @@
     implicit messages: Messages,
     user: MtdItUser[_]
 )
-
-@getMessage(key: String, args: String*) = @{
-    messages(s"selfAssessmentCharges.$key", args: _*)
-}
 
 @paymentTypeEntry(chargeItem: ChargeItem, rowId: String, isInterest: Boolean, linkSuffix: String, index: Int) = @{
 

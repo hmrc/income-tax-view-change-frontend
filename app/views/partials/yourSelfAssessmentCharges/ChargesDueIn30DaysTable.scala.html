@@ -28,6 +28,7 @@
 @import views.html.partials.yourSelfAssessmentCharges.TableRowWithoutInterest
 @import views.html.partials.yourSelfAssessmentCharges.PaymentInsetTextFor30Days
 @import views.html.partials.yourSelfAssessmentCharges.PaymentButton
+@import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
 
 @this(
     p: p,
@@ -52,13 +53,6 @@
     dateService: DateServiceInterface
 )
 
-@getMessage(key: String, args: String*) = @{
-    messages(s"selfAssessmentCharges.$key", args: _*)
-}
-
-@getPrefix(key: String) = @{
-    s"whatYouOwe.$key"
-}
 <div class="govuk-tabs__panel" id="charges-due-in-30-days">
     <table class="govuk-table">
         @tableHead("due-in-30-days-payments-table-head", false)
