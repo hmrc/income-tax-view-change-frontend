@@ -123,6 +123,7 @@
                     }
 
                     @govukTabs(Tabs(
+                        id = Some("self-assessment-charges-tabs"),
                         items = Seq(
                             Option.when(viewModel.overdueAccruingInterestOrOutstandingChargesListNonEmpty)(
                                 TabItem(
