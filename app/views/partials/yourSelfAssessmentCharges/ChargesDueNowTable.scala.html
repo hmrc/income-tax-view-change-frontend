@@ -60,7 +60,6 @@
 
 @import implicitDateFormatter.longDate
 
-<div class="govuk-tabs__panel" id="charges-due-now">
     <table class="govuk-table" id="charges-due-now-table">
         @tableHead("over-due-payments-table-head", true)
         <caption class="govuk-table__caption govuk-visually-hidden">@getMessage("charges-due-now")</caption>
@@ -106,4 +105,3 @@
             @paymentButton(taxYearWithAmount.amount.toPence, origin)
         }
     }
-</div>
