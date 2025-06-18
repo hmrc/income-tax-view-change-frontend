@@ -150,6 +150,8 @@
                     ))
                 }
 
+                @paymentPlanSection(viewModel.selfServeTimeToPayStartUrl)
+
                 @if(!viewModel.whatYouOweChargesList.isChargesListEmpty && viewModel.dunningLock && viewModel.hasLpiWithDunningLock) {
                     @dunningLockParagraph()
                 }
