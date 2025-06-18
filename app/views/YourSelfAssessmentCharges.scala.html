@@ -361,7 +361,7 @@
                                 </div>
                             } else {
                         @h2(msg = "selfAssessmentCharges.no-charges-due")
-                        <p class="govuk-body">
+                        <p class="govuk-body govuk-!-margin-bottom-4">
                             @getMessage("adjust-poa.paid-1")
                             @viewModel.whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.fold(Html("")) { case (_, amount) =>
                             @link(
@@ -371,7 +371,6 @@
                             )
                             }
                         </p>
-                        <p></p>
                         }
 
                         <div class="govuk-tabs" data-module="govuk-tabs" id="self-assessment-charges-tabs">
@@ -443,10 +442,9 @@
                                     </table>
 
                                     <div class="govuk-inset-text" id="overdue-payment-text">
-                                        <div>
+                                        <div class="govuk-!-margin-bottom-4">
                                         @getMessage("overdue-inset-text-1")
                                         </div>
-                                        <p></p>
                                         <div>
                                         @getMessage("overdue-inset-text-2")
                                         </div>
@@ -486,10 +484,9 @@
 
                                     @if(user.saUtr.isDefined && !user.isAgent() && !viewModel.overdueAccruingInterestOrOutstandingChargesListNonEmpty) {
                                         <div class="govuk-inset-text" id="30-days-payment-text">
-                                            <div>
+                                            <div class="govuk-!-margin-bottom-4">
                                             @getMessage("overdue-inset-text-1")
                                             </div>
-                                            <p></p>
                                             <div>
                                             @getMessage("overdue-inset-text-2")
                                             </div>
@@ -526,7 +523,7 @@
                                             <div>
                                             @getMessage("overdue-inset-text-1")
                                             </div>
-                                            <p></p>
+
                                             <div>
                                             @getMessage("overdue-inset-text-2")
                                             </div>
