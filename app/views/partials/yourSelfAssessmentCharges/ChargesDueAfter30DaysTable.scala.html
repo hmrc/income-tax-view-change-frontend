@@ -23,7 +23,6 @@
 @import views.html.partials.yourSelfAssessmentCharges.LaterPaymentInsetText
 @import views.html.partials.yourSelfAssessmentCharges.PaymentButton
 
-
 @this(
     p: p,
     link: link,
@@ -58,4 +57,4 @@
     @viewModel.earliestTaxYearAndAmountByDueDate.map { taxYearWithAmount =>
         @paymentButton(taxYearWithAmount.amount.toPence, origin)
     }
-}@import views.html.partials.yourSelfAssessmentCharges.LaterPaymentInsetText
+}
