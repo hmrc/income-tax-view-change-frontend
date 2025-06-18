@@ -168,6 +168,8 @@
 
                     @if(viewModel.whatYouOweChargesList.isChargesListEmpty) { @saNoteParagraph() }
 
+                    @if(!viewModel.whatYouOweChargesList.isChargesListEmpty) { @saNoteParagraph() }
+
                     @viewModel.whatYouOweChargesList.availableCredit.map { availableCreditAmt =>
                         @unallocatedCreditParagraphContent(availableCreditAmt.toCurrencyString, viewModel.creditAndRefundUrl)
                     }
