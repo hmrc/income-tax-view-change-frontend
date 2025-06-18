@@ -14,19 +14,17 @@
  * limitations under the License.
  *@
 
+@import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
+
 @this()
 
 @()(
     implicit messages: Messages
 )
 
-@getMessage(key: String, args: String*) = @{
-    messages(s"selfAssessmentCharges.$key", args: _*)
-}
-
-<div class="govuk-inset-text" id="overdue-payment-text">
+<div class="govuk-inset-text" id="later-payment-text">
     <div>
-    @getMessage("overdue-inset-text-1")
+        @getMessage("overdue-inset-text-1")
     </div>
     <br>
     <div>

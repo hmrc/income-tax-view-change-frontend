@@ -85,10 +85,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
 
-            @hmrcPageHeading(PageHeading(
-                text = getMessage("heading"),
-                headingClasses = Some("govuk-heading-xl")
-            ))
+            @h1(msg = getMessage("heading"), id = Some("page-heading"))
 
             @if(viewModel.chargesAndCodedOutDetailsAreEmpty) {
 
