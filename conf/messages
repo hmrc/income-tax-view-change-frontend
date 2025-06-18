@@ -1826,6 +1826,9 @@ business.added.income.sources.button                          = Your income sour
 business.added.previous.tax.years.heading                     = Previous tax years
 business.added.previous.tax.years.t1                          = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 
+#generic link text across business added:
+business.added.submit.software.link                                                     = software compatible with Making Tax Digital for Income Tax
+
 business.added.view.all.businesses                                                      = View all your businesses
 business.added.obligation.inset.single.annual.overdue.text                              = You have <b>1 overdue update</b>. You must submit your yearly tax return and pay the tax you owe.
 business.added.obligation.inset.single.quarterly.overdue.text                           = You have <b>1 overdue update</b> for 3 months of the {0} to {1} tax year. You must submit these updates with all required income and expenses through your compatible software.
