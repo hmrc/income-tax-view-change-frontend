@@ -311,7 +311,7 @@ class OptOutServiceSpec
 
             response.futureValue._1 shouldBe NextUpdatesQuarterlyReportingContentChecks(
               currentYearItsaStatus = true,
-              previousYearItsaStatus = true,
+              previousYearItsaStatus = false,
               previousYearCrystallisedStatus = false
             )
 
