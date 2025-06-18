@@ -20,7 +20,7 @@
 @import models.financialDetails.YourSelfAssessmentChargesViewModel
 @import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import views.html.partials.yourSelfAssessmentCharges.TableRowWithoutInterest
-@import views.html.partials.yourSelfAssessmentCharges.OverduePaymentInsetText
+@import views.html.partials.yourSelfAssessmentCharges.LaterPaymentInsetText
 @import views.html.partials.yourSelfAssessmentCharges.PaymentButton
 
 
@@ -28,7 +28,7 @@
     p: p,
     link: link,
     tableHead: TableHead,
-    overduePaymentInsetText: OverduePaymentInsetText,
+    laterPaymentInsetText: LaterPaymentInsetText,
     tableRowWithoutInterest: TableRowWithoutInterest,
     paymentButton: PaymentButton
 )
@@ -53,9 +53,9 @@
 
 @if(user.saUtr.isDefined && !user.isAgent() && !viewModel.overdueAccruingInterestOrOutstandingChargesListNonEmpty && !viewModel.chargesDueWithin30DaysListNonEmpty) {
 
-    @overduePaymentInsetText()
+    @laterPaymentInsetText()
 
     @viewModel.earliestTaxYearAndAmountByDueDate.map { taxYearWithAmount =>
         @paymentButton(taxYearWithAmount.amount.toPence, origin)
     }
-}
+}@import views.html.partials.yourSelfAssessmentCharges.LaterPaymentInsetText
