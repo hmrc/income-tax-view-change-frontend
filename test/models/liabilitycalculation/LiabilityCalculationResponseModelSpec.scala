@@ -41,7 +41,7 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
         calculation = None,
         metadata = Metadata(
           calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-          crystallised = Some(true),
+          calculationType = "crystallisation",
           calculationReason = Some("customerRequest"))
       )
       val expectedJson =
@@ -50,7 +50,7 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
            |  "inputs" : { "personalInformation" : { "taxRegime" : "UK" } },
            |  "metadata" : {
            |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
-           |    "crystallised" : true,
+           |    "calculationType" : "crystallisation",
            |    "calculationReason" : "customerRequest"
            |  }
            |}

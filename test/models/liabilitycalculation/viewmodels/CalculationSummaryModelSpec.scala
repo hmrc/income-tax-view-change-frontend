@@ -30,7 +30,7 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
       CalculationSummary(liabilityCalculationModelDeductionsMinimal()) shouldBe
         CalculationSummary(
           timestamp = None,
-          crystallised = None,
+          crystallised = true,
           unattendedCalc = false,
           taxDue = 0.0,
           income = 0,
@@ -49,7 +49,7 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
       "create a full CalculationSummary when there is a full Calculation" in {
         val expectedCalculationSummary = CalculationSummary(
           timestamp = Some("2019-02-15T09:35:15.094Z".toZonedDateTime.toLocalDate),
-          crystallised = Some(true),
+          crystallised = true,
           unattendedCalc = false,
           taxDue = 5000.99,
           income = 12500,
@@ -75,7 +75,7 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
         "incomeTaxNicAndCgtAmount is not available then take incomeTaxNicAmount as forecastIncomeTaxAndNics" in {
           val expectedCalculationSummary = CalculationSummary(
             timestamp = Some("2019-02-15T09:35:15.094Z".toZonedDateTime.toLocalDate),
-            crystallised = Some(true),
+            crystallised = true,
             unattendedCalc = false,
             taxDue = 5000.99,
             income = 12500,
@@ -109,7 +109,7 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
           val taxDue = 6000
           val expectedCalculationSummary = CalculationSummary(
             timestamp = Some("2019-02-15T09:35:15.094Z".toZonedDateTime.toLocalDate),
-            crystallised = Some(true),
+            crystallised = true,
             unattendedCalc = false,
             taxDue = taxDue,
             income = 12500,
@@ -143,7 +143,7 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
         CalculationSummary(liabilityCalculationModelErrorMessagesForIndividual) shouldBe
           CalculationSummary(
             timestamp = None,
-            crystallised = None,
+            crystallised = true,
             unattendedCalc = false,
             taxDue = 0.0,
             income = 0,
@@ -170,7 +170,7 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
       CalculationSummary(liabilityCalculationModelDeductionsMinimal(calculationReason = Some("unattendedCalculation"))) shouldBe
         CalculationSummary(
           timestamp = None,
-          crystallised = None,
+          crystallised = true,
           unattendedCalc = true,
           taxDue = 0.0,
           income = 0,
