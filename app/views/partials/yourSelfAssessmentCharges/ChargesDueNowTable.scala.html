@@ -1,0 +1,109 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import auth.MtdItUser
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.insettext.InsetText
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
+@import views.html.partials.yourSelfAssessmentCharges.TableHead
+@import models.financialDetails.YourSelfAssessmentChargesViewModel
+@import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import views.html.partials.yourSelfAssessmentCharges.TableRowWithInterest
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import services.DateServiceInterface
+@import views.html.partials.yourSelfAssessmentCharges.PaymentButton
+@import views.html.partials.yourSelfAssessmentCharges.OverduePaymentInsetText
+
+@this(
+    p: p,
+    link: link,
+    govukInsetText: GovukInsetText,
+    tableHead: TableHead,
+    implicitDateFormatter: ImplicitDateFormatterImpl,
+    tableRowWithInterest: TableRowWithInterest,
+    paymentButton: PaymentButton,
+    overduePaymentInsetText: OverduePaymentInsetText,
+    appConfig: config.FrontendAppConfig
+)
+
+@(
+    viewModel: YourSelfAssessmentChargesViewModel,
+    origin: Option[String]
+)(
+    implicit request: Request[_],
+    user: MtdItUser[_],
+    messages: Messages,
+    dateService: DateServiceInterface
+)
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"selfAssessmentCharges.$key", args: _*)
+}
+
+@getPrefix(key: String) = @{
+    s"whatYouOwe.$key"
+}
+
+@import implicitDateFormatter.longDate
+
+<div class="govuk-tabs__panel" id="charges-due-now">
+    <table class="govuk-table" id="charges-due-now-table">
+        @tableHead("over-due-payments-table-head", true)
+        <caption class="govuk-table__caption govuk-visually-hidden">@getMessage("charges-due-now")</caption>
+        <tbody class="govuk-table__body">
+            @if(viewModel.whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
+                <tr class="govuk-table__row" id="balancing-charge-type-0">
+                    <td class="govuk-table__cell">@{
+                        viewModel.whatYouOweChargesList.getRelevantDueDate.toLongDateShort
+                    }</td>
+                    <td class="govuk-table__cell">
+                        @p(id = Some("balancing-charge"))(Html(getMessage("balancingCharge.text")))
+                        @p(id = Some("pre-mtd-digital"))(Html(getMessage("pre-mtd-digital")))
+                    </td>
+                    <td class="govuk-table__cell">
+                    @getMessage("pre-mtd-year", (viewModel.currentTaxYear.endYear - 2).toString, (viewModel.currentTaxYear.endYear - 1).toString)
+                    </td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">
+                    @if(viewModel.whatYouOweChargesList.outstandingChargesModel.get.getAciChargeWithTieBreaker.isDefined
+                            && viewModel.whatYouOweChargesList.getRelevantDueDate.isBefore(viewModel.currentDate)) @{
+                        viewModel.whatYouOweChargesList.getAciChargeWithTieBreakerChargeAmount.toCurrency
+                    }
+                    </td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                        viewModel.whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.chargeAmount.toCurrency
+                    }</td>
+                </tr>
+            }
+            @for((charge, index) <- viewModel.overdueChargesWithIndex) {
+                @tableRowWithInterest(s"due-$index", charge, index, "taxYearSummary-link", origin, viewModel.taxYearSummaryUrl(charge.taxYear.endYear, origin), viewModel.LPP2Url)
+            }
+            <tr class="govuk-table__header">
+                <td class="govuk-table__header" colspan="2" id="total-amount">
+                @getMessage("table.total-amount", viewModel.whatYouOweChargesList.balanceDetails.overDueAmount.toCurrencyString)
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    @overduePaymentInsetText()
+
+    @if(user.saUtr.isDefined && !user.isAgent()) {
+        @viewModel.earliestTaxYearAndAmountByDueDate.map { taxYearWithAmount =>
+            @paymentButton(taxYearWithAmount.amount.toPence, origin)
+        }
+    }
+</div>

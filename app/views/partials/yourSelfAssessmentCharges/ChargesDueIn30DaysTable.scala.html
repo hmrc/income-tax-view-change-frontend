@@ -1,0 +1,85 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import auth.MtdItUser
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.insettext.InsetText
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
+@import views.html.partials.yourSelfAssessmentCharges.TableHead
+@import models.financialDetails.YourSelfAssessmentChargesViewModel
+@import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import views.html.partials.yourSelfAssessmentCharges.TableRowWithInterest
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import services.DateServiceInterface
+@import views.html.partials.yourSelfAssessmentCharges.TableRowWithoutInterest
+@import views.html.partials.yourSelfAssessmentCharges.PaymentInsetTextFor30Days
+@import views.html.partials.yourSelfAssessmentCharges.PaymentButton
+
+@this(
+    p: p,
+    link: link,
+    govukInsetText: GovukInsetText,
+    tableHead: TableHead,
+    implicitDateFormatter: ImplicitDateFormatterImpl,
+    tableRowWithInterest: TableRowWithInterest,
+    tableRowWithoutInterest: TableRowWithoutInterest,
+    paymentInsetTextFor30Days: PaymentInsetTextFor30Days,
+    paymentButton: PaymentButton,
+    appConfig: config.FrontendAppConfig
+)
+
+@(
+    viewModel: YourSelfAssessmentChargesViewModel,
+    origin: Option[String]
+)(
+    implicit request: Request[_],
+    user: MtdItUser[_],
+    messages: Messages,
+    dateService: DateServiceInterface
+)
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"selfAssessmentCharges.$key", args: _*)
+}
+
+@getPrefix(key: String) = @{
+    s"whatYouOwe.$key"
+}
+<div class="govuk-tabs__panel" id="charges-due-in-30-days">
+    <table class="govuk-table">
+        @tableHead("due-in-30-days-payments-table-head", false)
+        <tbody class="govuk-table__body">
+            @for((charge, index) <- viewModel.chargesDueWithin30DaysWithIndex) {
+                @tableRowWithoutInterest(s"due-30-days-$index", charge, index, "taxYearSummary-link", origin, viewModel.taxYearSummaryUrl(charge.taxYear.endYear, origin), viewModel.LPP2Url)
+            }
+            <tr class="govuk-table__header">
+                <td class="govuk-table__header" colspan="2">
+                @getMessage("table.total-amount", viewModel.whatYouOweChargesList.balanceDetails.balanceDueWithin30Days.toCurrencyString)
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+@if(user.saUtr.isDefined && !user.isAgent() && !viewModel.overdueAccruingInterestOrOutstandingChargesListNonEmpty) {
+
+    @paymentInsetTextFor30Days()
+
+    @viewModel.earliestTaxYearAndAmountByDueDate.map { taxYearWithAmount =>
+        @paymentButton(taxYearWithAmount.amount.toPence, origin)
+    }
+}

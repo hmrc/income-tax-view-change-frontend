@@ -1,0 +1,71 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import auth.MtdItUser
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.insettext.InsetText
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
+@import views.html.partials.yourSelfAssessmentCharges.TableHead
+@import models.financialDetails.YourSelfAssessmentChargesViewModel
+@import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import views.html.partials.yourSelfAssessmentCharges.TableRowWithInterest
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import services.DateServiceInterface
+@import views.html.partials.yourSelfAssessmentCharges.TableRowWithoutInterest
+@import views.html.partials.yourSelfAssessmentCharges.OverduePaymentInsetText
+@import views.html.partials.yourSelfAssessmentCharges.PaymentButton
+@import views.html.partials.yourSelfAssessmentCharges.PaymentPlanSection
+
+
+@this(
+    p: p,
+    link: link,
+    tableHead: TableHead,
+    overduePaymentInsetText: OverduePaymentInsetText,
+    tableRowWithoutInterest: TableRowWithoutInterest,
+    paymentPlanSection: PaymentPlanSection,
+    paymentButton: PaymentButton
+)
+
+@(
+    viewModel: YourSelfAssessmentChargesViewModel,
+    origin: Option[String]
+)(
+    implicit user: MtdItUser[_],
+    messages: Messages,
+)
+<div class="govuk-tabs__panel" id="charges-due-later">
+    <table class="govuk-table">
+        @tableHead("charges-due-later-table-head", showInterest = false)
+        <tbody class="govuk-table__body">
+            @for((charge, index) <- viewModel.chargesDueAfter30DaysWithIndex) {
+                @tableRowWithoutInterest(s"due-30-days-$index", charge, index, "taxYearSummary-link", origin, viewModel.taxYearSummaryUrl(charge.taxYear.endYear, origin), viewModel.LPP2Url)
+            }
+        </tbody>
+    </table>
+</div>
+
+@if(user.saUtr.isDefined && !user.isAgent() && !viewModel.overdueAccruingInterestOrOutstandingChargesListNonEmpty && !viewModel.chargesDueWithin30DaysListNonEmpty) {
+
+    @overduePaymentInsetText()
+
+    @viewModel.earliestTaxYearAndAmountByDueDate.map { taxYearWithAmount =>
+        @paymentButton(taxYearWithAmount.amount.toPence, origin)
+    }
+}
+
+@paymentPlanSection(viewModel.selfServeTimeToPayStartUrl)
