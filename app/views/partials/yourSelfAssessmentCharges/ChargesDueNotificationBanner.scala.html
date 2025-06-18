@@ -37,24 +37,15 @@
 
 @govukNotificationBanner(NotificationBanner(
     attributes = Map("id" -> "overdue-banner"),
-    content = HtmlContent(html)
+    content = HtmlContent({
+        h3(msg = getMessage("charges-due-now-with-amount", overDueAmount), classes = "govuk-notification-banner__heading").toString() ++
+        p()(Html(getMessage("important-p1"))).toString() ++
+        getMessage("important-p2") ++
+        link(
+            link = controllers.routes.PaymentController.paymentHandoff(earliestTaxYearAmount, origin).url,
+            isBold = true,
+            classes = "govuk-notification-banner__link govuk-!-margin-bottom-4 govuk-!-display-inline-block",
+            messageKey = getMessage("important-p2-link-text")
+        ).toString()
+    })
 ))
-
-@html = {
-
-    @h3(
-        msg = getMessage("charges-due-now-with-amount", overDueAmount),
-        classes = "govuk-notification-banner__heading"
-    )
-
-    @p()(Html(getMessage("important-p1")))
-
-    @getMessage("important-p2")
-
-    @link(
-        link = controllers.routes.PaymentController.paymentHandoff(earliestTaxYearAmount, origin).url,
-        isBold = true,
-        classes = "govuk-notification-banner__link govuk-!-margin-bottom-4 govuk-!-display-inline-block",
-        messageKey = getMessage("important-p2-link-text")
-    )
-}
