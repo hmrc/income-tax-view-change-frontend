@@ -370,7 +370,7 @@
             }
         }
     }
-
+    <div class="govuk-!-margin-bottom-8 govuk-!-padding-bottom-4">
     @govukSummaryList(SummaryList(
         rows = {
             if(viewModel.incomeSourceType == SelfEmployment) getSEList else Seq.empty
@@ -438,7 +438,5 @@
     @if(!showOptInOptOutContentUpdateR17){
         @quarterlyTypeInfoMessage
     }
-    <br>
-    <br>
-
+    </div>
 }
