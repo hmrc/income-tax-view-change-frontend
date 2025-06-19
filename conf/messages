@@ -14,6 +14,7 @@ base.error-prefix                                               = Error:
 base.govUk                                                      = GOV.UK
 base.confirm-and-continue                                       = Confirm and continue
 base.confirm-this-change                                        = Confirm this change
+base.software.compatible.with.mtd.income.tax.link               = software compatible with Making Tax Digital for Income Tax
 
 ## Accessibility ##
 accessibility.this-section-is                                   = This section is:
@@ -1826,6 +1827,7 @@ business.added.income.sources.button                          = Your income sour
 business.added.previous.tax.years.heading                     = Previous tax years
 business.added.previous.tax.years.t1                          = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 
+
 business.added.view.all.businesses                                                      = View all your businesses
 business.added.obligation.inset.single.annual.overdue.text                              = You have <b>1 overdue update</b>. You must submit your yearly tax return and pay the tax you owe.
 business.added.obligation.inset.single.quarterly.overdue.text                           = You have <b>1 overdue update</b> for 3 months of the {0} to {1} tax year. You must submit these updates with all required income and expenses through your compatible software.
@@ -1880,11 +1882,9 @@ business.added.sole-trader.annual.reporting.frequency.link              = your r
 
 business.added.sole-trader.submit.software.text                         = Submit updates in software
 business.added.sole-trader.submit.software.quarterly.text               = For any tax year you are reporting quarterly, you will need
-business.added.sole-trader.submit.software.quarterly.link               = software compatible with Making Tax Digital for Income Tax (opens in new tab).
 
 business.added.sole-trader.submit.tax.return                            = Submit your tax return
 business.added.sole-trader.submit.tax.return.text                       = When reporting annually, you can submit your tax return directly through your HMRC online account or
-business.added.sole-trader.submit.tax.return.link                       = software compatible with Making Tax Digital for Income Tax (opens in new tab).
 
 business.added.sole-trader.submit.annual.text                           = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
 business.added.sole-trader.submit.annual.annual.text                    = When reporting annually, you can submit your tax return directly through your HMRC online account or
@@ -1930,11 +1930,9 @@ business.added.uk-property.annual.reporting.frequency.link                = your
 
 business.added.uk-property.submit.software.text                           = Submit updates in software
 business.added.uk-property.submit.software.quarterly.text                 = For any tax year you are reporting quarterly, you will need
-business.added.uk-property.submit.software.quarterly.link                 = software compatible with Making Tax Digital for Income Tax (opens in new tab).
 
 business.added.uk-property.submit.tax.return                              = Submit your tax return
 business.added.uk-property.submit.tax.return.text                         = When reporting annually, you can submit your tax return directly through your HMRC online account or
-business.added.uk-property.submit.tax.return.link                         = software compatible with Making Tax Digital for Income Tax (opens in new tab).
 
 business.added.uk-property.submit.annual.text                             = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
 business.added.uk-property.submit.annual.annual.text                      = When reporting annually, you can submit your tax return directly through your HMRC online account or
@@ -1979,11 +1977,9 @@ business.added.foreign-property.annual.reporting.frequency.link      = your repo
 
 business.added.foreign-property.submit.software.text                         = Submit updates in software
 business.added.foreign-property.submit.software.quarterly.text               = For any tax year you are reporting quarterly, you will need
-business.added.foreign-property.submit.software.quarterly.link               = software compatible with Making Tax Digital for Income Tax (opens in new tab).
 
 business.added.foreign-property.submit.tax.return                            = Submit your tax return
 business.added.foreign-property.submit.tax.return.text                       = When reporting annually, you can submit your tax return directly through your HMRC online account or
-business.added.foreign-property.submit.tax.return.link                       = software compatible with Making Tax Digital for Income Tax (opens in new tab).
 
 business.added.foreign-property.submit.annual.text                           = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
 business.added.foreign-property.submit.annual.annual.text                    = When reporting annually, you can submit your tax return directly through your HMRC online account or
