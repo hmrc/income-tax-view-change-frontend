@@ -63,6 +63,8 @@ case class YourSelfAssessmentChargesViewModel(hasOverdueOrAccruingInterestCharge
     else               TaxYearSummaryController.renderTaxYearSummaryPage(year, origin)
   }.url
 
+  def adjustPoaUrl(implicit user: MtdItUser[_]): String =
+    controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url
 
   lazy val currentDate: LocalDate = dateService.getCurrentDate
 
