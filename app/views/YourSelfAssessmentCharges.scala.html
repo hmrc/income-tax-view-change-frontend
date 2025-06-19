@@ -159,9 +159,7 @@
                     @govukInsetText(InsetText(content = HtmlContent(codingOutInsetContent(codingOutDetails, origin))))
                 }
 
-                @if(viewModel.whatYouOweChargesList.isChargesListEmpty) {
-                    @saNoteParagraph()
-                }
+                @saNoteParagraph()
 
                 @viewModel.whatYouOweChargesList.availableCredit.map { availableCreditAmt =>
                     @unallocatedCreditParagraphContent(availableCreditAmt.toCurrencyString, viewModel.creditAndRefundUrl)
