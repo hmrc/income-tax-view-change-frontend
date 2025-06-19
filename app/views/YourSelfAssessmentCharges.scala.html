@@ -154,7 +154,11 @@
                     @dunningLockParagraph()
                 }
 
-                @claimToAdjustPoaSection(viewModel.whatYouOweChargesList.hasUnpaidPOAs, viewModel.claimToAdjustViewModel.claimToAdjustTaxYear)
+                @claimToAdjustPoaSection(
+                    viewModel.whatYouOweChargesList.hasUnpaidPOAs,
+                    viewModel.claimToAdjustViewModel.claimToAdjustTaxYear,
+                    viewModel.adjustPoaUrl
+                )
 
                 @viewModel.whatYouOweChargesList.codedOutDetails.map { codingOutDetails =>
                     @govukInsetText(InsetText(content = HtmlContent(codingOutInsetContent(codingOutDetails, origin))))
