@@ -87,7 +87,8 @@
         HeadCell(
             content = HtmlContent(getMessage("tableHead.amount").toNonBreaking)
         )
-    ))
+    )),
+    attributes = Map("id" -> "charges-due-after-30-days")
 ))
 
 @if(user.saUtr.isDefined && !user.isAgent() && !viewModel.overdueAccruingInterestOrOutstandingChargesListNonEmpty && !viewModel.chargesDueWithin30DaysListNonEmpty) {

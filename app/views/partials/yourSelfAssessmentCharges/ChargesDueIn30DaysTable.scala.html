@@ -29,6 +29,15 @@
 @import views.html.partials.yourSelfAssessmentCharges.PaymentInsetTextFor30Days
 @import views.html.partials.yourSelfAssessmentCharges.PaymentButton
 @import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukTable
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
+@import uk.gov.hmrc.govukfrontend.views.Aliases.TableRow
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.table.HeadCell
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+@import views.html.partials.yourSelfAssessmentCharges.PaymentTypeEntry
+@import models.financialDetails.YourSelfAssessmentChargesViewModel.getDisplayDueDate
+@import views.html.partials.yourSelfAssessmentCharges.TaxYearSummaryLink
+@import _root_.implicits.HtmlFormatter.NbspString
 
 @this(
     p: p,
@@ -39,6 +48,9 @@
     tableRowWithInterest: TableRowWithInterest,
     tableRowWithoutInterest: TableRowWithoutInterest,
     paymentInsetTextFor30Days: PaymentInsetTextFor30Days,
+    govukTable: GovukTable,
+    paymentTypeEntry: PaymentTypeEntry,
+    taxYearSummaryLink: TaxYearSummaryLink,
     paymentButton: PaymentButton,
     appConfig: config.FrontendAppConfig
 )
@@ -53,21 +65,48 @@
     dateService: DateServiceInterface
 )
 
-<div class="govuk-tabs__panel" id="charges-due-in-30-days">
-    <table class="govuk-table">
-        @tableHead("due-in-30-days-payments-table-head", false)
-        <tbody class="govuk-table__body">
-            @for((charge, index) <- viewModel.chargesDueWithin30DaysWithIndex) {
-                @tableRowWithoutInterest(s"due-30-days-$index", charge, index, "taxYearSummary-link", origin, viewModel.taxYearSummaryUrl(charge.taxYear.endYear, origin), viewModel.LPP2Url)
-            }
-            <tr class="govuk-table__header">
-                <td class="govuk-table__header" colspan="2">
-                @getMessage("table.total-amount", viewModel.whatYouOweChargesList.balanceDetails.balanceDueWithin30Days.toCurrencyString)
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+@import implicitDateFormatter.longDate
+
+@govukTable(Table(
+    rows = (for((charge, index) <- viewModel.chargesDueWithin30DaysWithIndex) yield {
+        Seq(
+            TableRow(
+                content = HtmlContent(getDisplayDueDate(charge).toLongDateShort.toNonBreaking)
+            ),
+            TableRow(
+                content = HtmlContent(paymentTypeEntry(viewModel.LPP2Url, charge, s"due-30-days-$index", isOverduePayment = false, index, origin)),
+                format = Some("numeric")
+            ),
+            TableRow(
+                content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, "taxYearSummary-link", viewModel.taxYearSummaryUrl(charge.taxYear.endYear, origin))),
+                format = Some("numeric")
+            )
+        )
+    })
+    ++ Seq(Seq(
+        TableRow(
+            attributes = Map("id" -> "total-amount"),
+            content = HtmlContent(getMessage("table.total-amount", viewModel.whatYouOweChargesList.balanceDetails.overDueAmount.toCurrencyString)),
+            colspan = Some(5),
+            classes = "govuk-table__header"
+        )
+    )),
+    head = Some(Seq(
+        HeadCell(
+            content = Text(getMessage("tableHead.due-date"))
+        ),
+        HeadCell(
+            content = Text(getMessage("tableHead.type-of-charge"))
+        ),
+        HeadCell(
+            content = Text(getMessage("tableHead.tax-year"))
+        ),
+        HeadCell(
+            content = HtmlContent(getMessage("tableHead.amount").toNonBreaking)
+        )
+    )),
+    attributes = Map("id" -> "charges-due-in-30-days")
+))
 
 @if(user.saUtr.isDefined && !user.isAgent() && !viewModel.overdueAccruingInterestOrOutstandingChargesListNonEmpty) {
 
