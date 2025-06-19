@@ -36,6 +36,10 @@ case class CalculationSummary(timestamp: Option[LocalDate],
                               periodTo: Option[LocalDate] = None,
                               messages: Option[Messages] = None) {
 
+  def errorPresent() = {
+    messages.isDefined && messages.exists(_.errorMessages.nonEmpty)
+  }
+
 }
 
 object CalculationSummary extends ImplicitDateParser {
