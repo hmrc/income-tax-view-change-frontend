@@ -82,10 +82,9 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
                 <td class="govuk-table__cell">
                     <a class="govuk-link" href="@payment.linkUrl" id="payment-@index">
                         @messages(s"paymentHistory.${payment.creditType.key}")
-                        <span class="govuk-visually-hidden">@payment.visuallyHiddenText @if(yearPayments.size > 1){ Item @(index + 1)}</span>
+                       <div> <span class="govuk-visually-hidden">@payment.visuallyHiddenText @if(yearPayments.size > 1){ Item @(index + 1)}</span></div>
                     </a>
-                    @if(payment.isCredit) {
-                    <br>
+                    @if(true) {
                     <a class="govuk-body-s">
                         @messages("paymentHistory.taxYear", payment.getTaxYear.startYear.toString, payment.getTaxYear.endYear.toString)
                     </a>
