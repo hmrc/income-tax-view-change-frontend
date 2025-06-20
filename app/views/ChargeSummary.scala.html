@@ -85,7 +85,7 @@
         @if((viewModel.chargeItem.transactionType == PoaOneDebit | viewModel.chargeItem.transactionType == PoaTwoDebit) && viewModel.latePaymentInterestCharge) {
             @p(id = Some("lpi-poa5"), classes = "govuk-body") {
                 @messages("chargeSummary.lpi.paymentsOnAccount.textOne")
-                <a class="govuk-link" href="https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate">@messa("chargeSummary.lpi.paymentsOnAccount.linkText")</a>
+                <a class="govuk-link" href="https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate">@messages("chargeSummary.lpi.paymentsOnAccount.linkText")</a>
                 @messages("chargeSummary.lpi.paymentsOnAccount.textTwo")
             }
             @p(id = Some("lpi-poa6"), classes = "govuk-body govuk-!-margin-bottom-8") {
@@ -94,7 +94,7 @@
             }
         }
     </div>
-
+}
 @balancingChargeExplanation = {
     <div id="charge-explanation">
         @p(){@messages("chargeSummary.definition.balancingcharge.p1")}
