@@ -17,21 +17,20 @@
 @import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 @import views.html.partials.taxYearSummary.NoForecastContent
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
-@import uk.gov.hmrc.govukfrontend.views.Aliases.{InsetText,Text}
+@import uk.gov.hmrc.govukfrontend.views.Aliases.{InsetText, Text}
+@import views.html.partials.taxYearSummary.ForecastContentTable
+
 @this(
-    noForecastContent: NoForecastContent,
-        govukInsetText: GovukInsetText
+        noForecastContent: NoForecastContent,
+        govukInsetText: GovukInsetText,
+        forecastContentTable: ForecastContentTable
 )
 
-@(viewModel: TaxYearSummaryViewModel, taxYear: Int)(implicit messages: Messages)
+@(viewModel: TaxYearSummaryViewModel, taxYear: Int, isAgent: Boolean)(implicit messages: Messages)
 
-@showForecastData = @{
-    viewModel.showForecastData
-}
-
-@if(showForecastData && viewModel.calculationSummary.isDefined) {
-    showForecastData
+@if(viewModel.showForecastData && viewModel.calculationSummary.isDefined) {
+    @forecastContentTable(viewModel, taxYear, isAgent)
     @govukInsetText(InsetText(content = Text(messages("tax-year-summary.forecast_tab.insetText", taxYear.toString)), id = Some("inset_forecast")))
 } else {
-    @noForecastContent
+    @noForecastContent()
 }
