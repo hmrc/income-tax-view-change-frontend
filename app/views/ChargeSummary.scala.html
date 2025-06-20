@@ -137,6 +137,36 @@
     </div>
 }
 
+@getLateSubmissionPenaltyInterestContent = {
+    <div>
+        @p(id = Some("lpi-LSP1")){@messages("chargeSummary.lpi.lateSubmissionPenalty.p1")}
+        @p(id = Some("lpi-LSP2")) {
+            @messages("chargeSummary.lpi.penalties.textOne")
+            <a class="govuk-link" href="https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate">@messages("chargeSummary.lpi.penalties.linkText")</a>
+            @messages("chargeSummary.lpi.penalties.textTwo")
+        }
+        @p(id = Some("lpi-LSP3")) {
+            @messages("chargeSummary.lpi.penalties.p3")
+            <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.lpi.penalties.p3LinkText")</a><br><br>
+            }
+    </div>
+}
+
+@getFirstlatePaymentPenaltyInterestContent = {
+    <div>
+        @p(id = Some("lpi-LPP1")){@messages("chargeSummary.lpi.firstLatePaymentPenalty.p1")}
+        @p(id = Some("lpi-LPP2")) {
+            @messages("chargeSummary.lpi.penalties.textOne")
+            <a class="govuk-link" href="https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate">@messages("chargeSummary.lpi.penalties.linkText")</a>
+            @messages("chargeSummary.lpi.penalties.textTwo")
+        }
+        @p(id = Some("lpi-LPP3")) {
+            @messages("chargeSummary.lpi.penalties.p3")
+            <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.lpi.penalties.p3LinkText")</a><br><br>
+            }
+    </div>
+}
+
 @getInterestRatesLink = {
     @p(id = Some("interest-link")) {
         @messages("chargeSummary.lpi.poaExtraCharge.link")
@@ -228,8 +258,10 @@
     case (PoaTwoReconciliationCredit, _)                                                   => reviewAndReconcilePoaCreditExplanation(PoaTwoDebit)
     case (BalancingCharge, None) if !viewModel.latePaymentInterestCharge                                    => balancingChargeExplanation
     case (BalancingCharge, None)                                                                            => getBalancingPaymentsExplanationContent
-    case (FirstLatePaymentPenalty, _)                                                                       => firstLatePaymentPenaltyExplanation
-    case (LateSubmissionPenalty, _)                                                                         => lateSubmissionPenaltyExplaination
+    case (FirstLatePaymentPenalty, _) if !viewModel.latePaymentInterestCharge                               => firstLatePaymentPenaltyExplanation
+    case (FirstLatePaymentPenalty, _)                                                                       => getFirstlatePaymentPenaltyInterestContent
+    case (LateSubmissionPenalty, _) if !viewModel.latePaymentInterestCharge                                 => lateSubmissionPenaltyExplaination
+    case (LateSubmissionPenalty, _)                                                                         => getLateSubmissionPenaltyInterestContent
     case _                                                                                                  =>
 }
 }
