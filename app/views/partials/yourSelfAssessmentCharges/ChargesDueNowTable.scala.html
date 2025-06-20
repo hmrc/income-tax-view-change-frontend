@@ -67,11 +67,9 @@
 
 @govukTable(Table(
     rows = Seq(
-
         Option.when(viewModel.whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero)(
             Seq(
                 TableRow(
-                    attributes = Map("id" -> "balancing-charge-type-0"),
                     content = Text(viewModel.whatYouOweChargesList.getRelevantDueDate.toLongDateShort)
                 ),
                 TableRow(
@@ -113,7 +111,7 @@
                     )
                 ),
                 TableRow(
-                    content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, s"due-$index", viewModel.taxYearSummaryUrl(charge.taxYear.endYear, origin)))
+                    content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, "taxYearSummary-link", viewModel.taxYearSummaryUrl(charge.taxYear.endYear, origin)))
                 ),
                 TableRow(
                     content = HtmlContent(if(charge.hasAccruingInterest) { s"""${charge.getInterestOutstandingAmount.toCurrency}""" } else ""),
