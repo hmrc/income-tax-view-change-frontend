@@ -16,6 +16,7 @@
 
 package views.nextUpdates
 
+import auth.MtdItUser
 import config.FrontendAppConfig
 import models.admin.{FeatureSwitch, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
@@ -23,6 +24,7 @@ import models.obligations._
 import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutMultiYearViewModel, OptOutOneYearViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.optout.{OneYearOptOutFollowedByAnnual, OneYearOptOutFollowedByMandated}
@@ -44,7 +46,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
 
   class Setup(quarterlyUpdateContentShow: Boolean = true, isSupportingAgent: Boolean = false, reportingFrequencyPageFsEnabled: Boolean = true) {
 
-    val user =
+    val user: MtdItUser[_] =
       getIndividualUser(FakeRequest())
         .addFeatureSwitches(List(
           FeatureSwitch(ReportingFrequencyPage, reportingFrequencyPageFsEnabled)
@@ -65,7 +67,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
     val optOutOneYearViewModel: OptOutOneYearViewModel =
       OptOutOneYearViewModel(TaxYear.forYearEnd(2024), Some(OneYearOptOutFollowedByAnnual))
 
-    val optOutOneYearViewModelWithMandated = optOutOneYearViewModel.copy(state = Some(OneYearOptOutFollowedByMandated))
+    val optOutOneYearViewModelWithMandated: OptOutOneYearViewModel = optOutOneYearViewModel.copy(state = Some(OneYearOptOutFollowedByMandated))
 
     val optOutMultiYearViewModel: OptOutMultiYearViewModel =
       OptOutMultiYearViewModel()
@@ -82,7 +84,6 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       Jsoup.parse(contentAsString(
         nextUpdatesView(
           obligationsModel,
-          Some(optOutOneYearViewModel),
           checks,
           "testBackURL",
           isSupportingAgent = isSupportingAgent,
@@ -95,7 +96,6 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       Jsoup.parse(contentAsString(
         nextUpdatesView(
           currentObligations = obligationsModel,
-          optOutViewModel = Some(optOutOneYearViewModel),
           checks = checks,
           backUrl = "testBackURL",
           isSupportingAgent = isSupportingAgent,
@@ -108,7 +108,6 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       Jsoup.parse(contentAsString(
         nextUpdatesView(
           currentObligations = obligationsModel,
-          optOutViewModel = Some(optOutOneYearViewModelWithMandated),
           checks = checks,
           backUrl = "testBackURL",
           isSupportingAgent = isSupportingAgent,
@@ -121,7 +120,6 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       Jsoup.parse(contentAsString(
         nextUpdatesView(
           currentObligations = obligationsModel,
-          optOutViewModel = Some(optOutOneYearViewModelWithMandated),
           checks = checks,
           backUrl = "testBackURL",
           isSupportingAgent = isSupportingAgent,
@@ -135,7 +133,6 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       Jsoup.parse(contentAsString(
         nextUpdatesView(
           currentObligations = obligationsModel,
-          optOutViewModel = Some(optOutMultiYearViewModel),
           checks = checks,
           backUrl = "testBackURL",
           isSupportingAgent = isSupportingAgent,
@@ -222,8 +219,8 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
 
       s"have the correct TradeName" in new Setup() {
 
-        val section = oneYearOptOutAnnualView.select(".govuk-accordion__section:nth-of-type(2)")
-        val table = section.select(".govuk-table")
+        val section: Elements = oneYearOptOutAnnualView.select(".govuk-accordion__section:nth-of-type(2)")
+        val table: Elements = section.select(".govuk-table")
 
         table.select(".govuk-table__cell:nth-of-type(1)").text() shouldBe messages("nextUpdates.quarterly")
         table.select(".govuk-table__cell:nth-of-type(2)").text() shouldBe messages(testTradeName)

@@ -102,7 +102,7 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
     "render the input error for " + incomeSourceType in new Setup(isAgent, prefix, incomeSourceType, true) {
       document.getElementById(s"$prefix-error").text() shouldBe messages("base.error-prefix") + " " +
         messages(s"$errorMessageKey")
-      document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
+      document.getElementsByClass("govuk-error-summary__title").text() shouldBe messages("base.error_summary.heading")
       document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe messages(s"$errorMessageKey")
     }
   }

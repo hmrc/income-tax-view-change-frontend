@@ -179,7 +179,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ControllerISpecHelper
 
                 result should have(
                   httpStatus(BAD_REQUEST),
-                  elementTextByID("error-summary-heading")(messagesAPI("base.error_summary.heading"))
+                  elementTextByClass("govuk-error-summary__title")(messagesAPI("base.error_summary.heading"))
                 )
               }
             }

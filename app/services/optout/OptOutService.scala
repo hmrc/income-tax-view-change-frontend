@@ -145,13 +145,13 @@ class OptOutService @Inject()(
     } yield (proposition, nextUpdatesOptOutViewModel(proposition))
   }
 
-  def nextUpdatesPageOptOutViewModels()(implicit user: MtdItUser[_],
-                                        hc: HeaderCarrier,
-                                        ec: ExecutionContext): Future[(NextUpdatesQuarterlyReportingContentChecks, Option[OptOutViewModel])] = {
+  def nextUpdatesPageOptOutChecks()(implicit user: MtdItUser[_],
+                                    hc: HeaderCarrier,
+                                    ec: ExecutionContext): Future[NextUpdatesQuarterlyReportingContentChecks] = {
     for {
       proposition <- fetchOptOutProposition()
       _ <- repository.initialiseOptOutJourney(proposition)
-    } yield (nextUpdatesQuarterlyReportingContentChecks(proposition), nextUpdatesOptOutViewModel(proposition))
+    } yield nextUpdatesQuarterlyReportingContentChecks(proposition)
   }
 
   private def nextUpdatesQuarterlyReportingContentChecks(oop: OptOutProposition) = {

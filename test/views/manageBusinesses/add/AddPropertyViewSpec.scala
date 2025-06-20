@@ -81,7 +81,7 @@ class AddPropertyViewSpec extends TestSupport{
           messages("manageBusinesses.type-of-property.error")
       }
       "render the error summary" in new Setup(isAgent, hasError = true) {
-        document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
+        document.getElementsByClass("govuk-error-summary__title").text() shouldBe messages("base.error_summary.heading")
         document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe
           messages("manageBusinesses.type-of-property.error")
       }
