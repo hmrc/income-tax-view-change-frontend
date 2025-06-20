@@ -90,7 +90,7 @@
     ++ Seq(Seq(
         TableRow(
             attributes = Map("id" -> "total-amount"),
-            content = HtmlContent(getMessage("table.total-amount", viewModel.whatYouOweChargesList.balanceDetails.overDueAmount.toCurrencyString)),
+            content = HtmlContent(getMessage("table.total-amount", viewModel.whatYouOweChargesList.balanceDetails.balanceDueWithin30Days.toCurrencyString)),
             colspan = Some(5),
             classes = "govuk-table__header"
         )
@@ -109,7 +109,7 @@
             content = HtmlContent(getMessage("tableHead.amount").toNonBreaking)
         )
     )),
-    attributes = Map("id" -> "charges-due-in-30-days")
+    attributes = Map("id" -> "charges-due-in-30-days-table")
 ))
 
 @if(user.saUtr.isDefined && !user.isAgent() && !viewModel.overdueAccruingInterestOrOutstandingChargesListNonEmpty) {

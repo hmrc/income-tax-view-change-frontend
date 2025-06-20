@@ -92,7 +92,7 @@
             content = HtmlContent(getMessage("tableHead.amount").toNonBreaking)
         )
     )),
-    attributes = Map("id" -> "charges-due-after-30-days")
+    attributes = Map("id" -> "charges-due-after-30-days-table")
 ))
 
 @if(user.saUtr.isDefined && !user.isAgent() && !viewModel.overdueAccruingInterestOrOutstandingChargesListNonEmpty && !viewModel.chargesDueWithin30DaysListNonEmpty) {
