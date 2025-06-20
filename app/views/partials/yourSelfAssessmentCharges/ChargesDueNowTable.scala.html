@@ -17,12 +17,9 @@
 @import views.html.components._
 @import auth.MtdItUser
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.insettext.InsetText
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
-@import views.html.partials.yourSelfAssessmentCharges.TableHead
 @import models.financialDetails.YourSelfAssessmentChargesViewModel
 @import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
-@import views.html.partials.yourSelfAssessmentCharges.TableRowWithInterest
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import services.DateServiceInterface
 @import views.html.partials.yourSelfAssessmentCharges.PaymentButton
@@ -42,12 +39,10 @@
     p: p,
     link: link,
     govukInsetText: GovukInsetText,
-    tableHead: TableHead,
     govukTable: GovukTable,
     paymentTypeEntry: PaymentTypeEntry,
     taxYearSummaryLink: TaxYearSummaryLink,
     implicitDateFormatter: ImplicitDateFormatterImpl,
-    tableRowWithInterest: TableRowWithInterest,
     paymentButton: PaymentButton,
     overduePaymentInsetText: OverduePaymentInsetText,
     appConfig: config.FrontendAppConfig

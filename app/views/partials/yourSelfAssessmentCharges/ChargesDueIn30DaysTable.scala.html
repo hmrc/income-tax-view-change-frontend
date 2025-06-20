@@ -17,15 +17,11 @@
 @import views.html.components._
 @import auth.MtdItUser
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.insettext.InsetText
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
-@import views.html.partials.yourSelfAssessmentCharges.TableHead
 @import models.financialDetails.YourSelfAssessmentChargesViewModel
 @import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
-@import views.html.partials.yourSelfAssessmentCharges.TableRowWithInterest
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import services.DateServiceInterface
-@import views.html.partials.yourSelfAssessmentCharges.TableRowWithoutInterest
 @import views.html.partials.yourSelfAssessmentCharges.PaymentInsetTextFor30Days
 @import views.html.partials.yourSelfAssessmentCharges.PaymentButton
 @import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
@@ -43,10 +39,7 @@
     p: p,
     link: link,
     govukInsetText: GovukInsetText,
-    tableHead: TableHead,
     implicitDateFormatter: ImplicitDateFormatterImpl,
-    tableRowWithInterest: TableRowWithInterest,
-    tableRowWithoutInterest: TableRowWithoutInterest,
     paymentInsetTextFor30Days: PaymentInsetTextFor30Days,
     govukTable: GovukTable,
     paymentTypeEntry: PaymentTypeEntry,

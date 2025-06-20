@@ -16,10 +16,8 @@
 
 @import views.html.components._
 @import auth.MtdItUser
-@import views.html.partials.yourSelfAssessmentCharges.TableHead
 @import models.financialDetails.YourSelfAssessmentChargesViewModel
 @import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
-@import views.html.partials.yourSelfAssessmentCharges.TableRowWithoutInterest
 @import views.html.partials.yourSelfAssessmentCharges.LaterPaymentInsetText
 @import views.html.partials.yourSelfAssessmentCharges.PaymentButton
 @import models.financialDetails.YourSelfAssessmentChargesViewModel.getDisplayDueDate
@@ -38,9 +36,7 @@
 @this(
     p: p,
     link: link,
-    tableHead: TableHead,
     laterPaymentInsetText: LaterPaymentInsetText,
-    tableRowWithoutInterest: TableRowWithoutInterest,
     implicitDateFormatter: ImplicitDateFormatterImpl,
     paymentTypeEntry: PaymentTypeEntry,
     govukTable: GovukTable,
