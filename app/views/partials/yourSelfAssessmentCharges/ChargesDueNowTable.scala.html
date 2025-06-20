@@ -73,6 +73,7 @@
                     content = Text(viewModel.whatYouOweChargesList.getRelevantDueDate.toLongDateShort)
                 ),
                 TableRow(
+                    attributes = Map("id" -> "balancing-charge-type-0"),
                     content = HtmlContent(
                         p(id = Some("balancing-charge"))(Html(getMessage("balancingCharge.text"))).toString() ++
                         p(id = Some("pre-mtd-digital"))(Html(getMessage("pre-mtd-digital"))).toString()
@@ -104,6 +105,7 @@
                     content = HtmlContent(getDisplayDueDate(charge).toLongDateShort.toNonBreaking)
                 ),
                 TableRow(
+                    attributes = Map("id" -> s"due-$index"),
                     content = HtmlContent(
                         paymentTypeEntry(viewModel.LPP2Url, charge, s"due-$index", isOverduePayment = true, index, origin).toString() ++
                             (if(charge.dunningLock) { s"""<div class="form-hint govuk-body-s"> ${getMessage("paymentUnderReview")} </div>""" } else "") ++

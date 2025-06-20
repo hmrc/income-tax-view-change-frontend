@@ -74,6 +74,7 @@
                 content = HtmlContent(getDisplayDueDate(charge).toLongDateShort.toNonBreaking)
             ),
             TableRow(
+                attributes = Map("id" -> s"due-$index"),
                 content = HtmlContent(paymentTypeEntry(viewModel.LPP2Url, charge, s"due-30-days-$index", isOverduePayment = false, index, origin)),
                 format = Some("numeric")
             ),
