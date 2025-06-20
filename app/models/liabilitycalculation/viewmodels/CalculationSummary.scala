@@ -22,7 +22,7 @@ import models.liabilitycalculation.{LiabilityCalculationResponse, Messages}
 import java.time.LocalDate
 
 case class CalculationSummary(timestamp: Option[LocalDate],
-                              crystallised: Option[Boolean],
+                              crystallised: Boolean,
                               unattendedCalc: Boolean,
                               taxDue: BigDecimal,
                               income: Int,
@@ -63,7 +63,7 @@ object CalculationSummary extends ImplicitDateParser {
 
     CalculationSummary(
       timestamp = calc.metadata.calculationTimestamp.map(_.toZonedDateTime.toLocalDate),
-      crystallised = calc.metadata.crystallised,
+      crystallised = calc.metadata.isCalculationCrystallised,
       unattendedCalc = isUnattendedCalc(calc.metadata.calculationReason),
       taxDue = getTaxDue(calc),
       income = calc.calculation.flatMap(c => c.taxCalculation.map(_.incomeTax.totalIncomeReceivedFromAllSources)).getOrElse(0),

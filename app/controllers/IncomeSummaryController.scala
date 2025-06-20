@@ -60,7 +60,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
       case liabilityCalc: LiabilityCalculationResponse =>
         val viewModel = IncomeBreakdownViewModel(liabilityCalc.calculation)
         val fallbackBackUrl = getFallbackUrl(user.session.get(calcPagesBackPage), isAgent,
-          liabilityCalc.metadata.crystallised.getOrElse(false), taxYear, origin)
+          liabilityCalc.metadata.isCalculationCrystallised, taxYear, origin)
         viewModel match {
           case Some(model) => Ok(incomeBreakdown(model, taxYear, backUrl = fallbackBackUrl, isAgent = isAgent,
             btaNavPartial = user.btaNavPartial))

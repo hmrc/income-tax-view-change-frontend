@@ -48,7 +48,7 @@ class IncomeTaxCalculationConnectorISpec extends AnyWordSpec with ComponentSpecB
       |  },
       |  "metadata": {
       |    "calculationTimestamp": "2024-02-15T09:35:15.094Z",
-      |    "crystallised": false,
+      |    "calculationType": "inYear",
       |    "calculationReason": "customerRequest"
       |  }
       |}
@@ -62,7 +62,7 @@ class IncomeTaxCalculationConnectorISpec extends AnyWordSpec with ComponentSpecB
 
           val result = connector.getCalculationResponse(mtditid, nino, taxYear).futureValue
 
-          result shouldBe LiabilityCalculationResponse(Inputs(PersonalInformation("UK", None)), Metadata(Some("2024-02-15T09:35:15.094Z"), Some(false), Some("customerRequest"), None, None), None, None)
+          result shouldBe LiabilityCalculationResponse(Inputs(PersonalInformation("UK", None)), Metadata(Some("2024-02-15T09:35:15.094Z"), calculationType = "inYear", Some("customerRequest"), None, None), None, None)
           WiremockHelper.verifyGet(s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear")
         }
 
@@ -92,7 +92,7 @@ class IncomeTaxCalculationConnectorISpec extends AnyWordSpec with ComponentSpecB
 
           val result = connector.getCalculationResponseByCalcId(mtditid, nino, calculationId, taxYear.toInt).futureValue
 
-          result shouldBe LiabilityCalculationResponse(Inputs(PersonalInformation("UK", None)), Metadata(Some("2024-02-15T09:35:15.094Z"), Some(false), Some("customerRequest"), None, None), None, None)
+          result shouldBe LiabilityCalculationResponse(Inputs(PersonalInformation("UK", None)), Metadata(Some("2024-02-15T09:35:15.094Z"), calculationType = "inYear", Some("customerRequest"), None, None), None, None)
           WiremockHelper.verifyGet(s"/income-tax-calculation/income-tax/nino/$nino/calc-id/$calculationId/calculation-details?taxYear=$taxYear")
         }
 
