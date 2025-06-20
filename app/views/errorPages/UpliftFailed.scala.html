@@ -22,18 +22,21 @@
     h1: h1,
     p: p,
     link: link,
-    list: bulletPointList
+    bulletPointList: bulletPointList
 )
 
 @()(implicit request : Request[_], messages: Messages)
 
 @mainTemplate(messages("upliftFailure.title"), showServiceName = false, isErrorPage = true) {
+
     @h1(msg = messages("upliftFailure.title"))
 
     @p(){@messages("upliftFailure.content")}
 
 	<div>
-        @list("upliftFailure.bullet.1", "upliftFailure.bullet.2", "upliftFailure.bullet.3")
+        @bulletPointList(
+            Seq("upliftFailure.bullet.1", "upliftFailure.bullet.2", "upliftFailure.bullet.3")
+        )
 	</div>
 
 	<div>
