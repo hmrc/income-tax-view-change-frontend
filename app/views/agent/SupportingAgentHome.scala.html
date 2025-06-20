@@ -97,9 +97,12 @@
         @messages("home.agent.supporting.cannotAccess")
     }
     @bulletList(
-        "home.agent.supporting.cannotAccess.payments",
-        "home.agent.supporting.cannotAccess.returns",
-        "home.agent.supporting.cannotAccess.nextChargesDue"
+        itemMsgKeys =
+            Seq(
+                "home.agent.supporting.cannotAccess.payments",
+                "home.agent.supporting.cannotAccess.returns",
+                "home.agent.supporting.cannotAccess.nextChargesDue"
+            )
     )
     @p(id = Some("read-more-about-differences-link")) {
         <a class="govuk-link" target="_blank" href="@messages("home.agent.supporting.readMore.link")">@messages("home.agent.supporting.readMore")</a>

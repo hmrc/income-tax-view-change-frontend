@@ -37,7 +37,9 @@
 
     @p(){@messages("agent-unauthorised.note")}
 
-    @bulletList("agent-unauthorised.note.b1", "agent-unauthorised.note.b2", "agent-unauthorised.note.b3")
+    @bulletList(
+        Seq("agent-unauthorised.note.b1", "agent-unauthorised.note.b2", "agent-unauthorised.note.b3")
+    )
 
     @link(link = "#", messageKey = "agent-unauthorised.link", target = None, rel=Some("noreferrer noopener"))
 
