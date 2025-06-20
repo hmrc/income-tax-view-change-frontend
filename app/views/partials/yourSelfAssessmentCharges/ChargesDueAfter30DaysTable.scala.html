@@ -71,6 +71,10 @@
             TableRow(
                 content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, "taxYearSummary-link", viewModel.taxYearSummaryUrl(charge.taxYear.endYear, origin))),
                 format = Some("numeric")
+            ),
+            TableRow(
+                content = HtmlContent(charge.remainingToPay.toCurrency),
+                format = Some("numeric")
             )
         )
     },
