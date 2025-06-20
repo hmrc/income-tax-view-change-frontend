@@ -118,11 +118,12 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
 
   private def handleSubmit(isAgent: Boolean, isChange: Boolean,
                            incomeSourceType: IncomeSourceType, isR17ContentEnabled: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
+    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData: UIJourneySessionData =>
       sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
         case Some(_) => IncomeSourceReportingFrequencyForm(isR17ContentEnabled).bindFromRequest().fold(
           _ => handleInvalidForm(isAgent, isChange, incomeSourceType, isR17ContentEnabled),
-          valid => handleValidForm(isAgent, isChange, valid, incomeSourceType, sessionData))
+          valid => handleValidForm(isAgent, isChange, valid, incomeSourceType, sessionData)
+        )
         case None =>
           val agentPrefix = if (isAgent) "[Agent]" else ""
           Logger("application").error(agentPrefix +
@@ -174,7 +175,7 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
                              )
                              (implicit user: MtdItUser[_]): Future[Result] = {
     val yesOrNo = form.yesNo.exists(_.toBoolean)
-    if(yesOrNo) {
+    if (yesOrNo) {
       val updatedSessionData = sessionData.copy(
         addIncomeSourceData = sessionData.addIncomeSourceData.map(_.copy(changeReportingFrequency = Some(yesOrNo))))
       sessionService.setMongoData(updatedSessionData)
