@@ -62,8 +62,7 @@
             ),
             TableRow(
                 attributes = Map("id" -> s"due-$index"),
-                content = HtmlContent(paymentTypeEntry(viewModel.LPP2Url, charge, s"due-30-days-$index", isOverduePayment = false, index, origin)),
-                format = Some("numeric")
+                content = HtmlContent(paymentTypeEntry(viewModel.LPP2Url, charge, s"due-30-days-$index", isOverduePayment = false, index, origin))
             ),
             TableRow(
                 content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, "taxYearSummary-link", viewModel.taxYearSummaryUrl(charge.taxYear.endYear, origin))),
