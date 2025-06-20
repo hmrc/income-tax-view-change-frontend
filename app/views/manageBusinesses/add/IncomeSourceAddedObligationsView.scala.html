@@ -223,7 +223,7 @@
 
         @p(id=Some("submit-via-compatible-software-quarterly")) {
             @getMessage("submit.software.quarterly.text")
-            @linkComponent(id = Some("compatible-software-link"), url = getSoftwareUrl, message = getMessage("submit.software.quarterly.link"))
+            @linkComponent(id = Some("compatible-software-link"), url = getSoftwareUrl, message = messages("base.software.compatible.with.mtd.income.tax.link") + " ", target = Some("_blank"), additionalOpenTabMessage = Some("."))
         }
 
         @p(id=Some("submit-via-compatible-software-annual")) { @messages(getMessage("submit.annual.text")) }
@@ -234,7 +234,7 @@
 
         @p(id=Some("submit-via-compatible-software-annual")) {
             @getMessage("submit.annual.annual.text")
-            @linkComponent(id = Some("compatible-software-link"), url = getSoftwareUrl, message = getMessage("submit.software.quarterly.link"))
+            @linkComponent(id = Some("compatible-software-link"), url = getSoftwareUrl, message = messages("base.software.compatible.with.mtd.income.tax.link") + " ", target = Some("_blank"), additionalOpenTabMessage = Some("."))
         }
 
     } else {
@@ -243,7 +243,7 @@
 
         @p(id=Some("submit-via-compatible-software-quarterly")) {
             @getMessage("submit.software.quarterly.text")
-            @linkComponent(id = Some("compatible-software-link"), url = getSoftwareUrl, message = getMessage("submit.software.quarterly.link"))
+            @linkComponent(id = Some("compatible-software-link"), url = getSoftwareUrl, message = messages("base.software.compatible.with.mtd.income.tax.link") + " ", target = Some("_blank"), additionalOpenTabMessage = Some("."))
         }
     }
 }

@@ -15,19 +15,17 @@
  *@
 
 @import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+@import forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
+@import services.DateServiceInterface
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.insettext.InsetText
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.insettext.InsetText
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-@import views.html.helpers.injected.ErrorSummary
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import services.DateServiceInterface
-@import forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
 
 
 @this(
@@ -41,7 +39,7 @@
     govukInsetText: GovukInsetText,
     formWithCSRF: FormWithCSRF,
     govukRadios: GovukRadios,
-    errorSummary: ErrorSummary,
+    govukErrorSummary: GovukErrorSummary,
     govukTable : GovukTable,
     govukButton: GovukButton,
 )
@@ -144,9 +142,9 @@
         btaNavPartial = user.btaNavPartial
     ) {
 
-    @errorSummary(
-        form = form
-    )
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form, mapping = Map("reporting-quarterly-form" -> "yes-response")))
+    }
 
     @hmrcPageHeading(PageHeading(
         text = getMessage("h1"),
