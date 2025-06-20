@@ -21,6 +21,7 @@
 @import java.time.LocalDate
 @import models.obligations._
 @import services.optout.OptOutProposition
+@import play.twirl.api.HtmlFormat
 
 @this(
         govukTabs: GovukTabs,
@@ -81,8 +82,6 @@
 
     @detailsDropdown(getMessage("quarterly.dropdown.heading"), quarterlyDropdownContent)
 
-    @h2(getMessage("quarterly.table.heading"), optId = Some("current-year-quarterly-table-heading"))
-
     @quarterlyUpdatesTable
 
     @if(!isSupportingAgent) {
@@ -100,7 +99,11 @@
         @link(link = getMessage("quarterly.compatibleSoftware.link"), target = Some("_blank"), messageKey = getMessage("quarterly.text4"), id = Some("quarterly-compatible-software-link"))
     }
 
-    <p id="current-year-return-due-date" class="govuk-body">@getMessage("quarterly.text5", currentTaxYearStart, currentTaxYearEnd)  <strong class="govuk-!-font-weight-bold">@getMessage("quarterly.text6", nextTaxYearEnd)</strong></p>
+    @p(id = Some("current-year-return-due-date")) {
+        @getMessage("quarterly.text5", currentTaxYearStart, currentTaxYearEnd)
+        <strong class="govuk-!-font-weight-bold">@getMessage("quarterly.text6", nextTaxYearEnd)</strong>
+    }
+
 }
 
 @currentYearTabContentAnnual = {
@@ -111,7 +114,10 @@
         @getMessage("annual.text2")
         @link(link = getMessage("quarterly.compatibleSoftware.link"), target = Some("_blank"), messageKey = getMessage("annual.link"), id = Some("annual-compatible-software-link"))
     }
-    <p id="current-year-return-due-date" class="govuk-body">@getMessage("annual.text3", currentTaxYearStart, currentTaxYearEnd)  <strong class="govuk-!-font-weight-bold">@getMessage("annual.text4", nextTaxYearEnd)</strong></p>
+    @p(id = Some("current-year-return-due-date")) {
+        @getMessage("annual.text3", currentTaxYearStart, currentTaxYearEnd)
+        <strong class="govuk-!-font-weight-bold">@getMessage("annual.text4", nextTaxYearEnd)</strong>
+    }
 }
 
 @nextYearTabContentQuarterly = {
@@ -145,26 +151,33 @@
     }
 }
 
-@quarterlyUpdatesTable = {
-    @govukTable(Table(
-        head = Some(List(
-            HeadCell(
-                content = Text(getMessage("quarterly.table.heading.row1")),
-                attributes = Map("id" -> "table-head-name-deadline")),
-            HeadCell(
-                content = Text(getMessage("quarterly.table.heading.row2")),
-                attributes = Map("id" -> "table-head-name-period")),
-            HeadCell(
-                content = Text(getMessage("quarterly.table.heading.row3")),
-                attributes = Map("id" -> "table-head-name-updates-due"))
-        )),
-        rows = quarterlyUpdatesRows,
-        attributes = Map("id" -> "quarterly-updates-table"),
-    ))
+@quarterlyUpdatesTable = @{
+    viewModel.allDeadlines match {
+        case Nil => HtmlFormat.empty
+        case deadlines =>
+            HtmlFormat.fill(Seq(
+                h2(getMessage("quarterly.table.heading"), optId = Some("current-year-quarterly-table-heading")),
+                govukTable(Table(
+                    head = Some(List(
+                        HeadCell(
+                            content = Text(getMessage("quarterly.table.heading.row1")),
+                            attributes = Map("id" -> "table-head-name-deadline")),
+                        HeadCell(
+                            content = Text(getMessage("quarterly.table.heading.row2")),
+                            attributes = Map("id" -> "table-head-name-period")),
+                        HeadCell(
+                            content = Text(getMessage("quarterly.table.heading.row3")),
+                            attributes = Map("id" -> "table-head-name-updates-due"))
+                    )),
+                    rows = quarterlyUpdatesRows(deadlines),
+                    attributes = Map("id" -> "quarterly-updates-table")
+                ))
+            ))
+    }
 }
 
-@quarterlyUpdatesRows = @{
-    viewModel.allDeadlines.zipWithIndex.map { case (DeadlineViewModel(obligationType: ObligationType, bothQuarters: Boolean, deadlineDate: LocalDate, standardObligations: Seq[ObligationWithIncomeType], calendarObligations: Seq[ObligationWithIncomeType]), index) =>
+@quarterlyUpdatesRows(deadlines: Seq[DeadlineViewModel]) = @{
+    deadlines.zipWithIndex.map { case (DeadlineViewModel(obligationType: ObligationType, bothQuarters: Boolean, deadlineDate: LocalDate, standardObligations: Seq[ObligationWithIncomeType], calendarObligations: Seq[ObligationWithIncomeType]), index) =>
         val allValidObligations = getObligations(bothQuarters, standardObligations, calendarObligations)
 
         Seq(

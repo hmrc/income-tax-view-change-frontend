@@ -781,6 +781,7 @@ nextUpdates.dropdown.finalDeclaration.text                      = Eich datganiad
 nextUpdates.table.header.type									= Math o ddiweddariad
 nextUpdates.table.header.source									= Ffynhonnell incwm
 nextUpdates.section.heading.quarterly						    = Diweddariad chwarterol
+nextUpdates.section.heading.end-of-year							= Diweddariad diwedd blwyddyn
 nextUpdates.section.heading.updates								= Cyfnod chwarterol o {0} i {1}
 nextUpdates.section.heading.taxYear								= Blwyddyn dreth: {0} i {1}
 nextUpdates.previousYears.textOne								= I weld diweddariadau a gyflwynwyd yn flaenorol, ewch i

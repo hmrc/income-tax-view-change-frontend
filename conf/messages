@@ -781,6 +781,7 @@ nextUpdates.dropdown.finalDeclaration.text                         = Your final 
 nextUpdates.table.header.type									   = Update type
 nextUpdates.table.header.source									   = Income source
 nextUpdates.section.heading.quarterly						       = Quarterly update
+nextUpdates.section.heading.end-of-year							   = End of year update
 nextUpdates.section.heading.updates								   = Quarterly period from {0} to {1}
 nextUpdates.section.heading.taxYear								   = Tax year: {0} to {1}
 nextUpdates.previousYears.textOne								   = To view previously submitted updates visit the

@@ -80,7 +80,7 @@ class NextUpdatesService @Inject()(
         DeadlineViewModel(QuarterlyObligation, standardAndCalendar = true, date, obligationsByType.getOrElse(Some(QuarterTypeStandard), Seq.empty), obligationsByType.getOrElse(Some(QuarterTypeCalendar), Seq.empty))
       }
       else DeadlineViewModel(EopsObligation, standardAndCalendar = false, date, obligations, Seq.empty)
-    }.filter(deadline => deadline.obligationType != EopsObligation)
+    }.filter(deadline => (deadline.obligationType != EopsObligation) && !(deadline.standardQuarters.isEmpty && deadline.calendarQuarters.isEmpty))
 
     NextUpdatesViewModel(allDeadlines)
   }
