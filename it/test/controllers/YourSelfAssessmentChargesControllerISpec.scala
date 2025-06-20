@@ -656,10 +656,10 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                 res should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "selfAssessmentCharges.heading"),
-                  elementTextBySelectorList("#charges-due-now", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 1"),
-                  elementTextBySelectorList("#charges-due-now", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 2"),
-                  elementTextBySelectorList("#charges-due-now", "tbody", "tr:nth-of-type(3)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 3"),
-                  elementTextBySelectorList("#charges-due-now", "tbody", "tr:nth-of-type(4)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 4"))
+                  elementTextBySelectorList("#charges-due-now-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 1"),
+                  elementTextBySelectorList("#charges-due-now-table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 2"),
+                  elementTextBySelectorList("#charges-due-now-table", "tbody", "tr:nth-of-type(3)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 3"),
+                  elementTextBySelectorList("#charges-due-now-table", "tbody", "tr:nth-of-type(4)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 4"))
               }
 
               "has a POA section" when {
