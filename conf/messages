@@ -17,8 +17,7 @@ base.govUk                                                      = GOV.UK
 base.confirm-and-continue                                       = Confirm and continue
 base.confirm-this-change                                        = Confirm this change
 base.software.compatible.with.mtd.income.tax.link               = software compatible with Making Tax Digital for Income Tax
-
-base.fullstop = .
+base.fullstop                                                   = .
 
 ## Accessibility ##
 accessibility.this-section-is                                   = This section is:
@@ -2098,15 +2097,8 @@ business.added.foreign-property.quarterly.annual.reporting.frequency.b       = f
 business.added.foreign-property.annual.reporting.frequency.text              = You are set to report annually for your new property. Find out more about
 business.added.foreign-property.annual.reporting.frequency.link              = your reporting frequency.
 
-business.added.foreign-property.submit.software.text                         = Submit updates in software
-business.added.foreign-property.submit.software.quarterly.text               = For any tax year you are reporting quarterly, you will need
-business.added.foreign-property.submit.software.quarterly.link               = software compatible with Making Tax Digital for Income Tax
-
-
 business.added.foreign-property.submit.tax.return                            = Submit your tax return
 business.added.foreign-property.submit.tax.return.text                       = When reporting annually, you can submit your tax return directly through your HMRC online account or
-business.added.foreign-property.submit.tax.return.link                       = software compatible with Making Tax Digital for Income Tax
-
 
 
 ####### Income Source Added page End #######

@@ -17,7 +17,7 @@ base.govUk                                                      = GOV.UK
 base.confirm-and-continue                                       = Cadarnhau ac yn eich blaen
 base.confirm-this-change                                        = Cadarnhau’r newid hwn
 base.software.compatible.with.mtd.income.tax.link               = feddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol
-base.full.stop = .
+base.fullstop                                                   = .
 
 
 ## Accessibility ##
@@ -2098,9 +2098,6 @@ business.added.foreign-property.quarterly.annual.reporting.frequency.b          
 
 business.added.foreign-property.annual.reporting.frequency.text      = Rydych wedi dewis cyflwyno adroddiadau blynyddol ar gyfer eich busnes newydd. Rhagor o wybodaeth am
 business.added.foreign-property.annual.reporting.frequency.link      = amlder eich adroddiadau.
-
-business.added.foreign-property.submit.software.text                         = Cyflwyno diweddariadau drwy ddefnyddio meddalwedd
-business.added.foreign-property.submit.software.quarterly.text               = Os ydych yn adrodd am flwyddyn dreth yn chwarterol, bydd angen i chi ddefnyddio
 
 business.added.foreign-property.submit.tax.return                            = Cyflwyno’ch Ffurflen Dreth
 business.added.foreign-property.submit.tax.return.text                       = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar.lein CThEF neu drwy ddefnyddio
