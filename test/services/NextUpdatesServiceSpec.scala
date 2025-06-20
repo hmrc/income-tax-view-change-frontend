@@ -595,4 +595,30 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
     }
 
   }
+
+  ".getNextUpdatesViewModel" should {
+    "return a valid model with no EOPS Obligations" in {
+      val obligations = ObligationsModel(
+        Seq(
+          GroupedObligationsModel("XA00001234", List(
+            SingleObligationModel(fixedDate, fixedDate, fixedDate, "Quarterly", None, "#001", StatusFulfilled),
+            SingleObligationModel(fixedDate, fixedDate, fixedDate, "Other", None, "#002", StatusFulfilled)
+          )),
+          GroupedObligationsModel("XA00001235", List(
+            SingleObligationModel(fixedDate, fixedDate, fixedDate, "Quarterly", None, "#003", StatusFulfilled)
+          )),
+          GroupedObligationsModel("XA00001236", List(
+            SingleObligationModel(fixedDate, fixedDate, fixedDate, "Other", None, "#003", StatusFulfilled)
+          ))
+        )
+      )
+      TestNextUpdatesService.getNextUpdatesViewModel(obligations, true) shouldBe {
+        NextUpdatesViewModel(
+          List(DeadlineViewModel(QuarterlyObligation, true, LocalDate.parse("2023-12-15"),
+            List(ObligationWithIncomeType("nextUpdates.business", SingleObligationModel(LocalDate.parse("2023-12-15"), LocalDate.parse("2023-12-15"), LocalDate.parse("2023-12-15"), "Quarterly", None, "#001", StatusFulfilled))),
+            List()))
+        )
+      }
+    }
+  }
 }

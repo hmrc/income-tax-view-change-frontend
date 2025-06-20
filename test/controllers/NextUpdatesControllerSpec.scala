@@ -32,7 +32,7 @@ import play.api.mvc.Result
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.NextUpdatesService
-import testConstants.BaseTestConstants
+import testConstants.{BaseTestConstants, NextUpdatesTestConstants}
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -40,7 +40,7 @@ import scala.concurrent.Future
 class NextUpdatesControllerSpec extends MockAuthActions
   with MockNextUpdatesService with MockNextUpdates with MockOptOutService {
 
-  val nextTitle: String = messages("htmlTitle", messages("nextUpdates.heading"))
+  val nextTitle: String = NextUpdatesTestConstants.title
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
@@ -57,7 +57,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
   val nextUpdatesViewModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(
     GroupedObligationsModel(BaseTestConstants.testSelfEmploymentId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001", StatusFulfilled))),
     GroupedObligationsModel(BaseTestConstants.testPropertyIncomeId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "EOPS", Some(fixedDate), "EOPS", StatusFulfilled)))
-  )).obligationsByDate.map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
+  )).obligationsByDate(isR17ContentEnabled = true).map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
     DeadlineViewModel(getQuarterType(obligations.head.incomeType), standardAndCalendar = false, date, obligations, Seq.empty)
   })
 
@@ -76,7 +76,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
   }
 
   def mockViewModel: OngoingStubbing[NextUpdatesViewModel] = {
-    when(mockNextUpdatesService.getNextUpdatesViewModel(any())(any()))
+    when(mockNextUpdatesService.getNextUpdatesViewModel(any(), any())(any()))
       .thenReturn(nextUpdatesViewModel)
   }
 
@@ -260,15 +260,15 @@ class NextUpdatesControllerSpec extends MockAuthActions
           }
 
           "render the NoNextUpdates page" in {
-            document.title shouldBe messages("htmlTitle", messages("obligations.heading"))
+            document.title shouldBe NextUpdatesTestConstants.noNextUpdatesTitle
           }
 
-          s"have the heading ${messages("obligations.heading")}" in {
-            document.select("h1").text() shouldBe messages("obligations.heading")
+          s"have the heading ${NextUpdatesTestConstants.noNextUpdatesHeading}" in {
+            document.select("h1").text() shouldBe NextUpdatesTestConstants.noNextUpdatesHeading
           }
 
-          s"have the correct no next updates message ${messages("obligations.noReports")}" in {
-            document.select("p.govuk-body").text shouldBe messages("obligations.noReports")
+          s"have the correct no next updates message ${NextUpdatesTestConstants.noNextUpdatesText}" in {
+            document.select("p.govuk-body").text shouldBe NextUpdatesTestConstants.noNextUpdatesText
           }
         }
 
@@ -309,7 +309,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
         setupMockUserAuth
         mockSingleBusinessIncomeSourceError()
         mockSingleBusinessIncomeSourceWithDeadlines()
-        mockGetNextUpdatesPageOptOutChecks(Future.failed(new Exception("api failure")))
+        mockGetNextUpdatesPageChecksAndProposition(Future.failed(new Exception("api failure")))
         mockObligations
         val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
