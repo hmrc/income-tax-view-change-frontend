@@ -284,7 +284,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           elementTextByClass("govuk-details__summary-text")(expectedValue = "Find out more about quarterly updates"),
           elementTextByID("current-year-dropdown-desc")(expectedValue = "Each quarterly update is a running total of income and expenses for the tax year so far. It combines:"),
           elementTextByClass("govuk-list govuk-list--bullet")(expectedValue = "new information and corrections made since the last update any information you’ve already provided that has not changed"),
-          elementTextByID("current-year-dropdown-desc2")(expectedValue = "This is done using software compatible with Making Tax Digital for Income Tax (opens in new tab)")
+          elementTextByID("current-year-dropdown-desc2")(expectedValue = "This is done using software compatible with Making Tax Digital for Income Tax (opens in new tab).")
         )
       }
 
@@ -325,7 +325,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         res should have(
           elementTextByID("current-year-desc")(expectedValue = "This page shows your upcoming due dates and any missed deadlines."),
           elementTextByID("current-year-subheading")(expectedValue = "Tax return due"),
-          elementTextByID("current-year-compatible-software-desc")(expectedValue = "As you are opted out of Making Tax Digital for Income Tax, you can find out here how you file your Self Assessment tax return (opens in new tab)"),
+          elementTextByID("current-year-compatible-software-desc")(expectedValue = "As you are opted out of Making Tax Digital for Income Tax, you can find out here how you file your Self Assessment tax return (opens in new tab)."),
           elementTextByID("current-year-return-due-date")(expectedValue = "Your return for the 2022 to 2023 tax year is due by 31 January 2024.")
         )
       }

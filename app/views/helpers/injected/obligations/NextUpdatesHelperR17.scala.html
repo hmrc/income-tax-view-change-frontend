@@ -96,7 +96,7 @@
     @h2(getMessage("quarterly.subheading2"), optId = Some("current-year-return-due-heading"))
     @p(id = Some("current-year-return-due-desc")) {
         @getMessage("quarterly.text3")
-        @link(link = getMessage("quarterly.compatibleSoftware.link"), target = Some("_blank"), messageKey = getMessage("quarterly.text4"), id = Some("quarterly-compatible-software-link"))
+        @link(link = getMessage("quarterly.compatibleSoftware.link"), target = Some("_blank"), messageKey = getMessage("quarterly.text4"), id = Some("quarterly-compatible-software-link"), outerMessage = ".")
     }
 
     @p(id = Some("current-year-return-due-date")) {
@@ -112,7 +112,7 @@
     @h2(getMessage("annual.subHeading"), optId = Some("current-year-subheading"))
     @p(id = Some("current-year-compatible-software-desc")) {
         @getMessage("annual.text2")
-        @link(link = getMessage("quarterly.compatibleSoftware.link"), target = Some("_blank"), messageKey = getMessage("annual.link"), id = Some("annual-compatible-software-link"))
+        @link(link = getMessage("quarterly.compatibleSoftware.link"), target = Some("_blank"), messageKey = getMessage("annual.link"), id = Some("annual-compatible-software-link"), outerMessage = ".")
     }
     @p(id = Some("current-year-return-due-date")) {
         @getMessage("annual.text3", currentTaxYearStart, currentTaxYearEnd)
@@ -124,7 +124,7 @@
     @h2(getMessage("quarterly.ny.heading", currentTaxYearEnd, nextTaxYearEnd), classes = "govuk-heading-l", optId = Some("next-year-heading"))
     @p(id = Some("next-year-desc")){
         @getMessage("quarterly.ny.text1", currentTaxYearEnd, nextTaxYearEnd)
-        @link(link = getMessage("quarterly.compatibleSoftware.link"), target = Some("_blank"), messageKey = getMessage("quarterly.ny.text2"), id = Some("quarterly-compatible-software-link-ny"))
+        @link(link = getMessage("quarterly.compatibleSoftware.link"), target = Some("_blank"), messageKey = getMessage("quarterly.ny.text2"), id = Some("quarterly-compatible-software-link-ny"), outerMessage = ".")
     }
     @p(id = Some("next-year-desc2")){ @getMessage("quarterly.ny.text3") }
 }
@@ -133,7 +133,7 @@
     @h2(getMessage("annual.ny.heading", currentTaxYearEnd, nextTaxYearEnd), classes = "govuk-heading-l", optId = Some("next-year-heading"))
     @p(id = Some("next-year-desc")){
         @getMessage("annual.text2")
-        @link(link = getMessage("quarterly.compatibleSoftware.link"), target = Some("_blank"), messageKey = getMessage("annual.link"), id = Some("annual-compatible-software-link-ny"))
+        @link(link = getMessage("quarterly.compatibleSoftware.link"), target = Some("_blank"), messageKey = getMessage("annual.link"), id = Some("annual-compatible-software-link-ny"), outerMessage = ".")
     }
     @p(id = Some("next-year-desc2")){ @getMessage("annual.ny.text1") }
 }
@@ -147,7 +147,7 @@
     )
     @p(id = Some("current-year-dropdown-desc2")) {
         @getMessage("quarterly.dropdown.text4")
-        @link(link = getMessage("quarterly.compatibleSoftware.link"), target = Some("_blank"), messageKey = getMessage("quarterly.dropdown.link.text"), id = Some("quarterly-compatible-software-link-dropdown"))
+        @link(link = getMessage("quarterly.compatibleSoftware.link"), target = Some("_blank"), messageKey = getMessage("quarterly.dropdown.link.text"), id = Some("quarterly-compatible-software-link-dropdown"), outerMessage = ".")
     }
 }
 
