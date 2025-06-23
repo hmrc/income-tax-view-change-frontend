@@ -1917,7 +1917,7 @@ income.source.added.obligation.list.text                                        
 
 income.source.added.scenario.one.account.updated.p.a                                        = Hyd yn oed os nad ydynt yn ymddangos ar unwaith ar y dudalen
 income.source.added.scenario.one.account.updated.p.link                                     = diweddariadau a dyddiadau cau
-income.source.added.scenario.one.account.updated.p.b                                        = mae’ch cyfrif wedi’i ddiweddaru
+income.source.added.scenario.one.account.updated.p.b                                        = mae’ch cyfrif wedi’i ddiweddaru.
 
 income.source.added.scenario.one.view.reporting.obligations.p.a                             = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
 income.source.added.scenario.one.view.reporting.obligations.link                            = bwrw golwg dros a newid eich ymrwymiadau adrodd
@@ -1930,7 +1930,7 @@ income.source.added.scenario.one.view.businesses.p                              
 
 income.source.added.scenario.two.account.updated.p.a                                        = Hyd yn oed os nad ydynt yn ymddangos ar unwaith ar y dudalen
 income.source.added.scenario.two.account.updated.p.link                                     = diweddariadau a dyddiadau cau
-income.source.added.scenario.two.account.updated.p.b                                        = mae’ch cyfrif wedi’i ddiweddaru
+income.source.added.scenario.two.account.updated.p.b                                        = mae’ch cyfrif wedi’i ddiweddaru.
 
 income.source.added.scenario.two.view.reporting.obligations.p.a                             = Mae’r busnes newydd hwn wedi optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Gallwch benderfynu ar unrhyw adeg i optio eich holl fusnes allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar eich tudalen
 income.source.added.scenario.two.view.reporting.obligations.link                            = ymrwymiadau adrodd.
@@ -1945,7 +1945,7 @@ income.source.added.few.minutes.overdue.updates                                 
 
 income.source.added.scenario.three.account.updated.p.a                                      = Hyd yn oed os nad ydynt yn ymddangos ar unwaith ar y dudalen
 income.source.added.scenario.three.account.updated.p.link                                   = diweddariadau a dyddiadau cau
-income.source.added.scenario.three.account.updated.p.b                                      = mae’ch cyfrif wedi’i ddiweddaru
+income.source.added.scenario.three.account.updated.p.b                                      = mae’ch cyfrif wedi’i ddiweddaru.
 
 income.source.added.scenario.three.view.reporting.obligations.p.a                           = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
 income.source.added.scenario.three.view.reporting.obligations.link                          = bwrw golwg dros a newid eich ymrwymiadau adrodd
@@ -1960,7 +1960,7 @@ income.source.added.few.minutes.overdue.updates                                 
 
 income.source.added.scenario.four.account.updated.p.a                                       = Hyd yn oed os nad ydynt yn ymddangos ar unwaith ar y dudalen
 income.source.added.scenario.four.account.updated.p.link                                    = diweddariadau a dyddiadau cau
-income.source.added.scenario.four.account.updated.p.b                                       = mae’ch cyfrif wedi’i ddiweddaru
+income.source.added.scenario.four.account.updated.p.b                                       = mae’ch cyfrif wedi’i ddiweddaru.
 
 income.source.added.scenario.four.view.reporting.obligations.p                              = Mae’r busnes newydd hwn wedi optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Dysgwch ragor am
 income.source.added.scenario.four.view.reporting.obligations.link                           = eich ymrwymiadau adrodd.
