@@ -1,3 +1,5 @@
+outage-page.serviceDisplayName                                  = Rheoli’ch Hunanasesiad
+
 ## Base ##
 base.back                                                       = Yn ôl
 base.service_name                                               = Cyfrif Treth Busnes
