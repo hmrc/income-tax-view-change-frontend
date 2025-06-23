@@ -112,29 +112,7 @@
         }
     }
 
-    @{
-        viewModel.ctaViewModel.claimToAdjustTaxYear match {
-            case Some(value) =>
-                govukInsetText(
-                    InsetText(
-                        content = HtmlContent(
-                            p(id = Some("claim-to-adjust-poa"))(Html(messages("tax-year-summary.adjust-poa-paragraph"))).toString +
-                                    p(id = Some("claim-to-adjust-poa-link"))
-                                            (
-                                                Html(
-                                                    link(
-                                                        link = ctaLink,
-                                                        messageKey = messages("tax-year-summary.adjust-poa", value.startYear.toString, value.endYear.toString),
-                                                        id = Some("adjust-poa-link")
-                                                    ).toString
-                                                )
-                                            ).toString
-                        )
-                    )
-                )
-            case None => Html("")
-        }
-    }
+   @getClaimToAdjustPoaSection(viewModel, ctaLink)
 
     @taxYearSummaryTabsPartial(viewModel.showForecastData, viewModel.showUpdates, taxCalculationContent(taxYear, viewModel, isAgent), paymentsContent(viewModel, taxYear, isAgent, origin), forecastContent(viewModel, taxYear, isAgent), updatesContent(viewModel))
 }

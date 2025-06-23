@@ -17,10 +17,7 @@
 package models.incomeSourceDetails.viewmodels
 
 import enums.IncomeSourceJourney.IncomeSourceType
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
-import services.DateServiceInterface
-
-import java.time.LocalDate
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 
 case class IncomeSourceCeasedObligationsViewModel(
                                                    incomeSourceType: IncomeSourceType,

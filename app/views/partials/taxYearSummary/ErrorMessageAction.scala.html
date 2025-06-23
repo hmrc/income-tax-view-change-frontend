@@ -14,13 +14,10 @@
  * limitations under the License.
  *@
 
-@this()
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukWarningText
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+@this(govukWarningText: GovukWarningText)
 @(action: String)(implicit messages: Messages)
 
-<div class="govuk-warning-text">
-    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-    <strong class="govuk-warning-text__text">
-        <span class="govuk-warning-text__assistive">Warning</span>
-        @messages(action)
-    </strong>
-</div>
+@govukWarningText(WarningText(content = HtmlContent(messages(action))))

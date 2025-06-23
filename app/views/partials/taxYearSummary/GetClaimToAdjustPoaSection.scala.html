@@ -26,25 +26,23 @@
 @(viewModel: TaxYearSummaryViewModel, ctaLink: String)(implicit messages: Messages)
 
 @{
-    viewModel.ctaViewModel.claimToAdjustTaxYear match {
-        case Some(value) =>
-            govukInsetText(
-                InsetText(
-                    content = HtmlContent(
-                        p(id = Some("claim-to-adjust-poa"))(Html(messages("tax-year-summary.adjust-poa-paragraph"))).toString +
-                                p(id = Some("claim-to-adjust-poa-link"))
-                                        (
-                                            Html(
-                                                link(
-                                                    link = ctaLink,
-                                                    messageKey = messages("tax-year-summary.adjust-poa", value.startYear.toString, value.endYear.toString),
-                                                    id = Some("adjust-poa-link")
-                                                ).toString
-                                            )
-                                        ).toString
-                    )
-                )
-            )
-        case None => Html("")
-    }
+  viewModel.ctaViewModel.claimToAdjustTaxYear.fold(Html("")) { value =>
+      govukInsetText(
+          InsetText(
+              content = HtmlContent(
+                  p(id = Some("claim-to-adjust-poa"))(Html(messages("tax-year-summary.adjust-poa-paragraph"))).toString +
+                          p(id = Some("claim-to-adjust-poa-link"))
+                                  (
+                                      Html(
+                                          link(
+                                              link = ctaLink,
+                                              messageKey = messages("tax-year-summary.adjust-poa", value.startYear.toString, value.endYear.toString),
+                                              id = Some("adjust-poa-link")
+                                          ).toString
+                                      )
+                                  ).toString
+              )
+          )
+      )
+  }
 }
