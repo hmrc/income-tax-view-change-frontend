@@ -188,7 +188,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             document.getElementById(IdSelectors.submitUpdatesSoftware).text() shouldBe submitUpdatesInSoftwareH2
             document.getElementById(IdSelectors.submitCompatibleSoftwareQuarterly).text() shouldBe submitCompatibleSoftwareQuarterlyParagraph
             document.getElementById(IdSelectors.viewReportingObligations).text() shouldBe "This new business is opted out of Making Tax Digital for Income Tax. You can decide at any time to opt all your businesses out of Making Tax Digital for Income Tax on your reporting obligations page."
-            document.getElementById(IdSelectors.viewBusinesses).text() shouldBe "View your businesses to add, manage or cease a business or income source."
+            document.getElementById(IdSelectors.viewBusinesses).text() shouldBe viewBusinessesParagraph
 
           }
         }
@@ -219,7 +219,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             document.getElementById(IdSelectors.viewReportingObligations).text() shouldBe viewReportingObligationsParagraph
             document.getElementById("reporting-obligations-link").link.attr("href") shouldBe getReportingFrequencyUrl
 
-            document.getElementById(IdSelectors.viewBusinesses).text() shouldBe "View your businesses to add, manage or cease a business or income source."
+            document.getElementById(IdSelectors.viewBusinesses).text() shouldBe viewBusinessesParagraph
             document.getElementById("view-businesses-link").link.attr("href") shouldBe getManageBusinessUrl
 
             document.getElementById(IdSelectors.submitUpdatesSoftware).text() shouldBe submitUpdatesInSoftwareH2
@@ -254,7 +254,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             document.getElementById(IdSelectors.viewReportingObligations).text() shouldBe viewReportingObligationsParagraph
             document.getElementById("reporting-obligations-link").link.attr("href") shouldBe getReportingFrequencyUrl
 
-            document.getElementById(IdSelectors.viewBusinesses).text() shouldBe "View your businesses to add, manage or cease a business or income source."
+            document.getElementById(IdSelectors.viewBusinesses).text() shouldBe viewBusinessesParagraph
             document.getElementById("view-businesses-link").link.attr("href") shouldBe getManageBusinessUrl
 
             document.getElementById(IdSelectors.submitUpdatesSoftware).text() shouldBe submitUpdatesInSoftwareH2
@@ -286,10 +286,10 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             document.getElementById(IdSelectors.accountUpdated).text() shouldBe accountUpdatedParagraph
             document.getElementById("updates-and-deadlines-link").link.attr("href") shouldBe nextUpdatesUrl
 
-            document.getElementById(IdSelectors.viewReportingObligations).text() shouldBe "This new business is opted out of Making Tax Digital for Income Tax. Find out more about view and change reporting obligations"
+            document.getElementById(IdSelectors.viewReportingObligations).text() shouldBe "This new business is opted out of Making Tax Digital for Income Tax. Find out more about your reporting obligations"
             document.getElementById("reporting-obligations-link").link.attr("href") shouldBe getReportingFrequencyUrl
 
-            document.getElementById(IdSelectors.viewBusinesses).text() shouldBe "View your businesses to add, manage or cease a business or income source."
+            document.getElementById(IdSelectors.viewBusinesses).text() shouldBe viewBusinessesParagraph
             document.getElementById("view-businesses-link").link.attr("href") shouldBe getManageBusinessUrl
 
             document.getElementById(IdSelectors.submitUpdatesSoftware).text() shouldBe submitUpdatesInSoftwareH2
@@ -321,10 +321,10 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             document.getElementById(IdSelectors.accountUpdated).text() shouldBe accountUpdatedParagraph
             document.getElementById("updates-and-deadlines-link").link.attr("href") shouldBe nextUpdatesUrl
 
-            document.getElementById(IdSelectors.viewReportingObligations).text() shouldBe "This new business is opted out of Making Tax Digital for Income Tax. Find out more about view and change reporting obligations"
+            document.getElementById(IdSelectors.viewReportingObligations).text() shouldBe "This new business is opted out of Making Tax Digital for Income Tax. Find out more about your reporting obligations"
             document.getElementById("reporting-obligations-link").link.attr("href") shouldBe getReportingFrequencyUrl
 
-            document.getElementById(IdSelectors.viewBusinesses).text() shouldBe "View your businesses to add, manage or cease a business or income source."
+            document.getElementById(IdSelectors.viewBusinesses).text() shouldBe viewBusinessesParagraph
             document.getElementById("view-businesses-link").link.attr("href") shouldBe getManageBusinessUrl
 
             document.getElementById(IdSelectors.submitUpdatesSoftware).text() shouldBe submitUpdatesInSoftwareH2
@@ -374,7 +374,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               document.getElementById(IdSelectors.viewReportingObligations).text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting obligations for all your businesses."
               document.getElementById("reporting-obligations-link").link.attr("href") shouldBe getReportingFrequencyUrl
 
-              document.getElementById(IdSelectors.viewBusinesses).text() shouldBe "View your businesses for all your businesses."
+              document.getElementById(IdSelectors.viewBusinesses).text() shouldBe viewBusinessesParagraph
               document.getElementById("view-businesses-link").link.attr("href") shouldBe getManageBusinessUrl
 
               document.getElementById(IdSelectors.submitUpdatesSoftware).text() shouldBe submitUpdatesInSoftwareH2
@@ -427,7 +427,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               document.getElementById(IdSelectors.viewReportingObligations).text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting obligations for all your businesses."
               document.getElementById("reporting-obligations-link").link.attr("href") shouldBe getReportingFrequencyUrl
 
-              document.getElementById(IdSelectors.viewBusinesses).text() shouldBe "View your businesses for all your businesses."
+              document.getElementById(IdSelectors.viewBusinesses).text() shouldBe viewBusinessesParagraph
               document.getElementById("view-businesses-link").link.attr("href") shouldBe getManageBusinessUrl
 
               document.getElementById(IdSelectors.submitUpdatesSoftware).text() shouldBe submitUpdatesInSoftwareH2
@@ -476,7 +476,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               document.getElementById(IdSelectors.viewReportingObligations).text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting obligations for all your businesses."
               document.getElementById("reporting-obligations-link").link.attr("href") shouldBe getReportingFrequencyUrl
 
-              document.getElementById(IdSelectors.viewBusinesses).text() shouldBe "View your businesses for all your businesses."
+              document.getElementById(IdSelectors.viewBusinesses).text() shouldBe viewBusinessesParagraph
               document.getElementById("view-businesses-link").link.attr("href") shouldBe getManageBusinessUrl
 
               document.getElementById(IdSelectors.submitUpdatesSoftware).text() shouldBe submitUpdatesInSoftwareH2
@@ -601,7 +601,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             Option(document.getElementById(IdSelectors.viewReportingObligations)) shouldBe None
 
-            document.getElementById(IdSelectors.viewBusinesses).text() shouldBe "View your businesses to add, manage or cease a business or income source."
+            document.getElementById(IdSelectors.viewBusinesses).text() shouldBe viewBusinessesParagraph
             document.getElementById("view-businesses-link").link.attr("href") shouldBe getManageBusinessUrl
 
             document.getElementById(IdSelectors.submitUpdatesSoftware).text() shouldBe submitUpdatesInSoftwareH2
@@ -635,7 +635,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             Option(document.getElementById(IdSelectors.viewReportingObligations)) shouldBe None
 
-            document.getElementById(IdSelectors.viewBusinesses).text() shouldBe "View your businesses to add, manage or cease a business or income source."
+            document.getElementById(IdSelectors.viewBusinesses).text() shouldBe viewBusinessesParagraph
             document.getElementById("view-businesses-link").link.attr("href") shouldBe getManageBusinessUrl
 
             document.getElementById(IdSelectors.submitUpdatesSoftware).text() shouldBe submitUpdatesInSoftwareH2
@@ -670,7 +670,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             Option(document.getElementById(IdSelectors.viewReportingObligations)) shouldBe None
 
-            document.getElementById(IdSelectors.viewBusinesses).text() shouldBe "View your businesses to add, manage or cease a business or income source."
+            document.getElementById(IdSelectors.viewBusinesses).text() shouldBe viewBusinessesParagraph
             document.getElementById("view-businesses-link").link.attr("href") shouldBe getManageBusinessUrl
 
             document.getElementById(IdSelectors.submitUpdatesSoftware).text() shouldBe submitUpdatesInSoftwareH2
@@ -704,7 +704,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             Option(document.getElementById(IdSelectors.viewReportingObligations)) shouldBe None
 
-            document.getElementById(IdSelectors.viewBusinesses).text() shouldBe "View your businesses to add, manage or cease a business or income source."
+            document.getElementById(IdSelectors.viewBusinesses).text() shouldBe viewBusinessesParagraph
             document.getElementById("view-businesses-link").link.attr("href") shouldBe getManageBusinessUrl
 
             document.getElementById(IdSelectors.submitUpdatesSoftware).text() shouldBe submitUpdatesInSoftwareH2
@@ -738,7 +738,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             Option(document.getElementById(IdSelectors.viewReportingObligations)) shouldBe None
 
-            document.getElementById(IdSelectors.viewBusinesses).text() shouldBe "View your businesses to add, manage or cease a business or income source."
+            document.getElementById(IdSelectors.viewBusinesses).text() shouldBe viewBusinessesParagraph
             document.getElementById("view-businesses-link").link.attr("href") shouldBe getManageBusinessUrl
 
             document.getElementById(IdSelectors.submitUpdatesSoftware).text() shouldBe submitUpdatesInSoftwareH2

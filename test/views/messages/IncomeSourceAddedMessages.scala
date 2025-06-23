@@ -29,7 +29,7 @@ object IncomeSourceAddedMessages {
   val fewMinutesWarning: String = "Your deadlines for this business will be available in the next few minutes."
   val accountUpdatedParagraph: String = "Even if they are not displayed right away on the updates and deadlines page, your account has been updated."
   val viewReportingObligationsParagraph: String = "Depending on your circumstances, you may be able to view and change your reporting obligations for all your businesses."
-  val viewBusinessesParagraph: String = "View your businesses for all your businesses."
+  val viewBusinessesParagraph: String = "View your businesses to add, manage or cease a business or income source."
 
   val submitUpdatesInSoftwareH2: String = "Submit updates in software"
   val submitCompatibleSoftwareQuarterlyParagraph: String = "For any tax year you are reporting quarterly, you will need software compatible with Making Tax Digital for Income Tax (opens in new tab)."
