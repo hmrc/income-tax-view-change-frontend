@@ -385,7 +385,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
               .thenReturn(Future(Right(Some(mongoUserAnswers))))
 
             val result = testIncomeSourceAddedController.contentLogicHelper(incomeSourceType)
-            await(result) shouldBe OnlyOneBusinessInLatency
+            await(result) shouldBe OnlyOneYearAvailableToSignUp
           }
         }
 
