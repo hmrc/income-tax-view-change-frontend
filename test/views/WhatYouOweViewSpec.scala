@@ -67,6 +67,12 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val poaExtra2Text: String = messages("whatYouOwe.reviewAndReconcilePoa2.text")
   val poa1ReconcileInterest: String = messages("whatYouOwe.lpi.reviewAndReconcilePoa1.text")
   val poa2ReconcileInterest: String = messages("whatYouOwe.lpi.reviewAndReconcilePoa2.text")
+  val lspText: String = messages("whatYouOwe.lateSubmissionPenalty.text")
+  val lpp1Text: String = messages("whatYouOwe.firstLatePaymentPenalty.text")
+  val lpp2Text: String = messages("whatYouOwe.secondLatePaymentPenalty.text")
+  val lspInterest: String = messages("whatYouOwe.lpi.lateSubmissionPenalty.text")
+  val lpp1Interest: String = messages("whatYouOwe.lpi.firstLatePaymentPenalty.text")
+  val lpp2Interest: String = messages("whatYouOwe.lpi.secondLatePaymentPenalty.text")
   val remainingBalance: String = messages("whatYouOwe.balancingCharge.text")
   val preMTDRemainingBalance: String = s"${messages("whatYouOwe.balancingCharge.text")} ${messages("whatYouOwe.pre-mtd-digital")}"
   val remainingBalanceLine1: String = messages("whatYouOwe.remaining-balance.line1")
@@ -404,9 +410,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           findElementById("balancing-charge-type-overdue") shouldBe None
         }
-        "have POA data in same table" in new TestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days(
-          dueDates = dueDateOverdue
-        )) {
+        "have POA data in same table" in new TestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days(dueDates = dueDateOverdue)) {
 
           val poa1Table: Element = pageDocument.select("tr").get(2)
           poa1Table.select("td").first().text() shouldBe fixedDate.minusDays(10).toLongDateShort
@@ -456,6 +460,45 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           poa2ExtraTable.select("td").last().text() shouldBe "£40.00"
         }
+        "have penalty charges in table" in new TestSetup(whatYouOweAllPenalties) {
+          val lpp1Row: Element = pageDocument.getElementById("due-2")
+          lpp1Row.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
+          lpp1Row.select("td").get(1).text() shouldBe lpp1Text + " 3"
+          lpp1Row.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
+          lpp1Row.select("td").last().text() shouldBe "£50.00"
+
+          val lpp2Row: Element = pageDocument.getElementById("due-3")
+          lpp2Row.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
+          lpp2Row.select("td").get(1).text() shouldBe lpp2Text + " 4"
+          lpp2Row.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
+          lpp2Row.select("td").last().text() shouldBe "£75.00"
+
+          val lspRow: Element = pageDocument.getElementById("due-0")
+          lspRow.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
+          lspRow.select("td").get(1).text() shouldBe lspText + " 1"
+          lspRow.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
+          lspRow.select("td").last().text() shouldBe "£50.00"
+        }
+        "have interest charges for paid penalties in table" in new TestSetup(whatYouOweAllPenaltiesInterest) {
+          val lspRow: Element = pageDocument.getElementById("due-0")
+          lspRow.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
+          lspRow.select("td").get(1).text() shouldBe lspInterest + " 1"
+          lspRow.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
+          lspRow.select("td").last().text() shouldBe "£100.00"
+
+          val lpp1Row: Element = pageDocument.getElementById("due-2")
+          lpp1Row.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
+          lpp1Row.select("td").get(1).text() shouldBe lpp1Interest + " 3"
+          lpp1Row.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
+          lpp1Row.select("td").last().text() shouldBe "£99.00"
+
+          val lpp2Row: Element = pageDocument.getElementById("due-3")
+          lpp2Row.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
+          lpp2Row.select("td").get(1).text() shouldBe lpp2Interest + " 4"
+          lpp2Row.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
+          lpp2Row.select("td").last().text() shouldBe "£98.00"
+        }
+
         "should have payment processing bullets when payment due in more than 30 days" in new TestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
 
           pageDocument.getElementById("payments-made").text shouldBe paymentsMade
