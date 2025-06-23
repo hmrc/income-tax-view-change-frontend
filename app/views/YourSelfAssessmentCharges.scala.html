@@ -122,21 +122,21 @@
                         items = Seq(
                             Option.when(viewModel.overdueAccruingInterestOrOutstandingChargesListNonEmpty)(
                                 TabItem(
-                                    id = Some("charges-due-now-tab"),
+                                    id = Some("charges-due-now"),
                                     label = getMessage("charges-due-now"),
                                     panel = TabPanel(HtmlContent(chargesDueNowTable(viewModel, origin)))
                                 )
                             ),
                             Option.when(viewModel.chargesDueWithin30DaysListNonEmpty)(
                                 TabItem(
-                                    id = Some("charges-due-in-30-days-tab"),
+                                    id = Some("charges-due-in-30-days"),
                                     label = getMessage("charges-due-in-30-days"),
                                     panel = TabPanel(HtmlContent(chargesDueIn30DaysTable(viewModel, origin)))
                                 )
                             ),
                             Option.when(viewModel.chargesDueAfter30DaysListNonEmpty)(
                                 TabItem(
-                                    id = Some("charges-to-pay-later-tab"),
+                                    id = Some("charges-due-later"),
                                     label = getMessage("charges-to-pay-later"),
                                     panel = TabPanel(HtmlContent(chargesDueAfter30DaysTable(viewModel, origin)))
                                 )

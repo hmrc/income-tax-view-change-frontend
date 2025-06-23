@@ -765,7 +765,9 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
           tableHeadings.get(1).text() shouldBe "Charges due in 30 days"
           tableHeadings.get(2).text() shouldBe "Charges to pay later"
 
-          val overdueTab: Element = pageDocument.getElementById("charges-due-now-tab")
+          println(pageDocument)
+
+          val overdueTab: Element = pageDocument.getElementById("charges-due-now")
 
           val overdueTableHead = overdueTab.getElementById("charges-due-now-table").select("thead").first()
           overdueTableHead.select("th").first().text() shouldBe dueDate
@@ -787,7 +789,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
           pageDocument.getElementById("overdue-payment-text").text() shouldBe paymentProcessingText
 
 
-          val within30DaysTab: Element = pageDocument.getElementById("charges-due-in-30-days-tab")
+          val within30DaysTab: Element = pageDocument.getElementById("charges-due-in-30-days")
 
           val chargesDueSoonTableHead: Element = within30DaysTab.getElementById("charges-due-in-30-days-table").select("thead").first()
           chargesDueSoonTableHead.select("th").first().text() shouldBe dueDate
@@ -804,7 +806,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
           Option(within30DaysTab.getElementById("payment-button")).isDefined shouldBe false
 
 
-          val beyond30DaysTab: Element = pageDocument.getElementById("charges-to-pay-later-tab")
+          val beyond30DaysTab: Element = pageDocument.getElementById("charges-due-later")
 
           val laterTableHead: Element = beyond30DaysTab.getElementById("charges-due-after-30-days-table").select("thead").first()
           laterTableHead.select("th").first().text() shouldBe dueDate
@@ -1117,7 +1119,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       }
     }
     "display the correct type of charge in 30-day section" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
-      val charge = pageDocument.select("#charges-due-in-30-days-tab tbody tr").get(0).select("td").get(1).text()
+      val charge = pageDocument.select("#charges-due-in-30-days tbody tr").get(0).select("td").get(1).text()
 
       charge.startsWith(poa1Text) ||
         charge.startsWith(poa2Text) ||
