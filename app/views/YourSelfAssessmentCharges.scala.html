@@ -122,7 +122,7 @@
                         items = Seq(
                             Option.when(viewModel.overdueAccruingInterestOrOutstandingChargesListNonEmpty)(
                                 TabItem(
-                                    id = Some("charges-due-now-tab"),
+                                    id = Some("tab_charges-due-now"),
                                     label = getMessage("charges-due-now"),
                                     panel = TabPanel(HtmlContent(chargesDueNowTable(viewModel, origin)))
                                 )

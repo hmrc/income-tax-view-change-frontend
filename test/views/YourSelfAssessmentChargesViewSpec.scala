@@ -765,7 +765,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
           tableHeadings.get(1).text() shouldBe "Charges due in 30 days"
           tableHeadings.get(2).text() shouldBe "Charges to pay later"
 
-          val overdueTab: Element = pageDocument.getElementById("charges-due-now-tab")
+          val overdueTab: Element = pageDocument.getElementById("tab_charges-due-now")
 
           val overdueTableHead = overdueTab.getElementById("charges-due-now-table").select("thead").first()
           overdueTableHead.select("th").first().text() shouldBe dueDate
