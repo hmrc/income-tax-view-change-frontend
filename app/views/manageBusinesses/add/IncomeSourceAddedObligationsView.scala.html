@@ -16,7 +16,7 @@
 
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-@import models.incomeSourceDetails.{ ChosenReportingMethod, SignedUpForMTD, SignUpNextYearOnly, NotSigningUp, SignUpCurrentYearOnly, SignUpBothYears, OnlyOneBusinessInLatency, OptedOut, Unknown}
+@import models.incomeSourceDetails.{ ChosenReportingMethod, SignedUpForMTD, SignUpNextYearOnly, NotSigningUp, SignUpCurrentYearOnly, SignUpBothYears, OnlyOneYearAvailableToSignUp, OptedOut, Unknown}
 @import models.incomeSourceDetails.viewmodels._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
 @import views.html.components._
@@ -282,7 +282,7 @@
         }
     }
 
-    @if(scenario == OnlyOneBusinessInLatency || scenario == OptedOut) {
+    @if(scenario == OnlyOneYearAvailableToSignUp || scenario == OptedOut) {
 
         @h2(messages("income.source.added.your.revised.deadlines.h2"), classes = "govuk-heading-m govuk-!-margin-top-7", optId=Some("your-revised-deadlines"))
 

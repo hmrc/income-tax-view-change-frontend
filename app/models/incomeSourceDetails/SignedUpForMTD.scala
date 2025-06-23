@@ -26,7 +26,7 @@ case object SignUpCurrentYearOnly extends SignedUpForMTD
 
 case object SignUpBothYears extends SignedUpForMTD
 
-case object OnlyOneBusinessInLatency extends SignedUpForMTD
+case object OnlyOneYearAvailableToSignUp extends SignedUpForMTD
 
 case object OptedOut extends SignedUpForMTD
 

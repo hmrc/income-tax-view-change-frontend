@@ -263,7 +263,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           }
         }
 
-        s"OnlyOneBusinessInLatency - $incomeSourceType" should {
+        s"OnlyOneYearAvailableToSignUp - $incomeSourceType" should {
 
           "have the correct content" in {
 
@@ -272,7 +272,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 viewModelTwoQuarterYearThenQuarterlyYear,
                 incomeSourceType,
                 ChosenReportingMethod.Quarterly,
-                OnlyOneBusinessInLatency,
+                OnlyOneYearAvailableToSignUp,
                 reportingFrequencyEnabled = true
               )
 
@@ -679,7 +679,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
           }
         }
 
-        s"OnlyOneBusinessInLatency - $incomeSourceType" should {
+        s"OnlyOneYearAvailableToSignUp - $incomeSourceType" should {
 
           "have the correct content" in {
 
@@ -688,7 +688,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 viewModelTwoQuarterYearThenQuarterlyYear,
                 incomeSourceType,
                 ChosenReportingMethod.Quarterly,
-                OnlyOneBusinessInLatency,
+                OnlyOneYearAvailableToSignUp,
                 reportingFrequencyEnabled = false
               )
 

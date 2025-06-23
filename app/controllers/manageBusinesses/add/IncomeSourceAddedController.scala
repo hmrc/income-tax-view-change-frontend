@@ -94,7 +94,7 @@ class IncomeSourceAddedController @Inject()(
           case (Some(false), Some(true), Some(true)) => Future(SignUpNextYearOnly)
           case (Some(true), Some(false), Some(true)) => Future(SignUpCurrentYearOnly)
           case (Some(true), Some(true), Some(true)) => Future(SignUpBothYears)
-          case (Some(true), _, None) => Future(OnlyOneBusinessInLatency)
+          case (Some(true), Some(false), None) | (Some(false), Some(true), None)  => Future(OnlyOneYearAvailableToSignUp)
           case (_, _, Some(false)) => Future(NotSigningUp)
           case _ => Future(Unknown)
         }
