@@ -1917,8 +1917,8 @@ income.source.added.obligation.list.text                                        
 ###### Income Source Added Scenario 1 - SignUpNextYearOnly  #######
 
 income.source.added.scenario.one.account.updated.p.a                                        = Even if they are not displayed right away on the
-income.source.added.scenario.one.account.updated.p.link                                     = updates and deadlines page
-income.source.added.scenario.one.account.updated.p.b                                        = your account has been updated.
+income.source.added.scenario.one.account.updated.p.link                                     = updates and deadlines
+income.source.added.scenario.one.account.updated.p.b                                        = page, your account has been updated.
 
 income.source.added.scenario.one.view.reporting.obligations.p.a                             = Depending on your circumstances, you may be able to
 income.source.added.scenario.one.view.reporting.obligations.link                            = view and change your reporting obligations
@@ -1930,8 +1930,8 @@ income.source.added.scenario.one.view.businesses.p                              
 ###### Income Source Added Scenario 2 - NotSigningUp  #######
 
 income.source.added.scenario.two.account.updated.p.a                                        = Even if they are not displayed right away on the
-income.source.added.scenario.two.account.updated.p.link                                     = updates and deadlines page
-income.source.added.scenario.two.account.updated.p.b                                        = your account has been updated.
+income.source.added.scenario.two.account.updated.p.link                                     = updates and deadlines
+income.source.added.scenario.two.account.updated.p.b                                        = page, your account has been updated.
 
 income.source.added.scenario.two.view.reporting.obligations.p.a                             = This new business is opted out of Making Tax Digital for Income Tax. You can decide at any time to opt all your businesses out of Making Tax Digital for Income Tax on
 income.source.added.scenario.two.view.reporting.obligations.link                            = your reporting obligations
@@ -1945,8 +1945,8 @@ income.source.added.scenario.two.view.businesses.p                              
 income.source.added.few.minutes.overdue.updates                                             = For this new business you may have overdue updates for the {0} to {1} tax year. You must submit these updates with all required income and expenses through your compatible software.
 
 income.source.added.scenario.three.account.updated.p.a                                      = Even if they are not displayed right away on the
-income.source.added.scenario.three.account.updated.p.link                                   = updates and deadlines page
-income.source.added.scenario.three.account.updated.p.b                                      = your account has been updated.
+income.source.added.scenario.three.account.updated.p.link                                   = updates and deadlines
+income.source.added.scenario.three.account.updated.p.b                                      = page, your account has been updated.
 
 income.source.added.scenario.three.view.reporting.obligations.p.a                           = Depending on your circumstances, you may be able to
 income.source.added.scenario.three.view.reporting.obligations.link                          = view and change your reporting obligations
@@ -1960,8 +1960,8 @@ income.source.added.scenario.three.view.businesses.p                            
 income.source.added.few.minutes.overdue.updates                                             = For this new business you may have overdue updates for the {0} to {1} tax year. You must submit these updates with all required income and expenses through your compatible software.
 
 income.source.added.scenario.four.account.updated.p.a                                       = Even if they are not displayed right away on the
-income.source.added.scenario.four.account.updated.p.link                                    = updates and deadlines page
-income.source.added.scenario.four.account.updated.p.b                                       = your account has been updated.
+income.source.added.scenario.four.account.updated.p.link                                    = updates and deadlines
+income.source.added.scenario.four.account.updated.p.b                                       = page, your account has been updated.
 
 income.source.added.scenario.four.view.reporting.obligations.p                              = This new business is opted out of Making Tax Digital for Income Tax. Find out more about
 income.source.added.scenario.four.view.reporting.obligations.link                           = your reporting obligations
