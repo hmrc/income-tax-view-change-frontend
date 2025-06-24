@@ -97,6 +97,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val itsaPOA1: String = "ITSA- POA 1"
   val itsaPOA2: String = "ITSA - POA 2"
   val cancelledPayeSelfAssessment: String = messages("whatYouOwe.cancelledPayeSelfAssessment.text")
+  val penaltiesCalcUrl: String = "http://localhost:9185/penalties/income-tax/calculation"
 
   val interestEndDateFuture: LocalDate = LocalDate.of(2100, 1, 1)
 
@@ -130,7 +131,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                   migrationYear: Int = fixedDate.getYear - 1,
                   reviewAndReconcileEnabled: Boolean = false,
                   adjustPaymentsOnAccountFSEnabled: Boolean = false,
-                  claimToAdjustViewModel: Option[WYOClaimToAdjustViewModel] = None
+                  claimToAdjustViewModel: Option[WYOClaimToAdjustViewModel] = None,
+                  LPP2Url: String = ""
                  ) {
     val individualUser: MtdItUser[_] = defaultMTDITUser(
       Some(testUserTypeIndividual),
@@ -151,7 +153,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       creditAndRefundEnabled = true,
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),
-      LPP2Url = "")(FakeRequest(), individualUser, implicitly, dateService)
+      LPP2Url = LPP2Url)(FakeRequest(), individualUser, implicitly, dateService)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def findElementById(id: String): Option[Element] = {
@@ -460,22 +462,25 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           poa2ExtraTable.select("td").last().text() shouldBe "£40.00"
         }
-        "have penalty charges in table" in new TestSetup(whatYouOweAllPenalties) {
+        "have penalty charges in table" in new TestSetup(whatYouOweAllPenalties, LPP2Url = penaltiesCalcUrl) {
           val lpp1Row: Element = pageDocument.getElementById("due-2")
           lpp1Row.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
           lpp1Row.select("td").get(1).text() shouldBe lpp1Text + " 3"
+          lpp1Row.select("td").get(1).getElementsByClass("govuk-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(fixedDate.getYear, id1040000123).url
           lpp1Row.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
           lpp1Row.select("td").last().text() shouldBe "£50.00"
 
           val lpp2Row: Element = pageDocument.getElementById("due-3")
           lpp2Row.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
           lpp2Row.select("td").get(1).text() shouldBe lpp2Text + " 4"
+          lpp2Row.select("td").get(1).getElementsByClass("govuk-link").attr("href") shouldBe penaltiesCalcUrl
           lpp2Row.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
           lpp2Row.select("td").last().text() shouldBe "£75.00"
 
           val lspRow: Element = pageDocument.getElementById("due-0")
           lspRow.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
           lspRow.select("td").get(1).text() shouldBe lspText + " 1"
+          lspRow.select("td").get(1).getElementsByClass("govuk-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(fixedDate.getYear, id1040000123).url
           lspRow.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
           lspRow.select("td").last().text() shouldBe "£50.00"
         }

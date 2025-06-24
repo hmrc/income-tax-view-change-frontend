@@ -770,6 +770,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       document.selectById("LSP-content-2").text() shouldBe lspContent2
       document.selectById("LSP-content-3").text() shouldBe lspContent3
       document.selectById("LSP-content-4").text() shouldBe lspContent4
+      document.selectById("LSPlink").attr("href") shouldBe "testLSPUrl"
     }
     "charge is a first late payment penalty" in new TestSetup(chargeItem = chargeItemModel(transactionType = FirstLatePaymentPenalty)) {
       document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
@@ -777,6 +778,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
       document.selectById("first-payment-penalty-p1").text() shouldBe lpp1Content1
       document.selectById("first-payment-penalty-p2").text() shouldBe lpp1Content2
+      document.selectById("first-payment-penalty-p2").attr("href") shouldBe "testLPPUrl"
     }
 
     "charge is a POA 1 reconciliation credit" in new TestSetup(chargeItem = chargeItemModel(transactionType = PoaOneReconciliationCredit, originalAmount = -100), reviewAndReconcileEnabled = true) {
