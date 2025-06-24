@@ -225,26 +225,25 @@
 }
 
 @lateSubmissionPenaltyExplaination = {
-
-@p(id = Some("LSP-content-1")) {
-    @messages("chargeSummary.lateSubmissionPenalty.penaltyPoints")
-}
-@p(id = Some("LSP-content-2")) {
-    @messages("chargeSummary.lateSubmissionPenalty.fourPoints")
-}
-@p(id = Some("LSP-content-3")) {
-    @messages("chargeSummary.lateSubmissionPenalty.avoidInFuture")
-}
-@p(id = Some("LSP-content-4")) {
-    @messages("chargeSummary.lateSubmissionPenalty.penaltyLinkText1")
-    @link(
-        id = Some("LSPlink"),
-        link = viewModel.LSPUrl.getOrElse(""),
-        rel = Some("noreferrer noopener"),
-        messageKey = "chargeSummary.lateSubmissionPenalty.penaltyLinkText"
-    )
-    @messages("chargeSummary.lateSubmissionPenalty.penaltyLinkText2")
-}
+    @p(id = Some("LSP-content-1")) {
+        @messages("chargeSummary.lateSubmissionPenalty.penaltyPoints")
+    }
+    @p(id = Some("LSP-content-2")) {
+        @messages("chargeSummary.lateSubmissionPenalty.fourPoints")
+    }
+    @p(id = Some("LSP-content-3")) {
+        @messages("chargeSummary.lateSubmissionPenalty.avoidInFuture")
+    }
+    @p(id = Some("LSP-content-4")) {
+        @messages("chargeSummary.lateSubmissionPenalty.penaltyLinkText1")
+        @link(
+            id = Some("LSPlink"),
+            link = viewModel.LSPUrl.getOrElse(""),
+            rel = Some("noreferrer noopener"),
+            messageKey = "chargeSummary.lateSubmissionPenalty.penaltyLinkText"
+        )
+        @messages("chargeSummary.lateSubmissionPenalty.penaltyLinkText2")
+    }
 }
 
 @getExplanationContent = @{(viewModel.chargeItem.transactionType, viewModel.chargeItem.codedOutStatus) match {
