@@ -42,13 +42,16 @@
     <tbody class="govuk-table__body">
         <tr class="govuk-table__row" id="table-row-1">
             <td class="govuk-table__cell">
-                <a class="govuk-link" id="poa-allocation-link" href="@link">
+                <div>
+                    <a class="govuk-link" id="poa-allocation-link" href="@link">
                     @linkText
-                </a>
-                <br>
-                <span class="govuk-body-s govuk-!-margin-bottom-1 govuk-!-margin-top-1">
-                    @messages("chargeSummary.taxYear", chargeItem.taxYear.startYear.toString, chargeItem.taxYear.endYear.toString)
-                </span>
+                    </a>
+                </div>
+                <div>
+                    <span class="govuk-body-s govuk-!-margin-bottom-1 govuk-!-margin-top-1">
+                        @messages("chargeSummary.taxYear", chargeItem.taxYear.startYear.toString, chargeItem.taxYear.endYear.toString)
+                    </span>
+                </div>
             </td>
             <td class="govuk-table__cell">@chargeItem.dueDate.getOrElse(chargeItem.documentDate).toLongDateShort.toNonBreaking</td>
             <td class="govuk-table__cell govuk-table__cell--numeric">@chargeItem.originalAmount.abs.toCurrencyString</td>
