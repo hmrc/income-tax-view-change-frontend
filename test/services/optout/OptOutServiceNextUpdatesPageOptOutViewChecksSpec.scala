@@ -23,7 +23,7 @@ import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResp
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
-import models.optout.{OptOutMultiYearViewModel, OptOutOneYearViewModel}
+import models.optout.NextUpdatesQuarterlyReportingContentChecks
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfter
@@ -35,7 +35,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class OptOutServiceNextUpdatesPageOptOutViewModelSpec extends UnitSpec
+class OptOutServiceNextUpdatesPageOptOutViewChecksSpec extends UnitSpec
   with BeforeAndAfter
   with MockITSAStatusService
   with MockCalculationListService
@@ -59,7 +59,7 @@ class OptOutServiceNextUpdatesPageOptOutViewModelSpec extends UnitSpec
     reset(optOutConnector, nextUpdatesService, repository, user, hc)
   }
 
-  "OptOutService.makeOptOutUpdateRequest" when {
+  "OptOutService.nextUpdatesPageOptouCheck" when {
 
     "one year available for opt-out; end-year 2023" should {
       "return successful response" in {
@@ -90,13 +90,20 @@ class OptOutServiceNextUpdatesPageOptOutViewModelSpec extends UnitSpec
           ITSAStatusUpdateResponseSuccess()
         ))
 
-        val result = service.nextUpdatesPageOptOutViewModels()
+        val (nextUpdatesQuarterlyReportingContentChecks, optOutProp) = service.nextUpdatesPageChecksAndProposition().futureValue
 
-        result.futureValue._2.get.isInstanceOf[OptOutOneYearViewModel] shouldBe true
+        nextUpdatesQuarterlyReportingContentChecks shouldBe NextUpdatesQuarterlyReportingContentChecks(true, true, false)
+        optOutProp shouldBe OptOutProposition(
+          PreviousOptOutTaxYear(ITSAStatus.Voluntary, TaxYear(2022, 2023), false),
+          CurrentOptOutTaxYear(ITSAStatus.Mandated, TaxYear(2023, 2024)),
+          NextOptOutTaxYear(ITSAStatus.Mandated, TaxYear(2024, 2025), CurrentOptOutTaxYear(ITSAStatus.Mandated, TaxYear(2023, 2024)))
+        )
       }
     }
 
+
     "three years available for opt-out; end-year 2023, 2024, 2025" should {
+
       "return successful response" in {
 
         val taxableEntityId = "456"
@@ -125,9 +132,14 @@ class OptOutServiceNextUpdatesPageOptOutViewModelSpec extends UnitSpec
           ITSAStatusUpdateResponseSuccess()
         ))
 
-        val result = service.nextUpdatesPageOptOutViewModels()
+        val (nextUpdatesQuarterlyReportingContentChecks, optOutProp) = service.nextUpdatesPageChecksAndProposition().futureValue
 
-        result.futureValue._2.get.isInstanceOf[OptOutMultiYearViewModel] shouldBe true
+        nextUpdatesQuarterlyReportingContentChecks shouldBe NextUpdatesQuarterlyReportingContentChecks(true, true, false)
+        optOutProp shouldBe OptOutProposition(
+          PreviousOptOutTaxYear(ITSAStatus.Voluntary, TaxYear(2022, 2023), false),
+          CurrentOptOutTaxYear(ITSAStatus.Voluntary, TaxYear(2023, 2024)),
+          NextOptOutTaxYear(ITSAStatus.Voluntary, TaxYear(2024, 2025), CurrentOptOutTaxYear(ITSAStatus.Voluntary, TaxYear(2023, 2024)))
+        )
       }
     }
   }

@@ -17,610 +17,162 @@
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import _root_.implicits.ImplicitCurrencyFormatter._
 @import models.financialDetails._
-@import models.financialDetails.YourSelfAssessmentChargesViewModel.getDisplayDueDate
 @import auth.MtdItUser
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import models.financialDetails.Nics2
-@import models.financialDetails.MfaDebitCharge
 @import services.DateServiceInterface
-@import _root_.implicits.HtmlFormatter.NbspString
+@import views.html.partials.yourSelfAssessmentCharges._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
+@import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
 
 @this(
-        mainTemplate: unifiedLayout,
-        implicitDateFormatter: ImplicitDateFormatterImpl,
-        appConfig: config.FrontendAppConfig,
-        h1: h1,
-        h2: h2,
-        h3: h3,
-        p: p,
-        link: link,
-        detailsDropdown: detailsDropdown,
-        govukWarningText: GovukWarningText,
-        govukInsetText: GovukInsetText
+    mainTemplate: unifiedLayout,
+    implicitDateFormatter: ImplicitDateFormatterImpl,
+    appConfig: config.FrontendAppConfig,
+    h1: h1,
+    h2: h2,
+    h3: h3,
+    p: p,
+    link: link,
+    detailsDropdown: detailsDropdown,
+    govukWarningText: GovukWarningText,
+    govukTabs: GovukTabs,
+    govukTable: GovukTable,
+    govukInsetText: GovukInsetText,
+    dunningLockParagraph: DunningLockParagraph,
+    paymentPlanSection: PaymentPlanSection,
+    claimToAdjustPoaSection: ClaimToAdjustPoaSection,
+    taxYearSummaryLink: TaxYearSummaryLink,
+    chargesDueNowTable: ChargesDueNowTable,
+    chargesDueIn30DaysTable: ChargesDueIn30DaysTable,
+    hmrcPageHeading: HmrcPageHeading,
+    chargesDueAfter30DaysTable: ChargesDueAfter30DaysTable,
+    codingOutInsetContent: CodingOutInsetContent,
+    paymentButton: PaymentButton,
+    overduePaymentInsetText: OverduePaymentInsetText,
+    paymentInsetTextFor30Days: PaymentInsetTextFor30Days,
+    paymentTypeEntry: PaymentTypeEntry,
+    availableCreditInAccount: AvailableCreditInAccount,
+    unallocatedCreditParagraphContent: UnallocatedCreditParagraphContent,
+    chargesDueNotificationBanner: ChargesDueNotificationBanner,
+    noChargesDueContent: NoChargesDueContent,
+    saNoteParagraph: SaNoteParagraph
 )
 
-@(viewModel: YourSelfAssessmentChargesViewModel,
-        origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages, dateService: DateServiceInterface)
+@(
+    viewModel: YourSelfAssessmentChargesViewModel,
+    origin: Option[String] = None
+)(
+    implicit request: Request[_],
+    user: MtdItUser[_],
+    messages: Messages,
+    dateService: DateServiceInterface
+)
 
-    @import implicitDateFormatter.longDate
 
-    @btaNavPartial = @{
-        user.btaNavPartial
-    }
+@mainTemplate(
+    pageTitle = getMessage("heading"),
+    backUrl = Some(viewModel.backUrl),
+    isAgent = user.isAgent(),
+    btaNavPartial = user.btaNavPartial,
+    mainClass = Some("govuk-width-container")
+) {
 
-    @getMessage(key: String, args: String*) = @{
-        messages(s"selfAssessmentCharges.$key", args: _*)
-    }
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
 
-    @getPrefix(key: String) = @{
-        s"whatYouOwe.$key"
-    }
+            @h1(msg = getMessage("heading"), id = Some("page-heading"))
 
-    @saNoteParagraphContent(utr: String) = {
-    @if(user.isAgent()) {
-        @p(id = Some("sa-note-migrated"))(Html(getMessage("sa-note-agent-1") + ". " + getMessage("sa-note-agent-2") +
-                link(link = appConfig.saForAgents,
-                    outerMessage = ". " + getMessage("sa-note-agent-3"),
-                    messageKey = getPrefix("sa-link-agent"),
-                    id = Some("sa-note-migrated-link"),
-                    rel = Some("noreferrer noopener"),
-                    target = Some("_blank")
-                ).toString())
-        )
-    } else {
-        @p(id = Some("sa-note-migrated"))(Html(getMessage("sa-note") +
-                link(link = appConfig.saViewLandPService(utr), outerMessage = ".",
-                    messageKey = getPrefix("sa-link"), id = Some("sa-note-migrated-link"),
-                    rel = Some("noreferrer noopener"), target = Some("_blank")).toString())
-        )
-    }
-    @p(id = Some("outstanding-charges-note-migrated"))(content = Html(getMessage("outstanding-charges-note")))
-    }
+            @if(viewModel.chargesAndCodedOutDetailsAreEmpty) {
 
-    @saNoteParagraph = {
-    @user.saUtr.map { utr =>
-        <div id="payments-due-note">
-            @govukInsetText(InsetText(content = HtmlContent(saNoteParagraphContent(utr))))
-        </div>
-    }
-    }
+                @p(id = Some("no-payments-due")) {
+                    @Html(messages(s"whatYouOwe.no-payments-due${if(user.isAgent()) "-agent" else ""}"))
+                }
 
-    @creditAndRefundUrl = @{
-        if(user.isAgent()) {
-            controllers.routes.CreditAndRefundController.showAgent().url
-        } else {
-            controllers.routes.CreditAndRefundController.show().url
-        }
-    }
+                @claimToAdjustPoaSection(
+                    viewModel.whatYouOweChargesList.hasUnpaidPOAs,
+                    viewModel.claimToAdjustViewModel.claimToAdjustTaxYear,
+                    viewModel.adjustPoaUrl
+                )
 
-    @unallocatedCreditParagraphContent(amount: String) = {
-    @p(id = Some("unallocated-credit-note"))(Html(messages("whatYouOwe.credit-overpaid-prefix") + link(link = creditAndRefundUrl,
-        outerMessage = messages("whatYouOwe.unallocated-credit-note"),
-        messageKey = messages("whatYouOwe.credit-overpaid-amount", amount),
-        id = Some("unallocated-credit-link")).toString()))
-    }
+                @saNoteParagraph()
 
-    @creditAndRefundsControllerURL = @{
-        if(user.incomeSources.yearOfMigration.isDefined) {
-            if(user.isAgent()) {
-                controllers.routes.CreditAndRefundController.showAgent().url
             } else {
-                controllers.routes.CreditAndRefundController.show().url
-            }
-        } else {
-            if(user.isAgent()) {
-                controllers.routes.NotMigratedUserController.showAgent().url
-            } else {
-                controllers.routes.NotMigratedUserController.show().url
-            }
-        }
-    }
+                @if(viewModel.chargeOrBcdExists) {
 
-    @dunningLockParagraph = {
-    @if(viewModel.dunningLock || viewModel.hasLpiWithDunningLock) {
-        <div id="payment-under-review-info">
-        @p() {
-            @getMessage("dunningLock.text", "")
-            @link(link = "https://www.gov.uk/tax-appeals", messageKey = getPrefix("dunningLock.link"),
-                id = Some("disagree-with-tax-appeal-link"), rel = Some("noreferrer noopener"), target = Some("_blank"),
-                additionalOpenTabMessage = Some(".")
-            )
-        }
-        </div>
-    }
-    }
+                    @if(ChargeItem.overdueOrAccruingInterestChargeList(viewModel.whatYouOweChargesList) || viewModel.whatYouOweChargesList.overdueOutstandingCharges.nonEmpty) {
 
-    @tableHead(headId: String, showInterest: Boolean) = {
-        <thead class="govuk-table__head" id="@headId">
-            <tr class="govuk-table__row">
-                <th scope="col" class="govuk-table__header">@getMessage("tableHead.due-date")</th>
-                <th scope="col" class="govuk-table__header">@getMessage("tableHead.type-of-charge")</th>
-                <th scope="col" class="govuk-table__header govuk-table__header--numeric">@getMessage("tableHead.tax-year")</th>
-                @if(showInterest) {
-                <th scope="col" class="govuk-table__header govuk-table__header--numeric">
-                    @getMessage("tableHead.estimated-interest")
-                </th>
-                }
-                <th scope="col" class="govuk-table__header govuk-table__header--numeric">@getMessage("tableHead.amount").toNonBreaking</th>
-            </tr>
-        </thead>
-    }
+                        @chargesDueNotificationBanner(
+                            viewModel.whatYouOweChargesList.balanceDetails.overDueAmount.toCurrencyString,
+                            viewModel.whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.get._2.toPence,
+                            origin
+                        )
 
-    @paymentTypeEntry(chargeItem: ChargeItem, rowId: String, isInterest: Boolean,
-        linkSuffix: String, index: Int) = @{
+                    } else {
 
-    val chargeTypeKey = chargeItem.getChargeTypeKey
-    val lpi = if(isInterest) "lpi." else ""
-    val linkText = getMessage(s"${lpi}${chargeTypeKey}")
-    val taxYear = chargeItem.taxYear
-    val linkHref = if (chargeItem.isLPP2) {
-        viewModel.LPP2Url
-    } else {
-        if(user.isAgent()) {
-        controllers.routes.ChargeSummaryController.showAgent(taxYear.endYear,
-            chargeItem.transactionId, isInterest).url
-    } else {
-        controllers.routes.ChargeSummaryController.show(taxYear.endYear,
-            chargeItem.transactionId, isInterest, origin).url
-    }
-    }
-    paymentTypeEntryHTML(linkText = linkText, linkHref = linkHref, taxYear = taxYear.endYear, rowId = rowId,
-        linkSuffix: String, index + 1)
-}
+                        @noChargesDueContent(
+                            viewModel.whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate,
+                            origin
+                        )
+                    }
 
-
-    @paymentTypeEntryHTML(linkText: String, linkHref: String, taxYear: Int, rowId: String, linkSuffix: String, index: Int) = {
-        <a class="govuk-link" id="@rowId-@linkSuffix" href="@linkHref">
-            @linkText
-            <span class="govuk-visually-hidden">@index</span>
-        </a>
-    }
-
-    @getPaymentTypeEntry(chargeItem: ChargeItem, rowId: String, isOverduePayment: Boolean, index: Int) = @{
-        val isInterest = chargeItem.isLatePaymentInterest
-
-        def getLinkSuffix(): String = {
-            if(!isOverduePayment) {
-                "link"
-            } else {
-                if(chargeItem.codedOutStatus.contains(Nics2) || chargeItem.isLatePaymentInterest) {
-                    "late-link"
-                } else {
-                    "late-link2"
-                }
-            }
-        }
-
-        paymentTypeEntry(chargeItem, rowId, isInterest = isInterest,
-            linkSuffix = getLinkSuffix(), index = index)
-    }
-
-    @getReturnHref(year: Int) = @{
-        if(user.isAgent()) {
-            controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(year).url
-        } else {
-            controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(year, origin).url
-        }
-    }
-
-    @taxYearSummaryLink(year: Int, index: Int, id: String) = {
-        <a class="govuk-link" id="@id-@index"
-        href="@getReturnHref(year)">
-            @getMessage("tax-year-summary.taxYear", (year - 1).toString, year.toString).toNonBreaking
-            <span class="govuk-visually-hidden">@getMessage("taxYear")</span>
-        </a>
-    }
-
-    @tableRowWithInterest(rowId: String, chargeItem: ChargeItem, index: Int, id: String) = {
-        <tr class="govuk-table__row" id="@rowId">
-            <td class="govuk-table__cell">
-                @getDisplayDueDate(chargeItem).toLongDateShort.toNonBreaking
-            </td>
-            <td class="govuk-table__cell">
-                @getPaymentTypeEntry(chargeItem = chargeItem, isOverduePayment = true,
-                    rowId = rowId, index = index)
-
-                @if(chargeItem.dunningLock) {
-                    <div class="form-hint govuk-body-s"> @getMessage("paymentUnderReview") </div>
-                }
-                @if(chargeItem.hasLpiWithDunningLock) {
-                    <div class="form-hint govuk-body-s" id="LpiDunningLock"> @getMessage("paymentUnderReview") </div>
-                }
-            </td>
-            <td class="govuk-table__cell"> @taxYearSummaryLink(chargeItem.taxYear.endYear, index, id)</td>
-            <td class="govuk-table__cell govuk-table__cell--numeric"> @if(chargeItem.hasAccruingInterest) @{
-                chargeItem.getInterestOutstandingAmount.toCurrency
-            }</td>
-            <td class="govuk-table__cell govuk-table__cell--numeric">@{
-                if(chargeItem.isOnlyInterest) {
-                    chargeItem.interestRemainingToPay.toCurrency
-                } else {
-                    chargeItem.remainingToPay.toCurrency
-                }
-            }</td>
-        </tr>
-    }
-
-    @tableRowWithoutInterest(rowId: String, chargeItem: ChargeItem, index: Int, id: String) = {
-    <tr class="govuk-table__row" id="@rowId">
-        <td class="govuk-table__cell">
-            @getDisplayDueDate(chargeItem).toLongDateShort.toNonBreaking
-        </td>
-        <td class="govuk-table__cell">
-            @getPaymentTypeEntry(chargeItem = chargeItem, isOverduePayment = false,
-            rowId = rowId, index = index)
-        </td>
-        <td class="govuk-table__cell govuk-table__cell--numeric">
-            @taxYearSummaryLink(chargeItem.taxYear.endYear, index, id)
-        </td>
-        <td class="govuk-table__cell govuk-table__cell--numeric">
-            @chargeItem.remainingToPay.toCurrency
-        </td>
-    </tr>
-    }
-
-    @getNoPaymentsDueText = @{
-        if(user.isAgent()) messages("whatYouOwe.no-payments-due-agent") else messages("whatYouOwe.no-payments-due")
-    }
-
-    @getClaimToAdjustPoaSection = @{
-        if(viewModel.whatYouOweChargesList.hasUnpaidPOAs) {
-            viewModel.claimToAdjustViewModel.claimToAdjustTaxYear match {
-                case Some(value) =>
-                    p(id = Some("adjust-poa-content"))(
-                        link(
-                            link = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url,
-                            messageKey = getMessage("adjust-poa", value.startYear.toString, value.endYear.toString),
-                            id = Some("adjust-poa-link"))
-                    )
-                case None => Html("")
-            }
-        } else {
-            viewModel.claimToAdjustViewModel.claimToAdjustTaxYear match {
-                case Some(value) =>
-                    p(id = Some("adjust-paid-poa-content"))(Html(
-                        s"""
-                    ${getMessage("adjust-poa.paid-1", value.startYear.toString, value.endYear.toString)}
-                    ${
-                            link(
-                                link = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url,
-                                messageKey = getMessage("adjust-poa.paid-2", value.startYear.toString, value.endYear.toString),
-                                id = Some("adjust-poa-link"))
-                        }
-                    ${getMessage("adjust-poa.paid-3", value.startYear.toString, value.endYear.toString)}
-                    <span class="govuk-!-font-weight-bold">
-                        ${getMessage("adjust-poa.paid-4", (value.endYear + 1).toString)}
-                    </span>
-                    ${getMessage("adjust-poa.paid-5")}
-                """))
-                case None => Html("")
-            }
-        }
-    }
-
-    @getPaymentPlanSection = {
-        <p class="govuk-body" id="payment-plan">
-            @getMessage("payment-plan-1")
-            @link(
-                link = viewModel.selfServeTimeToPayStartUrl,
-                messageKey = getMessage("payment-plan-link-text"),
-                id = Some("payment-plan-link"),
-                target = Some("_blank"),
-                outerMessage = ".")
-        </p>
-    }
-
-    @mainTemplate(
-        pageTitle = getMessage("heading"),
-        backUrl = Some(viewModel.backUrl),
-        isAgent = user.isAgent(),
-        btaNavPartial = btaNavPartial,
-        useFallbackBackLink = true,
-        mainClass = Some("govuk-width-container")
-    ) {
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-three-quarters">
-                @h1(msg = getMessage("heading"), id = Some("page-heading"))
-                @if(viewModel.whatYouOweChargesList.isChargesListEmpty && viewModel.whatYouOweChargesList.codedOutDetails.isEmpty) {
-                    @p(id = Some("no-payments-due"))(Html(getNoPaymentsDueText))
-
-                    @getClaimToAdjustPoaSection
-
-                    @saNoteParagraph
-                } else {
-                    <div>
-                        @if(viewModel.whatYouOweChargesList.chargesList.nonEmpty || viewModel.whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
-
-                            @if(ChargeItem.overdueOrAccruingInterestChargeList(viewModel.whatYouOweChargesList) || viewModel.whatYouOweChargesList.overdueOutstandingCharges.nonEmpty) {
-                                <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner" id="overdue-banner">
-                                    <div class="govuk-notification-banner__header">
-                                        <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
-                                        @getMessage("important")
-                                        </h2>
-                                    </div>
-                                    <div class="govuk-notification-banner__content" id="overdue-important-warning">
-                                        @h3(
-                                            msg = getMessage("charges-due-now-with-amount", viewModel.whatYouOweChargesList.balanceDetails.overDueAmount.toCurrencyString),
-                                            classes = "govuk-notification-banner__heading"
-                                        )
-                                        <p class="govuk-body">
-                                        <div class="govuk-!-margin-bottom-4">
-                                            @getMessage("important-p1")
-                                        </div>
-                                        <div>
-                                            @getMessage("important-p2")
-                                            <a class="govuk-notification-banner__link"
-                                            href=@controllers.routes.PaymentController.paymentHandoff(viewModel.whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.get._2.toPence, origin).url>
-                                                <b>@getMessage("important-p2-link-text")</b></a>
-                                        </div>
-                                        </p>
-                                    </div>
-                                </div>
-                            } else {
-                        @h2(msg = "selfAssessmentCharges.no-charges-due")
-                        <p class="govuk-body govuk-!-margin-bottom-4">
-                            @getMessage("adjust-poa.paid-1")
-                            @viewModel.whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.fold(Html("")) { case (_, amount) =>
-                            @link(
-                            link = controllers.routes.PaymentController.paymentHandoff(amount.toPence, origin).url,
-                            messageKey = getMessage("pay-upcoming-charges"),
-                            id = Some("pay-upcoming-charges-link")
+                    @govukTabs(Tabs(
+                        id = Some("self-assessment-charges-tabs"),
+                        items = Seq(
+                            Option.when(viewModel.overdueAccruingInterestOrOutstandingChargesListNonEmpty)(
+                                TabItem(
+                                    id = Some("charges-due-now"),
+                                    label = getMessage("charges-due-now"),
+                                    panel = TabPanel(HtmlContent(chargesDueNowTable(viewModel, origin)))
+                                )
+                            ),
+                            Option.when(viewModel.chargesDueWithin30DaysListNonEmpty)(
+                                TabItem(
+                                    id = Some("charges-due-in-30-days"),
+                                    label = getMessage("charges-due-in-30-days"),
+                                    panel = TabPanel(HtmlContent(chargesDueIn30DaysTable(viewModel, origin)))
+                                )
+                            ),
+                            Option.when(viewModel.chargesDueAfter30DaysListNonEmpty)(
+                                TabItem(
+                                    id = Some("charges-due-later"),
+                                    label = getMessage("charges-to-pay-later"),
+                                    panel = TabPanel(HtmlContent(chargesDueAfter30DaysTable(viewModel, origin)))
+                                )
                             )
-                            }
-                        </p>
-                        }
-
-                        <div class="govuk-tabs" data-module="govuk-tabs" id="self-assessment-charges-tabs">
-                            <h2 class="govuk-tabs__title">
-                                Contents
-                            </h2>
-                            <ul class="govuk-tabs__list">
-                                @if(viewModel.overdueAccruingInterestOrOutstandingChargesListNonEmpty) {
-                                    <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-                                        <a class="govuk-tabs__tab" href="#charges-due-now">
-                                        @getMessage("charges-due-now")
-                                        </a>
-                                    </li>
-                                }
-                                @if(viewModel.chargesDueWithin30DaysListNonEmpty) {
-                                <li class="govuk-tabs__list-item">
-                                    <a class="govuk-tabs__tab" href="#charges-due-in-30-days">
-                                        @getMessage("charges-due-in-30-days")
-                                    </a>
-                                </li>
-                                }
-                                @if(viewModel.chargesDueAfter30DaysListNonEmpty) {
-                                    <li class="govuk-tabs__list-item">
-                                        <a class="govuk-tabs__tab" href="#charges-due-later">
-                                        @getMessage("charges-to-pay-later")
-                                        </a>
-                                    </li>
-                                }
-                            </ul>
-
-                            @if(viewModel.overdueAccruingInterestOrOutstandingChargesListNonEmpty) {
-                                <div class="govuk-tabs__panel" id="charges-due-now">
-                                    <table class="govuk-table" id="charges-due-now-table">
-                                        @tableHead("over-due-payments-table-head", true)
-                                        <caption class="govuk-table__caption govuk-visually-hidden">@getMessage("charges-due-now")</caption>
-                                        <tbody class="govuk-table__body">
-                                            @if(viewModel.whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
-                                                <tr class="govuk-table__row" id="balancing-charge-type-0">
-                                                    <td class="govuk-table__cell">@{
-                                                        viewModel.whatYouOweChargesList.getRelevantDueDate.toLongDateShort
-                                                    }</td>
-                                                    <td class="govuk-table__cell">
-                                                        @p(id = Some("balancing-charge"))(Html(getMessage("balancingCharge.text")))
-                                                        @p(id = Some("pre-mtd-digital"))(Html(getMessage("pre-mtd-digital")))
-                                                    </td>
-                                                    <td class="govuk-table__cell">
-                                                    @getMessage("pre-mtd-year", (viewModel.currentTaxYear.endYear - 2).toString, (viewModel.currentTaxYear.endYear - 1).toString)
-                                                    </td>
-                                                    <td class="govuk-table__cell govuk-table__cell--numeric">
-                                                    @if(viewModel.whatYouOweChargesList.outstandingChargesModel.get.getAciChargeWithTieBreaker.isDefined
-                                                            && viewModel.whatYouOweChargesList.getRelevantDueDate.isBefore(viewModel.currentDate)) @{
-                                                        viewModel.whatYouOweChargesList.getAciChargeWithTieBreakerChargeAmount.toCurrency
-                                                    }
-                                                    </td>
-                                                    <td class="govuk-table__cell govuk-table__cell--numeric">@{
-                                                        viewModel.whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.chargeAmount.toCurrency
-                                                    }</td>
-                                                </tr>
-                                            }
-                                            @for((charge, index) <- viewModel.overdueChargesWithIndex) {
-                                                @tableRowWithInterest(s"due-$index", charge, index, "taxYearSummary-link")
-                                            }
-                                            <tr class="govuk-table__header">
-                                                <td class="govuk-table__header" colspan="2" id="total-amount">
-                                                @getMessage("table.total-amount", viewModel.whatYouOweChargesList.balanceDetails.overDueAmount.toCurrencyString)
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-
-                                    <div class="govuk-inset-text" id="overdue-payment-text">
-                                        <div class="govuk-!-margin-bottom-4">
-                                        @getMessage("overdue-inset-text-1")
-                                        </div>
-                                        <div>
-                                        @getMessage("overdue-inset-text-2")
-                                        </div>
-                                    </div>
-
-                                    @if(user.saUtr.isDefined && !user.isAgent()) {
-                                        @viewModel.earliestTaxYearAndAmountByDueDate.map { taxYearWithAmount =>
-                                            <div id="payment-button">
-                                                @link(
-                                                    controllers.routes.PaymentController.paymentHandoff(taxYearWithAmount.amount.toPence, origin).url,
-                                                    messageKey = getPrefix("payNow"),
-                                                    classes = "govuk-button",
-                                                    role = Some("button"),
-                                                    id = Some("payment-button-link")
-                                                    )
-                                            </div>
-                                        }
-                                    }
-                                </div>
-                            }
-
-                            @if(viewModel.chargesDueWithin30DaysListNonEmpty) {
-                                <div class="govuk-tabs__panel" id="charges-due-in-30-days">
-                                    <table class="govuk-table">
-                                        @tableHead("due-in-30-days-payments-table-head", false)
-                                        <tbody class="govuk-table__body">
-                                            @for((charge, index) <- viewModel.chargesDueWithin30DaysWithIndex) {
-                                                @tableRowWithoutInterest(s"due-30-days-$index", charge, index, "taxYearSummary-link")
-                                            }
-                                            <tr class="govuk-table__header">
-                                                <td class="govuk-table__header" colspan="2">
-                                                @getMessage("table.total-amount", viewModel.whatYouOweChargesList.balanceDetails.balanceDueWithin30Days.toCurrencyString)
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-
-                                    @if(user.saUtr.isDefined && !user.isAgent() && !viewModel.overdueAccruingInterestOrOutstandingChargesListNonEmpty) {
-                                        <div class="govuk-inset-text" id="30-days-payment-text">
-                                            <div class="govuk-!-margin-bottom-4">
-                                            @getMessage("overdue-inset-text-1")
-                                            </div>
-                                            <div>
-                                            @getMessage("overdue-inset-text-2")
-                                            </div>
-                                        </div>
-
-                                        @viewModel.earliestTaxYearAndAmountByDueDate.map { taxYearWithAmount =>
-                                            <div id="payment-button">
-                                                @link(
-                                                    controllers.routes.PaymentController.paymentHandoff(taxYearWithAmount.amount.toPence, origin).url,
-                                                    messageKey = getPrefix("payNow"),
-                                                    classes = "govuk-button",
-                                                    role = Some("button"),
-                                                    id = Some("payment-button-link")
-                                                )
-                                            </div>
-                                        }
-                                    }
-                                </div>
-                            }
-
-                            @if(viewModel.chargesDueAfter30DaysListNonEmpty) {
-                                <div class="govuk-tabs__panel" id="charges-due-later">
-                                    <table class="govuk-table">
-                                        @tableHead("charges-due-later-table-head", showInterest = false)
-                                        <tbody class="govuk-table__body">
-                                        @for((charge, index) <- viewModel.chargesDueAfter30DaysWithIndex) {
-                                            @tableRowWithoutInterest(s"due-$index", charge, index, "taxYearSummary-link")
-                                        }
-                                        </tbody>
-                                    </table>
-
-                                    @if(user.saUtr.isDefined && !user.isAgent() && !viewModel.overdueAccruingInterestOrOutstandingChargesListNonEmpty && !viewModel.chargesDueWithin30DaysListNonEmpty) {
-                                        <div class="govuk-inset-text" id="later-payment-text">
-                                            <div>
-                                            @getMessage("overdue-inset-text-1")
-                                            </div>
-
-                                            <div>
-                                            @getMessage("overdue-inset-text-2")
-                                            </div>
-                                        </div>
-                                        @viewModel.earliestTaxYearAndAmountByDueDate.map { taxYearWithAmount =>
-                                            <div id="payment-button">
-                                                @link(
-                                                    controllers.routes.PaymentController.paymentHandoff(taxYearWithAmount.amount.toPence, origin).url,
-                                                    messageKey = getPrefix("payNow"),
-                                                    classes = "govuk-button",
-                                                    role = Some("button"),
-                                                    id = Some("payment-button-link")
-                                                )
-                                            </div>
-                                        }
-                                    }
-                                </div>
-                            }
-                            </div>
-
-                            @getPaymentPlanSection
-                        }
-
-                        @if(!viewModel.whatYouOweChargesList.isChargesListEmpty) {
-                            @dunningLockParagraph
-                        }
-
-                        @getClaimToAdjustPoaSection
-
-                        @viewModel.whatYouOweChargesList.codedOutDetails.map { codingOutDetails =>
-                            <div id="coding-out-wrapper">
-                                @govukInsetText(InsetText(content = HtmlContent(codingOutInsetContent(codingOutDetails))))
-                            </div>
-                        }
-                        @if(viewModel.whatYouOweChargesList.isChargesListEmpty) {
-                            @saNoteParagraph
-                        }
-
-                    </div>
-                    @if(!viewModel.whatYouOweChargesList.isChargesListEmpty) {
-                        @saNoteParagraph
-                    }
-                    @viewModel.whatYouOweChargesList.availableCredit.map { availableCreditAmt =>
-                        @unallocatedCreditParagraphContent(availableCreditAmt.toCurrencyString)
-                    }
-
+                        ).flatten
+                    ))
                 }
 
-                @if(viewModel.creditAndRefundEnabled) {
-                    @viewModel.whatYouOweChargesList.availableCredit.map { ac =>
-                        @availableCreditInAccount(ac.toCurrencyString)
-                    }
+                @paymentPlanSection(viewModel.selfServeTimeToPayStartUrl)
+
+                @if(!viewModel.whatYouOweChargesList.isChargesListEmpty && (viewModel.dunningLock || viewModel.hasLpiWithDunningLock) ) {
+                    @dunningLockParagraph()
                 }
-            </div>
+
+                @claimToAdjustPoaSection(
+                    viewModel.whatYouOweChargesList.hasUnpaidPOAs,
+                    viewModel.claimToAdjustViewModel.claimToAdjustTaxYear,
+                    viewModel.adjustPoaUrl
+                )
+
+                @viewModel.whatYouOweChargesList.codedOutDetails.map { codingOutDetails =>
+                    @govukInsetText(InsetText(content = HtmlContent(codingOutInsetContent(codingOutDetails, origin))))
+                }
+
+                @saNoteParagraph()
+
+                @viewModel.whatYouOweChargesList.availableCredit.map { availableCreditAmt =>
+                    @unallocatedCreditParagraphContent(availableCreditAmt.toCurrencyString, viewModel.creditAndRefundUrl)
+                }
+            }
+
+            @if(viewModel.creditAndRefundEnabled) {
+                @viewModel.whatYouOweChargesList.availableCredit.map { ac =>
+                    @availableCreditInAccount(ac.toCurrencyString, viewModel.creditAndRefundsControllerUrl)
+                }
+            }
         </div>
-    }
-
-    @availableCreditInAccount(availableCredit: String) = {
-        <div class="govuk-body" id="money-in-your-account">
-        @if(user.isAgent()) {
-            @h2(msg = messages("whatYouOwe.moneyOnAccount-agent"))
-            @messages("whatYouOwe.moneyOnAccount-1") @availableCredit
-            @messages("whatYouOwe.moneyOnAccount-agent-2")
-            @link(link = creditAndRefundsControllerURL, messageKey = "whatYouOwe.moneyOnAccount-3", outerMessage = ".", rel = Some("noreferrer noopener"))
-        } else {
-            @h2(msg = messages("whatYouOwe.moneyOnAccount"))
-            @messages("whatYouOwe.moneyOnAccount-1") @availableCredit
-            @messages("whatYouOwe.moneyOnAccount-2")
-            @link(link = creditAndRefundsControllerURL, messageKey = "whatYouOwe.moneyOnAccount-3", outerMessage = ".", rel = Some("noreferrer noopener"))
-        }
-        </div>
-    }
-
-    @getCodingOutHref(taxYear: Int) = @{
-        if(user.isAgent()) {
-            controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear)
-        } else {
-            controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin = origin)
-        }
-    }
-
-    @codingOutInsetContent(codingOutDetails: CodingOutDetails) = {
-    @p(id = Some("coding-out-notice"), classes = "govuk-body coding-out-notice") {
-        @if(user.isAgent()) {
-            @getMessage("codingOut-1a")
-        } else {
-            @getMessage("credit-overpaid-prefix")
-        }
-        <a class="govuk-link" id="coding-out-summary-link" href="@getCodingOutHref(codingOutDetails.codingTaxYear.endYear)">
-        @codingOutDetails.amountCodedOut.toCurrency
-        </a>
-        @getMessage("codingOut-1b")
-        <b>@getMessage("codingOut-2", (codingOutDetails.codingTaxYear.endYear - 1).toString(),
-            codingOutDetails.codingTaxYear.endYear.toString)</b>
-        @if(user.isAgent()) {
-            @getMessage("codingOut-3")
-        } else {
-            @getMessage("codingOut-individual")
-        }
-    }
-    }
+    </div>
+}

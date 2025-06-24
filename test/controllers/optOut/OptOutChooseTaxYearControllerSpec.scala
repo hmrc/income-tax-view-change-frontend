@@ -85,9 +85,8 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
           "has intent not pre-selected" in {
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-            mockFetchIntent(Future.successful(None))
             mockGetSubmissionCountForTaxYear(counts)
-            mockRecallOptOutProposition(Future.successful(optOutProposition))
+            mockRecallOptOutPropositionWithIntent(Future.successful(optOutProposition, None))
 
             val result = action(fakeRequest)
 
@@ -99,9 +98,8 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
           "has intent pre-selected" in {
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-            mockFetchIntent(Future.successful(Some(optOutTaxYear.taxYear)))
             mockGetSubmissionCountForTaxYear(counts)
-            mockRecallOptOutProposition(Future.successful(optOutProposition))
+            mockRecallOptOutPropositionWithIntent(Future.successful(optOutProposition, Some(optOutTaxYear.taxYear)))
 
             val result = action(fakeRequest)
 
@@ -126,7 +124,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
 
             mockGetSubmissionCountForTaxYear(counts)
             mockSaveIntent(currentTaxYear, Future.successful(true))
-            mockRecallOptOutProposition(Future.successful(optOutProposition))
+            mockRecallOptOutPropositionWithIntent(Future.successful(optOutProposition, Some(currentTaxYear)))
 
             val formData = Map(
               ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> currentTaxYear.toString,
@@ -148,7 +146,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
 
             mockGetSubmissionCountForTaxYear(counts)
             mockSaveIntent(previousTaxYear, Future.successful(true))
-            mockRecallOptOutProposition(Future.successful(optOutProposition))
+            mockRecallOptOutPropositionWithIntent(Future.successful(optOutProposition, Some(previousTaxYear)))
 
             val formData = Map(ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> previousTaxYear.toString,
               ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> "")
@@ -168,7 +166,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
 
             mockGetSubmissionCountForTaxYear(counts)
             mockSaveIntent(nextTaxYear, Future.successful(true))
-            mockRecallOptOutProposition(Future.successful(optOutProposition))
+            mockRecallOptOutPropositionWithIntent(Future.successful(optOutProposition, Some(nextTaxYear)))
 
             val formData = Map(ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> nextTaxYear.toString,
               ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> "")
@@ -190,7 +188,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
 
             mockGetSubmissionCountForTaxYear(counts)
             mockSaveIntent(nextTaxYear, Future.successful(true))
-            mockRecallOptOutProposition(Future.successful(optOutProposition))
+            mockRecallOptOutPropositionWithIntent(Future.successful(optOutProposition, Some(nextTaxYear)))
 
             val formData = Map(ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> "", //missing
               ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> "")
@@ -210,7 +208,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
 
             mockGetSubmissionCountForTaxYear(counts)
             mockSaveIntent(currentTaxYear, Future.successful(false))
-            mockRecallOptOutProposition(Future.successful(optOutProposition))
+            mockRecallOptOutPropositionWithIntent(Future.successful(optOutProposition, Some(currentTaxYear)))
 
             val formData = Map(ConfirmOptOutMultiTaxYearChoiceForm.choiceField -> currentTaxYear.toString,
               ConfirmOptOutMultiTaxYearChoiceForm.csrfToken -> "")

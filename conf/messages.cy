@@ -1,3 +1,5 @@
+outage-page.serviceDisplayName                                  = Rheoli’ch Hunanasesiad
+
 ## Base ##
 base.back                                                       = Yn ôl
 base.service_name                                               = Cyfrif Treth Busnes
@@ -14,6 +16,7 @@ base.continue                                                   = Yn eich blaen
 base.govUk                                                      = GOV.UK
 base.confirm-and-continue                                       = Cadarnhau ac yn eich blaen
 base.confirm-this-change                                        = Cadarnhau’r newid hwn
+base.software.compatible.with.mtd.income.tax.link               = feddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol
 
 ## Accessibility ##
 accessibility.this-section-is                                   = Teitl yr adran hon yw
@@ -780,6 +783,7 @@ nextUpdates.dropdown.finalDeclaration.text                      = Eich datganiad
 nextUpdates.table.header.type									= Math o ddiweddariad
 nextUpdates.table.header.source									= Ffynhonnell incwm
 nextUpdates.section.heading.quarterly						    = Diweddariad chwarterol
+nextUpdates.section.heading.end-of-year							= Diweddariad diwedd blwyddyn
 nextUpdates.section.heading.updates								= Cyfnod chwarterol o {0} i {1}
 nextUpdates.section.heading.taxYear								= Blwyddyn dreth: {0} i {1}
 nextUpdates.previousYears.textOne								= I weld diweddariadau a gyflwynwyd yn flaenorol, ewch i
@@ -798,6 +802,53 @@ nextUpdates.optOutOneYear.p.link                                = optio allan o 
 
 nextUpdates.reporting.obligations.p.message                     = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
 nextUpdates.reporting.obligations.p.link                        = bwrw golwg dros eich ymrwymiadau adrodd.
+
+## Next updates Page - R17 Content Changes ##
+nextUpdates.r17.tab.quarterly.label                                = Hyd at blwyddyn dreth {0} i {1}
+nextUpdates.r17.tab.quarterly.heading                              = Hyd at blwyddyn dreth {0} i {1}
+nextUpdates.r17.tab.quarterly.text                                 = Mae’r dudalen hon yn dangos y dyddiadau cau sydd ar y gweill ar eich cyfer ac unrhyw ddyddiadau cau a fethwyd.
+nextUpdates.r17.tab.quarterly.subheading                           = Diweddariadau chwarterol i’w cyflwyno
+nextUpdates.r17.tab.quarterly.text2                                = Mae angen gwneud diweddariad bob 3 mis ar gyfer pob un o’ch ffynonellau incwm eiddo a’ch ffynonellau incwm unig fasnachwr.
+nextUpdates.r17.tab.quarterly.dropdown.heading                     = Dysgwch ragor am ddiweddariadau chwarterol
+nextUpdates.r17.tab.quarterly.dropdown.text1                       = Diweddariad chwarterol yw cyfanswm yr incwm a’r treuliau ar gyfer y flwyddyn dreth hyd yn hyn. Mae’n cyfuno’r canlynol:
+nextUpdates.r17.tab.quarterly.dropdown.text2                       = gwybodaeth newydd a chywiriadau a wnaed ers y diweddariad diwethaf
+nextUpdates.r17.tab.quarterly.dropdown.text3                       = unrhyw wybodaeth ychwanegol yr ydych eisoes wedi’i darparu sydd heb newid
+nextUpdates.r17.tab.quarterly.dropdown.text4                       = Mae hyn yn cael ei wneud drwy
+nextUpdates.r17.tab.quarterly.dropdown.link.text                   = feddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+nextUpdates.r17.tab.quarterly.compatibleSoftware.link              = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax.cy
+nextUpdates.r17.tab.quarterly.link.text1                           = Er mwyn bwrw golwg dros ddiweddariadau a gyflwynwyd yn flaenorol, ewch i’r dudalen trosolwg ar gyfer
+nextUpdates.r17.tab.quarterly.link.text2                           = blynyddoedd treth.
+nextUpdates.r17.tab.quarterly.link.text3                           =
+nextUpdates.r17.tab.quarterly.subheading2                          = Ffurflen Dreth i’w chyflwyno
+nextUpdates.r17.tab.quarterly.text3                                = Os ydych wedi cyflwyno diweddariadau chwarterol ar gyfer y flwyddyn dreth, byddwch hefyd yn nodi unrhyw incwm drethadwy arall yn eich Ffurflen Dreth. Yna, bydd angen i chi gyflwyno’ch Ffurflen Dreth gan ddefnyddio
+nextUpdates.r17.tab.quarterly.text4                                = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+nextUpdates.r17.tab.quarterly.text5                                = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer blwyddyn dreth {0} i {1} erbyn
+nextUpdates.r17.tab.quarterly.text6                                = 31 Ionawr {0}.
+nextUpdates.r17.tab.quarterly.table.heading                        = Dyddiadau cau ar y gweill
+nextUpdates.r17.tab.quarterly.table.heading.row1                   = Dyddiad cau
+nextUpdates.r17.tab.quarterly.table.heading.row2                   = Cyfnod
+nextUpdates.r17.tab.quarterly.table.heading.row3                   = Y diweddariadau sydd i’w cyflwyno ar gyfer ffynonellau incwm
+nextUpdates.r17.tab.quarterly.table.heading.period                 = {0} i {1}
+nextUpdates.r17.tab.quarterly.table.income.source.uk               = Busnes eiddo yn y DU
+nextUpdates.r17.tab.quarterly.table.income.source.foreign          = Busnes eiddo tramor
+nextUpdates.r17.tab.quarterly.table.income.source.property         = Busnes eiddo
+nextUpdates.r17.tab.quarterly.ny.label                             = Blwyddyn dreth {0} i {1}
+nextUpdates.r17.tab.quarterly.ny.heading                           = Blwyddyn dreth {0} i {1}
+nextUpdates.r17.tab.quarterly.ny.text1                             = Gan eich bod wedi cofrestru’n wirfoddol ar gyfer y flwyddyn dreth {0} i {1} neu gan ei fod yn ofynnol i chi wneud hynny, bydd angen
+nextUpdates.r17.tab.quarterly.ny.text2                             = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm arnoch
+nextUpdates.r17.tab.quarterly.ny.text3                             = Ni fydd dyddiadau cau i’w gweld hyd nes eu bod yn dod yn rhan o’r flwyddyn dreth bresennol.
+
+nextUpdates.r17.tab.annual.label                                   = Hyd at flwyddyn dreth {0} i {1}
+nextUpdates.r17.tab.annual.heading                                 = Hyd at flwyddyn dreth {0} i {1}
+nextUpdates.r17.tab.annual.text1                                   = Mae’r dudalen hon yn dangos y dyddiadau cau sydd ar y gweill ar eich cyfer ac unrhyw ddyddiadau cau a fethwyd.
+nextUpdates.r17.tab.annual.subHeading                              = Ffurflen Dreth i’w chyflwyno
+nextUpdates.r17.tab.annual.text2                                   = Gan eich bod yn optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, gallwch gael rhagor o wybodaeth yn y fan hon am sut rydych chi’n
+nextUpdates.r17.tab.annual.link                                    = cyflwyno’ch Ffurflen Dreth Hunanasesiad
+nextUpdates.r17.tab.annual.text3                                   = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer blwyddyn dreth {0} i {1} erbyn
+nextUpdates.r17.tab.annual.text4                                   = 31 Ionawr {0}.
+nextUpdates.r17.tab.annual.ny.label                                = Blwyddyn dreth {0} i {1}
+nextUpdates.r17.tab.annual.ny.heading                              = Blwyddyn dreth {0} i {1}
+nextUpdates.r17.tab.annual.ny.text1                                = Ni fydd dyddiadau cau i’w gweld hyd nes eu bod yn dod yn rhan o’r flwyddyn dreth bresennol.
 
 sections.open.all												= Dangos pob adran
 sections.close.all												= Cuddio pob adran
@@ -1883,11 +1934,9 @@ business.added.sole-trader.submit.annual.annual.text                    = Rydych
 
 business.added.sole-trader.submit.software.text                         = Cyflwyno diweddariadau drwy ddefnyddio meddalwedd
 business.added.sole-trader.submit.software.quarterly.text               = Os ydych yn adrodd am flwyddyn dreth yn chwarterol, bydd angen i chi ddefnyddio
-business.added.sole-trader.submit.software.quarterly.link               = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd)
 
 business.added.sole-trader.submit.tax.return                            = Cyflwyno’ch Ffurflen Dreth
 business.added.sole-trader.submit.tax.return.text                       = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar.lein CThEF neu drwy ddefnyddio
-business.added.sole-trader.submit.tax.return.link                       = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
 
 business.added.sole-trader.submit.annual.text                           = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar.lein CThEF neu drwy ddefnyddio meddalwedd sy’n cydweddu.
 
@@ -1934,11 +1983,9 @@ business.added.uk-property.submit.annual.annual.text                    = Rydych
 
 business.added.uk-property.submit.software.text                         = Cyflwyno diweddariadau drwy ddefnyddio meddalwedd
 business.added.uk-property.submit.software.quarterly.text               = Os ydych yn adrodd am flwyddyn dreth yn chwarterol, bydd angen i chi ddefnyddio
-business.added.uk-property.submit.software.quarterly.link               = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd)
 
 business.added.uk-property.submit.tax.return                            = Cyflwyno’ch Ffurflen Dreth
 business.added.uk-property.submit.tax.return.text                       = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar.lein CThEF neu drwy ddefnyddio
-business.added.uk-property.submit.tax.return.link                       = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
 
 business.added.uk-property.submit.annual.text                           = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar.lein CThEF neu drwy ddefnyddio meddalwedd sy’n cydweddu.
 
@@ -1985,11 +2032,9 @@ business.added.foreign-property.submit.annual.annual.text                    = R
 
 business.added.foreign-property.submit.software.text                         = Cyflwyno diweddariadau drwy ddefnyddio meddalwedd
 business.added.foreign-property.submit.software.quarterly.text               = Os ydych yn adrodd am flwyddyn dreth yn chwarterol, bydd angen i chi ddefnyddio
-business.added.foreign-property.submit.software.quarterly.link               = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd)
 
 business.added.foreign-property.submit.tax.return                            = Cyflwyno’ch Ffurflen Dreth
 business.added.foreign-property.submit.tax.return.text                       = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar.lein CThEF neu drwy ddefnyddio
-business.added.foreign-property.submit.tax.return.link                       = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
 
 business.added.foreign-property.submit.annual.text                           = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar.lein CThEF neu drwy ddefnyddio meddalwedd sy’n cydweddu.
 
@@ -2263,7 +2308,29 @@ manageBusinesses.type-of-property.uk                                     = Busne
 manageBusinesses.type-of-property.foreign                                = Busnes eiddo tramor
 manageBusinesses.type-of-property.error                                  = Dewiswch opsiwn
 
-# manage income sources reporting method
+# manage income sources reporting method (new - content FS R17 enabled)
+manageBusinesses.manage.propertyReportingMethod.new.heading.annual                  = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer y flwyddyn dreth {0} i {1}
+manageBusinesses.manage.propertyReportingMethod.new.heading.quarterly               = Cofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer y flwyddyn dreth {0} i {1}
+manageBusinesses.manage.propertyReportingMethod.new.description.annual              = Bydd hyn yn golygu nad oes angen i chi gyflwyno diweddariadau chwarterol mwyach trwy feddalwedd sy’n cydweddu ar gyfer y ffynhonnell incwm hon.
+manageBusinesses.manage.propertyReportingMethod.new.inset.annual                    = Os ydych eisoes wedi cyflwyno i CThEF unrhyw ddiweddariadau chwarterol ar gyfer y busnes newydd hwn ar gyfer y flwyddyn dreth hon, bydd angen i chi ailgyflwyno’r wybodaeth hon yn eich Ffurflen Dreth.
+manageBusinesses.manage.propertyReportingMethod.new.description.quarterly.CYplus    = Bydd hyn yn golygu bod angen i chi gyflwyno diweddariadau chwarterol trwy feddalwedd sy’n cydweddu ar gyfer y ffynhonnell incwm hon.
+manageBusinesses.manage.propertyReportingMethod.new.ul.description                  = Bydd hyn yn golygu’r canlynol:
+manageBusinesses.manage.propertyReportingMethod.new.ul.el1                          = angen cyflwyno diweddariadau chwarterol argyfer y ffynhonnell incwm hon
+manageBusinesses.manage.propertyReportingMethod.new.ul.el2                          = gallech gael o leiaf un diweddariad chwarterolsy’n hwyr
+manageBusinesses.manage.propertyReportingMethod.new.inset.quarterly                 = Os ydych eisoes wedi cyflwyno i CThEF unrhyw ddiweddariadau chwarterol ar gyfer y busnes newydd hwn ar gyfer y flwyddyn dreth hon, bydd angen i chi ailgyflwyno’r wybodaeth hon yn eich Ffurflen Dreth.
+manageBusinesses.manage.propertyReportingMethod.new.form.heading.signUp             = A ydych am gofrestru ar gyfer y flwyddyn dreth {0} i {1}?
+manageBusinesses.manage.propertyReportingMethod.new.form.heading.optOut             = A ydych am optio allan o’r flwyddyn dreth {0} i {1}?
+manageBusinesses.manage.propertyReportingMethod.new.form.error.annual               = Dewiswch ‘Iawn’ os ydych am optio’r busnes newydd hwn allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+manageBusinesses.manage.propertyReportingMethod.new.form.error.quarterly            = Dewiswch ‘Iawn’ os ydych am gofrestru’r busnes newydd hwn â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+
+manageBusinesses.manage.propertyReportingMethod.new.subHeading.UkProperty           = Eiddo yn y DU
+manageBusinesses.manage.propertyReportingMethod.new.subHeading.ForeignProperty      = Eiddo tramor
+manageBusinesses.manage.propertyReportingMethod.new.subHeading.SelfEmployment       = Unig fasnachwr
+manageBusinesses.manage.propertyReportingMethod.new.description.quarterly           = Bydd newid i adrodd yn chwarterol yn golygu y bydd angen i chi gyflwyno’ch diweddariadau chwarterol drwy feddalwedd sy’n cydweddu.
+manageBusinesses.manage.propertyReportingMethod.new.confirm                         = Cadarnhau a chadw
+
+
+# manage income sources reporting method (old - content FS R17 disabled)
 manageBusinesses.manage.propertyReportingMethod.heading.annual             = Newidiadau i adrodd blynyddol ar gyfer blwyddyn dreth {0} i {1}
 manageBusinesses.manage.propertyReportingMethod.heading.quarterly          = Newid i gyflwyno adroddiadau’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
 manageBusinesses.manage.propertyReportingMethod.subHeading.UkProperty      = Eiddo yn y DU
@@ -2273,7 +2340,6 @@ manageBusinesses.manage.propertyReportingMethod.description.annual         = Os 
 manageBusinesses.manage.propertyReportingMethod.description.quarterly      = Bydd newid i adrodd yn chwarterol yn golygu y bydd angen i chi gyflwyno’ch diweddariadau chwarterol drwy feddalwedd sy’n cydweddu.
 manageBusinesses.manage.propertyReportingMethod.inset.quarterly            = Os ydych wedi cyflwyno unrhyw incwm a threuliau i CThEF ar gyfer y flwyddyn dreth hon, byddant yn cael eu dileu o’n cofnodion. Gwnewch yn siŵr eich bod yn cadw’r wybodaeth hon yn ddiogel oherwydd y bydd angen i chi ei chynnwys yn eich diweddariadau chwarterol.
 manageBusinesses.manage.propertyReportingMethod.confirm                    = Cadarnhau a chadw
-
 
 # credits
 credit.description.balancingCharge                                      = Credyd o ordaliad treth

@@ -52,7 +52,7 @@ class OptOutSessionDataRepositoryISpec extends ComponentSpecBase with ScalaFutur
 
       await(repository.initialiseOptOutJourney(optOutProposition))
 
-      repository.recallOptOutProposition().futureValue.get shouldBe optOutProposition
+      repository.recallOptOutPropositionWithIntent().futureValue.get shouldBe (optOutProposition, None)
     }
 
     s"Removes the customer intent at journey initialisation" in {
@@ -88,7 +88,7 @@ class OptOutSessionDataRepositoryISpec extends ComponentSpecBase with ScalaFutur
       await(repository.initialiseOptOutJourney(optOutProposition))
       await(repository.saveIntent(taxYear2024_2025))
 
-      repository.recallOptOutProposition().futureValue.get shouldBe optOutProposition
+      repository.recallOptOutPropositionWithIntent().futureValue.get shouldBe (optOutProposition, Some(taxYear2024_2025))
     }
   }
 

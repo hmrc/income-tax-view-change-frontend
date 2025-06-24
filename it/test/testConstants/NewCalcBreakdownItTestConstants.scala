@@ -33,7 +33,7 @@ object NewCalcBreakdownItTestConstants {
       allowancesAndDeductions = Some(AllowancesAndDeductions()))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      crystallised = Some(true),
+      calculationType = "crystallisation",
       calculationReason = Some("customerRequest")),
     messages = None
   )
@@ -298,7 +298,7 @@ object NewCalcBreakdownItTestConstants {
       transitionProfit = Some(TransitionProfit(totalTaxableTransitionProfit = Some(3000.00))))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      crystallised = Some(true),
+      calculationType = "crystallisation",
       calculationReason = Some("customerRequest"))
   )
 
@@ -546,14 +546,14 @@ object NewCalcBreakdownItTestConstants {
       transitionProfit = Some(TransitionProfit(totalTaxableTransitionProfit = Some(3000.00))))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      crystallised = Some(true),
+      calculationType = "crystallisation",
       calculationReason = Some("customerRequest"))
   )
 
   val liabilityCalculationModelSuccessfulNotCrystallised: LiabilityCalculationResponse = liabilityCalculationModelSuccessful.copy(
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      crystallised = Some(false)
+      calculationType = "inYear"
     )
   )
 

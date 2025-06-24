@@ -26,7 +26,6 @@ import javax.inject.{Inject, Singleton}
 class TestOnlyAppConfig @Inject()(servicesConfig: ServicesConfig, config: Configuration) extends FrontendAppConfig(servicesConfig, config) {
 
   lazy val dynamicStubUrl: String = servicesConfig.baseUrl("itvc-dynamic-stub")
-  lazy val desSimulatorUrl: String = servicesConfig.baseUrl("des-simulator")
 
   lazy val matchingStubUrl: String = servicesConfig.baseUrl("matching-stub")
 

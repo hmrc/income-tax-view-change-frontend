@@ -169,7 +169,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 contentAsString(result).contains("Important") shouldBe true
                 contentAsString(result).contains("Charges due now: £2.00") shouldBe true
                 val doc: Document = Jsoup.parse(contentAsString(result))
-                Option(doc.getElementById("charges-due-now")).isDefined shouldBe true
+                Option(doc.getElementById("charges-due-now-table")).isDefined shouldBe true
               }
               "the user has PoA reconciliation debits accruing interest and ReviewAndReconcilePoa FS is enabled" in {
                 enable(ReviewAndReconcilePoa)
@@ -189,7 +189,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 contentAsString(result).contains("Charges due now: £2.00") shouldBe true
                 contentAsString(result).contains("First payment on account: extra amount from your tax return") shouldBe true
                 val doc: Document = Jsoup.parse(contentAsString(result))
-                Option(doc.getElementById("charges-due-now")).isDefined shouldBe true
+                Option(doc.getElementById("charges-due-now-table")).isDefined shouldBe true
               }
             }
             "not display the Charges due now tab or warning banner" when {

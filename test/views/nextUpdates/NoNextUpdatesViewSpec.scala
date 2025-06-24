@@ -22,6 +22,7 @@ import org.jsoup.nodes.Document
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import testConstants.NextUpdatesTestConstants
 import testUtils.TestSupport
 import views.html.nextUpdates.NoNextUpdates
 
@@ -31,15 +32,15 @@ class NoNextUpdatesViewSpec extends TestSupport {
 
   val NoNextUpdatesView: NoNextUpdates = app.injector.instanceOf[NoNextUpdates]
 
-  val heading: String = messages("obligations.heading")
+  val heading: String = NextUpdatesTestConstants.noNextUpdatesHeading
 
   "The NoNextUpdates view" should {
 
     lazy val page: Html = NoNextUpdatesView("testBackURL")(FakeRequest(), implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
-    s"have the title ${messages("htmlTitle", heading)}" in {
-      document.title() shouldBe messages("htmlTitle", heading)
+    s"have the title ${NextUpdatesTestConstants.noNextUpdatesTitle}" in {
+      document.title() shouldBe NextUpdatesTestConstants.noNextUpdatesTitle
     }
 
     s"have the heading $heading" in {
@@ -47,10 +48,7 @@ class NoNextUpdatesViewSpec extends TestSupport {
     }
 
     s"have the text the correct content text" in {
-      document.select("p.govuk-body").text() shouldBe messages("obligations.noReports")
+      document.select("p.govuk-body").text() shouldBe NextUpdatesTestConstants.noNextUpdatesText
     }
-
   }
-
-
 }

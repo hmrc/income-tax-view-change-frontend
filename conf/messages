@@ -1,3 +1,5 @@
+outage-page.serviceDisplayName                                  = Manage your Self Assessment
+
 ## Base ##
 base.back                                                       = Back
 base.service_name                                               = Business tax account
@@ -14,6 +16,7 @@ base.error-prefix                                               = Error:
 base.govUk                                                      = GOV.UK
 base.confirm-and-continue                                       = Confirm and continue
 base.confirm-this-change                                        = Confirm this change
+base.software.compatible.with.mtd.income.tax.link               = software compatible with Making Tax Digital for Income Tax
 
 ## Accessibility ##
 accessibility.this-section-is                                   = This section is:
@@ -780,6 +783,7 @@ nextUpdates.dropdown.finalDeclaration.text                         = Your final 
 nextUpdates.table.header.type									   = Update type
 nextUpdates.table.header.source									   = Income source
 nextUpdates.section.heading.quarterly						       = Quarterly update
+nextUpdates.section.heading.end-of-year							   = End of year update
 nextUpdates.section.heading.updates								   = Quarterly period from {0} to {1}
 nextUpdates.section.heading.taxYear								   = Tax year: {0} to {1}
 nextUpdates.previousYears.textOne								   = To view previously submitted updates visit the
@@ -798,6 +802,53 @@ nextUpdates.optOutOneYear.p.link                                   = opt out of 
 
 nextUpdates.reporting.obligations.p.message                        = Depending on your circumstances,
 nextUpdates.reporting.obligations.p.link                           = you may be able to view and change your reporting obligations.
+
+## Next updates Page - R17 Content Changes ##
+nextUpdates.r17.tab.quarterly.label                                = Up to {0} to {1} tax year
+nextUpdates.r17.tab.quarterly.heading                              = Up to {0} to {1} tax year
+nextUpdates.r17.tab.quarterly.text                                 = This page shows your upcoming due dates and any missed deadlines.
+nextUpdates.r17.tab.quarterly.subheading                           = Quarterly updates due
+nextUpdates.r17.tab.quarterly.text2                                = Every 3 months an update is due for each of your property and sole trader income sources.
+nextUpdates.r17.tab.quarterly.dropdown.heading                     = Find out more about quarterly updates
+nextUpdates.r17.tab.quarterly.dropdown.text1                       = Each quarterly update is a running total of income and expenses for the tax year so far. It combines:
+nextUpdates.r17.tab.quarterly.dropdown.text2                       = new information and corrections made since the last update
+nextUpdates.r17.tab.quarterly.dropdown.text3                       = any information you’ve already provided that has not changed
+nextUpdates.r17.tab.quarterly.dropdown.text4                       = This is done using
+nextUpdates.r17.tab.quarterly.dropdown.link.text                   = software compatible with Making Tax Digital for Income Tax
+nextUpdates.r17.tab.quarterly.compatibleSoftware.link              = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
+nextUpdates.r17.tab.quarterly.link.text1                           = To view previously submitted updates visit the
+nextUpdates.r17.tab.quarterly.link.text2                           = tax year
+nextUpdates.r17.tab.quarterly.link.text3                           = summary page.
+nextUpdates.r17.tab.quarterly.subheading2                          = Tax return due
+nextUpdates.r17.tab.quarterly.text3                                = If you have submitted quarterly updates for the tax year, in your tax return you will also provide any other taxable income. You will then need to file your return using
+nextUpdates.r17.tab.quarterly.text4                                = software compatible with Making Tax Digital for Income Tax
+nextUpdates.r17.tab.quarterly.text5                                = Your return for the {0} to {1} tax year is due by
+nextUpdates.r17.tab.quarterly.text6                                = 31 January {0}.
+nextUpdates.r17.tab.quarterly.table.heading                        = Upcoming deadlines
+nextUpdates.r17.tab.quarterly.table.heading.row1                   = Deadline
+nextUpdates.r17.tab.quarterly.table.heading.row2                   = Period
+nextUpdates.r17.tab.quarterly.table.heading.row3                   = Income source updates due
+nextUpdates.r17.tab.quarterly.table.heading.period                 = {0} to {1}
+nextUpdates.r17.tab.quarterly.table.income.source.uk               = UK property business
+nextUpdates.r17.tab.quarterly.table.income.source.foreign          = Foreign property business
+nextUpdates.r17.tab.quarterly.table.income.source.property         = Property business
+nextUpdates.r17.tab.quarterly.ny.label                             = {0} to {1} tax year
+nextUpdates.r17.tab.quarterly.ny.heading                           = {0} to {1} tax year
+nextUpdates.r17.tab.quarterly.ny.text1                             = As you are either required or voluntarily signed up for the {0} to {1} tax year, you will need
+nextUpdates.r17.tab.quarterly.ny.text2                             = software compatible with Making Tax Digital for Income Tax
+nextUpdates.r17.tab.quarterly.ny.text3                             = Deadlines will not be visible until it becomes the current tax year.
+
+nextUpdates.r17.tab.annual.label                                   = Up to {0} to {1} tax year
+nextUpdates.r17.tab.annual.heading                                 = Up to {0} to {1} tax year
+nextUpdates.r17.tab.annual.text1                                   = This page shows your upcoming due dates and any missed deadlines.
+nextUpdates.r17.tab.annual.subHeading                              = Tax return due
+nextUpdates.r17.tab.annual.text2                                   = As you are opted out of Making Tax Digital for Income Tax, you can find out here how you
+nextUpdates.r17.tab.annual.link                                    = file your Self Assessment tax return
+nextUpdates.r17.tab.annual.text3                                   = Your return for the {0} to {1} tax year is due by
+nextUpdates.r17.tab.annual.text4                                   = 31 January {0}.
+nextUpdates.r17.tab.annual.ny.label                                = {0} to {1} tax year
+nextUpdates.r17.tab.annual.ny.heading                              = {0} to {1} tax year
+nextUpdates.r17.tab.annual.ny.text1                                = Deadlines will not be visible until it becomes the current tax year.
 
 sections.open.all												   = Show all sections
 sections.close.all												   = Hide all sections
@@ -1826,6 +1877,7 @@ business.added.income.sources.button                          = Your income sour
 business.added.previous.tax.years.heading                     = Previous tax years
 business.added.previous.tax.years.t1                          = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 
+
 business.added.view.all.businesses                                                      = View all your businesses
 business.added.obligation.inset.single.annual.overdue.text                              = You have <b>1 overdue update</b>. You must submit your yearly tax return and pay the tax you owe.
 business.added.obligation.inset.single.quarterly.overdue.text                           = You have <b>1 overdue update</b> for 3 months of the {0} to {1} tax year. You must submit these updates with all required income and expenses through your compatible software.
@@ -1880,11 +1932,9 @@ business.added.sole-trader.annual.reporting.frequency.link              = your r
 
 business.added.sole-trader.submit.software.text                         = Submit updates in software
 business.added.sole-trader.submit.software.quarterly.text               = For any tax year you are reporting quarterly, you will need
-business.added.sole-trader.submit.software.quarterly.link               = software compatible with Making Tax Digital for Income Tax (opens in new tab).
 
 business.added.sole-trader.submit.tax.return                            = Submit your tax return
 business.added.sole-trader.submit.tax.return.text                       = When reporting annually, you can submit your tax return directly through your HMRC online account or
-business.added.sole-trader.submit.tax.return.link                       = software compatible with Making Tax Digital for Income Tax (opens in new tab).
 
 business.added.sole-trader.submit.annual.text                           = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
 business.added.sole-trader.submit.annual.annual.text                    = When reporting annually, you can submit your tax return directly through your HMRC online account or
@@ -1930,11 +1980,9 @@ business.added.uk-property.annual.reporting.frequency.link                = your
 
 business.added.uk-property.submit.software.text                           = Submit updates in software
 business.added.uk-property.submit.software.quarterly.text                 = For any tax year you are reporting quarterly, you will need
-business.added.uk-property.submit.software.quarterly.link                 = software compatible with Making Tax Digital for Income Tax (opens in new tab).
 
 business.added.uk-property.submit.tax.return                              = Submit your tax return
 business.added.uk-property.submit.tax.return.text                         = When reporting annually, you can submit your tax return directly through your HMRC online account or
-business.added.uk-property.submit.tax.return.link                         = software compatible with Making Tax Digital for Income Tax (opens in new tab).
 
 business.added.uk-property.submit.annual.text                             = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
 business.added.uk-property.submit.annual.annual.text                      = When reporting annually, you can submit your tax return directly through your HMRC online account or
@@ -1979,11 +2027,9 @@ business.added.foreign-property.annual.reporting.frequency.link      = your repo
 
 business.added.foreign-property.submit.software.text                         = Submit updates in software
 business.added.foreign-property.submit.software.quarterly.text               = For any tax year you are reporting quarterly, you will need
-business.added.foreign-property.submit.software.quarterly.link               = software compatible with Making Tax Digital for Income Tax (opens in new tab).
 
 business.added.foreign-property.submit.tax.return                            = Submit your tax return
 business.added.foreign-property.submit.tax.return.text                       = When reporting annually, you can submit your tax return directly through your HMRC online account or
-business.added.foreign-property.submit.tax.return.link                       = software compatible with Making Tax Digital for Income Tax (opens in new tab).
 
 business.added.foreign-property.submit.annual.text                           = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
 business.added.foreign-property.submit.annual.annual.text                    = When reporting annually, you can submit your tax return directly through your HMRC online account or
@@ -2258,7 +2304,29 @@ manageBusinesses.type-of-property.uk                                     = UK pr
 manageBusinesses.type-of-property.foreign                                = Foreign property business
 manageBusinesses.type-of-property.error                                  = Select an option
 
-# manage income sources reporting method
+# manage income sources reporting method (new - content FS R17 enabled)
+manageBusinesses.manage.propertyReportingMethod.new.heading.annual                  = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
+manageBusinesses.manage.propertyReportingMethod.new.heading.quarterly               = Signing up to Making Tax Digital for Income Tax for the {0} to {1} tax year
+manageBusinesses.manage.propertyReportingMethod.new.description.annual              = This will mean you no longer need to submit quarterly updates through compatible software for this income source.
+manageBusinesses.manage.propertyReportingMethod.new.inset.annual                    = If for this tax year you have already submitted to HMRC any quarterly updates for this new business, you will need to resubmit this information in your tax return.
+manageBusinesses.manage.propertyReportingMethod.new.description.quarterly.CYplus    = This will mean you need to submit quarterly updates through compatible software for this income source.
+manageBusinesses.manage.propertyReportingMethod.new.ul.description                  = This will mean you:
+manageBusinesses.manage.propertyReportingMethod.new.ul.el1                          = need to submit quarterly updates for this income source
+manageBusinesses.manage.propertyReportingMethod.new.ul.el2                          = could have at least one quarterly update overdue
+manageBusinesses.manage.propertyReportingMethod.new.inset.quarterly                 = If for this tax year you have already submitted to HMRC a quarterly update for this new business, you will need to resubmit this information in your next quarterly update.
+manageBusinesses.manage.propertyReportingMethod.new.form.heading.signUp             = Do you want to sign up for the {0} to {1} tax year?
+manageBusinesses.manage.propertyReportingMethod.new.form.heading.optOut             = Do you want to opt out of the {0} to {1} tax year?
+manageBusinesses.manage.propertyReportingMethod.new.form.error.annual               = Select yes if you want to opt this new business out of Making Tax Digital for Income Tax
+manageBusinesses.manage.propertyReportingMethod.new.form.error.quarterly            = Select yes if you want to sign this new business up to Making Tax Digital for Income Tax
+
+manageBusinesses.manage.propertyReportingMethod.new.subHeading.UkProperty           = UK property
+manageBusinesses.manage.propertyReportingMethod.new.subHeading.ForeignProperty      = Foreign property
+manageBusinesses.manage.propertyReportingMethod.new.subHeading.SelfEmployment       = Sole trader
+manageBusinesses.manage.propertyReportingMethod.new.description.quarterly           = Changing to quarterly reporting will mean you need to submit your quarterly updates through compatible software.
+manageBusinesses.manage.propertyReportingMethod.new.confirm                         = Confirm and save
+
+
+# manage income sources reporting method (old - content FS R17 disabled)
 manageBusinesses.manage.propertyReportingMethod.heading.annual             = Change to annual reporting for {0} to {1} tax year
 manageBusinesses.manage.propertyReportingMethod.heading.quarterly          = Change to quarterly reporting for {0} to {1} tax year
 manageBusinesses.manage.propertyReportingMethod.subHeading.UkProperty      = UK property
@@ -2268,6 +2336,7 @@ manageBusinesses.manage.propertyReportingMethod.description.annual         = If 
 manageBusinesses.manage.propertyReportingMethod.description.quarterly      = Changing to quarterly reporting will mean you need to submit your quarterly updates through compatible software.
 manageBusinesses.manage.propertyReportingMethod.inset.quarterly            = If you have submitted any income and expenses for this tax year to HMRC, this will be deleted from our records. So make sure you keep hold of this information because you will need to include it in your quarterly updates.
 manageBusinesses.manage.propertyReportingMethod.confirm                    = Confirm and save
+
 
 
 # credits

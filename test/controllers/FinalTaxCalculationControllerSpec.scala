@@ -32,6 +32,7 @@ import services.CalculationService
 import testConstants.BaseTestConstants.testTaxYear
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 
+import java.time.LocalDate
 import scala.concurrent.Future
 class FinalTaxCalculationControllerSpec extends MockAuthActions
   with MockCalculationService
@@ -52,7 +53,12 @@ class FinalTaxCalculationControllerSpec extends MockAuthActions
     inputs = Inputs(personalInformation = PersonalInformation(taxRegime = "UK", class2VoluntaryContributions = None)),
     messages = None,
     calculation = None,
-    metadata = Metadata(None))
+    metadata = Metadata(
+      calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
+      calculationType = "inYear",
+      calculationReason = Some("customerRequest"),
+      periodFrom = Some(LocalDate.of(2022, 1, 1)),
+      periodTo = Some(LocalDate.of(2023, 1, 1))))
   val taxYear = 2018
 
   mtdAllRoles.foreach { mtdUserRole =>
