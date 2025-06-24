@@ -22,33 +22,71 @@
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import views.html.partials.taxYearSummary._
-@import views.html.partials.{taxYearSummaryBreakdownPartial, taxYearSummaryTabsPartial}
+@import views.html.partials.taxYearSummaryTabsPartial
+@import models.liabilitycalculation.viewmodels.CalculationSummary
 
 
 @this(
         mainTemplate: unifiedLayout,
         implicitDateFormatter: ImplicitDateFormatterImpl,
-        breakdownPartial: taxYearSummaryBreakdownPartial,
         h1WithCaption: h1WithCaption,
-        h2: h2,
-        h3WithHtml: h3WithHtml,
         p: p,
         link: link,
         govukInsetText: GovukInsetText,
-        govukTable: GovukTable,
         taxYearSummaryTabsPartial: taxYearSummaryTabsPartial,
         taxCalculationContent: TaxCalculationContent,
         getClaimToAdjustPoaSection: GetClaimToAdjustPoaSection,
         forecastContentTable: ForecastContentTable,
         paymentsContent: PaymentsContent,
         updatesContent: UpdatesContent,
-        forecastContent: ForecastContent
+        forecastContent: ForecastContent,
+        govukSummaryList: GovukSummaryList
 )
 
 @(taxYear: Int, viewModel: TaxYearSummaryViewModel, backUrl: String, isAgent: Boolean = false, origin: Option[String] = None, ctaLink: String
 )(implicit request: Request[_], dateService: DateServiceInterface, messages: Messages, user: auth.MtdItUser[_])
 @import implicitDateFormatter._
 
+@getTotalDue(model: CalculationSummary) = @{
+    if(model.crystallised) {
+        messages("tax-year-summary.total-due")
+    } else {
+        if(model.periodFrom.isDefined && model.periodTo.isDefined) {
+            val calculationDateFrom = implicitDateFormatter.longDate(model.periodFrom.get).toLongDate
+            val calculationDateTo = implicitDateFormatter.longDate(model.periodTo.get).toLongDate
+            messages("tax-year-summary.tax-calculation.date", calculationDateFrom, calculationDateTo)
+        } else {
+            ""
+        }
+    }
+}
+@addForecastData(model: CalculationSummary) = @{
+    if(viewModel.showForecastData && viewModel.calculationSummary.isDefined) {
+        Seq(
+            SummaryListRow(
+                key = Key(content = Text(messages("tax-year-summary.forecast_total_title", s"${taxYear - 1}", s"$taxYear")), classes = "govuk-summary-list__key dt-cell-width"),
+                value = Value(content = Text(model.forecastIncomeTaxAndNics.get.toCurrencyString), classes = "govuk-summary-list__value--numeric govuk-!-text-align-right"),
+                classes = "govuk-summary-list__row"
+            )
+        )
+    } else {
+        Seq.empty
+    }
+}
+@listRows(model: CalculationSummary) = @{
+
+    Seq(
+        SummaryListRow(
+            key = Key(content = Text(messages("tax-year-summary.calculation-date")), classes = "govuk-summary-list__key dt-cell-width"),
+            value = Value(content = model.timestamp.map(_.toLongDate).fold(Text(""))(Text(_)), classes = "govuk-summary-list__value--numeric govuk-!-text-align-right govuk-!-margin-0"),
+            classes = "govuk-summary-list__row"),
+        SummaryListRow(
+            key = Key(content = Text(getTotalDue(model)), classes = "govuk-summary-list__key dt-cell-width"),
+            value = Value(content = Text(model.taxDue.toCurrencyString), classes = "govuk-summary-list__value--numeric govuk-!-text-align-right"),
+            classes = "govuk-summary-list__row"
+        )
+    ) ++ addForecastData(model)
+}
 @mainTemplate(pageTitle = messages("tax-year-summary.heading"), backUrl = Some(backUrl), isAgent = isAgent,
     btaNavPartial = user.btaNavPartial, useFallbackBackLink = true) {
     @h1WithCaption(
@@ -58,7 +96,7 @@
     )
 
     @viewModel.calculationSummary.map { model =>
-        @if(!model.crystallised && !model.messages.isDefined) {
+        @if(!model.crystallised && model.messages.isEmpty) {
             @govukInsetText(InsetText(content = HtmlContent(
                 p(id = Some("calc-date-info"))(content = Html(
                     messages(if(isAgent) "tax-year-summary.agent.calc-from-last-time" else "tax-year-summary.calc-from-last-time",
@@ -67,52 +105,14 @@
             )))
         }
         @if(!model.errorPresent()) {
-            <dl class="govuk-summary-list">
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key dt-cell-width">
-                    @messages("tax-year-summary.calculation-date")
-                    </dt>
-                    <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right govuk-!-margin-0">
-                        <span id="calculation-date">@{
-                            model.timestamp.map(_.toLongDate)
-                        }</span>
-                    </dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key dt-cell-width">
-                    @if(model.crystallised) {
-                        @messages("tax-year-summary.total-due")
-                    } else {
-                        @{
-                            if(!model.periodFrom.isEmpty && !model.periodTo.isEmpty) {
-                                val calculationDateFrom = implicitDateFormatter.longDate(model.periodFrom.get).toLongDate
-                                val calculationDateTo = implicitDateFormatter.longDate(model.periodTo.get).toLongDate
-                                messages("tax-year-summary.tax-calculation.date", calculationDateFrom, calculationDateTo)
-                            }
-                        }
-                    }
-                    </dt>
-                    <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
-                    @{
-                        model.taxDue.toCurrencyString
-                    }
-                    </dd>
-                </div>
-                @if(viewModel.showForecastData && viewModel.calculationSummary.isDefined) {
-                    <div id="forecast_total" class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key dt-cell-width">
-                        @messages("tax-year-summary.forecast_total_title", s"${taxYear - 1}", s"$taxYear")
-                        </dt>
-                        <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
-                        @model.forecastIncomeTaxAndNics.get.toCurrencyString
-                        </dd>
-                    </div>
-                }
-            </dl>
+            @govukSummaryList(SummaryList(
+                classes = "govuk-summary-list",
+                rows = listRows(model)
+            ))
         }
     }
 
-   @getClaimToAdjustPoaSection(viewModel, ctaLink)
+    @getClaimToAdjustPoaSection(viewModel, ctaLink)
 
     @taxYearSummaryTabsPartial(viewModel.showForecastData, viewModel.showUpdates, taxCalculationContent(taxYear, viewModel, isAgent), paymentsContent(viewModel, taxYear, isAgent, origin), forecastContent(viewModel, taxYear, isAgent), updatesContent(viewModel))
 }

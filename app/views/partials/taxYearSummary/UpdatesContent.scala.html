@@ -19,6 +19,13 @@
 @import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 @import java.time.LocalDate
 @import views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukTable
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.table.HeadCell
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+@import models.obligations.ObligationWithIncomeType
+@import uk.gov.hmrc.govukfrontend.views.Aliases.TableRow
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
+@import models.incomeSourceDetails.QuarterReportingType
 
 @this(
         h2: h2,
@@ -26,22 +33,54 @@
         h3WithHtml: h3WithHtml,
         updateTypeHelper: UpdateTypeHelper,
         implicitDateFormatter: ImplicitDateFormatterImpl,
-        obligationsTypeHelper: ObligationsTypeHelper
+        obligationsTypeHelper: ObligationsTypeHelper,
+        govukTable: GovukTable
 )
 
-@(viewModel: TaxYearSummaryViewModel)(implicit messages: Messages,user: auth.MtdItUser[_])
+@(viewModel: TaxYearSummaryViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
 @import implicitDateFormatter._
 
 @groupedObligations = @{
-        viewModel.obligations.allDeadlinesWithSource(previous = true)
-        .reverse.groupBy[LocalDate] { nextUpdateWithIncomeType => nextUpdateWithIncomeType.obligation.due }
-        .toList
-        .collect {
-            case (due, dueObligations) => (due, viewModel.obligations.groupByQuarterPeriod(dueObligations.distinct))
-        }
-        .sortBy(_._1)
+    viewModel.obligations.allDeadlinesWithSource(previous = true)
+    .reverse.groupBy[LocalDate] { nextUpdateWithIncomeType => nextUpdateWithIncomeType.obligation.due }
+    .toList
+    .collect {
+        case (due, dueObligations) => (due, viewModel.obligations.groupByQuarterPeriod(dueObligations.distinct))
     }
+    .sortBy(_._1)
+}
+@tableHead = @{
+    Some(Seq(
+        HeadCell(content = HtmlContent(messages("updateTab.updateType")), classes = "govuk-table__header", attributes = Map("scope" -> "col")),
+        HeadCell(content = HtmlContent(messages("updateTab.incomeSource")), classes = "govuk-table__header", attributes = Map("scope" -> "col")),
+        HeadCell(content = HtmlContent(messages("updateTab.dateSubmitted")), classes = "govuk-table__header", attributes = Map("scope" -> "col"))
+    ))
+}
+@tableRows(input: Seq[ObligationWithIncomeType]) = @{
+    input.map(nextUpdateWithIncomeType => {
+        Seq(
+            TableRow(classes = "govuk-table__header govuk-!-font-weight-regular",
+                attributes = Map("scope" -> "row"),
+                content = HtmlContent(updateTypeHelper(nextUpdateWithIncomeType.obligation.obligationType))),
+            TableRow(classes = "govuk-table__cell",
+                attributes = Map("scope" -> "row"),
+                content = HtmlContent(obligationsTypeHelper {
+                    messages(nextUpdateWithIncomeType.incomeType)
+                })),
+            TableRow(classes = "govuk-table__cell",
+                attributes = Map("scope" -> "row"),
+                content = nextUpdateWithIncomeType.obligation.dateReceived.map(_.toLongDateShort).fold(HtmlContent(""))(value => HtmlContent(value)))
+        )
+    })
+}
 
+@tableCaption(quarterlyTypeName: Option[QuarterReportingType], input: Seq[ObligationWithIncomeType]) = @{
+    if(quarterlyTypeName.isEmpty) {
+        messages("paymentDue.tax-year", input.head.obligation.start.getYear.toString, input.head.obligation.end.getYear.toString)
+    } else {
+        messages("updateTab.updatePeriodDateToDate", input.head.obligation.start.toLongDateShort, input.head.obligation.end.toLongDateShort)
+    }
+}
 @h2(msg = messages("tax-year-summary.updates"), classes = "govuk-heading-l")
 @p(id = Some("update-tab-description"))(Html(messages("updateTab.desc")))
 @groupedObligations.map { case (due, dueObligations) =>
@@ -57,34 +96,13 @@
         classes = "govuk-heading-m"
     )
     @dueObligations.map { case (quarterlyTypeName, obligations) =>
-    <table class="govuk-table">
-        <caption class="govuk-table__caption" style="margin-bottom: 0px;">
-            @if(quarterlyTypeName.isEmpty) {
-                @messages("paymentDue.tax-year", obligations.head.obligation.start.getYear.toString, obligations.head.obligation.end.getYear.toString)</caption>
-        } else {
-                @messages("updateTab.updatePeriodDateToDate", obligations.head.obligation.start.toLongDateShort, obligations.head.obligation.end.toLongDateShort)</caption>
-    }
-        <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-                <th class="govuk-table__header" scope="col">@messages("updateTab.updateType")</th>
-                <th class="govuk-table__header" scope="col">@messages("updateTab.incomeSource")</th>
-                <th class="govuk-table__header" scope="col">@messages("updateTab.dateSubmitted")</th>
-            </tr>
-        </thead>
-        <tbody>
-        @obligations.map { nextUpdateWithIncomeType =>
-            <tr class="govuk-table__row">
-                <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">
-                    <div>@updateTypeHelper(nextUpdateWithIncomeType.obligation.obligationType)</div>
-                </th>
-                <td class="govuk-table__cell">@obligationsTypeHelper@{
-                    messages(nextUpdateWithIncomeType.incomeType)
-                }</td>
-                <td class="govuk-table__cell">@nextUpdateWithIncomeType.obligation.dateReceived.map(_.toLongDateShort)</td>
-            </tr>
-        }
-    </tbody>
-    </table>
+        @govukTable(Table(
+            head = tableHead,
+            rows = tableRows(obligations),
+            classes = "govuk-table",
+            caption = Some(tableCaption(quarterlyTypeName, obligations)),
+            captionClasses = "govuk-table__caption"
+        ))
     }
 </div>
 }

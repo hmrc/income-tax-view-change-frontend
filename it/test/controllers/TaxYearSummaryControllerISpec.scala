@@ -95,8 +95,6 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 res should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "tax-year-summary.heading"),
-                  elementTextBySelector("#calculation-date")("15 February 2019"),
-                  elementTextBySelector("#forecast_total")(forecastTotal),
                   elementTextBySelector("""a[href$="#forecast"]""")(forecastTabHeader),
                   elementTextBySelector(".forecast_table")(tableText)
                 )
@@ -140,7 +138,6 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 res should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "tax-year-summary.heading"),
-                  elementTextBySelector("#calculation-date")("15 February 2019"),
                   elementTextBySelector("#income-deductions-contributions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
                   elementTextBySelector("#income-deductions-contributions-table tr:nth-child(2) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
                   elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(4)", "td:nth-of-type(1)")("£90,500.99"),
@@ -150,12 +147,12 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "a")(poa1Lpi),
                   elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("24 Jun 2021"),
                   elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("£100.00"),
-                  elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(quarterlyUpdate),
-                  elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("business"),
-                  elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString),
-                  elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(quarterlyUpdate),
-                  elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("business"),
-                  elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString)
+                  elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")(quarterlyUpdate),
+                  elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
+                  elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString),
+                  elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")(quarterlyUpdate),
+                  elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
+                  elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString)
                 )
               }
 
@@ -198,7 +195,6 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 res should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "tax-year-summary.heading"),
-                  elementTextBySelector("#calculation-date")("15 February 2019"),
                   elementTextBySelector("#income-deductions-contributions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
                   elementTextBySelector("#income-deductions-contributions-table tr:nth-child(2) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
                   elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(4)", "td:nth-of-type(1)")("£90,500.99"),
@@ -214,12 +210,12 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(1)")("24 Jun 2021"),
                   elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(2)")("£100.00"),
 
-                  elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(quarterlyUpdate),
-                  elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("business"),
-                  elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString),
-                  elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(quarterlyUpdate),
-                  elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("business"),
-                  elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString),
+                  elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")(quarterlyUpdate),
+                  elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
+                  elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString),
+                  elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")(quarterlyUpdate),
+                  elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
+                  elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString),
                 )
 
                 AuditStub.verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser(mtdUserRole, singleBusinessResponse),
@@ -540,7 +536,6 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "tax-year-summary.heading"),
-                  elementTextBySelector("#calculation-date")("15 February 2019"),
                   elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "th")(s"$hmrcAdjustment"),
                   elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("22 Apr 2021"),
                   elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£2,234.00"),
