@@ -94,7 +94,7 @@ class IncomeSourceAddedController @Inject()(
           case (Some(false), Some(true), Some(true)) => Future(SignUpNextYearOnly)
           case (Some(true), Some(false), Some(true)) => Future(SignUpCurrentYearOnly)
           case (Some(true), Some(true), Some(true)) => Future(SignUpBothYears)
-          case (Some(true), Some(false), None) | (Some(false), Some(true), None)  => Future(OnlyOneYearAvailableToSignUp)
+          case (Some(true), Some(false), None) | (Some(false), Some(true), None) => Future(OnlyOneYearAvailableToSignUp)
           case (_, _, Some(false)) => Future(NotSigningUp)
           case _ => Future(Unknown)
         }
@@ -119,6 +119,8 @@ class IncomeSourceAddedController @Inject()(
         signedUpForMTD: SignedUpForMTD <- contentLogicHelper(incomeSourceType)
         result <-
           sessionData match {
+            case Right(Some(_)) if signedUpForMTD == Unknown =>
+              Future(errorView)
             case Right(Some(sessionData)) =>
               lazy val result: Future[Result] = {
                 for {
