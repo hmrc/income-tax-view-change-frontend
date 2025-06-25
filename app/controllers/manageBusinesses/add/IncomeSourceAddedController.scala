@@ -200,6 +200,8 @@ class IncomeSourceAddedController @Inject()(
               businessName = businessName,
               incomeSourceType = incomeSourceType,
               currentDate = dateService.getCurrentDate,
+              currentTaxYear = dateService.getCurrentTaxYearStart.getYear,
+              nextTaxYear = dateService.getCurrentTaxYearStart.plusYears(1).getYear,
               isBusinessHistoric = isBusinessHistoric,
               reportingMethod = viewModel.reportingMethod(reportingMethodTaxYear1, reportingMethodTaxYear2),
               getSoftwareUrl = appConfig.compatibleSoftwareLink,

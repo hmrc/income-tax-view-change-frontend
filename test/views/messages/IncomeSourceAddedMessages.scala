@@ -25,6 +25,7 @@ object IncomeSourceAddedMessages {
   val headingBase: String = "has been added to your account"
   val submitTaxReturn: String = "Submit your tax return"
 
+  val mayHaveOverdueUpdates: String = "For this new business you may have overdue updates for the 2025 to 2026 tax year. You must submit these updates with all required income and expenses through your compatible software."
   val yourRevisedDeadlinesHeading: String = "Your revised deadlines"
   val fewMinutesWarning: String = "Your deadlines for this business will be available in the next few minutes."
   val accountUpdatedParagraph: String = "Even if they are not displayed right away on the updates and deadlines page, your account has been updated."

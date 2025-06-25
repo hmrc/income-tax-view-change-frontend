@@ -36,6 +36,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
   val view: IncomeSourceAddedObligationsView = app.injector.instanceOf[IncomeSourceAddedObligationsView]
 
   object IdSelectors {
+    val mayHaveOverdueUpdates = "may-have-overdue-updates"
     val yourRevisedDeadlinesH2 = "your-revised-deadlines"
     val fewMinutesWarning = "few-minutes-warning"
     val accountUpdated = "account-updated"
@@ -75,6 +76,8 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
       incomeSourceType = incomeSourceType,
       businessName = None,
       currentDate = day,
+      currentTaxYear = 2025,
+      nextTaxYear = 2026,
       isBusinessHistoric = false,
       reportingMethod = reportingMethod,
       getSoftwareUrl = appConfig.compatibleSoftwareLink,
@@ -110,6 +113,8 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 incomeSourceType = incomeSourceType,
                 businessName = businessName,
                 currentDate = day,
+                currentTaxYear = 2025,
+                nextTaxYear = 2026,
                 isBusinessHistoric = true,
                 reportingMethod = ChosenReportingMethod.Quarterly,
                 getSoftwareUrl = appConfig.compatibleSoftwareLink,
@@ -348,6 +353,8 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   incomeSourceType = incomeSourceType,
                   businessName = None,
                   currentDate = dayAfterFinalDeclarationDeadline2023_2024,
+                  currentTaxYear = 2025,
+                  nextTaxYear = 2026,
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.Quarterly,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
@@ -402,6 +409,8 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   incomeSourceType = incomeSourceType,
                   businessName = testName,
                   currentDate = dayAfterThirdQuarterDeadline2024_2025,
+                  currentTaxYear = 2025,
+                  nextTaxYear = 2026,
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.Quarterly,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
@@ -452,6 +461,8 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   incomeSourceType = incomeSourceType,
                   businessName = None,
                   currentDate = dayAfterFinalDeclarationDeadline2023_2024,
+                  currentTaxYear = 2025,
+                  nextTaxYear = 2026,
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.Annual,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
@@ -511,6 +522,8 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 incomeSourceType = incomeSourceType,
                 businessName = businessName,
                 currentDate = day,
+                currentTaxYear = 2025,
+                nextTaxYear = 2026,
                 isBusinessHistoric = true,
                 reportingMethod = ChosenReportingMethod.Quarterly,
                 getSoftwareUrl = appConfig.compatibleSoftwareLink,
@@ -625,6 +638,8 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             val document: Document = Jsoup.parse(view.body)
 
+            document.getElementById(IdSelectors.mayHaveOverdueUpdates).text() shouldBe mayHaveOverdueUpdates
+
             document.getElementById(IdSelectors.yourRevisedDeadlinesH2).text() shouldBe yourRevisedDeadlinesHeading
             document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by <b>5 February 2024</b> for the quarterly period 6 October 2023 to 5 January 2024"
 
@@ -659,6 +674,8 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               )
 
             val document: Document = Jsoup.parse(view.body)
+
+            document.getElementById(IdSelectors.mayHaveOverdueUpdates).text() shouldBe mayHaveOverdueUpdates
 
             document.getElementById(IdSelectors.yourRevisedDeadlinesH2).text() shouldBe yourRevisedDeadlinesHeading
             document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by <b>5 February 2024</b> for the quarterly period 6 October 2023 to 5 January 2024"

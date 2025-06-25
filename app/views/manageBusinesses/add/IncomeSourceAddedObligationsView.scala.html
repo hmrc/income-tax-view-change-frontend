@@ -47,6 +47,8 @@
     incomeSourceType: IncomeSourceType,
     businessName: Option[String] = None,
     currentDate: LocalDate,
+    currentTaxYear: Int,
+    nextTaxYear: Int,
     isBusinessHistoric: Boolean,
     reportingMethod: ChosenReportingMethod,
     getSoftwareUrl: String,
@@ -243,6 +245,8 @@
     }
 
     @if(scenario == SignUpCurrentYearOnly || scenario == SignUpBothYears) {
+
+        @govukInsetText(InsetText(id = Some("may-have-overdue-updates"), content = Text(messages("income.source.added.few.minutes.overdue.updates", currentTaxYear.toString(), nextTaxYear.toString()))))
 
         @h2(messages("income.source.added.your.revised.deadlines.h2"), classes = "govuk-heading-m govuk-!-margin-top-7", optId=Some("your-revised-deadlines"))
 
