@@ -40,9 +40,8 @@
     @if(isAgent) {
         <div class="grid-row">
             <div class="column-two-thirds">
-                <p></p>
                 @h1(messages("notmigrated.user.heading"))
-                @p() {
+                @p(classes = "govuk-body govuk-!-margin-bottom-4") {
                     @messages("notmigrated.agent.content")
                     @link(
                         link = controllers.routes.NotMigratedUserController.redirectAgent().url,
@@ -56,9 +55,8 @@
     } else {
         <div class="grid-row">
             <div class="column-two-thirds">
-            <p></p>
             @h1(messages("notmigrated.user.heading"))
-            @p() {
+            @p(classes = "govuk-body govuk-!-margin-bottom-4") {
                 @messages("notmigrated.user.content")
                 @link(
                     link = controllers.routes.NotMigratedUserController.redirect().url,
