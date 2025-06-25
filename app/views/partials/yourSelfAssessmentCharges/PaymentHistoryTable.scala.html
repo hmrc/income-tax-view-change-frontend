@@ -22,7 +22,6 @@
 @import models.chargeSummary.ChargeSummaryViewModel
 @import views.html.partials.yourSelfAssessmentCharges.LatePaymentInterestChargeMessage
 @import models.repaymentHistory.RepaymentHistoryUtils
-@import exceptions.MissingFieldException
 @import models.financialDetails.ChargeItem
 @import views.helpers.ChargeNameLangHelper
 
@@ -147,10 +146,10 @@
                     content = HtmlContent(latePaymentInterestChargeMessage(viewModel, allocation, payment).toString)
                 ),
                 TableRow(
-                    content = HtmlContent(payment.dueDate.getOrElse(throw MissingFieldException("Payment Date")).toLongDate.toNonBreaking)
+                    content = HtmlContent(payment.getDueDateOrThrow.toLongDate.toNonBreaking)
                 ),
                 TableRow(
-                    content = HtmlContent(payment.amount.getOrElse(throw MissingFieldException("Payment Amount")).abs.toCurrency),
+                    content = HtmlContent(payment.getAmountOrThrow.abs.toCurrency),
                     format = Some("numeric")
                 )
             )

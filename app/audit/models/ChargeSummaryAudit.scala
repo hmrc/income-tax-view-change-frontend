@@ -117,7 +117,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
     } else if (chargeItem.codedOutStatus.contains(Cancelled)) {
       Some(getAllocationDescriptionFromKey(Some("codingOut.cancelled")))
     } else {
-      Some(getAllocationDescriptionFromKey(paymentAllocation.getPaymentAllocationTextInChargeSummary))
+      Some(getAllocationDescriptionFromKey(Some(paymentAllocation.getPaymentAllocationTextInChargeSummary)))
     }
 
     paymentAllocation.allocations.map(payment => Json.obj() ++
