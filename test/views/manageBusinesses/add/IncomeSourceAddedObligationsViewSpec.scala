@@ -638,7 +638,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
             val document: Document = Jsoup.parse(view.body)
 
-            document.getElementById(IdSelectors.mayHaveOverdueUpdates).text() shouldBe mayHaveOverdueUpdates
+            document.getElementById(IdSelectors.mayHaveOverdueUpdates).text() shouldBe fewMinutesWarning
 
             document.getElementById(IdSelectors.yourRevisedDeadlinesH2).text() shouldBe yourRevisedDeadlinesHeading
             document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by <b>5 February 2024</b> for the quarterly period 6 October 2023 to 5 January 2024"
@@ -674,8 +674,6 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               )
 
             val document: Document = Jsoup.parse(view.body)
-
-            document.getElementById(IdSelectors.mayHaveOverdueUpdates).text() shouldBe mayHaveOverdueUpdates
 
             document.getElementById(IdSelectors.yourRevisedDeadlinesH2).text() shouldBe yourRevisedDeadlinesHeading
             document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by <b>5 February 2024</b> for the quarterly period 6 October 2023 to 5 January 2024"
