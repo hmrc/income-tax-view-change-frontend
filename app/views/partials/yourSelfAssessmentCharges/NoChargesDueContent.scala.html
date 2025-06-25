@@ -32,7 +32,7 @@
 )
 
 @h2(msg = "selfAssessmentCharges.no-charges-due")
-<p class="govuk-body">
+<p class="govuk-body govuk-!-margin-bottom-8">
     @getMessage("adjust-poa.paid-1")
     @earliestTaxYearAndAmountByDueDate.fold(Html("")) { case (_, amount) =>
         @link(
@@ -42,4 +42,4 @@
         )
     }
 </p>
-<br>
+
