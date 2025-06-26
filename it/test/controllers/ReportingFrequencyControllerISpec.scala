@@ -440,12 +440,12 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                     elementTextByID("separately-choose-to-opt-out")("For tax years you are using Making Tax Digital for Income Tax, you can separately choose to opt out for any new sole trader or property income source:"),
                     elementTextByID("latency-section-1-bullet-1")("started less than 2 years ago"),
                     elementTextByID("latency-section-1-bullet-2")("that you start in future"),
-                    elementTextByID("options-available")("This option is available to new businesses:"),
+                    elementTextByID("options-available")("This option is available to your new businesses:"),
                     elementTextByID("latency-section-2-bullet-1")("for up to 2 tax years"),
                     elementTextByID("latency-section-2-bullet-2")("only when you use Making Tax Digital for Income Tax for your other businesses"),
                     elementTextByID("latency-section-2-bullet-3")("even if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold"),
                     elementTextByID("change-reporting-obligations-heading")("How to change your reporting obligations for a new income source"),
-                    elementTextByID("your-businesses")("This option is available to your new businesses:")
+                    elementTextByID("your-businesses")("You can do this at any time in the your businesses section")
                   )
 
                   if (mtdUserRole == MTDIndividual) {
