@@ -33,7 +33,7 @@
     govukInsetText : GovukInsetText
 )
 
-@(viewModel: ReportingFrequencyViewModel)(implicit messages: Messages, user: auth.MtdItUser[_], dateService: DateServiceInterface)
+@(viewModel: ReportingFrequencyViewModel, optInOptOutContentUpdateR17:Boolean)(implicit messages: Messages, user: auth.MtdItUser[_], dateService: DateServiceInterface)
 
 @itsaStatusTable = {
     @h2(msg = "reporting.frequency.table.h2", optId = Some("manage-reporting-frequency-table-heading"))
@@ -135,38 +135,73 @@
     }
 }
 
-@latentBusinessText = {
-    @p(id = Some("rf-latency-para1")) {
+@dropDownContentOptInOptOutContentUpdateR17 = {
+
+    @p(id = Some("separately-choose-to-opt-out")) {
+        @messages("reporting.frequency.latency.details.section.text.para1.updateR17")
+    }
+    <ul class="govuk-list govuk-list--bullet">
+        <li id="latency-section-1-bullet-1">@messages("reporting.frequency.latency.details.section.text.para1.bullet1.updateR17")</li>
+        <li id="latency-section-1-bullet-2">@messages("reporting.frequency.latency.details.section.text.para1.bullet2.updateR17")</li>
+    </ul>
+    @p(id = Some("options-available")) {
+        @messages("reporting.frequency.latency.details.section.text.para2.updateR17")
+    }
+    <ul class="govuk-list govuk-list--bullet">
+        <li id="latency-section-2-bullet-1">@messages("reporting.frequency.latency.details.section.text.para2.bullet1.updateR17")</li>
+        <li id="latency-section-2-bullet-2">@messages("reporting.frequency.latency.details.section.text.para2.bullet2.updateR17")</li>
+        <li id="latency-section-2-bullet-3">@messages("reporting.frequency.latency.details.section.text.para2.bullet3.updateR17")</li>
+    </ul>
+
+    @h3(
+        msg = messages("reporting.frequency.latency.details.section.text.para3.heading.updateR17"),
+        optId = Some("change-reporting-obligations-heading")
+    )
+
+    @p(id = Some("your-businesses")) {
+        @messages("reporting.frequency.latency.details.section.text.para3.text.1.updateR17")
+        @linkComponent(
+            id = Some("your-businesses-link"),
+            url = if(viewModel.isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url else controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url,
+            message = messages("reporting.frequency.latency.details.section.text.para3.link.text.updateR17")
+        )
+        @messages("reporting.frequency.latency.details.section.text.para3.text.2.updateR17")
+    }
+}
+
+@latentBusinessDropdownContent = {
+    @p(id = Some("separately-choose-to-opt-out")) {
         @messages("reporting.frequency.latency.details.section.text.para1")
     }
     <ul class="govuk-list govuk-list--bullet">
-        <li id="rf-latency-para1-bullet1">@messages("reporting.frequency.latency.details.section.text.para1.bullet1")</li>
-        <li id="rf-latency-para1-bullet2">@messages("reporting.frequency.latency.details.section.text.para1.bullet2")</li>
+        <li id="latency-section-1-bullet-1">@messages("reporting.frequency.latency.details.section.text.para1.bullet1")</li>
+        <li id="latency-section-1-bullet-2">@messages("reporting.frequency.latency.details.section.text.para1.bullet2")</li>
     </ul>
-    @p(id = Some("rf-latency-para2")) {
+    @p(id = Some("options-available")) {
         @messages("reporting.frequency.latency.details.section.text.para2")
     }
     <ul class="govuk-list govuk-list--bullet">
-        <li id="rf-latency-para2-bullet1">@messages("reporting.frequency.latency.details.section.text.para2.bullet1")</li>
-        <li id="rf-latency-para2-bullet2">@messages("reporting.frequency.latency.details.section.text.para2.bullet2")</li>
-        <li id="rf-latency-para2-bullet3">@messages("reporting.frequency.latency.details.section.text.para2.bullet3")</li>
+        <li id="latency-section-2-bullet-1">@messages("reporting.frequency.latency.details.section.text.para2.bullet1")</li>
+        <li id="latency-section-2-bullet-2">@messages("reporting.frequency.latency.details.section.text.para2.bullet2")</li>
+        <li id="latency-section-2-bullet-3">@messages("reporting.frequency.latency.details.section.text.para2.bullet3")</li>
     </ul>
 
     @h3(
         msg = messages("reporting.frequency.latency.details.section.text.para3.heading"),
-        optId = Some("rf-latency-small-heading")
+        optId = Some("change-reporting-obligations-heading")
     )
 
-    @p(id = Some("rf-latency-para3-text")) {
+    @p(id = Some("your-businesses")) {
         @messages("reporting.frequency.latency.details.section.text.para3.text.1")
         @linkComponent(
-            id = Some("rf-latency-para3-link"),
-            url = if(viewModel.isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url else controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url,
-            message = messages("reporting.frequency.latency.details.section.text.para3.link.text")
+                id = Some("your-businesses-link"),
+                url = if(viewModel.isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url else controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url,
+                message = messages("reporting.frequency.latency.details.section.text.para3.link.text")
         )
         @messages("reporting.frequency.latency.details.section.text.para3.text.2")
     }
 }
+
 
 @mainTemplate(
     pageTitle = messages("reporting.frequency.title"),
@@ -179,9 +214,17 @@
     @h1(msg = messages("reporting.frequency.h1"), id = Some("reporting-frequency-heading"))
     @ceasedBusinessWarning
     @itsaStatusTable
+
+
     @if(viewModel.isAnyOfBusinessLatent) {
-        @detailsDropdown("reporting.frequency.latency.details.section.header", latentBusinessText)
+        @if(optInOptOutContentUpdateR17) {
+            @detailsDropdown("reporting.frequency.latency.details.section.header.updateR17", dropDownContentOptInOptOutContentUpdateR17, Some("latency-details-dropdown"))
+        } else {
+            @detailsDropdown("reporting.frequency.latency.details.section.header", latentBusinessDropdownContent, Some("latency-details-dropdown"))
+        }
     }
+
+
     @if(viewModel.displayManageYourRfSection && viewModel.atLeastOneOfOptInOrOptOutExists) {
         @manageReportingFrequency
     }

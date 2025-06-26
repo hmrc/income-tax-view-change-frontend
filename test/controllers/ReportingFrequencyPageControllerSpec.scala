@@ -21,7 +21,7 @@ import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.{MockOptInService, MockOptOutService}
 import models.ReportingFrequencyViewModel
-import models.admin.ReportingFrequencyPage
+import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import models.optout.OptOutMultiYearViewModel
@@ -65,81 +65,176 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
     val isAgent = mtdRole != MTDIndividual
 
     s"show(isAgent = $isAgent)" when {
+
       val action = testController.show(isAgent)
+
       s"the user is authenticated as a $mtdRole" should {
-        "render the reporting frequency page" when {
-          "the reporting frequency feature switch is enabled" in {
-            enable(ReportingFrequencyPage)
-            setupMockSuccess(mtdRole)
-            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
-            val optOutProposition: OptOutProposition = OptOutProposition.createOptOutProposition(
-              currentYear = TaxYear(2024, 2025),
-              previousYearCrystallised = false,
-              previousYearItsaStatus = Mandated,
-              currentYearItsaStatus = Voluntary,
-              nextYearItsaStatus = Mandated
-            )
 
-            when(mockOptInService.availableOptInTaxYear()(any(), any(), any())).thenReturn(
-              Future(Seq(TaxYear(2024, 2025)))
-            )
-            when(mockOptOutService.reportingFrequencyViewModels()(any(), any(), any())).thenReturn(
-              Future((optOutProposition, Some(OptOutMultiYearViewModel())))
-            )
-            when(
-              mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
-            ).thenReturn(Future(singleBusinessIncome))
+        "OptInOptOutContentUpdateR17 is enabled" when {
 
-            val result = action(fakeRequest)
+          "render the reporting frequency page" when {
 
-            status(result) shouldBe Status.OK
-            contentAsString(result) shouldBe
-              reportingFrequencyView(
-                ReportingFrequencyViewModel(
-                  isAgent = isAgent,
-                  optOutJourneyUrl = Some(controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url),
-                  optOutTaxYears = Seq(TaxYear(2024, 2025)),
-                  optInTaxYears = Seq(TaxYear(2024, 2025)),
-                  itsaStatusTable =
-                    Seq(
-                      "2023 to 2024" -> Some("Quarterly (mandatory)"),
-                      "2024 to 2025" -> Some("Quarterly"),
-                      "2025 to 2026" -> Some("Quarterly (mandatory)"),
-                    ),
-                  isAnyOfBusinessLatent = true,
-                  displayCeasedBusinessWarning = false
-                )
-              ).toString
+            "the reporting frequency feature switch is enabled" in {
+              enable(ReportingFrequencyPage)
+              enable(OptInOptOutContentUpdateR17)
+              setupMockSuccess(mtdRole)
+              val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
+              val optOutProposition: OptOutProposition = OptOutProposition.createOptOutProposition(
+                currentYear = TaxYear(2024, 2025),
+                previousYearCrystallised = false,
+                previousYearItsaStatus = Mandated,
+                currentYearItsaStatus = Voluntary,
+                nextYearItsaStatus = Mandated
+              )
+
+              when(mockOptInService.availableOptInTaxYear()(any(), any(), any())).thenReturn(
+                Future(Seq(TaxYear(2024, 2025)))
+              )
+              when(mockOptOutService.reportingFrequencyViewModels()(any(), any(), any())).thenReturn(
+                Future((optOutProposition, Some(OptOutMultiYearViewModel())))
+              )
+              when(
+                mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
+              ).thenReturn(Future(singleBusinessIncome))
+
+              val result = action(fakeRequest)
+
+              status(result) shouldBe Status.OK
+              contentAsString(result) shouldBe
+                reportingFrequencyView(
+                  ReportingFrequencyViewModel(
+                    isAgent = isAgent,
+                    optOutJourneyUrl = Some(controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url),
+                    optOutTaxYears = Seq(TaxYear(2024, 2025)),
+                    optInTaxYears = Seq(TaxYear(2024, 2025)),
+                    itsaStatusTable =
+                      Seq(
+                        "2023 to 2024" -> Some("Quarterly (mandatory)"),
+                        "2024 to 2025" -> Some("Quarterly"),
+                        "2025 to 2026" -> Some("Quarterly (mandatory)"),
+                      ),
+                    isAnyOfBusinessLatent = true,
+                    displayCeasedBusinessWarning = false
+                  ),
+                  optInOptOutContentUpdateR17 = true
+                ).toString
+            }
+          }
+
+          "render the error page" when {
+
+            "the reporting frequency feature switch is disabled" in {
+              disable(ReportingFrequencyPage)
+              enable(OptInOptOutContentUpdateR17)
+              setupMockSuccess(mtdRole)
+              val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
+              val optOutProposition: OptOutProposition = OptOutProposition.createOptOutProposition(
+                currentYear = TaxYear(2024, 2025),
+                previousYearCrystallised = false,
+                previousYearItsaStatus = Mandated,
+                currentYearItsaStatus = Voluntary,
+                nextYearItsaStatus = Mandated
+              )
+
+              when(mockOptInService.availableOptInTaxYear()(any(), any(), any())).thenReturn(
+                Future(Seq(TaxYear(2024, 2025)))
+              )
+              when(mockOptOutService.reportingFrequencyViewModels()(any(), any(), any())).thenReturn(
+                Future((optOutProposition, Some(OptOutMultiYearViewModel())))
+              )
+              when(
+                mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
+              ).thenReturn(Future(singleBusinessIncome))
+
+              val result = action(fakeRequest)
+
+              status(result) shouldBe INTERNAL_SERVER_ERROR
+              contentAsString(result).contains("Sorry, there is a problem with the service") shouldBe true
+            }
           }
         }
 
-        "render the error page" when {
-          "the reporting frequency feature switch is disabled" in {
-            disable(ReportingFrequencyPage)
-            setupMockSuccess(mtdRole)
-            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
-            val optOutProposition: OptOutProposition = OptOutProposition.createOptOutProposition(
-              currentYear = TaxYear(2024, 2025),
-              previousYearCrystallised = false,
-              previousYearItsaStatus = Mandated,
-              currentYearItsaStatus = Voluntary,
-              nextYearItsaStatus = Mandated
-            )
+        "OptInOptOutContentUpdateR17 is disenabled" when {
 
-            when(mockOptInService.availableOptInTaxYear()(any(), any(), any())).thenReturn(
-              Future(Seq(TaxYear(2024, 2025)))
-            )
-            when(mockOptOutService.reportingFrequencyViewModels()(any(), any(), any())).thenReturn(
-              Future((optOutProposition, Some(OptOutMultiYearViewModel())))
-            )
-            when(
-              mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
-            ).thenReturn(Future(singleBusinessIncome))
+          "render the reporting frequency page" when {
 
-            val result = action(fakeRequest)
+            "the reporting frequency feature switch is enabled" in {
+              enable(ReportingFrequencyPage)
+              disable(OptInOptOutContentUpdateR17)
+              setupMockSuccess(mtdRole)
+              val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
+              val optOutProposition: OptOutProposition = OptOutProposition.createOptOutProposition(
+                currentYear = TaxYear(2024, 2025),
+                previousYearCrystallised = false,
+                previousYearItsaStatus = Mandated,
+                currentYearItsaStatus = Voluntary,
+                nextYearItsaStatus = Mandated
+              )
 
-            status(result) shouldBe INTERNAL_SERVER_ERROR
-            contentAsString(result).contains("Sorry, there is a problem with the service") shouldBe true
+              when(mockOptInService.availableOptInTaxYear()(any(), any(), any())).thenReturn(
+                Future(Seq(TaxYear(2024, 2025)))
+              )
+              when(mockOptOutService.reportingFrequencyViewModels()(any(), any(), any())).thenReturn(
+                Future((optOutProposition, Some(OptOutMultiYearViewModel())))
+              )
+              when(
+                mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
+              ).thenReturn(Future(singleBusinessIncome))
+
+              val result = action(fakeRequest)
+
+              status(result) shouldBe Status.OK
+              contentAsString(result) shouldBe
+                reportingFrequencyView(
+                  ReportingFrequencyViewModel(
+                    isAgent = isAgent,
+                    optOutJourneyUrl = Some(controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url),
+                    optOutTaxYears = Seq(TaxYear(2024, 2025)),
+                    optInTaxYears = Seq(TaxYear(2024, 2025)),
+                    itsaStatusTable =
+                      Seq(
+                        "2023 to 2024" -> Some("Quarterly (mandatory)"),
+                        "2024 to 2025" -> Some("Quarterly"),
+                        "2025 to 2026" -> Some("Quarterly (mandatory)"),
+                      ),
+                    isAnyOfBusinessLatent = true,
+                    displayCeasedBusinessWarning = false
+                  ),
+                  optInOptOutContentUpdateR17 = false
+                ).toString
+            }
+          }
+
+          "render the error page" when {
+
+            "the reporting frequency feature switch is disabled" in {
+              disable(ReportingFrequencyPage)
+              disable(OptInOptOutContentUpdateR17)
+              setupMockSuccess(mtdRole)
+              val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
+              val optOutProposition: OptOutProposition = OptOutProposition.createOptOutProposition(
+                currentYear = TaxYear(2024, 2025),
+                previousYearCrystallised = false,
+                previousYearItsaStatus = Mandated,
+                currentYearItsaStatus = Voluntary,
+                nextYearItsaStatus = Mandated
+              )
+
+              when(mockOptInService.availableOptInTaxYear()(any(), any(), any())).thenReturn(
+                Future(Seq(TaxYear(2024, 2025)))
+              )
+              when(mockOptOutService.reportingFrequencyViewModels()(any(), any(), any())).thenReturn(
+                Future((optOutProposition, Some(OptOutMultiYearViewModel())))
+              )
+              when(
+                mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
+              ).thenReturn(Future(singleBusinessIncome))
+
+              val result = action(fakeRequest)
+
+              status(result) shouldBe INTERNAL_SERVER_ERROR
+              contentAsString(result).contains("Sorry, there is a problem with the service") shouldBe true
+            }
           }
         }
       }

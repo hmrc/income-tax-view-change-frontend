@@ -20,7 +20,7 @@ import auth.authV2.AuthActions
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.ReportingFrequencyViewModel
-import models.admin.ReportingFrequencyPage
+import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage}
 import models.optout.{OptOutMultiYearViewModel, OptOutOneYearViewModel}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -79,7 +79,8 @@ class ReportingFrequencyPageController @Inject()(
               displayCeasedBusinessWarning = user.incomeSources.areAllBusinessesCeased,
               isAnyOfBusinessLatent = user.incomeSources.isAnyOfActiveBusinessesLatent,
               displayManageYourRfSection = !(optOutProposition.areAllTaxYearsMandated || user.incomeSources.areAllBusinessesCeased)
-            )
+            ),
+            optInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17)
           ))
         } else {
           InternalServerError(
