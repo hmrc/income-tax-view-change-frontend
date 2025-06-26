@@ -95,7 +95,7 @@
         address4,
         postCode,
         countryCode
-    ).flatten.filter(_.nonEmpty).mkString("<br>")
+    ).flatten.filter(_.nonEmpty).map("<div>" + _ + "</div>").mkString("")
 }
 
 
