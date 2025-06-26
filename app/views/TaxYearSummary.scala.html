@@ -16,405 +16,79 @@
 
 @import _root_.implicits.ImplicitCurrencyFormatter._
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import models.financialDetails.DocumentDetailWithDueDate
-@import models.financialDetails.SecondLatePaymentPenalty
-@import models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
+@import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
+@import services.DateServiceInterface
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
-@import views.html.partials.{taxYearSummaryBreakdownPartial, taxYearSummaryTabsPartial}
-@import java.time.LocalDate
-@import models.taxyearsummary.TaxYearSummaryChargeItem
-@import models.financialDetails.Accepted
-@import models.financialDetails.FullyCollected
-@import models.financialDetails.PoaOneReconciliationDebit
-@import models.financialDetails.PoaTwoReconciliationDebit
-@import models.financialDetails.BalancingCharge
-@import services.DateServiceInterface
+@import views.html.partials.taxYearSummary._
+@import views.html.partials.taxYearSummaryTabsPartial
+@import models.liabilitycalculation.viewmodels.CalculationSummary
 
 
 @this(
-    mainTemplate: unifiedLayout,
-    implicitDateFormatter: ImplicitDateFormatterImpl,
-    breakdownPartial: taxYearSummaryBreakdownPartial,
-    h1WithCaption: h1WithCaption,
-    h2: h2,
-    h3WithHtml: h3WithHtml,
-    p: p,
-    link: link,
-    govukInsetText: GovukInsetText,
-    govukTable : GovukTable,
-    taxYearSummaryTabsPartial: taxYearSummaryTabsPartial
+        mainTemplate: unifiedLayout,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        h1WithCaption: h1WithCaption,
+        p: p,
+        link: link,
+        govukInsetText: GovukInsetText,
+        taxYearSummaryTabsPartial: taxYearSummaryTabsPartial,
+        taxCalculationContent: TaxCalculationContent,
+        getClaimToAdjustPoaSection: GetClaimToAdjustPoaSection,
+        forecastContentTable: ForecastContentTable,
+        paymentsContent: PaymentsContent,
+        updatesContent: UpdatesContent,
+        forecastContent: ForecastContent,
+        govukSummaryList: GovukSummaryList
 )
 
 @(taxYear: Int, viewModel: TaxYearSummaryViewModel, backUrl: String, isAgent: Boolean = false, origin: Option[String] = None, ctaLink: String
-  )(implicit request: Request[_], dateService: DateServiceInterface, messages: Messages, user: auth.MtdItUser[_])
-
+)(implicit request: Request[_], dateService: DateServiceInterface, messages: Messages, user: auth.MtdItUser[_])
 @import implicitDateFormatter._
-@showForecastData = @{viewModel.showForecastData}
 
-
-@taxCalculationContent = @{
-    viewModel.calculationSummary.fold(ifEmpty = taxCalculationNotPresent)(calcOverview => taxCalculationOverview(calcOverview, isAgent))
-}
-
-@taxCalculationNotPresent = {
-    @h2(msg = messages("tax-year-summary.tax-calculation.no-calc"), classes = "govuk-heading-l", optId=Some("no-calc-data-header"))
-    @p(id=Some("no-calc-data-note"))(Html(messages("tax-year-summary.tax-calculation.no-calc.note")))
-}
-
-@taxCalculationOverview(model: CalculationSummary, isAgent: Boolean) = {
-    @if(model.messages.exists(_.errorMessages.size > 0)) {
-       @{
-            val key = if(isAgent) "tax-year-summary.agent.message" else "tax-year-summary.message"
-            errorMessage(model, key, isAgent)
-        }
+@getTotalDue(model: CalculationSummary) = @{
+    if(model.crystallised) {
+        messages("tax-year-summary.total-due")
     } else {
-        @breakdownPartial(model, taxYear, isFinalCalc = false, isAgent)
-        @if(!model.crystallised) {
-            @govukInsetText(InsetText(content = HtmlContent(
-            p(id=Some("calc-estimate-info"))(content = Html(messages("tax-year-summary.calc-estimate-info")))
-            )))
-        }
-    }
-}
-
-@errorPresent(model: CalculationSummary) = @{
-    (!model.messages.isEmpty && model.messages.exists(_.errorMessages.size > 0))
-}
-
-@errorMessage(model: CalculationSummary, key: String, isAgent: Boolean) = {
-    @errorMessageHeader(key + ".header")
-    @if(model.messages.exists(_.errorMessages.size > 1)){
-        <ul class="govuk-list govuk-list--bullet">
-            @for(message <- model.messages.map(_.errorMessages).getOrElse(Seq())) {
-                @multipleErrorMessageList(key, message.text, message.id)
-            }
-        </ul>
-    } else {
-        @for(message <- model.messages.map(_.errorMessages).getOrElse(Seq())) {
-            @if(isMultiLineErrorMessage(message.id)){
-                @multipleErrorMessage(key, message.text,message.id)
-            } else {
-                @singleErrorMessage(key + s".${message.id}", message.text)
-            }
-        }
-    }
-    @errorMessageAction(key + ".action")
-}
-
-@errorMessageHeader(header: String) = {
-    @h2(msg = messages(header), classes = "govuk-heading-m")
-}
-
-@singleErrorMessage(errorMessage: String, messageValue: String) = {
-    @govukInsetText(InsetText(classes="govuk-insettext-zero-spacing", content = HtmlContent(Html(messages(errorMessage, messageValue)))))
-}
-
-
-@multipleErrorMessage(errorMessage: String, messageValue: String, messageId: String) = {
-    <div class="govuk-inset-text govuk-insettext-zero-spacing">
-        @messages(errorMessage + s".${messageId}.1", messageValue)
-        <div>
-            <ul class="govuk-list govuk-list--bullet">
-                <li>
-                @messages(errorMessage + s".${messageId}.2", messageValue)
-                </li>
-                <li>
-                @messages(errorMessage + s".${messageId}.3", messageValue)
-                </li>
-                @if(messageId == "C15322" || messageId == "C159028") {
-                    <li>
-                    @messages(errorMessage + s".${messageId}.4", messageValue)
-                    </li>
-                }
-            </ul>
-        </div>
-    </div>
-}
-
-@isMultiLineErrorMessage(messageId: String) = @{(messageId == "C15104" || messageId == "C15322" || messageId == "C159028")}
-
-@multipleErrorMessageList(errorMessage: String, messageValue: String, messageId: String) = {
-    @if(isMultiLineErrorMessage(messageId)) {
-        <li>
-            @multipleErrorMessage(errorMessage,messageValue,messageId)
-        </li>
-    } else {
-        <li>
-            @govukInsetText(InsetText(classes="govuk-insettext-zero-spacing",
-            content = HtmlContent(Html(messages(errorMessage + s".$messageId", messageValue)))))
-        </li>
-    }
-}
-
-@errorMessageAction(action: String) = {
-    <div class="govuk-warning-text">
-        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-        <strong class="govuk-warning-text__text">
-            <span class="govuk-warning-text__assistive">Warning</span>
-            @messages(action)
-        </strong>
-    </div>
-}
-
-@paymentsTableHead(headId: String) = {
-    <thead class="govuk-table__head" id="@headId">
-        <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header" id="paymentTypeHeading">@messages("tax-year-summary.payments.charge-type")</th>
-            <th scope="col" class="govuk-table__header" id="paymentDueDateHeading">@messages("tax-year-summary.payments.due-date")</th>
-            <th scope="col" class="govuk-table__header govuk-table__header--numeric" id="paymentAmountHeading">@messages("tax-year-summary.payments.amount")</th>
-        </tr>
-    </thead>
-}
-
-
-@getChargeSummaryHref(chargeItem: TaxYearSummaryChargeItem) = @{
-    if (chargeItem.transactionType == SecondLatePaymentPenalty) {
-        viewModel.LPP2Url
-    } else {
-        if(isAgent) {
-            controllers.routes.ChargeSummaryController.showAgent(taxYear, chargeItem.transactionId, chargeItem.isLatePaymentInterest).url
+        if(model.periodFrom.isDefined && model.periodTo.isDefined) {
+            val calculationDateFrom = implicitDateFormatter.longDate(model.periodFrom.get).toLongDate
+            val calculationDateTo = implicitDateFormatter.longDate(model.periodTo.get).toLongDate
+            messages("tax-year-summary.tax-calculation.date", calculationDateFrom, calculationDateTo)
         } else {
-            controllers.routes.ChargeSummaryController.show(taxYear, chargeItem.transactionId, chargeItem.isLatePaymentInterest, origin).url
+            ""
         }
     }
 }
-
-@getChargeSummaryMessage(chargeItem: TaxYearSummaryChargeItem) = @{
-    val chargeTypeKey = chargeItem.getChargeTypeKey
-    val lpi = if (chargeItem.isLatePaymentInterest) "lpi." else ""
-    messages(s"tax-year-summary.payments.${lpi}${chargeTypeKey}")
-}
-
-@getForecastSummaryHref(taxYear: Int, isAgent: Boolean) = @{
-    if(isAgent){
-        controllers.routes.ForecastIncomeSummaryController.showAgent(taxYear).url
-    } else {
-        controllers.routes.ForecastIncomeSummaryController.show(taxYear).url
-    }
-}
-
-@getForecastTaxDueHref(taxYear: Int, isAgent: Boolean) = @{
-    if(isAgent){
-        controllers.routes.ForecastTaxCalcSummaryController.showAgent(taxYear).url
-    } else {
-        controllers.routes.ForecastTaxCalcSummaryController.show(taxYear).url
-    }
-}
-
-@paymentsContent = {
-    @h2(msg = messages("tax-year-summary.charges"), classes = "govuk-heading-l")
-    @if(viewModel.charges.isEmpty){
-        @p()(content = Html(messages("tax-year-summary.payments.no-payments")))
-    } else {
-        <table class="govuk-table" id="payments-table">
-            <caption class="govuk-table__caption govuk-visually-hidden" style="margin-bottom: 0px;">@messages("tax-year-summary.payments")</caption>
-            @paymentsTableHead("payments-table-head")
-            <tbody>
-            @for((chargeItem, index) <- viewModel.charges.sortBy(_.dueDate).sortBy(_.codedOutStatus.contains(Accepted)).zipWithIndex) {
-                <tr class="govuk-table__row">
-                    <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">
-                        @if(chargeItem.isOverdue() &&
-                            !chargeItem.codedOutStatus.contains(Accepted) &&
-                            ((!chargeItem.isLatePaymentInterest && !chargeItem.isPaid) ||
-                            (chargeItem.isLatePaymentInterest && !chargeItem.interestIsPaid))) {
-                            <div class="govuk-tag govuk-tag--red">@messages("tax-year-summary.payments.overdue")</div>
-                        }
-
-                        @if(chargeItem.isAccruingInterest()) {
-                            <div class="govuk-tag govuk-tag--red" id="accrues-interest-tag">@messages("taxYears.accruesInterest")</div>
-                        }
-                        <div id="paymentTypeText-@{index}">
-                            @if(chargeItem.originalAmount == 0) {
-                                @getChargeSummaryMessage(chargeItem)
-                            } else {
-                                <a class="govuk-link"  id="paymentTypeLink-@{index}" href="@getChargeSummaryHref(chargeItem)">@getChargeSummaryMessage(chargeItem)</a>
-                            }
-                        </div>
-                        @if(chargeItem.dunningLock){<div class="form-hint govuk-body-s"> @messages("tax-year-summary.payments.paymentUnderReview") </div>}
-                        @if(chargeItem.hasLpiWithDunningLock){<div class="form-hint govuk-body-s"> @messages("tax-year-summary.payments.paymentUnderReview") </div>}
-                    </th>
-                    @if(chargeItem.isLatePaymentInterest) {
-                        @chargeItem.latePaymentInterestAmount.map { latePaymentInterestAmount =>
-                             <td class="govuk-table__cell">@chargeItem.dueDate.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))</td>
-                             <td class="govuk-table__cell govuk-table__cell--numeric">@latePaymentInterestAmount.toCurrencyString</td>
-                        }
-                    } else if(chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)) {
-                        <td class="govuk-table__cell">@messages("tax-year-summary.na")</td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@chargeItem.originalAmount.toCurrencyString</td>
-                    } else if(chargeItem.transactionType == BalancingCharge && chargeItem.codedOutStatus.isEmpty) {
-                         <td class="govuk-table__cell">
-                            @chargeItem.getDueDateForNonZeroBalancingCharge.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))
-                         </td>
-                         <td class="govuk-table__cell govuk-table__cell--numeric">@chargeItem.originalAmount.toCurrencyString</td>
-                    } else {
-                        <td class="govuk-table__cell">@chargeItem.dueDate.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))</td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@chargeItem.originalAmount.toCurrencyString</td>
-                    }
-                </tr>
-            }
-            </tbody>
-        </table>
-    }
-}
-
-@obligationsTypeHelper(obligationType: String) = @{
-    obligationType match {
-        case "Property" => messages("updateTab.obligationType.property")
-        case "Business" => messages("updateTab.obligationType.business")
-        case "Crystallisation" => messages("updateTab.obligationType.crystallised")
-        case _ => obligationType
-    }
-}
-
-@updateTypeHelper(updateType: String) = @{
-    updateType match {
-        case "Quarterly" => messages("updateTab.updateType.quarterly")
-        case "Crystallisation" => messages("updateTab.updateType.crystallised")
-        case _ => updateType
-    }
-}
-
-@groupedObligations = @{
-    viewModel.obligations.allDeadlinesWithSource(previous = true)
-    .reverse.groupBy[LocalDate]{nextUpdateWithIncomeType => nextUpdateWithIncomeType.obligation.due}
-    .toList
-    .collect {
-        case (due, dueObligations) => (due, viewModel.obligations.groupByQuarterPeriod(dueObligations.distinct))
-    }
-    .sortBy(_._1)
-}
-
-@showUpdates = @{viewModel.showUpdates}
-
-
-@updatesContent = {
-        @h2(msg = messages("tax-year-summary.updates"), classes = "govuk-heading-l")
-        @p(id=Some("update-tab-description"))(Html(messages("updateTab.desc")))
-        @groupedObligations.map { case (due, dueObligations) =>
-
-        <div class="govuk-tax-years-updates-table">
-            @h3WithHtml(
-                Html(s"""
-                    |<span class="govuk-tax-years-updates-table__section-title" id="table-default-content-$due">
-                    |   ${messages("updateTab.due", due.toLongDate)}
-                    |</span>""".stripMargin
-                ),
-                classes = "govuk-heading-m"
+@addForecastData(model: CalculationSummary) = @{
+    if(viewModel.showForecastData && viewModel.calculationSummary.isDefined) {
+        Seq(
+            SummaryListRow(
+                key = Key(content = Text(messages("tax-year-summary.forecast_total_title", s"${taxYear - 1}", s"$taxYear")), classes = "govuk-summary-list__key dt-cell-width"),
+                value = Value(content = Text(model.forecastIncomeTaxAndNics.get.toCurrencyString), classes = "govuk-summary-list__value--numeric govuk-!-text-align-right"),
+                classes = "govuk-summary-list__row"
             )
-            @dueObligations.map { case (quarterlyTypeName, obligations) =>
-                <table class="govuk-table">
-                    <caption class="govuk-table__caption" style="margin-bottom: 0px;">
-                        @if(quarterlyTypeName.isEmpty) {
-                            @messages("paymentDue.tax-year", obligations.head.obligation.start.getYear.toString, obligations.head.obligation.end.getYear.toString)</caption>
-                        } else {
-                            @messages("updateTab.updatePeriodDateToDate", obligations.head.obligation.start.toLongDateShort, obligations.head.obligation.end.toLongDateShort)</caption>
-                        }
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th class="govuk-table__header" scope="col">@messages("updateTab.updateType")</th>
-                            <th class="govuk-table__header" scope="col">@messages("updateTab.incomeSource")</th>
-                            <th class="govuk-table__header" scope="col">@messages("updateTab.dateSubmitted")</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    @obligations.map { nextUpdateWithIncomeType =>
-                        <tr class="govuk-table__row">
-                            <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">
-                                <div>@updateTypeHelper(nextUpdateWithIncomeType.obligation.obligationType)</div>
-                            </th>
-                            <td class="govuk-table__cell">@obligationsTypeHelper@{messages(nextUpdateWithIncomeType.incomeType)}</td>
-                            <td class="govuk-table__cell">@nextUpdateWithIncomeType.obligation.dateReceived.map(_.toLongDateShort)</td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-            }
-        </div>
-        }
-}
-
-@noForecastContent = {
-    @h2(msg = messages("forecast_taxCalc.noForecast.heading"), classes = "govuk-heading-l", optId=Some("no-forecast-data-header"))
-    @p(id=Some("no-forecast-data-note"))(Html(messages("forecast_taxCalc.noForecast.text")))
-}
-
-@forecastContent = {
-    @if(showForecastData && viewModel.calculationSummary.isDefined){
-        @forecastContentTable
-        @govukInsetText(InsetText(content = Text(messages("tax-year-summary.forecast_tab.insetText", taxYear.toString)), id=Some("inset_forecast")))
+        )
     } else {
-        @noForecastContent
+        Seq.empty
     }
 }
+@listRows(model: CalculationSummary) = @{
 
-@forecastContentTable = @{
-    val forecastIncome = viewModel.calculationSummary.flatMap(model => model.forecastIncome).getOrElse(0).toCurrencyString
-    val forecastTotalTaxableIncome = viewModel.calculationSummary.flatMap(model => model.forecastTotalTaxableIncome).getOrElse(0).toCurrencyString
-    val forecastIncomeAndNics = viewModel.calculationSummary.flatMap(model => model.forecastIncomeTaxAndNics).get.toCurrencyString
-
-    val forecastDeductions = viewModel.calculationSummary.flatMap(model => model.forecastAllowancesAndDeductions).getOrElse(BigDecimal(0)).toCurrencyString
-    govukTable(Table(
-        rows = Seq(
-            Seq(
-                TableRow(content = HtmlContent(link(link=getForecastSummaryHref(taxYear, isAgent),
-                    messageKey="tax-year-summary.income"))),
-                TableRow(content = Text(forecastIncome), format = Some("numeric")),
-            ),
-            Seq(
-                TableRow(content = Text(messages("tax-year-summary.deductions")), classes="govuk-!-font-weight-regular"),
-                TableRow(content = HtmlContent(s"<span>$forecastDeductions</span>"), classes="govuk-!-font-weight-regular", format = Some("numeric"))
-            ),
-            Seq(
-                TableRow(content = Text(messages("tax-year-summary.taxable-income"))),
-                TableRow(content = HtmlContent(s"<span class='govuk-!-font-weight-bold'>$forecastTotalTaxableIncome</span>"), format = Some("numeric"))
-            ),
-            Seq(
-                TableRow(content = HtmlContent(link(link = getForecastTaxDueHref(taxYear, isAgent),
-                    classes = "govuk-link govuk-!-font-weight-bold", messageKey = "tax-year-summary.forecast.tax-due"))),
-                TableRow(content = HtmlContent(s"<span class='govuk-!-font-weight-bold'>$forecastIncomeAndNics</span>"),
-                    format = Some("numeric"))
-            )
-        ),
-        head = Some(Seq(
-            HeadCell(content = Text(messages("tax-year-summary.section"))),
-            HeadCell(content = Text(messages("tax-year-summary.amount")), format = Some("numeric"))
-        )),
-        caption = Some(messages("tax-year-summary.forecast")),
-        captionClasses = "govuk-table__caption--l",
-        classes = "forecast_table",
-        firstCellIsHeader = true
-    ))
+    Seq(
+        SummaryListRow(
+            key = Key(content = Text(messages("tax-year-summary.calculation-date")), classes = "govuk-summary-list__key dt-cell-width"),
+            value = Value(content = model.timestamp.map(_.toLongDate).fold(Text(""))(Text(_)), classes = "govuk-summary-list__value--numeric govuk-!-text-align-right govuk-!-margin-0"),
+            classes = "govuk-summary-list__row"),
+        SummaryListRow(
+            key = Key(content = Text(getTotalDue(model)), classes = "govuk-summary-list__key dt-cell-width"),
+            value = Value(content = Text(model.taxDue.toCurrencyString), classes = "govuk-summary-list__value--numeric govuk-!-text-align-right"),
+            classes = "govuk-summary-list__row"
+        )
+    ) ++ addForecastData(model)
 }
-
-@getClaimToAdjustPoaSection = @{
-    viewModel.ctaViewModel.claimToAdjustTaxYear match {
-        case Some(value) =>
-            govukInsetText(
-                InsetText(
-                    content = HtmlContent(
-                        p(id = Some("claim-to-adjust-poa"))(Html(messages("tax-year-summary.adjust-poa-paragraph"))).toString +
-                        p(id = Some("claim-to-adjust-poa-link"))
-                                (
-                                    Html(
-                                        link(
-                                            link = ctaLink,
-                                            messageKey = messages("tax-year-summary.adjust-poa", value.startYear.toString, value.endYear.toString),
-                                            id = Some("adjust-poa-link")
-                                        ).toString
-                                    )
-                                ).toString
-                    )
-                )
-            )
-        case None => Html("")
-    }
-}
-
 @mainTemplate(pageTitle = messages("tax-year-summary.heading"), backUrl = Some(backUrl), isAgent = isAgent,
     btaNavPartial = user.btaNavPartial, useFallbackBackLink = true) {
-
     @h1WithCaption(
         heading = messages("tax-year-summary.heading"),
         captionMsg = messages("tax-year-summary.heading-secondary", (taxYear - 1).toString, taxYear.toString),
@@ -422,59 +96,24 @@
     )
 
     @viewModel.calculationSummary.map { model =>
-        @if(!model.crystallised && !model.messages.isDefined) {
+        @if(!model.crystallised && model.messages.isEmpty) {
             @govukInsetText(InsetText(content = HtmlContent(
-                p(id=Some("calc-date-info"))(content = Html(
+                p(id = Some("calc-date-info"))(content = Html(
                     messages(if(isAgent) "tax-year-summary.agent.calc-from-last-time" else "tax-year-summary.calc-from-last-time",
-                    model.timestamp.map(_.toLongDate).get))
+                        model.timestamp.map(_.toLongDate).get))
                 )
             )))
         }
-        @if(!errorPresent(model)) {
-            <dl class="govuk-summary-list">
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key dt-cell-width">
-                        @messages("tax-year-summary.calculation-date")
-                    </dt>
-                    <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right govuk-!-margin-0">
-                        <span id="calculation-date">@{
-                            model.timestamp.map(_.toLongDate)
-                        }</span>
-                    </dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key dt-cell-width">
-                    @if(model.crystallised) {
-                        @messages("tax-year-summary.total-due")
-                    } else {
-                        @{
-                            if ( !model.periodFrom.isEmpty && !model.periodTo.isEmpty ){
-                                val calculationDateFrom = implicitDateFormatter.longDate(model.periodFrom.get).toLongDate
-                                val calculationDateTo = implicitDateFormatter.longDate(model.periodTo.get).toLongDate
-                                messages("tax-year-summary.tax-calculation.date", calculationDateFrom, calculationDateTo)
-                            }
-                        }
-                    }
-                    </dt>
-                    <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
-                        @{model.taxDue.toCurrencyString}
-                    </dd>
-                </div>
-                @if(showForecastData && viewModel.calculationSummary.isDefined) {
-                    <div id="forecast_total" class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key dt-cell-width">
-                            @messages("tax-year-summary.forecast_total_title", s"${taxYear - 1}", s"$taxYear")
-                        </dt>
-                        <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
-                            @model.forecastIncomeTaxAndNics.get.toCurrencyString
-                        </dd>
-                    </div>
-                }
-            </dl>
+        @if(!model.errorPresent()) {
+            @govukSummaryList(SummaryList(
+                classes = "govuk-summary-list",
+                rows = listRows(model)
+            ))
+        }
     }
-}
-    @getClaimToAdjustPoaSection
 
-    @taxYearSummaryTabsPartial(showForecastData, showUpdates, taxCalculationContent, paymentsContent, forecastContent, updatesContent)
+    @getClaimToAdjustPoaSection(viewModel, ctaLink)
+
+    @taxYearSummaryTabsPartial(viewModel.showForecastData, viewModel.showUpdates, taxCalculationContent(taxYear, viewModel, isAgent), paymentsContent(viewModel, taxYear, isAgent, origin), forecastContent(viewModel, taxYear, isAgent), updatesContent(viewModel))
 }
 
