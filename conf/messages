@@ -2796,17 +2796,17 @@ reporting.frequency.ceasedBusiness.warning.text.1                   = There are 
 reporting.frequency.ceasedBusiness.warning.link                     = all businesses
 reporting.frequency.ceasedBusiness.warning.text.2                   = page.
 
-reporting.frequency.latency.details.section.header                  = Your new businesses can have a different reporting frequency
-reporting.frequency.latency.details.section.text.para1              = For tax years you report quarterly, you can separately choose to report annually for any new sole trader or property income source:
+reporting.frequency.latency.details.section.header                  = You can have different reporting obligations for your new businesses
+reporting.frequency.latency.details.section.text.para1              = For tax years you are using Making Tax Digital for Income Tax, you can separately choose to opt out for any new sole trader or property income source:
 reporting.frequency.latency.details.section.text.para1.bullet1      = started less than 2 years ago
 reporting.frequency.latency.details.section.text.para1.bullet2      = that you start in future
-reporting.frequency.latency.details.section.text.para2              = This option is available to new businesses:
+reporting.frequency.latency.details.section.text.para2              = This option is available to your new businesses:
 reporting.frequency.latency.details.section.text.para2.bullet1      = for up to 2 tax years
-reporting.frequency.latency.details.section.text.para2.bullet2      = only when you report quarterly for your other businesses
-reporting.frequency.latency.details.section.text.para2.bullet3      = even if your income from self-employment or property, or both, exceeds the income threshold
-reporting.frequency.latency.details.section.text.para3.heading      = How to change a new income source’s reporting frequency
+reporting.frequency.latency.details.section.text.para2.bullet2      = only when you use Making Tax Digital for Income Tax for your other businesses
+reporting.frequency.latency.details.section.text.para2.bullet3      = even if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold
+reporting.frequency.latency.details.section.text.para3.heading      = How to change your reporting obligations for a new income source
 reporting.frequency.latency.details.section.text.para3.text.1       = You can do this at any time in the
-reporting.frequency.latency.details.section.text.para3.link.text    = all businesses
+reporting.frequency.latency.details.section.text.para3.link.text    = your businesses
 reporting.frequency.latency.details.section.text.para3.text.2       = section
 
 yourSelfAssessmentChargeSummary.tax-year                            = {0} to {1} tax year
