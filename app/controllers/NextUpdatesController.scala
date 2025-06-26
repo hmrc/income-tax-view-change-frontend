@@ -74,17 +74,18 @@ class NextUpdatesController @Inject()(
           case obligations: ObligationsModel => obligations
           case _ => ObligationsModel(Nil)
         }
+        isR17ContentEnabled = isEnabled(OptInOptOutContentUpdateR17)
 
-        result <- (nextUpdates.obligations, isEnabled(OptOutFs)) match {
-          case (Nil, _) =>
+        result <- nextUpdates.obligations match {
+          case Nil =>
             Future.successful(errorHandler.showInternalServerError())
-          case (_, true) =>
+          case _ =>
             auditNextUpdates(user, isAgent, origin)
 
             val optOutSetup = {
               for {
                 (checks, optOutProposition) <- optOutService.nextUpdatesPageChecksAndProposition()
-                viewModel = nextUpdatesService.getNextUpdatesViewModel(nextUpdates, isEnabled(OptInOptOutContentUpdateR17))
+                viewModel = nextUpdatesService.getNextUpdatesViewModel(nextUpdates, isR17ContentEnabled)
               } yield {
                 Ok(
                 nextUpdatesOptOutView(
@@ -97,7 +98,7 @@ class NextUpdatesController @Inject()(
                   origin = origin,
                   reportingFrequencyLink = controllers.routes.ReportingFrequencyPageController.show(isAgent).url,
                   reportingFrequencyEnabled = isEnabled(ReportingFrequencyPage),
-                  optInOptOutContentR17Enabled = isEnabled(OptInOptOutContentUpdateR17)
+                  optInOptOutContentR17Enabled = isR17ContentEnabled
                 )
               )
               }
@@ -108,14 +109,7 @@ class NextUpdatesController @Inject()(
                 Logger("application").error(s"Failed to retrieve quarterly reporting content checks: ${ex.getMessage}")
                 Future.successful(Ok(nextUpdatesView(viewModel, backUrl.url, isAgent, user.isSupportingAgent, origin))) // Render view even on failure
             }
-
             optOutSetup
-
-          case (_, false) =>
-            val viewModel = nextUpdatesService.getNextUpdatesViewModel(nextUpdates, false)
-
-            auditNextUpdates(user, isAgent, origin)
-            Future.successful(Ok(nextUpdatesView(viewModel, backUrl.url, isAgent, user.isSupportingAgent, origin)))
         }
       } yield result
     }(user, origin)
