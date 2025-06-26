@@ -178,7 +178,7 @@
         )
     )
 }
-<a>sksaihhag</a>
+
 @getQuarterlyType = @{
     viewModel.quarterReportingType match {
         case Some(quarterType) =>
@@ -195,7 +195,7 @@
         case None => Seq.empty
     }
 }
-<a>sksaihhag</a>
+
 @quarterlyTypeInfoMessage = @{
     val messagePrefix = "incomeSources.manage.quarterly-period"
     val externalRefLink = messages(s"$messagePrefix.content.external-ref-link")
@@ -226,7 +226,7 @@
         section = Some(getSectionMessage),
         captionClasses = Some("govuk-caption-l")
     ))
-<a>sksaihhag</a>
+
     @govukSummaryList(SummaryList(
         rows = {
             if(viewModel.incomeSourceType == SelfEmployment) getSEList else Seq.empty
