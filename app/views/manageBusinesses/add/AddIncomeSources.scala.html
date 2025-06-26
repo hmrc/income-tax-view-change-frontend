@@ -81,6 +81,7 @@
     @h2(msg = getMessage("selfEmployment.heading"),
         optId = Some("self-employment-h2"))
 
+<div class="govuk-!-padding-bottom-4">
     @if(sources.soleTraderBusinesses.nonEmpty) {
 
         @govukTable(Table(
@@ -184,6 +185,6 @@
         @ceasedBusinesses(sources.ceasedBusinesses, sources.displayStartDate)
     }
 
-    <br>
+</div>
 
 }
