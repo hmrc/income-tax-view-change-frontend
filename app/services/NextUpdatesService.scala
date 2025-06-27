@@ -82,7 +82,9 @@ class NextUpdatesService @Inject()(
       else DeadlineViewModel(EopsObligation, standardAndCalendar = false, date, obligations, Seq.empty)
     }.filter(deadline => (deadline.obligationType != EopsObligation) && !(deadline.standardQuarters.isEmpty && deadline.calendarQuarters.isEmpty))
 
-    NextUpdatesViewModel(allDeadlines)
+    val (missedDeadlines, remainingDeadlines) = if (isR17ContentEnabled) allDeadlines.partition(_.deadline.isBefore(dateService.getCurrentDate)) else (Seq.empty, allDeadlines)
+
+    NextUpdatesViewModel(remainingDeadlines, missedDeadlines)
   }
 
   def getOpenObligations()(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsResponseModel] = {
