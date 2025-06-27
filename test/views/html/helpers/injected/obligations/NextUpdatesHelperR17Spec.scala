@@ -172,7 +172,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
 
       "display the correct table content for the current year tab" in new Setup(isAgent = false, obligationsModel, Voluntary, Annual) {
         pageDocument.getElementById("quarterly-deadline-date-0").text() shouldBe "30 Oct 2017"
-        pageDocument.getElementById("quarterly-period-0").text() shouldBe "1 Jul 2017 to 30 Sept 2017"
+        pageDocument.getElementById("quarterly-period-0").text() shouldBe "1 Jul 2017 to 30 Sep 2017"
         pageDocument.getElementById("quarterly-income-sources-0").text() shouldBe "Business income"
         pageDocument.getElementById("quarterly-deadline-date-1").text() shouldBe "31 Oct 2017"
         pageDocument.getElementById("quarterly-period-1").text() shouldBe "6 Apr 2017 to 5 Apr 2018"
@@ -299,7 +299,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
 
       "display the correct table content for the current year tab" in new Setup(isAgent = false, obligationsModel, Mandated, Mandated) {
         pageDocument.getElementById("quarterly-deadline-date-0").text() shouldBe "30 Oct 2017"
-        pageDocument.getElementById("quarterly-period-0").text() shouldBe "1 Jul 2017 to 30 Sept 2017"
+        pageDocument.getElementById("quarterly-period-0").text() shouldBe "1 Jul 2017 to 30 Sep 2017"
         pageDocument.getElementById("quarterly-income-sources-0").text() shouldBe "Business income"
         pageDocument.getElementById("quarterly-deadline-date-1").text() shouldBe "31 Oct 2017"
         pageDocument.getElementById("quarterly-period-1").text() shouldBe "6 Apr 2017 to 5 Apr 2018"
