@@ -315,6 +315,8 @@
         case _ if viewModel.latePaymentInterestCharge => messages("chargeSummary.chargeHistory.lateInterestPayment")
         case PoaOneDebit => messages("chargeSummary.chargeHistory.Poa1heading")
         case PoaTwoDebit => messages("chargeSummary.chargeHistory.Poa2heading")
+        case LateSubmissionPenalty => messages("chargeSummary.chargeHistory.LSPHeading")
+        case FirstLatePaymentPenalty => messages("chargeSummary.chargeHistory.LPPHeading")
         case _ => messages("chargeSummary.chargeHistory.heading")
     }
 }
