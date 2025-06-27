@@ -103,14 +103,12 @@
 }
 
 @detailsContent = {
-	<div id="details-content-0">
+	<div id="details-content-0" class="govuk-!-margin-bottom-4">
 		@h2(msg = "obligations.quarterlyUpdates", optId = Some("quarterlyReturns-heading"))
 		@p(id = Some("quarterly-dropdown-line1"))(Html(messages("nextUpdates.dropdown.quarterlyReturn.text")))
 		@p(id = Some("quarterly-dropdown-line2"))(Html(messages("nextUpdates.dropdown.quarterlyReturn.text.lin2")))
 		@p(id = Some("quarterly-dropdown-line3"))(Html(messages("nextUpdates.dropdown.quarterlyReturn.text.lin3")))
 		@link(link = messages("nextUpdates.dropdown.quarterlyReturn.link.link"), target = Some("_blank"), messageKey = "nextUpdates.dropdown.quarterlyReturn.link.text")
-		<br>
-		<br>
 	</div>
 	<div id="details-content-2">
 		@h2(msg = "obligations.finalDeclarationUpdate", optId = Some("finalDeclaration-heading"))

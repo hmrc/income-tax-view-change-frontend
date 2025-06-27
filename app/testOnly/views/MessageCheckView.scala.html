@@ -24,10 +24,12 @@
 @unifiedLayout(pageTitle = Messages("Message Check")) {
 <span id="messagesCheck">
     @for(key <- messageKey) {
+    <div class="govuk-!-margin-bottom-4">
       <span class="messageRow">
        <span class="messageKey">@key</span> =
        <span class="messageValue">@messages(key)</span>
-      </span><br><br>
+      </span>
+    </div>
     }
 </span>
 }

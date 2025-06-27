@@ -76,7 +76,7 @@
         @h2(msg = getMessage("self-employed-h2"),
             optId = Some("self-employed-h1"))
 
-        <table class="govuk-table govuk-!-margin-bottom-3" id="sole-trader-businesses-table">
+        <table class="govuk-table govuk-!-margin-bottom-6" id="sole-trader-businesses-table">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
                     <th class="govuk-table__header" scope="col" id="table-head-business-name">@getMessage("table-head.business-name")</th>
@@ -108,16 +108,13 @@
             }
             </tbody>
         </table>
-
-        <br>
-
     }
 
     @if(ukProperty.nonEmpty) {
         @h2(msg = getMessage("uk-property-h2"),
             optId = Some("uk-property-h2"))
 
-        <table class="govuk-table govuk-!-margin-bottom-3" id="uk-property-table">
+        <table class="govuk-table govuk-!-margin-bottom-6" id="uk-property-table">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
                     <th class="govuk-table__header" scope="col" id="table-head-date-started-uk">@getMessage("table-head.date-started")</th>
@@ -142,16 +139,13 @@
                 </tr>
             </tbody>
         </table>
-
-        <br>
-
     }
 
     @if(foreignProperty.nonEmpty) {
         @h2(msg = getMessage("foreign-property-h2"),
             optId = Some("foreign-property-h2"))
 
-        <table class="govuk-table govuk-!-margin-bottom-3" id="foreign-property-table">
+        <table class="govuk-table govuk-!-margin-bottom-6" id="foreign-property-table">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
                     <th class="govuk-table__header" scope="col" id="table-head-date-started-foreign">@getMessage("table-head.date-started")</th>
@@ -176,16 +170,10 @@
                 </tr>
             </tbody>
         </table>
-
-        <br>
-
     }
 
     @if(sources.viewCeasedBusinesses.nonEmpty) {
         @h2(msg = getMessage("ceased-businesses-h2"),optId = Some("ceased-businesses-heading"))
         @ceasedBusinesses(sources.viewCeasedBusinesses, sources.displayStartDate)
     }
-
-    <br>
-
 }

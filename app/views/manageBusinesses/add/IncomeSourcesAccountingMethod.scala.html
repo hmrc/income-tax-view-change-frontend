@@ -54,14 +54,14 @@
 }
 
 @hintContent = {
-@if(incomeSourceType == SelfEmployment) {
-    <br>
-    <div>@getMessage("hint")</div>
-    </br> <div>@detailsDropdown(getMessage("example"), detailsContent)</div>
-} else {
-    <br>
-    <div>@detailsDropdown(getMessage("example"), detailsContent)</div>
-}
+    <div class="govuk-!-margin-top-4">
+        @if(incomeSourceType == SelfEmployment) {
+            <div class="govuk-!-margin-bottom-4">@getMessage("hint")</div>
+            <div>@detailsDropdown(getMessage("example"), detailsContent)</div>
+        } else {
+            <div>@detailsDropdown(getMessage("example"), detailsContent)</div>
+        }
+    </div>
 }
 
 @incomeSourceTypeCaption = @{
