@@ -1,0 +1,66 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+@import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+@import views.html.components.link
+@import _root_.implicits.ImplicitCurrencyFormatter._
+
+
+@this(govukTable: GovukTable,
+        link: link)
+@(viewModel: TaxYearSummaryViewModel, taxYear: Int, isAgent: Boolean)(implicit messages: Messages)
+
+@{
+    val forecastIncome = viewModel.calculationSummary.flatMap(model => model.forecastIncome).getOrElse(0).toCurrencyString
+    val forecastTotalTaxableIncome = viewModel.calculationSummary.flatMap(model => model.forecastTotalTaxableIncome).getOrElse(0).toCurrencyString
+    val forecastIncomeAndNics = viewModel.calculationSummary.flatMap(model => model.forecastIncomeTaxAndNics).get.toCurrencyString
+
+    val forecastDeductions = viewModel.calculationSummary.flatMap(model => model.forecastAllowancesAndDeductions).getOrElse(BigDecimal(0)).toCurrencyString
+    govukTable(Table(
+        rows = Seq(
+            Seq(
+                TableRow(content = HtmlContent(link(link = viewModel.getForecastSummaryHref(taxYear, isAgent),
+                    messageKey = "tax-year-summary.income"))),
+                TableRow(content = Text(forecastIncome), format = Some("numeric")),
+            ),
+            Seq(
+                TableRow(content = Text(messages("tax-year-summary.deductions")), classes = "govuk-!-font-weight-regular"),
+                TableRow(content = HtmlContent(s"<span>$forecastDeductions</span>"), classes = "govuk-!-font-weight-regular", format = Some("numeric"))
+            ),
+            Seq(
+                TableRow(content = Text(messages("tax-year-summary.taxable-income"))),
+                TableRow(content = HtmlContent(s"<span class='govuk-!-font-weight-bold'>$forecastTotalTaxableIncome</span>"), format = Some("numeric"))
+            ),
+            Seq(
+                TableRow(content = HtmlContent(link(link = viewModel.getForecastTaxDueHref(taxYear, isAgent),
+                    classes = "govuk-link govuk-!-font-weight-bold", messageKey = "tax-year-summary.forecast.tax-due"))),
+                TableRow(content = HtmlContent(s"<span class='govuk-!-font-weight-bold'>$forecastIncomeAndNics</span>"),
+                    format = Some("numeric"))
+            )
+        ),
+        head = Some(Seq(
+            HeadCell(content = Text(messages("tax-year-summary.section"))),
+            HeadCell(content = Text(messages("tax-year-summary.amount")), format = Some("numeric"))
+        )),
+        caption = Some(messages("tax-year-summary.forecast")),
+        captionClasses = "govuk-table__caption--l",
+        classes = "forecast_table",
+        firstCellIsHeader = true
+    ))
+}

@@ -22,6 +22,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
 import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
+import testConstants.NextUpdatesTestConstants
 import testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel
 import testUtils.TestSupport
 import views.html.nextUpdates.NextUpdates
@@ -32,80 +33,66 @@ class NextUpdatesViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val nextUpdatesView: NextUpdates = app.injector.instanceOf[NextUpdates]
-  val claimToAdjustPoaMessage: String = messages("nextUpdates.claim-to-adjust.text")
-  val claimToAdjustPoaLink: String = "/report-quarterly/income-and-expenses/view/adjust-poa/start"
 
   class Setup(currentObligations: NextUpdatesViewModel, isSupportingAgent: Boolean = false) {
     val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, "testBackURL", isSupportingAgent = isSupportingAgent)))
   }
 
-  object obligationsMessages {
-    val heading: String = messages("nextUpdates.heading")
-    val title: String = messages("htmlTitle", heading)
-    val summary: String = messages("nextUpdates.dropdown.info")
-    val summaryQuarterly: String = messages("obligations.quarterlyUpdates")
-    val quarterlyLine1: String = messages("nextUpdates.dropdown.quarterlyReturn.text")
-    val quarterlyLine2: String = messages("nextUpdates.dropdown.quarterlyReturn.text.lin2")
-    val declarationLine1: String = messages("nextUpdates.dropdown.finalDeclaration.text")
-    val summaryDeclaration: String = messages("obligations.finalDeclarationUpdate")
-    val info: String = s"${messages("nextUpdates.previousYears.textOne")} ${messages("nextUpdates.previousYears.link")} ${messages("nextUpdates.previousYears.textTwo")}"
-  }
-
   lazy val obligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(
     business1.incomeSourceId,
     twoObligationsSuccessModel.obligations
-  ))).obligationsByDate.map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
+  ))).obligationsByDate(isR17ContentEnabled = false).map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
     DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
   })
 
   "Next Updates page" should {
 
     "have the correct title" in new Setup(obligationsModel) {
-      pageDocument.title() shouldBe obligationsMessages.title
+      pageDocument.title() shouldBe NextUpdatesTestConstants.title
     }
 
     "have the correct heading" in new Setup(obligationsModel) {
-      pageDocument.select("h1").text() shouldBe obligationsMessages.heading
+      pageDocument.select("h1").text() shouldBe NextUpdatesTestConstants.heading
     }
 
     "have the correct summary heading" in new Setup(obligationsModel) {
-      pageDocument.select("summary").text() shouldBe obligationsMessages.summary
+      pageDocument.select("summary").text() shouldBe NextUpdatesTestConstants.summary
     }
 
     "have a summary section for quarterly updates" in new Setup(obligationsModel) {
-      pageDocument.select("details h2").get(0).text() shouldBe obligationsMessages.summaryQuarterly
+      pageDocument.select("details h2").get(0).text() shouldBe NextUpdatesTestConstants.summaryQuarterly
     }
 
     "have the correct line 1 for quarterly updates section" in new Setup(obligationsModel) {
-      pageDocument.getElementById("quarterly-dropdown-line1").text() shouldBe obligationsMessages.quarterlyLine1
+      pageDocument.getElementById("quarterly-dropdown-line1").text() shouldBe NextUpdatesTestConstants.quarterlyLine1
     }
 
     "have the correct line 2 for quarterly updates section" in new Setup(obligationsModel) {
-      pageDocument.getElementById("quarterly-dropdown-line2").text() shouldBe obligationsMessages.quarterlyLine2
+      pageDocument.getElementById("quarterly-dropdown-line2").text() shouldBe NextUpdatesTestConstants.quarterlyLine2
     }
 
     "have a summary section for final declarations" in new Setup(obligationsModel) {
-      pageDocument.select("details h2").get(1).text() shouldBe obligationsMessages.summaryDeclaration
+      pageDocument.select("details h2").get(1).text() shouldBe NextUpdatesTestConstants.summaryDeclaration
     }
 
     "have the correct line 1 for final declaration section" in new Setup(obligationsModel) {
-      pageDocument.getElementById("final-declaration-line1").text() shouldBe obligationsMessages.declarationLine1
+      pageDocument.getElementById("final-declaration-line1").text() shouldBe NextUpdatesTestConstants.declarationLine1
     }
 
     "have an updates accordion" in new Setup(obligationsModel) {
       pageDocument.select("div .govuk-accordion").size() == 1
     }
 
-    s"have the information ${obligationsMessages.info}" when {
+    s"have the information ${NextUpdatesTestConstants.info}" when {
       "a primary agent or individual" in new Setup(obligationsModel) {
-        pageDocument.select("p:nth-child(6)").text shouldBe obligationsMessages.info
+        pageDocument.select("p:nth-child(6)").text shouldBe NextUpdatesTestConstants.info
         pageDocument.select("p:nth-child(6) a").attr("href") shouldBe controllers.routes.TaxYearsController.showTaxYears().url
       }
     }
 
-    s"not have the information ${obligationsMessages.info}" when {
+    s"not have the information ${NextUpdatesTestConstants.info}" when {
       "a supporting agent" in new Setup(obligationsModel, true) {
-        pageDocument.body.text() shouldNot include(obligationsMessages.info)
+        pageDocument.body.text() shouldNot include(NextUpdatesTestConstants.info)
       }
     }
 
@@ -114,13 +101,8 @@ class NextUpdatesViewSpec extends TestSupport {
 
       val table = section.select(".govuk-table")
 
-      table.select(".govuk-table__cell:nth-of-type(1)").text() shouldBe messages("nextUpdates.quarterly")
-      table.select(".govuk-table__cell:nth-of-type(2)").text() shouldBe messages(testTradeName)
+      table.select(".govuk-table__cell:nth-of-type(1)").text() shouldBe NextUpdatesTestConstants.quarterly
+      table.select(".govuk-table__cell:nth-of-type(2)").text() shouldBe NextUpdatesTestConstants.businessIncome
     }
-
-//    s"have the correct Claim To Adjust Poa Link and Text" in new Setup(obligationsModel) {
-//      pageDocument.getElementById("claim-to-adjust-poa").text() shouldBe claimToAdjustPoaMessage
-//      pageDocument.getElementById("claim-to-adjust-poa").select("p").attr("href") shouldBe claimToAdjustPoaLink
-//    }
   }
 }

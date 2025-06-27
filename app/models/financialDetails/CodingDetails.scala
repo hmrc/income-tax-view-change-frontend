@@ -19,8 +19,6 @@ package models.financialDetails
 import models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{Json, Reads, Writes}
 
-import java.time.LocalDate
-
 case class CodingDetails(totalLiabilityAmount: Option[BigDecimal],
                          taxYearReturn: Option[String]) {
 

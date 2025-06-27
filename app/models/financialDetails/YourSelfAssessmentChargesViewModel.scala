@@ -16,10 +16,12 @@
 
 package models.financialDetails
 
+import auth.MtdItUser
 import models.incomeSourceDetails.TaxYear
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.taxYearAmount.EarliestDueCharge
 import services.DateServiceInterface
+import controllers.routes._
 
 import java.time.LocalDate
 
@@ -37,6 +39,32 @@ case class YourSelfAssessmentChargesViewModel(hasOverdueOrAccruingInterestCharge
                                               claimToAdjustViewModel: WYOClaimToAdjustViewModel)(implicit val dateService: DateServiceInterface) {
   lazy val currentTaxYear: TaxYear = dateService.getCurrentTaxYear
 
+  def chargesAndCodedOutDetailsAreEmpty: Boolean =
+    whatYouOweChargesList.isChargesListEmpty && whatYouOweChargesList.codedOutDetails.isEmpty
+
+  def chargeOrBcdExists: Boolean =
+    whatYouOweChargesList.chargesList.nonEmpty || whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero
+
+  def creditAndRefundUrl(implicit user: MtdItUser[_]): String = {
+    if(user.isAgent()) CreditAndRefundController.showAgent()
+    else               CreditAndRefundController.show()
+  }.url
+
+  def creditAndRefundsControllerUrl(implicit user: MtdItUser[_]): String =
+    (user.isAgent() match {
+      case true if user.incomeSources.yearOfMigration.isDefined  => CreditAndRefundController.showAgent()
+      case true                                                  => NotMigratedUserController.showAgent()
+      case false if user.incomeSources.yearOfMigration.isDefined => CreditAndRefundController.show()
+      case false                                                 => NotMigratedUserController.show()
+    }).url
+
+  def taxYearSummaryUrl(year: Int, origin: Option[String])(implicit user: MtdItUser[_]): String = {
+    if(user.isAgent()) TaxYearSummaryController.renderAgentTaxYearSummaryPage(year)
+    else               TaxYearSummaryController.renderTaxYearSummaryPage(year, origin)
+  }.url
+
+  def adjustPoaUrl(implicit user: MtdItUser[_]): String =
+    controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url
 
   lazy val currentDate: LocalDate = dateService.getCurrentDate
 

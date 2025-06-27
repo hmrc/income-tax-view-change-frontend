@@ -1,3 +1,5 @@
+outage-page.serviceDisplayName                                  = Manage your Self Assessment
+
 ## Base ##
 base.back                                                       = Back
 base.service_name                                               = Business tax account
@@ -781,6 +783,7 @@ nextUpdates.dropdown.finalDeclaration.text                         = Your final 
 nextUpdates.table.header.type									   = Update type
 nextUpdates.table.header.source									   = Income source
 nextUpdates.section.heading.quarterly						       = Quarterly update
+nextUpdates.section.heading.end-of-year							   = End of year update
 nextUpdates.section.heading.updates								   = Quarterly period from {0} to {1}
 nextUpdates.section.heading.taxYear								   = Tax year: {0} to {1}
 nextUpdates.previousYears.textOne								   = To view previously submitted updates visit the
@@ -799,6 +802,53 @@ nextUpdates.optOutOneYear.p.link                                   = opt out of 
 
 nextUpdates.reporting.obligations.p.message                        = Depending on your circumstances,
 nextUpdates.reporting.obligations.p.link                           = you may be able to view and change your reporting obligations.
+
+## Next updates Page - R17 Content Changes ##
+nextUpdates.r17.tab.quarterly.label                                = Up to {0} to {1} tax year
+nextUpdates.r17.tab.quarterly.heading                              = Up to {0} to {1} tax year
+nextUpdates.r17.tab.quarterly.text                                 = This page shows your upcoming due dates and any missed deadlines.
+nextUpdates.r17.tab.quarterly.subheading                           = Quarterly updates due
+nextUpdates.r17.tab.quarterly.text2                                = Every 3 months an update is due for each of your property and sole trader income sources.
+nextUpdates.r17.tab.quarterly.dropdown.heading                     = Find out more about quarterly updates
+nextUpdates.r17.tab.quarterly.dropdown.text1                       = Each quarterly update is a running total of income and expenses for the tax year so far. It combines:
+nextUpdates.r17.tab.quarterly.dropdown.text2                       = new information and corrections made since the last update
+nextUpdates.r17.tab.quarterly.dropdown.text3                       = any information you’ve already provided that has not changed
+nextUpdates.r17.tab.quarterly.dropdown.text4                       = This is done using
+nextUpdates.r17.tab.quarterly.dropdown.link.text                   = software compatible with Making Tax Digital for Income Tax
+nextUpdates.r17.tab.quarterly.compatibleSoftware.link              = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
+nextUpdates.r17.tab.quarterly.link.text1                           = To view previously submitted updates visit the
+nextUpdates.r17.tab.quarterly.link.text2                           = tax year
+nextUpdates.r17.tab.quarterly.link.text3                           = summary page.
+nextUpdates.r17.tab.quarterly.subheading2                          = Tax return due
+nextUpdates.r17.tab.quarterly.text3                                = If you have submitted quarterly updates for the tax year, in your tax return you will also provide any other taxable income. You will then need to file your return using
+nextUpdates.r17.tab.quarterly.text4                                = software compatible with Making Tax Digital for Income Tax
+nextUpdates.r17.tab.quarterly.text5                                = Your return for the {0} to {1} tax year is due by
+nextUpdates.r17.tab.quarterly.text6                                = 31 January {0}.
+nextUpdates.r17.tab.quarterly.table.heading                        = Upcoming deadlines
+nextUpdates.r17.tab.quarterly.table.heading.row1                   = Deadline
+nextUpdates.r17.tab.quarterly.table.heading.row2                   = Period
+nextUpdates.r17.tab.quarterly.table.heading.row3                   = Income source updates due
+nextUpdates.r17.tab.quarterly.table.heading.period                 = {0} to {1}
+nextUpdates.r17.tab.quarterly.table.income.source.uk               = UK property business
+nextUpdates.r17.tab.quarterly.table.income.source.foreign          = Foreign property business
+nextUpdates.r17.tab.quarterly.table.income.source.property         = Property business
+nextUpdates.r17.tab.quarterly.ny.label                             = {0} to {1} tax year
+nextUpdates.r17.tab.quarterly.ny.heading                           = {0} to {1} tax year
+nextUpdates.r17.tab.quarterly.ny.text1                             = As you are either required or voluntarily signed up for the {0} to {1} tax year, you will need
+nextUpdates.r17.tab.quarterly.ny.text2                             = software compatible with Making Tax Digital for Income Tax
+nextUpdates.r17.tab.quarterly.ny.text3                             = Deadlines will not be visible until it becomes the current tax year.
+
+nextUpdates.r17.tab.annual.label                                   = Up to {0} to {1} tax year
+nextUpdates.r17.tab.annual.heading                                 = Up to {0} to {1} tax year
+nextUpdates.r17.tab.annual.text1                                   = This page shows your upcoming due dates and any missed deadlines.
+nextUpdates.r17.tab.annual.subHeading                              = Tax return due
+nextUpdates.r17.tab.annual.text2                                   = As you are opted out of Making Tax Digital for Income Tax, you can find out here how you
+nextUpdates.r17.tab.annual.link                                    = file your Self Assessment tax return
+nextUpdates.r17.tab.annual.text3                                   = Your return for the {0} to {1} tax year is due by
+nextUpdates.r17.tab.annual.text4                                   = 31 January {0}.
+nextUpdates.r17.tab.annual.ny.label                                = {0} to {1} tax year
+nextUpdates.r17.tab.annual.ny.heading                              = {0} to {1} tax year
+nextUpdates.r17.tab.annual.ny.text1                                = Deadlines will not be visible until it becomes the current tax year.
 
 sections.open.all												   = Show all sections
 sections.close.all												   = Hide all sections

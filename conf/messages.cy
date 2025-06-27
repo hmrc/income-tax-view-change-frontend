@@ -1,3 +1,5 @@
+outage-page.serviceDisplayName                                  = Rheoli’ch Hunanasesiad
+
 ## Base ##
 base.back                                                       = Yn ôl
 base.service_name                                               = Cyfrif Treth Busnes
@@ -781,6 +783,7 @@ nextUpdates.dropdown.finalDeclaration.text                      = Eich datganiad
 nextUpdates.table.header.type									= Math o ddiweddariad
 nextUpdates.table.header.source									= Ffynhonnell incwm
 nextUpdates.section.heading.quarterly						    = Diweddariad chwarterol
+nextUpdates.section.heading.end-of-year							= Diweddariad diwedd blwyddyn
 nextUpdates.section.heading.updates								= Cyfnod chwarterol o {0} i {1}
 nextUpdates.section.heading.taxYear								= Blwyddyn dreth: {0} i {1}
 nextUpdates.previousYears.textOne								= I weld diweddariadau a gyflwynwyd yn flaenorol, ewch i
@@ -799,6 +802,53 @@ nextUpdates.optOutOneYear.p.link                                = optio allan o 
 
 nextUpdates.reporting.obligations.p.message                     = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
 nextUpdates.reporting.obligations.p.link                        = bwrw golwg dros eich ymrwymiadau adrodd.
+
+## Next updates Page - R17 Content Changes ##
+nextUpdates.r17.tab.quarterly.label                                = Hyd at blwyddyn dreth {0} i {1}
+nextUpdates.r17.tab.quarterly.heading                              = Hyd at blwyddyn dreth {0} i {1}
+nextUpdates.r17.tab.quarterly.text                                 = Mae’r dudalen hon yn dangos y dyddiadau cau sydd ar y gweill ar eich cyfer ac unrhyw ddyddiadau cau a fethwyd.
+nextUpdates.r17.tab.quarterly.subheading                           = Diweddariadau chwarterol i’w cyflwyno
+nextUpdates.r17.tab.quarterly.text2                                = Mae angen gwneud diweddariad bob 3 mis ar gyfer pob un o’ch ffynonellau incwm eiddo a’ch ffynonellau incwm unig fasnachwr.
+nextUpdates.r17.tab.quarterly.dropdown.heading                     = Dysgwch ragor am ddiweddariadau chwarterol
+nextUpdates.r17.tab.quarterly.dropdown.text1                       = Diweddariad chwarterol yw cyfanswm yr incwm a’r treuliau ar gyfer y flwyddyn dreth hyd yn hyn. Mae’n cyfuno’r canlynol:
+nextUpdates.r17.tab.quarterly.dropdown.text2                       = gwybodaeth newydd a chywiriadau a wnaed ers y diweddariad diwethaf
+nextUpdates.r17.tab.quarterly.dropdown.text3                       = unrhyw wybodaeth ychwanegol yr ydych eisoes wedi’i darparu sydd heb newid
+nextUpdates.r17.tab.quarterly.dropdown.text4                       = Mae hyn yn cael ei wneud drwy
+nextUpdates.r17.tab.quarterly.dropdown.link.text                   = feddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+nextUpdates.r17.tab.quarterly.compatibleSoftware.link              = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax.cy
+nextUpdates.r17.tab.quarterly.link.text1                           = Er mwyn bwrw golwg dros ddiweddariadau a gyflwynwyd yn flaenorol, ewch i’r dudalen trosolwg ar gyfer
+nextUpdates.r17.tab.quarterly.link.text2                           = blynyddoedd treth.
+nextUpdates.r17.tab.quarterly.link.text3                           =
+nextUpdates.r17.tab.quarterly.subheading2                          = Ffurflen Dreth i’w chyflwyno
+nextUpdates.r17.tab.quarterly.text3                                = Os ydych wedi cyflwyno diweddariadau chwarterol ar gyfer y flwyddyn dreth, byddwch hefyd yn nodi unrhyw incwm drethadwy arall yn eich Ffurflen Dreth. Yna, bydd angen i chi gyflwyno’ch Ffurflen Dreth gan ddefnyddio
+nextUpdates.r17.tab.quarterly.text4                                = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+nextUpdates.r17.tab.quarterly.text5                                = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer blwyddyn dreth {0} i {1} erbyn
+nextUpdates.r17.tab.quarterly.text6                                = 31 Ionawr {0}.
+nextUpdates.r17.tab.quarterly.table.heading                        = Dyddiadau cau ar y gweill
+nextUpdates.r17.tab.quarterly.table.heading.row1                   = Dyddiad cau
+nextUpdates.r17.tab.quarterly.table.heading.row2                   = Cyfnod
+nextUpdates.r17.tab.quarterly.table.heading.row3                   = Y diweddariadau sydd i’w cyflwyno ar gyfer ffynonellau incwm
+nextUpdates.r17.tab.quarterly.table.heading.period                 = {0} i {1}
+nextUpdates.r17.tab.quarterly.table.income.source.uk               = Busnes eiddo yn y DU
+nextUpdates.r17.tab.quarterly.table.income.source.foreign          = Busnes eiddo tramor
+nextUpdates.r17.tab.quarterly.table.income.source.property         = Busnes eiddo
+nextUpdates.r17.tab.quarterly.ny.label                             = Blwyddyn dreth {0} i {1}
+nextUpdates.r17.tab.quarterly.ny.heading                           = Blwyddyn dreth {0} i {1}
+nextUpdates.r17.tab.quarterly.ny.text1                             = Gan eich bod wedi cofrestru’n wirfoddol ar gyfer y flwyddyn dreth {0} i {1} neu gan ei fod yn ofynnol i chi wneud hynny, bydd angen
+nextUpdates.r17.tab.quarterly.ny.text2                             = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm arnoch
+nextUpdates.r17.tab.quarterly.ny.text3                             = Ni fydd dyddiadau cau i’w gweld hyd nes eu bod yn dod yn rhan o’r flwyddyn dreth bresennol.
+
+nextUpdates.r17.tab.annual.label                                   = Hyd at flwyddyn dreth {0} i {1}
+nextUpdates.r17.tab.annual.heading                                 = Hyd at flwyddyn dreth {0} i {1}
+nextUpdates.r17.tab.annual.text1                                   = Mae’r dudalen hon yn dangos y dyddiadau cau sydd ar y gweill ar eich cyfer ac unrhyw ddyddiadau cau a fethwyd.
+nextUpdates.r17.tab.annual.subHeading                              = Ffurflen Dreth i’w chyflwyno
+nextUpdates.r17.tab.annual.text2                                   = Gan eich bod yn optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, gallwch gael rhagor o wybodaeth yn y fan hon am sut rydych chi’n
+nextUpdates.r17.tab.annual.link                                    = cyflwyno’ch Ffurflen Dreth Hunanasesiad
+nextUpdates.r17.tab.annual.text3                                   = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer blwyddyn dreth {0} i {1} erbyn
+nextUpdates.r17.tab.annual.text4                                   = 31 Ionawr {0}.
+nextUpdates.r17.tab.annual.ny.label                                = Blwyddyn dreth {0} i {1}
+nextUpdates.r17.tab.annual.ny.heading                              = Blwyddyn dreth {0} i {1}
+nextUpdates.r17.tab.annual.ny.text1                                = Ni fydd dyddiadau cau i’w gweld hyd nes eu bod yn dod yn rhan o’r flwyddyn dreth bresennol.
 
 sections.open.all												= Dangos pob adran
 sections.close.all												= Cuddio pob adran
