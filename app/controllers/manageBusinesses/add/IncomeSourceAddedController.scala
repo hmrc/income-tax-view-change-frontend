@@ -18,9 +18,11 @@ package controllers.manageBusinesses.add
 
 import auth.MtdItUser
 import auth.authV2.AuthActions
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney.IncomeSourceType
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
+import models.admin.ReportingFrequencyPage
 import models.core.IncomeSourceId
 import models.incomeSourceDetails._
 import models.incomeSourceDetails.viewmodels.ObligationsViewModel
@@ -45,36 +47,30 @@ class IncomeSourceAddedController @Inject()(
                                              itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                              dateService: DateServiceInterface,
                                              val sessionService: SessionService
-                                           )
-                                           (implicit val appConfig: FrontendAppConfig, mcc: MessagesControllerComponents, val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses {
+                                           )(implicit val appConfig: FrontendAppConfig, mcc: MessagesControllerComponents, val ec: ExecutionContext)
+  extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses with FeatureSwitching {
 
   val logger: Logger = Logger("application")
 
-  def getNextUpdatesUrl(isAgent: Boolean) =
+
+  private[controllers] def getNextUpdatesUrl(isAgent: Boolean) =
     if (isAgent) {
       controllers.routes.NextUpdatesController.showAgent().url
     } else {
       controllers.routes.NextUpdatesController.show().url
     }
 
-
-  def getManageBusinessUrl(isAgent: Boolean) =
+  private[controllers] def getManageBusinessUrl(isAgent: Boolean) =
     if (isAgent) {
       controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
     } else {
       controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
     }
 
-  def getReportingFrequencyUrl(isAgent: Boolean) =
-    // TODO the below link will need to change to the new entry point for the opt in/out journeys once the page is made
-    if (isAgent) {
-      controllers.routes.NextUpdatesController.showAgent().url
-    } else {
-      controllers.routes.NextUpdatesController.show().url
-    }
+  private[controllers] def getReportingFrequencyUrl(isAgent: Boolean) =
+    controllers.routes.ReportingFrequencyPageController.show(isAgent).url
 
-  private def getIncomeSourceIdFromSession(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[IncomeSourceId]] = {
+  private[controllers] def getIncomeSourceIdFromSession(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[IncomeSourceId]] = {
 
     sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType)).flatMap {
       case Right(Some(sessionData)) =>
@@ -82,6 +78,28 @@ class IncomeSourceAddedController @Inject()(
         Future(incomeSourceId)
       case _ =>
         Future(None)
+    }
+  }
+
+  private[controllers] def contentLogicHelper(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[SignedUpForMTD] = {
+
+    sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType)).flatMap {
+      case Right(Some(sessionData)) =>
+        val changeReportingFrequency: Option[Boolean] = sessionData.addIncomeSourceData.flatMap(_.changeReportingFrequency)
+        val isReportingQuarterlyCurrentYear: Option[Boolean] = sessionData.incomeSourceReportingFrequencyData.map(_.isReportingQuarterlyCurrentYear)
+        val isReportingQuarterlyForNextYear: Option[Boolean] = sessionData.incomeSourceReportingFrequencyData.map(_.isReportingQuarterlyForNextYear)
+
+        (isReportingQuarterlyCurrentYear, isReportingQuarterlyForNextYear, changeReportingFrequency) match {
+          case (None, None, None) => Future(OptedOut)
+          case (Some(false), Some(true), Some(true)) => Future(SignUpNextYearOnly)
+          case (Some(true), Some(false), Some(true)) => Future(SignUpCurrentYearOnly)
+          case (Some(true), Some(true), Some(true)) => Future(SignUpBothYears)
+          case (Some(true), Some(false), None) | (Some(false), Some(true), None) => Future(OnlyOneYearAvailableToSignUp)
+          case (_, _, Some(false)) => Future(NotSigningUp)
+          case _ => Future(Unknown)
+        }
+      case _ =>
+        Future(Unknown)
     }
   }
 
@@ -94,37 +112,48 @@ class IncomeSourceAddedController @Inject()(
     val agentPrefix = if (isAgent) "[Agent]" else ""
 
     withNewIncomeSourcesFS {
-      sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType)).flatMap {
+      val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
 
-        case Right(Some(sessionData)) =>
-          lazy val result: Future[Result] = {
-            for {
-              incomeSourceId: Option[IncomeSourceId] <- getIncomeSourceIdFromSession(incomeSourceType)
-              incomeSourceFromUser: Option[IncomeSourceFromUser] <- Future(incomeSourceId.flatMap(id => incomeSourceDetailsService.getIncomeSource(incomeSourceType, id, user.incomeSources)))
-              showPreviousTaxYears: Boolean = incomeSourceFromUser.exists(_.startDate.isBefore(dateService.getCurrentTaxYearStart))
-              showView: Result <-
-                (incomeSourceId, incomeSourceFromUser) match {
-                  case (Some(incomeSourceId), Some(incomeSource)) =>
-                    handleSuccess(
-                      isAgent = isAgent,
-                      businessName = incomeSource.businessName,
-                      incomeSourceType = incomeSourceType,
-                      incomeSourceId = incomeSourceId,
-                      showPreviousTaxYears = showPreviousTaxYears,
-                      sessionData = sessionData
-                    )
-                  case _ =>
-                    Future(errorView)
+      for {
+        sessionData: Either[Throwable, Option[UIJourneySessionData]] <- sessionService.getMongo(journeyType)
+        signedUpForMTD: SignedUpForMTD <- contentLogicHelper(incomeSourceType)
+        result <-
+          sessionData match {
+            case Right(Some(_)) if signedUpForMTD == Unknown =>
+              Future(errorView)
+            case Right(Some(sessionData)) =>
+              lazy val result: Future[Result] = {
+                for {
+                  incomeSourceId: Option[IncomeSourceId] <- getIncomeSourceIdFromSession(incomeSourceType)
+                  incomeSourceFromUser: Option[IncomeSourceFromUser] <-
+                    Future(incomeSourceId.flatMap(id => incomeSourceDetailsService.getIncomeSource(incomeSourceType, id, user.incomeSources)))
+                  showPreviousTaxYears: Boolean = incomeSourceFromUser.exists(_.startDate.isBefore(dateService.getCurrentTaxYearStart))
+                  showView: Result <-
+                    (incomeSourceId, incomeSourceFromUser) match {
+                      case (Some(incomeSourceId), Some(incomeSource)) =>
+                        handleSuccess(
+                          isAgent = isAgent,
+                          businessName = incomeSource.businessName,
+                          incomeSourceType = incomeSourceType,
+                          incomeSourceId = incomeSourceId,
+                          showPreviousTaxYears = showPreviousTaxYears,
+                          sessionData = sessionData,
+                          signedUpForMTD = signedUpForMTD
+                        )
+                      case _ =>
+                        Future(errorView)
+                    }
+                } yield {
+                  showView
                 }
-            } yield {
-              showView
-            }
+              }
+              result
+            case _ =>
+              logger.error(agentPrefix + s"Unable to retrieve Mongo session data for $incomeSourceType")
+              Future(errorView)
           }
-
-          result
-        case _ =>
-          logger.error(agentPrefix + s"Unable to retrieve Mongo session data for $incomeSourceType")
-          Future(errorView)
+      } yield {
+        result
       }
     }
   }
@@ -135,7 +164,8 @@ class IncomeSourceAddedController @Inject()(
                              businessName: Option[String],
                              showPreviousTaxYears: Boolean,
                              isAgent: Boolean,
-                             sessionData: UIJourneySessionData
+                             sessionData: UIJourneySessionData,
+                             signedUpForMTD: SignedUpForMTD
                            )(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
 
     lazy val showErrorView = errorHandler.showInternalServerError()
@@ -170,12 +200,16 @@ class IncomeSourceAddedController @Inject()(
               businessName = businessName,
               incomeSourceType = incomeSourceType,
               currentDate = dateService.getCurrentDate,
+              currentTaxYear = dateService.getCurrentTaxYearStart.getYear,
+              nextTaxYear = dateService.getCurrentTaxYearStart.plusYears(1).getYear,
               isBusinessHistoric = isBusinessHistoric,
               reportingMethod = viewModel.reportingMethod(reportingMethodTaxYear1, reportingMethodTaxYear2),
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
               getReportingFrequencyUrl = getReportingFrequencyUrl(isAgent),
               getNextUpdatesUrl = getNextUpdatesUrl(isAgent),
-              getManageBusinessUrl = getManageBusinessUrl(isAgent)
+              getManageBusinessUrl = getManageBusinessUrl(isAgent),
+              scenario = signedUpForMTD,
+              reportingFrequencyEnabled = isEnabled(ReportingFrequencyPage)
             )
           )
         case None =>

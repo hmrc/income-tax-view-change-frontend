@@ -18,10 +18,12 @@ package models.incomeSourceDetails
 
 import play.api.libs.json.{Json, OFormat}
 
-case class IncomeSourceReportingFrequencySourceData(displayOptionToChangeForCurrentTaxYear: Boolean,
-                                                    displayOptionToChangeForNextTaxYear: Boolean,
-                                                    isReportingQuarterlyCurrentYear: Boolean,
-                                                    isReportingQuarterlyForNextYear: Boolean)
+case class IncomeSourceReportingFrequencySourceData(
+                                                     displayOptionToChangeForCurrentTaxYear: Boolean,
+                                                     displayOptionToChangeForNextTaxYear: Boolean,
+                                                     isReportingQuarterlyCurrentYear: Boolean,
+                                                     isReportingQuarterlyForNextYear: Boolean
+                                                   )
 
 object IncomeSourceReportingFrequencySourceData {
   implicit val format: OFormat[IncomeSourceReportingFrequencySourceData] = Json.format[IncomeSourceReportingFrequencySourceData]

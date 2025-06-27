@@ -20,20 +20,19 @@ object IncomeSourceAddedMessages {
 
   val h1ForeignProperty: String = "Foreign property"
   val h1UKProperty: String = "UK property"
-  val h1SoleTraderContent: String = "Test Name"
+  val h1SoleTraderBusinessName: String = "Test Name"
+
   val headingBase: String = "has been added to your account"
   val submitTaxReturn: String = "Submit your tax return"
-  val submitUpdatesInSoftware: String = "Submit updates in software"
+
+  val mayHaveOverdueUpdates: String = "For this new business you may have overdue updates for the 2025 to 2026 tax year. You must submit these updates with all required income and expenses through your compatible software."
   val yourRevisedDeadlinesHeading: String = "Your revised deadlines"
-  val quarterlyText: String = "You must send quarterly updates of your income and expenses using compatible software by the following deadlines:"
-  val finalDecHeading: String = "Submit final declarations and pay your tax"
-  val finalDecText: String = "You must submit your final declarations and pay the tax you owe by the deadline."
-  val tableHeading1: String = "Tax year"
-  val tableHeading2: String = "Deadline"
-  val prevYearsHeading: String = "Previous tax years"
-  val prevYearsText: String = "You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than"
-  val viewAllBusinessesText: String = "View all your businesses"
-  val insetSingleOverdueUpdateText: (String, Int) => String = (month, year) => s"As your business started in $month $year, you have 1 overdue update."
-  val insetMultipleOverdueUpdateText: (String, Int, Int) => String = (month, year, overdueUpdates) => s"As your business started in $month $year, you have $overdueUpdates overdue updates."
-  val insetWarningOverdueUpdatesText: Int => String = startTaxYear => s"You must make sure that you have sent all the required income and expenses for tax years earlier than $startTaxYear to ${startTaxYear + 1}."
+  val fewMinutesWarning: String = "Your deadlines for this business will be available in the next few minutes."
+  val accountUpdatedParagraph: String = "Even if they are not displayed right away on the updates and deadlines page, your account has been updated."
+  val viewReportingObligationsParagraph: String = "Depending on your circumstances, you may be able to view and change your reporting obligations for all your businesses."
+  val viewBusinessesParagraph: String = "View your businesses to add, manage or cease a business or income source."
+
+  val submitUpdatesInSoftwareH2: String = "Submit updates in software"
+  val submitCompatibleSoftwareQuarterlyParagraph: String = "For any tax year you are reporting quarterly, you will need software compatible with Making Tax Digital for Income Tax (opens in new tab)."
+  val submitCompatibleSoftwareAnnualParagraph: String = "When reporting annually, you can submit your tax return directly through your HMRC online account or software compatible with Making Tax Digital for Income Tax (opens in new tab)."
 }

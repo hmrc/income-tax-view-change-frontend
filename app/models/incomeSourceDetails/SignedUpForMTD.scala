@@ -1,5 +1,5 @@
-@*
- * Copyright 2023 HM Revenue & Customs
+/*
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,14 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this()
+package models.incomeSourceDetails
 
-@(itemMsgKeys: Seq[String], id: Option[String]= None, bulletId: Option[String] = None)(implicit messages: Messages)
+sealed trait SignedUpForMTD
 
-<ul class="govuk-list govuk-list--bullet" id="@id">
-    @itemMsgKeys.map { msgKey =>
-       <li id="@bulletId">@messages(msgKey)</li>
-    }
-</ul>
+case object SignUpNextYearOnly extends SignedUpForMTD
+
+case object NotSigningUp extends SignedUpForMTD
+
+case object SignUpCurrentYearOnly extends SignedUpForMTD
+
+case object SignUpBothYears extends SignedUpForMTD
+
+case object OnlyOneYearAvailableToSignUp extends SignedUpForMTD
+
+case object OptedOut extends SignedUpForMTD
+
+case object Unknown extends SignedUpForMTD

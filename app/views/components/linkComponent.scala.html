@@ -28,4 +28,4 @@
     additionalOpenTabMessage: Option[String] = None
 )(implicit messages: Messages)
 
-<a href="@url" class="govuk-link govuk-body @classes" @id.map(id => s"id=$id") @if(rel.isDefined){rel="@rel.map(c=>s"$c")"} @target.map(target => s"target=$target") @role.map(role => s"role=$role")> @message@if(target == Some("_blank")){@messages("pagehelp.opensInNewTabText")@additionalOpenTabMessage.map(message => message)}</a>
+<a href="@url" class="govuk-link govuk-body @classes" @id.map(id => s"id=$id") @if(rel.isDefined){rel="@rel.map(c=>s"$c")"} @target.map(target => s"target=$target") @role.map(role => s"role=$role")>@message@if(target == Some("_blank")){ @messages("pagehelp.opensInNewTabText")@additionalOpenTabMessage}</a>
