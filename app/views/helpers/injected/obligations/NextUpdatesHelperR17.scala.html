@@ -88,8 +88,8 @@
         @p(id = Some("active-quarterly-desc")) { @getMessage("quarterly.text") }
     }
 
-    @h2(getMessage("quarterly.subheading"), optId = Some("active-quarterly-heading"))
-    @p(id = Some("active-quarterly-desc")){ @getMessage("quarterly.text2") }
+    @h2(getMessage("quarterly.subheading"), optId = Some("active-quarterly-subheading"))
+    @p(id = Some("active-quarterly-subdesc")){ @getMessage("quarterly.text2") }
 
     @detailsDropdown(getMessage("quarterly.dropdown.heading"), quarterlyDropdownContent)
 
@@ -193,7 +193,7 @@
                             content = Text(getMessage("quarterly.table.heading.row3")),
                             attributes = Map("id" -> "table-head-name-updates-due"))
                     )),
-                    rows = quarterlyUpdatesRows(deadlines),
+                    rows = quarterlyUpdatesRows(deadlines, "upcoming"),
                     attributes = Map("id" -> "quarterly-updates-table")
                 ))
             ))
@@ -205,7 +205,7 @@
         case Nil => HtmlFormat.empty
         case deadlines =>
             HtmlFormat.fill(Seq(
-                govukWarningText(WarningText(content = Text(getMessage("quarterly.missed.deadlines.warning")))),
+                govukWarningText(WarningText(content = Text(getMessage("quarterly.missed.deadlines.warning")), attributes = Map("id" -> "missed-deadlines-warning"))),
                 missedDeadlinesText,
                 h2(getMessage("quarterly.missed.deadlines.table.heading"), optId = Some("missed-deadlines-table-heading")),
                 govukTable(Table(
@@ -220,30 +220,30 @@
                             content = Text(getMessage("quarterly.table.heading.row3")),
                             attributes = Map("id" -> "table-head-name-updates-due-missed"))
                     )),
-                    rows = quarterlyUpdatesRows(deadlines),
+                    rows = quarterlyUpdatesRows(deadlines, "missed"),
                     attributes = Map("id" -> "missed-deadlines-table")
                 ))
             ))
     }
 }
 
-@quarterlyUpdatesRows(deadlines: Seq[DeadlineViewModel]) = @{
+@quarterlyUpdatesRows(deadlines: Seq[DeadlineViewModel], idSuffix: String) = @{
     deadlines.zipWithIndex.map { case (DeadlineViewModel(obligationType: ObligationType, bothQuarters: Boolean, deadlineDate: LocalDate, standardObligations: Seq[ObligationWithIncomeType], calendarObligations: Seq[ObligationWithIncomeType]), index) =>
         val allValidObligations = getObligations(bothQuarters, standardObligations, calendarObligations)
 
         Seq(
             TableRow(
                 content = Text(deadlineDate.toLongDateShort),
-                attributes = Map("id" -> s"quarterly-deadline-date-$index"),
+                attributes = Map("id" -> s"quarterly-deadline-date-$idSuffix-$index"),
                 classes = "govuk-!-font-weight-bold"
             ),
             TableRow(
                 content = Text(allValidObligations.headOption.map(obl => periodMessage(obl.obligation)).getOrElse("")),
-                attributes = Map("id" -> s"quarterly-period-$index")
+                attributes = Map("id" -> s"quarterly-period-$idSuffix-$index")
             ),
             TableRow(
                 content = HtmlContent(buildIncomeSourceRow(allValidObligations)),
-                attributes = Map("id" -> s"quarterly-income-sources-$index")
+                attributes = Map("id" -> s"quarterly-income-sources-$idSuffix-$index")
             )
         )
     }
