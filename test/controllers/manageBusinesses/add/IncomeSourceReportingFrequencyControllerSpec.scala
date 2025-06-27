@@ -78,10 +78,12 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
     case LATENCY_PERIOD_EXPIRED | CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS => {
       when(mockDateService.getCurrentTaxYearEnd).thenReturn(TAX_YEAR_2024.getYear)
       when(mockDateService.getCurrentTaxYearStart).thenReturn(TAX_YEAR_2023)
+      when(mockDateService.getCurrentDate).thenReturn(TAX_YEAR_2023)
     }
     case _ => {
       when(mockDateService.getCurrentTaxYearEnd).thenReturn(TAX_YEAR_2024.getYear)
       when(mockDateService.getCurrentTaxYearStart).thenReturn(TAX_YEAR_2023)
+      when(mockDateService.getCurrentDate).thenReturn(TAX_YEAR_2023)
     }
   }
 

@@ -1514,7 +1514,7 @@ incomeSources.add.reportingFrequency.r17.p2                             = Gallwc
 incomeSources.add.reportingFrequency.r17.inset                          = O fis Ebrill {0} pan fydd y cyfnod treth 2 flynedd hwn yn dod i ben, efallai y bydd yn ofynnol i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer y busnes newydd hwn.
 incomeSources.add.reportingFrequency.r17.form.h1                        = A ydych am gofrestru’r busnes newydd hwn gyda’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm?
 incomeSources.add.reportingFrequency.r17.li1                            = rydych wedi cofrestru’n wirfoddol neu os yw’n ofynnol i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer eich busnesau eraill
-incomeSources.add.reportingFrequency.r17.li2                            = mae cyfanswm eich incwm gros o hunangyflogaeth neu eiddo, neu’r ddau, yn fwy na’r trothwy o £50,000
+incomeSources.add.reportingFrequency.r17.li2                            = mae cyfanswm eich incwm gros o hunangyflogaeth neu eiddo, neu’r ddau, yn fwy na’r trothwy o {0}
 incomeSources.add.reportingFrequency.r17.form.no-select.error           = Dewiswch ‘Iawn’ os ydych am gofrestru’r busnes newydd hwn â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
 
 #######################################################################################################################
