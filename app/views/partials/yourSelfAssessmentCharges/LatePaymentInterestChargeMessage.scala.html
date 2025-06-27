@@ -14,17 +14,10 @@
  * limitations under the License.
  *@
 
-@import views.html.components._
-@import models.chargeSummary.ChargeSummaryViewModel
-@import models.chargeSummary.PaymentHistoryAllocation
-@import models.financialDetails.MfaDebitCharge
-@import models.chargeSummary.PaymentHistoryAllocations
-@import exceptions.MissingFieldException
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.table.TableRow
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 @import implicits.ImplicitDateFormatterImpl
-@import implicits.HtmlFormatter.NbspString
-@import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import models.chargeSummary._
+@import models.financialDetails.MfaDebitCharge
+@import views.html.components._
 
 @this(
         implicitDateFormatter: ImplicitDateFormatterImpl,
@@ -49,14 +42,11 @@
         } else {
             controllers.routes.PaymentAllocationsController.viewPaymentAllocation(matchingPayment.get, None).url
         }
-        val linkText = if (viewModel.chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit") else
-            allocation.getPaymentAllocationTextInChargeSummary.map(msg => {
-                messages(msg, viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
-            }).getOrElse(
-                throw MissingFieldException("Allocation link text missing")
-            )
+        val linkText = if(viewModel.chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit") else
+            messages(allocation.getPaymentAllocationTextInChargeSummary, viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
+
         allocationLinkHTML(link, linkText)
     } else {
-        allocation.getPaymentAllocationTextInChargeSummary.map(msg => messages(msg, viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut))
+         messages(allocation.getPaymentAllocationTextInChargeSummary, viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
     }
 }
