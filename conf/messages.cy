@@ -1924,7 +1924,7 @@ income.source.added.scenario.one.view.reporting.obligations.link                
 income.source.added.scenario.one.view.reporting.obligations.p.b                             = ar gyfer eich holl fusnesau.
 
 income.source.added.scenario.one.view.businesses.link                                       = Bwrw golwg dros eich busnesau
-income.source.added.scenario.one.view.businesses.p                                          = ar gyfer eich holl fusnesau.
+income.source.added.scenario.one.view.businesses.p                                          = er mwyn ychwanegu, rheoli neu ddod â busnes neu ffynhonnell incwm i ben.
 
 ###### Income Source Added Scenario 2 - NotSigningUp  #######
 
