@@ -1916,7 +1916,7 @@ income.source.added.obligation.list.text                                        
 ###### Income Source Added Scenario 1 - SignUpNextYearOnly  #######
 
 income.source.added.scenario.one.account.updated.p.a                                        = Hyd yn oed os nad ydynt yn ymddangos ar unwaith ar y dudalen
-income.source.added.scenario.one.account.updated.p.link                                     = diweddariadau a dyddiadau cau
+income.source.added.scenario.one.account.updated.p.link                                     = diweddariadau a dyddiadau cau,
 income.source.added.scenario.one.account.updated.p.b                                        = mae’ch cyfrif wedi’i ddiweddaru.
 
 income.source.added.scenario.one.view.reporting.obligations.p.a                             = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
@@ -1929,7 +1929,7 @@ income.source.added.scenario.one.view.businesses.p                              
 ###### Income Source Added Scenario 2 - NotSigningUp  #######
 
 income.source.added.scenario.two.account.updated.p.a                                        = Hyd yn oed os nad ydynt yn ymddangos ar unwaith ar y dudalen
-income.source.added.scenario.two.account.updated.p.link                                     = diweddariadau a dyddiadau cau
+income.source.added.scenario.two.account.updated.p.link                                     = diweddariadau a dyddiadau cau,
 income.source.added.scenario.two.account.updated.p.b                                        = mae’ch cyfrif wedi’i ddiweddaru.
 
 income.source.added.scenario.two.view.reporting.obligations.p.a                             = Mae’r busnes newydd hwn wedi optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Gallwch benderfynu ar unrhyw adeg i optio eich holl fusnes allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar eich tudalen
@@ -1944,7 +1944,7 @@ income.source.added.scenario.two.view.businesses.p                              
 income.source.added.few.minutes.overdue.updates                                             = Ar gyfer y busnes newydd hwn, mae’n bosibl bod gennych ddiweddariadau hwyr ar gyfer blwyddyn dreth {0} i {1}. Mae’n rhaid i chi gyflwyno’r diweddariadau hyn, ynghyd â’r holl incwm a threuliau sydd eu hangen, drwy ddefnyddio’ch meddalwedd sy’n cydweddu.
 
 income.source.added.scenario.three.account.updated.p.a                                      = Hyd yn oed os nad ydynt yn ymddangos ar unwaith ar y dudalen
-income.source.added.scenario.three.account.updated.p.link                                   = diweddariadau a dyddiadau cau
+income.source.added.scenario.three.account.updated.p.link                                   = diweddariadau a dyddiadau cau,
 income.source.added.scenario.three.account.updated.p.b                                      = mae’ch cyfrif wedi’i ddiweddaru.
 
 income.source.added.scenario.three.view.reporting.obligations.p.a                           = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
@@ -1959,7 +1959,7 @@ income.source.added.scenario.three.view.businesses.p                            
 income.source.added.few.minutes.overdue.updates                                             = Ar gyfer y busnes newydd hwn, mae’n bosibl bod gennych ddiweddariadau hwyr ar gyfer blwyddyn dreth {0} i {1}. Mae’n rhaid i chi gyflwyno’r diweddariadau hyn, ynghyd â’r holl incwm a threuliau sydd eu hangen, drwy ddefnyddio’ch meddalwedd sy’n cydweddu.
 
 income.source.added.scenario.four.account.updated.p.a                                       = Hyd yn oed os nad ydynt yn ymddangos ar unwaith ar y dudalen
-income.source.added.scenario.four.account.updated.p.link                                    = diweddariadau a dyddiadau cau
+income.source.added.scenario.four.account.updated.p.link                                    = diweddariadau a dyddiadau cau,
 income.source.added.scenario.four.account.updated.p.b                                       = mae’ch cyfrif wedi’i ddiweddaru.
 
 income.source.added.scenario.four.view.reporting.obligations.p                              = Mae’r busnes newydd hwn wedi optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Dysgwch ragor am
