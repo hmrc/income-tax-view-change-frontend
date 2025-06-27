@@ -131,7 +131,7 @@
                 address.postCode,
                 Some(address.countryName)
             ).flatten
-            Some(nonNoneFields.mkString("<div>\n</div>"))
+            Some(nonNoneFields.map("<div>" + _ + "</div>").mkString(""))
         case None => None
     }
 }
