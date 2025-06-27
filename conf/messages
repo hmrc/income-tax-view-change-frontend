@@ -257,6 +257,9 @@ tax-year-summary.payments.reviewAndReconcilePoa1.text              = First payme
 tax-year-summary.payments.reviewAndReconcilePoa2.text              = Second payment on account: extra amount from your tax return
 tax-year-summary.payments.lpi.reviewAndReconcilePoa1.text          = Interest for first payment on account: extra amount
 tax-year-summary.payments.lpi.reviewAndReconcilePoa2.text          = Interest for second payment on account: extra amount
+tax-year-summary.payments.lpi.firstLatePaymentPenalty.text         = Late payment interest on first late payment penalty
+tax-year-summary.payments.lpi.secondLatePaymentPenalty.text        = Late payment interest on second late payment penalty
+tax-year-summary.payments.lpi.lateSubmissionPenalty.text           = Late payment interest on late submission penalty
 tax-year-summary.section                                           = Section
 tax-year-summary.amount                                            = Amount
 tax-year-summary.payments.class2Nic.text                           = Class 2 National Insurance
@@ -905,6 +908,12 @@ whatYouOwe.lpi.balancingCharge.text                                = Late paymen
 whatYouOwe.balancingCharge.text  							       = Balancing payment
 whatYouOwe.balancingCharge.interest.line1.text                     = Interest on Balancing payment
 whatYouOwe.balancingCharge.interest.line2.text                     = {0} to {1}
+whatYouOwe.lateSubmissionPenalty.text                              = Late submission penalty
+whatYouOwe.firstLatePaymentPenalty.text                            = First late payment penalty
+whatYouOwe.secondLatePaymentPenalty.text                           = Second late payment penalty
+whatYouOwe.lpi.firstLatePaymentPenalty.text                        = Late payment interest on first late payment penalty
+whatYouOwe.lpi.secondLatePaymentPenalty.text                       = Late payment interest on second late payment penalty
+whatYouOwe.lpi.lateSubmissionPenalty.text                          = Late payment interest on late submission penalty
 whatYouOwe.payments-due                                            = Payments Due
 whatYouOwe.over-due                                                = Overdue
 whatYouOwe.over-due.interest.line1                                 = Interest for late payment
@@ -1047,6 +1056,10 @@ chargeSummary.codingOut.text                                       = Balancing p
 chargeSummary.poa1CodedOut.text                                    = First payment on account collected through PAYE tax code
 chargeSummary.poa2CodedOut.text                                    = Second payment on account collected through PAYE tax code
 chargeSummary.cancelledPayeSelfAssessment.text                     = Cancelled PAYE Self Assessment (through your PAYE tax code)
+chargeSummary.lateSubmissionPenalty.text                           = Late submission penalty
+chargeSummary.firstLatePaymentPenalty.text                         = First late payment penalty
+chargeSummary.lpi.lateSubmissionPenalty.text                       = Late payment interest on late submission penalty
+chargeSummary.lpi.firstLatePaymentPenalty.text                     = Late payment interest on first late payment penalty
 chargeSummary.hmrcAdjustment.text                                  = HMRC adjustment
 chargeSummary.dueDate											   = Due date
 chargeSummary.paymentAmount   									   = Amount
@@ -1092,6 +1105,14 @@ chargeSummary.poa2ExtraAmountInterest.p3                           = Interest is
 chargeSummary.poa2ExtraAmountInterest.p3LinkText                   = Bank of England base rate (opens in new tab)
 chargeSummary.poa2ExtraAmountInterest.p3AfterLink                  = plus 2.5%.
 
+chargeSummary.lpi.lateSubmissionPenalty.p1                  = You owe HMRC interest because you paid your late submission penalty late
+chargeSummary.lpi.firstLatePaymentPenalty.p1                = You owe HMRC interest because you paid your first late payment penalty late
+chargeSummary.lpi.penalties.textOne                        = Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the
+chargeSummary.lpi.penalties.linkText                       = Bank of England base rate (opens in new tab)
+chargeSummary.lpi.penalties.textTwo                        = plus 2.5%.
+chargeSummary.lpi.penalties.p3                             = See guidance on the
+chargeSummary.lpi.penalties.p3LinkText                     = interest rates set by HMRC (opens in new tab).
+
 chargeSummary.POA1Credit.p1                                        = HMRC has added a credit to your account because your tax return shows that your adjusted first payment on account was too high.
 
 chargeSummary.POA2Credit.p1                                        = HMRC has added a credit to your account because your tax return shows that your adjusted second payment on account was too high.
@@ -1102,6 +1123,16 @@ chargeSummary.definition.balancingcharge.bullet2                   = owe more th
 chargeSummary.definition.balancingcharge.p2                        = You’ll also need to make a balancing payment if you owe anything for Capital Gains Tax or student loans.
 
 chargeSummary.definition.hmrcadjustment                            = HMRC has added this charge after an adjustment to your tax return.
+
+chargeSummary.firstLatePaymentPenalty.p = You have received this penalty because you are late paying your Income Tax.
+chargeSummary.firstLatePaymentPenalty.link = View how your penalty was calculated.
+
+chargeSummary.lateSubmissionPenalty.penaltyPoints     = You will get a late submission penalty point every time you send a submission after the deadline. A submission can be a quarterly update or annual tax return.
+chargeSummary.lateSubmissionPenalty.fourPoints        = If you reach 4 points, you’ll have to pay a £200 penalty.
+chargeSummary.lateSubmissionPenalty.avoidInFuture     = To avoid receiving late submission penalty points in the future, and the potential for a financial penalty, you need to send your submissions on time.
+chargeSummary.lateSubmissionPenalty.penaltyLinkText1  = You can
+chargeSummary.lateSubmissionPenalty.penaltyLinkText   = view the details about your penalty
+chargeSummary.lateSubmissionPenalty.penaltyLinkText2  = and find out how to appeal.
 
 chargeSummary.paymentBreakdown.heading   						   = Payment breakdown
 chargeSummary.paymentBreakdown.incomeTax   						   = Income Tax
@@ -1142,6 +1173,8 @@ chargeSummary.chargeHistory.heading								        = History of this charge
 chargeSummary.chargeHistory.lateInterestPayment					        = Late payment interest history
 chargeSummary.chargeHistory.Poa1heading                                 = First payment on account history
 chargeSummary.chargeHistory.Poa2heading                                 = Second payment on account history
+chargeSummary.chargeHistory.LPPHeading                                  = Late payment interest history
+chargeSummary.chargeHistory.LSPHeading                                  = Late submission interest history
 chargeSummary.chargeHistory.date								        = Date
 chargeSummary.chargeHistory.description							        = Description
 chargeSummary.chargeHistory.amount								        = Amount
@@ -1178,6 +1211,8 @@ chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text	    = Late paymen
 chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa1.text = HMRC created this charge
 chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa2.text = HMRC created this charge
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text	    = Late payment interest on balancing payment created
+chargeSummary.lpi.chargeHistory.created.firstLatePaymentPenalty.text = HMRC created your late payment interest on first late payment penalty
+chargeSummary.lpi.chargeHistory.created.lateSubmissionPenalty.text = HMRC created your late payment interest on late submission penalty
 
 chargeSummary.lpi.balancingCharge.p1                               = You owe HMRC interest because you paid your balancing payment late.
 chargeSummary.lpi.balancingCharge.textOne                          = Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the
