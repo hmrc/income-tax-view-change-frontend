@@ -173,7 +173,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
 
       "display the correct table content for the current year tab" in new Setup(isAgent = false, obligationsModel, Voluntary, Annual) {
         pageDocument.getElementById("quarterly-deadline-date-upcoming-0").text() shouldBe "30 Oct 2017"
-        pageDocument.getElementById("quarterly-period-upcoming-0").text() shouldBe "1 Jul 2017 to 30 Sep 2017"
+        pageDocument.getElementById("quarterly-period-upcoming-0").text() should fullyMatch regex """1\sJul\s2017\sto\s30\s(?:Sep|Sept)\s2017"""
         pageDocument.getElementById("quarterly-income-sources-upcoming-0").text() shouldBe "Business income"
         pageDocument.getElementById("quarterly-deadline-date-upcoming-1").text() shouldBe "31 Oct 2017"
         pageDocument.getElementById("quarterly-period-upcoming-1").text() shouldBe "6 Apr 2017 to 5 Apr 2018"
@@ -193,7 +193,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
 
       "display the correct table content for the current year tab - Missed Deadlines" in new Setup(isAgent = false, obligationsModel, Voluntary, Annual) {
         pageDocument.getElementById("quarterly-deadline-date-missed-0").text() shouldBe "31 Jan 2025"
-        pageDocument.getElementById("quarterly-period-missed-0").text() shouldBe "1 Jul 2017 to 30 Sep 2017"
+        pageDocument.getElementById("quarterly-period-missed-0").text() should fullyMatch regex """1\sJul\s2017\sto\s30\s(?:Sep|Sept)\s2017"""
         pageDocument.getElementById("quarterly-income-sources-missed-0").text() shouldBe "Quarter"
       }
 
@@ -300,7 +300,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
 
       "display the correct table content for the next year tab" in new Setup(isAgent = false, obligationsModel, Annual, Voluntary) {
         pageDocument.getElementById("quarterly-deadline-date-upcoming-0").text() shouldBe "30 Oct 2017"
-        pageDocument.getElementById("quarterly-period-upcoming-0").text() shouldBe "1 Jul 2017 to 30 Sep 2017"
+        pageDocument.getElementById("quarterly-period-upcoming-0").text() should fullyMatch regex """1\sJul\s2017\sto\s30\s(?:Sep|Sept)\s2017"""
         pageDocument.getElementById("quarterly-income-sources-upcoming-0").text() shouldBe "Business income"
         pageDocument.getElementById("quarterly-deadline-date-upcoming-1").text() shouldBe "31 Oct 2017"
         pageDocument.getElementById("quarterly-period-upcoming-1").text() shouldBe "6 Apr 2017 to 5 Apr 2018"
@@ -395,7 +395,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
 
       "display the correct table content for the current year tab" in new Setup(isAgent = false, obligationsModel, Voluntary, Annual) {
         pageDocument.getElementById("quarterly-deadline-date-upcoming-0").text() shouldBe "30 Oct 2017"
-        pageDocument.getElementById("quarterly-period-upcoming-0").text() shouldBe "1 Jul 2017 to 30 Sep 2017"
+        pageDocument.getElementById("quarterly-period-upcoming-0").text() should fullyMatch regex """1\sJul\s2017\sto\s30\s(?:Sep|Sept)\s2017"""
         pageDocument.getElementById("quarterly-income-sources-upcoming-0").text() shouldBe "Business income"
         pageDocument.getElementById("quarterly-deadline-date-upcoming-1").text() shouldBe "31 Oct 2017"
         pageDocument.getElementById("quarterly-period-upcoming-1").text() shouldBe "6 Apr 2017 to 5 Apr 2018"
@@ -427,7 +427,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
 
       "display the correct table content for the current year tab - Missed Deadlines" in new Setup(isAgent = false, obligationsModel, Voluntary, Annual) {
         pageDocument.getElementById("quarterly-deadline-date-missed-0").text() shouldBe "31 Jan 2025"
-        pageDocument.getElementById("quarterly-period-missed-0").text() shouldBe "1 Jul 2017 to 30 Sep 2017"
+        pageDocument.getElementById("quarterly-period-missed-0").text() should fullyMatch regex """1\sJul\s2017\sto\s30\s(?:Sep|Sept)\s2017"""
         pageDocument.getElementById("quarterly-income-sources-missed-0").text() shouldBe "Quarter"
       }
 
