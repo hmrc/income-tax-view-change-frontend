@@ -1500,7 +1500,7 @@ incomeSources.add.reportingFrequency.r17.p2                             = You ca
 incomeSources.add.reportingFrequency.r17.inset                          = From April {0} when this 2-year tax period ends, you could be required to use Making Tax Digital for Income Tax for this new business.
 incomeSources.add.reportingFrequency.r17.form.h1                        = Do you want to sign this new business up to Making Tax Digital for Income Tax?
 incomeSources.add.reportingFrequency.r17.li1                            = you are voluntarily signed up or required to use Making Tax Digital for Income Tax for your other businesses
-incomeSources.add.reportingFrequency.r17.li2                            = your total gross income from self-employment or property, or both, exceed the £50,000 threshold
+incomeSources.add.reportingFrequency.r17.li2                            = your total gross income from self-employment or property, or both, exceed the {0} threshold
 incomeSources.add.reportingFrequency.r17.form.no-select.error           = Select yes if you want to sign this new business up to Making Tax Digital for Income Tax
 
 
