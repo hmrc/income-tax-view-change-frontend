@@ -157,6 +157,50 @@ class NextUpdatesService @Inject()(
 
     processingRes
   }
+
+  def getNextQuarterlyUpdateDueDate()(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[Option[LocalDate]] = {
+    getOpenObligations().map {
+      case ObligationsModel(obligations) =>
+        val allQuarterlies = obligations
+          .flatMap(_.obligations)
+          .filter(o => o.obligationType == "Quarterly" && o.status == StatusOpen)
+          .sortBy(_.due)
+
+        val nextQuarterly = allQuarterlies.headOption.map(_.due)
+
+        nextQuarterly
+
+      case _: ObligationsErrorModel =>
+        Logger("application").warn("[getNextQuarterlyUpdateDueDate] Failed to fetch obligations.")
+        None
+
+      case _ =>
+        Logger("application").error("[getNextQuarterlyUpdateDueDate] Unexpected response.")
+        None
+    }
+  }
+
+  def getNextTaxReturnDueDate()(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[Option[LocalDate]] = {
+    getOpenObligations().map {
+      case ObligationsModel(obligations) =>
+        val openFinalReturns = obligations
+          .flatMap(_.obligations)
+          .filter(o => o.obligationType == "Crystallisation" && o.status == StatusOpen)
+          .sortBy(_.due)
+
+        val nextTaxReturn = openFinalReturns.headOption.map(_.due)
+
+        nextTaxReturn
+
+      case _: ObligationsErrorModel =>
+        Logger("application").warn("[getNextTaxReturnDueDate] Failed to fetch obligations.")
+        None
+
+      case _ =>
+        Logger("application").error("[getNextTaxReturnDueDate] Unexpected response.")
+        None
+    }
+  }
 }
 
 

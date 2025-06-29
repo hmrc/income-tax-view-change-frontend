@@ -19,13 +19,14 @@ package services
 import config.featureswitch.FeatureSwitching
 import mocks.connectors.MockObligationsConnector
 import models.admin.IncomeSourcesFs
+import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.obligations._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
-import services.optout.OptOutTestSupport
+import services.optout.{OptOutProposition, OptOutTestSupport}
 import testConstants.BusinessDetailsTestConstants.{obligationsDataSuccessModel => _}
 import testConstants.NextUpdatesTestConstants._
 import testUtils.TestSupport
@@ -49,9 +50,9 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       "previous-year count is 3 and current-year count is 3" should {
         "return a count of 6" in new Setup {
 
-          val optOutProposition = OptOutTestSupport.buildThreeYearOptOutProposition()
-          val queriedTaxYear = optOutProposition.availableTaxYearsForOptOut.head
-          val currentYear = optOutProposition.availableTaxYearsForOptOut(1)
+          val optOutProposition: OptOutProposition = OptOutTestSupport.buildThreeYearOptOutProposition()
+          val queriedTaxYear: TaxYear = optOutProposition.availableTaxYearsForOptOut.head
+          val currentYear: TaxYear = optOutProposition.availableTaxYearsForOptOut(1)
 
           def buildNextUpdatesModel(): SingleObligationModel = {
             SingleObligationModel(
@@ -60,12 +61,12 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
               "#001", StatusFulfilled)
           }
 
-          val updates = GroupedObligationsModel("XA00001234", (1 to 3).map(_ => buildNextUpdatesModel()).toList)
-          val response = ObligationsModel(Seq(updates))
+          val updates: GroupedObligationsModel = GroupedObligationsModel("XA00001234", (1 to 3).map(_ => buildNextUpdatesModel()).toList)
+          val response: ObligationsModel = ObligationsModel(Seq(updates))
           setupMockAllObligationsWithDates(queriedTaxYear.toFinancialYearStart, queriedTaxYear.toFinancialYearEnd)(response)
           setupMockAllObligationsWithDates(currentYear.toFinancialYearStart, currentYear.toFinancialYearEnd)(response)
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
+          val result: Future[QuarterlyUpdatesCountForTaxYear] = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
 
           result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 3)
         }
@@ -76,9 +77,9 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       "previous-year count is 3 and current-year count is 3" should {
         "return a count of 3" in new Setup {
 
-          val optOutProposition = OptOutTestSupport.buildThreeYearOptOutProposition()
-          val queriedTaxYear = optOutProposition.availableTaxYearsForOptOut(1)
-          val currentYear = optOutProposition.availableTaxYearsForOptOut(1)
+          val optOutProposition: OptOutProposition = OptOutTestSupport.buildThreeYearOptOutProposition()
+          val queriedTaxYear: TaxYear = optOutProposition.availableTaxYearsForOptOut(1)
+          val currentYear: TaxYear = optOutProposition.availableTaxYearsForOptOut(1)
 
           def buildNextUpdatesModel(): SingleObligationModel = {
             SingleObligationModel(
@@ -87,12 +88,12 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
               "#001", StatusFulfilled)
           }
 
-          val updates = GroupedObligationsModel("XA00001234", (1 to 3).map(_ => buildNextUpdatesModel()).toList)
-          val response = ObligationsModel(Seq(updates))
+          val updates: GroupedObligationsModel = GroupedObligationsModel("XA00001234", (1 to 3).map(_ => buildNextUpdatesModel()).toList)
+          val response: ObligationsModel = ObligationsModel(Seq(updates))
           setupMockAllObligationsWithDates(queriedTaxYear.toFinancialYearStart, queriedTaxYear.toFinancialYearEnd)(response)
           setupMockAllObligationsWithDates(currentYear.toFinancialYearStart, currentYear.toFinancialYearEnd)(response)
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
+          val result: Future[QuarterlyUpdatesCountForTaxYear] = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
 
           result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 3)
         }
@@ -103,11 +104,11 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       "previous-year count is 3 and current-year count is 3" should {
         "return a count of 2" in new Setup {
 
-          val optOutProposition = OptOutTestSupport.buildThreeYearOptOutProposition()
-          val queriedTaxYear = optOutProposition.availableTaxYearsForOptOut.last
-          val previousTaxYear = optOutProposition.availableTaxYearsForOptOut.head
-          val currentYear = optOutProposition.availableTaxYearsForOptOut(1)
-          val nextYear = optOutProposition.availableTaxYearsForOptOut.last
+          val optOutProposition: OptOutProposition = OptOutTestSupport.buildThreeYearOptOutProposition()
+          val queriedTaxYear: TaxYear = optOutProposition.availableTaxYearsForOptOut.last
+          val previousTaxYear: TaxYear = optOutProposition.availableTaxYearsForOptOut.head
+          val currentYear: TaxYear = optOutProposition.availableTaxYearsForOptOut(1)
+          val nextYear: TaxYear = optOutProposition.availableTaxYearsForOptOut.last
 
           def buildNextUpdatesModel(): SingleObligationModel = {
             SingleObligationModel(
@@ -116,13 +117,13 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
               "#001", StatusFulfilled)
           }
 
-          val updates = GroupedObligationsModel("XA00001234", (1 to 2).map(_ => buildNextUpdatesModel()).toList)
-          val response = ObligationsModel(Seq(updates))
+          val updates: GroupedObligationsModel = GroupedObligationsModel("XA00001234", (1 to 2).map(_ => buildNextUpdatesModel()).toList)
+          val response: ObligationsModel = ObligationsModel(Seq(updates))
           setupMockAllObligationsWithDates(previousTaxYear.toFinancialYearStart, previousTaxYear.toFinancialYearEnd)(response)
           setupMockAllObligationsWithDates(currentYear.toFinancialYearStart, currentYear.toFinancialYearEnd)(response)
           setupMockAllObligationsWithDates(nextYear.toFinancialYearStart, nextYear.toFinancialYearEnd)(response)
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
+          val result: Future[QuarterlyUpdatesCountForTaxYear] = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
 
           result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 2)
         }
@@ -133,9 +134,9 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       "previous-year count is 3 and next-year count is 3" should {
         "return a count of 3" in new Setup {
 
-          val optOutProposition = OptOutTestSupport.buildTwoYearOptOutPropositionOfferingPYAndNY()
-          val queriedTaxYear = optOutProposition.availableTaxYearsForOptOut.head
-          val nextYear = optOutProposition.availableTaxYearsForOptOut(1)
+          val optOutProposition: OptOutProposition = OptOutTestSupport.buildTwoYearOptOutPropositionOfferingPYAndNY()
+          val queriedTaxYear: TaxYear = optOutProposition.availableTaxYearsForOptOut.head
+          val nextYear: TaxYear = optOutProposition.availableTaxYearsForOptOut(1)
 
           def buildNextUpdatesModel(): SingleObligationModel = {
             SingleObligationModel(
@@ -144,12 +145,12 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
               "#001", StatusFulfilled)
           }
 
-          val updates = GroupedObligationsModel("XA00001234", (1 to 3).map(_ => buildNextUpdatesModel()).toList)
-          val response = ObligationsModel(Seq(updates))
+          val updates: GroupedObligationsModel = GroupedObligationsModel("XA00001234", (1 to 3).map(_ => buildNextUpdatesModel()).toList)
+          val response: ObligationsModel = ObligationsModel(Seq(updates))
           setupMockAllObligationsWithDates(queriedTaxYear.toFinancialYearStart, queriedTaxYear.toFinancialYearEnd)(response)
           setupMockAllObligationsWithDates(nextYear.toFinancialYearStart, nextYear.toFinancialYearEnd)(response)
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
+          val result: Future[QuarterlyUpdatesCountForTaxYear] = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
 
           result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 3)
         }
@@ -160,10 +161,10 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       "previous-year count is 3 and next-year count is 3" should {
         "return a count of 3" in new Setup {
 
-          val optOutProposition = OptOutTestSupport.buildTwoYearOptOutPropositionOfferingPYAndNY()
-          val queriedTaxYear = optOutProposition.availableTaxYearsForOptOut(1)
-          val previousTaxYear = optOutProposition.availableTaxYearsForOptOut.head
-          val nextYear = optOutProposition.availableTaxYearsForOptOut(1)
+          val optOutProposition: OptOutProposition = OptOutTestSupport.buildTwoYearOptOutPropositionOfferingPYAndNY()
+          val queriedTaxYear: TaxYear = optOutProposition.availableTaxYearsForOptOut(1)
+          val previousTaxYear: TaxYear = optOutProposition.availableTaxYearsForOptOut.head
+          val nextYear: TaxYear = optOutProposition.availableTaxYearsForOptOut(1)
 
           def buildNextUpdatesModel(): SingleObligationModel = {
             SingleObligationModel(
@@ -172,12 +173,12 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
               "#001", StatusFulfilled)
           }
 
-          val updates = GroupedObligationsModel("XA00001234", (1 to 3).map(_ => buildNextUpdatesModel()).toList)
-          val response = ObligationsModel(Seq(updates))
+          val updates: GroupedObligationsModel = GroupedObligationsModel("XA00001234", (1 to 3).map(_ => buildNextUpdatesModel()).toList)
+          val response: ObligationsModel = ObligationsModel(Seq(updates))
           setupMockAllObligationsWithDates(previousTaxYear.toFinancialYearStart, previousTaxYear.toFinancialYearEnd)(response)
           setupMockAllObligationsWithDates(nextYear.toFinancialYearStart, nextYear.toFinancialYearEnd)(response)
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
+          val result: Future[QuarterlyUpdatesCountForTaxYear] = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
 
           result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 3)
         }
@@ -188,10 +189,10 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       "previous-year count is 3 and current-year count is 3" should {
         "return a count of 6" in new Setup {
 
-          val optOutProposition = OptOutTestSupport.buildTwoYearOptOutPropositionOfferingPYAndCY()
-          val queriedTaxYear = optOutProposition.availableTaxYearsForOptOut.head
-          val previousTaxYear = optOutProposition.availableTaxYearsForOptOut.head
-          val currentYear = optOutProposition.availableTaxYearsForOptOut(1)
+          val optOutProposition: OptOutProposition = OptOutTestSupport.buildTwoYearOptOutPropositionOfferingPYAndCY()
+          val queriedTaxYear: TaxYear = optOutProposition.availableTaxYearsForOptOut.head
+          val previousTaxYear: TaxYear = optOutProposition.availableTaxYearsForOptOut.head
+          val currentYear: TaxYear = optOutProposition.availableTaxYearsForOptOut(1)
 
           def buildNextUpdatesModel(): SingleObligationModel = {
             SingleObligationModel(
@@ -200,12 +201,12 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
               "#001", StatusFulfilled)
           }
 
-          val updates = GroupedObligationsModel("XA00001234", (1 to 3).map(_ => buildNextUpdatesModel()).toList)
-          val response = ObligationsModel(Seq(updates))
+          val updates: GroupedObligationsModel = GroupedObligationsModel("XA00001234", (1 to 3).map(_ => buildNextUpdatesModel()).toList)
+          val response: ObligationsModel = ObligationsModel(Seq(updates))
           setupMockAllObligationsWithDates(previousTaxYear.toFinancialYearStart, previousTaxYear.toFinancialYearEnd)(response)
           setupMockAllObligationsWithDates(currentYear.toFinancialYearStart, currentYear.toFinancialYearEnd)(response)
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
+          val result: Future[QuarterlyUpdatesCountForTaxYear] = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
 
           result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 3)
         }
@@ -216,10 +217,10 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       "previous-year count is 3 and current-year count is 3" should {
         "return a count of 3" in new Setup {
 
-          val optOutProposition = OptOutTestSupport.buildTwoYearOptOutPropositionOfferingPYAndCY()
-          val queriedTaxYear = optOutProposition.availableTaxYearsForOptOut(1)
-          val previousTaxYear = optOutProposition.availableTaxYearsForOptOut.head
-          val currentYear = optOutProposition.availableTaxYearsForOptOut(1)
+          val optOutProposition: OptOutProposition = OptOutTestSupport.buildTwoYearOptOutPropositionOfferingPYAndCY()
+          val queriedTaxYear: TaxYear = optOutProposition.availableTaxYearsForOptOut(1)
+          val previousTaxYear: TaxYear = optOutProposition.availableTaxYearsForOptOut.head
+          val currentYear: TaxYear = optOutProposition.availableTaxYearsForOptOut(1)
 
           def buildNextUpdatesModel(): SingleObligationModel = {
             SingleObligationModel(
@@ -228,12 +229,12 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
               "#001", StatusFulfilled)
           }
 
-          val updates = GroupedObligationsModel("XA00001234", (1 to 3).map(_ => buildNextUpdatesModel()).toList)
-          val response = ObligationsModel(Seq(updates))
+          val updates: GroupedObligationsModel = GroupedObligationsModel("XA00001234", (1 to 3).map(_ => buildNextUpdatesModel()).toList)
+          val response: ObligationsModel = ObligationsModel(Seq(updates))
           setupMockAllObligationsWithDates(previousTaxYear.toFinancialYearStart, previousTaxYear.toFinancialYearEnd)(response)
           setupMockAllObligationsWithDates(currentYear.toFinancialYearStart, currentYear.toFinancialYearEnd)(response)
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
+          val result: Future[QuarterlyUpdatesCountForTaxYear] = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
 
           result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 3)
         }
@@ -244,16 +245,16 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       "previous-year count is 0 and current-year count is 0" should {
         "return a count of 0" in new Setup {
 
-          val optOutProposition = OptOutTestSupport.buildTwoYearOptOutPropositionOfferingPYAndCY()
-          val queriedTaxYear = optOutProposition.availableTaxYearsForOptOut(1)
-          val previousTaxYear = optOutProposition.availableTaxYearsForOptOut.head
-          val currentYear = optOutProposition.availableTaxYearsForOptOut(1)
+          val optOutProposition: OptOutProposition = OptOutTestSupport.buildTwoYearOptOutPropositionOfferingPYAndCY()
+          val queriedTaxYear: TaxYear = optOutProposition.availableTaxYearsForOptOut(1)
+          val previousTaxYear: TaxYear = optOutProposition.availableTaxYearsForOptOut.head
+          val currentYear: TaxYear = optOutProposition.availableTaxYearsForOptOut(1)
 
-          val response = ObligationsModel(Seq())
+          val response: ObligationsModel = ObligationsModel(Seq())
           setupMockAllObligationsWithDates(previousTaxYear.toFinancialYearStart, previousTaxYear.toFinancialYearEnd)(response)
           setupMockAllObligationsWithDates(currentYear.toFinancialYearStart, currentYear.toFinancialYearEnd)(response)
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
+          val result: Future[QuarterlyUpdatesCountForTaxYear] = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
 
           result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 0)
         }
@@ -264,15 +265,15 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       "calls fail" should {
         "return a count of 0" in new Setup {
 
-          val optOutProposition = OptOutTestSupport.buildTwoYearOptOutPropositionOfferingPYAndCY()
-          val queriedTaxYear = optOutProposition.availableTaxYearsForOptOut(1)
-          val previousTaxYear = optOutProposition.availableTaxYearsForOptOut.head
-          val currentYear = optOutProposition.availableTaxYearsForOptOut(1)
+          val optOutProposition: OptOutProposition = OptOutTestSupport.buildTwoYearOptOutPropositionOfferingPYAndCY()
+          val queriedTaxYear: TaxYear = optOutProposition.availableTaxYearsForOptOut(1)
+          val previousTaxYear: TaxYear = optOutProposition.availableTaxYearsForOptOut.head
+          val currentYear: TaxYear = optOutProposition.availableTaxYearsForOptOut(1)
 
           setupMockAllObligationsWithDates(previousTaxYear.toFinancialYearStart, previousTaxYear.toFinancialYearEnd)(ObligationsErrorModel(400, "some error"))
           setupMockAllObligationsWithDates(currentYear.toFinancialYearStart, currentYear.toFinancialYearEnd)(ObligationsErrorModel(400, "some error"))
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
+          val result: Future[QuarterlyUpdatesCountForTaxYear] = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
 
           result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 0)
         }
@@ -594,5 +595,153 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       )
     }
 
+  }
+
+  "getNextQuarterlyUpdateDueDate" should {
+    "return the earliest quarterly due date" in new Setup {
+      val obligationsModel: ObligationsModel = ObligationsModel(Seq(
+        GroupedObligationsModel("id1", List(
+          SingleObligationModel(fixedDate, fixedDate, fixedDate.plusDays(3), "Quarterly", None, "#001", StatusOpen),
+          SingleObligationModel(fixedDate, fixedDate, fixedDate.plusDays(1), "Quarterly", None, "#002", StatusOpen),
+          SingleObligationModel(fixedDate, fixedDate, fixedDate.plusDays(2), "Crystallisation", None, "#003", StatusOpen)
+        ))
+      ))
+
+      setupMockNextUpdates(obligationsModel)
+
+      val result: Option[LocalDate] = getNextQuarterlyUpdateDueDate().futureValue
+      result shouldBe Some(fixedDate.plusDays(1))
+
+    }
+
+    "return the earliest quarterly due date and ignore already the fulfilled one" in new Setup {
+      val obligationsModel: ObligationsModel = ObligationsModel(Seq(
+        GroupedObligationsModel("id1", List(
+          SingleObligationModel(fixedDate, fixedDate, fixedDate.plusDays(1), "Quarterly", Some(fixedDate), "#001", StatusFulfilled),
+          SingleObligationModel(fixedDate, fixedDate, fixedDate.plusDays(5), "Quarterly", None, "#002", StatusOpen)
+        ))
+      ))
+
+      setupMockNextUpdates(obligationsModel)
+
+      val result: Option[LocalDate] = getNextQuarterlyUpdateDueDate().futureValue
+      result shouldBe Some(fixedDate.plusDays(5))
+    }
+
+    "return None when no quarterly obligations exist" in new Setup {
+      val obligationsModel: ObligationsModel = ObligationsModel(Seq(
+        GroupedObligationsModel("id1", List(
+          SingleObligationModel(fixedDate, fixedDate, fixedDate.plusDays(2), "Crystallisation", None, "#003", StatusOpen)
+        ))
+      ))
+
+      setupMockNextUpdates(obligationsModel)
+
+      val result: Option[LocalDate] = getNextQuarterlyUpdateDueDate().futureValue
+      result shouldBe None
+    }
+
+    "return an error when the obligations service returns an error model" in new Setup {
+      setupMockNextUpdates(obligationsDataErrorModel)
+
+      val result: Option[LocalDate] = getNextQuarterlyUpdateDueDate().futureValue
+      result shouldBe None
+    }
+
+    "return an empty sequence when the obligations list is completely empty" in new Setup {
+      setupMockNextUpdates(ObligationsModel(Seq.empty))
+
+      val result: Option[LocalDate] = getNextQuarterlyUpdateDueDate().futureValue
+      result shouldBe None
+    }
+  }
+
+  "getNextTaxReturnDueDate" should {
+    "return the earliest open tax return due date" in new Setup {
+      val obligationsModel: ObligationsModel = ObligationsModel(Seq(
+        GroupedObligationsModel("id1", List(
+          SingleObligationModel(fixedDate, fixedDate, fixedDate.plusDays(5), "Crystallisation", None, "C", StatusOpen),
+          SingleObligationModel(fixedDate, fixedDate, fixedDate.plusDays(2), "Crystallisation", None, "C", StatusOpen),
+          SingleObligationModel(fixedDate, fixedDate, fixedDate.plusDays(3), "Quarterly", None, "#001", StatusOpen)
+        ))
+      ))
+
+      setupMockNextUpdates(obligationsModel)
+
+      val result: Future[Option[LocalDate]] = TestNextUpdatesService.getNextTaxReturnDueDate()
+      result.futureValue shouldBe Some(fixedDate.plusDays(2))
+    }
+
+    "return None when there are no open tax return obligations" in new Setup {
+      val obligationsModel: ObligationsModel = ObligationsModel(Seq(
+        GroupedObligationsModel("id1", List(
+          SingleObligationModel(fixedDate, fixedDate, fixedDate.plusDays(1), "Crystallisation", None, "C", StatusFulfilled),
+          SingleObligationModel(fixedDate, fixedDate, fixedDate.plusDays(3), "Quarterly", None, "#001", StatusOpen)
+        ))
+      ))
+
+      setupMockNextUpdates(obligationsModel)
+
+      val result: Future[Option[LocalDate]] = TestNextUpdatesService.getNextTaxReturnDueDate()
+      result.futureValue shouldBe None
+    }
+
+    "return the earliest open tax return even when it is overdue" in new Setup {
+      val obligationsModel: ObligationsModel = ObligationsModel(Seq(
+        GroupedObligationsModel("id1", List(
+          SingleObligationModel(
+            start = fixedDate.minusYears(2),
+            end = fixedDate.minusYears(1),
+            due = fixedDate.minusDays(10),
+            obligationType = "Crystallisation",
+            dateReceived = None,
+            periodKey = "C",
+            status = StatusOpen
+          )
+        ))
+      ))
+
+      setupMockNextUpdates(obligationsModel)
+
+      val result: Future[Option[LocalDate]] = TestNextUpdatesService.getNextTaxReturnDueDate()
+      result.futureValue shouldBe Some(fixedDate.minusDays(10))
+    }
+
+    "return the earliest open tax return and ignore already the fulfilled ones" in new Setup {
+      val obligationsModel: ObligationsModel = ObligationsModel(Seq(
+        GroupedObligationsModel("id1", List(
+          SingleObligationModel(
+            start = fixedDate.minusYears(2),
+            end = fixedDate.minusYears(1),
+            due = fixedDate.plusDays(1),
+            obligationType = "Crystallisation",
+            dateReceived = Some(fixedDate),
+            periodKey = "C",
+            status = StatusFulfilled
+          ),
+          SingleObligationModel(
+            start = fixedDate.minusYears(1),
+            end = fixedDate,
+            due = fixedDate.plusDays(5),
+            obligationType = "Crystallisation",
+            dateReceived = None,
+            periodKey = "C",
+            status = StatusOpen
+          )
+        ))
+      ))
+
+      setupMockNextUpdates(obligationsModel)
+
+      val result: Future[Option[LocalDate]] = TestNextUpdatesService.getNextTaxReturnDueDate()
+      result.futureValue shouldBe Some(fixedDate.plusDays(5))
+    }
+
+    "return None when obligations connector returns an error" in new Setup {
+      setupMockNextUpdates(obligationsDataErrorModel)
+
+      val result: Future[Option[LocalDate]] = TestNextUpdatesService.getNextTaxReturnDueDate()
+      result.futureValue shouldBe None
+    }
   }
 }
