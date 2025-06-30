@@ -194,7 +194,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       }
     }
 
-    "have a updates tile" which {
+    "have an updates tile" which {
       "has a heading" in new Setup {
         getElementById("updates-tile").map(_.select("h2").text) shouldBe Some("Next updates due")
       }

@@ -47,9 +47,16 @@
         messageKey = if(nextUpdatesTileViewModel.isReportingFrequencyEnabled) {
             "home.updates.view.reportingFrequency"
         } else {
-            "home.updates.view"
+            if(nextUpdatesTileViewModel.showOptInOptOutContentUpdateR17) "home.updates.R17.linkText" else "home.updates.view"
         }
     )
+}
+
+@updatesTileHeading = @{
+    if(nextUpdatesTileViewModel.showOptInOptOutContentUpdateR17)
+        messages("home.updates.R17.heading")
+    else
+        messages("home.updates.heading")
 }
 
 @updatesTileContentUpdatesDue0 = {
@@ -67,37 +74,37 @@
 
 @updatesTileContentUpdatesDue0R17 = {
     @if(nextUpdatesTileViewModel.currentYearITSAStatus.contains(ITSAStatus.Voluntary) || nextUpdatesTileViewModel.currentYearITSAStatus.contains(ITSAStatus.Mandated)) {
-        @p() {@messages("home.updates.nextUpdateDue", nextUpdatesTileViewModel.nextQuarterlyUpdateDueDate.map(_.toLongDate).getOrElse(""))}
-        @p() {@messages("home.updates.nextTaxReturnDue", nextUpdatesTileViewModel.nextTaxReturnDueDate.map(_.toLongDate).getOrElse(""))}
+        @p() {@messages("home.updates.R17.nextUpdateDue", nextUpdatesTileViewModel.nextQuarterlyUpdateDueDate.map(_.toLongDate).getOrElse(""))}
+        @p() {@messages("home.updates.R17.nextTaxReturnDue", nextUpdatesTileViewModel.nextTaxReturnDueDate.map(_.toLongDate).getOrElse(""))}
 
     } else if (nextUpdatesTileViewModel.currentYearITSAStatus.contains(ITSAStatus.Annual)) {
-        @p() {@messages("home.updates.nextTaxReturnDue", nextUpdatesTileViewModel.nextTaxReturnDueDate.map(_.toLongDate).getOrElse(""))}
+        @p() {@messages("home.updates.R17.nextTaxReturnDue", nextUpdatesTileViewModel.nextTaxReturnDueDate.map(_.toLongDate).getOrElse(""))}
     }
 }
 
 @updatesTileContentUpdatesDue1R17 = {
     @if(nextUpdatesTileViewModel.currentYearITSAStatus.contains(ITSAStatus.Voluntary) ||nextUpdatesTileViewModel.currentYearITSAStatus.contains(ITSAStatus.Mandated)) {
         @p() {<span class="govuk-tag govuk-tag--red">@{messages("taxYears.overdue")}</span>}
-        @p() {@messages("home.updates.nextUpdateDue", nextUpdatesTileViewModel.nextQuarterlyUpdateDueDate.map(_.toLongDate).getOrElse(""))}
-        @p() {@messages("home.updates.nextTaxReturnDue", nextUpdatesTileViewModel.nextTaxReturnDueDate.map(_.toLongDate).getOrElse(""))}
+        @p() {@messages("home.updates.R17.nextUpdateDue", nextUpdatesTileViewModel.nextQuarterlyUpdateDueDate.map(_.toLongDate).getOrElse(""))}
+        @p() {@messages("home.updates.R17.nextTaxReturnDue", nextUpdatesTileViewModel.nextTaxReturnDueDate.map(_.toLongDate).getOrElse(""))}
 
     } else if (nextUpdatesTileViewModel.currentYearITSAStatus.contains(ITSAStatus.Annual)) {
-        @p() {@messages("home.updates.nextTaxReturnDue", nextUpdatesTileViewModel.nextTaxReturnDueDate.map(_.toLongDate).getOrElse(""))}
+        @p() {@messages("home.updates.R17.nextTaxReturnDue", nextUpdatesTileViewModel.nextTaxReturnDueDate.map(_.toLongDate).getOrElse(""))}
     }}
 
 
 @updatesTileContentUpdatesDueManyR17 = {
     @if(nextUpdatesTileViewModel.currentYearITSAStatus.contains(ITSAStatus.Voluntary) ||nextUpdatesTileViewModel.currentYearITSAStatus.contains(ITSAStatus.Mandated)) {
         @p() {<span class="govuk-tag govuk-tag--red">@{messages("home.updates.overdue.updates", nextUpdatesTileViewModel.getNumberOfOverdueObligations)}</span>}
-        @p() {@messages("home.updates.nextUpdateDue", nextUpdatesTileViewModel.nextQuarterlyUpdateDueDate.map(_.toLongDate).getOrElse(""))}
-        @p() {@messages("home.updates.nextTaxReturnDue", nextUpdatesTileViewModel.nextTaxReturnDueDate.map(_.toLongDate).getOrElse(""))}
+        @p() {@messages("home.updates.R17.nextUpdateDue", nextUpdatesTileViewModel.nextQuarterlyUpdateDueDate.map(_.toLongDate).getOrElse(""))}
+        @p() {@messages("home.updates.R17.nextTaxReturnDue", nextUpdatesTileViewModel.nextTaxReturnDueDate.map(_.toLongDate).getOrElse(""))}
 
     } else if (nextUpdatesTileViewModel.currentYearITSAStatus.contains(ITSAStatus.Annual)) {
-        @p() {@messages("home.updates.nextTaxReturnDue", nextUpdatesTileViewModel.nextTaxReturnDueDate.map(_.toLongDate).getOrElse(""))}
+        @p() {@messages("home.updates.R17.nextTaxReturnDue", nextUpdatesTileViewModel.nextTaxReturnDueDate.map(_.toLongDate).getOrElse(""))}
     }
 }
 
-@home_tile("updates-tile", messages("home.updates.heading")) {
+@home_tile("updates-tile", updatesTileHeading) {
 
     @if(nextUpdatesTileViewModel.showNextUpdatesTileContent) {
 
