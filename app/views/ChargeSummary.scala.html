@@ -18,7 +18,7 @@
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import models.financialDetails.ChargeType
 @import models.chargeSummary.ChargeSummaryViewModel
-@import models.financialDetails.{Accepted, BalancingCharge, FullyCollected, Cancelled, MfaDebitCharge, PoaOneDebit, PoaOneReconciliationDebit, PoaOneReconciliationCredit, PoaTwoDebit, PoaTwoReconciliationDebit, PoaTwoReconciliationCredit, TransactionType}
+@import models.financialDetails.{Accepted, BalancingCharge, FullyCollected, Cancelled, MfaDebitCharge, PoaOneDebit, PoaOneReconciliationDebit, PoaOneReconciliationCredit, PoaTwoDebit, PoaTwoReconciliationDebit, PoaTwoReconciliationCredit, FirstLatePaymentPenalty, LateSubmissionPenalty}
 @import services.DateServiceInterface
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
@@ -136,6 +136,36 @@
     </div>
 }
 
+@getLateSubmissionPenaltyInterestContent = {
+    <div>
+        @p(id = Some("lpi-LSP1")){@messages("chargeSummary.lpi.lateSubmissionPenalty.p1")}
+        @p(id = Some("lpi-LSP2")) {
+            @messages("chargeSummary.lpi.penalties.textOne")
+            <a class="govuk-link" href="https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate">@messages("chargeSummary.lpi.penalties.linkText")</a>
+            @messages("chargeSummary.lpi.penalties.textTwo")
+        }
+        @p(id = Some("lpi-LSP3")) {
+            @messages("chargeSummary.lpi.penalties.p3")
+            <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.lpi.penalties.p3LinkText")</a><br><br>
+            }
+    </div>
+}
+
+@getFirstlatePaymentPenaltyInterestContent = {
+    <div>
+        @p(id = Some("lpi-LPP1")){@messages("chargeSummary.lpi.firstLatePaymentPenalty.p1")}
+        @p(id = Some("lpi-LPP2")) {
+            @messages("chargeSummary.lpi.penalties.textOne")
+            <a class="govuk-link" href="https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate">@messages("chargeSummary.lpi.penalties.linkText")</a>
+            @messages("chargeSummary.lpi.penalties.textTwo")
+        }
+        @p(id = Some("lpi-LPP3")) {
+            @messages("chargeSummary.lpi.penalties.p3")
+            <a class="govuk-link" href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates">@messages("chargeSummary.lpi.penalties.p3LinkText")</a><br><br>
+            }
+    </div>
+}
+
 @getInterestRatesLink = {
     @p(id = Some("interest-link")) {
         @messages("chargeSummary.lpi.poaExtraCharge.link")
@@ -180,6 +210,41 @@
     }
 }
 
+@firstLatePaymentPenaltyExplanation = {
+    @p(id = Some("first-payment-penalty-p1")) {
+        @messages("chargeSummary.firstLatePaymentPenalty.p")
+    }
+
+    @link(
+        id = Some("first-payment-penalty-p2"),
+        link = viewModel.LPPUrl.getOrElse(""),
+        messageKey = "chargeSummary.firstLatePaymentPenalty.link"
+    )
+    <div class="govuk-!-margin-bottom-3"></div>
+}
+
+@lateSubmissionPenaltyExplaination = {
+    @p(id = Some("LSP-content-1")) {
+        @messages("chargeSummary.lateSubmissionPenalty.penaltyPoints")
+    }
+    @p(id = Some("LSP-content-2")) {
+        @messages("chargeSummary.lateSubmissionPenalty.fourPoints")
+    }
+    @p(id = Some("LSP-content-3")) {
+        @messages("chargeSummary.lateSubmissionPenalty.avoidInFuture")
+    }
+    @p(id = Some("LSP-content-4")) {
+        @messages("chargeSummary.lateSubmissionPenalty.penaltyLinkText1")
+        @link(
+            id = Some("LSPlink"),
+            link = viewModel.LSPUrl.getOrElse(""),
+            rel = Some("noreferrer noopener"),
+            messageKey = "chargeSummary.lateSubmissionPenalty.penaltyLinkText"
+        )
+        @messages("chargeSummary.lateSubmissionPenalty.penaltyLinkText2")
+    }
+}
+
 @getExplanationContent = @{(viewModel.chargeItem.transactionType, viewModel.chargeItem.codedOutStatus) match {
     case (MfaDebitCharge, _)                                                                                => hmrcAdjustmentExplanation
     case (PoaOneReconciliationDebit, _)  if !viewModel.latePaymentInterestCharge           => reviewAndReconcilePoaOneDebitExplanation
@@ -192,6 +257,10 @@
     case (PoaTwoReconciliationCredit, _)                                                   => reviewAndReconcilePoaCreditExplanation(PoaTwoDebit)
     case (BalancingCharge, None) if !viewModel.latePaymentInterestCharge                                    => balancingChargeExplanation
     case (BalancingCharge, None)                                                                            => getBalancingPaymentsExplanationContent
+    case (FirstLatePaymentPenalty, _) if !viewModel.latePaymentInterestCharge                               => firstLatePaymentPenaltyExplanation
+    case (FirstLatePaymentPenalty, _)                                                                       => getFirstlatePaymentPenaltyInterestContent
+    case (LateSubmissionPenalty, _) if !viewModel.latePaymentInterestCharge                                 => lateSubmissionPenaltyExplaination
+    case (LateSubmissionPenalty, _)                                                                         => getLateSubmissionPenaltyInterestContent
     case _                                                                                                  =>
 }
 }
@@ -245,6 +314,8 @@
         case _ if viewModel.latePaymentInterestCharge => messages("chargeSummary.chargeHistory.lateInterestPayment")
         case PoaOneDebit => messages("chargeSummary.chargeHistory.Poa1heading")
         case PoaTwoDebit => messages("chargeSummary.chargeHistory.Poa2heading")
+        case LateSubmissionPenalty => messages("chargeSummary.chargeHistory.LSPHeading")
+        case FirstLatePaymentPenalty => messages("chargeSummary.chargeHistory.LPPHeading")
         case _ => messages("chargeSummary.chargeHistory.heading")
     }
 }

@@ -182,6 +182,15 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     val poaExtraChargeTextLink: String = messages("chargeSummary.extraCharge.linkText")
     val poaExtraChargeText2: String = messages("chargeSummary.extraCharge.text2")
 
+    val lspContent1: String = messages("chargeSummary.lateSubmissionPenalty.penaltyPoints")
+    val lspContent2: String = messages("chargeSummary.lateSubmissionPenalty.fourPoints")
+    val lspContent3: String = messages("chargeSummary.lateSubmissionPenalty.avoidInFuture")
+    val lspContent4: String = messages("chargeSummary.lateSubmissionPenalty.penaltyLinkText1") + " " + messages("chargeSummary.lateSubmissionPenalty.penaltyLinkText") + " " +
+      messages("chargeSummary.lateSubmissionPenalty.penaltyLinkText2")
+
+    val lpp1Content1: String = messages("chargeSummary.firstLatePaymentPenalty.p")
+    val lpp1Content2: String = messages("chargeSummary.firstLatePaymentPenalty.link")
+
     val bcdTextParagraph = messages("chargeSummary.definition.balancingcharge.p1")
     val bcdTextBullets = messages("chargeSummary.definition.balancingcharge.bullet1") + " " + messages("chargeSummary.definition.balancingcharge.bullet2")
     val bcdTextP2 = messages("chargeSummary.definition.balancingcharge.p2")
@@ -216,6 +225,10 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     def poa1ReconcileInterestHeading = s"Interest for first payment on account: extra amount"
 
     def poa2ReconcileInterestHeading = s"Interest for second payment on account: extra amount"
+
+    val lateSubmissionPenaltyHeading: String = "Late submission penalty"
+
+    val firstLatePaymentPenalty: String = "First late payment penalty"
 
     def poa1ReconciliationCreditHeading = s"First payment on account: credit from your tax return"
 
@@ -748,6 +761,24 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       document.select("tbody tr td:nth-child(1)").text() shouldBe "15 Jun 2018"
       document.select("tbody tr td:nth-child(2)").text() shouldBe hmrcCreated
       document.select("tbody tr td:nth-child(3)").text() shouldBe "£100.00"
+    }
+    "charge is a late submission penalty" in new TestSetup(chargeItem = chargeItemModel(transactionType = LateSubmissionPenalty)) {
+      document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
+      document.select("h1").text() shouldBe lateSubmissionPenaltyHeading
+
+      document.selectById("LSP-content-1").text() shouldBe lspContent1
+      document.selectById("LSP-content-2").text() shouldBe lspContent2
+      document.selectById("LSP-content-3").text() shouldBe lspContent3
+      document.selectById("LSP-content-4").text() shouldBe lspContent4
+      document.selectById("LSPlink").attr("href") shouldBe "testLSPUrl"
+    }
+    "charge is a first late payment penalty" in new TestSetup(chargeItem = chargeItemModel(transactionType = FirstLatePaymentPenalty)) {
+      document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
+      document.select("h1").text() shouldBe firstLatePaymentPenalty
+
+      document.selectById("first-payment-penalty-p1").text() shouldBe lpp1Content1
+      document.selectById("first-payment-penalty-p2").text() shouldBe lpp1Content2
+      document.selectById("first-payment-penalty-p2").attr("href") shouldBe "testLPPUrl"
     }
 
     "charge is a POA 1 reconciliation credit" in new TestSetup(chargeItem = chargeItemModel(transactionType = PoaOneReconciliationCredit, originalAmount = -100), reviewAndReconcileEnabled = true) {
