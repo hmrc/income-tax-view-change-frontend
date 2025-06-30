@@ -14,19 +14,16 @@
  * limitations under the License.
  *@
 
-@import views.html.layouts.unifiedLayout
-@import enums.IncomeSourceJourney.IncomeSourceType
-@import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
-@import views.html.helpers.injected.ErrorSummary
+@import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
 @import views.html.components._
+@import views.html.layouts.unifiedLayout
 
 @this(
         mainTemplate: unifiedLayout,
         formWithCSRF: FormWithCSRF,
         govukRadios: GovukRadios,
-        errorSummary: ErrorSummary,
+        govukErrorSummary: GovukErrorSummary,
         govukButton: GovukButton,
         h1: h1,
         p: p
@@ -54,8 +51,9 @@
     btaNavPartial = user.btaNavPartial) {
 
     @formWithCSRF(action = postAction, Symbol("id") -> "add-income-source-start-date-check-form") {
-
-        @errorSummary(form)
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form, mapping = Map("start-date-check" -> "yes-response")))
+        }
 
         <span class="govuk-caption-l">@{
             incomeSourceType match {

@@ -16,6 +16,7 @@
 
 package models.liabilitycalculation.viewmodels
 
+import models.financialDetails.SecondLatePaymentPenalty
 import models.incomeSourceDetails.TaxYear
 import models.obligations.ObligationsModel
 import models.taxyearsummary.TaxYearSummaryChargeItem
@@ -37,6 +38,36 @@ case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary
     require(calculationSummaryValue.timestamp.isDefined, "missing Calculation timestamp")
   })
 
+  def getForecastSummaryHref(taxYear: Int, isAgent: Boolean): String = {
+    if(isAgent) {
+      controllers.routes.ForecastIncomeSummaryController.showAgent(taxYear).url
+    } else {
+      controllers.routes.ForecastIncomeSummaryController.show(taxYear).url
+    }
+  }
+
+  def getForecastTaxDueHref(taxYear: Int, isAgent: Boolean): String = {
+    if(isAgent) {
+      controllers.routes.ForecastTaxCalcSummaryController.showAgent(taxYear).url
+    } else {
+      controllers.routes.ForecastTaxCalcSummaryController.show(taxYear).url
+    }
+  }
+
+  def getChargeSummaryHref(chargeItem: TaxYearSummaryChargeItem,
+                           taxYear: Int,
+                           isAgent: Boolean,
+                           origin: Option[String]): String = {
+    if(chargeItem.transactionType == SecondLatePaymentPenalty) {
+      LPP2Url
+    } else {
+      if(isAgent) {
+        controllers.routes.ChargeSummaryController.showAgent(taxYear, chargeItem.transactionId, chargeItem.isLatePaymentInterest).url
+      } else {
+        controllers.routes.ChargeSummaryController.show(taxYear, chargeItem.transactionId, chargeItem.isLatePaymentInterest, origin).url
+      }
+    }
+  }
 }
 
 case class TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled: Boolean,

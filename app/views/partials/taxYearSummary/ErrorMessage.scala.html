@@ -1,0 +1,51 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.liabilitycalculation.viewmodels.CalculationSummary
+@import views.html.partials.taxYearSummary.ErrorMessageHeader
+@import views.html.partials.taxYearSummary.MultipleErrorMessage
+@import views.html.partials.taxYearSummary.MultipleErrorMessageList
+@import views.html.partials.taxYearSummary.ErrorMessageAction
+@import views.html.partials.taxYearSummary.SingleErrorMessage
+
+@this(errorMessageHeader: ErrorMessageHeader,
+        multipleErrorMessageList: MultipleErrorMessageList,
+        multipleErrorMessage: MultipleErrorMessage,
+        errorMessageAction: ErrorMessageAction,
+        singleErrorMessage: SingleErrorMessage)
+@(model: CalculationSummary, key: String, isAgent: Boolean)(implicit messages: Messages)
+
+@isMultiLineErrorMessage(messageId: String) = @{
+    (messageId == "C15104" || messageId == "C15322" || messageId == "C159028")
+}
+
+@errorMessageHeader(key + ".header")
+@if(model.messages.exists(_.errorMessages.size > 1)) {
+    <ul class="govuk-list govuk-list--bullet">
+    @for(message <- model.messages.map(_.errorMessages).getOrElse(Seq())) {
+        @multipleErrorMessageList(key, message.text, message.id)
+    }
+    </ul>
+} else {
+    @for(message <- model.messages.map(_.errorMessages).getOrElse(Seq())) {
+        @if(isMultiLineErrorMessage(message.id)) {
+            @multipleErrorMessage(key, message.text, message.id)
+        } else {
+            @singleErrorMessage(key + s".${message.id}", message.text)
+        }
+    }
+}
+@errorMessageAction(key + ".action")

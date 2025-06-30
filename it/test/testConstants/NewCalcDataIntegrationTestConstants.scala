@@ -39,7 +39,7 @@ object NewCalcDataIntegrationTestConstants {
       |  },
       |  "metadata" : {
       |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
-      |    "crystallised" : true
+      |    "calculationType" : "crystallisation"
       |  },
       |  "calculation": {
       |  }
@@ -56,7 +56,7 @@ object NewCalcDataIntegrationTestConstants {
       |  },
       |  "metadata" : {
       |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
-      |    "crystallised" : true
+      |    "calculationType" : "crystallisation"
       |  },
       |  "calculation": {
       |    "giftAid": {
@@ -77,7 +77,7 @@ object NewCalcDataIntegrationTestConstants {
       |  },
       |  "metadata" : {
       |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
-      |    "crystallised" : true
+      |    "calculationType" : "crystallisation"
       |  },
       |  "calculation": {
       |    "taxCalculation": {
@@ -103,7 +103,7 @@ object NewCalcDataIntegrationTestConstants {
       |  },
       |  "metadata" : {
       |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
-      |    "crystallised" : true
+      |    "calculationType" : "crystallisation"
       |  },
       |  "calculation": {
       |    "taxCalculation": {
@@ -135,7 +135,7 @@ object NewCalcDataIntegrationTestConstants {
       |  },
       |  "metadata" : {
       |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
-      |    "crystallised" : true
+      |    "calculationType" : "crystallisation"
       |  },
       |  "calculation": {
       |    "taxCalculation": {
@@ -168,7 +168,7 @@ object NewCalcDataIntegrationTestConstants {
       |  },
       |  "metadata" : {
       |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
-      |    "crystallised" : true
+      |    "calculationType" : "crystallisation"
       |  },
       |  "calculation": {
       |    "taxCalculation": {
@@ -198,7 +198,7 @@ object NewCalcDataIntegrationTestConstants {
       |  },
       |  "metadata" : {
       |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
-      |    "crystallised" : true
+      |    "calculationType" : "crystallisation"
       |  },
       |  "calculation": {
       |    "taxCalculation": {

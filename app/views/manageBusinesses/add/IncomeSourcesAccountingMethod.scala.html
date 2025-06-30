@@ -29,7 +29,7 @@
         continueButton: ContinueButton,
         formWithCSRF: FormWithCSRF,
         govukRadios: GovukRadios,
-        errorSummary: ErrorSummary,
+        govukErrorSummary: GovukErrorSummary,
         inputRadios: input_radios,
         detailsDropdown: detailsDropdown)
 
@@ -83,7 +83,9 @@
 
     @formWithCSRF(action = postAction, Symbol("id") -> s"$prefix-form") {
 
-        @errorSummary(form)
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form, mapping = Map(s"$prefix" -> s"$prefix-cash-basis-radio")))
+        }
 
         <span class="govuk-caption-xl hmrc-caption-xl" id="@captionId"><span class="govuk-visually-hidden">@messages("accessibility.this-section-is") </span>@incomeSourceTypeCaption</span>
 

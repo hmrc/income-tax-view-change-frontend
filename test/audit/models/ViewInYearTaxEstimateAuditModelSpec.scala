@@ -33,7 +33,7 @@ class ViewInYearTaxEstimateAuditModelSpec extends UnitSpec {
   val mtditid = "1234567890"
   val individual = "individual"
 
-  val taxCalc: CalculationSummary = CalculationSummary(None, None, false, taxDue, income, deductions, totalTaxable)
+  val taxCalc: CalculationSummary = CalculationSummary(None, crystallised = false, unattendedCalc = false, taxDue, income, deductions, totalTaxable)
   
   val viewInYearBodyNormal: ViewInYearTaxEstimateAuditBody = ViewInYearTaxEstimateAuditBody(income, deductions, totalTaxable, taxDue)
   val viewInYearBodyApplyModel: ViewInYearTaxEstimateAuditBody = ViewInYearTaxEstimateAuditBody(taxCalc)

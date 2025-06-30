@@ -17,11 +17,8 @@
 @import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import models.chargeSummary.PaymentHistoryAllocations
-@import models.financialDetails.PaymentsWithChargeType
 @import models.financialDetails.FinancialDetailsModel
 @import models.financialDetails.MfaDebitCharge
-@import exceptions.MissingFieldException
-@import java.time.LocalDate
 @import _root_.implicits.HtmlFormatter.NbspString
 
 @this(implicitDateFormatter: ImplicitDateFormatterImpl)
@@ -49,7 +46,7 @@
 
 @for(allocation <- paymentAllocations ; payment <- allocation.allocations) {
     <tr>
-        <td class="govuk-table__cell">@{payment.dueDate.getOrElse(throw MissingFieldException("Payment Date")).toLongDateShort.toNonBreaking}</td>
+        <td class="govuk-table__cell">@{payment.getDueDateOrThrow.toLongDateShort.toNonBreaking}</td>
         <td class="govuk-table__cell">
             @{
 
@@ -62,17 +59,13 @@
                         controllers.routes.PaymentAllocationsController.viewPaymentAllocation(matchingPayment.get, origin).url
                     }
                     val linkText = if (chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit") else
-                        allocation.getPaymentAllocationTextInChargeSummary.map(msg => {
-                                messages(msg, codingOutFrom, codingOutTo)
-                            }).getOrElse(
-                            throw MissingFieldException("Allocation link text missing")
-                        )
+                                messages(allocation.getPaymentAllocationTextInChargeSummary, codingOutFrom, codingOutTo)
                     allocationLinkHTML(link, linkText)
             } else {
-                    allocation.getPaymentAllocationTextInChargeSummary.map(msg => messages(msg, codingOutFrom, codingOutTo))
+                   messages(allocation.getPaymentAllocationTextInChargeSummary, codingOutFrom, codingOutTo)
                 }
             }
         </td>
-        <td class="govuk-table__cell govuk-!-text-align-right">@payment.amount.getOrElse(throw MissingFieldException("Payment Amount")).abs.toCurrency</td>
+        <td class="govuk-table__cell govuk-!-text-align-right">@payment.getAmountOrThrow.abs.toCurrency</td>
     </tr>
 }

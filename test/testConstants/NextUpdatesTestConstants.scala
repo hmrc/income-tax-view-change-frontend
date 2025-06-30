@@ -24,11 +24,28 @@ import java.time.LocalDate
 
 object NextUpdatesTestConstants {
 
+  val heading: String = "Your updates and deadlines"
+  val title: String = "Your updates and deadlines - Manage your Self Assessment - GOV.UK"
+  val summary: String = "What are the update types?"
+  val summaryQuarterly: String = "Quarterly updates"
+  val quarterlyLine1: String = "A quarterly update is a record of all your business income in a 3 month period."
+  val quarterlyLine2: String = "Using your record-keeping software, you must send 4 quarterly updates in a year for each source of income."
+  val declarationLine1: String = "Your final declaration is the last step in your tax return, where you confirm you’ve submitted all your income and expenses (to the best of your knowledge). This is done using your record-keeping software."
+  val summaryDeclaration: String = "Final declaration"
+  val updatesInSoftware: String = "Submitting updates in software"
+  val updatesInSoftwareDesc: String = "Use your compatible record keeping software (opens in new tab) to keep digital records of all your business income and expenses. You must submit these updates through your software by each date shown."
+  val info: String = "To view previously submitted updates visit the tax years page."
+  val oneYearOptOutMessage: String = "You are currently reporting quarterly on a voluntary basis for the 2023 to 2024 tax year. You can choose to opt out of quarterly updates and report annually instead."
+  val reportingObligationsLink: String = "Depending on your circumstances, you may be able to view and change your reporting obligations."
+  val quarterly: String = "Quarterly update"
+  val businessIncome: String = "Business income"
+  val noNextUpdatesHeading: String = "Report deadlines"
+  val noNextUpdatesTitle: String = "Report deadlines - Manage your Self Assessment - GOV.UK"
+  val noNextUpdatesText: String = "You don’t have any reports due right now. Your next deadline will show here on the first Monday of next month."
+
   val mockedCurrentTime20171031: LocalDate = LocalDate.of(2017, 10, 31)
 
   def fakeNextUpdatesModel(m: SingleObligationModel): SingleObligationModel = new SingleObligationModel(m.start, m.end, m.due, m.obligationType, m.dateReceived, m.periodKey, StatusFulfilled)
-
-  val testStartDate = LocalDate.of(2017, 7, 1)
 
   val quarterlyBusinessObligation = fakeNextUpdatesModel(SingleObligationModel(
     start = LocalDate.of(2017, 7, 1),
@@ -60,17 +77,6 @@ object NextUpdatesTestConstants {
     StatusFulfilled
   ))
 
-
-  val secondQuarterlyObligation = fakeNextUpdatesModel(SingleObligationModel(
-    start = LocalDate.of(2017, 10, 1),
-    end = mockedCurrentTime20171031,
-    due = mockedCurrentTime20171031,
-    obligationType = "Quarterly",
-    dateReceived = None,
-    periodKey = "#002",
-    StatusFulfilled
-  ))
-
   val crystallisedObligation = fakeNextUpdatesModel(SingleObligationModel(
     start = LocalDate.of(2017, 10, 1),
     end = LocalDate.of(2018, 10, 30),
@@ -91,72 +97,11 @@ object NextUpdatesTestConstants {
     StatusFulfilled
   ))
 
-
-  val quarterlyObligationsDataSuccessModel: GroupedObligationsModel = GroupedObligationsModel(testPropertyIncomeId, List(secondQuarterlyObligation, openObligation))
-
   val nextUpdatesDataSelfEmploymentSuccessModel: GroupedObligationsModel = GroupedObligationsModel(testSelfEmploymentId, List(overdueObligation, openObligation))
 
   val nextUpdatesDataPropertySuccessModel: GroupedObligationsModel = GroupedObligationsModel(testPropertyIncomeId, List(overdueObligation, openObligation))
 
   val obligationsDataSelfEmploymentOnlySuccessModel: ObligationsModel = ObligationsModel(List(nextUpdatesDataSelfEmploymentSuccessModel))
-
-  val obligationsDataPropertyOnlySuccessModel: ObligationsModel = ObligationsModel(List(nextUpdatesDataPropertySuccessModel))
-
-  val previousObligationOne: SingleObligationModel = SingleObligationModel(
-    LocalDate.of(2017, 1, 1),
-    LocalDate.of(2017, 4, 1),
-    LocalDate.of(2017, 5, 1),
-    "Quarterly",
-    Some(LocalDate.of(2017, 4, 1)),
-    "#001",
-    StatusFulfilled
-  )
-
-  val previousObligationTwo: SingleObligationModel = SingleObligationModel(
-    LocalDate.of(2017, 4, 1),
-    LocalDate.of(2017, 7, 1),
-    LocalDate.of(2017, 8, 1),
-    "Quarterly",
-    Some(LocalDate.of(2017, 7, 1)),
-    "#002",
-    StatusFulfilled
-  )
-
-  val previousObligationThree: SingleObligationModel = SingleObligationModel(
-    LocalDate.of(2017, 1, 1),
-    LocalDate.of(2018, 1, 1),
-    LocalDate.of(2018, 1, 1),
-    "Quarterly",
-    Some(LocalDate.of(2018, 1, 30)),
-    "#003",
-    StatusFulfilled
-  )
-
-  val previousObligationFour: SingleObligationModel = SingleObligationModel(
-    LocalDate.of(2019, 1, 1),
-    LocalDate.of(2019, 1, 1),
-    LocalDate.of(2019, 1, 30),
-    "Quarterly",
-    Some(LocalDate.of(2019, 1, 30)),
-    "#004",
-    status = StatusFulfilled
-  )
-
-
-  val previousObligationFive: SingleObligationModel = SingleObligationModel(
-    LocalDate.of(2019, 1, 1),
-    LocalDate.of(2019, 1, 1),
-    LocalDate.of(2019, 1, 31),
-    "Crystallisation",
-    Some(LocalDate.of(2018, 1, 31)),
-    "Crystallisation",
-    status = StatusFulfilled
-  )
-
-
-  val previousObligationsDataSuccessModel: GroupedObligationsModel = GroupedObligationsModel(testPropertyIncomeId, List(previousObligationTwo, previousObligationOne))
-  val previousObligationsEOPSDataSuccessModel: GroupedObligationsModel = GroupedObligationsModel(testPropertyIncomeId, List(previousObligationThree, previousObligationFour))
-  val previousObligationsCrystallisedSuccessModel: GroupedObligationsModel = GroupedObligationsModel(testPropertyIncomeId, List(previousObligationFive))
 
   val nextUpdateOverdueJson = Json.obj(
     "start" -> "2017-07-01",
@@ -215,17 +160,6 @@ object NextUpdatesTestConstants {
     status = StatusFulfilled
   ))
 
-  val openCrystObligation: SingleObligationModel = fakeNextUpdatesModel(SingleObligationModel(
-    start = LocalDate.of(2017, 4, 6),
-    end = LocalDate.of(2018, 4, 5),
-    due = LocalDate.of(2019, 10, 31),
-    obligationType = "Crystallisation",
-    dateReceived = None,
-    periodKey = "",
-    status = StatusFulfilled
-  ))
-
-
   val obligationsQuarterlyDataSuccessModel: GroupedObligationsModel = GroupedObligationsModel(testPropertyIncomeId, List(overdueQuarterlyObligation, openQuarterlyObligation))
 
   val obligationsCrystallisedSuccessModel: GroupedObligationsModel = GroupedObligationsModel(testMtditid, List(crystallisedObligation))
@@ -261,27 +195,11 @@ object NextUpdatesTestConstants {
 
   val twoObligationsSuccessModel: GroupedObligationsModel = GroupedObligationsModel(testPropertyIncomeId, List(overdueObligation, openQuarterlyObligation))
 
-  val crystallisedDeadlineSuccess: GroupedObligationsModel = GroupedObligationsModel(testMtditid, List(openCrystObligation))
-
   val obligationsDataErrorModel = ObligationsErrorModel(testErrorStatus, testErrorMessage)
-
-  def nextUpdatesErrorModel(status: Int) = ObligationsErrorModel(status, testErrorMessage)
 
   val obligationsDataErrorJson = Json.obj(
     "code" -> testErrorStatus,
     "message" -> testErrorMessage
   )
 
-  val obligationsDataAllMinusCrystallisedSuccessModel: ObligationsModel = ObligationsModel(List(
-    nextUpdatesDataPropertySuccessModel,
-    nextUpdatesDataSelfEmploymentSuccessModel,
-    GroupedObligationsModel(testSelfEmploymentId2, List(overdueObligation, openObligation))
-  ))
-
-  val obligationsDataAllDataSuccessModel: ObligationsModel = ObligationsModel(List(
-    nextUpdatesDataPropertySuccessModel,
-    nextUpdatesDataSelfEmploymentSuccessModel,
-    crystallisedDeadlineSuccess,
-    GroupedObligationsModel(testSelfEmploymentId2, List(overdueObligation, openObligation))
-  ))
 }

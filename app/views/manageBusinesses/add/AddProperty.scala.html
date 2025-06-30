@@ -14,10 +14,9 @@
  * limitations under the License.
  *@
 
-@import views.html.layouts.unifiedLayout
-@import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.helpers.injected.ErrorSummary
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
 
 @this(
         mainTemplate: unifiedLayout,
@@ -26,7 +25,7 @@
         link: link,
         p: p,
         formWithCSRF: FormWithCSRF,
-        errorSummary: ErrorSummary,
+        govukErrorSummary: GovukErrorSummary,
         continueButton: ContinueButton,
         govukRadios: GovukRadios)
 
@@ -45,7 +44,9 @@
 
     @formWithCSRF(action = postAction, Symbol("id") -> "type-of-business") {
 
-        @errorSummary(form)
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form, mapping = Map("type-of-business" -> "type-of-property")))
+        }
 
         @h1(msg = getMessage("heading"), size = "l", id = Some("heading"))
 
