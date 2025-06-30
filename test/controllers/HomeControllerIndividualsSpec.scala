@@ -19,9 +19,11 @@ package controllers
 import controllers.agent.sessionUtils.SessionKeys
 import models.admin._
 import models.financialDetails._
+import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
@@ -360,7 +362,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
       "render the home page controller with the next updates tile" when {
         "there is a future update date to display" in new Setup {
-          setupNextUpdatesTests(futureDueDates)
+          setupNextUpdatesTests(futureDueDates, None, None)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
@@ -376,7 +378,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         }
 
         "there is an overdue update date to display" in new Setup {
-          setupNextUpdatesTests(overdueDueDates)
+          setupNextUpdatesTests(overdueDueDates, None, None)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
@@ -392,7 +394,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         }
 
         "there are no updates to display" in new Setup {
-          setupNextUpdatesTests(Seq())
+          setupNextUpdatesTests(Seq(), None, None)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
@@ -406,6 +408,117 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           document.title shouldBe homePageTitle
           document.select("#updates-tile").text() shouldBe messages("home.updates.heading")
         }
+      }
+
+      "render the home page with the next updates tile and OptInOptOutContentUpdateR17 enabled for quarterly user (voluntary)" in new Setup {
+        enable(OptInOptOutContentUpdateR17)
+
+        val quarterlyUpdateDate: LocalDate = LocalDate.of(2099, 11, 5)
+        val taxReturnDueDate: LocalDate = LocalDate.of(2100, 1, 31)
+        setupNextUpdatesTests(
+          allDueDates = futureDueDates,
+          nextQuarterly = Some(quarterlyUpdateDate),
+          nextReturn = Some(taxReturnDueDate)
+        )
+
+        val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
+        setupMockGetStatusTillAvailableFutureYears(currentTaxYear.previousYear)(
+          Future.successful(Map(currentTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Voluntary)))
+        )
+
+        setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
+        setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+
+        val result = controller.show()(fakeRequestWithActiveSession)
+        status(result) shouldBe Status.OK
+
+        val document = Jsoup.parse(contentAsString(result))
+        document.title shouldBe homePageTitle
+
+        val tile = document.select("#updates-tile")
+        tile.select("h2").text shouldBe "Next updates due"
+        tile.select("p").get(0).text shouldBe "Next update due: 5 November 2099"
+        tile.select("p").get(1).text shouldBe "Your next tax return is due: 31 January 2100"
+
+        val link = tile.select("a")
+        link.text.trim shouldBe "View update deadlines"
+        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
+      }
+
+      "render the home page with the next updates tile and OptInOptOutContentUpdateR17 enabled for quarterly user (mandated) with overdue updates" in new Setup {
+        enable(OptInOptOutContentUpdateR17)
+
+        val overdueDate1 = LocalDate.of(2000, 1, 1)
+        val overdueDate2 = LocalDate.of(2000, 2, 1)
+        val nextQuarterlyDate = LocalDate.of(2099, 11, 5)
+        val taxReturnDueDate = LocalDate.of(2100, 1, 31)
+
+        setupNextUpdatesTests(
+          allDueDates = Seq(overdueDate1, overdueDate2, nextQuarterlyDate),
+          nextQuarterly = Some(nextQuarterlyDate),
+          nextReturn = Some(taxReturnDueDate)
+        )
+
+        val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
+        setupMockGetStatusTillAvailableFutureYears(currentTaxYear.previousYear)(
+          Future.successful(Map(currentTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Mandated)))
+        )
+
+        setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
+        setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+        val result = controller.show()(fakeRequestWithActiveSession)
+        status(result) shouldBe Status.OK
+
+        val document = Jsoup.parse(contentAsString(result))
+        val tile = document.select("#updates-tile")
+
+        tile.select("h2").text shouldBe "Next updates due"
+
+        val paragraphs = tile.select("p")
+        paragraphs.get(0).select("span.govuk-tag.govuk-tag--red").text should include("2 Overdue updates")
+        paragraphs.get(1).text shouldBe "Next update due: 5 November 2099"
+        paragraphs.get(2).text shouldBe "Your next tax return is due: 31 January 2100"
+
+        val link = paragraphs.get(3).select("a")
+        link.text.trim shouldBe "View update deadlines"
+        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
+      }
+
+      "render the home page controller with the next updates tile and OptInOptOutContentUpdateR17 enabled for annual user" in new Setup {
+        enable(OptInOptOutContentUpdateR17)
+
+        val taxReturnDueDate: LocalDate = LocalDate.of(2100, 1, 31)
+
+        setupNextUpdatesTests(
+          allDueDates = Seq(taxReturnDueDate),
+          nextQuarterly = None,
+          nextReturn = Some(taxReturnDueDate)
+        )
+
+        val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
+        setupMockGetStatusTillAvailableFutureYears(currentTaxYear.previousYear)(
+          Future.successful(Map(currentTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Annual)))
+        )
+
+        setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
+        setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+        status(result) shouldBe Status.OK
+
+        val document: Document = Jsoup.parse(contentAsString(result))
+        val tile: Elements = document.select("#updates-tile")
+
+        tile.select("h2").text shouldBe "Next updates due"
+
+        tile.text should not include "Next update due:"
+
+        val pTags = tile.select("p")
+        pTags.get(0).text shouldBe "Your next tax return is due: 31 January 2100"
+
+        val link = pTags.get(1).select("a")
+        link.text.trim shouldBe "View update deadlines"
+        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
       }
 
       "render the home without the Next Updates tile" when {
