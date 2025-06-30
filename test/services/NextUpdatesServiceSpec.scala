@@ -620,7 +620,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
         )
       }
     }
-
+  }
   "getNextQuarterlyUpdateDueDate" should {
     "return the earliest quarterly due date" in new Setup {
       val obligationsModel: ObligationsModel = ObligationsModel(Seq(
