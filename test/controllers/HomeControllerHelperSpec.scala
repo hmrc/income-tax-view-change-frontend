@@ -77,8 +77,7 @@ trait HomeControllerHelperSpec extends MockAuthActions
     }
 
     mockGetDueDates(Right(allDueDates))
-    mockGetNextQuarterlyUpdateDueDate(nextQuarterly)
-    mockGetNextTaxReturnDueDate(nextReturn)
+    mockGetNextDueDates((nextQuarterly, nextReturn))
     mockSingleBusinessIncomeSource()
 
     when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))

@@ -94,8 +94,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
     for {
       currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
-      nextQuarterlyUpdateDueDate <- getNextQuarterlyUpdateDueDateIfEnabled()
-      nextTaxReturnDueDate <- getNextTaxReturnDueDateIfEnabled()
+      (nextQuarterlyUpdateDueDate, nextTaxReturnDueDate) <- getNextDueDatesIfEnabled()
     } yield {
       val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates,
         currentDate = dateService.getCurrentDate,
@@ -136,8 +135,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       penaltiesAndAppealsTileViewModel = penaltyDetailsService.getPenaltyPenaltiesAndAppealsTileViewModel(isEnabled(PenaltiesAndAppeals))
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
       mandation <- ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(_.isMandated)
-      nextQuarterlyUpdateDueDate <- getNextQuarterlyUpdateDueDateIfEnabled()
-      nextTaxReturnDueDate <- getNextTaxReturnDueDateIfEnabled()
+      (nextQuarterlyUpdateDueDate, nextTaxReturnDueDate) <- getNextDueDatesIfEnabled()
     } yield {
       val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates,
         currentDate = dateService.getCurrentDate,
@@ -258,21 +256,13 @@ private def handleErrorGettingDueDates(isAgent: Boolean)(implicit user: MtdItUse
     case x if x.remainingToPayByChargeOrInterestWhenChargeIsPaid  => x
   }
 
-  private def getNextQuarterlyUpdateDueDateIfEnabled()
-                                                    (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Option[LocalDate]] = {
+  private def getNextDueDatesIfEnabled()
+                                      (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[(Option[LocalDate], Option[LocalDate])] = {
     if (isEnabled(OptInOptOutContentUpdateR17)) {
-      nextUpdatesService.getNextQuarterlyUpdateDueDate()
+      nextUpdatesService.getNextDueDates()
     } else {
-      Future.successful(None)
+      Future.successful((None, None))
     }
   }
 
-  private def getNextTaxReturnDueDateIfEnabled()
-                                              (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Option[LocalDate]] = {
-    if (isEnabled(OptInOptOutContentUpdateR17)) {
-      nextUpdatesService.getNextTaxReturnDueDate()
-    } else {
-      Future.successful(None)
-    }
-  }
 }
