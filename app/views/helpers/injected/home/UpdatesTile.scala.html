@@ -18,6 +18,7 @@
 @import java.time.LocalDate
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import models.obligations.NextUpdatesTileViewModel
+@import models.itsaStatus.ITSAStatus
 @import views.html.layouts.unifiedLayout
 
 
@@ -64,13 +65,55 @@
     <span class="govuk-tag govuk-tag--red">@{messages("home.updates.overdue.updates", nextUpdatesTileViewModel.getNumberOfOverdueObligations)}</span>
 }
 
+@updatesTileContentUpdatesDue0R17 = {
+    @if(nextUpdatesTileViewModel.currentYearITSAStatus.contains(ITSAStatus.Voluntary) || nextUpdatesTileViewModel.currentYearITSAStatus.contains(ITSAStatus.Mandated)) {
+        @p() {@messages("home.updates.nextUpdateDue", nextUpdatesTileViewModel.nextQuarterlyUpdateDueDate.map(_.toLongDate).getOrElse(""))}
+        @p() {@messages("home.updates.nextTaxReturnDue", nextUpdatesTileViewModel.nextTaxReturnDueDate.map(_.toLongDate).getOrElse(""))}
+
+    } else if (nextUpdatesTileViewModel.currentYearITSAStatus.contains(ITSAStatus.Annual)) {
+        @p() {@messages("home.updates.nextTaxReturnDue", nextUpdatesTileViewModel.nextTaxReturnDueDate.map(_.toLongDate).getOrElse(""))}
+    }
+}
+
+@updatesTileContentUpdatesDue1R17 = {
+    @if(nextUpdatesTileViewModel.currentYearITSAStatus.contains(ITSAStatus.Voluntary) ||nextUpdatesTileViewModel.currentYearITSAStatus.contains(ITSAStatus.Mandated)) {
+        @p() {<span class="govuk-tag govuk-tag--red">@{messages("taxYears.overdue")}</span>}
+        @p() {@messages("home.updates.nextUpdateDue", nextUpdatesTileViewModel.nextQuarterlyUpdateDueDate.map(_.toLongDate).getOrElse(""))}
+        @p() {@messages("home.updates.nextTaxReturnDue", nextUpdatesTileViewModel.nextTaxReturnDueDate.map(_.toLongDate).getOrElse(""))}
+
+    } else if (nextUpdatesTileViewModel.currentYearITSAStatus.contains(ITSAStatus.Annual)) {
+        @p() {@messages("home.updates.nextTaxReturnDue", nextUpdatesTileViewModel.nextTaxReturnDueDate.map(_.toLongDate).getOrElse(""))}
+    }}
+
+
+@updatesTileContentUpdatesDueManyR17 = {
+    @if(nextUpdatesTileViewModel.currentYearITSAStatus.contains(ITSAStatus.Voluntary) ||nextUpdatesTileViewModel.currentYearITSAStatus.contains(ITSAStatus.Mandated)) {
+        @p() {<span class="govuk-tag govuk-tag--red">@{messages("home.updates.overdue.updates", nextUpdatesTileViewModel.getNumberOfOverdueObligations)}</span>}
+        @p() {@messages("home.updates.nextUpdateDue", nextUpdatesTileViewModel.nextQuarterlyUpdateDueDate.map(_.toLongDate).getOrElse(""))}
+        @p() {@messages("home.updates.nextTaxReturnDue", nextUpdatesTileViewModel.nextTaxReturnDueDate.map(_.toLongDate).getOrElse(""))}
+
+    } else if (nextUpdatesTileViewModel.currentYearITSAStatus.contains(ITSAStatus.Annual)) {
+        @p() {@messages("home.updates.nextTaxReturnDue", nextUpdatesTileViewModel.nextTaxReturnDueDate.map(_.toLongDate).getOrElse(""))}
+    }
+}
+
 @home_tile("updates-tile", messages("home.updates.heading")) {
+
     @if(nextUpdatesTileViewModel.showNextUpdatesTileContent) {
-        @{nextUpdatesTileViewModel.getNumberOfOverdueObligations match {
-            case 0 => p()(updatesTileContentUpdatesDue0)
-            case 1 => p()(updatesTileContentUpdatesDue1)
-            case _ => p()(updatesTileContentUpdatesDueMany)
-        }}
+
+        @if(nextUpdatesTileViewModel.showOptInOptOutContentUpdateR17) {
+            @{ nextUpdatesTileViewModel.getNumberOfOverdueObligations match {
+                case 0 => updatesTileContentUpdatesDue0R17
+                case 1 => updatesTileContentUpdatesDue1R17
+                case _ => updatesTileContentUpdatesDueManyR17
+            }}
+        } else {
+            @{ nextUpdatesTileViewModel.getNumberOfOverdueObligations match {
+                case 0 => p()(updatesTileContentUpdatesDue0)
+                case 1 => p()(updatesTileContentUpdatesDue1)
+                case _ => p()(updatesTileContentUpdatesDueMany)
+            }}
+        }
 
         @p(classes = "govuk-!-margin-bottom-4") {
             @nextUpdatesLink
