@@ -1964,7 +1964,7 @@ income.source.added.scenario.four.account.updated.p.link                        
 income.source.added.scenario.four.account.updated.p.b                                       = page, your account has been updated.
 
 income.source.added.scenario.four.view.reporting.obligations.p                              = This new business is opted out of Making Tax Digital for Income Tax. Find out more about
-income.source.added.scenario.four.view.reporting.obligations.link                           = your reporting obligations
+income.source.added.scenario.four.view.reporting.obligations.link                           = your reporting obligations.
 
 income.source.added.scenario.four.view.businesses.link                                      = View your businesses
 income.source.added.scenario.four.view.businesses.p                                         = to add, manage or cease a business or income source.
