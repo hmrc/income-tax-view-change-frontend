@@ -291,7 +291,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             document.getElementById(IdSelectors.accountUpdated).text() shouldBe accountUpdatedParagraph
             document.getElementById("updates-and-deadlines-link").link.attr("href") shouldBe nextUpdatesUrl
 
-            document.getElementById(IdSelectors.viewReportingObligations).text() shouldBe "This new business is opted out of Making Tax Digital for Income Tax. Find out more about your reporting obligations"
+            document.getElementById(IdSelectors.viewReportingObligations).text() shouldBe "This new business is opted out of Making Tax Digital for Income Tax. Find out more about your reporting obligations."
             document.getElementById("reporting-obligations-link").link.attr("href") shouldBe getReportingFrequencyUrl
 
             document.getElementById(IdSelectors.viewBusinesses).text() shouldBe viewBusinessesParagraph
@@ -326,7 +326,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             document.getElementById(IdSelectors.accountUpdated).text() shouldBe accountUpdatedParagraph
             document.getElementById("updates-and-deadlines-link").link.attr("href") shouldBe nextUpdatesUrl
 
-            document.getElementById(IdSelectors.viewReportingObligations).text() shouldBe "This new business is opted out of Making Tax Digital for Income Tax. Find out more about your reporting obligations"
+            document.getElementById(IdSelectors.viewReportingObligations).text() shouldBe "This new business is opted out of Making Tax Digital for Income Tax. Find out more about your reporting obligations."
             document.getElementById("reporting-obligations-link").link.attr("href") shouldBe getReportingFrequencyUrl
 
             document.getElementById(IdSelectors.viewBusinesses).text() shouldBe viewBusinessesParagraph
