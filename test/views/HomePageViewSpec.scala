@@ -238,7 +238,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         tile.select("span.govuk-tag--red") shouldBe empty
 
         paragraphs.get(0).text shouldBe "Next update due: 5 November 2099"
-        paragraphs.get(1).text shouldBe "Your next tax return is due: 31 January 2100"
+        paragraphs.get(1).text shouldBe "Next tax return due: 31 January 2100"
 
         val link: Element = tile.select("a.govuk-link").first()
         link.text shouldBe "View deadlines and manage how you report"
@@ -261,7 +261,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         overdueTag.text() shouldBe "Overdue"
 
         paragraphs.get(1).text shouldBe "Next update due: 1 October 2024"
-        paragraphs.get(2).text shouldBe "Your next tax return is due: 31 January 2025"
+        paragraphs.get(2).text shouldBe "Next tax return due: 31 January 2025"
 
         val link: Element = tile.select("a.govuk-link").first()
         link.text shouldBe "View deadlines and manage how you report"
@@ -288,7 +288,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         overdueTag.text() shouldBe "3 Overdue updates"
 
         paragraphs.get(1).text shouldBe "Next update due: 5 May 2024"
-        paragraphs.get(2).text shouldBe "Your next tax return is due: 31 January 2025"
+        paragraphs.get(2).text shouldBe "Next tax return due: 31 January 2025"
 
         val link: Element = tile.select("a.govuk-link").first()
         link.text shouldBe "View deadlines and manage how you report"
@@ -310,7 +310,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         tile.select("span.govuk-tag--red") shouldBe empty
 
         paragraphs.size() shouldBe 1
-        paragraphs.get(0).text shouldBe "Your next tax return is due: 31 January 2101"
+        paragraphs.get(0).text shouldBe "Next tax return due: 31 January 2101"
 
         val link: Element = tile.select("a.govuk-link").first()
         link.text shouldBe "View deadlines and manage how you report"
@@ -333,7 +333,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         overdueTag.text() shouldBe "Overdue"
 
         paragraphs.get(1).text shouldBe "Next update due: 5 April 2025"
-        paragraphs.get(2).text shouldBe "Your next tax return is due: 31 January 2026"
+        paragraphs.get(2).text shouldBe "Next tax return due: 31 January 2026"
 
         val link: Element = tile.select("a.govuk-link").first()
         link.text shouldBe "View deadlines and manage how you report"
@@ -345,7 +345,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       ) {
         val tile: Element = getElementById("updates-tile").get
 
-        tile.text().trim shouldBe "Next updates due"
+        tile.text().trim shouldBe "Your updates and deadlines"
         tile.select("span.govuk-tag--red") shouldBe empty
         tile.select("p.govuk-body") shouldBe empty
       }

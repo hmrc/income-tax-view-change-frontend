@@ -436,12 +436,12 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         document.title shouldBe homePageTitle
 
         val tile = document.select("#updates-tile")
-        tile.select("h2").text shouldBe "Next updates due"
+        tile.select("h2").text shouldBe "Your updates and deadlines"
         tile.select("p").get(0).text shouldBe "Next update due: 5 November 2099"
-        tile.select("p").get(1).text shouldBe "Your next tax return is due: 31 January 2100"
+        tile.select("p").get(1).text shouldBe "Next tax return due: 31 January 2100"
 
         val link = tile.select("a")
-        link.text.trim shouldBe "View update deadlines"
+        link.text.trim shouldBe "View your deadlines"
         link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
       }
 
@@ -472,15 +472,15 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         val document = Jsoup.parse(contentAsString(result))
         val tile = document.select("#updates-tile")
 
-        tile.select("h2").text shouldBe "Next updates due"
+        tile.select("h2").text shouldBe "Your updates and deadlines"
 
         val paragraphs = tile.select("p")
         paragraphs.get(0).select("span.govuk-tag.govuk-tag--red").text should include("2 Overdue updates")
         paragraphs.get(1).text shouldBe "Next update due: 5 November 2099"
-        paragraphs.get(2).text shouldBe "Your next tax return is due: 31 January 2100"
+        paragraphs.get(2).text shouldBe "Next tax return due: 31 January 2100"
 
         val link = paragraphs.get(3).select("a")
-        link.text.trim shouldBe "View update deadlines"
+        link.text.trim shouldBe "View your deadlines"
         link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
       }
 
@@ -509,15 +509,15 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         val document: Document = Jsoup.parse(contentAsString(result))
         val tile: Elements = document.select("#updates-tile")
 
-        tile.select("h2").text shouldBe "Next updates due"
+        tile.select("h2").text shouldBe "Your updates and deadlines"
 
         tile.text should not include "Next update due:"
 
         val pTags = tile.select("p")
-        pTags.get(0).text shouldBe "Your next tax return is due: 31 January 2100"
+        pTags.get(0).text shouldBe "Next tax return due: 31 January 2100"
 
         val link = pTags.get(1).select("a")
-        link.text.trim shouldBe "View update deadlines"
+        link.text.trim shouldBe "View your deadlines"
         link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
       }
 

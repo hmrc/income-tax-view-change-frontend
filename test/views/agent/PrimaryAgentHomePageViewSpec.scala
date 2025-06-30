@@ -268,7 +268,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
           val link = tile.select("a.govuk-link").first()
 
           paragraphs.get(0).text shouldBe "Next update due: 5 November 2099"
-          paragraphs.get(1).text shouldBe "Your next tax return is due: 31 January 2100"
+          paragraphs.get(1).text shouldBe "Next tax return due: 31 January 2100"
           link.text shouldBe "View deadlines and manage how you report"
           link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/next-updates"
         }
@@ -292,7 +292,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
           tag.text() shouldBe "Overdue"
           paragraphs.get(1).text shouldBe "Next update due: 1 October 2024"
-          paragraphs.get(2).text shouldBe "Your next tax return is due: 31 January 2025"
+          paragraphs.get(2).text shouldBe "Next tax return due: 31 January 2025"
           link.text shouldBe "View deadlines and manage how you report"
         }
 
@@ -318,7 +318,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
           tag.text() shouldBe "3 Overdue updates"
           paragraphs.get(1).text shouldBe "Next update due: 5 May 2024"
-          paragraphs.get(2).text shouldBe "Your next tax return is due: 31 January 2025"
+          paragraphs.get(2).text shouldBe "Next tax return due: 31 January 2025"
           link.text shouldBe "View deadlines and manage how you report"
         }
 
@@ -336,7 +336,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
           val tag = tile.select("span.govuk-tag.govuk-tag--red")
 
           paragraphs.size() shouldBe 1
-          paragraphs.get(0).text shouldBe "Your next tax return is due: 31 January 2101"
+          paragraphs.get(0).text shouldBe "Next tax return due: 31 January 2101"
           tag shouldBe empty
         }
       }
