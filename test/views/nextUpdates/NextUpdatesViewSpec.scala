@@ -21,7 +21,7 @@ import models.obligations._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
-import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
+import testConstants.BusinessDetailsTestConstants.business1
 import testConstants.NextUpdatesTestConstants
 import testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel
 import testUtils.TestSupport

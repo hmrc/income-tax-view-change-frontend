@@ -224,8 +224,9 @@ class NextUpdatesHelperR17Spec extends TestSupport {
         pageDocument.getElementById("current-year-subheading").text() shouldBe "Tax return due"
       }
 
-      "not display the description containing the compatible software link in the current year tab" in new Setup(isAgent = false, obligationsModel, Annual, Voluntary) {
-        Option(pageDocument.getElementById("current-year-compatible-software-desc")) shouldBe None
+      "display the description containing the compatible software link in the current year tab" in new Setup(isAgent = false, obligationsModel, Annual, Voluntary) {
+        pageDocument.getElementById("current-year-compatible-software-desc").text() shouldBe "As you are opted out of Making Tax Digital for Income Tax, you can find out here how you file your Self Assessment tax return (opens in new tab)."
+        pageDocument.getElementById("annual-compatible-software-link").attr("href") shouldBe "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
       }
 
       "display correct tax return due date for the 2025-26 tax year in the current year tab" in new Setup(isAgent = false, obligationsModel, Annual, Voluntary) {

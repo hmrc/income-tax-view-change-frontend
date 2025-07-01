@@ -52,7 +52,7 @@
 
 @currentYearLabel = @{ if(!isCurrentYearQuarterly) getMessage("annual.label", currentTaxYearStart, currentTaxYearEnd) else getMessage("quarterly.label", currentTaxYearStart, currentTaxYearEnd) }
 @nextYearLabel = @{ if(!isNextYearQuarterly) getMessage("annual.ny.label", currentTaxYearEnd, nextTaxYearEnd) else getMessage("quarterly.ny.label", currentTaxYearEnd, nextTaxYearEnd) }
-@currentYearTab = @{ if(!isCurrentYearQuarterly) currentYearTabContentAnnual(isNextYearQuarterly) else quarterlyTabCYOrNY(currentTaxYearStart, currentTaxYearEnd, nextTaxYearEnd, true) }
+@currentYearTab = @{ if(!isCurrentYearQuarterly) currentYearTabContentAnnual else quarterlyTabCYOrNY(currentTaxYearStart, currentTaxYearEnd, nextTaxYearEnd, true) }
 @nextYearTab = @{ if(!isNextYearQuarterly) nextYearTabContentAnnual else nextYearTabContentQuarterly }
 
 @govukTabs(Tabs(
@@ -120,15 +120,13 @@
 
 }
 
-@currentYearTabContentAnnual(isNextYearQuarterly: Boolean) = {
+@currentYearTabContentAnnual = {
     @h2(getMessage("annual.heading", currentTaxYearStart, currentTaxYearEnd), classes = "govuk-heading-l", optId = Some("current-year-heading"))
     @p(id = Some("current-year-desc")){@getMessage("annual.text1")}
     @h2(getMessage("annual.subHeading"), optId = Some("current-year-subheading"))
-    @if(!isNextYearQuarterly) {
-        @p(id = Some("current-year-compatible-software-desc")) {
-            @getMessage("annual.text2")
-            @link(link = getMessage("quarterly.compatibleSoftware.link"), target = Some("_blank"), messageKey = getMessage("annual.link"), id = Some("annual-compatible-software-link"), outerMessage = ".")
-        }
+    @p(id = Some("current-year-compatible-software-desc")) {
+        @getMessage("annual.text2")
+        @link(link = getMessage("quarterly.compatibleSoftware.link"), target = Some("_blank"), messageKey = getMessage("annual.link"), id = Some("annual-compatible-software-link"), outerMessage = ".")
     }
     @p(id = Some("current-year-return-due-date")) {
         @getMessage("annual.text3", currentTaxYearStart, currentTaxYearEnd)
