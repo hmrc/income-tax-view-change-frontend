@@ -163,9 +163,10 @@
 @quarterlyDropdownContent = {
     @p(id = Some("active-quarterly-dropdown-desc")){@getMessage("quarterly.dropdown.text1")}
     @bulletList(
-        itemMsgKeys =
+        Seq(
             getMessage("quarterly.dropdown.text2"),
-            getMessage("quarterly.dropdown.text3"),
+            getMessage("quarterly.dropdown.text3")
+        )
     )
     @p(id = Some("active-quarterly-dropdown-desc2")) {
         @getMessage("quarterly.dropdown.text4")
