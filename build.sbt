@@ -8,23 +8,24 @@ import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 val appName = "income-tax-view-change-frontend"
 
-val bootstrapPlayVersion = "9.7.0"
-val playPartialsVersion = "9.1.0"
-val playFrontendHMRCVersion = "11.11.0"
-val catsVersion = "2.12.0"
+val bootstrapPlayVersion = "9.13.0"
+val playPartialsVersion = "10.1.0"
+val playFrontendHMRCVersion = "12.6.0"
+val catsVersion = "2.13.0"
 val scalaTestPlusVersion = "7.0.1"
 val pegdownVersion = "1.6.0"
-val jsoupVersion = "1.18.1"
-val mockitoVersion = "5.11.0"
-val scalaMockVersion = "5.2.0"
-val wiremockVersion = "3.0.0-beta-7"
-val hmrcMongoVersion = "2.4.0"
-val currentScalaVersion = "2.13.16"
+val jsoupVersion = "1.20.1"
+val mockitoVersion = "5.18.0"
+val scalaMockVersion = "7.3.2"
+val wiremockVersion = "3.0.1"
+val hmrcMongoVersion = "2.6.0"
+val currentScalaVersion = "3.3.6"
 val playVersion = "play-30"
 
 scalacOptions ++= Seq(
   "-feature",
   "-Wconf:src=target/.*:silent")
+scalacOptions ++= Seq("-new-syntax", "-rewrite")
 
 val compile = Seq(
   ws,
@@ -36,7 +37,6 @@ val compile = Seq(
   "uk.gov.hmrc" %% s"crypto-json-$playVersion" % "8.1.0",
   "org.jsoup" % "jsoup" % jsoupVersion,
 )
-
 def test(scope: String = "test"): Seq[ModuleID] = Seq(
   "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,
   "org.scalamock" %% "scalamock" % scalaMockVersion % scope,
