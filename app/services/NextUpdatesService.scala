@@ -163,30 +163,38 @@ class NextUpdatesService @Inject()(
   def getNextDueDates()(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[(Option[LocalDate], Option[LocalDate])] = {
     getOpenObligations().map {
       case ObligationsModel(obligations) =>
-        val all = obligations.flatMap(_.obligations)
+        val openObligations = obligations.flatMap(_.obligations)
 
-        val nextQuarterly = all
+        val nextQuarterlyDueDate = openObligations
           .filter(_.obligationType == "Quarterly")
           .sortBy(_.due)
           .headOption
           .map(_.due)
 
-        val nextTaxReturn = all
-          .filter(_.obligationType == "Crystallisation")
-          .sortBy(_.due)
-          .headOption
-          .map(_.due)
+        val nextTaxReturnDate = Some(calculateNextTaxReturnDueDate())
 
-        (nextQuarterly, nextTaxReturn)
+        (nextQuarterlyDueDate, nextTaxReturnDate)
 
       case error: ObligationsErrorModel =>
         Logger("application").warn(s"[getNextDueDates] Failed to fetch obligations: ${error.message}")
-        (None, None)
+        (None, Some(calculateNextTaxReturnDueDate()))
 
       case unexpected =>
         Logger("application").error(s"[getNextDueDates] Unexpected response: $unexpected")
-        (None, None)
+        (None, Some(calculateNextTaxReturnDueDate()))
     }
+  }
+
+  private def calculateNextTaxReturnDueDate(): LocalDate = {
+    val currentDate = LocalDate.now()
+    val currentTaxYearStart = dateService.getCurrentTaxYear.startYear
+    var nextTaxReturnDate: LocalDate = LocalDate.of(currentTaxYearStart + 1, 1, 31)
+
+    if (!currentDate.isBefore(nextTaxReturnDate)) {
+      nextTaxReturnDate = nextTaxReturnDate.plusYears(1)
+    }
+
+    nextTaxReturnDate
   }
 
 

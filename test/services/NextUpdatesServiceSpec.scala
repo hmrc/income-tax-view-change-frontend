@@ -621,8 +621,9 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       }
     }
   }
-  "getNextQuarterlyUpdateDueDate" should {
-    "return the earliest quarterly due date" in new Setup {
+
+  "getNextDueDates" should {
+    "return the earliest quarterly due date and static next tax return due date" in new Setup {
       val obligationsModel: ObligationsModel = ObligationsModel(Seq(
         GroupedObligationsModel("id1", List(
           SingleObligationModel(fixedDate, fixedDate, fixedDate.plusDays(3), "Quarterly", None, "#001", StatusOpen),
@@ -633,11 +634,20 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
 
       setupMockNextUpdates(obligationsModel)
 
-      val (quarterlyDueDate, _) = getNextDueDates().futureValue
-      quarterlyDueDate shouldBe Some(fixedDate.plusDays(1))
+      val (nextQuarterlyUpdateDueDate, nextTaxReturnDueDate) = TestNextUpdatesService.getNextDueDates().futureValue
+
+      nextQuarterlyUpdateDueDate shouldBe Some(fixedDate.plusDays(1))
+
+      val currentDate = LocalDate.now()
+      val currentTaxYearStart = TestNextUpdatesService.dateService.getCurrentTaxYear.startYear
+      var expectedNextTaxReturnDueDate = LocalDate.of(currentTaxYearStart + 1, 1, 31)
+
+      if (!currentDate.isBefore(expectedNextTaxReturnDueDate)) {
+        expectedNextTaxReturnDueDate = expectedNextTaxReturnDueDate.plusYears(1)
+      }
+
+      nextTaxReturnDueDate shouldBe Some(expectedNextTaxReturnDueDate)
     }
-
-
     "return None when no quarterly obligations exist" in new Setup {
       val obligationsModel: ObligationsModel = ObligationsModel(Seq(
         GroupedObligationsModel("id1", List(
@@ -647,67 +657,36 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
 
       setupMockNextUpdates(obligationsModel)
 
-      val (quarterlyDueDate, _) = getNextDueDates().futureValue
-      quarterlyDueDate shouldBe None
-    }
+      val (nextQuarterlyUpdateDueDate, nextTaxReturnDueDate) = TestNextUpdatesService.getNextDueDates().futureValue
 
+      nextQuarterlyUpdateDueDate shouldBe None
+
+      val currentDate = LocalDate.now()
+      val currentTaxYearStart: Int = TestNextUpdatesService.dateService.getCurrentTaxYear.startYear
+      var expectedNextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYearStart + 1, 1, 31)
+
+      if (!currentDate.isBefore(expectedNextTaxReturnDueDate)) {
+        expectedNextTaxReturnDueDate = expectedNextTaxReturnDueDate.plusYears(1)
+      }
+
+      nextTaxReturnDueDate shouldBe Some(expectedNextTaxReturnDueDate)
+    }
     "return an error when the obligations service returns an error model" in new Setup {
       setupMockNextUpdates(obligationsDataErrorModel)
 
-      val (quarterlyDueDate, _) = getNextDueDates().futureValue
-      quarterlyDueDate shouldBe None
-    }
+      val (nextQuarterlyUpdateDueDate, nextTaxReturnDueDate) = TestNextUpdatesService.getNextDueDates().futureValue
 
-    "return an empty sequence when the obligations list is completely empty" in new Setup {
-      setupMockNextUpdates(ObligationsModel(Seq.empty))
+      nextQuarterlyUpdateDueDate shouldBe None
 
-      val (quarterlyDueDate, _) = getNextDueDates().futureValue
-      quarterlyDueDate shouldBe None
-    }
-  }
+      val currentDate = LocalDate.now()
+      val currentTaxYearStart: Int = TestNextUpdatesService.dateService.getCurrentTaxYear.startYear
+      var expectedNextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYearStart + 1, 1, 31)
 
-  "getNextTaxReturnDueDate" should {
-    "return the earliest open tax return due date" in new Setup {
-      val obligationsModel: ObligationsModel = ObligationsModel(Seq(
-        GroupedObligationsModel("id1", List(
-          SingleObligationModel(fixedDate, fixedDate, fixedDate.plusDays(5), "Crystallisation", None, "C", StatusOpen),
-          SingleObligationModel(fixedDate, fixedDate, fixedDate.plusDays(2), "Crystallisation", None, "C", StatusOpen),
-          SingleObligationModel(fixedDate, fixedDate, fixedDate.plusDays(3), "Quarterly", None, "#001", StatusOpen)
-        ))
-      ))
+      if (!currentDate.isBefore(expectedNextTaxReturnDueDate)) {
+        expectedNextTaxReturnDueDate = expectedNextTaxReturnDueDate.plusYears(1)
+      }
 
-      setupMockNextUpdates(obligationsModel)
-
-      val (_, nextTaxReturnDueDate) = getNextDueDates().futureValue
-      nextTaxReturnDueDate shouldBe Some(fixedDate.plusDays(2))
-    }
-
-    "return the earliest open tax return even when it is overdue" in new Setup {
-      val obligationsModel: ObligationsModel = ObligationsModel(Seq(
-        GroupedObligationsModel("id1", List(
-          SingleObligationModel(
-            start = fixedDate.minusYears(2),
-            end = fixedDate.minusYears(1),
-            due = fixedDate.minusDays(10),
-            obligationType = "Crystallisation",
-            dateReceived = None,
-            periodKey = "C",
-            status = StatusOpen
-          )
-        ))
-      ))
-
-      setupMockNextUpdates(obligationsModel)
-
-      val (_, nextTaxReturnDueDate) = getNextDueDates().futureValue
-      nextTaxReturnDueDate shouldBe Some(fixedDate.minusDays(10))
-    }
-
-    "return None when obligations connector returns an error" in new Setup {
-      setupMockNextUpdates(obligationsDataErrorModel)
-
-      val (_, nextTaxReturnDueDate) = getNextDueDates().futureValue
-      nextTaxReturnDueDate shouldBe None
+      nextTaxReturnDueDate shouldBe Some(expectedNextTaxReturnDueDate)
     }
   }
 }
