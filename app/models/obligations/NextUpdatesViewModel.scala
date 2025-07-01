@@ -18,7 +18,7 @@ package models.obligations
 
 import java.time.LocalDate
 
-case class NextUpdatesViewModel(allDeadlines: Seq[DeadlineViewModel])
+case class NextUpdatesViewModel(allDeadlines: Seq[DeadlineViewModel], missedDeadlines: Seq[DeadlineViewModel] = Seq.empty)
 
 case class DeadlineViewModel(obligationType: ObligationType,
                              standardAndCalendar: Boolean,
