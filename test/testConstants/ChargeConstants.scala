@@ -708,6 +708,28 @@ trait ChargeConstants {
     latePaymentInterestAmount = List(None, None),
     dunningLock = noDunningLocks
   )
+  val financialDetailsLatePaymentPenaltiesChargeItemInterest: List[ChargeItem] = testFinancialDetailsChargeItems(
+    transactionId = List(id1040000123, id1040000124),
+    transactionTypes = List(FirstLatePaymentPenalty, SecondLatePaymentPenalty),
+    dueDate = List(Some(fixedDate.plusDays(1)), Some(fixedDate.plusDays(1))),
+    outstandingAmount = List(0, 0),
+    taxYear = fixedDate.getYear.toString,
+    latePaymentInterestAmount = List(Some(99.0), Some(98.0)),
+    interestEndDate = List(Some(fixedDate.plusDays(1)), Some(fixedDate.plusDays(1))),
+    dunningLock = noDunningLocks,
+    interestRate = List(Some(100), Some(100)),
+    dueDateForFinancialDetail = List(fixedDate.plusDays(1), fixedDate.plusDays(1))
+  )
+  val financialDetailsLateSubmissionPenaltyChargeItemInterest: List[ChargeItem] = testFinancialDetailsChargeItems(
+    transactionId = List(id1040000123, id1040000124),
+    transactionTypes = List(LateSubmissionPenalty, PoaTwoDebit),
+    dueDate = List(Some(fixedDate.plusDays(1)), Some(fixedDate.plusDays(1))),
+    outstandingAmount = List(100.0, 0),
+    taxYear = fixedDate.getYear.toString,
+    latePaymentInterestAmount = List(Some(100.0), None),
+    interestEndDate = List(Some(fixedDate.plusDays(1)), Some(fixedDate.plusDays(1))),
+    dunningLock = noDunningLocks
+  )
 
   val financialDetailsOverdueCharges: List[ChargeItem] = testFinancialDetailsChargeItems(
     transactionId = List(id1040000123, id1040000124),
@@ -844,6 +866,18 @@ trait ChargeConstants {
   val whatYouOweLatePaymentPenalties: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = financialDetailsLatePaymentPenaltiesChargeItem,
+    outstandingChargesModel = Some(OutstandingChargesModel(List()))
+  )
+
+  val whatYouOweAllPenalties: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    chargesList = financialDetailsLateSubmissionPenaltyChargeItem ++ financialDetailsLatePaymentPenaltiesChargeItem,
+    outstandingChargesModel = Some(OutstandingChargesModel(List()))
+  )
+
+  val whatYouOweAllPenaltiesInterest: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    chargesList = financialDetailsLateSubmissionPenaltyChargeItemInterest ++ financialDetailsLatePaymentPenaltiesChargeItemInterest,
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 

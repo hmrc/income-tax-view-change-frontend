@@ -68,13 +68,12 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
 
       auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
 
-      val chargesListNoPenalties = whatYouOweChargesList.copy(chargesList = whatYouOweChargesList.chargesList.filter(!_.isPenalty))
       val hasOverdueCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
       val hasAccruingInterestReviewAndReconcileCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isNotPaidAndNotOverduePoaReconciliationDebit()(dateService))
       Ok(whatYouOwe(
         currentDate = dateService.getCurrentDate,
         hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
-        whatYouOweChargesList = chargesListNoPenalties, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
+        whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
         currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,
         dunningLock = whatYouOweChargesList.hasDunningLock,
         reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
@@ -82,7 +81,8 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
         isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
         creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
         origin = origin,
-        claimToAdjustViewModel = ctaViewModel)(user, user, messages, dateService)
+        claimToAdjustViewModel = ctaViewModel,
+        LPP2Url = appConfig.incomeTaxPenaltiesFrontendCalculation)(user, user, messages, dateService)
       ).addingToSession(gatewayPage -> WhatYouOwePage.name)
     }
   } recover {
