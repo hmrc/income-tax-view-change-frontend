@@ -471,6 +471,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
         val document = Jsoup.parse(contentAsString(result))
         val tile = document.select("#updates-tile")
+        println(tile)
 
         tile.select("h2").text shouldBe "Your updates and deadlines"
 
@@ -479,7 +480,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         paragraphs.get(1).text shouldBe "Next update due: 5 November 2099"
         paragraphs.get(2).text shouldBe "Next tax return due: 31 January 2100"
 
-        val link = paragraphs.get(3).select("a")
+        val link = tile.select("a.govuk-link")
         link.text.trim shouldBe "View your deadlines"
         link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
       }

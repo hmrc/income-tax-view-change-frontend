@@ -19,6 +19,7 @@ package audit.models
 import authV2.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import forms.IncomeSourcesFormsSpec.commonAuditDetails
 import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.itsaStatus.ITSAStatus
 import models.obligations.NextUpdatesTileViewModel
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -103,14 +104,26 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
       val user = defaultMTDITUser(Some(Agent), IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil), isSupportingAgent = true)
       "there are updates due" that {
         "are not overdue" in {
-          val nextDetailsTile = NextUpdatesTileViewModel(List(fixedDate), fixedDate.minusDays(5), true, false, None, None, None)
+          val nextDetailsTile = NextUpdatesTileViewModel(dueDates = List(fixedDate),
+            currentDate = fixedDate.minusDays(5),
+            isReportingFrequencyEnabled = true,
+            showOptInOptOutContentUpdateR17 = false,
+            currentYearITSAStatus = ITSAStatus.NoStatus,
+            nextQuarterlyUpdateDueDate = None,
+            nextTaxReturnDueDate = None)
           HomeAudit.applySupportingAgent(user, nextDetailsTile).detail shouldBe commonAuditDetails(Agent, true) ++ Json.obj(
             "nextUpdateDeadline" -> fixedDate.toString
           )
         }
 
         "are overdue" in {
-          val nextDetailsTile = NextUpdatesTileViewModel(List(fixedDate), fixedDate.plusDays(5), true, false, None, None, None)
+          val nextDetailsTile = NextUpdatesTileViewModel(dueDates = List(fixedDate),
+            currentDate = fixedDate.plusDays(5),
+            isReportingFrequencyEnabled = true,
+            showOptInOptOutContentUpdateR17 = false,
+            currentYearITSAStatus = ITSAStatus.NoStatus,
+            nextQuarterlyUpdateDueDate = None,
+            nextTaxReturnDueDate = None)
           HomeAudit.applySupportingAgent(user, nextDetailsTile).detail shouldBe commonAuditDetails(Agent, true) ++ Json.obj(
             "nextUpdateDeadline" -> fixedDate.toString
           )
@@ -118,7 +131,13 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
       }
 
       "there are multiple overdue updates" in {
-        val nextDetailsTile = NextUpdatesTileViewModel(List(fixedDate.minusDays(5), fixedDate.minusDays(10)), fixedDate, true, false, None, None, None)
+        val nextDetailsTile = NextUpdatesTileViewModel(List(fixedDate.minusDays(5), fixedDate.minusDays(10)),
+          currentDate = fixedDate,
+          isReportingFrequencyEnabled = true,
+          showOptInOptOutContentUpdateR17 = false,
+          currentYearITSAStatus = ITSAStatus.NoStatus,
+          nextQuarterlyUpdateDueDate = None,
+          nextTaxReturnDueDate = None)
         HomeAudit.applySupportingAgent(user, nextDetailsTile).detail shouldBe commonAuditDetails(Agent, true) ++ Json.obj(
           "overdueUpdates" -> 2
         )

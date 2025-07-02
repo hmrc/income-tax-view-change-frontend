@@ -100,7 +100,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
         currentDate = dateService.getCurrentDate,
         isReportingFrequencyEnabled = isEnabled(ReportingFrequencyPage),
         showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
-        currentYearITSAStatus = Some(currentITSAStatus),
+        currentYearITSAStatus = currentITSAStatus,
         nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
         nextTaxReturnDueDate = nextTaxReturnDueDate)
       val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, isEnabled(IncomeSourcesFs),
@@ -141,7 +141,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
         currentDate = dateService.getCurrentDate,
         isReportingFrequencyEnabled = isEnabled(ReportingFrequencyPage),
         showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
-        currentYearITSAStatus = Some(currentITSAStatus),
+        currentYearITSAStatus = currentITSAStatus,
         nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
         nextTaxReturnDueDate = nextTaxReturnDueDate)
 

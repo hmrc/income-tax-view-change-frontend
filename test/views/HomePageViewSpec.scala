@@ -84,12 +84,12 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
   val overdueMessage = "! Warning You have overdue charges. You may be charged interest on these until they are paid in full."
   val overdueMessageForDunningLocks = "! Warning You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full."
   val currentDate = dateService.getCurrentDate
-  private val viewModelFuture: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, false, false, None, None, None)
-  private val viewModelOneOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)), currentDate, false, false, None, None, None)
+  private val viewModelFuture: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, false, false, ITSAStatus.NoStatus, None, None)
+  private val viewModelOneOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)), currentDate, false, false, ITSAStatus.NoStatus, None, None)
   private val viewModelThreeOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1),
-    LocalDate.of(2018, 2, 1), LocalDate.of(2018, 3, 1)), currentDate, false, false, None, None, None)
-  private val viewModelNoUpdates: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(), currentDate, false, false, None, None, None)
-  private val viewModelOptOut: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, true, false, None, None, None)
+    LocalDate.of(2018, 2, 1), LocalDate.of(2018, 3, 1)), currentDate, false, false, ITSAStatus.NoStatus, None, None)
+  private val viewModelNoUpdates: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(), currentDate, false, false, ITSAStatus.NoStatus, None, None)
+  private val viewModelOptOut: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, true, false, ITSAStatus.NoStatus, None, None)
   val paymentTileOverdueDate: LocalDate = LocalDate.of(2020, 4, 6)
   val paymentTileFutureDate: LocalDate = LocalDate.of(2100, 4, 6)
   val paymentTileFutureDateLongFormat: String = paymentTileFutureDate.format(DateTimeFormatter.ofPattern("d MMMM YYYY"))
@@ -228,7 +228,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
           currentDate = LocalDate.of(2025, 06, 24),
           isReportingFrequencyEnabled = true,
           showOptInOptOutContentUpdateR17 = true,
-          currentYearITSAStatus = Some(ITSAStatus.Voluntary),
+          currentYearITSAStatus = ITSAStatus.Voluntary,
           nextQuarterlyUpdateDueDate = Some(LocalDate.of(2099, 11, 5)),
           nextTaxReturnDueDate = Some(LocalDate.of(2100, 1, 31)))
       ) {
@@ -250,7 +250,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
           currentDate = LocalDate.of(2025, 06, 24),
           isReportingFrequencyEnabled = true,
           showOptInOptOutContentUpdateR17 = true,
-          currentYearITSAStatus = Some(ITSAStatus.Voluntary),
+          currentYearITSAStatus = ITSAStatus.Voluntary,
           nextQuarterlyUpdateDueDate = Some(LocalDate.of(2024, 10, 1)),
           nextTaxReturnDueDate = Some(LocalDate.of(2025, 1, 31)))
       ) {
@@ -277,7 +277,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
           currentDate = LocalDate.of(2025, 6, 24),
           isReportingFrequencyEnabled = true,
           showOptInOptOutContentUpdateR17 = true,
-          currentYearITSAStatus = Some(ITSAStatus.Voluntary),
+          currentYearITSAStatus = ITSAStatus.Voluntary,
           nextQuarterlyUpdateDueDate = Some(LocalDate.of(2024, 5, 5)),
           nextTaxReturnDueDate = Some(LocalDate.of(2025, 1, 31)))
       ) {
@@ -300,7 +300,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
           currentDate = LocalDate.of(2025, 06, 24),
           isReportingFrequencyEnabled = true,
           showOptInOptOutContentUpdateR17 = true,
-          currentYearITSAStatus = Some(ITSAStatus.Annual),
+          currentYearITSAStatus = ITSAStatus.Annual,
           nextQuarterlyUpdateDueDate = Some(LocalDate.of(2025, 4, 5)),
           nextTaxReturnDueDate = Some(LocalDate.of(2101, 1, 31)))
       ) {
@@ -322,7 +322,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
           currentDate = LocalDate.of(2025, 6, 24),
           isReportingFrequencyEnabled = true,
           showOptInOptOutContentUpdateR17 = true,
-          currentYearITSAStatus = Some(ITSAStatus.Mandated),
+          currentYearITSAStatus = ITSAStatus.Mandated,
           nextQuarterlyUpdateDueDate = Some(LocalDate.of(2025, 4, 5)),
           nextTaxReturnDueDate = Some(LocalDate.of(2026, 1, 31)))
       ) {
@@ -341,7 +341,13 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       }
 
       "has only title when OptInOptOutContentUpdateR17 is enabled and user has no obligations or tax return date" in new Setup(
-        nextUpdatesTileViewModel = NextUpdatesTileViewModel(dueDates = Seq.empty, currentDate = LocalDate.of(2025, 6, 24), isReportingFrequencyEnabled = true, showOptInOptOutContentUpdateR17 = true, currentYearITSAStatus = Some(ITSAStatus.Voluntary), None, nextTaxReturnDueDate = None)
+        nextUpdatesTileViewModel = NextUpdatesTileViewModel(dueDates = Seq.empty,
+          currentDate = LocalDate.of(2025, 6, 24),
+          isReportingFrequencyEnabled = true,
+          showOptInOptOutContentUpdateR17 = true,
+          currentYearITSAStatus = ITSAStatus.Voluntary,
+          None,
+          nextTaxReturnDueDate = None)
       ) {
         val tile: Element = getElementById("updates-tile").get
 

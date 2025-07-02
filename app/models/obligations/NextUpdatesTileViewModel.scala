@@ -20,13 +20,7 @@ import models.itsaStatus.ITSAStatus.ITSAStatus
 
 import java.time.LocalDate
 
-case class NextUpdatesTileViewModel(dueDates: Seq[LocalDate],
-                                    currentDate: LocalDate,
-                                    isReportingFrequencyEnabled: Boolean,
-                                    showOptInOptOutContentUpdateR17: Boolean,
-                                    currentYearITSAStatus: Option[ITSAStatus],
-                                    nextQuarterlyUpdateDueDate: Option[LocalDate],
-                                    nextTaxReturnDueDate: Option[LocalDate]) {
+case class NextUpdatesTileViewModel(dueDates: Seq[LocalDate], currentDate: LocalDate, isReportingFrequencyEnabled: Boolean, showOptInOptOutContentUpdateR17: Boolean, currentYearITSAStatus: ITSAStatus, nextQuarterlyUpdateDueDate: Option[LocalDate], nextTaxReturnDueDate: Option[LocalDate]) {
   def getNextDeadline: Option[LocalDate] = {
     dueDates.sortWith(_ isBefore _).headOption
   }
