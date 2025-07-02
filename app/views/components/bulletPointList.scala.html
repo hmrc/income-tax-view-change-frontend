@@ -16,10 +16,10 @@
 
 @this()
 
-@(itemMsgKeys: String*)(implicit messages: Messages)
+@(itemMsgKeys: Seq[String], id: Option[String]= None, bulletId: Option[String] = None)(implicit messages: Messages)
 
-<ul class="govuk-list govuk-list--bullet">
+<ul class="govuk-list govuk-list--bullet" id="@id">
     @itemMsgKeys.map { msgKey =>
-       <li>@messages(msgKey)</li>
+       <li id="@bulletId">@messages(msgKey)</li>
     }
 </ul>

@@ -43,8 +43,10 @@
 @bulletPoints = @{
     if(yourReportingObligationsTileViewModel.currentYearITSAStatus == ITSAStatus.Mandated || yourReportingObligationsTileViewModel.currentYearITSAStatus == ITSAStatus.Voluntary) {
         bulletList(
-                messages("home.reportingObligations.quarterly.bullet1"),
-                messages("home.reportingObligations.quarterly.bullet2")
+            Seq(
+                "home.reportingObligations.quarterly.bullet1",
+                "home.reportingObligations.quarterly.bullet2"
+            )
         )
     }
 }

@@ -1,5 +1,5 @@
 @*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-@import models.incomeSourceDetails.ChosenReportingMethod
+@import models.incomeSourceDetails.{ ChosenReportingMethod, SignedUpForMTD, SignUpNextYearOnly, NotSigningUp, SignUpCurrentYearOnly, SignUpBothYears, OnlyOneYearAvailableToSignUp, OptedOut}
 @import models.incomeSourceDetails.viewmodels._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
 @import views.html.components._
@@ -30,6 +30,7 @@
         h1: h1,
         h2: h2,
         p: p,
+        bulletPoints: bulletPointList,
         linkComponent: linkComponent,
         implicitDateFormatter: ImplicitDateFormatterImpl,
         continueButton: ContinueButton,
@@ -46,12 +47,16 @@
     incomeSourceType: IncomeSourceType,
     businessName: Option[String] = None,
     currentDate: LocalDate,
+    currentTaxYear: Int,
+    nextTaxYear: Int,
     isBusinessHistoric: Boolean,
     reportingMethod: ChosenReportingMethod,
     getSoftwareUrl: String,
     getReportingFrequencyUrl: String,
     getNextUpdatesUrl: String,
-    getManageBusinessUrl: String
+    getManageBusinessUrl: String,
+    scenario: SignedUpForMTD,
+    reportingFrequencyEnabled: Boolean
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
@@ -78,7 +83,7 @@
     }
 }
 
-@panel = @{
+@greenPanel = @{
     govukPanel(
         Panel(
             title = Text(getPanelTitle),
@@ -105,46 +110,38 @@
 
 @getQuarterlyOrHybridList = @{
 
-    def renderQuarterlyBullet(quarterlyUpdate: DatesModel): Html = {
+    def renderQuarterlyBullet(quarterlyUpdate: DatesModel): String = {
         val taxYear = viewModel.getQuarterlyObligationTaxYear(quarterlyUpdate)
-        Html(
-            s"""
-                <li id="quarterly-list">
-                    ${getMessage(
-                        "next.quarterly.obligation.text",
-                        (taxYear - 1).toString,
-                        taxYear.toString,
-                        quarterlyUpdate.inboundCorrespondenceDue.toLongDate,
-                        quarterlyUpdate.inboundCorrespondenceFrom.toLongDate,
-                        quarterlyUpdate.inboundCorrespondenceTo.toLongDate
-                    )}
-                </li>
-            """
+        getMessage(
+            "next.quarterly.obligation.text",
+            (taxYear - 1).toString,
+            taxYear.toString,
+            quarterlyUpdate.inboundCorrespondenceDue.toLongDate,
+            quarterlyUpdate.inboundCorrespondenceFrom.toLongDate,
+            quarterlyUpdate.inboundCorrespondenceTo.toLongDate
         )
     }
 
-    def renderFinalDecBullet(finalDecDate: DatesModel): Html = {
-        Html(
-            s"""
-                <li id="obligations-list">
-                    ${getMessage(
-                        "obligation.list.text",
-                        finalDecDate.inboundCorrespondenceFrom.getYear.toString,
-                        finalDecDate.inboundCorrespondenceTo.getYear.toString,
-                        finalDecDate.inboundCorrespondenceDue.toLongDate
-                    )}
-                </li>
-            """
+    def renderFinalDecBullet(finalDecDate: DatesModel): String = {
+        getMessage(
+            "obligation.list.text",
+            finalDecDate.inboundCorrespondenceFrom.getYear.toString,
+            finalDecDate.inboundCorrespondenceTo.getYear.toString,
+            finalDecDate.inboundCorrespondenceDue.toLongDate
         )
     }
 
-    val quarterlyBullet: List[Html] = viewModel.getFirstUpcomingQuarterlyDate(currentDate)
-    .map(renderQuarterlyBullet)
-    .toList
+    val quarterlyBullet: List[String] =
+        viewModel
+        .getFirstUpcomingQuarterlyDate(currentDate)
+        .map(renderQuarterlyBullet)
+        .toList
 
-    val hybridOrFinalDecBullet: List[Html] = viewModel.getFinalDeclarationDate(currentDate)
-    .map(renderFinalDecBullet)
-    .toList
+    val hybridOrFinalDecBullet: List[String] =
+        viewModel
+        .getFinalDeclarationDate(currentDate)
+        .map(renderFinalDecBullet)
+        .toList
 
     quarterlyBullet ++ hybridOrFinalDecBullet
 }
@@ -155,7 +152,7 @@
     btaNavPartial = user.btaNavPartial
 ) {
 
-    @panel
+    @greenPanel
 
     @if(getOverdueObligationsComponents.messageKey.nonEmpty) {
       @if(getOverdueObligationsComponents.messageKey != "hybrid") {
@@ -166,84 +163,199 @@
       }
     }
 
-    @h2(getMessage("deadlines"), classes = "govuk-heading-m", optId=Some("your-revised-deadlines"))
+    @if(scenario == SignUpNextYearOnly) {
 
-    @if((reportingMethod == ChosenReportingMethod.QuarterlyAnnual || reportingMethod == ChosenReportingMethod.Quarterly) && getQuarterlyOrHybridList.nonEmpty) {
-        <ul class="govuk-list govuk-list--bullet">
-            @getQuarterlyOrHybridList
-        </ul>
-    } else {
-         @viewModel.getFinalDeclarationDate(currentDate).map { finalDecDate =>
-              <p class="govuk-body" id="final-declaration">
-                  @Html(getMessage("obligation.list.text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString, finalDecDate.inboundCorrespondenceDue.toLongDate)).
-              </p>
-         }
+        @h2(messages("income.source.added.your.revised.deadlines.h2"), classes = "govuk-heading-m govuk-!-margin-top-7", optId=Some("your-revised-deadlines"))
+
+        @if((reportingMethod == ChosenReportingMethod.QuarterlyAnnual || reportingMethod == ChosenReportingMethod.Quarterly) && getQuarterlyOrHybridList.nonEmpty) {
+            @bulletPoints(getQuarterlyOrHybridList, None, Some("quarterly-list"))
+        } else {
+            @viewModel.getFinalDeclarationDate(currentDate).map { finalDecDate =>
+                @p(id=Some("final-declaration")) {
+                    @messages("income.source.added.obligation.list.text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString, finalDecDate.inboundCorrespondenceDue.toLongDate)
+                }
+            }
+        }
+
+        @govukInsetText(InsetText(id = Some("few-minutes-warning"), content = Text(messages("income.source.added.few.minutes.inset"))))
+
+        @p(id=Some("account-updated")) {
+            @messages("income.source.added.scenario.one.account.updated.p.a")
+            @linkComponent(
+                id = Some("updates-and-deadlines-link"),
+                url = getNextUpdatesUrl,
+                message = messages("income.source.added.scenario.three.account.updated.p.link")
+            )
+            @messages("income.source.added.scenario.one.account.updated.p.b")
+        }
+
+        @if(reportingFrequencyEnabled) {
+            @p(id=Some("view-reporting-obligations")) {
+                @messages("income.source.added.scenario.one.view.reporting.obligations.p.a")
+                @linkComponent(id = Some("reporting-obligations-link"), url = getReportingFrequencyUrl, message = messages("income.source.added.scenario.one.view.reporting.obligations.link"))
+                @messages("income.source.added.scenario.one.view.reporting.obligations.p.b")
+            }
+        }
+
+        @p(id=Some("view-businesses")) {
+            @linkComponent(id = Some("view-businesses-link"), url = getManageBusinessUrl, message = messages("income.source.added.scenario.one.view.businesses.link"))
+            @messages("income.source.added.scenario.one.view.businesses.p")
+        }
+
     }
 
-    @if(viewModel.getOverdueObligationsMessageComponents(currentDate, isBusinessHistoric).messageKey.nonEmpty) {
-      <div class="govuk-link govuk-body" id="view-upcoming-updates">
-        <a href=@getNextUpdatesUrl>@getMessage("obligation.view.overdue.upcoming.updates.text")</a>
-      </div>
-    } else {
-      <div class="govuk-link govuk-body" id="view-upcoming-updates">
-        <a href=@getNextUpdatesUrl>@getMessage("obligation.view.upcoming.updates.text")</a>
-      </div>
+    @if(scenario == NotSigningUp) {
+
+        @h2(messages("income.source.added.your.revised.deadlines.h2"), classes = "govuk-heading-m govuk-!-margin-top-7", optId=Some("your-revised-deadlines"))
+
+        @if((reportingMethod == ChosenReportingMethod.QuarterlyAnnual || reportingMethod == ChosenReportingMethod.Quarterly) && getQuarterlyOrHybridList.nonEmpty) {
+            @bulletPoints(getQuarterlyOrHybridList, None, Some("quarterly-list"))
+        } else {
+            @viewModel.getFinalDeclarationDate(currentDate).map { finalDecDate =>
+                @p(id=Some("final-declaration")) {
+                    @messages("income.source.added.obligation.list.text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString, finalDecDate.inboundCorrespondenceDue.toLongDate)
+                }
+            }
+        }
+
+        @govukInsetText(InsetText(id = Some("few-minutes-warning"), content = Text(messages("income.source.added.few.minutes.inset"))))
+
+        @p(id=Some("account-updated")) {
+            @messages("income.source.added.scenario.two.account.updated.p.a")
+            @linkComponent(
+                id = Some("updates-and-deadlines-link"),
+                url = getNextUpdatesUrl,
+                message = messages("income.source.added.scenario.three.account.updated.p.link")
+            )
+            @messages("income.source.added.scenario.two.account.updated.p.b")
+        }
+
+        @if(reportingFrequencyEnabled) {
+            @p(id=Some("view-reporting-obligations")) {
+                @messages("income.source.added.scenario.two.view.reporting.obligations.p.a")
+                @linkComponent(id = Some("reporting-obligations-link"), url = getReportingFrequencyUrl, message = messages("income.source.added.scenario.two.view.reporting.obligations.link"))
+                @messages("income.source.added.scenario.two.view.reporting.obligations.p.b")
+            }
+        }
+
+        @p(id=Some("view-businesses")) {
+            @linkComponent(id = Some("view-businesses-link"), url = getManageBusinessUrl, message = messages("income.source.added.scenario.two.view.businesses.link"))
+            @messages("income.source.added.scenario.two.view.businesses.p")
+        }
     }
 
-    <div class="govuk-link govuk-body" id="view-all-businesses-link">
-      <a href=@getManageBusinessUrl>@getMessage("view.all.businesses")</a>
-    </div>
+    @if(scenario == SignUpCurrentYearOnly || scenario == SignUpBothYears) {
 
-    @if(reportingMethod == ChosenReportingMethod.QuarterlyAnnual || reportingMethod == ChosenReportingMethod.AnnualQuarterly) {
-        <div class="govuk-body" id="change-frequency">
-          @getMessage("quarterly.annual.reporting.frequency.a")
-          <a class="govuk-link" href=@getReportingFrequencyUrl>@getMessage("quarterly.annual.reporting.frequency.link")</a>
-          @getMessage("quarterly.annual.reporting.frequency.b")
-        </div>
-    } else if(reportingMethod == ChosenReportingMethod.Annual || reportingMethod == ChosenReportingMethod.DefaultAnnual) {
-        <div class="govuk-body" id="change-frequency">
-            @getMessage("annual.reporting.frequency.text")
-            <a class="govuk-link" href=@getReportingFrequencyUrl>@getMessage("annual.reporting.frequency.link")</a>
-        </div>
-    } else if(reportingMethod == ChosenReportingMethod.Quarterly) {
-        @* No output for Quarterly reporting method *@
-    } else {
-        <div class="govuk-body" id="change-frequency">
-            @getMessage("quarterly.opt.out.text.1")
-            <a class="govuk-link" href=@getReportingFrequencyUrl>@getMessage("quarterly.opt.out.link")</a>
-            @getMessage("quarterly.opt.out.text.2")
-        </div>
+        @govukInsetText(InsetText(id = Some("may-have-overdue-updates"), content = Text(messages("income.source.added.few.minutes.overdue.updates", currentTaxYear.toString(), nextTaxYear.toString()))))
+
+        @h2(messages("income.source.added.your.revised.deadlines.h2"), classes = "govuk-heading-m govuk-!-margin-top-7", optId=Some("your-revised-deadlines"))
+
+        @if((reportingMethod == ChosenReportingMethod.QuarterlyAnnual || reportingMethod == ChosenReportingMethod.Quarterly) && getQuarterlyOrHybridList.nonEmpty) {
+            @bulletPoints(getQuarterlyOrHybridList, None, Some("quarterly-list"))
+        } else {
+            @viewModel.getFinalDeclarationDate(currentDate).map { finalDecDate =>
+                @p(id=Some("final-declaration")) {
+                    @messages("income.source.added.obligation.list.text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString, finalDecDate.inboundCorrespondenceDue.toLongDate)
+                }
+            }
+        }
+
+        @govukInsetText(InsetText(id = Some("few-minutes-warning"), content = Text(messages("income.source.added.few.minutes.inset"))))
+
+        @p(id = Some("account-updated")) {
+            @messages("income.source.added.scenario.three.account.updated.p.a")
+            @linkComponent(
+                id = Some("updates-and-deadlines-link"),
+                url = getNextUpdatesUrl,
+                message = messages("income.source.added.scenario.three.account.updated.p.link")
+            )
+            @messages("income.source.added.scenario.three.account.updated.p.b")
+        }
+
+        @if(reportingFrequencyEnabled) {
+            @p(id=Some("view-reporting-obligations")) {
+                @messages("income.source.added.scenario.three.view.reporting.obligations.p.a")
+                @linkComponent(id = Some("reporting-obligations-link"), url = getReportingFrequencyUrl, message = messages("income.source.added.scenario.three.view.reporting.obligations.link"))
+                @messages("income.source.added.scenario.three.view.reporting.obligations.p.b")
+            }
+        }
+
+        @p(id=Some("view-businesses")) {
+            @linkComponent(id = Some("view-businesses-link"), url = getManageBusinessUrl, message = messages("income.source.added.scenario.three.view.businesses.link"))
+            @messages("income.source.added.scenario.three.view.businesses.p")
+        }
     }
+
+    @if(scenario == OnlyOneYearAvailableToSignUp || scenario == OptedOut) {
+
+        @h2(messages("income.source.added.your.revised.deadlines.h2"), classes = "govuk-heading-m govuk-!-margin-top-7", optId=Some("your-revised-deadlines"))
+
+        @if((reportingMethod == ChosenReportingMethod.QuarterlyAnnual || reportingMethod == ChosenReportingMethod.Quarterly) && getQuarterlyOrHybridList.nonEmpty) {
+                @bulletPoints(getQuarterlyOrHybridList, None, Some("quarterly-list"))
+        } else {
+            @viewModel.getFinalDeclarationDate(currentDate).map { finalDecDate =>
+                @p(id=Some("final-declaration")) {
+                    @messages("income.source.added.obligation.list.text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString, finalDecDate.inboundCorrespondenceDue.toLongDate)
+                }
+            }
+        }
+
+        @govukInsetText(InsetText(id = Some("few-minutes-warning"), content = Text(messages("income.source.added.few.minutes.inset"))))
+
+        @p(id=Some("account-updated")) {
+            @messages("income.source.added.scenario.four.account.updated.p.a")
+            @linkComponent(
+                id = Some("updates-and-deadlines-link"),
+                url = getNextUpdatesUrl,
+                message = messages("income.source.added.scenario.three.account.updated.p.link")
+            )
+            @messages("income.source.added.scenario.four.account.updated.p.b")
+        }
+
+        @if(reportingFrequencyEnabled) {
+            @p(id=Some("view-reporting-obligations")) {
+                @messages("income.source.added.scenario.four.view.reporting.obligations.p")
+                @linkComponent(id = Some("reporting-obligations-link"), url = getReportingFrequencyUrl, message = messages("income.source.added.scenario.four.view.reporting.obligations.link"))
+            }
+        }
+
+        @p(id=Some("view-businesses")) {
+            @linkComponent(id = Some("view-businesses-link"), url = getManageBusinessUrl, message = messages("income.source.added.scenario.four.view.businesses.link"))
+            @messages("income.source.added.scenario.four.view.businesses.p")
+        }
+    }
+
 
     @if(
         reportingMethod == ChosenReportingMethod.QuarterlyAnnual ||
         reportingMethod == ChosenReportingMethod.AnnualQuarterly
     ) {
-        @h2(getMessage("submit.software.text"), classes = "govuk-heading-m", optId = Some("submit-updates-in-software"))
+        @h2(messages("income.source.added.submit.software.h2"), classes = "govuk-heading-m", optId = Some("submit-updates-in-software"))
 
         @p(id=Some("submit-via-compatible-software-quarterly")) {
-            @getMessage("submit.software.quarterly.text")
-            @linkComponent(id = Some("compatible-software-link"), url = getSoftwareUrl, message = messages("base.software.compatible.with.mtd.income.tax.link") + " ", target = Some("_blank"), additionalOpenTabMessage = Some("."))
+            @messages("income.source.added.submit.software.quarterly.p")
+            @linkComponent(id = Some("compatible-software-link"), url = getSoftwareUrl, message = messages("income.source.added.submit.software.quarterly.link"), target = Some("_blank"), additionalOpenTabMessage = Some(messages("base.fullstop")))
         }
 
-        @p(id=Some("submit-via-compatible-software-annual")) { @messages(getMessage("submit.annual.text")) }
+        @p(id=Some("submit-via-compatible-software-annual")) { @messages(messages("income.source.added.submit.annual.text.full")) }
 
-    } else if(reportingMethod == ChosenReportingMethod.Annual || reportingMethod == ChosenReportingMethod.DefaultAnnual) {
+    } else if (reportingMethod == ChosenReportingMethod.Annual || reportingMethod == ChosenReportingMethod.DefaultAnnual) {
 
-        @h2(getMessage("submit.software.text"), classes = "govuk-heading-m", optId = Some("submit-updates-in-software"))
+        @h2(messages("income.source.added.submit.software.h2"), classes = "govuk-heading-m", optId = Some("submit-updates-in-software"))
 
         @p(id=Some("submit-via-compatible-software-annual")) {
-            @getMessage("submit.annual.annual.text")
-            @linkComponent(id = Some("compatible-software-link"), url = getSoftwareUrl, message = messages("base.software.compatible.with.mtd.income.tax.link") + " ", target = Some("_blank"), additionalOpenTabMessage = Some("."))
+            @messages("income.source.added.submit.annual.text.p")
+            @linkComponent(id = Some("compatible-software-link"), url = getSoftwareUrl, message = messages("income.source.added.submit.software.annual.link"), target = Some("_blank"), additionalOpenTabMessage = Some(messages("base.fullstop")))
         }
-
     } else {
 
-        @h2(getMessage("submit.software.text"), classes = "govuk-heading-m", optId = Some("submit-updates-in-software"))
+        @h2(messages("income.source.added.submit.software.h2"), classes = "govuk-heading-m", optId = Some("submit-updates-in-software"))
 
         @p(id=Some("submit-via-compatible-software-quarterly")) {
-            @getMessage("submit.software.quarterly.text")
-            @linkComponent(id = Some("compatible-software-link"), url = getSoftwareUrl, message = messages("base.software.compatible.with.mtd.income.tax.link") + " ", target = Some("_blank"), additionalOpenTabMessage = Some("."))
+            @messages("income.source.added.submit.software.quarterly.p")
+            @linkComponent(id = Some("compatible-software-link"), url = getSoftwareUrl, message = messages("income.source.added.submit.software.quarterly.link"), target = Some("_blank"), additionalOpenTabMessage = Some(messages("base.fullstop")))
         }
     }
+
+
 }

@@ -31,6 +31,7 @@
         bulletList: bulletPointList,
         link: link,
         govukTable: GovukTable,
+        govukWarningText : GovukWarningText,
         implicitDateFormatter: ImplicitDateFormatterImpl
 )
 
@@ -45,12 +46,13 @@
 @currentTaxYearStart = @{ optOutProposition.currentTaxYear.taxYear.startYear.toString }
 @currentTaxYearEnd = @{ optOutProposition.currentTaxYear.taxYear.endYear.toString }
 @nextTaxYearEnd = @{ optOutProposition.currentTaxYear.taxYear.nextYear.endYear.toString }
+@nextYearTaxReturnYear = @{ nextTaxYearEnd.toInt + 1 }
 @isCurrentYearQuarterly = @{ optOutProposition.isCurrentYearQuarterly && !user.incomeSources.areAllBusinessesCeased }
 @isNextYearQuarterly = @{ optOutProposition.isNextYearQuarterly && !user.incomeSources.areAllBusinessesCeased }
 
 @currentYearLabel = @{ if(!isCurrentYearQuarterly) getMessage("annual.label", currentTaxYearStart, currentTaxYearEnd) else getMessage("quarterly.label", currentTaxYearStart, currentTaxYearEnd) }
 @nextYearLabel = @{ if(!isNextYearQuarterly) getMessage("annual.ny.label", currentTaxYearEnd, nextTaxYearEnd) else getMessage("quarterly.ny.label", currentTaxYearEnd, nextTaxYearEnd) }
-@currentYearTab = @{ if(!isCurrentYearQuarterly) currentYearTabContentAnnual else currentYearTabContentQuarterly }
+@currentYearTab = @{ if(!isCurrentYearQuarterly) currentYearTabContentAnnual else quarterlyTabCYOrNY(currentTaxYearStart, currentTaxYearEnd, nextTaxYearEnd, true) }
 @nextYearTab = @{ if(!isNextYearQuarterly) nextYearTabContentAnnual else nextYearTabContentQuarterly }
 
 @govukTabs(Tabs(
@@ -74,34 +76,46 @@
 ))
 
 
-@currentYearTabContentQuarterly = {
-    @h2(getMessage("quarterly.heading", currentTaxYearStart, currentTaxYearEnd), classes = "govuk-heading-l", optId = Some("current-year-heading"))
-    @p(id = Some("current-year-desc")){ @getMessage("quarterly.text") }
-    @h2(getMessage("quarterly.subheading"), optId = Some("current-year-quarterly-heading"))
-    @p(id = Some("current-year-quarterly-desc")){ @getMessage("quarterly.text2") }
+@quarterlyTabCYOrNY(taxYearStart: String, taxYearEnd: String, taxReturnYear: String, isCY: Boolean) = {
+
+    @if(isCY) {
+        @h2(getMessage("quarterly.heading", taxYearStart, taxYearEnd), classes = "govuk-heading-l", optId = Some("active-quarterly-heading"))
+    } else {
+        @h2(getMessage("quarterly.ny.heading", taxYearStart, taxYearEnd), classes = "govuk-heading-l", optId = Some("active-quarterly-heading"))
+    }
+
+    @if(isCY) {
+        @p(id = Some("active-quarterly-desc")) { @getMessage("quarterly.text") }
+    }
+
+    @h2(getMessage("quarterly.subheading"), optId = Some("active-quarterly-subheading"))
+    @p(id = Some("active-quarterly-subdesc")){ @getMessage("quarterly.text2") }
 
     @detailsDropdown(getMessage("quarterly.dropdown.heading"), quarterlyDropdownContent)
+
+    @if(isCY) {
+        @missedDeadlinesTable
+    }
 
     @quarterlyUpdatesTable
 
     @if(!isSupportingAgent) {
-        @p(id = Some("current-year-tax-year-summary-desc")) {
+        @p(id = Some("active-quarterly-tax-year-summary-desc")) {
             @getMessage("quarterly.link.text1")
             @link(link = taxYearSummaryLink, messageKey = getMessage("quarterly.link.text2"), id = Some("tax-year-summary-link"))
             @getMessage("quarterly.link.text3")
         }
     }
 
-
-    @h2(getMessage("quarterly.subheading2"), optId = Some("current-year-return-due-heading"))
-    @p(id = Some("current-year-return-due-desc")) {
+    @h2(getMessage("quarterly.subheading2"), optId = Some("active-quarterly-return-due-heading"))
+    @p(id = Some("active-quarterly-return-due-desc")) {
         @getMessage("quarterly.text3")
         @link(link = getMessage("quarterly.compatibleSoftware.link"), target = Some("_blank"), messageKey = getMessage("quarterly.text4"), id = Some("quarterly-compatible-software-link"), outerMessage = ".")
     }
 
-    @p(id = Some("current-year-return-due-date")) {
-        @getMessage("quarterly.text5", currentTaxYearStart, currentTaxYearEnd)
-        <strong class="govuk-!-font-weight-bold">@getMessage("quarterly.text6", nextTaxYearEnd)</strong>
+    @p(id = Some("active-quarterly-return-due-date")) {
+        @getMessage("quarterly.text5", taxYearStart, taxYearEnd)
+        <strong class="govuk-!-font-weight-bold">@getMessage("quarterly.text6", taxReturnYear)</strong>
     }
 
 }
@@ -120,13 +134,21 @@
     }
 }
 
-@nextYearTabContentQuarterly = {
-    @h2(getMessage("quarterly.ny.heading", currentTaxYearEnd, nextTaxYearEnd), classes = "govuk-heading-l", optId = Some("next-year-heading"))
-    @p(id = Some("next-year-desc")){
-        @getMessage("quarterly.ny.text1", currentTaxYearEnd, nextTaxYearEnd)
-        @link(link = getMessage("quarterly.compatibleSoftware.link"), target = Some("_blank"), messageKey = getMessage("quarterly.ny.text2"), id = Some("quarterly-compatible-software-link-ny"), outerMessage = ".")
+@nextYearTabContentQuarterly = @{
+    if (isCurrentYearQuarterly) {
+        HtmlFormat.fill(Seq(
+            h2(getMessage("quarterly.ny.heading", currentTaxYearEnd, nextTaxYearEnd), classes = "govuk-heading-l", optId = Some("next-year-heading")),
+            p(id = Some("next-year-desc")){
+                HtmlFormat.fill(Seq(
+                    Html(getMessage("quarterly.ny.text1", currentTaxYearEnd, nextTaxYearEnd)),
+                    link(link = getMessage("quarterly.compatibleSoftware.link"), target = Some("_blank"), messageKey = getMessage("quarterly.ny.text2"), id = Some("quarterly-compatible-software-link-ny"), outerMessage = ".")
+                ))
+            },
+            p(id = Some("next-year-desc2")){ Html(getMessage("quarterly.ny.text3")) }
+        ))
+    } else {
+        quarterlyTabCYOrNY(currentTaxYearEnd, nextTaxYearEnd, nextYearTaxReturnYear.toString, false)
     }
-    @p(id = Some("next-year-desc2")){ @getMessage("quarterly.ny.text3") }
 }
 
 @nextYearTabContentAnnual = {
@@ -139,15 +161,16 @@
 }
 
 @quarterlyDropdownContent = {
-    @p(id = Some("current-year-dropdown-desc")){@getMessage("quarterly.dropdown.text1")}
+    @p(id = Some("active-quarterly-dropdown-desc")){@getMessage("quarterly.dropdown.text1")}
     @bulletList(
-        itemMsgKeys =
+        Seq(
             getMessage("quarterly.dropdown.text2"),
-            getMessage("quarterly.dropdown.text3"),
+            getMessage("quarterly.dropdown.text3")
+        )
     )
-    @p(id = Some("current-year-dropdown-desc2")) {
+    @p(id = Some("active-quarterly-dropdown-desc2")) {
         @getMessage("quarterly.dropdown.text4")
-        @link(link = getMessage("quarterly.compatibleSoftware.link"), target = Some("_blank"), messageKey = getMessage("quarterly.dropdown.link.text"), id = Some("quarterly-compatible-software-link-dropdown"), outerMessage = ".")
+        @link(link = getMessage("quarterly.compatibleSoftware.link"), target = Some("_blank"), messageKey = getMessage("quarterly.dropdown.link.text"), id = Some("active-quarterly-compatible-software-link-dropdown"), outerMessage = ".")
     }
 }
 
@@ -156,7 +179,7 @@
         case Nil => HtmlFormat.empty
         case deadlines =>
             HtmlFormat.fill(Seq(
-                h2(getMessage("quarterly.table.heading"), optId = Some("current-year-quarterly-table-heading")),
+                h2(getMessage("quarterly.table.heading"), optId = Some("active-quarterly-table-heading")),
                 govukTable(Table(
                     head = Some(List(
                         HeadCell(
@@ -169,30 +192,57 @@
                             content = Text(getMessage("quarterly.table.heading.row3")),
                             attributes = Map("id" -> "table-head-name-updates-due"))
                     )),
-                    rows = quarterlyUpdatesRows(deadlines),
+                    rows = quarterlyUpdatesRows(deadlines, "upcoming"),
                     attributes = Map("id" -> "quarterly-updates-table")
                 ))
             ))
     }
 }
 
-@quarterlyUpdatesRows(deadlines: Seq[DeadlineViewModel]) = @{
+@missedDeadlinesTable = @{
+    viewModel.missedDeadlines match {
+        case Nil => HtmlFormat.empty
+        case deadlines =>
+            HtmlFormat.fill(Seq(
+                govukWarningText(WarningText(content = Text(getMessage("quarterly.missed.deadlines.warning")), attributes = Map("id" -> "missed-deadlines-warning"))),
+                missedDeadlinesText,
+                h2(getMessage("quarterly.missed.deadlines.table.heading"), optId = Some("missed-deadlines-table-heading")),
+                govukTable(Table(
+                    head = Some(List(
+                        HeadCell(
+                            content = Text(getMessage("quarterly.table.heading.row1")),
+                            attributes = Map("id" -> "table-head-name-deadline-missed")),
+                        HeadCell(
+                            content = Text(getMessage("quarterly.table.heading.row2")),
+                            attributes = Map("id" -> "table-head-name-period-missed")),
+                        HeadCell(
+                            content = Text(getMessage("quarterly.table.heading.row3")),
+                            attributes = Map("id" -> "table-head-name-updates-due-missed"))
+                    )),
+                    rows = quarterlyUpdatesRows(deadlines, "missed"),
+                    attributes = Map("id" -> "missed-deadlines-table")
+                ))
+            ))
+    }
+}
+
+@quarterlyUpdatesRows(deadlines: Seq[DeadlineViewModel], idSuffix: String) = @{
     deadlines.zipWithIndex.map { case (DeadlineViewModel(obligationType: ObligationType, bothQuarters: Boolean, deadlineDate: LocalDate, standardObligations: Seq[ObligationWithIncomeType], calendarObligations: Seq[ObligationWithIncomeType]), index) =>
         val allValidObligations = getObligations(bothQuarters, standardObligations, calendarObligations)
 
         Seq(
             TableRow(
                 content = Text(deadlineDate.toLongDateShort),
-                attributes = Map("id" -> s"quarterly-deadline-date-$index"),
+                attributes = Map("id" -> s"quarterly-deadline-date-$idSuffix-$index"),
                 classes = "govuk-!-font-weight-bold"
             ),
             TableRow(
                 content = Text(allValidObligations.headOption.map(obl => periodMessage(obl.obligation)).getOrElse("")),
-                attributes = Map("id" -> s"quarterly-period-$index")
+                attributes = Map("id" -> s"quarterly-period-$idSuffix-$index")
             ),
             TableRow(
                 content = HtmlContent(buildIncomeSourceRow(allValidObligations)),
-                attributes = Map("id" -> s"quarterly-income-sources-$index")
+                attributes = Map("id" -> s"quarterly-income-sources-$idSuffix-$index")
             )
         )
     }
@@ -218,5 +268,15 @@
         controllers.routes.TaxYearsController.showAgentTaxYears().url
     } else {
         controllers.routes.TaxYearsController.showTaxYears().url
+    }
+}
+
+@missedDeadlinesText = @{
+    if(optOutProposition.currentTaxYear.canOptOut) {
+        p(id = Some("missed-deadline-voluntary-desc")) {
+            Html(getMessage("quarterly.missed.deadlines.voluntary.text"))
+        }
+    } else {
+            HtmlFormat.empty
     }
 }

@@ -30,8 +30,9 @@ import org.mockito.Mockito.{mock, when}
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.MessagesControllerComponents
-import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import play.api.test.Helpers.{await, defaultAwaitTimeout, redirectLocation, status}
 import services._
+import testConstants.BaseTestConstants.{testSelfEmploymentId, testSessionId}
 import testConstants.BusinessDetailsTestConstants.{year2018, year2019}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessIncome, notCompletedUIJourneySessionData}
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants._
@@ -74,6 +75,362 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
       dateService = mockDateService,
       sessionService = mockSessionService
     )(frontendAppConfig, messagesControllerComponents, executionContext)
+
+  ".getNextUpdatesUrl" should {
+
+    "return the correct agent url" in {
+      testIncomeSourceAddedController.getNextUpdatesUrl(true) shouldBe "/report-quarterly/income-and-expenses/view/agents/next-updates"
+    }
+
+    "return the correct non-agent url" in {
+      testIncomeSourceAddedController.getNextUpdatesUrl(false) shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
+    }
+  }
+
+  ".getReportingFrequencyUrl" should {
+
+    "return the correct agent url" in {
+      testIncomeSourceAddedController.getReportingFrequencyUrl(true) shouldBe "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
+    }
+
+    "return the correct non-agent url" in {
+      testIncomeSourceAddedController.getReportingFrequencyUrl(false) shouldBe "/report-quarterly/income-and-expenses/view/reporting-frequency"
+    }
+  }
+
+  ".getManageBusinessUrl" should {
+
+    "return the correct agent url" in {
+      testIncomeSourceAddedController.getManageBusinessUrl(true) shouldBe "/report-quarterly/income-and-expenses/view/agents/manage-your-businesses"
+    }
+
+    "return the correct non-agent url" in {
+      testIncomeSourceAddedController.getManageBusinessUrl(false) shouldBe "/report-quarterly/income-and-expenses/view/manage-your-businesses"
+    }
+  }
+
+  Seq(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
+
+    s".contentLogicHelper - $incomeSourceType" when {
+
+      "user selects 'Yes' on ChangeReportingFrequency page" when {
+
+        "isReportingQuarterlyForNextYear == true" should {
+
+          "return the correct scenario enum - SignUpNextYearOnly" in {
+
+            val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
+
+            val mongoUserAnswers =
+              UIJourneySessionData(
+                sessionId = testSessionId,
+                journeyType = journeyType.toString,
+                addIncomeSourceData =
+                  Some(
+                    AddIncomeSourceData(
+                      businessName = Some("A Business Name"),
+                      businessTrade = Some("A Trade"),
+                      dateStarted = Some(LocalDate.of(2022, 1, 1)),
+                      accountingPeriodStartDate = Some(LocalDate.of(2022, 4, 5)),
+                      accountingPeriodEndDate = Some(LocalDate.of(2023, 4, 6)),
+                      incomeSourceId = Some(testSelfEmploymentId),
+                      address = Some(Address(Seq("line1", "line2"), Some("N1 1EE"))),
+                      countryCode = Some("A Country"),
+                      incomeSourcesAccountingMethod = Some("cash"),
+                      reportingMethodTaxYear1 = None,
+                      reportingMethodTaxYear2 = None,
+                      incomeSourceCreatedJourneyComplete = None,
+                      changeReportingFrequency = Some(true)
+                    )
+                  ),
+                incomeSourceReportingFrequencyData = Some(
+                  IncomeSourceReportingFrequencySourceData(
+                    displayOptionToChangeForCurrentTaxYear = true,
+                    displayOptionToChangeForNextTaxYear = true,
+                    isReportingQuarterlyCurrentYear = false,
+                    isReportingQuarterlyForNextYear = true
+                  )
+
+                )
+              )
+
+            when(mockSessionService.getMongo(any())(any(), any()))
+              .thenReturn(Future(Right(Some(mongoUserAnswers))))
+
+            val result = testIncomeSourceAddedController.contentLogicHelper(incomeSourceType)
+            await(result) shouldBe SignUpNextYearOnly
+          }
+        }
+
+        "isReportingQuarterlyCurrentYear == true" should {
+
+          "return the correct scenario enum - SignUpCurrentYearOnly" in {
+
+            val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
+
+            val mongoUserAnswers =
+              UIJourneySessionData(
+                sessionId = testSessionId,
+                journeyType = journeyType.toString,
+                addIncomeSourceData =
+                  Some(
+                    AddIncomeSourceData(
+                      businessName = Some("A Business Name"),
+                      businessTrade = Some("A Trade"),
+                      dateStarted = Some(LocalDate.of(2022, 1, 1)),
+                      accountingPeriodStartDate = Some(LocalDate.of(2022, 4, 5)),
+                      accountingPeriodEndDate = Some(LocalDate.of(2023, 4, 6)),
+                      incomeSourceId = Some(testSelfEmploymentId),
+                      address = Some(Address(Seq("line1", "line2"), Some("N1 1EE"))),
+                      countryCode = Some("A Country"),
+                      incomeSourcesAccountingMethod = Some("cash"),
+                      reportingMethodTaxYear1 = None,
+                      reportingMethodTaxYear2 = None,
+                      incomeSourceCreatedJourneyComplete = None,
+                      changeReportingFrequency = Some(true)
+                    )
+                  ),
+                incomeSourceReportingFrequencyData = Some(
+                  IncomeSourceReportingFrequencySourceData(
+                    displayOptionToChangeForCurrentTaxYear = true,
+                    displayOptionToChangeForNextTaxYear = true,
+                    isReportingQuarterlyCurrentYear = true,
+                    isReportingQuarterlyForNextYear = false
+                  )
+                )
+              )
+
+            when(mockSessionService.getMongo(any())(any(), any()))
+              .thenReturn(Future(Right(Some(mongoUserAnswers))))
+
+            val result = testIncomeSourceAddedController.contentLogicHelper(incomeSourceType)
+            await(result) shouldBe SignUpCurrentYearOnly
+          }
+        }
+
+        "(isReportingQuarterlyCurrentYear == true && isReportingQuarterlyForNextYear == true)" should {
+
+          "return the correct scenario enum - SignUpBothYears" in {
+
+            val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
+
+            val mongoUserAnswers =
+              UIJourneySessionData(
+                sessionId = testSessionId,
+                journeyType = journeyType.toString,
+                addIncomeSourceData =
+                  Some(
+                    AddIncomeSourceData(
+                      businessName = Some("A Business Name"),
+                      businessTrade = Some("A Trade"),
+                      dateStarted = Some(LocalDate.of(2022, 1, 1)),
+                      accountingPeriodStartDate = Some(LocalDate.of(2022, 4, 5)),
+                      accountingPeriodEndDate = Some(LocalDate.of(2023, 4, 6)),
+                      incomeSourceId = Some(testSelfEmploymentId),
+                      address = Some(Address(Seq("line1", "line2"), Some("N1 1EE"))),
+                      countryCode = Some("A Country"),
+                      incomeSourcesAccountingMethod = Some("cash"),
+                      reportingMethodTaxYear1 = None,
+                      reportingMethodTaxYear2 = None,
+                      incomeSourceCreatedJourneyComplete = None,
+                      changeReportingFrequency = Some(true)
+                    )
+                  ),
+                incomeSourceReportingFrequencyData = Some(
+                  IncomeSourceReportingFrequencySourceData(
+                    displayOptionToChangeForCurrentTaxYear = true,
+                    displayOptionToChangeForNextTaxYear = true,
+                    isReportingQuarterlyCurrentYear = true,
+                    isReportingQuarterlyForNextYear = true
+                  )
+                )
+              )
+
+            when(mockSessionService.getMongo(any())(any(), any()))
+              .thenReturn(Future(Right(Some(mongoUserAnswers))))
+
+            val result = testIncomeSourceAddedController.contentLogicHelper(incomeSourceType)
+            await(result) shouldBe SignUpBothYears
+          }
+        }
+
+        "user is unable to select any years to opt in / unable to signup to quarterly reporting for MTD" should {
+
+          "return the correct scenario enum - OptedOut" in {
+
+            val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
+
+            val mongoUserAnswers =
+              UIJourneySessionData(
+                sessionId = testSessionId,
+                journeyType = journeyType.toString,
+                addIncomeSourceData =
+                  Some(
+                    AddIncomeSourceData(
+                      businessName = Some("A Business Name"),
+                      businessTrade = Some("A Trade"),
+                      dateStarted = Some(LocalDate.of(2022, 1, 1)),
+                      accountingPeriodStartDate = Some(LocalDate.of(2022, 4, 5)),
+                      accountingPeriodEndDate = Some(LocalDate.of(2023, 4, 6)),
+                      incomeSourceId = Some(testSelfEmploymentId),
+                      address = Some(Address(Seq("line1", "line2"), Some("N1 1EE"))),
+                      countryCode = Some("A Country"),
+                      incomeSourcesAccountingMethod = Some("cash"),
+                      reportingMethodTaxYear1 = None,
+                      reportingMethodTaxYear2 = None,
+                      incomeSourceCreatedJourneyComplete = None,
+                      changeReportingFrequency = None
+                    )
+                  ),
+                incomeSourceReportingFrequencyData = None
+              )
+
+            when(mockSessionService.getMongo(any())(any(), any()))
+              .thenReturn(Future(Right(Some(mongoUserAnswers))))
+
+            val result = testIncomeSourceAddedController.contentLogicHelper(incomeSourceType)
+            await(result) shouldBe OptedOut
+          }
+        }
+      }
+
+      "user selects 'No' in ChangeReportingFrequency page" should {
+
+        "return the correct scenario enum - NotSigningUp" in {
+
+          val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
+
+          val mongoUserAnswers =
+            UIJourneySessionData(
+              sessionId = testSessionId,
+              journeyType = journeyType.toString,
+              addIncomeSourceData =
+                Some(
+                  AddIncomeSourceData(
+                    businessName = Some("A Business Name"),
+                    businessTrade = Some("A Trade"),
+                    dateStarted = Some(LocalDate.of(2022, 1, 1)),
+                    accountingPeriodStartDate = Some(LocalDate.of(2022, 4, 5)),
+                    accountingPeriodEndDate = Some(LocalDate.of(2023, 4, 6)),
+                    incomeSourceId = Some(testSelfEmploymentId),
+                    address = Some(Address(Seq("line1", "line2"), Some("N1 1EE"))),
+                    countryCode = Some("A Country"),
+                    incomeSourcesAccountingMethod = Some("cash"),
+                    reportingMethodTaxYear1 = None,
+                    reportingMethodTaxYear2 = None,
+                    incomeSourceCreatedJourneyComplete = None,
+                    changeReportingFrequency = Some(false)
+                  )
+                ),
+              incomeSourceReportingFrequencyData = Some(
+                IncomeSourceReportingFrequencySourceData(
+                  displayOptionToChangeForCurrentTaxYear = true,
+                  displayOptionToChangeForNextTaxYear = true,
+                  isReportingQuarterlyCurrentYear = true,
+                  isReportingQuarterlyForNextYear = true
+                )
+
+              )
+            )
+
+          when(mockSessionService.getMongo(any())(any(), any()))
+            .thenReturn(Future(Right(Some(mongoUserAnswers))))
+
+          val result = testIncomeSourceAddedController.contentLogicHelper(incomeSourceType)
+          await(result) shouldBe NotSigningUp
+        }
+      }
+
+      "user unable to answer ChangeReportingFrequency page" when {
+
+        "user has a single business and opts in/signs up to quarterly reporting for MTD" should {
+
+          "return the correct scenario enum - OnlyOneBusinessInLatency" in {
+
+            val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
+
+            val mongoUserAnswers =
+              UIJourneySessionData(
+                sessionId = testSessionId,
+                journeyType = journeyType.toString,
+                addIncomeSourceData =
+                  Some(
+                    AddIncomeSourceData(
+                      businessName = Some("A Business Name"),
+                      businessTrade = Some("A Trade"),
+                      dateStarted = Some(LocalDate.of(2022, 1, 1)),
+                      accountingPeriodStartDate = Some(LocalDate.of(2022, 4, 5)),
+                      accountingPeriodEndDate = Some(LocalDate.of(2023, 4, 6)),
+                      incomeSourceId = Some(testSelfEmploymentId),
+                      address = Some(Address(Seq("line1", "line2"), Some("N1 1EE"))),
+                      countryCode = Some("A Country"),
+                      incomeSourcesAccountingMethod = Some("cash"),
+                      reportingMethodTaxYear1 = None,
+                      reportingMethodTaxYear2 = None,
+                      incomeSourceCreatedJourneyComplete = None,
+                      changeReportingFrequency = None
+                    )
+                  ),
+                incomeSourceReportingFrequencyData = Some(
+                  IncomeSourceReportingFrequencySourceData(
+                    displayOptionToChangeForCurrentTaxYear = true,
+                    displayOptionToChangeForNextTaxYear = true,
+                    isReportingQuarterlyCurrentYear = true,
+                    isReportingQuarterlyForNextYear = false
+                  )
+                )
+              )
+
+            when(mockSessionService.getMongo(any())(any(), any()))
+              .thenReturn(Future(Right(Some(mongoUserAnswers))))
+
+            val result = testIncomeSourceAddedController.contentLogicHelper(incomeSourceType)
+            await(result) shouldBe OnlyOneYearAvailableToSignUp
+          }
+        }
+
+        "user is unable to select any years to opt in / unable to signup to quarterly reporting for MTD" should {
+
+          "return the correct scenario enum - OptedOut" in {
+
+            val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
+
+            val mongoUserAnswers =
+              UIJourneySessionData(
+                sessionId = testSessionId,
+                journeyType = journeyType.toString,
+                addIncomeSourceData =
+                  Some(
+                    AddIncomeSourceData(
+                      businessName = Some("A Business Name"),
+                      businessTrade = Some("A Trade"),
+                      dateStarted = Some(LocalDate.of(2022, 1, 1)),
+                      accountingPeriodStartDate = Some(LocalDate.of(2022, 4, 5)),
+                      accountingPeriodEndDate = Some(LocalDate.of(2023, 4, 6)),
+                      incomeSourceId = Some(testSelfEmploymentId),
+                      address = Some(Address(Seq("line1", "line2"), Some("N1 1EE"))),
+                      countryCode = Some("A Country"),
+                      incomeSourcesAccountingMethod = Some("cash"),
+                      reportingMethodTaxYear1 = None,
+                      reportingMethodTaxYear2 = None,
+                      incomeSourceCreatedJourneyComplete = None,
+                      changeReportingFrequency = None
+                    )
+                  ),
+                incomeSourceReportingFrequencyData = None
+              )
+
+            when(mockSessionService.getMongo(any())(any(), any()))
+              .thenReturn(Future(Right(Some(mongoUserAnswers))))
+
+            val result = testIncomeSourceAddedController.contentLogicHelper(incomeSourceType)
+            await(result) shouldBe OptedOut
+          }
+        }
+      }
+    }
+  }
+
 
   ".show()" when {
 
