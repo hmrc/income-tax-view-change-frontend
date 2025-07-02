@@ -33,7 +33,7 @@ val compile = Seq(
   "org.typelevel" %% "cats-core" % catsVersion,
   "uk.gov.hmrc.mongo" %% s"hmrc-mongo-$playVersion" % hmrcMongoVersion,
   "uk.gov.hmrc" %% s"play-frontend-hmrc-$playVersion" % playFrontendHMRCVersion,
-  "uk.gov.hmrc" %% s"crypto-json-$playVersion" % "8.1.0",
+  "uk.gov.hmrc" %% s"crypto-json-$playVersion" % "8.2.0",
   "org.jsoup" % "jsoup" % jsoupVersion,
 )
 
