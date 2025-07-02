@@ -2860,7 +2860,8 @@ optIn.confirmTaxYear.cancel                         = Cancel
 optIn.confirmNextTaxYear.heading                    = Confirm and opt in from {0} to {1} tax year onwards
 optIn.confirmNextTaxYear.desc                       = If you opt in for the next tax year, from {0} you will need to submit your quarterly updates through compatible software.
 
-# Reporting Frequency Page
+########  Reporting Frequency Page  ########
+
 reporting.frequency.title = Your reporting frequency
 reporting.frequency.h1    = Your reporting frequency
 reporting.frequency.h2    = Manage your reporting frequency for all your businesses
@@ -2913,7 +2914,24 @@ reporting.frequency.latency.details.section.text.para2.bullet3      = even if yo
 reporting.frequency.latency.details.section.text.para3.heading      = How to change a new income source’s reporting frequency
 reporting.frequency.latency.details.section.text.para3.text.1       = You can do this at any time in the
 reporting.frequency.latency.details.section.text.para3.link.text    = all businesses
-reporting.frequency.latency.details.section.text.para3.text.2       = section
+reporting.frequency.latency.details.section.text.para3.text.2       = section.
+
+reporting.frequency.latency.details.section.header.updateR17                  = You can have different reporting obligations for your new businesses
+reporting.frequency.latency.details.section.text.para1.updateR17              = For tax years you are using Making Tax Digital for Income Tax, you can separately choose to opt out for any new sole trader or property income source:
+reporting.frequency.latency.details.section.text.para1.bullet1.updateR17      = started less than 2 years ago
+reporting.frequency.latency.details.section.text.para1.bullet2.updateR17      = that you start in future
+reporting.frequency.latency.details.section.text.para2.updateR17              = This option is available to your new businesses:
+reporting.frequency.latency.details.section.text.para2.bullet1.updateR17      = for up to 2 tax years
+reporting.frequency.latency.details.section.text.para2.bullet2.updateR17      = only when you use Making Tax Digital for Income Tax for your other businesses
+reporting.frequency.latency.details.section.text.para2.bullet3.updateR17      = even if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold
+reporting.frequency.latency.details.section.text.para3.heading.updateR17      = How to change your reporting obligations for a new income source
+reporting.frequency.latency.details.section.text.para3.text.1.updateR17       = You can do this at any time in the
+reporting.frequency.latency.details.section.text.para3.link.text.updateR17    = your businesses
+reporting.frequency.latency.details.section.text.para3.text.2.updateR17       = section.
+
+########  Reporting Frequency Page Feature Switched Content  ########
+
+
 
 yourSelfAssessmentChargeSummary.tax-year                            = {0} to {1} tax year
 yourSelfAssessmentChargeSummary.overDueCharge                       = Overdue charge:
