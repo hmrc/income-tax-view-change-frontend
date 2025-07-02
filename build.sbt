@@ -18,7 +18,7 @@ val jsoupVersion = "1.18.1"
 val mockitoVersion = "5.11.0"
 val scalaMockVersion = "5.2.0"
 val wiremockVersion = "3.0.0-beta-7"
-val hmrcMongoVersion = "2.4.0"
+val hmrcMongoVersion = "2.6.0"
 val currentScalaVersion = "2.13.16"
 val playVersion = "play-30"
 
