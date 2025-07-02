@@ -16,12 +16,12 @@
 
 package utils
 
-import services.DateService
+import services.DateServiceInterface
 
 import java.time.LocalDate
 
 trait MtdConstants {
-  val dateService: DateService
+  val dateService: DateServiceInterface
 
   private final val baseThreshold = "£50,000"
   private final val thresholdFrom2027 = "£30,000"
