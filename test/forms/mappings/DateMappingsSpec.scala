@@ -140,7 +140,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
     val result = form.bind(Map.empty[String, String])
 
-    result.errors must contain only FormError("value", "error.required.all", List.empty)
+    result.errors must contain only FormError("value.day", "error.required.all", List.empty)
   }
 
   "must fail to bind a date with a missing day" in {
@@ -160,7 +160,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value", "error.required", List("date.error.day"))
+        result.errors must contain only FormError("value.day", "error.required", List("date.error.day"))
     }
   }
 
@@ -200,7 +200,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value", "error.required", List("date.error.month"))
+        result.errors must contain only FormError("value.month", "error.required", List("date.error.month"))
     }
   }
 
@@ -240,7 +240,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value", "error.required", List("date.error.year"))
+        result.errors must contain only FormError("value.year", "error.required", List("date.error.year"))
     }
   }
 
@@ -284,7 +284,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value", "error.required.two", List("date.error.day", "date.error.month"))
+        result.errors must contain only FormError("value.day", "error.required.two", List("date.error.day", "date.error.month"))
     }
   }
 
@@ -309,7 +309,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value", "error.required.two", List("date.error.day", "date.error.year"))
+        result.errors must contain only FormError("value.day", "error.required.two", List("date.error.day", "date.error.year"))
     }
   }
 
@@ -334,7 +334,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value", "error.required.two", List("date.error.month", "date.error.year"))
+        result.errors must contain only FormError("value.month", "error.required.two", List("date.error.month", "date.error.year"))
     }
   }
 

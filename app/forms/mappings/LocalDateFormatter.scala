@@ -31,12 +31,6 @@ private[mappings] class LocalDateFormatter(
                                             args: Seq[String] = Seq.empty
                                           )(implicit messages: Messages) extends Formatter[LocalDate] with Formatters {
 
-  private val fieldKeys = Map(
-    "day" -> messages("date.error.day"),
-    "month" -> messages("date.error.month"),
-    "year" -> messages("date.error.year")
-  )
-
   private def toDate(key: String, day: Int, month: Int, year: Int): Either[Seq[FormError], LocalDate] =
     Try(LocalDate.of(year, month, day)) match {
       case Success(date) =>
@@ -64,28 +58,37 @@ private[mappings] class LocalDateFormatter(
     } yield date
   }
 
+  private val fieldKeys = Map(
+    "day" -> messages("date.error.day"),
+    "month" -> messages("date.error.month"),
+    "year" -> messages("date.error.year")
+  )
+
+  private case class LocalDateErrorUtility(idField: String, messageField: String, value: Option[String])
+
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
 
     val fields = fieldKeys.map {
-      field => field._2 -> data.get(s"$key.${field._1}").filter(_.nonEmpty)
+      field => LocalDateErrorUtility(field._1, field._2, data.get(s"$key.${field._1}").filter(_.nonEmpty))
     }
 
-    lazy val missingFields = fields
-      .withFilter(_._2.isEmpty)
-      .map(_._1)
-      .toList
+    lazy val (missingFields, idFields) = fields
+      .filter(_.value.isEmpty)
+      .foldLeft((List.empty[String], List.empty[String])) { case ((msgs, ids), f) =>
+        (msgs :+ f.messageField, ids :+ f.idField)
+      }
 
-    fields.count(_._2.isDefined) match {
+    fields.count(_.value.isDefined) match {
       case 3 =>
         formatDate(key, data).left.map {
           _.map(_.copy(key = key, args = args))
         }
       case 2 =>
-        Left(List(FormError(key, requiredKey, missingFields ++ args)))
+        Left(List(FormError(s"$key.${idFields.head}", requiredKey, missingFields ++ args)))
       case 1 =>
-        Left(List(FormError(key, twoRequiredKey, missingFields ++ args)))
+        Left(List(FormError(s"$key.${idFields.head}", twoRequiredKey, missingFields ++ args)))
       case _ =>
-        Left(List(FormError(key, allRequiredKey, args)))
+        Left(List(FormError(s"$key.${idFields.head}", allRequiredKey, args)))
     }
   }
 
