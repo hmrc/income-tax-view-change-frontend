@@ -97,7 +97,7 @@
     )
     )
     @formWithCSRF(getSubmitHref) {
-        @continueButton()
+        @continueButton(alternativeText = Some(getMessage("confirm")), id = Some("continue-button"))
     }
 
 }

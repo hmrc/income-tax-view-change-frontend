@@ -115,7 +115,7 @@
     }
 
     <div class="govuk-button-group">
-        @continueButton(href = Some(viewModel.redirect))
+        @continueButton(href = Some(viewModel.redirect), id = Some("continue"))
         <a class="govuk-link" id="cancel" href=@getHomePageUrl>@getMessage("cancel")</a>
     </div>
 }
