@@ -35,7 +35,7 @@ import services.optIn.OptInService
 import services.optout.OptOutService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.JourneyCheckerManageBusinesses
+import utils.{JourneyCheckerManageBusinesses, MtdConstants}
 import viewUtils.ReportingFrequencyViewUtils
 import views.html.errorPages.templates.ErrorTemplate
 import views.html.manageBusinesses.add.IncomeSourceReportingFrequency
@@ -56,7 +56,7 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
                                                          val dateService: DateService,
                                                          mcc: MessagesControllerComponents,
                                                          val ec: ExecutionContext
-                                                        ) extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses with FeatureSwitching {
+                                                        ) extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses with FeatureSwitching with MtdConstants {
 
   lazy val submitUrl: (Boolean, Boolean, IncomeSourceType) => Call = (isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType) =>
     controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.submit(isAgent, isChange, incomeSourceType)
@@ -97,7 +97,8 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
           form = filledOrEmptyForm,
           incomeSourceType = incomeSourceType,
           taxDateService = dateService,
-          isR17ContentEnabled = isR17ContentEnabled
+          isR17ContentEnabled = isR17ContentEnabled,
+          mtdThreshold = getMtdThreshold
         )))
     }
   }
@@ -148,7 +149,8 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
             form = formWithError,
             incomeSourceType = incomeSourceType,
             taxDateService = dateService,
-            isR17ContentEnabled = isR17ContentEnabled
+            isR17ContentEnabled = isR17ContentEnabled,
+            mtdThreshold = getMtdThreshold
           ))
         )
       }, {
@@ -160,7 +162,8 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
               form = IncomeSourceReportingFrequencyForm(isR17ContentEnabled),
               incomeSourceType = incomeSourceType,
               taxDateService = dateService,
-              isR17ContentEnabled = isR17ContentEnabled
+              isR17ContentEnabled = isR17ContentEnabled,
+              mtdThreshold = getMtdThreshold
             ))
           )
       }
