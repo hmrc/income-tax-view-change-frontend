@@ -26,18 +26,18 @@
 
 
 @this(
-    mainTemplate: unifiedLayout,
-    appConfig: config.FrontendAppConfig,
-    h1: h1,
-    h2: h2,
-    p: p,
-    link: link,
-    form: FormWithCSRF,
-    govukInsetText : GovukInsetText,
-    govukButton : GovukButton,
-    govukInput : GovukInput,
-    inputHelper: InputHelper,
-    errorSummary: ErrorSummary
+        mainTemplate: unifiedLayout,
+        appConfig: config.FrontendAppConfig,
+        h1: h1,
+        h2: h2,
+        p: p,
+        link: link,
+        form: FormWithCSRF,
+        govukInsetText: GovukInsetText,
+        govukInput: GovukInput,
+        inputHelper: InputHelper,
+        errorSummary: ErrorSummary,
+        continueButton: ContinueButton
 )
 
 @(businessTradeForm: Form[BusinessTradeForm], postAction: Call, isAgent: Boolean, backURL: String)(implicit messages: Messages, user: auth.MtdItUser[_])
@@ -51,28 +51,28 @@
 }
 
 @hintContent = {
-    @p(classes="govuk-hint"){
-        @messages("add-trade.trade-info-2")
-    }
+@p(classes = "govuk-hint") {
+    @messages("add-trade.trade-info-2")
+}
 }
 
 @mainTemplate(pageTitle = messages("add-business-trade.heading"),
-form = Some(businessTradeForm),
-backUrl = Some(backURL),
-isAgent = isAgent,
-btaNavPartial = user.btaNavPartial) {
+    form = Some(businessTradeForm),
+    backUrl = Some(backURL),
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial) {
 
     @errorSummary(form = businessTradeForm)
 
     @form(action = postAction, Symbol("id") -> "business-trade-form") {
 
         <span class="govuk-caption-l", id="caption">
-            @messages("incomeSources.add.sole-trader")
+        @messages("incomeSources.add.sole-trader")
         </span>
 
         @h1(messages("add-trade.heading"), size = "l")
 
-        @p(id=Some("business-trade-description"),classes="govuk-body"){
+        @p(id = Some("business-trade-description"), classes = "govuk-body") {
             @messages("add-trade.trade-info-1")
         }
 
@@ -87,9 +87,6 @@ btaNavPartial = user.btaNavPartial) {
             ).withFormField(field)
         )
 
-        @govukButton(Button(
-            content = Text(messages("base.continue")),
-            attributes = Map("id" -> "continue-button")
-        ))
+      @continueButton()
     }
 }

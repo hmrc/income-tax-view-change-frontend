@@ -21,17 +21,17 @@
 @import views.viewmodels.govuk.all.{DateViewModel, ErrorSummaryViewModel, FluentDate}
 
 @import java.time.LocalDate
+@import views.html.components._
 
 @this(
         mainTemplate: unifiedLayout,
         formWithCSRF: FormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
         govukDateInput: GovukDateInput,
-        govukButton: GovukButton,
+        continueButton: ContinueButton,
         p: p,
         h1: h1
 )
-
 
 @(
         form: Form[LocalDate],
@@ -97,9 +97,6 @@
             )
         )
 
-        @govukButton(Button(
-            content = Text(messages("base.continue")),
-            attributes = Map("id" -> "continue-button")
-        ))
+        @continueButton()
     }
 }

@@ -29,7 +29,7 @@
         h1: h1,
         h2: h2,
         p: p,
-        govukButton: GovukButton,
+        continueButton: ContinueButton,
         link: link,
         govukInsetText: GovukInsetText,
         howMuchCanIClaim: HowMuchCanIClaim,
@@ -69,10 +69,7 @@
     }
 
     @if(!isAgent) {
-        @govukButton(Button(
-            content = Text(messages("credit-and-refund.claim-refund-btn")),
-            attributes = Map("id" -> "continue-button"),
-            href = Some(s"${controllers.routes.CreditAndRefundController.startRefund().url}")
-        ))
+        @continueButton(Some(messages("credit-and-refund.claim-refund-btn")), Some(s"${controllers.routes.CreditAndRefundController.startRefund().url}"))
+
     }
 }

@@ -18,13 +18,14 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import views.html.helpers.injected.ErrorSummary
+@import views.html.components._
 
 @this(
         mainTemplate: unifiedLayout,
         formWithCSRF: FormWithCSRF,
         govukRadios: GovukRadios,
         errorSummary: ErrorSummary,
-        govukButton: GovukButton
+        continueButton: ContinueButton
 )
 
 @(
@@ -75,9 +76,6 @@
             errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
         ).withFormField(form("start-date-check")))
 
-        @govukButton(Button(
-            content = Text(messages("base.continue")),
-            attributes = Map("id" -> "continue-button")
-        ))
+        @continueButton()
     }
 }

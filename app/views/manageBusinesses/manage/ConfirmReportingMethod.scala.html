@@ -26,43 +26,48 @@
 
 
 @this(mainTemplate: unifiedLayout,
-    govukButton: GovukButton,
-    formWithCSRF: FormWithCSRF,
-    govukWarningText : GovukWarningText,
-    hmrcPageHeading: HmrcPageHeading,
-    p: p,
-    govukInsetText: GovukInsetText,
-    govukRadios : GovukRadios,
-    govukErrorSummary: GovukErrorSummary
+        govukButton: GovukButton,
+        continueButton: ContinueButton,
+        formWithCSRF: FormWithCSRF,
+        govukWarningText: GovukWarningText,
+        hmrcPageHeading: HmrcPageHeading,
+        p: p,
+        govukInsetText: GovukInsetText,
+        govukRadios: GovukRadios,
+        govukErrorSummary: GovukErrorSummary
 )
 
 @(
-    backUrl: String,
-    postAction: Call,
-    isAgent: Boolean,
-    taxYearStartYear: String,
-    taxYearEndYear: String,
-    newReportingMethod: String,
-    isCurrentTaxYear: Boolean,
-    incomeSourceType: IncomeSourceType,
-    form: Form[_],
-    optInOutContentFSEnabled: Boolean
+        backUrl: String,
+        postAction: Call,
+        isAgent: Boolean,
+        taxYearStartYear: String,
+        taxYearEndYear: String,
+        newReportingMethod: String,
+        isCurrentTaxYear: Boolean,
+        incomeSourceType: IncomeSourceType,
+        form: Form[_],
+        optInOutContentFSEnabled: Boolean
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
-@prefixOld = @{ "manageBusinesses.manage.propertyReportingMethod" }
-@prefixNew = @{ "manageBusinesses.manage.propertyReportingMethod.new" }
+@prefixOld = @{
+    "manageBusinesses.manage.propertyReportingMethod"
+}
+@prefixNew = @{
+    "manageBusinesses.manage.propertyReportingMethod.new"
+}
 
 @getMessage(key: String, args: String*) = @{
-    if(optInOutContentFSEnabled){
+    if(optInOutContentFSEnabled) {
         messages(s"$prefixNew.$key", args: _*)
-    }else{
+    } else {
         messages(s"$prefixOld.$key", args: _*)
     }
 }
 @getNewFormHeading = @{
-    if(newReportingMethod == "quarterly"){
+    if(newReportingMethod == "quarterly") {
         getMessage("form.heading.signUp", taxYearStartYear, taxYearEndYear)
-    }else{
+    } else {
         getMessage("form.heading.optOut", taxYearStartYear, taxYearEndYear)
     }
 }
@@ -145,12 +150,9 @@
                 errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args: _*))))
             ).withFormField(form("change-reporting-method-check")))
 
-            @govukButton(Button(
-                content = Text(messages("base.continue")),
-                attributes = Map("id" -> "continue-button")
-            ))
+            @continueButton()
         }
-    }else{
+    } else {
         @formWithCSRF(action = postAction, Symbol("id") -> s"$prefixOld-form") {
 
             @hmrcPageHeading(PageHeading(
@@ -160,10 +162,12 @@
                 captionClasses = Some("govuk-caption-l")
             ))
 
-            @p(id = Some("change-reporting-method-description")){@getMessage(s"description.$newReportingMethod")}
+            @p(id = Some("change-reporting-method-description")) {
+                @getMessage(s"description.$newReportingMethod")
+            }
 
             @if(newReportingMethod == "quarterly") {
-                @govukInsetText(InsetText(id=Some("change-reporting-method-inset"), content = HtmlContent(messages("manageBusinesses.manage.propertyReportingMethod.inset.quarterly"))))
+                @govukInsetText(InsetText(id = Some("change-reporting-method-inset"), content = HtmlContent(messages("manageBusinesses.manage.propertyReportingMethod.inset.quarterly"))))
             }
 
             @govukButton(Button(

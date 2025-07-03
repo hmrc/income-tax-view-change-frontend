@@ -29,7 +29,7 @@
         formWithCSRF: FormWithCSRF,
         govukRadios: GovukRadios,
         errorSummary: ErrorSummary,
-        govukButton: GovukButton,
+        continueButton: ContinueButton,
         govukInsetText: GovukInsetText,
         h1: h1,
         p: p
@@ -83,10 +83,7 @@
             errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
         ).withFormField(form(ConfirmOptOutSingleTaxYearForm.confirmOptOutField)))
 
-        @govukButton(Button(
-            content = Text(messages("base.continue")),
-            attributes = Map("id" -> "continue-button")
-        ))
+        @continueButton()
     }
 
 }

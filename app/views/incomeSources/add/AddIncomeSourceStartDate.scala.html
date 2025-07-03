@@ -21,13 +21,14 @@
 @import views.viewmodels.govuk.all.ErrorSummaryViewModel
 @import views.viewmodels.govuk.all.DateViewModel
 @import views.viewmodels.govuk.all.FluentDate
+@import views.html.components._
 
 @this(
         mainTemplate: unifiedLayout,
         formWithCSRF: FormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
         govukDateInput: GovukDateInput,
-        govukButton: GovukButton
+        continueButton: ContinueButton
 )
 
 @(
@@ -82,9 +83,6 @@
             )
         )
 
-        @govukButton(Button(
-            content = Text(messages("base.continue")),
-            attributes = Map("id" -> "continue-button")
-        ))
+        @continueButton()
     }
 }

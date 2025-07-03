@@ -1,5 +1,5 @@
 @*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,11 @@
 @this(
         govukButton: GovukButton
 )
-@(alternativeText: Option[String] = None)(implicit messages: Messages)
+@(id: Option[String] = None, name: Option[String] = None, label: String)(implicit messages: Messages)
 
 @govukButton(Button(
-    content = Text(alternativeText.getOrElse(messages("base.continue"))),
-    id = Some("continue-button"),
-    classes = "govuk-button"
+    content = Text(label),
+    id = id,
+    classes = "govuk-button",
+    name = name
 ))

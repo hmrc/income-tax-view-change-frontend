@@ -26,7 +26,7 @@
         mainTemplate: unifiedLayout,
         formWithCSRF: FormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
-        govukButton: GovukButton,
+        continueButton: ContinueButton,
         govukCheckboxes: GovukCheckboxes,
         h1WithCaption: h1WithCaption
 )
@@ -116,9 +116,6 @@
         errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
     ).withFormField(form(form.value.map(_.chooseTaxYear).getOrElse("choose-tax-year")))
 )
-    @govukButton(Button(
-        content = Text(messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button")),
-        attributes = Map("id" -> "continue-button")
-    ))
+      @continueButton(Some(messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button")))
     }
 }

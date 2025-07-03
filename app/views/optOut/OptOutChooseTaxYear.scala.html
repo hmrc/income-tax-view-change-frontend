@@ -26,7 +26,7 @@
         mainTemplate: unifiedLayout,
         formWithCSRF: FormWithCSRF,
         govukRadios: GovukRadios,
-        govukButton: GovukButton,
+        continueButton: ContinueButton,
         errorSummary: ErrorSummary,
         h1: h1,
         h2: h2,
@@ -75,10 +75,7 @@
         ).withFormField(form(ConfirmOptOutMultiTaxYearChoiceForm.choiceField)))
 
         <div class="govuk-button-group">
-            @govukButton(Button(
-                content = Text(messages("base.continue")),
-                attributes = Map("id" -> "continue-button")
-            ))
+            @continueButton()
             <a class="govuk-link" id="cancel-button" href=@cancelURL>
             @messages("optout.confirmOptOut.cancel")
             </a>
