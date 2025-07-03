@@ -173,7 +173,6 @@ class NextUpdatesService @Inject()(
           .headOption
 
         val nextTaxReturnDate = Some(calculateNextTaxReturnDueDate())
-        Logger("application").info(s"[getNextDueDates]openObligations: ${openObligations}")
 
         (nextQuarterlyDueDate, nextTaxReturnDate)
 
