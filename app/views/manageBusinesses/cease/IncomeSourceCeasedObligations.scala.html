@@ -92,7 +92,7 @@
 }
 
 @p2 = {
-    @p(id=Some("view-your-businesses")) {
+    @p(id=Some("view-your-businesses"), classes = "govuk-body govuk-!-margin-bottom-9") {
         @link(id = Some("p2-link"), link = viewAllBusinessLink, messageKey = getMessage("p2.link"))
         @getMessage("p2.text")
     }
@@ -122,7 +122,6 @@
 @mainTemplate(pageTitle = getPageTitle,
     isAgent = source.isAgent,
     btaNavPartial = user.btaNavPartial) {
-
         @confirmationPanel
         @yourRevisedDeadlinesHeading
         @getInsetWarning
@@ -133,8 +132,5 @@
         }else if(source.allBusinessesCeased) {
             @allBusinessCeasedParagraph
         }
-
         @p2
-
-    <br />
 }
