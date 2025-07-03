@@ -167,11 +167,13 @@ class NextUpdatesService @Inject()(
 
         val nextQuarterlyDueDate = openObligations
           .filter(_.obligationType == "Quarterly")
-          .sortBy(_.due)
-          .headOption
           .map(_.due)
+          .filter(dueDate => !dueDate.isBefore(dateService.getCurrentDate))
+          .sorted
+          .headOption
 
         val nextTaxReturnDate = Some(calculateNextTaxReturnDueDate())
+        Logger("application").info(s"[getNextDueDates]openObligations: ${openObligations}")
 
         (nextQuarterlyDueDate, nextTaxReturnDate)
 
