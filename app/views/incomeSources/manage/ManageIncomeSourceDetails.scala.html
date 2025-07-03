@@ -134,7 +134,7 @@
                 address.postCode,
                 Some(address.countryName)
             ).flatten
-            Some(nonNoneFields.mkString("<br>"))
+            Some(nonNoneFields.map("<div>" + _ + "</div>").mkString(""))
         case None => None
     }
 }
@@ -256,12 +256,10 @@
                 ++ {
             if(viewModel.shouldShowTaxYears) getTaxYears else Seq.empty
         },
-        attributes = Map("id" -> "manage-details-table")),
+        attributes = Map("id" -> "manage-details-table"), classes = "govuk-table govuk-!-margin-bottom-9")
     )
 
     @quarterlyTypeInfoMessage
-    <br>
-    <br>
 
 }
 

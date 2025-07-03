@@ -181,6 +181,25 @@ object NextUpdatesIntegrationTestConstants {
     )
   ))
 
+  def upcomingAndMissedObligationModel(incomeId: String): GroupedObligationsModel = GroupedObligationsModel(incomeId, List(
+    SingleObligationModel(
+      start = LocalDate.of(2017, 4, 6),
+      end = LocalDate.of(2017, 7, 5),
+      due = LocalDate.of(2017, 10, 31),
+      obligationType = "Quarterly",
+      dateReceived = None,
+      periodKey = "periodKey", status = StatusFulfilled
+    ),
+    SingleObligationModel(
+      start = LocalDate.of(2026, 4, 6),
+      end = LocalDate.of(2026, 7, 5),
+      due = LocalDate.of(2026, 8, 31),
+      obligationType = "Quarterly",
+      dateReceived = None,
+      periodKey = "periodKey1", status = StatusFulfilled
+    )
+  ))
+
   def singleObligationPlusYearOpenModel(incomeId: String): GroupedObligationsModel = GroupedObligationsModel(incomeId, List(
     SingleObligationModel(
       start = LocalDate.of(2017, 4, 6),

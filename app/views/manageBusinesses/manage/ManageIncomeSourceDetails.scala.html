@@ -131,7 +131,7 @@
                 address.postCode,
                 Some(address.countryName)
             ).flatten
-            Some(nonNoneFields.mkString("<br>"))
+            Some(nonNoneFields.map("<div>" + _ + "</div>").mkString(""))
         case None => None
     }
 }
@@ -366,7 +366,7 @@
             }
         }
     }
-
+    <div class="govuk-!-margin-bottom-9">
     @govukSummaryList(SummaryList(
         rows = {
             if(viewModel.incomeSourceType == SelfEmployment) getSEList else Seq.empty
@@ -434,7 +434,5 @@
     @if(!showOptInOptOutContentUpdateR17){
         @quarterlyTypeInfoMessage
     }
-    <br>
-    <br>
-
+    </div>
 }

@@ -63,14 +63,14 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
               result should have(
                 httpStatus(OK),
                 pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Business name"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessTradingName),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Address"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(addressAsString),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(3)", "dt")("Date started"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(3)", "dd")(businessStartDate),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dt")("Accounting method"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dd")(businessAccountingMethod)
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(1) dt")("Business name"),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(1) dd")(businessTradingName),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(2) dt")("Address"),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(2) dd")(addressAsString),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(3) dt")("Date started"),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(3) dd")(businessStartDate),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(4) dt")("Accounting method"),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(4) dd")(businessAccountingMethod)
               )
             }
             "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in new Test {
@@ -93,18 +93,18 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
               result should have(
                 httpStatus(OK),
                 pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Business name"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessTradingName),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Address"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(addressAsString),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(3)", "dt")("Date started"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(3)", "dd")(businessStartDate),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dt")("Accounting method"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dd")(businessAccountingMethod),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(5)", "dt")("Reporting frequency 2022 to 2023"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(5)", "dd")(messagesQuarterly),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(6)", "dt")("Reporting frequency 2023 to 2024"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(6)", "dd")(messagesAnnually),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(1) dt")("Business name"),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(1) dd")(businessTradingName),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(2) dt")("Address"),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(2) dd")(addressAsString),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(3) dt")("Date started"),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(3) dd")(businessStartDate),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(4) dt")("Accounting method"),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(4) dd")(businessAccountingMethod),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dt")("Reporting frequency 2022 to 2023"),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dd")(messagesQuarterly),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(6) dt")("Reporting frequency 2023 to 2024"),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(6) dd")(messagesAnnually),
                 elementTextByID("change-link-1")(""),
                 elementTextByID("change-link-2")("")
               )
@@ -127,18 +127,18 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
               result should have(
                 httpStatus(OK),
                 pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Business name"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessTradingName),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Address"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(addressAsString),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(3)", "dt")("Date started"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(3)", "dd")(businessStartDate),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dt")("Accounting method"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dd")(businessAccountingMethod),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(5)", "dt")("Reporting frequency 2022 to 2023"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(5)", "dd")(messagesAnnually),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(6)", "dt")("Reporting frequency 2023 to 2024"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(6)", "dd")(messagesQuarterly),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(1) dt")("Business name"),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(1) dd")(businessTradingName),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(2) dt")("Address"),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(2) dd")(addressAsString),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(3) dt")("Date started"),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(3) dd")(businessStartDate),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(4) dt")("Accounting method"),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(4) dd")(businessAccountingMethod),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dt")("Reporting frequency 2022 to 2023"),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dd")(messagesAnnually),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(6) dt")("Reporting frequency 2023 to 2024"),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(6) dd")(messagesQuarterly),
                 elementTextByID("change-link-1")(messagesChangeLinkText),
                 elementTextByID("change-link-2")(messagesChangeLinkText)
               )
@@ -160,14 +160,14 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
               result should have(
                 httpStatus(OK),
                 pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Business name"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(messagesUnknown),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Address"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(messagesUnknown),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(3)", "dt")("Date started"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(3)", "dd")(messagesUnknown),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dt")("Accounting method"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dd")("Cash basis accounting")
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(1) dt")("Business name"),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(1) dd")(messagesUnknown),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(2) dt")("Address"),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(2) dd")(messagesUnknown),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(3) dt")("Date started"),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(3) dd")(messagesUnknown),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(4) dt")("Accounting method"),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(4) dd")("Cash basis accounting")
               )
             }
           }

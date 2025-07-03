@@ -19,18 +19,19 @@
 
 <div class="govuk-inset-text govuk-insettext-zero-spacing">
     @messages(errorMessage + s".${messageId}.1", messageValue)
-<br>
-<ul class="govuk-list govuk-list--bullet">
-    <li>
-    @messages(errorMessage + s".${messageId}.2", messageValue)
-    </li>
-    <li>
-    @messages(errorMessage + s".${messageId}.3", messageValue)
-    </li>
-    @if(messageId == "C15322" || messageId == "C159028") {
-        <li>
-        @messages(errorMessage + s".${messageId}.4", messageValue)
-        </li>
-    }
-</ul>
+    <div>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>
+            @messages(errorMessage + s".${messageId}.2", messageValue)
+            </li>
+            <li>
+            @messages(errorMessage + s".${messageId}.3", messageValue)
+            </li>
+            @if(messageId == "C15322" || messageId == "C159028") {
+                <li>
+                @messages(errorMessage + s".${messageId}.4", messageValue)
+                </li>
+            }
+        </ul>
+    </div>
 </div>

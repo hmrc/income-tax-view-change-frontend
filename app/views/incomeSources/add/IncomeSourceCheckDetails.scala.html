@@ -93,7 +93,7 @@
         address4,
         postCode,
         countryCode
-    ).flatten.filter(_.nonEmpty).mkString("<br>")
+    ).flatten.filter(_.nonEmpty).map("<div>" + _ + "</div>").mkString("")
 }
 
 
@@ -278,12 +278,12 @@
             rows = {
                 businessNameRow ++ businessStartDateRow ++ businessTradeRow ++ businessAddressRow ++ businessAccountingMethodRow
             },
-            attributes = Map("id" -> "check-details-table")
+            attributes = Map("id" -> "check-details-table"),
+            classes = "govuk-!-margin-bottom-9"
         ))
 
-        <br>
-        <br>
-      @continueButton(id = Some("confirm-button"), alternativeText = Some(messages("base.confirm-and-continue")))
+        @continueButton(id = Some("confirm-button"), alternativeText = Some(messages("base.confirm-and-continue")))
+
     }
 
 }

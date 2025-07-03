@@ -18,9 +18,10 @@
 
 @this(govukDetails : GovukDetails)
 
-@(summary: String, content: Html)(implicit messages: Messages)
+@(summary: String, content: Html, id: Option[String] = None)(implicit messages: Messages)
 
 @govukDetails(Details(
+    id = id,
     summary = Text(messages(summary)),
     content = HtmlContent(content)
 ))

@@ -92,4 +92,3 @@ Local: http://localhost:9081/report-quarterly/income-and-expenses/view/agents/te
 Staging: https://www.staging.tax.service.gov.uk/report-quarterly/income-and-expenses/view/agents/test-only/session-storage
 
 Functionality for getting this working with individuals will be added soon.
-

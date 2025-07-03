@@ -30,7 +30,8 @@
         p: p,
         formWithCSRF: FormWithCSRF,
         continueButton: ContinueButton,
-        govukWarningText: GovukWarningText)
+        govukWarningText: GovukWarningText
+)
 
 @(isAgent: Boolean = false, incomeSourceType: IncomeSourceType, postAction: Call)(implicit user: auth.MtdItUser[_], messages: Messages)
 

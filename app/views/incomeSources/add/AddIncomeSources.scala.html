@@ -75,128 +75,128 @@
     @h2(msg = getMessage("selfEmployment.heading"),
         optId = Some("self-employment-h2"))
 
-    @if(sources.soleTraderBusinesses.nonEmpty) {
-        @if(sources.displayStartDate) {
-            @govukTable(Table(
-                head = Some(List(
+    <div class="govuk-!-margin-bottom-9">
+        @if(sources.soleTraderBusinesses.nonEmpty) {
+            @if(sources.displayStartDate) {
+                @govukTable(Table(
+                    head = Some(List(
+                        HeadCell(
+                            content = Text(getMessage("tableHead.businessName")),
+                            attributes = Map("id" -> "table-head-business-name")),
+                        HeadCell(
+                            content = Text(getMessage("tableHead.dateStarted")),
+                            attributes = Map("id" -> "table-head-date-started"))
+                    )),
+                    rows = sources.soleTraderBusinesses.zipWithIndex.map { case (business, index) => Seq(
+                        TableRow(
+                            content = Text(business.tradingName.getOrElse(messageForEmptyField)),
+                            attributes = Map("id" -> s"table-row-trading-name-$index")),
+
+                        TableRow(
+                            content = Text(business.tradingStartDate.map(_.toLongDate).getOrElse(messageForEmptyField)),
+                            attributes = Map("id" -> s"table-row-trading-start-date-$index"))
+                    )
+                    },
+                    attributes = Map("id" -> "sole-trader-businesses-table")
+                ))
+            } else {
+                @govukTable(Table(
+                    head = Some(List(
                     HeadCell(
                         content = Text(getMessage("tableHead.businessName")),
                         attributes = Map("id" -> "table-head-business-name")),
-                    HeadCell(
-                        content = Text(getMessage("tableHead.dateStarted")),
-                        attributes = Map("id" -> "table-head-date-started"))
-                )),
-                rows = sources.soleTraderBusinesses.zipWithIndex.map { case (business, index) => Seq(
+                    )),
+                    rows = sources.soleTraderBusinesses.zipWithIndex.map { case (business, index) => Seq(
                     TableRow(
                         content = Text(business.tradingName.getOrElse(messageForEmptyField)),
                         attributes = Map("id" -> s"table-row-trading-name-$index")),
+                        )
+                    },
+                    attributes = Map("id" -> "sole-trader-businesses-table")
+                ))
+            }
 
-                    TableRow(
-                        content = Text(business.tradingStartDate.map(_.toLongDate).getOrElse(messageForEmptyField)),
-                        attributes = Map("id" -> s"table-row-trading-start-date-$index"))
-                )
-                },
-                attributes = Map("id" -> "sole-trader-businesses-table")
-            ))
         } else {
-            @govukTable(Table(
-                head = Some(List(
-                HeadCell(
-                    content = Text(getMessage("tableHead.businessName")),
-                    attributes = Map("id" -> "table-head-business-name")),
-                )),
-                rows = sources.soleTraderBusinesses.zipWithIndex.map { case (business, index) => Seq(
-                TableRow(
-                    content = Text(business.tradingName.getOrElse(messageForEmptyField)),
-                    attributes = Map("id" -> s"table-row-trading-name-$index")),
-                    )
-                },
-                attributes = Map("id" -> "sole-trader-businesses-table")
-            ))
+            @hr()
         }
 
-    } else {
+        @link(link = addBusinessNameURL,
+            messageKey = getMessage("selfEmployment.link"),
+            id = Some("self-employment-link"))
+
         @hr()
-    }
 
-    @link(link = addBusinessNameURL,
-        messageKey = getMessage("selfEmployment.link"),
-        id = Some("self-employment-link"))
+        @h2(msg = getMessage("ukProperty.heading"),
+            optId = Some("uk-property-h2"))
 
-    @hr()
+        @if(sources.ukProperty.nonEmpty) {
 
-    @h2(msg = getMessage("ukProperty.heading"),
-        optId = Some("uk-property-h2"))
+            @p(id = Some("uk-property-p1")) {
+                @getMessage("ukProperty.text")
+            }
+            @if(sources.displayStartDate) {
+                @govukTable(Table(
+                    head = Some(List(
+                        HeadCell(
+                            content = Text(getMessage("tableHead.dateStarted")),
+                            attributes = Map("id" -> "table-head-date-started-uk"))
+                    )),
+                    rows = Seq(Seq(
+                        TableRow(
+                            content = Text(sources.ukProperty.flatMap(_.tradingStartDate.map(_.toLongDate)).getOrElse(messageForEmptyField)),
+                            attributes = Map("id" -> "table-row-trading-start-date-uk")
+                        )
+                    )),
+                    attributes = Map("id" -> "uk-property-table")
+                ))
+            }
+        } else {
+            @hr()
 
-    @if(sources.ukProperty.nonEmpty) {
+            @link(link = addUKPropertyStartDateURL,
+                messageKey = getMessage("ukProperty.link"),
+                id = Some("uk-property-link"))
 
-        @p(id = Some("uk-property-p1")) {
-            @getMessage("ukProperty.text")
+            @hr()
         }
-        @if(sources.displayStartDate) {
-            @govukTable(Table(
-                head = Some(List(
-                    HeadCell(
-                        content = Text(getMessage("tableHead.dateStarted")),
-                        attributes = Map("id" -> "table-head-date-started-uk"))
-                )),
-                rows = Seq(Seq(
-                    TableRow(
-                        content = Text(sources.ukProperty.flatMap(_.tradingStartDate.map(_.toLongDate)).getOrElse(messageForEmptyField)),
-                        attributes = Map("id" -> "table-row-trading-start-date-uk")
-                    )
-                )),
-                attributes = Map("id" -> "uk-property-table")
-            ))
+
+        @h2(msg = getMessage("foreignProperty.heading"),
+            optId = Some("foreign-property-h2"))
+
+        @if(sources.foreignProperty.nonEmpty) {
+
+            @p(id = Some("foreign-property-p1")) {
+                @getMessage("foreignProperty.text")
+            }
+            @if(sources.displayStartDate) {
+                @govukTable(Table(
+                    head = Some(List(
+                        HeadCell(
+                            content = Text(getMessage("tableHead.dateStarted")),
+                            attributes = Map("id" -> "table-head-date-started-foreign"))
+                    )),
+                    rows = Seq(Seq(
+                        TableRow(
+                            content = Text(sources.foreignProperty.flatMap(_.tradingStartDate.map(_.toLongDate)).getOrElse(messageForEmptyField)),
+                            attributes = Map("id" -> "table-row-trading-start-date-foreign"))
+                    )),
+                    attributes = Map("id" -> "foreign-property-table")
+                ))
+            }
+        } else {
+            @hr()
+
+            @link(link = addForeignPropertyBusinessStartDateURL,
+                messageKey = getMessage("foreignProperty.link"),
+                id = Some("foreign-property-link"))
+
+            @hr()
         }
-    } else {
-        @hr()
 
-        @link(link = addUKPropertyStartDateURL,
-            messageKey = getMessage("ukProperty.link"),
-            id = Some("uk-property-link"))
-
-        @hr()
-    }
-
-    @h2(msg = getMessage("foreignProperty.heading"),
-        optId = Some("foreign-property-h2"))
-
-    @if(sources.foreignProperty.nonEmpty) {
-
-        @p(id = Some("foreign-property-p1")) {
-            @getMessage("foreignProperty.text")
+        @if(sources.ceasedBusinesses.nonEmpty) {
+            @h2(msg = getMessage("ceasedBusinesses.heading"),optId = Some("ceased-businesses-heading"))
+            @ceasedBusinesses(sources.ceasedBusinesses, sources.displayStartDate)
         }
-        @if(sources.displayStartDate) {
-            @govukTable(Table(
-                head = Some(List(
-                    HeadCell(
-                        content = Text(getMessage("tableHead.dateStarted")),
-                        attributes = Map("id" -> "table-head-date-started-foreign"))
-                )),
-                rows = Seq(Seq(
-                    TableRow(
-                        content = Text(sources.foreignProperty.flatMap(_.tradingStartDate.map(_.toLongDate)).getOrElse(messageForEmptyField)),
-                        attributes = Map("id" -> "table-row-trading-start-date-foreign"))
-                )),
-                attributes = Map("id" -> "foreign-property-table")
-            ))
-        }
-    } else {
-        @hr()
-
-        @link(link = addForeignPropertyBusinessStartDateURL,
-            messageKey = getMessage("foreignProperty.link"),
-            id = Some("foreign-property-link"))
-
-        @hr()
-    }
-
-    @if(sources.ceasedBusinesses.nonEmpty) {
-        @h2(msg = getMessage("ceasedBusinesses.heading"),optId = Some("ceased-businesses-heading"))
-        @ceasedBusinesses(sources.ceasedBusinesses, sources.displayStartDate)
-    }
-
-    <br>
+    </div>
 
 }

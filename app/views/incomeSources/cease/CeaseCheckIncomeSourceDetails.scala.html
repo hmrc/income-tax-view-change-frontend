@@ -107,7 +107,7 @@
         Some(address.countryName)
     ).flatten
 
-    val addressHtml = nonEmptyFields.map(line => HtmlFormat.escape(line).toString).mkString("<br>")
+    val addressHtml = nonEmptyFields.map(line => "<div>" + HtmlFormat.escape(line).toString + "</div>").mkString("")
     HtmlFormat.raw(addressHtml)
 }
 

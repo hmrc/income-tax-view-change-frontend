@@ -47,8 +47,10 @@
     }
 
     @bulletPointList(
-        getMessage("whatIsABalancingPayment.p2"),
-        getMessage("whatIsABalancingPayment.p3")
+        Seq(
+            getMessage("whatIsABalancingPayment.p2"),
+            getMessage("whatIsABalancingPayment.p3")
+        )
     )
 
     @p(id = Some("whatIsABalancingPayment.p4")) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,20 @@
  * limitations under the License.
  */
 
-package models.obligations
+package models.incomeSourceDetails
 
-import java.time.LocalDate
+sealed trait SignedUpForMTD
 
-case class NextUpdatesViewModel(allDeadlines: Seq[DeadlineViewModel], missedDeadlines: Seq[DeadlineViewModel] = Seq.empty)
+case object SignUpNextYearOnly extends SignedUpForMTD
 
-case class DeadlineViewModel(obligationType: ObligationType,
-                             standardAndCalendar: Boolean,
-                             deadline: LocalDate,
-                             standardQuarters: Seq[ObligationWithIncomeType],
-                             calendarQuarters: Seq[ObligationWithIncomeType]) {}
+case object NotSigningUp extends SignedUpForMTD
+
+case object SignUpCurrentYearOnly extends SignedUpForMTD
+
+case object SignUpBothYears extends SignedUpForMTD
+
+case object OnlyOneYearAvailableToSignUp extends SignedUpForMTD
+
+case object OptedOut extends SignedUpForMTD
+
+case object Unknown extends SignedUpForMTD
