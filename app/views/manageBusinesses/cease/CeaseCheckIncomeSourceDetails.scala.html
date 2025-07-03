@@ -25,22 +25,22 @@
 @import models.core.AddressModel
 @import play.twirl.api.HtmlFormat
 @import models.core._
-
+@import views.html.components._
 
 @this(
-    mainTemplate: unifiedLayout,
-    hmrcPageHeading: HmrcPageHeading,
-    formWithCSRF: FormWithCSRF,
-    govukSummaryList: GovukSummaryList,
-    implicitDateFormatter: ImplicitDateFormatterImpl,
-    govukButton: GovukButton
+        mainTemplate: unifiedLayout,
+        hmrcPageHeading: HmrcPageHeading,
+        formWithCSRF: FormWithCSRF,
+        govukSummaryList: GovukSummaryList,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        continueButton: ContinueButton
 )
 
 @(
-    isAgent: Boolean,
-    backUrl: String,
-    viewModel: CheckCeaseIncomeSourceDetailsViewModel,
-    messagesPrefix: String
+        isAgent: Boolean,
+        backUrl: String,
+        viewModel: CheckCeaseIncomeSourceDetailsViewModel,
+        messagesPrefix: String
 )(implicit request: auth.MtdItUser[_], messages: Messages)
 
 @getMessage(key: String, args: String*) = @{
@@ -51,14 +51,14 @@
 
 @getBusinessChangeHref = @{
     controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(Some(viewModel.incomeSourceId.toHash.hash),
-    SelfEmployment,
-    isAgent,
-    mode = CheckMode
+        SelfEmployment,
+        isAgent,
+        mode = CheckMode
     ).url
 }
 
 @getBusinessSubmitHref = @{
-    if(isAgent){
+    if(isAgent) {
         controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(SelfEmployment)
     } else {
         controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(SelfEmployment)
@@ -81,18 +81,18 @@
             isAgent,
             mode = CheckMode
         ).url
-        }
     }
+}
 
 @getPropertySubmitHref = @{
     if(viewModel.incomeSourceType.toString == "UkProperty") {
-        if(isAgent){
+        if(isAgent) {
             controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(UkProperty)
         } else {
             controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(UkProperty)
         }
     } else {
-        if(isAgent){
+        if(isAgent) {
             controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(ForeignProperty)
         } else {
             controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(ForeignProperty)
@@ -123,10 +123,10 @@
     useFallbackBackLink = true) {
 
     @hmrcPageHeading(PageHeading(
-    text = messages("cease-check-answers.title"),
-    headingClasses = Some("govuk-heading-l"),
-    section = Some(getMessage("caption")),
-    captionClasses = Some("govuk-caption-l")
+        text = messages("cease-check-answers.title"),
+        headingClasses = Some("govuk-heading-l"),
+        section = Some(getMessage("caption")),
+        captionClasses = Some("govuk-caption-l")
     ))
 
     @if(viewModel.incomeSourceType.toString == "SelfEmployment") {
@@ -148,7 +148,7 @@
                 SummaryListRow(
                     key = Key(Text(getMessage("business-name"))),
                     value = Value(Text(
-                        if(viewModel.tradingName){
+                        if(viewModel.tradingName) {
                             viewModel.tradingName.get
                         } else {
                             messages("incomeSources.generic.unknown")
@@ -158,7 +158,7 @@
                 SummaryListRow(
                     key = Key(Text(getMessage("trade"))),
                     value = Value(Text(
-                        if(viewModel.trade){
+                        if(viewModel.trade) {
                             viewModel.trade.get
                         } else {
                             messages("incomeSources.generic.unknown")
@@ -175,13 +175,10 @@
                         }
                     )),
                 ))
-            )
+        )
         )
         @formWithCSRF(getBusinessSubmitHref) {
-            @govukButton(Button(
-                content = Text(messages("base.confirm-and-continue")),
-                attributes = Map("id" -> "continue-button")
-            ))
+            @continueButton(Some(messages("base.confirm-and-continue")))
         }
     } else {
         @govukSummaryList(SummaryList(
@@ -200,10 +197,7 @@
             ))
         ))
         @formWithCSRF(getPropertySubmitHref) {
-            @govukButton(Button(
-                content = Text(messages("base.confirm-and-continue")),
-                attributes = Map("id" -> "continue-button")
-            ))
+          @continueButton(Some(messages("base.confirm-and-continue")))
         }
     }
 

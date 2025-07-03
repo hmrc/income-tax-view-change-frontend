@@ -24,31 +24,32 @@
 @import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
 @import models.core.AddressModel
 @import play.twirl.api.HtmlFormat
+@import views.html.components._
 
 @this(
-    mainTemplate: unifiedLayout,
-    hmrcPageHeading: HmrcPageHeading,
-    formWithCSRF: FormWithCSRF,
-    govukSummaryList: GovukSummaryList,
-    implicitDateFormatter: ImplicitDateFormatterImpl,
-    govukButton: GovukButton
+        mainTemplate: unifiedLayout,
+        hmrcPageHeading: HmrcPageHeading,
+        formWithCSRF: FormWithCSRF,
+        govukSummaryList: GovukSummaryList,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        continueButton: ContinueButton
 )
 
 @(
-    isAgent: Boolean,
-    backUrl: String,
-    viewModel: CheckCeaseIncomeSourceDetailsViewModel,
-    messagesPrefix: String
+        isAgent: Boolean,
+        backUrl: String,
+        viewModel: CheckCeaseIncomeSourceDetailsViewModel,
+        messagesPrefix: String
 )(implicit request: auth.MtdItUser[_], messages: Messages)
 
 @getMessage(key: String, args: String*) = @{
-messages(s"$messagesPrefix.$key", args: _*)
+    messages(s"$messagesPrefix.$key", args: _*)
 }
 @import implicitDateFormatter.longDate
 
 
 @getBusinessChangeHref = @{
-    if(isAgent){
+    if(isAgent) {
         controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(Some(viewModel.incomeSourceId.toHash.hash), SelfEmployment).url
     } else {
         controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(Some(viewModel.incomeSourceId.toHash.hash), SelfEmployment).url
@@ -56,7 +57,7 @@ messages(s"$messagesPrefix.$key", args: _*)
 }
 
 @getBusinessSubmitHref = @{
-    if(isAgent){
+    if(isAgent) {
         controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(SelfEmployment)
     } else {
         controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(SelfEmployment)
@@ -66,13 +67,13 @@ messages(s"$messagesPrefix.$key", args: _*)
 
 @getPropertyChangeHref = @{
     if(viewModel.incomeSourceType.toString == "UkProperty") {
-        if(isAgent){
+        if(isAgent) {
             controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(None, UkProperty).url
         } else {
             controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(None, UkProperty).url
         }
     } else {
-        if(isAgent){
+        if(isAgent) {
             controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(None, ForeignProperty).url
         } else {
             controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(None, ForeignProperty).url
@@ -82,13 +83,13 @@ messages(s"$messagesPrefix.$key", args: _*)
 
 @getPropertySubmitHref = @{
     if(viewModel.incomeSourceType.toString == "UkProperty") {
-        if(isAgent){
+        if(isAgent) {
             controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(UkProperty)
         } else {
             controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(UkProperty)
         }
     } else {
-        if(isAgent){
+        if(isAgent) {
             controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(ForeignProperty)
         } else {
             controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(ForeignProperty)
@@ -119,10 +120,10 @@ messages(s"$messagesPrefix.$key", args: _*)
     useFallbackBackLink = true) {
 
     @hmrcPageHeading(PageHeading(
-    text = getMessage("heading"),
-    headingClasses = Some("govuk-heading-l"),
-    section = Some(getMessage("caption")),
-    captionClasses = Some("govuk-caption-l")
+        text = getMessage("heading"),
+        headingClasses = Some("govuk-heading-l"),
+        section = Some(getMessage("caption")),
+        captionClasses = Some("govuk-caption-l")
     ))
 
     @if(viewModel.incomeSourceType.toString == "SelfEmployment") {
@@ -144,7 +145,7 @@ messages(s"$messagesPrefix.$key", args: _*)
                 SummaryListRow(
                     key = Key(Text(getMessage("businessName"))),
                     value = Value(Text(
-                        if(viewModel.tradingName){
+                        if(viewModel.tradingName) {
                             viewModel.tradingName.get
                         } else {
                             messages("incomeSources.generic.unknown")
@@ -161,13 +162,10 @@ messages(s"$messagesPrefix.$key", args: _*)
                         }
                     )),
                 ))
-            )
+        )
         )
         @formWithCSRF(getBusinessSubmitHref) {
-            @govukButton(Button(
-                content = Text(getMessage("confirm")),
-                attributes = Map("id" -> "continue-button")
-            ))
+            @continueButton(Some(getMessage("confirm")))
         }
     } else {
         @govukSummaryList(SummaryList(
@@ -186,10 +184,7 @@ messages(s"$messagesPrefix.$key", args: _*)
             ))
         ))
         @formWithCSRF(getPropertySubmitHref) {
-            @govukButton(Button(
-                content = Text(getMessage("confirm")),
-                attributes = Map("id" -> "continue-button")
-            ))
+          @continueButton(Some(getMessage("confirm")))
         }
     }
 

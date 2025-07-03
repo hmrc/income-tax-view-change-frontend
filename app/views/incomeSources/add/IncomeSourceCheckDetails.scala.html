@@ -35,7 +35,7 @@
         link: link,
         hr: hr,
         govukTable: GovukTable,
-        govukButton: GovukButton,
+        continueButton: ContinueButton,
         formWithCSRF: FormWithCSRF
 )
 
@@ -283,11 +283,7 @@
 
         <br>
         <br>
-
-        @govukButton(Button(
-            content = Text(messages("base.confirm-and-continue")),
-            attributes = Map("id" -> "confirm-button")
-        ))
+      @continueButton(id = Some("confirm-button"), alternativeText = Some(messages("base.confirm-and-continue")))
     }
 
 }

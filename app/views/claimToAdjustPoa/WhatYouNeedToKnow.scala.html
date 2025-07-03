@@ -32,7 +32,7 @@
         link: link,
         form: FormWithCSRF,
         govukBackLink : GovukBackLink,
-        govukButton : GovukButton,
+        continueButton: ContinueButton,
         govukWarningText : GovukWarningText,
         inputHelper: InputHelper,
 )
@@ -115,12 +115,7 @@
     }
 
     <div class="govuk-button-group">
-
-        @govukButton(Button(
-            id = Some("continue"),
-            content = Text(getMessage("continue-button")),
-            href = Some(viewModel.redirect)
-        ))
+        @continueButton(href = Some(viewModel.redirect))
         <a class="govuk-link" id="cancel" href=@getHomePageUrl>@getMessage("cancel")</a>
     </div>
 }
