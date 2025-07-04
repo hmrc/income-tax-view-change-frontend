@@ -50,5 +50,11 @@ object WYOMessagesHelper {
       else                "payments-made"
     )
 
+  def getHeading(implicit user: MtdItUser[_], messages: Messages): String =
+    getMessage(
+      if(user.isAgent()) getPrefix("heading-agent")
+      else               getPrefix("heading")
+    )
+
 
 }

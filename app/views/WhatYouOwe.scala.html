@@ -35,6 +35,8 @@
 @import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper.getNoPaymentsDueText
 @import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper.getPaymentsMadeBulletLinkText
 @import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper.getPaymentsMadeBulletText
+@import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper.getPaymentsMadeText
+@import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper.getHeading
 
 @this(
     mainTemplate: unifiedLayout,
@@ -47,6 +49,7 @@
     detailsDropdown: detailsDropdown,
     govukWarningText: GovukWarningText,
     saNoteParagraph: SaNoteParagraph,
+    unallocatedCreditParagraphContent: UnallocatedCreditParagraphContent,
     govukInsetText : GovukInsetText
 )
 @(currentDate: LocalDate,
@@ -73,13 +76,6 @@
 )
 
 @import implicitDateFormatter.longDate
-
-@unallocatedCreditParagraphContent(amount: String) = {
-    @p(id = Some("unallocated-credit-note"))(Html(messages("whatYouOwe.credit-overpaid-prefix") + link(link = creditAndRefundUrl,
-        outerMessage = messages("whatYouOwe.unallocated-credit-note"),
-        messageKey = messages("whatYouOwe.credit-overpaid-amount", amount),
-        id = Some("unallocated-credit-link")).toString()))
-}
 
 @dunningLockParagraph = {
     @if(dunningLock || hasLpiWithDunningLock) {
@@ -215,14 +211,6 @@
     </tr>
 }
 
-@getHeading = @{
-    if(isAgent) getPrefix("heading-agent") else getPrefix("heading")
-}
-
-@getPaymentsMadeText = @{
-    if(isAgent) messages("whatYouOwe.payments-made-agent") else messages("whatYouOwe.payments-made")
-}
-
 @getClaimToAdjustPoaSection = @{
     if(whatYouOweChargesList.hasUnpaidPOAs) {
         claimToAdjustViewModel.claimToAdjustTaxYear match {
@@ -256,13 +244,12 @@
 }
 
 @mainTemplate(
-    pageTitle = messages(getHeading),
+    pageTitle = getHeading,
     backUrl = Some(backUrl),
     isAgent = isAgent,
-    btaNavPartial = user.btaNavPartial,
-    useFallbackBackLink = true
+    btaNavPartial = user.btaNavPartial
 ) {
-    @h1(msg = messages(getHeading), id = Some("page-heading"))
+    @h1(msg = getHeading, id = Some("page-heading"))
     @if(whatYouOweChargesList.isChargesListEmpty && whatYouOweChargesList.codedOutDetails.isEmpty) {
         @p(id = Some("no-payments-due"))(Html(getNoPaymentsDueText))
 
@@ -376,7 +363,7 @@
             @saNoteParagraph(utr)
         }
         @whatYouOweChargesList.availableCredit.map { availableCreditAmt =>
-            @unallocatedCreditParagraphContent(availableCreditAmt.toCurrencyString)
+            @unallocatedCreditParagraphContent(availableCreditAmt.toCurrencyString, creditAndRefundUrl)
         }
 
         @if(utr.isDefined && !isAgent && whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.isDefined) {
