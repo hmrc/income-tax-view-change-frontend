@@ -34,8 +34,8 @@ object WYOMessagesHelper {
 
   def getPaymentsMadeBulletText(implicit user: MtdItUser[_], messages: Messages): String =
     getMessage(
-      if (user.isAgent()) "whatYouOwe.payments-made-bullet-agent-2"
-      else                "whatYouOwe.payments-made-bullet-2"
+      if (user.isAgent()) "payments-made-bullet-agent-2"
+      else                "payments-made-bullet-2"
     )
 
   def getNoPaymentsDueText(implicit user: MtdItUser[_], messages: Messages): String =
