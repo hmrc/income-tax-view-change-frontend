@@ -217,7 +217,7 @@
 
     @link(
         id = Some("first-payment-penalty-p2"),
-        link = viewModel.LPPUrl.getOrElse(""),
+        link = viewModel.LPPUrl,
         messageKey = "chargeSummary.firstLatePaymentPenalty.link"
     )
     <div class="govuk-!-margin-bottom-3"></div>
@@ -237,7 +237,7 @@
         @messages("chargeSummary.lateSubmissionPenalty.penaltyLinkText1")
         @link(
             id = Some("LSPlink"),
-            link = viewModel.LSPUrl.getOrElse(""),
+            link = viewModel.LSPUrl,
             rel = Some("noreferrer noopener"),
             messageKey = "chargeSummary.lateSubmissionPenalty.penaltyLinkText"
         )

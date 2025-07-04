@@ -26,7 +26,7 @@ import enums.GatewayPage.YourSelfAssessmentChargeSummaryPage
 import forms.utils.SessionKeys.gatewayPage
 import models.admin._
 import models.core.Nino
-import models.financialDetails.{ChargeItem, YourSelfAssessmentChargesViewModel}
+import models.financialDetails.{ChargeItem, SecondLatePaymentPenalty, YourSelfAssessmentChargesViewModel}
 import models.incomeSourceDetails.TaxYear
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.taxYearAmount.EarliestDueCharge
@@ -90,7 +90,7 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
             dunningLock = whatYouOweChargesList.hasDunningLock,
             reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
             penaltiesEnabled = isEnabled(PenaltiesAndAppeals),
-            LPP2Url = appConfig.incomeTaxPenaltiesFrontendCalculation,
+            LPP2Url = getLPP2Link(whatYouOweChargesList.chargesList),
             creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
             earliestTaxYearAndAmountByDueDate = earliestTaxYearAndAmount,
             selfServeTimeToPayStartUrl = startUrl,
@@ -107,6 +107,17 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
       Logger("application").error(s"${if (user.isAgent()) "[Agent]"}" +
         s"Error received while getting WhatYouOwe page details: ${ex.getMessage} - ${ex.getCause}")
       itvcErrorHandler.showInternalServerError()
+  }
+
+  private def getLPP2Link(chargeItems: List[ChargeItem]): String = {
+    val LPP2 = chargeItems.find(_.transactionType == SecondLatePaymentPenalty)
+    LPP2 match {
+      case Some(charge) => charge.chargeReference match {
+        case Some(value) => appConfig.incomeTaxPenaltiesFrontendLPP2Calculation(value)
+        case None => "" //TODO: Whatever backup link is
+      }
+      case None => ""
+    }
   }
 
   private def claimToAdjustViewModel(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[WYOClaimToAdjustViewModel] = {

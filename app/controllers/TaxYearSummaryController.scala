@@ -82,7 +82,7 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
     liabilityCalc match {
       case liabilityCalc: LiabilityCalculationResponse =>
         val lang: Seq[Lang] = Seq(languageUtils.getCurrentLang)
-        val LPP2Url = appConfig.incomeTaxPenaltiesFrontendCalculation
+        val LPP2Url = getLPP2Link(chargeItems)
 
         val calculationSummary = Some(CalculationSummary(
           formatErrorMessages(
@@ -117,7 +117,7 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
 
         lazy val ctaLink = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = isAgent).url
 
-        val LPP2Url = appConfig.incomeTaxPenaltiesFrontendCalculation
+        val LPP2Url = getLPP2Link(chargeItems)
 
         val viewModel = TaxYearSummaryViewModel(
           None,
@@ -152,6 +152,17 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
     }
   }
 
+  private def getLPP2Link(chargeItems: List[TaxYearSummaryChargeItem]): String = {
+    val LPP2 = chargeItems.find(_.transactionType == SecondLatePaymentPenalty)
+    LPP2 match {
+      case Some(charge) => charge.chargeReference match {
+        case Some(value) => appConfig.incomeTaxPenaltiesFrontendLPP2Calculation(value)
+        case None => "" //TODO: Whatever backup link is
+      }
+      case None => ""
+    }
+  }
+
   private def withTaxYearFinancials(taxYear: Int, isAgent: Boolean)(f: List[TaxYearSummaryChargeItem] => Future[Result])
                                    (implicit user: MtdItUser[_]): Future[Result] = {
 
@@ -163,7 +174,7 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
         val chargeItemsNoPayments = documentDetails
           .filter(_.paymentLot.isEmpty)
 
-        val  chargeItemsCodingOut = chargeItemsNoPayments
+        val chargeItemsCodingOut = chargeItemsNoPayments
           .filterNot(_.isNotCodingOutDocumentDetail)
           .flatMap(dd => getChargeItem(dd)
             .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, dd.getDueDate())))

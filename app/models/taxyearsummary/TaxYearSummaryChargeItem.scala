@@ -42,7 +42,8 @@ object TaxYearSummaryChargeItem {
       lpiWithDunningLock = chargeItem.lpiWithDunningLock,
       amountCodedOut = chargeItem.amountCodedOut,
       isLatePaymentInterest = chargeItem.isLatePaymentInterest,
-      dunningLock = chargeItem.dunningLock
+      dunningLock = chargeItem.dunningLock,
+      chargeReference = chargeItem.chargeReference
     )
   }
 
@@ -64,7 +65,8 @@ object TaxYearSummaryChargeItem {
       lpiWithDunningLock = chargeItem.lpiWithDunningLock,
       amountCodedOut = chargeItem.amountCodedOut,
       isLatePaymentInterest = isLatePaymentInterest,
-      dunningLock = chargeItem.dunningLock
+      dunningLock = chargeItem.dunningLock,
+      chargeReference = chargeItem.chargeReference
     )
   }
 
@@ -87,7 +89,8 @@ case class TaxYearSummaryChargeItem(
                                      lpiWithDunningLock: Option[BigDecimal],
                                      amountCodedOut: Option[BigDecimal],
                                      isLatePaymentInterest: Boolean = false,
-                                     dunningLock: Boolean) extends TransactionItem {
+                                     dunningLock: Boolean,
+                                     chargeReference: Option[String]) extends TransactionItem {
 
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean = dueDate.exists(_ isBefore dateService.getCurrentDate)
 

@@ -180,8 +180,11 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
           else controllers.routes.YourSelfAssessmentChargesController.show(origin).url
       }
 
-      val LSPUrl = if (chargeItem.transactionType == LateSubmissionPenalty) Some(appConfig.incomeTaxPenaltiesFrontend) else None
-      val LPPUrl = if (chargeItem.transactionType == FirstLatePaymentPenalty) Some(appConfig.incomeTaxPenaltiesFrontendCalculation) else None
+      val LSPUrl = appConfig.incomeTaxPenaltiesFrontend
+      val LPPUrl = chargeReference match {
+        case Some(chargeRef) => appConfig.incomeTaxPenaltiesFrontendLPP1Calculation(chargeRef)
+        case _ => "" //TODO: Whatever backup link is
+      }
 
       val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
           currentDate = dateService.getCurrentDate,
