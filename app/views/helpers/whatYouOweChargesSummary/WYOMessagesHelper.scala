@@ -52,8 +52,8 @@ object WYOMessagesHelper {
 
   def getHeading(implicit user: MtdItUser[_], messages: Messages): String =
     getMessage(
-      if(user.isAgent()) getPrefix("heading-agent")
-      else               getPrefix("heading")
+      if(user.isAgent()) "heading-agent"
+      else               "heading"
     )
 
 
