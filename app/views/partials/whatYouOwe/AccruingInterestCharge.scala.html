@@ -14,24 +14,30 @@
  * limitations under the License.
  *@
 
-@import views.html.components._
 @import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
-@import implicits.HtmlFormatter.NbspString
+@import models.financialDetails.ChargeItem
+@import views.html.partials.whatYouOwe.InterestMessage
+@import implicits.ImplicitDateFormatterImpl
 
 @this(
-    p: p,
-    link: link
+    interestMessage: InterestMessage,
+    implicitDateFormatter: ImplicitDateFormatterImpl
 )
 @(
-    year: Int,
-    index:Int,
-    returnHref: Int => String
+    charge: ChargeItem,
 )(
     implicit messages: Messages
 )
 
-<a class="govuk-link" id="taxYearSummary-link-@index"
-href="@returnHref(year)">
-    @getMessage("tax-year-summary.taxYear", (year - 1).toString, year.toString).toNbsp
-    <span class="govuk-visually-hidden">@getMessage("taxYear")</span>
-</a>
+@import implicitDateFormatter.longDate
+
+@interestMessage(charge)
+
+<div>
+    @getMessage(
+        "over-due.interest.line2",
+        charge.getInterestFromDate.toLongDateShort,
+        charge.getInterestEndDate.toLongDateShort,
+        charge.getInterestRate.toString
+    )
+</div>

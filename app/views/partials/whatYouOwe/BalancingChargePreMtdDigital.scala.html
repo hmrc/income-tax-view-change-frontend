@@ -16,22 +16,22 @@
 
 @import views.html.components._
 @import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
-@import implicits.HtmlFormatter.NbspString
+@import models.financialDetails.WhatYouOweChargesList
+@import java.time.LocalDate
 
 @this(
-    p: p,
-    link: link
+    p: p
 )
 @(
-    year: Int,
-    index:Int,
-    returnHref: Int => String
+    whatYouOweChargesList: WhatYouOweChargesList,
+    currentDate: LocalDate
 )(
     implicit messages: Messages
 )
 
-<a class="govuk-link" id="taxYearSummary-link-@index"
-href="@returnHref(year)">
-    @getMessage("tax-year-summary.taxYear", (year - 1).toString, year.toString).toNbsp
-    <span class="govuk-visually-hidden">@getMessage("taxYear")</span>
-</a>
+@if(whatYouOweChargesList.getRelevantDueDate.isBefore(currentDate)) {
+    <span id="balancing-charge-type-overdue" class="govuk-tag govuk-tag--red">@getMessage("over-due")</span>
+}
+@p(id = Some("balancing-charge"))(Html(getMessage("balancingCharge.text")))
+@p(id = Some("pre-mtd-digital"))(Html(getMessage("pre-mtd-digital")))
+
