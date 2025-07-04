@@ -88,7 +88,7 @@
             <th scope="col" class="govuk-table__header">@getMessage("tableHead.due-date")</th>
             <th scope="col" class="govuk-table__header">@getMessage("tableHead.charge-type")</th>
             <th scope="col" class="govuk-table__header">@getMessage("tableHead.tax-year")</th>
-            <th scope="col" class="govuk-table__header govuk-table__header--numeric">@getMessage("tableHead.amount-due").toNonBreaking</th>
+            <th scope="col" class="govuk-table__header govuk-table__header--numeric">@getMessage("tableHead.amount-due").toNbsp</th>
         </tr>
     </thead>
 }
@@ -102,7 +102,7 @@
 @taxYearSummaryLink(year: Int, index:Int, id:String) = {
     <a class="govuk-link" id="@id-@index"
        href="@returnHref(year)">
-        @getMessage("tax-year-summary.taxYear", (year - 1).toString, year.toString).toNonBreaking
+        @getMessage("tax-year-summary.taxYear", (year - 1).toString, year.toString).toNbsp
         <span class="govuk-visually-hidden">@getMessage("taxYear")</span>
     </a>
 }
@@ -111,9 +111,9 @@
     <tr class="govuk-table__row" id="@rowId2">
         <td class="govuk-table__cell">
             @if(chargeItem.isLatePaymentInterest && chargeItem.isPaid) {
-                 @chargeItem.getInterestEndDate.toLongDateShort.toNonBreaking
+                 @chargeItem.getInterestEndDate.toLongDateShort.toNbsp
              }else{
-                @chargeItem.getDueDate.toLongDateShort.toNonBreaking
+                @chargeItem.getDueDate.toLongDateShort.toNbsp
             }
         </td>
         <td class="govuk-table__cell">

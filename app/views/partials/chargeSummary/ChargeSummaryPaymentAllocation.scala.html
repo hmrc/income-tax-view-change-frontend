@@ -46,7 +46,7 @@
 
 @for(allocation <- paymentAllocations ; payment <- allocation.allocations) {
     <tr>
-        <td class="govuk-table__cell">@{payment.getDueDateOrThrow.toLongDateShort.toNonBreaking}</td>
+        <td class="govuk-table__cell">@{payment.getDueDateOrThrow.toLongDateShort.toNbsp}</td>
         <td class="govuk-table__cell">
             @{
 

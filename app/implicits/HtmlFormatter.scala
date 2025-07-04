@@ -20,7 +20,7 @@ import play.twirl.api.Html
 
 object HtmlFormatter {
   implicit class NbspString(val str: String) extends AnyVal {
-    def toNonBreaking: Html =
+    def toNbsp: Html =
       Html(str.replace(" ", "&nbsp;"))
   }
 
