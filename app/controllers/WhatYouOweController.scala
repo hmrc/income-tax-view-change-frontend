@@ -86,6 +86,13 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
           case false                                                 => NotMigratedUserController.show()
         }).url,
         creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
+        returnHref = {
+          if (isAgent) {
+            controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(_).url
+          } else {
+            controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(_, origin).url
+          }
+        },
         origin = origin,
         claimToAdjustViewModel = ctaViewModel,
         LPP2Url = appConfig.incomeTaxPenaltiesFrontendCalculation)(user, user, messages, dateService)

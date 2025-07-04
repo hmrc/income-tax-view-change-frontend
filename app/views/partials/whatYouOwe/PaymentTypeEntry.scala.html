@@ -21,6 +21,7 @@
 @import models.financialDetails.ChargeItem
 @import models.financialDetails.Nics2
 @import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
+@import models.financialDetails.MfaDebitCharge
 
 @this(
     p: p,
@@ -39,7 +40,7 @@
     user: MtdItUser[_]
 )
 
-@paymentTypeEntry(chargeItem: ChargeItem, rowId: String, isInterest: Boolean, linkSuffix: String, index: Int) = @{
+@paymentTypeEntry(chargeItem: ChargeItem, rowId: String, isInterest: Boolean, linkSuffix: String, isMFADebit: Boolean, index: Int) = @{
 
     val chargeTypeKey = chargeItem.getChargeTypeKey
     val lpi = if(isInterest) "lpi." else ""
@@ -82,5 +83,5 @@
     }
 
     paymentTypeEntry(chargeItem, rowId, isInterest = isInterest,
-        linkSuffix = getLinkSuffix(), index = index)
+        linkSuffix = getLinkSuffix(), isMFADebit = chargeItem.transactionType == MfaDebitCharge, index = index)
 }

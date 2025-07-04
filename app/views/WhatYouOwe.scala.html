@@ -69,6 +69,7 @@
     isAgent: Boolean = false,
     creditAndRefundUrl: String,
     creditAndRefundEnabled: Boolean,
+    returnHref: Int => String,
     claimToAdjustViewModel: WYOClaimToAdjustViewModel,
     LPP2Url: String,
     origin: Option[String] = None
@@ -96,19 +97,11 @@
     if(chargeItem.transactionType == PoaOneReconciliationDebit) getMessage("over-due.reviewAndReconcileOne.line1")
     else if(chargeItem.transactionType == PoaTwoReconciliationDebit) getMessage("over-due.reviewAndReconcileTwo.line1")
     else getMessage("over-due.interest.line1")
-    }
-
-@getReturnHref(year: Int) = @{
-   if (isAgent) {
-       controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(year).url
-   } else {
-       controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(year, origin).url
-   }
 }
 
 @taxYearSummaryLink(year: Int, index:Int, id:String) = {
     <a class="govuk-link" id="@id-@index"
-       href="@getReturnHref(year)">
+       href="@returnHref(year)">
         @getMessage("tax-year-summary.taxYear", (year - 1).toString, year.toString).toNonBreaking
         <span class="govuk-visually-hidden">@getMessage("taxYear")</span>
     </a>
@@ -133,8 +126,14 @@
                 </div>
             }
 
-            @paymentTypeEntry(chargeItem = chargeItem, isOverduePayment = isOverduePayment,
-                rowId = rowId2, isMFADebit = chargeItem.transactionType == MfaDebitCharge, index = index)
+            @paymentTypeEntry(
+                LPP2Url = LPP2Url,
+                chargeItem = chargeItem,
+                isOverduePayment = isOverduePayment,
+                rowId = rowId2,
+                index = index,
+                origin = origin
+            )
 
             @if(chargeItem.dunningLock){
                 <div class="form-hint govuk-body-s"> @getMessage("paymentUnderReview") </div>
