@@ -52,6 +52,7 @@
     dunningLockParagraph: DunningLockParagraph,
     claimToAdjustPoaSection: ClaimToAdjustPoaSection,
     codingOutInsetContent: CodingOutInsetContent,
+    paymentTypeEntry: PaymentTypeEntry,
     unallocatedCreditParagraphContent: UnallocatedCreditParagraphContent,
     govukInsetText : GovukInsetText
 )
@@ -89,53 +90,6 @@
             <th scope="col" class="govuk-table__header govuk-table__header--numeric">@getMessage("tableHead.amount-due").toNonBreaking</th>
         </tr>
     </thead>
-}
-
-@paymentTypeEntry(chargeItem: ChargeItem, rowId: String, isInterest: Boolean,
-    isMFADebit: Boolean, linkSuffix: String, index: Int) = @{
-
-    val chargeTypeKey = chargeItem.getChargeTypeKey
-    val lpi = if (isInterest) "lpi." else ""
-    val linkText = getMessage(s"${lpi}${chargeTypeKey}")
-    val taxYear = chargeItem.taxYear
-    val linkHref = if (chargeItem.isLPP2) {
-        LPP2Url
-    } else {
-        if(isAgent) {
-            controllers.routes.ChargeSummaryController.showAgent(taxYear.endYear,
-                chargeItem.transactionId, isInterest).url
-        } else {
-            controllers.routes.ChargeSummaryController.show(taxYear.endYear,
-                chargeItem.transactionId, isInterest, origin).url
-        }
-    }
-    paymentTypeEntryHTML(linkText = linkText, linkHref = linkHref, taxYear = taxYear.endYear, rowId = rowId,
-        linkSuffix: String, index+1)
-}
-
-
-@paymentTypeEntryHTML(linkText: String, linkHref:String, taxYear: Int, rowId: String, linkSuffix: String, index: Int) = {
-    <a class="govuk-link" id="@rowId-@linkSuffix" href="@linkHref">
-        @linkText
-        <span class="govuk-visually-hidden">@index</span>
-    </a>
-}
-
-@getPaymentTypeEntry(chargeItem: ChargeItem, rowId: String, isOverduePayment: Boolean, isMFADebit: Boolean, index: Int) = @{
-    val isInterest = chargeItem.isLatePaymentInterest
-    def getLinkSuffix() : String = {
-        if(!isOverduePayment) {
-            "link"
-        } else {
-            if(chargeItem.codedOutStatus.contains(Nics2) || chargeItem.isLatePaymentInterest) {
-                "late-link"
-            } else {
-                "late-link2"
-            }
-        }
-    }
-    paymentTypeEntry(chargeItem, rowId, isInterest = isInterest,
-    linkSuffix = getLinkSuffix(), isMFADebit = isMFADebit, index = index)
 }
 
 @getInterestMessage(chargeItem: ChargeItem): String = @{
@@ -179,7 +133,7 @@
                 </div>
             }
 
-            @getPaymentTypeEntry(chargeItem = chargeItem, isOverduePayment = isOverduePayment,
+            @paymentTypeEntry(chargeItem = chargeItem, isOverduePayment = isOverduePayment,
                 rowId = rowId2, isMFADebit = chargeItem.transactionType == MfaDebitCharge, index = index)
 
             @if(chargeItem.dunningLock){
