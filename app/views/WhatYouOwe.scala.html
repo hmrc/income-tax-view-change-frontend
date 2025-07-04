@@ -51,6 +51,7 @@
     saNoteParagraph: SaNoteParagraph,
     dunningLockParagraph: DunningLockParagraph,
     claimToAdjustPoaSection: ClaimToAdjustPoaSection,
+    codingOutInsetContent: CodingOutInsetContent,
     unallocatedCreditParagraphContent: UnallocatedCreditParagraphContent,
     govukInsetText : GovukInsetText
 )
@@ -303,16 +304,14 @@
                     </table>
                 </div>
             }
-            @if(!whatYouOweChargesList.isChargesListEmpty) {
-                @if(dunningLock || hasLpiWithDunningLock) {
-                    @dunningLockParagraph()
-                }
+            @if(!whatYouOweChargesList.isChargesListEmpty && (dunningLock || hasLpiWithDunningLock) ) {
+                @dunningLockParagraph()
             }
 
             @claimToAdjustPoaSection
 
                 @whatYouOweChargesList.codedOutDetails.map { codedOutDetails =>
-                    @codingOutInsetContent(codedOutDetails)
+                    @codingOutInsetContent(codedOutDetails, origin)
                 }
                 @if(whatYouOweChargesList.isChargesListEmpty) {
                     @saNoteParagraph(utr)
@@ -344,7 +343,7 @@
 
     @if(creditAndRefundEnabled){
         @whatYouOweChargesList.availableCredit.map { ac =>
-                @availableCreditInAccount(ac.toCurrencyString)
+            @availableCreditInAccount(ac.toCurrencyString)
         }
     }
 }
@@ -370,26 +369,5 @@
         controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear)
     } else {
         controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin = origin)
-    }
-}
-
-@codingOutInsetContent(codingOutDetails: CodingOutDetails) = {
-    @p(id=Some("coding-out-notice"), classes="govuk-body coding-out-notice"){
-        @if(isAgent) {
-            @getMessage("codingOut-1a")
-        } else {
-            @getMessage("credit-overpaid-prefix")
-        }
-        <a class="govuk-link" id="coding-out-summary-link" href="@getCodingOutHref(codingOutDetails.codingTaxYear.endYear)">
-            @codingOutDetails.amountCodedOut.toCurrency
-        </a>
-        @getMessage("codingOut-1b")
-        <b>@getMessage("codingOut-2", (codingOutDetails.codingTaxYear.endYear - 1).toString(),
-            codingOutDetails.codingTaxYear.endYear.toString)</b>
-        @if(isAgent) {
-            @getMessage("codingOut-3")
-        } else {
-          @getMessage("codingOut-individual")
-        }
     }
 }
