@@ -53,6 +53,7 @@
     claimToAdjustPoaSection: ClaimToAdjustPoaSection,
     codingOutInsetContent: CodingOutInsetContent,
     paymentTypeEntry: PaymentTypeEntry,
+    paymentsMadeContent: PaymentsMadeContent,
     interestMessage: InterestMessage,
     taxYearSummaryLink: TaxYearSummaryLink,
     availableCreditInAccount: AvailableCreditInAccount,
@@ -278,13 +279,8 @@
                 id = Some("payment-button-link"))
             </div>
         }
-        @p(id = Some("payments-made"))(Html(getPaymentsMadeText))
-        <ul class="govuk-list govuk-list--bullet" id="payments-made-bullets">
-            <li>@messages("whatYouOwe.payments-made-bullet-1.1")
-                @link(link = "https://www.gov.uk/pay-self-assessment-tax-bill", id = Some("sa-tax-bill"), messageKey = getPaymentsMadeBulletLinkText, target = Some("_blank"), rel = Some("noreferrer noopener"))
-            </li>
-            <li>@getPaymentsMadeBulletText</li>
-        </ul>
+
+        @paymentsMadeContent()
     }
 
     @if(creditAndRefundEnabled){
