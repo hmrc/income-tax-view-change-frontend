@@ -30,6 +30,7 @@
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
 @import _root_.implicits.HtmlFormatter.NbspString
 @import views.html.partials.whatYouOwe.SaNoteParagraph
+@import views.helpers.whatYouOweChargesSummary.WYOSummaryLangHelper._
 
 @this(
     mainTemplate: unifiedLayout,
@@ -69,15 +70,7 @@
 
 @import implicitDateFormatter.longDate
 
-@getPrefix(key: String) = @{
-    s"whatYouOwe.$key"
-}
-
 @btaNavPartial = @{ user.btaNavPartial }
-
-@getMessage(key: String, args: String*) = @{
-    messages(s"whatYouOwe.$key", args: _*)
-}
 
 @unallocatedCreditParagraphContent(amount: String) = {
     @p(id = Some("unallocated-credit-note"))(Html(messages("whatYouOwe.credit-overpaid-prefix") + link(link = creditAndRefundUrl,
