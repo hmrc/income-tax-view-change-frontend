@@ -29,8 +29,12 @@
 @import services.DateServiceInterface
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
 @import _root_.implicits.HtmlFormatter.NbspString
-@import views.html.partials.whatYouOwe.SaNoteParagraph
-@import views.helpers.whatYouOweChargesSummary.WYOSummaryLangHelper._
+@import views.html.partials.whatYouOwe._
+@import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper.getMessage
+@import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper.getPrefix
+@import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper.getNoPaymentsDueText
+@import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper.getPaymentsMadeBulletLinkText
+@import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper.getPaymentsMadeBulletText
 
 @this(
     mainTemplate: unifiedLayout,
@@ -213,18 +217,6 @@
 
 @getHeading = @{
     if(isAgent) getPrefix("heading-agent") else getPrefix("heading")
-}
-
-@getPaymentsMadeBulletLinkText = @{
-    if(isAgent) messages("whatYouOwe.payments-made-bullet-agent-1.2") else messages("whatYouOwe.payments-made-bullet-1.2")
-}
-
-@getPaymentsMadeBulletText = @{
-    if(isAgent) messages("whatYouOwe.payments-made-bullet-agent-2") else messages("whatYouOwe.payments-made-bullet-2")
-}
-
-@getNoPaymentsDueText = @{
-    if(isAgent) messages("whatYouOwe.no-payments-due-agent") else messages("whatYouOwe.no-payments-due")
 }
 
 @getPaymentsMadeText = @{
