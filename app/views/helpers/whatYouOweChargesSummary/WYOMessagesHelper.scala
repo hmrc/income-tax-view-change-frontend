@@ -55,6 +55,4 @@ object WYOMessagesHelper {
       if(user.isAgent()) "heading-agent"
       else               "heading"
     )
-
-
 }

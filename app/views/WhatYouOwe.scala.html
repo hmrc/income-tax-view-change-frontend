@@ -74,6 +74,7 @@
     returnHref: Int => String,
     claimToAdjustViewModel: WYOClaimToAdjustViewModel,
     LPP2Url: String,
+    adjustPoaUrl: String,
     origin: Option[String] = None
 )(
     implicit request: Request[_],
@@ -249,7 +250,11 @@
                 @dunningLockParagraph()
             }
 
-            @claimToAdjustPoaSection
+            @claimToAdjustPoaSection(
+                whatYouOweChargesList.hasUnpaidPOAs,
+                claimToAdjustViewModel.claimToAdjustTaxYear,
+                adjustPoaUrl
+            )
 
                 @whatYouOweChargesList.codedOutDetails.map { codedOutDetails =>
                     @codingOutInsetContent(codedOutDetails, origin)
@@ -284,10 +289,7 @@
 
     @if(creditAndRefundEnabled){
         @whatYouOweChargesList.availableCredit.map { ac =>
-            @availableCreditInAccount(
-                ac.toCurrencyString,
-                creditAndRefundUrl
-            )
+            @availableCreditInAccount(ac.toCurrencyString, creditAndRefundUrl)
         }
     }
 }

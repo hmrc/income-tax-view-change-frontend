@@ -94,6 +94,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
           }
         },
         origin = origin,
+        adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url,
         claimToAdjustViewModel = ctaViewModel,
         LPP2Url = appConfig.incomeTaxPenaltiesFrontendCalculation)(user, user, messages, dateService)
       ).addingToSession(gatewayPage -> WhatYouOwePage.name)
