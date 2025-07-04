@@ -70,8 +70,6 @@
 
 @import implicitDateFormatter.longDate
 
-@btaNavPartial = @{ user.btaNavPartial }
-
 @unallocatedCreditParagraphContent(amount: String) = {
     @p(id = Some("unallocated-credit-note"))(Html(messages("whatYouOwe.credit-overpaid-prefix") + link(link = creditAndRefundUrl,
         outerMessage = messages("whatYouOwe.unallocated-credit-note"),
@@ -269,7 +267,7 @@
     pageTitle = messages(getHeading),
     backUrl = Some(backUrl),
     isAgent = isAgent,
-    btaNavPartial = btaNavPartial,
+    btaNavPartial = user.btaNavPartial,
     useFallbackBackLink = true
 ) {
     @h1(msg = messages(getHeading), id = Some("page-heading"))
