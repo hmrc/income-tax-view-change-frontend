@@ -21,10 +21,10 @@ import play.api.i18n.Messages
 
 object WYOMessagesHelper {
 
-  def getMessage(key: String, args: String*)(implicit messages: Messages) =
+  def getMessage(key: String, args: String*)(implicit messages: Messages): String =
     messages(s"whatYouOwe.$key", args: _*)
 
-  def getPrefix(key: String) = s"whatYouOwe.$key"
+  def getPrefix(key: String): String = s"whatYouOwe.$key"
 
   def getPaymentsMadeBulletLinkText(implicit user: MtdItUser[_], messages: Messages): String =
     getMessage(
