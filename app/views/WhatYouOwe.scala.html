@@ -17,7 +17,6 @@
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import _root_.implicits.ImplicitCurrencyFormatter._
 @import models.financialDetails.WhatYouOweChargesList
-@import models.financialDetails.DocumentDetailWithDueDate
 @import models.financialDetails._
 @import auth.MtdItUser
 @import views.html.layouts.unifiedLayout
@@ -56,7 +55,7 @@
     reviewAndReconcileEnabled: Boolean,
     isAgent: Boolean = false,
     creditAndRefundUrl: String,
-    isUserMigrated: Boolean = false,
+    creditAndRefundsUrlWithMigrationCheck: String,
     creditAndRefundEnabled: Boolean,
     claimToAdjustViewModel: WYOClaimToAdjustViewModel,
     LPP2Url: String,
@@ -85,22 +84,6 @@
         outerMessage = messages("whatYouOwe.unallocated-credit-note"),
         messageKey = messages("whatYouOwe.credit-overpaid-amount", amount),
         id = Some("unallocated-credit-link")).toString()))
-}
-
-@creditAndRefundsControllerURL = @{
-    if (isUserMigrated) {
-        if(isAgent) {
-            controllers.routes.CreditAndRefundController.showAgent().url
-        } else {
-            controllers.routes.CreditAndRefundController.show().url
-        }
-    } else {
-        if (isAgent) {
-            controllers.routes.NotMigratedUserController.showAgent().url
-        } else {
-            controllers.routes.NotMigratedUserController.show().url
-        }
-    }
 }
 
 @dunningLockParagraph = {
@@ -442,12 +425,12 @@
             @h2(msg = messages("whatYouOwe.moneyOnAccount-agent"))
             @messages("whatYouOwe.moneyOnAccount-1") @availableCredit
             @messages("whatYouOwe.moneyOnAccount-agent-2")
-            @link(link = creditAndRefundsControllerURL,  messageKey = "whatYouOwe.moneyOnAccount-3", outerMessage = ".", rel=Some("noreferrer noopener"))
+            @link(link = creditAndRefundsUrlWithMigrationCheck,  messageKey = "whatYouOwe.moneyOnAccount-3", outerMessage = ".", rel=Some("noreferrer noopener"))
         } else {
             @h2(msg = messages("whatYouOwe.moneyOnAccount"))
             @messages("whatYouOwe.moneyOnAccount-1") @availableCredit
             @messages("whatYouOwe.moneyOnAccount-2")
-            @link(link = creditAndRefundsControllerURL,  messageKey = "whatYouOwe.moneyOnAccount-3", outerMessage = ".", rel=Some("noreferrer noopener"))
+            @link(link = creditAndRefundsUrlWithMigrationCheck,  messageKey = "whatYouOwe.moneyOnAccount-3", outerMessage = ".", rel=Some("noreferrer noopener"))
         }
     </div>
 }

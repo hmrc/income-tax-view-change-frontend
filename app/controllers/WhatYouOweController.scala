@@ -83,7 +83,24 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
           if(isAgent) CreditAndRefundController.showAgent().url
           else        CreditAndRefundController.show().url
         },
-        isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
+        creditAndRefundsUrlWithMigrationCheck = {
+
+          val isUserMigrated = user.incomeSources.yearOfMigration.isDefined
+
+          if (isUserMigrated) {
+            if(isAgent) {
+              controllers.routes.CreditAndRefundController.showAgent().url
+            } else {
+              controllers.routes.CreditAndRefundController.show().url
+            }
+          } else {
+            if (isAgent) {
+              controllers.routes.NotMigratedUserController.showAgent().url
+            } else {
+              controllers.routes.NotMigratedUserController.show().url
+            }
+          }
+        },
         creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
         origin = origin,
         claimToAdjustViewModel = ctaViewModel,
