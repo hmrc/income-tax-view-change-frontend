@@ -52,7 +52,6 @@ def test(scope: String = "test"): Seq[ModuleID] = Seq(
 def it(scope: String = "test"): Seq[ModuleID] = Seq(
   "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,
   "org.scalamock" %% "scalamock" % scalaMockVersion % scope,
-  "org.pegdown" % "pegdown" % pegdownVersion % scope,
   "org.jsoup" % "jsoup" % jsoupVersion % scope,
   "org.mockito" % "mockito-core" % mockitoVersion % scope,
   "com.github.tomakehurst" % "wiremock" % wiremockVersion % scope,
