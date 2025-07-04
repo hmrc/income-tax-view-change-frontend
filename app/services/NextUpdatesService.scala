@@ -172,33 +172,19 @@ class NextUpdatesService @Inject()(
           .sorted
           .headOption
 
-        val nextTaxReturnDate = Some(calculateNextTaxReturnDueDate())
+        val nextTaxReturnDate : Option[LocalDate] = Some(LocalDate.of(dateService.getCurrentTaxYear.endYear + 1, 1, 31))
 
         (nextQuarterlyDueDate, nextTaxReturnDate)
 
       case error: ObligationsErrorModel =>
         Logger("application").warn(s"[getNextDueDates] Failed to fetch obligations: ${error.message}")
-        (None, Some(calculateNextTaxReturnDueDate()))
+        (None, Some(LocalDate.of(dateService.getCurrentTaxYear.endYear + 1, 1, 31)))
 
       case unexpected =>
         Logger("application").error(s"[getNextDueDates] Unexpected response: $unexpected")
-        (None, Some(calculateNextTaxReturnDueDate()))
+        (None, Some(LocalDate.of(dateService.getCurrentTaxYear.endYear + 1, 1, 31)))
     }
   }
-
-  private def calculateNextTaxReturnDueDate(): LocalDate = {
-    val currentDate = LocalDate.now()
-    val currentTaxYearStart = dateService.getCurrentTaxYear.startYear
-    var nextTaxReturnDate: LocalDate = LocalDate.of(currentTaxYearStart + 1, 1, 31)
-
-    if (!currentDate.isBefore(nextTaxReturnDate)) {
-      nextTaxReturnDate = nextTaxReturnDate.plusYears(1)
-    }
-
-    nextTaxReturnDate
-  }
-
-
 }
 
 

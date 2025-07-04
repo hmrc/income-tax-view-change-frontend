@@ -638,13 +638,8 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
 
       nextQuarterlyUpdateDueDate shouldBe Some(fixedDate.plusDays(1))
 
-      val currentDate = LocalDate.now()
-      val currentTaxYearStart = TestNextUpdatesService.dateService.getCurrentTaxYear.startYear
-      var expectedNextTaxReturnDueDate = LocalDate.of(currentTaxYearStart + 1, 1, 31)
-
-      if (!currentDate.isBefore(expectedNextTaxReturnDueDate)) {
-        expectedNextTaxReturnDueDate = expectedNextTaxReturnDueDate.plusYears(1)
-      }
+      val currentTaxYearEnd: Int = TestNextUpdatesService.dateService.getCurrentTaxYear.endYear
+      val expectedNextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYearEnd + 1, 1, 31)
 
       nextTaxReturnDueDate shouldBe Some(expectedNextTaxReturnDueDate)
     }
@@ -661,13 +656,8 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
 
       nextQuarterlyUpdateDueDate shouldBe None
 
-      val currentDate = LocalDate.now()
-      val currentTaxYearStart: Int = TestNextUpdatesService.dateService.getCurrentTaxYear.startYear
-      var expectedNextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYearStart + 1, 1, 31)
-
-      if (!currentDate.isBefore(expectedNextTaxReturnDueDate)) {
-        expectedNextTaxReturnDueDate = expectedNextTaxReturnDueDate.plusYears(1)
-      }
+      val currentTaxYearEnd: Int = TestNextUpdatesService.dateService.getCurrentTaxYear.endYear
+      val expectedNextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYearEnd + 1, 1, 31)
 
       nextTaxReturnDueDate shouldBe Some(expectedNextTaxReturnDueDate)
     }
@@ -678,13 +668,8 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
 
       nextQuarterlyUpdateDueDate shouldBe None
 
-      val currentDate = LocalDate.now()
-      val currentTaxYearStart: Int = TestNextUpdatesService.dateService.getCurrentTaxYear.startYear
-      var expectedNextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYearStart + 1, 1, 31)
-
-      if (!currentDate.isBefore(expectedNextTaxReturnDueDate)) {
-        expectedNextTaxReturnDueDate = expectedNextTaxReturnDueDate.plusYears(1)
-      }
+      val currentTaxYearEnd: Int = TestNextUpdatesService.dateService.getCurrentTaxYear.endYear
+      val expectedNextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYearEnd + 1, 1, 31)
 
       nextTaxReturnDueDate shouldBe Some(expectedNextTaxReturnDueDate)
     }
