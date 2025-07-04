@@ -79,28 +79,12 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
         dunningLock = whatYouOweChargesList.hasDunningLock,
         reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
         isAgent = isAgent,
-        creditAndRefundUrl = {
-          if(isAgent) CreditAndRefundController.showAgent().url
-          else        CreditAndRefundController.show().url
-        },
-        creditAndRefundsUrlWithMigrationCheck = {
-
-          val isUserMigrated = user.incomeSources.yearOfMigration.isDefined
-
-          if (isUserMigrated) {
-            if(isAgent) {
-              controllers.routes.CreditAndRefundController.showAgent().url
-            } else {
-              controllers.routes.CreditAndRefundController.show().url
-            }
-          } else {
-            if (isAgent) {
-              controllers.routes.NotMigratedUserController.showAgent().url
-            } else {
-              controllers.routes.NotMigratedUserController.show().url
-            }
-          }
-        },
+        creditAndRefundUrl = (user.isAgent() match {
+          case true if user.incomeSources.yearOfMigration.isDefined  => CreditAndRefundController.showAgent()
+          case true                                                  => NotMigratedUserController.showAgent()
+          case false if user.incomeSources.yearOfMigration.isDefined => CreditAndRefundController.show()
+          case false                                                 => NotMigratedUserController.show()
+        }).url,
         creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
         origin = origin,
         claimToAdjustViewModel = ctaViewModel,

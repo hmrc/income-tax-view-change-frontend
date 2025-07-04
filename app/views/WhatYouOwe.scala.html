@@ -67,7 +67,6 @@
     reviewAndReconcileEnabled: Boolean,
     isAgent: Boolean = false,
     creditAndRefundUrl: String,
-    creditAndRefundsUrlWithMigrationCheck: String,
     creditAndRefundEnabled: Boolean,
     claimToAdjustViewModel: WYOClaimToAdjustViewModel,
     LPP2Url: String,
@@ -308,12 +307,12 @@
             @h2(msg = messages("whatYouOwe.moneyOnAccount-agent"))
             @messages("whatYouOwe.moneyOnAccount-1") @availableCredit
             @messages("whatYouOwe.moneyOnAccount-agent-2")
-            @link(link = creditAndRefundsUrlWithMigrationCheck,  messageKey = "whatYouOwe.moneyOnAccount-3", outerMessage = ".", rel=Some("noreferrer noopener"))
+            @link(link = creditAndRefundUrl,  messageKey = "whatYouOwe.moneyOnAccount-3", outerMessage = ".", rel=Some("noreferrer noopener"))
         } else {
             @h2(msg = messages("whatYouOwe.moneyOnAccount"))
             @messages("whatYouOwe.moneyOnAccount-1") @availableCredit
             @messages("whatYouOwe.moneyOnAccount-2")
-            @link(link = creditAndRefundsUrlWithMigrationCheck,  messageKey = "whatYouOwe.moneyOnAccount-3", outerMessage = ".", rel=Some("noreferrer noopener"))
+            @link(link = creditAndRefundUrl,  messageKey = "whatYouOwe.moneyOnAccount-3", outerMessage = ".", rel=Some("noreferrer noopener"))
         }
     </div>
 }
