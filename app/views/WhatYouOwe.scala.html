@@ -317,11 +317,3 @@
         }
     </div>
 }
-
-@getCodingOutHref(taxYear: Int) = @{
-    if(user.isAgent()) {
-        controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear)
-    } else {
-        controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin = origin)
-    }
-}
