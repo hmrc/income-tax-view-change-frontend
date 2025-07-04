@@ -37,7 +37,7 @@
             (chargeItem.transactionType match {
                 case PoaOneReconciliationDebit => ".reviewAndReconcileOne"
                 case PoaTwoReconciliationDebit => ".reviewAndReconcileTwo"
-                case _                         => ""
+                case _                         => ".interest"
             }) + ".line1"
     )
 }
