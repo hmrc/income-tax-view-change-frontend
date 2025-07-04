@@ -50,6 +50,7 @@
     govukWarningText: GovukWarningText,
     saNoteParagraph: SaNoteParagraph,
     dunningLockParagraph: DunningLockParagraph,
+    claimToAdjustPoaSection: ClaimToAdjustPoaSection,
     unallocatedCreditParagraphContent: UnallocatedCreditParagraphContent,
     govukInsetText : GovukInsetText
 )
@@ -198,38 +199,6 @@
     </tr>
 }
 
-@getClaimToAdjustPoaSection = @{
-    if(whatYouOweChargesList.hasUnpaidPOAs) {
-        claimToAdjustViewModel.claimToAdjustTaxYear match {
-            case Some(value) =>
-                p(id = Some("adjust-poa-content"))(
-                    link(
-                        link = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent).url,
-                        messageKey = getMessage("adjust-poa", value.startYear.toString, value.endYear.toString),
-                        id = Some("adjust-poa-link"))
-                )
-            case None => Html("")
-        }
-    } else {
-        claimToAdjustViewModel.claimToAdjustTaxYear match {
-            case Some(value) =>
-                p(id = Some("adjust-paid-poa-content"))(Html(s"""
-                    ${getMessage("adjust-poa.paid-1", value.startYear.toString, value.endYear.toString)}
-                    ${link(
-                        link = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent).url,
-                        messageKey = getMessage("adjust-poa.paid-2", value.startYear.toString, value.endYear.toString),
-                        id = Some("adjust-poa-link"))}
-                    ${getMessage("adjust-poa.paid-3", value.startYear.toString, value.endYear.toString)}
-                    <span class="govuk-!-font-weight-bold">
-                        ${getMessage("adjust-poa.paid-4", (value.endYear + 1).toString)}
-                    </span>
-                    ${getMessage("adjust-poa.paid-5")}
-                """))
-            case None => Html("")
-        }
-    }
-}
-
 @mainTemplate(
     pageTitle = getHeading,
     backUrl = Some(backUrl),
@@ -237,15 +206,17 @@
     btaNavPartial = user.btaNavPartial
 ) {
     @h1(msg = getHeading, id = Some("page-heading"))
+
     @if(whatYouOweChargesList.isChargesListEmpty && whatYouOweChargesList.codedOutDetails.isEmpty) {
+
         @p(id = Some("no-payments-due"))(Html(getNoPaymentsDueText))
-
-        @getClaimToAdjustPoaSection
-
+        @claimToAdjustPoaSection
         @saNoteParagraph(utr)
+
     } else {
 
         @if(hasOverdueOrAccruingInterestCharges) {
+
             @govukWarningText(WarningText(
                 attributes = Map("id" -> "interest-charges-warning"),
                 content = Text(getMessage("interestChargesWarning"))
@@ -338,7 +309,7 @@
                 }
             }
 
-            @getClaimToAdjustPoaSection
+            @claimToAdjustPoaSection
 
                 @whatYouOweChargesList.codedOutDetails.map { codedOutDetails =>
                     @codingOutInsetContent(codedOutDetails)
