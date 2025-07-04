@@ -70,20 +70,26 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
 
       val hasOverdueCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
       val hasAccruingInterestReviewAndReconcileCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isNotPaidAndNotOverduePoaReconciliationDebit()(dateService))
-      Ok(whatYouOwe(
-        currentDate = dateService.getCurrentDate,
-        hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
-        whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
-        currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,
-        dunningLock = whatYouOweChargesList.hasDunningLock,
-        reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
-        isAgent = isAgent,
-        isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
-        creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
-        origin = origin,
-        claimToAdjustViewModel = ctaViewModel,
-        LPP2Url = getLPP2Link(whatYouOweChargesList.chargesList))(user, user, messages, dateService)
-      ).addingToSession(gatewayPage -> WhatYouOwePage.name)
+      getLPP2Link(whatYouOweChargesList.chargesList) match {
+        case Some(lpp2Url) =>
+          Ok(whatYouOwe(
+            currentDate = dateService.getCurrentDate,
+            hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
+            whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
+            currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,
+            dunningLock = whatYouOweChargesList.hasDunningLock,
+            reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
+            isAgent = isAgent,
+            isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
+            creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
+            origin = origin,
+            claimToAdjustViewModel = ctaViewModel,
+            LPP2Url = lpp2Url)(user, user, messages, dateService)
+          ).addingToSession(gatewayPage -> WhatYouOwePage.name)
+        case None =>
+          Logger("application").error("No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
+          itvcErrorHandler.showInternalServerError()
+      }
     }
   } recover {
     case ex: Exception =>
@@ -92,14 +98,14 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
       itvcErrorHandler.showInternalServerError()
   }
 
-  private def getLPP2Link(chargeItems: List[ChargeItem]): String = {
+  private def getLPP2Link(chargeItems: List[ChargeItem]): Option[String] = {
     val LPP2 = chargeItems.find(_.transactionType == SecondLatePaymentPenalty)
     LPP2 match {
       case Some(charge) => charge.chargeReference match {
-        case Some(value) => appConfig.incomeTaxPenaltiesFrontendLPP2Calculation(value)
-        case None => "" //TODO: Whatever backup link is
+        case Some(value) => Some(appConfig.incomeTaxPenaltiesFrontendLPP2Calculation(value))
+        case None => None
       }
-      case None => ""
+      case None => Some("")
     }
   }
 

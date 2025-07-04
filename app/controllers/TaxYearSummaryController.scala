@@ -79,10 +79,9 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
                    origin: Option[String],
                    isAgent: Boolean
                   )(implicit mtdItUser: MtdItUser[_]): Result = {
-    liabilityCalc match {
-      case liabilityCalc: LiabilityCalculationResponse =>
+    (liabilityCalc, getLPP2Link(chargeItems)) match {
+      case (liabilityCalc: LiabilityCalculationResponse, Some(lpp2Url)) =>
         val lang: Seq[Lang] = Seq(languageUtils.getCurrentLang)
-        val LPP2Url = getLPP2Link(chargeItems)
 
         val calculationSummary = Some(CalculationSummary(
           formatErrorMessages(
@@ -96,7 +95,7 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
           obligations,
           showForecastData = showForecast(calculationSummary),
           ctaViewModel = claimToAdjustViewModel,
-          LPP2Url
+          lpp2Url
         )
         lazy val ctaLink = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = isAgent).url
         auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(
@@ -113,53 +112,67 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
           isAgent = isAgent,
           ctaLink = ctaLink
         ))
-      case error: LiabilityCalculationError if error.status == NO_CONTENT =>
+      case (error: LiabilityCalculationError,Some(lpp2Url)) =>
+        if (error.status == NO_CONTENT) {
+          lazy val ctaLink = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = isAgent).url
 
-        lazy val ctaLink = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = isAgent).url
+          val viewModel = TaxYearSummaryViewModel(
+            None,
+            chargeItems,
+            obligations,
+            showForecastData = true,
+            claimToAdjustViewModel,
+            lpp2Url)
 
-        val LPP2Url = getLPP2Link(chargeItems)
+          auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(
+            mtdItUser, messagesApi, viewModel))
 
-        val viewModel = TaxYearSummaryViewModel(
-          None,
-          chargeItems,
-          obligations,
-          showForecastData = true,
-          claimToAdjustViewModel,
-          LPP2Url)
+          Logger("application").info(
+            s"[$taxYear]] Rendered Tax year summary page with No Calc data")
 
-        auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(
-          mtdItUser, messagesApi, viewModel))
-
-        Logger("application").info(
-          s"[$taxYear]] Rendered Tax year summary page with No Calc data")
-
-        Ok(taxYearSummaryView(
-          taxYear = taxYear,
-          viewModel = viewModel,
-          backUrl = backUrl,
-          origin = origin,
-          isAgent = isAgent,
-          ctaLink = ctaLink
-        ))
-      case _: LiabilityCalculationError if isAgent =>
-        Logger("application").error(
-          s"[Agent][$taxYear]] No new calc deductions data error found. Downstream error")
-        agentItvcErrorHandler.showInternalServerError()
-      case _: LiabilityCalculationError =>
-        Logger("application").error(
-          s"[$taxYear]] No new calc deductions data error found. Downstream error")
-        itvcErrorHandler.showInternalServerError()
+          Ok(taxYearSummaryView(
+            taxYear = taxYear,
+            viewModel = viewModel,
+            backUrl = backUrl,
+            origin = origin,
+            isAgent = isAgent,
+            ctaLink = ctaLink
+          ))
+        }
+        else {
+          if (isAgent) {
+            Logger("application").error(
+              s"[Agent][$taxYear]] No new calc deductions data error found. Downstream error")
+            agentItvcErrorHandler.showInternalServerError()
+          }
+          else {
+            Logger("application").error(
+              s"[$taxYear]] No new calc deductions data error found. Downstream error")
+            itvcErrorHandler.showInternalServerError()
+          }
+        }
+      case (_, None) =>
+        if (isAgent) {
+          Logger("application").error(
+            s"[Agent][$taxYear]] No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
+          agentItvcErrorHandler.showInternalServerError()
+        }
+        else {
+          Logger("application").error(
+            s"[$taxYear]] No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
+          itvcErrorHandler.showInternalServerError()
+        }
     }
   }
 
-  private def getLPP2Link(chargeItems: List[TaxYearSummaryChargeItem]): String = {
+  private def getLPP2Link(chargeItems: List[TaxYearSummaryChargeItem]): Option[String] = {
     val LPP2 = chargeItems.find(_.transactionType == SecondLatePaymentPenalty)
     LPP2 match {
       case Some(charge) => charge.chargeReference match {
-        case Some(value) => appConfig.incomeTaxPenaltiesFrontendLPP2Calculation(value)
-        case None => "" //TODO: Whatever backup link is
+        case Some(value) => Some(appConfig.incomeTaxPenaltiesFrontendLPP2Calculation(value))
+        case None => None
       }
-      case None => ""
+      case None => Some("")
     }
   }
 
