@@ -108,9 +108,6 @@ lazy val microservice = Project(appName, file("."))
     ),
     RoutesKeys.routesImport := Seq("enums.IncomeSourceJourney._", "models.admin._", "models.core._"),
   )
-  .settings(resolvers ++= Seq(
-    Resolver.jcenterRepo
-  ))
 
 lazy val it = project
   .dependsOn(microservice % "test->test")
