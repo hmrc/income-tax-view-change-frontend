@@ -53,6 +53,8 @@
     claimToAdjustPoaSection: ClaimToAdjustPoaSection,
     codingOutInsetContent: CodingOutInsetContent,
     paymentTypeEntry: PaymentTypeEntry,
+    interestMessage: InterestMessage,
+    taxYearSummaryLink: TaxYearSummaryLink,
     availableCreditInAccount: AvailableCreditInAccount,
     unallocatedCreditParagraphContent: UnallocatedCreditParagraphContent,
     govukInsetText : GovukInsetText
@@ -93,20 +95,6 @@
     </thead>
 }
 
-@getInterestMessage(chargeItem: ChargeItem): String = @{
-    if(chargeItem.transactionType == PoaOneReconciliationDebit) getMessage("over-due.reviewAndReconcileOne.line1")
-    else if(chargeItem.transactionType == PoaTwoReconciliationDebit) getMessage("over-due.reviewAndReconcileTwo.line1")
-    else getMessage("over-due.interest.line1")
-}
-
-@taxYearSummaryLink(year: Int, index:Int, id:String) = {
-    <a class="govuk-link" id="@id-@index"
-       href="@returnHref(year)">
-        @getMessage("tax-year-summary.taxYear", (year - 1).toString, year.toString).toNbsp
-        <span class="govuk-visually-hidden">@getMessage("taxYear")</span>
-    </a>
-}
-
 @tableRow(rowId2: String, chargeItem: ChargeItem, isOverduePayment: Boolean, index:Int, id:String) = {
     <tr class="govuk-table__row" id="@rowId2">
         <td class="govuk-table__cell">
@@ -142,7 +130,7 @@
                 <div class="form-hint govuk-body-s" id="LpiDunningLock"> @getMessage("paymentUnderReview") </div>
             }
         </td>
-        <td class="govuk-table__cell"> @taxYearSummaryLink(chargeItem.taxYear.endYear, index, id)</td>
+        <td class="govuk-table__cell"> @taxYearSummaryLink(chargeItem.taxYear.endYear, index, id, returnHref)</td>
         <td class="govuk-table__cell govuk-table__cell--numeric">@{
             if(chargeItem.isOnlyInterest) {
                 chargeItem.interestRemainingToPay.toCurrency
@@ -234,7 +222,7 @@
                                         <tr class="govuk-table__row" id=@(s"charge-interest-$index")>
                                             <td class="govuk-table__cell"></td>
                                             <td class="govuk-table__cell">
-                                                @getInterestMessage(charge)
+                                                @interestMessage(charge)
                                                 <div>
                                                 @getMessage("over-due.interest.line2",
                                                     charge.getInterestFromDate.toLongDateShort,
@@ -244,7 +232,7 @@
                                                 </div>
                                             </td>
                                             <td class="govuk-table__cell">
-                                            @taxYearSummaryLink(charge.taxYear.endYear, index, "taxYearSummary-accuring-interest-link")
+                                            @taxYearSummaryLink(charge.taxYear.endYear, index, "taxYearSummary-accuring-interest-link", returnHref)
                                             </td>
                                             <td class="govuk-table__cell govuk-table__cell--numeric">@{
                                                 charge.getInterestOutstandingAmount.toCurrency
