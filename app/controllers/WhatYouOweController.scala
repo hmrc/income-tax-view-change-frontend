@@ -36,6 +36,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.WhatYouOwe
 import controllers.routes._
+import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -95,6 +96,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
         },
         origin = origin,
         adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url,
+        paymentHandOffUrl = PaymentController.paymentHandoff(whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.get._2.toPence, origin).url,
         claimToAdjustViewModel = ctaViewModel,
         LPP2Url = appConfig.incomeTaxPenaltiesFrontendCalculation)(user, user, messages, dateService)
       ).addingToSession(gatewayPage -> WhatYouOwePage.name)

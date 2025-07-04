@@ -48,6 +48,7 @@
     link: link,
     detailsDropdown: detailsDropdown,
     govukWarningText: GovukWarningText,
+    govukButton: GovukButton,
     saNoteParagraph: SaNoteParagraph,
     dunningLockParagraph: DunningLockParagraph,
     claimToAdjustPoaSection: ClaimToAdjustPoaSection,
@@ -76,6 +77,7 @@
     claimToAdjustViewModel: WYOClaimToAdjustViewModel,
     LPP2Url: String,
     adjustPoaUrl: String,
+    paymentHandOffUrl: String,
     origin: Option[String] = None
 )(
     implicit request: Request[_],
@@ -273,11 +275,12 @@
         }
 
         @if(utr.isDefined && !isAgent && whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.isDefined) {
-            <div id="payment-button">
-            @link(link = controllers.routes.PaymentController.paymentHandoff(whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.get._2.toPence, origin).url,
-                messageKey = getPrefix("payNow"), classes = "govuk-button", role = Some("button"),
-                id = Some("payment-button-link"))
-            </div>
+
+            @govukButton(Button(
+                id = Some("payment-button-link"),
+                content = Text(getMessage("payNow")),
+                href = Some(paymentHandOffUrl)
+            ))
         }
 
         @paymentsMadeContent()
