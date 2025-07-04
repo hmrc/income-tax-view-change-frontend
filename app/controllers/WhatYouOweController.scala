@@ -35,6 +35,7 @@ import services.{ClaimToAdjustService, DateServiceInterface, WhatYouOweService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.WhatYouOwe
+import controllers.routes._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -78,6 +79,10 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
         dunningLock = whatYouOweChargesList.hasDunningLock,
         reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
         isAgent = isAgent,
+        creditAndRefundUrl = {
+          if(isAgent) CreditAndRefundController.showAgent().url
+          else        CreditAndRefundController.show().url
+        },
         isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
         creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
         origin = origin,

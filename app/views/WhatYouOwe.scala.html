@@ -55,11 +55,18 @@
     dunningLock: Boolean,
     reviewAndReconcileEnabled: Boolean,
     isAgent: Boolean = false,
+    creditAndRefundUrl: String,
     isUserMigrated: Boolean = false,
     creditAndRefundEnabled: Boolean,
     claimToAdjustViewModel: WYOClaimToAdjustViewModel,
     LPP2Url: String,
-    origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages, dateService: DateServiceInterface)
+    origin: Option[String] = None
+)(
+    implicit request: Request[_],
+    user: MtdItUser[_],
+    messages: Messages,
+    dateService: DateServiceInterface
+)
 
 @import implicitDateFormatter.longDate
 
@@ -71,14 +78,6 @@
 
 @getMessage(key: String, args: String*) = @{
     messages(s"whatYouOwe.$key", args: _*)
-}
-
-@creditAndRefundUrl = @{
-    if(isAgent) {
-        controllers.routes.CreditAndRefundController.showAgent().url
-    } else {
-        controllers.routes.CreditAndRefundController.show().url
-    }
 }
 
 @unallocatedCreditParagraphContent(amount: String) = {
