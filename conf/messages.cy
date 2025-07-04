@@ -180,6 +180,11 @@ home.interest-accruing                                          = Mae gennych da
 home.updates.overdue.charges                                    = {0} Daliadau am fod yn hwyr
 home.updates.overdue.updates                                    = {0} Ddiweddariadau yn hwyr
 
+home.updates.R17.heading                                        = Eich diweddariadau a’ch dyddiadau cau
+home.updates.R17.nextUpdateDue                                  = Diweddariad nesaf i’w gyflwyno erbyn: {0}
+home.updates.R17.nextTaxReturnDue                               = Ffurflen Dreth nesaf i’w chyflwyno erbyn: {0}
+home.updates.R17.linkText                                       = Bwrw golwg dros eich dyddiadau cau
+
 home.agent.supporting.paymentAndReturns                         = Taliadau a Ffurflenni Treth
 home.agent.supporting.cannotAccess                              = Ni all asiantau ategol gael mynediad at gofnodion sy’n dangos:
 home.agent.supporting.cannotAccess.payments                     = taliadau, credydau ac ad-daliadau
