@@ -67,8 +67,8 @@ trait HomeControllerHelperSpec extends MockAuthActions
   val staticTaxYear: TaxYear = TaxYear(fixedDate.getYear - 1, fixedDate.getYear)
 
   def setupNextUpdatesTests(allDueDates: Seq[LocalDate],
-                            nextQuarterly: Option[LocalDate],
-                            nextReturn: Option[LocalDate],
+                            nextQuarterlyUpdateDueDate: Option[LocalDate],
+                            nextTaxReturnDueDate: Option[LocalDate],
                             mtdUserRole: MTDUserRole = MTDIndividual): Unit = {
     mtdUserRole match {
       case MTDIndividual => setupMockUserAuth
@@ -77,7 +77,7 @@ trait HomeControllerHelperSpec extends MockAuthActions
     }
 
     mockGetDueDates(Right(allDueDates))
-    mockGetNextDueDates((nextQuarterly, nextReturn))
+    mockGetNextDueDates((nextQuarterlyUpdateDueDate, nextTaxReturnDueDate))
     mockSingleBusinessIncomeSource()
 
     when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
