@@ -127,7 +127,7 @@
                         content = Text(getMessage("tableHead.tax-year"))
                     ),
                     HeadCell(
-                        content =HtmlContent(getMessage("tableHead.amount-due").toNbsp)
+                        content = HtmlContent(getMessage("tableHead.amount-due").toNbsp)
                     )
                 )),
                 rows = Seq(
@@ -173,23 +173,19 @@
                     ) ++ (for ((charge, index) <- whatYouOweChargesList.sortedChargesList.zipWithIndex) yield {
                         Seq(
                             Seq(
-                                TableRow(content = HtmlContent(
-                                    if (charge.isLatePaymentInterest && charge.isPaid) charge.getInterestEndDate.toLongDateShort.toNbsp
-                                    else                                               charge.getDueDate.toLongDateShort.toNbsp
-                                )),
+                                TableRow(
+                                    content = HtmlContent(charge.getChargeWithoutAccruingInterestDueDate.toLongDateShort.toNbsp)
+                                ),
                                 TableRow(
                                     attributes = Map("id" -> "charge-without-accruing-interest"),
                                     content = HtmlContent(chargeWithoutAccruingInterest(LPP2Url, s"due-$index", charge, index, origin))
                                 ),
-                                TableRow(content = HtmlContent(
-                                    taxYearSummaryLink(charge.taxYear.endYear, index, returnHref)
-                                )),
                                 TableRow(
-                                    format = Some("numeric"),
-                                    content = HtmlContent(
-                                        if (charge.isOnlyInterest) charge.interestRemainingToPay.toCurrency
-                                        else                       charge.remainingToPay.toCurrency
-                                    )
+                                    content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, returnHref))
+                                ),
+                                TableRow(
+                                    content = HtmlContent(charge.remainingToPay.toCurrency),
+                                    format = Some("numeric")
                                 )
                             )
                         ) ++ Option.when(charge.hasAccruingInterest)(
@@ -198,15 +194,15 @@
                                     content = Empty
                                 ),
                                 TableRow(
+                                    attributes = Map("id" -> "charge-with-accruing-interest"),
                                     content = HtmlContent(accruingInterestCharge(charge))
                                 ),
                                 TableRow(
-                                    content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, returnHref)),
-                                    attributes = Map("id" -> "charge-with-accruing-interest")
+                                    content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, returnHref))
                                 ),
                                 TableRow(
-                                    format = Some("numeric"),
-                                    content = HtmlContent(charge.getInterestOutstandingAmount.toCurrency)
+                                    content = HtmlContent(charge.getInterestOutstandingAmount.toCurrency),
+                                    format = Some("numeric")
                                 )
                             ))
                     }).flatten

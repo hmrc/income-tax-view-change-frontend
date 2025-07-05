@@ -104,6 +104,14 @@ case class ChargeItem (
 
   def isOnlyInterest(implicit dateService: DateServiceInterface): Boolean = {(isOverdue() && isLatePaymentInterest) || (interestRemainingToPay > 0 && isPaid)}
 
+  def remainingToPay(implicit dateServiceInterface: DateServiceInterface): BigDecimal =
+    if (isOnlyInterest) interestRemainingToPay
+    else remainingToPay
+
+  def getChargeWithoutAccruingInterestDueDate: LocalDate =
+    if (isLatePaymentInterest && isPaid) getInterestEndDate
+    else getDueDate
+
   def isCodingOut: Boolean = {
     val codingOutSubTypes = Seq(Nics2, Accepted, Cancelled)
     codedOutStatus.exists(subType => codingOutSubTypes.contains(subType))
