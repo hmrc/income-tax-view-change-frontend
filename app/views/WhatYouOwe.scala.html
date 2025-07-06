@@ -134,6 +134,7 @@
                     Option.when(whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero)(
                         Seq(
                             TableRow(
+                                attributes = Map("id" -> "balancing-charge-due-date-0"),
                                 content = Text(whatYouOweChargesList.getRelevantDueDate.toLongDateShort)
                             ),
                             TableRow(
@@ -141,9 +142,11 @@
                                 content = HtmlContent(balancingChargePreMtdDigital(whatYouOweChargesList, currentDate))
                             ),
                             TableRow(
+                                attributes = Map("id" -> "balancing-charge-tax-year-0"),
                                 content = Text(getMessage("pre-mtd-year", (currentTaxYear - 2).toString, (currentTaxYear - 1).toString))
                             ),
                             TableRow(
+                                attributes = Map("id" -> "balancing-charge-amount-due-0"),
                                 content = HtmlContent(whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.chargeAmount.toCurrency),
                                 format = Some("numeric")
                             ),
@@ -159,7 +162,7 @@
                                 content = Empty
                             ),
                             TableRow(
-                                attributes = Map("id" -> "interest-on-balancing-charge"),
+                                attributes = Map("id" -> "balancing-charge-due-date-1"),
                                 content = HtmlContent(interestOnBalancingCharge(whatYouOweChargesList, currentDate))
                             ),
                             TableRow(
@@ -167,6 +170,7 @@
                                 content = HtmlContent(getMessage("pre-mtd-year", (currentTaxYear - 2).toString, (currentTaxYear - 1).toString))
                             ),
                             TableRow(
+                                attributes = Map("id" -> "balancing-charge-amount-due-1"),
                                 content = HtmlContent(whatYouOweChargesList.getAciChargeWithTieBreakerChargeAmount.toCurrency),
                                 format = Some("numeric")
                             ),
@@ -195,7 +199,6 @@
                         ) ++ Option.when(charge.hasAccruingInterest)(
                             Seq(
                                 TableRow(
-                                    attributes = Map("id" -> s"accrued-interest-due-date-$index"),
                                     content = Empty
                                 ),
                                 TableRow(
