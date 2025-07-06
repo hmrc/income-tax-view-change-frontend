@@ -31,24 +31,24 @@
 @import controllers.routes._
 
 @this(
-    mainTemplate: unifiedLayout,
-    implicitDateFormatter: ImplicitDateFormatterImpl,
     h1: h1,
     p: p,
-    govukWarningText: GovukWarningText,
-    govukButton: GovukButton,
     govukTable: GovukTable,
-    balancingChargePreMtdDigital: BalancingChargePreMtdDigital,
-    interestOnBalancingCharge: InterestOnBalancingCharge,
     chargeInfo: ChargeInfo,
-    accruingInterestCharge: AccruingInterestCharge,
+    govukButton: GovukButton,
+    mainTemplate: unifiedLayout,
     saNoteParagraph: SaNoteParagraph,
-    dunningLockParagraph: DunningLockParagraph,
-    claimToAdjustPoaSection: ClaimToAdjustPoaSection,
-    codingOutInsetContent: CodingOutInsetContent,
-    paymentsMadeContent: PaymentsMadeContent,
+    govukWarningText: GovukWarningText,
     taxYearSummaryLink: TaxYearSummaryLink,
+    paymentsMadeContent: PaymentsMadeContent,
+    dunningLockParagraph: DunningLockParagraph,
+    codingOutInsetContent: CodingOutInsetContent,
+    accruingInterestCharge: AccruingInterestCharge,
+    implicitDateFormatter: ImplicitDateFormatterImpl,
+    claimToAdjustPoaSection: ClaimToAdjustPoaSection,
     availableCreditInAccount: AvailableCreditInAccount,
+    interestOnBalancingCharge: InterestOnBalancingCharge,
+    balancingChargePreMtdDigital: BalancingChargePreMtdDigital,
     unallocatedCreditParagraphContent: UnallocatedCreditParagraphContent
 )
 @(
@@ -79,9 +79,9 @@
 @import implicitDateFormatter.longDate
 
 @mainTemplate(
+    isAgent = isAgent,
     pageTitle = getHeading,
     backUrl = Some(backUrl),
-    isAgent = isAgent,
     btaNavPartial = user.btaNavPartial
 ) {
     @h1(msg = getHeading, id = Some("page-heading"))
