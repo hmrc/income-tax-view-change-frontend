@@ -219,36 +219,36 @@
             ))
         }
 
-            @if(!whatYouOweChargesList.isChargesListEmpty && (dunningLock || hasLpiWithDunningLock) ) {
-                @dunningLockParagraph()
-            }
+        @if(!whatYouOweChargesList.isChargesListEmpty && (dunningLock || hasLpiWithDunningLock) ) {
+            @dunningLockParagraph()
+        }
 
-            @claimToAdjustPoaSection(
-                whatYouOweChargesList.hasUnpaidPOAs,
-                claimToAdjustViewModel.claimToAdjustTaxYear,
-                adjustPoaUrl
-            )
+        @claimToAdjustPoaSection(
+            whatYouOweChargesList.hasUnpaidPOAs,
+            claimToAdjustViewModel.claimToAdjustTaxYear,
+            adjustPoaUrl
+        )
 
-            @whatYouOweChargesList.codedOutDetails.map { codedOutDetails =>
-                @codingOutInsetContent(codedOutDetails, origin)
-            }
+        @whatYouOweChargesList.codedOutDetails.map { codedOutDetails =>
+            @codingOutInsetContent(codedOutDetails, origin)
+        }
 
-            @saNoteParagraph(utr)
+        @saNoteParagraph(utr)
 
-            @whatYouOweChargesList.availableCredit.map { availableCreditAmt =>
-                @unallocatedCreditParagraphContent(creditAndRefundUrl, availableCreditAmt.toCurrencyString)
-            }
+        @whatYouOweChargesList.availableCredit.map { availableCreditAmt =>
+            @unallocatedCreditParagraphContent(creditAndRefundUrl, availableCreditAmt.toCurrencyString)
+        }
 
-            @if(utr.isDefined && !isAgent && whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.isDefined) {
+        @if(utr.isDefined && !isAgent && whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.isDefined) {
 
-                @govukButton(Button(
-                    id = Some("payment-button-link"),
-                    content = Text(getMessage("payNow")),
-                    href = Some(PaymentController.paymentHandoff(whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.get._2.toPence, origin).url)
-                ))
-            }
+            @govukButton(Button(
+                id = Some("payment-button-link"),
+                content = Text(getMessage("payNow")),
+                href = Some(PaymentController.paymentHandoff(whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.get._2.toPence, origin).url)
+            ))
+        }
 
-            @paymentsMadeContent()
+        @paymentsMadeContent()
     }
 
     @if(creditAndRefundEnabled){
