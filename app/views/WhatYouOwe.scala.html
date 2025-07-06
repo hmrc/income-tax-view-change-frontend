@@ -27,16 +27,13 @@
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
 @import _root_.implicits.HtmlFormatter.NbspString
 @import views.html.partials.whatYouOwe._
-@import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper.getMessage
-@import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper.getNoPaymentsDueText
-@import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper.getHeading
+@import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
 @import controllers.routes._
 
 @this(
     mainTemplate: unifiedLayout,
     implicitDateFormatter: ImplicitDateFormatterImpl,
     h1: h1,
-    h2: h2,
     p: p,
     govukWarningText: GovukWarningText,
     govukButton: GovukButton,
@@ -49,9 +46,7 @@
     dunningLockParagraph: DunningLockParagraph,
     claimToAdjustPoaSection: ClaimToAdjustPoaSection,
     codingOutInsetContent: CodingOutInsetContent,
-    paymentTypeEntry: PaymentTypeEntry,
     paymentsMadeContent: PaymentsMadeContent,
-    interestMessage: InterestMessage,
     taxYearSummaryLink: TaxYearSummaryLink,
     availableCreditInAccount: AvailableCreditInAccount,
     unallocatedCreditParagraphContent: UnallocatedCreditParagraphContent
