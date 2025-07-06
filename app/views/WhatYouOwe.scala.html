@@ -163,6 +163,7 @@
                                 content = HtmlContent(interestOnBalancingCharge(whatYouOweChargesList, currentDate))
                             ),
                             TableRow(
+                                attributes = Map("id" -> "balancing-charge-type-1"),
                                 content = HtmlContent(getMessage("pre-mtd-year", (currentTaxYear - 2).toString, (currentTaxYear - 1).toString))
                             ),
                             TableRow(
