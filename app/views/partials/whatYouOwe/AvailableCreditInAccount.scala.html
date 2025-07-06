@@ -15,24 +15,30 @@
  *@
 
 @import views.html.components._
-@import implicits.HtmlFormatter.NbspString
-@import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
+@import auth.MtdItUser
 
 @this(
     p: p,
+    h2: h2,
     link: link
 )
 
 @(
-    year: Int,
-    index: Int,
-    id: String,
-    taxYearSummaryUrl: String
+    availableCredit: String,
+    creditAndRefundsControllerUrl: String
 )(
-    implicit messages: Messages
+    implicit messages: Messages,
+    user: MtdItUser[_]
 )
 
-<a class="govuk-link" id="@id-@index" href="@taxYearSummaryUrl">
-    @getMessage("tax-year-summary.taxYear", (year - 1).toString, year.toString).toNbsp
-    <span class="govuk-visually-hidden">@getMessage("taxYear")</span>
-</a>
+<div class="govuk-body" id="money-in-your-account">
+    @h2(msg = messages(s"whatYouOwe.moneyOnAccount${if(user.isAgent()) "-agent" else ""}"))
+    @messages("whatYouOwe.moneyOnAccount-1") @availableCredit
+    @messages(s"whatYouOwe.moneyOnAccount${if(user.isAgent()) "-agent" else ""}-2")
+    @link(
+        link = creditAndRefundsControllerUrl,
+        messageKey = "whatYouOwe.moneyOnAccount-3",
+        outerMessage = ".",
+        rel = Some("noreferrer noopener")
+    )
+</div>

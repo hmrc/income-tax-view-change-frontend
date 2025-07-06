@@ -55,7 +55,7 @@ messages("paymentAllocation.moneyOnAccount")
                     </td>
                     <td class="govuk-table__cell">
                     @{
-                        dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDateShort.toNonBreaking
+                        dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDateShort.toNbsp
                     }
                     </td>
                     <td class="govuk-table__cell govuk-table__cell--numeric">@{

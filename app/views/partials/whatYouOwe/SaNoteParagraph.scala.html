@@ -1,0 +1,61 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import auth.MtdItUser
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components._
+@import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
+
+@this(
+        appConfig: config.FrontendAppConfig,
+        p: p,
+        link: link,
+        govukInsetText: GovukInsetText
+)
+@(
+        utr: Option[String]
+)(
+        implicit request: Request[_],
+        user: MtdItUser[_],
+        messages: Messages
+)
+
+@saNoteParagraphContent(utr: String) = {
+    @if(user.isAgent()) {
+        @p(id = Some("sa-note-migrated"))(Html(getMessage("sa-note-agent-1") + ". " + getMessage("sa-note-agent-2") +
+                link(link = appConfig.saForAgents,
+                    outerMessage = ". " + getMessage("sa-note-agent-3"),
+                    messageKey = getPrefix("sa-link-agent"),
+                    id = Some("sa-note-migrated-link"),
+                    rel = Some("noreferrer noopener"),
+                    target = Some("_blank")
+                ).toString())
+        )
+    } else {
+        @p(id = Some("sa-note-migrated"))(Html(getMessage("sa-note") +
+                link(link = appConfig.saViewLandPService(utr), outerMessage = ".",
+                    messageKey = getPrefix("sa-link"), id = Some("sa-note-migrated-link"),
+                    rel = Some("noreferrer noopener"), target = Some("_blank")).toString())
+        )
+    }
+    @p(id=Some("outstanding-charges-note-migrated"))(content = Html(getMessage("outstanding-charges-note")))
+}
+
+@utr.map { utr =>
+    <div id="payments-due-note">
+        @govukInsetText(InsetText(content = HtmlContent(saNoteParagraphContent(utr))))
+    </div>
+}

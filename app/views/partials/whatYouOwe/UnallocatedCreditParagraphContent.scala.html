@@ -15,24 +15,28 @@
  *@
 
 @import views.html.components._
-@import implicits.HtmlFormatter.NbspString
-@import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
+@import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
 
 @this(
     p: p,
     link: link
 )
-
 @(
-    year: Int,
-    index: Int,
-    id: String,
-    taxYearSummaryUrl: String
+    creditAndRefundUrl: String,
+    amount: String
 )(
     implicit messages: Messages
 )
 
-<a class="govuk-link" id="@id-@index" href="@taxYearSummaryUrl">
-    @getMessage("tax-year-summary.taxYear", (year - 1).toString, year.toString).toNbsp
-    <span class="govuk-visually-hidden">@getMessage("taxYear")</span>
-</a>
+@p(id = Some("unallocated-credit-note"))(
+    Html(
+        getMessage("credit-overpaid-prefix") +
+            link(
+                link = creditAndRefundUrl,
+                outerMessage = getMessage("unallocated-credit-note"),
+                messageKey = getMessage("credit-overpaid-amount", amount),
+                id = Some("unallocated-credit-link")
+            )
+            .toString()
+    )
+)

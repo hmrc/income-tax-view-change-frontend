@@ -35,6 +35,8 @@ import services.{ClaimToAdjustService, DateServiceInterface, WhatYouOweService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.WhatYouOwe
+import controllers.routes._
+import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -78,9 +80,22 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
         dunningLock = whatYouOweChargesList.hasDunningLock,
         reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
         isAgent = isAgent,
-        isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
+        creditAndRefundUrl = (user.isAgent() match {
+          case true if user.incomeSources.yearOfMigration.isDefined  => CreditAndRefundController.showAgent()
+          case true                                                  => NotMigratedUserController.showAgent()
+          case false if user.incomeSources.yearOfMigration.isDefined => CreditAndRefundController.show()
+          case false                                                 => NotMigratedUserController.show()
+        }).url,
         creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
+        returnHref = {
+          if (isAgent) {
+            controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(_).url
+          } else {
+            controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(_, origin).url
+          }
+        },
         origin = origin,
+        adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url,
         claimToAdjustViewModel = ctaViewModel,
         LPP2Url = appConfig.incomeTaxPenaltiesFrontendCalculation)(user, user, messages, dateService)
       ).addingToSession(gatewayPage -> WhatYouOwePage.name)

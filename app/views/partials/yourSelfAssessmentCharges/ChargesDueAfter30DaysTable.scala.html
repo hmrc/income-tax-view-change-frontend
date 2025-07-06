@@ -58,7 +58,7 @@
     rows = for((charge, index) <- viewModel.chargesDueAfter30DaysWithIndex) yield {
         Seq(
             TableRow(
-                content = HtmlContent(getDisplayDueDate(charge).toLongDateShort.toNonBreaking)
+                content = HtmlContent(getDisplayDueDate(charge).toLongDateShort.toNbsp)
             ),
             TableRow(
                 attributes = Map("id" -> s"due-$index"),
@@ -85,7 +85,7 @@
             content = Text(getMessage("tableHead.tax-year"))
         ),
         HeadCell(
-            content = HtmlContent(getMessage("tableHead.amount").toNonBreaking)
+            content = HtmlContent(getMessage("tableHead.amount").toNbsp)
         )
     )),
     attributes = Map("id" -> "charges-due-after-30-days-table")

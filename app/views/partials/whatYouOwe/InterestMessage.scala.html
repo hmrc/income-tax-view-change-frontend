@@ -15,8 +15,10 @@
  *@
 
 @import views.html.components._
-@import implicits.HtmlFormatter.NbspString
-@import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
+@import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
+@import models.financialDetails.ChargeItem
+@import models.financialDetails.PoaOneReconciliationDebit
+@import models.financialDetails.PoaTwoReconciliationDebit
 
 @this(
     p: p,
@@ -24,15 +26,18 @@
 )
 
 @(
-    year: Int,
-    index: Int,
-    id: String,
-    taxYearSummaryUrl: String
+    chargeItem: ChargeItem
 )(
     implicit messages: Messages
 )
 
-<a class="govuk-link" id="@id-@index" href="@taxYearSummaryUrl">
-    @getMessage("tax-year-summary.taxYear", (year - 1).toString, year.toString).toNbsp
-    <span class="govuk-visually-hidden">@getMessage("taxYear")</span>
-</a>
+@{
+    getMessage(
+        "over-due" +
+            (chargeItem.transactionType match {
+                case PoaOneReconciliationDebit => ".reviewAndReconcileOne"
+                case PoaTwoReconciliationDebit => ".reviewAndReconcileTwo"
+                case _                         => ".interest"
+            }) + ".line1"
+    )
+}
