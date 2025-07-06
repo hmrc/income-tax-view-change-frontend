@@ -42,7 +42,7 @@
     govukTable: GovukTable,
     balancingChargePreMtdDigital: BalancingChargePreMtdDigital,
     interestOnBalancingCharge: InterestOnBalancingCharge,
-    chargeWithoutAccruingInterest: ChargeWithoutAccruingInterest,
+    chargeInfo: ChargeInfo,
     accruingInterestCharge: AccruingInterestCharge,
     saNoteParagraph: SaNoteParagraph,
     dunningLockParagraph: DunningLockParagraph,
@@ -174,33 +174,39 @@
                         Seq(
                             Seq(
                                 TableRow(
-                                    content = HtmlContent(charge.getChargeWithoutAccruingInterestDueDate.toLongDateShort.toNbsp)
+                                    attributes = Map("id" -> s"due-charge-due-date-$index"),
+                                    content = HtmlContent(charge.getChargeDueDate.toLongDateShort.toNbsp)
                                 ),
                                 TableRow(
-                                    attributes = Map("id" -> "charge-without-accruing-interest"),
-                                    content = HtmlContent(chargeWithoutAccruingInterest(LPP2Url, s"due-$index", charge, index, origin))
+                                    attributes = Map("id" -> s"due-charge-$index"),
+                                    content = HtmlContent(chargeInfo(LPP2Url, s"due-$index", charge, index, origin))
                                 ),
                                 TableRow(
+                                    attributes = Map("id" -> s"due-charge-tax-year-$index"),
                                     content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, returnHref))
                                 ),
                                 TableRow(
-                                    content = HtmlContent(charge.remainingToPay.toCurrency),
+                                    attributes = Map("id" -> s"due-charge-amount-due-$index"),
+                                    content = HtmlContent(charge.remainingToPayOnCharge.toCurrency),
                                     format = Some("numeric")
                                 )
                             )
                         ) ++ Option.when(charge.hasAccruingInterest)(
                             Seq(
                                 TableRow(
+                                    attributes = Map("id" -> s"accrued-interest-due-date-$index"),
                                     content = Empty
                                 ),
                                 TableRow(
-                                    attributes = Map("id" -> "charge-with-accruing-interest"),
+                                    attributes = Map("id" -> s"accrued-interest-charge-type-$index"),
                                     content = HtmlContent(accruingInterestCharge(charge))
                                 ),
                                 TableRow(
+                                    attributes = Map("id" -> s"accrued-interest-tax-year-$index"),
                                     content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, returnHref))
                                 ),
                                 TableRow(
+                                    attributes = Map("id" -> s"accrued-interest-amount-due-$index"),
                                     content = HtmlContent(charge.getInterestOutstandingAmount.toCurrency),
                                     format = Some("numeric")
                                 )
@@ -230,7 +236,7 @@
             @saNoteParagraph(utr)
 
             @whatYouOweChargesList.availableCredit.map { availableCreditAmt =>
-                @unallocatedCreditParagraphContent(availableCreditAmt.toCurrencyString, creditAndRefundUrl)
+                @unallocatedCreditParagraphContent(creditAndRefundUrl, availableCreditAmt.toCurrencyString)
             }
 
             @if(utr.isDefined && !isAgent && whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.isDefined) {

@@ -104,11 +104,11 @@ case class ChargeItem (
 
   def isOnlyInterest(implicit dateService: DateServiceInterface): Boolean = {(isOverdue() && isLatePaymentInterest) || (interestRemainingToPay > 0 && isPaid)}
 
-  def remainingToPay(implicit dateServiceInterface: DateServiceInterface): BigDecimal =
+  def remainingToPayOnCharge(implicit dateServiceInterface: DateServiceInterface): BigDecimal =
     if (isOnlyInterest) interestRemainingToPay
     else remainingToPay
 
-  def getChargeWithoutAccruingInterestDueDate: LocalDate =
+  def getChargeDueDate: LocalDate =
     if (isLatePaymentInterest && isPaid) getInterestEndDate
     else getDueDate
 
