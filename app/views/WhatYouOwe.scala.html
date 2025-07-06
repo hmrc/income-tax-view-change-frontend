@@ -30,6 +30,7 @@
 @import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper.getMessage
 @import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper.getNoPaymentsDueText
 @import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper.getHeading
+@import controllers.routes._
 
 @this(
     mainTemplate: unifiedLayout,
@@ -72,7 +73,6 @@
     claimToAdjustViewModel: WYOClaimToAdjustViewModel,
     LPP2Url: String,
     adjustPoaUrl: String,
-    paymentHandOffUrl: String,
     origin: Option[String] = None
 )(
     implicit request: Request[_],
@@ -244,7 +244,7 @@
                 @govukButton(Button(
                     id = Some("payment-button-link"),
                     content = Text(getMessage("payNow")),
-                    href = Some(paymentHandOffUrl)
+                    href = Some(PaymentController.paymentHandoff(whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.get._2.toPence, origin).url)
                 ))
             }
 

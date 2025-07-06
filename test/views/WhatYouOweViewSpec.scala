@@ -131,7 +131,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                   dunningLock: Boolean = false,
                   migrationYear: Int = fixedDate.getYear - 1,
                   reviewAndReconcileEnabled: Boolean = false,
-                  amountInPence: Long = 0,
                   adjustPaymentsOnAccountFSEnabled: Boolean = false,
                   claimToAdjustViewModel: Option[WYOClaimToAdjustViewModel] = None,
                   LPP2Url: String = ""
@@ -155,7 +154,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       creditAndRefundUrl = CreditAndRefundController.show().url,
       returnHref = _ => controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(fixedDate.getYear).url,
       adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = false).url,
-      paymentHandOffUrl = controllers.routes.PaymentController.paymentHandoff(amountInPence).url,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       creditAndRefundEnabled = true,
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),
@@ -178,7 +176,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                        currentTaxYear: Int = fixedDate.getYear,
                        migrationYear: Int = fixedDate.getYear - 1,
                        reviewAndReconcileEnabled: Boolean = false,
-                       amountInPence: Long = 0,
                        dunningLock: Boolean = false,
                        hasLpiWithDunningLock: Boolean = false,
                        adjustPaymentsOnAccountFSEnabled: Boolean = false,
@@ -208,7 +205,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       creditAndRefundUrl = CreditAndRefundController.showAgent().url,
       returnHref = _ => controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(fixedDate.getYear).url,
       adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = true).url,
-      paymentHandOffUrl = "paymentHandOffUrl",
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       creditAndRefundEnabled = true,
       isAgent = true,
@@ -618,7 +614,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
         "have payment details and should not contain future payments " +
-          "and overdue payment headers" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()(dateService), amountInPence = 5000) {
+          "and overdue payment headers" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()(dateService)) {
           pageDocument.getElementById("payment-button-link").text shouldBe payNow
           pageDocument.getElementById("payment-button-link").
             attr("href") shouldBe controllers.routes.PaymentController.
@@ -927,7 +923,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           findElementById(".interest-rate") shouldBe None
         }
 
-        "have payments data with button" in new TestSetup(charges = whatYouOweDataWithOverdueData(), amountInPence = 12345667) {
+        "have payments data with button" in new TestSetup(charges = whatYouOweDataWithOverdueData()) {
           pageDocument.getElementById("payment-button-link").text shouldBe payNow
 
           pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
@@ -1025,7 +1021,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
       }
-      s"have payment data with button" in new TestSetup(charges = whatYouOweDataWithMixedData1, amountInPence = 10000) {
+      s"have payment data with button" in new TestSetup(charges = whatYouOweDataWithMixedData1) {
 
         pageDocument.getElementById("payment-button-link").text shouldBe payNow
 
@@ -1091,7 +1087,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
       }
 
-      s"have payment data with button" in new TestSetup(charges = whatYouOweDataWithWithAciValueZeroAndOverdue, amountInPence = 12345667) {
+      s"have payment data with button" in new TestSetup(charges = whatYouOweDataWithWithAciValueZeroAndOverdue) {
 
         pageDocument.getElementById("payment-button-link").text shouldBe payNow
 
