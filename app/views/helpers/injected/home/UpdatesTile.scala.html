@@ -72,46 +72,33 @@
     <span class="govuk-tag govuk-tag--red">@{messages("home.updates.overdue.updates", nextUpdatesTileViewModel.getNumberOfOverdueObligations)}</span>
 }
 
-@updatesTileContentUpdatesDue0R17 = {
-    @if(nextUpdatesTileViewModel.currentYearITSAStatus == ITSAStatus.Voluntary || nextUpdatesTileViewModel.currentYearITSAStatus == ITSAStatus.Mandated) {
-        @nextUpdatesTileViewModel.nextQuarterlyUpdateDueDate.map { date =>
-          @p() {@messages("home.updates.R17.nextUpdateDue", date.toLongDate)}
+@overdueUpdatesTag = {
+    @if(nextUpdatesTileViewModel.isQuarterlyUser) {
+        @nextUpdatesTileViewModel.getNumberOfOverdueObligations match {
+            case 0 => {}
+            case 1 => {
+                @p() {<span class="govuk-tag govuk-tag--red">@messages("taxYears.overdue")</span>}
+            }
+            case _ => {
+                @p() {<span class="govuk-tag govuk-tag--red">@messages("home.updates.overdue.updates", nextUpdatesTileViewModel.getNumberOfOverdueObligations)</span>}
+            }
         }
-
-        @p() {@messages("home.updates.R17.nextTaxReturnDue", nextUpdatesTileViewModel.nextTaxReturnDueDate.map(_.toLongDate).getOrElse(""))}
-
-    } else if (nextUpdatesTileViewModel.currentYearITSAStatus == ITSAStatus.Annual) {
-        @p() {@messages("home.updates.R17.nextTaxReturnDue", nextUpdatesTileViewModel.nextTaxReturnDueDate.map(_.toLongDate).getOrElse(""))}
     }
 }
 
-@updatesTileContentUpdatesDue1R17 = {
-    @if(nextUpdatesTileViewModel.currentYearITSAStatus == ITSAStatus.Voluntary || nextUpdatesTileViewModel.currentYearITSAStatus == ITSAStatus.Mandated) {
-        @p() {<span class="govuk-tag govuk-tag--red">@{messages("taxYears.overdue")}</span>}
-
+@nextQuarterlyUpdateDueDate = {
+    @if(nextUpdatesTileViewModel.isQuarterlyUser) {
         @nextUpdatesTileViewModel.nextQuarterlyUpdateDueDate.map { date =>
           @p() {@messages("home.updates.R17.nextUpdateDue", date.toLongDate)}
         }
+    }
+}
 
-        @p() {@messages("home.updates.R17.nextTaxReturnDue", nextUpdatesTileViewModel.nextTaxReturnDueDate.map(_.toLongDate).getOrElse(""))}
-
-    } else if (nextUpdatesTileViewModel.currentYearITSAStatus == ITSAStatus.Annual) {
-        @p() {@messages("home.updates.R17.nextTaxReturnDue", nextUpdatesTileViewModel.nextTaxReturnDueDate.map(_.toLongDate).getOrElse(""))}
-    }}
-
-
-@updatesTileContentUpdatesDueManyR17 = {
-    @if(nextUpdatesTileViewModel.currentYearITSAStatus == ITSAStatus.Voluntary || nextUpdatesTileViewModel.currentYearITSAStatus == ITSAStatus.Mandated) {
-        @p() {<span class="govuk-tag govuk-tag--red">@{messages("home.updates.overdue.updates", nextUpdatesTileViewModel.getNumberOfOverdueObligations)}</span>}
-
-        @nextUpdatesTileViewModel.nextQuarterlyUpdateDueDate.map { date =>
-          @p() {@messages("home.updates.R17.nextUpdateDue", date.toLongDate)}
+@nextTaxReturnDueDate = {
+    @if(nextUpdatesTileViewModel.isQuarterlyUser || nextUpdatesTileViewModel.isAnnualUser) {
+        @nextUpdatesTileViewModel.nextTaxReturnDueDate.map { date =>
+          @p() {@messages("home.updates.R17.nextTaxReturnDue", date.toLongDate)}
         }
-
-        @p() {@messages("home.updates.R17.nextTaxReturnDue", nextUpdatesTileViewModel.nextTaxReturnDueDate.map(_.toLongDate).getOrElse(""))}
-
-    } else if (nextUpdatesTileViewModel.currentYearITSAStatus == ITSAStatus.Annual) {
-        @p() {@messages("home.updates.R17.nextTaxReturnDue", nextUpdatesTileViewModel.nextTaxReturnDueDate.map(_.toLongDate).getOrElse(""))}
     }
 }
 
@@ -120,11 +107,9 @@
     @if(nextUpdatesTileViewModel.showNextUpdatesTileContent) {
 
         @if(nextUpdatesTileViewModel.showOptInOptOutContentUpdateR17) {
-            @{ nextUpdatesTileViewModel.getNumberOfOverdueObligations match {
-                case 0 => updatesTileContentUpdatesDue0R17
-                case 1 => updatesTileContentUpdatesDue1R17
-                case _ => updatesTileContentUpdatesDueManyR17
-            }}
+            @overdueUpdatesTag
+            @nextQuarterlyUpdateDueDate
+            @nextTaxReturnDueDate
         } else {
             @{ nextUpdatesTileViewModel.getNumberOfOverdueObligations match {
                 case 0 => p()(updatesTileContentUpdatesDue0)

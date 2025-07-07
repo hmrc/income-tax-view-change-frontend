@@ -16,6 +16,7 @@
 
 package models.obligations
 
+import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
 
 import java.time.LocalDate
@@ -37,4 +38,9 @@ case class NextUpdatesTileViewModel(dueDates: Seq[LocalDate],
 
   def showNextUpdatesTileContent: Boolean = dueDates.nonEmpty
 
+  def isQuarterlyUser: Boolean =
+    currentYearITSAStatus == ITSAStatus.Voluntary || currentYearITSAStatus == ITSAStatus.Mandated
+
+  def isAnnualUser: Boolean =
+    currentYearITSAStatus == ITSAStatus.Annual
 }
