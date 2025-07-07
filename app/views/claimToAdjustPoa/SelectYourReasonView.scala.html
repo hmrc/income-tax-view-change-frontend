@@ -26,19 +26,19 @@
 @import models.core.Mode
 
 @this(
-    mainTemplate: unifiedLayout,
-    appConfig: config.FrontendAppConfig,
-    h1WithCaption: h1WithCaption,
-    h2: h2,
-    p: p,
-    link: link,
-    formWithCSRF: FormWithCSRF,
-    govukInsetText : GovukInsetText,
-    govukRadios: GovukRadios,
-    govukButton : GovukButton,
-    inputHelper: InputHelper,
-    errorSummary: ErrorSummary,
-    govukInput : GovukInput
+        mainTemplate: unifiedLayout,
+        appConfig: config.FrontendAppConfig,
+        h1WithCaption: h1WithCaption,
+        h2: h2,
+        p: p,
+        link: link,
+        formWithCSRF: FormWithCSRF,
+        govukInsetText: GovukInsetText,
+        govukRadios: GovukRadios,
+        continueButton: ContinueButton,
+        inputHelper: InputHelper,
+        errorSummary: ErrorSummary,
+        govukInput: GovukInput
 )
 
 @(  selectYourReasonForm: Form[SelectYourReason],
@@ -111,12 +111,7 @@
         )
 
         <div class="govuk-button-group">
-            @govukButton(
-                Button(
-                    element = Some("button"),
-                    content = HtmlContent(messages("claimToAdjustPoa.selectYourReason.continue"))
-                )
-            )
+            @continueButton(Some(messages("claimToAdjustPoa.selectYourReason.continue")))
 
             @link(
                 id = Some("cancel-link"),

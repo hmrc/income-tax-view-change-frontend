@@ -18,12 +18,13 @@
 @import models.admin.FeatureSwitchName
 @import views.html.layouts.unifiedLayout
 @import views.html.components.h3
+@import testOnly.views.html.helpers.FeatureSwitchButton
 
 @this(
-    unifiedLayout: unifiedLayout,
-    h3: h3
+        unifiedLayout: unifiedLayout,
+        h3: h3,
+        featureSwitchButton: FeatureSwitchButton
 )
-
 @(switchNames: Map[FeatureSwitchName, Boolean], action: Call)(implicit request: Request[_], messages: Messages)
 
 @unifiedLayout(pageTitle = Messages("Feature switch")) {
@@ -43,15 +44,20 @@
             @for((switch, state) <- switchNames) {
                 <div class="govuk-checkboxes__item">
                     <input class="govuk-checkboxes__input" type="checkbox" id="feature-switch.enable-@switch.name" name="@switch.name"
-                    value="true" @{if(state){"Checked"}}>
+                    value="true" @{
+                        if(state) {
+                            "Checked"
+                        }
+                    }>
                     <label class="govuk-label govuk-checkboxes__label" for="@switch.name">@switch.toString</label>
                 </div>
             }
             </div>
         </fieldset>
-        <button id="update-global-settings" class="govuk-button" type="submit">Update global settings</button>
-        <button class="govuk-button" type="submit" name="feature-switch.enable-all-switches">Enable All Features</button>
-        <button class="govuk-button" type="submit" name="feature-switch.disable-all-switches">Disable All Features</button>
-        <button class="govuk-button" type="submit" name="feature-switch.prod-switches">Prod Features</button>
+
+        @featureSwitchButton(label = "Update global settings", id = Some("update-global-settings"))
+        @featureSwitchButton(label = "Enable All Features", name = Some("feature-switch.enable-all-switches"))
+        @featureSwitchButton(label = "Disable All Features", name = Some("feature-switch.disable-all-switches"))
+        @featureSwitchButton(label = "Prod Features", name = Some("feature-switch.prod-switches"))
     </form>
 }

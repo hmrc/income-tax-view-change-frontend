@@ -26,25 +26,25 @@
 @import play.twirl.api.HtmlFormat
 
 @this(
-    mainTemplate: unifiedLayout,
-    appConfig: config.FrontendAppConfig,
-    h1: h1,
-    h2: h2,
-    p: p,
-    link: link,
-    form: FormWithCSRF,
-    govukInsetText : GovukInsetText,
-    govukButton : GovukButton,
-    inputHelper: InputHelper,
-    errorSummary: ErrorSummary,
-    govukInput : GovukInput
+        mainTemplate: unifiedLayout,
+        appConfig: config.FrontendAppConfig,
+        h1: h1,
+        h2: h2,
+        p: p,
+        link: link,
+        form: FormWithCSRF,
+        govukInsetText: GovukInsetText,
+        continueButton: ContinueButton,
+        inputHelper: InputHelper,
+        errorSummary: ErrorSummary,
+        govukInput: GovukInput
 )
 
 @(businessNameForm: Form[BusinessNameForm],
-    isAgent: Boolean,
-    postAction: Call,
-    backUrl: String,
-    useFallbackLink: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
+        isAgent: Boolean,
+        postAction: Call,
+        backUrl: String,
+        useFallbackLink: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @businessName = @{
     "business-name"
@@ -55,21 +55,21 @@
 }
 
 @hintContent = {
-    @p(classes = "govuk-hint"){
-        @messages("add-business-name.p1")
-    }
-    @p(classes = "govuk-hint"){
-        @messages("add-business-name.p2")
-    }
+@p(classes = "govuk-hint") {
+    @messages("add-business-name.p1")
+}
+@p(classes = "govuk-hint") {
+    @messages("add-business-name.p2")
+}
 }
 
 @mainTemplate(
-pageTitle = messages("add-business-name.heading"),
-form = Some(businessNameForm),
-isAgent = isAgent,
-useFallbackBackLink = useFallbackLink,
-backUrl = Some(backUrl),
-btaNavPartial = user.btaNavPartial) {
+    pageTitle = messages("add-business-name.heading"),
+    form = Some(businessNameForm),
+    isAgent = isAgent,
+    useFallbackBackLink = useFallbackLink,
+    backUrl = Some(backUrl),
+    btaNavPartial = user.btaNavPartial) {
 
     @errorSummary(
         form = businessNameForm
@@ -93,10 +93,7 @@ btaNavPartial = user.btaNavPartial) {
             ).withFormField(field)
         )
 
-        @govukButton(Button(
-            content = Text(messages("base.continue")),
-            attributes = Map("id" -> "continue-button")
-        ))
+        @continueButton()
     }
 }
 
