@@ -97,6 +97,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val itsaPOA1: String = "ITSA- POA 1"
   val itsaPOA2: String = "ITSA - POA 2"
   val cancelledPayeSelfAssessment: String = messages("whatYouOwe.cancelledPayeSelfAssessment.text")
+  val poa1CollectedCodedOut = messages("whatYouOwe.poa1CodedOut.text")
+  val poa2CollectedCodedOut = messages("whatYouOwe.poa2CodedOut.text")
   val penaltiesCalcUrl: String = "http://localhost:9185/penalties/income-tax/calculation"
 
   val interestEndDateFuture: LocalDate = LocalDate.of(2100, 1, 1)
@@ -369,6 +371,20 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     chargesList = List(chargeItemWithCodingOutCancelledPayeSaCi()),
     outstandingChargesModel = None,
     codedOutDetails = None
+  )
+
+  val whatYouOweWithPoaOneCollected: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    chargesList = List(chargeItemWithPoaCodingOutAccepted()),
+    outstandingChargesModel = None,
+    codedOutDetails = Some(codedOutDetails)
+  )
+
+  val whatYouOweWithPoaTwoCollected: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    chargesList = List(chargeItemWithPoaCodingOutAccepted().copy(transactionType = PoaTwoDebit)),
+    outstandingChargesModel = None,
+    codedOutDetails = Some(codedOutDetails)
   )
 
   val noChargesModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
@@ -1182,6 +1198,18 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("due-0").text().contains(cancelledPayeSelfAssessment) shouldBe true
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
         findElementById("coding-out-summary-link") shouldBe None
+      }
+
+      "have a Payment on Account 1 entry" in new TestSetup(charges = whatYouOweWithPoaOneCollected) {
+        pageDocument.getElementById("due-0").text().contains(poa1CollectedCodedOut) shouldBe true
+        pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
+        pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/tax-year-summary/2021"
+      }
+
+      "have a Payment on Account 2 entry" in new TestSetup(charges = whatYouOweWithPoaTwoCollected) {
+        pageDocument.getElementById("due-0").text().contains(poa2CollectedCodedOut) shouldBe true
+        pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
+        pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/tax-year-summary/2021"
       }
     }
 
