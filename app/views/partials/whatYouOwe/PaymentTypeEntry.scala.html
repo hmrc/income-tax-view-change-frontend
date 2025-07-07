@@ -34,7 +34,7 @@
     rowId: String,
     isOverduePayment: Boolean,
     index: Int,
-    origin: Option[String]
+    chargeSummaryUrl: String
 )(
     implicit messages: Messages,
     user: MtdItUser[_]
@@ -46,15 +46,8 @@
     val lpi = if(isInterest) "lpi." else ""
     val linkText = getMessage(s"${lpi}${chargeTypeKey}")
     val taxYear = chargeItem.taxYear
-    val linkHref = if (chargeItem.isLPP2) {
-        LPP2Url
-    } else {
-        if(user.isAgent()) {
-            controllers.routes.ChargeSummaryController.showAgent(taxYear.endYear, chargeItem.transactionId, isInterest).url
-        } else {
-            controllers.routes.ChargeSummaryController.show(taxYear.endYear, chargeItem.transactionId, isInterest, origin).url
-        }
-    }
+    val linkHref = if (chargeItem.isLPP2) LPP2Url else chargeSummaryUrl
+
     paymentTypeEntryHTML(linkText = linkText, linkHref = linkHref, taxYear = taxYear.endYear, rowId = rowId,
         linkSuffix: String, index + 1)
 }

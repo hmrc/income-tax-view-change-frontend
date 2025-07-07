@@ -31,7 +31,7 @@
     rowId2: String,
     charge: ChargeItem,
     index: Int,
-    origin: Option[String]
+    chargeSummaryUrl: String
 )(
     implicit messages: Messages,
     user: MtdItUser[_],
@@ -57,7 +57,7 @@
     isOverduePayment = charge.isOverdue(),
     rowId = rowId2,
     index = index,
-    origin = origin
+    chargeSummaryUrl = chargeSummaryUrl
 )
 
 @if(charge.dunningLock){

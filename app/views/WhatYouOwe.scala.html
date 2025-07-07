@@ -61,13 +61,13 @@
     utr: Option[String],
     dunningLock: Boolean,
     reviewAndReconcileEnabled: Boolean,
-    isAgent: Boolean = false,
     creditAndRefundUrl: String,
     creditAndRefundEnabled: Boolean,
     returnHref: Int => String,
     claimToAdjustViewModel: WYOClaimToAdjustViewModel,
     LPP2Url: String,
     adjustPoaUrl: String,
+    chargeSummaryUrl: (Int, String, Boolean, Option[String]) => String,
     paymentHandOffUrl: Long => String,
     origin: Option[String] = None
 )(
@@ -80,7 +80,7 @@
 @import implicitDateFormatter.longDate
 
 @mainTemplate(
-    isAgent = isAgent,
+    isAgent = user.isAgent(),
     pageTitle = getHeading,
     backUrl = Some(backUrl),
     btaNavPartial = user.btaNavPartial
@@ -180,7 +180,7 @@
                                 ),
                                 TableRow(
                                     attributes = Map("id" -> s"due-charge-$index"),
-                                    content = HtmlContent(chargeInfo(LPP2Url, s"due-$index", charge, index, origin))
+                                    content = HtmlContent(chargeInfo(LPP2Url, s"due-$index", charge, index, chargeSummaryUrl(charge.taxYear.endYear, charge.transactionId, charge.isLatePaymentInterest, origin)))
                                 ),
                                 TableRow(
                                     attributes = Map("id" -> s"due-charge-tax-year-$index"),
@@ -242,7 +242,7 @@
 
         @(for {
             (_, amount) <- whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate
-            if             utr.isDefined && !isAgent
+            if             utr.isDefined && !user.isAgent()
         } yield {
             govukButton(Button(
                 id = Some("payment-button-link"),

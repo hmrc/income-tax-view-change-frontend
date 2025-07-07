@@ -79,7 +79,6 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
         currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,
         dunningLock = whatYouOweChargesList.hasDunningLock,
         reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
-        isAgent = isAgent,
         creditAndRefundUrl = (user.isAgent() match {
           case true if user.incomeSources.yearOfMigration.isDefined  => CreditAndRefundController.showAgent()
           case true                                                  => NotMigratedUserController.showAgent()
@@ -96,6 +95,10 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
         },
         origin = origin,
         adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url,
+        chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) => {
+          if (user.isAgent()) ChargeSummaryController.showAgent(taxYearEnd, transactionId, isInterest).url
+          else                ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url
+        },
         paymentHandOffUrl = PaymentController.paymentHandoff(_, origin).url,
         claimToAdjustViewModel = ctaViewModel,
         LPP2Url = appConfig.incomeTaxPenaltiesFrontendCalculation)(user, user, messages, dateService)
