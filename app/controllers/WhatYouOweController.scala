@@ -87,11 +87,8 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
         }).url,
         creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
         taxYearSummaryUrl = {
-          if (isAgent) {
-            controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(_).url
-          } else {
-            controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(_, origin).url
-          }
+          if (user.isAgent()) TaxYearSummaryController.renderAgentTaxYearSummaryPage(_).url
+          else                TaxYearSummaryController.renderTaxYearSummaryPage(_, origin).url
         },
         origin = origin,
         adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url,

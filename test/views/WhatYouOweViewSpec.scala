@@ -1212,13 +1212,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         findElementById("coding-out-summary-link") shouldBe None
       }
 
-      "have a Payment on Account 1 entry" in new TestSetup(charges = whatYouOweWithPoaOneCollected) {
+      "have a Payment on Account 1 entry" in new TestSetup(charges = whatYouOweWithPoaOneCollected, taxYear = whatYouOweWithPoaOneCollected.codedOutDetails.get.codingTaxYear.endYear) {
         pageDocument.getElementById("due-0").text().contains(poa1CollectedCodedOut) shouldBe true
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
         pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/tax-year-summary/2021"
       }
 
-      "have a Payment on Account 2 entry" in new TestSetup(charges = whatYouOweWithPoaTwoCollected) {
+      "have a Payment on Account 2 entry" in new TestSetup(charges = whatYouOweWithPoaTwoCollected, , taxYear = whatYouOweWithPoaTwoCollected.codedOutDetails.get.codingTaxYear.endYear) {
         pageDocument.getElementById("due-0").text().contains(poa2CollectedCodedOut) shouldBe true
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
         pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/tax-year-summary/2021"
