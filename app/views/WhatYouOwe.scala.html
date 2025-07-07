@@ -68,6 +68,7 @@
     claimToAdjustViewModel: WYOClaimToAdjustViewModel,
     LPP2Url: String,
     adjustPoaUrl: String,
+    paymentHandOffUrl: Long => String,
     origin: Option[String] = None
 )(
     implicit request: Request[_],
@@ -246,7 +247,7 @@
             govukButton(Button(
                 id = Some("payment-button-link"),
                 content = Text(getMessage("payNow")),
-                href = Some(PaymentController.paymentHandoff(amount.toPence, origin).url)
+                href = Some(paymentHandOffUrl(amount.toPence))
             ))
         })
 
