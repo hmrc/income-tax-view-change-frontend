@@ -37,7 +37,7 @@
         errorSummary: ErrorSummary,
         formWithCSRF: FormWithCSRF,
         govukRadios: GovukRadios,
-        govukButton: GovukButton
+        continueButton: ContinueButton
 )
 
 @(form: Form[_], submitAction: Call, isAgent: Boolean, taxYear: TaxYear)(implicit messages: Messages, user: auth.MtdItUser[_])
@@ -108,10 +108,7 @@
             )
         ).withFormField(form(SingleTaxYearOptInWarningForm.choiceField)))
 
-        @govukButton(Button(
-            content = Text(messages("optIn.singleTaxYearWarning.continue")),
-            attributes = Map("id" -> "continue-button")
-        ))
+      @continueButton(Some(messages("optIn.singleTaxYearWarning.continue")))
     }
 }
 

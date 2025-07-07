@@ -40,8 +40,7 @@
     formWithCSRF: FormWithCSRF,
     govukRadios: GovukRadios,
     govukErrorSummary: GovukErrorSummary,
-    govukTable : GovukTable,
-    govukButton: GovukButton,
+    govukTable : GovukTable
 )
 
 @(isAgent: Boolean = false, continueAction: Call, form: Form[IncomeSourceReportingFrequencyForm], incomeSourceType: IncomeSourceType, taxDateService: DateServiceInterface, isR17ContentEnabled: Boolean)(implicit user: auth.MtdItUser[_], messages: Messages)
@@ -127,10 +126,7 @@
             classes = "govuk-radios--inline"
         ).withFormField(form("reporting-quarterly-form")))
 
-        @govukButton(Button(
-            id = Some("continue-button"),
-            content = Text(messages("base.continue"))
-        ))
+       @continueButton()
     }
 }
 

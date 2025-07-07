@@ -33,7 +33,7 @@
         link: link,
         form: FormWithCSRF,
         govukBackLink: GovukBackLink,
-        govukButton: GovukButton,
+        continueButton: ContinueButton,
         govukWarningText: GovukWarningText,
         govukInput: GovukInput,
         govukInsetText: GovukInsetText,
@@ -216,12 +216,7 @@
         ).withFormField(enterPoaForm("poa-amount")))
 
         <div class="govuk-button-group">
-            @govukButton(
-                Button(
-                    element = Some("button"),
-                    content = HtmlContent(messages("base.continue"))
-                )
-            )
+           @continueButton()
 
             @link(
                 id = Some("cancel"),
