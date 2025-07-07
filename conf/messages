@@ -185,7 +185,6 @@ home.agent.supporting.cannotAccess.payments                     = payments, cred
 home.agent.supporting.cannotAccess.returns                      = returns
 home.agent.supporting.cannotAccess.nextChargesDue               = next charges due
 home.agent.supporting.readMore                                  = Read more about the difference between main and supporting agents on GOV.UK (opens in new tab).
-home.agent.supporting.readMore.link                             = https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax
 
 home.penaltiesAndAppeals.heading                                = Penalties and appeals
 home.penaltiesAndAppeals.view                                   = Check Self Assessment penalties and appeals

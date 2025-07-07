@@ -36,7 +36,8 @@
     govukWarningText : GovukWarningText,
     updatesTile: UpdatesTile,
     incomeSourcesTile: IncomeSourcesTile,
-    yourReportingObligationsTile: YourReportingObligationsTile
+    yourReportingObligationsTile: YourReportingObligationsTile,
+    appConfig: config.FrontendAppConfig
 )
 
 @(
@@ -104,9 +105,10 @@
                 "home.agent.supporting.cannotAccess.nextChargesDue"
             )
     )
-    @p(id = Some("read-more-about-differences-link")) {
-        <a class="govuk-link" target="_blank" href="@messages("home.agent.supporting.readMore.link")">@messages("home.agent.supporting.readMore")</a>
-    }
+    @p(id = Some("read-more-about-differences-link")){
+    link(link = appConfig.homeAgentSupportingReadMoreLink,messageKey = "home.agent.supporting.readMore.link", class="govuk-link", target="_blank")
+    @messages("home.agent.supporting.readMore")
+}
 }
 
 @layout(

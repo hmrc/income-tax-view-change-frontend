@@ -199,5 +199,5 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   val selfAssessmentTaxReturn = servicesConfig.getString("external-urls.self-assessment-tax-return-link")
   val compatibleSoftwareLink = servicesConfig.getString("external-urls.compatible-software-link")
-
+  val homeAgentSupportingReadMoreLink = servicesConfig.getString("external-urls.home.agent.supporting.readMore.link")
 }
