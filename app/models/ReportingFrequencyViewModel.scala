@@ -24,10 +24,10 @@ case class ReportingFrequencyViewModel(
                                         optOutJourneyUrl: Option[String],
                                         optOutTaxYears: Seq[TaxYear],
                                         optInTaxYears: Seq[TaxYear],
-                                        itsaStatusTable: Seq[(String, Option[String])],
+                                        itsaStatusTable: Seq[(String, Option[String], Option[String])],
                                         displayCeasedBusinessWarning: Boolean,
                                         isAnyOfBusinessLatent: Boolean,
-                                        displayManageYourRfSection: Boolean = true,
+                                        displayManageYourReportingFrequencySection: Boolean = true,
                                         mtdThreshold: String
                                       )(implicit dateService: DateServiceInterface) {
 

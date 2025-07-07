@@ -30,34 +30,72 @@
     detailsDropdown: detailsDropdown,
     bulletList: bulletPointList,
     govukTable: GovukTable,
-    govukInsetText : GovukInsetText
+    govukInsetText : GovukInsetText,
 )
 
-@(viewModel: ReportingFrequencyViewModel, optInOptOutContentUpdateR17:Boolean)(implicit messages: Messages, user: auth.MtdItUser[_], dateService: DateServiceInterface, appConfig: config.FrontendAppConfig)
+
+@(viewModel: ReportingFrequencyViewModel, optInOptOutContentUpdateR17IsEnabled: Boolean, nextUpdatesLink: String)(implicit messages: Messages, user: auth.MtdItUser[_], dateService: DateServiceInterface, appConfig: config.FrontendAppConfig)
 
 @itsaStatusTable = {
-    @h2(msg = "reporting.frequency.table.h2", optId = Some("manage-reporting-frequency-table-heading"))
-    @govukTable(Table(
-        head = Some(List(
-            HeadCell(
-                content = Text(messages("reporting.frequency.table.heading.taxyear")),
-                attributes = Map("id" -> "table-head-name-taxyear")),
-            HeadCell(
-                content = Text(messages("reporting.frequency.table.heading.status")),
-                attributes = Map("id" -> "table-head-name-status"))
-        )),
-        rows = viewModel.itsaStatusTable.zipWithIndex.map { case (itsaStatusTable, index) =>
-            Seq(
-                TableRow(
-                    content = Text(itsaStatusTable._1),
-                    attributes = Map("id" -> s"table-taxyear-$index")),
-                TableRow(
-                    content = Text(itsaStatusTable._2.get),
-                    attributes = Map("id" -> s"table-status-$index"))
-            )
-        },
-        attributes = Map("id" -> "itsa-status-table")
-    ))
+    @h2(
+        msg = if(optInOptOutContentUpdateR17IsEnabled) "reporting.frequency.table.h2.R17" else "reporting.frequency.table.h2",
+        optId = Some("manage-table-heading")
+    )
+    @if(optInOptOutContentUpdateR17IsEnabled) {
+        @govukTable(Table(
+            head = Some(List(
+                HeadCell(
+                    classes = "govuk-table__header govuk-!-width-one-quarter",
+                    content = Text(messages("reporting.frequency.table.heading.taxyear")),
+                    attributes = Map("id" -> "table-head-name-taxyear")),
+                HeadCell(
+                    classes = "govuk-table__header govuk-!-width-one-quarter",
+                    content = Text(messages("reporting.frequency.table.heading.usingMTD")),
+                    attributes = Map("id" -> "table-head-name-using-mtd")),
+                HeadCell(
+                    classes = "govuk-table__header govuk-!-width-one-quarter",
+                    content = Text(messages("reporting.frequency.table.heading.status.R17")),
+                    attributes = Map("id" -> "table-head-name-status"))
+            )),
+            rows = viewModel.itsaStatusTable.zipWithIndex.map { case (itsaStatusTable, index) =>
+                Seq(
+                    TableRow(
+                        classes = "govuk-table__header",
+                        content = Text(itsaStatusTable._1),
+                        attributes = Map("id" -> s"table-taxyear-$index")),
+                    TableRow(
+                        content = Text(itsaStatusTable._2.get),
+                        attributes = Map("id" -> s"table-using-mtd-$index")),
+                    TableRow(
+                        content = Text(itsaStatusTable._3.get),
+                        attributes = Map("id" -> s"table-status-$index"))
+                )
+            },
+            attributes = Map("id" -> "itsa-status-table")
+        ))
+    }else{
+        @govukTable(Table(
+            head = Some(List(
+                HeadCell(
+                    content = Text(messages("reporting.frequency.table.heading.taxyear")),
+                    attributes = Map("id" -> "table-head-name-taxyear")),
+                HeadCell(
+                    content = Text(messages("reporting.frequency.table.heading.status")),
+                    attributes = Map("id" -> "table-head-name-status"))
+            )),
+            rows = viewModel.itsaStatusTable.zipWithIndex.map { case (itsaStatusTable, index) =>
+                Seq(
+                    TableRow(
+                        content = Text(itsaStatusTable._1),
+                        attributes = Map("id" -> s"table-taxyear-$index")),
+                    TableRow(
+                        content = Text(itsaStatusTable._3.get),
+                        attributes = Map("id" -> s"table-status-$index"))
+                )
+            },
+            attributes = Map("id" -> "itsa-status-table")
+        ))
+    }
 }
 
 @optInLink = {
@@ -135,15 +173,137 @@
     }
 }
 
+@latentBusinessText = {
+    @p(id = Some("latency-para1")) {
+        @messages("reporting.frequency.latency.details.section.text.para1")
+    }
+    <ul class="govuk-list govuk-list--bullet">
+        <li id="latency-para1-bullet1">@messages("reporting.frequency.latency.details.section.text.para1.bullet1")</li>
+        <li id="latency-para1-bullet2">@messages("reporting.frequency.latency.details.section.text.para1.bullet2")</li>
+    </ul>
+    @p(id = Some("latency-para2")) {
+        @messages("reporting.frequency.latency.details.section.text.para2")
+    }
+    <ul class="govuk-list govuk-list--bullet">
+        <li id="latency-para2-bullet1">@messages("reporting.frequency.latency.details.section.text.para2.bullet1")</li>
+        <li id="latency-para2-bullet2">@messages("reporting.frequency.latency.details.section.text.para2.bullet2")</li>
+        <li id="latency-para2-bullet3">@messages("reporting.frequency.latency.details.section.text.para2.bullet3")</li>
+    </ul>
+
+    @h3(
+        msg = messages("reporting.frequency.latency.details.section.text.para3.heading"),
+        optId = Some("latency-small-heading")
+    )
+
+    @p(id = Some("latency-para3-text")) {
+        @messages("reporting.frequency.latency.details.section.text.para3.text.1")
+        @linkComponent(
+            id = Some("latency-para3-link"),
+            url = if(viewModel.isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url else controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url,
+            message = messages("reporting.frequency.latency.details.section.text.para3.link.text")
+        )
+        @messages("reporting.frequency.latency.details.section.text.para3.text.2")
+    }
+}
+
+@latentBusinessDropdownContent = {
+    @p(id = Some("separately-choose-to-opt-out")) {
+        @messages("reporting.frequency.latency.details.section.text.para1")
+    }
+        <ul class="govuk-list govuk-list--bullet">
+            <li id="latency-section-1-bullet-1">@messages("reporting.frequency.latency.details.section.text.para1.bullet1")</li>
+            <li id="latency-section-1-bullet-2">@messages("reporting.frequency.latency.details.section.text.para1.bullet2")</li>
+        </ul>
+    @p(id = Some("options-available")) {
+        @messages("reporting.frequency.latency.details.section.text.para2")
+    }
+        <ul class="govuk-list govuk-list--bullet">
+            <li id="latency-section-2-bullet-1">@messages("reporting.frequency.latency.details.section.text.para2.bullet1")</li>
+            <li id="latency-section-2-bullet-2">@messages("reporting.frequency.latency.details.section.text.para2.bullet2")</li>
+            <li id="latency-section-2-bullet-3">@messages("reporting.frequency.latency.details.section.text.para2.bullet3")</li>
+        </ul>
+
+    @h3(
+        msg = messages("reporting.frequency.latency.details.section.text.para3.heading"),
+        optId = Some("change-reporting-obligations-heading")
+    )
+
+    @p(id = Some("your-businesses")) {
+        @messages("reporting.frequency.latency.details.section.text.para3.text.1")
+        @linkComponent(
+            id = Some("your-businesses-link"),
+            url = if(viewModel.isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url else controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url,
+            message = messages("reporting.frequency.latency.details.section.text.para3.link.text")
+        )
+        @messages("reporting.frequency.latency.details.section.text.para3.text.2")
+    }
+}
+
+@differentObligations = {
+    @h2(msg = "reporting.frequency.different.obligations.heading", optId = Some("different-obligations-heading"))
+    @p(id = Some("different-obligations-p1")){
+        @messages("reporting.frequency.different.obligations.p1")
+    }
+    <ul class="govuk-list govuk-list--bullet" id="different-obligations-ul">
+
+        <li id="different-obligations-li1">
+            @messages("reporting.frequency.different.obligations.li1")
+        </li>
+
+        <li id="different-obligations-li2">
+            @messages("reporting.frequency.different.obligations.li2")
+        </li>
+
+    </ul>
+    @p(id = Some("different-obligations-p2")){
+        @messages("reporting.frequency.different.obligations.p2")
+    }
+    @p(id = Some("different-obligations-updates-and-deadlines")){
+        @messages("reporting.frequency.different.obligations.p3")
+        @linkComponent(nextUpdatesLink,
+            message = messages("reporting.frequency.different.obligations.link.text"),
+            rel=Some("noreferrer noopener"),
+            id = Some("different-obligations-updates-and-deadlines-link")
+        )
+        @messages("reporting.frequency.different.obligations.link.text.additional.english")
+    }
+}
+
+@mandatoryReporting = {
+    @if(optInOptOutContentUpdateR17IsEnabled){
+        @h2(msg = "reporting.frequency.mandatoryReporting.heading.R17", optId = Some("mandatory-reporting-heading"))
+        @govukInsetText(InsetText(id = Some("mandatory-reporting-inset"), content = HtmlContent(messages("reporting.frequency.mandatoryReporting.inset.R17"))))
+        @p(id = Some("mandatory-reporting-text")){
+            @messages("reporting.frequency.mandatoryReporting.p1",
+                s"${dateService.getCurrentTaxYear.startYear - 1}",
+                s"${dateService.getCurrentTaxYear.endYear - 1}",
+                s"${dateService.getCurrentTaxYear.startYear + 1}",
+                s"${dateService.getCurrentTaxYear.endYear + 1}"
+            )
+        }
+        @p(id = Some("mandatory-reporting-text-2")) {
+            @messages("reporting.frequency.mandatoryReporting.p2")
+            @linkComponent(appConfig.saWhoNeedsToSignUpUrl, message = s"${messages("reporting.frequency.mandatoryReporting.link.text")} ", rel = Some("noreferrer noopener"), target = Some("_blank"), id = Some("mandatory-reporting-link"))
+        }
+    }else {
+        @h2(msg = "reporting.frequency.mandatoryReporting.heading", optId = Some("mandatory-reporting-heading"))
+        @govukInsetText(InsetText(id = Some("mandatory-reporting-inset"), content = HtmlContent(messages("reporting.frequency.mandatoryReporting.inset"))))
+        @p(id = Some("mandatory-reporting-text")) {
+            @messages("reporting.frequency.mandatoryReporting.text")
+            @linkComponent(appConfig.saWhoNeedsToSignUpUrl, message = s"${messages("reporting.frequency.mandatoryReporting.link.text")} ", rel = Some("noreferrer noopener"), target = Some("_blank"), id = Some("mandatory-reporting-link"))
+        }
+    }
+}
+
 @dropDownContentOptInOptOutContentUpdateR17 = {
 
     @p(id = Some("separately-choose-to-opt-out")) {
         @messages("reporting.frequency.latency.details.section.text.para1.updateR17")
     }
-    <ul class="govuk-list govuk-list--bullet">
-        <li id="latency-section-1-bullet-1">@messages("reporting.frequency.latency.details.section.text.para1.bullet1.updateR17")</li>
-        <li id="latency-section-1-bullet-2">@messages("reporting.frequency.latency.details.section.text.para1.bullet2.updateR17")</li>
-    </ul>
+        <ul class="govuk-list govuk-list--bullet">
+            <li id="latency-section-1-bullet-1">@messages("reporting.frequency.latency.details.section.text.para1.bullet1.updateR17")</li>
+            <li id="latency-section-1-bullet-2">@messages("reporting.frequency.latency.details.section.text.para1.bullet2.updateR17")</li>
+        </ul>
     @p(id = Some("options-available")) {
         @messages("reporting.frequency.latency.details.section.text.para2.updateR17")
     }
@@ -169,80 +329,76 @@
     }
 }
 
-@latentBusinessDropdownContent = {
-    @p(id = Some("separately-choose-to-opt-out")) {
-        @messages("reporting.frequency.latency.details.section.text.para1")
-    }
-    <ul class="govuk-list govuk-list--bullet">
-        <li id="latency-section-1-bullet-1">@messages("reporting.frequency.latency.details.section.text.para1.bullet1")</li>
-        <li id="latency-section-1-bullet-2">@messages("reporting.frequency.latency.details.section.text.para1.bullet2")</li>
-    </ul>
-    @p(id = Some("options-available")) {
-        @messages("reporting.frequency.latency.details.section.text.para2")
-    }
-    <ul class="govuk-list govuk-list--bullet">
-        <li id="latency-section-2-bullet-1">@messages("reporting.frequency.latency.details.section.text.para2.bullet1")</li>
-        <li id="latency-section-2-bullet-2">@messages("reporting.frequency.latency.details.section.text.para2.bullet2")</li>
-        <li id="latency-section-2-bullet-3">@messages("reporting.frequency.latency.details.section.text.para2.bullet3")</li>
-    </ul>
-
-    @h3(
-        msg = messages("reporting.frequency.latency.details.section.text.para3.heading"),
-        optId = Some("change-reporting-obligations-heading")
-    )
-
-    @p(id = Some("your-businesses")) {
-        @messages("reporting.frequency.latency.details.section.text.para3.text.1")
-        @linkComponent(
-                id = Some("your-businesses-link"),
-                url = if(viewModel.isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url else controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url,
-                message = messages("reporting.frequency.latency.details.section.text.para3.link.text")
-        )
-        @messages("reporting.frequency.latency.details.section.text.para3.text.2")
+@compatibleSoftware = {
+    @if(optInOptOutContentUpdateR17IsEnabled){
+        @h2(msg = "reporting.frequency.compatibleSoftware.heading.R17", optId = Some("compatible-software-heading"))
+        @p(id=Some("compatible-software-text")){
+            @messages("reporting.frequency.compatibleSoftware.p1.R17")
+            @linkComponent(
+                url = appConfig.compatibleSoftwareLink,
+                message = s"${messages("reporting.frequency.compatibleSoftware.link.text.R17")} ",
+                rel=Some("noreferrer noopener"),
+                target = Some("_blank"),
+                id = Some("compatible-software-link"),
+                additionalOpenTabMessage = Some(".")
+            )
+            @messages("reporting.frequency.compatibleSoftware.p2.R17")
+        }
+        @p(id=Some("compatible-software-text-2")){
+            @messages("reporting.frequency.compatibleSoftware.p3.R17")
+            @linkComponent(appConfig.selfAssessmentTaxReturn, message = s"${messages("reporting.frequency.compatibleSoftware.link2.text")} ", rel=Some("noreferrer noopener"), target = Some("_blank"), id = Some("self-assessment-tax-return-link"), additionalOpenTabMessage = Some("."))
+        }
+    }else{
+        @h2(msg = "reporting.frequency.compatibleSoftware.heading", optId = Some("compatible-software-heading"))
+        @p(id=Some("compatible-software-text")){
+            @messages("reporting.frequency.compatibleSoftware.p1")
+            @linkComponent(
+                url = appConfig.compatibleSoftwareLink,
+                message = s"${messages("reporting.frequency.compatibleSoftware.link.text")} ",
+                rel=Some("noreferrer noopener"),
+                target = Some("_blank"),
+                id = Some("compatible-software-link")
+            )
+            @messages("reporting.frequency.compatibleSoftware.p2")
+        }
+        @p(id=Some("compatible-software-text-2")){
+            @messages("reporting.frequency.compatibleSoftware.p3")
+        }
     }
 }
 
-
 @mainTemplate(
-    pageTitle = messages("reporting.frequency.title"),
+    pageTitle = if(optInOptOutContentUpdateR17IsEnabled) messages("reporting.frequency.title.R17") else messages("reporting.frequency.title"),
     backUrl = Some("#"),
     isAgent = viewModel.isAgent,
     btaNavPartial = user.btaNavPartial,
     useFallbackBackLink = true
 ) {
 
-    @h1(msg = messages("reporting.frequency.h1"), id = Some("reporting-frequency-heading"))
+    @h1(
+        msg = if(optInOptOutContentUpdateR17IsEnabled) messages("reporting.frequency.title.R17") else messages("reporting.frequency.title"),
+        id = Some("page-heading")
+    )
     @ceasedBusinessWarning
+
     @itsaStatusTable
 
-
     @if(viewModel.isAnyOfBusinessLatent) {
-        @if(optInOptOutContentUpdateR17) {
+        @if(optInOptOutContentUpdateR17IsEnabled) {
             @detailsDropdown("reporting.frequency.latency.details.section.header.updateR17", dropDownContentOptInOptOutContentUpdateR17, Some("latency-details-dropdown"))
         } else {
             @detailsDropdown("reporting.frequency.latency.details.section.header", latentBusinessDropdownContent, Some("latency-details-dropdown"))
         }
     }
 
-
-    @if(viewModel.displayManageYourRfSection && viewModel.atLeastOneOfOptInOrOptOutExists) {
+    @if(viewModel.displayManageYourReportingFrequencySection && viewModel.atLeastOneOfOptInOrOptOutExists) {
         @manageReportingFrequency
     }
 
-    @h2(msg = "reporting.frequency.mandatoryReporting.heading", optId = Some("mandatory-reporting-heading"))
-    @govukInsetText(InsetText(id=Some("mandatory-reporting-inset"),content = HtmlContent(messages("reporting.frequency.mandatoryReporting.inset"))))
-    @p(id=Some("mandatory-reporting-text")){
-        @messages("reporting.frequency.mandatoryReporting.text")
-        @linkComponent(appConfig.saWhoNeedsToSignUpUrl, message = s"${messages("reporting.frequency.mandatoryReporting.link.text")} ", rel=Some("noreferrer noopener"), target = Some("_blank"), id = Some("mandatory-reporting-link"))
-    }
 
-    @h2(msg = "reporting.frequency.compatibleSoftware.heading", optId = Some("compatible-software-heading"))
-    @p(id=Some("compatible-software-text")){
-        @messages("reporting.frequency.compatibleSoftware.p1")
-        @linkComponent(appConfig.compatibleSoftwareLink, message = s"${messages("reporting.frequency.compatibleSoftware.link.text")} ", rel=Some("noreferrer noopener"), target = Some("_blank"), id = Some("compatible-software-link"))
-        @messages("reporting.frequency.compatibleSoftware.p2")
-    }
-    @p(id=Some("compatible-software-text-2")){
-        @messages("reporting.frequency.compatibleSoftware.p3")
-    }
+    @differentObligations
+
+    @mandatoryReporting
+
+    @compatibleSoftware
 }
