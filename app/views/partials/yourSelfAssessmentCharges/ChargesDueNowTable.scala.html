@@ -97,7 +97,7 @@
     ++ (for((charge, index) <- viewModel.overdueChargesWithIndex) yield {
             Seq(
                 TableRow(
-                    content = HtmlContent(getDisplayDueDate(charge).toLongDateShort.toNbsp)
+                    content = HtmlContent(getDisplayDueDate(charge).toLongDateShort.toNonBreaking)
                 ),
                 TableRow(
                     attributes = Map("id" -> s"due-$index"),
@@ -144,7 +144,7 @@
             format = Some("numeric")
         ),
         HeadCell(
-            content = HtmlContent(getMessage("tableHead.amount").toNbsp),
+            content = HtmlContent(getMessage("tableHead.amount").toNonBreaking),
             format = Some("numeric")
         )
     )),

@@ -56,7 +56,7 @@
                     chargeItem.dueDate.map(_.toLongDateShort).getOrElse(messages("chargeSummary.na"))
                 } else {
                     chargeItem.dueDate.map(_.toLongDate).getOrElse(messages("chargeSummary.na"))
-                }).toNbsp
+                }).toNonBreaking
             }
         </dd>
     </div>
@@ -67,7 +67,7 @@
             <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
             @messages("chargeSummary.lpi.interestPeriod.dates",
                 chargeItem.interestFromDate.getOrElse(throw MissingFieldException("Interest From Date")).toLongDateShort,
-                chargeItem.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDateShort).toNbsp</dd>
+                chargeItem.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDateShort).toNonBreaking</dd>
         </div>
     }
     <div class="govuk-summary-list__row">

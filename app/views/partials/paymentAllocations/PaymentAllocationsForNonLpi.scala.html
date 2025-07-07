@@ -43,7 +43,7 @@
                 </a>
                 <span class="govuk-body-s" aria-hidden="true">@messages("paymentAllocation.taxYear", (paymentAllocation.allocationDetailActual.getTaxYear - 1).toString, paymentAllocation.allocationDetailActual.getTaxYear.toString)</span>
             </td>
-            <td class="govuk-table__cell">@paymentAllocation.clearingDateActual.toLongDateShort.toNbsp</td>
+            <td class="govuk-table__cell">@paymentAllocation.clearingDateActual.toLongDateShort.toNonBreaking</td>
             <td class="govuk-table__cell govuk-table__cell--numeric">@paymentAllocation.allocationDetailActual.amountActual.toCurrencyString</td>
         </tr>
     </tbody>

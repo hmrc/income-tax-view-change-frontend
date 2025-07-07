@@ -32,6 +32,6 @@
 
 <a class="govuk-link" id="taxYearSummary-link-@index"
 href="@returnHref(year)">
-    @getMessage("tax-year-summary.taxYear", (year - 1).toString, year.toString).toNbsp
+    @getMessage("tax-year-summary.taxYear", (year - 1).toString, year.toString).toNonBreaking
     <span class="govuk-visually-hidden">@getMessage("taxYear")</span>
 </a>

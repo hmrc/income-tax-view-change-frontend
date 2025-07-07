@@ -123,7 +123,7 @@
                         content = Text(getMessage("tableHead.tax-year"))
                     ),
                     HeadCell(
-                        content = HtmlContent(getMessage("tableHead.amount-due").toNbsp)
+                        content = HtmlContent(getMessage("tableHead.amount-due").toNonBreaking)
                     )
                 )),
                 rows = Seq(
@@ -176,7 +176,7 @@
                             Seq(
                                 TableRow(
                                     attributes = Map("id" -> s"due-charge-due-date-$index"),
-                                    content = HtmlContent(charge.getChargeDueDate.toLongDateShort.toNbsp)
+                                    content = HtmlContent(charge.getChargeDueDate.toLongDateShort.toNonBreaking)
                                 ),
                                 TableRow(
                                     attributes = Map("id" -> s"due-$index"),

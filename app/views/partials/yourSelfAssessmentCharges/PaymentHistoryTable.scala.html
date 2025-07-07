@@ -65,7 +65,7 @@
                 ),
                 TableRow(
                     content = HtmlContent(
-                        viewModel.adjustmentHistory.creationEvent.adjustmentDate.map(_.toLongDate.toNbsp).getOrElse(Html(messages("incomeSources.generic.unknown")))
+                        viewModel.adjustmentHistory.creationEvent.adjustmentDate.map(_.toLongDate.toNonBreaking).getOrElse(Html(messages("incomeSources.generic.unknown")))
                     )
                 ),
                 TableRow(
@@ -79,7 +79,7 @@
                     content = Text(messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey}"))
                 ),
                 TableRow(
-                    content = HtmlContent(viewModel.chargeItem.interestEndDate.get.toLongDate.toNbsp)
+                    content = HtmlContent(viewModel.chargeItem.interestEndDate.get.toLongDate.toNonBreaking)
                 ),
                 TableRow(
                     content = HtmlContent(viewModel.chargeItem.latePaymentInterestAmount.get.toCurrency),
@@ -93,7 +93,7 @@
                     content = Text(messages("chargeSummary.codingOutPayHistoryAmount", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut))
                 ),
                 TableRow(
-                    content = HtmlContent(viewModel.chargeItem.documentDate.toLongDate.toNbsp)
+                    content = HtmlContent(viewModel.chargeItem.documentDate.toLongDate.toNonBreaking)
                 ),
                 TableRow(
                     content = HtmlContent(viewModel.chargeItem.originalAmount.toCurrency),
@@ -109,7 +109,7 @@
                         attributes = Map("id" -> "rar-due-date")
                     ),
                     TableRow(
-                        content = HtmlContent(charge.getDueDate.toLongDate.toNbsp),
+                        content = HtmlContent(charge.getDueDate.toLongDate.toNonBreaking),
                         attributes = Map("id" -> "rar-due-date")
                     ),
                     TableRow(
@@ -127,7 +127,7 @@
                         content = Text(messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey}"))
                     ),
                     TableRow(
-                        content = HtmlContent(charge.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDate.toNbsp)
+                        content = HtmlContent(charge.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDate.toNonBreaking)
                     ),
                     TableRow(
                         content = HtmlContent(charge.amount.toCurrency),
@@ -146,7 +146,7 @@
                     content = HtmlContent(latePaymentInterestChargeMessage(viewModel, allocation, payment).toString)
                 ),
                 TableRow(
-                    content = HtmlContent(payment.getDueDateOrThrow.toLongDate.toNbsp)
+                    content = HtmlContent(payment.getDueDateOrThrow.toLongDate.toNonBreaking)
                 ),
                 TableRow(
                     content = HtmlContent(payment.getAmountOrThrow.abs.toCurrency),

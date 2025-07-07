@@ -53,7 +53,7 @@
                     </span>
                 </div>
             </td>
-            <td class="govuk-table__cell">@chargeItem.dueDate.getOrElse(chargeItem.documentDate).toLongDateShort.toNbsp</td>
+            <td class="govuk-table__cell">@chargeItem.dueDate.getOrElse(chargeItem.documentDate).toLongDateShort.toNonBreaking</td>
             <td class="govuk-table__cell govuk-table__cell--numeric">@chargeItem.originalAmount.abs.toCurrencyString</td>
         </tr>
     </tbody>

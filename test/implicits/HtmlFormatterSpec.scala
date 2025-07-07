@@ -22,13 +22,13 @@ import testUtils.UnitSpec
 
 class HtmlFormatterSpec extends UnitSpec with Matchers {
 
-  "HtmlFormatter.toNbsp" when {
+  "HtmlFormatter.toNonBreaking" when {
 
-    "calling toNbsp with a string containing spaces" should {
+    "calling toNonBreaking with a string containing spaces" should {
 
       "return a Html with no breaking spaces when given a string date" in {
 
-        val input = HtmlFormatter.NbspString("21 Apr 2021").toNbsp
+        val input = HtmlFormatter.NbspString("21 Apr 2021").toNonBreaking
         val result = Html("21&nbsp;Apr&nbsp;2021")
 
         input shouldBe result
@@ -36,7 +36,7 @@ class HtmlFormatterSpec extends UnitSpec with Matchers {
 
       "return a Html with no breaking spaces when given a string Tax year" in {
 
-        val input = HtmlFormatter.NbspString("2017 to 2018").toNbsp
+        val input = HtmlFormatter.NbspString("2017 to 2018").toNonBreaking
         val result = Html("2017&nbsp;to&nbsp;2018")
 
         input shouldBe result
@@ -45,7 +45,7 @@ class HtmlFormatterSpec extends UnitSpec with Matchers {
       "return a Html with no formatting applied if the string contains no spaces" in {
 
         val inputString = "HelloWorld"
-        val input = HtmlFormatter.NbspString(inputString).toNbsp
+        val input = HtmlFormatter.NbspString(inputString).toNonBreaking
         val result = Html(inputString)
 
         input shouldBe result

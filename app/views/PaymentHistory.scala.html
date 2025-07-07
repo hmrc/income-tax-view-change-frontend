@@ -78,7 +78,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
         <tbody>
         @for((payment, index) <- yearPayments.sortBy(x => x.date).reverse.zipWithIndex) {
             <tr class="govuk-table__row">
-                <td class="govuk-table__cell">@payment.date.toLongDate.toNbsp</td>
+                <td class="govuk-table__cell">@payment.date.toLongDate.toNonBreaking</td>
                 <td class="govuk-table__cell">
                     <a class="govuk-link" href="@payment.linkUrl" id="payment-@index">
                         @messages(s"paymentHistory.${payment.creditType.key}")
