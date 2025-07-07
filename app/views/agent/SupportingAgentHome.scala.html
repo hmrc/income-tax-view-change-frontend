@@ -106,8 +106,8 @@
                 "home.agent.supporting.cannotAccess.nextChargesDue"
             )
     )
-    @p(id = Some("read-more-about-differences-link")){
-    link(link = appConfig.homeAgentSupportingReadMoreLink, messageKey = "home.agent.supporting.readMore", class="govuk-link", target="_blank")
+    @p(id = Some("read-more-about-differences-link")) {
+     <a class="govuk-link" target="_blank" href="@appConfig.homeAgentSupportingReadMoreLink">@messages("home.agent.supporting.readMore")</a>
 }
 }
 
