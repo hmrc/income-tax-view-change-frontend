@@ -179,6 +179,11 @@ home.interest-accruing                                          = You have charg
 home.updates.overdue.charges                                    = {0} Overdue charges
 home.updates.overdue.updates                                    = {0} Overdue updates
 
+home.updates.R17.heading                                        = Your updates and deadlines
+home.updates.R17.nextUpdateDue                                  = Next update due: {0}
+home.updates.R17.nextTaxReturnDue                               = Next tax return due: {0}
+home.updates.R17.linkText                                       = View your deadlines
+
 home.agent.supporting.paymentAndReturns                         = Payments and returns
 home.agent.supporting.cannotAccess                              = Supporting agents cannot access records that show:
 home.agent.supporting.cannotAccess.payments                     = payments, credits and refunds

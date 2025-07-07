@@ -161,6 +161,32 @@ class NextUpdatesService @Inject()(
 
     processingRes
   }
+
+  def getNextDueDates()(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[(Option[LocalDate], Option[LocalDate])] = {
+    getOpenObligations().map {
+      case ObligationsModel(obligations) =>
+        val openObligations = obligations.flatMap(_.obligations)
+
+        val nextQuarterlyDueDate = openObligations
+          .filter(_.obligationType == "Quarterly")
+          .map(_.due)
+          .filter(dueDate => !dueDate.isBefore(dateService.getCurrentDate))
+          .sorted
+          .headOption
+
+        val nextTaxReturnDate : Option[LocalDate] = Some(LocalDate.of(dateService.getCurrentTaxYear.endYear + 1, 1, 31))
+
+        (nextQuarterlyDueDate, nextTaxReturnDate)
+
+      case error: ObligationsErrorModel =>
+        Logger("application").warn(s"[getNextDueDates] Failed to fetch obligations: ${error.message}")
+        (None, Some(LocalDate.of(dateService.getCurrentTaxYear.endYear + 1, 1, 31)))
+
+      case unexpected =>
+        Logger("application").error(s"[getNextDueDates] Unexpected response: $unexpected")
+        (None, Some(LocalDate.of(dateService.getCurrentTaxYear.endYear + 1, 1, 31)))
+    }
+  }
 }
 
 

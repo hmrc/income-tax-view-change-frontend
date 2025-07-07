@@ -84,17 +84,17 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
   val overdueMessage = "! Warning You have overdue charges. You may be charged interest on these until they are paid in full."
   val overdueMessageForDunningLocks = "! Warning You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full."
   val currentDate = dateService.getCurrentDate
-  private val viewModelFuture: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, false)
-  private val viewModelOneOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)), currentDate, false)
+  private val viewModelFuture: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, false, false, ITSAStatus.NoStatus, None, None)
+  private val viewModelOneOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)), currentDate, false, false, ITSAStatus.NoStatus, None, None)
   private val viewModelThreeOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1),
-    LocalDate.of(2018, 2, 1), LocalDate.of(2018, 3, 1)), currentDate, false)
-  private val viewModelNoUpdates: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(), currentDate, false)
-  private val viewModelOptOut: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, true)
+    LocalDate.of(2018, 2, 1), LocalDate.of(2018, 3, 1)), currentDate, false, false, ITSAStatus.NoStatus, None, None)
+  private val viewModelNoUpdates: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(), currentDate, false, false, ITSAStatus.NoStatus, None, None)
+  private val viewModelOptOut: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, true, false, ITSAStatus.NoStatus, None, None)
   val paymentTileOverdueDate: LocalDate = LocalDate.of(2020, 4, 6)
   val paymentTileFutureDate: LocalDate = LocalDate.of(2100, 4, 6)
   val paymentTileFutureDateLongFormat: String = paymentTileFutureDate.format(DateTimeFormatter.ofPattern("d MMMM YYYY"))
   val paymentTileOverdueDateLongFormat: String = s"Overdue ${paymentTileOverdueDate.format(DateTimeFormatter.ofPattern("d MMMM YYYY"))}"
-
+  val testFutureTaxYear = TaxYear(2099,2100)
 
   class Setup(paymentDueDate: LocalDate = nextPaymentDueDate, overDuePaymentsCount: Int = 0, paymentsAccruingInterestCount: Int = 0, reviewAndReconcileEnabled: Boolean = false,
               nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture, utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
@@ -221,6 +221,161 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
         link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/next-updates")
         link.map(_.text) shouldBe Some("View deadlines and manage how you report")
+      }
+
+      "has next update and tax return dates when OptInOptOutContentUpdateR17 is enabled and ITSA status is Voluntary with no overdue updates" in {
+        val testNextQuarterlyUpdateDueDate: LocalDate = LocalDate.of(2099, 11, 5)
+        val testNextTaxReturnDueDate: LocalDate = LocalDate.of(testFutureTaxYear.endYear + 1, 1, 31)
+
+        new Setup(
+          nextUpdatesTileViewModel = NextUpdatesTileViewModel(dueDates = Seq(testNextQuarterlyUpdateDueDate),
+            currentDate = LocalDate.of(testFutureTaxYear.startYear, 6, 24),
+            isReportingFrequencyEnabled = true,
+            showOptInOptOutContentUpdateR17 = true,
+            currentYearITSAStatus = ITSAStatus.Voluntary,
+            nextQuarterlyUpdateDueDate = Some(testNextQuarterlyUpdateDueDate),
+            nextTaxReturnDueDate = Some(testNextTaxReturnDueDate))
+        ) {
+          val tile: Element = getElementById("updates-tile").get
+          val paragraphs: Elements = tile.select("p.govuk-body")
+
+          tile.select("span.govuk-tag--red") shouldBe empty
+
+          paragraphs.get(0).text shouldBe "Next update due: 5 November 2099"
+          paragraphs.get(1).text shouldBe "Next tax return due: 31 January 2101"
+
+          val link: Element = tile.select("a.govuk-link").first()
+          link.text shouldBe "View deadlines and manage how you report"
+          link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
+        }
+      }
+
+      "has overdue update and tax return dates when OptInOptOutContentUpdateR17 is enabled and ITSA status is Voluntary with 1 overdue update" in {
+        val testOverdueUpdate: LocalDate = LocalDate.of(2000, 2, 5)
+        val testNextQuarterlyUpdateDueDate: LocalDate = LocalDate.of(2099, 11, 5)
+        val testNextTaxReturnDueDate: LocalDate = LocalDate.of(testFutureTaxYear.endYear + 1, 1, 31)
+
+        new Setup(
+          nextUpdatesTileViewModel = NextUpdatesTileViewModel(dueDates = Seq(testOverdueUpdate, testNextQuarterlyUpdateDueDate),
+            currentDate = LocalDate.of(testFutureTaxYear.startYear, 6, 24),
+            isReportingFrequencyEnabled = true,
+            showOptInOptOutContentUpdateR17 = true,
+            currentYearITSAStatus = ITSAStatus.Voluntary,
+            nextQuarterlyUpdateDueDate = Some(testNextQuarterlyUpdateDueDate),
+            nextTaxReturnDueDate = Some(testNextTaxReturnDueDate))
+        ) {
+          val tile: Element = getElementById("updates-tile").get
+          val paragraphs: Elements = tile.select("p.govuk-body")
+
+          val overdueTag: Elements = tile.select("span.govuk-tag.govuk-tag--red")
+          overdueTag.text() shouldBe "Overdue"
+
+          paragraphs.get(1).text shouldBe "Next update due: 5 November 2099"
+          paragraphs.get(2).text shouldBe "Next tax return due: 31 January 2101"
+
+          val link: Element = tile.select("a.govuk-link").first()
+          link.text shouldBe "View deadlines and manage how you report"
+          link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
+        }
+      }
+
+      "has overdue count and tax return when OptInOptOutContentUpdateR17 is enabled and ITSA status is Voluntary with multiple overdue updates" in {
+        val testNextQuarterlyUpdateDueDate: LocalDate = LocalDate.of(2099, 11, 5)
+        val testNextTaxReturnDueDate: LocalDate = LocalDate.of(testFutureTaxYear.endYear + 1, 1, 31)
+
+        new Setup(
+             nextUpdatesTileViewModel = NextUpdatesTileViewModel(dueDates = Seq(
+              LocalDate.of(2000, 5, 5),
+              LocalDate.of(2000, 8, 5),
+              LocalDate.of(2000, 11, 5),
+              testNextQuarterlyUpdateDueDate
+            ),
+            currentDate = LocalDate.of(testFutureTaxYear.startYear, 6, 24),
+            isReportingFrequencyEnabled = true,
+            showOptInOptOutContentUpdateR17 = true,
+            currentYearITSAStatus = ITSAStatus.Voluntary,
+            nextQuarterlyUpdateDueDate = Some(testNextQuarterlyUpdateDueDate),
+            nextTaxReturnDueDate = Some(testNextTaxReturnDueDate))
+        ) {
+          val tile: Element = getElementById("updates-tile").get
+          val paragraphs: Elements = tile.select("p.govuk-body")
+
+          val overdueTag: Elements = tile.select("span.govuk-tag.govuk-tag--red")
+          overdueTag.text() shouldBe "3 Overdue updates"
+
+          paragraphs.get(1).text shouldBe "Next update due: 5 November 2099"
+          paragraphs.get(2).text shouldBe "Next tax return due: 31 January 2101"
+
+          val link: Element = tile.select("a.govuk-link").first()
+          link.text shouldBe "View deadlines and manage how you report"
+          link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
+        }
+      }
+
+      "has only tax return date when OptInOptOutContentUpdateR17 is enabled and ITSA status is Annual" in {
+        val testNextQuarterlyUpdateDueDate: LocalDate = LocalDate.of(2099, 11, 5)
+        val testNextTaxReturnDueDate: LocalDate = LocalDate.of(testFutureTaxYear.endYear + 1, 1, 31)
+
+        new Setup(
+          nextUpdatesTileViewModel = NextUpdatesTileViewModel(dueDates = Seq(testNextQuarterlyUpdateDueDate),
+            currentDate = LocalDate.of(testFutureTaxYear.startYear, 6, 24),
+            isReportingFrequencyEnabled = true,
+            showOptInOptOutContentUpdateR17 = true,
+            currentYearITSAStatus = ITSAStatus.Annual,
+            nextQuarterlyUpdateDueDate = Some(testNextQuarterlyUpdateDueDate),
+            nextTaxReturnDueDate = Some(testNextTaxReturnDueDate))
+        ) {
+          val tile: Element = getElementById("updates-tile").get
+          val paragraphs: Elements = tile.select("p.govuk-body")
+
+          tile.select("span.govuk-tag--red") shouldBe empty
+
+          paragraphs.size() shouldBe 1
+          paragraphs.get(0).text shouldBe "Next tax return due: 31 January 2101"
+
+          val link: Element = tile.select("a.govuk-link").first()
+          link.text shouldBe "View deadlines and manage how you report"
+          link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
+        }
+      }
+
+      "has overdue update and tax return dates when OptInOptOutContentUpdateR17 is enabled and ITSA status is Mandated with 1 overdue update" in new Setup(
+        nextUpdatesTileViewModel = NextUpdatesTileViewModel(dueDates = Seq(LocalDate.of(2025, 4, 5)),
+          currentDate = LocalDate.of(2025, 6, 24),
+          isReportingFrequencyEnabled = true,
+          showOptInOptOutContentUpdateR17 = true,
+          currentYearITSAStatus = ITSAStatus.Mandated,
+          nextQuarterlyUpdateDueDate = Some(LocalDate.of(2025, 4, 5)),
+          nextTaxReturnDueDate = Some(LocalDate.of(2026, 1, 31)))
+      ) {
+        val tile: Element = getElementById("updates-tile").get
+        val paragraphs: Elements = tile.select("p.govuk-body")
+
+        val overdueTag: Elements = tile.select("span.govuk-tag.govuk-tag--red")
+        overdueTag.text() shouldBe "Overdue"
+
+        paragraphs.get(1).text shouldBe "Next update due: 5 April 2025"
+        paragraphs.get(2).text shouldBe "Next tax return due: 31 January 2026"
+
+        val link: Element = tile.select("a.govuk-link").first()
+        link.text shouldBe "View deadlines and manage how you report"
+        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
+      }
+
+      "has only title when OptInOptOutContentUpdateR17 is enabled and user has no obligations or tax return date" in new Setup(
+        nextUpdatesTileViewModel = NextUpdatesTileViewModel(dueDates = Seq.empty,
+          currentDate = LocalDate.of(2025, 6, 24),
+          isReportingFrequencyEnabled = true,
+          showOptInOptOutContentUpdateR17 = true,
+          currentYearITSAStatus = ITSAStatus.Voluntary,
+          None,
+          nextTaxReturnDueDate = None)
+      ) {
+        val tile: Element = getElementById("updates-tile").get
+
+        tile.text().trim shouldBe "Your updates and deadlines"
+        tile.select("span.govuk-tag--red") shouldBe empty
+        tile.select("p.govuk-body") shouldBe empty
       }
     }
 

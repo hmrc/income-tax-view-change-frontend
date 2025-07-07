@@ -16,9 +16,18 @@
 
 package models.obligations
 
+import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus.ITSAStatus
+
 import java.time.LocalDate
 
-case class NextUpdatesTileViewModel(dueDates: Seq[LocalDate], currentDate: LocalDate, isReportingFrequencyEnabled: Boolean) {
+case class NextUpdatesTileViewModel(dueDates: Seq[LocalDate],
+                                    currentDate: LocalDate,
+                                    isReportingFrequencyEnabled: Boolean,
+                                    showOptInOptOutContentUpdateR17: Boolean,
+                                    currentYearITSAStatus: ITSAStatus,
+                                    nextQuarterlyUpdateDueDate: Option[LocalDate],
+                                    nextTaxReturnDueDate: Option[LocalDate]) {
   def getNextDeadline: Option[LocalDate] = {
     dueDates.sortWith(_ isBefore _).headOption
   }
@@ -29,4 +38,9 @@ case class NextUpdatesTileViewModel(dueDates: Seq[LocalDate], currentDate: Local
 
   def showNextUpdatesTileContent: Boolean = dueDates.nonEmpty
 
+  def isQuarterlyUser: Boolean =
+    currentYearITSAStatus == ITSAStatus.Voluntary || currentYearITSAStatus == ITSAStatus.Mandated
+
+  def isAnnualUser: Boolean =
+    currentYearITSAStatus == ITSAStatus.Annual
 }
