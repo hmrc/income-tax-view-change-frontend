@@ -27,19 +27,11 @@
 
 @(
     codingOutDetails: CodingOutDetails,
-    origin: Option[String]
+    getCodingOutHref: Int => String
 )(
     implicit messages: Messages,
     user: MtdItUser[_]
 )
-
-@getCodingOutHref(taxYear: Int) = @{
-    if(user.isAgent()) {
-        controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear)
-    } else {
-        controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin = origin)
-    }
-}
 
 @p(id = Some("coding-out-notice"), classes = "govuk-body coding-out-notice") {
 
