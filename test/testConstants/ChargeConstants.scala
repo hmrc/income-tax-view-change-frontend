@@ -301,7 +301,7 @@ trait ChargeConstants {
           transactionId = "CODINGOUT01", taxYear = TaxYear.forYearEnd(2021),
           transactionType = BalancingCharge,
           codedOutStatus = Some(Nics2),
-          outstandingAmount = 12.34,
+          outstandingAmount = 0,
           originalAmount = 43.21,
           documentDate = LocalDate.of(2018, 3, 29),
           interestOutstandingAmount = None,
@@ -319,6 +319,27 @@ trait ChargeConstants {
     transactionId = "CODINGOUT01", taxYear = TaxYear.forYearEnd(2021),
     transactionType = BalancingCharge,
     codedOutStatus = Some(Cancelled),
+    outstandingAmount = 12.34,
+    originalAmount = 43.21,
+    documentDate = LocalDate.of(2018, 3, 29),
+    interestOutstandingAmount = None,
+    interestRate = None,
+    interestFromDate = Some(LocalDate.parse("2019-05-25")),
+    interestEndDate = Some(LocalDate.parse("2019-06-25")),
+    latePaymentInterestAmount = None,
+    dueDate = Some(LocalDate.parse("2021-08-25")),
+    lpiWithDunningLock = None, amountCodedOut = None,
+    dunningLock = false,
+    poaRelevantAmount = None,
+    dueDateForFinancialDetail = Some(LocalDate.parse("2024-01-14")),
+    paymentLotItem = Some("paymentLotItem"),
+    paymentLot = Some("paymentLot")
+  )
+
+  def chargeItemWithPoaCodingOutAccepted(): ChargeItem = ChargeItem(
+    transactionId = "CODINGOUT01", taxYear = TaxYear.forYearEnd(2021),
+    transactionType = PoaOneDebit,
+    codedOutStatus = Some(FullyCollected),
     outstandingAmount = 12.34,
     originalAmount = 43.21,
     documentDate = LocalDate.of(2018, 3, 29),
@@ -708,6 +729,28 @@ trait ChargeConstants {
     latePaymentInterestAmount = List(None, None),
     dunningLock = noDunningLocks
   )
+  val financialDetailsLatePaymentPenaltiesChargeItemInterest: List[ChargeItem] = testFinancialDetailsChargeItems(
+    transactionId = List(id1040000123, id1040000124),
+    transactionTypes = List(FirstLatePaymentPenalty, SecondLatePaymentPenalty),
+    dueDate = List(Some(fixedDate.plusDays(1)), Some(fixedDate.plusDays(1))),
+    outstandingAmount = List(0, 0),
+    taxYear = fixedDate.getYear.toString,
+    latePaymentInterestAmount = List(Some(99.0), Some(98.0)),
+    interestEndDate = List(Some(fixedDate.plusDays(1)), Some(fixedDate.plusDays(1))),
+    dunningLock = noDunningLocks,
+    interestRate = List(Some(100), Some(100)),
+    dueDateForFinancialDetail = List(fixedDate.plusDays(1), fixedDate.plusDays(1))
+  )
+  val financialDetailsLateSubmissionPenaltyChargeItemInterest: List[ChargeItem] = testFinancialDetailsChargeItems(
+    transactionId = List(id1040000123, id1040000124),
+    transactionTypes = List(LateSubmissionPenalty, PoaTwoDebit),
+    dueDate = List(Some(fixedDate.plusDays(1)), Some(fixedDate.plusDays(1))),
+    outstandingAmount = List(100.0, 0),
+    taxYear = fixedDate.getYear.toString,
+    latePaymentInterestAmount = List(Some(100.0), None),
+    interestEndDate = List(Some(fixedDate.plusDays(1)), Some(fixedDate.plusDays(1))),
+    dunningLock = noDunningLocks
+  )
 
   val financialDetailsOverdueCharges: List[ChargeItem] = testFinancialDetailsChargeItems(
     transactionId = List(id1040000123, id1040000124),
@@ -844,6 +887,18 @@ trait ChargeConstants {
   val whatYouOweLatePaymentPenalties: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = financialDetailsLatePaymentPenaltiesChargeItem,
+    outstandingChargesModel = Some(OutstandingChargesModel(List()))
+  )
+
+  val whatYouOweAllPenalties: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    chargesList = financialDetailsLateSubmissionPenaltyChargeItem ++ financialDetailsLatePaymentPenaltiesChargeItem,
+    outstandingChargesModel = Some(OutstandingChargesModel(List()))
+  )
+
+  val whatYouOweAllPenaltiesInterest: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    chargesList = financialDetailsLateSubmissionPenaltyChargeItemInterest ++ financialDetailsLatePaymentPenaltiesChargeItemInterest,
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 

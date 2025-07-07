@@ -244,7 +244,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(upcomingAndMissedObligationModel(testPropertyIncomeId))))
 
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(taxYear = dateService.getCurrentTaxYear)
@@ -265,26 +265,38 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           pageTitleIndividual("nextUpdates.heading")
         )
 
-        Then("the page displays the quarterly updates table")
+        Then("the page displays the missed deadlines table")
         res should have(
-          elementTextByID("current-year-quarterly-table-heading")(expectedValue = "Upcoming deadlines"),
+          elementTextByID("missed-deadlines-warning")(expectedValue = "! Warning You have missed deadlines for one or more quarterly updates."),
+          elementTextByID("missed-deadlines-table-heading")(expectedValue = "Missed deadlines"),
+          elementTextByID("table-head-name-deadline-missed")(expectedValue = "Deadline"),
+          elementTextByID("table-head-name-period-missed")(expectedValue = "Period"),
+          elementTextByID("table-head-name-updates-due-missed")(expectedValue = "Income source updates due"),
+          elementTextByID("quarterly-deadline-date-missed-0")(expectedValue = "31 Oct 2017"),
+          elementTextByID("quarterly-period-missed-0")(expectedValue = "6 Apr 2017 to 5 Jul 2017"),
+          elementTextByID("quarterly-income-sources-missed-0")(expectedValue = "Property business"),
+        )
+
+        Then("the page displays the upcoming deadlines table")
+        res should have(
+          elementTextByID("active-quarterly-table-heading")(expectedValue = "Upcoming deadlines"),
           elementTextByID("table-head-name-deadline")(expectedValue = "Deadline"),
           elementTextByID("table-head-name-period")(expectedValue = "Period"),
           elementTextByID("table-head-name-updates-due")(expectedValue = "Income source updates due"),
-          elementTextByID("quarterly-deadline-date-0")(expectedValue = "1 Jan 2018"),
-          elementTextByID("quarterly-period-0")(expectedValue = "6 Apr 2017 to 5 Jul 2017"),
-          elementTextByID("quarterly-income-sources-0")(expectedValue = "Property business"),
+          elementTextByID("quarterly-deadline-date-upcoming-0")(expectedValue = "31 Aug 2026"),
+          elementTextByID("quarterly-period-upcoming-0")(expectedValue = "6 Apr 2026 to 5 Jul 2026"),
+          elementTextByID("quarterly-income-sources-upcoming-0")(expectedValue = "Property business"),
         )
 
         Then("the quarterly updates info sections")
         res should have(
-          elementTextByID("current-year-desc")(expectedValue = "This page shows your upcoming due dates and any missed deadlines."),
-          elementTextByID("current-year-quarterly-heading")(expectedValue = "Quarterly updates due"),
-          elementTextByID("current-year-quarterly-desc")(expectedValue = "Every 3 months an update is due for each of your property and sole trader income sources."),
+          elementTextByID("active-quarterly-desc")(expectedValue = "This page shows your upcoming due dates and any missed deadlines."),
+          elementTextByID("active-quarterly-subheading")(expectedValue = "Quarterly updates due"),
+          elementTextByID("active-quarterly-subdesc")(expectedValue = "Every 3 months an update is due for each of your property and sole trader income sources."),
           elementTextByClass("govuk-details__summary-text")(expectedValue = "Find out more about quarterly updates"),
-          elementTextByID("current-year-dropdown-desc")(expectedValue = "Each quarterly update is a running total of income and expenses for the tax year so far. It combines:"),
+          elementTextByID("active-quarterly-dropdown-desc")(expectedValue = "Each quarterly update is a running total of income and expenses for the tax year so far. It combines:"),
           elementTextByClass("govuk-list govuk-list--bullet")(expectedValue = "new information and corrections made since the last update any information you’ve already provided that has not changed"),
-          elementTextByID("current-year-dropdown-desc2")(expectedValue = "This is done using software compatible with Making Tax Digital for Income Tax (opens in new tab).")
+          elementTextByID("active-quarterly-dropdown-desc2")(expectedValue = "This is done using software compatible with Making Tax Digital for Income Tax (opens in new tab).")
         )
       }
 

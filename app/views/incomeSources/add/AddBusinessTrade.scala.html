@@ -26,18 +26,18 @@
 
 
 @this(
-    mainTemplate: unifiedLayout,
-    appConfig: config.FrontendAppConfig,
-    h1: h1,
-    h2: h2,
-    p: p,
-    link: link,
-    form: FormWithCSRF,
-    govukInsetText : GovukInsetText,
-    govukButton : GovukButton,
-    govukInput : GovukInput,
-    inputHelper: InputHelper,
-    errorSummary: ErrorSummary
+        mainTemplate: unifiedLayout,
+        appConfig: config.FrontendAppConfig,
+        h1: h1,
+        h2: h2,
+        p: p,
+        link: link,
+        form: FormWithCSRF,
+        govukInsetText: GovukInsetText,
+        continueButton: ContinueButton,
+        govukInput: GovukInput,
+        inputHelper: InputHelper,
+        errorSummary: ErrorSummary
 )
 
 @(businessTradeForm: Form[BusinessTradeForm], postAction: Call, isAgent: Boolean, backURL: String)(implicit messages: Messages, user: auth.MtdItUser[_])
@@ -51,10 +51,10 @@
 }
 
 @mainTemplate(pageTitle = messages("add-business-trade.heading"),
-form = Some(businessTradeForm),
-backUrl = Some(backURL),
-isAgent = isAgent,
-btaNavPartial = user.btaNavPartial) {
+    form = Some(businessTradeForm),
+    backUrl = Some(backURL),
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial) {
 
     @errorSummary(form = businessTradeForm)
 
@@ -74,9 +74,6 @@ btaNavPartial = user.btaNavPartial) {
             ).withFormField(field)
         )
 
-        @govukButton(Button(
-            content = Text(messages("base.continue")),
-            attributes = Map("id" -> "continue-button")
-        ))
+        @continueButton()
     }
 }

@@ -35,6 +35,8 @@ import services.{ClaimToAdjustService, DateServiceInterface, WhatYouOweService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.WhatYouOwe
+import controllers.routes._
+import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -68,21 +70,35 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
 
       auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
 
-      val chargesListNoPenalties = whatYouOweChargesList.copy(chargesList = whatYouOweChargesList.chargesList.filter(!_.isPenalty))
       val hasOverdueCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
       val hasAccruingInterestReviewAndReconcileCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isNotPaidAndNotOverduePoaReconciliationDebit()(dateService))
       Ok(whatYouOwe(
         currentDate = dateService.getCurrentDate,
         hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
-        whatYouOweChargesList = chargesListNoPenalties, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
+        whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
         currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,
         dunningLock = whatYouOweChargesList.hasDunningLock,
         reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
-        isAgent = isAgent,
-        isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
+        creditAndRefundUrl = (user.isAgent() match {
+          case true if user.incomeSources.yearOfMigration.isDefined  => CreditAndRefundController.showAgent()
+          case true                                                  => NotMigratedUserController.showAgent()
+          case false if user.incomeSources.yearOfMigration.isDefined => CreditAndRefundController.show()
+          case false                                                 => NotMigratedUserController.show()
+        }).url,
         creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
+        taxYearSummaryUrl = {
+          if (user.isAgent()) TaxYearSummaryController.renderAgentTaxYearSummaryPage(_).url
+          else                TaxYearSummaryController.renderTaxYearSummaryPage(_, origin).url
+        },
         origin = origin,
-        claimToAdjustViewModel = ctaViewModel)(user, user, messages, dateService)
+        adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url,
+        chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) => {
+          if (user.isAgent()) ChargeSummaryController.showAgent(taxYearEnd, transactionId, isInterest).url
+          else                ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url
+        },
+        paymentHandOffUrl = PaymentController.paymentHandoff(_, origin).url,
+        claimToAdjustViewModel = ctaViewModel,
+        LPP2Url = appConfig.incomeTaxPenaltiesFrontendCalculation)(user, user, messages, dateService)
       ).addingToSession(gatewayPage -> WhatYouOwePage.name)
     }
   } recover {

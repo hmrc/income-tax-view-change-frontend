@@ -21,13 +21,14 @@
 @import views.viewmodels.govuk.all.ErrorSummaryViewModel
 @import views.viewmodels.govuk.all.DateViewModel
 @import views.viewmodels.govuk.all.FluentDate
+@import views.html.components._
 
 @this(
         mainTemplate: unifiedLayout,
         formWithCSRF: FormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
         govukDateInput: GovukDateInput,
-        govukButton: GovukButton
+        continueButton: ContinueButton
 )
 
 @(
@@ -77,14 +78,11 @@
             .withHint(
                 Hint(
                     id = Some("income-source-end-date-hint-example"),
-                    content = HtmlContent(s"<div>${getMessage("hint")}</div></br><div>${messages("dateForm.hint")}</div>")
+                    content = HtmlContent(s"<div class='govuk-body govuk-!-margin-bottom-4'>${getMessage("hint")}</div><div>${messages("dateForm.hint")}</div>")
                 )
             )
         )
 
-        @govukButton(Button(
-            content = Text(messages("base.continue")),
-            attributes = Map("id" -> "continue-button")
-        ))
+        @continueButton()
     }
 }

@@ -37,7 +37,7 @@
         link: link,
         hr: hr,
         govukTable: GovukTable,
-        govukButton: GovukButton,
+        continueButton: ContinueButton,
         formWithCSRF: FormWithCSRF
 )
 
@@ -95,7 +95,7 @@
         address4,
         postCode,
         countryCode
-    ).flatten.filter(_.nonEmpty).mkString("<br>")
+    ).flatten.filter(_.nonEmpty).map("<div>" + _ + "</div>").mkString("")
 }
 
 
@@ -287,10 +287,7 @@
             @getMessage("description")
         }
 
-        @govukButton(Button(
-            content = Text(messages("base.confirm-and-continue")),
-            attributes = Map("id" -> "confirm-button")
-        ))
+      @continueButton(id = Some("confirm-button"), alternativeText = Some(messages("base.confirm-and-continue")))
     }
 
 }

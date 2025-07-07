@@ -17,6 +17,7 @@ base.govUk                                                      = GOV.UK
 base.confirm-and-continue                                       = Confirm and continue
 base.confirm-this-change                                        = Confirm this change
 base.software.compatible.with.mtd.income.tax.link               = software compatible with Making Tax Digital for Income Tax
+base.fullstop                                                   = .
 
 ## Accessibility ##
 accessibility.this-section-is                                   = This section is:
@@ -262,6 +263,9 @@ tax-year-summary.payments.reviewAndReconcilePoa1.text              = First payme
 tax-year-summary.payments.reviewAndReconcilePoa2.text              = Second payment on account: extra amount from your tax return
 tax-year-summary.payments.lpi.reviewAndReconcilePoa1.text          = Interest for first payment on account: extra amount
 tax-year-summary.payments.lpi.reviewAndReconcilePoa2.text          = Interest for second payment on account: extra amount
+tax-year-summary.payments.lpi.firstLatePaymentPenalty.text         = Late payment interest on first late payment penalty
+tax-year-summary.payments.lpi.secondLatePaymentPenalty.text        = Late payment interest on second late payment penalty
+tax-year-summary.payments.lpi.lateSubmissionPenalty.text           = Late payment interest on late submission penalty
 tax-year-summary.section                                           = Section
 tax-year-summary.amount                                            = Amount
 tax-year-summary.payments.class2Nic.text                           = Class 2 National Insurance
@@ -837,6 +841,9 @@ nextUpdates.r17.tab.quarterly.table.heading.period                 = {0} to {1}
 nextUpdates.r17.tab.quarterly.table.income.source.uk               = UK property business
 nextUpdates.r17.tab.quarterly.table.income.source.foreign          = Foreign property business
 nextUpdates.r17.tab.quarterly.table.income.source.property         = Property business
+nextUpdates.r17.tab.quarterly.missed.deadlines.warning             = You have missed deadlines for one or more quarterly updates.
+nextUpdates.r17.tab.quarterly.missed.deadlines.voluntary.text      = Because you are not required to use Making Tax Digital for Income Tax, there are no penalties for missing these quarterly deadlines.
+nextUpdates.r17.tab.quarterly.missed.deadlines.table.heading       = Missed deadlines
 nextUpdates.r17.tab.quarterly.ny.label                             = {0} to {1} tax year
 nextUpdates.r17.tab.quarterly.ny.heading                           = {0} to {1} tax year
 nextUpdates.r17.tab.quarterly.ny.text1                             = As you are either required or voluntarily signed up for the {0} to {1} tax year, you will need
@@ -910,6 +917,12 @@ whatYouOwe.lpi.balancingCharge.text                                = Late paymen
 whatYouOwe.balancingCharge.text  							       = Balancing payment
 whatYouOwe.balancingCharge.interest.line1.text                     = Interest on Balancing payment
 whatYouOwe.balancingCharge.interest.line2.text                     = {0} to {1}
+whatYouOwe.lateSubmissionPenalty.text                              = Late submission penalty
+whatYouOwe.firstLatePaymentPenalty.text                            = First late payment penalty
+whatYouOwe.secondLatePaymentPenalty.text                           = Second late payment penalty
+whatYouOwe.lpi.firstLatePaymentPenalty.text                        = Late payment interest on first late payment penalty
+whatYouOwe.lpi.secondLatePaymentPenalty.text                       = Late payment interest on second late payment penalty
+whatYouOwe.lpi.lateSubmissionPenalty.text                          = Late payment interest on late submission penalty
 whatYouOwe.payments-due                                            = Payments Due
 whatYouOwe.over-due                                                = Overdue
 whatYouOwe.over-due.interest.line1                                 = Interest for late payment
@@ -937,6 +950,8 @@ whatYouOwe.codingOut-2                                             = {0} to {1} 
 whatYouOwe.codingOut-3                                             = being paid through their PAYE tax code. This amount is not part of their total payments due because we are collecting them automatically.
 whatYouOwe.codingOut-individual                                    = being paid through your PAYE tax code. This amount is not part of your total payments due because they are being collected automatically.
 whatYouOwe.class2Nic.text                                          = Class 2 National Insurance
+whatYouOwe.poa1CodedOut.text                                       = First payment on account collected through PAYE tax code
+whatYouOwe.poa2CodedOut.text                                       = Second payment on account collected through PAYE tax code
 whatYouOwe.cancelledPayeSelfAssessment.text                        = Cancelled PAYE Self Assessment (through your PAYE tax code)
 whatYouOwe.credit-overpaid-prefix                                  = You have
 whatYouOwe.credit-overpaid-amount                                  = {0} in your account
@@ -1052,6 +1067,10 @@ chargeSummary.codingOut.text                                       = Balancing p
 chargeSummary.poa1CodedOut.text                                    = First payment on account collected through PAYE tax code
 chargeSummary.poa2CodedOut.text                                    = Second payment on account collected through PAYE tax code
 chargeSummary.cancelledPayeSelfAssessment.text                     = Cancelled PAYE Self Assessment (through your PAYE tax code)
+chargeSummary.lateSubmissionPenalty.text                           = Late submission penalty
+chargeSummary.firstLatePaymentPenalty.text                         = First late payment penalty
+chargeSummary.lpi.lateSubmissionPenalty.text                       = Late payment interest on late submission penalty
+chargeSummary.lpi.firstLatePaymentPenalty.text                     = Late payment interest on first late payment penalty
 chargeSummary.hmrcAdjustment.text                                  = HMRC adjustment
 chargeSummary.dueDate											   = Due date
 chargeSummary.paymentAmount   									   = Amount
@@ -1097,6 +1116,14 @@ chargeSummary.poa2ExtraAmountInterest.p3                           = Interest is
 chargeSummary.poa2ExtraAmountInterest.p3LinkText                   = Bank of England base rate (opens in new tab)
 chargeSummary.poa2ExtraAmountInterest.p3AfterLink                  = plus 2.5%.
 
+chargeSummary.lpi.lateSubmissionPenalty.p1                  = You owe HMRC interest because you paid your late submission penalty late
+chargeSummary.lpi.firstLatePaymentPenalty.p1                = You owe HMRC interest because you paid your first late payment penalty late
+chargeSummary.lpi.penalties.textOne                        = Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the
+chargeSummary.lpi.penalties.linkText                       = Bank of England base rate (opens in new tab)
+chargeSummary.lpi.penalties.textTwo                        = plus 2.5%.
+chargeSummary.lpi.penalties.p3                             = See guidance on the
+chargeSummary.lpi.penalties.p3LinkText                     = interest rates set by HMRC (opens in new tab).
+
 chargeSummary.POA1Credit.p1                                        = HMRC has added a credit to your account because your tax return shows that your adjusted first payment on account was too high.
 
 chargeSummary.POA2Credit.p1                                        = HMRC has added a credit to your account because your tax return shows that your adjusted second payment on account was too high.
@@ -1107,6 +1134,16 @@ chargeSummary.definition.balancingcharge.bullet2                   = owe more th
 chargeSummary.definition.balancingcharge.p2                        = You’ll also need to make a balancing payment if you owe anything for Capital Gains Tax or student loans.
 
 chargeSummary.definition.hmrcadjustment                            = HMRC has added this charge after an adjustment to your tax return.
+
+chargeSummary.firstLatePaymentPenalty.p = You have received this penalty because you are late paying your Income Tax.
+chargeSummary.firstLatePaymentPenalty.link = View how your penalty was calculated.
+
+chargeSummary.lateSubmissionPenalty.penaltyPoints     = You will get a late submission penalty point every time you send a submission after the deadline. A submission can be a quarterly update or annual tax return.
+chargeSummary.lateSubmissionPenalty.fourPoints        = If you reach 4 points, you’ll have to pay a £200 penalty.
+chargeSummary.lateSubmissionPenalty.avoidInFuture     = To avoid receiving late submission penalty points in the future, and the potential for a financial penalty, you need to send your submissions on time.
+chargeSummary.lateSubmissionPenalty.penaltyLinkText1  = You can
+chargeSummary.lateSubmissionPenalty.penaltyLinkText   = view the details about your penalty
+chargeSummary.lateSubmissionPenalty.penaltyLinkText2  = and find out how to appeal.
 
 chargeSummary.paymentBreakdown.heading   						   = Payment breakdown
 chargeSummary.paymentBreakdown.incomeTax   						   = Income Tax
@@ -1147,6 +1184,8 @@ chargeSummary.chargeHistory.heading								        = History of this charge
 chargeSummary.chargeHistory.lateInterestPayment					        = Late payment interest history
 chargeSummary.chargeHistory.Poa1heading                                 = First payment on account history
 chargeSummary.chargeHistory.Poa2heading                                 = Second payment on account history
+chargeSummary.chargeHistory.LPPHeading                                  = Late payment interest history
+chargeSummary.chargeHistory.LSPHeading                                  = Late submission interest history
 chargeSummary.chargeHistory.date								        = Date
 chargeSummary.chargeHistory.description							        = Description
 chargeSummary.chargeHistory.amount								        = Amount
@@ -1183,6 +1222,8 @@ chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text	    = Late paymen
 chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa1.text = HMRC created this charge
 chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa2.text = HMRC created this charge
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text	    = Late payment interest on balancing payment created
+chargeSummary.lpi.chargeHistory.created.firstLatePaymentPenalty.text = HMRC created your late payment interest on first late payment penalty
+chargeSummary.lpi.chargeHistory.created.lateSubmissionPenalty.text = HMRC created your late payment interest on late submission penalty
 
 chargeSummary.lpi.balancingCharge.p1                               = You owe HMRC interest because you paid your balancing payment late.
 chargeSummary.lpi.balancingCharge.textOne                          = Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the
@@ -1811,6 +1852,7 @@ cease-check-answers-fp.caption                                = Foreign property
 
 
 # check business details
+
 check-details.title                                     = Confirm this information is correct
 check-details.heading                                   = Sole trader
 check-details.business-name                             = Business name
@@ -1868,9 +1910,9 @@ incomeSources.add.foreign-property-check-details.start-date                 = Fo
 incomeSources.add.foreign-property-check-details.accounting-method          = Foreign property business accounting method
 incomeSources.add.foreign-property-check-details.change                     = Change
 
-business.added.text                                     = What you must do
-business.added.deadlines                                = Your revised deadlines
-business.added.to                                       = to
+business.added.text                                           = What you must do
+business.added.deadlines                                      = Your revised deadlines
+business.added.to                                             = to
 
 business.added.quarterly.heading                              = Send quarterly updates
 business.added.quarterly.p1                                   = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
@@ -1883,72 +1925,144 @@ business.added.previous.tax.years.heading                     = Previous tax yea
 business.added.previous.tax.years.t1                          = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 
 
-business.added.view.all.businesses                                                      = View all your businesses
-business.added.obligation.inset.single.annual.overdue.text                              = You have <b>1 overdue update</b>. You must submit your yearly tax return and pay the tax you owe.
-business.added.obligation.inset.single.quarterly.overdue.text                           = You have <b>1 overdue update</b> for 3 months of the {0} to {1} tax year. You must submit these updates with all required income and expenses through your compatible software.
-business.added.obligation.inset.multiple.quarterly.overdue.text                         = You have <b>{0} overdue updates</b> for {1} months of the {2} to {3} tax year. You must submit these updates with all required income and expenses through your compatible software.
-business.added.obligation.inset.multiple.tax.years.single.quarterly.overdue.text        = You have <b>1 overdue update</b>. You must submit these updates with all required income and expenses through your compatible software.
-business.added.obligation.inset.multiple.tax.years.multiple.quarterly.overdue.text      = You have <b>{0} overdue updates</b>. You must submit these updates with all required income and expenses through your compatible software.
-business.added.obligation.inset.single.historic.overdue.text                            = You have <b>1 overdue update</b>. You must make sure that you have sent all the required income and expenses for tax years earlier than {0} to {1}.
-business.added.obligation.inset.multiple.historic.overdue.text                          = You have <b>{0} overdue updates</b>. You must make sure that you have sent all the required income and expenses for tax years earlier than {1} to {2}.
-business.added.obligation.view.overdue.upcoming.updates.text                            = View your overdue and upcoming updates
-business.added.obligation.view.upcoming.updates.text                                    = View your upcoming updates
+business.added.view.all.businesses                                                          = View all your businesses
 
-business.added.next.quarterly.obligation.text                       = Your next quarterly update for the {0} to {1} tax year is due by <b>{2}</b> for the quarterly period {3} to {4}
-business.added.final.declaration.text                               = You must submit your final declarations and pay the tax you owe by the deadline.
+business.added.obligation.inset.single.annual.overdue.text                                  = You have <b>1 overdue update</b>. You must submit your yearly tax return and pay the tax you owe.
+business.added.obligation.inset.single.quarterly.overdue.text                               = You have <b>1 overdue update</b> for 3 months of the {0} to {1} tax year. You must submit these updates with all required income and expenses through your compatible software.
+business.added.obligation.inset.multiple.quarterly.overdue.text                             = You have <b>{0} overdue updates</b> for {1} months of the {2} to {3} tax year. You must submit these updates with all required income and expenses through your compatible software.
+business.added.obligation.inset.multiple.tax.years.single.quarterly.overdue.text            = You have <b>1 overdue update</b>. You must submit these updates with all required income and expenses through your compatible software.
+business.added.obligation.inset.multiple.tax.years.multiple.quarterly.overdue.text          = You have <b>{0} overdue updates</b>. You must submit these updates with all required income and expenses through your compatible software.
+business.added.obligation.inset.single.historic.overdue.text                                = You have <b>1 overdue update</b>. You must make sure that you have sent all the required income and expenses for tax years earlier than {0} to {1}.
+business.added.obligation.inset.multiple.historic.overdue.text                              = You have <b>{0} overdue updates</b>. You must make sure that you have sent all the required income and expenses for tax years earlier than {1} to {2}.
+business.added.obligation.view.overdue.upcoming.updates.text                                = View your overdue and upcoming updates
+business.added.obligation.view.upcoming.updates.text                                        = View your upcoming updates
 
-# business added page - h1 intentionally empty
+business.added.next.quarterly.obligation.text                                               = Your next quarterly update for the {0} to {1} tax year is due by <b>{2}</b> for the quarterly period {3} to {4}
+business.added.final.declaration.text                                                       = You must submit your final declarations and pay the tax you owe by the deadline.
 
-business.added.sole-trader.text                                     = What you must do
-business.added.sole-trader.deadlines                                = Your revised deadlines
-business.added.sole-trader.to                                       = to
+####### Income Source Added page - h1 intentionally empty for green card #######
 
-business.added.sole-trader.title                              = {0} has been added to your account
-business.added.sole-trader.panel.title                        = {0}
-business.added.sole-trader.panel.body                         = has been added to your account
+#### Shared Messages
+
+income.source.added.your.revised.deadlines.h2                                               = Your revised deadlines
+income.source.added.few.minutes.inset                                                       = Your deadlines for this business will be available in the next few minutes.
+
+income.source.added.submit.software.h2                                                      = Submit updates in software
+income.source.added.submit.software.quarterly.p                                             = For any tax year you are reporting quarterly, you will need
+income.source.added.submit.software.quarterly.link                                          = software compatible with Making Tax Digital for Income Tax
+
+
+income.source.added.submit.annual.text.p                                                    = When reporting annually, you can submit your tax return directly through your HMRC online account or
+income.source.added.submit.software.annual.link                                             = software compatible with Making Tax Digital for Income Tax
+
+income.source.added.submit.annual.text.full                                                 = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
+income.source.added.obligation.list.text                                                    = Your tax return for the {0} to {1} tax year is due by <b>{2}</b>
+
+
+###### Income Source Added Scenario 1 - SignUpNextYearOnly  #######
+
+income.source.added.scenario.one.account.updated.p.a                                        = Even if they are not displayed right away on the
+income.source.added.scenario.one.account.updated.p.link                                     = updates and deadlines
+income.source.added.scenario.one.account.updated.p.b                                        = page, your account has been updated.
+
+income.source.added.scenario.one.view.reporting.obligations.p.a                             = Depending on your circumstances, you may be able to
+income.source.added.scenario.one.view.reporting.obligations.link                            = view and change your reporting obligations
+income.source.added.scenario.one.view.reporting.obligations.p.b                             = for all your businesses.
+
+income.source.added.scenario.one.view.businesses.link                                       = View your businesses
+income.source.added.scenario.one.view.businesses.p                                          = to add, manage or cease a business or income source.
+
+###### Income Source Added Scenario 2 - NotSigningUp  #######
+
+income.source.added.scenario.two.account.updated.p.a                                        = Even if they are not displayed right away on the
+income.source.added.scenario.two.account.updated.p.link                                     = updates and deadlines
+income.source.added.scenario.two.account.updated.p.b                                        = page, your account has been updated.
+
+income.source.added.scenario.two.view.reporting.obligations.p.a                             = This new business is opted out of Making Tax Digital for Income Tax. You can decide at any time to opt all your businesses out of Making Tax Digital for Income Tax on
+income.source.added.scenario.two.view.reporting.obligations.link                            = your reporting obligations
+income.source.added.scenario.two.view.reporting.obligations.p.b                             = page.
+
+income.source.added.scenario.two.view.businesses.link                                       = View your businesses
+income.source.added.scenario.two.view.businesses.p                                          = to add, manage or cease a business or income source.
+
+###### Income Source Added Scenario 3 - SignUpCurrentYearOnly || SignUpBothYears #######
+
+income.source.added.few.minutes.overdue.updates                                             = For this new business you may have overdue updates for the {0} to {1} tax year. You must submit these updates with all required income and expenses through your compatible software.
+
+income.source.added.scenario.three.account.updated.p.a                                      = Even if they are not displayed right away on the
+income.source.added.scenario.three.account.updated.p.link                                   = updates and deadlines
+income.source.added.scenario.three.account.updated.p.b                                      = page, your account has been updated.
+
+income.source.added.scenario.three.view.reporting.obligations.p.a                           = Depending on your circumstances, you may be able to
+income.source.added.scenario.three.view.reporting.obligations.link                          = view and change your reporting obligations
+income.source.added.scenario.three.view.reporting.obligations.p.b                           = for all your businesses.
+
+income.source.added.scenario.three.view.businesses.link                                     = View your businesses
+income.source.added.scenario.three.view.businesses.p                                        = to add, manage or cease a business or income source.
+
+###### Income Source Added Scenario 4 - OnlyOneBusinessInLatency || OptedOut  #######
+
+income.source.added.few.minutes.overdue.updates                                             = For this new business you may have overdue updates for the {0} to {1} tax year. You must submit these updates with all required income and expenses through your compatible software.
+
+income.source.added.scenario.four.account.updated.p.a                                       = Even if they are not displayed right away on the
+income.source.added.scenario.four.account.updated.p.link                                    = updates and deadlines
+income.source.added.scenario.four.account.updated.p.b                                       = page, your account has been updated.
+
+income.source.added.scenario.four.view.reporting.obligations.p                              = This new business is opted out of Making Tax Digital for Income Tax. Find out more about
+income.source.added.scenario.four.view.reporting.obligations.link                           = your reporting obligations.
+
+income.source.added.scenario.four.view.businesses.link                                      = View your businesses
+income.source.added.scenario.four.view.businesses.p                                         = to add, manage or cease a business or income source.
+
+#### Added a Business Messages
+
+business.added.sole-trader.text                                           = What you must do
+business.added.sole-trader.revised.deadlines                              = Your revised deadlines
+business.added.sole-trader.to                                             = to
+
+business.added.sole-trader.title                                          = {0} has been added to your account
+business.added.sole-trader.panel.title                                    = {0}
+business.added.sole-trader.panel.body                                     = has been added to your account
 
 business.added.sole-trader.quarterly.heading                              = Send quarterly updates
 business.added.sole-trader.quarterly.p1                                   = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
 business.added.sole-trader.final.declaration.heading                      = Submit final declarations and pay your tax
-business.added.sole-trader.obligation.list.text                      = Your tax return for the {0} to {1} tax year is due by <b>{2}</b>
+business.added.sole-trader.obligation.list.text                           = Your tax return for the {0} to {1} tax year is due by <b>{2}</b>
 business.added.sole-trader.table.heading.1                                = Tax year
 business.added.sole-trader.table.heading.2                                = Deadline
 business.added.sole-trader.income.sources.button                          = Your income sources
 business.added.sole-trader.previous.tax.years.heading                     = Previous tax years
 business.added.sole-trader.previous.tax.years.t1                          = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 
-business.added.sole-trader.view.all.businesses                                          = View all your businesses
-business.added.sole-trader.obligation.view.overdue.upcoming.updates.text                = View your overdue and upcoming updates
-business.added.sole-trader.obligation.view.upcoming.updates.text                        = View your upcoming updates
+business.added.sole-trader.view.all.businesses                            = View all your businesses
+business.added.sole-trader.obligation.view.overdue.upcoming.updates.text  = View your overdue and upcoming updates
+business.added.sole-trader.obligation.view.upcoming.updates.text          = View your upcoming updates
 
-business.added.sole-trader.next.quarterly.obligation.text               = Your next quarterly update for the {0} to {1} tax year is due by <b>{2}</b> for the quarterly period {3} to {4}
-business.added.sole-trader.final.dec.text                               = Your tax return for the {0} to {1} tax year is due by <b>{2}</b>
+business.added.sole-trader.next.quarterly.obligation.text                 = Your next quarterly update for the {0} to {1} tax year is due by <b>{2}</b> for the quarterly period {3} to {4}
+business.added.sole-trader.final.dec.text                                 = Your tax return for the {0} to {1} tax year is due by <b>{2}</b>
 
-business.added.sole-trader.quarterly.opt.out.text.1                     = You can decide at any time to opt out of quarterly reporting and report annually for all your businesses on
-business.added.sole-trader.quarterly.opt.out.link                       = your reporting frequency
-business.added.sole-trader.quarterly.opt.out.text.2                     = page.
+business.added.sole-trader.quarterly.opt.out.text.1                       = You can decide at any time to opt out of quarterly reporting and report annually for all your businesses on
+business.added.sole-trader.quarterly.opt.out.link                         = your reporting frequency
+business.added.sole-trader.quarterly.opt.out.text.2                       = page.
 
-business.added.sole-trader.quarterly.annual.reporting.frequency.a       = Depending on your circumstances, you may be able to
-business.added.sole-trader.quarterly.annual.reporting.frequency.link    = view and change your reporting frequency
-business.added.sole-trader.quarterly.annual.reporting.frequency.b       = for all your businesses.
+business.added.sole-trader.quarterly.annual.reporting.frequency.a         = Depending on your circumstances, you may be able to
+business.added.sole-trader.quarterly.annual.reporting.frequency.link      = view and change your reporting frequency
+business.added.sole-trader.quarterly.annual.reporting.frequency.b         = for all your businesses.
 
-business.added.sole-trader.annual.reporting.frequency.text              = You are set to report annually for your new business. Find out more about
-business.added.sole-trader.annual.reporting.frequency.link              = your reporting frequency.
+business.added.sole-trader.annual.reporting.frequency.text                = You are set to report annually for your new business. Find out more about
+business.added.sole-trader.annual.reporting.frequency.link                = your reporting frequency.
 
-business.added.sole-trader.submit.software.text                         = Submit updates in software
-business.added.sole-trader.submit.software.quarterly.text               = For any tax year you are reporting quarterly, you will need
 
-business.added.sole-trader.submit.tax.return                            = Submit your tax return
-business.added.sole-trader.submit.tax.return.text                       = When reporting annually, you can submit your tax return directly through your HMRC online account or
+business.added.sole-trader.submit.tax.return                              = Submit your tax return
+business.added.sole-trader.submit.tax.return.text                         = When reporting annually, you can submit your tax return directly through your HMRC online account or
+business.added.sole-trader.submit.tax.return.link.a                       = software compatible with Making Tax Digital for Income Tax
 
-business.added.sole-trader.submit.annual.text                           = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
-business.added.sole-trader.submit.annual.annual.text                    = When reporting annually, you can submit your tax return directly through your HMRC online account or
-
+business.added.sole-trader.submit.annual.text                             = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
 
 ##### UK Property Text
 
 business.added.uk-property.text                                           = What you must do
-business.added.uk-property.deadlines                                      = Your revised deadlines
+business.added.uk-property.revised.deadlines                                      = Your revised deadlines
 business.added.uk-property.to                                             = to
 
 business.added.uk-property.title                                          = UK property has been added to your account
@@ -1958,16 +2072,16 @@ business.added.uk-property.panel.body                                     = has 
 business.added.uk-property.quarterly.heading                              = Send quarterly updates
 business.added.uk-property.quarterly.p1                                   = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
 business.added.uk-property.final.declaration.heading                      = Submit final declarations and pay your tax
-business.added.uk-property.obligation.list.text                           = Your tax return for the {0} to {1} tax year is due by <b>{2}</b>
+business.added.uk-property.obligation.list.text                           = Your tax return for the {0} to {1} tax year is due by <b>{2}</b>.
 business.added.uk-property.table.heading.1                                = Tax year
 business.added.uk-property.table.heading.2                                = Deadline
 business.added.uk-property.income.sources.button                          = Your income sources
 business.added.uk-property.previous.tax.years.heading                     = Previous tax years
 business.added.uk-property.previous.tax.years.t1                          = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 
-business.added.uk-property.view.all.businesses                                                      = View all your businesses
-business.added.uk-property.obligation.view.overdue.upcoming.updates.text                = View your overdue and upcoming updates
-business.added.uk-property.obligation.view.upcoming.updates.text                        = View your upcoming updates
+business.added.uk-property.view.all.businesses                            = View all your businesses
+business.added.uk-property.obligation.view.overdue.upcoming.updates.text  = View your overdue and upcoming updates
+business.added.uk-property.obligation.view.upcoming.updates.text          = View your upcoming updates
 
 business.added.uk-property.next.quarterly.obligation.text                 = Your next quarterly update for the {0} to {1} tax year is due by <b>{2}</b> for the quarterly period {3} to {4}
 business.added.uk-property.final.dec.text                                 = Your tax return for the {0} to {1} tax year is due by <b>{2}</b>
@@ -1983,8 +2097,6 @@ business.added.uk-property.quarterly.annual.reporting.frequency.b         = for 
 business.added.uk-property.annual.reporting.frequency.text                = You are set to report annually for your new property. Find out more about
 business.added.uk-property.annual.reporting.frequency.link                = your reporting frequency.
 
-business.added.uk-property.submit.software.text                           = Submit updates in software
-business.added.uk-property.submit.software.quarterly.text                 = For any tax year you are reporting quarterly, you will need
 
 business.added.uk-property.submit.tax.return                              = Submit your tax return
 business.added.uk-property.submit.tax.return.text                         = When reporting annually, you can submit your tax return directly through your HMRC online account or
@@ -1995,7 +2107,7 @@ business.added.uk-property.submit.annual.annual.text                      = When
 ##### Foreign Property Text #####
 
 business.added.foreign-property.text                                      = What you must do
-business.added.foreign-property.deadlines                                 = Your revised deadlines
+business.added.foreign-property.revised.deadlines                         = Your revised deadlines
 business.added.foreign-property.to                                        = to
 
 business.added.foreign-property.title                                     = Foreign property has been added to your account
@@ -2012,9 +2124,9 @@ business.added.foreign-property.income.sources.button                     = Your
 business.added.foreign-property.previous.tax.years.heading                = Previous tax years
 business.added.foreign-property.previous.tax.years.t1                     = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 
-business.added.foreign-property.view.all.businesses                                          = View all your businesses
-business.added.foreign-property.obligation.view.overdue.upcoming.updates.text                = View your overdue and upcoming updates
-business.added.foreign-property.obligation.view.upcoming.updates.text                        = View your upcoming updates
+business.added.foreign-property.view.all.businesses                             = View all your businesses
+business.added.foreign-property.obligation.view.overdue.upcoming.updates.text   = View your overdue and upcoming updates
+business.added.foreign-property.obligation.view.upcoming.updates.text           = View your upcoming updates
 
 business.added.foreign-property.next.quarterly.obligation.text               = Your next quarterly update for the {0} to {1} tax year is due by <b>{2}</b> for the quarterly period {3} to {4}
 business.added.foreign-property.final.dec.text                               = Your tax return for the {0} to {1} tax year is due by <b>{2}</b>
@@ -2027,18 +2139,14 @@ business.added.foreign-property.quarterly.annual.reporting.frequency.a       = D
 business.added.foreign-property.quarterly.annual.reporting.frequency.link    = view and change your reporting frequency
 business.added.foreign-property.quarterly.annual.reporting.frequency.b       = for all your properties.
 
-business.added.foreign-property.annual.reporting.frequency.text      = You are set to report annually for your new property. Find out more about
-business.added.foreign-property.annual.reporting.frequency.link      = your reporting frequency.
-
-business.added.foreign-property.submit.software.text                         = Submit updates in software
-business.added.foreign-property.submit.software.quarterly.text               = For any tax year you are reporting quarterly, you will need
+business.added.foreign-property.annual.reporting.frequency.text              = You are set to report annually for your new property. Find out more about
+business.added.foreign-property.annual.reporting.frequency.link              = your reporting frequency.
 
 business.added.foreign-property.submit.tax.return                            = Submit your tax return
 business.added.foreign-property.submit.tax.return.text                       = When reporting annually, you can submit your tax return directly through your HMRC online account or
 
-business.added.foreign-property.submit.annual.text                           = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
-business.added.foreign-property.submit.annual.annual.text                    = When reporting annually, you can submit your tax return directly through your HMRC online account or
 
+####### Income Source Added page End #######
 
 ## You cannot go back - Your business has been added page ##
 
@@ -2759,7 +2867,8 @@ optIn.confirmTaxYear.cancel                         = Cancel
 optIn.confirmNextTaxYear.heading                    = Confirm and opt in from {0} to {1} tax year onwards
 optIn.confirmNextTaxYear.desc                       = If you opt in for the next tax year, from {0} you will need to submit your quarterly updates through compatible software.
 
-# Reporting Frequency Page
+########  Reporting Frequency Page  ########
+
 reporting.frequency.title = Your reporting frequency
 reporting.frequency.h1    = Your reporting frequency
 reporting.frequency.h2    = Manage your reporting frequency for all your businesses
@@ -2812,7 +2921,24 @@ reporting.frequency.latency.details.section.text.para2.bullet3      = even if yo
 reporting.frequency.latency.details.section.text.para3.heading      = How to change a new income source’s reporting frequency
 reporting.frequency.latency.details.section.text.para3.text.1       = You can do this at any time in the
 reporting.frequency.latency.details.section.text.para3.link.text    = all businesses
-reporting.frequency.latency.details.section.text.para3.text.2       = section
+reporting.frequency.latency.details.section.text.para3.text.2       = section.
+
+reporting.frequency.latency.details.section.header.updateR17                  = You can have different reporting obligations for your new businesses
+reporting.frequency.latency.details.section.text.para1.updateR17              = For tax years you are using Making Tax Digital for Income Tax, you can separately choose to opt out for any new sole trader or property income source:
+reporting.frequency.latency.details.section.text.para1.bullet1.updateR17      = started less than 2 years ago
+reporting.frequency.latency.details.section.text.para1.bullet2.updateR17      = that you start in future
+reporting.frequency.latency.details.section.text.para2.updateR17              = This option is available to your new businesses:
+reporting.frequency.latency.details.section.text.para2.bullet1.updateR17      = for up to 2 tax years
+reporting.frequency.latency.details.section.text.para2.bullet2.updateR17      = only when you use Making Tax Digital for Income Tax for your other businesses
+reporting.frequency.latency.details.section.text.para2.bullet3.updateR17      = even if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold
+reporting.frequency.latency.details.section.text.para3.heading.updateR17      = How to change your reporting obligations for a new income source
+reporting.frequency.latency.details.section.text.para3.text.1.updateR17       = You can do this at any time in the
+reporting.frequency.latency.details.section.text.para3.link.text.updateR17    = your businesses
+reporting.frequency.latency.details.section.text.para3.text.2.updateR17       = section.
+
+########  Reporting Frequency Page Feature Switched Content  ########
+
+
 
 yourSelfAssessmentChargeSummary.tax-year                            = {0} to {1} tax year
 yourSelfAssessmentChargeSummary.overDueCharge                       = Overdue charge:
