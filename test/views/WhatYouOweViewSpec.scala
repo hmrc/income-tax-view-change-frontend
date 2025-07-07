@@ -1218,7 +1218,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/tax-year-summary/2021"
       }
 
-      "have a Payment on Account 2 entry" in new TestSetup(charges = whatYouOweWithPoaTwoCollected, , taxYear = whatYouOweWithPoaTwoCollected.codedOutDetails.get.codingTaxYear.endYear) {
+      "have a Payment on Account 2 entry" in new TestSetup(charges = whatYouOweWithPoaTwoCollected, taxYear = whatYouOweWithPoaTwoCollected.codedOutDetails.get.codingTaxYear.endYear) {
         pageDocument.getElementById("due-0").text().contains(poa2CollectedCodedOut) shouldBe true
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
         pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/tax-year-summary/2021"
