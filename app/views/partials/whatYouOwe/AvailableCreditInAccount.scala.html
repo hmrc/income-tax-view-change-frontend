@@ -25,7 +25,7 @@
 
 @(
     availableCredit: String,
-    creditAndRefundsControllerUrl: String
+    creditAndRefundsUrl: String
 )(
     implicit messages: Messages,
     user: MtdItUser[_]
@@ -36,7 +36,7 @@
     @messages("whatYouOwe.moneyOnAccount-1") @availableCredit
     @messages(s"whatYouOwe.moneyOnAccount${if(user.isAgent()) "-agent" else ""}-2")
     @link(
-        link = creditAndRefundsControllerUrl,
+        link = creditAndRefundsUrl,
         messageKey = "whatYouOwe.moneyOnAccount-3",
         outerMessage = ".",
         rel = Some("noreferrer noopener")
