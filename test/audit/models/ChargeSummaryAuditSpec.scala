@@ -127,7 +127,8 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
     lpiWithDunningLock = None,
     amountCodedOut = None,
     dunningLock = false,
-    poaRelevantAmount = None
+    poaRelevantAmount = None,
+    chargeReference = Some("chargeRef")
   )
   val chargeItemWithCodingOutAccepted: ChargeItem = chargeItemWithNoInterest.copy(
     transactionType = BalancingCharge,
