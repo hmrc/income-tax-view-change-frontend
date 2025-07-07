@@ -63,7 +63,7 @@
     reviewAndReconcileEnabled: Boolean,
     creditAndRefundUrl: String,
     creditAndRefundEnabled: Boolean,
-    returnHref: Int => String,
+    taxYearSummaryUrl: Int => String,
     claimToAdjustViewModel: WYOClaimToAdjustViewModel,
     LPP2Url: String,
     adjustPoaUrl: String,
@@ -184,7 +184,7 @@
                                 ),
                                 TableRow(
                                     attributes = Map("id" -> s"due-charge-tax-year-$index"),
-                                    content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, returnHref))
+                                    content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, taxYearSummaryUrl))
                                 ),
                                 TableRow(
                                     attributes = Map("id" -> s"due-charge-amount-due-$index"),
@@ -203,7 +203,7 @@
                                 ),
                                 TableRow(
                                     attributes = Map("id" -> s"accrued-interest-tax-year-$index"),
-                                    content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, returnHref))
+                                    content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, taxYearSummaryUrl))
                                 ),
                                 TableRow(
                                     attributes = Map("id" -> s"accrued-interest-amount-due-$index"),
@@ -230,7 +230,7 @@
         )
 
         @whatYouOweChargesList.codedOutDetails.map { codedOutDetails =>
-            @codingOutInsetContent(codedOutDetails, returnHref)
+            @codingOutInsetContent(codedOutDetails, taxYearSummaryUrl)
         }
 
         @saNoteParagraph(utr)

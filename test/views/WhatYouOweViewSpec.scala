@@ -152,7 +152,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       utr = Some("1234567890"),
       dunningLock = dunningLock,
       creditAndRefundUrl = CreditAndRefundController.show().url,
-      returnHref = _ => controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(fixedDate.getYear).url,
+      taxYearSummaryUrl = _ => controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(fixedDate.getYear).url,
       adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = false).url,
       chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) =>
         ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url,
@@ -206,7 +206,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       utr = Some("1234567890"),
       dunningLock = dunningLock,
       creditAndRefundUrl = CreditAndRefundController.showAgent().url,
-      returnHref = _ => controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(fixedDate.getYear).url,
+      taxYearSummaryUrl = _ => controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(fixedDate.getYear).url,
       adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = true).url,
       chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) =>
         ChargeSummaryController.showAgent(taxYearEnd, transactionId, isInterest).url,

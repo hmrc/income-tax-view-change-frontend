@@ -86,7 +86,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
           case false                                                 => NotMigratedUserController.show()
         }).url,
         creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
-        returnHref = {
+        taxYearSummaryUrl = {
           if (isAgent) {
             controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(_).url
           } else {
