@@ -781,7 +781,7 @@ nextUpdates.dropdown.quarterlyReturn.text                          = A quarterly
 nextUpdates.dropdown.quarterlyReturn.text.lin2                     = Using your record-keeping software, you must send 4 quarterly updates in a year for each source of income.
 nextUpdates.dropdown.quarterlyReturn.text.lin3                     = You may be able to choose your quarterly period in your chosen software. For example, standard quarters reports from 6th April to 5th July whereas calendar quarters is from 1st April to 30th June.
 nextUpdates.dropdown.quarterlyReturn.link.text                     = Learn more about quarterly periods
-nextUpdates.dropdown.quarterlyReturn.link.link                     = https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates
+
 nextUpdates.dropdown.finalDeclaration.text                         = Your final declaration is the last step in your tax return, where you confirm you’ve submitted all your income and expenses (to the best of your knowledge). This is done using your record-keeping software.
 nextUpdates.table.header.type									   = Update type
 nextUpdates.table.header.source									   = Income source
@@ -865,7 +865,7 @@ nextUpdates.updates.software.heading    					       = Submitting updates in soft
 nextUpdates.updates.software.dec1       					       = Use your
 nextUpdates.updates.software.dec2       					       = compatible record keeping software
 nextUpdates.updates.software.dec3       					       = to keep digital records of all your business income and expenses. You must submit these updates through your software by each date shown.
-nextUpdates.updates.software.link       					       = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
+
 
 
 ## Payment Due Page ##

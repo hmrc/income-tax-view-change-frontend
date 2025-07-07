@@ -866,7 +866,6 @@ nextUpdates.updates.software.heading    					    = Cyflwyno diweddariadau drwy f
 nextUpdates.updates.software.dec1       					    = Defnyddiwch eich
 nextUpdates.updates.software.dec2       					    = meddalwedd cadw cofnodion sy’n cydweddu
 nextUpdates.updates.software.dec3       					    = i gadw cofnodion digidol o’ch holl incwm a threuliau busnes. Mae’n rhaid i chi gyflwyno’r diweddariadau hyn trwy eich meddalwedd erbyn pob dyddiad a ddangosir.
-nextUpdates.updates.software.link       					    = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax.cy
 
 
 ## Payment Due Page ##
