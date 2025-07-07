@@ -19,7 +19,7 @@ package views
 import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import config.featureswitch.FeatureSwitching
-import controllers.routes.{CreditAndRefundController, NotMigratedUserController}
+import controllers.routes.{CreditAndRefundController, NotMigratedUserController, PaymentController}
 import enums.CodingOutType._
 import implicits.ImplicitDateFormatter
 import models.financialDetails._
@@ -154,6 +154,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       creditAndRefundUrl = CreditAndRefundController.show().url,
       returnHref = _ => controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(fixedDate.getYear).url,
       adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = false).url,
+      paymentHandOffUrl = PaymentController.paymentHandoff(_, None).url,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       creditAndRefundEnabled = true,
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),
@@ -205,6 +206,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       creditAndRefundUrl = CreditAndRefundController.showAgent().url,
       returnHref = _ => controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(fixedDate.getYear).url,
       adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = true).url,
+      paymentHandOffUrl = PaymentController.paymentHandoff(_, None).url,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       creditAndRefundEnabled = true,
       isAgent = true,
