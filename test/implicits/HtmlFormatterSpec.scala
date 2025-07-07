@@ -22,7 +22,7 @@ import testUtils.UnitSpec
 
 class HtmlFormatterSpec extends UnitSpec with Matchers {
 
-  "HtmlFormatter.toNonBreaking" when {
+  "HtmlFormatter.NbspString" when {
 
     "calling toNonBreaking with a string containing spaces" should {
 
