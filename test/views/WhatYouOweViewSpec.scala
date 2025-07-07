@@ -19,7 +19,7 @@ package views
 import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import config.featureswitch.FeatureSwitching
-import controllers.routes.{ChargeSummaryController, CreditAndRefundController, NotMigratedUserController, PaymentController}
+import controllers.routes.{ChargeSummaryController, CreditAndRefundController, PaymentController}
 import enums.CodingOutType._
 import implicits.ImplicitDateFormatter
 import models.financialDetails._
