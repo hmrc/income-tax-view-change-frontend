@@ -238,14 +238,17 @@
             @unallocatedCreditParagraphContent(creditAndRefundUrl, availableCreditAmt.toCurrencyString)
         }
 
-        @if(utr.isDefined && !isAgent && whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.isDefined) {
 
-            @govukButton(Button(
+        @(for {
+            (_, amount) <- whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate
+            if             utr.isDefined && !isAgent
+        } yield {
+            govukButton(Button(
                 id = Some("payment-button-link"),
                 content = Text(getMessage("payNow")),
-                href = Some(PaymentController.paymentHandoff(whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.get._2.toPence, origin).url)
+                href = Some(PaymentController.paymentHandoff(amount.toPence, origin).url)
             ))
-        }
+        })
 
         @paymentsMadeContent()
     }
