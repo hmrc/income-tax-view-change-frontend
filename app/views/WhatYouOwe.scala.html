@@ -179,7 +179,7 @@
                                     content = HtmlContent(charge.getChargeDueDate.toLongDateShort.toNbsp)
                                 ),
                                 TableRow(
-                                    attributes = Map("id" -> s"due-charge-$index"),
+                                    attributes = Map("id" -> s"due-$index"),
                                     content = HtmlContent(chargeInfo(LPP2Url, s"due-$index", charge, index, chargeSummaryUrl(charge.taxYear.endYear, charge.transactionId, charge.isLatePaymentInterest, origin)))
                                 ),
                                 TableRow(
@@ -245,7 +245,7 @@
             if             utr.isDefined && !user.isAgent()
         } yield {
             govukButton(Button(
-                id = Some("payment-button-link"),
+                id = Some("payment-button"),
                 content = Text(getMessage("payNow")),
                 href = Some(paymentHandOffUrl(amount.toPence))
             ))

@@ -622,8 +622,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         "have payment details and should not contain future payments " +
           "and overdue payment headers" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()(dateService)) {
-          pageDocument.getElementById("payment-button-link").text shouldBe payNow
-          pageDocument.getElementById("payment-button-link").
+          pageDocument.getElementById("payment-button").text shouldBe payNow
+          pageDocument.getElementById("payment-button").
             attr("href") shouldBe controllers.routes.PaymentController.
             paymentHandoff(5000).url
         }
@@ -931,9 +931,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
         "have payments data with button" in new TestSetup(charges = whatYouOweDataWithOverdueData()) {
-          pageDocument.getElementById("payment-button-link").text shouldBe payNow
+          pageDocument.getElementById("payment-button").text shouldBe payNow
 
-          pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
+          pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
 
         }
 
@@ -1030,9 +1030,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
       s"have payment data with button" in new TestSetup(charges = whatYouOweDataWithMixedData1) {
 
-        pageDocument.getElementById("payment-button-link").text shouldBe payNow
+        pageDocument.getElementById("payment-button").text shouldBe payNow
 
-        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(10000).url
+        pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(10000).url
 
         findElementById("pre-mtd-payments-heading") shouldBe None
       }
@@ -1096,9 +1096,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       s"have payment data with button" in new TestSetup(charges = whatYouOweDataWithWithAciValueZeroAndOverdue) {
 
-        pageDocument.getElementById("payment-button-link").text shouldBe payNow
+        pageDocument.getElementById("payment-button").text shouldBe payNow
 
-        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
+        pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
 
       }
 
@@ -1120,7 +1120,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
 
       "not have button Pay now" in new TestSetup(charges = noChargesModel) {
-        findElementById("payment-button-link") shouldBe None
+        findElementById("payment-button") shouldBe None
       }
       "not have payment processing bullets" in new TestSetup(charges = noChargesModel) {
         findElementById("payments-made") shouldBe None
@@ -1173,8 +1173,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString)
       }
       "have a class 2 Nics overdue entry" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2) {
-        Option(pageDocument.getElementById("due-charge-0")).isDefined shouldBe true
-        pageDocument.getElementById("due-charge-0").text().contains(CODING_OUT_CLASS2_NICS) shouldBe true
+        Option(pageDocument.getElementById("due-0")).isDefined shouldBe true
+        pageDocument.getElementById("due-0").text().contains(CODING_OUT_CLASS2_NICS) shouldBe true
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
       }
 
@@ -1191,7 +1191,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       "have a cancelled paye self assessment entry" in new TestSetup(charges = whatYouOweDataWithCancelledPayeSa) {
         findElementById("coding-out-notice") shouldBe None
-        pageDocument.getElementById("due-charge-0").text().contains(cancelledPayeSelfAssessment) shouldBe true
+        pageDocument.getElementById("due-0").text().contains(cancelledPayeSelfAssessment) shouldBe true
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
         findElementById("coding-out-summary-link") shouldBe None
       }
@@ -1211,8 +1211,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     "have an HMRC adjustment payment due" in new TestSetup(charges = whatYouOweDataWithMFADebits) {
       pageDocument.title() shouldBe whatYouOweTitle
       pageDocument.selectFirst("h1").text shouldBe whatYouOweHeading
-      pageDocument.getElementById("due-charge-0").text.contains(hmrcAdjustment)
-      pageDocument.select("#due-charge-0 a").get(0).text() shouldBe hmrcAdjustment + s" 1"
+      pageDocument.getElementById("due-0").text.contains(hmrcAdjustment)
+      pageDocument.select("#due-0 a").get(0).text() shouldBe hmrcAdjustment + s" 1"
       pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
     }
   }
@@ -1229,10 +1229,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
 
       "not have button Pay now with no chagres" in new AgentTestSetup(charges = noChargesModel) {
-        findAgentElementById("payment-button-link") shouldBe None
+        findAgentElementById("payment-button") shouldBe None
       }
       "not have button Pay now with charges" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
-        findAgentElementById("payment-button-link") shouldBe None
+        findAgentElementById("payment-button") shouldBe None
       }
 
       "money in your account section with available credits" in new AgentTestSetup(charges = whatYouOweDataWithAvailableCredits()) {
