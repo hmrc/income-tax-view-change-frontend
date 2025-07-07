@@ -88,6 +88,10 @@
     }
 }
 
+@stripHtml(input: String) = @{
+    input.replaceAll("<[^>]*>", "")
+}
+
 @getLongAddressFromBusinessAddressDetails(address1: String, address2: Option[String], address3: Option[String], address4: Option[String], postCode: Option[String], countryCode: Option[String]) = @{
     List(Some(address1),
         address2,
@@ -95,7 +99,11 @@
         address4,
         postCode,
         countryCode
-    ).flatten.filter(_.nonEmpty).map("<div>" + _ + "</div>").mkString("")
+    ).flatten
+    .filter(_.nonEmpty)
+    .map(stripHtml)
+    .map(HtmlFormat.escape)
+    .mkString("<br>")
 }
 
 
@@ -130,14 +138,23 @@
 
 @extractAddress = @{
     HtmlContent(viewModel match {
-        case x: CheckBusinessDetailsViewModel => getLongAddressFromBusinessAddressDetails(
-            address1 = x.businessAddressLine1,
-            address2 = x.businessAddressLine2,
-            address3 = x.businessAddressLine3,
-            address4 = x.businessAddressLine4,
-            postCode = x.businessPostalCode,
-            countryCode = x.countryName,
-        )
+        case x: CheckBusinessDetailsViewModel => {
+            println(x.businessAddressLine1)
+            println(x.businessAddressLine2)
+            println(x.businessAddressLine3)
+            println(x.businessAddressLine4)
+            println(x.businessPostalCode)
+
+
+            getLongAddressFromBusinessAddressDetails(
+                address1 = x.businessAddressLine1,
+                address2 = x.businessAddressLine2,
+                address3 = x.businessAddressLine3,
+                address4 = x.businessAddressLine4,
+                postCode = x.businessPostalCode,
+                countryCode = x.countryName,
+            )
+        }
         case _ => ""
     })
 }
