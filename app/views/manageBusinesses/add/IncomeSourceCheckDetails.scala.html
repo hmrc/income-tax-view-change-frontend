@@ -139,13 +139,6 @@
 @extractAddress = @{
     HtmlContent(viewModel match {
         case x: CheckBusinessDetailsViewModel => {
-            println(x.businessAddressLine1)
-            println(x.businessAddressLine2)
-            println(x.businessAddressLine3)
-            println(x.businessAddressLine4)
-            println(x.businessPostalCode)
-
-
             getLongAddressFromBusinessAddressDetails(
                 address1 = x.businessAddressLine1,
                 address2 = x.businessAddressLine2,
