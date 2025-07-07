@@ -129,6 +129,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                   currentTaxYear: Int = fixedDate.getYear,
                   hasLpiWithDunningLock: Boolean = false,
                   dunningLock: Boolean = false,
+                  taxYear: Int = fixedDate.getYear,
                   migrationYear: Int = fixedDate.getYear - 1,
                   reviewAndReconcileEnabled: Boolean = false,
                   adjustPaymentsOnAccountFSEnabled: Boolean = false,
@@ -152,7 +153,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       utr = Some("1234567890"),
       dunningLock = dunningLock,
       creditAndRefundUrl = CreditAndRefundController.show().url,
-      taxYearSummaryUrl = _ => controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(fixedDate.getYear).url,
+      taxYearSummaryUrl = _ => controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear).url,
       adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = false).url,
       chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) =>
         ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url,
@@ -180,6 +181,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                        migrationYear: Int = fixedDate.getYear - 1,
                        reviewAndReconcileEnabled: Boolean = false,
                        dunningLock: Boolean = false,
+                       taxYear: Int = fixedDate.getYear,
                        hasLpiWithDunningLock: Boolean = false,
                        adjustPaymentsOnAccountFSEnabled: Boolean = false,
                        claimToAdjustViewModel: Option[WYOClaimToAdjustViewModel] = None) {
@@ -206,7 +208,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       utr = Some("1234567890"),
       dunningLock = dunningLock,
       creditAndRefundUrl = CreditAndRefundController.showAgent().url,
-      taxYearSummaryUrl = _ => controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(fixedDate.getYear).url,
+      taxYearSummaryUrl = _ => controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url,
       adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = true).url,
       chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) =>
         ChargeSummaryController.showAgent(taxYearEnd, transactionId, isInterest).url,
@@ -1164,7 +1166,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
 
     "codingOut is enabled" should {
-      "have coding out message displayed at the bottom of the page" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2) {
+      "have coding out message displayed at the bottom of the page" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2, taxYear = whatYouOweDataWithCodingOutNics2.codedOutDetails.get.codingTaxYear.endYear) {
         Option(pageDocument.getElementById("coding-out-summary-link")).isDefined shouldBe true
         pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
           "/report-quarterly/income-and-expenses/view/tax-year-summary/2021"
