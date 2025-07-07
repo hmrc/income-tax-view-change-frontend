@@ -23,6 +23,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
 @import views.html.helpers.injected.home._
+@import config.FrontendAppConfig
 
 @this(
     layout: unifiedLayout,
@@ -106,8 +107,7 @@
             )
     )
     @p(id = Some("read-more-about-differences-link")){
-    link(link = appConfig.homeAgentSupportingReadMoreLink,messageKey = "home.agent.supporting.readMore.link", class="govuk-link", target="_blank")
-    @messages("home.agent.supporting.readMore")
+    link(link = appConfig.homeAgentSupportingReadMoreLink, messageKey = "home.agent.supporting.readMore", class="govuk-link", target="_blank")
 }
 }
 
