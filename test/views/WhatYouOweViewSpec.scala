@@ -1198,7 +1198,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
 
     "At crystallization, the user has the coding out requested amount fully collected" should {
-      "only show coding out content under header" in new TestSetup(charges = whatYouOweDataWithCodingOutFullyCollected) {
+      "only show coding out content under header" in new TestSetup(charges = whatYouOweDataWithCodingOutFullyCollected, taxYear = whatYouOweDataWithCodingOutFullyCollected.codedOutDetails.get.codingTaxYear.endYear) {
         pageDocument.getElementById("coding-out-notice").text() shouldBe codingOutNoticeFullyCollected
         pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
           "/report-quarterly/income-and-expenses/view/tax-year-summary/2021"
