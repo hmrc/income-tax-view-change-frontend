@@ -14,17 +14,24 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
-@import uk.gov.hmrc.govukfrontend.views.Aliases.Button
-@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+@import views.html.components._
+@import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
+@import implicits.HtmlFormatter.NbspString
 
 @this(
-        govukButton: GovukButton
+    p: p,
+    link: link
 )
-@(alternativeText: Option[String] = None)(implicit messages: Messages)
+@(
+    year: Int,
+    index:Int,
+    returnHref: Int => String
+)(
+    implicit messages: Messages
+)
 
-@govukButton(Button(
-    content = Text(alternativeText.getOrElse(messages("base.continue"))),
-    id = Some("continue-button"),
-    classes = "govuk-button"
-))
+<a class="govuk-link" id="taxYearSummary-link-@index"
+href="@returnHref(year)">
+    @getMessage("tax-year-summary.taxYear", (year - 1).toString, year.toString).toNonBreaking
+    <span class="govuk-visually-hidden">@getMessage("taxYear")</span>
+</a>

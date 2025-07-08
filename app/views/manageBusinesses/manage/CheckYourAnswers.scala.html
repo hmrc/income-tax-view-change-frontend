@@ -23,21 +23,22 @@
 @import enums.IncomeSourceJourney._
 @import models.incomeSourceDetails.viewmodels.CheckYourAnswersViewModel
 @import play.twirl.api.HtmlFormat
+@import views.html.components._
 
 @this(
-    mainTemplate: unifiedLayout,
-    hmrcPageHeading: HmrcPageHeading,
-    formWithCSRF: FormWithCSRF,
-    govukSummaryList: GovukSummaryList,
-    implicitDateFormatter: ImplicitDateFormatterImpl,
-    govukButton: GovukButton
+        mainTemplate: unifiedLayout,
+        hmrcPageHeading: HmrcPageHeading,
+        formWithCSRF: FormWithCSRF,
+        govukSummaryList: GovukSummaryList,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        continueButton: ContinueButton
 )
 
 @(
-    isAgent: Boolean,
-    backUrl: String,
-    viewModel: CheckYourAnswersViewModel,
-    incomeSourceType: IncomeSourceType
+        isAgent: Boolean,
+        backUrl: String,
+        viewModel: CheckYourAnswersViewModel,
+        incomeSourceType: IncomeSourceType
 )(implicit request: auth.MtdItUser[_], messages: Messages)
 
 @getMessage(key: String, args: String*) = @{
@@ -46,12 +47,12 @@
 @import implicitDateFormatter.longDate
 
 @getChangeHref = @{
-  val url = incomeSourceType match {
-    case SelfEmployment => controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController.showChange(SelfEmployment, isAgent).url
-    case UkProperty => controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController.showChange(UkProperty, isAgent).url
-    case _ => controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController.showChange(ForeignProperty, isAgent).url
-  }
-  url
+    val url = incomeSourceType match {
+        case SelfEmployment => controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController.showChange(SelfEmployment, isAgent).url
+        case UkProperty => controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController.showChange(UkProperty, isAgent).url
+        case _ => controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController.showChange(ForeignProperty, isAgent).url
+    }
+    url
 }
 
 @getSubmitHref = @{
@@ -59,7 +60,7 @@
         case SelfEmployment => controllers.manageBusinesses.manage.routes.CheckYourAnswersController.submit(isAgent, SelfEmployment)
         case UkProperty => controllers.manageBusinesses.manage.routes.CheckYourAnswersController.submit(isAgent, UkProperty)
         case _ => controllers.manageBusinesses.manage.routes.CheckYourAnswersController.submit(isAgent, ForeignProperty)
-}
+    }
     url
 }
 
@@ -72,34 +73,31 @@
     useFallbackBackLink = true) {
 
     @hmrcPageHeading(PageHeading(
-    text = getMessage("text"),
-    headingClasses = Some("govuk-heading-l"),
-    section = Some(getMessage(s"$incomeSourceType.heading")),
-    captionClasses = Some("govuk-caption-l")
+        text = getMessage("text"),
+        headingClasses = Some("govuk-heading-l"),
+        section = Some(getMessage(s"$incomeSourceType.heading")),
+        captionClasses = Some("govuk-caption-l")
     ))
 
     @govukSummaryList(SummaryList(
-            classes = "govuk-!-margin-bottom-9",
-            rows = Seq(
-                SummaryListRow(
-                    key = Key(Text(getMessage("reporting-frequency", viewModel.taxYear.startYear.toString, viewModel.taxYear.endYear.toString))),
-                    value = Value(Text(getMessage((if(viewModel.reportingMethod == "quarterly") "reporting.quarterly" else "reporting.annually")))),
-                    actions = Some(Actions(
-                        items = Seq(ActionItem(
-                            href = getChangeHref,
-                            classes = "govuk-link govuk-body",
-                            content = HtmlContent(getMessage("change")),
-                            attributes = Map("id" -> "change")
-                        ))
+        classes = "govuk-!-margin-bottom-9",
+        rows = Seq(
+            SummaryListRow(
+                key = Key(Text(getMessage("reporting-frequency", viewModel.taxYear.startYear.toString, viewModel.taxYear.endYear.toString))),
+                value = Value(Text(getMessage((if(viewModel.reportingMethod == "quarterly") "reporting.quarterly" else "reporting.annually")))),
+                actions = Some(Actions(
+                    items = Seq(ActionItem(
+                        href = getChangeHref,
+                        classes = "govuk-link govuk-body",
+                        content = HtmlContent(getMessage("change")),
+                        attributes = Map("id" -> "change")
                     ))
                 ))
-            )
-        )
+            ))
+    )
+    )
     @formWithCSRF(getSubmitHref) {
-        @govukButton(Button(
-            content = Text(getMessage("confirm")),
-            attributes = Map("id" -> "continue-button")
-        ))
+        @continueButton(alternativeText = Some(getMessage("confirm")), id = Some("continue-button"))
     }
 
 }
