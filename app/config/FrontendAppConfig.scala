@@ -216,5 +216,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   val chargeSummaryLpiBalancingChargeLink = servicesConfig.getString("external-urls.chargeSummary.lpi.balancingCharge.link")
   val chargeSummaryLpiBalancingChargeP3Link = servicesConfig.getString("external-urls.chargeSummary.lpi.balancingCharge.p3Link")
   val chargeSummaryCheckPayeTaxCode2Link = servicesConfig.getString("external-urls.chargeSummary.check-paye-tax-code-2-link")
+  val agentUtrErrorReasonBullet2Link = servicesConfig.getString("external-urls.agent.utr_error.reason.bullet2_link")
 
 }
