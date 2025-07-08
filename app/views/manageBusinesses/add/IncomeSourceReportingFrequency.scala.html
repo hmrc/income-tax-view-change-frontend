@@ -43,7 +43,7 @@
     govukTable : GovukTable
 )
 
-@(isAgent: Boolean = false, continueAction: Call, form: Form[IncomeSourceReportingFrequencyForm], incomeSourceType: IncomeSourceType, taxDateService: DateServiceInterface, isR17ContentEnabled: Boolean)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(isAgent: Boolean = false, continueAction: Call, form: Form[IncomeSourceReportingFrequencyForm], incomeSourceType: IncomeSourceType, taxDateService: DateServiceInterface, isR17ContentEnabled: Boolean, mtdThreshold: String)(implicit user: auth.MtdItUser[_], messages: Messages)
 
 @getMessage(key: String, args: String*) = @{
     if(isR17ContentEnabled) {
@@ -159,7 +159,7 @@
             @getMessage("li1")
             </li>
             <li id="inset-text-bullet-2">
-            @getMessage("li2")
+            @getMessage("li2", mtdThreshold)
             </li>
         </ul>
     }
