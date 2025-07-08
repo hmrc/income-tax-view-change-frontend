@@ -285,7 +285,7 @@
         @messages("chargeSummary.codingOutInset-1")
         @link(
             id = Some("coding-out-notice-link"),
-            link="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code",
+            link=appConfig.chargeSummaryCodingOutInset2Link,
             target = Some("_blank"),
             rel= Some("noreferrer noopener"),
             messageKey = "chargeSummary.codingOutInset-2"
@@ -299,7 +299,7 @@
         @messages("chargeSummary.cancelledPayeInset-1")
         @link(
             id = Some("cancelled-coding-out-notice-link"),
-            link="https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code",
+            link=appConfig.chargeSummaryCancelledPayeInset2Link,
             target = Some("_blank"),
             rel= Some("noreferrer noopener"),
             messageKey = "chargeSummary.cancelledPayeInset-2",
