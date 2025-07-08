@@ -221,5 +221,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   val chargeSummaryCancelledPayeInset2Link = servicesConfig.getString("external-urls.chargeSummary.cancelledPayeInset-2-link")
   val whatYouOwePaymentsMadeBullet11Link = servicesConfig.getString("external-urls.whatYouOwe.payments-made-bullet-1.1-link")
   val whatYouOweDunningLockLink = servicesConfig.getString("external-urls.whatYouOwe.dunningLock.link")
+  val homepageLink = servicesConfig.getString("external-urls.homepageLink")
 
 }
