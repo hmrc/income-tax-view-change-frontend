@@ -202,4 +202,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   val homeAgentSupportingReadMoreLink = servicesConfig.getString("external-urls.home.agent.supporting.readMore.link")
   val nextUpdatesUpdatesSoftwareLink = servicesConfig.getString("external-urls.nextUpdates.updates.software.link")
   val nextUpdatesDropdownQuarterlyReturnLink = servicesConfig.getString("external-urls.nextUpdates.dropdown.quarterlyReturn.link.link")
+  val optoutConfirmedOptOutSoftwareCompatibleLink = servicesConfig.getString("external-urls.optout.confirmedOptOut.software-compatible.link")
+  val optoutConfirmedOptOutReportQuarterlyDesc3AnchorLink = servicesConfig.getString("external-urls.optout.confirmedOptOut.reportQuarterly.desc3.anchor-link")
 }

@@ -19,6 +19,7 @@
 @import views.html.layouts.unifiedLayout
 @import models.optout.ConfirmedOptOutViewModel
 @import services.optout.OneYearOptOutFollowedByMandated
+@import config.FrontendAppConfig
 
 @this(
     mainTemplate: unifiedLayout,
@@ -29,7 +30,8 @@
     hr: hr,
     govukTable: GovukTable,
     govukInsetText : GovukInsetText,
-    govukPanel : GovukPanel
+    govukPanel : GovukPanel,
+    appConfig: config.FrontendAppConfig
 )
 
 @(
@@ -60,7 +62,7 @@
     @h2(msg = "optout.confirmedOptOut.report-quarterly-next-year-onwards")
 
     @{
-        val externalRefLink = messages("optout.confirmedOptOut.software-compatible.link")
+        val externalRefLink = appConfig.optoutConfirmedOptOutSoftwareCompatibleLink
         val anchor = link(
             id = Some("software-compatible-ext"),
             target = Some("_blank"),
@@ -148,7 +150,7 @@
         }
         @p(){
             @{
-                val externalRefLink = messages("optout.confirmedOptOut.reportQuarterly.desc3.anchor-link")
+                val externalRefLink = appConfig.optoutConfirmedOptOutReportQuarterlyDesc3AnchorLink
                 val anchor = link(
                     id = Some("sign-up-criteria-ext"),
                     target = Some("_blank"),
