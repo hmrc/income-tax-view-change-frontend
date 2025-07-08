@@ -137,7 +137,8 @@
         <div id="payment-under-review-info">
         @p(){
             @getMessage("dunningLock.text", "")
-            @link(link = "https://www.gov.uk/tax-appeals", messageKey = getPrefix("dunningLock.link"),
+
+            @link(link = appConfig.whatYouOweDunningLockLink, messageKey = getPrefix("dunningLock.link"),
                 id = Some("disagree-with-tax-appeal-link"), rel=Some("noreferrer noopener"), target = Some("_blank"),
                 additionalOpenTabMessage = Some(".")
             )
@@ -452,7 +453,7 @@
         @p(id = Some("payments-made"))(Html(getPaymentsMadeText))
         <ul class="govuk-list govuk-list--bullet" id="payments-made-bullets">
             <li>@messages("whatYouOwe.payments-made-bullet-1.1")
-                @link(link = "https://www.gov.uk/pay-self-assessment-tax-bill", id = Some("sa-tax-bill"), messageKey = getPaymentsMadeBulletLinkText, target = Some("_blank"), rel = Some("noreferrer noopener"))
+                @link(link = appConfig.whatYouOwePaymentsMadeBullet11Link, id = Some("sa-tax-bill"), messageKey = getPaymentsMadeBulletLinkText, target = Some("_blank"), rel = Some("noreferrer noopener"))
             </li>
             <li>@getPaymentsMadeBulletText</li>
         </ul>

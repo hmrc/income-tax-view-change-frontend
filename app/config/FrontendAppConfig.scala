@@ -219,5 +219,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   val agentUtrErrorReasonBullet2Link = servicesConfig.getString("external-urls.agent.utr_error.reason.bullet2-link")
   val chargeSummaryCodingOutInset2Link = servicesConfig.getString("external-urls.chargeSummary.codingOutInset-2-link")
   val chargeSummaryCancelledPayeInset2Link = servicesConfig.getString("external-urls.chargeSummary.cancelledPayeInset-2-link")
+  val whatYouOwePaymentsMadeBullet11Link = servicesConfig.getString("external-urls.whatYouOwe.payments-made-bullet-1.1-link")
+  val whatYouOweDunningLockLink = servicesConfig.getString("external-urls.whatYouOwe.dunningLock.link")
 
 }
