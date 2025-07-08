@@ -222,5 +222,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   val whatYouOwePaymentsMadeBullet11Link = servicesConfig.getString("external-urls.whatYouOwe.payments-made-bullet-1.1-link")
   val whatYouOweDunningLockLink = servicesConfig.getString("external-urls.whatYouOwe.dunningLock.link")
   val homepageLink = servicesConfig.getString("external-urls.homepageLink")
+  val optinCompletedOptInSubmitUpdatesDesc1BUrl = servicesConfig.getString("external-urls.optin.completedOptIn.submitUpdates.desc1.b.url")
+  val optinCompletedOptInIncomeThresholdDescBUrl = servicesConfig.getString("external-urls.optin.completedOptIn.incomeThreshold.desc.b.url")
 
 }

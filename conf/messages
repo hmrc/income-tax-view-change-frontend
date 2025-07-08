@@ -2549,7 +2549,6 @@ paymentOnAccount.caption                             = {0} to {1} tax year
 paymentOnAccount.heading                             = Adjusting your payments on account
 paymentOnAccount.p1                                  = You can adjust both payments on account if you expect the total of your Income Tax and
 paymentOnAccount.class4NationalInsurance.link.text   = Class 4 National Insurance contributions (opens in a new tab)
-paymentOnAccount.class4NationalInsurance.link        = https://www.gov.uk/self-employed-national-insurance-rates
 paymentOnAccount.p2                                  = to be lower than the previous tax year.
 paymentOnAccount.heading.example                     = Example
 paymentOnAccount.hint                                = For example, if your tax bill was £4,000 last year, but you think you should only pay £3,000 this year, you can reduce both payments on account to £1,500 each.
@@ -2825,7 +2824,6 @@ optin.completedOptIn.yourRevisedDeadline.p2.link                = your reporting
 optin.completedOptIn.submitUpdates                              = Submit updates in software
 optin.completedOptIn.submitUpdates.desc1.a                      = For any tax year you are reporting quarterly, you will need
 optin.completedOptIn.submitUpdates.desc1.b                      = software compatible with Making Tax Digital for Income Tax (opens in new tab).
-optin.completedOptIn.submitUpdates.desc1.b.url                  = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
 
 optin.completedOptIn.submitUpdates.annualReportingAdvice        = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
 
@@ -2845,7 +2843,6 @@ optin.completedOptIn.futureReporting.desc2                      = If this happen
 
 optin.completedOptIn.incomeThreshold.desc.a                     = You can check the threshold for qualifying income in the
 optin.completedOptIn.incomeThreshold.desc.b                     = criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab).
-optin.completedOptIn.incomeThreshold.desc.b.url                 = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up
 
 # opt in confirm tax year
 optIn.confirmTaxYear.heading                        = Confirm and opt in for {0} to {1} tax year

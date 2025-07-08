@@ -2544,7 +2544,6 @@ paymentOnAccount.caption                             = Blwyddyn dreth {0} i {1}
 paymentOnAccount.heading                             = Addasu eich taliadau ar gyfrif
 paymentOnAccount.p1                                  = Gallwch addasu’r ddau daliad ar gyfrif os ydych yn disgwyl i gyfanswm eich Treth Incwm a’ch
 paymentOnAccount.class4NationalInsurance.link.text   = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)
-paymentOnAccount.class4NationalInsurance.link        = https://www.gov.uk/self-employed-national-insurance-rates
 paymentOnAccount.p2                                  = i fod yn is na’r flwyddyn dreth flaenorol.
 paymentOnAccount.heading.example                     = Enghraifft
 paymentOnAccount.hint                                = Er enghraifft, os oedd eich bil treth y llynedd yn £4,000, ac rydych o’r farn y dylech dalu dim ond £3,000 eleni, gallwch ostwng y ddau daliad gan £1,500 yr un, ar gyfrif.
@@ -2819,7 +2818,6 @@ optin.completedOptIn.yourRevisedDeadline.p2.link            = amlder eich adrodd
 optin.completedOptIn.submitUpdates                          = Cyflwyno diweddariadau drwy ddefnyddio meddalwedd
 optin.completedOptIn.submitUpdates.desc1.a                  = Os ydych yn adrodd am flwyddyn dreth yn chwarterol, bydd angen i chi ddefnyddio
 optin.completedOptIn.submitUpdates.desc1.b                  = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
-optin.completedOptIn.submitUpdates.desc1.b.url              = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax.cy
 
 optin.completedOptIn.submitUpdates.annualReportingAdvice    = Wrth adrodd yn flynyddol, gallwch gyflwyno’ch Ffurflen Dreth yn uniongyrchol drwy’ch cyfrif ar-lein CThEF neu drwy ddefnyddio meddalwedd sy’n cydweddu.
 
@@ -2839,7 +2837,6 @@ optin.completedOptIn.futureReporting.desc2                  = Os bydd hyn yn dig
 
 optin.completedOptIn.incomeThreshold.desc.a                 = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
 optin.completedOptIn.incomeThreshold.desc.b                 = meini prawf ar gyfer pobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
-optin.completedOptIn.incomeThreshold.desc.b.url             = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax.cy#pwy-fydd-angen-cofrestru
 
 # opt in confirm tax year
 optIn.confirmTaxYear.heading                        = Cadarnhau ac optio i mewn ar gyfer blwyddyn dreth {0} i {1}
