@@ -204,4 +204,17 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   val nextUpdatesDropdownQuarterlyReturnLink = servicesConfig.getString("external-urls.nextUpdates.dropdown.quarterlyReturn.link.link")
   val optoutConfirmedOptOutSoftwareCompatibleLink = servicesConfig.getString("external-urls.optout.confirmedOptOut.software-compatible.link")
   val optoutConfirmedOptOutReportQuarterlyDesc3AnchorLink = servicesConfig.getString("external-urls.optout.confirmedOptOut.reportQuarterly.desc3.anchor-link")
+  val paymentOnAccountClass4NationalInsuranceLink = servicesConfig.getString("external-urls.paymentOnAccount.class4NationalInsurance.link")
+  val chargeSummaryPaymentsOnAccountBullet2link = servicesConfig.getString("external-urls.chargeSummary.paymentsOnAccount.bullet2-link")
+  val chargeSummaryLpiPaymentsOnAccountLink = servicesConfig.getString("external-urls.chargeSummary.lpi.paymentsOnAccount-link")
+  val chargeSummaryLpiPaymentsOnAccountP3Link = servicesConfig.getString("external-urls.chargeSummary.lpi.paymentsOnAccount.p3Link")
+  val chargeSummaryPoa1ExtraAmountInterestP3Link = servicesConfig.getString("external-urls.chargeSummary.poa1ExtraAmountInterest.p3Link")
+  val chargeSummaryPoa2ExtraAmountInterestP3Link = servicesConfig.getString("external-urls.chargeSummary.poa2ExtraAmountInterest.p3Link")
+  val chargeSummaryLpiPenaltiesLink = servicesConfig.getString("external-urls.chargeSummary.lpi.penalties.link")
+  val chargeSummaryLpiPenaltiesP3Link = servicesConfig.getString("external-urls.chargeSummary.lpi.penalties.p3Link")
+  val chargeSummaryLpiPoaExtraChargeLink = servicesConfig.getString("external-urls.chargeSummary.lpi.poaExtraCharge.link")
+  val chargeSummaryLpiBalancingChargeLink = servicesConfig.getString("external-urls.chargeSummary.lpi.balancingCharge.link")
+  val chargeSummaryLpiBalancingChargeP3Link = servicesConfig.getString("external-urls.chargeSummary.lpi.balancingCharge.p3Link")
+  val chargeSummaryCheckPayeTaxCode2Link = servicesConfig.getString("external-urls.chargeSummary.check-paye-tax-code-2-link")
+
 }
