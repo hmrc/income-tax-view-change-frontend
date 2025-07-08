@@ -88,8 +88,10 @@
     }
 }
 
-@stripHtml(input: String) = @{
-    input.replaceAll("<[^>]*>", "")
+@sanitiseOutput(input: String) = @{
+    input
+    .replaceAll("<[^>]*>", "")
+    .replaceAll("\t", "")
 }
 
 @getLongAddressFromBusinessAddressDetails(address1: String, address2: Option[String], address3: Option[String], address4: Option[String], postCode: Option[String], countryCode: Option[String]) = @{
@@ -101,7 +103,7 @@
         countryCode
     ).flatten
     .filter(_.nonEmpty)
-    .map(stripHtml)
+    .map(sanitiseOutput)
     .map(HtmlFormat.escape)
     .mkString("<br>")
 }
