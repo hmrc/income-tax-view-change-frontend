@@ -56,9 +56,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //View L&P
   def saViewLandPService(utr: String): String = servicesConfig.getString("old-sa-viewer-frontend.host") + s"/$utr/account"
 
-  //SA for Agents Online Service
-  lazy val saForAgents: String = "https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
-
   //GG Sign In via BAS Gateway
   lazy val signInUrl: String = servicesConfig.getString("base.sign-in")
   lazy val ggSignInUrl: String = servicesConfig.getString("government-gateway.sign-in.url")
@@ -122,11 +119,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val paymentRedirectUrl: String = s"$itvcFrontendEnvironment/$baseUrl/what-you-owe"
   //Payment Redirect route
   lazy val agentPaymentRedirectUrl: String = s"$itvcFrontendEnvironment/$agentBaseUrl/payments-owed"
-
-  //Accounting software guidance
-  lazy val accountingSoftwareLinkUrl: String = "https://www.gov.uk/guidance/use-software-to-send-income-tax-updates"
-
-  lazy val clientAuthorisationGuidance: String = "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax-as-an-agent-step-by-step"
 
   //Calculation Polling config
   lazy val calcPollSchedulerInterval: Int = servicesConfig.getInt("calculation-polling.interval")
@@ -197,36 +189,61 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val isSessionDataStorageEnabled: Boolean = servicesConfig.getBoolean("feature-switch.enable-session-data-storage")
 
-  val selfAssessmentTaxReturn = servicesConfig.getString("external-urls.self-assessment-tax-return-link")
-  val compatibleSoftwareLink = servicesConfig.getString("external-urls.compatible-software-link")
-  val homeAgentSupportingReadMoreLink = servicesConfig.getString("external-urls.home.agent.supporting.readMore.link")
-  val nextUpdatesUpdatesSoftwareLink = servicesConfig.getString("external-urls.nextUpdates.updates.software.link")
-  val nextUpdatesDropdownQuarterlyReturnLink = servicesConfig.getString("external-urls.nextUpdates.dropdown.quarterlyReturn.link.link")
-  val nextUpdatesR17TabQuarterlyCompatibleSoftwareLink = servicesConfig.getString("external-urls.nextUpdates.r17.tab.quarterly.compatibleSoftware.link")
-  val optoutConfirmedOptOutSoftwareCompatibleLink = servicesConfig.getString("external-urls.optout.confirmedOptOut.software-compatible.link")
-  val optoutConfirmedOptOutReportQuarterlyDesc3AnchorLink = servicesConfig.getString("external-urls.optout.confirmedOptOut.reportQuarterly.desc3.anchor-link")
-  val paymentOnAccountClass4NationalInsuranceLink = servicesConfig.getString("external-urls.paymentOnAccount.class4NationalInsurance.link")
-  val chargeSummaryPaymentsOnAccountBullet2link = servicesConfig.getString("external-urls.chargeSummary.paymentsOnAccount.bullet2-link")
-  val chargeSummaryLpiPaymentsOnAccountLink = servicesConfig.getString("external-urls.chargeSummary.lpi.paymentsOnAccount-link")
-  val chargeSummaryLpiPaymentsOnAccountP3Link = servicesConfig.getString("external-urls.chargeSummary.lpi.paymentsOnAccount.p3Link")
-  val chargeSummaryPoa1ExtraAmountInterestP3Link = servicesConfig.getString("external-urls.chargeSummary.poa1ExtraAmountInterest.p3Link")
-  val chargeSummaryPoa2ExtraAmountInterestP3Link = servicesConfig.getString("external-urls.chargeSummary.poa2ExtraAmountInterest.p3Link")
-  val chargeSummaryLpiPenaltiesLink = servicesConfig.getString("external-urls.chargeSummary.lpi.penalties.link")
-  val chargeSummaryLpiPenaltiesP3Link = servicesConfig.getString("external-urls.chargeSummary.lpi.penalties.p3Link")
-  val chargeSummaryLpiPoaExtraChargeLink = servicesConfig.getString("external-urls.chargeSummary.lpi.poaExtraCharge.link")
-  val chargeSummaryLpiBalancingChargeLink = servicesConfig.getString("external-urls.chargeSummary.lpi.balancingCharge.link")
-  val chargeSummaryLpiBalancingChargeP3Link = servicesConfig.getString("external-urls.chargeSummary.lpi.balancingCharge.p3Link")
-  val chargeSummaryCheckPayeTaxCode2Link = servicesConfig.getString("external-urls.chargeSummary.check-paye-tax-code-2-link")
-  val agentUtrErrorReasonBullet2Link = servicesConfig.getString("external-urls.agent.utr_error.reason.bullet2-link")
-  val chargeSummaryCodingOutInset2Link = servicesConfig.getString("external-urls.chargeSummary.codingOutInset-2-link")
-  val chargeSummaryCancelledPayeInset2Link = servicesConfig.getString("external-urls.chargeSummary.cancelledPayeInset-2-link")
-  val whatYouOwePaymentsMadeBullet11Link = servicesConfig.getString("external-urls.whatYouOwe.payments-made-bullet-1.1-link")
-  val whatYouOweDunningLockLink = servicesConfig.getString("external-urls.whatYouOwe.dunningLock.link")
-  val homepageLink = servicesConfig.getString("external-urls.homepageLink")
-  val optinCompletedOptInSubmitUpdatesDesc1BUrl = servicesConfig.getString("external-urls.optin.completedOptIn.submitUpdates.desc1.b.url")
-  val optinCompletedOptInIncomeThresholdDescBUrl = servicesConfig.getString("external-urls.optin.completedOptIn.incomeThreshold.desc.b.url")
-  val incomeSourcesManageQuarterlyPeriodContentExternalRefLink = servicesConfig.getString("external-urls.incomeSources.manage.quarterly-period.content.external-ref-link")
-  val reportingFrequencyMandatoryReportingLink = servicesConfig.getString("external-urls.reporting.frequency.mandatoryReporting.link")
-  val reportingFrequencyCompatibleSoftwareLink = servicesConfig.getString("external-urls.reporting.frequency.compatibleSoftware.link")
-  val yourSelfAssessmentChargeSummaryWhatIsPaymentOnAccountP3Link = servicesConfig.getString("external-urls.yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3-link")
+  //External-Urls
+  lazy val homepageLink = "https://www.gov.uk"
+
+  //SA for Agents Online Service
+  lazy val saForAgents: String = "https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
+
+  //Accounting software guidance
+  lazy val accountingSoftwareLinkUrl: String = "https://www.gov.uk/guidance/use-software-to-send-income-tax-updates"
+
+  lazy val clientAuthorisationGuidance: String = "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax-as-an-agent-step-by-step"
+
+  lazy val selfAssessmentTaxReturn = "https://www.gov.uk/log-in-file-self-assessment-tax-return"
+  lazy val compatibleSoftwareLink = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+
+  lazy val yourSelfAssessmentChargeSummaryWhatIsPaymentOnAccountP3Link = "https://www.gov.uk/self-employed-national-insurance-rates"
+
+  lazy val homeAgentSupportingReadMoreLink = "https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax"
+
+  lazy val nextUpdatesUpdatesSoftwareLink = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+  lazy val nextUpdatesDropdownQuarterlyReturnLink = "https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates"
+  lazy val nextUpdatesR17TabQuarterlyCompatibleSoftwareLink = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+
+  lazy val optinCompletedOptInSubmitUpdatesDesc1BUrl = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+  lazy val optinCompletedOptInIncomeThresholdDescBUrl = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
+
+  lazy val optoutConfirmedOptOutSoftwareCompatibleLink = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+  lazy val optoutConfirmedOptOutReportQuarterlyDesc3AnchorLink = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
+
+  lazy val paymentOnAccountClass4NationalInsuranceLink = "https://www.gov.uk/self-employed-national-insurance-rates"
+
+  lazy val chargeSummaryPaymentsOnAccountBullet2link = "https://www.gov.uk/self-employed-national-insurance-rates"
+
+  lazy val chargeSummaryPoa1ExtraAmountInterestP3Link = "https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate"
+  lazy val chargeSummaryPoa2ExtraAmountInterestP3Link = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates"
+
+  lazy val chargeSummaryLpiPaymentsOnAccountLink = "https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate"
+  lazy val chargeSummaryLpiPaymentsOnAccountP3Link = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates"
+  lazy val chargeSummaryLpiPenaltiesLink = "https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate"
+  lazy val chargeSummaryLpiPenaltiesP3Link = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates"
+  lazy val chargeSummaryLpiPoaExtraChargeLink = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates"
+  lazy val chargeSummaryLpiBalancingChargeLink = "https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate"
+  lazy val chargeSummaryLpiBalancingChargeP3Link = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates"
+
+  lazy val chargeSummaryCodingOutInset2Link = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
+
+  lazy val chargeSummaryCheckPayeTaxCode2Link = "https://www.tax.service.gov.uk/check-income-tax/tax-codes"
+  lazy val chargeSummaryCancelledPayeInset2Link = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
+
+  lazy val agentUtrErrorReasonBullet2Link = "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax"
+
+  lazy val whatYouOwePaymentsMadeBullet11Link = "https://www.gov.uk/pay-self-assessment-tax-bill"
+  lazy val whatYouOweDunningLockLink = "https://www.gov.uk/tax-appeals"
+
+  lazy val incomeSourcesManageQuarterlyPeriodContentExternalRefLink = "https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates"
+
+  lazy val reportingFrequencyMandatoryReportingLink = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
+  lazy val reportingFrequencyCompatibleSoftwareLink = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
 }
