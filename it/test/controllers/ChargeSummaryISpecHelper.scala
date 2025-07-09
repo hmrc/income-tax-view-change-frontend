@@ -81,6 +81,7 @@ trait ChargeSummaryISpecHelper extends ControllerISpecHelper {
         "transactionId" -> "1040000123",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> 1200.00,
+        "chargeReference" -> "chargeRef",
         "items" -> Json.arr(
           Json.obj("subItem" -> "001",
             "amount" -> 10000,
@@ -131,6 +132,7 @@ trait ChargeSummaryISpecHelper extends ControllerISpecHelper {
         "transactionId" -> "1",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> 1200.00,
+        "chargeReference" -> "chargeRef",
         "items" -> Json.arr(
           Json.obj("subItem" -> "001",
             "amount" -> 1200,
@@ -153,6 +155,7 @@ trait ChargeSummaryISpecHelper extends ControllerISpecHelper {
         "transactionId" -> "2",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> 1200.00,
+        "chargeReference" -> "chargeRef",
         "items" -> Json.arr(
           Json.obj("subItem" -> "001",
             "amount" -> 1200,
@@ -191,7 +194,8 @@ trait ChargeSummaryISpecHelper extends ControllerISpecHelper {
     lpiWithDunningLock = None,
     amountCodedOut = None,
     dunningLock = false,
-    poaRelevantAmount = None
+    poaRelevantAmount = None,
+    chargeReference = Some("chargeRef")
   )
 
   val chargeItemPaid = chargeItemUnpaid.copy(outstandingAmount = 0)

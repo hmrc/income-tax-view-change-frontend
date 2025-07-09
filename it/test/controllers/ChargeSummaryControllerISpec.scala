@@ -221,7 +221,8 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                       Json.obj(
                         "transactionId" -> "1040001234",
                         "taxYear" -> "2018",
-                        "mainTransaction" -> "4930"
+                        "mainTransaction" -> "4930",
+                        "chargeReference" -> "chargeRef",
                       )
                     )))
 
@@ -259,7 +260,8 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                       Json.obj(
                         "transactionId" -> "CODINGOUT01",
                         "taxYear" -> "2018",
-                        "mainTransaction" -> "4910"
+                        "mainTransaction" -> "4910",
+                        "chargeReference" -> "chargeRef",
                       )
                     )))
 
