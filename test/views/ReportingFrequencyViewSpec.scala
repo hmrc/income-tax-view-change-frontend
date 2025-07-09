@@ -88,12 +88,12 @@ class ReportingFrequencyViewSpec extends TestSupport {
     val govGuidance = "#compatible-software-link"
   }
 
-  def testContentByIds(pageDocument: Document, newContentEnabled: Boolean, additionalIdsAndContent: Seq[(String, String)] = Seq()): Unit = {
+  def testContentByIds(pageDocument: Document, R17ContentEnabled: Boolean, additionalIdsAndContent: Seq[(String, String)] = Seq()): Unit = {
     val expectedContent: Seq[(String, String)] = {
-      if(newContentEnabled){
+      if(R17ContentEnabled){
 
         Seq(
-          Selectors.h1 -> pageHeadingContent(newContentEnabled),
+          Selectors.h1 -> pageHeadingContentNew,
           Selectors.h2 -> manageRFHeadingContent,
           Selectors.p1 -> p1Content,
           Selectors.p2 -> p2Content,
@@ -103,28 +103,27 @@ class ReportingFrequencyViewSpec extends TestSupport {
           Selectors.differentObligationsLi2 -> differentObligationsLiTwo,
           Selectors.differentObligationsP2 -> differentObligationsTextTwo,
           Selectors.differentObligationsP3 -> differentObligationsTextThree,
-          Selectors.mandatoryReportingH2 -> mandatoryReportingHeading(newContentEnabled),
-          Selectors.mandatoryReportingInset -> mandatoryReportingInset(newContentEnabled),
-          Selectors.mandatoryReportingText -> mandatoryReportingText(newContentEnabled),
-          Selectors.mandatoryReportingText2 -> newMandatoryReportingTextTwo,
-          Selectors.compatibleSoftwareH2 -> compatibleSoftwareHeading(newContentEnabled),
-          Selectors.compatibleSoftwareP1 -> compatibleSoftwareText(newContentEnabled),
-          Selectors.compatibleSoftwareP3 -> newCompatibleSoftwareTextThree,
-          Selectors.compatibleSoftwareLinkText2 -> newCompatibleSoftwareTextThree,
+          Selectors.mandatoryReportingH2 -> mandatoryReportingHeadingR17,
+          Selectors.mandatoryReportingInset -> mandatoryReportingInsetR17,
+          Selectors.mandatoryReportingText -> mandatoryReportingTextR17,
+          Selectors.mandatoryReportingText2 -> mandatoryReportingTextTwoR17,
+          Selectors.compatibleSoftwareH2 -> compatibleSoftwareHeadingR17,
+          Selectors.compatibleSoftwareP1 -> compatibleSoftwareTextR17,
+          Selectors.compatibleSoftwareP3 -> compatibleSoftwareTextThreeR17,
         ) ++ additionalIdsAndContent
 
 
       }else{
         Seq(
-          Selectors.h1 -> pageHeadingContent(newContentEnabled),
+          Selectors.h1 -> pageHeadingContent,
           Selectors.h2 -> manageRFHeadingContent,
           Selectors.p1 -> p1Content,
           Selectors.p2 -> p2Content,
-          Selectors.mandatoryReportingH2 -> mandatoryReportingHeading(newContentEnabled),
-          Selectors.mandatoryReportingInset -> mandatoryReportingInset(newContentEnabled),
-          Selectors.mandatoryReportingText -> mandatoryReportingText(newContentEnabled),
-          Selectors.compatibleSoftwareH2 -> compatibleSoftwareHeading(newContentEnabled),
-          Selectors.compatibleSoftwareP1 -> compatibleSoftwareText(newContentEnabled),
+          Selectors.mandatoryReportingH2 -> mandatoryReportingHeading,
+          Selectors.mandatoryReportingInset -> mandatoryReportingInset,
+          Selectors.mandatoryReportingText -> mandatoryReportingText,
+          Selectors.compatibleSoftwareH2 -> compatibleSoftwareHeading,
+          Selectors.compatibleSoftwareP1 -> compatibleSoftwareText,
           Selectors.compatibleSoftwareP2 -> compatibleSoftwareTextTwo,
         ) ++ additionalIdsAndContent
       }
@@ -169,7 +168,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
         pageDocument.title() shouldBe agentTitle
 
-        testContentByIds(pageDocument, newContentEnabled = false)
+        testContentByIds(pageDocument, R17ContentEnabled = false)
 
         pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
 
@@ -181,7 +180,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
         pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
       }
-      "(new content) return the correct content when opt in and opt out has multiple tax years" in {
+      "(R17 content) return the correct content when opt in and opt out has multiple tax years" in {
 
         val isAgentFlag = true
 
@@ -207,9 +206,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
             )
           )
 
-        pageDocument.title() shouldBe title(isNewContentEnabled = true)
+        pageDocument.title() shouldBe titleNew
 
-        testContentByIds(pageDocument, newContentEnabled = true)
+        testContentByIds(pageDocument, R17ContentEnabled = true)
 
         pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
 
@@ -250,7 +249,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
         pageDocument.title() shouldBe agentTitle
 
-        testContentByIds(pageDocument, newContentEnabled = false)
+        testContentByIds(pageDocument, R17ContentEnabled = false)
 
         pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
 
@@ -262,7 +261,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
         pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
       }
-      "(new content) return the correct content when opt in and opt out has single tax year and it is next tax year(2024)" in {
+      "(R17 content) return the correct content when opt in and opt out has single tax year and it is next tax year(2024)" in {
 
         val isAgentFlag = true
 
@@ -288,9 +287,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
             )
           )
 
-        pageDocument.title() shouldBe title(isNewContentEnabled = true)
+        pageDocument.title() shouldBe titleNew
 
-        testContentByIds(pageDocument, newContentEnabled = true)
+        testContentByIds(pageDocument, R17ContentEnabled = true)
 
         pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
 
@@ -335,7 +334,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
         pageDocument.title() shouldBe agentTitle
 
-        testContentByIds(pageDocument, newContentEnabled = false)
+        testContentByIds(pageDocument, R17ContentEnabled = false)
 
         pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
 
@@ -377,7 +376,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
             pageDocument.select(s"#table-status-$i").text() shouldBe tableContent
           }
       }
-      "(new content) return the correct content when opt in and opt out has single tax year and it is not next tax year(2024)" in {
+      "(R17 content) return the correct content when opt in and opt out has single tax year and it is not next tax year(2024)" in {
 
         val isAgentFlag = true
 
@@ -407,9 +406,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
             )
           )
 
-        pageDocument.title() shouldBe title(isNewContentEnabled = true)
+        pageDocument.title() shouldBe titleNew
 
-        testContentByIds(pageDocument, newContentEnabled = true)
+        testContentByIds(pageDocument, R17ContentEnabled = true)
 
         pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
 
@@ -423,7 +422,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
         pageDocument.select("#table-head-name-taxyear").text() shouldBe "Tax year"
 
-        pageDocument.select("#table-head-name-usingMTD").text() shouldBe "Using Making Tax Digital for Income Tax"
+        pageDocument.select("#table-head-name-using-mtd").text() shouldBe "Using Making Tax Digital for Income Tax"
 
         pageDocument.select("#table-head-name-status").text() shouldBe "Your status"
 
@@ -484,9 +483,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
             )
           )
 
-        pageDocument.title() shouldBe title(isNewContentEnabled = false)
+        pageDocument.title() shouldBe title
 
-        testContentByIds(pageDocument, newContentEnabled = false)
+        testContentByIds(pageDocument, R17ContentEnabled = false)
 
         pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
 
@@ -498,7 +497,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
         pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
       }
-      "(new content) return the correct content when opt in and opt out has multiple tax years" in {
+      "(R17 content) return the correct content when opt in and opt out has multiple tax years" in {
 
         val isAgentFlag = false
 
@@ -524,9 +523,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
             )
           )
 
-        pageDocument.title() shouldBe title(isNewContentEnabled = true)
+        pageDocument.title() shouldBe titleNew
 
-        testContentByIds(pageDocument, newContentEnabled = true)
+        testContentByIds(pageDocument, R17ContentEnabled = true)
 
         pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
 
@@ -564,15 +563,15 @@ class ReportingFrequencyViewSpec extends TestSupport {
             )
           )
 
-        pageDocument.title() shouldBe title(isNewContentEnabled = false)
+        pageDocument.title() shouldBe title
 
-        testContentByIds(pageDocument, newContentEnabled = false)
+        testContentByIds(pageDocument, R17ContentEnabled = false)
 
         pageDocument.getElementById("ceased-business-warning").text() shouldBe "Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page."
 
         pageDocument.getElementById("ceased-business-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/manage-your-businesses"
       }
-      "(new content) return the correct content when the user has a ceased business" in {
+      "(R17 content) return the correct content when the user has a ceased business" in {
         val isAgentFlag = false
 
         val reportingFrequencyViewModel: ReportingFrequencyViewModel =
@@ -597,9 +596,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
             )
           )
 
-        pageDocument.title() shouldBe title(isNewContentEnabled = true)
+        pageDocument.title() shouldBe titleNew
 
-        testContentByIds(pageDocument, newContentEnabled = true)
+        testContentByIds(pageDocument, R17ContentEnabled = true)
 
         pageDocument.getElementById("ceased-business-warning").text() shouldBe "Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page."
 
@@ -633,13 +632,13 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
         pageDocument.title() shouldBe agentTitle
 
-        testContentByIds(pageDocument, newContentEnabled = false)
+        testContentByIds(pageDocument, R17ContentEnabled = false)
 
         pageDocument.getElementById("ceased-business-warning").text() shouldBe "Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page."
 
         pageDocument.getElementById("ceased-business-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/manage-your-businesses"
       }
-      "(new content) return the correct content when the user has a ceased business and is an agent" in {
+      "(R17 content) return the correct content when the user has a ceased business and is an agent" in {
         val isAgentFlag = true
 
         val reportingFrequencyViewModel: ReportingFrequencyViewModel =
@@ -664,9 +663,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
             )
           )
 
-        pageDocument.title() shouldBe title(isNewContentEnabled = true)
+        pageDocument.title() shouldBe titleNew
 
-        testContentByIds(pageDocument, newContentEnabled = true)
+        testContentByIds(pageDocument, R17ContentEnabled = true)
 
         pageDocument.getElementById("ceased-business-warning").text() shouldBe "Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page."
 
