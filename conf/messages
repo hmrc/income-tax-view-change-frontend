@@ -2295,7 +2295,6 @@ incomeSources.manage.quarterly-period.standard.content.p2             =   If you
 incomeSources.manage.quarterly-period.calendar.content.p1             =   This business is currently reporting from the 1st April by calendar quarters.
 incomeSources.manage.quarterly-period.calendar.content.p2             =   You can change this to report by standard quarters, in line with the tax year, so you report from 6th April. This change can only be made in your compatible software.
 incomeSources.manage.quarterly-period.content.p3                      =   Learn more about standard and calendar quarters
-incomeSources.manage.quarterly-period.content.external-ref-link       =   https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates
 
 incomeSources.manage.business-manage-details.heading                  =   Manage your details
 incomeSources.manage.business-manage-details.sole-trader-section      =   Sole trader
