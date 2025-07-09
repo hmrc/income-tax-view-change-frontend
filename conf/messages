@@ -818,7 +818,6 @@ nextUpdates.r17.tab.quarterly.dropdown.text2                       = new informa
 nextUpdates.r17.tab.quarterly.dropdown.text3                       = any information you’ve already provided that has not changed
 nextUpdates.r17.tab.quarterly.dropdown.text4                       = This is done using
 nextUpdates.r17.tab.quarterly.dropdown.link.text                   = software compatible with Making Tax Digital for Income Tax
-nextUpdates.r17.tab.quarterly.compatibleSoftware.link              = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
 nextUpdates.r17.tab.quarterly.link.text1                           = To view previously submitted updates visit the
 nextUpdates.r17.tab.quarterly.link.text2                           = tax year
 nextUpdates.r17.tab.quarterly.link.text3                           = summary page.

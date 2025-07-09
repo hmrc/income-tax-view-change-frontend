@@ -818,7 +818,6 @@ nextUpdates.r17.tab.quarterly.dropdown.text2                       = gwybodaeth 
 nextUpdates.r17.tab.quarterly.dropdown.text3                       = unrhyw wybodaeth ychwanegol yr ydych eisoes wedi’i darparu sydd heb newid
 nextUpdates.r17.tab.quarterly.dropdown.text4                       = Mae hyn yn cael ei wneud drwy
 nextUpdates.r17.tab.quarterly.dropdown.link.text                   = feddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
-nextUpdates.r17.tab.quarterly.compatibleSoftware.link              = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax.cy
 nextUpdates.r17.tab.quarterly.link.text1                           = Er mwyn bwrw golwg dros ddiweddariadau a gyflwynwyd yn flaenorol, ewch i’r dudalen trosolwg ar gyfer
 nextUpdates.r17.tab.quarterly.link.text2                           = blynyddoedd treth.
 nextUpdates.r17.tab.quarterly.link.text3                           =
