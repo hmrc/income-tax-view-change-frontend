@@ -78,9 +78,9 @@ class ReportingFrequencyPageController @Inject()(
               itsaStatusTable = reportingFrequencyViewUtils.itsaStatusTable(optOutProposition),
               displayCeasedBusinessWarning = user.incomeSources.areAllBusinessesCeased,
               isAnyOfBusinessLatent = user.incomeSources.isAnyOfActiveBusinessesLatent,
-              displayManageYourRfSection = !(optOutProposition.areAllTaxYearsMandated || user.incomeSources.areAllBusinessesCeased)
-            ),
-            optInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17)
+              displayManageYourReportingFrequencySection = !(optOutProposition.areAllTaxYearsMandated || user.incomeSources.areAllBusinessesCeased)),
+            isEnabled(OptInOptOutContentUpdateR17),
+            nextUpdatesLink = if(isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url
           ))
         } else {
           InternalServerError(

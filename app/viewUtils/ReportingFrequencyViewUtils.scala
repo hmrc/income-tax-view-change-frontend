@@ -16,8 +16,10 @@
 
 package viewUtils
 
+import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
+import models.admin.OptInOptOutContentUpdateR17
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, Voluntary}
 import play.api.i18n.Messages
 import services.DateServiceInterface
@@ -33,27 +35,60 @@ class ReportingFrequencyViewUtils @Inject()()(
 ) extends FeatureSwitching {
 
 
-  def itsaStatusString(itsaStatus: ITSAStatus)(implicit messages: Messages): Option[String] = {
+  def itsaStatusString(itsaStatus: ITSAStatus)(implicit messages: Messages, user: MtdItUser[_]): Option[String] = {
+    if(isEnabled(OptInOptOutContentUpdateR17)){
+      itsaStatus match {
+        case Mandated => Some(messages("reporting.frequency.table.mandated.r17"))
+        case Voluntary => Some(messages("reporting.frequency.table.voluntary.r17"))
+        case Annual => Some(messages("reporting.frequency.table.annual.r17"))
+        case _ => None
+      }
+    }else{
+      itsaStatus match {
+        case Mandated => Some(messages("reporting.frequency.table.mandated"))
+        case Voluntary => Some(messages("reporting.frequency.table.voluntary"))
+        case Annual => Some(messages("reporting.frequency.table.annual"))
+        case _ => None
+      }
+    }
+  }
+
+  private def isUsingMTD(itsaStatus: ITSAStatus)(implicit messages: Messages): Option[String] = {
     itsaStatus match {
-      case Mandated => Some(messages("reporting.frequency.table.mandated"))
-      case Voluntary => Some(messages("reporting.frequency.table.voluntary"))
-      case Annual => Some(messages("reporting.frequency.table.annual"))
+      case Mandated => Some(messages("reporting.frequency.table.MTD.isUsingMTD"))
+      case Voluntary => Some(messages("reporting.frequency.table.MTD.isUsingMTD"))
+      case Annual => Some(messages("reporting.frequency.table.MTD.isNotUsingMTD"))
       case _ => None
     }
   }
 
-  def itsaStatusTable(optOutProposition: OptOutProposition)(implicit messages: Messages): Seq[(String, Option[String])] = {
+  def itsaStatusTable(optOutProposition: OptOutProposition)(implicit messages: Messages, user: MtdItUser[_]): Seq[(String, Option[String], Option[String])] = {
     if (optOutProposition.previousTaxYear.crystallised) {
-      Seq(
-        messages("reporting.frequency.table.taxYear", optOutProposition.currentTaxYear.taxYear.startYear.toString, optOutProposition.currentTaxYear.taxYear.endYear.toString) -> itsaStatusString(optOutProposition.currentTaxYear.status),
-        messages("reporting.frequency.table.taxYear", optOutProposition.nextTaxYear.taxYear.startYear.toString, optOutProposition.nextTaxYear.taxYear.endYear.toString) -> itsaStatusString(optOutProposition.nextTaxYear.status)
-      ).filter(_._2.nonEmpty)
+      if(isEnabled(OptInOptOutContentUpdateR17)) {
+        Seq(
+          (messages("reporting.frequency.table.taxYear", optOutProposition.currentTaxYear.taxYear.startYear.toString, optOutProposition.currentTaxYear.taxYear.endYear.toString), isUsingMTD(optOutProposition.currentTaxYear.status), itsaStatusString(optOutProposition.currentTaxYear.status)),
+          (messages("reporting.frequency.table.taxYear", optOutProposition.nextTaxYear.taxYear.startYear.toString, optOutProposition.nextTaxYear.taxYear.endYear.toString), isUsingMTD(optOutProposition.nextTaxYear.status), itsaStatusString(optOutProposition.nextTaxYear.status))
+        ).filter(_._3.nonEmpty)
+      }else{
+        Seq(
+          (messages("reporting.frequency.table.taxYear", optOutProposition.currentTaxYear.taxYear.startYear.toString, optOutProposition.currentTaxYear.taxYear.endYear.toString), None, itsaStatusString(optOutProposition.currentTaxYear.status)),
+          (messages("reporting.frequency.table.taxYear", optOutProposition.nextTaxYear.taxYear.startYear.toString, optOutProposition.nextTaxYear.taxYear.endYear.toString), None, itsaStatusString(optOutProposition.nextTaxYear.status))
+        ).filter(_._3.nonEmpty)
+      }
     } else {
-      Seq(
-        messages("reporting.frequency.table.taxYear", optOutProposition.previousTaxYear.taxYear.startYear.toString, optOutProposition.previousTaxYear.taxYear.endYear.toString) -> itsaStatusString(optOutProposition.previousTaxYear.status),
-        messages("reporting.frequency.table.taxYear", optOutProposition.currentTaxYear.taxYear.startYear.toString, optOutProposition.currentTaxYear.taxYear.endYear.toString) -> itsaStatusString(optOutProposition.currentTaxYear.status),
-        messages("reporting.frequency.table.taxYear", optOutProposition.nextTaxYear.taxYear.startYear.toString, optOutProposition.nextTaxYear.taxYear.endYear.toString) -> itsaStatusString(optOutProposition.nextTaxYear.status)
-      ).filter(_._2.nonEmpty)
+      if(isEnabled(OptInOptOutContentUpdateR17)) {
+        Seq(
+          (messages("reporting.frequency.table.taxYear", optOutProposition.previousTaxYear.taxYear.startYear.toString, optOutProposition.previousTaxYear.taxYear.endYear.toString), isUsingMTD(optOutProposition.previousTaxYear.status), itsaStatusString(optOutProposition.previousTaxYear.status)),
+          (messages("reporting.frequency.table.taxYear", optOutProposition.currentTaxYear.taxYear.startYear.toString, optOutProposition.currentTaxYear.taxYear.endYear.toString), isUsingMTD(optOutProposition.currentTaxYear.status), itsaStatusString(optOutProposition.currentTaxYear.status)),
+          (messages("reporting.frequency.table.taxYear", optOutProposition.nextTaxYear.taxYear.startYear.toString, optOutProposition.nextTaxYear.taxYear.endYear.toString), isUsingMTD(optOutProposition.nextTaxYear.status), itsaStatusString(optOutProposition.nextTaxYear.status))
+        ).filter(_._3.nonEmpty)
+      }else{
+        Seq(
+          (messages("reporting.frequency.table.taxYear", optOutProposition.previousTaxYear.taxYear.startYear.toString, optOutProposition.previousTaxYear.taxYear.endYear.toString), None, itsaStatusString(optOutProposition.previousTaxYear.status)),
+          (messages("reporting.frequency.table.taxYear", optOutProposition.currentTaxYear.taxYear.startYear.toString, optOutProposition.currentTaxYear.taxYear.endYear.toString), None, itsaStatusString(optOutProposition.currentTaxYear.status)),
+          (messages("reporting.frequency.table.taxYear", optOutProposition.nextTaxYear.taxYear.startYear.toString, optOutProposition.nextTaxYear.taxYear.endYear.toString), None, itsaStatusString(optOutProposition.nextTaxYear.status))
+        ).filter(_._3.nonEmpty)
+      }
     }
   }
 }
