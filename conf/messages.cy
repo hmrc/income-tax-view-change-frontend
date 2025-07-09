@@ -2860,7 +2860,7 @@ optIn.confirmNextTaxYear.desc                       = Os byddwch yn optio i mewn
 
 # Reporting Frequency Page
 reporting.frequency.title       = Amlder eich adroddiadau
-reporting.frequency.title.new   = Eich ymrwymiadau o ran rhoi gwybod i ni
+reporting.frequency.title.R17   = Eich ymrwymiadau o ran rhoi gwybod i ni
 reporting.frequency.h2          = Rheoli amlder eich adroddiadau ar gyfer eich holl fusnesau
 
 reporting.frequency.manageReportingFrequency.p1 = Os ydych yn adrodd yn flynyddol, neu’n adrodd yn chwarterol yn wirfoddol, mae’n bosibl y byddwch yn gallu newid amlder eich adroddiadau ar gyfer blynyddoedd treth penodol.
@@ -2891,8 +2891,8 @@ reporting.frequency.mandatoryReporting.link.text  = meini prawf ar gyfer pobl y 
 reporting.frequency.mandatoryReporting.link       = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax.cy#pwy-fydd-angen-cofrestru
 
 #new mandatory reporting messages for reporting frequency with OptInOptOutContentUpdateR17 enabled:
-reporting.frequency.mandatoryReporting.heading.new      = Pan fydd angen defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
-reporting.frequency.mandatoryReporting.inset.new        = Mae’n rhaid i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm os yw cyfanswm eich incwm gros o hunangyflogaeth neu eiddo, neu’r ddau, yn fwy na’r trothwy o £50,000.
+reporting.frequency.mandatoryReporting.heading.R17      = Pan fydd angen defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+reporting.frequency.mandatoryReporting.inset.R17        = Mae’n rhaid i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm os yw cyfanswm eich incwm gros o hunangyflogaeth neu eiddo, neu’r ddau, yn fwy na’r trothwy o £50,000.
 reporting.frequency.mandatoryReporting.p1               = Os bydd hyn yn digwydd yn y flwyddyn dreth {0} i {1}, byddai’n ofynnol i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer y flwyddyn dreth {2} i {3}.
 reporting.frequency.mandatoryReporting.p2               = Find out more about the threshold in the
 
@@ -2904,16 +2904,16 @@ reporting.frequency.compatibleSoftware.p2        =
 reporting.frequency.compatibleSoftware.p3        = Gallwch chi, neu’ch asiant, ddewis o blith amrywiaeth o becynnau meddalwedd, gan gynnwys rhai sy’n rhad ac am ddim a rhai y mae angen talu amdanynt.
 
 #new compatible software messages for reporting frequency with OptInOptOutContentUpdateR17 enabled:
-reporting.frequency.compatibleSoftware.heading.new                      = Pan fydd angen meddalwedd sy’n cydweddu arnoch
-reporting.frequency.compatibleSoftware.p1.new                           = P’un a oes angen i chi gofrestru neu wedi cofrestru’n wirfoddol, mae angen
-reporting.frequency.compatibleSoftware.link.text.new                    = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm arnoch
-reporting.frequency.compatibleSoftware.p2.new                           = Gallwch chi, neu’ch asiant, ddewis o blith amrywiaeth o becynnau meddalwedd, gan gynnwys rhai sy’n rhad ac am ddim a rhai y mae angen talu amdanynt.
-reporting.frequency.compatibleSoftware.p3.new                           = Os ydych chi wedi optio allan, gallwch ddarganfod yma sut i
+reporting.frequency.compatibleSoftware.heading.R17                      = Pan fydd angen meddalwedd sy’n cydweddu arnoch
+reporting.frequency.compatibleSoftware.p1.R17                           = P’un a oes angen i chi gofrestru neu wedi cofrestru’n wirfoddol, mae angen
+reporting.frequency.compatibleSoftware.link.text.R17                    = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm arnoch
+reporting.frequency.compatibleSoftware.p2.R17                           = Gallwch chi, neu’ch asiant, ddewis o blith amrywiaeth o becynnau meddalwedd, gan gynnwys rhai sy’n rhad ac am ddim a rhai y mae angen talu amdanynt.
+reporting.frequency.compatibleSoftware.p3.R17                           = Os ydych chi wedi optio allan, gallwch ddarganfod yma sut i
 reporting.frequency.compatibleSoftware.link2.text                       = gyflwyno’ch Ffurflen Dreth Hunanasesiad
 reporting.frequency.compatibleSoftware.link2                            = https://www.gov.uk/log-in-file-self-assessment-tax-return
 
 reporting.frequency.table.h2                                        = Pa mor aml y mae angen i chi gyflwyno adroddiadau
-reporting.frequency.table.h2.new                                    = Sut rydych yn rhoi gwybod ar gyfer pob blwyddyn dreth
+reporting.frequency.table.h2.R17                                    = Sut rydych yn rhoi gwybod ar gyfer pob blwyddyn dreth
 reporting.frequency.table.heading.taxyear                           = Blwyddyn Dreth
 reporting.frequency.table.heading.status                            = Amlder cyflwyno adroddiadau
 
@@ -2924,9 +2924,9 @@ reporting.frequency.table.annual                                    = Yn flynydd
 
 #new table messages for reporting frequency with OptInOptOutContentUpdateR17 enabled:
 reporting.frequency.table.heading.usingMTD                          = Defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
-reporting.frequency.table.heading.status.new                        = Eich statws
-reporting.frequency.table.MTD.voluntary                             = Iawn
-reporting.frequency.table.MTD.annual                                = Na
+reporting.frequency.table.heading.status.R17                        = Eich statws
+reporting.frequency.table.MTD.isUsingMTD                            = Iawn
+reporting.frequency.table.MTD.isNotUsingMTD                         = Na
 reporting.frequency.table.mandated.r17                              = Yn ofynnol
 reporting.frequency.table.voluntary.r17                             = Wedi cofrestru’n wirfoddol
 reporting.frequency.table.annual.r17                                = Wedi optio allan

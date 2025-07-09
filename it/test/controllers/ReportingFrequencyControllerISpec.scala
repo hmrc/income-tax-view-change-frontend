@@ -116,7 +116,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
                   httpStatus(OK),
-                  elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
+                  elementTextByID("manage-§-heading")("Manage your reporting frequency for all your businesses"),
                   elementTextBySelector(optInOptOutLinks(1))("Opt in to quarterly reporting")
                 )
                 if(isEnabled(OptInOptOutContentUpdateR17)){

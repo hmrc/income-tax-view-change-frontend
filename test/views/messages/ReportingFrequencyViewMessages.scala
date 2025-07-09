@@ -19,13 +19,11 @@ package views.messages
 import models.incomeSourceDetails.TaxYear
 
 object ReportingFrequencyViewMessages {
-  def title(isNewContentEnabled: Boolean): String =
-    if(isNewContentEnabled) "Your reporting obligations - Manage your Self Assessment - GOV.UK"
-    else "Your reporting frequency - Manage your Self Assessment - GOV.UK"
+  val titleNew = "Your reporting obligations - Manage your Self Assessment - GOV.UK"
+  val title = "Your reporting frequency - Manage your Self Assessment - GOV.UK"
   val agentTitle = "Your reporting frequency - Manage your Self Assessment - GOV.UK"
-  def pageHeadingContent(isNewContentEnabled: Boolean): String =
-    if(isNewContentEnabled) "Your reporting obligations"
-    else "Your reporting frequency"
+  val pageHeadingContentNew = "Your reporting obligations"
+  val pageHeadingContent = "Your reporting frequency"
 
   val manageRFHeadingContent = "Manage your reporting frequency for all your businesses"
   val p1Content = "If you are reporting annually or voluntarily reporting quarterly, you may be able to change your reporting frequency for specific tax years."
@@ -44,27 +42,22 @@ object ReportingFrequencyViewMessages {
   val differentObligationsTextTwo = "For tax years you are opted out of, you only need to file a tax return."
   val differentObligationsTextThree = "You can see what is due on the updates and deadlines page."
 
-  def mandatoryReportingHeading(isNewContentEnabled: Boolean): String =
-    if(isNewContentEnabled) "When Making Tax Digital for Income Tax is required"
-    else "When reporting quarterly is mandatory"
-  def mandatoryReportingInset(isNewContentEnabled: Boolean): String =
-    if(isNewContentEnabled) "You must use Making Tax Digital for Income Tax if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold."
-    else "Reporting quarterly is required if your income from self-employment or property, or both, exceeds the income threshold."
-  def mandatoryReportingText(isNewContentEnabled: Boolean): String =
-    if(isNewContentEnabled) "If this happens in the 2022 to 2023 tax year, you would be required to use Making Tax Digital for Income Tax for the 2024 to 2025 tax year."
-    else "You can check the threshold for when reporting quarterly is mandatory in the criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab)"
-  val newMandatoryReportingTextTwo = "Find out more about the threshold in the criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab)"
+  val mandatoryReportingHeadingR17 = "When Making Tax Digital for Income Tax is required"
+  val mandatoryReportingHeading = "When reporting quarterly is mandatory"
+  val mandatoryReportingInsetR17 =  "You must use Making Tax Digital for Income Tax if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold."
+  val mandatoryReportingInset =  "Reporting quarterly is required if your income from self-employment or property, or both, exceeds the income threshold."
+  val mandatoryReportingTextR17 = "If this happens in the 2022 to 2023 tax year, you would be required to use Making Tax Digital for Income Tax for the 2024 to 2025 tax year."
+  val mandatoryReportingText = "You can check the threshold for when reporting quarterly is mandatory in the criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab)"
+  val mandatoryReportingTextTwoR17 = "Find out more about the threshold in the criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab)"
 
-  def compatibleSoftwareHeading(isNewContentEnabled: Boolean): String =
-    if(isNewContentEnabled) "When you need compatible software"
-    else "When compatible software is required"
+  val compatibleSoftwareHeadingR17 = "When you need compatible software"
+  val compatibleSoftwareHeading = "When compatible software is required"
 
-  def compatibleSoftwareText(isNewContentEnabled: Boolean): String =
-    if(isNewContentEnabled) "Whether you are required or voluntarily signed up, you need software compatible with Making Tax Digital for Income Tax (opens in new tab). There are both paid and free options for you or your agent to choose from."
-    else "If you are reporting quarterly, you will need to use software compatible with Making Tax Digital for Income Tax (opens in new tab) There are both paid and free options for you or your agent to choose from."
+  val compatibleSoftwareTextR17 = "Whether you are required or voluntarily signed up, you need software compatible with Making Tax Digital for Income Tax (opens in new tab). There are both paid and free options for you or your agent to choose from."
+  val compatibleSoftwareText = "If you are reporting quarterly, you will need to use software compatible with Making Tax Digital for Income Tax (opens in new tab) There are both paid and free options for you or your agent to choose from."
 
   val compatibleSoftwareTextTwo = "For reporting annually, you can use either compatible software or your HMRC online account to submit your tax return."
 
-  val newCompatibleSoftwareTextThree = "If you are opted out, you can find out here how to file your Self Assessment tax return (opens in new tab)."
+  val compatibleSoftwareTextThreeR17 = "If you are opted out, you can find out here how to file your Self Assessment tax return (opens in new tab)."
 
 }
