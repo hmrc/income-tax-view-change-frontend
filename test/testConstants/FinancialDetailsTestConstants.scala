@@ -622,6 +622,17 @@ object FinancialDetailsTestConstants {
       )
     )
 
+  def financialDetailsModelWithPoaOneNoChargeRef(): FinancialDetailsModel =
+    FinancialDetailsModel(
+      balanceDetails = balanceDetails,
+      documentDetails = List(
+        documentDetailModel(transactionId = id1040000125, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, latePaymentInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1)))
+      ),
+      financialDetails = List(
+        financialDetail(transactionId = Some(id1040000125), taxYear = testTaxYear, mainTransaction = "4920", chargeRef = None),
+      )
+    )
+
   def financialDetailsModelWithPoaOneAndTwoWithLpi() =
     FinancialDetailsModel(
       balanceDetails = balanceDetails,
@@ -2062,6 +2073,15 @@ object FinancialDetailsTestConstants {
       FinancialDetail(taxYear = "2018", mainTransaction = Some("4028"), transactionId = Some("LPP1"),
         totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
       FinancialDetail(taxYear = "2018", mainTransaction = Some("4029"), transactionId = Some("LPP2"), chargeReference = Some("chargeRef123"),
+        totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15))))))
+    )
+  )
+
+  val financialDetailsWithLPP2NoChargeRef: FinancialDetailsModel = FinancialDetailsModel(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(6.00), Some(1.00), Some(2.00), Some(4.00), None),
+    documentDetails = penaltiesDocumentDetails,
+    financialDetails = List(
+      FinancialDetail(taxYear = "2018", mainTransaction = Some("4029"), transactionId = Some("LPP2"),
         totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15))))))
     )
   )

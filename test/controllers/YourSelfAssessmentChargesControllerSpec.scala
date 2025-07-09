@@ -20,7 +20,7 @@ import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockAuthActions
 import mocks.services.MockClaimToAdjustService
-import models.admin.{AdjustPaymentsOnAccount, CreditsRefundsRepay, ReviewAndReconcilePoa}
+import models.admin.{AdjustPaymentsOnAccount, CreditsRefundsRepay, PenaltiesAndAppeals, ReviewAndReconcilePoa}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
@@ -111,6 +111,12 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
     Some(OutstandingChargesModel(List(
       OutstandingChargeModel("BCD", Some(LocalDate.parse("2020-12-31")), 10.23, 1234), OutstandingChargeModel("BCD", None, 1.23, 1234))
     ))
+  )
+
+  def whatYouOweChargesListWithLPP2NoChargeRef: WhatYouOweChargesList = WhatYouOweChargesList(
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    financialDetailsLPP2NoChargeRef,
+    Some(OutstandingChargesModel(List()))
   )
 
   val noFinancialDetailErrors = List(testFinancialDetail(2018))
@@ -334,6 +340,19 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
 
 
+            }
+
+            "user has a second late payment penalty without a chargeReference, so url cannot be generated" in {
+              enable(PenaltiesAndAppeals)
+              mockSingleBISWithCurrentYearAsMigrationYear()
+              setupMockSuccess(mtdUserRole)
+              setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+
+              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+                .thenReturn(Future.successful(whatYouOweChargesListWithLPP2NoChargeRef))
+
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
             }
           }
         }
