@@ -24,7 +24,7 @@
         formWithCSRF: FormWithCSRF,
         govukRadios: GovukRadios,
         govukErrorSummary: GovukErrorSummary,
-        govukButton: GovukButton,
+        continueButton: ContinueButton,
         h1: h1,
         p: p
 )
@@ -91,9 +91,6 @@
         </div>
         }
 
-        @govukButton(Button(
-            content = Text(messages("base.continue")),
-            attributes = Map("id" -> "continue-button")
-        ))
+       @continueButton()
     }
 }

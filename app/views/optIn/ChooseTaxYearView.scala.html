@@ -25,7 +25,7 @@
         mainTemplate: unifiedLayout,
         formWithCSRF: FormWithCSRF,
         govukRadios: GovukRadios,
-        govukButton: GovukButton,
+        continueButton: ContinueButton,
         errorSummary: ErrorSummary,
         h1: h1,
         h2: h2,
@@ -43,57 +43,54 @@
 }
 
 @formBlock = {
-    @formWithCSRF(action = confirmOptInPostUrl, Symbol("id") -> "confirm-multi-year-opt-in-form") {
-        @govukRadios(Radios(
-            fieldset = Some(Fieldset(
-                legend = Some(Legend(
-                    content = Text(messages("optin.chooseOptInTaxYear.whichTaxYear")),
-                    classes = "govuk-fieldset__legend--m"
-                )),
-                attributes = Map("id" -> "whichTaxYear")
+@formWithCSRF(action = confirmOptInPostUrl, Symbol("id") -> "confirm-multi-year-opt-in-form") {
+    @govukRadios(Radios(
+        fieldset = Some(Fieldset(
+            legend = Some(Legend(
+                content = Text(messages("optin.chooseOptInTaxYear.whichTaxYear")),
+                classes = "govuk-fieldset__legend--m"
             )),
-            items = model.availableOptInTaxYear.zipWithIndex.map { case (optOutTaxYear, index) =>
-                RadioItem(
-                    id = Some(s"choice-year-$index"),
-                    value = Some(optOutTaxYear.toString),
-                    content = Text(messages("optin.chooseOptInTaxYear.taxYearOnwards", s"${optOutTaxYear.startYear}", s"${optOutTaxYear.endYear}")),
-                    hint = Some(Hint(
-                        id = Some(s"radio-hint-$index"),
-                        classes = "govuk-hint govuk-radios__hint",
-                        content = Text(messages(s"optin.chooseOptInTaxYear.radiobutton.hint${index+1}"))
-                    ))
-                )
-            },
-            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
-        ).withFormField(form(ChooseTaxYearForm.choiceField)))
+            attributes = Map("id" -> "whichTaxYear")
+        )),
+        items = model.availableOptInTaxYear.zipWithIndex.map { case (optOutTaxYear, index) =>
+            RadioItem(
+                id = Some(s"choice-year-$index"),
+                value = Some(optOutTaxYear.toString),
+                content = Text(messages("optin.chooseOptInTaxYear.taxYearOnwards", s"${optOutTaxYear.startYear}", s"${optOutTaxYear.endYear}")),
+                hint = Some(Hint(
+                    id = Some(s"radio-hint-$index"),
+                    classes = "govuk-hint govuk-radios__hint",
+                    content = Text(messages(s"optin.chooseOptInTaxYear.radiobutton.hint${index + 1}"))
+                ))
+            )
+        },
+        errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args: _*))))
+    ).withFormField(form(ChooseTaxYearForm.choiceField)))
 
-        <div class="govuk-button-group">
-            @govukButton(Button(
-                content = Text(messages("optin.chooseOptInTaxYear.continue")),
-                attributes = Map("id" -> "continue-button")
-            ))
-            <a class="govuk-link" id="cancel-button" href=@model.cancelURL>
-            @messages("optin.confirmOptIn.cancel")
-            </a>
-        </div>
-    }
+    <div class="govuk-button-group">
+        @continueButton(Some(messages("optin.chooseOptInTaxYear.continue")))
+        <a class="govuk-link" id="cancel-button" href=@model.cancelURL>
+        @messages("optin.confirmOptIn.cancel")
+        </a>
+    </div>
+}
 }
 
 @detailsDropdownContent = {
-    @p(id=Some("dropdown-insettext-p1")) {
-        @messages("optin.chooseOptInTaxYear.dropDown.insetText.p1")
-    }
-    @p(id=Some("dropdown-insettext-p2")) {
-        @messages("optin.chooseOptInTaxYear.dropDown.insetText.p2")
-        <ul class="govuk-list govuk-list--bullet">
-            <li id="dropdown-insettext-p2-listitems1">
-                @messages("optin.chooseOptInTaxYear.dropDown.insetText.p2.list1")
-            </li>
-            <li id="dropdown-insettext-p2-listitems2">
-                @messages("optin.chooseOptInTaxYear.dropDown.insetText.p2.list2")
-            </li>
-        </ul>
-    }
+@p(id = Some("dropdown-insettext-p1")) {
+    @messages("optin.chooseOptInTaxYear.dropDown.insetText.p1")
+}
+@p(id = Some("dropdown-insettext-p2")) {
+    @messages("optin.chooseOptInTaxYear.dropDown.insetText.p2")
+    <ul class="govuk-list govuk-list--bullet">
+        <li id="dropdown-insettext-p2-listitems1">
+        @messages("optin.chooseOptInTaxYear.dropDown.insetText.p2.list1")
+        </li>
+        <li id="dropdown-insettext-p2-listitems2">
+        @messages("optin.chooseOptInTaxYear.dropDown.insetText.p2.list2")
+        </li>
+    </ul>
+}
 
 }
 @mainTemplate(
@@ -102,26 +99,26 @@
     isAgent = model.isAgent,
     btaNavPartial = user.btaNavPartial,
     useFallbackBackLink = true
-    ) {
+) {
 
     @errorSummary(form = form)
 
     @h1(id = Some("heading"), msg = messages("optin.chooseOptInTaxYear.heading"), size = "l")
 
     <div class="govuk-!-margin-bottom-7 ">
-        @p(id=Some("description1")) {
-            @messages("optin.chooseOptInTaxYear.desc1")
-        }
+    @p(id = Some("description1")) {
+        @messages("optin.chooseOptInTaxYear.desc1")
+    }
     </div>
 
     <div class="govuk-!-margin-bottom-7 ">
-        @p(id=Some("description2")) {
-            @h2(msg = "optin.chooseOptInTaxYear.desc2.heading", optId = Some("description2-heading"))
-            @govukInsetText(InsetText(content = HtmlContent(messages("optin.chooseOptInTaxYear.desc2.insetText")), id = Some("description2-insettext")))
-            @p(id=Some("description2-text")) {
-                @messages("optin.chooseOptInTaxYear.desc2.text")
-            }
+    @p(id = Some("description2")) {
+        @h2(msg = "optin.chooseOptInTaxYear.desc2.heading", optId = Some("description2-heading"))
+        @govukInsetText(InsetText(content = HtmlContent(messages("optin.chooseOptInTaxYear.desc2.insetText")), id = Some("description2-insettext")))
+        @p(id = Some("description2-text")) {
+            @messages("optin.chooseOptInTaxYear.desc2.text")
         }
+    }
     </div>
 
     @detailsDropdown("optin.chooseOptInTaxYear.dropDown.heading", detailsDropdownContent)

@@ -19,6 +19,7 @@ package views
 import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import config.featureswitch.FeatureSwitching
+import controllers.routes.{ChargeSummaryController, CreditAndRefundController, PaymentController}
 import enums.CodingOutType._
 import implicits.ImplicitDateFormatter
 import models.financialDetails._
@@ -97,6 +98,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val itsaPOA1: String = "ITSA- POA 1"
   val itsaPOA2: String = "ITSA - POA 2"
   val cancelledPayeSelfAssessment: String = messages("whatYouOwe.cancelledPayeSelfAssessment.text")
+  val poa1CollectedCodedOut = messages("whatYouOwe.poa1CodedOut.text")
+  val poa2CollectedCodedOut = messages("whatYouOwe.poa2CodedOut.text")
   val penaltiesCalcUrl: String = "http://localhost:9185/penalties/income-tax/calculation"
 
   val interestEndDateFuture: LocalDate = LocalDate.of(2100, 1, 1)
@@ -128,6 +131,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                   currentTaxYear: Int = fixedDate.getYear,
                   hasLpiWithDunningLock: Boolean = false,
                   dunningLock: Boolean = false,
+                  taxYear: Int = fixedDate.getYear,
                   migrationYear: Int = fixedDate.getYear - 1,
                   reviewAndReconcileEnabled: Boolean = false,
                   adjustPaymentsOnAccountFSEnabled: Boolean = false,
@@ -150,6 +154,12 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       backUrl = "testBackURL",
       utr = Some("1234567890"),
       dunningLock = dunningLock,
+      creditAndRefundUrl = CreditAndRefundController.show().url,
+      taxYearSummaryUrl = _ => controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear).url,
+      adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = false).url,
+      chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) =>
+        ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url,
+      paymentHandOffUrl = PaymentController.paymentHandoff(_, None).url,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       creditAndRefundEnabled = true,
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),
@@ -173,6 +183,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                        migrationYear: Int = fixedDate.getYear - 1,
                        reviewAndReconcileEnabled: Boolean = false,
                        dunningLock: Boolean = false,
+                       taxYear: Int = fixedDate.getYear,
                        hasLpiWithDunningLock: Boolean = false,
                        adjustPaymentsOnAccountFSEnabled: Boolean = false,
                        claimToAdjustViewModel: Option[WYOClaimToAdjustViewModel] = None) {
@@ -198,9 +209,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       backUrl = "testBackURL",
       utr = Some("1234567890"),
       dunningLock = dunningLock,
+      creditAndRefundUrl = CreditAndRefundController.showAgent().url,
+      taxYearSummaryUrl = _ => controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url,
+      adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = true).url,
+      chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) =>
+        ChargeSummaryController.showAgent(taxYearEnd, transactionId, isInterest).url,
+      paymentHandOffUrl = PaymentController.paymentHandoff(_, None).url,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       creditAndRefundEnabled = true,
-      isAgent = true,
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),
       LPP2Url = ""
     )(FakeRequest(), agentUser, implicitly, dateService)
@@ -371,6 +387,20 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     codedOutDetails = None
   )
 
+  val whatYouOweWithPoaOneCollected: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    chargesList = List(chargeItemWithPoaCodingOutAccepted()),
+    outstandingChargesModel = None,
+    codedOutDetails = Some(codedOutDetails)
+  )
+
+  val whatYouOweWithPoaTwoCollected: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    chargesList = List(chargeItemWithPoaCodingOutAccepted().copy(transactionType = PoaTwoDebit)),
+    outstandingChargesModel = None,
+    codedOutDetails = Some(codedOutDetails)
+  )
+
   val noChargesModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
 
   val whatYouOweDataWithPayeSA: WhatYouOweChargesList = WhatYouOweChargesList(
@@ -432,14 +462,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         "have review and reconcile extra payments with Accrues Interest tags in the same table" in new TestSetup(
           charges = whatYouOweWithReviewReconcileDataNotYetDue,
           reviewAndReconcileEnabled  = true) {
-          val poaExtra1Table: Element = pageDocument.getElementById("due-0")
+          val poaExtra1Table: Element = pageDocument.getElementsByClass("govuk-table__row").get(1)
           poaExtra1Table.select("td").first().text() shouldBe fixedDate.plusYears(100).minusDays(1).toLongDateShort
           poaExtra1Table.select("td").get(1).text() shouldBe "Accrues interest " + poaExtra1Text + " 1"
           poaExtra1Table.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
 
           poaExtra1Table.select("td").last().text() shouldBe "£50.00"
 
-          val poa2ExtraTable: Element = pageDocument.getElementById("due-1")
+          val poa2ExtraTable: Element = pageDocument.getElementsByClass("govuk-table__row").get(2)
           poa2ExtraTable.select("td").first().text() shouldBe fixedDate.plusYears(100).plusDays(30).toLongDateShort
           poa2ExtraTable.select("td").get(1).text() shouldBe "Accrues interest " + poaExtra2Text + " 2"
           poa2ExtraTable.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
@@ -448,14 +478,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
         "have interest charges for paid reconciliation charges in the same table" in new TestSetup(charges = whatYouOweReconciliationInterestData,
           reviewAndReconcileEnabled = true) {
-          val poaExtra1Table: Element = pageDocument.getElementById("due-0")
+          val poaExtra1Table: Element = pageDocument.getElementsByClass("govuk-table__row").get(1)
           poaExtra1Table.select("td").first().text() shouldBe interestEndDateFuture.toLongDateShort
           poaExtra1Table.select("td").get(1).text() shouldBe poa1ReconcileInterest + " 1"
           poaExtra1Table.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
 
           poaExtra1Table.select("td").last().text() shouldBe "£100.00"
 
-          val poa2ExtraTable: Element = pageDocument.getElementById("due-1")
+          val poa2ExtraTable: Element = pageDocument.getElementsByClass("govuk-table__row").get(2)
           poa2ExtraTable.select("td").first().text() shouldBe interestEndDateFuture.toLongDateShort
           poa2ExtraTable.select("td").get(1).text() shouldBe poa2ReconcileInterest + " 2"
           poa2ExtraTable.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
@@ -463,21 +493,21 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           poa2ExtraTable.select("td").last().text() shouldBe "£40.00"
         }
         "have penalty charges in table" in new TestSetup(whatYouOweAllPenalties, LPP2Url = penaltiesCalcUrl) {
-          val lpp1Row: Element = pageDocument.getElementById("due-2")
+          val lpp1Row: Element = pageDocument.getElementsByClass("govuk-table__row").get(3)
           lpp1Row.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
           lpp1Row.select("td").get(1).text() shouldBe lpp1Text + " 3"
           lpp1Row.select("td").get(1).getElementsByClass("govuk-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(fixedDate.getYear, id1040000123).url
           lpp1Row.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
           lpp1Row.select("td").last().text() shouldBe "£50.00"
 
-          val lpp2Row: Element = pageDocument.getElementById("due-3")
+          val lpp2Row: Element = pageDocument.getElementsByClass("govuk-table__row").get(4)
           lpp2Row.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
           lpp2Row.select("td").get(1).text() shouldBe lpp2Text + " 4"
           lpp2Row.select("td").get(1).getElementsByClass("govuk-link").attr("href") shouldBe penaltiesCalcUrl
           lpp2Row.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
           lpp2Row.select("td").last().text() shouldBe "£75.00"
 
-          val lspRow: Element = pageDocument.getElementById("due-0")
+          val lspRow: Element = pageDocument.getElementsByClass("govuk-table__row").get(1)
           lspRow.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
           lspRow.select("td").get(1).text() shouldBe lspText + " 1"
           lspRow.select("td").get(1).getElementsByClass("govuk-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(fixedDate.getYear, id1040000123).url
@@ -485,19 +515,19 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           lspRow.select("td").last().text() shouldBe "£50.00"
         }
         "have interest charges for paid penalties in table" in new TestSetup(whatYouOweAllPenaltiesInterest) {
-          val lspRow: Element = pageDocument.getElementById("due-0")
+          val lspRow: Element = pageDocument.getElementsByClass("govuk-table__row").get(1)
           lspRow.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
           lspRow.select("td").get(1).text() shouldBe lspInterest + " 1"
           lspRow.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
           lspRow.select("td").last().text() shouldBe "£100.00"
 
-          val lpp1Row: Element = pageDocument.getElementById("due-2")
+          val lpp1Row: Element = pageDocument.getElementsByClass("govuk-table__row").get(3)
           lpp1Row.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
           lpp1Row.select("td").get(1).text() shouldBe lpp1Interest + " 3"
           lpp1Row.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
           lpp1Row.select("td").last().text() shouldBe "£99.00"
 
-          val lpp2Row: Element = pageDocument.getElementById("due-3")
+          val lpp2Row: Element = pageDocument.getElementsByClass("govuk-table__row").get(4)
           lpp2Row.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
           lpp2Row.select("td").get(1).text() shouldBe lpp2Interest + " 4"
           lpp2Row.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
@@ -609,7 +639,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         "have payment details and should not contain future payments " +
           "and overdue payment headers" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()(dateService)) {
           pageDocument.getElementById("payment-button").text shouldBe payNow
-          pageDocument.getElementById("payment-button-link").
+          pageDocument.getElementById("payment-button").
             attr("href") shouldBe controllers.routes.PaymentController.
             paymentHandoff(5000).url
         }
@@ -886,13 +916,12 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
         "have accruing interest displayed below each overdue POA" in new TestSetup(charges = whatYouOweDataWithOverdueInterestData(List(None, None))) {
-          def overduePaymentsInterestTableRow(index: String): Element = pageDocument.getElementById(s"charge-interest-$index")
 
-          overduePaymentsInterestTableRow("0").select("td").get(1).text() shouldBe interestFromToDate("25 May 2019", "25 Jun 2019", "2.6")
-          overduePaymentsInterestTableRow("0").select("td").last().text() shouldBe "£42.50"
+          pageDocument.getElementById("accrued-interest-charge-type-0").text() shouldBe interestFromToDate("25 May 2019", "25 Jun 2019", "2.6")
+          pageDocument.getElementById("accrued-interest-amount-due-0").text() shouldBe "£42.50"
 
-          overduePaymentsInterestTableRow("1").select("td").get(1).text() shouldBe interestFromToDate("25 May 2019", "25 Jun 2019", "6.2")
-          overduePaymentsInterestTableRow("1").select("td").last().text() shouldBe "£24.05"
+          pageDocument.getElementById("accrued-interest-charge-type-1").text() shouldBe interestFromToDate("25 May 2019", "25 Jun 2019", "6.2")
+          pageDocument.getElementById("accrued-interest-amount-due-1").text() shouldBe "£24.05"
         }
         "should have payment processing bullets when there is accruing interest" in new TestSetup(charges = whatYouOweDataWithOverdueInterestData(List(None, None))) {
 
@@ -906,12 +935,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
         "only show interest for POA when there is no late Payment Interest" in new TestSetup(charges = whatYouOweDataWithOverdueInterestData(List(Some(34.56), None))) {
-          def overduePaymentsInterestTableRow(index: String): Element = pageDocument.getElementById(s"charge-interest-$index")
 
-          Option(overduePaymentsInterestTableRow("0")).isDefined shouldBe false
+          Option(pageDocument.getElementById("accrued-interest-charge-type-0")).isDefined shouldBe false
 
-          overduePaymentsInterestTableRow("1").select("td").get(1).text() shouldBe interestFromToDate("25 May 2019", "25 Jun 2019", "6.2")
-          overduePaymentsInterestTableRow("1").select("td").last().text() shouldBe "£24.05"
+          pageDocument.getElementById("accrued-interest-charge-type-1").text() shouldBe interestFromToDate("25 May 2019", "25 Jun 2019", "6.2")
+          pageDocument.getElementById("accrued-interest-amount-due-1").text() shouldBe "£24.05"
         }
 
         "not have a paragraph explaining interest rates when there is no accruing interest" in new TestSetup(charges = whatYouOweDataWithOverdueDataIt()) {
@@ -921,7 +949,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         "have payments data with button" in new TestSetup(charges = whatYouOweDataWithOverdueData()) {
           pageDocument.getElementById("payment-button").text shouldBe payNow
 
-          pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
+          pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
 
         }
 
@@ -1020,7 +1048,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         pageDocument.getElementById("payment-button").text shouldBe payNow
 
-        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(10000).url
+        pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(10000).url
 
         findElementById("pre-mtd-payments-heading") shouldBe None
       }
@@ -1086,7 +1114,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         pageDocument.getElementById("payment-button").text shouldBe payNow
 
-        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
+        pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
 
       }
 
@@ -1154,7 +1182,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
 
     "codingOut is enabled" should {
-      "have coding out message displayed at the bottom of the page" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2) {
+      "have coding out message displayed at the bottom of the page" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2, taxYear = whatYouOweDataWithCodingOutNics2.codedOutDetails.get.codingTaxYear.endYear) {
         Option(pageDocument.getElementById("coding-out-summary-link")).isDefined shouldBe true
         pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
           "/report-quarterly/income-and-expenses/view/tax-year-summary/2021"
@@ -1183,10 +1211,22 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
         findElementById("coding-out-summary-link") shouldBe None
       }
+
+      "have a Payment on Account 1 entry" in new TestSetup(charges = whatYouOweWithPoaOneCollected, taxYear = whatYouOweWithPoaOneCollected.codedOutDetails.get.codingTaxYear.endYear) {
+        pageDocument.getElementById("due-0").text().contains(poa1CollectedCodedOut) shouldBe true
+        pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
+        pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/tax-year-summary/2021"
+      }
+
+      "have a Payment on Account 2 entry" in new TestSetup(charges = whatYouOweWithPoaTwoCollected, taxYear = whatYouOweWithPoaTwoCollected.codedOutDetails.get.codingTaxYear.endYear) {
+        pageDocument.getElementById("due-0").text().contains(poa2CollectedCodedOut) shouldBe true
+        pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
+        pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/tax-year-summary/2021"
+      }
     }
 
     "At crystallization, the user has the coding out requested amount fully collected" should {
-      "only show coding out content under header" in new TestSetup(charges = whatYouOweDataWithCodingOutFullyCollected) {
+      "only show coding out content under header" in new TestSetup(charges = whatYouOweDataWithCodingOutFullyCollected, taxYear = whatYouOweDataWithCodingOutFullyCollected.codedOutDetails.get.codingTaxYear.endYear) {
         pageDocument.getElementById("coding-out-notice").text() shouldBe codingOutNoticeFullyCollected
         pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
           "/report-quarterly/income-and-expenses/view/tax-year-summary/2021"

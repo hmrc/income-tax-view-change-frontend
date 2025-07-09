@@ -14,17 +14,27 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
-@import uk.gov.hmrc.govukfrontend.views.Aliases.Button
-@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+@import views.html.components._
+@import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
 
 @this(
-        govukButton: GovukButton
+    p: p,
+    link: link
 )
-@(alternativeText: Option[String] = None)(implicit messages: Messages)
+@()(
+    implicit messages: Messages
+)
 
-@govukButton(Button(
-    content = Text(alternativeText.getOrElse(messages("base.continue"))),
-    id = Some("continue-button"),
-    classes = "govuk-button"
-))
+<div id="payment-under-review-info">
+    @p(){
+        @getMessage("dunningLock.text", "")
+        @link(
+            link = "https://www.gov.uk/tax-appeals",
+            messageKey = getPrefix("dunningLock.link"),
+            id = Some("disagree-with-tax-appeal-link"),
+            rel=Some("noreferrer noopener"),
+            target = Some("_blank"),
+            additionalOpenTabMessage = Some(".")
+        )
+    }
+</div>
