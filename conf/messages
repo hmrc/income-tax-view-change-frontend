@@ -2874,11 +2874,9 @@ reporting.frequency.mandatoryReporting.heading    = When reporting quarterly is 
 reporting.frequency.mandatoryReporting.inset      = Reporting quarterly is required if your income from self-employment or property, or both, exceeds the income threshold.
 reporting.frequency.mandatoryReporting.text       = You can check the threshold for when reporting quarterly is mandatory in the
 reporting.frequency.mandatoryReporting.link.text  = criteria for people who will need to sign up for Making Tax Digital for Income Tax
-reporting.frequency.mandatoryReporting.link       = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up
 
 reporting.frequency.compatibleSoftware.heading   = When compatible software is required
 reporting.frequency.compatibleSoftware.p1        = If you are reporting quarterly, you will need to use
-reporting.frequency.compatibleSoftware.link      = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
 reporting.frequency.compatibleSoftware.link.text = software compatible with Making Tax Digital for Income Tax
 reporting.frequency.compatibleSoftware.p2        = There are both paid and free options for you or your agent to choose from.
 reporting.frequency.compatibleSoftware.p3        = For reporting annually, you can use either compatible software or your HMRC online account to submit your tax return.

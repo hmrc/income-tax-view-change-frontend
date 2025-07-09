@@ -225,6 +225,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   val optinCompletedOptInSubmitUpdatesDesc1BUrl = servicesConfig.getString("external-urls.optin.completedOptIn.submitUpdates.desc1.b.url")
   val optinCompletedOptInIncomeThresholdDescBUrl = servicesConfig.getString("external-urls.optin.completedOptIn.incomeThreshold.desc.b.url")
   val incomeSourcesManageQuarterlyPeriodContentExternalRefLink = servicesConfig.getString("external-urls.incomeSources.manage.quarterly-period.content.external-ref-link")
+  val reportingFrequencyMandatoryReportingLink = servicesConfig.getString("external-urls.reporting.frequency.mandatoryReporting.link")
+  val reportingFrequencyCompatibleSoftwareLink = servicesConfig.getString("external-urls.reporting.frequency.compatibleSoftware.link")
 
 
 }
