@@ -24,7 +24,8 @@
 @this(
         p: p,
         link: link,
-        govukDetails: GovukDetails
+        govukDetails: GovukDetails,
+        appConfig: config.FrontendAppConfig
 )
 
 @()(
@@ -50,7 +51,7 @@
         <ul class="govuk-list govuk-list--bullet">
             <li>@getMessage("whatIsPaymentOnAccount.p2")</li>
             <li>@link(
-                link = "https://www.gov.uk/self-employed-national-insurance-rates",
+                link = appConfig.yourSelfAssessmentChargeSummaryWhatIsPaymentOnAccountP3Link,
                 messageKey = getMessage("whatIsPaymentOnAccount.p3"),
                 rel = Some("noreferrer noopener"),
                 target = Some("_blank")

@@ -228,6 +228,5 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   val incomeSourcesManageQuarterlyPeriodContentExternalRefLink = servicesConfig.getString("external-urls.incomeSources.manage.quarterly-period.content.external-ref-link")
   val reportingFrequencyMandatoryReportingLink = servicesConfig.getString("external-urls.reporting.frequency.mandatoryReporting.link")
   val reportingFrequencyCompatibleSoftwareLink = servicesConfig.getString("external-urls.reporting.frequency.compatibleSoftware.link")
-
-
+  val yourSelfAssessmentChargeSummaryWhatIsPaymentOnAccountP3Link = servicesConfig.getString("external-urls.yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3-link")
 }
