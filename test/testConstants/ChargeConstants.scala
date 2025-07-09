@@ -87,7 +87,7 @@ trait ChargeConstants {
                                               overdue: List[Boolean] = List(true, true),
                                               poaRelevantAmount: Option[BigDecimal] = None,
                                               dueDateForFinancialDetail: List[LocalDate] = List.empty,
-                                              chargeReference: List[Option[String]] = List(None, None)): List[ChargeItem] = {
+                                              chargeReference: List[Option[String]] = List(Some("ABCD1234"), Some("ABCD1234"))): List[ChargeItem] = {
 
     List(
       ChargeItem(transactionId = transactionId.head,
@@ -364,7 +364,8 @@ trait ChargeConstants {
     poaRelevantAmount = None,
     dueDateForFinancialDetail = Some(LocalDate.parse("2024-01-14")),
     paymentLotItem = Some("paymentLotItem"),
-    paymentLot = Some("paymentLot")
+    paymentLot = Some("paymentLot"),
+    chargeReference = Some("chargeRef")
   )
 
   val poa1WithCodedOut = ChargeItem(
@@ -388,7 +389,7 @@ trait ChargeConstants {
     dueDateForFinancialDetail = Some(LocalDate.parse("2024-01-14")),
     paymentLotItem = Some("paymentLotItem"),
     paymentLot = Some("paymentLot"),
-    chargeReference = Some("chargeRef")
+    chargeReference = Some("ABCD1234")
   )
   val poa2WithCodedOut = ChargeItem(
     transactionId = id1040000124,
@@ -411,7 +412,7 @@ trait ChargeConstants {
     dueDateForFinancialDetail = Some( LocalDate.parse("2023-12-14")),
     paymentLotItem = Some("paymentLotItem"),
     paymentLot = Some("paymentLot"),
-    chargeReference = Some("chargeRef")
+    chargeReference = Some("ABCD1234")
   )
 
   val poa1 = ChargeItem(
@@ -435,7 +436,7 @@ trait ChargeConstants {
     dueDateForFinancialDetail = Some( LocalDate.parse("2023-12-14")),
     paymentLotItem = Some("paymentLotItem"),
     paymentLot = Some("paymentLot"),
-    chargeReference = Some("chargeRef")
+    chargeReference = Some("ABCD1234")
   )
 
   val poa2 = ChargeItem(
@@ -459,7 +460,7 @@ trait ChargeConstants {
       dueDateForFinancialDetail = Some( LocalDate.parse("2023-12-14")),
       paymentLotItem = Some("paymentLotItem"),
        paymentLot = Some("paymentLot"),
-      chargeReference = Some("chargeRef")
+      chargeReference = Some("ABCD1234")
   )
 
   val poa1WithFutureDueDate = ChargeItem(
@@ -727,7 +728,8 @@ trait ChargeConstants {
     latePaymentInterestAmount = List(None, None),
     interestOutstandingAmount = List(None, None),
     interestEndDate = List(Some(LocalDate.of(2018, 6, 15)), Some(LocalDate.of(2018, 6, 15))),
-    lpiWithDunningLock = List(None, None)
+    lpiWithDunningLock = List(None, None),
+    chargeReference = List(Some("chargeRefLPP1"), Some("chargeRefLPP2"))
   )
 
   val financialDetailsLatePaymentPenaltiesChargeItem: List[ChargeItem] = testFinancialDetailsChargeItems(
@@ -739,7 +741,8 @@ trait ChargeConstants {
     latePaymentInterestAmount = List(None, None),
     dunningLock = noDunningLocks,
     interestRate = List(Some(100), Some(100)),
-    dueDateForFinancialDetail = List(fixedDate.plusDays(1), fixedDate.plusDays(1))
+    dueDateForFinancialDetail = List(fixedDate.plusDays(1), fixedDate.plusDays(1)),
+    chargeReference = List(Some("chargeRefLPP1"), Some("chargeRefLPP2"))
   )
   val financialDetailsLateSubmissionPenaltyChargeItem: List[ChargeItem] = testFinancialDetailsChargeItems(
     transactionId = List(id1040000123, id1040000124),

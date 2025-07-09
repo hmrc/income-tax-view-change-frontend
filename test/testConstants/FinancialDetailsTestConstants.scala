@@ -871,6 +871,7 @@ object FinancialDetailsTestConstants {
         clearedAmount = Some(100),
         chargeType = Some(NIC4_WALES),
         accruedInterest = Some(100),
+        chargeReference = Some("chargeRef"),
         items = Some(Seq(SubItem(
           dueDate = Some(LocalDate.parse("2019-05-15")),
           subItemId = Some("1"),
@@ -925,6 +926,7 @@ object FinancialDetailsTestConstants {
         clearedAmount = Some(100),
         chargeType = Some(NIC4_WALES),
         accruedInterest = Some(100),
+        chargeReference = Some("chargeRef"),
         items = Some(Seq(SubItem(
           dueDate = Some(LocalDate.parse("2019-05-15")),
           subItemId = Some("1"),
@@ -979,6 +981,7 @@ object FinancialDetailsTestConstants {
         clearedAmount = Some(100),
         chargeType = Some(NIC4_WALES),
         accruedInterest = Some(100),
+        chargeReference = Some("chargeRef"),
         items = Some(Seq(SubItem(
           dueDate = Some(LocalDate.parse("2019-05-15")),
           subItemId = Some("1"),
@@ -1033,6 +1036,7 @@ object FinancialDetailsTestConstants {
         clearedAmount = Some(100),
         chargeType = Some(NIC4_WALES),
         accruedInterest = Some(100),
+        chargeReference = Some("chargeRef"),
         items = Some(Seq(SubItem(
           dueDate = Some(LocalDate.parse("2019-05-15")),
           subItemId = Some("1"),
@@ -1308,7 +1312,8 @@ object FinancialDetailsTestConstants {
                                                      latePaymentInterestAmount: List[Option[BigDecimal]] = List(Some(100), Some(100)),
                                                      interestEndDate: List[Option[LocalDate]] = List(Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29))),
                                                      lpiWithDunningLock: List[Option[BigDecimal]] = List(Some(100), Some(100)),
-                                                     amountCodedOut: List[Option[BigDecimal]] = List(None, None)
+                                                     amountCodedOut: List[Option[BigDecimal]] = List(None, None),
+                                                     chargeReference: List[Option[String]] = List(Some("ABCD1234"), Some("ABCD1234"))
                                                     ): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
@@ -1353,8 +1358,8 @@ object FinancialDetailsTestConstants {
           amountCodedOut = amountCodedOut(1))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, mainTransaction.head, Some(id1040000123), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head)))),
-        FinancialDetail(taxYear, mainType(1), mainTransaction(1), Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate(1)))))
+        FinancialDetail(taxYear, mainType.head, mainTransaction.head, Some(id1040000123), Some(LocalDate.parse("2022-08-16")), chargeReference = chargeReference.head, Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head)))),
+        FinancialDetail(taxYear, mainType(1), mainTransaction(1), Some(id1040000124), Some(LocalDate.parse("2022-08-16")), chargeReference = chargeReference(1), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate(1)))))
       )
     )
   val testFinancialDetailsModelWithReviewAndReconcileAndPoas: FinancialDetailsModel =
@@ -2056,7 +2061,7 @@ object FinancialDetailsTestConstants {
         totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
       FinancialDetail(taxYear = "2018", mainTransaction = Some("4028"), transactionId = Some("LPP1"),
         totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
-      FinancialDetail(taxYear = "2018", mainTransaction = Some("4029"), transactionId = Some("LPP2"),
+      FinancialDetail(taxYear = "2018", mainTransaction = Some("4029"), transactionId = Some("LPP2"), chargeReference = Some("chargeRef123"),
         totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15))))))
     )
   )
