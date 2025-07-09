@@ -55,9 +55,9 @@ class ReportingFrequencyViewUtils @Inject()()(
 
   private def isUsingMTD(itsaStatus: ITSAStatus)(implicit messages: Messages): Option[String] = {
     itsaStatus match {
-      case Mandated => Some(messages("reporting.frequency.table.MTD.voluntary"))
-      case Voluntary => Some(messages("reporting.frequency.table.MTD.voluntary"))
-      case Annual => Some(messages("reporting.frequency.table.MTD.annual"))
+      case Mandated => Some(messages("reporting.frequency.table.MTD.isUsingMTD"))
+      case Voluntary => Some(messages("reporting.frequency.table.MTD.isUsingMTD"))
+      case Annual => Some(messages("reporting.frequency.table.MTD.isNotUsingMTD"))
       case _ => None
     }
   }
