@@ -190,6 +190,9 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val isSessionDataStorageEnabled: Boolean = servicesConfig.getBoolean("feature-switch.enable-session-data-storage")
 
   //External-Urls
+  val selfAssessmentTaxReturn = servicesConfig.getString("external-urls.self-assessment-tax-return-link")
+  val compatibleSoftwareLink = servicesConfig.getString("external-urls.compatible-software-link")
+
   lazy val homepageLink = "https://www.gov.uk"
 
   //SA for Agents Online Service
@@ -199,9 +202,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val accountingSoftwareLinkUrl: String = "https://www.gov.uk/guidance/use-software-to-send-income-tax-updates"
 
   lazy val clientAuthorisationGuidance: String = "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax-as-an-agent-step-by-step"
-
-  lazy val selfAssessmentTaxReturn = "https://www.gov.uk/log-in-file-self-assessment-tax-return"
-  lazy val compatibleSoftwareLink = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
 
   lazy val yourSelfAssessmentChargeSummaryWhatIsPaymentOnAccountP3Link = "https://www.gov.uk/self-employed-national-insurance-rates"
 
