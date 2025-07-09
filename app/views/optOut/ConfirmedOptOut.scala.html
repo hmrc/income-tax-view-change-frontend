@@ -19,7 +19,6 @@
 @import views.html.layouts.unifiedLayout
 @import models.optout.ConfirmedOptOutViewModel
 @import services.optout.OneYearOptOutFollowedByMandated
-@import config.FrontendAppConfig
 
 @this(
     mainTemplate: unifiedLayout,
@@ -30,8 +29,7 @@
     hr: hr,
     govukTable: GovukTable,
     govukInsetText : GovukInsetText,
-    govukPanel : GovukPanel,
-    appConfig: config.FrontendAppConfig
+    govukPanel : GovukPanel
 )
 
 @(
@@ -39,7 +37,7 @@
     isAgent: Boolean = false,
     showReportingFrequencyContent: Boolean,
     submitYourTaxReturnContent: Option[Html]
-)(implicit messages: Messages, user: auth.MtdItUser[_])
+)(implicit messages: Messages, user: auth.MtdItUser[_], appConfig: config.FrontendAppConfig)
 
 
 @getPanel(bodyMsgKey: String) = @{

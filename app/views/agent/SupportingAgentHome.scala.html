@@ -23,7 +23,6 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
 @import views.html.helpers.injected.home._
-@import config.FrontendAppConfig
 
 @this(
     layout: unifiedLayout,
@@ -37,8 +36,7 @@
     govukWarningText : GovukWarningText,
     updatesTile: UpdatesTile,
     incomeSourcesTile: IncomeSourcesTile,
-    yourReportingObligationsTile: YourReportingObligationsTile,
-    appConfig: config.FrontendAppConfig
+    yourReportingObligationsTile: YourReportingObligationsTile
 )
 
 @(
