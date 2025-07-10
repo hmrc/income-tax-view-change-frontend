@@ -20,7 +20,6 @@ import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import mocks.auth.MockAuthActions
 import mocks.services.{MockCreditHistoryService, MockDateService, MockFinancialDetailsService}
-import models.admin.{ChargeHistory, FeatureSwitch}
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.mockito.Mockito.{mock, reset, when}
@@ -55,11 +54,9 @@ class ChargeSummaryControllerTest extends MockAuthActions
 
   override lazy val tsTestUser: MtdItUser[_] =
     defaultMTDITUser(Some(testUserTypeIndividual), IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
-      .addFeatureSwitches(List(FeatureSwitch(ChargeHistory, true)))
 
   override lazy val tsTestUserAgent: MtdItUser[_] =
     defaultMTDITUser(Some(testUserTypeAgent), IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
-      .addFeatureSwitches(List(FeatureSwitch(ChargeHistory, true)))
 
 
   lazy val testController = app.injector.instanceOf[ChargeSummaryController]
@@ -71,8 +68,6 @@ class ChargeSummaryControllerTest extends MockAuthActions
       "return true when original amount is present" in {
         val isLatePaymentCharge: Boolean = false
         val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
-
-        enable(ChargeHistory)
 
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
         when(documentDetail.isPayeSelfAssessment).thenReturn(false)
@@ -97,7 +92,6 @@ class ChargeSummaryControllerTest extends MockAuthActions
 
         val isLatePaymentCharge: Boolean = true
         val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
-        enable(ChargeHistory)
 
         val documentDetail: DocumentDetail = mock(classOf[DocumentDetail])
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
@@ -120,7 +114,6 @@ class ChargeSummaryControllerTest extends MockAuthActions
 
         val isLatePaymentCharge: Boolean = true
         val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
-        enable(ChargeHistory)
 
         val documentDetail: DocumentDetail = mock(classOf[DocumentDetail])
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
@@ -142,7 +135,6 @@ class ChargeSummaryControllerTest extends MockAuthActions
 
         val isLatePaymentCharge: Boolean = true
         val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
-        enable(ChargeHistory)
 
         val documentDetail: DocumentDetail = mock(classOf[DocumentDetail])
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
@@ -165,7 +157,6 @@ class ChargeSummaryControllerTest extends MockAuthActions
 
         val isLatePaymentCharge: Boolean = true
         val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
-        enable(ChargeHistory)
 
         val documentDetail: DocumentDetail = mock(classOf[DocumentDetail])
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
@@ -193,7 +184,6 @@ class ChargeSummaryControllerTest extends MockAuthActions
 
         val isLatePaymentCharge: Boolean = false
         val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
-        enable(ChargeHistory)
 
         val documentDetail: DocumentDetail = mock(classOf[DocumentDetail])
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)

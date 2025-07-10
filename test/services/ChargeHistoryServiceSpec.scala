@@ -68,7 +68,7 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
     "return a Right(Nil)" when {
       "the conditions are not met" in {
         val res = TestChargeHistoryService.chargeHistoryResponse(isLatePaymentCharge = true, isPayeSelfAssessment = true,
-          None, isChargeHistoryEnabled = false)
+          None)
 
         res.futureValue shouldBe Right(Nil)
       }
@@ -76,7 +76,7 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
         setupGetChargeHistory(testNino, None)(testChargesHistoryModel)
 
         val res = TestChargeHistoryService.chargeHistoryResponse(isLatePaymentCharge = false, isPayeSelfAssessment = false,
-          None, isChargeHistoryEnabled = true)
+          None)
 
         res.futureValue shouldBe Right(Nil)
       }
@@ -86,7 +86,7 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
         setupGetChargeHistoryError(testNino, None)(testChargeHistoryErrorModel)
 
         val res = TestChargeHistoryService.chargeHistoryResponse(isLatePaymentCharge = false, isPayeSelfAssessment = false,
-          None, isChargeHistoryEnabled = true)
+          None)
 
         res.futureValue shouldBe Left(testChargeHistoryErrorModel)
       }
@@ -96,7 +96,7 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
         setupGetChargeHistory(testNino, None)(chargesHistoryWithHistory)
 
         val res = TestChargeHistoryService.chargeHistoryResponse(isLatePaymentCharge = false, isPayeSelfAssessment = false,
-          None, isChargeHistoryEnabled = true)
+          None)
 
         res.futureValue shouldBe Right(testChargeHistory)
       }

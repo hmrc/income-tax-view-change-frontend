@@ -147,7 +147,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
 
 
     chargeHistoryService.chargeHistoryResponse(isInterestCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment,
-      chargeReference, isEnabled(ChargeHistory)).map {
+      chargeReference).map {
       case Right(chargeHistory) =>
         auditChargeSummary(chargeItem, paymentBreakdown,
           chargeHistory, paymentAllocations, isInterestCharge, isMFADebit, taxYear)
@@ -191,7 +191,6 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
           paymentBreakdown = paymentBreakdown,
           paymentAllocations = paymentAllocations,
           payments = paymentsForAllYears,
-          chargeHistoryEnabled = isEnabled(ChargeHistory),
           latePaymentInterestCharge = isInterestCharge,
           reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
           penaltiesEnabled = isEnabled(PenaltiesAndAppeals),
@@ -243,9 +242,9 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
 
   def mandatoryViewDataPresent(isLatePaymentCharge: Boolean, documentDetailWithDueDate: DocumentDetailWithDueDate)(implicit user: MtdItUser[_]): Either[ErrorCode, Boolean] = {
 
-    val viewSection1 = isEnabled(ChargeHistory) && (!isLatePaymentCharge && !documentDetailWithDueDate.documentDetail.isPayeSelfAssessment)
-    val viewSection2 = isEnabled(ChargeHistory) && isLatePaymentCharge
-    val viewSection3 = isEnabled(ChargeHistory) && documentDetailWithDueDate.documentDetail.isPayeSelfAssessment
+    val viewSection1 = !isLatePaymentCharge && !documentDetailWithDueDate.documentDetail.isPayeSelfAssessment
+    val viewSection2 =  isLatePaymentCharge
+    val viewSection3 =  documentDetailWithDueDate.documentDetail.isPayeSelfAssessment
 
     val values = List(
       (viewSection1, true, "Original Amount"),

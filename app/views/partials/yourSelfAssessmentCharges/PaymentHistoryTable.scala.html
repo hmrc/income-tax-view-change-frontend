@@ -58,7 +58,7 @@
         )
     ),
     rows = Seq(
-        if(viewModel.noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment && viewModel.chargeHistoryEnabled)
+        if(viewModel.noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment)
             Seq(
                 TableRow(
                     content = Text(messages(s"chargeSummary.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey}"))
@@ -73,7 +73,7 @@
                 )
             ) else Nil,
 
-        if(viewModel.latePaymentInterestCharge && viewModel.chargeHistoryEnabled)
+        if(viewModel.latePaymentInterestCharge)
             Seq(
                 TableRow(
                     content = Text(messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey}"))
@@ -87,7 +87,7 @@
                 )
             ) else Nil,
 
-        if(viewModel.latePaymentInterestCharge && viewModel.chargeHistoryEnabled)
+        if(viewModel.latePaymentInterestCharge)
             Seq(
                 TableRow(
                     content = Text(messages("chargeSummary.codingOutPayHistoryAmount", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut))
@@ -102,7 +102,7 @@
             ) else Nil
     )
         ++ viewModel.reviewAndReconcileCredit.toSeq.collect {
-            case charge if viewModel.chargeHistoryEnabled =>
+            case charge =>
                 Seq(
                     TableRow(
                         content = HtmlContent(reviewAndReconcileCreditMessage(charge)),
@@ -121,7 +121,7 @@
         }
 
         ++ viewModel.adjustmentHistory.adjustments.collect {
-            case charge if viewModel.chargeHistoryEnabled =>
+            case charge =>
                 Seq(
                     TableRow(
                         content = Text(messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey}"))

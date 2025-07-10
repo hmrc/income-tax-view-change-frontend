@@ -130,7 +130,7 @@
         @interestOnYourChargeTable(viewModel)
     }
 
-    @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit) {
+    @if(viewModel.paymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit) {
         @paymentHistoryTable(viewModel)
     }
 }

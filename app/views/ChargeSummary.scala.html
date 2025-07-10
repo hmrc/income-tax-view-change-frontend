@@ -474,7 +474,7 @@
 
 
 
-@if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit){
+@if(viewModel.paymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit){
         @if(viewModel.hasPaymentBreakdown && viewModel.chargeItem.codedOutStatus == None) {
             @h3(
                 msg = chargeHistoryHeading,
@@ -496,7 +496,6 @@
             </thead>
 
             <tbody class = "govuk-table__body">
-            @if(viewModel.chargeHistoryEnabled){
                 @if(viewModel.noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment) {
                     <tr>
                         <td class="govuk-table__cell">@{
@@ -555,7 +554,6 @@
                         <td class="govuk-table__cell govuk-table__cell--numeric">@{charge.amount.toCurrency}</td>
                     </tr>
                 }
-            }
 
             @if(!viewModel.latePaymentInterestCharge) {
                 @chargeSummaryPaymentAllocation(viewModel.paymentAllocations, viewModel.payments, viewModel.chargeItem, viewModel.isAgent, None, viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)

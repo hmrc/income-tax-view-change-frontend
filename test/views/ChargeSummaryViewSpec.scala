@@ -54,7 +54,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
                   paymentAllocations: List[PaymentHistoryAllocations] = List(),
                   reviewAndReconcileCredit: Option[ChargeItem] = None,
                   payments: FinancialDetailsModel = payments,
-                  chargeHistoryEnabled: Boolean = true,
                   latePaymentInterestCharge: Boolean = false,
                   reviewAndReconcileEnabled: Boolean = false,
                   isAgent: Boolean = false,
@@ -76,7 +75,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       paymentAllocations = paymentAllocations,
       reviewAndReconcileCredit = reviewAndReconcileCredit,
       payments = payments,
-      chargeHistoryEnabled = chargeHistoryEnabled,
       latePaymentInterestCharge = latePaymentInterestCharge,
       reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       penaltiesEnabled = true,
@@ -1395,20 +1393,15 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
             "15 Dec 2019 Payment allocated to Voluntary Class 2 National Insurance for Balancing payment 2018 £3,900.00"
           )
 
-          "chargeHistory enabled, having Payment created in the first row" in new TestSetup(chargeItem = chargeItemModel(),
-            chargeHistoryEnabled = true, paymentAllocations = paymentAllocations) {
+          "having Payment created in the first row" in new TestSetup(chargeItem = chargeItemModel(),
+            paymentAllocations = paymentAllocations) {
             verifyPaymentHistoryContent(historyRowPOA1Created :: expectedPaymentAllocationRows: _*)
           }
 
-          "chargeHistory enabled with a matching link to the payment allocations page" in new TestSetup(chargeItem = chargeItemModel(),
-            chargeHistoryEnabled = true, paymentAllocations = paymentAllocations) {
+          "matching link to the payment allocations page" in new TestSetup(chargeItem = chargeItemModel(),
+             paymentAllocations = paymentAllocations) {
             document.select(Selectors.table).select("a").size shouldBe 10
             document.select(Selectors.table).select("a").forall(_.attr("href") == controllers.routes.PaymentAllocationsController.viewPaymentAllocation("PAYID01").url) shouldBe true
-          }
-
-          "chargeHistory disabled" in new TestSetup(chargeItem = chargeItemModel(),
-            chargeHistoryEnabled = false, paymentAllocations = paymentAllocations) {
-            verifyPaymentHistoryContent(expectedPaymentAllocationRows: _*)
           }
         }
       }
@@ -1416,14 +1409,10 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       "hide payment allocations in history table" when {
         "the allocations list is empty" when {
           "chargeHistory enabled, having Payment created in the first row" in new TestSetup(chargeItem = chargeItemModel(),
-            chargeHistoryEnabled = true, paymentAllocations = Nil) {
+            paymentAllocations = Nil) {
             verifyPaymentHistoryContent(historyRowPOA1Created)
           }
 
-          "chargeHistory disabled, not showing the table at all" in new TestSetup(chargeItem = chargeItemModel(),
-            chargeHistoryEnabled = false, paymentAllocations = Nil) {
-            (document select Selectors.table).size shouldBe 0
-          }
         }
       }
     }
@@ -1452,7 +1441,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         paymentBreakdown = paymentBreakdown,
         paymentAllocations = List(),
         payments = payments,
-        chargeHistoryEnabled = true,
         latePaymentInterestCharge = false,
         reviewAndReconcileCredit = None,
         reviewAndReconcileEnabled = false,
@@ -1557,8 +1545,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         document.select("div#payment-link-2018").text() shouldBe ""
       }
 
-      "list payment allocations with right number of rows and agent payment allocations link" in new TestSetup(chargeItem = chargeItemModel(),
-        chargeHistoryEnabled = true, paymentAllocations = List(
+      "list payment allocations with right number of rows and agent payment allocations link" in new TestSetup(chargeItem = chargeItemModel(), paymentAllocations = List(
           paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0, Some("123456789012"), Some("PAYID01"))), isAgent = true) {
         document.select(Selectors.table).select("a").size shouldBe 1
         document.select(Selectors.table).select("a").forall(_.attr("href") == controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent("PAYID01").url) shouldBe true
