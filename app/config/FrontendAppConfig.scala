@@ -216,7 +216,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val currentLPAndRepaymentInterestRatesUrl = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates"
 
-  lazy val saThroughYourTaxCode = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
+  lazy val saThroughYourTaxCodeUrl = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
 
   lazy val checkPayeTaxCodeUrl = "https://www.tax.service.gov.uk/check-income-tax/tax-codes"
 
