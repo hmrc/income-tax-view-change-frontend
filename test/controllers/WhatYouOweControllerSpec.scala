@@ -91,6 +91,12 @@ class WhatYouOweControllerSpec extends MockAuthActions
     ))
   )
 
+  def whatYouOweChargesListWithLpp2: WhatYouOweChargesList = WhatYouOweChargesList(
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    financialDetailsLPP2,
+    Some(OutstandingChargesModel(List()))
+  )
+
   def whatYouOweChargesListWithLPP2NoChargeRef: WhatYouOweChargesList = WhatYouOweChargesList(
     BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     financialDetailsLPP2NoChargeRef,
@@ -139,6 +145,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
             "displays the money in your account" when {
               "the user has available credit in his account and CreditsRefundsRepay FS enabled" in {
                 def whatYouOweWithAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, Some(300.00), None, None, None, None), List.empty)
+
                 setupMockSuccess(mtdUserRole)
                 enable(CreditsRefundsRepay)
                 mockSingleBISWithCurrentYearAsMigrationYear()
@@ -150,13 +157,16 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
                 val doc: Document = Jsoup.parse(contentAsString(result))
                 Option(doc.getElementById("money-in-your-account")).isDefined shouldBe (true)
-                doc.select("#money-in-your-account").select("div h2").text() shouldBe messages("whatYouOwe.moneyOnAccount" + {if(isAgent) "-agent" else ""})
+                doc.select("#money-in-your-account").select("div h2").text() shouldBe messages("whatYouOwe.moneyOnAccount" + {
+                  if (isAgent) "-agent" else ""
+                })
               }
             }
 
             "does not display the money in your account" when {
               "the user has available credit in his account but CreditsRefundsRepay FS disabled" in {
                 def whatYouOweWithZeroAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, Some(0.00), None, None, None, None), List.empty)
+
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
@@ -268,6 +278,19 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 status(result) shouldBe Status.OK
                 Option(Jsoup.parse(contentAsString(result)).getElementById("interest-charges-warning")).isDefined shouldBe false
               }
+            }
+
+            "user has a second late payment penalty with a chargeReference, so url can be generated" in {
+              enable(PenaltiesAndAppeals)
+              mockSingleBISWithCurrentYearAsMigrationYear()
+              setupMockSuccess(mtdUserRole)
+              setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+
+              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+                .thenReturn(Future.successful(whatYouOweChargesListWithLpp2))
+
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.OK
             }
           }
 

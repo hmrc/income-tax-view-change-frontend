@@ -113,6 +113,12 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
     ))
   )
 
+  def whatYouOweChargesListWithLpp2: WhatYouOweChargesList = WhatYouOweChargesList(
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    financialDetailsLPP2,
+    Some(OutstandingChargesModel(List()))
+  )
+
   def whatYouOweChargesListWithLPP2NoChargeRef: WhatYouOweChargesList = WhatYouOweChargesList(
     BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     financialDetailsLPP2NoChargeRef,
@@ -298,6 +304,21 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 val result = action(fakeRequest)
                 contentAsString(result).contains("Adjust payments on account for the") shouldBe false
               }
+            }
+
+            "user has a second late payment penalty with a chargeReference, so url can be generated" in {
+              enable(PenaltiesAndAppeals)
+              mockSingleBISWithCurrentYearAsMigrationYear()
+              setupMockSuccess(mtdUserRole)
+              setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+
+              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+                .thenReturn(Future.successful(whatYouOweChargesListWithLpp2))
+              when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
+
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.OK
             }
           }
 

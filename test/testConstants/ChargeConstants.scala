@@ -718,6 +718,17 @@ trait ChargeConstants {
     dunningLock = noDunningLocks
   )
 
+  val financialDetailsLPP2: List[ChargeItem] = testFinancialDetailsChargeItems(
+    transactionId = List(id1040000123, id1040000124),
+    transactionTypes = List(SecondLatePaymentPenalty, PoaTwoDebit),
+    dueDate = List(Some(fixedDate.plusYears(100).minusDays(1)), Some(fixedDate.plusYears(100).plusDays(30))),
+    outstandingAmount = List(50.06, 75.07),
+    outstandingInterest = List(Some(BigDecimal(10.01)),Some(BigDecimal(20.20))),
+    interestRate = List(Some(BigDecimal(2.75)),Some(BigDecimal(2))),
+    taxYear = fixedDate.getYear.toString,
+    latePaymentInterestAmount = List(None, None),
+    dunningLock = noDunningLocks)
+
   val financialDetailsLPP2NoChargeRef: List[ChargeItem] = testFinancialDetailsChargeItems(
     transactionId = List(id1040000123, id1040000124),
     transactionTypes = List(SecondLatePaymentPenalty, PoaTwoDebit),
