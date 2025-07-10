@@ -218,10 +218,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val optoutConfirmedOptOutSoftwareCompatibleLink = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
   lazy val optoutConfirmedOptOutReportQuarterlyDesc3AnchorLink = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
 
-  lazy val paymentOnAccountClass4NationalInsuranceLink = "https://www.gov.uk/self-employed-national-insurance-rates"
-
-  lazy val chargeSummaryPaymentsOnAccountBullet2link = "https://www.gov.uk/self-employed-national-insurance-rates"
-
   lazy val chargeSummaryPoa1ExtraAmountInterestP3Link = "https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate"
   lazy val chargeSummaryPoa2ExtraAmountInterestP3Link = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates"
 
