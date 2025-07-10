@@ -144,29 +144,29 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
         "return the correct content when opt in and opt out has multiple tax years" in {
 
-        val isAgentFlag = true
+          val isAgentFlag = true
 
-        val reportingFrequencyViewModel: ReportingFrequencyViewModel =
-          ReportingFrequencyViewModel(
-            isAgent = isAgentFlag,
-            optOutJourneyUrl = Some(optOutChooseTaxYearUrl(isAgentFlag)),
-            optOutTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
-            optInTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
-            itsaStatusTable = Seq(("2024 to 2025", None, Some("Quarterly"))),
-            isAnyOfBusinessLatent = false,
-            displayCeasedBusinessWarning = false
-          )
+          val reportingFrequencyViewModel: ReportingFrequencyViewModel =
+            ReportingFrequencyViewModel(
+              isAgent = isAgentFlag,
+              optOutJourneyUrl = Some(optOutChooseTaxYearUrl(isAgentFlag)),
+              optOutTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
+              optInTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
+              itsaStatusTable = Seq(("2024 to 2025", None, Some("Quarterly"))),
+              isAnyOfBusinessLatent = false,
+              displayCeasedBusinessWarning = false
+            )
 
-        val pageDocument: Document =
-          Jsoup.parse(
-            contentAsString(
-              view.apply(
-                viewModel = reportingFrequencyViewModel,
-                optInOptOutContentUpdateR17IsEnabled = false,
-                nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
+          val pageDocument: Document =
+            Jsoup.parse(
+              contentAsString(
+                view.apply(
+                  viewModel = reportingFrequencyViewModel,
+                  optInOptOutContentUpdateR17IsEnabled = false,
+                  nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
+                )
               )
             )
-          )
 
           pageDocument.title() shouldBe agentTitle
 
@@ -325,75 +325,76 @@ class ReportingFrequencyViewSpec extends TestSupport {
               )
             )
 
-        testContentByIds(pageDocument, R17ContentEnabled = false)
+          testContentByIds(pageDocument, R17ContentEnabled = false)
 
-        pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
+          pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
 
-        pageDocument.select(bullet(1)).text() shouldBe optOutGenericContent
+          pageDocument.select(bullet(1)).text() shouldBe optOutGenericContent
 
-        pageDocument.select(bullet(1)).attr("href") shouldBe optOutChooseTaxYearUrl(isAgentFlag)
+          pageDocument.select(bullet(1)).attr("href") shouldBe optOutChooseTaxYearUrl(isAgentFlag)
 
-        pageDocument.select(bullet(2)).text() shouldBe optInGenericContent
+          pageDocument.select(bullet(2)).text() shouldBe optInGenericContent
 
-        pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
-      }
-      "(R17 content) return the correct content when opt in and opt out has multiple tax years" in {
+          pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
+        }
+        "(R17 content) return the correct content when opt in and opt out has multiple tax years" in {
 
-        val isAgentFlag = true
+          val isAgentFlag = true
 
-        val latencyDetailsDropdownContent = Seq(
-          Selectors.latencyDetailsDropdownPara1 -> "For tax years you are using Making Tax Digital for Income Tax, you can separately choose to opt out for any new sole trader or property income source:",
-          Selectors.latencyDetailsDropdownBullet1 -> "started less than 2 years ago",
-          Selectors.latencyDetailsDropdownBullet2 -> "that you start in future",
-          Selectors.latencyDetailsDropdownPara2 -> "This option is available to your new businesses:",
-          Selectors.latencyDetailsDropdownBullet3 -> "for up to 2 tax years",
-          Selectors.latencyDetailsDropdownBullet4 -> "only when you use Making Tax Digital for Income Tax for your other businesses",
-          Selectors.latencyDetailsDropdownBullet5 -> "even if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold",
-          Selectors.latencyDetailsDropdownH3 -> "How to change your reporting obligations for a new income source",
-          Selectors.latencyDetailsDropdownPara3 -> "You can do this at any time in the your businesses section.",
-          Selectors.latencyDetailsDropdownPara3Link -> "your businesses",
-        )
-
-        val reportingFrequencyViewModel: ReportingFrequencyViewModel =
-          ReportingFrequencyViewModel(
-            isAgent = isAgentFlag,
-            optOutJourneyUrl = Some(optOutChooseTaxYearUrl(isAgentFlag)),
-            optOutTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
-            optInTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
-            itsaStatusTable = Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
-            isAnyOfBusinessLatent = false,
-            displayCeasedBusinessWarning = false
+          val latencyDetailsDropdownContent = Seq(
+            Selectors.latencyDetailsDropdownPara1 -> "For tax years you are using Making Tax Digital for Income Tax, you can separately choose to opt out for any new sole trader or property income source:",
+            Selectors.latencyDetailsDropdownBullet1 -> "started less than 2 years ago",
+            Selectors.latencyDetailsDropdownBullet2 -> "that you start in future",
+            Selectors.latencyDetailsDropdownPara2 -> "This option is available to your new businesses:",
+            Selectors.latencyDetailsDropdownBullet3 -> "for up to 2 tax years",
+            Selectors.latencyDetailsDropdownBullet4 -> "only when you use Making Tax Digital for Income Tax for your other businesses",
+            Selectors.latencyDetailsDropdownBullet5 -> "even if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold",
+            Selectors.latencyDetailsDropdownH3 -> "How to change your reporting obligations for a new income source",
+            Selectors.latencyDetailsDropdownPara3 -> "You can do this at any time in the your businesses section.",
+            Selectors.latencyDetailsDropdownPara3Link -> "your businesses",
           )
 
-        val pageDocument: Document =
-          Jsoup.parse(
-            contentAsString(
-              view.apply(
-                viewModel = reportingFrequencyViewModel,
-                optInOptOutContentUpdateR17IsEnabled = true,
-                nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
+          val reportingFrequencyViewModel: ReportingFrequencyViewModel =
+            ReportingFrequencyViewModel(
+              isAgent = isAgentFlag,
+              optOutJourneyUrl = Some(optOutChooseTaxYearUrl(isAgentFlag)),
+              optOutTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
+              optInTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
+              itsaStatusTable = Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
+              isAnyOfBusinessLatent = false,
+              displayCeasedBusinessWarning = false
+            )
+
+          val pageDocument: Document =
+            Jsoup.parse(
+              contentAsString(
+                view.apply(
+                  viewModel = reportingFrequencyViewModel,
+                  optInOptOutContentUpdateR17IsEnabled = true,
+                  nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
+                )
               )
             )
-          )
 
-        pageDocument.title() shouldBe titleNew
+          pageDocument.title() shouldBe titleNew
 
-        testContentByIds(pageDocument, R17ContentEnabled = true)
+          testContentByIds(pageDocument, R17ContentEnabled = true)
 
-        pageDocument.title() shouldBe agentTitle
+          pageDocument.title() shouldBe agentTitle
 
-        testContentByIds(pageDocument, R17ContentEnabled = true, latencyDetailsDropdownContent)
+          testContentByIds(pageDocument, R17ContentEnabled = true, latencyDetailsDropdownContent)
 
-        pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
+          pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
 
-        pageDocument.select(bullet(1)).text() shouldBe optOutGenericContent
+          pageDocument.select(bullet(1)).text() shouldBe optOutGenericContent
 
-        pageDocument.select(bullet(1)).attr("href") shouldBe optOutChooseTaxYearUrl(isAgentFlag)
+          pageDocument.select(bullet(1)).attr("href") shouldBe optOutChooseTaxYearUrl(isAgentFlag)
 
-        pageDocument.select(bullet(2)).text() shouldBe optInGenericContent
+          pageDocument.select(bullet(2)).text() shouldBe optInGenericContent
 
-        pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
+          pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
 
+        }
       }
 
 
@@ -638,28 +639,28 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
         "return the correct content when opt in and opt out has multiple tax years" in {
 
-        val isAgentFlag: Boolean = true
-        val reportingFrequencyViewModel: ReportingFrequencyViewModel =
-          ReportingFrequencyViewModel(
-            isAgent = isAgentFlag,
-            Some(confirmOptOutUrl(isAgentFlag)),
-            Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
-            Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
-            Seq(("2024 to 2025", None, Some("Quarterly"))),
-            isAnyOfBusinessLatent = false,
-            displayCeasedBusinessWarning = false
-          )
+          val isAgentFlag: Boolean = true
+          val reportingFrequencyViewModel: ReportingFrequencyViewModel =
+            ReportingFrequencyViewModel(
+              isAgent = isAgentFlag,
+              Some(confirmOptOutUrl(isAgentFlag)),
+              Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
+              Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
+              Seq(("2024 to 2025", None, Some("Quarterly"))),
+              isAnyOfBusinessLatent = false,
+              displayCeasedBusinessWarning = false
+            )
 
-        val pageDocument: Document =
-          Jsoup.parse(
-            contentAsString(
-              view.apply(
-                viewModel = reportingFrequencyViewModel,
-                optInOptOutContentUpdateR17IsEnabled = false,
-                nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
+          val pageDocument: Document =
+            Jsoup.parse(
+              contentAsString(
+                view.apply(
+                  viewModel = reportingFrequencyViewModel,
+                  optInOptOutContentUpdateR17IsEnabled = false,
+                  nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
+                )
               )
             )
-          )
 
           pageDocument.title() shouldBe agentTitle
 
@@ -832,130 +833,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
               )
             )
 
-        testContentByIds(pageDocument, R17ContentEnabled = false, latencyDetailsDropdownContent)
-
-        pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
-
-        pageDocument.select(bullet(1)).text() shouldBe optOutGenericContent
-
-        pageDocument.select(bullet(1)).attr("href") shouldBe confirmOptOutUrl(isAgentFlag)
-
-        pageDocument.select(bullet(2)).text() shouldBe optInGenericContent
-
-        pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
-      }
-
-      "(R17 content) return the correct content when opt in and opt out has multiple tax years" in {
-
-        val isAgentFlag = false
-
-        val reportingFrequencyViewModel: ReportingFrequencyViewModel =
-          ReportingFrequencyViewModel(
-            isAgent = isAgentFlag,
-            Some(confirmOptOutUrl(isAgentFlag)),
-            Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
-            Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
-            Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
-            isAnyOfBusinessLatent = false,
-            displayCeasedBusinessWarning = false
-          )
-
-        val pageDocument: Document =
-          Jsoup.parse(
-            contentAsString(
-              view.apply(
-                viewModel = reportingFrequencyViewModel,
-                optInOptOutContentUpdateR17IsEnabled = true,
-                nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
-              )
-            )
-          )
-
-        pageDocument.title() shouldBe titleNew
-
-        testContentByIds(pageDocument, R17ContentEnabled = true)
-
-        testContentByIds(pageDocument, R17ContentEnabled = true)
-
-        pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
-
-        pageDocument.select(bullet(1)).text() shouldBe optOutGenericContent
-
-        pageDocument.select(bullet(1)).attr("href") shouldBe optOutChooseTaxYearUrl(isAgentFlag)
-
-        pageDocument.select(bullet(2)).text() shouldBe optInGenericContent
-
-        pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
-
-
-      }
-
-      "the user is Non-Agent" should {
-
-        "return the correct content when opt in and opt out has multiple tax years" in {
-
-          val isAgentFlag = false
-
-          val reportingFrequencyViewModel: ReportingFrequencyViewModel =
-            ReportingFrequencyViewModel(
-              isAgent = isAgentFlag,
-              Some(confirmOptOutUrl(isAgentFlag)),
-              Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
-              Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
-              Seq(("2024 to 2025", None, Some("Quarterly"))),
-              isAnyOfBusinessLatent = false,
-              displayCeasedBusinessWarning = false
-            )
-
-          val pageDocument: Document =
-            Jsoup.parse(
-              contentAsString(
-                view.apply(
-                  viewModel = reportingFrequencyViewModel,
-                  optInOptOutContentUpdateR17IsEnabled = false,
-                  nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
-                )
-              )
-            )
-
-          pageDocument.title() shouldBe title
-
-          testContentByIds(pageDocument, R17ContentEnabled = false)
-
-          pageDocument.getElementById("ceased-business-warning").text() shouldBe "Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page."
-
-          pageDocument.getElementById("ceased-business-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/manage-your-businesses"
-
-        }
-
-        "(R17 content) return the correct content when the user has a ceased business" in {
-          val isAgentFlag = false
-
-          val reportingFrequencyViewModel: ReportingFrequencyViewModel =
-            ReportingFrequencyViewModel(
-              isAgent = isAgentFlag,
-              Some(optOutChooseTaxYearUrl(isAgentFlag)),
-              Seq(TaxYear(2024, 2025)),
-              Seq(TaxYear(2024, 2025)),
-              Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
-              isAnyOfBusinessLatent = false,
-              displayCeasedBusinessWarning = true
-            )
-
-          val pageDocument: Document =
-            Jsoup.parse(
-              contentAsString(
-                view.apply(
-                  viewModel = reportingFrequencyViewModel,
-                  optInOptOutContentUpdateR17IsEnabled = true,
-                  nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
-                )
-              )
-            )
-
-          pageDocument.title() shouldBe titleNew
-
-          testContentByIds(pageDocument, R17ContentEnabled = true)
+          testContentByIds(pageDocument, R17ContentEnabled = false, latencyDetailsDropdownContent)
 
           pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
 
@@ -966,56 +844,21 @@ class ReportingFrequencyViewSpec extends TestSupport {
           pageDocument.select(bullet(2)).text() shouldBe optInGenericContent
 
           pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
-
         }
 
-        "return the correct content when the user has a ceased business" in {
+        "(R17 content) return the correct content when opt in and opt out has multiple tax years" in {
+
           val isAgentFlag = false
 
           val reportingFrequencyViewModel: ReportingFrequencyViewModel =
             ReportingFrequencyViewModel(
               isAgent = isAgentFlag,
-              Some(optOutChooseTaxYearUrl(isAgentFlag)),
-              Seq(TaxYear(2024, 2025)),
-              Seq(TaxYear(2024, 2025)),
-              Seq(("2024 to 2025", None, Some("Quarterly"))),
-              isAnyOfBusinessLatent = false,
-              displayCeasedBusinessWarning = true
-            )
-
-          val pageDocument: Document =
-            Jsoup.parse(
-              contentAsString(
-                view.apply(
-                  viewModel = reportingFrequencyViewModel,
-                  optInOptOutContentUpdateR17IsEnabled = false,
-                  nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
-                )
-              )
-            )
-
-          pageDocument.title() shouldBe title
-
-          testContentByIds(pageDocument, R17ContentEnabled = false)
-
-          pageDocument.getElementById("ceased-business-warning").text() shouldBe "Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page."
-
-          pageDocument.getElementById("ceased-business-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/manage-your-businesses"
-
-        }
-
-        "(R17 content) return the correct content when the user has a ceased business and is an agent" in {
-          val isAgentFlag = true
-
-          val reportingFrequencyViewModel: ReportingFrequencyViewModel =
-            ReportingFrequencyViewModel(
-              isAgent = isAgentFlag,
-              Some(optOutChooseTaxYearUrl(isAgentFlag)),
-              Seq(TaxYear(2024, 2025)),
-              Seq(TaxYear(2024, 2025)),
+              Some(confirmOptOutUrl(isAgentFlag)),
+              Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
+              Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
               Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
               isAnyOfBusinessLatent = false,
-              displayCeasedBusinessWarning = true
+              displayCeasedBusinessWarning = false
             )
 
           val pageDocument: Document =
@@ -1033,43 +876,202 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
           testContentByIds(pageDocument, R17ContentEnabled = true)
 
-          pageDocument.getElementById("ceased-business-warning").text() shouldBe "Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page."
+          testContentByIds(pageDocument, R17ContentEnabled = true)
 
-          pageDocument.getElementById("ceased-business-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/manage-your-businesses"
+          pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
+
+          pageDocument.select(bullet(1)).text() shouldBe optOutGenericContent
+
+          pageDocument.select(bullet(1)).attr("href") shouldBe optOutChooseTaxYearUrl(isAgentFlag)
+
+          pageDocument.select(bullet(2)).text() shouldBe optInGenericContent
+
+          pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
+
+
         }
 
-        "return the correct content when the user has a ceased business and is an agent" in {
-          val isAgentFlag = true
+        "the user is Non-Agent" should {
 
-          val reportingFrequencyViewModel: ReportingFrequencyViewModel =
-            ReportingFrequencyViewModel(
-              isAgent = isAgentFlag,
-              Some(optOutChooseTaxYearUrl(isAgentFlag)),
-              Seq(TaxYear(2024, 2025)),
-              Seq(TaxYear(2024, 2025)),
-              Seq(("2024 to 2025", None, Some("Quarterly"))),
-              isAnyOfBusinessLatent = false,
-              displayCeasedBusinessWarning = true
-            )
+          "return the correct content when opt in and opt out has multiple tax years" in {
 
-          val pageDocument: Document =
-            Jsoup.parse(
-              contentAsString(
-                view.apply(
-                  viewModel = reportingFrequencyViewModel,
-                  optInOptOutContentUpdateR17IsEnabled = false,
-                  nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
+            val isAgentFlag = false
+
+            val reportingFrequencyViewModel: ReportingFrequencyViewModel =
+              ReportingFrequencyViewModel(
+                isAgent = isAgentFlag,
+                Some(confirmOptOutUrl(isAgentFlag)),
+                Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
+                Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
+                Seq(("2024 to 2025", None, Some("Quarterly"))),
+                isAnyOfBusinessLatent = false,
+                displayCeasedBusinessWarning = false
+              )
+
+            val pageDocument: Document =
+              Jsoup.parse(
+                contentAsString(
+                  view.apply(
+                    viewModel = reportingFrequencyViewModel,
+                    optInOptOutContentUpdateR17IsEnabled = false,
+                    nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
+                  )
                 )
               )
-            )
 
-          pageDocument.title() shouldBe agentTitle
+            pageDocument.title() shouldBe title
 
-          testContentByIds(pageDocument, R17ContentEnabled = false)
+            testContentByIds(pageDocument, R17ContentEnabled = false)
 
-          pageDocument.getElementById("ceased-business-warning").text() shouldBe "Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page."
+            pageDocument.getElementById("ceased-business-warning").text() shouldBe "Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page."
 
-          pageDocument.getElementById("ceased-business-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/manage-your-businesses"
+            pageDocument.getElementById("ceased-business-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/manage-your-businesses"
+
+          }
+
+          "(R17 content) return the correct content when the user has a ceased business" in {
+            val isAgentFlag = false
+
+            val reportingFrequencyViewModel: ReportingFrequencyViewModel =
+              ReportingFrequencyViewModel(
+                isAgent = isAgentFlag,
+                Some(optOutChooseTaxYearUrl(isAgentFlag)),
+                Seq(TaxYear(2024, 2025)),
+                Seq(TaxYear(2024, 2025)),
+                Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
+                isAnyOfBusinessLatent = false,
+                displayCeasedBusinessWarning = true
+              )
+
+            val pageDocument: Document =
+              Jsoup.parse(
+                contentAsString(
+                  view.apply(
+                    viewModel = reportingFrequencyViewModel,
+                    optInOptOutContentUpdateR17IsEnabled = true,
+                    nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
+                  )
+                )
+              )
+
+            pageDocument.title() shouldBe titleNew
+
+            testContentByIds(pageDocument, R17ContentEnabled = true)
+
+            pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
+
+            pageDocument.select(bullet(1)).text() shouldBe optOutGenericContent
+
+            pageDocument.select(bullet(1)).attr("href") shouldBe confirmOptOutUrl(isAgentFlag)
+
+            pageDocument.select(bullet(2)).text() shouldBe optInGenericContent
+
+            pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
+
+          }
+
+          "return the correct content when the user has a ceased business" in {
+            val isAgentFlag = false
+
+            val reportingFrequencyViewModel: ReportingFrequencyViewModel =
+              ReportingFrequencyViewModel(
+                isAgent = isAgentFlag,
+                Some(optOutChooseTaxYearUrl(isAgentFlag)),
+                Seq(TaxYear(2024, 2025)),
+                Seq(TaxYear(2024, 2025)),
+                Seq(("2024 to 2025", None, Some("Quarterly"))),
+                isAnyOfBusinessLatent = false,
+                displayCeasedBusinessWarning = true
+              )
+
+            val pageDocument: Document =
+              Jsoup.parse(
+                contentAsString(
+                  view.apply(
+                    viewModel = reportingFrequencyViewModel,
+                    optInOptOutContentUpdateR17IsEnabled = false,
+                    nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
+                  )
+                )
+              )
+
+            pageDocument.title() shouldBe title
+
+            testContentByIds(pageDocument, R17ContentEnabled = false)
+
+            pageDocument.getElementById("ceased-business-warning").text() shouldBe "Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page."
+
+            pageDocument.getElementById("ceased-business-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/manage-your-businesses"
+
+          }
+
+          "(R17 content) return the correct content when the user has a ceased business and is an agent" in {
+            val isAgentFlag = true
+
+            val reportingFrequencyViewModel: ReportingFrequencyViewModel =
+              ReportingFrequencyViewModel(
+                isAgent = isAgentFlag,
+                Some(optOutChooseTaxYearUrl(isAgentFlag)),
+                Seq(TaxYear(2024, 2025)),
+                Seq(TaxYear(2024, 2025)),
+                Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
+                isAnyOfBusinessLatent = false,
+                displayCeasedBusinessWarning = true
+              )
+
+            val pageDocument: Document =
+              Jsoup.parse(
+                contentAsString(
+                  view.apply(
+                    viewModel = reportingFrequencyViewModel,
+                    optInOptOutContentUpdateR17IsEnabled = true,
+                    nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
+                  )
+                )
+              )
+
+            pageDocument.title() shouldBe titleNew
+
+            testContentByIds(pageDocument, R17ContentEnabled = true)
+
+            pageDocument.getElementById("ceased-business-warning").text() shouldBe "Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page."
+
+            pageDocument.getElementById("ceased-business-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/manage-your-businesses"
+          }
+
+          "return the correct content when the user has a ceased business and is an agent" in {
+            val isAgentFlag = true
+
+            val reportingFrequencyViewModel: ReportingFrequencyViewModel =
+              ReportingFrequencyViewModel(
+                isAgent = isAgentFlag,
+                Some(optOutChooseTaxYearUrl(isAgentFlag)),
+                Seq(TaxYear(2024, 2025)),
+                Seq(TaxYear(2024, 2025)),
+                Seq(("2024 to 2025", None, Some("Quarterly"))),
+                isAnyOfBusinessLatent = false,
+                displayCeasedBusinessWarning = true
+              )
+
+            val pageDocument: Document =
+              Jsoup.parse(
+                contentAsString(
+                  view.apply(
+                    viewModel = reportingFrequencyViewModel,
+                    optInOptOutContentUpdateR17IsEnabled = false,
+                    nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
+                  )
+                )
+              )
+
+            pageDocument.title() shouldBe agentTitle
+
+            testContentByIds(pageDocument, R17ContentEnabled = false)
+
+            pageDocument.getElementById("ceased-business-warning").text() shouldBe "Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page."
+
+            pageDocument.getElementById("ceased-business-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/manage-your-businesses"
+          }
         }
       }
     }
