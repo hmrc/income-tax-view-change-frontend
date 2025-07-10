@@ -90,7 +90,7 @@
             }
             @p(id = Some("lpi-poa6"), classes = "govuk-body govuk-!-margin-bottom-8") {
                 @messages("chargeSummary.lpi.paymentsOnAccount.p3")
-                <a class="govuk-link" href="appConfig.chargeSummaryLpiPaymentsOnAccountP3Link">@messages("chargeSummary.lpi.paymentsOnAccount.p3LinkText")</a>
+                <a class="govuk-link" href="appConfig.currentLPAndRepaymentInterestRatesUrl">@messages("chargeSummary.lpi.paymentsOnAccount.p3LinkText")</a>
             }
         }
     </div>
@@ -130,7 +130,7 @@
         @p(id = Some("poa2-extra-charge-p2")){@messages("chargeSummary.poa2ExtraAmountInterest.p2")}
         @p(id = Some("poa2-extra-charge-p3")){
             @messages("chargeSummary.poa2ExtraAmountInterest.p3")
-            <a class="govuk-link" rel="noreferrer noopener" target="_blank"  href="appConfig.chargeSummaryPoa2ExtraAmountInterestP3Link">@messages("chargeSummary.poa2ExtraAmountInterest.p3LinkText")</a>
+            <a class="govuk-link" rel="noreferrer noopener" target="_blank"  href="appConfig.currentLPAndRepaymentInterestRatesUrl">@messages("chargeSummary.poa2ExtraAmountInterest.p3LinkText")</a>
             @messages("chargeSummary.poa2ExtraAmountInterest.p3AfterLink")
         }
     </div>
@@ -146,7 +146,7 @@
         }
         @p(id = Some("lpi-LSP3"), classes = "govuk-body govuk-!-margin-bottom-8") {
             @messages("chargeSummary.lpi.penalties.p3")
-            <a class="govuk-link" href="appConfig.chargeSummaryLpiPenaltiesP3Link">@messages("chargeSummary.lpi.penalties.p3LinkText")</a>
+            <a class="govuk-link" href="appConfig.currentLPAndRepaymentInterestRatesUrl">@messages("chargeSummary.lpi.penalties.p3LinkText")</a>
             }
     </div>
 }
@@ -161,7 +161,7 @@
         }
         @p(id = Some("lpi-LPP3"), classes = "govuk-body govuk-!-margin-bottom-8") {
             @messages("chargeSummary.lpi.penalties.p3")
-            <a class="govuk-link" href="appConfig.chargeSummaryLpiPenaltiesP3Link">@messages("chargeSummary.lpi.penalties.p3LinkText")</a>
+            <a class="govuk-link" href="appConfig.currentLPAndRepaymentInterestRatesUrl">@messages("chargeSummary.lpi.penalties.p3LinkText")</a>
             }
     </div>
 }
@@ -169,7 +169,7 @@
 @getInterestRatesLink = {
     @p(id = Some("interest-link")) {
         @messages("chargeSummary.lpi.poaExtraCharge.link")
-        <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="appConfig.chargeSummaryLpiPoaExtraChargeLink">@messages("chargeSummary.lpi.poaExtraCharge.linkText")</a>
+        <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="appConfig.currentLPAndRepaymentInterestRatesUrl">@messages("chargeSummary.lpi.poaExtraCharge.linkText")</a>
         }
 }
 
@@ -183,7 +183,7 @@
         }
         @p(id = Some("lpi-bcd3"), classes = "govuk-body govuk-!-margin-bottom-8") {
         @messages("chargeSummary.lpi.balancingCharge.p3")
-        <a class="govuk-link" href="appConfig.chargeSummaryLpiBalancingChargeP3Link">@messages("chargeSummary.lpi.balancingCharge.p3LinkText")</a>
+        <a class="govuk-link" href="appConfig.currentLPAndRepaymentInterestRatesUrl">@messages("chargeSummary.lpi.balancingCharge.p3LinkText")</a>
         }
     </div>
 }
@@ -285,7 +285,7 @@
         @messages("chargeSummary.codingOutInset-1")
         @link(
             id = Some("coding-out-notice-link"),
-            link=appConfig.chargeSummaryCodingOutInset2Link,
+            link=appConfig.saThroughYourTaxCode,
             target = Some("_blank"),
             rel= Some("noreferrer noopener"),
             messageKey = "chargeSummary.codingOutInset-2"
@@ -299,7 +299,7 @@
         @messages("chargeSummary.cancelledPayeInset-1")
         @link(
             id = Some("cancelled-coding-out-notice-link"),
-            link=appConfig.chargeSummaryCancelledPayeInset2Link,
+            link=appConfig.saThroughYourTaxCode,
             target = Some("_blank"),
             rel= Some("noreferrer noopener"),
             messageKey = "chargeSummary.cancelledPayeInset-2",
