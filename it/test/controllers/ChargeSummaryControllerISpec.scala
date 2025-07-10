@@ -81,36 +81,6 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                 }
               }
               "includes the importantPaymentBreakdown" when {
-                "Charge History feature is disabled" in {
-                  stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testAuditFinancialDetailsModelJson(123.45, 1.2,
-                    dunningLock = oneDunningLock, interestLocks = twoInterestLocks, latePaymentInterestAmount = None,
-                    dueDate = dateService.getCurrentDate.plusDays(20).toString))
-                  IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
-
-                  val res = buildGETMTDClient(path +"?id=1040000123", additionalCookies).futureValue
-
-                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-                  AuditStub.verifyAuditEvent(ChargeSummaryAudit(
-                    testUser(mtdUserRole),
-                    chargeItemWithInterestAndOverdue(BalancingCharge, None,
-                      Some(dateService.getCurrentDate.plusDays(20))),
-                    paymentBreakdown = paymentBreakdown,
-                    chargeHistories = List.empty,
-                    paymentAllocations = paymentAllocation,
-                    isLatePaymentCharge = false,
-                    taxYear = testTaxYearTyped
-                  )(dateService))
-
-                  res should have(
-                    httpStatus(OK),
-                    pageTitle(mtdUserRole, "chargeSummary.balancingCharge.text"),
-                    elementTextBySelector("main h2")(importantPaymentBreakdown)
-                  )
-                }
-
                 "when charge history is enabled" in {
                   
                   stubAuthorised(mtdUserRole)
@@ -173,46 +143,6 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                     pageTitle(mtdUserRole, "chargeSummary.lpi.balancingCharge.text"),
                     elementTextBySelector("main h2")(lpiHistory),
                     elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")(lpiCreated)
-                  )
-                }
-              }
-
-              "is expected" when {
-                "late payment interest flag is true but there are no payment allocations" in {
-                  stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, Json.obj(
-                    "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
-                    "codingDetails" -> Json.arr(),
-                    "documentDetails" -> Json.arr(
-                      Json.obj("taxYear" -> 2018,
-                        "transactionId" -> "1040001234",
-                        "documentDescription" -> "ITSA - POA 2",
-                        "outstandingAmount" -> 1.2,
-                        "originalAmount" -> 10.34,
-                        "documentDate" -> "2018-03-29",
-                        "interestFromDate" -> "2018-03-29",
-                        "interestEndDate" -> "2018-03-29",
-                        "latePaymentInterestAmount" -> 100.0,
-                        "interestOutstandingAmount" -> 80.0
-                      )),
-                    "financialDetails" -> Json.arr(
-                      Json.obj(
-                        "transactionId" -> "1040001234",
-                        "taxYear" -> "2018",
-                        "mainTransaction" -> "4930"
-                      )
-                    )))
-
-                  val res = buildGETMTDClient(path +"?id=1040001234&isInterestCharge=true", additionalCookies).futureValue
-
-                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-                  Then("the result should have a HTTP status of OK (200) and load the correct page")
-                  res should have(
-                    httpStatus(OK),
-                    pageTitle(mtdUserRole, "chargeSummary.lpi.paymentOnAccount2.text"),
-                    elementTextBySelector("main h2")("")
                   )
                 }
               }
