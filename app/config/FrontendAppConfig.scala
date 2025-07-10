@@ -204,7 +204,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val clientAuthorisationGuidance: String = "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax-as-an-agent-step-by-step"
 
-  lazy val yourSelfAssessmentChargeSummaryWhatIsPaymentOnAccountP3Link = "https://www.gov.uk/self-employed-national-insurance-rates"
+  lazy val saNationalInsuranceRatesUrl = "https://www.gov.uk/self-employed-national-insurance-rates"
 
   lazy val homeAgentSupportingReadMoreLink = "https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax"
 
