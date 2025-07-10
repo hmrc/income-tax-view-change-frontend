@@ -2282,7 +2282,8 @@ incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.sole-trader     
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.uk-property                       =   eiddo yn y DU
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.foreign-property                  =   eiddo tramor
 
-# manage journey manage income source
+####### Manage journey manage income source
+
 incomeSources.manage.quarterly-period                                 =   Cyfnod diweddaru
 incomeSources.manage.quarterly-period.standard                        =   Safonol
 incomeSources.manage.quarterly-period.calendar                        =   Calendr
@@ -2312,22 +2313,58 @@ incomeSources.manage.business-manage-details.tradetype                =   Math o
 incomeSources.manage.business-manage-details.reportingFrequency       =   Bwrw golwg dros a newid amlder eich adroddiadau ar gyfer eich holl fusnesau
 incomeSources.manage.business-manage-details.insetText                =   Gan mai busnes newydd yw hwn o hyd, gallwch newid pa mor aml rydych yn cyflwyno adroddiadau ar ei gyfer am hyd at ddwy flwyddyn dreth. O fis Ebrill {0} ymlaen, gallai fod yn ofynnol i chi gyflwyno adroddiadau chwarterol.
 
-# Used when OptInOptOutContentUpdateR17 feature switch is enabled
-incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.paragraph      =   Gan mai busnes newydd yw hwn, gallwch benderfynu os ydych am ddefnyddio’r gwasanaeth Troi Treth yn Ddigidol ar gyfer Treth Incwm am hyd at 2 flwyddyn dreth. O fis Ebrill {0} ymlaen, gallai fod yn ofynnol i chi ddefnyddio’r gwasanaeth hwn.
-incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyPrefix       =   Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
-incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyLink         =   bwrw golwg dros a newid eich rhwymedigaethau adrodd ar gyfer eich holl fusnesau
-
-incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage = Defnyddio Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer {0} i {1}
-incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage.yes  = Iawn
-incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage.no  = Na
-incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.signup = Cofrestru
-incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.optOut = Optio allan
-
 incomeSources.manage.uk-property-manage-details.uk-property-section              =   Eiddo yn y DU
 incomeSources.manage.uk-property-manage-details.accounting-method                =   Dull cyfrifyddu
-
 incomeSources.manage.foreign-property-manage-details.foreign-property-section    =   Eiddo tramor
 incomeSources.manage.foreign-property-manage-details.accounting-method           =   Dull cyfrifyddu
+
+##################### New - Manage journey manage income source #####################
+
+incomeSources.manage.new.business-manage-details.heading                  =   Manage your details
+
+incomeSources.manage.new.quarterly.update.period                          =   Cyfnod diweddaru
+incomeSources.manage.new.quarterly.period.standard                        =   Safonol
+incomeSources.manage.new.quarterly.period.calendar                        =   Calendr
+incomeSources.manage.new.quarterly.period.summary                         =   Beth yw cyfnod chwarterol safonol?
+incomeSources.manage.new.quarterly.period.content.p1                      =   Mae’r busnes hwn yn cyflwyno adroddiadau o 6 Ebrill yn unol â’r flwyddyn dreth – enw arall ar hyn yw ‘defnyddio cyfnodau diweddaru safonol’.
+incomeSources.manage.new.quarterly.period.content.p2                      =   Gallwch ddewis adrodd gan ddefnyddio cyfnodau diweddaru calendr sy’n dod i ben ar ddiwrnod olaf y mis, os yw’ch meddalwedd yn caniatáu hyn.
+incomeSources.manage.new.quarterly.period.content.p3.link                 =   Dysgwch ragor am chwarterau safonol a chwarterau calendr
+
+incomeSources.manage.new.business.details.heading                         =   Gwirio’ch manylion
+incomeSources.manage.new.business.details.sole.trader.section             =   Unig fasnachwr
+incomeSources.manage.new.business.details.business.name                   =   Enw’r busnes
+incomeSources.manage.new.business.details.business.address                =   Cyfeiriad
+incomeSources.manage.new.business.details.date.started                    =   Dyddiad cychwyn
+incomeSources.manage.new.business.details.accounting.method               =   Dull cyfrifyddu
+incomeSources.manage.new.business.details.reporting.method                =   Amlder cyflwyno {0} i {1}
+incomeSources.manage.new.business.details.change                          =   Newid
+incomeSources.manage.new.business.details.quarterly                       =   Bob chwarter
+incomeSources.manage.new.business.details.annually                        =   Blynyddol
+incomeSources.manage.new.business.details.quarterly.grace.period          =   Bob chwarter
+incomeSources.manage.new.business.details.annually.grace.period           =   Blynyddol
+incomeSources.manage.new.business.details.cash.accounting                 =   Cyfrifyddu ar sail arian parod
+incomeSources.manage.new.business.details.traditional.accounting          =   Cyfrifyddu traddodiadol
+incomeSources.manage.new.business.details.trade.type                      =   Math o fasnach
+incomeSources.manage.new.business.details.reporting.frequency             =   Bwrw golwg dros a newid amlder eich adroddiadau ar gyfer eich holl fusnesau
+incomeSources.manage.new.business.details.insetText                       =   Gan mai busnes newydd yw hwn o hyd, gallwch newid pa mor aml rydych yn cyflwyno adroddiadau ar ei gyfer am hyd at ddwy flwyddyn dreth. O fis Ebrill {0} ymlaen, gallai fod yn ofynnol i chi gyflwyno adroddiadau chwarterol.
+
+
+incomeSources.manage.new.uk.property.manage.details.uk.property.section              =   Eiddo yn y DU
+incomeSources.manage.new.uk.property.manage.details.accounting.method                =   Dull cyfrifyddu
+incomeSources.manage.new.foreign.property.manage.details.foreign.property.section    =   Eiddo tramor
+incomeSources.manage.new.foreign.property.manage.details.accounting.method           =   Dull cyfrifyddu
+
+
+# Used when OptInOptOutContentUpdateR17 feature switch is enabled
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.paragraph                      =   Gan mai busnes newydd yw hwn, gallwch benderfynu os ydych am ddefnyddio’r gwasanaeth Troi Treth yn Ddigidol ar gyfer Treth Incwm am hyd at 2 flwyddyn dreth. O fis Ebrill {0} ymlaen, gallai fod yn ofynnol i chi ddefnyddio’r gwasanaeth hwn.
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.reportingFrequencyPrefix       =   Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.reportingFrequencyLink         =   bwrw golwg dros a newid eich rhwymedigaethau adrodd ar gyfer eich holl fusnesau
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage                       = Defnyddio Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer {0} i {1}
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage.yes                   = Iawn
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage.no                    = Na
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.signup                         = Cofrestru
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.optOut                         = Optio allan
+
 
 incomeSources.cease.error.UK.notCeased.text                       = Nid oedd modd dod â’ch busnes eiddo yn y DU i ben. Rhowch gynnig arall arni yn nes ymlaen.
 incomeSources.cease.error.FP.notCeased.text                       = Nid oedd modd dod â’ch busnes eiddo tramor i ben. Rhowch gynnig arall arni yn nes ymlaen.

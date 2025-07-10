@@ -26,7 +26,7 @@ import play.api.http.Status
 import play.api.test.Helpers._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{emptyUIJourneySessionData, notCompletedUIJourneySessionData}
 
-class ManageIncomeSourceDetailsUkPropertyISpec extends ManageIncomeSourceDetailsHelper {
+class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsHelper {
 
   mtdAllRoles.foreach { mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
@@ -50,7 +50,7 @@ class ManageIncomeSourceDetailsUkPropertyISpec extends ManageIncomeSourceDetails
             val result = action(fakeRequest)
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
-            document.title shouldBe title(mtdUserRole)
+            document.title shouldBe title()
             getHeading(document) shouldBe heading
             hasChangeFirstYearReportingMethodLink(document) shouldBe false
             hasChangeSecondYearReportingMethodLink(document) shouldBe false
@@ -72,7 +72,7 @@ class ManageIncomeSourceDetailsUkPropertyISpec extends ManageIncomeSourceDetails
             val result = action(fakeRequest)
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
-            document.title shouldBe title(mtdUserRole)
+            document.title shouldBe title()
             getHeading(document) shouldBe heading
             hasChangeFirstYearReportingMethodLink(document) shouldBe true
             hasChangeSecondYearReportingMethodLink(document) shouldBe true
@@ -97,7 +97,7 @@ class ManageIncomeSourceDetailsUkPropertyISpec extends ManageIncomeSourceDetails
             val result = action(fakeRequest)
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
-            document.title shouldBe title(mtdUserRole)
+            document.title shouldBe title()
             getHeading(document) shouldBe heading
             hasChangeFirstYearReportingMethodLink(document) shouldBe false
             hasChangeSecondYearReportingMethodLink(document) shouldBe false
@@ -123,7 +123,7 @@ class ManageIncomeSourceDetailsUkPropertyISpec extends ManageIncomeSourceDetails
             val document: Document = Jsoup.parse(contentAsString(result))
             val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
 
-            document.title shouldBe title(mtdUserRole)
+            document.title shouldBe title()
             getHeading(document) shouldBe heading
             hasChangeFirstYearReportingMethodLink(document) shouldBe false
             hasChangeSecondYearReportingMethodLink(document) shouldBe false
@@ -147,7 +147,7 @@ class ManageIncomeSourceDetailsUkPropertyISpec extends ManageIncomeSourceDetails
             val result = action(fakeRequest)
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
-            document.title shouldBe title(mtdUserRole)
+            document.title shouldBe title()
             getHeading(document) shouldBe heading
             hasChangeFirstYearReportingMethodLink(document) shouldBe true
             hasChangeSecondYearReportingMethodLink(document) shouldBe true

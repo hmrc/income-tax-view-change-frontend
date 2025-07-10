@@ -210,7 +210,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val chooseAgentGuidanceUrl = "https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax"
 
-  lazy val quarterlyUpdatesGuidanceUrl = "https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates"
+  lazy val quarterlyUpdatesGuidanceUrl = "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax/send-quarterly-updates"
 
   lazy val saWhoNeedsToSignUpUrl = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
 

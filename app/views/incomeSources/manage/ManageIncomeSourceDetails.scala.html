@@ -46,9 +46,9 @@
 )
 
 @(
-        viewModel: ManageIncomeSourceDetailsViewModel,
-        isAgent: Boolean,
-        backUrl: String
+    viewModel: ManageIncomeSourceDetailsViewModel,
+    isAgent: Boolean,
+    backUrl: String
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import play.twirl.api.HtmlFormat
@@ -101,7 +101,7 @@
     }
 }
 
-@getSEList = @{
+@getSelfEmploymentList = @{
     Seq(
         SummaryListRow(
             key = Key(
@@ -222,15 +222,15 @@
     btaNavPartial = user.btaNavPartial) {
 
     @hmrcPageHeading(PageHeading(
-        text = getMessage("heading"),
-        headingClasses = Some("govuk-heading-l"),
+        text = messages("incomeSources.manage.business-manage-details.heading"),
         section = Some(getSectionMessage),
+        headingClasses = Some("govuk-heading-l"),
         captionClasses = Some("govuk-caption-l")
     ))
 
     @govukSummaryList(SummaryList(
         rows = {
-            if(viewModel.incomeSourceType == SelfEmployment) getSEList else Seq.empty
+            if(viewModel.incomeSourceType == SelfEmployment) getSelfEmploymentList else Seq.empty
         } ++ Seq(
             SummaryListRow(
                 key = Key(
