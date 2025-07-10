@@ -210,7 +210,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val quarterlyUpdatesGuidanceUrl = "https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates"
 
-  lazy val optinCompletedOptInIncomeThresholdDescBUrl = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
+  lazy val saWhoNeedsToSignUpUrl = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
 
   lazy val optoutConfirmedOptOutReportQuarterlyDesc3AnchorLink = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
 
