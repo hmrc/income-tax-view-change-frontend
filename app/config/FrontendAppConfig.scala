@@ -212,15 +212,12 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val saWhoNeedsToSignUpUrl = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
 
-  lazy val chargeSummaryPoa1ExtraAmountInterestP3Link = "https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate"
+  lazy val interestRateBankRateUrl = "https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate"
   lazy val chargeSummaryPoa2ExtraAmountInterestP3Link = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates"
 
-  lazy val chargeSummaryLpiPaymentsOnAccountLink = "https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate"
   lazy val chargeSummaryLpiPaymentsOnAccountP3Link = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates"
-  lazy val chargeSummaryLpiPenaltiesLink = "https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate"
   lazy val chargeSummaryLpiPenaltiesP3Link = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates"
   lazy val chargeSummaryLpiPoaExtraChargeLink = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates"
-  lazy val chargeSummaryLpiBalancingChargeLink = "https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate"
   lazy val chargeSummaryLpiBalancingChargeP3Link = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates"
 
   lazy val chargeSummaryCodingOutInset2Link = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
