@@ -232,6 +232,4 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val whatYouOwePaymentsMadeBullet11Link = "https://www.gov.uk/pay-self-assessment-tax-bill"
   lazy val whatYouOweDunningLockLink = "https://www.gov.uk/tax-appeals"
-
-  lazy val incomeSourcesManageQuarterlyPeriodContentExternalRefLink = "https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates"
 }

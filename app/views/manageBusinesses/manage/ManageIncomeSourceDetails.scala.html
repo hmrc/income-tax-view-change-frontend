@@ -310,7 +310,7 @@
         val quarterTypeMessageKey = quarterType.value.toLowerCase
         val p1 = p(id = Some("expandable-info-p1"))(Html(messages(s"$messagePrefix.$quarterTypeMessageKey.content.p1")))
         val p2 = p(id = Some("expandable-info-p2"))(Html(messages(s"$messagePrefix.$quarterTypeMessageKey.content.p2")))
-        val anchor = link( id = Some("expandable-more-info-link"), target = Some("_blank"), link = appConfig.incomeSourcesManageQuarterlyPeriodContentExternalRefLink, messageKey = s"$messagePrefix.content.p3" )
+        val anchor = link( id = Some("expandable-more-info-link"), target = Some("_blank"), link = appConfig.quarterlyUpdatesGuidanceUrl, messageKey = s"$messagePrefix.content.p3" )
         val content = HtmlContent(p1.toString() + p2.toString() + anchor.toString())
 
         govukDetails(Details(id = Some("expandable-info"),
