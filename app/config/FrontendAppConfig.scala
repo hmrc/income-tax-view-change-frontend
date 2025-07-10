@@ -218,7 +218,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val saThroughYourTaxCode = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
 
-  lazy val chargeSummaryCheckPayeTaxCode2Link = "https://www.tax.service.gov.uk/check-income-tax/tax-codes"
+  lazy val checkPayeTaxCodeUrl = "https://www.tax.service.gov.uk/check-income-tax/tax-codes"
 
   lazy val agentUtrErrorReasonBullet2Link = "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax"
 
