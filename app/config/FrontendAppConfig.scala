@@ -208,14 +208,10 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val homeAgentSupportingReadMoreLink = "https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax"
 
-  lazy val nextUpdatesUpdatesSoftwareLink = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
   lazy val nextUpdatesDropdownQuarterlyReturnLink = "https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates"
-  lazy val nextUpdatesR17TabQuarterlyCompatibleSoftwareLink = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
 
-  lazy val optinCompletedOptInSubmitUpdatesDesc1BUrl = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
   lazy val optinCompletedOptInIncomeThresholdDescBUrl = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
 
-  lazy val optoutConfirmedOptOutSoftwareCompatibleLink = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
   lazy val optoutConfirmedOptOutReportQuarterlyDesc3AnchorLink = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
 
   lazy val chargeSummaryPoa1ExtraAmountInterestP3Link = "https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate"
@@ -242,5 +238,4 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val incomeSourcesManageQuarterlyPeriodContentExternalRefLink = "https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates"
 
   lazy val reportingFrequencyMandatoryReportingLink = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
-  lazy val reportingFrequencyCompatibleSoftwareLink = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
 }
