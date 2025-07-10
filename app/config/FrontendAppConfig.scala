@@ -206,7 +206,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val saNationalInsuranceRatesUrl = "https://www.gov.uk/self-employed-national-insurance-rates"
 
-  lazy val chooseAgentGuidance = "https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax"
+  lazy val chooseAgentGuidanceUrl = "https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax"
 
   lazy val nextUpdatesDropdownQuarterlyReturnLink = "https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates"
 
