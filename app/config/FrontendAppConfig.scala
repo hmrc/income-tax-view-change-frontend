@@ -212,8 +212,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val saWhoNeedsToSignUpUrl = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
 
-  lazy val optoutConfirmedOptOutReportQuarterlyDesc3AnchorLink = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
-
   lazy val chargeSummaryPoa1ExtraAmountInterestP3Link = "https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate"
   lazy val chargeSummaryPoa2ExtraAmountInterestP3Link = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates"
 
@@ -236,6 +234,4 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val whatYouOweDunningLockLink = "https://www.gov.uk/tax-appeals"
 
   lazy val incomeSourcesManageQuarterlyPeriodContentExternalRefLink = "https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates"
-
-  lazy val reportingFrequencyMandatoryReportingLink = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
 }

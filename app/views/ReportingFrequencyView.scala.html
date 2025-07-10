@@ -233,7 +233,7 @@
     @govukInsetText(InsetText(id=Some("mandatory-reporting-inset"),content = HtmlContent(messages("reporting.frequency.mandatoryReporting.inset"))))
     @p(id=Some("mandatory-reporting-text")){
         @messages("reporting.frequency.mandatoryReporting.text")
-        @linkComponent(appConfig.reportingFrequencyMandatoryReportingLink, message = s"${messages("reporting.frequency.mandatoryReporting.link.text")} ", rel=Some("noreferrer noopener"), target = Some("_blank"), id = Some("mandatory-reporting-link"))
+        @linkComponent(appConfig.saWhoNeedsToSignUpUrl, message = s"${messages("reporting.frequency.mandatoryReporting.link.text")} ", rel=Some("noreferrer noopener"), target = Some("_blank"), id = Some("mandatory-reporting-link"))
     }
 
     @h2(msg = "reporting.frequency.compatibleSoftware.heading", optId = Some("compatible-software-heading"))
