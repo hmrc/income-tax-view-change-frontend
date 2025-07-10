@@ -44,8 +44,6 @@ object FeatureSwitchName {
   implicit val reads: Reads[FeatureSwitchName] = {
     case JsString(ITSASubmissionIntegration.name) =>
       JsSuccess(ITSASubmissionIntegration)
-    case JsString(ChargeHistory.name) =>
-      JsSuccess(ChargeHistory)
     case JsString(NavBarFs.name) =>
       JsSuccess(NavBarFs)
     case JsString(CreditsRefundsRepay.name) =>
@@ -102,7 +100,6 @@ object FeatureSwitchName {
   val allFeatureSwitches: immutable.Set[FeatureSwitchName] =
     Set(
       ITSASubmissionIntegration,
-      ChargeHistory,
       NavBarFs,
       CreditsRefundsRepay,
       PaymentHistoryRefunds,
@@ -127,12 +124,6 @@ case object ITSASubmissionIntegration extends FeatureSwitchName {
   override val name: String = "itsa-submission-integration"
 
   override def toString: String = "ITSA Submission Integration"
-}
-
-case object ChargeHistory extends FeatureSwitchName {
-  override val name: String = "charge-history"
-
-  override def toString: String = "Charge History"
 }
 
 case object NavBarFs extends FeatureSwitchName {

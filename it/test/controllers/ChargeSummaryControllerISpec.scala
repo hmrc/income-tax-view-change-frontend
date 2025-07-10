@@ -23,7 +23,6 @@ import enums.CodingOutType._
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.ChargeItemStub.{chargeItemWithInterestAndOverdue, docDetail}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.admin.ChargeHistory
 import models.financialDetails._
 import play.api.http.Status._
 import play.api.libs.json.Json
@@ -57,7 +56,6 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
             "render the charge summary page" that {
               "has expected Payments Breakdown" when {
                 "Charge History feature is disabled" in {
-                  disable(ChargeHistory)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                   IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2,
@@ -83,39 +81,8 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                 }
               }
               "includes the importantPaymentBreakdown" when {
-                "Charge History feature is disabled" in {
-                  disable(ChargeHistory)
-                  stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testAuditFinancialDetailsModelJson(123.45, 1.2,
-                    dunningLock = oneDunningLock, interestLocks = twoInterestLocks, latePaymentInterestAmount = None,
-                    dueDate = dateService.getCurrentDate.plusDays(20).toString))
-                  IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
-
-                  val res = buildGETMTDClient(path +"?id=1040000123", additionalCookies).futureValue
-
-                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-                  AuditStub.verifyAuditEvent(ChargeSummaryAudit(
-                    testUser(mtdUserRole),
-                    chargeItemWithInterestAndOverdue(BalancingCharge, None,
-                      Some(dateService.getCurrentDate.plusDays(20))),
-                    paymentBreakdown = paymentBreakdown,
-                    chargeHistories = List.empty,
-                    paymentAllocations = paymentAllocation,
-                    isLatePaymentCharge = false,
-                    taxYear = testTaxYearTyped
-                  )(dateService))
-
-                  res should have(
-                    httpStatus(OK),
-                    pageTitle(mtdUserRole, "chargeSummary.balancingCharge.text"),
-                    elementTextBySelector("main h2")(importantPaymentBreakdown)
-                  )
-                }
-
                 "when charge history is enabled" in {
-                  enable(ChargeHistory)
+                  
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                   val json = testAuditFinancialDetailsModelJson(123.45, 1.2,
@@ -151,7 +118,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
 
               "includes late payment interest" when {
                 "late payment interest flag is true and chargeHistory FS is enabled" in {
-                  enable(ChargeHistory)
+                  
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                   IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJsonAccruingInterest(
@@ -178,69 +145,11 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                     elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")(lpiCreated)
                   )
                 }
-
-                "late payment interest flag is true and chargeHistory FS is disabled" in {
-                  disable(ChargeHistory)
-                  stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelWithPaymentAllocationJson(10.34, 1.2))
-
-                  val res = buildGETMTDClient(path +"?id=1040000123&isInterestCharge=true", additionalCookies).futureValue
-
-                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                  res should have(
-                    httpStatus(OK),
-                    pageTitle(mtdUserRole, "chargeSummary.lpi.balancingCharge.text"),
-                    elementTextBySelector("main h2")(lpiHistory),
-                    elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")("")
-                  )
-                }
-              }
-
-              "is expected" when {
-                "late payment interest flag is true but there are no payment allocations" in {
-                  disable(ChargeHistory)
-                  stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, Json.obj(
-                    "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
-                    "codingDetails" -> Json.arr(),
-                    "documentDetails" -> Json.arr(
-                      Json.obj("taxYear" -> 2018,
-                        "transactionId" -> "1040001234",
-                        "documentDescription" -> "ITSA - POA 2",
-                        "outstandingAmount" -> 1.2,
-                        "originalAmount" -> 10.34,
-                        "documentDate" -> "2018-03-29",
-                        "interestFromDate" -> "2018-03-29",
-                        "interestEndDate" -> "2018-03-29",
-                        "latePaymentInterestAmount" -> 100.0,
-                        "interestOutstandingAmount" -> 80.0
-                      )),
-                    "financialDetails" -> Json.arr(
-                      Json.obj(
-                        "transactionId" -> "1040001234",
-                        "taxYear" -> "2018",
-                        "mainTransaction" -> "4930"
-                      )
-                    )))
-
-                  val res = buildGETMTDClient(path +"?id=1040001234&isInterestCharge=true", additionalCookies).futureValue
-
-                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-                  Then("the result should have a HTTP status of OK (200) and load the correct page")
-                  res should have(
-                    httpStatus(OK),
-                    pageTitle(mtdUserRole, "chargeSummary.lpi.paymentOnAccount2.text"),
-                    elementTextBySelector("main h2")("")
-                  )
-                }
               }
 
               "has coding out details" when {
                 "coding out is enabled and a coded out documentDetail id is passed" in {
-                  enable(ChargeHistory)
+                  
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                   IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, Json.obj(
@@ -284,7 +193,6 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                   IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
 
                   Given("the ChargeHistory feature switch is disabled")
-                  disable(ChargeHistory)
 
                   val res = buildGETMTDClient(path +"?id=1040000123", additionalCookies).futureValue
 
@@ -300,7 +208,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
 
               "has balancing payment title" when {
                 s"ChargeHistory FS is enabled and the charge history details API responds with a $NOT_FOUND" in {
-                  enable(ChargeHistory)
+                  
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                   IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
@@ -320,7 +228,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                   )
                 }
                 s"ChargeHistory FS is enabled and the charge history details API responds with a $FORBIDDEN" in {
-                  enable(ChargeHistory)
+                  
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                   IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
@@ -342,7 +250,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
               }
 
               "has an UNPAID MFADebit" in {
-                enable(ChargeHistory)
+                
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                 IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, financialDetailsUnpaidMFA)
@@ -378,7 +286,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
               }
 
               "has a PAID MFADebit" in {
-                enable(ChargeHistory)
+                
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                 IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, financialDetailsPaidMFA)
@@ -419,7 +327,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
             }
             "return a technical difficulties page to the user" when {
               "ChargeHistory FS is enabled and the charge history details API responded with an error" in {
-                enable(ChargeHistory)
+                
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                 IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
@@ -440,7 +348,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
               }
 
               "When Original Amount value is missing from financial details / document details" in {
-                enable(ChargeHistory)
+                
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                 IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testFinancialDetailsModelWithMissingOriginalAmountJson())

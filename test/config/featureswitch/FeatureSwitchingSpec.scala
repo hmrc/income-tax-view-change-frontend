@@ -44,7 +44,6 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
   val mtdItUser: MtdItUser[_] = defaultMTDITUser(None, IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil))
   val allFeatureSwitches: Set[FeatureSwitchName] = Set(
     ITSASubmissionIntegration,
-    ChargeHistory,
     NavBarFs,
     CreditsRefundsRepay,
     PaymentHistoryRefunds,
