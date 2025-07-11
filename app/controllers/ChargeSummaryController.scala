@@ -183,7 +183,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
         chargeReference match {
           case Some(chargeRef) =>
             val LSPUrl = appConfig.incomeTaxPenaltiesFrontend
-            val LPPUrl = appConfig.incomeTaxPenaltiesFrontendLPP1Calculation(chargeRef)
+            val LPPUrl = if (isAgent) appConfig.incomeTaxPenaltiesFrontendLPP1CalculationAgent(chargeRef) else appConfig.incomeTaxPenaltiesFrontendLPP1Calculation(chargeRef)
 
             val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
               currentDate = dateService.getCurrentDate,
