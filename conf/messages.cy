@@ -2326,9 +2326,9 @@ incomeSources.manage.new.quarterly.period                                 =   Cy
 incomeSources.manage.new.quarterly.period.standard                        =   Safonol
 incomeSources.manage.new.quarterly.period.calendar                        =   Calendr
 incomeSources.manage.new.quarterly.period.summary                         =   Beth yw cyfnod chwarterol safonol?
-incomeSources.manage.new.quarterly.period.content.p1                      =   This business is reporting from 6th April in line with the tax year, also known as standard quarters.
-incomeSources.manage.new.quarterly.period.content.p2                      =   If your software supports it, you can change this to report from the 1st of the month by calendar quarters.
-incomeSources.manage.new.quarterly.period.content.p3                      =   Learn more about standard and calendar quarters
+incomeSources.manage.new.quarterly.period.content.p1                      =   Mae’r busnes hwn yn cyflwyno adroddiadau o 6 Ebrill yn unol â’r flwyddyn dreth – enw arall ar hyn yw ‘defnyddio cyfnodau diweddaru safonol’.
+incomeSources.manage.new.quarterly.period.content.p2                      =   Gallwch ddewis adrodd gan ddefnyddio cyfnodau diweddaru calendr sy’n dod i ben ar ddiwrnod olaf y mis, os yw’ch meddalwedd yn caniatáu hyn.
+incomeSources.manage.new.quarterly.period.content.p3.link                 =   Dysgwch ragor am chwarterau safonol a chwarterau calendr (yn agor tab newydd)
 incomeSources.manage.new.quarterly.period.content.external-ref-link       =   https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates
 
 incomeSources.manage.new.business.details.heading                         =   Gwirio’ch manylion

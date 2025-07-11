@@ -2334,7 +2334,7 @@ incomeSources.manage.new.quarterly.period.calendar                        =   Ca
 incomeSources.manage.new.quarterly.period.summary                         =   What is a standard quarterly period?
 incomeSources.manage.new.quarterly.period.content.p1                      =   This business is reporting from 6th April in line with the tax year, also known as standard quarters.
 incomeSources.manage.new.quarterly.period.content.p2                      =   If your software supports it, you can change this to report from the 1st of the month by calendar quarters.
-incomeSources.manage.new.quarterly.period.content.p3                      =   Learn more about standard and calendar quarters
+incomeSources.manage.new.quarterly.period.content.p3.link                 =   Learn more about standard and calendar quarters
 incomeSources.manage.new.quarterly.period.content.external-ref-link       =   https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates
 
 incomeSources.manage.new.business.details.heading                         =   Manage your details
