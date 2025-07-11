@@ -69,7 +69,7 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
       ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
     } yield {
 
-      (selfServeTimeToPayStartUrl, getLPP2Link(whatYouOweChargesList.chargesList)) match {
+      (selfServeTimeToPayStartUrl, getLPP2Link(whatYouOweChargesList.chargesList, user.isAgent())) match {
         case (Left(ex), _) =>
           Logger("application").error(s"Unable to retrieve selfServeTimeToPayStartUrl: ${ex.getMessage} - ${ex.getCause}")
           itvcErrorHandler.showInternalServerError()
@@ -112,10 +112,11 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
       itvcErrorHandler.showInternalServerError()
   }
 
-  private def getLPP2Link(chargeItems: List[ChargeItem]): Option[String] = {
+  private def getLPP2Link(chargeItems: List[ChargeItem], isAgent: Boolean): Option[String] = {
     val LPP2 = chargeItems.find(_.transactionType == SecondLatePaymentPenalty)
     LPP2 match {
       case Some(charge) => charge.chargeReference match {
+        case Some(value) if isAgent => Some(appConfig.incomeTaxPenaltiesFrontendLPP2CalculationAgent(value))
         case Some(value) => Some(appConfig.incomeTaxPenaltiesFrontendLPP2Calculation(value))
         case None => None
       }

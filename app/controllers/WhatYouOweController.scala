@@ -72,7 +72,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
 
       val hasOverdueCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
       val hasAccruingInterestReviewAndReconcileCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isNotPaidAndNotOverduePoaReconciliationDebit()(dateService))
-      getLPP2Link(whatYouOweChargesList.chargesList) match {
+      getLPP2Link(whatYouOweChargesList.chargesList, isAgent) match {
         case Some(lpp2Url) =>
           Ok(whatYouOwe(
             currentDate = dateService.getCurrentDate,
@@ -114,10 +114,11 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
       itvcErrorHandler.showInternalServerError()
   }
 
-  private def getLPP2Link(chargeItems: List[ChargeItem]): Option[String] = {
+  private def getLPP2Link(chargeItems: List[ChargeItem], isAgent: Boolean): Option[String] = {
     val LPP2 = chargeItems.find(_.transactionType == SecondLatePaymentPenalty)
     LPP2 match {
       case Some(charge) => charge.chargeReference match {
+        case Some(value) if isAgent => Some(appConfig.incomeTaxPenaltiesFrontendLPP2CalculationAgent(value))
         case Some(value) => Some(appConfig.incomeTaxPenaltiesFrontendLPP2Calculation(value))
         case None => None
       }

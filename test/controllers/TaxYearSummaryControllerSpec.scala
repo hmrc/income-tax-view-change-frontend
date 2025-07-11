@@ -403,7 +403,11 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").text() shouldBe "First late payment penalty"
                 Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-1").attr("href") shouldBe chargeSummaryUrl("LPP1")
                 Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-2").text() shouldBe "Second late payment penalty"
-                Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-2").attr("href") shouldBe appConfig.incomeTaxPenaltiesFrontendLPP2Calculation("chargeRef123")
+                if (isAgent) {
+                  Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-2").attr("href") shouldBe appConfig.incomeTaxPenaltiesFrontendLPP2CalculationAgent("chargeRef123")
+                } else {
+                  Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-2").attr("href") shouldBe appConfig.incomeTaxPenaltiesFrontendLPP2Calculation("chargeRef123")
+                }
               }
             }
             "Not show penalties in the charges table" when {

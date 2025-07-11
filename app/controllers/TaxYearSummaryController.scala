@@ -79,7 +79,7 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
                    origin: Option[String],
                    isAgent: Boolean
                   )(implicit mtdItUser: MtdItUser[_]): Result = {
-    (liabilityCalc, getLPP2Link(chargeItems)) match {
+    (liabilityCalc, getLPP2Link(chargeItems, isAgent)) match {
       case (liabilityCalc: LiabilityCalculationResponse, Some(lpp2Url)) =>
         val lang: Seq[Lang] = Seq(languageUtils.getCurrentLang)
 
@@ -165,10 +165,11 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
     }
   }
 
-  private def getLPP2Link(chargeItems: List[TaxYearSummaryChargeItem]): Option[String] = {
+  private def getLPP2Link(chargeItems: List[TaxYearSummaryChargeItem], isAgent: Boolean): Option[String] = {
     val LPP2 = chargeItems.find(_.transactionType == SecondLatePaymentPenalty)
     LPP2 match {
       case Some(charge) => charge.chargeReference match {
+        case Some(value) if isAgent => Some(appConfig.incomeTaxPenaltiesFrontendLPP2CalculationAgent(value))
         case Some(value) => Some(appConfig.incomeTaxPenaltiesFrontendLPP2Calculation(value))
         case None => None
       }
