@@ -115,9 +115,9 @@
 
 @manageReportingFrequency = {
 
-    @h2(msg = "reporting.frequency.h2", optId = Some("manage-heading"))
+    @h2(msg = "reporting.frequency.h2", optId = Some("manage-reporting-frequency-heading"))
 
-    @p(id=Some("change")){
+    @p(id=Some("change-reporting-frequency")){
         @messages("reporting.frequency.manageReportingFrequency.p1")
     }
 
@@ -365,7 +365,7 @@
 
     @h1(
         msg = if(optInOptOutContentUpdateR17IsEnabled) messages("reporting.frequency.title.R17") else messages("reporting.frequency.title"),
-        id = Some("heading")
+        id = Some("page-heading")
     )
     @ceasedBusinessWarning
 
