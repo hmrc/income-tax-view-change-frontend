@@ -152,7 +152,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
         auditChargeSummary(chargeItem, paymentBreakdown,
           chargeHistory, paymentAllocations, isInterestCharge, isMFADebit, taxYear)
 
-        val chargeItems : List[ChargeItem] = chargeDetailsforTaxYear.asChargeItems
+        val chargeItems: List[ChargeItem] = chargeDetailsforTaxYear.asChargeItems
         val (poaOneChargeUrl, poaTwoChargeUrl) = {
           for {
             poaOneChargeItem <- chargeItems
@@ -170,50 +170,54 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                 routes.ChargeSummaryController.show(poaTwoChargeItem.taxYear.endYear, poaTwoChargeItem.transactionId).url
               )
           }
-        }.headOption.getOrElse( ("", ""))
+        }.headOption.getOrElse(("", ""))
         val whatYouOweUrl = {
           if (isAgent) controllers.routes.WhatYouOweController.showAgent().url
           else controllers.routes.WhatYouOweController.show(origin).url
         }
         val saChargesUrl: String = {
-          if(isAgent) controllers.routes.YourSelfAssessmentChargesController.showAgent().url
+          if (isAgent) controllers.routes.YourSelfAssessmentChargesController.showAgent().url
           else controllers.routes.YourSelfAssessmentChargesController.show(origin).url
-      }
+        }
 
-      val LSPUrl = if (chargeItem.transactionType == LateSubmissionPenalty) Some(appConfig.incomeTaxPenaltiesFrontend) else None
-      val LPPUrl = if (chargeItem.transactionType == FirstLatePaymentPenalty) Some(appConfig.incomeTaxPenaltiesFrontendCalculation) else None
+        chargeReference match {
+          case Some(chargeRef) =>
+            val LSPUrl = appConfig.incomeTaxPenaltiesFrontend
+            val LPPUrl = appConfig.incomeTaxPenaltiesFrontendLPP1Calculation(chargeRef)
 
-      val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
-          currentDate = dateService.getCurrentDate,
-          chargeItem = chargeItem,
-          backUrl = getChargeSummaryBackUrl(sessionGatewayPage, taxYear, origin, isAgent),
-          gatewayPage = sessionGatewayPage,
-          paymentBreakdown = paymentBreakdown,
-          paymentAllocations = paymentAllocations,
-          payments = paymentsForAllYears,
-          chargeHistoryEnabled = isEnabled(ChargeHistory),
-          latePaymentInterestCharge = isInterestCharge,
-          reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
-          penaltiesEnabled = isEnabled(PenaltiesAndAppeals),
-          reviewAndReconcileCredit = chargeHistoryService.getReviewAndReconcileCredit(chargeItem, chargeDetailsforTaxYear, isEnabled(ReviewAndReconcilePoa)),
-          btaNavPartial = user.btaNavPartial,
-          isAgent = isAgent,
-          adjustmentHistory = chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail),
-          poaExtraChargeLink = checkForPoaExtraChargeLink(chargeDetailsforTaxYear, documentDetailWithDueDate, isAgent),
-          poaOneChargeUrl = poaOneChargeUrl,
-          poaTwoChargeUrl = poaTwoChargeUrl,
-          LSPUrl = LSPUrl,
-          LPPUrl = LPPUrl
-        )
+            val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
+              currentDate = dateService.getCurrentDate,
+              chargeItem = chargeItem,
+              backUrl = getChargeSummaryBackUrl(sessionGatewayPage, taxYear, origin, isAgent),
+              gatewayPage = sessionGatewayPage,
+              paymentBreakdown = paymentBreakdown,
+              paymentAllocations = paymentAllocations,
+              payments = paymentsForAllYears,
+              chargeHistoryEnabled = isEnabled(ChargeHistory),
+              latePaymentInterestCharge = isInterestCharge,
+              reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
+              penaltiesEnabled = isEnabled(PenaltiesAndAppeals),
+              reviewAndReconcileCredit = chargeHistoryService.getReviewAndReconcileCredit(chargeItem, chargeDetailsforTaxYear, isEnabled(ReviewAndReconcilePoa)),
+              btaNavPartial = user.btaNavPartial,
+              isAgent = isAgent,
+              adjustmentHistory = chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail),
+              poaExtraChargeLink = checkForPoaExtraChargeLink(chargeDetailsforTaxYear, documentDetailWithDueDate, isAgent),
+              poaOneChargeUrl = poaOneChargeUrl,
+              poaTwoChargeUrl = poaTwoChargeUrl,
+              LSPUrl = LSPUrl,
+              LPPUrl = LPPUrl
+            )
 
-        mandatoryViewDataPresent(isInterestCharge, documentDetailWithDueDate) match {
-          case Right(_) => Ok {
-            if (isEnabled(YourSelfAssessmentCharges) && chargeItem.isIncludedInSACSummary) {
-              yourSelfAssessmentChargeSummary(viewModel, whatYouOweUrl)
-            } else
-              chargeSummaryView(viewModel, whatYouOweUrl, saChargesUrl, isEnabled(YourSelfAssessmentCharges))
-          }
-          case Left(ec) => onError(s"Invalid response from charge history: ${ec.message}", isAgent, showInternalServerError = true)
+            mandatoryViewDataPresent(isInterestCharge, documentDetailWithDueDate) match {
+              case Right(_) => Ok {
+                if (isEnabled(YourSelfAssessmentCharges) && chargeItem.isIncludedInSACSummary) {
+                  yourSelfAssessmentChargeSummary(viewModel, whatYouOweUrl)
+                } else
+                  chargeSummaryView(viewModel, whatYouOweUrl, saChargesUrl, isEnabled(YourSelfAssessmentCharges))
+              }
+              case Left(ec) => onError(s"Invalid response from charge history: ${ec.message}", isAgent, showInternalServerError = true)
+            }
+          case None => onError("No chargeReference found", isAgent, showInternalServerError = true)
         }
       case _ =>
         onError("Invalid response from charge history", isAgent, showInternalServerError = true)

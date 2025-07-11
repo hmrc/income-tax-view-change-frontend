@@ -553,6 +553,16 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
             }
 
+            "the financial details response does not contain a chargeReference" in new Setup(financialDetailsModelWithPoaOneNoChargeRef()) {
+              setupMockSuccess(mtdUserRole)
+              mockBothIncomeSources()
+
+              val result: Future[Result] = action(id1040000125)(fakeRequest)
+
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+              JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
+            }
+
             if (mtdUserRole == MTDIndividual) {
               "no related tax year financial details found" in new Setup(testFinancialDetailsModelWithPayeSACodingOut()) {
                 disable(ChargeHistory)

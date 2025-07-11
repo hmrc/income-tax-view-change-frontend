@@ -100,7 +100,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val cancelledPayeSelfAssessment: String = messages("whatYouOwe.cancelledPayeSelfAssessment.text")
   val poa1CollectedCodedOut = messages("whatYouOwe.poa1CodedOut.text")
   val poa2CollectedCodedOut = messages("whatYouOwe.poa2CodedOut.text")
-  val penaltiesCalcUrl: String = "http://localhost:9185/penalties/income-tax/calculation"
 
   val interestEndDateFuture: LocalDate = LocalDate.of(2100, 1, 1)
 
@@ -492,7 +491,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           poa2ExtraTable.select("td").last().text() shouldBe "£40.00"
         }
-        "have penalty charges in table" in new TestSetup(whatYouOweAllPenalties, LPP2Url = penaltiesCalcUrl) {
+        "have penalty charges in table" in new TestSetup(whatYouOweAllPenalties, LPP2Url = appConfig.incomeTaxPenaltiesFrontendLPP2Calculation("chargeRefLPP2")) {
           val lpp1Row: Element = pageDocument.getElementsByClass("govuk-table__row").get(3)
           lpp1Row.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
           lpp1Row.select("td").get(1).text() shouldBe lpp1Text + " 3"
@@ -503,7 +502,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           val lpp2Row: Element = pageDocument.getElementsByClass("govuk-table__row").get(4)
           lpp2Row.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
           lpp2Row.select("td").get(1).text() shouldBe lpp2Text + " 4"
-          lpp2Row.select("td").get(1).getElementsByClass("govuk-link").attr("href") shouldBe penaltiesCalcUrl
+          lpp2Row.select("td").get(1).getElementsByClass("govuk-link").attr("href") shouldBe appConfig.incomeTaxPenaltiesFrontendLPP2Calculation("chargeRefLPP2")
           lpp2Row.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
           lpp2Row.select("td").last().text() shouldBe "£75.00"
 

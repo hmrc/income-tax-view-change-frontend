@@ -160,7 +160,9 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   //penalties frontend
   lazy val incomeTaxPenaltiesFrontend: String = servicesConfig.getString("income-tax-penalties-frontend.homeUrl")
-  lazy val incomeTaxPenaltiesFrontendCalculation: String = servicesConfig.getString("income-tax-penalties-frontend.calculationUrl")
+  lazy val incomeTaxPenaltiesFrontendLPP1Calculation: String => String = chargeRef => servicesConfig.getString("income-tax-penalties-frontend.homeUrl") + s"/first-lpp-calculation?penaltyId=$chargeRef"
+  lazy val incomeTaxPenaltiesFrontendLPP2Calculation: String => String = chargeRef => servicesConfig.getString("income-tax-penalties-frontend.homeUrl") + s"/second-lpp-calculation?penaltyId=$chargeRef"
+
 
   // API timeout
 

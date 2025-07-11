@@ -693,6 +693,7 @@ object IncomeSourceIntegrationTestConstants {
         "transactionId" -> "PAYID01",
         "outstandingAmount" -> -outstandingAmount,
         "originalAmount" -> -originalAmount,
+        "chargeReference" -> "chargeRef",
         "items" -> Json.arr(
           Json.obj("amount" -> -10000,
             "subItemId" -> "001",
@@ -710,6 +711,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainTransaction" -> "4910",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
+        "chargeReference" -> "chargeRef",
         "items" -> Json.arr(
           Json.obj("amount" -> 10000,
             "clearingSAPDocument" -> "012345678912",
@@ -723,6 +725,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainTransaction" -> "4920",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
+        "chargeReference" -> "chargeRef",
         "items" -> Json.arr(
           Json.obj("amount" -> 9000,
             "clearingDate" -> "2019-08-13",
@@ -739,6 +742,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainTransaction" -> "4930",
         "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
+        "chargeReference" -> "chargeRef",
         "items" -> Json.arr(
           Json.obj("amount" -> 8000,
             "clearingDate" -> "2019-08-13",
@@ -809,6 +813,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "SA Balancing Charge",
         "mainTransaction" -> "4910",
         "transactionId" -> "1040000123",
+        "chargeReference" -> "chargeRef",
         "items" -> Json.arr(
           Json.obj("amount" -> 8000,
             "clearingDate" -> "2019-08-13",
@@ -821,6 +826,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "SA Payment on Account 1",
         "mainTransaction" -> "4920",
         "transactionId" -> "1040000124",
+        "chargeReference" -> "chargeRef",
         "items" -> Json.arr(
           Json.obj("amount" -> 8000,
             "clearingDate" -> "2019-08-13",
@@ -833,6 +839,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "SA Payment on Account 2",
         "mainTransaction" -> "4930",
         "transactionId" -> "1040000125",
+        "chargeReference" -> "chargeRef",
         "items" -> Json.arr(
           Json.obj("amount" -> 8000,
             "clearingDate" -> "2019-08-13",
