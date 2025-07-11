@@ -33,16 +33,19 @@ trait ManageIncomeSourceDetailsHelper extends MockAuthActions with MockBusinessD
   with MockSessionService with MockDateService with MockITSAStatusService with MockCalculationListService {
 
   lazy val incomeSourceIdHash: String = mkIncomeSourceId(testSelfEmploymentId).toHash.hash
-  lazy val heading: String = messages("incomeSources.manage.business-manage-details.heading")
-  def title(mtdRole: MTDUserRole) = if(mtdRole == MTDIndividual) s"${messages("htmlTitle", heading)}" else s"${messages("htmlTitle.agent", heading)}"
-  lazy val link: String = s"${messages("incomeSources.manage.business-manage-details.change")}"
+
+  lazy val heading: String = "Manage your details"
+
+  def title() = "Manage your details - Manage your Self Assessment - GOV.UK"
+
+  lazy val link: String = "Change"
   lazy val incomeSourceId: String = "XAIS00000000008"
   lazy val businessWithLatencyAddress: String = "8 Test New Court New Town New City NE12 6CI United Kingdom"
-  lazy val unknown: String = messages("incomeSources.generic.unknown")
-  lazy val annually: String = messages("incomeSources.manage.business-manage-details.annually")
-  lazy val quarterly: String = messages("incomeSources.manage.business-manage-details.quarterly")
-  lazy val standard: String = messages("incomeSources.manage.quarterly-period.standard")
-  lazy val calendar: String = messages("incomeSources.manage.quarterly-period.calendar")
+  lazy val unknown: String = "Unknown"
+  lazy val annually: String = "Annual"
+  lazy val quarterly: String = "Quarterly"
+  lazy val standard: String = "Standard"
+  lazy val calendar: String = "Calendar"
 
   lazy val taxYearEnd2023 = TaxYear(2022, 2023)
 

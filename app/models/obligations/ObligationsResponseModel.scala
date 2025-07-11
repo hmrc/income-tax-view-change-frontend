@@ -44,8 +44,15 @@ case class ObligationsModel(obligations: Seq[GroupedObligationsModel]) extends O
         case _ =>
           if (mtdItUser.incomeSources.businesses.exists(_.incomeSourceId == groupedObligationsModel.identification)) groupedObligationsModel.obligations.map {
             deadline =>
-              Some(ObligationWithIncomeType(mtdItUser.incomeSources.businesses.find(_.incomeSourceId == groupedObligationsModel.identification)
-                .get.tradingName.getOrElse("nextUpdates.business"), deadline))
+              Some(ObligationWithIncomeType(
+                incomeType = mtdItUser.incomeSources.businesses
+                  .find(_.incomeSourceId == groupedObligationsModel.identification)
+                  .get
+                  .tradingName
+                  .getOrElse("nextUpdates.business"),
+                obligation = deadline
+              )
+              )
           } else if (groupedObligationsModel.obligations.forall(ob => ob.obligationType == "Crystallisation"))
             groupedObligationsModel.obligations.map {
               deadline => Some(ObligationWithIncomeType("nextUpdates.crystallisedAll", deadline))
