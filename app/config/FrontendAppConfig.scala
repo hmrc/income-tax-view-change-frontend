@@ -200,4 +200,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   val selfAssessmentTaxReturn = servicesConfig.getString("external-urls.self-assessment-tax-return-link")
   val compatibleSoftwareLink = servicesConfig.getString("external-urls.compatible-software-link")
 
+  lazy val preThreshold2027 = servicesConfig.getString("thresholds.first")
+  lazy val threshold2027 = servicesConfig.getString("thresholds.second")
+  lazy val threshold2028 = servicesConfig.getString("thresholds.third")
+
 }
