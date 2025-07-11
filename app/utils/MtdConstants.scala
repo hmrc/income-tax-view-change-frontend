@@ -16,6 +16,7 @@
 
 package utils
 
+import config.FrontendAppConfig
 import services.DateServiceInterface
 
 import java.time.LocalDate
@@ -23,17 +24,13 @@ import java.time.LocalDate
 trait MtdConstants {
   val dateService: DateServiceInterface
 
-  private final val baseThreshold = "£50,000"
-  private final val thresholdFrom2027 = "£30,000"
-  private final val thresholdFrom2028 = "£20,000"
-
-  def getMtdThreshold: String = {
+  def getMtdThreshold(implicit appConfig: FrontendAppConfig): String = {
     if (dateService.getCurrentDate.isBefore(LocalDate.of(2027, 4, 6))) {
-      baseThreshold
+      appConfig.preThreshold2027
     } else if (dateService.getCurrentDate.isBefore(LocalDate.of(2028, 4, 6))) {
-      thresholdFrom2027
+      appConfig.threshold2027
     } else {
-      thresholdFrom2028
+      appConfig.threshold2028
     }
   }
 }
