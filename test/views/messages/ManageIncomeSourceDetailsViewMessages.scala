@@ -53,12 +53,8 @@ object ManageIncomeSourceDetailsViewMessages {
   val expectedBusinessName: String = "Business income"
   val expectedBusinessStartDate: String = "1 January 2022"
   val expandableInfoStandardSummary: String = "What is a standard quarterly period?"
-//  val expandableInfoCalendarSummary: String = "What is a calendar quarterly period?"
   val expandableInfoStandardContentP1: String = "This business is reporting from 6th April in line with the tax year, also known as standard quarters."
   val expandableInfoStandardContentP2: String = "If your software supports it, you can change this to report from the 1st of the month by calendar quarters."
-
-  // val expandableInfoCalendarContentP1: String = "This business is currently reporting from the 1st April by calendar quarters."
-  // val expandableInfoCalendarContentP2: String = "You can change this to report by standard quarters, in line with the tax year, so you report from 6th April. This change can only be made in your compatible software."
 
   val expandableInfoContentP3: String = "Learn more about standard and calendar quarters"
   val expandableMoreInfoLink = "https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates"
