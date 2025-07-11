@@ -38,7 +38,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
   val govGuidanceUrl = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
 
   def nextUpdatesUrl(isAgent: Boolean): String =
-    if(isAgent) controllers.routes.NextUpdatesController.showAgent().url
+    if (isAgent) controllers.routes.NextUpdatesController.showAgent().url
     else controllers.routes.NextUpdatesController.show().url
 
   def bullet(i: Int): String = s"#main-content > div > div > div > ul > li:nth-child($i) > a"
@@ -87,7 +87,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
   def testContentByIds(pageDocument: Document, R17ContentEnabled: Boolean, additionalIdsAndContent: Seq[(String, String)] = Seq()): Unit = {
     val expectedContent: Seq[(String, String)] = {
-      if(R17ContentEnabled){
+      if (R17ContentEnabled) {
 
         Seq(
           Selectors.h1 -> pageHeadingContentNew,
@@ -110,7 +110,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
         ) ++ additionalIdsAndContent
 
 
-      }else{
+      } else {
         Seq(
           Selectors.h1 -> pageHeadingContent,
           Selectors.h2 -> manageRFHeadingContent,
@@ -801,7 +801,6 @@ class ReportingFrequencyViewSpec extends TestSupport {
             Selectors.latencyDetailsDropdownBullet4 -> "only when you report quarterly for your other businesses",
             Selectors.latencyDetailsDropdownBullet5 -> "even if your income from self-employment or property, or both, exceeds the income threshold",
             Selectors.latencyDetailsDropdownH3 -> "How to change a new income source’s reporting frequency",
-            //TODO this for some reason manages to render the page missing a full stop...
             Selectors.latencyDetailsDropdownPara3 -> "You can do this at any time in the all businesses section.",
             Selectors.latencyDetailsDropdownPara3Link -> "all businesses",
           )

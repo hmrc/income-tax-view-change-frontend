@@ -2954,6 +2954,8 @@ reporting.frequency.latency.details.section.text.para3.text.1       = You can do
 reporting.frequency.latency.details.section.text.para3.link.text    = all businesses
 reporting.frequency.latency.details.section.text.para3.text.2       = section.
 
+########  Reporting Frequency Page Feature Switched Content  ########
+
 reporting.frequency.latency.details.section.header.updateR17                  = You can have different reporting obligations for your new businesses
 reporting.frequency.latency.details.section.text.para1.updateR17              = For tax years you are using Making Tax Digital for Income Tax, you can separately choose to opt out for any new sole trader or property income source:
 reporting.frequency.latency.details.section.text.para1.bullet1.updateR17      = started less than 2 years ago
@@ -2967,8 +2969,6 @@ reporting.frequency.latency.details.section.text.para3.text.1.updateR17       = 
 reporting.frequency.latency.details.section.text.para3.link.text.updateR17    = your businesses
 reporting.frequency.latency.details.section.text.para3.text.2.updateR17       = section.
 
-########  Reporting Frequency Page Feature Switched Content  ########
-reporting.frequency.latency.details.section.text.para3.text.2       = section
 
 yourSelfAssessmentChargeSummary.tax-year                            = {0} to {1} tax year
 yourSelfAssessmentChargeSummary.overDueCharge                       = Overdue charge:
