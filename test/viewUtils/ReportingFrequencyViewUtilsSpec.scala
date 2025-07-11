@@ -159,6 +159,28 @@ class ReportingFrequencyViewUtilsSpec extends UnitSpec with FeatureSwitching wit
           actual shouldBe expected
         }
       }
+      "(new content FS enabled) the CY-1 == Mandated(crystallised) , CY == Voluntary, CY+1 == Mandated" should {
+
+        "return the correct content" in {
+          enable(OptInOptOutContentUpdateR17)
+          val optOutProposition: OptOutProposition =
+            OptOutProposition.createOptOutProposition(
+              currentYear = TaxYear(2024, 2025),
+              previousYearCrystallised = true,
+              previousYearItsaStatus = Mandated,
+              currentYearItsaStatus = Voluntary,
+              nextYearItsaStatus = Mandated
+            )
+
+          val actual = reportingFrequencyViewUtils.itsaStatusTable(optOutProposition)
+          val expected =
+            List(
+              ("2024 to 2025", Some("Yes"), Some("Voluntarily signed up")),
+              ("2025 to 2026", Some("Yes"), Some("Required"))
+            )
+          actual shouldBe expected
+        }
+      }
 
       "the CY-1 == Mandated , CY == Voluntary, CY+1 == Annual" should {
 

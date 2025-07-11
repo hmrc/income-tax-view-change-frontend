@@ -2957,8 +2957,6 @@ reporting.frequency.latency.details.section.text.para3.text.1.updateR17       = 
 reporting.frequency.latency.details.section.text.para3.link.text.updateR17    = your businesses
 reporting.frequency.latency.details.section.text.para3.text.2.updateR17       = section.
 
-########  Reporting Frequency Page Feature Switched Content  ########
-reporting.frequency.latency.details.section.text.para3.text.2       = section
 
 yourSelfAssessmentChargeSummary.tax-year                            = {0} to {1} tax year
 yourSelfAssessmentChargeSummary.overDueCharge                       = Overdue charge:
