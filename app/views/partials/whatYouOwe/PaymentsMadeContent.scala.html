@@ -20,7 +20,8 @@
 
 @this(
     p: p,
-    link: link
+    link: link,
+    appConfig: config.FrontendAppConfig
 )
 @()(
     implicit messages: Messages,
@@ -32,7 +33,7 @@
 <ul class="govuk-list govuk-list--bullet" id="payments-made-bullets">
     <li>@messages("whatYouOwe.payments-made-bullet-1.1")
         @link(
-            link = "https://www.gov.uk/pay-self-assessment-tax-bill",
+            link = appConfig.saPayTaxBillUrl,
             id = Some("sa-tax-bill"),
             messageKey = getPaymentsMadeBulletLinkText,
             target = Some("_blank"),

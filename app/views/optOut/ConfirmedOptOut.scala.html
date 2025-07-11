@@ -37,7 +37,7 @@
     isAgent: Boolean = false,
     showReportingFrequencyContent: Boolean,
     submitYourTaxReturnContent: Option[Html]
-)(implicit messages: Messages, user: auth.MtdItUser[_])
+)(implicit messages: Messages, user: auth.MtdItUser[_], appConfig: config.FrontendAppConfig)
 
 
 @getPanel(bodyMsgKey: String) = @{
@@ -60,7 +60,7 @@
     @h2(msg = "optout.confirmedOptOut.report-quarterly-next-year-onwards")
 
     @{
-        val externalRefLink = messages("optout.confirmedOptOut.software-compatible.link")
+        val externalRefLink = appConfig.compatibleSoftwareLink
         val anchor = link(
             id = Some("software-compatible-ext"),
             target = Some("_blank"),
@@ -148,7 +148,7 @@
         }
         @p(){
             @{
-                val externalRefLink = messages("optout.confirmedOptOut.reportQuarterly.desc3.anchor-link")
+                val externalRefLink = appConfig.saWhoNeedsToSignUpUrl
                 val anchor = link(
                     id = Some("sign-up-criteria-ext"),
                     target = Some("_blank"),

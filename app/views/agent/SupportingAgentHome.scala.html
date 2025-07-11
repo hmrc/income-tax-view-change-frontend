@@ -105,8 +105,8 @@
             )
     )
     @p(id = Some("read-more-about-differences-link")) {
-        <a class="govuk-link" target="_blank" href="@messages("home.agent.supporting.readMore.link")">@messages("home.agent.supporting.readMore")</a>
-    }
+     <a class="govuk-link" target="_blank" href="@appConfig.chooseAgentGuidanceUrl">@messages("home.agent.supporting.readMore")</a>
+}
 }
 
 @layout(

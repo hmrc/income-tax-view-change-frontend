@@ -185,7 +185,6 @@ home.agent.supporting.cannotAccess.payments                     = payments, cred
 home.agent.supporting.cannotAccess.returns                      = returns
 home.agent.supporting.cannotAccess.nextChargesDue               = next charges due
 home.agent.supporting.readMore                                  = Read more about the difference between main and supporting agents on GOV.UK (opens in new tab).
-home.agent.supporting.readMore.link                             = https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax
 
 home.penaltiesAndAppeals.heading                                = Penalties and appeals
 home.penaltiesAndAppeals.view                                   = Check Self Assessment penalties and appeals
@@ -782,7 +781,7 @@ nextUpdates.dropdown.quarterlyReturn.text                          = A quarterly
 nextUpdates.dropdown.quarterlyReturn.text.lin2                     = Using your record-keeping software, you must send 4 quarterly updates in a year for each source of income.
 nextUpdates.dropdown.quarterlyReturn.text.lin3                     = You may be able to choose your quarterly period in your chosen software. For example, standard quarters reports from 6th April to 5th July whereas calendar quarters is from 1st April to 30th June.
 nextUpdates.dropdown.quarterlyReturn.link.text                     = Learn more about quarterly periods
-nextUpdates.dropdown.quarterlyReturn.link.link                     = https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates
+
 nextUpdates.dropdown.finalDeclaration.text                         = Your final declaration is the last step in your tax return, where you confirm you’ve submitted all your income and expenses (to the best of your knowledge). This is done using your record-keeping software.
 nextUpdates.table.header.type									   = Update type
 nextUpdates.table.header.source									   = Income source
@@ -819,7 +818,6 @@ nextUpdates.r17.tab.quarterly.dropdown.text2                       = new informa
 nextUpdates.r17.tab.quarterly.dropdown.text3                       = any information you’ve already provided that has not changed
 nextUpdates.r17.tab.quarterly.dropdown.text4                       = This is done using
 nextUpdates.r17.tab.quarterly.dropdown.link.text                   = software compatible with Making Tax Digital for Income Tax
-nextUpdates.r17.tab.quarterly.compatibleSoftware.link              = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
 nextUpdates.r17.tab.quarterly.link.text1                           = To view previously submitted updates visit the
 nextUpdates.r17.tab.quarterly.link.text2                           = tax year
 nextUpdates.r17.tab.quarterly.link.text3                           = summary page.
@@ -866,7 +864,7 @@ nextUpdates.updates.software.heading    					       = Submitting updates in soft
 nextUpdates.updates.software.dec1       					       = Use your
 nextUpdates.updates.software.dec2       					       = compatible record keeping software
 nextUpdates.updates.software.dec3       					       = to keep digital records of all your business income and expenses. You must submit these updates through your software by each date shown.
-nextUpdates.updates.software.link       					       = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
+
 
 
 ## Payment Due Page ##
@@ -2298,7 +2296,6 @@ incomeSources.manage.quarterly-period.standard.content.p2             =   If you
 incomeSources.manage.quarterly-period.calendar.content.p1             =   This business is currently reporting from the 1st April by calendar quarters.
 incomeSources.manage.quarterly-period.calendar.content.p2             =   You can change this to report by standard quarters, in line with the tax year, so you report from 6th April. This change can only be made in your compatible software.
 incomeSources.manage.quarterly-period.content.p3                      =   Learn more about standard and calendar quarters
-incomeSources.manage.quarterly-period.content.external-ref-link       =   https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates
 
 incomeSources.manage.business-manage-details.heading                  =   Manage your details
 incomeSources.manage.business-manage-details.sole-trader-section      =   Sole trader
@@ -2552,7 +2549,6 @@ paymentOnAccount.caption                             = {0} to {1} tax year
 paymentOnAccount.heading                             = Adjusting your payments on account
 paymentOnAccount.p1                                  = You can adjust both payments on account if you expect the total of your Income Tax and
 paymentOnAccount.class4NationalInsurance.link.text   = Class 4 National Insurance contributions (opens in a new tab)
-paymentOnAccount.class4NationalInsurance.link        = https://www.gov.uk/self-employed-national-insurance-rates
 paymentOnAccount.p2                                  = to be lower than the previous tax year.
 paymentOnAccount.heading.example                     = Example
 paymentOnAccount.hint                                = For example, if your tax bill was £4,000 last year, but you think you should only pay £3,000 this year, you can reduce both payments on account to £1,500 each.
@@ -2677,11 +2673,9 @@ optout.confirmedOptOut.reportQuarterly.example                   = For example, 
 optout.confirmedOptOut.reportQuarterly.desc2                     = If this happens, we will write to you to let you know.
 optout.confirmedOptOut.reportQuarterly.desc3                     = You can check the threshold for qualifying income in the {0} .
 optout.confirmedOptOut.reportQuarterly.desc3.anchor-text         = criteria for people who will need to sign up for Making Tax Digital
-optout.confirmedOptOut.reportQuarterly.desc3.anchor-link         = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up
 optout.confirmedOptOut.report-quarterly-next-year-onwards        = Reporting quarterly from next tax year onwards
 optout.confirmedOptOut.warning-quarterly-update.text             = From 6 April {0}, you’ll be required to send quarterly updates through
 optout.confirmedOptOut.software-compatible                       = software compatible with Making Tax Digital for Income Tax
-optout.confirmedOptOut.software-compatible.link                  = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
 optout.confirmedOptOut.reportQuarterly.reason-list               = This could be because:
 optout.confirmedOptOut.reportQuarterly.reason1                   = HMRC lowered the income threshold for Making Tax Digital
 optout.confirmedOptOut.reportQuarterly.reason2                   = you reported an increase in your qualifying income in last year’s tax return
@@ -2830,7 +2824,6 @@ optin.completedOptIn.yourRevisedDeadline.p2.link                = your reporting
 optin.completedOptIn.submitUpdates                              = Submit updates in software
 optin.completedOptIn.submitUpdates.desc1.a                      = For any tax year you are reporting quarterly, you will need
 optin.completedOptIn.submitUpdates.desc1.b                      = software compatible with Making Tax Digital for Income Tax (opens in new tab).
-optin.completedOptIn.submitUpdates.desc1.b.url                  = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
 
 optin.completedOptIn.submitUpdates.annualReportingAdvice        = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
 
@@ -2850,7 +2843,6 @@ optin.completedOptIn.futureReporting.desc2                      = If this happen
 
 optin.completedOptIn.incomeThreshold.desc.a                     = You can check the threshold for qualifying income in the
 optin.completedOptIn.incomeThreshold.desc.b                     = criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab).
-optin.completedOptIn.incomeThreshold.desc.b.url                 = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up
 
 # opt in confirm tax year
 optIn.confirmTaxYear.heading                        = Confirm and opt in for {0} to {1} tax year
@@ -2883,11 +2875,9 @@ reporting.frequency.mandatoryReporting.heading    = When reporting quarterly is 
 reporting.frequency.mandatoryReporting.inset      = Reporting quarterly is required if your income from self-employment or property, or both, exceeds the income threshold.
 reporting.frequency.mandatoryReporting.text       = You can check the threshold for when reporting quarterly is mandatory in the
 reporting.frequency.mandatoryReporting.link.text  = criteria for people who will need to sign up for Making Tax Digital for Income Tax
-reporting.frequency.mandatoryReporting.link       = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up
 
 reporting.frequency.compatibleSoftware.heading   = When compatible software is required
 reporting.frequency.compatibleSoftware.p1        = If you are reporting quarterly, you will need to use
-reporting.frequency.compatibleSoftware.link      = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
 reporting.frequency.compatibleSoftware.link.text = software compatible with Making Tax Digital for Income Tax
 reporting.frequency.compatibleSoftware.p2        = There are both paid and free options for you or your agent to choose from.
 reporting.frequency.compatibleSoftware.p3        = For reporting annually, you can use either compatible software or your HMRC online account to submit your tax return.

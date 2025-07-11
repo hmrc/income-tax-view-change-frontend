@@ -20,6 +20,7 @@
 @import views.html.helpers.injected.obligations._
 @import views.html.layouts.unifiedLayout
 @import services.optout.OptOutProposition
+@import config.FrontendAppConfig
 
 @this(
 	mainTemplate: unifiedLayout,
@@ -30,7 +31,8 @@
 	link: link,
 	detailsDropdown: detailsDropdown,
 	nextUpdatesHelper: NextUpdatesHelper,
-	nextUpdatesHelperR17: NextUpdatesHelperR17
+	nextUpdatesHelperR17: NextUpdatesHelperR17,
+    appConfig: config.FrontendAppConfig
 )
 
 @(
@@ -94,7 +96,7 @@
 			@p(){
 				<div id="updates-software-link" class="govuk-body app-get-help-link">
 					@messages("nextUpdates.updates.software.dec1")
-					@link(link = messages("nextUpdates.updates.software.link"), target = Some("_blank"), messageKey = "nextUpdates.updates.software.dec2")
+					@link(link = appConfig.compatibleSoftwareLink , target = Some("_blank"), messageKey = "nextUpdates.updates.software.dec2")
 					@messages("nextUpdates.updates.software.dec3")
 				</div>
 			}
@@ -108,7 +110,7 @@
 		@p(id = Some("quarterly-dropdown-line1"))(Html(messages("nextUpdates.dropdown.quarterlyReturn.text")))
 		@p(id = Some("quarterly-dropdown-line2"))(Html(messages("nextUpdates.dropdown.quarterlyReturn.text.lin2")))
 		@p(id = Some("quarterly-dropdown-line3"))(Html(messages("nextUpdates.dropdown.quarterlyReturn.text.lin3")))
-		@link(link = messages("nextUpdates.dropdown.quarterlyReturn.link.link"), target = Some("_blank"), messageKey = "nextUpdates.dropdown.quarterlyReturn.link.text")
+		@link(link = appConfig.quarterlyUpdatesGuidanceUrl , target = Some("_blank"), messageKey = "nextUpdates.dropdown.quarterlyReturn.link.text")
 	</div>
 	<div id="details-content-2">
 		@h2(msg = "obligations.finalDeclarationUpdate", optId = Some("finalDeclaration-heading"))
