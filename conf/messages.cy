@@ -2871,7 +2871,7 @@ reporting.frequency.different.obligations.li1                               = 4 
 reporting.frequency.different.obligations.li2                               = Ffurflen Dreth
 reporting.frequency.different.obligations.p2                                = Ar gyfer blynyddoedd treth yr ydych wedi optio allan ohonynt, bydd dim ond angen i chi gyflwyno Ffurflen Dreth.
 reporting.frequency.different.obligations.p3                                = Gallwch fwrw golwg dros yr hyn sy’n ddyledus ar y dudalen
-reporting.frequency.different.obligations.link.text                         = diweddariadau a dyddiadau cau
+reporting.frequency.different.obligations.link.text                         = diweddariadau a dyddiadau cau.
 reporting.frequency.different.obligations.link.text.additional.english      =
 
 reporting.frequency.mandatoryReporting.heading    = Pan fydd adrodd yn chwarterol yn ofynnol
@@ -2883,7 +2883,7 @@ reporting.frequency.mandatoryReporting.link.text  = meini prawf ar gyfer pobl y 
 reporting.frequency.mandatoryReporting.heading.R17      = Pan fydd angen defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
 reporting.frequency.mandatoryReporting.inset.R17        = Mae’n rhaid i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm os yw cyfanswm eich incwm gros o hunangyflogaeth neu eiddo, neu’r ddau, yn fwy na’r trothwy o £50,000.
 reporting.frequency.mandatoryReporting.p1               = Os bydd hyn yn digwydd yn y flwyddyn dreth {0} i {1}, byddai’n ofynnol i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer y flwyddyn dreth {2} i {3}.
-reporting.frequency.mandatoryReporting.p2               = Find out more about the threshold in the
+reporting.frequency.mandatoryReporting.p2               = Dysgwch ragor am y trothwy yn y
 
 reporting.frequency.compatibleSoftware.heading   = Pan fydd angen meddalwedd sy’n cydweddu
 reporting.frequency.compatibleSoftware.p1        = Os ydych yn adrodd yn chwarterol, bydd angen i chi ddefnyddio
