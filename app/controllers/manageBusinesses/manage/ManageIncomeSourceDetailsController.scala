@@ -146,9 +146,11 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
         sources = user.incomeSources,
         incomeSourceId = incomeSourceId
       )
-      anyBusinessesInLatency =
+      anyIncomeSourcesInLatency =
         user.incomeSources.businesses.flatMap(_.latencyDetails.map(_.latencyIndicator1)).nonEmpty ||
-          user.incomeSources.businesses.flatMap(_.latencyDetails.map(_.latencyIndicator2)).nonEmpty
+          user.incomeSources.businesses.flatMap(_.latencyDetails.map(_.latencyIndicator2)).nonEmpty ||
+          user.incomeSources.properties.flatMap(_.latencyDetails.map(_.latencyIndicator2)).nonEmpty ||
+          user.incomeSources.properties.flatMap(_.latencyDetails.map(_.latencyIndicator2)).nonEmpty
 
     } yield {
 
@@ -160,8 +162,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
         showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
         showReportingFrequencyLink = isEnabled(ReportingFrequencyPage),
         backUrl = backUrl,
-        anyBusinessesInLatency = anyBusinessesInLatency,
-        anyPropertyInLatency = false
+        anyIncomeSourcesInLatency = anyIncomeSourcesInLatency,
       ))
     }
 
@@ -181,9 +182,12 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
                      backUrl: String,
                      incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
-    val anyPropertyInLatency =
-      sources.properties.flatMap(_.latencyDetails.map(_.latencyIndicator1)).nonEmpty ||
-        sources.properties.flatMap(_.latencyDetails.map(_.latencyIndicator2)).nonEmpty
+    val anyIncomeSourcesInLatency =
+      user.incomeSources.businesses.flatMap(_.latencyDetails.map(_.latencyIndicator1)).nonEmpty ||
+        user.incomeSources.businesses.flatMap(_.latencyDetails.map(_.latencyIndicator2)).nonEmpty ||
+        user.incomeSources.properties.flatMap(_.latencyDetails.map(_.latencyIndicator2)).nonEmpty ||
+        user.incomeSources.properties.flatMap(_.latencyDetails.map(_.latencyIndicator2)).nonEmpty
+
 
     getManageIncomeSourceViewModelProperty(sources = sources, isAgent = isAgent, incomeSourceType = incomeSourceType)
       .map { viewModel =>
@@ -195,8 +199,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
           showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
           showReportingFrequencyLink = isEnabled(ReportingFrequencyPage),
           backUrl = backUrl,
-          anyBusinessesInLatency = false,
-          anyPropertyInLatency = anyPropertyInLatency
+          anyIncomeSourcesInLatency = anyIncomeSourcesInLatency
         ))
       }.recover {
         case ex =>

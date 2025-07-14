@@ -64,7 +64,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
   val expandableInfoCalendarContentP1: String = messages("incomeSources.manage.quarterly-period.calendar.content.p1")
   val expandableInfoCalendarContentP2: String = messages("incomeSources.manage.quarterly-period.calendar.content.p2")
   val expandableInfoContentP3: String = messages("incomeSources.manage.quarterly-period.content.p3")
-  val expandableMoreInfoLink: String = "https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates"
+  val expandableMoreInfoLink: String = "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax/send-quarterly-updates"
   val opensInNewTabText: String = messages("pagehelp.opensInNewTabText")
   val cashBasisAccounting: String = "Cash basis accounting"
 

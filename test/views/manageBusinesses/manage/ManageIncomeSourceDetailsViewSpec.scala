@@ -62,8 +62,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true,
-        anyBusinessesInLatency = true,
-        anyPropertyInLatency = false
+        anyIncomeSourcesInLatency = false
       )(messages, implicitly)
     }
 
@@ -86,8 +85,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true,
-        anyBusinessesInLatency = true,
-        anyPropertyInLatency = false
+        anyIncomeSourcesInLatency = false,
+
       )(messages, implicitly)
     }
 
@@ -110,8 +109,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true,
-        anyBusinessesInLatency = true,
-        anyPropertyInLatency = false
+        anyIncomeSourcesInLatency = true
       )(messages, implicitly)
     }
 
@@ -130,8 +128,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true,
-        anyBusinessesInLatency = true,
-        anyPropertyInLatency = false
+        anyIncomeSourcesInLatency = true
       )(messages, implicitly)
     }
 
@@ -154,8 +151,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true,
-        anyBusinessesInLatency = false,
-        anyPropertyInLatency = true
+        anyIncomeSourcesInLatency = false
       )(messages, implicitly)
     }
 
@@ -177,8 +173,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true,
-        anyBusinessesInLatency = false,
-        anyPropertyInLatency = true
+        anyIncomeSourcesInLatency = false
       )(messages, implicitly)
     }
 
@@ -200,8 +195,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true,
-        anyBusinessesInLatency = false,
-        anyPropertyInLatency = true
+        anyIncomeSourcesInLatency = true
       )(messages, implicitly)
     }
 
@@ -220,8 +214,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true,
-        anyBusinessesInLatency = false,
-        anyPropertyInLatency = true
+        anyIncomeSourcesInLatency = true
       )(messages, implicitly)
     }
 
@@ -244,8 +237,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true,
-        anyBusinessesInLatency = false,
-        anyPropertyInLatency = true
+        anyIncomeSourcesInLatency = false
       )(messages, implicitly)
     }
 
@@ -267,8 +259,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true,
-        anyBusinessesInLatency = false,
-        anyPropertyInLatency = true
+        anyIncomeSourcesInLatency = false
       )(messages, implicitly)
     }
 
@@ -290,8 +281,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true,
-        anyBusinessesInLatency = false,
-        anyPropertyInLatency = true
+        anyIncomeSourcesInLatency = true
       )(messages, implicitly)
     }
 
@@ -310,8 +300,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true,
-        anyBusinessesInLatency = false,
-        anyPropertyInLatency = true
+        anyIncomeSourcesInLatency = true
       )(messages, implicitly)
     }
 
@@ -329,8 +318,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = true,
         showReportingFrequencyLink = true,
-        anyBusinessesInLatency = true,
-        anyPropertyInLatency = false
+        anyIncomeSourcesInLatency = true
       )(messages, implicitly)
     }
 
@@ -394,8 +382,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showAccountingMethod = false,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true,
-        anyBusinessesInLatency = false,
-        anyPropertyInLatency = false
+        anyIncomeSourcesInLatency = true
       )(messages, implicitly)
 
       implicit val document: Document = Jsoup.parse(contentAsString(view))
@@ -488,8 +475,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = true,
         showReportingFrequencyLink = true,
-        anyBusinessesInLatency = false,
-        anyPropertyInLatency = false,
+        anyIncomeSourcesInLatency = true,
         backUrl = backUrl(false)
       )(messages, implicitly)
 
@@ -502,7 +488,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       summaryListRowKeys().text() should include(expectedRow2)
 
       summaryListRowValues().eq(6).text() shouldBe "Yes"
-//      summaryListRowValues().eq(7).text() shouldBe "No"
+      //      summaryListRowValues().eq(7).text() shouldBe "No"
 
 
       val actionLinks = document.select(".govuk-summary-list__actions a")
@@ -535,8 +521,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = true,
         showReportingFrequencyLink = true,
-        anyBusinessesInLatency = false,
-        anyPropertyInLatency = false,
+        anyIncomeSourcesInLatency = true,
         backUrl = backUrl(false)
       )(messages, implicitly)
 
@@ -555,7 +540,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
       val actions = document.select(".govuk-summary-list__actions a").eachText()
       actions should contain("Opt out")
-      actions should not contain("Sign up")
+      actions should not contain ("Sign up")
     }
 
 
@@ -662,8 +647,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showAccountingMethod = false,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true,
-        anyBusinessesInLatency = false,
-        anyPropertyInLatency = false
+        anyIncomeSourcesInLatency = true
       )(messages, implicitly)
 
       implicit val document = Jsoup.parse(contentAsString(view))
@@ -760,6 +744,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     }
 
     "render the whole page with unknowns and no change links" in new UkSetupUnknowns(true) {
+
       document.getElementById("up-to-two-tax-years").text() shouldBe "Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April , you could be required to report quarterly."
 
       summaryListRowKeys().eq(0).text() shouldBe dateStarted
@@ -822,8 +807,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showAccountingMethod = false,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true,
-        anyBusinessesInLatency = false,
-        anyPropertyInLatency = false
+        anyIncomeSourcesInLatency = true
       )(messages, implicitly)
 
       implicit val document = Jsoup.parse(contentAsString(view))

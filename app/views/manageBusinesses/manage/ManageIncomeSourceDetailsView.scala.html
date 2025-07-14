@@ -51,8 +51,7 @@
         showOptInOptOutContentUpdateR17: Boolean,
         showReportingFrequencyLink: Boolean,
         backUrl: String,
-        anyBusinessesInLatency: Boolean,
-        anyPropertyInLatency: Boolean
+        anyIncomeSourcesInLatency: Boolean
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
@@ -355,7 +354,7 @@
         captionClasses = Some("govuk-caption-l")
     ))
 
-    @if(anyBusinessesInLatency || anyPropertyInLatency){
+    @if(!anyIncomeSourcesInLatency){
         @if(showOptInOptOutContentUpdateR17) {
             <div id="up-to-two-tax-years" class="govuk-body">
                 @messages("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.paragraph", viewModel.latencyDetails.fold("")(_.taxYear2))
@@ -453,7 +452,7 @@
     )
 
 
-    @if(!anyBusinessesInLatency || !anyPropertyInLatency){
+    @if(!anyIncomeSourcesInLatency){
         @quarterlyPeriodDropDown
     }
 
