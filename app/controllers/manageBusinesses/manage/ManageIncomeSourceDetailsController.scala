@@ -148,7 +148,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
       )
       anyBusinessesInLatency =
         user.incomeSources.businesses.flatMap(_.latencyDetails.map(_.latencyIndicator1)).nonEmpty ||
-          user.incomeSources.businesses.flatMap(_.latencyDetails.map(_.latencyIndicator1)).nonEmpty
+          user.incomeSources.businesses.flatMap(_.latencyDetails.map(_.latencyIndicator2)).nonEmpty
 
     } yield {
 
@@ -183,7 +183,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
 
     val anyPropertyInLatency =
       sources.properties.flatMap(_.latencyDetails.map(_.latencyIndicator1)).nonEmpty ||
-        sources.properties.flatMap(_.latencyDetails.map(_.latencyIndicator1)).nonEmpty
+        sources.properties.flatMap(_.latencyDetails.map(_.latencyIndicator2)).nonEmpty
 
     getManageIncomeSourceViewModelProperty(sources = sources, isAgent = isAgent, incomeSourceType = incomeSourceType)
       .map { viewModel =>
