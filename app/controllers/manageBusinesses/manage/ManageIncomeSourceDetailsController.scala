@@ -162,7 +162,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
         showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
         showReportingFrequencyLink = isEnabled(ReportingFrequencyPage),
         backUrl = backUrl,
-        anyIncomeSourcesInLatency = anyIncomeSourcesInLatency,
+        anyIncomeSourcesInLatency = anyIncomeSourcesInLatency
       ))
     }
 
