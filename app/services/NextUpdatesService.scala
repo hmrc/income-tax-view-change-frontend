@@ -174,7 +174,21 @@ class NextUpdatesService @Inject()(
           .sorted
           .headOption
 
-        val nextTaxReturnDate : Option[LocalDate] = Some(LocalDate.of(dateService.getCurrentTaxYear.endYear + 1, 1, 31))
+        val nextCrystallisationDueDate = openObligations
+          .filter(_.obligationType == "Crystallisation")
+          .map(_.due)
+          .filter(dueDate => !dueDate.isBefore(dateService.getCurrentDate))
+          .sorted
+          .headOption
+
+        val fallbackNextTaxReturnDate: LocalDate = LocalDate.of(dateService.getCurrentTaxYear.endYear + 1, 1, 31)
+
+        val nextTaxReturnDate: Option[LocalDate] = nextCrystallisationDueDate match {
+          case Some(date) => Some(date)
+          case None =>
+            Logger("application").info("[getNextDueDates] No upcoming crystallisation obligation found - falling back to static next tax return due date")
+            Some(fallbackNextTaxReturnDate)
+        }
 
         (nextQuarterlyDueDate, nextTaxReturnDate)
 
