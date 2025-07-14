@@ -92,6 +92,7 @@
     input
     .replaceAll("<[^>]*>", "")
     .replaceAll("\t", "")
+    .replaceAll("[\\p{So}\\p{Cn}]", "") // remove symbols/emoji
 }
 
 @getLongAddressFromBusinessAddressDetails(address1: String, address2: Option[String], address3: Option[String], address4: Option[String], postCode: Option[String], countryCode: Option[String]) = @{
@@ -105,7 +106,8 @@
     .filter(_.nonEmpty)
     .map(sanitiseOutput)
     .map(HtmlFormat.escape)
-    .mkString("<br>")
+    .map("<div>" + _ + "</div>")
+    .mkString("")
 }
 
 
