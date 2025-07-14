@@ -2878,6 +2878,7 @@ reporting.frequency.mandatoryReporting.heading    = Pan fydd adrodd yn chwartero
 reporting.frequency.mandatoryReporting.inset      = Mae angen adrodd yn chwarterol os yw’ch incwm o hunangyflogaeth neu’ch incwm o eiddo, neu’r ddau, y tu hwn i’r trothwy incwm.
 reporting.frequency.mandatoryReporting.text       = Gallwch wirio’r trothwy ar gyfer pryd y bydd adrodd yn chwarterol yn ofynnol yn y
 reporting.frequency.mandatoryReporting.link.text  = meini prawf ar gyfer pobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+reporting.frequency.mandatoryReporting.link       = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up
 
 #new mandatory reporting messages for reporting frequency with OptInOptOutContentUpdateR17 enabled:
 reporting.frequency.mandatoryReporting.heading.R17      = Pan fydd angen defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm

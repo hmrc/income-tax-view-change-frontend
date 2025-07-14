@@ -2885,6 +2885,7 @@ reporting.frequency.mandatoryReporting.heading    = When reporting quarterly is 
 reporting.frequency.mandatoryReporting.inset      = Reporting quarterly is required if your income from self-employment or property, or both, exceeds the income threshold.
 reporting.frequency.mandatoryReporting.text       = You can check the threshold for when reporting quarterly is mandatory in the
 reporting.frequency.mandatoryReporting.link.text  = criteria for people who will need to sign up for Making Tax Digital for Income Tax
+reporting.frequency.mandatoryReporting.link       = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up
 
 #new mandatory reporting messages for reporting frequency with OptInOptOutContentUpdateR17 enabled:
 reporting.frequency.mandatoryReporting.heading.R17      = When Making Tax Digital for Income Tax is required
