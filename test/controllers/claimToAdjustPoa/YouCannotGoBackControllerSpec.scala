@@ -19,12 +19,11 @@ package controllers.claimToAdjustPoa
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
-import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.PoaAmendmentData
 import play.api
 import play.api.Application
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.testPoa1Maybe
 
@@ -40,10 +39,9 @@ class YouCannotGoBackControllerSpec extends MockAuthActions
       api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
     ).build()
 
-  lazy val testController = app.injector.instanceOf[YouCannotGoBackController]
+  lazy val testController: YouCannotGoBackController = app.injector.instanceOf[YouCannotGoBackController]
 
   def setupTest(): Unit = {
-    enable(AdjustPaymentsOnAccount)
     mockSingleBISWithCurrentYearAsMigrationYear()
   }
 
@@ -80,27 +78,6 @@ class YouCannotGoBackControllerSpec extends MockAuthActions
 
             }
           }
-
-          s"redirect to home page" when {
-
-            "AdjustPaymentsOnAccount FS is disabled" in {
-              setupTest()
-              disable(AdjustPaymentsOnAccount)
-              setupMockGetPaymentsOnAccount(testPoa1Maybe)
-              setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
-
-              setupMockSuccess(mtdRole)
-              val result = action(fakeRequest)
-              status(result) shouldBe SEE_OTHER
-              val expectedRedirectUrl = if (isAgent) {
-                controllers.routes.HomeController.showAgent().url
-              } else {
-                controllers.routes.HomeController.show().url
-              }
-              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-            }
-          }
-
           s"return status $INTERNAL_SERVER_ERROR" when {
 
             "No POAs can be found" in {
@@ -141,7 +118,7 @@ class YouCannotGoBackControllerSpec extends MockAuthActions
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdRole, false)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
     }
   }
 }

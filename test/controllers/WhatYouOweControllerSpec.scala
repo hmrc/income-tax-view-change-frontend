@@ -20,8 +20,8 @@ import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockAuthActions
 import mocks.services.MockClaimToAdjustService
-import models.admin.{AdjustPaymentsOnAccount, CreditsRefundsRepay, ReviewAndReconcilePoa}
-import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
+import models.admin.{CreditsRefundsRepay, ReviewAndReconcilePoa}
+import models.financialDetails.{BalanceDetails, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
 import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import org.jsoup.Jsoup
@@ -51,7 +51,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
       api.inject.bind[DateService].toInstance(dateService)
     ).build()
 
-  lazy val testController = app.injector.instanceOf[WhatYouOweController]
+  lazy val testController: WhatYouOweController = app.injector.instanceOf[WhatYouOweController]
 
   def testFinancialDetail(taxYear: Int): FinancialDetailsModel = financialDetailsModel(taxYear)
 
@@ -91,9 +91,9 @@ class WhatYouOweControllerSpec extends MockAuthActions
     ))
   )
 
-  val noFinancialDetailErrors = List(testFinancialDetail(2018))
-  val hasFinancialDetailErrors = List(testFinancialDetail(2018), testFinancialDetailsErrorModel)
-  val hasAFinancialDetailError = List(testFinancialDetailsErrorModel)
+  val noFinancialDetailErrors: Seq[FinancialDetailsModel] = List(testFinancialDetail(2018))
+  val hasFinancialDetailErrors: Seq[FinancialDetailsResponseModel] = List(testFinancialDetail(2018), testFinancialDetailsErrorModel)
+  val hasAFinancialDetailError: Seq[FinancialDetailsErrorModel] = List(testFinancialDetailsErrorModel)
   val interestChargesWarningText = "! Warning Interest charges will keep increasing every day until the charges they relate to are paid in full."
 
   mtdAllRoles.foreach { case mtdUserRole =>
@@ -143,7 +143,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 status(result) shouldBe Status.OK
                 result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
                 val doc: Document = Jsoup.parse(contentAsString(result))
-                Option(doc.getElementById("money-in-your-account")).isDefined shouldBe (true)
+                Option(doc.getElementById("money-in-your-account")).isDefined shouldBe true
                 doc.select("#money-in-your-account").select("div h2").text() shouldBe messages("whatYouOwe.moneyOnAccount" + {if(isAgent) "-agent" else ""})
               }
             }
@@ -160,13 +160,12 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 status(result) shouldBe Status.OK
                 result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
                 val doc: Document = Jsoup.parse(contentAsString(result))
-                Option(doc.getElementById("money-in-your-account")).isDefined shouldBe (false)
+                Option(doc.getElementById("money-in-your-account")).isDefined shouldBe false
               }
             }
 
             "contains the adjust POA" when {
               "the AdjustPaymentsOnAccount FS is enabled and there are adjustable POA" in {
-                enable(AdjustPaymentsOnAccount)
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
@@ -178,7 +177,6 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 contentAsString(result).contains("Adjust payments on account for the 2017 to 2018 tax year") shouldBe true
               }
               "the AdjustPaymentsOnAccount FS is enabled and there are no adjustable POAs" in {
-                enable(AdjustPaymentsOnAccount)
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
@@ -189,19 +187,6 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 val result = action(fakeRequest)
                 contentAsString(result).contains("Adjust payments on account for the") shouldBe false
 
-              }
-            }
-
-            "does not contain the adjust POA" when {
-              "the AdjustPaymentsOnAccount FS is disabled" in {
-                disable(AdjustPaymentsOnAccount)
-                setupMockSuccess(mtdUserRole)
-                mockSingleBISWithCurrentYearAsMigrationYear()
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
-                  .thenReturn(Future.successful(whatYouOweChargesListFull))
-
-                val result = action(fakeRequest)
-                contentAsString(result).contains("Adjust payments on account for the") shouldBe false
               }
             }
 
@@ -277,7 +262,6 @@ class WhatYouOweControllerSpec extends MockAuthActions
             }
 
             "fetching POA entry point fails" in {
-              enable(AdjustPaymentsOnAccount)
               setupMockSuccess(mtdUserRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPoaTaxYearForEntryPointCall(Left(new Exception("")))
@@ -291,7 +275,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdUserRole, supportingAgentAccessAllowed = false)(fakeRequest)
     }
   }
 }

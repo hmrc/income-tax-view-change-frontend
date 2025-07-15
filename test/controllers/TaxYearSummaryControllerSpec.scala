@@ -81,8 +81,8 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
   val homeBackLink: Boolean => String = isAgent => {
     "/report-quarterly/income-and-expenses/view" + {if(isAgent) "/agents/client-income-tax" else ""}
   }
-  val emptyCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = false, None)
-  val populatedCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = true, Some(TaxYear(2023, 2024)))
+  val emptyCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel( None)
+  val populatedCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(Some(TaxYear(2023, 2024)))
   lazy val ctaLink: Boolean => String = isAgent => {
     "/report-quarterly/income-and-expenses/view" + {if (isAgent) "/agents" else ""} + "/adjust-poa/start"
   }
@@ -209,7 +209,6 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
             }
             "has the poa section" when {
               "AdjustPaymentsOnAccount FS is enabled and POAs are for the tax year on the page" in {
-                enable(AdjustPaymentsOnAccount)
                 setupMockSuccess(mtdUserRole)
                 mockSingleBusinessIncomeSource()
                 mockCalculationSuccessfulNew(testMtditid)
@@ -227,7 +226,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
               }
 
               "FilterCodedOutPoas FS is enabled and there are some not coded out" in {
-                enable(AdjustPaymentsOnAccount, FilterCodedOutPoas)
+                enable(FilterCodedOutPoas)
                 setupMockSuccess(mtdUserRole)
                 mockSingleBusinessIncomeSource()
                 mockCalculationSuccessfulNew(testMtditid)
@@ -245,7 +244,6 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
               }
 
               "there are coded out POA charges but FilterCodedOutPoas FS disabled" in {
-                enable(AdjustPaymentsOnAccount)
                 setupMockSuccess(mtdUserRole)
                 mockSingleBusinessIncomeSource()
                 mockCalculationSuccessfulNew(testMtditid)
@@ -264,7 +262,6 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
             }
             "doesn't have a the poa section" when {
               "AdjustPaymentsOnAccount FS is enabled and POAs are for the tax year of a different year" in {
-                enable(AdjustPaymentsOnAccount)
                 setupMockSuccess(mtdUserRole)
                 mockSingleBusinessIncomeSource()
                 mockCalculationSuccessfulNew(testMtditid)
@@ -281,7 +278,6 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 contentAsString(result).contains("Adjust payments on account") shouldBe true
               }
               "AdjustPaymentsOnAccount FS is enabled and there are no valid POAs" in {
-                enable(AdjustPaymentsOnAccount)
                 setupMockSuccess(mtdUserRole)
                 mockSingleBusinessIncomeSource()
                 mockCalculationSuccessfulNew(testMtditid)
@@ -296,25 +292,8 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 status(result) shouldBe OK
                 contentAsString(result).contains("Adjust payments on account") shouldBe false
               }
-              "AdjustPaymentsOnAccount FS is disabled" in {
-                disable(AdjustPaymentsOnAccount)
-                setupMockSuccess(mtdUserRole)
-                mockSingleBusinessIncomeSource()
-                mockCalculationSuccessfulNew(testMtditid)
-                mockFinancialDetailsSuccess()
-                mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
-                  toDate = LocalDate.of(testTaxYear, 4, 5))(
-                  response = testObligtionsModel
-                )
-                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
-
-                val result = action(fakeRequest)
-                status(result) shouldBe OK
-                contentAsString(result).contains("Adjust payments on account") shouldBe false
-              }
-
               "FilterCodedOutPoas FS is enabled and POA charges are coded out" in {
-                enable(AdjustPaymentsOnAccount, FilterCodedOutPoas)
+                enable(FilterCodedOutPoas)
                 setupMockSuccess(mtdUserRole)
                 mockSingleBusinessIncomeSource()
                 mockCalculationSuccessfulNew(testMtditid)
@@ -646,7 +625,6 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
 
           "render the error page" when {
             "getPoaTaxYearForEntryPoint returns an error" in {
-              enable(AdjustPaymentsOnAccount)
               setupMockSuccess(mtdUserRole)
               mockSingleBusinessIncomeSource()
               setupMockGetPoaTaxYearForEntryPointCall(Left(new Exception("TEST")))
@@ -695,7 +673,6 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
               }
             }
             "the calculation returned from the calculation service was an error" in {
-              enable(AdjustPaymentsOnAccount)
               setupMockSuccess(mtdUserRole)
               mockSingleBusinessIncomeSource()
 

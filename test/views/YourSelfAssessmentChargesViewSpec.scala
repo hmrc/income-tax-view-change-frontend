@@ -117,7 +117,6 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
   def ctaViewModel(isFSEnabled: Boolean): WYOClaimToAdjustViewModel = {
     if (isFSEnabled) {
       WYOClaimToAdjustViewModel(
-        adjustPaymentsOnAccountFSEnabled = true,
         poaTaxYear = Some(TaxYear(
           startYear = 2024,
           endYear = 2025)
@@ -125,7 +124,6 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       )
     } else {
       WYOClaimToAdjustViewModel(
-        adjustPaymentsOnAccountFSEnabled = false,
         poaTaxYear = None)
     }
   }
@@ -910,7 +908,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       "user has no POA that can be adjusted should not display link" in new TestSetup(
         charges = whatYouOweDataNoCharges,
         adjustPaymentsOnAccountFSEnabled = true,
-        claimToAdjustViewModel = Some(WYOClaimToAdjustViewModel(true, None))) {
+        claimToAdjustViewModel = Some(WYOClaimToAdjustViewModel(None))) {
         Option(pageDocument.getElementById("adjust-poa-link")) shouldBe None
         Option(pageDocument.getElementById("adjust-paid-poa-content")) shouldBe None
       }
@@ -1026,7 +1024,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       "user has no POA that can be adjusted should not display link" in new AgentTestSetup(
         charges = whatYouOweDataNoCharges,
         adjustPaymentsOnAccountFSEnabled = true,
-        claimToAdjustViewModel = Some(WYOClaimToAdjustViewModel(true, None))) {
+        claimToAdjustViewModel = Some(WYOClaimToAdjustViewModel(None))) {
         Option(pageDocument.getElementById("adjust-poa-link")) shouldBe None
         Option(pageDocument.getElementById("adjust-paid-poa-content")) shouldBe None
       }

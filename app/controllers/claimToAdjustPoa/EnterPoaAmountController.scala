@@ -29,7 +29,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.ErrorRecovery
-import utils.claimToAdjust.{ClaimToAdjustUtils, JourneyCheckerClaimToAdjust}
+import utils.claimToAdjust.JourneyCheckerClaimToAdjust
 import views.html.claimToAdjustPoa.EnterPoaAmountView
 
 import javax.inject.{Inject, Singleton}
@@ -45,12 +45,11 @@ class EnterPoaAmountController @Inject()(val authActions: AuthActions,
                                          val agentErrorHandler: AgentItvcErrorHandler,
                                          val mcc: MessagesControllerComponents,
                                          val ec: ExecutionContext)
-  extends FrontendController(mcc) with FeatureSwitching with ClaimToAdjustUtils with I18nSupport with JourneyCheckerClaimToAdjust with ErrorRecovery {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with JourneyCheckerClaimToAdjust with ErrorRecovery {
 
   def show(isAgent: Boolean, mode: Mode): Action[AnyContent] =
     authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
       implicit user =>
-        ifAdjustPoaIsEnabled(user.isAgent()) {
           withSessionData() { session =>
             claimToAdjustService.getPoaViewModelWithAdjustmentReason(Nino(user.nino)).map {
               case Right(viewModel) =>
@@ -62,19 +61,17 @@ class EnterPoaAmountController @Inject()(val authActions: AuthActions,
                 logAndRedirect(s"Error while retrieving charge history details : ${ex.getMessage} - ${ex.getCause}")
             }
           }
-        } recover logAndRedirect
     }
 
   def submit(isAgent: Boolean, mode: Mode): Action[AnyContent] = authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
     implicit user =>
-      ifAdjustPoaIsEnabled(user.isAgent()) {
         claimToAdjustService.getPoaViewModelWithAdjustmentReason(Nino(user.nino)).flatMap {
           case Right(viewModel) =>
             handleForm(viewModel, user.isAgent(), mode)
           case Left(ex) =>
             Future.successful(logAndRedirect(s"Error while retrieving charge history details : ${ex.getMessage} - ${ex.getCause}"))
         } recover logAndRedirect
-      }
+
   }
 
   def handleForm(viewModel: PaymentOnAccountViewModel, isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {

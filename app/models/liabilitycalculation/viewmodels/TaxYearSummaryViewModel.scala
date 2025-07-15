@@ -70,15 +70,8 @@ case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary
   }
 }
 
-case class TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled: Boolean,
-                                     poaTaxYear: Option[TaxYear]) {
+case class TYSClaimToAdjustViewModel(poaTaxYear: Option[TaxYear]) {
 
-  val claimToAdjustTaxYear: Option[TaxYear] = {
-    if (adjustPaymentsOnAccountFSEnabled) {
-      poaTaxYear
-    } else {
-      None
-    }
-  }
+  val claimToAdjustTaxYear: Option[TaxYear] = poaTaxYear
 
 }

@@ -29,7 +29,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.claimToAdjust.{ClaimToAdjustUtils, WithSessionAndPoa}
+import utils.claimToAdjust.WithSessionAndPoa
 import views.html.claimToAdjustPoa.SelectYourReasonView
 
 import javax.inject.Inject
@@ -46,7 +46,7 @@ class SelectYourReasonController @Inject()(val authActions: AuthActions,
                                            val agentErrorHandler: AgentItvcErrorHandler,
                                            val mcc: MessagesControllerComponents,
                                            val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with ClaimToAdjustUtils with WithSessionAndPoa {
+  extends FrontendController(mcc) with I18nSupport with WithSessionAndPoa {
 
   def show(isAgent: Boolean, mode: Mode): Action[AnyContent] = authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
     implicit user =>
