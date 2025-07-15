@@ -17,7 +17,6 @@
 package controllers.manageBusinesses.manage
 
 import connectors.BusinessDetailsConnector
-import enums.{MTDIndividual, MTDUserRole}
 import mocks.auth.MockAuthActions
 import mocks.connectors.MockBusinessDetailsConnector
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockSessionService}
@@ -32,19 +31,22 @@ trait ManageIncomeSourceDetailsHelper extends MockAuthActions with MockBusinessD
   with MockSessionService with MockDateService with MockITSAStatusService with MockCalculationListService {
 
   lazy val incomeSourceIdHash: String = mkIncomeSourceId(testSelfEmploymentId).toHash.hash
-  lazy val heading: String = messages("incomeSources.manage.business-manage-details.heading")
-  def title(mtdRole: MTDUserRole) = if(mtdRole == MTDIndividual) s"${messages("htmlTitle", heading)}" else s"${messages("htmlTitle.agent", heading)}"
-  lazy val link: String = s"${messages("incomeSources.manage.business-manage-details.change")}"
+
+  lazy val heading: String = "Manage your details"
+
+  def title() = "Manage your details - Manage your Self Assessment - GOV.UK"
+
+  lazy val link: String = "Change"
   lazy val incomeSourceId: String = "XAIS00000000008"
   lazy val businessWithLatencyAddress: String = "8 Test New Court New Town New City NE12 6CI United Kingdom"
-  lazy val unknown: String = messages("incomeSources.generic.unknown")
-  lazy val annually: String = messages("incomeSources.manage.business-manage-details.annually")
-  lazy val quarterly: String = messages("incomeSources.manage.business-manage-details.quarterly")
-  lazy val annuallyGracePeriod: String = messages("incomeSources.manage.business-manage-details.annually.graceperiod")
-  lazy val quarterlyGracePeriod: String = messages("incomeSources.manage.business-manage-details.quarterly.graceperiod")
-  lazy val standard: String = messages("incomeSources.manage.quarterly-period.standard")
-  lazy val calendar: String = messages("incomeSources.manage.quarterly-period.calendar")
-  lazy val reportingMethod: String = messages("incomeSources.manage.business-manage-details.reporting-method")
+  lazy val unknown: String = "Unknown"
+  lazy val annually: String = "Annually"
+  lazy val quarterly: String = "Quarterly"
+  lazy val annuallyGracePeriod: String = "Annual"
+  lazy val quarterlyGracePeriod: String = "Quarterly"
+  lazy val standard: String = "Standard"
+  lazy val calendar: String = "Calendar"
+  lazy val reportingMethod: String = "Reporting frequency"
 
   override lazy val app = applicationBuilderWithAuthBindings
     .overrides(
@@ -58,13 +60,17 @@ trait ManageIncomeSourceDetailsHelper extends MockAuthActions with MockBusinessD
   lazy val testController = app.injector.instanceOf[ManageIncomeSourceDetailsController]
 
   def getHeading(document: Document): String = document.select("h1:nth-child(1)").text
+
   def hasChangeFirstYearReportingMethodLink(document: Document): Boolean = Option(document.getElementById("change-link-1")).isDefined
+
   def hasChangeSecondYearReportingMethodLink(document: Document): Boolean = Option(document.getElementById("change-link-2")).isDefined
 
   def hasGracePeriodInfo(document: Document): Boolean = Option(document.getElementById("graceperiodinfo")).isDefined
+
   def hasInsetText(document: Document): Boolean = Option(document.getElementsByClass("govuk-inset-text")).isDefined
 
   def manageDetailsTable(document: Document): Element = document.getElementById("manage-details-table")
+
   def getManageDetailsSummaryRows(document: Document): Elements =
     manageDetailsTable(document)
       .getElementsByClass("govuk-summary-list__row")

@@ -35,20 +35,21 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import utils.JourneyCheckerManageBusinesses
-import views.html.manageBusinesses.manage.ManageIncomeSourceDetails
+import views.html.manageBusinesses.manage.ManageIncomeSourceDetailsView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSourceDetails,
-                                                    val authActions: AuthActions,
-                                                    val itvcErrorHandler: ItvcErrorHandler,
-                                                    val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                                    val itsaStatusService: ITSAStatusService,
-                                                    val dateService: DateService,
-                                                    val calculationListService: CalculationListService,
-                                                    val sessionService: SessionService)
+class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDetailsView,
+                                                    authActions: AuthActions,
+                                                    itvcErrorHandler: ItvcErrorHandler,
+                                                    itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                                    itsaStatusService: ITSAStatusService,
+                                                    dateService: DateService,
+                                                    calculationListService: CalculationListService,
+                                                    val sessionService: SessionService
+                                                   )
                                                    (implicit val ec: ExecutionContext,
                                                     val mcc: MessagesControllerComponents,
                                                     val appConfig: FrontendAppConfig) extends FrontendController(mcc)
@@ -69,27 +70,33 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     }
 
 
-  def show(isAgent: Boolean,
-           incomeSourceType: IncomeSourceType,
-           id: Option[String]): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
-      withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Manage, incomeSourceType), InitialPage) { _ =>
-        incomeSourceType match {
-          case SelfEmployment => id match {
-            case Some(realId) => handleSoleTrader(realId, getBackUrl(isAgent), isAgent)
-            case None => Logger("application")
-              .error(s"no incomeSourceId supplied with SelfEmployment isAgent = $isAgent")
-              Future.successful(errorHandler(isAgent).showInternalServerError())
+  def show(
+            isAgent: Boolean,
+            incomeSourceType: IncomeSourceType,
+            id: Option[String]
+          ): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+      implicit user =>
+        withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Manage, incomeSourceType), InitialPage) { _ =>
+          incomeSourceType match {
+            case SelfEmployment =>
+              id match {
+                case Some(realId) =>
+                  handleSoleTrader(realId, getBackUrl(isAgent), isAgent)
+                case None =>
+                  Logger("application").error(s"no incomeSourceId supplied with SelfEmployment isAgent = $isAgent")
+                  Future.successful(errorHandler(isAgent).showInternalServerError())
+              }
+            case _ =>
+              handleProperty(
+                sources = user.incomeSources,
+                isAgent = isAgent,
+                backUrl = getBackUrl(isAgent),
+                incomeSourceType = incomeSourceType
+              )
           }
-          case _ => handleProperty(
-            sources = user.incomeSources,
-            isAgent = isAgent,
-            backUrl = getBackUrl(isAgent),
-            incomeSourceType = incomeSourceType
-          )
         }
-      }
-  }
+    }
 
   def showChange(incomeSourceType: IncomeSourceType,
                  isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
@@ -105,18 +112,22 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
               .error(s"no incomeSourceId supplied with SelfEmployment isAgent = $isAgent")
               Future.successful(errorHandler(isAgent).showInternalServerError())
           }
-          case _ => handleProperty(
-            sources = user.incomeSources,
-            isAgent = isAgent,
-            backUrl = backUrl,
-            incomeSourceType = incomeSourceType
-          )
+          case _ =>
+            handleProperty(
+              sources = user.incomeSources,
+              isAgent = isAgent,
+              backUrl = backUrl,
+              incomeSourceType = incomeSourceType
+            )
         }
       }
   }
 
-  def handleSoleTrader(hashIdString: String, backUrl: String, isAgent: Boolean)
-                      (implicit user: MtdItUser[_]): Future[Result] = {
+  def handleSoleTrader(
+                        hashIdString: String,
+                        backUrl: String,
+                        isAgent: Boolean
+                      )(implicit user: MtdItUser[_]): Future[Result] = {
 
     def setMongoKey(incomeSourceId: IncomeSourceId): Future[Boolean] = sessionService.setMongoKey(
       ManageIncomeSourceData.incomeSourceIdField,
@@ -133,17 +144,27 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       _ <- setMongoKey(incomeSourceId)
       viewModel <- getManageIncomeSourceViewModel(
         sources = user.incomeSources,
-        incomeSourceId = incomeSourceId,
-        isAgent
+        incomeSourceId = incomeSourceId
       )
-    } yield Ok(view(viewModel = viewModel,
-      isAgent = isAgent,
-      showStartDate = isEnabled(DisplayBusinessStartDate),
-      showAccountingMethod = isEnabled(AccountingMethodJourney),
-      showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
-      showReportingFrequencyLink = isEnabled(ReportingFrequencyPage),
-      backUrl = backUrl
-    ))
+      anyIncomeSourcesInLatency =
+        user.incomeSources.businesses.flatMap(_.latencyDetails.map(_.latencyIndicator1)).nonEmpty ||
+          user.incomeSources.businesses.flatMap(_.latencyDetails.map(_.latencyIndicator2)).nonEmpty ||
+          user.incomeSources.properties.flatMap(_.latencyDetails.map(_.latencyIndicator1)).nonEmpty ||
+          user.incomeSources.properties.flatMap(_.latencyDetails.map(_.latencyIndicator2)).nonEmpty
+
+    } yield {
+
+      Ok(view(
+        viewModel = viewModel,
+        isAgent = isAgent,
+        showStartDate = isEnabled(DisplayBusinessStartDate),
+        showAccountingMethod = isEnabled(AccountingMethodJourney),
+        showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
+        showReportingFrequencyLink = isEnabled(ReportingFrequencyPage),
+        backUrl = backUrl,
+        anyIncomeSourcesInLatency = anyIncomeSourcesInLatency
+      ))
+    }
 
     result.recover {
       case ex =>
@@ -161,6 +182,13 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                      backUrl: String,
                      incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
+    val anyIncomeSourcesInLatency =
+      user.incomeSources.businesses.flatMap(_.latencyDetails.map(_.latencyIndicator1)).nonEmpty ||
+        user.incomeSources.businesses.flatMap(_.latencyDetails.map(_.latencyIndicator2)).nonEmpty ||
+        user.incomeSources.properties.flatMap(_.latencyDetails.map(_.latencyIndicator1)).nonEmpty ||
+        user.incomeSources.properties.flatMap(_.latencyDetails.map(_.latencyIndicator2)).nonEmpty
+
+
     getManageIncomeSourceViewModelProperty(sources = sources, isAgent = isAgent, incomeSourceType = incomeSourceType)
       .map { viewModel =>
         Ok(view(
@@ -170,7 +198,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
           showAccountingMethod = isEnabled(AccountingMethodJourney),
           showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
           showReportingFrequencyLink = isEnabled(ReportingFrequencyPage),
-          backUrl = backUrl
+          backUrl = backUrl,
+          anyIncomeSourcesInLatency = anyIncomeSourcesInLatency
         ))
       }.recover {
         case ex =>
@@ -272,14 +301,14 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
 
   private def getManageIncomeSourceViewModel(
                                               sources: IncomeSourceDetailsModel,
-                                              incomeSourceId: IncomeSourceId,
-                                              isAgent: Boolean
+                                              incomeSourceId: IncomeSourceId
                                             )(implicit user: MtdItUser[_],
                                               hc: HeaderCarrier, ec: ExecutionContext): Future[ManageIncomeSourceDetailsViewModel] = {
 
-    val desiredIncomeSourceMaybe: Option[BusinessDetailsModel] = sources.businesses
-      .filterNot(_.isCeased)
-      .find(_.incomeSourceId == incomeSourceId.value)
+    val desiredIncomeSourceMaybe: Option[BusinessDetailsModel] =
+      sources.businesses
+        .filterNot(_.isCeased)
+        .find(_.incomeSourceId == incomeSourceId.value)
 
     desiredIncomeSourceMaybe match {
       case Some(desiredIncomeSource) =>
