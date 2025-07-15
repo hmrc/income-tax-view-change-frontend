@@ -488,8 +488,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       summaryListRowKeys().text() should include(expectedRow2)
 
       summaryListRowValues().eq(6).text() shouldBe "Yes"
-      //      summaryListRowValues().eq(7).text() shouldBe "No"
-
 
       val actionLinks = document.select(".govuk-summary-list__actions a")
       actionLinks.eq(0).text() shouldBe "Opt out"
