@@ -36,6 +36,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     controllers.routes.ReportingFrequencyPageController.show(isAgent).url
 
   def backUrl(isAgent: Boolean): String = if (isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+
   else controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
 
   def summaryListRowKeys()(implicit document: Document) = document.getElementsByClass("govuk-summary-list__key")
@@ -650,6 +651,24 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
       implicit val document = Jsoup.parse(contentAsString(view))
       val summaryKeys = summaryListRowKeys().eachText()
+
+      summaryKeys should not contain ukAccountingMethod
+    }
+
+    "not display the accounting method row when showAccountingMethod is true but isTraditionalAccountingMethod in the view model is empty" in {
+      val view = manageIncomeSourceDetailsView(
+        ukViewModel.copy(isTraditionalAccountingMethod = None),
+        isAgent = false,
+        backUrl = backUrl(false),
+        showStartDate = true,
+        showAccountingMethod = false,
+        showOptInOptOutContentUpdateR17 = false,
+        showReportingFrequencyLink = true,
+        anyIncomeSourcesInLatency = true
+      )(messages, implicitly)
+
+      val document = Jsoup.parse(contentAsString(view))
+      val summaryKeys = document.getElementsByClass("govuk-summary-list__key").eachText()
 
       summaryKeys should not contain ukAccountingMethod
     }

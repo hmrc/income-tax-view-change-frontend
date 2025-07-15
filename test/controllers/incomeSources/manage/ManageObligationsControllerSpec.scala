@@ -92,7 +92,7 @@ class ManageObligationsControllerSpec extends MockAuthActions
     tradingStartDate = None,
     contextualTaxYear = None,
     cessation = None,
-    cashOrAccruals = false,
+    cashOrAccruals = Some(false),
     latencyDetails = None
   )
   private val propertyDetailsModelForeign = propertyDetailsModelUK.copy(incomeSourceType = Some("foreign-property"))
@@ -113,7 +113,7 @@ class ManageObligationsControllerSpec extends MockAuthActions
           Some(LocalDate.of(2022, 1, 1)),
           contextualTaxYear = None,
           None,
-          cashOrAccruals = false
+          cashOrAccruals = Some(false)
         )), List.empty)
     }
   }
@@ -180,7 +180,7 @@ class ManageObligationsControllerSpec extends MockAuthActions
                     Some(LocalDate.of(2022, 1, 1)),
                     contextualTaxYear = None,
                     None,
-                    cashOrAccruals = true
+                    cashOrAccruals = Some(false)
                   )), List.empty)
                 setupMockGetIncomeSourceDetails(source)
                 when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any()))
