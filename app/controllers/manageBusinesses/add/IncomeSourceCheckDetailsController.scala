@@ -107,7 +107,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         Logger("application").error(agentPrefix +
           s"Unexpected exception ${ex.getMessage} - ${ex.getCause}")
         errorHandler.showInternalServerError()
-  }
+    }
 
   private def getViewModel(incomeSourceType: IncomeSourceType, sessionData: UIJourneySessionData)
                           (implicit user: MtdItUser[_]): Option[CheckDetailsViewModel] = {
@@ -195,10 +195,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
                   result: Boolean <-
                     sessionService.setMongoData(
                       sessionData.copy(
-                        addIncomeSourceData =
-                          sessionData.addIncomeSourceData.map(_.copy(
-                            incomeSourceId = Some(id)
-                          ))
+                        addIncomeSourceData = sessionData.addIncomeSourceData.map(_.copy(incomeSourceId = Some(id)))
                       )
                     )
                 } yield {
