@@ -62,7 +62,7 @@
             @govukErrorSummary(
                 ErrorSummaryViewModel(
                     form,
-                    errorLinkOverrides = Map("value" -> s"value.${form.errors.flatMap(_.args).headOption.getOrElse("day")}")
+                    errorLinkOverrides = Map("value" -> s"value.${form.errors.flatMap(_.args).headOption.getOrElse(s"${messages("date.error.day")}")}")
                 )
             )
         }

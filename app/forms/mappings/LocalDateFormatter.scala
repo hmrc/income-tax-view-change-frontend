@@ -64,31 +64,28 @@ private[mappings] class LocalDateFormatter(
     "year" -> messages("date.error.year")
   )
 
-  private case class LocalDateErrorUtility(idField: String, messageField: String, value: Option[String])
-
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
 
     val fields = fieldKeys.map {
-      field => LocalDateErrorUtility(field._1, field._2, data.get(s"$key.${field._1}").filter(_.nonEmpty))
+      field => field._2 -> data.get(s"$key.${field._1}").filter(_.nonEmpty)
     }
 
-    lazy val (missingFields, idFields) = fields
-      .filter(_.value.isEmpty)
-      .foldLeft((List.empty[String], List.empty[String])) { case ((msgs, ids), f) =>
-        (msgs :+ f.messageField, ids :+ f.idField)
-      }
+    lazy val missingFields = fields
+      .withFilter(_._2.isEmpty)
+      .map(_._1)
+      .toList
 
-    fields.count(_.value.isDefined) match {
+    fields.count(_._2.isDefined) match {
       case 3 =>
         formatDate(key, data).left.map {
           _.map(_.copy(key = key, args = args))
         }
       case 2 =>
-        Left(List(FormError(s"$key.${idFields.head}", requiredKey, missingFields ++ args)))
+        Left(List(FormError(s"$key", requiredKey, missingFields ++ args)))
       case 1 =>
-        Left(List(FormError(s"$key.${idFields.head}", twoRequiredKey, missingFields ++ args)))
+        Left(List(FormError(s"$key", twoRequiredKey, missingFields ++ args)))
       case _ =>
-        Left(List(FormError(s"$key.${idFields.head}", allRequiredKey, args)))
+        Left(List(FormError(s"$key", allRequiredKey, args)))
     }
   }
 
