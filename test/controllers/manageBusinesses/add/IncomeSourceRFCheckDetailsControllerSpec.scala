@@ -139,8 +139,10 @@ class IncomeSourceRFCheckDetailsControllerSpec
 
             enable(IncomeSourcesNewJourney)
 
+            val redirectUrl = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(incomeSource).url else routes.IncomeSourceNotAddedController.show(incomeSource).url
+
             val result = action(fakeRequest)
-            status(result) shouldBe INTERNAL_SERVER_ERROR
+            redirectLocation(result) shouldBe Some(redirectUrl)
           }
         }
       }
