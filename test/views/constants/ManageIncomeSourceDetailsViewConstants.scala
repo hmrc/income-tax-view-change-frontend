@@ -33,7 +33,7 @@ object ManageIncomeSourceDetailsViewConstants {
       tradingName = Some(testTradeName),
       tradingStartDate = Some(testStartDate),
       address = expectedAddress,
-      isTraditionalAccountingMethod = false,
+      isTraditionalAccountingMethod = Some(false),
       latencyYearsQuarterly = LatencyYearsQuarterly(
         firstYear = Some(true),
         secondYear = Some(true)
@@ -54,7 +54,7 @@ object ManageIncomeSourceDetailsViewConstants {
       tradingName = Some(testTradeName),
       tradingStartDate = Some(testStartDate),
       address = expectedAddress,
-      isTraditionalAccountingMethod = false,
+      isTraditionalAccountingMethod = Some(false),
       latencyYearsQuarterly = LatencyYearsQuarterly(
         firstYear = Some(true),
         secondYear = Some(true)
@@ -75,7 +75,7 @@ object ManageIncomeSourceDetailsViewConstants {
       tradingName = Some(testTradeName),
       tradingStartDate = Some(testStartDate),
       address = expectedAddress,
-      isTraditionalAccountingMethod = false,
+      isTraditionalAccountingMethod = Some(false),
       latencyYearsQuarterly = LatencyYearsQuarterly(
         firstYear = Some(true),
         secondYear = None
@@ -96,7 +96,7 @@ object ManageIncomeSourceDetailsViewConstants {
       tradingName = None,
       tradingStartDate = None,
       address = None,
-      isTraditionalAccountingMethod = false,
+      isTraditionalAccountingMethod = Some(false),
       latencyYearsQuarterly = LatencyYearsQuarterly(
         firstYear = Some(false),
         secondYear = Some(false)
@@ -117,7 +117,7 @@ object ManageIncomeSourceDetailsViewConstants {
       tradingName = None,
       tradingStartDate = Some(testStartDate),
       address = None,
-      isTraditionalAccountingMethod = false,
+      isTraditionalAccountingMethod = Some(false),
       latencyYearsQuarterly = LatencyYearsQuarterly(
         firstYear = Some(true),
         secondYear = Some(true)
@@ -138,7 +138,7 @@ object ManageIncomeSourceDetailsViewConstants {
       tradingName = None,
       tradingStartDate = Some(testStartDate),
       address = None,
-      isTraditionalAccountingMethod = false,
+      isTraditionalAccountingMethod = Some(false),
       latencyYearsQuarterly = LatencyYearsQuarterly(
         firstYear = Some(true),
         secondYear = Some(true)
@@ -159,7 +159,7 @@ object ManageIncomeSourceDetailsViewConstants {
       tradingName = Some(testTradeName),
       tradingStartDate = Some(testStartDate),
       address = expectedAddress,
-      isTraditionalAccountingMethod = false,
+      isTraditionalAccountingMethod = Some(false),
       latencyYearsQuarterly = LatencyYearsQuarterly(
         firstYear = Some(true),
         secondYear = Some(true)
@@ -180,7 +180,7 @@ object ManageIncomeSourceDetailsViewConstants {
       tradingName = Some(testTradeName),
       tradingStartDate = Some(testStartDate),
       address = expectedAddress,
-      isTraditionalAccountingMethod = false,
+      isTraditionalAccountingMethod = Some(false),
       latencyYearsQuarterly = LatencyYearsQuarterly(
         firstYear = Some(true),
         secondYear = None
@@ -201,7 +201,7 @@ object ManageIncomeSourceDetailsViewConstants {
       tradingName = None,
       tradingStartDate = None,
       address = None,
-      isTraditionalAccountingMethod = false,
+      isTraditionalAccountingMethod = Some(false),
       latencyYearsQuarterly = LatencyYearsQuarterly(
         firstYear = Some(false),
         secondYear = Some(false)
@@ -222,7 +222,7 @@ object ManageIncomeSourceDetailsViewConstants {
       tradingName = None,
       tradingStartDate = Some(testStartDate),
       address = None,
-      isTraditionalAccountingMethod = false,
+      isTraditionalAccountingMethod = Some(false),
       latencyYearsQuarterly = LatencyYearsQuarterly(
         firstYear = Some(true),
         secondYear = Some(true)
@@ -243,7 +243,7 @@ object ManageIncomeSourceDetailsViewConstants {
       tradingName = Some(testTradeName),
       tradingStartDate = Some(testStartDate),
       address = expectedAddress,
-      isTraditionalAccountingMethod = false,
+      isTraditionalAccountingMethod = Some(false),
       latencyYearsQuarterly = LatencyYearsQuarterly(
         firstYear = Some(true),
         secondYear = Some(true)
@@ -264,7 +264,7 @@ object ManageIncomeSourceDetailsViewConstants {
       tradingName = Some(testTradeName),
       tradingStartDate = Some(testStartDate),
       address = expectedAddress,
-      isTraditionalAccountingMethod = false,
+      isTraditionalAccountingMethod = Some(false),
       latencyYearsQuarterly = LatencyYearsQuarterly(
         firstYear = Some(true),
         secondYear = None
@@ -285,7 +285,7 @@ object ManageIncomeSourceDetailsViewConstants {
       tradingName = None,
       tradingStartDate = None,
       address = None,
-      isTraditionalAccountingMethod = false,
+      isTraditionalAccountingMethod = Some(false),
       latencyYearsQuarterly = LatencyYearsQuarterly(
         firstYear = Some(false),
         secondYear = Some(false)
