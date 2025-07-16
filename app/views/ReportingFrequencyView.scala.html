@@ -283,14 +283,14 @@
         }
         @p(id = Some("mandatory-reporting-text-2")) {
             @messages("reporting.frequency.mandatoryReporting.p2")
-            @linkComponent(messages("reporting.frequency.mandatoryReporting.link"), message = s"${messages("reporting.frequency.mandatoryReporting.link.text")} ", rel = Some("noreferrer noopener"), target = Some("_blank"), id = Some("mandatory-reporting-link"))
+            @linkComponent(appConfig.saWhoNeedsToSignUpUrl, message = s"${messages("reporting.frequency.mandatoryReporting.link.text")} ", rel = Some("noreferrer noopener"), target = Some("_blank"), id = Some("mandatory-reporting-link"))
         }
     }else {
         @h2(msg = "reporting.frequency.mandatoryReporting.heading", optId = Some("mandatory-reporting-heading"))
         @govukInsetText(InsetText(id = Some("mandatory-reporting-inset"), content = HtmlContent(messages("reporting.frequency.mandatoryReporting.inset"))))
         @p(id = Some("mandatory-reporting-text")) {
             @messages("reporting.frequency.mandatoryReporting.text")
-            @linkComponent(messages("reporting.frequency.mandatoryReporting.link"), message = s"${messages("reporting.frequency.mandatoryReporting.link.text")} ", rel = Some("noreferrer noopener"), target = Some("_blank"), id = Some("mandatory-reporting-link"))
+            @linkComponent(appConfig.saWhoNeedsToSignUpUrl, message = s"${messages("reporting.frequency.mandatoryReporting.link.text")} ", rel = Some("noreferrer noopener"), target = Some("_blank"), id = Some("mandatory-reporting-link"))
         }
     }
 }
@@ -346,7 +346,7 @@
         }
         @p(id=Some("compatible-software-text-2")){
             @messages("reporting.frequency.compatibleSoftware.p3.R17")
-            @linkComponent(messages("reporting.frequency.compatibleSoftware.link2"), message = s"${messages("reporting.frequency.compatibleSoftware.link2.text")} ", rel=Some("noreferrer noopener"), target = Some("_blank"), id = Some("self-assessment-tax-return-link"), additionalOpenTabMessage = Some("."))
+            @linkComponent(appConfig.selfAssessmentTaxReturn, message = s"${messages("reporting.frequency.compatibleSoftware.link2.text")} ", rel=Some("noreferrer noopener"), target = Some("_blank"), id = Some("self-assessment-tax-return-link"), additionalOpenTabMessage = Some("."))
         }
     }else{
         @h2(msg = "reporting.frequency.compatibleSoftware.heading", optId = Some("compatible-software-heading"))
