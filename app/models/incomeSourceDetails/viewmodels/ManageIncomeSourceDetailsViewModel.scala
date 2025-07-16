@@ -54,10 +54,6 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
     latencyYearsQuarterly.secondYear.getOrElse(false) && latencyDetails.isDefined
   }
 
-  def shouldShowInsetText: Boolean = {
-    latencyYearsQuarterly.firstYear.getOrElse(false) || latencyYearsQuarterly.secondYear.getOrElse(false)
-  }
-
 }
 
 
