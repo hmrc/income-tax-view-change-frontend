@@ -111,7 +111,7 @@ case class IncomeSourceDetailsModel(
                                (implicit user: MtdItUser[_]): List[Boolean] = {
     user.incomeSources.businesses
       .filterNot(_.isCeased)
-      .map(_.cashOrAccruals)
+      .flatMap(_.cashOrAccruals)
   }
 
   def areAllBusinessesCeased: Boolean = businesses.forall(_.isCeased) && properties.forall(_.isCeased)

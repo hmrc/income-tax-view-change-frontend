@@ -53,7 +53,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
       None,
       None,
       address = Some(address),
-      cashOrAccruals = false
+      cashOrAccruals = Some(false)
     )),
     properties = Nil
   )

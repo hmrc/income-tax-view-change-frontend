@@ -244,15 +244,12 @@
                         }
                     )
                 )
-            ),
+            )) ++ viewModel.isTraditionalAccountingMethod.toSeq.map { method =>
             SummaryListRow(
-                key = Key(
-                    content = Text(getAccountingMethodMessage)
-                ),
-                value = Value(
-                    content = Text(messages(viewModel.businessAccountingMethodAsKey(viewModel.isTraditionalAccountingMethod)))
-                )
-            ))
+                key = Key(content = Text(getAccountingMethodMessage)),
+                value = Value(content = Text(messages(viewModel.businessAccountingMethodAsKey(method))))
+            )
+        }
                 ++ getQuarterlyType
                 ++ {
             if(viewModel.shouldShowTaxYears) getTaxYears else Seq.empty
