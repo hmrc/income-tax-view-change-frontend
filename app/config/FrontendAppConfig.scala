@@ -212,7 +212,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val chooseAgentGuidanceUrl = "https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax"
 
-  def quarterlyUpdatesGuidanceUrl(implicit messages: Messages) =
+  def quarterlyUpdatesGuidanceUrl(implicit messages: Messages): String =
     messages.lang.code match {
       case "en" => "https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates"
       case "cy" => "https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax.cy#anfon-diweddariadau-chwarterol"
