@@ -18,6 +18,7 @@
 @import java.time.LocalDate
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import models.obligations.NextUpdatesTileViewModel
+@import models.itsaStatus.ITSAStatus
 @import views.html.layouts.unifiedLayout
 
 
@@ -46,9 +47,16 @@
         messageKey = if(nextUpdatesTileViewModel.isReportingFrequencyEnabled) {
             "home.updates.view.reportingFrequency"
         } else {
-            "home.updates.view"
+            if(nextUpdatesTileViewModel.showOptInOptOutContentUpdateR17) "home.updates.R17.linkText" else "home.updates.view"
         }
     )
+}
+
+@updatesTileHeading = @{
+    if(nextUpdatesTileViewModel.showOptInOptOutContentUpdateR17)
+        messages("home.updates.R17.heading")
+    else
+        messages("home.updates.heading")
 }
 
 @updatesTileContentUpdatesDue0 = {
@@ -64,13 +72,51 @@
     <span class="govuk-tag govuk-tag--red">@{messages("home.updates.overdue.updates", nextUpdatesTileViewModel.getNumberOfOverdueObligations)}</span>
 }
 
-@home_tile("updates-tile", messages("home.updates.heading")) {
+@overdueUpdatesTag = {
+    @if(nextUpdatesTileViewModel.isQuarterlyUser) {
+        @nextUpdatesTileViewModel.getNumberOfOverdueObligations match {
+            case 0 => {}
+            case 1 => {
+                @p() {<span class="govuk-tag govuk-tag--red">@messages("taxYears.overdue")</span>}
+            }
+            case _ => {
+                @p() {<span class="govuk-tag govuk-tag--red">@messages("home.updates.overdue.updates", nextUpdatesTileViewModel.getNumberOfOverdueObligations)</span>}
+            }
+        }
+    }
+}
+
+@nextQuarterlyUpdateDueDate = {
+    @if(nextUpdatesTileViewModel.isQuarterlyUser) {
+        @nextUpdatesTileViewModel.nextQuarterlyUpdateDueDate.map { date =>
+          @p() {@messages("home.updates.R17.nextUpdateDue", date.toLongDate)}
+        }
+    }
+}
+
+@nextTaxReturnDueDate = {
+    @if(nextUpdatesTileViewModel.isQuarterlyUser || nextUpdatesTileViewModel.isAnnualUser) {
+        @nextUpdatesTileViewModel.nextTaxReturnDueDate.map { date =>
+          @p() {@messages("home.updates.R17.nextTaxReturnDue", date.toLongDate)}
+        }
+    }
+}
+
+@home_tile("updates-tile", updatesTileHeading) {
+
     @if(nextUpdatesTileViewModel.showNextUpdatesTileContent) {
-        @{nextUpdatesTileViewModel.getNumberOfOverdueObligations match {
-            case 0 => p()(updatesTileContentUpdatesDue0)
-            case 1 => p()(updatesTileContentUpdatesDue1)
-            case _ => p()(updatesTileContentUpdatesDueMany)
-        }}
+
+        @if(nextUpdatesTileViewModel.showOptInOptOutContentUpdateR17) {
+            @overdueUpdatesTag
+            @nextQuarterlyUpdateDueDate
+            @nextTaxReturnDueDate
+        } else {
+            @{ nextUpdatesTileViewModel.getNumberOfOverdueObligations match {
+                case 0 => p()(updatesTileContentUpdatesDue0)
+                case 1 => p()(updatesTileContentUpdatesDue1)
+                case _ => p()(updatesTileContentUpdatesDueMany)
+            }}
+        }
 
         @p(classes = "govuk-!-margin-bottom-4") {
             @nextUpdatesLink
