@@ -32,9 +32,10 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
-import services.{ClaimToAdjustService, DateService, WhatYouOweService}
+import services.{ClaimToAdjustService, DateService, SelfServeTimeToPayService, WhatYouOweService}
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants._
+import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -43,12 +44,15 @@ class WhatYouOweControllerSpec extends MockAuthActions
   with MockClaimToAdjustService with ChargeConstants {
 
   lazy val whatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
+  lazy val selfServeTimeToPayService: SelfServeTimeToPayService = mock(classOf[SelfServeTimeToPayService])
+  implicit val hc: HeaderCarrier = HeaderCarrier()
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[WhatYouOweService].toInstance(whatYouOweService),
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
-      api.inject.bind[DateService].toInstance(dateService)
+      api.inject.bind[DateService].toInstance(dateService),
+      api.inject.bind[SelfServeTimeToPayService].toInstance(selfServeTimeToPayService)
     ).build()
 
   lazy val testController = app.injector.instanceOf[WhatYouOweController]
@@ -124,6 +128,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
+                when(selfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                  .thenReturn(Future.successful(Right("/url")))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -135,6 +141,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListEmpty))
+                when(selfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                  .thenReturn(Future.successful(Right("/url")))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -151,6 +159,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithAvailableCredits))
+                when(selfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                  .thenReturn(Future.successful(Right("/url")))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -171,6 +181,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithZeroAvailableCredits))
+                when(selfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                  .thenReturn(Future.successful(Right("/url")))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -189,6 +201,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
+                when(selfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                  .thenReturn(Future.successful(Right("/url")))
 
                 val result = action(fakeRequest)
                 contentAsString(result).contains("Adjust payments on account for the 2017 to 2018 tax year") shouldBe true
@@ -201,6 +215,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
+                when(selfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                  .thenReturn(Future.successful(Right("/url")))
 
                 val result = action(fakeRequest)
                 contentAsString(result).contains("Adjust payments on account for the") shouldBe false
@@ -215,6 +231,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
+                when(selfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                  .thenReturn(Future.successful(Right("/url")))
 
                 val result = action(fakeRequest)
                 contentAsString(result).contains("Adjust payments on account for the") shouldBe false
@@ -230,6 +248,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithReviewReconcile))
+                when(selfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                  .thenReturn(Future.successful(Right("/url")))
 
                 val result = action(fakeRequest)
 
@@ -245,6 +265,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 setupMockSuccess(mtdUserRole)
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithOverdueCharge))
+                when(selfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                  .thenReturn(Future.successful(Right("/url")))
 
                 val result = action(fakeRequest)
 
@@ -258,6 +280,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 setupMockSuccess(mtdUserRole)
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithOverdueCharge))
+                when(selfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                  .thenReturn(Future.successful(Right("/url")))
 
                 val result = action(fakeRequest)
 
@@ -273,6 +297,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 setupMockSuccess(mtdUserRole)
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithBalancingChargeNotOverdue))
+                when(selfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                  .thenReturn(Future.successful(Right("/url")))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -288,6 +314,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
               when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(whatYouOweChargesListWithLpp2))
+              when(selfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                .thenReturn(Future.successful(Right("/url")))
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK
@@ -300,6 +328,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
               mockSingleBISWithCurrentYearAsMigrationYear()
               when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future.failed(new Exception("failed to retrieve data")))
+              when(selfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                .thenReturn(Future.successful(Right("/url")))
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -313,6 +343,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
               when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(whatYouOweChargesListFull))
+              when(selfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                .thenReturn(Future.successful(Right("/url")))
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -326,6 +358,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
               when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(whatYouOweChargesListWithLPP2NoChargeRef))
+              when(selfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                .thenReturn(Future.successful(Right("/url")))
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
