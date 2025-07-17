@@ -197,7 +197,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   val selfAssessmentTaxReturn = servicesConfig.getString("external-urls.self-assessment-tax-return-link")
   val compatibleSoftwareLink = servicesConfig.getString("external-urls.compatible-software-link")
-
+  
   lazy val homepageLink = "https://www.gov.uk"
 
   //SA for Agents Online Service
@@ -227,4 +227,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val mtdForIncomeTaxUrl = "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax"
 
   lazy val saPayTaxBillUrl = "https://www.gov.uk/pay-self-assessment-tax-bill"
+
+  lazy val preThreshold2027 = servicesConfig.getString("thresholds.first")
+  lazy val threshold2027 = servicesConfig.getString("thresholds.second")
+  lazy val threshold2028 = servicesConfig.getString("thresholds.third")
 }

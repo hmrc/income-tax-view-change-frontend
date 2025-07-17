@@ -1519,7 +1519,7 @@ incomeSources.add.reportingFrequency.r17.p2                             = Gallwc
 incomeSources.add.reportingFrequency.r17.inset                          = O fis Ebrill {0} pan fydd y cyfnod treth 2 flynedd hwn yn dod i ben, efallai y bydd yn ofynnol i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer y busnes newydd hwn.
 incomeSources.add.reportingFrequency.r17.form.h1                        = A ydych am gofrestru’r busnes newydd hwn gyda’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm?
 incomeSources.add.reportingFrequency.r17.li1                            = rydych wedi cofrestru’n wirfoddol neu os yw’n ofynnol i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer eich busnesau eraill
-incomeSources.add.reportingFrequency.r17.li2                            = mae cyfanswm eich incwm gros o hunangyflogaeth neu eiddo, neu’r ddau, yn fwy na’r trothwy o £50,000
+incomeSources.add.reportingFrequency.r17.li2                            = mae cyfanswm eich incwm gros o hunangyflogaeth neu eiddo, neu’r ddau, yn fwy na’r trothwy o {0}
 incomeSources.add.reportingFrequency.r17.form.no-select.error           = Dewiswch ‘Iawn’ os ydych am gofrestru’r busnes newydd hwn â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
 
 #######################################################################################################################
@@ -2950,7 +2950,7 @@ reporting.frequency.latency.details.section.text.para1.bullet2.updateR17      = 
 reporting.frequency.latency.details.section.text.para2.updateR17              = Mae’r opsiwn hwn ar gael i’ch busnesau newydd:
 reporting.frequency.latency.details.section.text.para2.bullet1.updateR17      = am hyd ar 2 flwyddyn dreth
 reporting.frequency.latency.details.section.text.para2.bullet2.updateR17      = dim ond pan fyddwch yn defnyddio Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer eich busnesau eraill
-reporting.frequency.latency.details.section.text.para2.bullet3.updateR17      = hyd yn oed os yw cyfanswm eich incwm gros o hunangyflogaeth neu eiddo, neu’r ddau, yn fwy na’r trothwy o £50,000
+reporting.frequency.latency.details.section.text.para2.bullet3.updateR17      = hyd yn oed os yw cyfanswm eich incwm gros o hunangyflogaeth neu eiddo, neu’r ddau, yn fwy na’r trothwy o {0}
 reporting.frequency.latency.details.section.text.para3.heading.updateR17      = Sut i newid eich rhwymedigaethau adrodd ar gyfer ffynhonnell incwm newydd
 reporting.frequency.latency.details.section.text.para3.text.1.updateR17       = Gallwch wneud hyn ar unrhyw adeg o’r adran
 reporting.frequency.latency.details.section.text.para3.link.text.updateR17    = eich busnesau.

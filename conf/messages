@@ -1505,7 +1505,7 @@ incomeSources.add.reportingFrequency.r17.p2                             = You ca
 incomeSources.add.reportingFrequency.r17.inset                          = From April {0} when this 2-year tax period ends, you could be required to use Making Tax Digital for Income Tax for this new business.
 incomeSources.add.reportingFrequency.r17.form.h1                        = Do you want to sign this new business up to Making Tax Digital for Income Tax?
 incomeSources.add.reportingFrequency.r17.li1                            = you are voluntarily signed up or required to use Making Tax Digital for Income Tax for your other businesses
-incomeSources.add.reportingFrequency.r17.li2                            = your total gross income from self-employment or property, or both, exceed the £50,000 threshold
+incomeSources.add.reportingFrequency.r17.li2                            = your total gross income from self-employment or property, or both, exceed the {0} threshold
 incomeSources.add.reportingFrequency.r17.form.no-select.error           = Select yes if you want to sign this new business up to Making Tax Digital for Income Tax
 
 
@@ -2962,7 +2962,7 @@ reporting.frequency.latency.details.section.text.para1.bullet2.updateR17      = 
 reporting.frequency.latency.details.section.text.para2.updateR17              = This option is available to your new businesses:
 reporting.frequency.latency.details.section.text.para2.bullet1.updateR17      = for up to 2 tax years
 reporting.frequency.latency.details.section.text.para2.bullet2.updateR17      = only when you use Making Tax Digital for Income Tax for your other businesses
-reporting.frequency.latency.details.section.text.para2.bullet3.updateR17      = even if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold
+reporting.frequency.latency.details.section.text.para2.bullet3.updateR17      = even if your total gross income from self-employment or property, or both, exceeds the {0} threshold
 reporting.frequency.latency.details.section.text.para3.heading.updateR17      = How to change your reporting obligations for a new income source
 reporting.frequency.latency.details.section.text.para3.text.1.updateR17       = You can do this at any time in the
 reporting.frequency.latency.details.section.text.para3.link.text.updateR17    = your businesses
