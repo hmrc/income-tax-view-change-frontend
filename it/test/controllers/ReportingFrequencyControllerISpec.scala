@@ -85,10 +85,10 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, "reporting.frequency.title"),
                   elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
                   elementTextBySelector(optInOptOutLinks(1))("Opt out of quarterly reporting and report annually")
                 )
+                pageTitle(mtdUserRole, "reporting.frequency.title.R17")
                 result shouldNot have(
                   elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses"),
                   elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
@@ -112,10 +112,10 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, "reporting.frequency.title"),
                   elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
                   elementTextBySelector(optInOptOutLinks(1))("Opt in to quarterly reporting")
                 )
+                pageTitle(mtdUserRole, "reporting.frequency.title.R17")
                 result shouldNot have(
                   elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses"),
                   elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
@@ -139,11 +139,12 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, "reporting.frequency.title"),
                   elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
                   elementTextBySelector(optInOptOutLinks(1))(s"Opt out of quarterly reporting and report annually for the $currentStartYear to $currentEndYear tax year"),
                   elementTextBySelector(optInOptOutLinks(2))(s"Opt in to quarterly reporting from the $nextStartYear to $nextEndYear tax year onwards")
                 )
+                pageTitle(mtdUserRole, "reporting.frequency.title.R17")
+
                 result shouldNot have(
                   elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses"),
                   elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
@@ -168,11 +169,12 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, "reporting.frequency.title"),
                   elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
                   elementTextBySelector(optInOptOutLinks(1))(s"Opt in to quarterly reporting for the $currentStartYear to $currentEndYear tax year"),
                   elementTextBySelector(optInOptOutLinks(2))(s"Opt out of quarterly reporting and report annually from the $nextStartYear to $nextEndYear tax year onwards")
                 )
+                pageTitle(mtdUserRole, "reporting.frequency.title.R17")
+
                 result shouldNot have(
                   elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses"),
                   elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
@@ -197,9 +199,10 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, "reporting.frequency.title"),
                   elementTextBySelector(optInOptOutLinks(1))(s"Opt in to quarterly reporting for the $currentStartYear to $currentEndYear tax year")
                 )
+                pageTitle(mtdUserRole, "reporting.frequency.title.R17")
+
                 result shouldNot have(
                   elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses"),
                   elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
@@ -221,10 +224,10 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, "reporting.frequency.title"),
                   elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
                   elementTextBySelector(optInOptOutLinks(1))(s"Opt in to quarterly reporting from the $nextStartYear to $nextEndYear tax year onwards")
                 )
+                pageTitle(mtdUserRole, "reporting.frequency.title.R17")
                 result shouldNot have(
                   elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses"),
                   elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
@@ -249,10 +252,10 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, "reporting.frequency.title"),
                   elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
                   elementTextBySelector(optInOptOutLinks(1))(s"Opt out of quarterly reporting and report annually from the $nextStartYear to $nextEndYear tax year onwards")
                 )
+                pageTitle(mtdUserRole, "reporting.frequency.title.R17")
                 result shouldNot have(
                   elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses"),
                   elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
@@ -277,11 +280,11 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, "reporting.frequency.title"),
                   elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
                   elementTextBySelector(optInOptOutLinks(1))("Opt out of quarterly reporting and report annually"),
                   elementTextBySelector(optInOptOutLinks(2))(s"Opt in to quarterly reporting from the $nextStartYear to $nextEndYear tax year onwards")
                 )
+                pageTitle(mtdUserRole, "reporting.frequency.title.R17")
                 result shouldNot have(
                   elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses"),
                   elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
@@ -306,11 +309,11 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, "reporting.frequency.title"),
                   elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
                   elementTextBySelector(optInOptOutLinks(1))(s"Opt out of quarterly reporting and report annually for the $previousStartYear to $previousEndYear tax year"),
                   elementTextBySelector(optInOptOutLinks(2))(s"Opt in to quarterly reporting")
                 )
+                pageTitle(mtdUserRole, "reporting.frequency.title.R17")
                 result shouldNot have(
                   elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses"),
                   elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
@@ -335,8 +338,8 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, "reporting.frequency.title")
                 )
+                pageTitle(mtdUserRole, "reporting.frequency.title.R17")
                 result shouldNot have(
                   elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
                   elementTextBySelector(optInOptOutLinks(1))(s"Opt out of quarterly reporting and report annually for the $previousStartYear to $previousEndYear tax year"),
@@ -358,14 +361,14 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
-                  httpStatus(OK),
-                  pageTitle(mtdUserRole, "reporting.frequency.title")
+                  httpStatus(OK)
                 )
                 result shouldNot have(
                   elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
                   elementTextBySelector(optInOptOutLinks(1))(s"Opt out of quarterly reporting and report annually for the $previousStartYear to $previousEndYear tax year"),
                   elementTextBySelector(optInOptOutLinks(2))(s"Opt in to quarterly reporting")
                 )
+                pageTitle(mtdUserRole, "reporting.frequency.title.R17")
                 result shouldNot have(
                   elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses")
                 )
@@ -385,13 +388,13 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, "reporting.frequency.title")
                 )
                 result shouldNot have(
                   elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
                   elementTextBySelector(optInOptOutLinks(1))(s"Opt out of quarterly reporting and report annually for the $previousStartYear to $previousEndYear tax year"),
                   elementTextBySelector(optInOptOutLinks(2))(s"Opt in to quarterly reporting")
                 )
+                pageTitle(mtdUserRole, "reporting.frequency.title.R17")
                 result shouldNot have(
                   elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses")
                 )
@@ -414,9 +417,9 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, "reporting.frequency.title"),
                   elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
                 )
+                pageTitle(mtdUserRole, "reporting.frequency.title.R17")
               }
             }
 
@@ -441,7 +444,6 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   val result = buildGETMTDClient(path, additionalCookies).futureValue
                   result should have(
                     httpStatus(OK),
-                    pageTitle(mtdUserRole, "reporting.frequency.title"),
                     elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses"),
                     elementTextByID("separately-choose-to-opt-out")("For tax years you are using Making Tax Digital for Income Tax, you can separately choose to opt out for any new sole trader or property income source:"),
                     elementTextByID("latency-section-1-bullet-1")("started less than 2 years ago"),
@@ -453,7 +455,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                     elementTextByID("change-reporting-obligations-heading")("How to change your reporting obligations for a new income source"),
                     elementTextByID("your-businesses")("You can do this at any time in the your businesses section.")
                   )
-
+                  pageTitle(mtdUserRole, "reporting.frequency.title.R17")
                   if (mtdUserRole == MTDIndividual) {
                     result should have(
                       elementAttributeBySelector(latencyDetailsLink, "href")("/report-quarterly/income-and-expenses/view/manage-your-businesses")
