@@ -31,12 +31,6 @@ private[mappings] class LocalDateFormatter(
                                             args: Seq[String] = Seq.empty
                                           )(implicit messages: Messages) extends Formatter[LocalDate] with Formatters {
 
-  private val fieldKeys = Map(
-    "day" -> messages("date.error.day"),
-    "month" -> messages("date.error.month"),
-    "year" -> messages("date.error.year")
-  )
-
   private def toDate(key: String, day: Int, month: Int, year: Int): Either[Seq[FormError], LocalDate] =
     Try(LocalDate.of(year, month, day)) match {
       case Success(date) =>
@@ -64,6 +58,12 @@ private[mappings] class LocalDateFormatter(
     } yield date
   }
 
+  private val fieldKeys = Map(
+    "day" -> messages("date.error.day"),
+    "month" -> messages("date.error.month"),
+    "year" -> messages("date.error.year")
+  )
+
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
 
     val fields = fieldKeys.map {
@@ -81,11 +81,11 @@ private[mappings] class LocalDateFormatter(
           _.map(_.copy(key = key, args = args))
         }
       case 2 =>
-        Left(List(FormError(key, requiredKey, missingFields ++ args)))
+        Left(List(FormError(s"$key", requiredKey, missingFields ++ args)))
       case 1 =>
-        Left(List(FormError(key, twoRequiredKey, missingFields ++ args)))
+        Left(List(FormError(s"$key", twoRequiredKey, missingFields ++ args)))
       case _ =>
-        Left(List(FormError(key, allRequiredKey, args)))
+        Left(List(FormError(s"$key", allRequiredKey, args)))
     }
   }
 
