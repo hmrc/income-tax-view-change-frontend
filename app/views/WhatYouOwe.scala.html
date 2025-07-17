@@ -16,19 +16,17 @@
 
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import _root_.implicits.ImplicitCurrencyFormatter._
-@import models.financialDetails.WhatYouOweChargesList
 @import auth.MtdItUser
-@import views.html.layouts.unifiedLayout
-@import views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import java.time.LocalDate
-@import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
+@import models.financialDetails.WhatYouOweViewModel
 @import services.DateServiceInterface
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
-@import _root_.implicits.HtmlFormatter.NbspString
-@import views.html.partials.whatYouOwe._
 @import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
-@import controllers.routes._
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
+@import views.html.partials.whatYouOwe._
+@import _root_.implicits.HtmlFormatter.NbspString
+@import views.html.partials.yourSelfAssessmentCharges.PaymentPlanSection
 
 @this(
     h1: h1,
@@ -40,6 +38,7 @@
     saNoteParagraph: SaNoteParagraph,
     govukWarningText: GovukWarningText,
     taxYearSummaryLink: TaxYearSummaryLink,
+    paymentPlanSection: PaymentPlanSection,
     paymentsMadeContent: PaymentsMadeContent,
     dunningLockParagraph: DunningLockParagraph,
     codingOutInsetContent: CodingOutInsetContent,
@@ -52,23 +51,7 @@
     unallocatedCreditParagraphContent: UnallocatedCreditParagraphContent
 )
 @(
-    currentDate: LocalDate,
-    hasOverdueOrAccruingInterestCharges: Boolean,
-    whatYouOweChargesList: WhatYouOweChargesList,
-    hasLpiWithDunningLock: Boolean,
-    currentTaxYear: Int,
-    backUrl: String,
-    utr: Option[String],
-    dunningLock: Boolean,
-    reviewAndReconcileEnabled: Boolean,
-    creditAndRefundUrl: String,
-    creditAndRefundEnabled: Boolean,
-    taxYearSummaryUrl: Int => String,
-    claimToAdjustViewModel: WYOClaimToAdjustViewModel,
-    LPP2Url: String,
-    adjustPoaUrl: String,
-    chargeSummaryUrl: (Int, String, Boolean, Option[String]) => String,
-    paymentHandOffUrl: Long => String,
+    viewModel: WhatYouOweViewModel,
     origin: Option[String] = None
 )(
     implicit request: Request[_],
@@ -82,26 +65,26 @@
 @mainTemplate(
     isAgent = user.isAgent(),
     pageTitle = getHeading,
-    backUrl = Some(backUrl),
+    backUrl = Some(viewModel.backUrl),
     btaNavPartial = user.btaNavPartial
 ) {
     @h1(msg = getHeading, id = Some("page-heading"))
 
-    @if(whatYouOweChargesList.isChargesListEmpty && whatYouOweChargesList.codedOutDetails.isEmpty) {
+    @if(viewModel.whatYouOweChargesList.isChargesListEmpty && viewModel.whatYouOweChargesList.codedOutDetails.isEmpty) {
 
         @p(id = Some("no-payments-due"))(Html(getNoPaymentsDueText))
 
         @claimToAdjustPoaSection(
-            whatYouOweChargesList.hasUnpaidPOAs,
-            claimToAdjustViewModel.claimToAdjustTaxYear,
-            adjustPoaUrl
+            viewModel.whatYouOweChargesList.hasUnpaidPOAs,
+            viewModel.claimToAdjustViewModel.claimToAdjustTaxYear,
+            viewModel.adjustPoaUrl
         )
 
-        @saNoteParagraph(utr)
+        @saNoteParagraph(viewModel.utr)
 
     } else {
 
-        @if(hasOverdueOrAccruingInterestCharges) {
+        @if(viewModel.hasOverdueOrAccruingInterestCharges) {
 
             @govukWarningText(WarningText(
                 attributes = Map("id" -> "interest-charges-warning"),
@@ -109,7 +92,7 @@
             ))
         }
 
-        @if(whatYouOweChargesList.chargesList.nonEmpty || whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
+        @if(viewModel.whatYouOweChargesList.chargesList.nonEmpty || viewModel.whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
 
             @govukTable(Table(
                 head = Some(Seq(
@@ -127,31 +110,31 @@
                     )
                 )),
                 rows = Seq(
-                    Option.when(whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero)(
+                    Option.when(viewModel.whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero)(
                         Seq(
                             TableRow(
                                 attributes = Map("id" -> "balancing-charge-due-date-0"),
-                                content = Text(whatYouOweChargesList.getRelevantDueDate.toLongDateShort)
+                                content = Text(viewModel.whatYouOweChargesList.getRelevantDueDate.toLongDateShort)
                             ),
                             TableRow(
                                 attributes = Map("id" -> "balancing-charge-type-0"),
-                                content = HtmlContent(balancingChargePreMtdDigital(whatYouOweChargesList, currentDate))
+                                content = HtmlContent(balancingChargePreMtdDigital(viewModel.whatYouOweChargesList, viewModel.currentDate))
                             ),
                             TableRow(
                                 attributes = Map("id" -> "balancing-charge-tax-year-0"),
-                                content = Text(getMessage("pre-mtd-year", (currentTaxYear - 2).toString, (currentTaxYear - 1).toString))
+                                content = Text(getMessage("pre-mtd-year", (viewModel.currentTaxYear - 2).toString, (viewModel.currentTaxYear - 1).toString))
                             ),
                             TableRow(
                                 attributes = Map("id" -> "balancing-charge-amount-due-0"),
-                                content = HtmlContent(whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.chargeAmount.toCurrency),
+                                content = HtmlContent(viewModel.whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.chargeAmount.toCurrency),
                                 format = Some("numeric")
                             ),
                         )
                     ),
                     Option.when(
-                        whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero &&
-                        whatYouOweChargesList.outstandingChargesModel.get.getAciChargeWithTieBreaker.isDefined &&
-                        whatYouOweChargesList.getRelevantDueDate.isBefore(currentDate)
+                        viewModel.whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero &&
+                        viewModel.whatYouOweChargesList.outstandingChargesModel.get.getAciChargeWithTieBreaker.isDefined &&
+                        viewModel.whatYouOweChargesList.getRelevantDueDate.isBefore(viewModel.currentDate)
                     )(
                         Seq(
                             TableRow(
@@ -159,19 +142,19 @@
                             ),
                             TableRow(
                                 attributes = Map("id" -> "balancing-charge-due-date-1"),
-                                content = HtmlContent(interestOnBalancingCharge(whatYouOweChargesList, currentDate))
+                                content = HtmlContent(interestOnBalancingCharge(viewModel.whatYouOweChargesList, viewModel.currentDate))
                             ),
                             TableRow(
                                 attributes = Map("id" -> "balancing-charge-type-1"),
-                                content = HtmlContent(getMessage("pre-mtd-year", (currentTaxYear - 2).toString, (currentTaxYear - 1).toString))
+                                content = HtmlContent(getMessage("pre-mtd-year", (viewModel.currentTaxYear - 2).toString, (viewModel.currentTaxYear - 1).toString))
                             ),
                             TableRow(
                                 attributes = Map("id" -> "balancing-charge-amount-due-1"),
-                                content = HtmlContent(whatYouOweChargesList.getAciChargeWithTieBreakerChargeAmount.toCurrency),
+                                content = HtmlContent(viewModel.whatYouOweChargesList.getAciChargeWithTieBreakerChargeAmount.toCurrency),
                                 format = Some("numeric")
                             ),
                         )
-                    ) ++ (for ((charge, index) <- whatYouOweChargesList.sortedChargesList.zipWithIndex) yield {
+                    ) ++ (for ((charge, index) <- viewModel.whatYouOweChargesList.sortedChargesList.zipWithIndex) yield {
                         Seq(
                             Seq(
                                 TableRow(
@@ -180,11 +163,11 @@
                                 ),
                                 TableRow(
                                     attributes = Map("id" -> s"due-$index"),
-                                    content = HtmlContent(chargeInfo(LPP2Url, s"due-$index", charge, index, chargeSummaryUrl(charge.taxYear.endYear, charge.transactionId, charge.isLatePaymentInterest, origin)))
+                                    content = HtmlContent(chargeInfo(viewModel.LPP2Url, s"due-$index", charge, index, viewModel.chargeSummaryUrl(charge.taxYear.endYear, charge.transactionId, charge.isLatePaymentInterest, origin)))
                                 ),
                                 TableRow(
                                     attributes = Map("id" -> s"due-charge-tax-year-$index"),
-                                    content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, taxYearSummaryUrl))
+                                    content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, viewModel.taxYearSummaryUrl))
                                 ),
                                 TableRow(
                                     attributes = Map("id" -> s"due-charge-amount-due-$index"),
@@ -203,7 +186,7 @@
                                 ),
                                 TableRow(
                                     attributes = Map("id" -> s"accrued-interest-tax-year-$index"),
-                                    content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, taxYearSummaryUrl))
+                                    content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, viewModel.taxYearSummaryUrl))
                                 ),
                                 TableRow(
                                     attributes = Map("id" -> s"accrued-interest-amount-due-$index"),
@@ -219,44 +202,46 @@
             ))
         }
 
-        @if(!whatYouOweChargesList.isChargesListEmpty && (dunningLock || hasLpiWithDunningLock) ) {
+        @if(!viewModel.whatYouOweChargesList.isChargesListEmpty && (viewModel.dunningLock || viewModel.hasLpiWithDunningLock) ) {
             @dunningLockParagraph()
         }
 
         @claimToAdjustPoaSection(
-            whatYouOweChargesList.hasUnpaidPOAs,
-            claimToAdjustViewModel.claimToAdjustTaxYear,
-            adjustPoaUrl
+            viewModel.whatYouOweChargesList.hasUnpaidPOAs,
+            viewModel.claimToAdjustViewModel.claimToAdjustTaxYear,
+            viewModel.adjustPoaUrl
         )
 
-        @whatYouOweChargesList.codedOutDetails.map { codedOutDetails =>
-            @codingOutInsetContent(codedOutDetails, taxYearSummaryUrl)
+        @viewModel.whatYouOweChargesList.codedOutDetails.map { codedOutDetails =>
+            @codingOutInsetContent(codedOutDetails, viewModel.taxYearSummaryUrl)
         }
 
-        @saNoteParagraph(utr)
+        @saNoteParagraph(viewModel.utr)
 
-        @whatYouOweChargesList.availableCredit.map { availableCreditAmt =>
-            @unallocatedCreditParagraphContent(creditAndRefundUrl, availableCreditAmt.toCurrencyString)
+        @viewModel.whatYouOweChargesList.availableCredit.map { availableCreditAmt =>
+            @unallocatedCreditParagraphContent(viewModel.creditAndRefundUrl, availableCreditAmt.toCurrencyString)
         }
 
 
         @(for {
-            (_, amount) <- whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate
-            if             utr.isDefined && !user.isAgent()
+            (_, amount) <- viewModel.whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate
+            if             viewModel.utr.isDefined && !user.isAgent()
         } yield {
             govukButton(Button(
                 id = Some("payment-button"),
                 content = Text(getMessage("payNow")),
-                href = Some(paymentHandOffUrl(amount.toPence))
+                href = Some(viewModel.paymentHandOffUrl(amount.toPence))
             ))
         })
 
         @paymentsMadeContent()
+
+        @paymentPlanSection(viewModel.selfServeTimeToPayStartUrl)
     }
 
-    @if(creditAndRefundEnabled){
-        @whatYouOweChargesList.availableCredit.map { ac =>
-            @availableCreditInAccount(ac.toCurrencyString, creditAndRefundUrl)
+    @if(viewModel.creditAndRefundEnabled){
+        @viewModel.whatYouOweChargesList.availableCredit.map { ac =>
+            @availableCreditInAccount(ac.toCurrencyString, viewModel.creditAndRefundUrl)
         }
     }
 }
