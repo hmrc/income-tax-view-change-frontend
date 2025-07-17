@@ -22,13 +22,12 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage}
+import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage}
 import models.obligations._
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.NextUpdatesService
-import services.optIn.OptInService
 import services.optout.OptOutService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
