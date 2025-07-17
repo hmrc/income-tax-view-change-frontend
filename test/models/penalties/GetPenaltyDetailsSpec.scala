@@ -196,9 +196,8 @@ class GetPenaltyDetailsSpec extends TestSupport {
 
   s"parse a NO CONTENT (${Status.NO_CONTENT}) response" in {
     val result = GetPenaltyDetailsParser.GetPenaltyDetailsReads.read("GET", "/", mockNoContentHttpResponse)
-    result.isLeft shouldBe true
-    result.left.getOrElse(GetPenaltyDetailsFailureResponse(IM_A_TEAPOT)).asInstanceOf[GetPenaltyDetailsFailureResponse].status shouldBe Status.NO_CONTENT
-  }
+    result.isRight shouldBe true
+    result.toOption.get.asInstanceOf[GetPenaltyDetailsParser.GetPenaltyDetailsSuccessResponse].penaltyDetails shouldBe mockGetPenaltyDetailsModelv3  }
 
   s"parse a Conflict (${Status.CONFLICT}) response - logging PagerDuty" in {
     val result = GetPenaltyDetailsParser.GetPenaltyDetailsReads.read("GET", "/", mockConflictHttpResponse)

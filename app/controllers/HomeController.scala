@@ -132,7 +132,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       overDuePaymentsCount = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
       accruingInterestPaymentsCount = NextPaymentsTileViewModel.paymentsAccruingInterestCount(unpaidCharges, dateService.getCurrentDate)
       currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
-      penaltiesAndAppealsTileViewModel = penaltyDetailsService.getPenaltyPenaltiesAndAppealsTileViewModel(isEnabled(PenaltiesAndAppeals))
+      penaltiesCount <- penaltyDetailsService.getPenaltiesCount(isEnabled(PenaltiesBackendEnabled))
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
       mandation <- ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(_.isMandated)
       (nextQuarterlyUpdateDueDate, nextTaxReturnDueDate) <- getNextDueDatesIfEnabled()
@@ -144,6 +144,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
         currentYearITSAStatus = currentITSAStatus,
         nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
         nextTaxReturnDueDate = nextTaxReturnDueDate)
+      val penaltiesAndAppealsTileViewModel: PenaltiesAndAppealsTileViewModel = PenaltiesAndAppealsTileViewModel(isEnabled(PenaltiesAndAppeals), penaltyDetailsService.getPenaltySubmissionFrequency(currentITSAStatus), penaltiesCount)
 
       val paymentCreditAndRefundHistoryTileViewModel =
         PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds), user.incomeSources.yearOfMigration.isDefined)
