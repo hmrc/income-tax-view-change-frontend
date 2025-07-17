@@ -102,7 +102,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
               else                TaxYearSummaryController.renderTaxYearSummaryPage(_, origin).url
             },
             claimToAdjustViewModel = ctaViewModel,
-            LPP2Url = lpp2Url,
+            lpp2Url = lpp2Url,
             adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url,
             chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) => {
               if (user.isAgent()) ChargeSummaryController.showAgent(taxYearEnd, transactionId, isInterest).url

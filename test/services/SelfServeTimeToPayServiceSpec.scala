@@ -31,7 +31,7 @@ import scala.concurrent.Future
 class SelfServeTimeToPayServiceSpec extends TestSupport with MockHttp {
 
   val selfServeTimeToPayConnector: SelfServeTimeToPayConnector = mock(classOf[SelfServeTimeToPayConnector])
-  val testService = new SelfServeTimeToPayService(selfServeTimeToPayConnector)
+  val selfServeTimeToPayService = new SelfServeTimeToPayService(selfServeTimeToPayConnector)
 
   "SelfServeTimeToPayService" should {
     "startSelfServeTimeToPayJourney" when {
@@ -41,7 +41,7 @@ class SelfServeTimeToPayServiceSpec extends TestSupport with MockHttp {
           .thenReturn(Future {
             SelfServeTimeToPayJourneyResponseModel(expectedJourneyId, testSetUpPaymentPlanUrl)
           })
-        testService.startSelfServeTimeToPayJourney().futureValue shouldBe Right(testSetUpPaymentPlanUrl)
+        selfServeTimeToPayService.startSelfServeTimeToPayJourney().futureValue shouldBe Right(testSetUpPaymentPlanUrl)
       }
     }
     "return a Left" when {
@@ -51,7 +51,7 @@ class SelfServeTimeToPayServiceSpec extends TestSupport with MockHttp {
           .thenReturn(Future {
             SelfServeTimeToPayJourneyErrorResponse(INTERNAL_SERVER_ERROR, "Error message")
           })
-        testService.startSelfServeTimeToPayJourney().futureValue shouldBe Left(SelfServeTimeToPayJourneyException(INTERNAL_SERVER_ERROR, "Error message"))
+        selfServeTimeToPayService.startSelfServeTimeToPayJourney().futureValue shouldBe Left(SelfServeTimeToPayJourneyException(INTERNAL_SERVER_ERROR, "Error message"))
       }
     }
     "return a Left" when {
@@ -59,7 +59,7 @@ class SelfServeTimeToPayServiceSpec extends TestSupport with MockHttp {
 
         when(selfServeTimeToPayConnector.startSelfServeTimeToPayJourney()(any()))
           .thenReturn(Future.failed(new Exception("Error message")))
-        testService.startSelfServeTimeToPayJourney().futureValue.toString shouldBe Left(new Exception("Error message")).toString
+        selfServeTimeToPayService.startSelfServeTimeToPayJourney().futureValue.toString shouldBe Left(new Exception("Error message")).toString
       }
     }
 

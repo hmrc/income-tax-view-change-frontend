@@ -144,7 +144,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     val defaultClaimToAdjustViewModel = ctaViewModel(adjustPaymentsOnAccountFSEnabled)
 
-    val html: HtmlFormat.Appendable = whatYouOweView(
+    val wyoViewModel: WhatYouOweViewModel = WhatYouOweViewModel(
       currentDate = dateService.getCurrentDate,
       hasOverdueOrAccruingInterestCharges = false,
       whatYouOweChargesList = charges,
@@ -153,16 +153,20 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       backUrl = "testBackURL",
       utr = Some("1234567890"),
       dunningLock = dunningLock,
+      reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       creditAndRefundUrl = CreditAndRefundController.show().url,
+      creditAndRefundEnabled = true,
       taxYearSummaryUrl = _ => controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear).url,
+      claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),
+      lpp2Url = LPP2Url,
       adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = false).url,
       chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) =>
         ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url,
       paymentHandOffUrl = PaymentController.paymentHandoff(_, None).url,
-      reviewAndReconcileEnabled = reviewAndReconcileEnabled,
-      creditAndRefundEnabled = true,
-      claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),
-      LPP2Url = LPP2Url)(FakeRequest(), individualUser, implicitly, dateService)
+      selfServeTimeToPayStartUrl = ""
+    )
+
+    val html: HtmlFormat.Appendable = whatYouOweView(wyoViewModel)(FakeRequest(), individualUser, implicitly, dateService)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def findElementById(id: String): Option[Element] = {
@@ -197,10 +201,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
 
     val whatYouOweView: WhatYouOwe = app.injector.instanceOf[WhatYouOwe]
-
     private val currentDateIs: LocalDate = dateService.getCurrentDate
-    val html: HtmlFormat.Appendable = whatYouOweView(
-      currentDateIs,
+
+    val wyoViewModelAgent: WhatYouOweViewModel = WhatYouOweViewModel(
+      currentDate = currentDateIs,
       hasOverdueOrAccruingInterestCharges = false,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
@@ -208,17 +212,20 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       backUrl = "testBackURL",
       utr = Some("1234567890"),
       dunningLock = dunningLock,
+      reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       creditAndRefundUrl = CreditAndRefundController.showAgent().url,
+      creditAndRefundEnabled = true,
       taxYearSummaryUrl = _ => controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url,
+      claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),
+      lpp2Url = "",
       adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = true).url,
       chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) =>
         ChargeSummaryController.showAgent(taxYearEnd, transactionId, isInterest).url,
       paymentHandOffUrl = PaymentController.paymentHandoff(_, None).url,
-      reviewAndReconcileEnabled = reviewAndReconcileEnabled,
-      creditAndRefundEnabled = true,
-      claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),
-      LPP2Url = ""
-    )(FakeRequest(), agentUser, implicitly, dateService)
+      selfServeTimeToPayStartUrl = ""
+    )
+
+    val html: HtmlFormat.Appendable = whatYouOweView(wyoViewModelAgent)(FakeRequest(), agentUser, implicitly, dateService)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
 
