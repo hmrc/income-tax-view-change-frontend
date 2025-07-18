@@ -37,6 +37,7 @@ import services.{ClaimToAdjustService, DateServiceInterface, SelfServeTimeToPayS
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.YourSelfAssessmentCharges
+import views.html.errorPages.CustomNotFoundError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,6 +49,7 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
                                                     val itvcErrorHandler: ItvcErrorHandler,
                                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                     val auditingService: AuditingService,
+                                                    val customNotFoundErrorView: CustomNotFoundError,
                                                     implicit val dateService: DateServiceInterface,
                                                     view: YourSelfAssessmentCharges
                                     )(implicit val appConfig: FrontendAppConfig,
@@ -60,7 +62,10 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
-    for {
+if (!isEnabled(PenaltiesAndAppeals))
+  Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
+else
+  for {
       whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isEnabled(ReviewAndReconcilePoa),
         isEnabled(FilterCodedOutPoas),
         isEnabled(PenaltiesAndAppeals),
@@ -105,6 +110,7 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
           ).addingToSession(gatewayPage -> YourSelfAssessmentChargeSummaryPage.name)
       }
     }
+
   } recover {
     case ex: Exception =>
       Logger("application").error(s"${if (user.isAgent()) "[Agent]"}" +
