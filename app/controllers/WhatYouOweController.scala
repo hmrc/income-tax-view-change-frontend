@@ -37,6 +37,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.WhatYouOwe
 import controllers.routes._
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+import views.html.errorPages.CustomNotFoundError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,6 +48,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
                                      val itvcErrorHandler: ItvcErrorHandler,
                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                      val auditingService: AuditingService,
+                                     val customNotFoundErrorView: CustomNotFoundError,
                                      implicit val dateService: DateServiceInterface,
                                      whatYouOwe: WhatYouOwe
                                     )(implicit val appConfig: FrontendAppConfig,
@@ -59,7 +61,9 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
                     isAgent: Boolean,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-
+    if (!isEnabled(PenaltiesAndAppeals))
+      Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
+    else
     for {
       whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isEnabled(ReviewAndReconcilePoa),
         isEnabled(FilterCodedOutPoas),
