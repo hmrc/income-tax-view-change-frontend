@@ -18,6 +18,7 @@ package models
 
 import implicits.ImplicitDateFormatter
 import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard}
+import models.itsaStatus.ITSAStatus
 import models.obligations._
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.{JsSuccess, Json}
@@ -203,6 +204,33 @@ class ObligationsResponseModelSpec extends TestSupport with Matchers with Implic
             ObligationWithIncomeType("nextUpdates.propertyIncome", SingleObligationModel("2017-04-06", "2018-04-05", "2017-10-31", "Quarterly", None, "#003", StatusFulfilled)))
         )
       }
+    }
+
+    "return only quarterly business obligations if R17 is enabled and user is Mandated" in {
+      obligationsAllDeadlinesSuccessModel.allDeadlinesWithSource(
+        r17ContentEnabled = true,
+        currentYearITSAStatus = Some(ITSAStatus.Mandated)
+      )(testMtdItUser) shouldBe List(
+        ObligationWithIncomeType("nextUpdates.business", overdueObligation),
+        ObligationWithIncomeType("nextUpdates.business", openObligation)
+      )
+    }
+
+    "return only quarterly business obligations if R17 is enabled and user is Voluntary" in {
+      obligationsAllDeadlinesSuccessModel.allDeadlinesWithSource(
+        r17ContentEnabled = true,
+        currentYearITSAStatus = Some(ITSAStatus.Voluntary)
+      )(testMtdItUser) shouldBe List(
+        ObligationWithIncomeType("nextUpdates.business", overdueObligation),
+        ObligationWithIncomeType("nextUpdates.business", openObligation)
+      )
+    }
+
+    "return empty list if R17 is enabled and user is Annual" in {
+      obligationsAllDeadlinesSuccessModel.allDeadlinesWithSource(
+        r17ContentEnabled = true,
+        currentYearITSAStatus = Some(ITSAStatus.Annual)
+      )(testMtdItUser) shouldBe Nil
     }
   }
 }
