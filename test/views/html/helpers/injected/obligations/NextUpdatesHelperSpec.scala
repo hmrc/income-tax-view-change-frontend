@@ -47,7 +47,7 @@ class  NextUpdatesHelperSpec extends TestSupport {
   lazy val crystallisedObligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(
     business1.incomeSourceId,
     List(crystallisedObligation)
-  ))).obligationsByDate(isR17ContentEnabled = true, Some(ITSAStatus.Voluntary)).map{case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
+  ))).obligationsByDate(isR17ContentEnabled = false, Some(ITSAStatus.Voluntary)).map{case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
     DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)})
 
   "Next updates helper" should {
@@ -99,7 +99,7 @@ class  NextUpdatesHelperSpec extends TestSupport {
       pageDocument.getElementById("accordion-with-summary-sections-heading-1").text() shouldBe "30 October 2017"
     }
 
-    "display the correct due date text for a non-quarterly date" in new Setup(crystallisedObligationsModel) {
+    "display the correct due date text for a non-quarterly date when R17 is disabled" in new Setup(crystallisedObligationsModel) {
       pageDocument.getElementById("accordion-with-summary-sections-heading-1").text() shouldBe "31 October 2017"
     }
   }
