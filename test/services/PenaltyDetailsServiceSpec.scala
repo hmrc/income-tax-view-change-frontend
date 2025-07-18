@@ -17,8 +17,11 @@
 package services
 
 import mocks.connectors.MockPenaltyDetailsConnector
-import models.penalties.GetPenaltyDetailsParser.{GetPenaltyDetailsFailureResponse, GetPenaltyDetailsSuccessResponse}
+import models.itsaStatus.ITSAStatus
+import models.penalties.{GetPenaltyDetails, Totalisations}
+import models.penalties.GetPenaltyDetailsParser.{GetPenaltyDetailsFailureResponse, GetPenaltyDetailsMalformed, GetPenaltyDetailsSuccessResponse}
 import play.api.http.Status.INTERNAL_SERVER_ERROR
+import testConstants.BaseTestConstants
 import testConstants.PenaltiesTestConstants.getPenaltyDetails
 import testUtils.TestSupport
 
@@ -27,25 +30,121 @@ class PenaltyDetailsServiceSpec extends TestSupport with MockPenaltyDetailsConne
   val mtditid = "123456"
   object TestPenaltyDetailsService extends PenaltyDetailsService(mockGetPenaltyDetailsConnector, appConfig)
 
-  "PenaltyDetailsService" should {
+  "PenaltyDetailsService" when {
 
-    "return a GetPenaltyDetails successful response model" when {
-      "the response from the connector is successful" in {
-        setupMockGetPenaltyDetailsConnector(mtditid)(Right(GetPenaltyDetailsSuccessResponse(getPenaltyDetails)))
+    "calling GetPenaltyDetails" should {
 
-        val result = TestPenaltyDetailsService.getPenaltyDetails(mtditid).futureValue
-        result shouldBe Right(GetPenaltyDetailsSuccessResponse(getPenaltyDetails))
+      "return a GetPenaltyDetails successful response model" when {
+        "the response from the connector is successful" in {
+          setupMockGetPenaltyDetailsConnector(mtditid)(Right(GetPenaltyDetailsSuccessResponse(getPenaltyDetails)))
+
+          val result = TestPenaltyDetailsService.getPenaltyDetails(mtditid).futureValue
+          result shouldBe Right(GetPenaltyDetailsSuccessResponse(getPenaltyDetails))
+        }
+      }
+
+      "return a GetPenaltyDetails failure response" when {
+        "unable to retrieve the penalty details model from the connector" in {
+          setupMockGetPenaltyDetailsConnector(mtditid)(Left(GetPenaltyDetailsFailureResponse(INTERNAL_SERVER_ERROR)))
+
+          val result = TestPenaltyDetailsService.getPenaltyDetails(mtditid).futureValue
+          result shouldBe Left(GetPenaltyDetailsFailureResponse(INTERNAL_SERVER_ERROR))
+        }
+      }
+
+    }
+
+    "calling getPenaltySubmissionFrequency" should {
+
+      "return a response of Quarterly" when {
+
+        "ITSA status is mandated" in {
+          val result = TestPenaltyDetailsService.getPenaltySubmissionFrequency(ITSAStatus.Mandated)
+          result shouldBe "Quarterly"
+        }
+
+        "ITSA status is voluntary" in {
+          val result = TestPenaltyDetailsService.getPenaltySubmissionFrequency(ITSAStatus.Voluntary)
+          result shouldBe "Quarterly"
+        }
+      }
+
+      "return a response of Annual" when {
+        "ITSA status is annual" in {
+          val result = TestPenaltyDetailsService.getPenaltySubmissionFrequency(ITSAStatus.Annual)
+          result shouldBe "Annual"
+        }
+      }
+
+      "return a response of Not Applicable" when {
+        val notApplicableStatuses = List(ITSAStatus.NoStatus, ITSAStatus.Dormant, ITSAStatus.Exempt, ITSAStatus.NonDigital)
+
+        notApplicableStatuses.foreach{ status =>
+          s"ITSA status is ${status.toString}" in {
+            val result = TestPenaltyDetailsService.getPenaltySubmissionFrequency(status)
+            result shouldBe "Non Penalty Applicable Status"
+          }
+        }
       }
     }
 
-    "return a GetPenaltyDetails failure response" when {
-      "unable to retrieve the penalty details model from the connector" in {
-        setupMockGetPenaltyDetailsConnector(mtditid)(Left(GetPenaltyDetailsFailureResponse(INTERNAL_SERVER_ERROR)))
+    "calling getPenaltiesCount" should {
 
-        val result = TestPenaltyDetailsService.getPenaltyDetails(mtditid).futureValue
-        result shouldBe Left(GetPenaltyDetailsFailureResponse(INTERNAL_SERVER_ERROR))
+      "return a valid count of 0" when {
+
+        "the penalties feature is disabled" in {
+          setupMockGetPenaltyDetailsConnector(BaseTestConstants.testMtditid)(Right(GetPenaltyDetailsSuccessResponse(getPenaltyDetails)))
+
+          val result = TestPenaltyDetailsService.getPenaltiesCount(penaltiesCallEnabled = false).futureValue
+          result shouldBe 0
+        }
+
+        "the response is successful but with no totalisations object" in {
+          setupMockGetPenaltyDetailsConnector(BaseTestConstants.testMtditid)(Right(GetPenaltyDetailsSuccessResponse(GetPenaltyDetails(None, None, None, None))))
+
+          val result = TestPenaltyDetailsService.getPenaltiesCount(penaltiesCallEnabled = false).futureValue
+          result shouldBe 0
+        }
+
+        "the response is successful with a zero points total returned" in {
+          setupMockGetPenaltyDetailsConnector(BaseTestConstants.testMtditid)(Right(GetPenaltyDetailsSuccessResponse(
+            GetPenaltyDetails(Some(Totalisations(Some(0), None, None, None)), None, None, None))))
+
+          val result = TestPenaltyDetailsService.getPenaltiesCount(penaltiesCallEnabled = false).futureValue
+          result shouldBe 0
+        }
+      }
+
+      "return a valid count greater than 0" when {
+
+        "the response is successful with a non-zero points total returned" in {
+          setupMockGetPenaltyDetailsConnector(BaseTestConstants.testMtditid)(Right(GetPenaltyDetailsSuccessResponse(getPenaltyDetails)))
+
+          val result = TestPenaltyDetailsService.getPenaltiesCount(penaltiesCallEnabled = true).futureValue
+          result shouldBe 2
+        }
+      }
+
+      "return an error" when {
+
+        "the response is a generic FailureResponse" in {
+          setupMockGetPenaltyDetailsConnector(BaseTestConstants.testMtditid)(Left(GetPenaltyDetailsFailureResponse(500)))
+
+          val exception = intercept[Exception] {
+            TestPenaltyDetailsService.getPenaltiesCount(penaltiesCallEnabled = true).futureValue
+          }
+          exception.getMessage shouldBe "The future returned an exception of type: java.lang.Exception, with message: Get penalty details call failed with status of : 500."
+        }
+
+        "the response is a malformed FailureResponse" in {
+          setupMockGetPenaltyDetailsConnector(BaseTestConstants.testMtditid)(Left(GetPenaltyDetailsMalformed))
+
+          val exception = intercept[Exception] {
+            TestPenaltyDetailsService.getPenaltiesCount(penaltiesCallEnabled = true).futureValue
+          }
+          exception.getMessage shouldBe "The future returned an exception of type: java.lang.Exception, with message: Get penalty details call failed with a malformed response body."
+        }
       }
     }
   }
-
 }

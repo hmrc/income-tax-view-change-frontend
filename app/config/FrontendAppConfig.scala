@@ -148,7 +148,9 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val incomeTaxSessionDataUrl: String = servicesConfig.baseUrl("income-tax-session-data")
 
   // penalties stub url
-  lazy val incomeTaxPenaltiesStubBase: String = servicesConfig.baseUrl("income-tax-penalties-stub")
+  lazy val incomeTaxPenaltiesStubBase: String = servicesConfig.baseUrl("income-tax-penalties-stub") + "/income-tax-penalties-stubs"
+
+  lazy val penaltiesBackendBase: String = servicesConfig.baseUrl("penalties")
 
   //penalties frontend
   lazy val incomeTaxPenaltiesFrontend: String = servicesConfig.getString("income-tax-penalties-frontend.homeUrl")

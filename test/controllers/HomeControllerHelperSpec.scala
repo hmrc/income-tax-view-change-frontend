@@ -42,7 +42,8 @@ trait HomeControllerHelperSpec extends MockAuthActions
   with MockWhatYouOweService
   with MockClientDetailsService
   with MockDateService
-  with MockITSAStatusService {
+  with MockITSAStatusService
+  with MockPenaltyDetailsService {
 
   val agentTitle = s"${messages("htmlTitle.agent", messages("home.agent.heading"))}"
 
@@ -52,7 +53,8 @@ trait HomeControllerHelperSpec extends MockAuthActions
       api.inject.bind[FinancialDetailsService].toInstance(mockFinancialDetailsService),
       api.inject.bind[WhatYouOweService].toInstance(mockWhatYouOweService),
       api.inject.bind[DateService].toInstance(mockDateService),
-      api.inject.bind[ITSAStatusService].toInstance(mockITSAStatusService)
+      api.inject.bind[ITSAStatusService].toInstance(mockITSAStatusService),
+      api.inject.bind[PenaltyDetailsService].toInstance(mockPenaltyDetailsService)
     ).build()
 
   val updateYear: String = "2018"
