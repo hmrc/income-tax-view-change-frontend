@@ -17,6 +17,7 @@
 package views.nextUpdates
 
 import config.FrontendAppConfig
+import models.itsaStatus.ITSAStatus
 import models.obligations._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -41,7 +42,7 @@ class NextUpdatesViewSpec extends TestSupport {
   lazy val obligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(
     business1.incomeSourceId,
     twoObligationsSuccessModel.obligations
-  ))).obligationsByDate(isR17ContentEnabled = false).map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
+  ))).obligationsByDate(isR17ContentEnabled = false, currentYearITSAStatus = Some(ITSAStatus.NoStatus)).map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
     DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
   })
 

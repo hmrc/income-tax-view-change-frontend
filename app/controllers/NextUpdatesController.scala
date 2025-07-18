@@ -22,14 +22,15 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage}
+import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage}
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus
 import models.obligations._
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.NextUpdatesService
-import services.optIn.OptInService
 import services.optout.OptOutService
+import services.{DateServiceInterface, ITSAStatusService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.nextUpdates.{NextUpdates, NextUpdatesOptOut, NoNextUpdates}
@@ -46,6 +47,8 @@ class NextUpdatesController @Inject()(
                                        nextUpdatesService: NextUpdatesService,
                                        itvcErrorHandler: ItvcErrorHandler,
                                        optOutService: OptOutService,
+                                       val dateService: DateServiceInterface,
+                                       val ITSAStatusService: ITSAStatusService,
                                        val appConfig: FrontendAppConfig,
                                        val authActions: AuthActions
                                      )
@@ -68,6 +71,8 @@ class NextUpdatesController @Inject()(
   def getNextUpdates(backUrl: Call, isAgent: Boolean, errorHandler: ShowInternalServerError, origin: Option[String] = None)
                     (implicit user: MtdItUser[_]): Future[Result] = {
 
+    val currentTaxYear = TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd)
+
     hasAnyIncomeSource {
       for {
         nextUpdates <- nextUpdatesService.getOpenObligations().map {
@@ -85,7 +90,8 @@ class NextUpdatesController @Inject()(
             val optOutSetup = {
               for {
                 (checks, optOutProposition) <- optOutService.nextUpdatesPageChecksAndProposition()
-                viewModel = nextUpdatesService.getNextUpdatesViewModel(nextUpdates, isR17ContentEnabled)
+                currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
+                viewModel = nextUpdatesService.getNextUpdatesViewModel(nextUpdates, isR17ContentEnabled, Some(currentITSAStatus))
               } yield {
                 Ok(
                 nextUpdatesOptOutView(
@@ -104,7 +110,7 @@ class NextUpdatesController @Inject()(
               }
             }.recoverWith {
               case ex =>
-                val viewModel = nextUpdatesService.getNextUpdatesViewModel(nextUpdates, false)
+                val viewModel = nextUpdatesService.getNextUpdatesViewModel(nextUpdates, false, None)
 
                 Logger("application").error(s"Failed to retrieve quarterly reporting content checks: ${ex.getMessage}")
                 Future.successful(Ok(nextUpdatesView(viewModel, backUrl.url, isAgent, user.isSupportingAgent, origin))) // Render view even on failure
@@ -141,4 +147,11 @@ class NextUpdatesController @Inject()(
     } else {
       auditingService.extendedAudit(NextUpdatesAuditModel(user), Some(controllers.routes.NextUpdatesController.show(origin).url))
     }
+
+  private def getCurrentITSAStatus(taxYear: TaxYear)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[ITSAStatus.ITSAStatus] = {
+    ITSAStatusService.getStatusTillAvailableFutureYears(taxYear.previousYear).map(_.view.mapValues(_.status)
+      .toMap
+      .withDefaultValue(ITSAStatus.NoStatus)
+    ).map(detail => detail(taxYear))
+  }
 }

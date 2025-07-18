@@ -16,6 +16,7 @@
 
 package views.html.helpers.injected.obligations
 
+import models.itsaStatus.ITSAStatus
 import models.obligations._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -40,13 +41,13 @@ class  NextUpdatesHelperSpec extends TestSupport {
   lazy val obligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(
     business1.incomeSourceId,
     twoObligationsSuccessModel.obligations
-  ))).obligationsByDate(isR17ContentEnabled = true).map{case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
+  ))).obligationsByDate(isR17ContentEnabled = true, Some(ITSAStatus.Voluntary)).map{case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
     DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)})
 
   lazy val crystallisedObligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(
     business1.incomeSourceId,
     List(crystallisedObligation)
-  ))).obligationsByDate(isR17ContentEnabled = true).map{case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
+  ))).obligationsByDate(isR17ContentEnabled = true, Some(ITSAStatus.Voluntary)).map{case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
     DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)})
 
   "Next updates helper" should {

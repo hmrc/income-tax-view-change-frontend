@@ -20,6 +20,7 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import models.admin.{FeatureSwitch, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.Annual
 import models.obligations._
 import models.optout.NextUpdatesQuarterlyReportingContentChecks
@@ -82,7 +83,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(
         business1.incomeSourceId,
         twoObligationsSuccessModel.obligations
-      ))).obligationsByDate(isR17ContentEnabled = true)(user).map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
+      ))).obligationsByDate(isR17ContentEnabled = true, Some(ITSAStatus.Voluntary))(user).map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
         DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
       })
 
