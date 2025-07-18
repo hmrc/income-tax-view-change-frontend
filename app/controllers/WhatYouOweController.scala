@@ -66,7 +66,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
         isEnabled(FilterCodedOutPoas),
         isEnabled(PenaltiesAndAppeals),
         mainChargeIsNotPaidFilter)
-      selfServeTimeToPayUrl <- selfServeTimeToPayService.startSelfServeTimeToPayJourney()
+      selfServeTimeToPayUrl <- selfServeTimeToPayService.startSelfServeTimeToPayJourney(user.isAgent())
       ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
     } yield {
 
@@ -109,6 +109,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
               else                ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url
             },
             paymentHandOffUrl = PaymentController.paymentHandoff(_, origin).url,
+            selfServeTimeToPayEnabled  = isEnabled(SelfServeTimeToPayR17),
             selfServeTimeToPayStartUrl = startUrl
           )
           Ok(whatYouOwe(

@@ -163,7 +163,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) =>
         ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url,
       paymentHandOffUrl = PaymentController.paymentHandoff(_, None).url,
-      selfServeTimeToPayStartUrl = ""
+      selfServeTimeToPayEnabled = true,
+      selfServeTimeToPayStartUrl = "/self-serve-time-to-pay"
     )
 
     val html: HtmlFormat.Appendable = whatYouOweView(wyoViewModel)(FakeRequest(), individualUser, implicitly, dateService)
@@ -222,7 +223,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) =>
         ChargeSummaryController.showAgent(taxYearEnd, transactionId, isInterest).url,
       paymentHandOffUrl = PaymentController.paymentHandoff(_, None).url,
-      selfServeTimeToPayStartUrl = ""
+      selfServeTimeToPayEnabled = true,
+      selfServeTimeToPayStartUrl = "/self-serve-time-to-pay"
     )
 
     val html: HtmlFormat.Appendable = whatYouOweView(wyoViewModelAgent)(FakeRequest(), agentUser, implicitly, dateService)

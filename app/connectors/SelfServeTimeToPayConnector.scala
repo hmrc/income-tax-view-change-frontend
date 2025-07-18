@@ -22,9 +22,9 @@ import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.CREATED
 import play.api.libs.json.Json
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
-import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,7 +34,8 @@ class SelfServeTimeToPayConnector @Inject()(http: HttpClientV2,
                                            )(implicit ec: ExecutionContext) {
   val journeyStartUrl: String = config.setUpAPaymentPlanUrl + "/essttp-backend/sa/itsa/journey/start"
 
-  def startSelfServeTimeToPayJourney()(implicit hc: HeaderCarrier): Future[SelfServeTimeToPayJourneyResponse] = {
+  def startSelfServeTimeToPayJourney(isAgent: Boolean)(implicit hc: HeaderCarrier): Future[SelfServeTimeToPayJourneyResponse] = {
+
     val body = Json.parse(
       s"""
        {
