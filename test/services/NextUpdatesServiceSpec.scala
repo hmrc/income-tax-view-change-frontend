@@ -20,6 +20,7 @@ import config.featureswitch.FeatureSwitching
 import mocks.connectors.MockObligationsConnector
 import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
+import models.itsaStatus.ITSAStatus
 import models.obligations._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -615,11 +616,22 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           ))
         )
       )
-      TestNextUpdatesService.getNextUpdatesViewModel(obligations, true) shouldBe {
+      TestNextUpdatesService.getNextUpdatesViewModel(obligationsModel = obligations,
+        isR17ContentEnabled = true,
+        currentYearITSAStatus = Some(ITSAStatus.Voluntary)) shouldBe {
         NextUpdatesViewModel(
-          List(DeadlineViewModel(QuarterlyObligation, true, LocalDate.parse("2023-12-15"),
-            List(ObligationWithIncomeType("nextUpdates.business", SingleObligationModel(LocalDate.parse("2023-12-15"), LocalDate.parse("2023-12-15"), LocalDate.parse("2023-12-15"), "Quarterly", None, "#001", StatusFulfilled))),
-            List()))
+          List(DeadlineViewModel(obligationType = QuarterlyObligation,
+            standardAndCalendar = true,
+            deadline = LocalDate.parse("2023-12-15"),
+            standardQuarters = List(ObligationWithIncomeType("nextUpdates.business",
+              SingleObligationModel(LocalDate.parse("2023-12-15"),
+                LocalDate.parse("2023-12-15"),
+                LocalDate.parse("2023-12-15"),
+                "Quarterly",
+                None,
+                "#001",
+                StatusFulfilled))),
+            calendarQuarters = List()))
         )
       }
     }
