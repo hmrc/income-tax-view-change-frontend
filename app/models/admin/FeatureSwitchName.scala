@@ -72,6 +72,8 @@ object FeatureSwitchName {
       JsSuccess(AccountingMethodJourney)
     case JsString(PenaltiesAndAppeals.name) =>
       JsSuccess(PenaltiesAndAppeals)
+    case JsString(PenaltiesBackendEnabled.name) =>
+      JsSuccess(PenaltiesBackendEnabled)
     case JsString(YourSelfAssessmentCharges.name) =>
       JsSuccess(YourSelfAssessmentCharges)
     case JsString(OptInOptOutContentUpdateR17.name) =>
@@ -116,6 +118,7 @@ object FeatureSwitchName {
       DisplayBusinessStartDate,
       AccountingMethodJourney,
       PenaltiesAndAppeals,
+      PenaltiesBackendEnabled,
       YourSelfAssessmentCharges,
       OptInOptOutContentUpdateR17
     )
