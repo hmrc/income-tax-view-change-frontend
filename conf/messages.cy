@@ -2356,9 +2356,9 @@ incomeSources.manage.new.foreign.property.manage.details.accounting.method      
 
 
 # Used when OptInOptOutContentUpdateR17 feature switch is enabled
-incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.paragraph                      =   Gan mai busnes newydd yw hwn, gallwch benderfynu os ydych am ddefnyddio’r gwasanaeth Troi Treth yn Ddigidol ar gyfer Treth Incwm am hyd at 2 flwyddyn dreth. O fis Ebrill {0} ymlaen, gallai fod yn ofynnol i chi ddefnyddio’r gwasanaeth hwn.
-incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.reportingFrequencyPrefix       =   Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
-incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.reportingFrequencyLink         =   bwrw golwg dros a newid eich rhwymedigaethau adrodd ar gyfer eich holl fusnesau
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.paragraph                      = Gan mai busnes newydd yw hwn, gallwch benderfynu os ydych am ddefnyddio’r gwasanaeth Troi Treth yn Ddigidol ar gyfer Treth Incwm am hyd at 2 flwyddyn dreth. O fis Ebrill {0} ymlaen, gallai fod yn ofynnol i chi ddefnyddio’r gwasanaeth hwn.
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.reportingFrequencyPrefix       = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.reportingFrequencyLink         = bwrw golwg dros a newid eich rhwymedigaethau adrodd ar gyfer eich holl fusnesau
 incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage                       = Defnyddio Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer {0} i {1}
 incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage.yes                   = Iawn
 incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage.no                    = Na
