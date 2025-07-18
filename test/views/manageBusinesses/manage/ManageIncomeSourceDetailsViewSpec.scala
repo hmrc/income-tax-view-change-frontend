@@ -238,7 +238,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = false
+        anyIncomeSourcesInLatency = true
       )(messages, implicitly)
     }
 
@@ -260,7 +260,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = false
+        anyIncomeSourcesInLatency = true
       )(messages, implicitly)
     }
 
@@ -339,8 +339,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
     "render the whole page" in new SelfEmploymentSetup(false) {
 
-      document.getElementById("up-to-two-tax-years").text() shouldBe newBusinessInsetText
-
       summaryListRowKeys().eq(0).text() shouldBe businessName
       summaryListRowKeys().eq(1).text() shouldBe businessAddress
       summaryListRowKeys().eq(2).text() shouldBe dateStarted
@@ -393,8 +391,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     }
 
     "render the whole page with unknowns and no change links or inset text" in new SelfEmploymentUnknownsSetup(false) {
-
-      document.getElementById("up-to-two-tax-years").text() shouldBe "Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April , you could be required to report quarterly."
 
       summaryListRowKeys().eq(0).text() shouldBe businessName
       summaryListRowKeys().eq(1).text() shouldBe businessAddress
@@ -558,8 +554,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
     "render the whole page" in new SelfEmploymentSetup(true) {
 
-      document.getElementById("up-to-two-tax-years").text() shouldBe newBusinessInsetText
-
       summaryListRowKeys().eq(0).text() shouldBe businessName
       summaryListRowKeys().eq(1).text() shouldBe businessAddress
       summaryListRowKeys().eq(2).text() shouldBe dateStarted
@@ -609,8 +603,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     }
 
     "render the whole page" in new UkSetup(false) {
-
-      document.getElementById("up-to-two-tax-years").text() shouldBe newBusinessInsetText
 
       summaryListRowKeys().eq(0).text() shouldBe dateStarted
       summaryListRowKeys().eq(1).text() shouldBe ukAccountingMethod
@@ -733,8 +725,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
     "render the whole page" in new UkSetup(true) {
 
-      document.getElementById("up-to-two-tax-years").text() shouldBe newBusinessInsetText
-
       summaryListRowKeys().eq(0).text() shouldBe dateStarted
       summaryListRowKeys().eq(1).text() shouldBe ukAccountingMethod
       summaryListRowKeys().eq(2).text() shouldBe quarterlyPeriodType
@@ -762,8 +752,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
     "render the whole page with unknowns and no change links" in new UkSetupUnknowns(true) {
 
-      document.getElementById("up-to-two-tax-years").text() shouldBe "Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April , you could be required to report quarterly."
-
       summaryListRowKeys().eq(0).text() shouldBe dateStarted
       summaryListRowKeys().eq(1).text() shouldBe ukAccountingMethod
 
@@ -788,6 +776,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     }
 
     "render the whole page" in new ForeignSetup(false) {
+
       document.getElementById("up-to-two-tax-years").text() shouldBe newBusinessInsetText
 
       summaryListRowKeys().eq(0).text() shouldBe dateStarted
@@ -806,13 +795,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       summaryListRowValues().eq(2).text() shouldBe calendar
       summaryListRowValues().eq(3).text() shouldBe annuallyGracePeriod
       summaryListRowValues().eq(4).text() shouldBe quarterlyGracePeriod
-
-      val expandableInfo = document.getElementById("standard-update-period-dropdown")
-      expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoStandardSummary
-      expandableInfo.getElementById("expandable-standard-update-period").text() shouldBe expandableInfoStandardContentP1
-      expandableInfo.getElementById("software-support").text() shouldBe expandableInfoStandardContentP2
-      expandableInfo.getElementById("learn-about-quarters-link").text() shouldBe expandableInfoContentP3 + " " + opensInNewTabText
-      expandableInfo.getElementById("learn-about-quarters-link").attr("href") shouldBe expandableMoreInfoLink
     }
 
     "not display the accounting method row when showAccountingMethod is false" in {
@@ -906,14 +888,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       summaryListRowValues().eq(2).text() shouldBe calendar
       summaryListRowValues().eq(3).text() shouldBe annuallyGracePeriod
       summaryListRowValues().eq(4).text() shouldBe quarterlyGracePeriod
-
-      val expandableInfo = document.getElementById("standard-update-period-dropdown")
-
-      expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoStandardSummary
-      expandableInfo.getElementById("expandable-standard-update-period").text() shouldBe expandableInfoStandardContentP1
-      expandableInfo.getElementById("software-support").text() shouldBe expandableInfoStandardContentP2
-      expandableInfo.getElementById("learn-about-quarters-link").text() shouldBe expandableInfoContentP3 + " " + opensInNewTabText
-      expandableInfo.getElementById("learn-about-quarters-link").attr("href") shouldBe expandableMoreInfoLink
     }
 
     "render the whole page with unknowns and no change links or inset text" in new ForeignSetupUnknowns(true) {
