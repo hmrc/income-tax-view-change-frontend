@@ -110,7 +110,7 @@ class NextUpdatesController @Inject()(
               }
             }.recoverWith {
               case ex =>
-                val viewModel = nextUpdatesService.getNextUpdatesViewModel(nextUpdates, false, None)
+                val viewModel = nextUpdatesService.getNextUpdatesViewModel(nextUpdates, isR17ContentEnabled = false, currentYearITSAStatus = None)
 
                 Logger("application").error(s"Failed to retrieve quarterly reporting content checks: ${ex.getMessage}")
                 Future.successful(Ok(nextUpdatesView(viewModel, backUrl.url, isAgent, user.isSupportingAgent, origin))) // Render view even on failure

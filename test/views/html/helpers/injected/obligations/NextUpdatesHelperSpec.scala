@@ -32,7 +32,7 @@ import java.time.LocalDate
 class  NextUpdatesHelperSpec extends TestSupport {
 
   class Setup(currentObligations: NextUpdatesViewModel) {
-    val nextUpdatesHelper = app.injector.instanceOf[NextUpdatesHelper]
+    val nextUpdatesHelper: NextUpdatesHelper = app.injector.instanceOf[NextUpdatesHelper]
 
     val html: HtmlFormat.Appendable = nextUpdatesHelper(currentObligations)(implicitly, testMtdItUser)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))

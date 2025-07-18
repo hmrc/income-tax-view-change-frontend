@@ -20,8 +20,7 @@ import auth.MtdItUser
 import models.incomeSourceDetails.QuarterTypeElection.orderingByTypeName
 import models.incomeSourceDetails.{PropertyDetailsModel, QuarterReportingType, QuarterTypeCalendar, QuarterTypeStandard}
 import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
-import play.api.Logger
+import models.itsaStatus.ITSAStatus.ITSAStatus
 import play.api.libs.json._
 
 import java.time.LocalDate
