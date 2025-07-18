@@ -236,7 +236,9 @@
 
         @paymentsMadeContent()
 
-        @paymentPlanSection(viewModel.selfServeTimeToPayStartUrl)
+        @if(viewModel.selfServeTimeToPayEnabled) {
+            @paymentPlanSection(viewModel.selfServeTimeToPayStartUrl)
+        }
     }
 
     @if(viewModel.creditAndRefundEnabled){

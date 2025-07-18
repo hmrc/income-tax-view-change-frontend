@@ -38,6 +38,7 @@ case class WhatYouOweViewModel(currentDate: LocalDate,
                                adjustPoaUrl: String,
                                chargeSummaryUrl: (Int, String, Boolean, Option[String]) => String,
                                paymentHandOffUrl: Long => String,
+                               selfServeTimeToPayEnabled: Boolean,
                                selfServeTimeToPayStartUrl: String)(implicit val dateServiceInterface: DateServiceInterface) {
 
 }
