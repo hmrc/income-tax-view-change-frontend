@@ -76,6 +76,8 @@ object FeatureSwitchName {
       JsSuccess(YourSelfAssessmentCharges)
     case JsString(OptInOptOutContentUpdateR17.name) =>
       JsSuccess(OptInOptOutContentUpdateR17)
+    case JsString(SelfServeTimeToPayR17.name) =>
+      JsSuccess(SelfServeTimeToPayR17)
     case invalidName =>
       Logger("application").error(s"Invalid feature switch Json found: $invalidName")
       JsSuccess(InvalidFS)
@@ -117,7 +119,8 @@ object FeatureSwitchName {
       AccountingMethodJourney,
       PenaltiesAndAppeals,
       YourSelfAssessmentCharges,
-      OptInOptOutContentUpdateR17
+      OptInOptOutContentUpdateR17,
+      SelfServeTimeToPayR17
     )
 
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)
@@ -218,3 +221,7 @@ case object OptInOptOutContentUpdateR17 extends FeatureSwitchName {
   override val toString = "Opt In Opt Out Content Update R17"
 }
 
+case object SelfServeTimeToPayR17 extends FeatureSwitchName {
+  override val name: String = "self-serve-time-to-pay-r17"
+  override val toString: String = "Self Serve Time To Pay R17"
+}
