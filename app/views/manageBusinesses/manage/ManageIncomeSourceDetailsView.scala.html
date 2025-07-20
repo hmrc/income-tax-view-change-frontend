@@ -354,7 +354,7 @@
         captionClasses = Some("govuk-caption-l")
     ))
 
-    @if(!anyIncomeSourcesInLatency){
+    @if(viewModel.isBusinessInLatency){
         @if(showOptInOptOutContentUpdateR17) {
             <div id="up-to-two-tax-years" class="govuk-body">
                 @messages("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.paragraph", viewModel.latencyDetails.fold("")(_.taxYear2))
@@ -439,7 +439,7 @@
                 )
                 ++ (getQuarterlyType)
                 ++(
-                    if (viewModel.shouldShowTaxYears) {
+                    if (viewModel.isBusinessInLatency) {
                         if (showOptInOptOutContentUpdateR17) {
                             getMTDUsageRows
                         } else {
@@ -452,7 +452,7 @@
     )
 
 
-    @if(!anyIncomeSourcesInLatency){
+    @if(!viewModel.isBusinessInLatency){
         @quarterlyPeriodDropDown
     }
 

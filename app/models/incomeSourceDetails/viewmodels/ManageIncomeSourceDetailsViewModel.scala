@@ -19,6 +19,7 @@ package models.incomeSourceDetails.viewmodels
 import enums.IncomeSourceJourney.IncomeSourceType
 import models.core.{AddressModel, IncomeSourceId}
 import models.incomeSourceDetails.{LatencyDetails, LatencyYearsCrystallised, LatencyYearsQuarterly, QuarterReportingType}
+import services.{DateService, DateServiceInterface}
 
 import java.time.LocalDate
 
@@ -33,7 +34,7 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
                                               latencyDetails: Option[LatencyDetails],
                                               incomeSourceType: IncomeSourceType,
                                               quarterReportingType: Option[QuarterReportingType]
-                                             ) {
+                                             )(implicit dateService: DateServiceInterface) {
 
   def latencyValueAsKey(latencyIndicator: String): String = {
     latencyIndicator match {
@@ -50,14 +51,17 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
     }
   }
 
-  def shouldShowTaxYears: Boolean = {
-    latencyYearsQuarterly.secondYear.getOrElse(false) && latencyDetails.isDefined
-  }
-
   def shouldShowInsetText: Boolean = {
     latencyYearsQuarterly.firstYear.getOrElse(false) || latencyYearsQuarterly.secondYear.getOrElse(false)
   }
 
+  def isBusinessInLatency: Boolean = {
+    !latencyDetails.exists(_.taxYear2.toInt < dateService.getCurrentTaxYearEnd)
+  }
+
+  def shouldShowChangeLinksForTaxYear1: Boolean = {
+
+  }
 }
 
 

@@ -46,13 +46,13 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
                                                     itvcErrorHandler: ItvcErrorHandler,
                                                     itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                     itsaStatusService: ITSAStatusService,
-                                                    dateService: DateService,
                                                     calculationListService: CalculationListService,
                                                     val sessionService: SessionService
                                                    )
                                                    (implicit val ec: ExecutionContext,
                                                     val mcc: MessagesControllerComponents,
-                                                    val appConfig: FrontendAppConfig) extends FrontendController(mcc)
+                                                    val appConfig: FrontendAppConfig,
+                                                    val dateService: DateServiceInterface) extends FrontendController(mcc)
   with I18nSupport with JourneyCheckerManageBusinesses {
 
   private def getBackUrl(isAgent: Boolean): String =
@@ -339,7 +339,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
                                                     )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ManageIncomeSourceDetailsViewModel] = {
 
     for {
-      (latencyYearOneStatus, latencyYearTwoStatus) <- itsaStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(latencyDetails))
+      (latencyYearOneIsQuarterly, latencyYearTwoIsQuarterly) <- itsaStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(latencyDetails))
       crystallisationData <- getCrystallisationInformation(Some(latencyDetails))
     } yield {
 
@@ -348,8 +348,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
           variableViewModelSEBusiness(
             incomeSource = desiredIncomeSource,
             latencyYearsQuarterly = LatencyYearsQuarterly(
-              firstYear = Some(latencyYearOneStatus),
-              secondYear = Some(latencyYearTwoStatus)
+              firstYear = Some(latencyYearOneIsQuarterly),
+              secondYear = Some(latencyYearTwoIsQuarterly)
             ),
             latencyYearsCrystallised = LatencyYearsCrystallised(
               firstYear = None,
@@ -361,8 +361,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
           variableViewModelSEBusiness(
             incomeSource = desiredIncomeSource,
             latencyYearsQuarterly = LatencyYearsQuarterly(
-              firstYear = Some(latencyYearOneStatus),
-              secondYear = Some(latencyYearTwoStatus)
+              firstYear = Some(latencyYearOneIsQuarterly),
+              secondYear = Some(latencyYearTwoIsQuarterly)
             ),
             latencyYearsCrystallised = LatencyYearsCrystallised(
               firstYear = crystallisationList.headOption,

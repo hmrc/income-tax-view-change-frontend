@@ -55,10 +55,6 @@ class IncomeSourceRFService @Inject()(val sessionService: SessionService,
     else Future.successful(Redirect(routes.IncomeSourceAddedController.show(incomeSourceType)))
   }
 
-  private def isItsaStatusMandatedOrVoluntary(itsaStatusDetail: Option[StatusDetail]): Boolean = {
-    itsaStatusDetail.exists(_.isMandatedOrVoluntary)
-  }
-
   private def isItsaStatusAnnual(itsaStatusDetail: Option[StatusDetail]): Boolean = {
     itsaStatusDetail.exists(_.isAnnual)
   }
@@ -67,22 +63,15 @@ class IncomeSourceRFService @Inject()(val sessionService: SessionService,
     !latencyDetails.exists(_.taxYear2.toInt < currentTy.endYear)
   }
 
-  private case class CrystallisationStatus(cyTaxYearIsCrystallised: Boolean, `cy+1TaxYearIsCrystallised`: Boolean)
-
-  private def isCrystallisedForCurrTyAndNextTy(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[CrystallisationStatus] = {
-    for {
-      currTyIsCrystallised <- calculationListService.determineTaxYearCrystallised(currentTy.endYear)
-      nextTyIsCrystallised <- calculationListService.determineTaxYearCrystallised(nextTy.endYear)
-    } yield {
-      CrystallisationStatus(currTyIsCrystallised, nextTyIsCrystallised)
-    }
+  private def onlyOneYearInLatency(latencyDetails: Option[LatencyDetails]): Boolean = {
+    businessIsInLatency(latencyDetails) && latencyDetails.exists(_.taxYear2.toInt == currentTy.endYear)
   }
 
   private def updateChooseTaxYearsModelInSessionData(
                                                       sessionData: UIJourneySessionData,
-                                                      incomeSourceReportingFrequencySourceData: Option[IncomeSourceReportingFrequencySourceData]
+                                                      incomeSourceReportingFrequencySourceData: IncomeSourceReportingFrequencySourceData
                                                     ): Future[UIJourneySessionData] = {
-    val updatedSessionData: UIJourneySessionData = sessionData.copy(incomeSourceReportingFrequencyData = incomeSourceReportingFrequencySourceData)
+    val updatedSessionData: UIJourneySessionData = sessionData.copy(incomeSourceReportingFrequencyData = Some(incomeSourceReportingFrequencySourceData))
     sessionService.setMongoData(updatedSessionData).flatMap {
       case true =>
         Future.successful(updatedSessionData)
@@ -92,76 +81,16 @@ class IncomeSourceRFService @Inject()(val sessionService: SessionService,
     }
   }
 
-  private def redirectToCompletionPage(
+  private def redirectToCompletionPageChecks(
                                         currentTyStatus: Option[StatusDetail],
                                         nextTyStatus: Option[StatusDetail],
                                         isCrystallisedForCurrTy: Boolean,
-                                        isCrystallisedForNextTy: Boolean,
                                         latencyDetails: Option[LatencyDetails]
                                       ): Boolean = {
-    (!businessIsInLatency(latencyDetails)) ||
-      (isCrystallisedForCurrTy && isCrystallisedForNextTy) ||
-      (isCrystallisedForCurrTy && nextTyStatus.exists(_.status == ITSAStatus.Annual)) ||
-      ((nextTyStatus.exists(_.status == ITSAStatus.NoStatus) || nextTyStatus.isEmpty)
-        && currentTyStatus.exists(cys => cys.status == ITSAStatus.Annual && cys.statusReason == StatusReason.Rollover)) ||
-      (isItsaStatusAnnual(currentTyStatus) && isItsaStatusAnnual(nextTyStatus))
-  }
-
-  private def determineIncomeSourceReportingFrequencySourceData(
-                                                                 currentTyStatusDetailOpt: Option[StatusDetail],
-                                                                 nextTyStatusDetailOpt: Option[StatusDetail],
-                                                                 isCrystallisedForCurrTy: Boolean,
-                                                                 isCrystallisedForNextTy: Boolean
-                                                               ): Option[IncomeSourceReportingFrequencySourceData] = {
-
-    val incomeSourceReportingFrequencySourceData: Option[IncomeSourceReportingFrequencySourceData] = {
-      (
-        isCrystallisedForCurrTy,
-        isCrystallisedForNextTy,
-        currentTyStatusDetailOpt.map(_.status),
-        nextTyStatusDetailOpt.map(_.status)
-      ) match {
-        case (true, false, Some(ITSAStatus.Annual), Some(ITSAStatus.NoStatus)) if currentTyStatusDetailOpt.exists(_.statusReason != StatusReason.Rollover) =>
-          Some(IncomeSourceReportingFrequencySourceData(false, true, false, false))
-        case (true, false, _, _) if isItsaStatusMandatedOrVoluntary(currentTyStatusDetailOpt) =>
-          Some(IncomeSourceReportingFrequencySourceData(false, true, false, false))
-        case (_, false, Some(ITSAStatus.Annual), _) if isItsaStatusMandatedOrVoluntary(nextTyStatusDetailOpt) =>
-          Some(IncomeSourceReportingFrequencySourceData(false, true, false, false))
-        case (false, _, _, Some(ITSAStatus.Annual)) if isItsaStatusMandatedOrVoluntary(currentTyStatusDetailOpt) =>
-          Some(IncomeSourceReportingFrequencySourceData(true, false, false, false))
-        case (false, _, _, _) if isItsaStatusMandatedOrVoluntary(currentTyStatusDetailOpt) =>
-          Some(IncomeSourceReportingFrequencySourceData(true, true, false, false))
-        case _ =>
-          None
-      }
-    }
-    incomeSourceReportingFrequencySourceData
-  }
-
-  private def redirectToRFPageChecks(latencyDetails: Option[LatencyDetails],
-                                     currentTyStatusDetailOpt: Option[StatusDetail],
-                                     nextTyStatusDetailOpt: Option[StatusDetail],
-                                     isCrystallisedForCurrTy: Boolean,
-                                     isCrystallisedForNextTy: Boolean,
-                                     incomeSourceType: IncomeSourceType,
-                                     isAgent: Boolean,
-                                     sessionData: UIJourneySessionData
-                                    )(codeBlock: UIJourneySessionData => Future[Result]): Future[Result] = {
-    val data =
-      determineIncomeSourceReportingFrequencySourceData(
-        currentTyStatusDetailOpt,
-        nextTyStatusDetailOpt,
-        isCrystallisedForCurrTy,
-        isCrystallisedForNextTy
-      )
-
-    data match {
-      case data: Option[IncomeSourceReportingFrequencySourceData] if businessIsInLatency(latencyDetails) =>
-        updateChooseTaxYearsModelInSessionData(sessionData, data)
-          .flatMap(codeBlock(_))
-      case _ =>
-        redirectToIncomeSourceAddedPage(isAgent, incomeSourceType)
-    }
+      onlyOneYearInLatency(latencyDetails) ||
+      isItsaStatusAnnual(currentTyStatus) ||
+      isItsaStatusAnnual(nextTyStatus) ||
+      isCrystallisedForCurrTy
   }
 
   def redirectChecksForIncomeSourceRF(incomeSourceJourneyType: IncomeSourceJourneyType,
@@ -179,8 +108,8 @@ class IncomeSourceRFService @Inject()(val sessionService: SessionService,
         codeBlock(sessionData)
       } else {
         for {
-          crystallisationStatus <- isCrystallisedForCurrTyAndNextTy
-          statusTaxYearMap <- itsaStatusService.getStatusTillAvailableFutureYears(TaxYear(currentTaxYearEnd - 1, currentTaxYearEnd))
+          crystallisationStatusForCy <- calculationListService.determineTaxYearCrystallised(currentTy.endYear)
+          statusTaxYearMap <- itsaStatusService. getStatusTillAvailableFutureYears(TaxYear(currentTaxYearEnd - 1, currentTaxYearEnd))
           accountLevelITSAStatusCurrentTaxYear = statusTaxYearMap.get(currentTy)
           accountLevelITSAStatusNextTaxYear = statusTaxYearMap.get(nextTy)
           someIncomeSourceId <- Future(sessionData.addIncomeSourceData.flatMap(_.incomeSourceId))
@@ -188,13 +117,16 @@ class IncomeSourceRFService @Inject()(val sessionService: SessionService,
             someIncomeSourceId match {
               case Some(id) =>
                 val latencyDetails = user.incomeSources.getLatencyDetails(incomeSourceType, id)
-                if (redirectToCompletionPage(accountLevelITSAStatusCurrentTaxYear, accountLevelITSAStatusNextTaxYear, crystallisationStatus.cyTaxYearIsCrystallised, crystallisationStatus.`cy+1TaxYearIsCrystallised`, latencyDetails)) {
+                if (redirectToCompletionPageChecks(accountLevelITSAStatusCurrentTaxYear, accountLevelITSAStatusNextTaxYear,
+                  crystallisationStatusForCy, latencyDetails)) {
                   redirectToIncomeSourceAddedPage(isAgent, incomeSourceType)
                 } else {
-                  redirectToRFPageChecks(latencyDetails, accountLevelITSAStatusCurrentTaxYear, accountLevelITSAStatusNextTaxYear, crystallisationStatus.cyTaxYearIsCrystallised, crystallisationStatus.`cy+1TaxYearIsCrystallised`, incomeSourceType, isAgent, sessionData)(codeBlock)
+                  updateChooseTaxYearsModelInSessionData(sessionData, IncomeSourceReportingFrequencySourceData(true, true, false, false))
+                    .flatMap(codeBlock(_))
                 }
               case None =>
-                Logger("application").error(agentPrefix(isAgent) + s"Unable to retrieve incomeSourceId from session data for $incomeSourceType on IncomeSourceReportingFrequency page")
+                Logger("application").error(
+                  agentPrefix(isAgent) + s"Unable to retrieve incomeSourceId from session data for $incomeSourceType on IncomeSourceReportingFrequency page")
                 Future.successful(errorHandler(isAgent).showInternalServerError())
             }
         } yield {
