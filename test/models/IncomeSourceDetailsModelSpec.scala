@@ -88,7 +88,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
         singleBusinessIncomeWithLatency2019.businesses.head.address.get shouldBe testBizAddress
       }
       "should have a cashOrAccruals field" in {
-        singleBusinessIncomeWithLatency2019.businesses.head.cashOrAccruals shouldBe false
+        singleBusinessIncomeWithLatency2019.businesses.head.cashOrAccruals shouldBe Some(false)
       }
       //Test Property details
       s"should not have property details" in {
@@ -132,7 +132,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
               cessation = None,
               latencyDetails = None,
               address = Some(address),
-              cashOrAccruals = true
+              cashOrAccruals = Some(true)
             ),
             BusinessDetailsModel(
               incomeSourceId = "",
@@ -145,7 +145,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
               cessation = None,
               latencyDetails = None,
               address = Some(address),
-              cashOrAccruals = true
+              cashOrAccruals = Some(true)
             )
           ),
           List(PropertyDetailsModel(
@@ -156,7 +156,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
             tradingStartDate = Some(LocalDate.parse("2022-01-01")),
             contextualTaxYear = None,
             cessation = None,
-            cashOrAccruals = true
+            cashOrAccruals = Some(true)
           )
           ))
         preSanitised.sanitise shouldBe expected
@@ -207,14 +207,20 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
 
   "getCashOrAccruals method" when {
     "return list of cashOrAccrual flags from all active businesses" should {
-      "return " in {
+      "return true if there is a field" in {
         implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, ukPropertyAndSoleTraderBusinessIncomeNoTradingName)
 
         val result = user.incomeSources.getBusinessCashOrAccruals()
 
         result shouldBe List(true)
       }
-    }
+      "return an empty list if there are no cashOrAccrual fields" in {
+        implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, singleBusinessWithNoCashOrAccuralsFlag)
 
+        val result = user.incomeSources.getBusinessCashOrAccruals()
+
+        result shouldBe List.empty
+      }
+    }
   }
 }

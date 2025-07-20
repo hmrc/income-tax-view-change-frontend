@@ -74,7 +74,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     tradingName = Some(testTradeName),
     tradingStartDate = Some(testStartDate),
     address = expectedAddress,
-    isTraditionalAccountingMethod = false,
+    isTraditionalAccountingMethod = Some(false),
     latencyYearsQuarterly = LatencyYearsQuarterly(
       firstYear = None,
       secondYear = Some(true)
@@ -94,7 +94,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     tradingName = None,
     tradingStartDate = None,
     address = None,
-    isTraditionalAccountingMethod = false,
+    isTraditionalAccountingMethod = Some(false),
     latencyYearsQuarterly = LatencyYearsQuarterly(
       firstYear = None,
       secondYear = Some(false)
@@ -114,7 +114,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     tradingName = None,
     tradingStartDate = Some(testStartDate),
     address = None,
-    isTraditionalAccountingMethod = false,
+    isTraditionalAccountingMethod = Some(false),
     latencyYearsQuarterly = LatencyYearsQuarterly(
       firstYear = None,
       secondYear = Some(true)
@@ -134,7 +134,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     tradingName = None,
     tradingStartDate = None,
     address = None,
-    isTraditionalAccountingMethod = false,
+    isTraditionalAccountingMethod = Some(false),
     latencyYearsQuarterly = LatencyYearsQuarterly(
       firstYear = None,
       secondYear =  Some(false)
@@ -154,7 +154,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     tradingName = None,
     tradingStartDate = Some(testStartDate),
     address = None,
-    isTraditionalAccountingMethod = false,
+    isTraditionalAccountingMethod = Some(false),
     latencyYearsQuarterly = LatencyYearsQuarterly(
       firstYear = None,
       secondYear =  Some(true)
@@ -174,7 +174,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     tradingName = None,
     tradingStartDate = None,
     address = None,
-    isTraditionalAccountingMethod = false,
+    isTraditionalAccountingMethod = Some(false),
     latencyYearsQuarterly = LatencyYearsQuarterly(
       firstYear = None,
       secondYear =  Some(false)

@@ -16,30 +16,45 @@
 
 package services
 
+import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.GetPenaltyDetailsConnector
-import models.homePage.PenaltiesAndAppealsTileViewModel
-import models.penalties.GetPenaltyDetailsParser.GetPenaltyDetailsResponse
+import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus.ITSAStatus
+import models.penalties.GetPenaltyDetailsParser._
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
-import scala.concurrent.Future
-import scala.util.Random
+import scala.concurrent.{ExecutionContext, Future}
 
 class PenaltyDetailsService @Inject()(getPenaltyDetailsConnector: GetPenaltyDetailsConnector,
                                       val appConfig: FrontendAppConfig) {
 
-  val dummySubmissionFrequency: String =
-    Random.shuffle(Seq("Annual", "Quarterly")).head
-
-  val dummyPenaltyPoints: Int =
-    Random.nextInt(5) + 1
+  def getPenaltySubmissionFrequency(status: ITSAStatus): String = {
+    status match {
+      case ITSAStatus.Mandated | ITSAStatus.Voluntary => "Quarterly"
+      case ITSAStatus.Annual => "Annual"
+      case _ => "Non Penalty Applicable Status"
+    }
+  }
 
   def getPenaltyDetails(mtdItId: String)(implicit hc: HeaderCarrier): Future[GetPenaltyDetailsResponse] = {
     getPenaltyDetailsConnector.getPenaltyDetails(mtdItId)
   }
 
-  def getPenaltyPenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled: Boolean): PenaltiesAndAppealsTileViewModel = {
-    PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled, dummySubmissionFrequency, dummyPenaltyPoints)
+  def getPenaltiesCount(penaltiesCallEnabled: Boolean)(implicit user: MtdItUser[_],
+                                                       hc: HeaderCarrier,
+                                                       ec: ExecutionContext): Future[Int] = {
+    if (penaltiesCallEnabled) {
+      getPenaltyDetails(user.mtditid).map(_.fold(
+        {
+          case error: GetPenaltyDetailsFailureResponse =>
+            throw new Exception(s"Get penalty details call failed with status of : ${error.status}")
+          case GetPenaltyDetailsMalformed =>
+            throw new Exception("Get penalty details call failed with a malformed response body")
+        },
+        success => success.penaltyDetails.lateSubmissionPenalty.map(_.summary.activePenaltyPoints).getOrElse(0))
+      )
+    } else Future.successful(0)
   }
 }

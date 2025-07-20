@@ -19,7 +19,6 @@ package models.incomeSourceDetails.viewmodels
 import enums.IncomeSourceJourney.IncomeSourceType
 import models.core.{AddressModel, IncomeSourceId}
 import models.incomeSourceDetails.{LatencyDetails, LatencyYearsCrystallised, LatencyYearsQuarterly, QuarterReportingType}
-import services.{DateService, DateServiceInterface}
 
 import java.time.LocalDate
 
@@ -28,13 +27,13 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
                                               tradingName: Option[String],
                                               tradingStartDate: Option[LocalDate],
                                               address: Option[AddressModel],
-                                              isTraditionalAccountingMethod: Boolean,
+                                              isTraditionalAccountingMethod: Option[Boolean],
                                               latencyYearsQuarterly: LatencyYearsQuarterly,
                                               latencyYearsCrystallised: LatencyYearsCrystallised,
                                               latencyDetails: Option[LatencyDetails],
                                               incomeSourceType: IncomeSourceType,
                                               quarterReportingType: Option[QuarterReportingType]
-                                             )(implicit dateService: DateServiceInterface) {
+                                             ) {
 
   def latencyValueAsKey(latencyIndicator: String): String = {
     latencyIndicator match {
