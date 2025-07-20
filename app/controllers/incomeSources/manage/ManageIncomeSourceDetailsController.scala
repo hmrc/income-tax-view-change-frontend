@@ -42,13 +42,13 @@ import scala.concurrent.{ExecutionContext, Future}
 class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSourceDetails,
                                                     val authActions: AuthActions,
                                                     val itsaStatusService: ITSAStatusService,
-                                                    val dateService: DateService,
                                                     val calculationListService: CalculationListService,
                                                     val sessionService: SessionService)
                                                    (implicit val ec: ExecutionContext,
                                                     val itvcErrorHandler: ItvcErrorHandler,
                                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                     val mcc: MessagesControllerComponents,
+                                                    val dateService: DateServiceInterface,
                                                     val appConfig: FrontendAppConfig) extends FrontendController(mcc)
     with I18nSupport with JourneyChecker {
 
@@ -203,6 +203,11 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
         firstYear = None,
         secondYear = Some(itsaStatus)
       ),
+      //Dummy code to fix compile warnings
+      latencyYearsAnnual = LatencyYearsAnnual(
+        firstYear = None,
+        secondYear = Some(itsaStatus)
+      ),
       latencyYearsCrystallised = LatencyYearsCrystallised(
         firstYear = crystallisationTaxYear1,
         secondYear = crystallisationTaxYear2
@@ -226,6 +231,11 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       address = None,
       isTraditionalAccountingMethod = incomeSource.cashOrAccruals,
       latencyYearsQuarterly = LatencyYearsQuarterly(
+        firstYear = None,
+        secondYear = Some(itsaStatus)
+      ),
+      //Dummy code to fix compile warnings
+      latencyYearsAnnual = LatencyYearsAnnual(
         firstYear = None,
         secondYear = Some(itsaStatus)
       ),

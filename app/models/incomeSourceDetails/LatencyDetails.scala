@@ -31,6 +31,10 @@ case class LatencyDetails(
 
 case class LatencyYearsQuarterly(firstYear: Option[Boolean], secondYear: Option[Boolean])
 
+case class LatencyYearsAnnual(firstYear: Option[Boolean], secondYear: Option[Boolean])
+
+case class LatencyYearsQuarterlyAndAnnualStatus(latencyYearsQuarterly: LatencyYearsQuarterly, latencyYearsAnnual: LatencyYearsAnnual)
+
 case class LatencyYearsCrystallised(firstYear: Option[Boolean], secondYear: Option[Boolean])
 
 object LatencyDetails {

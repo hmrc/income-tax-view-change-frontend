@@ -22,7 +22,7 @@ import controllers.manageBusinesses.add.routes
 import enums.IncomeSourceJourney.{IncomeSourceType, JourneyState}
 import enums.JourneyType.IncomeSourceJourneyType
 import models.incomeSourceDetails.{IncomeSourceReportingFrequencySourceData, LatencyDetails, TaxYear, UIJourneySessionData}
-import models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
+import models.itsaStatus.StatusDetail
 import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect

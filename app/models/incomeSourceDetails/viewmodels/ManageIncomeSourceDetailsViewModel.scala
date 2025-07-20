@@ -18,7 +18,8 @@ package models.incomeSourceDetails.viewmodels
 
 import enums.IncomeSourceJourney.IncomeSourceType
 import models.core.{AddressModel, IncomeSourceId}
-import models.incomeSourceDetails.{LatencyDetails, LatencyYearsCrystallised, LatencyYearsQuarterly, QuarterReportingType}
+import models.incomeSourceDetails.{LatencyDetails, LatencyYearsAnnual, LatencyYearsCrystallised, LatencyYearsQuarterly, QuarterReportingType}
+import services.DateServiceInterface
 
 import java.time.LocalDate
 
@@ -29,11 +30,12 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
                                               address: Option[AddressModel],
                                               isTraditionalAccountingMethod: Option[Boolean],
                                               latencyYearsQuarterly: LatencyYearsQuarterly,
+                                              latencyYearsAnnual: LatencyYearsAnnual,
                                               latencyYearsCrystallised: LatencyYearsCrystallised,
                                               latencyDetails: Option[LatencyDetails],
                                               incomeSourceType: IncomeSourceType,
                                               quarterReportingType: Option[QuarterReportingType]
-                                             ) {
+                                             )(implicit dateService: DateServiceInterface) {
 
   def latencyValueAsKey(latencyIndicator: String): String = {
     latencyIndicator match {
@@ -50,16 +52,23 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
     }
   }
 
-  def shouldShowInsetText: Boolean = {
-    latencyYearsQuarterly.firstYear.getOrElse(false) || latencyYearsQuarterly.secondYear.getOrElse(false)
+  //TODO: Could be removed while oldIncomeSource journey is cleaned up.
+  def shouldShowTaxYears: Boolean = {
+    latencyYearsQuarterly.secondYear.getOrElse(false) && latencyDetails.isDefined
   }
 
   def isBusinessInLatency: Boolean = {
     !latencyDetails.exists(_.taxYear2.toInt < dateService.getCurrentTaxYearEnd)
   }
 
-  def shouldShowChangeLinksForTaxYear1: Boolean = {
+  def shouldShowChangeLinksForTaxYearOne: Boolean = {
+    (latencyYearsCrystallised.firstYear contains false) ||
+      (latencyDetails.exists(_.latencyIndicator1 == "A") && latencyYearsAnnual.firstYear.contains(false))
+  }
 
+  def shouldShowChangeLinksForTaxYearTwo: Boolean = {
+    (latencyYearsCrystallised.secondYear contains false) ||
+      (latencyDetails.exists(_.latencyIndicator2 == "A") && latencyYearsAnnual.secondYear.contains(false))
   }
 }
 

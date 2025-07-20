@@ -50,8 +50,7 @@
         showAccountingMethod: Boolean,
         showOptInOptOutContentUpdateR17: Boolean,
         showReportingFrequencyLink: Boolean,
-        backUrl: String,
-        anyIncomeSourcesInLatency: Boolean
+        backUrl: String
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
@@ -156,94 +155,88 @@
 
 
 @getMTDUsageRows = @{
-
     viewModel.latencyDetails.toSeq.flatMap { latencyDetails =>
         Seq(
-            if (viewModel.latencyYearsCrystallised.firstYear.contains(false)) {
-                Some(SummaryListRow(
-                    key = Key(
-                        content = Text(
-                            messages(
-                                "incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage",
-                                (latencyDetails.taxYear1.toInt - 1).toString,
-                                latencyDetails.taxYear1
-                            )
+            Some(SummaryListRow(
+                key = Key(
+                    content = Text(
+                        messages(
+                            "incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage",
+                            (latencyDetails.taxYear1.toInt - 1).toString,
+                            latencyDetails.taxYear1
                         )
-                    ),
-                    value = Value(
-                        content = Text(
-                            if (latencyDetails.latencyIndicator1 == "Q")
-                                messages("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage.yes")
-                            else
-                                messages("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage.no")
-                        )
-                    ),
-                    actions = if (viewModel.latencyYearsQuarterly.firstYear.contains(true)) Some(Actions(
-                        items = Seq(
-                            ActionItem(
-                                href = changeReportingMethodUrl(
-                                    taxYearValue(latencyDetails.taxYear1),
-                                    changeToValue(latencyDetails.latencyIndicator1)
-                                ),
-                                content = Text(
-                                    messages(
-                                        if (latencyDetails.latencyIndicator1 == "Q")
-                                            "incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.optOut"
-                                        else
-                                            "incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.signup"
-                                    )
-                                ),
-                                attributes = Map(
-                                    "id" -> (if (latencyDetails.latencyIndicator1 == "Q") "opt-out-link-1" else "sign-up-link-1")
+                    )
+                ),
+                value = Value(
+                    content = Text(
+                        if (latencyDetails.latencyIndicator1 == "Q")
+                            messages("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage.yes")
+                        else
+                            messages("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage.no")
+                    )
+                ),
+                actions = if (viewModel.shouldShowChangeLinksForTaxYearOne) Some(Actions(
+                    items = Seq(
+                        ActionItem(
+                            href = changeReportingMethodUrl(
+                                taxYearValue(latencyDetails.taxYear1),
+                                changeToValue(latencyDetails.latencyIndicator1)
+                            ),
+                            content = Text(
+                                messages(
+                                    if (latencyDetails.latencyIndicator1 == "Q")
+                                        "incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.optOut"
+                                    else
+                                        "incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.signup"
                                 )
+                            ),
+                            attributes = Map(
+                                "id" -> (if (latencyDetails.latencyIndicator1 == "Q") "opt-out-link-1" else "sign-up-link-1")
                             )
                         )
-                    )) else None
-                ))
-            } else None,
-
-            if (viewModel.latencyYearsCrystallised.secondYear.contains(false)) {
-                Some(SummaryListRow(
-                    key = Key(
-                        content = Text(
-                            messages(
-                                "incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage",
-                                (latencyDetails.taxYear2.toInt - 1).toString,
-                                latencyDetails.taxYear2
-                            )
+                    )
+                )) else None
+            )),
+            Some(SummaryListRow(
+                key = Key(
+                    content = Text(
+                        messages(
+                            "incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage",
+                            (latencyDetails.taxYear2.toInt - 1).toString,
+                            latencyDetails.taxYear2
                         )
-                    ),
-                    value = Value(
-                        content = Text(
-                            if (latencyDetails.latencyIndicator2 == "Q")
-                                messages("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage.yes")
-                            else
-                                messages("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage.no")
-                        )
-                    ),
-                    actions = if (viewModel.latencyYearsQuarterly.secondYear.contains(true)) Some(Actions(
-                        items = Seq(
-                            ActionItem(
-                                href = changeReportingMethodUrl(
-                                    taxYearValue(latencyDetails.taxYear2),
-                                    changeToValue(latencyDetails.latencyIndicator2)
-                                ),
-                                content = Text(
-                                    messages(
-                                        if (latencyDetails.latencyIndicator2 == "Q")
-                                            "incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.optOut"
-                                        else
-                                            "incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.signup"
-                                    )
-                                ),
-                                attributes = Map(
-                                    "id" -> (if (latencyDetails.latencyIndicator2 == "Q") "opt-out-link-2" else "sign-up-link-2")
+                    )
+                ),
+                value = Value(
+                    content = Text(
+                        if (latencyDetails.latencyIndicator2 == "Q")
+                            messages("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage.yes")
+                        else
+                            messages("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage.no")
+                    )
+                ),
+                actions = if (viewModel.shouldShowChangeLinksForTaxYearTwo) Some(Actions(
+                    items = Seq(
+                        ActionItem(
+                            href = changeReportingMethodUrl(
+                                taxYearValue(latencyDetails.taxYear2),
+                                changeToValue(latencyDetails.latencyIndicator2)
+                            ),
+                            content = Text(
+                                messages(
+                                    if (latencyDetails.latencyIndicator2 == "Q")
+                                        "incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.optOut"
+                                    else
+                                        "incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.signup"
                                 )
+                            ),
+                            attributes = Map(
+                                "id" -> (if (latencyDetails.latencyIndicator2 == "Q") "opt-out-link-2" else "sign-up-link-2")
                             )
                         )
-                    )) else None
-                ))
-            } else None
+                    )
+                )) else None
+            ))
         ).flatten
     }
 }
@@ -251,52 +244,40 @@
 @getTaxYears = @{
     viewModel.latencyDetails.toSeq.flatMap { latencyDetails =>
         Seq(
-            if (viewModel.latencyYearsCrystallised.firstYear.contains(false)) {
-                Some(SummaryListRow(
-                    key = Key(
-                        content = Text(messages("incomeSources.manage.new.business.details.reporting.method", (latencyDetails.taxYear1.toInt - 1).toString, latencyDetails.taxYear1))
-                    ),
-                    value = Value(
-                        content = if (viewModel.latencyYearsCrystallised.firstYear.contains(false))
-                            Text(messages(s"incomeSources.manage.new.business.details.${viewModel.latencyValueAsKey(latencyDetails.latencyIndicator1)}.grace.period"))
-                        else
-                            Text(messages(s"incomeSources.manage.new.business.details.${viewModel.latencyValueAsKey(latencyDetails.latencyIndicator1)}"))
-                    ),
-                    actions = if (viewModel.latencyYearsQuarterly.firstYear.contains(true)) Some(Actions(
-                        items = Seq(
-                            ActionItem(
-                                href = changeReportingMethodUrl(taxYearValue(latencyDetails.taxYear1), changeToValue(latencyDetails.latencyIndicator1)),
-                                content = Text(messages("incomeSources.manage.new.business.details.change")),
-                                attributes = Map("id" -> "change-link-1")
-                            )
+            Some(SummaryListRow(
+                key = Key(
+                    content = Text(messages("incomeSources.manage.new.business.details.reporting.method", (latencyDetails.taxYear1.toInt - 1).toString, latencyDetails.taxYear1))
+                ),
+                value = Value(
+                    content = Text(messages(s"incomeSources.manage.new.business.details.${viewModel.latencyValueAsKey(latencyDetails.latencyIndicator1)}"))
+                ),
+                actions = if (viewModel.shouldShowChangeLinksForTaxYearOne) Some(Actions(
+                    items = Seq(
+                        ActionItem(
+                            href = changeReportingMethodUrl(taxYearValue(latencyDetails.taxYear1), changeToValue(latencyDetails.latencyIndicator1)),
+                            content = Text(messages("incomeSources.manage.new.business.details.change")),
+                            attributes = Map("id" -> "change-link-1")
                         )
-                    )) else None
-                ))
-            } else None,
-
-            if (viewModel.latencyYearsCrystallised.secondYear.contains(false)) {
-                Some(SummaryListRow(
-                    key = Key(
-                        content = Text(messages("incomeSources.manage.new.business.details.reporting.method", (latencyDetails.taxYear2.toInt - 1).toString, latencyDetails.taxYear2))
-                    ),
-                    value = Value(
-                        content =
-                            if (viewModel.latencyYearsCrystallised.secondYear.contains(false))
-                                Text(messages(s"incomeSources.manage.new.business.details.${viewModel.latencyValueAsKey(latencyDetails.latencyIndicator2)}.grace.period"))
-                            else
-                                Text(messages(s"incomeSources.manage.new.business.details.${viewModel.latencyValueAsKey(latencyDetails.latencyIndicator2)}"))
-                    ),
-                    actions = if (viewModel.latencyYearsQuarterly.secondYear.contains(true)) Some(Actions(
-                        items = Seq(
-                            ActionItem(
-                                href = changeReportingMethodUrl(taxYearValue(latencyDetails.taxYear2), changeToValue(latencyDetails.latencyIndicator2)),
-                                content = Text(messages("incomeSources.manage.new.business.details.change")),
-                                attributes = Map("id" -> "change-link-2")
-                            )
+                    )
+                )) else None
+            )),
+            Some(SummaryListRow(
+                key = Key(
+                    content = Text(messages("incomeSources.manage.new.business.details.reporting.method", (latencyDetails.taxYear2.toInt - 1).toString, latencyDetails.taxYear2))
+                ),
+                value = Value(
+                    content = Text(messages(s"incomeSources.manage.new.business.details.${viewModel.latencyValueAsKey(latencyDetails.latencyIndicator2)}"))
+                ),
+                actions = if (viewModel.shouldShowChangeLinksForTaxYearTwo) Some(Actions(
+                    items = Seq(
+                        ActionItem(
+                            href = changeReportingMethodUrl(taxYearValue(latencyDetails.taxYear2), changeToValue(latencyDetails.latencyIndicator2)),
+                            content = Text(messages("incomeSources.manage.new.business.details.change")),
+                            attributes = Map("id" -> "change-link-2")
                         )
-                    )) else None
-                ))
-            } else None
+                    )
+                )) else None
+            ))
         ).flatten
     }
 }
