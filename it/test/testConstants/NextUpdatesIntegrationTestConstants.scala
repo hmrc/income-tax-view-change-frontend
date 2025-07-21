@@ -16,7 +16,7 @@
 
 package testConstants
 
-import models.obligations.{GroupedObligationsModel, SingleObligationModel, StatusFulfilled}
+import models.obligations.{GroupedObligationsModel, SingleObligationModel, StatusFulfilled, StatusOpen}
 import play.api.libs.json.{JsValue, Json}
 import testConstants.BaseIntegrationTestConstants._
 
@@ -188,7 +188,7 @@ object NextUpdatesIntegrationTestConstants {
       due = LocalDate.of(2017, 10, 31),
       obligationType = "Quarterly",
       dateReceived = None,
-      periodKey = "periodKey", status = StatusFulfilled
+      periodKey = "periodKey", status = StatusOpen
     ),
     SingleObligationModel(
       start = LocalDate.of(2026, 4, 6),
