@@ -62,12 +62,12 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
   }
 
   def shouldShowChangeLinksForTaxYearOne: Boolean = {
-    (latencyYearsCrystallised.firstYear contains false) ||
+    (latencyYearsCrystallised.firstYear contains false) &&
       (latencyDetails.exists(_.latencyIndicator1 == "A") && latencyYearsAnnual.firstYear.contains(false))
   }
 
   def shouldShowChangeLinksForTaxYearTwo: Boolean = {
-    (latencyYearsCrystallised.secondYear contains false) ||
+    (latencyYearsCrystallised.secondYear contains false) &&
       (latencyDetails.exists(_.latencyIndicator2 == "A") && latencyYearsAnnual.secondYear.contains(false))
   }
 }
