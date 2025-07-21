@@ -72,6 +72,8 @@ object FeatureSwitchName {
       JsSuccess(AccountingMethodJourney)
     case JsString(PenaltiesAndAppeals.name) =>
       JsSuccess(PenaltiesAndAppeals)
+    case JsString(PenaltiesBackendEnabled.name) =>
+      JsSuccess(PenaltiesBackendEnabled)
     case JsString(YourSelfAssessmentCharges.name) =>
       JsSuccess(YourSelfAssessmentCharges)
     case JsString(OptInOptOutContentUpdateR17.name) =>
@@ -116,6 +118,7 @@ object FeatureSwitchName {
       DisplayBusinessStartDate,
       AccountingMethodJourney,
       PenaltiesAndAppeals,
+      PenaltiesBackendEnabled,
       YourSelfAssessmentCharges,
       OptInOptOutContentUpdateR17
     )
@@ -206,6 +209,11 @@ case object AccountingMethodJourney extends FeatureSwitchName {
 case object PenaltiesAndAppeals extends FeatureSwitchName {
   override val name: String = "penalties-and-appeals"
   override val toString: String = "Penalties and Appeals"
+}
+
+case object PenaltiesBackendEnabled extends FeatureSwitchName {
+  override val name: String = "penalties-backend"
+  override val toString: String = "Penalties Backend"
 }
 
 case object YourSelfAssessmentCharges extends FeatureSwitchName {

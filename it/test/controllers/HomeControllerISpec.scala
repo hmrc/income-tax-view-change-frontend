@@ -20,7 +20,7 @@ import audit.models.{HomeAudit, NextUpdatesResponseAuditModel}
 import auth.MtdItUser
 import enums.MTDIndividual
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub, MTDIndividualAuthStub}
+import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub, MTDIndividualAuthStub, PenaltyDetailsStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.admin.{IncomeSourcesFs, IncomeSourcesNewJourney, NavBarFs, ReportingFrequencyPage}
 import models.core.{AccountingPeriodModel, CessationModel}
@@ -58,7 +58,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
       None,
       Some(CessationModel(Some(b2CessationDate))),
       address = Some(address),
-      cashOrAccruals = false
+      cashOrAccruals = Some(false)
     )),
     properties = Nil
   )
@@ -77,6 +77,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
             disable(NavBarFs)
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
             MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
+
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,
               response = incomeSourceDetailsModel
@@ -129,6 +130,8 @@ class HomeControllerISpec extends ControllerISpecHelper {
 
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+            PenaltyDetailsStub.stubNoPenaltiesDataResponse(testMtditid)
 
             val result = buildGETMTDClient(path).futureValue
 
@@ -200,6 +203,8 @@ class HomeControllerISpec extends ControllerISpecHelper {
 
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+            PenaltyDetailsStub.stubNoPenaltiesDataResponse(testMtditid)
 
             val result = buildGETMTDClient(path).futureValue
 
@@ -274,6 +279,8 @@ class HomeControllerISpec extends ControllerISpecHelper {
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
+            PenaltyDetailsStub.stubNoPenaltiesDataResponse(testMtditid)
+
             val result = buildGETMTDClient(path).futureValue
 
             result should have(
@@ -344,6 +351,8 @@ class HomeControllerISpec extends ControllerISpecHelper {
 
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, getCurrentTaxYearEnd.minusYears(1).getYear.toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
+
+            PenaltyDetailsStub.stubNoPenaltiesDataResponse(testMtditid)
 
             val result = buildGETMTDClient(path).futureValue
 
@@ -438,6 +447,8 @@ class HomeControllerISpec extends ControllerISpecHelper {
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
+            PenaltyDetailsStub.stubNoPenaltiesDataResponse(testMtditid)
+
             val result = buildGETMTDClient(path).futureValue
 
             result should have(
@@ -512,6 +523,8 @@ class HomeControllerISpec extends ControllerISpecHelper {
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
+            PenaltyDetailsStub.stubNoPenaltiesDataResponse(testMtditid)
+
             val result = buildGETMTDClient(path).futureValue
 
             result should have(
@@ -583,6 +596,8 @@ class HomeControllerISpec extends ControllerISpecHelper {
 
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+            PenaltyDetailsStub.stubNoPenaltiesDataResponse(testMtditid)
 
             val result = buildGETMTDClient(path).futureValue
 
@@ -657,6 +672,8 @@ class HomeControllerISpec extends ControllerISpecHelper {
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
+            PenaltyDetailsStub.stubNoPenaltiesDataResponse(testMtditid)
+
             val result = buildGETMTDClient(path).futureValue
 
             result should have(
@@ -702,6 +719,8 @@ class HomeControllerISpec extends ControllerISpecHelper {
             response = Json.obj()
           )
 
+          PenaltyDetailsStub.stubNoPenaltiesDataResponse(testMtditid)
+
           val result = buildGETMTDClient(path).futureValue
 
           result should have(
@@ -737,6 +756,8 @@ class HomeControllerISpec extends ControllerISpecHelper {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsErrorResponse(testMtditid)(
           status = INTERNAL_SERVER_ERROR)
+
+        PenaltyDetailsStub.stubNoPenaltiesDataResponse(testMtditid)
 
         val result = buildGETMTDClient(path).futureValue
 

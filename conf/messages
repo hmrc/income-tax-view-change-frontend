@@ -179,6 +179,11 @@ home.interest-accruing                                          = You have charg
 home.updates.overdue.charges                                    = {0} Overdue charges
 home.updates.overdue.updates                                    = {0} Overdue updates
 
+home.updates.R17.heading                                        = Your updates and deadlines
+home.updates.R17.nextUpdateDue                                  = Next update due: {0}
+home.updates.R17.nextTaxReturnDue                               = Next tax return due: {0}
+home.updates.R17.linkText                                       = View your deadlines
+
 home.agent.supporting.paymentAndReturns                         = Payments and returns
 home.agent.supporting.cannotAccess                              = Supporting agents cannot access records that show:
 home.agent.supporting.cannotAccess.payments                     = payments, credits and refunds
@@ -2288,7 +2293,8 @@ incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.sole-trader     
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.uk-property                       =   UK property
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.foreign-property                  =   Foreign property
 
-# manage journey manage income source
+####### Manage journey manage income source
+
 incomeSources.manage.quarterly-period                                 =   Update period
 incomeSources.manage.quarterly-period.standard                        =   Standard
 incomeSources.manage.quarterly-period.calendar                        =   Calendar
@@ -2318,21 +2324,62 @@ incomeSources.manage.business-manage-details.tradetype                =   Type o
 incomeSources.manage.business-manage-details.reportingFrequency       =   View and change your reporting frequency for all your businesses
 incomeSources.manage.business-manage-details.insetText                =   Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April {0}, you could be required to report quarterly.
 
-# Used when OptInOptOutContentUpdateR17 feature switch is enabled
-incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.paragraph      =   Because this is still a new business, for up to 2 tax years you can choose if you want to use Making Tax Digital for Income Tax. From April {0}, you could be required to use the service.
-incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyPrefix       =   Depending on your circumstances, you may be able to
-incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyLink         =   view and change your reporting obligations for all your businesses
-incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage = Using Making Tax Digital for Income Tax for {0} to {1}
-incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage.yes  = Yes
-incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage.no  = No
-incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.signup = Sign up
-incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.optOut = Opt out
-
 incomeSources.manage.uk-property-manage-details.uk-property-section              =   UK property
 incomeSources.manage.uk-property-manage-details.accounting-method                =   Accounting method
 
 incomeSources.manage.foreign-property-manage-details.foreign-property-section    =   Foreign property
 incomeSources.manage.foreign-property-manage-details.accounting-method           =   Accounting method
+
+
+##################### New - Manage journey manage income source #####################
+
+
+incomeSources.manage.new.business-manage-details.heading                  =   Manage your details
+
+incomeSources.manage.new.quarterly.update.period                          =   Update period
+incomeSources.manage.new.quarterly.period.standard                        =   Standard
+incomeSources.manage.new.quarterly.period.calendar                        =   Calendar
+incomeSources.manage.new.quarterly.period.summary                         =   What is a standard quarterly period?
+incomeSources.manage.new.quarterly.period.content.p1                      =   This business is reporting from 6 April in line with the tax year, also known as using standard update periods.
+incomeSources.manage.new.quarterly.period.content.p2                      =   If your software supports it, you can choose to report using calendar update periods which end on the last day of the month.
+incomeSources.manage.new.quarterly.period.content.p3.link                 =   Learn more about standard and calendar quarters
+
+incomeSources.manage.new.business.details.heading                         =   Manage your details
+incomeSources.manage.new.business.details.sole.trader.section             =   Sole trader
+incomeSources.manage.new.business.details.business.name                   =   Business name
+incomeSources.manage.new.business.details.business.address                =   Address
+incomeSources.manage.new.business.details.date.started                    =   Date started
+incomeSources.manage.new.business.details.accounting.method               =   Accounting method
+incomeSources.manage.new.business.details.reporting.method                =   Reporting frequency {0} to {1}
+incomeSources.manage.new.business.details.change                          =   Change
+incomeSources.manage.new.business.details.quarterly                       =   Quarterly
+incomeSources.manage.new.business.details.annually                        =   Annual
+incomeSources.manage.new.business.details.quarterly.grace.period          =   Quarterly
+incomeSources.manage.new.business.details.annually.grace.period           =   Annual
+incomeSources.manage.new.business.details.cash.accounting                 =   Cash basis accounting
+incomeSources.manage.new.business.details.traditional.accounting          =   Traditional accounting
+incomeSources.manage.new.business.details.trade.type                      =   Type of trade
+incomeSources.manage.new.business.details.reporting.frequency             =   View and change your reporting frequency for all your businesses
+incomeSources.manage.new.business.details.insetText                       =   Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April {0}, you could be required to report quarterly.
+
+
+incomeSources.manage.new.uk.property.manage.details.uk.property.section              =   UK property
+incomeSources.manage.new.uk.property.manage.details.accounting.method                =   Accounting method
+
+incomeSources.manage.new.foreign.property.manage.details.foreign.property.section    =   Foreign property
+incomeSources.manage.new.foreign.property.manage.details.accounting.method           =   Accounting method
+
+# Used when OptInOptOutContentUpdateR17 feature switch is enabled
+
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.paragraph      =   Because this is still a new business, for up to 2 tax years you can choose if you want to use Making Tax Digital for Income Tax. From April {0}, you could be required to use the service.
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.reportingFrequencyPrefix       =   Depending on your circumstances, you may be able to
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.reportingFrequencyLink         =   view and change your reporting obligations for all your businesses
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage = Using Making Tax Digital for Income Tax for {0} to {1}
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage.yes  = Yes
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage.no  = No
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.signup = Sign up
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.optOut = Opt out
+
 
 incomeSources.cease.error.UK.notCeased.text                       = Your UK property business could not be ceased. We have not saved your answers. Please try again later.
 incomeSources.cease.error.FP.notCeased.text                       = Your foreign property business could not be ceased. We have not saved your answers. Please try again later.

@@ -26,7 +26,7 @@ import play.api.http.Status
 import play.api.test.Helpers._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{emptyUIJourneySessionData, notCompletedUIJourneySessionData}
 
-class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDetailsHelper {
+class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDetailsHelper {
 
   mtdAllRoles.foreach { mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
@@ -51,7 +51,7 @@ class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDet
             val result = action(fakeRequest)
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
-            document.title shouldBe title(mtdUserRole)
+            document.title shouldBe title()
             getHeading(document) shouldBe heading
             hasChangeFirstYearReportingMethodLink(document) shouldBe false
             hasChangeSecondYearReportingMethodLink(document) shouldBe false
@@ -82,7 +82,7 @@ class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDet
             val result = action(fakeRequest)
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
-            document.title shouldBe title(mtdUserRole)
+            document.title shouldBe title()
             getHeading(document) shouldBe heading
             hasChangeFirstYearReportingMethodLink(document) shouldBe false
             hasChangeSecondYearReportingMethodLink(document) shouldBe false
@@ -114,7 +114,7 @@ class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDet
             val result = action(fakeRequest)
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
-            document.title shouldBe title(mtdUserRole)
+            document.title shouldBe title()
             getHeading(document) shouldBe heading
             hasChangeFirstYearReportingMethodLink(document) shouldBe true
             hasChangeSecondYearReportingMethodLink(document) shouldBe true
@@ -146,7 +146,7 @@ class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDet
             val result = action(fakeRequest)
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
-            document.title shouldBe title(mtdUserRole)
+            document.title shouldBe title()
             getHeading(document) shouldBe heading
             hasChangeFirstYearReportingMethodLink(document) shouldBe false
             hasChangeSecondYearReportingMethodLink(document) shouldBe false
@@ -176,7 +176,7 @@ class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDet
             val result = action(fakeRequest)
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
-            document.title shouldBe title(mtdUserRole)
+            document.title shouldBe title()
             getHeading(document) shouldBe heading
             hasChangeFirstYearReportingMethodLink(document) shouldBe false
             hasChangeSecondYearReportingMethodLink(document) shouldBe false
@@ -208,7 +208,7 @@ class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDet
             val manageDetailsSummaryKeys = getManageDetailsSummaryKeys(document)
             val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
 
-            document.title shouldBe title(mtdUserRole)
+            document.title shouldBe title()
             getHeading(document) shouldBe heading
             hasChangeFirstYearReportingMethodLink(document) shouldBe false
             hasChangeSecondYearReportingMethodLink(document) shouldBe false
@@ -241,7 +241,7 @@ class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDet
             val result = action(fakeRequest)
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
-            document.title shouldBe title(mtdUserRole)
+            document.title shouldBe title()
             getHeading(document) shouldBe heading
             hasChangeFirstYearReportingMethodLink(document) shouldBe true
             hasChangeSecondYearReportingMethodLink(document) shouldBe true
@@ -299,21 +299,16 @@ class ManageIncomeSourceDetailsSelfEmploymentISpec extends ManageIncomeSourceDet
 
             val document: Document = Jsoup.parse(contentAsString(result))
 
-            document.title shouldBe title(mtdUserRole)
+            document.title shouldBe title()
             getHeading(document) shouldBe heading
 
             hasInsetText(document) shouldBe true
-            document.getElementById("reportingFrequency").text() should include(
-              messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyPrefix")
-            )
+            document.getElementById("reportingFrequency").text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting obligations for all your businesses."
 
-            val summaryKeys = getManageDetailsSummaryKeys(document).eachText()
-            summaryKeys should contain(
-              messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage", "2022", "2023")
-            )
-            summaryKeys should contain(
-              messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage", "2023", "2024")
-            )
+            val summaryKeys = getManageDetailsSummaryKeys(document)
+
+            summaryKeys.eq(4).text() shouldBe "Using Making Tax Digital for Income Tax for 2022 to 2023"
+            summaryKeys.eq(5).text() shouldBe  "Using Making Tax Digital for Income Tax for 2023 to 2024"
 
             val summaryValues = getManageDetailsSummaryValues(document).eachText()
             summaryValues should contain("No")

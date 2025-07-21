@@ -148,7 +148,9 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val incomeTaxSessionDataUrl: String = servicesConfig.baseUrl("income-tax-session-data")
 
   // penalties stub url
-  lazy val incomeTaxPenaltiesStubBase: String = servicesConfig.baseUrl("income-tax-penalties-stub")
+  lazy val incomeTaxPenaltiesStubBase: String = servicesConfig.baseUrl("income-tax-penalties-stub") + "/income-tax-penalties-stubs"
+
+  lazy val penaltiesBackendBase: String = servicesConfig.baseUrl("penalties")
 
   //penalties frontend
   lazy val incomeTaxPenaltiesFrontend: String = servicesConfig.getString("income-tax-penalties-frontend.homeUrl")
@@ -212,7 +214,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val chooseAgentGuidanceUrl = "https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax"
 
-  lazy val quarterlyUpdatesGuidanceUrl = "https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates"
+  lazy val quarterlyUpdatesGuidanceUrl = "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax/send-quarterly-updates"
 
   lazy val saWhoNeedsToSignUpUrl = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
 

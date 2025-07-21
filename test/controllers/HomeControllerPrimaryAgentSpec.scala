@@ -17,10 +17,13 @@
 package controllers
 
 import enums.MTDPrimaryAgent
-import models.admin.{CreditsRefundsRepay, IncomeSourcesFs, IncomeSourcesNewJourney, ReviewAndReconcilePoa}
+import models.admin._
 import models.financialDetails._
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
@@ -83,6 +86,8 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetFilteredChargesListFromFinancialDetails(financialDetailsModels.flatMap(_.asChargeItems))
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+            setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
+            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
@@ -103,6 +108,8 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
               .thenReturn(Future.successful(oneOverdueBCDPaymentInWhatYouOweChargesList))
             setupMockGetFilteredChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList.chargesList)
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+            setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
+            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -145,6 +152,8 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetFilteredChargesListFromFinancialDetails(financialDetailsModels.flatMap(_.asChargeItems))
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+            setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
+            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
@@ -191,6 +200,8 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetFilteredChargesListFromFinancialDetails(financialDetailsModels.flatMap(_.asChargeItems).take(3))
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+            setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
+            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
@@ -228,6 +239,8 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+            setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
+            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
@@ -266,6 +279,8 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+            setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
+            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
@@ -290,6 +305,8 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+          setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
+          setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
           status(result) shouldBe Status.OK
@@ -310,6 +327,8 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+          setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
+          setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
           status(result) shouldBe Status.OK
@@ -335,6 +354,8 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+          setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
+          setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
           status(result) shouldBe Status.OK
@@ -347,10 +368,12 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
 
       "render the home page controller with the next updates tile" when {
         "there is a future update date to display" in new Setup {
-          setupNextUpdatesTests(futureDueDates, agentType)
+          setupNextUpdatesTests(futureDueDates, None, None, agentType)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+          setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
+          setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
           status(result) shouldBe Status.OK
@@ -360,10 +383,12 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
         }
 
         "there is an overdue update date to display" in new Setup {
-          setupNextUpdatesTests(overdueDueDates, agentType)
+          setupNextUpdatesTests(overdueDueDates, None, None, agentType)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+          setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
+          setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
           status(result) shouldBe Status.OK
@@ -373,10 +398,12 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
         }
 
         "there are no updates to display" in new Setup {
-          setupNextUpdatesTests(Seq(), agentType)
+          setupNextUpdatesTests(Seq(), None, None, agentType)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+          setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
+          setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
           status(result) shouldBe Status.OK
@@ -384,6 +411,113 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           document.title shouldBe homePageTitle
           document.select("#updates-tile").text() shouldBe messages("home.updates.heading")
         }
+      }
+
+      "render the home page with the next updates tile and OptInOptOutContentUpdateR17 enabled for quarterly user (voluntary)" in new Setup {
+        enable(OptInOptOutContentUpdateR17)
+
+        val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
+        val nextQuarterlyUpdateDate: LocalDate = LocalDate.of(2024, 2, 5)
+        val nextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYear.endYear + 1, 1, 31)
+
+        setupMockGetStatusTillAvailableFutureYears(currentTaxYear.previousYear)(
+          Future.successful(Map(currentTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Voluntary)))
+        )
+
+        setupNextUpdatesTests(allDueDates = Seq(nextQuarterlyUpdateDate),
+          nextQuarterlyUpdateDueDate = Some(nextQuarterlyUpdateDate),
+          nextTaxReturnDueDate = Some(nextTaxReturnDueDate),
+          mtdUserRole = agentType)
+
+        setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+        setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
+        setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
+        setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
+
+        val result: Future[Result] = controller.showAgent()(fakeRequest)
+        status(result) shouldBe Status.OK
+
+        val document: Document = Jsoup.parse(contentAsString(result))
+        val tile: Elements = document.select("#updates-tile")
+        tile.select("h2").text shouldBe "Your updates and deadlines"
+        tile.select("p").get(0).text shouldBe "Next update due: 5 February 2024"
+        tile.select("p").get(1).text shouldBe "Next tax return due: 31 January 2025"
+
+        val link: Elements = tile.select("a")
+        link.text.trim shouldBe "View your deadlines"
+        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/next-updates"
+      }
+
+      "render the homepage with the next updates tile and OptInOptOutContentUpdateR17 enabled for quarterly user (mandated) with overdue updates" in new Setup {
+        enable(OptInOptOutContentUpdateR17)
+
+        val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
+        val overdue1 = LocalDate.of(2000, 1, 1)
+        val overdue2 = LocalDate.of(2000, 2, 1)
+        val nextQuarterlyUpdateDate: LocalDate = LocalDate.of(2024, 2, 5)
+        val nextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYear.endYear + 1, 1, 31)
+
+        setupMockGetStatusTillAvailableFutureYears(currentTaxYear.previousYear)(
+          Future.successful(Map(currentTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Mandated)))
+        )
+
+        setupNextUpdatesTests(allDueDates = Seq(overdue1, overdue2, nextQuarterlyUpdateDate),
+          nextQuarterlyUpdateDueDate = Some(nextQuarterlyUpdateDate),
+          nextTaxReturnDueDate = Some(nextTaxReturnDueDate),
+          mtdUserRole = agentType)
+
+        setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+        setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
+        setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
+        setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
+
+        val result: Future[Result] = controller.showAgent()(fakeRequest)
+        status(result) shouldBe Status.OK
+
+        val document: Document = Jsoup.parse(contentAsString(result))
+        val tile: Elements = document.select("#updates-tile")
+        tile.select("h2").text shouldBe "Your updates and deadlines"
+        tile.select("span.govuk-tag.govuk-tag--red").text should include("2 Overdue updates")
+        tile.select("p").get(1).text shouldBe "Next update due: 5 February 2024"
+        tile.select("p").get(2).text shouldBe "Next tax return due: 31 January 2025"
+
+        val link: Elements = tile.select("a")
+        link.text.trim shouldBe "View your deadlines"
+        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/next-updates"
+      }
+
+      "render the home page with the next updates tile and OptInOptOutContentUpdateR17 enabled for annual user" in new Setup {
+        enable(OptInOptOutContentUpdateR17)
+        val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
+        val nextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYear.endYear + 1, 1, 31)
+
+        setupMockGetStatusTillAvailableFutureYears(currentTaxYear.previousYear)(
+          Future.successful(Map(currentTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Annual)))
+        )
+
+        setupNextUpdatesTests(allDueDates = futureDueDates,
+          nextQuarterlyUpdateDueDate = None,
+          nextTaxReturnDueDate = Some(nextTaxReturnDueDate),
+          mtdUserRole = agentType)
+
+        setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+        setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
+        setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
+        setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
+
+        val result: Future[Result] = controller.showAgent()(fakeRequest)
+        status(result) shouldBe Status.OK
+
+        val document: Document = Jsoup.parse(contentAsString(result))
+        val tile: Elements = document.select("#updates-tile")
+
+        tile.select("h2").text shouldBe "Your updates and deadlines"
+        tile.text should not include "Next update due:"
+        tile.select("p").get(0).text shouldBe "Next tax return due: 31 January 2025"
+
+        val link: Elements = tile.select("a")
+        link.text.trim shouldBe "View your deadlines"
+        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/next-updates"
       }
 
       "render the home without the Next Updates tile" when {
@@ -396,6 +530,8 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+          setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
+          setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
           val result: Future[Result] = controller.showAgent()(fakeRequest)
           status(result) shouldBe Status.OK
 
@@ -423,6 +559,8 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+            setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
+            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
@@ -454,6 +592,8 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+            setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
+            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
@@ -486,6 +626,8 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+          setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
+          setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
           val result: Future[Result] = controller.showAgent()(fakeRequest)
           status(result) shouldBe Status.OK
           val document: Document = Jsoup.parse(contentAsString(result))
@@ -516,6 +658,8 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+            setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
+            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
@@ -541,6 +685,8 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+            setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
+            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
@@ -568,6 +714,8 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+            setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
+            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
