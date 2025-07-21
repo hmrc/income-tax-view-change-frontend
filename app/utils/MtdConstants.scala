@@ -25,9 +25,12 @@ trait MtdConstants {
   val dateService: DateServiceInterface
 
   def getMtdThreshold(implicit appConfig: FrontendAppConfig): String = {
-    if (dateService.getCurrentDate.isBefore(LocalDate.of(2027, 4, 6))) {
+    val dateThreshold2027 = LocalDate.of(2027, 4, 6)
+    val dateThreshold2028 = LocalDate.of(2028, 4, 6)
+
+    if (dateService.getCurrentDate.isBefore(dateThreshold2027)) {
       appConfig.preThreshold2027
-    } else if (dateService.getCurrentDate.isBefore(LocalDate.of(2028, 4, 6))) {
+    } else if (dateService.getCurrentDate.isBefore(dateThreshold2028)) {
       appConfig.threshold2027
     } else {
       appConfig.threshold2028
