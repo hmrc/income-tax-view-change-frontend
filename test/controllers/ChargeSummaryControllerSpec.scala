@@ -17,7 +17,7 @@
 package controllers
 
 import enums.{MTDIndividual, MTDSupportingAgent}
-import models.admin.{ChargeHistory, ReviewAndReconcilePoa, YourSelfAssessmentCharges}
+import models.admin.{ChargeHistory, PenaltiesAndAppeals, ReviewAndReconcilePoa, YourSelfAssessmentCharges}
 import models.financialDetails.PoaTwoReconciliationCredit
 import models.repaymentHistory.RepaymentHistoryUtils
 import play.api
@@ -183,7 +183,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "provided with an id associated to a Late Submission Penalty" in new Setup(testValidFinancialDetailsModelWithLateSubmissionPenalty) {
-                enable(ReviewAndReconcilePoa, YourSelfAssessmentCharges, ChargeHistory)
+                enable(ReviewAndReconcilePoa, YourSelfAssessmentCharges, ChargeHistory, PenaltiesAndAppeals)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 
@@ -204,7 +204,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "provided with an id associated to a Late payment penalty" in new Setup(testValidFinancialDetailsModelWithLatePaymentPenalty){
-                enable(ReviewAndReconcilePoa, YourSelfAssessmentCharges, ChargeHistory)
+                enable(ReviewAndReconcilePoa, YourSelfAssessmentCharges, ChargeHistory, PenaltiesAndAppeals)
 
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
@@ -558,6 +558,17 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               mockBothIncomeSources()
 
               val result: Future[Result] = action(id1040000125)(fakeRequest)
+
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+              JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
+            }
+
+            "the charge type is forbidden by current feature switches" in new Setup(testValidFinancialDetailsModelWithLateSubmissionPenalty) {
+              disable(PenaltiesAndAppeals)
+              setupMockSuccess(mtdUserRole)
+              mockBothIncomeSources()
+
+              val result: Future[Result] = action(id1040000123)(fakeRequest)
 
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
               JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
