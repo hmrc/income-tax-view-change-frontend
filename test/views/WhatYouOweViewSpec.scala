@@ -100,6 +100,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val cancelledPayeSelfAssessment: String = messages("whatYouOwe.cancelledPayeSelfAssessment.text")
   val poa1CollectedCodedOut = messages("whatYouOwe.poa1CodedOut.text")
   val poa2CollectedCodedOut = messages("whatYouOwe.poa2CodedOut.text")
+  val paymentPlanText: String = s"${messages("selfAssessmentCharges.payment-plan-1")} ${messages("selfAssessmentCharges.payment-plan-link-text")} (opens in new tab)."
+
 
   val interestEndDateFuture: LocalDate = LocalDate.of(2100, 1, 1)
 
@@ -728,6 +730,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
 
         }
+
+        "display the payment plan content and link" in new TestSetup(charges = whatYouOweDataWithOverdueDataAndInterest()) {
+          val paymentPlan: Element = pageDocument.getElementById("payment-plan")
+          paymentPlan.text() shouldBe paymentPlanText
+        }
       }
 
       "the user has charges and access viewer after due date" should {
@@ -959,6 +966,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
 
+        }
+
+        "display the payment plan content and link" in new TestSetup(charges = whatYouOweDataWithOverdueDataAndInterest()) {
+          val paymentPlan: Element = pageDocument.getElementById("payment-plan")
+          paymentPlan.text() shouldBe paymentPlanText
         }
 
         "display the paragraph about payments under review when there is a dunningLock" in new TestSetup(
