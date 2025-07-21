@@ -23,10 +23,13 @@ import cats.data.OptionT
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
 import enums._
+import models.admin.{OptOutFs, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
 import models.optout._
+import play.api.Logger
+import play.api.mvc.Result
 import repositories.OptOutSessionDataRepository
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optout.OptOutProposition.createOptOutProposition
@@ -269,4 +272,31 @@ class OptOutService @Inject()(
     }
   }
 
+  def isOptOutTaxYearValid(taxYear: Option[String])(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutTaxYearQuestionViewModel]] = {
+    taxYear match {
+      case Some(year) =>
+        fetchOptOutProposition().flatMap { proposition =>
+          val checkOptOutStatus = year match {
+            //case ty if ty == proposition.previousTaxYear.taxYear.startYear.toString => Some((proposition.previousTaxYear.canOptOut, proposition.previousTaxYear)) //TODO: Enable once CY-1 is added
+            case ty if ty == proposition.currentTaxYear.taxYear.startYear.toString  => Some((proposition.currentTaxYear.canOptOut, proposition.currentTaxYear))
+            case ty if ty == proposition.nextTaxYear.taxYear.startYear.toString     => Some((proposition.nextTaxYear.canOptOut, proposition.nextTaxYear))
+            case _ => None
+          }
+
+          (checkOptOutStatus, proposition.optOutPropositionType) match {
+            case (Some((true, propositionTaxYear)), Some(propositionType)) if propositionType.state().contains(MultiYearOptOutDefault) =>
+              Future.successful(Some(OptOutTaxYearQuestionViewModel(propositionTaxYear, propositionType.state())))
+            case (Some((true, _)), Some(_)) =>
+              Logger("application").warn("[OptOutService] Single year pages not available, redirecting to Reporting Obligations Page")
+              Future.successful(None) //TODO: Build single year pages
+            case _ =>
+              Logger("application").warn("[OptOutService] Invalid tax year provided, redirecting to Reporting Obligations Page")
+              Future.successful(None)
+          }
+        }
+      case _ =>
+        Logger("application").warn("[OptOutService] No tax year provided, redirecting to Reporting Obligations Page")
+        Future.successful(None)
+    }
+  }
 }

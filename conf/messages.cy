@@ -2756,6 +2756,24 @@ optout.cancelled.p2                                 = Gan fod gennych un neu fwy
 optout.cancelled.p3.link                            = Gallwch fwrw golwg dros eich busnesau a’u rheoli
 optout.cancelled.p3                                 = i newid pa mor aml rydych yn cyflwyno adroddiadau ar gyfer eich busnesau.
 
+# opt out tax year question page
+
+optout.taxYearQuestion.heading.currentYear.multiYear                   = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r  flwyddyn dreth bresennol ymlaen
+optout.taxYearQuestion.title.currentYear.multiYear                     = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r  flwyddyn dreth bresennol ymlaen
+optout.taxYearQuestion.desc1.currentYear.multiYear                     = Byddai hyn yn golygu na fydd angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach.
+optout.taxYearQuestion.inset.currentYear.multiYear                     = Bydd diweddariadau chwarterol yr ydych wedi’u cyflwyno yn cael eu dileu o’n cofnodion os ydych yn optio allan o’r flwyddyn dreth honno. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
+optout.taxYearQuestion.desc2.currentYear.multiYear                     = Byddai angen i chi fynd yn ôl i’r ffordd yr oeddech yn cyflwyno’ch Ffurflenni Treth yn y gorffennol ar gyfer pob un o’ch busnesau cyfredol, ac unrhyw fusnesau eraill y byddwch yn eu hychwanegu yn y dyfodol.
+optout.taxYearQuestion.desc3.currentYear.multiYear                     = Yn y dyfodol, efallai y bydd angen i chi fynd yn ôl i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+optout.taxYearQuestion.radioQuestion.currentYear.multiYear             = A ydych am optio allan o’r flwyddyn dreth bresennol ymlaen?
+
+optout.taxYearQuestion.heading.nextYear.multiYear                      = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r flwyddyn dreth nesaf ymlaen
+optout.taxYearQuestion.title.nextYear.multiYear                        = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r flwyddyn dreth nesaf ymlaen
+optout.taxYearQuestion.desc1.nextYear.multiYear                        = O 6 Ebrill {0} ymlaen, byddai hyn yn golygu na fydd angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach.
+optout.taxYearQuestion.desc2.nextYear.multiYear                        = Yn ogystal â hyn, bydd angen i chi fynd yn ôl i’r ffordd yr oeddech yn cyflwyno’ch Ffurflenni Treth yn y gorffennol ar gyfer pob un o’ch busnesau cyfredol, ac unrhyw fusnesau eraill y byddwch yn eu hychwanegu yn y dyfodol.
+optout.taxYearQuestion.desc3.nextYear.multiYear                        = Yn y dyfodol, efallai y bydd angen i chi fynd yn ôl i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+optout.taxYearQuestion.radioQuestion.nextYear.multiYear                = A ydych am optio allan o’r flwyddyn dreth nesaf ymlaen?
+
+optout.taxYearQuestion.error                                           = Dewiswch ‘Iawn’ i optio allan ar gyfer blwyddyn dreth {0} i {1}
 
 #######################################################################################################################
 ## Opt In ##
