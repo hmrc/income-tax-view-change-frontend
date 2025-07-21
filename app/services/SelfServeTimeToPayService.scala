@@ -30,14 +30,15 @@ class SelfServeTimeToPayService @Inject()(
                                            selfServeTimeToPayConnector: SelfServeTimeToPayConnector
                                          )(implicit ec: ExecutionContext) {
 
-  def startSelfServeTimeToPayJourney(isAgent: Boolean)(implicit hc: HeaderCarrier): Future[Either[Throwable, String]] = {
-    selfServeTimeToPayConnector.startSelfServeTimeToPayJourney(isAgent)
+  def startSelfServeTimeToPayJourney(isYourSelfAssessmentChargesEnabled: Boolean)
+                                    (implicit hc: HeaderCarrier): Future[Either[Throwable, String]] = {
+    selfServeTimeToPayConnector.startSelfServeTimeToPayJourney(isYourSelfAssessmentChargesEnabled)
       .map {
         case SelfServeTimeToPayJourneyResponseModel(_, nextUrl) =>
           Right(nextUrl)
 
         case SelfServeTimeToPayJourneyErrorResponse(status, message) =>
-          Logger("application").error(s"Start self serve time to pay journey failed with status: $status, message: $message ")
+          Logger("application").error(s"Start self serve time to pay journey failed with status: $status, message: $message")
           Left(SelfServeTimeToPayJourneyException(status, message))
       }
       .recover {

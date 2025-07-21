@@ -66,7 +66,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
         isEnabled(FilterCodedOutPoas),
         isEnabled(PenaltiesAndAppeals),
         mainChargeIsNotPaidFilter)
-      selfServeTimeToPayUrl <- selfServeTimeToPayService.startSelfServeTimeToPayJourney(user.isAgent())
+      selfServeTimeToPayUrl <- selfServeTimeToPayService.startSelfServeTimeToPayJourney(isEnabled(YourSelfAssessmentCharges))
       ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
     } yield {
 
