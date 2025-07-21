@@ -322,7 +322,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
 
                 val document: Document = Jsoup.parse(contentAsString(result))
                 document.title shouldBe getValidationErrorTabTitle(incomeSourceType)
-                document.getElementsByClass("govuk-error-message").text() shouldBe "Error:: The date must include a day"
+                document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe "The date must include a day"
               }
             }
             if (incomeSourceType != ForeignProperty) {
