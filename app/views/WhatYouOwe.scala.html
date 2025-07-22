@@ -236,7 +236,7 @@
 
         @paymentsMadeContent()
 
-        @if(viewModel.selfServeTimeToPayEnabled) {
+        @if(viewModel.selfServeTimeToPayEnabled && !user.isAgent()) {
             @paymentPlanSection(viewModel.selfServeTimeToPayStartUrl)
         }
     }
