@@ -25,8 +25,7 @@ import forms.optOut.OptOutTaxYearQuestionForm
 import models.admin.{OptOutFs, ReportingFrequencyPage}
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.Results.Redirect
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
+import play.api.mvc._
 import services.optout.OptOutService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.optOut.OptOutTaxYearQuestionView

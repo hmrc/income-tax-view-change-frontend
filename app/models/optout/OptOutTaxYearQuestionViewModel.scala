@@ -16,7 +16,7 @@
 
 package models.optout
 
-import services.optout.{CurrentOptOutTaxYear, MultiYearOptOutDefault, NextOptOutTaxYear, NextYearOptOut, OneYearOptOutFollowedByAnnual, OneYearOptOutFollowedByMandated, OptOutState, OptOutTaxYear, PreviousOptOutTaxYear}
+import services.optout._
 
 case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear, optOutState: Option[OptOutState]) {
   private val taxYearMessageSuffix = taxYear match {

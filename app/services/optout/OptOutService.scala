@@ -23,13 +23,11 @@ import cats.data.OptionT
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
 import enums._
-import models.admin.{OptOutFs, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
 import models.optout._
 import play.api.Logger
-import play.api.mvc.Result
 import repositories.OptOutSessionDataRepository
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optout.OptOutProposition.createOptOutProposition

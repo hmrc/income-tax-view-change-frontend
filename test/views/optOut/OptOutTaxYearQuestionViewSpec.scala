@@ -21,7 +21,6 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.optout.OptOutTaxYearQuestionViewModel
 import org.jsoup.Jsoup
-import play.api.data.Form
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import services.optout.{CurrentOptOutTaxYear, MultiYearOptOutDefault, NextOptOutTaxYear}
 import testUtils.TestSupport
