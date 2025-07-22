@@ -1516,6 +1516,7 @@ incomeSources.add.error.incomeSourceNotSaved.uk                  = UK property
 incomeSources.add.error.incomeSourceNotSaved.fp                  = foreign property
 incomeSources.add.error.incomeSourceNotSaved.incomeSources       = Your income sources
 
+incomeSources.add.error.reportingMethodNotSaved.heading                          = Sorry, there is a problem with the service
 incomeSources.add.error.reportingMethodNotSaved.p1                               = Your {0} business was added, but we were unable to save any separate reporting obligations you may have set for it.
 incomeSources.add.error.reportingMethodNotSaved.p2                               = For its first two tax years, this business by default is opted out of Making Tax Digital for Income Tax.
 incomeSources.add.error.reportingMethodNotSaved.p3.firstHalf                     = You can change this at any time in the
