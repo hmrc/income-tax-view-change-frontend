@@ -28,6 +28,9 @@ import views.html.manageBusinesses.add.IncomeSourceReportingMethodNotSaved
 class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {
   val incomeSourceReportingMethodNotSaved: IncomeSourceReportingMethodNotSaved = app.injector.instanceOf[IncomeSourceReportingMethodNotSaved]
 
+  val getManageBusinessUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+  val getManageBusinessAgentUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+
   def getMessage(incomeSourceType: IncomeSourceType, key:String): String = {
     incomeSourceType match {
       case SelfEmployment => messages(s"incomeSources.add.error.reportingMethodNotSaved.se.$key")
@@ -65,6 +68,8 @@ class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {
       document.getElementsByTag("h1").first().text() shouldBe messages("incomeSources.add.error.standardError")
       document.getElementById("paragraph-1").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p1", selfEmploymentText)
       document.getElementById("paragraph-2").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p2")
+      document.getElementById("paragraph-3").text() shouldBe "You can change this at any time in the your businesses section."
+      document.getElementById("your-businesses-link").attr("href") shouldBe getManageBusinessUrl
       document.getElementById("continue-button").attr("href") shouldBe action.url
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
@@ -73,6 +78,8 @@ class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {
       document.getElementsByTag("h1").first().text() shouldBe messages("incomeSources.add.error.standardError")
       document.getElementById("paragraph-1").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p1", ukPropertyText)
       document.getElementById("paragraph-2").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p2")
+      document.getElementById("paragraph-3").text() shouldBe "You can change this at any time in the your businesses section."
+      document.getElementById("your-businesses-link").attr("href") shouldBe getManageBusinessUrl
       document.getElementById("continue-button").attr("href") shouldBe action.url
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
@@ -81,6 +88,8 @@ class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {
       document.getElementsByTag("h1").first().text() shouldBe messages("incomeSources.add.error.standardError")
       document.getElementById("paragraph-1").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p1", foreignPropertyText)
       document.getElementById("paragraph-2").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p2")
+      document.getElementById("paragraph-3").text() shouldBe "You can change this at any time in the your businesses section."
+      document.getElementById("your-businesses-link").attr("href") shouldBe getManageBusinessUrl
       document.getElementById("continue-button").attr("href") shouldBe action.url
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
@@ -91,6 +100,8 @@ class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {
       document.getElementsByTag("h1").first().text() shouldBe messages("incomeSources.add.error.standardError")
       document.getElementById("paragraph-1").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p1", selfEmploymentText)
       document.getElementById("paragraph-2").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p2")
+      document.getElementById("paragraph-3").text() shouldBe "You can change this at any time in the your businesses section."
+      document.getElementById("your-businesses-link").attr("href") shouldBe getManageBusinessAgentUrl
       document.getElementById("continue-button").attr("href") shouldBe action.url
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
@@ -99,6 +110,8 @@ class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {
       document.getElementsByTag("h1").first().text() shouldBe messages("incomeSources.add.error.standardError")
       document.getElementById("paragraph-1").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p1", ukPropertyText)
       document.getElementById("paragraph-2").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p2")
+      document.getElementById("paragraph-3").text() shouldBe "You can change this at any time in the your businesses section."
+      document.getElementById("your-businesses-link").attr("href") shouldBe getManageBusinessAgentUrl
       document.getElementById("continue-button").attr("href") shouldBe action.url
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
@@ -107,6 +120,8 @@ class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {
       document.getElementsByTag("h1").first().text() shouldBe messages("incomeSources.add.error.standardError")
       document.getElementById("paragraph-1").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p1", foreignPropertyText)
       document.getElementById("paragraph-2").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p2")
+      document.getElementById("paragraph-3").text() shouldBe "You can change this at any time in the your businesses section."
+      document.getElementById("your-businesses-link").attr("href") shouldBe getManageBusinessAgentUrl
       document.getElementById("continue-button").attr("href") shouldBe action.url
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
