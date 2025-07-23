@@ -807,6 +807,8 @@ nextUpdates.business            							    = Incwm busnes
 
 nextUpdates.optOutOneYear.p.message                             = Ar hyn o bryd, rydych yn adrodd bob chwarter ar sail wirfoddol ar gyfer blwyddyn dreth {0} i {1}. Gallwch ddewis
 nextUpdates.optOutOneYear.p.link                                = optio allan o ddiweddariadau bob chwarter ac adrodd yn flynyddol yn lle hynny.
+nextUpdates.optOutMultiYear.p.message                           = Ar hyn o bryd rhydych yn cyflwyno adroddiadau’n chwarterol ar sail wirfoddol. Cadarnhewch eich bod am
+nextUpdates.optOutMultiYear.p.link                              = optio allan o ddiweddariadau chwarterol ac am gyflwyno’n flynyddol yn lle hynny.
 
 nextUpdates.reporting.obligations.p.message                     = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
 nextUpdates.reporting.obligations.p.link                        = bwrw golwg dros eich ymrwymiadau adrodd.

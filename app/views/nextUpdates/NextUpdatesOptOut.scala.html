@@ -43,8 +43,7 @@
 	isAgent: Boolean = false,
 	isSupportingAgent: Boolean = false,
 	origin: Option[String] = None,
-	reportingFrequencyLink: String,
-	reportingFrequencyEnabled: Boolean,
+	whatTheUserCanDo: Option[Html],
 	optInOptOutContentR17Enabled: Boolean
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
@@ -63,13 +62,8 @@
 		}
 	}
 
-	@if(reportingFrequencyEnabled) {
-		@p(id = Some("what-the-user-can-do")) {
-			@messages(
-				"nextUpdates.reporting.obligations.p.message"
-			)
-			@link(link = reportingFrequencyLink, messageKey = "nextUpdates.reporting.obligations.p.link", id= Some("reporting-obligations-link"))
-		}
+	@whatTheUserCanDo.map { content =>
+		@p(id = Some("what-the-user-can-do")) { @content }
 	}
 
 	@if(optInOptOutContentR17Enabled) {
