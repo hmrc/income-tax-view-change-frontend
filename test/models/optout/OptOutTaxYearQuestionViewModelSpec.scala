@@ -18,7 +18,7 @@ package models.optout
 
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import services.optout.{CurrentOptOutTaxYear, NextOptOutTaxYear, PreviousOptOutTaxYear}
+import services.optout.{CurrentOptOutTaxYear, MultiYearOptOutDefault, NextOptOutTaxYear, NextYearOptOut, OneYearOptOutFollowedByAnnual, OneYearOptOutFollowedByMandated, PreviousOptOutTaxYear}
 import testUtils.UnitSpec
 
 class OptOutTaxYearQuestionViewModelSpec extends UnitSpec {
@@ -42,6 +42,32 @@ class OptOutTaxYearQuestionViewModelSpec extends UnitSpec {
       "return false for NextOptOutTaxYear" in {
         val model = OptOutTaxYearQuestionViewModel(nextOptOutTaxYear, None)
         model.isCurrentYear shouldBe false
+      }
+    }
+
+    "messageSuffix" should {
+      val cases = Seq(
+        (previousOptOutTaxYear, Some(MultiYearOptOutDefault), "previousYear.multiYear"),
+        (currentOptOutTaxYear, Some(MultiYearOptOutDefault), "currentYear.multiYear"),
+        (nextOptOutTaxYear, Some(MultiYearOptOutDefault), "nextYear.multiYear"),
+        (previousOptOutTaxYear, Some(OneYearOptOutFollowedByMandated), "previousYear.singleYearFollowedByMandated"),
+        (currentOptOutTaxYear, Some(OneYearOptOutFollowedByMandated), "currentYear.singleYearFollowedByMandated"),
+        (nextOptOutTaxYear, Some(OneYearOptOutFollowedByMandated), "nextYear.singleYearFollowedByMandated"),
+        (previousOptOutTaxYear, Some(OneYearOptOutFollowedByAnnual), "previousYear.singleYearFollowedByAnnual"),
+        (currentOptOutTaxYear, Some(OneYearOptOutFollowedByAnnual), "currentYear.singleYearFollowedByAnnual"),
+        (nextOptOutTaxYear, Some(OneYearOptOutFollowedByAnnual), "nextYear.singleYearFollowedByAnnual"),
+        (previousOptOutTaxYear, Some(NextYearOptOut), "previousYear.nextYearOptOut"),
+        (currentOptOutTaxYear, Some(NextYearOptOut), "currentYear.nextYearOptOut"),
+        (nextOptOutTaxYear, Some(NextYearOptOut), "nextYear.nextYearOptOut"),
+        (previousOptOutTaxYear, None, "previousYear.noState"),
+        (currentOptOutTaxYear, None, "currentYear.noState"),
+        (nextOptOutTaxYear, None, "nextYear.noState")
+      )
+      for ((taxYear, optOutState, expectedSuffix) <- cases) {
+        s"return $expectedSuffix for ${taxYear.getClass.getSimpleName} with $optOutState" in {
+          val model = OptOutTaxYearQuestionViewModel(taxYear, optOutState)
+          model.messageSuffix shouldBe expectedSuffix
+        }
       }
     }
   }
