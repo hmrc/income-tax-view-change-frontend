@@ -27,7 +27,8 @@ case class ReportingFrequencyViewModel(
                                         itsaStatusTable: Seq[(String, Option[String])],
                                         displayCeasedBusinessWarning: Boolean,
                                         isAnyOfBusinessLatent: Boolean,
-                                        displayManageYourRfSection: Boolean = true
+                                        displayManageYourRfSection: Boolean = true,
+                                        mtdThreshold: String
                                       )(implicit dateService: DateServiceInterface) {
 
   val isOptInLinkOnward: Boolean =

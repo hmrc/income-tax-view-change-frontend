@@ -32,9 +32,10 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
-import services.{ClaimToAdjustService, DateService, WhatYouOweService}
+import services.{ClaimToAdjustService, DateService, SelfServeTimeToPayService, WhatYouOweService}
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants._
+import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -43,12 +44,15 @@ class WhatYouOweControllerSpec extends MockAuthActions
   with MockClaimToAdjustService with ChargeConstants {
 
   lazy val whatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
+  lazy val selfServeTimeToPayService: SelfServeTimeToPayService = mock(classOf[SelfServeTimeToPayService])
+  implicit val hc: HeaderCarrier = HeaderCarrier()
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[WhatYouOweService].toInstance(whatYouOweService),
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
-      api.inject.bind[DateService].toInstance(dateService)
+      api.inject.bind[DateService].toInstance(dateService),
+      api.inject.bind[SelfServeTimeToPayService].toInstance(selfServeTimeToPayService)
     ).build()
 
   lazy val testController = app.injector.instanceOf[WhatYouOweController]
@@ -124,6 +128,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
+                when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
+                  .thenReturn(Future.successful(Right("/url")))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -135,6 +141,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListEmpty))
+                when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
+                  .thenReturn(Future.successful(Right("/url")))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -144,19 +152,22 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
             "displays the money in your account" when {
               "the user has available credit in his account and CreditsRefundsRepay FS enabled" in {
-                def whatYouOweWithAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, Some(300.00), None, None, None, None), List.empty)
+                def whatYouOweWithAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(
+                  BalanceDetails(1.00, 2.00, 3.00, Some(300.00), None, None, None, None), List.empty)
 
                 setupMockSuccess(mtdUserRole)
                 enable(CreditsRefundsRepay)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithAvailableCredits))
+                when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
+                  .thenReturn(Future.successful(Right("/url")))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
                 result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
                 val doc: Document = Jsoup.parse(contentAsString(result))
-                Option(doc.getElementById("money-in-your-account")).isDefined shouldBe (true)
+                Option(doc.getElementById("money-in-your-account")).isDefined shouldBe true
                 doc.select("#money-in-your-account").select("div h2").text() shouldBe messages("whatYouOwe.moneyOnAccount" + {
                   if (isAgent) "-agent" else ""
                 })
@@ -165,18 +176,21 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
             "does not display the money in your account" when {
               "the user has available credit in his account but CreditsRefundsRepay FS disabled" in {
-                def whatYouOweWithZeroAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, Some(0.00), None, None, None, None), List.empty)
+                def whatYouOweWithZeroAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(
+                  BalanceDetails(1.00, 2.00, 3.00, Some(0.00), None, None, None, None), List.empty)
 
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithZeroAvailableCredits))
+                when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
+                  .thenReturn(Future.successful(Right("/url")))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
                 result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
                 val doc: Document = Jsoup.parse(contentAsString(result))
-                Option(doc.getElementById("money-in-your-account")).isDefined shouldBe (false)
+                Option(doc.getElementById("money-in-your-account")).isDefined shouldBe false
               }
             }
 
@@ -189,6 +203,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
+                when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
+                  .thenReturn(Future.successful(Right("/url")))
 
                 val result = action(fakeRequest)
                 contentAsString(result).contains("Adjust payments on account for the 2017 to 2018 tax year") shouldBe true
@@ -201,6 +217,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
+                when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
+                  .thenReturn(Future.successful(Right("/url")))
 
                 val result = action(fakeRequest)
                 contentAsString(result).contains("Adjust payments on account for the") shouldBe false
@@ -215,6 +233,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
+                when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
+                  .thenReturn(Future.successful(Right("/url")))
 
                 val result = action(fakeRequest)
                 contentAsString(result).contains("Adjust payments on account for the") shouldBe false
@@ -230,6 +250,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithReviewReconcile))
+                when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
+                  .thenReturn(Future.successful(Right("/url")))
 
                 val result = action(fakeRequest)
 
@@ -245,6 +267,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 setupMockSuccess(mtdUserRole)
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithOverdueCharge))
+                when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
+                  .thenReturn(Future.successful(Right("/url")))
 
                 val result = action(fakeRequest)
 
@@ -258,6 +282,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 setupMockSuccess(mtdUserRole)
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithOverdueCharge))
+                when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
+                  .thenReturn(Future.successful(Right("/url")))
 
                 val result = action(fakeRequest)
 
@@ -273,6 +299,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 setupMockSuccess(mtdUserRole)
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithBalancingChargeNotOverdue))
+                when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
+                  .thenReturn(Future.successful(Right("/url")))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -288,6 +316,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
               when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(whatYouOweChargesListWithLpp2))
+              when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
+                .thenReturn(Future.successful(Right("/url")))
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK
@@ -300,6 +330,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
               mockSingleBISWithCurrentYearAsMigrationYear()
               when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future.failed(new Exception("failed to retrieve data")))
+              when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
+                .thenReturn(Future.successful(Right("/url")))
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -313,6 +345,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
               when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(whatYouOweChargesListFull))
+              when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
+                .thenReturn(Future.successful(Right("/url")))
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -326,6 +360,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
               when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(whatYouOweChargesListWithLPP2NoChargeRef))
+              when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
+                .thenReturn(Future.successful(Right("/url")))
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -333,7 +369,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdUserRole, supportingAgentAccessAllowed = false)(fakeRequest)
     }
   }
 }

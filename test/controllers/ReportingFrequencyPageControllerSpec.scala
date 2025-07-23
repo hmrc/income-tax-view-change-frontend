@@ -114,7 +114,8 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
                         "2025 to 2026" -> Some("Quarterly (mandatory)"),
                       ),
                     isAnyOfBusinessLatent = true,
-                    displayCeasedBusinessWarning = false
+                    displayCeasedBusinessWarning = false,
+                    mtdThreshold = "£50,000"
                   ),
                   optInOptOutContentUpdateR17 = true
                 ).toString
@@ -198,7 +199,8 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
                         "2025 to 2026" -> Some("Quarterly (mandatory)"),
                       ),
                     isAnyOfBusinessLatent = true,
-                    displayCeasedBusinessWarning = false
+                    displayCeasedBusinessWarning = false,
+                    mtdThreshold = "£50,000"
                   ),
                   optInOptOutContentUpdateR17 = false
                 ).toString

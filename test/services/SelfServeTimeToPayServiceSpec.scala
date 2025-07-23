@@ -31,39 +31,39 @@ import scala.concurrent.Future
 class SelfServeTimeToPayServiceSpec extends TestSupport with MockHttp {
 
   val selfServeTimeToPayConnector: SelfServeTimeToPayConnector = mock(classOf[SelfServeTimeToPayConnector])
-  val testService = new SelfServeTimeToPayService(selfServeTimeToPayConnector)
+  val selfServeTimeToPayService = new SelfServeTimeToPayService(selfServeTimeToPayConnector)
 
   "SelfServeTimeToPayService" should {
     "startSelfServeTimeToPayJourney" when {
       "return Right when connector returns successful response" in {
 
-        when(selfServeTimeToPayConnector.startSelfServeTimeToPayJourney()(any()))
+        when(selfServeTimeToPayConnector.startSelfServeTimeToPayJourney(any())(any()))
           .thenReturn(Future {
             SelfServeTimeToPayJourneyResponseModel(expectedJourneyId, testSetUpPaymentPlanUrl)
           })
-        testService.startSelfServeTimeToPayJourney().futureValue shouldBe Right(testSetUpPaymentPlanUrl)
+        selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any())
+          .futureValue shouldBe Right(testSetUpPaymentPlanUrl)
       }
     }
     "return a Left" when {
       "startSelfServeTimeToPayJourney failed to start" in {
 
-        when(selfServeTimeToPayConnector.startSelfServeTimeToPayJourney()(any()))
+        when(selfServeTimeToPayConnector.startSelfServeTimeToPayJourney(any())(any()))
           .thenReturn(Future {
             SelfServeTimeToPayJourneyErrorResponse(INTERNAL_SERVER_ERROR, "Error message")
           })
-        testService.startSelfServeTimeToPayJourney().futureValue shouldBe Left(SelfServeTimeToPayJourneyException(INTERNAL_SERVER_ERROR, "Error message"))
+        selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any())
+          .futureValue shouldBe Left(SelfServeTimeToPayJourneyException(INTERNAL_SERVER_ERROR, "Error message"))
       }
     }
     "return a Left" when {
       "startSelfServeTimeToPayJourney future failed" in {
 
-        when(selfServeTimeToPayConnector.startSelfServeTimeToPayJourney()(any()))
+        when(selfServeTimeToPayConnector.startSelfServeTimeToPayJourney(any())(any()))
           .thenReturn(Future.failed(new Exception("Error message")))
-        testService.startSelfServeTimeToPayJourney().futureValue.toString shouldBe Left(new Exception("Error message")).toString
+        selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any())
+          .futureValue.toString shouldBe Left(new Exception("Error message")).toString
       }
     }
-
-
   }
-
 }

@@ -21,7 +21,7 @@ import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockAuthActions
 import mocks.services.MockClaimToAdjustService
 import models.admin.{AdjustPaymentsOnAccount, CreditsRefundsRepay, PenaltiesAndAppeals, ReviewAndReconcilePoa}
-import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
+import models.financialDetails.{BalanceDetails, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
 import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import org.jsoup.Jsoup
@@ -144,7 +144,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
               "the user has a fill list of charges" in {
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
@@ -157,7 +157,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
               "the user has no charges" in {
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListEmpty))
@@ -172,7 +172,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 disable(AdjustPaymentsOnAccount)
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
@@ -189,7 +189,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 setupMockSuccess(mtdUserRole)
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
-                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListOnlyReconciliation))
@@ -221,12 +221,13 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
 
             "displays the money in your account" when {
               "the user has available credit in his account and CreditsRefundsRepay FS enabled" in {
-                def whatYouOweWithAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, Some(300.00), None, None, None, None), List.empty)
+                def whatYouOweWithAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(
+                  BalanceDetails(1.00, 2.00, 3.00, Some(300.00), None, None, None, None), List.empty)
 
                 setupMockSuccess(mtdUserRole)
                 enable(CreditsRefundsRepay)
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithAvailableCredits))
@@ -235,7 +236,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 status(result) shouldBe Status.OK
                 result.futureValue.session.get(gatewayPage) shouldBe Some("yourSelfAssessmentChargeSummary")
                 val doc: Document = Jsoup.parse(contentAsString(result))
-                Option(doc.getElementById("money-in-your-account")).isDefined shouldBe (true)
+                Option(doc.getElementById("money-in-your-account")).isDefined shouldBe true
                 doc.select("#money-in-your-account").select("div h2").text() shouldBe messages("whatYouOwe.moneyOnAccount" + {
                   if (isAgent) "-agent" else ""
                 })
@@ -244,11 +245,12 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
 
             "does not display the money in your account" when {
               "the user has available credit in his account but CreditsRefundsRepay FS disabled" in {
-                def whatYouOweWithZeroAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, Some(0.00), None, None, None, None), List.empty)
+                def whatYouOweWithZeroAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(
+                  BalanceDetails(1.00, 2.00, 3.00, Some(0.00), None, None, None, None), List.empty)
 
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithZeroAvailableCredits))
@@ -257,7 +259,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 status(result) shouldBe Status.OK
                 result.futureValue.session.get(gatewayPage) shouldBe Some("yourSelfAssessmentChargeSummary")
                 val doc: Document = Jsoup.parse(contentAsString(result))
-                Option(doc.getElementById("money-in-your-account")).isDefined shouldBe (false)
+                Option(doc.getElementById("money-in-your-account")).isDefined shouldBe false
               }
             }
 
@@ -268,7 +270,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
-                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
@@ -282,7 +284,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
-                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
@@ -314,7 +316,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
 
               when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(whatYouOweChargesListWithLpp2))
-              when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+              when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                 .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
 
               val result = action(fakeRequest)
@@ -326,7 +328,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
             "PaymentsDueService returns an exception" in {
               setupMockSuccess(mtdUserRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
-              when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+              when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                 .thenReturn(Future.failed(new Exception("failed to retrieve data")))
               when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future.failed(new Exception("failed to retrieve data")))
@@ -353,7 +355,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
               mockSingleBISWithCurrentYearAsMigrationYear()
               when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(whatYouOweChargesListFull))
-              when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+              when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                 .thenReturn(Future.failed(new Exception("failed to retrieve data")))
 
               val result = action(fakeRequest)
@@ -378,7 +380,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdUserRole, supportingAgentAccessAllowed = false)(fakeRequest)
     }
   }
 }
