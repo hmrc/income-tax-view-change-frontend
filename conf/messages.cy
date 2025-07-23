@@ -1489,8 +1489,8 @@ incomeSources.add.error.reportingMethodNotSaved.heading                         
 incomeSources.add.error.reportingMethodNotSaved.p1                              = Ychwanegwyd eich busnes newydd, ond nid oedd modd i ni gadw unrhyw rwymedigaethau adrodd ar wahân y gallech fod wedi’u gosod ar ei gyfer.
 incomeSources.add.error.reportingMethodNotSaved.p2                              = Ar gyfer ei ddwy flynedd dreth gyntaf, mae’r busnes hwn yn ddiofyn yn cael ei optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm.
 incomeSources.add.error.reportingMethodNotSaved.p3.firstHalf                    = Gallwch newid hyn ar unrhyw adeg o’r adran
-incomeSources.add.error.reportingMethodNotSaved.p3.linkText                     = eich busnesau
-incomeSources.add.error.reportingMethodNotSaved.p3.secondHalf                   = .
+incomeSources.add.error.reportingMethodNotSaved.p3.linkText                     = eich busnesau.
+incomeSources.add.error.reportingMethodNotSaved.p3.secondHalf                   =
 incomeSources.add.error.reportingMethodNotSaved.se.incomeSource                 = unig fasnachwr
 incomeSources.add.error.reportingMethodNotSaved.uk.incomeSource                 = eiddo yn y DU
 incomeSources.add.error.reportingMethodNotSaved.fp.incomeSource                 = eiddo tramor
