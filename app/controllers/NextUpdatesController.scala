@@ -77,6 +77,7 @@ class NextUpdatesController @Inject()(
           case _ => ObligationsModel(Nil)
         }
         isR17ContentEnabled = isEnabled(OptInOptOutContentUpdateR17)
+        isOptOutEnabled = isEnabled(OptOutFs)
 
         result <- nextUpdates.obligations match {
           case Nil =>
@@ -89,6 +90,8 @@ class NextUpdatesController @Inject()(
                 (checks, optOutOneYearViewModel, optOutProposition) <- optOutService.nextUpdatesPageChecksAndProposition()
                 viewModel = nextUpdatesService.getNextUpdatesViewModel(nextUpdates, isR17ContentEnabled)
               } yield {
+                val whatTheUserCanDoContent = if (isOptOutEnabled) nextUpdatesViewUtils.whatTheUserCanDo(optOutOneYearViewModel, isAgent) else None
+
                 Ok(
                 nextUpdatesOptOutView(
                   viewModel = viewModel,
@@ -98,7 +101,7 @@ class NextUpdatesController @Inject()(
                   isAgent = isAgent,
                   isSupportingAgent = user.isSupportingAgent,
                   origin = origin,
-                  whatTheUserCanDo = nextUpdatesViewUtils.whatTheUserCanDo(optOutOneYearViewModel, isAgent),
+                  whatTheUserCanDo = whatTheUserCanDoContent,
                   optInOptOutContentR17Enabled = isR17ContentEnabled
                 )
               )
