@@ -46,13 +46,13 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
                                                     itvcErrorHandler: ItvcErrorHandler,
                                                     itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                     itsaStatusService: ITSAStatusService,
+                                                    dateService: DateService,
                                                     calculationListService: CalculationListService,
                                                     val sessionService: SessionService
                                                    )
                                                    (implicit val ec: ExecutionContext,
                                                     val mcc: MessagesControllerComponents,
-                                                    val appConfig: FrontendAppConfig,
-                                                    val dateService: DateServiceInterface) extends FrontendController(mcc)
+                                                    val appConfig: FrontendAppConfig) extends FrontendController(mcc)
   with I18nSupport with JourneyCheckerManageBusinesses {
 
   private def getBackUrl(isAgent: Boolean): String =
@@ -262,7 +262,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
       latencyYearsCrystallised = latencyYearsCrystallised,
       latencyDetails = incomeSource.latencyDetails,
       incomeSourceType = SelfEmployment,
-      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection)
+      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection),
+      currentTaxYearEnd = dateService.getCurrentTaxYearEnd
     )
   }
 
@@ -283,7 +284,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
       latencyYearsCrystallised = latencyYearsCrystallised,
       latencyDetails = incomeSource.latencyDetails,
       incomeSourceType = incomeSourceType,
-      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection)
+      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection),
+      currentTaxYearEnd = dateService.getCurrentTaxYearEnd
     )
   }
 

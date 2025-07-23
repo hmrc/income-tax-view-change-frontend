@@ -48,7 +48,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                                                     val itvcErrorHandler: ItvcErrorHandler,
                                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                     val mcc: MessagesControllerComponents,
-                                                    val dateService: DateServiceInterface,
+                                                    val dateService: DateService,
                                                     val appConfig: FrontendAppConfig) extends FrontendController(mcc)
     with I18nSupport with JourneyChecker {
 
@@ -214,7 +214,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       ),
       latencyDetails = incomeSource.latencyDetails,
       incomeSourceType = SelfEmployment,
-      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection)
+      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection),
+      currentTaxYearEnd = dateService.getCurrentTaxYearEnd
     )
   }
 
@@ -245,7 +246,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       ),
       latencyDetails = incomeSource.latencyDetails,
       incomeSourceType = incomeSourceType,
-      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection)
+      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection),
+      currentTaxYearEnd = dateService.getCurrentTaxYearEnd
     )
   }
 

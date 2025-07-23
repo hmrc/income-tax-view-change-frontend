@@ -41,7 +41,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(2024)
-            setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, true)
+            setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
             mockUkPlusForeignPlusSoleTraderNoLatency()
             setupMockCreateSession(true)
             setupMockSetSessionKeyMongo(Right(true))
@@ -72,7 +72,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(2024)
-            setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, true)
+            setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
             mockUkPlusForeignPlusSoleTraderNoLatency()
             setupMockCreateSession(true)
             setupMockSetSessionKeyMongo(Right(true))
@@ -103,7 +103,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(2023)
-            setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, true)
+            setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
             mockUkPlusForeignPlusSoleTraderWithLatency()
             setupMockTaxYearNotCrystallised(2023)
             setupMockTaxYearNotCrystallised(2024)
@@ -135,7 +135,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(2023)
-            setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, false)
+            setupMockLatencyYearsQuarterlyAndAnnualStatus(true, false)
             mockUkPlusForeignPlusSoleTraderWithLatency()
             setupMockTaxYearNotCrystallised(2023)
             setupMockTaxYearNotCrystallised(2024)
@@ -165,7 +165,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(2023)
-            setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, true)
+            setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
             mockUkPlusForeignPlusSoleTraderWithLatency()
             setupMockTaxYearCrystallised(2023)
             setupMockTaxYearCrystallised(2024)
@@ -194,7 +194,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(2023)
-            setupMockHasMandatedOrVoluntaryStatusForLatencyYears(false, false)
+            setupMockLatencyYearsQuarterlyAndAnnualStatus(false, false)
             setupMockTaxYearCrystallised(2023)
             setupMockTaxYearCrystallised(2024)
             mockUkPlusForeignPlusSoleTrader2023WithLatencyAndUnknowns()
@@ -230,7 +230,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(2025)
-            setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, true)
+            setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
             mockUkPlusForeignPlusSoleTraderWithLatency()
             setupMockTaxYearNotCrystallised(2023)
             setupMockTaxYearNotCrystallised(2024)
@@ -261,7 +261,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(2024)
-            setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, true)
+            setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
             mockUkPlusForeignPlusSoleTraderWithLatency()
             setupMockTaxYearNotCrystallised(2023)
             setupMockTaxYearNotCrystallised(2024)
@@ -285,7 +285,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(2023)
-            setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, true)
+            setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
             setupMockTaxYearNotCrystallised(2023)
             setupMockTaxYearNotCrystallised(2024)
 
@@ -349,7 +349,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             mockUKPropertyIncomeSource()
 
             setupMockGetCurrentTaxYearEnd(2023)
-            setupMockHasMandatedOrVoluntaryStatusForLatencyYears(false, false)
+            setupMockLatencyYearsQuarterlyAndAnnualStatus(false, false)
 
             setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment)))))
 

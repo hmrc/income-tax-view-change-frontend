@@ -62,8 +62,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = false
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -85,9 +84,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = false,
-
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -109,8 +106,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = true
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -128,8 +124,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = true
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -151,8 +146,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = false
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -173,8 +167,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = false
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -195,8 +188,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = true
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -214,8 +206,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = true
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -237,8 +228,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = false
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -259,8 +249,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = false
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -281,8 +270,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = true
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -300,8 +288,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = true
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -318,8 +305,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = true,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = true
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -382,8 +368,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = true,
         showAccountingMethod = false,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = true
+        showReportingFrequencyLink = true
       )(messages, implicitly)
 
       implicit val document: Document = Jsoup.parse(contentAsString(view))
@@ -476,7 +461,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = true,
         showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = true,
         backUrl = backUrl(false)
       )(messages, implicitly)
 
@@ -520,7 +504,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = true,
         showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = true,
         backUrl = backUrl(false)
       )(messages, implicitly)
 
@@ -645,8 +628,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = true,
         showAccountingMethod = false,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = true
+        showReportingFrequencyLink = true
       )(messages, implicitly)
 
       implicit val document = Jsoup.parse(contentAsString(view))
@@ -663,8 +645,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = true,
         showAccountingMethod = false,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = true
+        showReportingFrequencyLink = true
       )(messages, implicitly)
 
       val document = Jsoup.parse(contentAsString(view))
@@ -823,8 +804,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = true,
         showAccountingMethod = false,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = true
+        showReportingFrequencyLink = true
       )(messages, implicitly)
 
       implicit val document = Jsoup.parse(contentAsString(view))

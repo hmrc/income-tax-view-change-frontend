@@ -18,8 +18,7 @@ package models.incomeSourceDetails.viewmodels
 
 import enums.IncomeSourceJourney.IncomeSourceType
 import models.core.{AddressModel, IncomeSourceId}
-import models.incomeSourceDetails.{LatencyDetails, LatencyYearsAnnual, LatencyYearsCrystallised, LatencyYearsQuarterly, QuarterReportingType}
-import services.DateServiceInterface
+import models.incomeSourceDetails._
 
 import java.time.LocalDate
 
@@ -34,8 +33,9 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
                                               latencyYearsCrystallised: LatencyYearsCrystallised,
                                               latencyDetails: Option[LatencyDetails],
                                               incomeSourceType: IncomeSourceType,
-                                              quarterReportingType: Option[QuarterReportingType]
-                                             )(implicit dateService: DateServiceInterface) {
+                                              quarterReportingType: Option[QuarterReportingType],
+                                              currentTaxYearEnd: Int
+                                             ) {
 
   def latencyValueAsKey(latencyIndicator: String): String = {
     latencyIndicator match {
@@ -58,17 +58,19 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
   }
 
   def isBusinessInLatency: Boolean = {
-    !latencyDetails.exists(_.taxYear2.toInt < dateService.getCurrentTaxYearEnd)
+    !latencyDetails.exists(_.taxYear2.toInt < currentTaxYearEnd)
   }
 
   def shouldShowChangeLinksForTaxYearOne: Boolean = {
     (latencyYearsCrystallised.firstYear contains false) &&
-      (latencyDetails.exists(_.latencyIndicator1 == "A") && latencyYearsAnnual.firstYear.contains(false))
+      ((latencyDetails.exists(_.latencyIndicator1 == "A") && latencyYearsAnnual.firstYear.contains(false)) ||
+        latencyDetails.exists(_.latencyIndicator1 == "Q"))
   }
 
   def shouldShowChangeLinksForTaxYearTwo: Boolean = {
     (latencyYearsCrystallised.secondYear contains false) &&
-      (latencyDetails.exists(_.latencyIndicator2 == "A") && latencyYearsAnnual.secondYear.contains(false))
+      ((latencyDetails.exists(_.latencyIndicator2 == "A") && latencyYearsAnnual.secondYear.contains(false)) ||
+        latencyDetails.exists(_.latencyIndicator2 == "Q"))
   }
 }
 
