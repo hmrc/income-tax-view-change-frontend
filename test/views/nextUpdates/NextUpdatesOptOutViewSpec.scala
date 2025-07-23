@@ -22,16 +22,18 @@ import models.admin.{FeatureSwitch, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.Annual
 import models.obligations._
-import models.optout.NextUpdatesQuarterlyReportingContentChecks
+import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutMultiYearViewModel, OptOutOneYearViewModel, OptOutViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.optout.OptOutProposition
+import play.twirl.api.Html
+import services.optout.{OneYearOptOutFollowedByAnnual, OneYearOptOutFollowedByMandated, OptOutProposition}
 import testConstants.BusinessDetailsTestConstants.business1
 import testConstants.NextUpdatesTestConstants
 import testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel
 import testUtils.TestSupport
+import viewUtils.NextUpdatesViewUtils
 import views.html.components.link
 import views.html.nextUpdates.NextUpdatesOptOut
 
@@ -78,6 +80,13 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       nextYearItsaStatus = Annual
     )
 
+    def nextUpdatesViewUtils: NextUpdatesViewUtils = new NextUpdatesViewUtils(linkComponent)
+
+    val optOutMultiYearViewModel: OptOutMultiYearViewModel = OptOutMultiYearViewModel()
+
+    def whatTheUserCanDoContentMulti: Option[Html] =
+      nextUpdatesViewUtils.whatTheUserCanDo(Some(optOutMultiYearViewModel), isSupportingAgent)(user, implicitly)
+
     lazy val obligationsModel: NextUpdatesViewModel =
       NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(
         business1.incomeSourceId,
@@ -94,8 +103,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
           optOutProposition = optOutProposition,
           "testBackURL",
           isSupportingAgent = isSupportingAgent,
-          reportingFrequencyLink = controllers.routes.ReportingFrequencyPageController.show(false).url,
-          reportingFrequencyEnabled = reportingFrequencyPageFsEnabled,
+          whatTheUserCanDo = whatTheUserCanDoContentMulti,
           optInOptOutContentR17Enabled = optInOptOutContentR17Enabled
         )(implicitly, user)
       ))
@@ -176,24 +184,16 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
           nextUpdatesDocument.select("#updates-software-heading").isEmpty shouldBe true
           nextUpdatesDocument.select("#updates-software-link").isEmpty shouldBe true
         }
-
-        "have the reporting obligations message" in new Setup() {
-          nextUpdatesDocument.getElementById("what-the-user-can-do").text() shouldBe NextUpdatesTestConstants.reportingObligationsLink
-        }
-
-        "have the reporting obligations link to the correct page" in new Setup(reportingFrequencyPageFsEnabled = true) {
-          nextUpdatesDocument.getElementById("reporting-obligations-link").attr("href") shouldBe reportingFrequencyLink
-        }
       }
 
       "The reporting frequency FS is turned OFF" should {
 
-        "not have the reporting obligations message" in new Setup(reportingFrequencyPageFsEnabled = false) {
-          Option(nextUpdatesDocument.getElementById("what-the-user-can-do")) shouldBe None
-        }
-
         "not have the reporting obligations link" in new Setup(reportingFrequencyPageFsEnabled = false) {
           Option(nextUpdatesDocument.getElementById("reporting-obligations-link")) shouldBe None
+        }
+
+        "have the correct what you can do text if the user is opting out for multiple years" in new Setup() {
+          nextUpdatesDocument.getElementById("what-the-user-can-do").text() shouldBe NextUpdatesTestConstants.multiYearOptOutMessage
         }
       }
 

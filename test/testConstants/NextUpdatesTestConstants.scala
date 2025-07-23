@@ -36,6 +36,7 @@ object NextUpdatesTestConstants {
   val updatesInSoftwareDesc: String = "Use your compatible record keeping software (opens in new tab) to keep digital records of all your business income and expenses. You must submit these updates through your software by each date shown."
   val info: String = "To view previously submitted updates visit the tax years page."
   val oneYearOptOutMessage: String = "You are currently reporting quarterly on a voluntary basis for the 2023 to 2024 tax year. You can choose to opt out of quarterly updates and report annually instead."
+  val multiYearOptOutMessage: String = "You are currently reporting quarterly on a voluntary basis. You can choose to opt out of quarterly updates and report annually instead."
   val reportingObligationsLink: String = "Depending on your circumstances, you may be able to view and change your reporting obligations."
   val quarterly: String = "Quarterly update"
   val businessIncome: String = "Business income"
