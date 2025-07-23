@@ -105,7 +105,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
               optInTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
               itsaStatusTable = Seq("2024 to 2025" -> Some("Quarterly")),
               displayCeasedBusinessWarning = false,
-              isAnyOfBusinessLatent = false
+              isAnyOfBusinessLatent = false,
+              mtdThreshold = "£50,000"
             )
 
           val pageDocument: Document =
@@ -145,7 +146,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
               Seq(TaxYear(2024, 2025)),
               Seq("2024 to 2025" -> Some("Quarterly")),
               isAnyOfBusinessLatent = false,
-              displayCeasedBusinessWarning = false
+              displayCeasedBusinessWarning = false,
+              mtdThreshold = "£50,000"
             )
 
           val pageDocument: Document =
@@ -189,7 +191,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
                 "2025 to 2026" -> Some("Annual"),
               ),
               isAnyOfBusinessLatent = false,
-              displayCeasedBusinessWarning = false
+              displayCeasedBusinessWarning = false,
+              mtdThreshold = "£50,000"
             )
 
           val pageDocument: Document =
@@ -259,7 +262,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
               optInTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
               itsaStatusTable = Seq("2024 to 2025" -> Some("Quarterly")),
               displayCeasedBusinessWarning = false,
-              isAnyOfBusinessLatent = true
+              isAnyOfBusinessLatent = true,
+              mtdThreshold = "£50,000"
             )
 
 
@@ -317,7 +321,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
               Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
               Seq("2024 to 2025" -> Some("Quarterly")),
               isAnyOfBusinessLatent = false,
-              displayCeasedBusinessWarning = false
+              displayCeasedBusinessWarning = false,
+              mtdThreshold = "£50,000"
             )
 
           val pageDocument: Document =
@@ -356,7 +361,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
               Seq(TaxYear(2024, 2025)),
               Seq("2024 to 2025" -> Some("Quarterly")),
               isAnyOfBusinessLatent = false,
-              displayCeasedBusinessWarning = true
+              displayCeasedBusinessWarning = true,
+              mtdThreshold = "£50,000"
             )
 
           val pageDocument: Document =
@@ -389,7 +395,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
               Seq(TaxYear(2024, 2025)),
               Seq("2024 to 2025" -> Some("Quarterly")),
               isAnyOfBusinessLatent = false,
-              displayCeasedBusinessWarning = true
+              displayCeasedBusinessWarning = true,
+              mtdThreshold = "£50,000"
             )
 
           val pageDocument: Document =
@@ -429,7 +436,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
               optInTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
               itsaStatusTable = Seq("2024 to 2025" -> Some("Quarterly")),
               displayCeasedBusinessWarning = false,
-              isAnyOfBusinessLatent = false
+              isAnyOfBusinessLatent = false,
+              mtdThreshold = "£50,000"
             )
 
           val pageDocument: Document =
@@ -469,7 +477,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
               Seq(TaxYear(2024, 2025)),
               Seq("2024 to 2025" -> Some("Quarterly")),
               isAnyOfBusinessLatent = false,
-              displayCeasedBusinessWarning = false
+              displayCeasedBusinessWarning = false,
+              mtdThreshold = "£50,000"
             )
 
           val pageDocument: Document =
@@ -513,7 +522,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
                 "2025 to 2026" -> Some("Annual"),
               ),
               isAnyOfBusinessLatent = false,
-              displayCeasedBusinessWarning = false
+              displayCeasedBusinessWarning = false,
+              mtdThreshold = "£50,000"
             )
 
           val pageDocument: Document =
@@ -583,7 +593,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
               optInTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
               itsaStatusTable = Seq("2024 to 2025" -> Some("Quarterly")),
               displayCeasedBusinessWarning = false,
-              isAnyOfBusinessLatent = true
+              isAnyOfBusinessLatent = true,
+              mtdThreshold = "£50,000"
             )
 
 
@@ -641,7 +652,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
               Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
               Seq("2024 to 2025" -> Some("Quarterly")),
               isAnyOfBusinessLatent = false,
-              displayCeasedBusinessWarning = false
+              displayCeasedBusinessWarning = false,
+              mtdThreshold = "£50,000"
             )
 
           val pageDocument: Document =
@@ -680,7 +692,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
               Seq(TaxYear(2024, 2025)),
               Seq("2024 to 2025" -> Some("Quarterly")),
               isAnyOfBusinessLatent = false,
-              displayCeasedBusinessWarning = true
+              displayCeasedBusinessWarning = true,
+              mtdThreshold = "£50,000"
             )
 
           val pageDocument: Document =
@@ -713,7 +726,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
               Seq(TaxYear(2024, 2025)),
               Seq("2024 to 2025" -> Some("Quarterly")),
               isAnyOfBusinessLatent = false,
-              displayCeasedBusinessWarning = true
+              displayCeasedBusinessWarning = true,
+              mtdThreshold = "£50,000"
             )
 
           val pageDocument: Document =
