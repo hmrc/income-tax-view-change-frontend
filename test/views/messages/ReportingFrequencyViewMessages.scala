@@ -16,12 +16,16 @@
 
 package views.messages
 
-object ReportingFrequencyViewMessages {
+import models.incomeSourceDetails.TaxYear
 
+object ReportingFrequencyViewMessages {
+  val titleNew = "Your reporting obligations - Manage your Self Assessment - GOV.UK"
   val title = "Your reporting frequency - Manage your Self Assessment - GOV.UK"
   val agentTitle = "Your reporting frequency - Manage your Self Assessment - GOV.UK"
-  val h1Content = "Your reporting frequency"
-  val h2Content = "Manage your reporting frequency for all your businesses"
+  val pageHeadingContentNew = "Your reporting obligations"
+  val pageHeadingContent = "Your reporting frequency"
+
+  val manageRFHeadingContent = "Manage your reporting frequency for all your businesses"
   val p1Content = "If you are reporting annually or voluntarily reporting quarterly, you may be able to change your reporting frequency for specific tax years."
   val p2Content = "This is what you can do for all your businesses:"
   val optInGenericContent = "Opt in to quarterly reporting"
@@ -31,15 +35,29 @@ object ReportingFrequencyViewMessages {
   val optOutContentWithTaxYear = "Opt out of quarterly reporting and report annually for the 2023 to 2024 tax year"
   val optOutContentWithTaxYearOnwards = "Opt out of quarterly reporting and report annually from the 2024 to 2025 tax year onwards"
 
+  val differentObligationsHeading = "What the different reporting obligations are"
+  val differentObligationsText = "When you are using Making Tax Digital for Income Tax you need to submit:"
+  val differentObligationsLiOne = "4 updates a year for each source of self employment and property income"
+  val differentObligationsLiTwo = "a tax return"
+  val differentObligationsTextTwo = "For tax years you are opted out of, you only need to file a tax return."
+  val differentObligationsTextThree = "You can see what is due on the updates and deadlines page."
+
+  val mandatoryReportingHeadingR17 = "When Making Tax Digital for Income Tax is required"
   val mandatoryReportingHeading = "When reporting quarterly is mandatory"
-  val mandatoryReportingInset = "Reporting quarterly is required if your income from self-employment or property, or both, exceeds the income threshold."
+  val mandatoryReportingInsetR17 =  "You must use Making Tax Digital for Income Tax if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold."
+  val mandatoryReportingInset =  "Reporting quarterly is required if your income from self-employment or property, or both, exceeds the income threshold."
+  val mandatoryReportingTextR17 = "If this happens in the 2022 to 2023 tax year, you would be required to use Making Tax Digital for Income Tax for the 2024 to 2025 tax year."
   val mandatoryReportingText = "You can check the threshold for when reporting quarterly is mandatory in the criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab)"
-  val mandatoryReportingLink = "criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab)"
+  val mandatoryReportingTextTwoR17 = "Find out more about the threshold in the criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab)"
 
-  val compatibleSoftwareH2 = "When compatible software is required"
-  val compatibleSoftwareP1 = "If you are reporting quarterly, you will need to use software compatible with Making Tax Digital for Income Tax (opens in new tab) There are both paid and free options for you or your agent to choose from."
-  val compatibleSoftwareP2 = "For reporting annually, you can use either compatible software or your HMRC online account to submit your tax return."
+  val compatibleSoftwareHeadingR17 = "When you need compatible software"
+  val compatibleSoftwareHeading = "When compatible software is required"
 
+  val compatibleSoftwareTextR17 = "Whether you are required or voluntarily signed up, you need software compatible with Making Tax Digital for Income Tax (opens in new tab). There are both paid and free options for you or your agent to choose from."
+  val compatibleSoftwareText = "If you are reporting quarterly, you will need to use software compatible with Making Tax Digital for Income Tax (opens in new tab) There are both paid and free options for you or your agent to choose from."
 
+  val compatibleSoftwareTextTwo = "For reporting annually, you can use either compatible software or your HMRC online account to submit your tax return."
+
+  val compatibleSoftwareTextThreeR17 = "If you are opted out, you can find out here how to file your Self Assessment tax return (opens in new tab)."
 
 }
