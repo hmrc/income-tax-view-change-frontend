@@ -132,6 +132,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
               "the user has a fill list of charges" in {
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
+                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
                 when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
@@ -149,7 +150,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListEmpty))
-
+                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
                 result.futureValue.session.get(gatewayPage) shouldBe Some("yourSelfAssessmentChargeSummary")
@@ -189,6 +190,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithAvailableCredits))
+                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -211,6 +213,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithZeroAvailableCredits))
+                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK

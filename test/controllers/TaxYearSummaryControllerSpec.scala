@@ -127,6 +127,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
+                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2018, 2019))))
                 val taxYearSummary = TaxYearSummaryViewModel(
                   Some(CalculationSummary(liabilityCalculationModelSuccessfulNotCrystallised)),
                   testChargesList,
@@ -155,6 +156,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 mockSingleBusinessIncomeSource()
                 mockCalculationSuccessfulNew(testMtditid, taxYear = testTaxYear)
                 mockFinancialDetailsSuccess(taxYear = testTaxYear)
+                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2018, 2019))))
                 mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
@@ -183,6 +185,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 setupMockSuccess(mtdUserRole)
                 mockSingleBusinessIncomeSource()
                 mockCalculationNotFoundNew(testMtditid, year = testTaxYear)
+                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2018, 2019))))
                 mockFinancialDetailsSuccess(taxYear = testTaxYear)
                 mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
@@ -315,6 +318,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 enable(ReviewAndReconcilePoa)
                 setupMockSuccess(mtdUserRole)
                 mockSingleBusinessIncomeSource()
+                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2018, 2019))))
                 mockCalculationSuccessfulNew(testMtditid)
                 mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithReviewAndReconcileDebits)
                 mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
@@ -343,6 +347,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 setupMockSuccess(mtdUserRole)
                 mockSingleBusinessIncomeSource()
                 mockCalculationSuccessfulNew(testMtditid)
+                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2018, 2019))))
                 mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithReviewAndReconcileDebitsOverdue)
                 mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
@@ -364,6 +369,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 setupMockSuccess(mtdUserRole)
                 mockSingleBusinessIncomeSource()
                 mockCalculationSuccessfulNew(testMtditid)
+                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2018, 2019))))
                 mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithAllThreePenalties)
                 mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
@@ -385,17 +391,13 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-2").attr("href") shouldBe "http://localhost:9185/penalties/income-tax/calculation"
               }
             }
-            "Not show penalties in the charges table" when {
-              "the penalties FS is disabled" in {
-
-              }
-            }
 
             "has a back link to the home page" in {
               setupMockSuccess(mtdUserRole)
               mockSingleBusinessIncomeSource()
               mockCalculationSuccessfulNew(testMtditid)
               mockFinancialDetailsSuccess()
+              setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2018, 2019))))
               mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                 toDate = LocalDate.of(testTaxYear, 4, 5))(
                 response = testObligtionsModel
@@ -425,6 +427,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 setupMockSuccess(mtdUserRole)
                 mockSingleBusinessIncomeSource()
                 mockCalculationSuccessfulNew(testMtditid)
+                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2018, 2019))))
                 mockFinancialDetailsSuccess(
                   financialDetailsModelResponse = financialDetails(
                     documentDetails = documentDetailClass2Nic.documentDetail,
@@ -459,6 +462,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 setupMockSuccess(mtdUserRole)
                 mockSingleBusinessIncomeSource()
                 mockCalculationSuccessfulNew(testMtditid)
+                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2018, 2019))))
                 mockFinancialDetailsSuccess(
                   financialDetailsModelResponse = financialDetails(
                     documentDetails = documentDetailPaye.documentDetail,
@@ -492,6 +496,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 setupMockSuccess(mtdUserRole)
                 mockSingleBusinessIncomeSource()
                 mockCalculationSuccessfulNew(testMtditid)
+                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2018, 2019))))
                 mockFinancialDetailsSuccess(financialDetailsModelResponse = MFADebitsFinancialDetails)
                 mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
@@ -531,6 +536,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 mockSingleBusinessIncomeSource()
                 mockCalculationSuccessfulNew(testMtditid)
                 mockFinancialDetailsNotFound()
+                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2018, 2019))))
                 mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
@@ -563,6 +569,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 mockSingleBusinessIncomeSource()
                 mockCalculationNotFoundNew(testMtditid)
                 mockFinancialDetailsSuccess()
+                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2018, 2019))))
                 mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
@@ -596,6 +603,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 mockSingleBusinessIncomeSource()
                 mockCalculationWithErrorMessages(testMtditid)
                 mockFinancialDetailsSuccess()
+                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2018, 2019))))
                 mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel

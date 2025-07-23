@@ -29,8 +29,7 @@ import repositories.UIJourneySessionDataRepository
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.b1TradingName
-import testConstants.IncomeSourceIntegrationTestConstants
-import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, businessOnlyResponseAllCeased, businessOnlyResponseWithLatency, foreignPropertyOnlyResponse, foreignPropertyOnlyResponseAllCeased, foreignPropertyOnlyResponseWithLatency, ukPropertyOnlyResponse, ukPropertyOnlyResponseAllCeased, ukPropertyOnlyResponseWithLatency}
+import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponseAllCeased, businessOnlyResponseWithLatency, foreignPropertyOnlyResponseAllCeased, foreignPropertyOnlyResponseWithLatency, ukPropertyOnlyResponse, ukPropertyOnlyResponseAllCeased, ukPropertyOnlyResponseWithLatency}
 import testConstants.IncomeSourcesObligationsIntegrationTestConstants.testObligationsModel
 
 import java.time.LocalDate
@@ -38,7 +37,7 @@ import java.time.LocalDate
 class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  val repository = app.injector.instanceOf[UIJourneySessionDataRepository]
+  val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
   val businessCeasedObligationsShowUrl: String = controllers.manageBusinesses.cease.routes.IncomeSourceCeasedObligationsController.show(SelfEmployment).url
   val foreignPropertyCeasedObligationsShowUrl: String = controllers.manageBusinesses.cease.routes.IncomeSourceCeasedObligationsController.show(ForeignProperty).url
@@ -77,7 +76,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
     }
   }
 
-  def setupTestMongoData(incomeSourceType: IncomeSourceType) = {
+  def setupTestMongoData(incomeSourceType: IncomeSourceType): Boolean = {
     val incomeSourceId = incomeSourceType match {
       case SelfEmployment => testSelfEmploymentId
       case _ => testPropertyIncomeId
@@ -138,7 +137,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
               disable(NavBarFs)
               enable(ReportingFrequencyPage)
               enable(IncomeSourcesNewJourney)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType, true))
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType, allCeased = true))
               IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
               setupTestMongoData(incomeSourceType)
 
@@ -147,7 +146,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
 
               result should have(
                 httpStatus(OK),
-                pageTitle(mtdUserRole, getExpectedTitle(incomeSourceType, true)),
+                pageTitle(mtdUserRole, getExpectedTitle(incomeSourceType, allCeased = true)),
                 elementTextByID("all-business-ceased")("In future, any new business you add will be opted out of Making Tax Digital for Income Tax." +
                   " Find out more about your reporting obligations."),
                 elementTextByID("all-business-ceased-link")("your reporting obligations")
@@ -158,7 +157,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
               disable(NavBarFs)
               disable(ReportingFrequencyPage)
               enable(IncomeSourcesNewJourney)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType, true))
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType, allCeased = true))
               IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
               setupTestMongoData(incomeSourceType)
 
@@ -167,7 +166,7 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
 
               result should have(
                 httpStatus(OK),
-                pageTitle(mtdUserRole, getExpectedTitle(incomeSourceType, true)),
+                pageTitle(mtdUserRole, getExpectedTitle(incomeSourceType, allCeased = true)),
                 elementTextByID("all-business-ceased")("In future, any new business you add will be opted out of Making Tax Digital for Income Tax."),
                 elementTextByID("all-business-ceased-link")("")
               )
