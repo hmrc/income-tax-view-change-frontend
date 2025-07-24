@@ -27,7 +27,7 @@ import testUtils.TestSupport
 
 class PenaltyDetailsServiceSpec extends TestSupport with MockPenaltyDetailsConnector {
 
-  val mtditid = "123456"
+  val nino = "AA123456A"
   object TestPenaltyDetailsService extends PenaltyDetailsService(mockGetPenaltyDetailsConnector, appConfig)
 
   "PenaltyDetailsService" when {
@@ -36,18 +36,18 @@ class PenaltyDetailsServiceSpec extends TestSupport with MockPenaltyDetailsConne
 
       "return a GetPenaltyDetails successful response model" when {
         "the response from the connector is successful" in {
-          setupMockGetPenaltyDetailsConnector(mtditid)(Right(GetPenaltyDetailsSuccessResponse(getPenaltyDetails)))
+          setupMockGetPenaltyDetailsConnector(nino)(Right(GetPenaltyDetailsSuccessResponse(getPenaltyDetails)))
 
-          val result = TestPenaltyDetailsService.getPenaltyDetails(mtditid).futureValue
+          val result = TestPenaltyDetailsService.getPenaltyDetails(nino).futureValue
           result shouldBe Right(GetPenaltyDetailsSuccessResponse(getPenaltyDetails))
         }
       }
 
       "return a GetPenaltyDetails failure response" when {
         "unable to retrieve the penalty details model from the connector" in {
-          setupMockGetPenaltyDetailsConnector(mtditid)(Left(GetPenaltyDetailsFailureResponse(INTERNAL_SERVER_ERROR)))
+          setupMockGetPenaltyDetailsConnector(nino)(Left(GetPenaltyDetailsFailureResponse(INTERNAL_SERVER_ERROR)))
 
-          val result = TestPenaltyDetailsService.getPenaltyDetails(mtditid).futureValue
+          val result = TestPenaltyDetailsService.getPenaltyDetails(nino).futureValue
           result shouldBe Left(GetPenaltyDetailsFailureResponse(INTERNAL_SERVER_ERROR))
         }
       }
@@ -93,21 +93,21 @@ class PenaltyDetailsServiceSpec extends TestSupport with MockPenaltyDetailsConne
       "return a valid count of 0" when {
 
         "the penalties feature is disabled" in {
-          setupMockGetPenaltyDetailsConnector(BaseTestConstants.testMtditid)(Right(GetPenaltyDetailsSuccessResponse(getPenaltyDetails)))
+          setupMockGetPenaltyDetailsConnector(BaseTestConstants.testNino)(Right(GetPenaltyDetailsSuccessResponse(getPenaltyDetails)))
 
           val result = TestPenaltyDetailsService.getPenaltiesCount(penaltiesCallEnabled = false).futureValue
           result shouldBe 0
         }
 
         "the response is successful but with no totalisations object" in {
-          setupMockGetPenaltyDetailsConnector(BaseTestConstants.testMtditid)(Right(GetPenaltyDetailsSuccessResponse(GetPenaltyDetails(None, None, None, None))))
+          setupMockGetPenaltyDetailsConnector(BaseTestConstants.testNino)(Right(GetPenaltyDetailsSuccessResponse(GetPenaltyDetails(None, None, None, None))))
 
           val result = TestPenaltyDetailsService.getPenaltiesCount(penaltiesCallEnabled = false).futureValue
           result shouldBe 0
         }
 
         "the response is successful with a zero points total returned" in {
-          setupMockGetPenaltyDetailsConnector(BaseTestConstants.testMtditid)(Right(GetPenaltyDetailsSuccessResponse(
+          setupMockGetPenaltyDetailsConnector(BaseTestConstants.testNino)(Right(GetPenaltyDetailsSuccessResponse(
             GetPenaltyDetails(Some(Totalisations(Some(0), None, None, None)), None, None, None))))
 
           val result = TestPenaltyDetailsService.getPenaltiesCount(penaltiesCallEnabled = false).futureValue
@@ -118,7 +118,7 @@ class PenaltyDetailsServiceSpec extends TestSupport with MockPenaltyDetailsConne
       "return a valid count greater than 0" when {
 
         "the response is successful with a non-zero points total returned" in {
-          setupMockGetPenaltyDetailsConnector(BaseTestConstants.testMtditid)(Right(GetPenaltyDetailsSuccessResponse(getPenaltyDetails)))
+          setupMockGetPenaltyDetailsConnector(BaseTestConstants.testNino)(Right(GetPenaltyDetailsSuccessResponse(getPenaltyDetails)))
 
           val result = TestPenaltyDetailsService.getPenaltiesCount(penaltiesCallEnabled = true).futureValue
           result shouldBe 2
@@ -128,7 +128,7 @@ class PenaltyDetailsServiceSpec extends TestSupport with MockPenaltyDetailsConne
       "return an error" when {
 
         "the response is a generic FailureResponse" in {
-          setupMockGetPenaltyDetailsConnector(BaseTestConstants.testMtditid)(Left(GetPenaltyDetailsFailureResponse(500)))
+          setupMockGetPenaltyDetailsConnector(BaseTestConstants.testNino)(Left(GetPenaltyDetailsFailureResponse(500)))
 
           val exception = intercept[Exception] {
             TestPenaltyDetailsService.getPenaltiesCount(penaltiesCallEnabled = true).futureValue
@@ -137,7 +137,7 @@ class PenaltyDetailsServiceSpec extends TestSupport with MockPenaltyDetailsConne
         }
 
         "the response is a malformed FailureResponse" in {
-          setupMockGetPenaltyDetailsConnector(BaseTestConstants.testMtditid)(Left(GetPenaltyDetailsMalformed))
+          setupMockGetPenaltyDetailsConnector(BaseTestConstants.testNino)(Left(GetPenaltyDetailsMalformed))
 
           val exception = intercept[Exception] {
             TestPenaltyDetailsService.getPenaltiesCount(penaltiesCallEnabled = true).futureValue
