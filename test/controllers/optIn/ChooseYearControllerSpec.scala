@@ -20,6 +20,7 @@ import enums.MTDIndividual
 import forms.optIn.ChooseTaxYearForm
 import mocks.auth.MockAuthActions
 import mocks.services.MockOptInService
+import models.admin.ReportingFrequencyPage
 import models.incomeSourceDetails.TaxYear
 import play.api
 import play.api.Application
@@ -48,6 +49,7 @@ class ChooseYearControllerSpec extends MockAuthActions
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         "render the check your answers page" in {
+          enable(ReportingFrequencyPage)
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
@@ -55,6 +57,22 @@ class ChooseYearControllerSpec extends MockAuthActions
 
           val result = action(fakeRequest)
           status(result) shouldBe Status.OK
+        }
+
+        "render the home page when the feature switch is disabled" in {
+          disable(ReportingFrequencyPage)
+          setupMockSuccess(mtdRole)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+          val result = action(fakeRequest)
+
+          val redirectUrl = if (isAgent) {
+            "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
+          } else {
+            "/report-quarterly/income-and-expenses/view"
+          }
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(redirectUrl)
         }
       }
       testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
@@ -65,6 +83,7 @@ class ChooseYearControllerSpec extends MockAuthActions
       val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         "redirect to Check Your Answers" in {
+          enable(ReportingFrequencyPage)
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
@@ -79,6 +98,7 @@ class ChooseYearControllerSpec extends MockAuthActions
 
         "return a BadRequest" when {
           "the form is invalid" in {
+            enable(ReportingFrequencyPage)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
@@ -93,6 +113,7 @@ class ChooseYearControllerSpec extends MockAuthActions
 
         s"render the error page" when {
           "failed save intent" in {
+            enable(ReportingFrequencyPage)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
@@ -102,6 +123,24 @@ class ChooseYearControllerSpec extends MockAuthActions
               ChooseTaxYearForm.choiceField -> taxYear2023.toString
             ))
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          }
+        }
+
+        "render the home page" when {
+          "the ReportingFrequencyPage feature switch is disabled" in {
+            disable(ReportingFrequencyPage)
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+            val result = action(fakeRequest)
+
+            val redirectUrl = if (isAgent) {
+              "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
+            } else {
+              "/report-quarterly/income-and-expenses/view"
+            }
+            status(result) shouldBe Status.SEE_OTHER
+            redirectLocation(result) shouldBe Some(redirectUrl)
           }
         }
         testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)

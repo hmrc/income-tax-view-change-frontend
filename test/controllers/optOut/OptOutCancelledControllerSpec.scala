@@ -19,6 +19,7 @@ package controllers.optOut
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockOptOutService
+import models.admin.OptOutFs
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import org.mockito.ArgumentMatchers
@@ -27,8 +28,8 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api
 import play.api.Application
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.optout.{OptOutProposition, OptOutService}
 import testConstants.BaseTestConstants.{testMtditid, testNino}
 import testConstants.BusinessDetailsTestConstants.business1
@@ -66,6 +67,7 @@ class OptOutCancelledControllerSpec extends MockAuthActions with MockOptOutServi
         "a tax year is determined from a single year / multi year chosen intent tax year" should {
 
           "render the opt out cancelled page" in {
+            enable(OptOutFs)
 
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
             setupMockSuccess(mtdRole)
@@ -108,6 +110,7 @@ class OptOutCancelledControllerSpec extends MockAuthActions with MockOptOutServi
         "user hits the cancel page before a tax year is selected for a multi year scenario and no tax year is returned" should {
 
           "render the opt out cancelled page - OK 200" in {
+            enable(OptOutFs)
 
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
@@ -150,6 +153,7 @@ class OptOutCancelledControllerSpec extends MockAuthActions with MockOptOutServi
           "there is some unexpected error" should {
 
             "recover and return error template Internal Server Error - 500" in {
+              enable(OptOutFs)
 
               val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
@@ -181,6 +185,27 @@ class OptOutCancelledControllerSpec extends MockAuthActions with MockOptOutServi
               status(result) shouldBe INTERNAL_SERVER_ERROR
               contentAsString(result).contains("Sorry, there is a problem with the service") shouldBe true
             }
+          }
+        }
+        "redirect to the home page" when {
+          "the feature switch is disabled" in {
+            disable(OptOutFs)
+            setupMockSuccess(mtdRole)
+
+            when(
+              mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
+            ).thenReturn(Future.successful(IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)))
+
+            val result = action(fakeRequest)
+
+            val redirectUrl = if (isAgent) {
+              "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
+            } else {
+              "/report-quarterly/income-and-expenses/view"
+            }
+
+            status(result) shouldBe SEE_OTHER
+            redirectLocation(result) shouldBe Some(redirectUrl)
           }
         }
       }

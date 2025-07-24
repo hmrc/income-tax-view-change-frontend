@@ -27,6 +27,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.optIn.OptInService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.ReportingObligationsUtils
 import views.html.optIn.SingleTaxYearWarningView
 
 import javax.inject.Inject
@@ -42,7 +43,7 @@ class SingleTaxYearOptInWarningController @Inject()(
                                                      implicit val appConfig: FrontendAppConfig,
                                                      mcc: MessagesControllerComponents,
                                                      val ec: ExecutionContext
-                                                   ) extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+                                                   ) extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ReportingObligationsUtils {
 
   val logger = Logger(getClass)
 
@@ -92,12 +93,14 @@ class SingleTaxYearOptInWarningController @Inject()(
   def show(isAgent: Boolean = false): Action[AnyContent] =
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
       implicit user =>
-        withRecover(isAgent) {
-          optInService.availableOptInTaxYear().map {
-            case Seq(singleYear) =>
-              Ok(view(SingleTaxYearOptInWarningForm(singleYear), submitAction(isAgent), isAgent, singleYear))
-            case _ =>
-              Redirect(controllers.optIn.routes.ChooseYearController.show(isAgent))
+        withReportingObligationsFS {
+          withRecover(isAgent) {
+            optInService.availableOptInTaxYear().map {
+              case Seq(singleYear) =>
+                Ok(view(SingleTaxYearOptInWarningForm(singleYear), submitAction(isAgent), isAgent, singleYear))
+              case _ =>
+                Redirect(controllers.optIn.routes.ChooseYearController.show(isAgent))
+            }
           }
         }
     }
@@ -105,12 +108,14 @@ class SingleTaxYearOptInWarningController @Inject()(
   def submit(isAgent: Boolean): Action[AnyContent] =
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
       implicit request =>
-        withRecover(isAgent) {
-          optInService.availableOptInTaxYear().flatMap {
-            case Seq(singleYear) =>
-              handleSubmitRequest(isAgent, singleYear)
-            case _ =>
-              Future.successful(Redirect(controllers.optIn.routes.ChooseYearController.show(isAgent)))
+        withReportingObligationsFS {
+          withRecover(isAgent) {
+            optInService.availableOptInTaxYear().flatMap {
+              case Seq(singleYear) =>
+                handleSubmitRequest(isAgent, singleYear)
+              case _ =>
+                Future.successful(Redirect(controllers.optIn.routes.ChooseYearController.show(isAgent)))
+            }
           }
         }
     }

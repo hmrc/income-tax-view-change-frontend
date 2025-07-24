@@ -28,6 +28,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.optIn.OptInService
 import services.optIn.core.OptInProposition
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.ReportingObligationsUtils
 import views.html.optIn.OptInCompletedView
 
 import javax.inject.Inject
@@ -41,7 +42,7 @@ class OptInCompletedController @Inject()(val view: OptInCompletedView,
                                         (implicit val appConfig: FrontendAppConfig,
                                          mcc: MessagesControllerComponents,
                                          val ec: ExecutionContext)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ReportingObligationsUtils {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -56,23 +57,25 @@ class OptInCompletedController @Inject()(val view: OptInCompletedView,
   def show(isAgent: Boolean = false): Action[AnyContent] =
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
       implicit user =>
-        withRecover(isAgent) {
-          for {
-            proposition: OptInProposition <- optInService.fetchOptInProposition()
-            intent <- optInService.fetchSavedChosenTaxYear()
-          } yield {
-            intent.map { optInTaxYear =>
-              val model =
-                OptInCompletedViewModel(
-                  isAgent = isAgent,
-                  optInTaxYear = optInTaxYear,
-                  showAnnualReportingAdvice = proposition.showAnnualReportingAdvice(optInTaxYear),
-                  isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear),
-                  optInIncludedNextYear = proposition.nextTaxYear.status == Voluntary,
-                  annualWithFollowingYearMandated = proposition.annualWithFollowingYearMandated()
-                )
-              Ok(view(model))
-            }.getOrElse(errorHandler(isAgent).showInternalServerError())
+        withReportingObligationsFS {
+          withRecover(isAgent) {
+            for {
+              proposition: OptInProposition <- optInService.fetchOptInProposition()
+              intent <- optInService.fetchSavedChosenTaxYear()
+            } yield {
+              intent.map { optInTaxYear =>
+                val model =
+                  OptInCompletedViewModel(
+                    isAgent = isAgent,
+                    optInTaxYear = optInTaxYear,
+                    showAnnualReportingAdvice = proposition.showAnnualReportingAdvice(optInTaxYear),
+                    isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear),
+                    optInIncludedNextYear = proposition.nextTaxYear.status == Voluntary,
+                    annualWithFollowingYearMandated = proposition.annualWithFollowingYearMandated()
+                  )
+                Ok(view(model))
+              }.getOrElse(errorHandler(isAgent).showInternalServerError())
+            }
           }
         }
     }
