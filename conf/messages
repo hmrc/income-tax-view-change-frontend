@@ -1048,7 +1048,8 @@ selfAssessmentCharges.adjust-poa.paid-3                                       = 
 selfAssessmentCharges.adjust-poa.paid-4                                       = 31 January {0}.
 selfAssessmentCharges.adjust-poa.paid-5                                       =
 selfAssessmentCharges.interestChargesWarning                                  = Interest charges will keep increasing every day until the charges they relate to are paid in full.
-
+selfAssessmentCharges.lpi.firstLatePaymentPenalty.text                        = Late payment interest on first late payment penalty
+selfAssessmentCharges.lpi.secondLatePaymentPenalty.text                       = Late payment interest on second late payment penalty
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = First payment on account
