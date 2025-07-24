@@ -42,7 +42,7 @@ case class LPPDetails(
                        communicationsDate: Option[LocalDate],
                        penaltyChargeReference: Option[String],
                        penaltyChargeDueDate: Option[LocalDate],
-                       appealInformation: Seq[AppealInformationType],
+                       appealInformation: Option[Seq[AppealInformationType]],
                        principalChargeDocNumber: String,
                        principalChargeMainTransaction: String,
                        principalChargeSubTransaction: String,
@@ -50,7 +50,7 @@ case class LPPDetails(
                        principalChargeBillingTo: LocalDate,
                        principalChargeDueDate: LocalDate,
                        principalChargeLatestClearing: Option[LocalDate],
-                       timeToPay: Seq[TimeToPay]
+                       timeToPay: Option[Seq[TimeToPay]]
                      )
 
 object LPPDetails extends JsonUtils {
@@ -76,7 +76,7 @@ object LPPDetails extends JsonUtils {
         communicationsDate <- (json \ "communicationsDate").validateOpt[LocalDate]
         penaltyChargeReference <- (json \ "penaltyChargeReference").validateOpt[String]
         penaltyChargeDueDate <- (json \ "penaltyChargeDueDate").validateOpt[LocalDate]
-        appealInformation <- (json \ "appealInformation").validate[Seq[AppealInformationType]]
+        appealInformation <- (json \ "appealInformation").validateOpt[Seq[AppealInformationType]]
         principalChargeDocNumber <- (json \ "principalChargeDocNumber").validate[String]
         principalChargeMainTransaction <- (json \ "principalChargeMainTransaction").validate[String]
         principalChargeSubTransaction <- (json \ "principalChargeSubTransaction").validate[String]
@@ -84,7 +84,7 @@ object LPPDetails extends JsonUtils {
         principalChargeBillingTo <- (json \ "principalChargeBillingTo").validate[LocalDate]
         principalChargeDueDate <- (json \ "principalChargeDueDate").validate[LocalDate]
         principalChargeLatestClearing <- (json \ "principalChargeLatestClearing").validateOpt[LocalDate]
-        timeToPay <- (json \ "timeToPay").validate[Seq[TimeToPay]]
+        timeToPay <- (json \ "timeToPay").validateOpt[Seq[TimeToPay]]
       } yield LPPDetails(principleChargeReference, penaltyCategory, penaltyStatus, penaltyAmountAccruing, penaltyAmountPosted,
         penaltyAmountPaid, penaltyAmountOutstanding, lpp1LRCalculationAmount, lpp1LRDays, lpp1LRPercentage, lpp1HRCalculationAmount,
         lpp1HRDays, lpp1HRPercentage, lpp2Days, lpp2Percentage, penaltyChargeCreationDate, communicationsDate, penaltyChargeReference,
