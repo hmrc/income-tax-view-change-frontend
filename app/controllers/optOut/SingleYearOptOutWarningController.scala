@@ -28,6 +28,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.optout.OptOutService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.ReportingObligationsUtils
 import views.html.optOut.SingleYearOptOutWarning
 
 import javax.inject.Inject
@@ -41,7 +42,7 @@ class SingleYearOptOutWarningController @Inject()(auth: AuthActions,
                                                   val itvcErrorHandler: ItvcErrorHandler,
                                                   val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                   val mcc: MessagesControllerComponents)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ReportingObligationsUtils {
 
   val logger = Logger(getClass)
 
@@ -52,11 +53,15 @@ class SingleYearOptOutWarningController @Inject()(auth: AuthActions,
     if (isAgent) controllers.routes.NextUpdatesController.showAgent() else controllers.routes.NextUpdatesController.show()
 
   def show(isAgent: Boolean): Action[AnyContent] = withAuth(isAgent) { implicit user =>
-    withRecover(isAgent)(handleRequest(isAgent))
+    withOptOutFS {
+      withRecover(isAgent)(handleRequest(isAgent))
+    }
   }
 
   def submit(isAgent: Boolean): Action[AnyContent] = withAuth(isAgent) { implicit user =>
-    withRecover(isAgent)(handleSubmitRequest(isAgent))
+    withOptOutFS {
+      withRecover(isAgent)(handleSubmitRequest(isAgent))
+    }
   }
 
   private def withAuth(isAgent: Boolean)(code: MtdItUser[_] => Future[Result]): Action[AnyContent] = {

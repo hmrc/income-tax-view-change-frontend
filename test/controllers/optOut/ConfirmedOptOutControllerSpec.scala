@@ -19,6 +19,7 @@ package controllers.optOut
 import enums.{CurrentTaxYear, MTDIndividual}
 import mocks.auth.MockAuthActions
 import mocks.services.MockOptOutService
+import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
@@ -29,7 +30,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.INTERNAL_SERVER_ERROR
-import play.api.test.Helpers.{defaultAwaitTimeout, status}
+import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.optout._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
@@ -59,6 +60,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions
       val action = testController.show(isAgent)
       s"the user is authenticated as a $mtdRole" should {
         "render the Confirmed page" in {
+          enable(OptOutFs)
 
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -88,6 +90,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions
 
         s"return result with $INTERNAL_SERVER_ERROR status" when {
           "there is no tax year eligible for opt out" in {
+            enable(OptOutFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockOptOutConfirmedPageViewModel(noEligibleTaxYearResponse)
@@ -115,6 +118,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions
           }
 
           "opt out service fails" in {
+            enable(OptOutFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockOptOutConfirmedPageViewModel(failedResponse)
@@ -131,6 +135,26 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions
             val result = action(fakeRequest)
 
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          }
+        }
+
+        "redirect to the home page" when {
+          "the opt out feature switch is disabled" in {
+            disable(OptOutFs)
+
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+            val result = action(fakeRequest)
+
+            val redirectUrl = if (isAgent) {
+              "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
+            } else {
+              "/report-quarterly/income-and-expenses/view"
+            }
+
+            status(result) shouldBe Status.SEE_OTHER
+            redirectLocation(result) shouldBe Some(redirectUrl)
           }
         }
       }

@@ -21,6 +21,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.ReportingObligationsUtils
 import views.html.optOut.OptOutError
 
 import javax.inject.Inject
@@ -33,12 +34,13 @@ class OptOutErrorController @Inject()(val view: OptOutError,
                                      (implicit val appConfig: FrontendAppConfig,
                                       val ec: ExecutionContext,
                                       val mcc: MessagesControllerComponents
-                                     ) extends FrontendController(mcc) with I18nSupport  {
+                                     ) extends FrontendController(mcc) with I18nSupport with ReportingObligationsUtils  {
 
 
   def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      Future.successful(Ok(view(isAgent)))
+      withOptOutFS {
+        Future.successful(Ok(view(isAgent)))
+      }
   }
-
 }

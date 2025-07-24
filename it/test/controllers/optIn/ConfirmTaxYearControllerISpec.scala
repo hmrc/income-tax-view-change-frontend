@@ -24,7 +24,7 @@ import enums.JourneyType.{Opt, OptInJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.ITSAStatusUpdateConnectorStub
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.NavBarFs
+import models.admin.{NavBarFs, ReportingFrequencyPage}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, Mandated, Voluntary}
@@ -88,6 +88,7 @@ class ConfirmTaxYearControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "render the confirm tax year for the current tax year" in {
             disable(NavBarFs)
+            enable(ReportingFrequencyPage)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -111,6 +112,7 @@ class ConfirmTaxYearControllerISpec extends ControllerISpecHelper {
 
           "render the confirm tax year for the next tax year" in {
             disable(NavBarFs)
+            enable(ReportingFrequencyPage)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -141,6 +143,7 @@ class ConfirmTaxYearControllerISpec extends ControllerISpecHelper {
           "redirect to completed page" when {
             "the user is opting in for current tax year" in {
               disable(NavBarFs)
+              enable(ReportingFrequencyPage)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -161,6 +164,7 @@ class ConfirmTaxYearControllerISpec extends ControllerISpecHelper {
 
             "the user is opting in for next tax year" in {
               disable(NavBarFs)
+              enable(ReportingFrequencyPage)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -183,6 +187,7 @@ class ConfirmTaxYearControllerISpec extends ControllerISpecHelper {
           "redirect to the optIn error page" when {
             "no tax-year choice is made" in {
               disable(NavBarFs)
+              enable(ReportingFrequencyPage)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
