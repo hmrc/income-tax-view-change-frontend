@@ -1047,6 +1047,8 @@ selfAssessmentCharges.adjust-poa.paid-3                                       = 
 selfAssessmentCharges.adjust-poa.paid-4                                       = 31 Ionawr {0}
 selfAssessmentCharges.adjust-poa.paid-5                                       = fan bellaf.
 selfAssessmentCharges.interestChargesWarning                                  = Bydd taliadau llog yn parhau i gynyddu bob dydd nes bod y taliadau y maent yn ymwneud â nhw yn cael eu talu’n llawn.
+selfAssessmentCharges.lpi.firstLatePaymentPenalty.text                        = Llog am dalu’n hwyr ar y gosb gyntaf am dalu’n hwyr
+selfAssessmentCharges.lpi.secondLatePaymentPenalty.text                       = Llog am dalu’n hwyr ar yr ail gosb am dalu’n hwyr
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad cyntaf ar gyfrif
