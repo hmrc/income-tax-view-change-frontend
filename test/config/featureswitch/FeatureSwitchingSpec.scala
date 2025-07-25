@@ -60,7 +60,8 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
     PenaltiesAndAppeals,
     PenaltiesBackendEnabled,
     YourSelfAssessmentCharges,
-    OptInOptOutContentUpdateR17
+    OptInOptOutContentUpdateR17,
+    SelfServeTimeToPayR17
   )
 
   "FeatureSwitchName" when {

@@ -28,6 +28,7 @@ import services.DateServiceInterface
 import services.optIn.OptInService
 import services.optout.OptOutService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.MtdConstants
 import viewUtils.ReportingFrequencyViewUtils
 import views.html.ReportingFrequencyView
 import views.html.errorPages.templates.ErrorTemplate
@@ -49,7 +50,7 @@ class ReportingFrequencyPageController @Inject()(
                                                   val ec: ExecutionContext
                                                 )
 
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with MtdConstants {
 
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
@@ -78,9 +79,11 @@ class ReportingFrequencyPageController @Inject()(
               itsaStatusTable = reportingFrequencyViewUtils.itsaStatusTable(optOutProposition),
               displayCeasedBusinessWarning = user.incomeSources.areAllBusinessesCeased,
               isAnyOfBusinessLatent = user.incomeSources.isAnyOfActiveBusinessesLatent,
-              displayManageYourRfSection = !(optOutProposition.areAllTaxYearsMandated || user.incomeSources.areAllBusinessesCeased)
+              displayManageYourReportingFrequencySection = !(optOutProposition.areAllTaxYearsMandated || user.incomeSources.areAllBusinessesCeased),
+              mtdThreshold = getMtdThreshold
             ),
-            optInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17)
+            optInOptOutContentUpdateR17IsEnabled = isEnabled(OptInOptOutContentUpdateR17),
+            nextUpdatesLink = if(isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url
           ))
         } else {
           InternalServerError(

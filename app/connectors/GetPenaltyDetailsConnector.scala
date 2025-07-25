@@ -32,10 +32,10 @@ class GetPenaltyDetailsConnector @Inject() (val httpClientV2: HttpClientV2,
     Connector to be updated in future to use NINO identifier
    */
 
-  private val incomeTaxPenaltyDetailsUrl: String = appConfig.penaltiesBackendBase + s"/penalties/ITSA/etmp/penalties/MTDITID/"
+  private val incomeTaxPenaltyDetailsUrl: String = appConfig.penaltiesBackendBase + s"/penalties/ITSA/etmp/penalties/NINO/"
 
-  def getPenaltyDetails(mtdItId: String)(implicit headerCarrier: HeaderCarrier): Future[GetPenaltyDetailsResponse] = {
-    val url = incomeTaxPenaltyDetailsUrl + mtdItId
+  def getPenaltyDetails(nino: String)(implicit headerCarrier: HeaderCarrier): Future[GetPenaltyDetailsResponse] = {
+    val url = incomeTaxPenaltyDetailsUrl + nino
     httpClientV2
       .get(url"$url")
       .execute[GetPenaltyDetailsResponse](GetPenaltyDetailsReads, executionContext)

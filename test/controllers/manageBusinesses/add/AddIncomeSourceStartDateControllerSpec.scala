@@ -274,7 +274,7 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
 
                 val document: Document = Jsoup.parse(contentAsString(result))
                 document.title shouldBe getValidationErrorTabTitle(incomeSourceType)
-                document.getElementsByClass("govuk-error-message").text() shouldBe s"Error:: Enter the date your ${getHintText(incomeSourceType)}"
+                document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe s"Enter the date your ${getHintText(incomeSourceType)}"
               }
               "no form is submitted" in {
                 setupMockSuccess(mtdRole)
