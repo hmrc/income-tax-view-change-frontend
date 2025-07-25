@@ -21,7 +21,7 @@ import controllers.optIn.OptInErrorControllerISpec.headingText
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.NavBarFs
+import models.admin.{NavBarFs, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import play.api.http.Status.OK
@@ -48,6 +48,7 @@ class OptInErrorControllerISpec extends ControllerISpecHelper {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           "render the optInError page" in {
+            enable(ReportingFrequencyPage)
             disable(NavBarFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)

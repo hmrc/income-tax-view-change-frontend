@@ -21,6 +21,7 @@ import forms.optOut.ConfirmOptOutMultiTaxYearChoiceForm
 import mocks.auth.MockAuthActions
 import mocks.repositories.MockOptOutSessionDataRepository
 import mocks.services.MockOptOutService
+import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.optout.OptOutMultiYearViewModel
@@ -83,6 +84,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
       s"the user is authenticated as a $mtdRole" should {
         s"render the choose tax year page" that {
           "has intent not pre-selected" in {
+            enable(OptOutFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockGetSubmissionCountForTaxYear(counts)
@@ -96,6 +98,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
           }
 
           "has intent pre-selected" in {
+            enable(OptOutFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockGetSubmissionCountForTaxYear(counts)
@@ -105,6 +108,26 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
 
             Jsoup.parse(contentAsString(result)).select("#choice-year-1[checked]").toArray should have length 1
             status(result) shouldBe Status.OK
+          }
+        }
+
+        "render the home page" when {
+          "the OptOut feature switch is disabled" in {
+            disable(OptOutFs)
+
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+            val result = action(fakeRequest)
+
+            val redirectUrl = if (isAgent) {
+              "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
+            } else {
+              "/report-quarterly/income-and-expenses/view"
+            }
+
+            status(result) shouldBe Status.SEE_OTHER
+            redirectLocation(result) shouldBe Some(redirectUrl)
           }
         }
       }
@@ -118,6 +141,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
       s"the user is authenticated as a $mtdRole" should {
         "redirect to review and confirm page" when {
           "current tax is chosen" in {
+            enable(OptOutFs)
 
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -141,6 +165,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
           }
 
           "previous tax is chosen" in {
+            enable(OptOutFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -161,6 +186,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
           }
 
           "next tax is chosen" in {
+            enable(OptOutFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -183,6 +209,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
 
         "return a BadRequest" when {
           "choice is missing in form" in {
+            enable(OptOutFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -203,6 +230,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
 
         "return an Internal Server Error" when {
           "intent cant be saved" in {
+            enable(OptOutFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -218,6 +246,24 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
             ))
 
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          }
+        }
+        "redirect to the home page" when {
+          "the opt out feature switch is disabled" in {
+            disable(OptOutFs)
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+            val result = action(fakeRequest)
+
+            val redirectUrl = if (isAgent) {
+              "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
+            } else {
+              "/report-quarterly/income-and-expenses/view"
+            }
+
+            status(result) shouldBe Status.SEE_OTHER
+            redirectLocation(result) shouldBe Some(redirectUrl)
           }
         }
       }

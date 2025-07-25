@@ -24,6 +24,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.optout.OptOutService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.ReportingObligationsUtils
 import views.html.errorPages.templates.ErrorTemplate
 import views.html.optOut.OptOutCancelledView
 
@@ -40,47 +41,51 @@ class OptOutCancelledController @Inject()(val authActions: AuthActions,
                                            val ec: ExecutionContext
                                          )
 
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with ReportingObligationsUtils {
 
   def show(): Action[AnyContent] =
     authActions.asMTDIndividual.async { implicit user =>
-      optOutService.getTaxYearForOptOutCancelled()
-        .map { taxYear: Option[TaxYear] =>
-          Ok(view(
-            isAgent = false,
-            taxYear
-          ))
-        }.recover {
-          case _ =>
-            InternalServerError(
-              errorTemplate(
-                pageTitle = "standardError.heading",
-                heading = "standardError.heading",
-                message = "standardError.message",
-                isAgent = false
+      withOptOutFS {
+        optOutService.getTaxYearForOptOutCancelled()
+          .map { taxYear: Option[TaxYear] =>
+            Ok(view(
+              isAgent = false,
+              taxYear
+            ))
+          }.recover {
+            case _ =>
+              InternalServerError(
+                errorTemplate(
+                  pageTitle = "standardError.heading",
+                  heading = "standardError.heading",
+                  message = "standardError.message",
+                  isAgent = false
+                )
               )
-            )
-        }
+          }
+      }
     }
 
   def showAgent(): Action[AnyContent] =
     authActions.asMTDAgentWithConfirmedClient.async { implicit user =>
-      optOutService.getTaxYearForOptOutCancelled()
-        .map { taxYear: Option[TaxYear] =>
-          Ok(view(
-            isAgent = true,
-            taxYear
-          ))
-        }.recover {
-          case _ =>
-            InternalServerError(
-              errorTemplate(
-                pageTitle = "standardError.heading",
-                heading = "standardError.heading",
-                message = "standardError.message",
-                isAgent = true
+      withOptOutFS {
+        optOutService.getTaxYearForOptOutCancelled()
+          .map { taxYear: Option[TaxYear] =>
+            Ok(view(
+              isAgent = true,
+              taxYear
+            ))
+          }.recover {
+            case _ =>
+              InternalServerError(
+                errorTemplate(
+                  pageTitle = "standardError.heading",
+                  heading = "standardError.heading",
+                  message = "standardError.message",
+                  isAgent = true
+                )
               )
-            )
-        }
+          }
+      }
     }
 }

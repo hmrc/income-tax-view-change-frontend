@@ -19,6 +19,7 @@ package controllers.optOut
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import models.admin.OptOutFs
 import models.itsaStatus.ITSAStatus
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
@@ -48,7 +49,7 @@ class OptOutCancelledControllerISpec extends ControllerISpecHelper {
           "render the choose tax year page" when {
 
             "only single tax year is voluntary, CY-1 = Mandated, CY = Voluntary, CY+1 = Mandated" in {
-
+              enable(OptOutFs)
               val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
               stubAuthorised(mtdUserRole)
 
@@ -72,6 +73,7 @@ class OptOutCancelledControllerISpec extends ControllerISpecHelper {
             }
 
             "no tax year is voluntary, CY-1 = Mandated, CY = Mandated, CY+1 = Mandated" in {
+              enable(OptOutFs)
 
               val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
 
@@ -96,6 +98,7 @@ class OptOutCancelledControllerISpec extends ControllerISpecHelper {
             }
 
             "multiple tax years are voluntary, CY-1 = Mandated, CY = Voluntary, CY+1 = Voluntary" in {
+              enable(OptOutFs)
 
               val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
 

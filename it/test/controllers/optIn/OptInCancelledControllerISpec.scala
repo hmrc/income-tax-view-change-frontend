@@ -21,6 +21,7 @@ import controllers.ControllerISpecHelper
 import enums.JourneyType.{Opt, OptInJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import models.admin.ReportingFrequencyPage
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, Mandated}
@@ -66,6 +67,7 @@ class OptInCancelledControllerISpec extends ControllerISpecHelper with FeatureSw
         "is authenticated, with a valid enrolment" should {
           "render the choose tax year page" when {
             "only single tax year is Annual, CY-1 = Mandated, CY = Annual, CY+1 = Mandated" in {
+              enable(ReportingFrequencyPage)
               val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
               stubAuthorised(mtdUserRole)
 
@@ -94,6 +96,7 @@ class OptInCancelledControllerISpec extends ControllerISpecHelper with FeatureSw
           "render the error page" when {
 
             "no tax year is voluntary, CY-1 = Mandated, CY = Mandated, CY+1 = Mandated" in {
+              enable(ReportingFrequencyPage)
               val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
 
               stubAuthorised(mtdUserRole)
@@ -119,7 +122,7 @@ class OptInCancelledControllerISpec extends ControllerISpecHelper with FeatureSw
             }
 
             "multiple tax years are Annual, CY-1 = Mandated, CY = Annual, CY+1 = Annual" in {
-
+              enable(ReportingFrequencyPage)
               val previousTaxYear = dateService.getCurrentTaxYearEnd - 1
 
               stubAuthorised(mtdUserRole)

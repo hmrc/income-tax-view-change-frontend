@@ -20,6 +20,7 @@ import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateRes
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.{MockOptOutService, MockSessionService}
+import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.optout.{MultiYearOptOutCheckpointViewModel, OneYearOptOutCheckpointViewModel, OptOutCheckpointViewModel}
@@ -66,6 +67,7 @@ class ConfirmOptOutControllerSpec extends MockAuthActions
       s"the user is authenticated as a $mtdRole" should {
         s"render the confirm opt out page" that {
           "is for one year" in {
+            enable(OptOutFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockOptOutCheckPointPageViewModel(oneYearViewModelResponse)
@@ -76,6 +78,7 @@ class ConfirmOptOutControllerSpec extends MockAuthActions
           }
 
           "is for multiple years" in {
+            enable(OptOutFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockOptOutCheckPointPageViewModel(multiYearViewModelResponse)
@@ -88,6 +91,7 @@ class ConfirmOptOutControllerSpec extends MockAuthActions
         s"return result with $INTERNAL_SERVER_ERROR status" when {
 
           "there is no tax year eligible for opt out" in {
+            enable(OptOutFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockOptOutCheckPointPageViewModel(noEligibleTaxYearResponse)
@@ -98,6 +102,7 @@ class ConfirmOptOutControllerSpec extends MockAuthActions
           }
 
           "opt out service fails" in {
+            enable(OptOutFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockOptOutCheckPointPageViewModel(failedResponse)
@@ -105,6 +110,26 @@ class ConfirmOptOutControllerSpec extends MockAuthActions
             val result = action(fakeRequest)
 
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          }
+        }
+
+        "render the home page" when {
+          "the opt out feature switch is disabled" in {
+            disable(OptOutFs)
+
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+            val result = action(fakeRequest)
+
+            val redirectUrl = if (isAgent) {
+              "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
+            } else {
+              "/report-quarterly/income-and-expenses/view"
+            }
+
+            status(result) shouldBe Status.SEE_OTHER
+            redirectLocation(result) shouldBe Some(redirectUrl)
           }
         }
       }
@@ -117,6 +142,7 @@ class ConfirmOptOutControllerSpec extends MockAuthActions
       val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         "redirect to confirmed opt out controller" in {
+          enable(OptOutFs)
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockMakeOptOutUpdateRequest(optOutUpdateResponseSuccess)
@@ -130,6 +156,7 @@ class ConfirmOptOutControllerSpec extends MockAuthActions
         s"redirect to optOutError controller" when {
 
           "there is no tax year eligible for opt out" in {
+            enable(OptOutFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockMakeOptOutUpdateRequest(optOutUpdateResponseFailure)
@@ -141,6 +168,7 @@ class ConfirmOptOutControllerSpec extends MockAuthActions
           }
 
           "opt-out service fails" in {
+            enable(OptOutFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockMakeOptOutUpdateRequest(optOutUpdateResponseFailure)
@@ -149,6 +177,25 @@ class ConfirmOptOutControllerSpec extends MockAuthActions
 
             status(result) shouldBe Status.SEE_OTHER
             redirectLocation(result) shouldBe Some(routes.OptOutErrorController.show(isAgent).url)
+          }
+        }
+        "redirect to the home page" when {
+          "the opt out feature switch is disabled" in {
+            disable(OptOutFs)
+
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+            val result = action(fakeRequest)
+
+            val redirectUrl = if (isAgent) {
+              "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
+            } else {
+              "/report-quarterly/income-and-expenses/view"
+            }
+
+            status(result) shouldBe Status.SEE_OTHER
+            redirectLocation(result) shouldBe Some(redirectUrl)
           }
         }
       }

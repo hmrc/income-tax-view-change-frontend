@@ -29,6 +29,7 @@ import play.api.mvc._
 import services.DateService
 import services.optIn.OptInService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.ReportingObligationsUtils
 import views.html.optIn.CheckYourAnswersView
 
 import javax.inject.Inject
@@ -43,7 +44,7 @@ class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
                                            val appConfig: FrontendAppConfig,
                                            mcc: MessagesControllerComponents,
                                            val ec: ExecutionContext)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ReportingObligationsUtils {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -57,6 +58,7 @@ class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
 
   def show(isAgent: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
+      withReportingObligationsFS {
       withRecover(isAgent) {
 
         optInService.getMultiYearCheckYourAnswersViewModel(isAgent) map {
@@ -67,15 +69,17 @@ class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
             model.intentIsNextYear)))
           case None => errorHandler(isAgent).showInternalServerError()
         }
-
+      }
       }
   }
 
   def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      optInService.makeOptInCall() map {
-        case ITSAStatusUpdateResponseSuccess(_) => redirectToCheckpointPage(isAgent)
-        case _ => Redirect(OptInErrorController.show(isAgent))
+      withReportingObligationsFS {
+        optInService.makeOptInCall() map {
+          case ITSAStatusUpdateResponseSuccess(_) => redirectToCheckpointPage(isAgent)
+          case _ => Redirect(OptInErrorController.show(isAgent))
+        }
       }
   }
 
