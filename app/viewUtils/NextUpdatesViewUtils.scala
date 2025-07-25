@@ -35,20 +35,22 @@ class NextUpdatesViewUtils @Inject()(link: link)(
   def whatTheUserCanDo(optOutViewModel: Option[OptOutViewModel], isAgent: Boolean)(implicit user: MtdItUser[_], messages: Messages): Option[Html] = {
     val reportingFrequencyLink = controllers.routes.ReportingFrequencyPageController.show(isAgent).url
 
-    optOutViewModel.map {
-      case _ if isEnabled(ReportingFrequencyPage) =>
-        HtmlFormat.fill(
-          Seq(
-            Html(messages("nextUpdates.reporting.obligations.p.message")),
-            link(
-              link = reportingFrequencyLink,
-              messageKey = "nextUpdates.reporting.obligations.p.link",
-              id = Some("reporting-frequency-link")
-            )
+    val reportingFrequencyHtml: Html =
+      HtmlFormat.fill(
+        Seq(
+          Html(messages("nextUpdates.reporting.obligations.p.message")),
+          link(
+            link = reportingFrequencyLink,
+            messageKey = "nextUpdates.reporting.obligations.p.link",
+            id = Some("reporting-frequency-link")
           )
         )
+      )
+
+    optOutViewModel.fold(Some(reportingFrequencyHtml)) {
+      case _ if isEnabled(ReportingFrequencyPage) => Some(reportingFrequencyHtml)
       case m: OptOutOneYearViewModel if m.showWarning =>
-        HtmlFormat.fill(
+        Some(HtmlFormat.fill(
           Seq(
             Html(messages("nextUpdates.optOutOneYear.p.message", m.startYear, m.endYear)),
             link(
@@ -57,9 +59,9 @@ class NextUpdatesViewUtils @Inject()(link: link)(
               id = Some("single-year-opt-out-warning-link")
             )
           )
-        )
+        ))
       case m: OptOutOneYearViewModel =>
-        HtmlFormat.fill(
+        Some(HtmlFormat.fill(
           Seq(
             Html(messages("nextUpdates.optOutOneYear.p.message", m.startYear, m.endYear)),
             link(
@@ -68,9 +70,9 @@ class NextUpdatesViewUtils @Inject()(link: link)(
               id = Some("confirm-opt-out-link")
             )
           )
-        )
+        ))
       case _: OptOutMultiYearViewModel =>
-        HtmlFormat.fill(
+        Some(HtmlFormat.fill(
           Seq(
             Html(messages("nextUpdates.optOutMultiYear.p.message")),
             link(
@@ -79,7 +81,7 @@ class NextUpdatesViewUtils @Inject()(link: link)(
               id = Some("opt-out-link")
             )
           )
-        )
+        ))
     }
   }
 }
