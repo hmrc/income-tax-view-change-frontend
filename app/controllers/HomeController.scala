@@ -197,7 +197,6 @@ class HomeController @Inject()(val homeView: views.html.Home,
       case fdm: FinancialDetailsModel => fdm
     }
       whatYouOweService.getFilteredChargesList(chargesList,
-          reviewAndReconcileEnabled,
           isFilterOutCodedPoasEnabled,
           penaltiesEnabled,
           mainChargeIsNotPaidFilter).flatMap(_.dueDate)
@@ -209,7 +208,6 @@ private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsRespo
                                       (implicit user: MtdItUser[_]): Future[List[OutstandingChargeModel]] =
   whatYouOweService.getWhatYouOweChargesList(
     unpaidCharges,
-    isReviewAndReconciledEnabled = isEnabled(ReviewAndReconcilePoa),
     isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas),
     isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
     mainChargeIsNotPaidFilter
