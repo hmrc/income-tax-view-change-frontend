@@ -88,7 +88,6 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
             backUrl = backUrl,
             utr = user.saUtr,
             dunningLock = whatYouOweChargesList.hasDunningLock,
-            reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
             creditAndRefundUrl = (user.isAgent() match {
               case true if user.incomeSources.yearOfMigration.isDefined  => CreditAndRefundController.showAgent()
               case true                                                  => NotMigratedUserController.showAgent()
