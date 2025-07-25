@@ -29,7 +29,7 @@ class SelfServeTimeToPayConnectorISpec extends AnyWordSpec with ComponentSpecBas
 
   val url = s"/essttp-backend/sa/itsa/journey/start"
 
-  val requestBody = Json.parse(
+  val requestBodyYSAC = Json.parse(
     s"""
      {
       "returnUrl": "/report-quarterly/income-and-expenses/view",
@@ -38,8 +38,17 @@ class SelfServeTimeToPayConnectorISpec extends AnyWordSpec with ComponentSpecBas
     """.stripMargin
   )
 
+  val requestBodyWYO = Json.parse(
+    s"""
+     {
+      "returnUrl": "/report-quarterly/income-and-expenses/view",
+      "backUrl": "/report-quarterly/income-and-expenses/view/what-you-owe"
+     }
+    """.stripMargin
+  )
+
   "SelfServeTimeToPayConnector" when {
-    ".startSelfServeTimeToPayJourney()" when {
+    ".startSelfServeTimeToPayJourney() & YourSelfAssessmentCharges is enabled" when {
       "CREATED - 201" should {
         "return a successful response with valid json" in {
 
@@ -48,15 +57,15 @@ class SelfServeTimeToPayConnectorISpec extends AnyWordSpec with ComponentSpecBas
           val expectedResponse: SelfServeTimeToPayJourneyResponse =
             SelfServeTimeToPayJourneyResponseModel("journeyId", "nextUrl")
 
-          WiremockHelper.stubPostWithRequest(url, requestBody, CREATED, json.toString())
+          WiremockHelper.stubPostWithRequest(url, requestBodyYSAC, CREATED, json.toString())
 
-          val result: SelfServeTimeToPayJourneyResponse = connector.startSelfServeTimeToPayJourney().futureValue
+          val result: SelfServeTimeToPayJourneyResponse = connector.startSelfServeTimeToPayJourney(yourSelfAssessmentChargesEnabled = true).futureValue
 
           result shouldBe expectedResponse
 
           WiremockHelper.verifyPostContainingJson(
             uri = s"/essttp-backend/sa/itsa/journey/start",
-            bodyPart = Some(Json.toJson(requestBody))
+            bodyPart = Some(Json.toJson(requestBodyYSAC))
           )
         }
       }
@@ -67,15 +76,15 @@ class SelfServeTimeToPayConnectorISpec extends AnyWordSpec with ComponentSpecBas
           val expectedResponse: SelfServeTimeToPayJourneyResponse =
             SelfServeTimeToPayJourneyErrorResponse(CREATED, "Invalid Json")
 
-          WiremockHelper.stubPostWithRequest(url, requestBody, CREATED, "{}")
+          WiremockHelper.stubPostWithRequest(url, requestBodyYSAC, CREATED, "{}")
 
-          val result: SelfServeTimeToPayJourneyResponse = connector.startSelfServeTimeToPayJourney().futureValue
+          val result: SelfServeTimeToPayJourneyResponse = connector.startSelfServeTimeToPayJourney(yourSelfAssessmentChargesEnabled = true).futureValue
 
           result shouldBe expectedResponse
 
           WiremockHelper.verifyPostContainingJson(
             uri = s"/essttp-backend/sa/itsa/journey/start",
-            bodyPart = Some(Json.toJson(requestBody))
+            bodyPart = Some(Json.toJson(requestBodyYSAC))
 
           )
         }
@@ -87,16 +96,77 @@ class SelfServeTimeToPayConnectorISpec extends AnyWordSpec with ComponentSpecBas
           val expectedResponse: SelfServeTimeToPayJourneyResponse =
             SelfServeTimeToPayJourneyErrorResponse(INTERNAL_SERVER_ERROR, "Error Message")
 
-          WiremockHelper.stubPostWithRequest(url, requestBody, INTERNAL_SERVER_ERROR, "Error Message")
+          WiremockHelper.stubPostWithRequest(url, requestBodyYSAC, INTERNAL_SERVER_ERROR, "Error Message")
 
-          val result: SelfServeTimeToPayJourneyResponse = connector.startSelfServeTimeToPayJourney().futureValue
+          val result: SelfServeTimeToPayJourneyResponse = connector.startSelfServeTimeToPayJourney(yourSelfAssessmentChargesEnabled = true).futureValue
 
           result shouldBe expectedResponse
 
           WiremockHelper.verifyPostContainingJson(
             uri = s"/essttp-backend/sa/itsa/journey/start",
-            bodyPart = Some(Json.toJson(requestBody))
+            bodyPart = Some(Json.toJson(requestBodyYSAC))
+          )
+        }
+      }
+    }
 
+    ".startSelfServeTimeToPayJourney() & YourSelfAssessmentCharges is disabled" when {
+      "CREATED - 201" should {
+        "return a successful response with valid json" in {
+
+          val json = Json.toJson(SelfServeTimeToPayJourneyResponseModel("journeyId", "nextUrl"))
+
+          val expectedResponse: SelfServeTimeToPayJourneyResponse =
+            SelfServeTimeToPayJourneyResponseModel("journeyId", "nextUrl")
+
+          WiremockHelper.stubPostWithRequest(url, requestBodyWYO, CREATED, json.toString())
+
+          val result: SelfServeTimeToPayJourneyResponse = connector.startSelfServeTimeToPayJourney(yourSelfAssessmentChargesEnabled = false).futureValue
+
+          result shouldBe expectedResponse
+
+          WiremockHelper.verifyPostContainingJson(
+            uri = s"/essttp-backend/sa/itsa/journey/start",
+            bodyPart = Some(Json.toJson(requestBodyWYO))
+          )
+        }
+      }
+
+      "CREATED - 201" should {
+        "return a successful response with invalid json" in {
+
+          val expectedResponse: SelfServeTimeToPayJourneyResponse =
+            SelfServeTimeToPayJourneyErrorResponse(CREATED, "Invalid Json")
+
+          WiremockHelper.stubPostWithRequest(url, requestBodyWYO, CREATED, "{}")
+
+          val result: SelfServeTimeToPayJourneyResponse = connector.startSelfServeTimeToPayJourney(yourSelfAssessmentChargesEnabled = false).futureValue
+
+          result shouldBe expectedResponse
+
+          WiremockHelper.verifyPostContainingJson(
+            uri = s"/essttp-backend/sa/itsa/journey/start",
+            bodyPart = Some(Json.toJson(requestBodyWYO))
+
+          )
+        }
+      }
+
+      "INTERNAL_SERVER_ERROR - 500" should {
+        "return PaymentJourneyErrorResponse" in {
+
+          val expectedResponse: SelfServeTimeToPayJourneyResponse =
+            SelfServeTimeToPayJourneyErrorResponse(INTERNAL_SERVER_ERROR, "Error Message")
+
+          WiremockHelper.stubPostWithRequest(url, requestBodyWYO, INTERNAL_SERVER_ERROR, "Error Message")
+
+          val result: SelfServeTimeToPayJourneyResponse = connector.startSelfServeTimeToPayJourney(yourSelfAssessmentChargesEnabled = false).futureValue
+
+          result shouldBe expectedResponse
+
+          WiremockHelper.verifyPostContainingJson(
+            uri = s"/essttp-backend/sa/itsa/journey/start",
+            bodyPart = Some(Json.toJson(requestBodyWYO))
           )
         }
       }

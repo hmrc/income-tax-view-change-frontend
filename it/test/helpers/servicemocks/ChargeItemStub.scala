@@ -40,7 +40,8 @@ object ChargeItemStub {
     lpiWithDunningLock = None,
     amountCodedOut = Some(2500),
     dunningLock = false,
-    poaRelevantAmount = None
+    poaRelevantAmount = None,
+    chargeReference = Some("chargeRef")
   )
 
   def chargeItemWithInterest(chargeType: ChargeType = PoaOneDebit,
@@ -61,7 +62,8 @@ object ChargeItemStub {
     lpiWithDunningLock = None,
     amountCodedOut = Some(2500),
     dunningLock = false,
-    poaRelevantAmount = None
+    poaRelevantAmount = None,
+    chargeReference = Some("chargeRef")
   )
 
   def chargeItemWithInterestAndOverdue(chargeType: ChargeType = PoaOneDebit,
@@ -83,7 +85,8 @@ object ChargeItemStub {
     lpiWithDunningLock = None,
     amountCodedOut = Some(2500),
     dunningLock = false,
-    poaRelevantAmount = None
+    poaRelevantAmount = None,
+    chargeReference = Some("chargeRef")
   )
 
 }

@@ -18,7 +18,7 @@ package models.penalties.latePayment
 
 import play.api.libs.json.{Format, Json}
 
-case class LatePaymentPenalty(details: Option[Seq[LPPDetails]], manualLPPIndicator: Boolean)
+case class LatePaymentPenalty(details: Option[Seq[LPPDetails]], manualLPPIndicator: Option[Boolean])
 
 object LatePaymentPenalty {
   implicit val format: Format[LatePaymentPenalty] = Json.format[LatePaymentPenalty]

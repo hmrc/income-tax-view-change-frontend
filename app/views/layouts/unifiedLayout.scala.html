@@ -85,7 +85,7 @@
         else controllers.routes.HomeController.show().url
 
     hmrcHeader(Header(
-        homepageUrl = "https://www.gov.uk",
+        homepageUrl = appConfig.homepageLink,
         serviceName = if(showServiceName) serviceName else None,
         serviceUrl = serviceUrl,
         language = CurrentLanguage(),

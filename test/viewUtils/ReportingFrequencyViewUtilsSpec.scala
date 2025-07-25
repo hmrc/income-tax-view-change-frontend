@@ -16,16 +16,21 @@
 
 package viewUtils
 
+import auth.MtdItUser
+import authV2.AuthActionsTestData.defaultAuthUserDetails
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
+import enums.MTDIndividual
 import implicits.ImplicitDateFormatter
-import models.incomeSourceDetails.TaxYear
+import models.admin.OptInOptOutContentUpdateR17
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.{Annual, Mandated, Voluntary}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import services.DateService
 import services.optout.OptOutProposition
+import testConstants.BaseTestConstants.{testMtditid, testNino}
 import testUtils.UnitSpec
 import uk.gov.hmrc.play.language.LanguageUtils
 
@@ -40,6 +45,20 @@ class ReportingFrequencyViewUtilsSpec extends UnitSpec with FeatureSwitching wit
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
   implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
+
+  implicit val csbTestUser: MtdItUser[_] = MtdItUser(
+    testMtditid,
+    testNino,
+    MTDIndividual,
+    defaultAuthUserDetails(MTDIndividual),
+    None,
+    IncomeSourceDetailsModel(
+      nino = testNino,
+      mtdbsa = testMtditid,
+      yearOfMigration = None,
+      businesses = List.empty,
+      properties = List.empty)
+  )(FakeRequest())
 
   lazy val fixedDate: LocalDate = LocalDate.of(2023, 12, 15)
 
@@ -59,10 +78,9 @@ class ReportingFrequencyViewUtilsSpec extends UnitSpec with FeatureSwitching wit
   val reportingFrequencyViewUtils = new ReportingFrequencyViewUtils()
 
   "ReportingFrequencyViewUtils" when {
-
     ".itsaStatusString()" when {
-
       "the ITSAStatus == Mandated" should {
+        disable(OptInOptOutContentUpdateR17)
 
         "return 'Quarterly (mandatory)'" in {
 
@@ -96,8 +114,8 @@ class ReportingFrequencyViewUtilsSpec extends UnitSpec with FeatureSwitching wit
     ".itsaStatusTable()" when {
 
       "the CY-1 == Mandated , CY == Voluntary, CY+1 == Mandated" should {
-
         "return the correct content" in {
+          disable(OptInOptOutContentUpdateR17)
 
           val optOutProposition: OptOutProposition =
             OptOutProposition.createOptOutProposition(
@@ -111,9 +129,54 @@ class ReportingFrequencyViewUtilsSpec extends UnitSpec with FeatureSwitching wit
           val actual = reportingFrequencyViewUtils.itsaStatusTable(optOutProposition)
           val expected =
             List(
-              ("2023 to 2024", Some("Quarterly (mandatory)")),
-              ("2024 to 2025", Some("Quarterly")),
-              ("2025 to 2026", Some("Quarterly (mandatory)"))
+              ("2023 to 2024", None, Some("Quarterly (mandatory)")),
+              ("2024 to 2025", None, Some("Quarterly")),
+              ("2025 to 2026", None, Some("Quarterly (mandatory)"))
+            )
+          actual shouldBe expected
+        }
+      }
+      "(new content FS enabled) the CY-1 == Mandated , CY == Voluntary, CY+1 == Mandated" should {
+
+        "return the correct content" in {
+          enable(OptInOptOutContentUpdateR17)
+          val optOutProposition: OptOutProposition =
+            OptOutProposition.createOptOutProposition(
+              currentYear = TaxYear(2024, 2025),
+              previousYearCrystallised = false,
+              previousYearItsaStatus = Mandated,
+              currentYearItsaStatus = Voluntary,
+              nextYearItsaStatus = Mandated
+            )
+
+          val actual = reportingFrequencyViewUtils.itsaStatusTable(optOutProposition)
+          val expected =
+            List(
+              ("2023 to 2024", Some("Yes"), Some("Required")),
+              ("2024 to 2025", Some("Yes"), Some("Voluntarily signed up")),
+              ("2025 to 2026", Some("Yes"), Some("Required"))
+            )
+          actual shouldBe expected
+        }
+      }
+      "(new content FS enabled) the CY-1 == Mandated(crystallised) , CY == Voluntary, CY+1 == Mandated" should {
+
+        "return the correct content" in {
+          enable(OptInOptOutContentUpdateR17)
+          val optOutProposition: OptOutProposition =
+            OptOutProposition.createOptOutProposition(
+              currentYear = TaxYear(2024, 2025),
+              previousYearCrystallised = true,
+              previousYearItsaStatus = Mandated,
+              currentYearItsaStatus = Voluntary,
+              nextYearItsaStatus = Mandated
+            )
+
+          val actual = reportingFrequencyViewUtils.itsaStatusTable(optOutProposition)
+          val expected =
+            List(
+              ("2024 to 2025", Some("Yes"), Some("Voluntarily signed up")),
+              ("2025 to 2026", Some("Yes"), Some("Required"))
             )
           actual shouldBe expected
         }
@@ -122,6 +185,7 @@ class ReportingFrequencyViewUtilsSpec extends UnitSpec with FeatureSwitching wit
       "the CY-1 == Mandated , CY == Voluntary, CY+1 == Annual" should {
 
         "return the correct content" in {
+          disable(OptInOptOutContentUpdateR17)
 
           val optOutProposition: OptOutProposition =
             OptOutProposition.createOptOutProposition(
@@ -135,9 +199,33 @@ class ReportingFrequencyViewUtilsSpec extends UnitSpec with FeatureSwitching wit
           val actual = reportingFrequencyViewUtils.itsaStatusTable(optOutProposition)
           val expected =
             List(
-              ("2023 to 2024", Some("Quarterly (mandatory)")),
-              ("2024 to 2025", Some("Quarterly")),
-              ("2025 to 2026", Some("Annual"))
+              ("2023 to 2024", None, Some("Quarterly (mandatory)")),
+              ("2024 to 2025", None, Some("Quarterly")),
+              ("2025 to 2026", None, Some("Annual"))
+            )
+          actual shouldBe expected
+        }
+      }
+      "(new content) the CY-1 == Mandated , CY == Voluntary, CY+1 == Annual" should {
+
+        "return the correct content" in {
+          enable(OptInOptOutContentUpdateR17)
+
+          val optOutProposition: OptOutProposition =
+            OptOutProposition.createOptOutProposition(
+              currentYear = TaxYear(2024, 2025),
+              previousYearCrystallised = false,
+              previousYearItsaStatus = Mandated,
+              currentYearItsaStatus = Voluntary,
+              nextYearItsaStatus = Annual
+            )
+
+          val actual = reportingFrequencyViewUtils.itsaStatusTable(optOutProposition)
+          val expected =
+            List(
+              ("2023 to 2024", Some("Yes"), Some("Required")),
+              ("2024 to 2025", Some("Yes"), Some("Voluntarily signed up")),
+              ("2025 to 2026", Some("No"), Some("Opted out"))
             )
           actual shouldBe expected
         }

@@ -93,3 +93,8 @@ GET        /report-quarterly/income-and-expenses/view/test-only/showOptOutSessio
 
 GET       /report-quarterly/income-and-expenses/view/test-only/upsertOptOutSession                         testOnly.controllers.OptOutMongoTestJourneyController.upsert(key: Option[String], value: Option[String])
 
++nocsrf
+POST    /report-quarterly/income-and-expenses/view/test-only/penaltiesData/penaltyDetails                   testOnly.controllers.StubPenaltiesDataController.submitStubbedPenaltyDetails()
+
++nocsrf
+POST    /report-quarterly/income-and-expenses/view/test-only/penaltiesData/financialDetails                 testOnly.controllers.StubPenaltiesDataController.submitStubbedFinancialData()

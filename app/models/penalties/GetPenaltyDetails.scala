@@ -45,7 +45,7 @@ object GetPenaltyDetailsParser {
 
   case object GetPenaltyDetailsMalformed extends GetPenaltyDetailsFailure
 
-  type GetPenaltyDetailsResponse = Either[GetPenaltyDetailsFailure, GetPenaltyDetailsSuccess]
+  type GetPenaltyDetailsResponse = Either[GetPenaltyDetailsFailure, GetPenaltyDetailsSuccessResponse]
 
   implicit object GetPenaltyDetailsReads extends HttpReads[GetPenaltyDetailsResponse] {
     override def read(method: String, url: String, response: HttpResponse): GetPenaltyDetailsResponse = {
@@ -60,13 +60,15 @@ object GetPenaltyDetailsParser {
               logger.debug(s"[GetPenaltyDetailsReads][read] Json validation errors: $errors")
               Left(GetPenaltyDetailsMalformed)
           }
-        case status@(NOT_FOUND | BAD_REQUEST | CONFLICT | INTERNAL_SERVER_ERROR | SERVICE_UNAVAILABLE) => {
+        case status@(BAD_REQUEST | CONFLICT | INTERNAL_SERVER_ERROR | SERVICE_UNAVAILABLE) => {
           logger.error(s"[GetPenaltyDetailsReads][read] Received $status when trying to call GetPenaltyDetails - with body: ${response.body}")
           Left(GetPenaltyDetailsFailureResponse(status))
         }
-        case status@NO_CONTENT => {
-          logger.debug(s"[GetPenaltyDetailsReads][read] Received 204 when calling ETMP")
-          Left(GetPenaltyDetailsFailureResponse(status))
+        //Status of NOT FOUND is currently the default return value for penalties,
+        //but code to implement a NO_CONTENT response is also being implemented so both included until migration to HIP is completed and a single return finalised
+        case status@(NO_CONTENT | NOT_FOUND) => {
+          logger.debug(s"[GetPenaltyDetailsReads][read] Received $status when calling penalties, returning empty data response")
+          Right(GetPenaltyDetailsSuccessResponse(GetPenaltyDetails(None, None, None, None)))
         }
         case status@UNPROCESSABLE_ENTITY => {
           logger.error(s"[GetPenaltyDetailsReads][read] Received 422 when trying to call GetPenaltyDetails - with body: ${response.body}")

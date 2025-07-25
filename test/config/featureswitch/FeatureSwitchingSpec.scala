@@ -57,8 +57,10 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
     DisplayBusinessStartDate,
     AccountingMethodJourney,
     PenaltiesAndAppeals,
+    PenaltiesBackendEnabled,
     YourSelfAssessmentCharges,
-    OptInOptOutContentUpdateR17
+    OptInOptOutContentUpdateR17,
+    SelfServeTimeToPayR17
   )
 
   "FeatureSwitchName" when {

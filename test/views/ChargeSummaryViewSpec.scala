@@ -85,8 +85,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       poaTwoChargeUrl = "testUrl2",
       adjustmentHistory = adjustmentHistory,
       poaExtraChargeLink = poaExtraChargeLink,
-      LSPUrl = Some("testLSPUrl"),
-      LPPUrl = Some("testLPPUrl"))
+      LSPUrl = "testLSPUrl",
+      LPPUrl = "testLPPUrl")
 
     val view: Html = chargeSummary(viewModel, whatYouOweUrl, saChargesUrl, yourSelfAssessmentChargesFS )
     val document: Document = Jsoup.parse(view.toString())
@@ -132,7 +132,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       amountCodedOut = None,
       dunningLock = false,
       poaRelevantAmount = None,
-
+      chargeReference = Some("chargeRef")
     ))
 
   def paymentsForCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal, clearingSAPDocument: Option[String], clearingId: Option[String]): PaymentHistoryAllocations =
@@ -1460,8 +1460,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         poaOneChargeUrl = "",
         poaTwoChargeUrl = "",
         adjustmentHistory = defaultAdjustmentHistory,
-        LSPUrl = None,
-        LPPUrl = None)
+        LSPUrl = "",
+        LPPUrl = "")
       val thrownException = intercept[MissingFieldException] {
 
         chargeSummary(exceptionViewModel, "/report-quarterly/income-and-expenses/view/what-you-owe", "/report-quarterly/income-and-expenses/view/your-self-assessment-charges", false)

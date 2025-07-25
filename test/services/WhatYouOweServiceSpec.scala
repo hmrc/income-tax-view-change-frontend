@@ -278,8 +278,8 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
             mainChargeIsNotPaidFilter).futureValue shouldBe WhatYouOweChargesList(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             chargesList = List(
-              balancingChargeNics2.copy(dueDate = Some(LocalDate.parse("2021-08-24"))),
-              balancingChargeCancelled.copy(dueDate =Some(LocalDate.parse("2021-08-25")))),
+              balancingChargeNics2.copy(dueDate = Some(LocalDate.parse("2021-08-24")), chargeReference = Some("ABCD1234")),
+              balancingChargeCancelled.copy(dueDate =Some(LocalDate.parse("2021-08-25")), chargeReference = Some("ABCD1234"))),
             outstandingChargesModel = None,
             codedOutDetails = Some(balancingCodedOut)
           )

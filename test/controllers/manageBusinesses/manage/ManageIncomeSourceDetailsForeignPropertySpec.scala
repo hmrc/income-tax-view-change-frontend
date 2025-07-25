@@ -26,7 +26,7 @@ import play.api.http.Status
 import play.api.test.Helpers._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{emptyUIJourneySessionData, notCompletedUIJourneySessionData}
 
-class ManageIncomeSourceDetailsForeignPropertyISpec extends ManageIncomeSourceDetailsHelper {
+class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDetailsHelper {
 
   mtdAllRoles.foreach { mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
@@ -56,7 +56,7 @@ class ManageIncomeSourceDetailsForeignPropertyISpec extends ManageIncomeSourceDe
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK
               val document: Document = Jsoup.parse(contentAsString(result))
-              document.title shouldBe title(mtdUserRole)
+              document.title shouldBe title()
               getHeading(document) shouldBe heading
               hasChangeFirstYearReportingMethodLink(document) shouldBe false
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
@@ -81,7 +81,7 @@ class ManageIncomeSourceDetailsForeignPropertyISpec extends ManageIncomeSourceDe
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK
               val document: Document = Jsoup.parse(contentAsString(result))
-              document.title shouldBe title(mtdUserRole)
+              document.title shouldBe title()
               getHeading(document) shouldBe heading
               hasChangeFirstYearReportingMethodLink(document) shouldBe false
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
@@ -132,21 +132,16 @@ class ManageIncomeSourceDetailsForeignPropertyISpec extends ManageIncomeSourceDe
               status(result) shouldBe Status.OK
 
               val document: Document = Jsoup.parse(contentAsString(result))
-              document.title shouldBe title(mtdUserRole)
+              document.title shouldBe title()
               getHeading(document) shouldBe heading
 
               hasInsetText(document) shouldBe true
-              document.getElementById("reportingFrequency").text() should include(
-                messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyPrefix")
-              )
+              document.getElementById("reportingFrequency").text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting obligations for all your businesses."
 
-              val summaryKeys = getManageDetailsSummaryKeys(document).eachText()
-              summaryKeys should contain(
-                messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage", "2022", "2023")
-              )
-              summaryKeys should contain(
-                messages("incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage", "2023", "2024")
-              )
+              val summaryKeys = getManageDetailsSummaryKeys(document)
+
+              summaryKeys.eq(2).text() shouldBe "Using Making Tax Digital for Income Tax for 2022 to 2023"
+              summaryKeys.eq(3).text() shouldBe  "Using Making Tax Digital for Income Tax for 2023 to 2024"
 
               val summaryValues = getManageDetailsSummaryValues(document).eachText()
               summaryValues should contain("No")
@@ -172,7 +167,7 @@ class ManageIncomeSourceDetailsForeignPropertyISpec extends ManageIncomeSourceDe
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK
               val document: Document = Jsoup.parse(contentAsString(result))
-              document.title shouldBe title(mtdUserRole)
+              document.title shouldBe title()
               getHeading(document) shouldBe heading
               hasChangeFirstYearReportingMethodLink(document) shouldBe true
               hasChangeSecondYearReportingMethodLink(document) shouldBe true
@@ -198,7 +193,7 @@ class ManageIncomeSourceDetailsForeignPropertyISpec extends ManageIncomeSourceDe
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK
               val document: Document = Jsoup.parse(contentAsString(result))
-              document.title shouldBe title(mtdUserRole)
+              document.title shouldBe title()
               getHeading(document) shouldBe heading
               hasChangeFirstYearReportingMethodLink(document) shouldBe false
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
@@ -224,7 +219,7 @@ class ManageIncomeSourceDetailsForeignPropertyISpec extends ManageIncomeSourceDe
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK
               val document: Document = Jsoup.parse(contentAsString(result))
-              document.title shouldBe title(mtdUserRole)
+              document.title shouldBe title()
               getHeading(document) shouldBe heading
               hasChangeFirstYearReportingMethodLink(document) shouldBe false
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
@@ -252,7 +247,7 @@ class ManageIncomeSourceDetailsForeignPropertyISpec extends ManageIncomeSourceDe
               val document: Document = Jsoup.parse(contentAsString(result))
               val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
 
-              document.title shouldBe title(mtdUserRole)
+              document.title shouldBe title()
               getHeading(document) shouldBe heading
               hasChangeFirstYearReportingMethodLink(document) shouldBe false
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
@@ -277,7 +272,7 @@ class ManageIncomeSourceDetailsForeignPropertyISpec extends ManageIncomeSourceDe
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK
               val document: Document = Jsoup.parse(contentAsString(result))
-              document.title shouldBe title(mtdUserRole)
+              document.title shouldBe title()
               getHeading(document) shouldBe heading
               hasChangeFirstYearReportingMethodLink(document) shouldBe true
               hasChangeSecondYearReportingMethodLink(document) shouldBe true

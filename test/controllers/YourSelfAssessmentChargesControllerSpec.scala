@@ -20,7 +20,7 @@ import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockAuthActions
 import mocks.services.MockClaimToAdjustService
-import models.admin.{CreditsRefundsRepay, ReviewAndReconcilePoa}
+import models.admin.{CreditsRefundsRepay, ReviewAndReconcilePoa,PenaltiesAndAppeals}
 import models.financialDetails.{BalanceDetails, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
 import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
@@ -113,9 +113,21 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
     ))
   )
 
-  val noFinancialDetailErrors: Seq[FinancialDetailsModel] = List(testFinancialDetail(2018))
-  val hasFinancialDetailErrors: Seq[FinancialDetailsResponseModel] = List(testFinancialDetail(2018), testFinancialDetailsErrorModel)
-  val hasAFinancialDetailError: Seq[FinancialDetailsErrorModel] = List(testFinancialDetailsErrorModel)
+  def whatYouOweChargesListWithLpp2: WhatYouOweChargesList = WhatYouOweChargesList(
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    financialDetailsLPP2,
+    Some(OutstandingChargesModel(List()))
+  )
+
+  def whatYouOweChargesListWithLPP2NoChargeRef: WhatYouOweChargesList = WhatYouOweChargesList(
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    financialDetailsLPP2NoChargeRef,
+    Some(OutstandingChargesModel(List()))
+  )
+
+  val noFinancialDetailErrors = List(testFinancialDetail(2018))
+  val hasFinancialDetailErrors = List(testFinancialDetail(2018), testFinancialDetailsErrorModel)
+  val hasAFinancialDetailError = List(testFinancialDetailsErrorModel)
   val interestChargesWarningText = "! Warning Interest charges will keep increasing every day until the charges they relate to are paid in full."
 
   mtdAllRoles.foreach { case mtdUserRole =>
@@ -133,7 +145,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
-                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
@@ -146,7 +158,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
               "the user has no charges" in {
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListEmpty))
@@ -163,7 +175,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 setupMockSuccess(mtdUserRole)
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
-                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListOnlyReconciliation))
@@ -181,12 +193,13 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
 
             "displays the money in your account" when {
               "the user has available credit in his account and CreditsRefundsRepay FS enabled" in {
-                def whatYouOweWithAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, Some(300.00), None, None, None, None), List.empty)
+                def whatYouOweWithAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(
+                  BalanceDetails(1.00, 2.00, 3.00, Some(300.00), None, None, None, None), List.empty)
 
                 setupMockSuccess(mtdUserRole)
                 enable(CreditsRefundsRepay)
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithAvailableCredits))
@@ -205,11 +218,12 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
 
             "does not display the money in your account" when {
               "the user has available credit in his account but CreditsRefundsRepay FS disabled" in {
-                def whatYouOweWithZeroAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, Some(0.00), None, None, None, None), List.empty)
+                def whatYouOweWithZeroAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(
+                  BalanceDetails(1.00, 2.00, 3.00, Some(0.00), None, None, None, None), List.empty)
 
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithZeroAvailableCredits))
@@ -229,7 +243,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
-                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
@@ -242,7 +256,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
-                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+                when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
@@ -252,13 +266,28 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
 
               }
             }
+
+            "user has a second late payment penalty with a chargeReference, so url can be generated" in {
+              enable(PenaltiesAndAppeals)
+              mockSingleBISWithCurrentYearAsMigrationYear()
+              setupMockSuccess(mtdUserRole)
+              setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+
+              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+                .thenReturn(Future.successful(whatYouOweChargesListWithLpp2))
+              when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
+                .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
+
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.OK
+            }
           }
 
           "render the error page" when {
             "PaymentsDueService returns an exception" in {
               setupMockSuccess(mtdUserRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
-              when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+              when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                 .thenReturn(Future.failed(new Exception("failed to retrieve data")))
               when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future.failed(new Exception("failed to retrieve data")))
@@ -284,7 +313,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
               mockSingleBISWithCurrentYearAsMigrationYear()
               when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(whatYouOweChargesListFull))
-              when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney()(any()))
+              when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                 .thenReturn(Future.failed(new Exception("failed to retrieve data")))
 
               val result = action(fakeRequest)
@@ -292,6 +321,19 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
 
 
+            }
+
+            "user has a second late payment penalty without a chargeReference, so url cannot be generated" in {
+              enable(PenaltiesAndAppeals)
+              mockSingleBISWithCurrentYearAsMigrationYear()
+              setupMockSuccess(mtdUserRole)
+              setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+
+              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+                .thenReturn(Future.successful(whatYouOweChargesListWithLPP2NoChargeRef))
+
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
             }
           }
         }

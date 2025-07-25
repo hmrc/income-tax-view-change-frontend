@@ -100,7 +100,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val cancelledPayeSelfAssessment: String = messages("whatYouOwe.cancelledPayeSelfAssessment.text")
   val poa1CollectedCodedOut = messages("whatYouOwe.poa1CodedOut.text")
   val poa2CollectedCodedOut = messages("whatYouOwe.poa2CodedOut.text")
-  val penaltiesCalcUrl: String = "http://localhost:9185/penalties/income-tax/calculation"
+  val paymentPlanText: String = s"${messages("selfAssessmentCharges.payment-plan-1")} ${messages("selfAssessmentCharges.payment-plan-link-text")} (opens in new tab)."
+
 
   val interestEndDateFuture: LocalDate = LocalDate.of(2100, 1, 1)
 
@@ -143,7 +144,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     val defaultClaimToAdjustViewModel = ctaViewModel(adjustPaymentsOnAccountFSEnabled)
 
-    val html: HtmlFormat.Appendable = whatYouOweView(
+    val wyoViewModel: WhatYouOweViewModel = WhatYouOweViewModel(
       currentDate = dateService.getCurrentDate,
       hasOverdueOrAccruingInterestCharges = false,
       whatYouOweChargesList = charges,
@@ -152,16 +153,21 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       backUrl = "testBackURL",
       utr = Some("1234567890"),
       dunningLock = dunningLock,
+      reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       creditAndRefundUrl = CreditAndRefundController.show().url,
+      creditAndRefundEnabled = true,
       taxYearSummaryUrl = _ => controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear).url,
+      claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),
+      lpp2Url = LPP2Url,
       adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = false).url,
       chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) =>
         ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url,
       paymentHandOffUrl = PaymentController.paymentHandoff(_, None).url,
-      reviewAndReconcileEnabled = reviewAndReconcileEnabled,
-      creditAndRefundEnabled = true,
-      claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),
-      LPP2Url = LPP2Url)(FakeRequest(), individualUser, implicitly, dateService)
+      selfServeTimeToPayEnabled = true,
+      selfServeTimeToPayStartUrl = "/self-serve-time-to-pay"
+    )
+
+    val html: HtmlFormat.Appendable = whatYouOweView(wyoViewModel)(FakeRequest(), individualUser, implicitly, dateService)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def findElementById(id: String): Option[Element] = {
@@ -196,10 +202,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
 
     val whatYouOweView: WhatYouOwe = app.injector.instanceOf[WhatYouOwe]
-
     private val currentDateIs: LocalDate = dateService.getCurrentDate
-    val html: HtmlFormat.Appendable = whatYouOweView(
-      currentDateIs,
+
+    val wyoViewModelAgent: WhatYouOweViewModel = WhatYouOweViewModel(
+      currentDate = currentDateIs,
       hasOverdueOrAccruingInterestCharges = false,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
@@ -207,17 +213,21 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       backUrl = "testBackURL",
       utr = Some("1234567890"),
       dunningLock = dunningLock,
+      reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       creditAndRefundUrl = CreditAndRefundController.showAgent().url,
+      creditAndRefundEnabled = true,
       taxYearSummaryUrl = _ => controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url,
+      claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),
+      lpp2Url = "",
       adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = true).url,
       chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) =>
         ChargeSummaryController.showAgent(taxYearEnd, transactionId, isInterest).url,
       paymentHandOffUrl = PaymentController.paymentHandoff(_, None).url,
-      reviewAndReconcileEnabled = reviewAndReconcileEnabled,
-      creditAndRefundEnabled = true,
-      claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),
-      LPP2Url = ""
-    )(FakeRequest(), agentUser, implicitly, dateService)
+      selfServeTimeToPayEnabled = true,
+      selfServeTimeToPayStartUrl = "/self-serve-time-to-pay"
+    )
+
+    val html: HtmlFormat.Appendable = whatYouOweView(wyoViewModelAgent)(FakeRequest(), agentUser, implicitly, dateService)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
 
@@ -490,7 +500,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           poa2ExtraTable.select("td").last().text() shouldBe "£40.00"
         }
-        "have penalty charges in table" in new TestSetup(whatYouOweAllPenalties, LPP2Url = penaltiesCalcUrl) {
+        "have penalty charges in table" in new TestSetup(whatYouOweAllPenalties, LPP2Url = appConfig.incomeTaxPenaltiesFrontendLPP2Calculation("chargeRefLPP2")) {
           val lpp1Row: Element = pageDocument.getElementsByClass("govuk-table__row").get(3)
           lpp1Row.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
           lpp1Row.select("td").get(1).text() shouldBe lpp1Text + " 3"
@@ -501,7 +511,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           val lpp2Row: Element = pageDocument.getElementsByClass("govuk-table__row").get(4)
           lpp2Row.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
           lpp2Row.select("td").get(1).text() shouldBe lpp2Text + " 4"
-          lpp2Row.select("td").get(1).getElementsByClass("govuk-link").attr("href") shouldBe penaltiesCalcUrl
+          lpp2Row.select("td").get(1).getElementsByClass("govuk-link").attr("href") shouldBe appConfig.incomeTaxPenaltiesFrontendLPP2Calculation("chargeRefLPP2")
           lpp2Row.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
           lpp2Row.select("td").last().text() shouldBe "£75.00"
 
@@ -717,6 +727,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
           pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
 
+        }
+
+        "display the payment plan content and link" in new TestSetup(charges = whatYouOweDataWithOverdueDataAndInterest()) {
+          val paymentPlan: Element = pageDocument.getElementById("payment-plan")
+          paymentPlan.text() shouldBe paymentPlanText
         }
       }
 
@@ -949,6 +964,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
 
+        }
+
+        "display the payment plan content and link" in new TestSetup(charges = whatYouOweDataWithOverdueDataAndInterest()) {
+          val paymentPlan: Element = pageDocument.getElementById("payment-plan")
+          paymentPlan.text() shouldBe paymentPlanText
         }
 
         "display the paragraph about payments under review when there is a dunningLock" in new TestSetup(

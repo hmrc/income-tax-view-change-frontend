@@ -31,7 +31,7 @@
     govukPanel : GovukPanel
 )
 
-@(model: OptInCompletedViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(model: OptInCompletedViewModel)(implicit messages: Messages, user: auth.MtdItUser[_], appConfig: config.FrontendAppConfig)
 
 @panel = @{
     govukPanel(
@@ -43,11 +43,11 @@
 }
 
 @makingTaxDigitalUrl = {
-    @messages("optin.completedOptIn.submitUpdates.desc1.b.url")
+    @appConfig.compatibleSoftwareLink
 }
 
 @incomeThresholdUrl = {
-    @messages("optin.completedOptIn.incomeThreshold.desc.b.url")
+    @appConfig.saWhoNeedsToSignUpUrl
 }
 
 @submitUpdatesInSoftware = {

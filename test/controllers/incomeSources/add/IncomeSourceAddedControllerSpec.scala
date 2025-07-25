@@ -207,7 +207,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions
                   tradingStartDate = Some(LocalDate.of(2022, 1, 1)),
                   contextualTaxYear = None,
                   cessation = None,
-                  cashOrAccruals = false
+                  cashOrAccruals = Some(false)
                 )), List.empty)
                 setupMockGetSessionKeyMongoTyped[String](Right(Some(testSelfEmploymentId)))
                 setupMockGetIncomeSourceDetails(sources)

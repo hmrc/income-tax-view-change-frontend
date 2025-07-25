@@ -17,10 +17,12 @@
 package controllers
 
 import enums.MTDSupportingAgent
-import models.admin.{IncomeSourcesFs, IncomeSourcesNewJourney, ReportingFrequencyPage}
+import models.admin.{IncomeSourcesFs, IncomeSourcesNewJourney, OptInOptOutContentUpdateR17, ReportingFrequencyPage}
+import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.Result
@@ -28,6 +30,7 @@ import play.api.test.Helpers._
 import play.api.test.Injecting
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, businessesAndPropertyIncomeCeased}
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with Injecting {
@@ -116,6 +119,101 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           document.title shouldBe homePageTitle
           document.select("#updates-tile").text shouldBe messages("home.updates.heading")
         }
+      }
+
+      "render the home page with the next updates tile and OptInOptOutContentUpdateR17 enabled for quarterly user (voluntary)" in new Setup {
+        enable(OptInOptOutContentUpdateR17)
+        setupMockAgentWithClientAuth(isSupportingAgent)
+
+        val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
+        val nextQuarterlyUpdateDate: LocalDate = LocalDate.of(2024, 2, 5)
+        val nextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYear.endYear + 1, 1, 31)
+
+        setupMockGetStatusTillAvailableFutureYears(currentTaxYear.previousYear)(
+          Future.successful(Map(currentTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Voluntary)))
+        )
+
+        setupNextUpdatesTests(allDueDates = Seq(nextQuarterlyUpdateDate),
+          nextQuarterlyUpdateDueDate = Some(nextQuarterlyUpdateDate),
+          nextTaxReturnDueDate = Some(nextTaxReturnDueDate),
+          mtdUserRole = agentType)
+
+        val result: Future[Result] = controller.showAgent()(fakeRequest)
+        status(result) shouldBe Status.OK
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        val tile: Elements = document.select("#updates-tile")
+        tile.select("h2").text shouldBe "Your updates and deadlines"
+        tile.select("p").get(0).text shouldBe "Next update due: 5 February 2024"
+        tile.select("p").get(1).text shouldBe "Next tax return due: 31 January 2025"
+
+        val link: Elements = tile.select("a")
+        link.text.trim shouldBe "View your deadlines"
+        link.attr("href") shouldBe controllers.routes.NextUpdatesController.showAgent().url
+      }
+
+      "render the homepage with the next updates tile and OptInOptOutContentUpdateR17 enabled for quarterly user (mandated) with overdue updates" in new Setup {
+        enable(OptInOptOutContentUpdateR17)
+        setupMockAgentWithClientAuth(isSupportingAgent)
+
+        val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
+        val overdue1 = LocalDate.of(2000, 1, 1)
+        val overdue2 = LocalDate.of(2000, 2, 1)
+        val nextQuarterlyUpdateDate: LocalDate = LocalDate.of(2024, 2, 5)
+        val nextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYear.endYear + 1, 1, 31)
+
+        setupNextUpdatesTests(allDueDates = Seq(overdue1, overdue2, nextQuarterlyUpdateDate),
+          nextQuarterlyUpdateDueDate = Some(nextQuarterlyUpdateDate),
+          nextTaxReturnDueDate = Some(nextTaxReturnDueDate),
+          mtdUserRole = agentType)
+
+        setupMockGetStatusTillAvailableFutureYears(currentTaxYear.previousYear)(
+          Future.successful(Map(currentTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Mandated)))
+        )
+
+        val result: Future[Result] = controller.showAgent()(fakeRequest)
+        status(result) shouldBe Status.OK
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        val tile = document.select("#updates-tile")
+        tile.select("h2").text shouldBe "Your updates and deadlines"
+        tile.select("p").get(0).select("span.govuk-tag").text should include("2 Overdue updates")
+        tile.select("p").get(1).text shouldBe "Next update due: 5 February 2024"
+        tile.select("p").get(2).text shouldBe "Next tax return due: 31 January 2025"
+
+        val link: Elements = tile.select("a")
+        link.text.trim shouldBe "View your deadlines"
+        link.attr("href") shouldBe controllers.routes.NextUpdatesController.showAgent().url
+      }
+
+      "render the home page with the next updates tile and OptInOptOutContentUpdateR17 enabled for annual user" in new Setup {
+        enable(OptInOptOutContentUpdateR17)
+        setupMockAgentWithClientAuth(isSupportingAgent)
+
+        val currentTaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
+        val nextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYear.endYear + 1, 1, 31)
+
+        setupNextUpdatesTests(allDueDates = futureDueDates,
+          nextQuarterlyUpdateDueDate = None,
+          nextTaxReturnDueDate = Some(nextTaxReturnDueDate),
+          mtdUserRole = agentType)
+
+        setupMockGetStatusTillAvailableFutureYears(currentTaxYear.previousYear)(
+          Future.successful(Map(currentTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Annual)))
+        )
+
+        val result: Future[Result] = controller.showAgent()(fakeRequest)
+        status(result) shouldBe Status.OK
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        val tile: Elements = document.select("#updates-tile")
+        tile.select("h2").text shouldBe "Your updates and deadlines"
+        tile.text should not include "Next update due"
+        tile.select("p").get(0).text shouldBe "Next tax return due: 31 January 2025"
+
+        val link = tile.select("a")
+        link.text.trim shouldBe "View your deadlines"
+        link.attr("href") shouldBe controllers.routes.NextUpdatesController.showAgent().url
       }
 
       "render the home page with the Income Sources tile" that {

@@ -37,7 +37,7 @@ object BusinessDetailsIntegrationTestConstants {
   val b1AddressLine4 = "England"
   val b1AddressLine5 = "ZL1 064"
   val b1CountryCode = "UK"
-  val b1AccountingMethod = false
+  val b1AccountingMethod = Some(false)
 
   val b2CessationDate = LocalDate.of(endYear, 12, 31)
   val b2TradingStart = LocalDate.parse("2018-01-01")
@@ -77,7 +77,7 @@ object BusinessDetailsIntegrationTestConstants {
     contextualTaxYear = None,
     cessation = None,
     address = Some(address),
-    cashOrAccruals = false
+    cashOrAccruals = Some(false)
   )
 
   val business1WithAddress2 = BusinessDetailsModel(
@@ -109,7 +109,7 @@ object BusinessDetailsIntegrationTestConstants {
     contextualTaxYear = None,
     cessation = None,
     address = Some(address),
-    cashOrAccruals = false
+    cashOrAccruals = Some(false)
   )
 
   val business3 = BusinessDetailsModel(
@@ -125,7 +125,7 @@ object BusinessDetailsIntegrationTestConstants {
     contextualTaxYear = None,
     cessation = Some(CessationModel(Some(LocalDate.of(2020, 1, 1)))),
     address = Some(address),
-    cashOrAccruals = false
+    cashOrAccruals = Some(false)
   )
 
   val business3WithUnknowns: BusinessDetailsModel = BusinessDetailsModel(
@@ -141,7 +141,7 @@ object BusinessDetailsIntegrationTestConstants {
     contextualTaxYear = None,
     cessation = None,
     address = None,
-    cashOrAccruals = false
+    cashOrAccruals = Some(false)
   )
 
   val businessWithAddressAndAccountingMethod = BusinessDetailsModel(
@@ -173,7 +173,7 @@ object BusinessDetailsIntegrationTestConstants {
     contextualTaxYear = None,
     cessation = Some(CessationModel(Some(b2CessationDate))),
     address = Some(address),
-    cashOrAccruals = false
+    cashOrAccruals = Some(false)
   )
 
   val businessUnknownAddressName = BusinessDetailsModel(
@@ -189,7 +189,7 @@ object BusinessDetailsIntegrationTestConstants {
     contextualTaxYear = None,
     cessation = None,
     address = None,
-    cashOrAccruals = false
+    cashOrAccruals = Some(false)
   )
 
   val businessWithLatencyForManageYourDetailsAudit = BusinessDetailsModel(
@@ -205,7 +205,7 @@ object BusinessDetailsIntegrationTestConstants {
     contextualTaxYear = None,
     cessation = None,
     address = expectedAddress,
-    cashOrAccruals = false,
+    cashOrAccruals = Some(false),
     latencyDetails = Some(testLatencyDetails3)
   )
 }

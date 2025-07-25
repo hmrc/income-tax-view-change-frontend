@@ -56,9 +56,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //View L&P
   def saViewLandPService(utr: String): String = servicesConfig.getString("old-sa-viewer-frontend.host") + s"/$utr/account"
 
-  //SA for Agents Online Service
-  lazy val saForAgents: String = "https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
-
   //GG Sign In via BAS Gateway
   lazy val signInUrl: String = servicesConfig.getString("base.sign-in")
   lazy val ggSignInUrl: String = servicesConfig.getString("government-gateway.sign-in.url")
@@ -123,11 +120,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //Payment Redirect route
   lazy val agentPaymentRedirectUrl: String = s"$itvcFrontendEnvironment/$agentBaseUrl/payments-owed"
 
-  //Accounting software guidance
-  lazy val accountingSoftwareLinkUrl: String = "https://www.gov.uk/guidance/use-software-to-send-income-tax-updates"
-
-  lazy val clientAuthorisationGuidance: String = "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax-as-an-agent-step-by-step"
-
   //Calculation Polling config
   lazy val calcPollSchedulerInterval: Int = servicesConfig.getInt("calculation-polling.interval")
   lazy val calcPollSchedulerTimeout: Int = servicesConfig.getInt("calculation-polling.timeout")
@@ -156,11 +148,17 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val incomeTaxSessionDataUrl: String = servicesConfig.baseUrl("income-tax-session-data")
 
   // penalties stub url
-  lazy val incomeTaxPenaltiesStubBase: String = servicesConfig.baseUrl("income-tax-penalties-stub")
+  lazy val incomeTaxPenaltiesStubBase: String = servicesConfig.baseUrl("income-tax-penalties-stub") + "/income-tax-penalties-stubs"
+
+  lazy val penaltiesBackendBase: String = servicesConfig.baseUrl("penalties")
 
   //penalties frontend
   lazy val incomeTaxPenaltiesFrontend: String = servicesConfig.getString("income-tax-penalties-frontend.homeUrl")
-  lazy val incomeTaxPenaltiesFrontendCalculation: String = servicesConfig.getString("income-tax-penalties-frontend.calculationUrl")
+  lazy val incomeTaxPenaltiesFrontendLPP1Calculation: String => String = chargeRef => servicesConfig.getString("income-tax-penalties-frontend.homeUrl") + s"/first-lpp-calculation?penaltyId=$chargeRef"
+  lazy val incomeTaxPenaltiesFrontendLPP1CalculationAgent: String => String = chargeRef => servicesConfig.getString("income-tax-penalties-frontend.homeUrl") + s"/agent-first-lpp-calculation?penaltyId=$chargeRef"
+  lazy val incomeTaxPenaltiesFrontendLPP2Calculation: String => String = chargeRef => servicesConfig.getString("income-tax-penalties-frontend.homeUrl") + s"/second-lpp-calculation?penaltyId=$chargeRef"
+  lazy val incomeTaxPenaltiesFrontendLPP2CalculationAgent: String => String = chargeRef => servicesConfig.getString("income-tax-penalties-frontend.homeUrl") + s"/agent-second-lpp-calculation?penaltyId=$chargeRef"
+
 
   // API timeout
 
@@ -197,7 +195,42 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val isSessionDataStorageEnabled: Boolean = servicesConfig.getBoolean("feature-switch.enable-session-data-storage")
 
+  //External-Urls
+
   val selfAssessmentTaxReturn = servicesConfig.getString("external-urls.self-assessment-tax-return-link")
   val compatibleSoftwareLink = servicesConfig.getString("external-urls.compatible-software-link")
+  
+  lazy val homepageLink = "https://www.gov.uk"
 
+  //SA for Agents Online Service
+  lazy val saForAgents: String = "https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
+
+  //Accounting software guidance
+  lazy val accountingSoftwareLinkUrl: String = "https://www.gov.uk/guidance/use-software-to-send-income-tax-updates"
+
+  lazy val clientAuthorisationGuidance: String = "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax-as-an-agent-step-by-step"
+
+  lazy val seNationalInsuranceRatesUrl = "https://www.gov.uk/self-employed-national-insurance-rates"
+
+  lazy val chooseAgentGuidanceUrl = "https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax"
+
+  lazy val quarterlyUpdatesGuidanceUrl = "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax/send-quarterly-updates"
+
+  lazy val saWhoNeedsToSignUpUrl = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
+
+  lazy val interestRateBankRateUrl = "https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate"
+
+  lazy val currentLPAndRepaymentInterestRatesUrl = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates"
+
+  lazy val saThroughYourTaxCodeUrl = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
+
+  lazy val checkPayeTaxCodeUrl = "https://www.tax.service.gov.uk/check-income-tax/tax-codes"
+
+  lazy val mtdForIncomeTaxUrl = "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax"
+
+  lazy val saPayTaxBillUrl = "https://www.gov.uk/pay-self-assessment-tax-bill"
+
+  lazy val preThreshold2027 = servicesConfig.getString("thresholds.prethreshold2027")
+  lazy val threshold2027 = servicesConfig.getString("thresholds.threshold2027")
+  lazy val threshold2028 = servicesConfig.getString("thresholds.threshold2028")
 }

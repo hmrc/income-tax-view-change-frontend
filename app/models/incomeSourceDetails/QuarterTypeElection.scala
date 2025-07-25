@@ -31,6 +31,7 @@ case object QuarterTypeCalendar extends QuarterReportingType {
 }
 
 case class QuarterTypeElection(quarterReportingType: String, taxYearofElection: String) {
+
   val isStandardQuarterlyReporting: Option[QuarterReportingType] = {
     quarterReportingType match {
       case QuarterTypeStandard.value => Some(QuarterTypeStandard)

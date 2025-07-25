@@ -22,6 +22,7 @@
 @import models.obligations._
 @import services.optout.OptOutProposition
 @import play.twirl.api.HtmlFormat
+@import config.FrontendAppConfig
 
 @this(
         govukTabs: GovukTabs,
@@ -32,7 +33,8 @@
         link: link,
         govukTable: GovukTable,
         govukWarningText : GovukWarningText,
-        implicitDateFormatter: ImplicitDateFormatterImpl
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        appConfig: config.FrontendAppConfig
 )
 
 @(isAgent: Boolean, viewModel: NextUpdatesViewModel, optOutProposition: OptOutProposition, isSupportingAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
@@ -110,7 +112,7 @@
     @h2(getMessage("quarterly.subheading2"), optId = Some("active-quarterly-return-due-heading"))
     @p(id = Some("active-quarterly-return-due-desc")) {
         @getMessage("quarterly.text3")
-        @link(link = getMessage("quarterly.compatibleSoftware.link"), target = Some("_blank"), messageKey = getMessage("quarterly.text4"), id = Some("quarterly-compatible-software-link"), outerMessage = ".")
+        @link(link = appConfig.compatibleSoftwareLink, target = Some("_blank"), messageKey = getMessage("quarterly.text4"), id = Some("quarterly-compatible-software-link"), outerMessage = ".")
     }
 
     @p(id = Some("active-quarterly-return-due-date")) {
@@ -126,7 +128,7 @@
     @h2(getMessage("annual.subHeading"), optId = Some("current-year-subheading"))
     @p(id = Some("current-year-compatible-software-desc")) {
         @getMessage("annual.text2")
-        @link(link = getMessage("quarterly.compatibleSoftware.link"), target = Some("_blank"), messageKey = getMessage("annual.link"), id = Some("annual-compatible-software-link"), outerMessage = ".")
+        @link(link = appConfig.compatibleSoftwareLink, target = Some("_blank"), messageKey = getMessage("annual.link"), id = Some("annual-compatible-software-link"), outerMessage = ".")
     }
     @p(id = Some("current-year-return-due-date")) {
         @getMessage("annual.text3", currentTaxYearStart, currentTaxYearEnd)
@@ -141,7 +143,7 @@
             p(id = Some("next-year-desc")){
                 HtmlFormat.fill(Seq(
                     Html(getMessage("quarterly.ny.text1", currentTaxYearEnd, nextTaxYearEnd)),
-                    link(link = getMessage("quarterly.compatibleSoftware.link"), target = Some("_blank"), messageKey = getMessage("quarterly.ny.text2"), id = Some("quarterly-compatible-software-link-ny"), outerMessage = ".")
+                    link(link = appConfig.compatibleSoftwareLink, target = Some("_blank"), messageKey = getMessage("quarterly.ny.text2"), id = Some("quarterly-compatible-software-link-ny"), outerMessage = ".")
                 ))
             },
             p(id = Some("next-year-desc2")){ Html(getMessage("quarterly.ny.text3")) }
@@ -155,7 +157,7 @@
     @h2(getMessage("annual.ny.heading", currentTaxYearEnd, nextTaxYearEnd), classes = "govuk-heading-l", optId = Some("next-year-heading"))
     @p(id = Some("next-year-desc")){
         @getMessage("annual.text2")
-        @link(link = getMessage("quarterly.compatibleSoftware.link"), target = Some("_blank"), messageKey = getMessage("annual.link"), id = Some("annual-compatible-software-link-ny"), outerMessage = ".")
+        @link(link = appConfig.compatibleSoftwareLink, target = Some("_blank"), messageKey = getMessage("annual.link"), id = Some("annual-compatible-software-link-ny"), outerMessage = ".")
     }
     @p(id = Some("next-year-desc2")){ @getMessage("annual.ny.text1") }
 }
@@ -170,7 +172,7 @@
     )
     @p(id = Some("active-quarterly-dropdown-desc2")) {
         @getMessage("quarterly.dropdown.text4")
-        @link(link = getMessage("quarterly.compatibleSoftware.link"), target = Some("_blank"), messageKey = getMessage("quarterly.dropdown.link.text"), id = Some("active-quarterly-compatible-software-link-dropdown"), outerMessage = ".")
+        @link(link = appConfig.compatibleSoftwareLink, target = Some("_blank"), messageKey = getMessage("quarterly.dropdown.link.text"), id = Some("active-quarterly-compatible-software-link-dropdown"), outerMessage = ".")
     }
 }
 

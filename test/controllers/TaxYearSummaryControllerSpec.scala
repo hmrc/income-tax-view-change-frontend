@@ -81,7 +81,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
   val homeBackLink: Boolean => String = isAgent => {
     "/report-quarterly/income-and-expenses/view" + {if(isAgent) "/agents/client-income-tax" else ""}
   }
-  val emptyCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel( None)
+  val emptyCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(None)
   val populatedCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(Some(TaxYear(2023, 2024)))
   lazy val ctaLink: Boolean => String = isAgent => {
     "/report-quarterly/income-and-expenses/view" + {if (isAgent) "/agents" else ""} + "/adjust-poa/start"
@@ -388,7 +388,11 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").text() shouldBe "First late payment penalty"
                 Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-1").attr("href") shouldBe chargeSummaryUrl("LPP1")
                 Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-2").text() shouldBe "Second late payment penalty"
-                Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-2").attr("href") shouldBe "http://localhost:9185/penalties/income-tax/calculation"
+                if (isAgent) {
+                  Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-2").attr("href") shouldBe appConfig.incomeTaxPenaltiesFrontendLPP2CalculationAgent("chargeRef123")
+                } else {
+                  Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-2").attr("href") shouldBe appConfig.incomeTaxPenaltiesFrontendLPP2Calculation("chargeRef123")
+                }
               }
             }
 
@@ -690,6 +694,22 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 response = testObligtionsModel)
 
               mockCalculationErrorNew(testMtditid)
+
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+              contentType(result) shouldBe Some("text/html")
+            }
+
+            "user has a second late payment penalty without a chargeReference, so url cannot be generated" in {
+              enable(PenaltiesAndAppeals)
+              setupMockSuccess(mtdUserRole)
+              mockSingleBusinessIncomeSource()
+              mockCalculationSuccessfulNew(testMtditid)
+              mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithLPP2NoChargeRef)
+              mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+                toDate = LocalDate.of(testTaxYear, 4, 5))(
+                response = testObligtionsModel
+              )
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR

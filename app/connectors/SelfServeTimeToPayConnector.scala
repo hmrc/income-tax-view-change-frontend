@@ -21,10 +21,10 @@ import models.core.{SelfServeTimeToPayJourneyErrorResponse, SelfServeTimeToPayJo
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.CREATED
-import play.api.libs.json.Json
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
-import uk.gov.hmrc.http.client.HttpClientV2
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,15 +34,28 @@ class SelfServeTimeToPayConnector @Inject()(http: HttpClientV2,
                                            )(implicit ec: ExecutionContext) {
   val journeyStartUrl: String = config.setUpAPaymentPlanUrl + "/essttp-backend/sa/itsa/journey/start"
 
-  def startSelfServeTimeToPayJourney()(implicit hc: HeaderCarrier): Future[SelfServeTimeToPayJourneyResponse] = {
-    val body = Json.parse(
-      s"""
+  private val bodyYSAC: JsValue = Json.parse(
+    s"""
        {
         "returnUrl": "/report-quarterly/income-and-expenses/view",
         "backUrl": "/report-quarterly/income-and-expenses/view/your-self-assessment-charges"
        }
       """.stripMargin
-    )
+  )
+
+  private val bodyWYO: JsValue = Json.parse(
+    s"""
+       {
+        "returnUrl": "/report-quarterly/income-and-expenses/view",
+        "backUrl": "/report-quarterly/income-and-expenses/view/what-you-owe"
+       }
+      """.stripMargin
+  )
+
+  def startSelfServeTimeToPayJourney(yourSelfAssessmentChargesEnabled: Boolean)
+                                    (implicit hc: HeaderCarrier): Future[SelfServeTimeToPayJourneyResponse] = {
+
+    val body = if (yourSelfAssessmentChargesEnabled) bodyYSAC else bodyWYO
 
     http
       .post(url"$journeyStartUrl")

@@ -31,6 +31,10 @@ case object TribunalAppealLevel extends AppealLevelEnum {
   override val value: String = "02"
 }
 
+case object ThirdAppealLevel extends AppealLevelEnum {
+  override val value: String = "03"
+}
+
 object AppealLevelEnum {
   implicit val writes: Writes[AppealLevelEnum] = Writes {
     case HmrcAppealLevel => JsString(HmrcAppealLevel.value)
@@ -41,6 +45,7 @@ object AppealLevelEnum {
     case JsString(value) => value.toUpperCase match {
       case "01" => JsSuccess(HmrcAppealLevel)
       case "02" => JsSuccess(TribunalAppealLevel)
+      case "03" => JsSuccess(ThirdAppealLevel)
       case e => JsError(s"$e not recognised as appeal level value")
     }
     case _ => JsError("Invalid JSON value")

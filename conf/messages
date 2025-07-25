@@ -179,13 +179,17 @@ home.interest-accruing                                          = You have charg
 home.updates.overdue.charges                                    = {0} Overdue charges
 home.updates.overdue.updates                                    = {0} Overdue updates
 
+home.updates.R17.heading                                        = Your updates and deadlines
+home.updates.R17.nextUpdateDue                                  = Next update due: {0}
+home.updates.R17.nextTaxReturnDue                               = Next tax return due: {0}
+home.updates.R17.linkText                                       = View your deadlines
+
 home.agent.supporting.paymentAndReturns                         = Payments and returns
 home.agent.supporting.cannotAccess                              = Supporting agents cannot access records that show:
 home.agent.supporting.cannotAccess.payments                     = payments, credits and refunds
 home.agent.supporting.cannotAccess.returns                      = returns
 home.agent.supporting.cannotAccess.nextChargesDue               = next charges due
 home.agent.supporting.readMore                                  = Read more about the difference between main and supporting agents on GOV.UK (opens in new tab).
-home.agent.supporting.readMore.link                             = https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax
 
 home.penaltiesAndAppeals.heading                                = Penalties and appeals
 home.penaltiesAndAppeals.view                                   = Check Self Assessment penalties and appeals
@@ -782,7 +786,7 @@ nextUpdates.dropdown.quarterlyReturn.text                          = A quarterly
 nextUpdates.dropdown.quarterlyReturn.text.lin2                     = Using your record-keeping software, you must send 4 quarterly updates in a year for each source of income.
 nextUpdates.dropdown.quarterlyReturn.text.lin3                     = You may be able to choose your quarterly period in your chosen software. For example, standard quarters reports from 6th April to 5th July whereas calendar quarters is from 1st April to 30th June.
 nextUpdates.dropdown.quarterlyReturn.link.text                     = Learn more about quarterly periods
-nextUpdates.dropdown.quarterlyReturn.link.link                     = https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates
+
 nextUpdates.dropdown.finalDeclaration.text                         = Your final declaration is the last step in your tax return, where you confirm you’ve submitted all your income and expenses (to the best of your knowledge). This is done using your record-keeping software.
 nextUpdates.table.header.type									   = Update type
 nextUpdates.table.header.source									   = Income source
@@ -819,7 +823,6 @@ nextUpdates.r17.tab.quarterly.dropdown.text2                       = new informa
 nextUpdates.r17.tab.quarterly.dropdown.text3                       = any information you’ve already provided that has not changed
 nextUpdates.r17.tab.quarterly.dropdown.text4                       = This is done using
 nextUpdates.r17.tab.quarterly.dropdown.link.text                   = software compatible with Making Tax Digital for Income Tax
-nextUpdates.r17.tab.quarterly.compatibleSoftware.link              = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
 nextUpdates.r17.tab.quarterly.link.text1                           = To view previously submitted updates visit the
 nextUpdates.r17.tab.quarterly.link.text2                           = tax year
 nextUpdates.r17.tab.quarterly.link.text3                           = summary page.
@@ -866,7 +869,7 @@ nextUpdates.updates.software.heading    					       = Submitting updates in soft
 nextUpdates.updates.software.dec1       					       = Use your
 nextUpdates.updates.software.dec2       					       = compatible record keeping software
 nextUpdates.updates.software.dec3       					       = to keep digital records of all your business income and expenses. You must submit these updates through your software by each date shown.
-nextUpdates.updates.software.link       					       = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
+
 
 
 ## Payment Due Page ##
@@ -1045,7 +1048,8 @@ selfAssessmentCharges.adjust-poa.paid-3                                       = 
 selfAssessmentCharges.adjust-poa.paid-4                                       = 31 January {0}.
 selfAssessmentCharges.adjust-poa.paid-5                                       =
 selfAssessmentCharges.interestChargesWarning                                  = Interest charges will keep increasing every day until the charges they relate to are paid in full.
-
+selfAssessmentCharges.lpi.firstLatePaymentPenalty.text                        = Late payment interest on first late payment penalty
+selfAssessmentCharges.lpi.secondLatePaymentPenalty.text                       = Late payment interest on second late payment penalty
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = First payment on account
@@ -1502,7 +1506,7 @@ incomeSources.add.reportingFrequency.r17.p2                             = You ca
 incomeSources.add.reportingFrequency.r17.inset                          = From April {0} when this 2-year tax period ends, you could be required to use Making Tax Digital for Income Tax for this new business.
 incomeSources.add.reportingFrequency.r17.form.h1                        = Do you want to sign this new business up to Making Tax Digital for Income Tax?
 incomeSources.add.reportingFrequency.r17.li1                            = you are voluntarily signed up or required to use Making Tax Digital for Income Tax for your other businesses
-incomeSources.add.reportingFrequency.r17.li2                            = your total gross income from self-employment or property, or both, exceed the £50,000 threshold
+incomeSources.add.reportingFrequency.r17.li2                            = your total gross income from self-employment or property, or both, exceed the {0} threshold
 incomeSources.add.reportingFrequency.r17.form.no-select.error           = Select yes if you want to sign this new business up to Making Tax Digital for Income Tax
 
 
@@ -2287,7 +2291,8 @@ incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.sole-trader     
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.uk-property                       =   UK property
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.foreign-property                  =   Foreign property
 
-# manage journey manage income source
+####### Manage journey manage income source
+
 incomeSources.manage.quarterly-period                                 =   Update period
 incomeSources.manage.quarterly-period.standard                        =   Standard
 incomeSources.manage.quarterly-period.calendar                        =   Calendar
@@ -2298,7 +2303,6 @@ incomeSources.manage.quarterly-period.standard.content.p2             =   If you
 incomeSources.manage.quarterly-period.calendar.content.p1             =   This business is currently reporting from the 1st April by calendar quarters.
 incomeSources.manage.quarterly-period.calendar.content.p2             =   You can change this to report by standard quarters, in line with the tax year, so you report from 6th April. This change can only be made in your compatible software.
 incomeSources.manage.quarterly-period.content.p3                      =   Learn more about standard and calendar quarters
-incomeSources.manage.quarterly-period.content.external-ref-link       =   https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates
 
 incomeSources.manage.business-manage-details.heading                  =   Manage your details
 incomeSources.manage.business-manage-details.sole-trader-section      =   Sole trader
@@ -2318,21 +2322,62 @@ incomeSources.manage.business-manage-details.tradetype                =   Type o
 incomeSources.manage.business-manage-details.reportingFrequency       =   View and change your reporting frequency for all your businesses
 incomeSources.manage.business-manage-details.insetText                =   Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April {0}, you could be required to report quarterly.
 
-# Used when OptInOptOutContentUpdateR17 feature switch is enabled
-incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.paragraph      =   Because this is still a new business, for up to 2 tax years you can choose if you want to use Making Tax Digital for Income Tax. From April {0}, you could be required to use the service.
-incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyPrefix       =   Depending on your circumstances, you may be able to
-incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.reportingFrequencyLink         =   view and change your reporting obligations for all your businesses
-incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage = Using Making Tax Digital for Income Tax for {0} to {1}
-incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage.yes  = Yes
-incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.mtdUsage.no  = No
-incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.signup = Sign up
-incomeSources.manage.business-manage-details.OptInOptOutContentUpdateR17.optOut = Opt out
-
 incomeSources.manage.uk-property-manage-details.uk-property-section              =   UK property
 incomeSources.manage.uk-property-manage-details.accounting-method                =   Accounting method
 
 incomeSources.manage.foreign-property-manage-details.foreign-property-section    =   Foreign property
 incomeSources.manage.foreign-property-manage-details.accounting-method           =   Accounting method
+
+
+##################### New - Manage journey manage income source #####################
+
+
+incomeSources.manage.new.business-manage-details.heading                  =   Manage your details
+
+incomeSources.manage.new.quarterly.update.period                          =   Update period
+incomeSources.manage.new.quarterly.period.standard                        =   Standard
+incomeSources.manage.new.quarterly.period.calendar                        =   Calendar
+incomeSources.manage.new.quarterly.period.summary                         =   What is a standard quarterly period?
+incomeSources.manage.new.quarterly.period.content.p1                      =   This business is reporting from 6 April in line with the tax year, also known as using standard update periods.
+incomeSources.manage.new.quarterly.period.content.p2                      =   If your software supports it, you can choose to report using calendar update periods which end on the last day of the month.
+incomeSources.manage.new.quarterly.period.content.p3.link                 =   Learn more about standard and calendar quarters
+
+incomeSources.manage.new.business.details.heading                         =   Manage your details
+incomeSources.manage.new.business.details.sole.trader.section             =   Sole trader
+incomeSources.manage.new.business.details.business.name                   =   Business name
+incomeSources.manage.new.business.details.business.address                =   Address
+incomeSources.manage.new.business.details.date.started                    =   Date started
+incomeSources.manage.new.business.details.accounting.method               =   Accounting method
+incomeSources.manage.new.business.details.reporting.method                =   Reporting frequency {0} to {1}
+incomeSources.manage.new.business.details.change                          =   Change
+incomeSources.manage.new.business.details.quarterly                       =   Quarterly
+incomeSources.manage.new.business.details.annually                        =   Annual
+incomeSources.manage.new.business.details.quarterly.grace.period          =   Quarterly
+incomeSources.manage.new.business.details.annually.grace.period           =   Annual
+incomeSources.manage.new.business.details.cash.accounting                 =   Cash basis accounting
+incomeSources.manage.new.business.details.traditional.accounting          =   Traditional accounting
+incomeSources.manage.new.business.details.trade.type                      =   Type of trade
+incomeSources.manage.new.business.details.reporting.frequency             =   View and change your reporting frequency for all your businesses
+incomeSources.manage.new.business.details.insetText                       =   Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April {0}, you could be required to report quarterly.
+
+
+incomeSources.manage.new.uk.property.manage.details.uk.property.section              =   UK property
+incomeSources.manage.new.uk.property.manage.details.accounting.method                =   Accounting method
+
+incomeSources.manage.new.foreign.property.manage.details.foreign.property.section    =   Foreign property
+incomeSources.manage.new.foreign.property.manage.details.accounting.method           =   Accounting method
+
+# Used when OptInOptOutContentUpdateR17 feature switch is enabled
+
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.paragraph      =   Because this is still a new business, for up to 2 tax years you can choose if you want to use Making Tax Digital for Income Tax. From April {0}, you could be required to use the service.
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.reportingFrequencyPrefix       =   Depending on your circumstances, you may be able to
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.reportingFrequencyLink         =   view and change your reporting obligations for all your businesses
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage = Using Making Tax Digital for Income Tax for {0} to {1}
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage.yes  = Yes
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage.no  = No
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.signup = Sign up
+incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.optOut = Opt out
+
 
 incomeSources.cease.error.UK.notCeased.text                       = Your UK property business could not be ceased. We have not saved your answers. Please try again later.
 incomeSources.cease.error.FP.notCeased.text                       = Your foreign property business could not be ceased. We have not saved your answers. Please try again later.
@@ -2552,7 +2597,6 @@ paymentOnAccount.caption                             = {0} to {1} tax year
 paymentOnAccount.heading                             = Adjusting your payments on account
 paymentOnAccount.p1                                  = You can adjust both payments on account if you expect the total of your Income Tax and
 paymentOnAccount.class4NationalInsurance.link.text   = Class 4 National Insurance contributions (opens in a new tab)
-paymentOnAccount.class4NationalInsurance.link        = https://www.gov.uk/self-employed-national-insurance-rates
 paymentOnAccount.p2                                  = to be lower than the previous tax year.
 paymentOnAccount.heading.example                     = Example
 paymentOnAccount.hint                                = For example, if your tax bill was £4,000 last year, but you think you should only pay £3,000 this year, you can reduce both payments on account to £1,500 each.
@@ -2677,11 +2721,9 @@ optout.confirmedOptOut.reportQuarterly.example                   = For example, 
 optout.confirmedOptOut.reportQuarterly.desc2                     = If this happens, we will write to you to let you know.
 optout.confirmedOptOut.reportQuarterly.desc3                     = You can check the threshold for qualifying income in the {0} .
 optout.confirmedOptOut.reportQuarterly.desc3.anchor-text         = criteria for people who will need to sign up for Making Tax Digital
-optout.confirmedOptOut.reportQuarterly.desc3.anchor-link         = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up
 optout.confirmedOptOut.report-quarterly-next-year-onwards        = Reporting quarterly from next tax year onwards
 optout.confirmedOptOut.warning-quarterly-update.text             = From 6 April {0}, you’ll be required to send quarterly updates through
 optout.confirmedOptOut.software-compatible                       = software compatible with Making Tax Digital for Income Tax
-optout.confirmedOptOut.software-compatible.link                  = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
 optout.confirmedOptOut.reportQuarterly.reason-list               = This could be because:
 optout.confirmedOptOut.reportQuarterly.reason1                   = HMRC lowered the income threshold for Making Tax Digital
 optout.confirmedOptOut.reportQuarterly.reason2                   = you reported an increase in your qualifying income in last year’s tax return
@@ -2726,6 +2768,24 @@ optout.cancelled.p2                                 = As you have one or more ne
 optout.cancelled.p3.link                            = View and manage your businesses
 optout.cancelled.p3                                 = to change how often you want to report for your businesses.
 
+# opt out tax year question page
+
+optout.taxYearQuestion.heading.currentYear.multiYear                   = Opt out of Making Tax Digital for Income Tax from the current tax year
+optout.taxYearQuestion.title.currentYear.multiYear                     = Opt out of Making Tax Digital for Income Tax from the current tax year
+optout.taxYearQuestion.desc1.currentYear.multiYear                     = This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax.
+optout.taxYearQuestion.inset.currentYear.multiYear                     = Quarterly updates that you’ve submitted will be deleted from our records if you opt out from that tax year. You’ll need to include any income from these updates in your tax return.
+optout.taxYearQuestion.desc2.currentYear.multiYear                     = You would need to go back to the way you have filed your tax return previously for all of your current businesses and any that you add in future.
+optout.taxYearQuestion.desc3.currentYear.multiYear                     = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
+optout.taxYearQuestion.radioQuestion.currentYear.multiYear             = Do you want to opt out from the current tax year?
+
+optout.taxYearQuestion.heading.nextYear.multiYear                      = Opt out of Making Tax Digital for Income Tax from the next tax year
+optout.taxYearQuestion.title.nextYear.multiYear                        = Opt out of Making Tax Digital for Income Tax from the next tax year
+optout.taxYearQuestion.desc1.nextYear.multiYear                        = From 6 April {0}, this would mean you would no longer need to use software compatible with Making Tax Digital for Income Tax.
+optout.taxYearQuestion.desc2.nextYear.multiYear                        = You will also need to go back to the way you have filed your tax return previously for all of your current businesses and any that you add in future.
+optout.taxYearQuestion.desc3.nextYear.multiYear                        = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
+optout.taxYearQuestion.radioQuestion.nextYear.multiYear                = Do you want to opt out from the next tax year?
+
+optout.taxYearQuestion.error                                           = Select yes to opt out for the {0} to {1} tax year
 
 #######################################################################################################################
 ## Opt In ##
@@ -2830,7 +2890,6 @@ optin.completedOptIn.yourRevisedDeadline.p2.link                = your reporting
 optin.completedOptIn.submitUpdates                              = Submit updates in software
 optin.completedOptIn.submitUpdates.desc1.a                      = For any tax year you are reporting quarterly, you will need
 optin.completedOptIn.submitUpdates.desc1.b                      = software compatible with Making Tax Digital for Income Tax (opens in new tab).
-optin.completedOptIn.submitUpdates.desc1.b.url                  = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
 
 optin.completedOptIn.submitUpdates.annualReportingAdvice        = When reporting annually, you can submit your tax return directly through your HMRC online account or compatible software.
 
@@ -2850,7 +2909,6 @@ optin.completedOptIn.futureReporting.desc2                      = If this happen
 
 optin.completedOptIn.incomeThreshold.desc.a                     = You can check the threshold for qualifying income in the
 optin.completedOptIn.incomeThreshold.desc.b                     = criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab).
-optin.completedOptIn.incomeThreshold.desc.b.url                 = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up
 
 # opt in confirm tax year
 optIn.confirmTaxYear.heading                        = Confirm and opt in for {0} to {1} tax year
@@ -2863,10 +2921,10 @@ optIn.confirmNextTaxYear.heading                    = Confirm and opt in from {0
 optIn.confirmNextTaxYear.desc                       = If you opt in for the next tax year, from {0} you will need to submit your quarterly updates through compatible software.
 
 ########  Reporting Frequency Page  ########
-
-reporting.frequency.title = Your reporting frequency
-reporting.frequency.h1    = Your reporting frequency
-reporting.frequency.h2    = Manage your reporting frequency for all your businesses
+# Reporting Frequency Page
+reporting.frequency.title       = Your reporting frequency
+reporting.frequency.title.R17   = Your reporting obligations
+reporting.frequency.h2          = Manage your reporting frequency for all your businesses
 
 reporting.frequency.manageReportingFrequency.p1                     = If you are reporting annually or voluntarily reporting quarterly, you may be able to change your reporting frequency for specific tax years.
 reporting.frequency.manageReportingFrequency.p2                     = This is what you can do for all your businesses:
@@ -2879,20 +2937,44 @@ reporting.frequency.manageReportingFrequency.optOut.link.onwards    = Opt out of
 reporting.frequency.manageReportingFrequency.b1.link                = Opt in to quarterly reporting for the {0} to {1} tax year
 reporting.frequency.manageReportingFrequency.b2.link                = Opt out of quarterly reporting and report annually from the {0} to {1} tax year onwards
 
+#different obligations
+reporting.frequency.different.obligations.heading                           = What the different reporting obligations are
+reporting.frequency.different.obligations.p1                                = When you are using Making Tax Digital for Income Tax you need to submit:
+reporting.frequency.different.obligations.li1                               = 4 updates a year for each source of self employment and property income
+reporting.frequency.different.obligations.li2                               = a tax return
+reporting.frequency.different.obligations.p2                                = For tax years you are opted out of, you only need to file a tax return.
+reporting.frequency.different.obligations.p3                                = You can see what is due on the
+reporting.frequency.different.obligations.link.text                         = updates and deadlines
+reporting.frequency.different.obligations.link.text.additional.english      = page.
+
 reporting.frequency.mandatoryReporting.heading    = When reporting quarterly is mandatory
 reporting.frequency.mandatoryReporting.inset      = Reporting quarterly is required if your income from self-employment or property, or both, exceeds the income threshold.
 reporting.frequency.mandatoryReporting.text       = You can check the threshold for when reporting quarterly is mandatory in the
 reporting.frequency.mandatoryReporting.link.text  = criteria for people who will need to sign up for Making Tax Digital for Income Tax
-reporting.frequency.mandatoryReporting.link       = https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up
+
+#new mandatory reporting messages for reporting frequency with OptInOptOutContentUpdateR17 enabled:
+reporting.frequency.mandatoryReporting.heading.R17      = When Making Tax Digital for Income Tax is required
+reporting.frequency.mandatoryReporting.inset.R17        = You must use Making Tax Digital for Income Tax if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold.
+reporting.frequency.mandatoryReporting.p1               = If this happens in the {0} to {1} tax year, you would be required to use Making Tax Digital for Income Tax for the {2} to {3} tax year.
+reporting.frequency.mandatoryReporting.p2               = Find out more about the threshold in the
 
 reporting.frequency.compatibleSoftware.heading   = When compatible software is required
 reporting.frequency.compatibleSoftware.p1        = If you are reporting quarterly, you will need to use
-reporting.frequency.compatibleSoftware.link      = https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax
 reporting.frequency.compatibleSoftware.link.text = software compatible with Making Tax Digital for Income Tax
 reporting.frequency.compatibleSoftware.p2        = There are both paid and free options for you or your agent to choose from.
 reporting.frequency.compatibleSoftware.p3        = For reporting annually, you can use either compatible software or your HMRC online account to submit your tax return.
 
+#new compatible software messages for reporting frequency with OptInOptOutContentUpdateR17 enabled:
+reporting.frequency.compatibleSoftware.heading.R17                      = When you need compatible software
+reporting.frequency.compatibleSoftware.p1.R17                           = Whether you are required or voluntarily signed up, you need
+reporting.frequency.compatibleSoftware.link.text.R17                    = software compatible with Making Tax Digital for Income Tax
+reporting.frequency.compatibleSoftware.p2.R17                           = There are both paid and free options for you or your agent to choose from.
+reporting.frequency.compatibleSoftware.p3.R17                           = If you are opted out, you can find out here how to
+reporting.frequency.compatibleSoftware.link2.text                       = file your Self Assessment tax return
+
+
 reporting.frequency.table.h2                                        = How often you need to report
+reporting.frequency.table.h2.R17                                    = How you report for each tax year
 reporting.frequency.table.heading.taxyear                           = Tax year
 reporting.frequency.table.heading.status                            = Reporting frequency
 
@@ -2900,6 +2982,15 @@ reporting.frequency.table.taxYear                                   = {0} to {1}
 reporting.frequency.table.mandated                                  = Quarterly (mandatory)
 reporting.frequency.table.voluntary                                 = Quarterly
 reporting.frequency.table.annual                                    = Annual
+
+#new table messages for reporting frequency with OptInOptOutContentUpdateR17 enabled:
+reporting.frequency.table.heading.usingMTD                          = Using Making Tax Digital for Income Tax
+reporting.frequency.table.heading.status.R17                        = Your status
+reporting.frequency.table.MTD.isUsingMTD                            = Yes
+reporting.frequency.table.MTD.isNotUsingMTD                         = No
+reporting.frequency.table.mandated.r17                              = Required
+reporting.frequency.table.voluntary.r17                             = Voluntarily signed up
+reporting.frequency.table.annual.r17                                = Opted out
 
 reporting.frequency.ceasedBusiness.warning.text.1                   = There are currently no businesses on this account. You can add a sole trader or property business on the
 reporting.frequency.ceasedBusiness.warning.link                     = all businesses
@@ -2925,14 +3016,11 @@ reporting.frequency.latency.details.section.text.para1.bullet2.updateR17      = 
 reporting.frequency.latency.details.section.text.para2.updateR17              = This option is available to your new businesses:
 reporting.frequency.latency.details.section.text.para2.bullet1.updateR17      = for up to 2 tax years
 reporting.frequency.latency.details.section.text.para2.bullet2.updateR17      = only when you use Making Tax Digital for Income Tax for your other businesses
-reporting.frequency.latency.details.section.text.para2.bullet3.updateR17      = even if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold
+reporting.frequency.latency.details.section.text.para2.bullet3.updateR17      = even if your total gross income from self-employment or property, or both, exceeds the {0} threshold
 reporting.frequency.latency.details.section.text.para3.heading.updateR17      = How to change your reporting obligations for a new income source
 reporting.frequency.latency.details.section.text.para3.text.1.updateR17       = You can do this at any time in the
 reporting.frequency.latency.details.section.text.para3.link.text.updateR17    = your businesses
 reporting.frequency.latency.details.section.text.para3.text.2.updateR17       = section.
-
-########  Reporting Frequency Page Feature Switched Content  ########
-
 
 
 yourSelfAssessmentChargeSummary.tax-year                            = {0} to {1} tax year

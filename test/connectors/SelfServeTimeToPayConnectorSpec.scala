@@ -47,7 +47,7 @@ class SelfServeTimeToPayConnectorSpec extends BaseConnectorSpec {
 
         when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
           .thenReturn(Future(successResponse))
-        val result = TestSelfServeTimeToPayConnector.startSelfServeTimeToPayJourney().futureValue
+        val result = TestSelfServeTimeToPayConnector.startSelfServeTimeToPayJourney(yourSelfAssessmentChargesEnabled = false).futureValue
         result shouldBe SelfServeTimeToPayJourneyResponseModel("journeyId", "http://www.redirect-url.com")
         verify(mockHttpClientV2, times(1)).post(any())(any())
 
@@ -65,7 +65,7 @@ class SelfServeTimeToPayConnectorSpec extends BaseConnectorSpec {
         when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
           .thenReturn(Future(badResponse))
 
-        val result = TestSelfServeTimeToPayConnector.startSelfServeTimeToPayJourney().futureValue
+        val result = TestSelfServeTimeToPayConnector.startSelfServeTimeToPayJourney(yourSelfAssessmentChargesEnabled = false).futureValue
         result shouldBe SelfServeTimeToPayJourneyErrorResponse(400, "Error Message")
         verify(mockHttpClientV2, times(1)).post(any())(any())
 
@@ -80,7 +80,7 @@ class SelfServeTimeToPayConnectorSpec extends BaseConnectorSpec {
         when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
           .thenReturn(Future(successResponseBadJson))
 
-        val result = TestSelfServeTimeToPayConnector.startSelfServeTimeToPayJourney().futureValue
+        val result = TestSelfServeTimeToPayConnector.startSelfServeTimeToPayJourney(yourSelfAssessmentChargesEnabled = false).futureValue
         result shouldBe SelfServeTimeToPayJourneyErrorResponse(201, "Invalid Json")
         verify(mockHttpClientV2, times(1)).post(any())(any())
 
@@ -96,7 +96,7 @@ class SelfServeTimeToPayConnectorSpec extends BaseConnectorSpec {
         when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
           .thenReturn(Future(internalServerError))
 
-        val result = TestSelfServeTimeToPayConnector.startSelfServeTimeToPayJourney().futureValue
+        val result = TestSelfServeTimeToPayConnector.startSelfServeTimeToPayJourney(yourSelfAssessmentChargesEnabled = false).futureValue
         result shouldBe SelfServeTimeToPayJourneyErrorResponse(500, "Unexpected future failed error, Unknown error")
         verify(mockHttpClientV2, times(1)).post(any())(any())
 

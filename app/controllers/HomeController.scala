@@ -94,9 +94,15 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
     for {
       currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
+      (nextQuarterlyUpdateDueDate, nextTaxReturnDueDate) <- getNextDueDatesIfEnabled()
     } yield {
-
-      val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(ReportingFrequencyPage))
+      val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates,
+        currentDate = dateService.getCurrentDate,
+        isReportingFrequencyEnabled = isEnabled(ReportingFrequencyPage),
+        showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
+        currentYearITSAStatus = currentITSAStatus,
+        nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
+        nextTaxReturnDueDate = nextTaxReturnDueDate)
       val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, isEnabled(IncomeSourcesFs),
         isEnabled(IncomeSourcesNewJourney))
       val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
@@ -126,12 +132,19 @@ class HomeController @Inject()(val homeView: views.html.Home,
       overDuePaymentsCount = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
       accruingInterestPaymentsCount = NextPaymentsTileViewModel.paymentsAccruingInterestCount(unpaidCharges, dateService.getCurrentDate)
       currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
-      penaltiesAndAppealsTileViewModel = penaltyDetailsService.getPenaltyPenaltiesAndAppealsTileViewModel(isEnabled(PenaltiesAndAppeals))
+      penaltiesCount <- penaltyDetailsService.getPenaltiesCount(isEnabled(PenaltiesBackendEnabled))
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
       mandation <- ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(_.isMandated)
+      (nextQuarterlyUpdateDueDate, nextTaxReturnDueDate) <- getNextDueDatesIfEnabled()
     } yield {
-
-      val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate, isEnabled(ReportingFrequencyPage))
+      val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates,
+        currentDate = dateService.getCurrentDate,
+        isReportingFrequencyEnabled = isEnabled(ReportingFrequencyPage),
+        showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
+        currentYearITSAStatus = currentITSAStatus,
+        nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
+        nextTaxReturnDueDate = nextTaxReturnDueDate)
+      val penaltiesAndAppealsTileViewModel: PenaltiesAndAppealsTileViewModel = PenaltiesAndAppealsTileViewModel(isEnabled(PenaltiesAndAppeals), penaltyDetailsService.getPenaltySubmissionFrequency(currentITSAStatus), penaltiesCount)
 
       val paymentCreditAndRefundHistoryTileViewModel =
         PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds), user.incomeSources.yearOfMigration.isDefined)
@@ -243,4 +256,14 @@ private def handleErrorGettingDueDates(isAgent: Boolean)(implicit user: MtdItUse
   private def mainChargeIsNotPaidFilter: PartialFunction[ChargeItem, ChargeItem]  = {
     case x if x.remainingToPayByChargeOrInterestWhenChargeIsPaid  => x
   }
+
+  private def getNextDueDatesIfEnabled()
+                                      (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[(Option[LocalDate], Option[LocalDate])] = {
+    if (isEnabled(OptInOptOutContentUpdateR17)) {
+      nextUpdatesService.getNextDueDates()
+    } else {
+      Future.successful((None, None))
+    }
+  }
+
 }

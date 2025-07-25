@@ -26,7 +26,7 @@ class LatePaymentPenaltySpec extends TestSupport {
   val latePaymentPenaltyModel: LatePaymentPenalty =
     LatePaymentPenalty(
       details = Some(lppDetails),
-      manualLPPIndicator = false)
+      manualLPPIndicator = Some(false))
 
   val latePaymentPenaltyJson: JsValue = Json.parse("""{
                      |  "details" : [ {

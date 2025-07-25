@@ -42,7 +42,8 @@ trait HomeControllerHelperSpec extends MockAuthActions
   with MockWhatYouOweService
   with MockClientDetailsService
   with MockDateService
-  with MockITSAStatusService {
+  with MockITSAStatusService
+  with MockPenaltyDetailsService {
 
   val agentTitle = s"${messages("htmlTitle.agent", messages("home.agent.heading"))}"
 
@@ -52,7 +53,8 @@ trait HomeControllerHelperSpec extends MockAuthActions
       api.inject.bind[FinancialDetailsService].toInstance(mockFinancialDetailsService),
       api.inject.bind[WhatYouOweService].toInstance(mockWhatYouOweService),
       api.inject.bind[DateService].toInstance(mockDateService),
-      api.inject.bind[ITSAStatusService].toInstance(mockITSAStatusService)
+      api.inject.bind[ITSAStatusService].toInstance(mockITSAStatusService),
+      api.inject.bind[PenaltyDetailsService].toInstance(mockPenaltyDetailsService)
     ).build()
 
   val updateYear: String = "2018"
@@ -66,14 +68,20 @@ trait HomeControllerHelperSpec extends MockAuthActions
   val baseStatusDetail: StatusDetail = StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.Annual, StatusReason.SignupReturnAvailable, Some(8000.25))
   val staticTaxYear: TaxYear = TaxYear(fixedDate.getYear - 1, fixedDate.getYear)
 
-  def setupNextUpdatesTests(dueDates: Seq[LocalDate], mtdUserRole: MTDUserRole = MTDIndividual): Unit = {
+  def setupNextUpdatesTests(allDueDates: Seq[LocalDate],
+                            nextQuarterlyUpdateDueDate: Option[LocalDate],
+                            nextTaxReturnDueDate: Option[LocalDate],
+                            mtdUserRole: MTDUserRole = MTDIndividual): Unit = {
     mtdUserRole match {
       case MTDIndividual => setupMockUserAuth
       case MTDPrimaryAgent => setupMockAgentWithClientAuth(false)
       case _ => setupMockAgentWithClientAuth(true)
     }
-    mockGetDueDates(Right(dueDates))
+
+    mockGetDueDates(Right(allDueDates))
+    mockGetNextDueDates((nextQuarterlyUpdateDueDate, nextTaxReturnDueDate))
     mockSingleBusinessIncomeSource()
+
     when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
       .thenReturn(Future.successful(List(FinancialDetailsModel(
         balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
@@ -81,6 +89,7 @@ trait HomeControllerHelperSpec extends MockAuthActions
         financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
           items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
       ))))
+
     setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
   }
 
