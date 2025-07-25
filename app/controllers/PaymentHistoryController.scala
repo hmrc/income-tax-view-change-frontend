@@ -76,8 +76,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
           isAgent = isAgent,
           payments = payments,
           repayments = repayments,
-          languageUtils = languageUtils,
-          reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa)
+          languageUtils = languageUtils
         )
 
         val viewModel = PaymentCreditAndRefundHistoryViewModel(isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds))
