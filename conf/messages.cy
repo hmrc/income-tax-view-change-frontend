@@ -1977,7 +1977,6 @@ income.source.added.scenario.two.account.updated.p.b                            
 
 income.source.added.scenario.two.view.reporting.obligations.p.a                             = Mae’r busnes newydd hwn wedi optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Gallwch benderfynu ar unrhyw adeg i optio eich holl fusnes allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar eich tudalen
 income.source.added.scenario.two.view.reporting.obligations.link                            = ymrwymiadau adrodd.
-income.source.added.scenario.two.view.reporting.obligations.p.b                             =
 
 income.source.added.scenario.two.view.businesses.link                                       = Bwrw golwg dros eich busnesau
 income.source.added.scenario.two.view.businesses.p                                          = er mwyn ychwanegu, rheoli neu ddod â busnes neu ffynhonnell incwm i ben.
