@@ -17,6 +17,7 @@
 package views.html.helpers.injected.obligations
 
 import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, Voluntary}
 import models.obligations._
 import org.jsoup.Jsoup
@@ -44,7 +45,10 @@ class NextUpdatesHelperR17Spec extends TestSupport {
       nextYearItsaStatus = nextYearStatus
     )
 
-    val html: HtmlFormat.Appendable = nextUpdatesHelper(isAgent, currentObligations, optOutProposition, false)(implicitly, getIndividualUser(FakeRequest()))
+    val html: HtmlFormat.Appendable = nextUpdatesHelper(isAgent = isAgent,
+      viewModel = currentObligations,
+      optOutProposition = optOutProposition,
+      isSupportingAgent = false)(implicitly, getIndividualUser(FakeRequest()))
 
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
@@ -52,7 +56,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
   lazy val obligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(
     business1.incomeSourceId,
     twoObligationsSuccessModel.obligations
-  ))).obligationsByDate(isR17ContentEnabled = true).map{
+  ))).obligationsByDate(isR17ContentEnabled = true, Some(ITSAStatus.Voluntary)).map{
     case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
     DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
   }, Seq(DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, LocalDate.of(2025, 1, 31), Seq(ObligationWithIncomeType("Quarter", quarterlyBusinessObligation)), Seq.empty)))

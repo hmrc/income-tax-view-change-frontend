@@ -21,6 +21,7 @@ import connectors._
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels._
 import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard, TaxYear}
+import models.itsaStatus.ITSAStatus.ITSAStatus
 import models.obligations._
 import play.api.Logger
 import services.NextUpdatesService.{QuarterlyUpdatesCountForTaxYear, noQuarterlyUpdates}
@@ -73,11 +74,17 @@ class NextUpdatesService @Inject()(
   }
 
 
-  def getNextUpdatesViewModel(obligationsModel: ObligationsModel, isR17ContentEnabled: Boolean)(implicit user: MtdItUser[_]): NextUpdatesViewModel = {
-    val allDeadlines = obligationsModel.obligationsByDate(isR17ContentEnabled).map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
+  def getNextUpdatesViewModel(obligationsModel: ObligationsModel,
+                              isR17ContentEnabled: Boolean,
+                              currentYearITSAStatus: Option[ITSAStatus])(implicit user: MtdItUser[_]): NextUpdatesViewModel = {
+    val allDeadlines = obligationsModel.obligationsByDate(isR17ContentEnabled, currentYearITSAStatus).map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
       if (obligations.headOption.map(_.obligation.obligationType).contains("Quarterly")) {
         val obligationsByType = obligationsModel.groupByQuarterPeriod(obligations)
-        DeadlineViewModel(QuarterlyObligation, standardAndCalendar = true, date, obligationsByType.getOrElse(Some(QuarterTypeStandard), Seq.empty), obligationsByType.getOrElse(Some(QuarterTypeCalendar), Seq.empty))
+        DeadlineViewModel(QuarterlyObligation,
+          standardAndCalendar = true,
+          date,
+          obligationsByType.getOrElse(Some(QuarterTypeStandard), Seq.empty),
+          obligationsByType.getOrElse(Some(QuarterTypeCalendar), Seq.empty))
       }
       else DeadlineViewModel(EopsObligation, standardAndCalendar = false, date, obligations, Seq.empty)
     }.filter(deadline => (deadline.obligationType != EopsObligation) && !(deadline.standardQuarters.isEmpty && deadline.calendarQuarters.isEmpty))

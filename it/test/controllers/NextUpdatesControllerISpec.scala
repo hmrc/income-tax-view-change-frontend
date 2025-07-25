@@ -242,18 +242,17 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         val currentTaxYear = dateService.getCurrentTaxYearEnd
         val previousYear = currentTaxYear - 1
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
 
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(upcomingAndMissedObligationModel(testPropertyIncomeId))))
-
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(upcomingAndMissedObligationModel(testSelfEmploymentId))))
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
-        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(taxYear = dateService.getCurrentTaxYear)
+        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(taxYear = dateService.getCurrentTaxYear, itsaStatusCY = ITSAStatus.Voluntary )
         CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
 
         val res = buildGETMTDClient(path).futureValue
 
-        AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
+        AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testBusinessOnlyUser))
 
         IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
         IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
@@ -274,7 +273,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           elementTextByID("table-head-name-updates-due-missed")(expectedValue = "Income source updates due"),
           elementTextByID("quarterly-deadline-date-missed-0")(expectedValue = "31 Oct 2017"),
           elementTextByID("quarterly-period-missed-0")(expectedValue = "6 Apr 2017 to 5 Jul 2017"),
-          elementTextByID("quarterly-income-sources-missed-0")(expectedValue = "Property business"),
+          elementTextByID("quarterly-income-sources-missed-0")(expectedValue = "business"),
         )
 
         Then("the page displays the upcoming deadlines table")
@@ -285,7 +284,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           elementTextByID("table-head-name-updates-due")(expectedValue = "Income source updates due"),
           elementTextByID("quarterly-deadline-date-upcoming-0")(expectedValue = "31 Aug 2026"),
           elementTextByID("quarterly-period-upcoming-0")(expectedValue = "6 Apr 2026 to 5 Jul 2026"),
-          elementTextByID("quarterly-income-sources-upcoming-0")(expectedValue = "Property business"),
+          elementTextByID("quarterly-income-sources-upcoming-0")(expectedValue = "business"),
         )
 
         Then("the quarterly updates info sections")

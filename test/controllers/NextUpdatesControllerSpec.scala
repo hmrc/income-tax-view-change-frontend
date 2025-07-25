@@ -20,6 +20,7 @@ import mocks.auth.MockAuthActions
 import mocks.services.{MockNextUpdatesService, MockOptOutService}
 import mocks.views.agent.MockNextUpdates
 import models.admin.OptOutFs
+import models.itsaStatus.ITSAStatus
 import models.obligations._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -57,7 +58,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
   val nextUpdatesViewModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(
     GroupedObligationsModel(BaseTestConstants.testSelfEmploymentId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001", StatusFulfilled))),
     GroupedObligationsModel(BaseTestConstants.testPropertyIncomeId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "EOPS", Some(fixedDate), "EOPS", StatusFulfilled)))
-  )).obligationsByDate(isR17ContentEnabled = true).map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
+  )).obligationsByDate(isR17ContentEnabled = true, Some(ITSAStatus.Voluntary)).map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
     DeadlineViewModel(getQuarterType(obligations.head.incomeType), standardAndCalendar = false, date, obligations, Seq.empty)
   })
 
@@ -76,7 +77,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
   }
 
   def mockViewModel: OngoingStubbing[NextUpdatesViewModel] = {
-    when(mockNextUpdatesService.getNextUpdatesViewModel(any(), any())(any()))
+    when(mockNextUpdatesService.getNextUpdatesViewModel(any(), any(), any())(any()))
       .thenReturn(nextUpdatesViewModel)
   }
 
