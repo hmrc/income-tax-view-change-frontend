@@ -1,0 +1,92 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.layouts.unifiedLayout
+@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
+@import views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
+@import uk.gov.hmrc.govukfrontend.views.Aliases.InsetText
+@import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Button
+
+@this(
+        mainTemplate: unifiedLayout,
+        h1: h1,
+        h2: h2,
+        p: p,
+        govukButton: GovukButton,
+        bulletList: bulletPointList,
+        govukInsetText: GovukInsetText
+)
+
+@(isAgent: Boolean, isSigningUpForCY: Boolean, buttonUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])
+
+@mainTemplate(
+    pageTitle = messages("signUp.start.heading"),
+    backUrl = Some("#"),
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial) {
+
+    @h1(id = Some("sign-up-start-heading"), msg = messages("signUp.start.heading"))
+
+    @p(id = Some("sign-up-start-description")) {
+        @messages("signUp.start.desc")
+    }
+
+    @govukInsetText(InsetText(
+        id = Some("sign-up-inset"),
+        content = HtmlContent(
+            messages("signUp.start.inset")
+        )
+    ))
+
+    @h2(msg = "signUp.start.reportingQuarterly.heading", optId = Some("sign-up-reporting-quarterly-heading"))
+
+    @p(id = Some("sign-up-reporting-quarterly-text-1")) {
+        @messages("signUp.start.reportingQuarterly.desc")
+    }
+
+    @bulletList(
+        itemMsgKeys =
+            Seq(
+                "signUp.start.reportingQuarterly.bullet1",
+                "signUp.start.reportingQuarterly.bullet2",
+                "signUp.start.reportingQuarterly.bullet3"
+            ),
+        bulletId = Some("sign-up-bullet")
+    )
+
+    @if(isSigningUpForCY) {
+        @p(id = Some("sign-up-reporting-quarterly-text-2")) {
+            @messages("signUp.start.reportingQuarterly.cy.desc")
+        }
+    }
+
+    @h2(msg = "signUp.start.ifYouChangeYourMind.heading", optId = Some("sign-up-if-you-change-your-mind-heading"))
+
+    @p(id = Some("sign-up-if-you-change-your-mind-text")) {
+        @messages("signUp.start.ifYouChangeYourMind.desc")
+    }
+
+    @govukButton(Button(
+        content = Text(messages("signUp.start.button")),
+        attributes = Map("id" -> "sign-up-continue-button"),
+        href = Some(buttonUrl),
+        isStartButton = true
+    ))
+}
