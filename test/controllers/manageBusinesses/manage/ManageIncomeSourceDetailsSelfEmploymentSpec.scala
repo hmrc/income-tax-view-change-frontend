@@ -129,7 +129,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             manageDetailsSummaryKeys.eq(7).text().contains(reportingMethod)
           }
 
-          "valid latency information and two tax years not crystallised and ITSA status for TY2 is Annual" in {
+          "valid latency information and two tax years not crystallised and ITSA status for TY2 is Annual but Latency TY2 is Q" in {
             enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
             setupMockSuccess(mtdUserRole)
             setupMockCreateSession(true)
@@ -148,13 +148,43 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe title()
             getHeading(document) shouldBe heading
-            hasChangeFirstYearReportingMethodLink(document) shouldBe false
-            hasChangeSecondYearReportingMethodLink(document) shouldBe false
+            hasChangeFirstYearReportingMethodLink(document) shouldBe true
+            hasChangeSecondYearReportingMethodLink(document) shouldBe true
             hasInsetText(document) shouldBe true
             val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
             val manageDetailsSummaryKeys = getManageDetailsSummaryKeys(document)
             manageDetailsSummaryKeys.get(1).text() shouldBe "Address"
             manageDetailsSummaryValues.get(1).text() shouldBe businessWithLatencyAddress
+            manageDetailsSummaryValues.eq(5).isEmpty
+            manageDetailsSummaryValues.eq(6).isEmpty
+          }
+
+          "valid latency information and two tax years not crystallised and ITSA status for TY2 is Annual but Latency TY2 is A" in {
+            enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+            setupMockSuccess(mtdUserRole)
+            setupMockCreateSession(true)
+
+            setupMockGetCurrentTaxYearEnd(2023)
+            setupMockLatencyYearsQuarterlyAndAnnualStatus(true, false)
+            mockUkPlusForeignPlusSoleTraderWithLatencyAnnual()
+            setupMockTaxYearNotCrystallised(2023)
+            setupMockTaxYearNotCrystallised(2024)
+
+            setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment)))))
+            setupMockSetSessionKeyMongo(Right(true))
+
+            val result = action(fakeRequest)
+            status(result) shouldBe Status.OK
+            val document: Document = Jsoup.parse(contentAsString(result))
+            document.title shouldBe title()
+            getHeading(document) shouldBe heading
+            hasChangeFirstYearReportingMethodLink(document) shouldBe true
+            hasChangeSecondYearReportingMethodLink(document) shouldBe false
+            hasInsetText(document) shouldBe true
+            val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
+            val manageDetailsSummaryKeys = getManageDetailsSummaryKeys(document)
+            manageDetailsSummaryKeys.get(1).text() shouldBe "Address"
+            manageDetailsSummaryValues.get(1).text() shouldBe businessWithLatencyAddress2
             manageDetailsSummaryValues.eq(5).isEmpty
             manageDetailsSummaryValues.eq(6).isEmpty
           }
@@ -243,8 +273,8 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe title()
             getHeading(document) shouldBe heading
-            hasChangeFirstYearReportingMethodLink(document) shouldBe true
-            hasChangeSecondYearReportingMethodLink(document) shouldBe true
+            hasChangeFirstYearReportingMethodLink(document) shouldBe false
+            hasChangeSecondYearReportingMethodLink(document) shouldBe false
             hasInsetText(document) shouldBe true
             val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
             getManageDetailsSummaryKeys(document).get(1).text() shouldBe "Address"

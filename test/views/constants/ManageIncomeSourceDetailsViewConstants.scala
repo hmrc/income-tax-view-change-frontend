@@ -39,8 +39,8 @@ object ManageIncomeSourceDetailsViewConstants {
         secondYear = Some(true)
       ),
       latencyYearsAnnual = LatencyYearsAnnual(
-        firstYear = Some(true),
-        secondYear = Some(true)
+        firstYear = Some(false),
+        secondYear = Some(false)
       ),
       latencyYearsCrystallised = LatencyYearsCrystallised(
         firstYear = Some(false),
@@ -65,8 +65,8 @@ object ManageIncomeSourceDetailsViewConstants {
         secondYear = Some(true)
       ),
       latencyYearsAnnual = LatencyYearsAnnual(
-        firstYear = Some(true),
-        secondYear = Some(true)
+        firstYear = Some(false),
+        secondYear = Some(false)
       ),
       latencyYearsCrystallised = LatencyYearsCrystallised(
         firstYear = Some(true),
@@ -91,7 +91,7 @@ object ManageIncomeSourceDetailsViewConstants {
         secondYear = None
       ),
       latencyYearsAnnual = LatencyYearsAnnual(
-        firstYear = Some(true),
+        firstYear = Some(false),
         secondYear = None
       ),
       latencyYearsCrystallised = LatencyYearsCrystallised(
@@ -117,8 +117,8 @@ object ManageIncomeSourceDetailsViewConstants {
         secondYear = Some(false)
       ),
       latencyYearsAnnual = LatencyYearsAnnual(
-        firstYear = Some(false),
-        secondYear = Some(false)
+        firstYear = Some(true),
+        secondYear = Some(true)
       ),
       latencyYearsCrystallised = LatencyYearsCrystallised(
         firstYear = None,
@@ -143,8 +143,8 @@ object ManageIncomeSourceDetailsViewConstants {
         secondYear = Some(true)
       ),
       latencyYearsAnnual = LatencyYearsAnnual(
-        firstYear = Some(true),
-        secondYear = Some(true)
+        firstYear = Some(false),
+        secondYear = Some(false)
       ),
       latencyYearsCrystallised = LatencyYearsCrystallised(
         firstYear = Some(false),
@@ -169,8 +169,8 @@ object ManageIncomeSourceDetailsViewConstants {
         secondYear = Some(true)
       ),
       latencyYearsAnnual = LatencyYearsAnnual(
-        firstYear = Some(true),
-        secondYear = Some(true)
+        firstYear = Some(false),
+        secondYear = Some(false)
       ),
       latencyYearsCrystallised = LatencyYearsCrystallised(
         firstYear = Some(false),
@@ -195,8 +195,8 @@ object ManageIncomeSourceDetailsViewConstants {
         secondYear = Some(true)
       ),
       latencyYearsAnnual = LatencyYearsAnnual(
-        firstYear = Some(true),
-        secondYear = Some(true)
+        firstYear = Some(false),
+        secondYear = Some(false)
       ),
       latencyYearsCrystallised = LatencyYearsCrystallised(
         firstYear = Some(true),
@@ -221,7 +221,7 @@ object ManageIncomeSourceDetailsViewConstants {
         secondYear = None
       ),
       latencyYearsAnnual = LatencyYearsAnnual(
-        firstYear = Some(true),
+        firstYear = Some(false),
         secondYear = None
       ),
       latencyYearsCrystallised = LatencyYearsCrystallised(
@@ -247,8 +247,8 @@ object ManageIncomeSourceDetailsViewConstants {
         secondYear = Some(false)
       ),
       latencyYearsAnnual = LatencyYearsAnnual(
-        firstYear = Some(false),
-        secondYear = Some(false)
+        firstYear = Some(true),
+        secondYear = Some(true)
       ),
       latencyYearsCrystallised = LatencyYearsCrystallised(
         firstYear = None,
@@ -273,8 +273,8 @@ object ManageIncomeSourceDetailsViewConstants {
         secondYear = Some(true)
       ),
       latencyYearsAnnual = LatencyYearsAnnual(
-        firstYear = Some(true),
-        secondYear = Some(true)
+        firstYear = Some(false),
+        secondYear = Some(false)
       ),
       latencyYearsCrystallised = LatencyYearsCrystallised(
         firstYear = Some(false),
@@ -299,8 +299,8 @@ object ManageIncomeSourceDetailsViewConstants {
         secondYear = Some(true)
       ),
       latencyYearsAnnual = LatencyYearsAnnual(
-        firstYear = Some(true),
-        secondYear = Some(true)
+        firstYear = Some(false),
+        secondYear = Some(false)
       ),
       latencyYearsCrystallised = LatencyYearsCrystallised(
         firstYear = Some(true),
@@ -325,7 +325,7 @@ object ManageIncomeSourceDetailsViewConstants {
         secondYear = None
       ),
       latencyYearsAnnual = LatencyYearsAnnual(
-        firstYear = Some(true),
+        firstYear = Some(false),
         secondYear = None
       ),
       latencyYearsCrystallised = LatencyYearsCrystallised(
@@ -351,8 +351,8 @@ object ManageIncomeSourceDetailsViewConstants {
         secondYear = Some(false)
       ),
       latencyYearsAnnual = LatencyYearsAnnual(
-        firstYear = Some(false),
-        secondYear = Some(false)
+        firstYear = Some(true),
+        secondYear = Some(true)
       ),
       latencyYearsCrystallised = LatencyYearsCrystallised(
         firstYear = None,

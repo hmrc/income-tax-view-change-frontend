@@ -335,7 +335,7 @@
         captionClasses = Some("govuk-caption-l")
     ))
 
-    @if(viewModel.isBusinessInLatency){
+    @if(viewModel.showLatencyDetails){
         @if(showOptInOptOutContentUpdateR17) {
             <div id="up-to-two-tax-years" class="govuk-body">
                 @messages("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.paragraph", viewModel.latencyDetails.fold("")(_.taxYear2))

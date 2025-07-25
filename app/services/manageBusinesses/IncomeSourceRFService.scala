@@ -36,7 +36,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class IncomeSourceRFService @Inject()(val sessionService: SessionService,
                                       val itsaStatusService: ITSAStatusService,
-                                      val calculationListService: CalculationListService,
                                       val itvcErrorHandler: ItvcErrorHandler,
                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                       val dateService: DateService,
@@ -59,12 +58,8 @@ class IncomeSourceRFService @Inject()(val sessionService: SessionService,
     itsaStatusDetail.exists(_.isAnnual)
   }
 
-  private def businessIsInLatency(latencyDetails: Option[LatencyDetails]): Boolean = {
-    !latencyDetails.exists(_.taxYear2.toInt < currentTy.endYear)
-  }
-
   private def onlyOneYearInLatency(latencyDetails: Option[LatencyDetails]): Boolean = {
-    businessIsInLatency(latencyDetails) && latencyDetails.exists(_.taxYear2.toInt == currentTy.endYear)
+    latencyDetails.exists(_.taxYear2.toInt == currentTy.endYear)
   }
 
   private def updateChooseTaxYearsModelInSessionData(
@@ -84,13 +79,11 @@ class IncomeSourceRFService @Inject()(val sessionService: SessionService,
   private def redirectToCompletionPageChecks(
                                         currentTyStatus: Option[StatusDetail],
                                         nextTyStatus: Option[StatusDetail],
-                                        isCrystallisedForCurrTy: Boolean,
                                         latencyDetails: Option[LatencyDetails]
                                       ): Boolean = {
-      onlyOneYearInLatency(latencyDetails) ||
+    onlyOneYearInLatency(latencyDetails) ||
       isItsaStatusAnnual(currentTyStatus) ||
-      isItsaStatusAnnual(nextTyStatus) ||
-      isCrystallisedForCurrTy
+      isItsaStatusAnnual(nextTyStatus)
   }
 
   def redirectChecksForIncomeSourceRF(incomeSourceJourneyType: IncomeSourceJourneyType,
@@ -108,7 +101,6 @@ class IncomeSourceRFService @Inject()(val sessionService: SessionService,
         codeBlock(sessionData)
       } else {
         for {
-          crystallisationStatusForCy <- calculationListService.determineTaxYearCrystallised(currentTy.endYear)
           statusTaxYearMap <- itsaStatusService. getStatusTillAvailableFutureYears(TaxYear(currentTaxYearEnd - 1, currentTaxYearEnd))
           accountLevelITSAStatusCurrentTaxYear = statusTaxYearMap.get(currentTy)
           accountLevelITSAStatusNextTaxYear = statusTaxYearMap.get(nextTy)
@@ -117,8 +109,7 @@ class IncomeSourceRFService @Inject()(val sessionService: SessionService,
             someIncomeSourceId match {
               case Some(id) =>
                 val latencyDetails = user.incomeSources.getLatencyDetails(incomeSourceType, id)
-                if (redirectToCompletionPageChecks(accountLevelITSAStatusCurrentTaxYear, accountLevelITSAStatusNextTaxYear,
-                  crystallisationStatusForCy, latencyDetails)) {
+                if (redirectToCompletionPageChecks(accountLevelITSAStatusCurrentTaxYear, accountLevelITSAStatusNextTaxYear, latencyDetails)) {
                   redirectToIncomeSourceAddedPage(isAgent, incomeSourceType)
                 } else {
                   updateChooseTaxYearsModelInSessionData(sessionData, IncomeSourceReportingFrequencySourceData(true, true, false, false))

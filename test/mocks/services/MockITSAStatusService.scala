@@ -55,7 +55,7 @@ trait MockITSAStatusService extends UnitSpec with BeforeAndAfterEach {
     when(mockITSAStatusService.latencyYearsQuarterlyAndAnnualStatus(any[Option[LatencyDetails]])(any(), any(), any()))
       .thenReturn(Future.successful(
         LatencyYearsQuarterlyAndAnnualStatus(LatencyYearsQuarterly(Some(taxYear1Status), Some(taxYear2Status)),
-          LatencyYearsAnnual(Some(taxYear1Status), Some(taxYear2Status)))))
+          LatencyYearsAnnual(Some(!taxYear1Status), Some(!taxYear2Status)))))
   }
 
 }

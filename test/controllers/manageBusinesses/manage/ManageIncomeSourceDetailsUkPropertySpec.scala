@@ -199,16 +199,42 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               val document: Document = Jsoup.parse(contentAsString(result))
               document.title shouldBe title()
               getHeading(document) shouldBe heading
-              hasChangeFirstYearReportingMethodLink(document) shouldBe false
+              hasChangeFirstYearReportingMethodLink(document) shouldBe true
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasInsetText(document) shouldBe true
               val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
               manageDetailsSummaryValues.get(2).text() shouldBe calendar
-              manageDetailsSummaryValues.eq(3).size() shouldBe 0
-              manageDetailsSummaryValues.eq(4).size() shouldBe 0
+              manageDetailsSummaryValues.eq(3).size() shouldBe 1
+              manageDetailsSummaryValues.eq(4).size() shouldBe 1
+            }
+            "the user has a valid id parameter, valid latency information and tax year1 crystallised and tax year not crystallised" in {
+              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+              setupMockSuccess(mtdUserRole)
+              setupMockCreateSession(true)
+
+              setupMockGetCurrentTaxYearEnd(2023)
+              setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
+              mockUkPlusForeignPlusSoleTraderWithLatency()
+              setupMockTaxYearCrystallised(2023)
+              setupMockTaxYearNotCrystallised(2024)
+
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, UkProperty)))))
+
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.OK
+              val document: Document = Jsoup.parse(contentAsString(result))
+              document.title shouldBe title()
+              getHeading(document) shouldBe heading
+              hasChangeFirstYearReportingMethodLink(document) shouldBe false
+              hasChangeSecondYearReportingMethodLink(document) shouldBe true
+              hasGracePeriodInfo(document) shouldBe false
+              val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
+              manageDetailsSummaryValues.get(2).text() shouldBe calendar
+              manageDetailsSummaryValues.eq(3).size() shouldBe 1
+              manageDetailsSummaryValues.eq(4).size() shouldBe 1
             }
 
-            "the user has a valid id parameter, valid latency information and two tax years crystallised" in {
+            "the user has a valid id parameter, valid latency information and two tax years crystallised" in {//I think this scenario is not possible
               enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
@@ -231,8 +257,8 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               hasGracePeriodInfo(document) shouldBe false
               val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
               manageDetailsSummaryValues.get(2).text() shouldBe calendar
-              manageDetailsSummaryValues.eq(3).size() shouldBe 0
-              manageDetailsSummaryValues.eq(4).size() shouldBe 0
+              manageDetailsSummaryValues.eq(3).size() shouldBe 1
+              manageDetailsSummaryValues.eq(4).size() shouldBe 1
             }
 
             "the user has a valid id parameter, but non eligable itsa status" in {
@@ -280,12 +306,11 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               val document: Document = Jsoup.parse(contentAsString(result))
               document.title shouldBe title()
               getHeading(document) shouldBe heading
-              hasChangeFirstYearReportingMethodLink(document) shouldBe true
-              hasChangeSecondYearReportingMethodLink(document) shouldBe true
+              hasChangeFirstYearReportingMethodLink(document) shouldBe false
+              hasChangeSecondYearReportingMethodLink(document) shouldBe false
               val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
               manageDetailsSummaryValues.get(2).text() shouldBe calendar
-              manageDetailsSummaryValues.get(3).text() shouldBe quarterlyGracePeriod
-              manageDetailsSummaryValues.get(4).text() shouldBe annuallyGracePeriod
+              manageDetailsSummaryValues.size() shouldBe 3
             }
           }
 

@@ -24,7 +24,7 @@ import mocks.services.{MockCalculationListService, MockITSAStatusService, MockSe
 import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
-import models.itsaStatus.StatusDetail
+import models.itsaStatus.{StatusDetail, StatusReason}
 import models.itsaStatus.StatusReason.{Rollover, SignupReturnAvailable, StatusReason}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -33,7 +33,7 @@ import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Result, Results}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.DateService
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{notCompletedUIJourneySessionData, singleBusinessIncome2023, singleBusinessIncomeWithLatency2019}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{incomeSourceWithBothYearsInLatency, incomeSourceWithOneYearInLatency, notCompletedUIJourneySessionData, singleBusinessIncome2023, singleBusinessIncomeWithLatency2019}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.HeaderCarrier
@@ -56,7 +56,6 @@ class IncomeSourceRFServiceSpec extends TestSupport
   val incomeSourceRFService = new IncomeSourceRFService(
     mockSessionService,
     mockITSAStatusService,
-    mockCalculationListService,
     mockItvcErrorHandler,
     mockAgentErrorHandler,
     mockDateService,
@@ -65,28 +64,31 @@ class IncomeSourceRFServiceSpec extends TestSupport
 
   implicit val hc: HeaderCarrier = mock(classOf[HeaderCarrier])
 
-  class Setup(withLatency: Boolean, CYStatus: ITSAStatus, CYStatusReason: StatusReason, NYStatus: ITSAStatus, NYStatusReason: StatusReason, isCYCrystallised: Boolean = false) {
+  class Setup(withBothYearsInLatency: Boolean, withOneYearsInLatency: Boolean, CYStatus: ITSAStatus, NYStatus: ITSAStatus) {
     enable(IncomeSourcesNewJourney)
 
     setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment)))))
     setupMockSetMongoData(true)
 
-    when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.eq(2023))(any(), any())).thenReturn(Future.successful(isCYCrystallised))
-    when(mockCalculationListService.determineTaxYearCrystallised(ArgumentMatchers.eq(2024))(any(), any())).thenReturn(Future.successful(false))
-
     when(mockITSAStatusService.getStatusTillAvailableFutureYears(any())(any(), any(), any()))
       .thenReturn(Future.successful(
-        Map(TaxYear.forYearEnd(2023) -> StatusDetail("", CYStatus, CYStatusReason), TaxYear.forYearEnd(2024) -> StatusDetail("", NYStatus, NYStatusReason))
+        Map(TaxYear.forYearEnd(2023) -> StatusDetail("", CYStatus, StatusReason.SignupNoReturnAvailable),
+          TaxYear.forYearEnd(2024) -> StatusDetail("", NYStatus, StatusReason.Rollover),
+          TaxYear.forYearEnd(2025) -> StatusDetail("", NYStatus, StatusReason.Rollover)
+        )
       ))
 
-    val testUser = if (withLatency) defaultMTDITUser(Some(Individual), singleBusinessIncome2023) else defaultMTDITUser(Some(Individual), singleBusinessIncomeWithLatency2019)
+    val testUser =
+      if (withBothYearsInLatency) defaultMTDITUser(Some(Individual), incomeSourceWithBothYearsInLatency)
+      else if(withOneYearsInLatency) defaultMTDITUser(Some(Individual), incomeSourceWithOneYearInLatency)
+      else defaultMTDITUser(Some(Individual), singleBusinessIncomeWithLatency2019)
     def journeySessionCodeBlock: UIJourneySessionData => Future[Result] = (_) => Future.successful(Results.SeeOther("Successful"))
 
   }
 
   "redirectChecksForIncomeSourceRF" should {
     "redirect to the income source added page" when {
-      "business is not in latency" in new Setup(false, NoStatus, SignupReturnAvailable, Annual, SignupReturnAvailable) {
+      "business is not in latency" in new Setup(false, false, NoStatus, Annual) {
         val result = incomeSourceRFService.redirectChecksForIncomeSourceRF(
           IncomeSourceJourneyType(Add, SelfEmployment),
           AfterSubmissionPage,
@@ -100,7 +102,7 @@ class IncomeSourceRFServiceSpec extends TestSupport
         redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/manage-your-businesses/add-sole-trader/business-added")
       }
 
-      "business is in latency and annual for CY and the status reason for CY is Rollover" in new Setup(true, Annual, Rollover, Annual, SignupReturnAvailable) {
+      "business is in latency for both years and CY+1 status is Annual at account level" in new Setup(true, false, Mandated, Annual) {
         val result = incomeSourceRFService.redirectChecksForIncomeSourceRF(
           IncomeSourceJourneyType(Add, SelfEmployment),
           AfterSubmissionPage,
@@ -114,7 +116,7 @@ class IncomeSourceRFServiceSpec extends TestSupport
         redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/manage-your-businesses/add-sole-trader/business-added")
       }
 
-      "business is crystallised for CY and the CY+1 status is Annual at account level" in new Setup(true, Annual, SignupReturnAvailable, Annual, SignupReturnAvailable, true) {
+      "business is in latency for both years and CY status is Annual at account level" in new Setup(true, false, Annual, Mandated) {
         val result = incomeSourceRFService.redirectChecksForIncomeSourceRF(
           IncomeSourceJourneyType(Add, SelfEmployment),
           AfterSubmissionPage,
@@ -129,7 +131,7 @@ class IncomeSourceRFServiceSpec extends TestSupport
       }
     }
     "redirect to the url within the codeblock returned" when {
-      "business is in latency for CY & CY+1 and CY is crystallised" in new Setup(true, Voluntary, SignupReturnAvailable, Voluntary, SignupReturnAvailable, true) {
+      "business is in latency for both years and mandated for both years" in new Setup(true, false, Mandated, Mandated) {
         val result = incomeSourceRFService.redirectChecksForIncomeSourceRF(
           IncomeSourceJourneyType(Add, SelfEmployment),
           AfterSubmissionPage,
@@ -143,49 +145,7 @@ class IncomeSourceRFServiceSpec extends TestSupport
         redirectLocation(result) shouldBe Some("Successful")
       }
 
-      "business is in latency for CY & CY+1 and CY is NOT crystallised" in new Setup(true, Voluntary, SignupReturnAvailable, Voluntary, SignupReturnAvailable) {
-        val result = incomeSourceRFService.redirectChecksForIncomeSourceRF(
-          IncomeSourceJourneyType(Add, SelfEmployment),
-          AfterSubmissionPage,
-          SelfEmployment,
-          mockDateService.getCurrentTaxYearEnd,
-          false,
-          false
-        )(journeySessionCodeBlock)(testUser, hc)
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some("Successful")
-      }
-
-      "business is annual for CY and the status reason is NOT Rollover" in new Setup(true, Annual, SignupReturnAvailable, Voluntary, SignupReturnAvailable) {
-        val result = incomeSourceRFService.redirectChecksForIncomeSourceRF(
-          IncomeSourceJourneyType(Add, SelfEmployment),
-          AfterSubmissionPage,
-          SelfEmployment,
-          mockDateService.getCurrentTaxYearEnd,
-          false,
-          false
-        )(journeySessionCodeBlock)(testUser, hc)
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some("Successful")
-      }
-
-      "business is annual for CY and mandated or voluntary for CY+1" in new Setup(true, Annual, SignupReturnAvailable, Mandated, SignupReturnAvailable) {
-        val result = incomeSourceRFService.redirectChecksForIncomeSourceRF(
-          IncomeSourceJourneyType(Add, SelfEmployment),
-          AfterSubmissionPage,
-          SelfEmployment,
-          mockDateService.getCurrentTaxYearEnd,
-          false,
-          false
-        )(journeySessionCodeBlock)(testUser, hc)
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some("Successful")
-      }
-
-      "business is mandated/voluntary for CY and annual for CY+1" in new Setup(true, Mandated, SignupReturnAvailable, Annual, SignupReturnAvailable) {
+      "business is in latency for one year" in new Setup(false, true, Mandated, Mandated) {
         val result = incomeSourceRFService.redirectChecksForIncomeSourceRF(
           IncomeSourceJourneyType(Add, SelfEmployment),
           AfterSubmissionPage,

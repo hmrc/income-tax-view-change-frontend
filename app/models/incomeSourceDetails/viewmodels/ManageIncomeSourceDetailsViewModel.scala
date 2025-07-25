@@ -58,16 +58,22 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
   }
 
   def isBusinessInLatency: Boolean = {
-    !latencyDetails.exists(_.taxYear2.toInt < currentTaxYearEnd)
+    !latencyDetails.forall(_.taxYear2.toInt < currentTaxYearEnd)
+  }
+
+  def showLatencyDetails: Boolean = {
+    latencyYearsCrystallised.secondYear.contains(false)
   }
 
   def shouldShowChangeLinksForTaxYearOne: Boolean = {
+    isBusinessInLatency &&
     (latencyYearsCrystallised.firstYear contains false) &&
       ((latencyDetails.exists(_.latencyIndicator1 == "A") && latencyYearsAnnual.firstYear.contains(false)) ||
         latencyDetails.exists(_.latencyIndicator1 == "Q"))
   }
 
   def shouldShowChangeLinksForTaxYearTwo: Boolean = {
+    isBusinessInLatency &&
     (latencyYearsCrystallised.secondYear contains false) &&
       ((latencyDetails.exists(_.latencyIndicator2 == "A") && latencyYearsAnnual.secondYear.contains(false)) ||
         latencyDetails.exists(_.latencyIndicator2 == "Q"))

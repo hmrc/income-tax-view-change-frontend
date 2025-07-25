@@ -195,12 +195,12 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               val document: Document = Jsoup.parse(contentAsString(result))
               document.title shouldBe title()
               getHeading(document) shouldBe heading
-              hasChangeFirstYearReportingMethodLink(document) shouldBe false
+              hasChangeFirstYearReportingMethodLink(document) shouldBe true
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasInsetText(document) shouldBe true
               val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
-              manageDetailsSummaryValues.eq(2).size() shouldBe 0
-              manageDetailsSummaryValues.eq(3).size() shouldBe 0
+              manageDetailsSummaryValues.eq(2).size() shouldBe 1
+              manageDetailsSummaryValues.eq(3).size() shouldBe 1
             }
 
             "the user has a valid id parameter, valid latency information and two tax years crystallised" in {
@@ -274,13 +274,11 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               val document: Document = Jsoup.parse(contentAsString(result))
               document.title shouldBe title()
               getHeading(document) shouldBe heading
-              hasChangeFirstYearReportingMethodLink(document) shouldBe true
-              hasChangeSecondYearReportingMethodLink(document) shouldBe true
+              hasChangeFirstYearReportingMethodLink(document) shouldBe false
+              hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasInsetText(document) shouldBe true
               val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
               manageDetailsSummaryValues.get(2).text() shouldBe standard
-              manageDetailsSummaryValues.get(3).text() shouldBe annuallyGracePeriod
-              manageDetailsSummaryValues.get(4).text() shouldBe annuallyGracePeriod
             }
           }
 

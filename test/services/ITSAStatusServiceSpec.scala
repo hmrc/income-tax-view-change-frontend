@@ -83,7 +83,7 @@ class ITSAStatusServiceSpec extends TestSupport with MockITSAStatusConnector {
   }
 
 
-  "hasMandatedOrVoluntaryStatusForCurrentAndPreviousYear" when {
+  "latencyYearsQuarterlyAndAnnualStatus" when {
 
     "ITSAStatus is returned" should {
 
@@ -97,14 +97,44 @@ class ITSAStatusServiceSpec extends TestSupport with MockITSAStatusConnector {
         result shouldBe LatencyYearsQuarterlyAndAnnualStatus(LatencyYearsQuarterly(Some(true), Some(true)), LatencyYearsAnnual(Some(false), Some(false)))
       }
 
-      "return (true, true) if first year is MTD Mandated Or MTD Voluntary and second year has No Status (fall back to first year status)" in {
+      "return (true, true) if first year is MTD Mandated Or MTD Voluntary and second year has No Status status reason NOT rollover (fall back to first year status)" in {
         when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
         setupGetITSAStatusDetail(testNino, yearRange, false, false)(Right(List(successITSAStatusResponseMTDMandatedModel)))
         setupGetITSAStatusDetail(testNino, secondYearRange, false, false)(Right(List(successITSAStatusResponseModel)))
 
 
         val result = TestITSAStatusService.latencyYearsQuarterlyAndAnnualStatus(Some(testLatencyDetails4))(headerCarrier, ec, testMtdItUser).futureValue
+        result shouldBe LatencyYearsQuarterlyAndAnnualStatus(LatencyYearsQuarterly(Some(true), Some(false)), LatencyYearsAnnual(Some(false), Some(false)))
+      }
+
+      "return (true, true) if first year is MTD Mandated Or MTD Voluntary and second year has No Status status reason rollover (fall back to first year status)" in {
+        when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
+        setupGetITSAStatusDetail(testNino, yearRange, false, false)(Right(List(successITSAStatusResponseMTDMandatedModelRollover)))
+        setupGetITSAStatusDetail(testNino, secondYearRange, false, false)(Right(List(successITSAStatusResponseModelWithRollover)))
+
+
+        val result = TestITSAStatusService.latencyYearsQuarterlyAndAnnualStatus(Some(testLatencyDetails4))(headerCarrier, ec, testMtdItUser).futureValue
         result shouldBe LatencyYearsQuarterlyAndAnnualStatus(LatencyYearsQuarterly(Some(true), Some(true)), LatencyYearsAnnual(Some(false), Some(false)))
+      }
+
+      "return (true, true) if first year is Annual and second year has No Status status reason NOT rollover (fall back to first year status)" in {
+        when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
+        setupGetITSAStatusDetail(testNino, yearRange, false, false)(Right(List(successITSAStatusResponseAnnualModelNotRollover)))
+        setupGetITSAStatusDetail(testNino, secondYearRange, false, false)(Right(List(successITSAStatusResponseModelWithRollover)))
+
+
+        val result = TestITSAStatusService.latencyYearsQuarterlyAndAnnualStatus(Some(testLatencyDetails4))(headerCarrier, ec, testMtdItUser).futureValue
+        result shouldBe LatencyYearsQuarterlyAndAnnualStatus(LatencyYearsQuarterly(Some(false), Some(false)), LatencyYearsAnnual(Some(true), Some(false)))
+      }
+
+      "return (true, true) if first year is Annual and second year has No Status status reason rollover (fall back to first year status)" in {
+        when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
+        setupGetITSAStatusDetail(testNino, yearRange, false, false)(Right(List(successITSAStatusResponseAnnualModelRollover)))
+        setupGetITSAStatusDetail(testNino, secondYearRange, false, false)(Right(List(successITSAStatusResponseModelWithRollover)))
+
+
+        val result = TestITSAStatusService.latencyYearsQuarterlyAndAnnualStatus(Some(testLatencyDetails4))(headerCarrier, ec, testMtdItUser).futureValue
+        result shouldBe LatencyYearsQuarterlyAndAnnualStatus(LatencyYearsQuarterly(Some(false), Some(false)), LatencyYearsAnnual(Some(true), Some(true)))
       }
 
       "return (false, true) if only second year has MTD Mandated or MTD Voluntary" in {
