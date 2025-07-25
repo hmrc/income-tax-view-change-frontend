@@ -156,24 +156,20 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
   "RepaymentHistoryUtils" should {
     "getGroupedPaymentHistoryData should combine payments and approved repayments and group by year" when {
       "both payments and repayments are present" in {
-        getGroupedPaymentHistoryData(payments, repaymentHistory, isAgent = false, reviewAndReconcileEnabled = true, languageUtils
+        getGroupedPaymentHistoryData(payments, repaymentHistory, isAgent = false, languageUtils
         )(messages, dateService ) shouldBe groupedRepayments() ++ groupedPayments()
       }
 
       "only payments are present" in {
-        getGroupedPaymentHistoryData(payments, List(), isAgent = false, reviewAndReconcileEnabled = true, languageUtils
+        getGroupedPaymentHistoryData(payments, List(), isAgent = false, languageUtils
         )(messages, dateService) shouldBe groupedPayments()
       }
 
       "only approved repayments are present" in {
-        getGroupedPaymentHistoryData(List(), repaymentHistory, isAgent = false, reviewAndReconcileEnabled = true, languageUtils
+        getGroupedPaymentHistoryData(List(), repaymentHistory, isAgent = false, languageUtils
         )(messages, dateService) shouldBe groupedRepayments()
       }
 
-      "review and reconcile credits are NOT present when switch is OFF" in {
-        getGroupedPaymentHistoryData(payments, List(), isAgent = false, reviewAndReconcileEnabled = false, languageUtils
-        )(messages, dateService) shouldBe groupedPayments(true, true, false)
-      }
     }
   }
 }
