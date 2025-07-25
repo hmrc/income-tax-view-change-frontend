@@ -43,7 +43,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
   val paymentsLpiPaymentOnAccount1: String = messages("tax-year-summary.payments.lpi.paymentOnAccount1.text")
   val paymentsPaymentOnAccount1: String = messages("tax-year-summary.payments.paymentOnAccount1.text")
   val updateTypeQuarterly: String = "Quarterly Update"
-  val emptyCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = false, None)
+  val emptyCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(None)
 
   def calculationSummary(forecastIncome: Option[Int] = None,
                          forecastIncomeTaxAndNics: Option[BigDecimal] = None,
@@ -120,7 +120,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     )
   ))
 
-  val business = List(BusinessDetailsModel(
+  val business: List[BusinessDetailsModel] = List(BusinessDetailsModel(
     "testId",
     incomeSource = Some(testIncomeSource),
     accountingPeriod = Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
@@ -158,7 +158,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     Message("C159028", "the total tax taken off your client’s employment must be less than the total taxable pay including: tips, other payments, lump sums")
   ))))
 
-  val jsonAuditAgentResponse = commonAuditDetails(Agent) ++ Json.obj(
+  val jsonAuditAgentResponse: JsObject = commonAuditDetails(Agent) ++ Json.obj(
     "taxYearOverview" -> Json.obj(
       "calculationDate" -> "2017-07-06",
       "calculationAmount" -> 2010,
@@ -198,7 +198,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     ))
   )
 
-  val jsonAuditIndividualResponse = commonAuditDetails(Individual) ++ Json.obj(
+  val jsonAuditIndividualResponse: JsObject = commonAuditDetails(Individual) ++ Json.obj(
     "taxYearOverview" -> Json.obj(
       "calculationDate" -> "2017-07-06",
       "calculationAmount" -> 2010,
@@ -272,14 +272,14 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
         forecastIncome = forecastIncome,
         forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
         forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
-      ), charges = payments(paymentHasADunningLock).map(TaxYearSummaryChargeItem.fromChargeItem(_)),
+      ), charges = payments(paymentHasADunningLock).map(TaxYearSummaryChargeItem.fromChargeItem),
         obligations = updates, showForecastData = true, ctaViewModel = emptyCTAViewModel, LPP2Url = ""
       )
     )
 
   def errorAuditResponseJson(auditResponse: JsObject, messages: Option[Messages]): JsObject = {
     val calculation = auditResponse("calculation")
-    val updatedCalc = (calculation.as[JsObject] ++ Json.obj("errors" -> messages.get.errors.get.map(_.text)))
+    val updatedCalc = calculation.as[JsObject] ++ Json.obj("errors" -> messages.get.errors.get.map(_.text))
     auditResponse ++ Json.obj("calculation" -> updatedCalc)
   }
 
@@ -377,9 +377,9 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
           forecastAllowancesAndDeductions = Some(100)
         )
 
-        (auditJson.detail \ "taxYearOverview" \ "calculationAmount").toString() shouldBe "JsDefined(2010)"
-        (auditJson.detail \ "taxYearOverview" \ "isCrystallised").toString() shouldBe "JsDefined(false)"
-        (auditJson.detail \ "taxYearOverview" \ "forecastAmount").toString() shouldBe "JsDefined(2000)"
+        (auditJson.detail \ "taxYearOverview" \ "calculationAmount").toString shouldBe "JsDefined(2010)"
+        (auditJson.detail \ "taxYearOverview" \ "isCrystallised").toString shouldBe "JsDefined(false)"
+        (auditJson.detail \ "taxYearOverview" \ "forecastAmount").toString shouldBe "JsDefined(2000)"
         (auditJson.detail \ "forecast").toOption.get shouldBe
           Json.obj(
             "income" -> 2000,

@@ -99,7 +99,7 @@ class OptOutServiceMakeOptOutUpdateRequestSpec
 
         when(repository.recallOptOutPropositionWithIntent())
           .thenReturn(Future(Some(
-            createOptOutProposition(currentTaxYear, false, ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus), None))
+            createOptOutProposition(currentTaxYear, previousYearCrystallised = false, ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus), None))
           )
 
         when(optOutConnector.optOut(previousTaxYear, taxableEntityId))
@@ -196,7 +196,7 @@ class OptOutServiceMakeOptOutUpdateRequestSpec
         ))
 
         when(repository.recallOptOutPropositionWithIntent()).thenReturn(Future.successful(Some(
-          createOptOutProposition(currentTaxYear, false, ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus), None)))
+          createOptOutProposition(currentTaxYear, previousYearCrystallised = false, ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus), None)))
 
         val result = service.makeOptOutUpdateRequest()
 

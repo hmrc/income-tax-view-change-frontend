@@ -25,8 +25,6 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.jsoup.select.Elements
-import org.scalatest.Assertion
 import play.api.data.{Form, FormError}
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
@@ -55,7 +53,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
 
     val formFieldName = "incomeSources.manage.propertyReportingMethod"
 
-    val taxYearSet = if(isCYPlus)("2026","2027") else ("2025", "2026")
+    val taxYearSet: (String, String) = if(isCYPlus)("2026","2027") else ("2025", "2026")
 
     def getFormErrorMessage(incomeSourceType: IncomeSourceType): String = {
       incomeSourceType match {
@@ -65,13 +63,13 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       }
     }
 
-    val selfEmploymentId = incomeSourceType match {
+    val selfEmploymentId: Option[String] = incomeSourceType match {
       case SelfEmployment => Some(testSelfEmploymentId)
       case _ => None
     }
 
-    val backUrl = manageIncomeSourceDetailsController.show(isAgent, incomeSourceType, selfEmploymentId).url
-    val pageSubHeading = incomeSourceType match {
+    val backUrl: String = manageIncomeSourceDetailsController.show(isAgent, incomeSourceType, selfEmploymentId).url
+    val pageSubHeading: String = incomeSourceType match {
       case SelfEmployment => "Sole trader"
       case UkProperty => "UK property"
       case ForeignProperty => "Foreign property"
@@ -100,7 +98,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
 
     //old messages (content R17 FS disabled)
     val oldPageHeading = s"Change to $newReportingMethod reporting for ${taxYearSet._1} to ${taxYearSet._2} tax year"
-    val oldPageDescription = if (newReportingMethod == "quarterly") "Changing to quarterly reporting will mean you need to submit your quarterly updates through compatible software."
+    val oldPageDescription: String = if (newReportingMethod == "quarterly") "Changing to quarterly reporting will mean you need to submit your quarterly updates through compatible software."
     else "If you change to annual reporting, you can submit your tax return through your HMRC online account or compatible software."
     val oldPageInset = "If you have submitted any income and expenses for this tax year to HMRC, this will be deleted from our records. So make sure you keep hold of this information because you will need to include it in your quarterly updates."
     val oldPageConfirm = "Confirm and save"

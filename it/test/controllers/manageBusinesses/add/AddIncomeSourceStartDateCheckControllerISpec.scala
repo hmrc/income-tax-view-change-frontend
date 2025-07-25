@@ -23,10 +23,10 @@ import enums.{MTDIndividual, MTDUserRole}
 import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm
 import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm.{responseNo, responseYes}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSourcesFs, NavBarFs, AccountingMethodJourney, IncomeSourcesNewJourney}
+import models.admin.{AccountingMethodJourney, IncomeSourcesNewJourney, NavBarFs}
 import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData.{accountingPeriodEndDateField, accountingPeriodStartDateField, dateStartedField}
-import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
+import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceDetailsResponse, UIJourneySessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
@@ -95,7 +95,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
     }
   }
 
-  def getIncomeSourceDetailsResponse(incomeSourceType: IncomeSourceType) = {
+  def getIncomeSourceDetailsResponse(incomeSourceType: IncomeSourceType): IncomeSourceDetailsResponse = {
     incomeSourceType match {
       case SelfEmployment => businessOnlyResponse
       case UkProperty => ukPropertyOnlyResponse

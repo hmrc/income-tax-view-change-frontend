@@ -19,6 +19,7 @@ package controllers.claimToAdjustPoa
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import cats.data.EitherT
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.AfterSubmissionPage
 import models.admin.YourSelfAssessmentCharges
@@ -30,7 +31,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{ClaimToAdjustService, DateService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.ErrorRecovery
-import utils.claimToAdjust.{ClaimToAdjustUtils, WithSessionAndPoa}
+import utils.claimToAdjust.WithSessionAndPoa
 import views.html.claimToAdjustPoa.PoaAdjustedView
 
 import java.time.LocalDate
@@ -47,7 +48,7 @@ class PoaAdjustedController @Inject()(val authActions: AuthActions,
                                       val agentErrorHandler: AgentItvcErrorHandler,
                                       val mcc: MessagesControllerComponents,
                                       val ec: ExecutionContext)
-  extends FrontendController(mcc) with ClaimToAdjustUtils with I18nSupport with WithSessionAndPoa with ErrorRecovery {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with WithSessionAndPoa with ErrorRecovery {
 
   def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
     implicit user =>
