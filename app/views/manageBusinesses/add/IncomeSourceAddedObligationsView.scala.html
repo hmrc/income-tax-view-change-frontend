@@ -233,8 +233,12 @@
         @if(reportingFrequencyEnabled) {
             @p(id=Some("view-reporting-obligations")) {
                 @messages("income.source.added.scenario.two.view.reporting.obligations.p.a")
-                @linkComponent(id = Some("reporting-obligations-link"), url = getReportingFrequencyUrl, message = messages("income.source.added.scenario.two.view.reporting.obligations.link"))
-                @messages("income.source.added.scenario.two.view.reporting.obligations.p.b")
+                @linkComponent(
+                    id = Some("reporting-obligations-link"),
+                    url = getReportingFrequencyUrl,
+                    message = messages("income.source.added.scenario.two.view.reporting.obligations.link"),
+                    additionalMessage = Some(messages("base.fullstop"))
+                )
             }
         }
 
