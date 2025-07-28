@@ -807,6 +807,8 @@ nextUpdates.business            							       = Business income
 
 nextUpdates.optOutOneYear.p.message                                = You are currently reporting quarterly on a voluntary basis for the {0} to {1} tax year. You can choose to
 nextUpdates.optOutOneYear.p.link                                   = opt out of quarterly updates and report annually instead.
+nextUpdates.optOutMultiYear.p.message                              = You are currently reporting quarterly on a voluntary basis. You can choose to
+nextUpdates.optOutMultiYear.p.link                                 = opt out of quarterly updates and report annually instead.
 
 nextUpdates.reporting.obligations.p.message                        = Depending on your circumstances,
 nextUpdates.reporting.obligations.p.link                           = you may be able to view and change your reporting obligations.

@@ -21,7 +21,7 @@ import controllers.optIn.BeforeYouStartControllerISpec._
 import enums.JourneyType.{Opt, OptInJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.NavBarFs
+import models.admin.{NavBarFs, ReportingFrequencyPage}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.optin.{OptInContextData, OptInSessionData}
@@ -58,6 +58,7 @@ class BeforeYouStartControllerISpec extends ControllerISpecHelper {
           "render the before you start page with a button" that {
             "Redirects to choose tax year page" in {
               disable(NavBarFs)
+              enable(ReportingFrequencyPage)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -82,6 +83,7 @@ class BeforeYouStartControllerISpec extends ControllerISpecHelper {
 
             "Redirects to confirm tax year page" in {
               disable(NavBarFs)
+              enable(ReportingFrequencyPage)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
