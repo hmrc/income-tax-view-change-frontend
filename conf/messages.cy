@@ -1547,18 +1547,6 @@ cease-income-sources.ceased-businesses.h1     = Busnesau sydd wedi dod i ben
 cease-income-sources.table-head.date-ended    = Y dyddiad dod i ben
 cease-income-sources.unknown                  = Anhysbys
 
-## view Income Sources
-view-income-sources.heading                  = Bwrw golwg dros eich ffynonellau incwm a’u rheoli
-view-income-sources.self-employed-h2         = Busnesau unig fasnachwr
-view-income-sources.uk-property-h2           = Eiddo yn y DU
-view-income-sources.foreign-property-h2      = Eiddo tramor
-view-income-sources.ceased-businesses-h2     = Busnesau sydd wedi dod i ben
-view-income-sources.table-head.business-name = Enw’r busnes
-view-income-sources.table-head.date-started  = Dyddiad cychwyn
-view-income-sources.table-head.date-ended    = Y dyddiad dod i ben
-view-income-sources.choose                   = Dewis
-view-income-sources.unknown-field            = Anhysbys
-
 ## Add business trade page
 add-trade.heading                               = Beth yw masnach eich busnes?
 add-trade.trade-info-1                          = Masnach eich busnes yw’r nwyddau neu’r gwasanaethau mae eich busnes yn eu darparu.
@@ -1762,17 +1750,8 @@ incomeSources.add.FP.AccountingMethod.drop-down-text          = Gwnaethoch greu 
 incomeSources.add.FP.AccountingMethod.drop-down-text-bp-1     = os daeth yr incwm i law ym mis Mai 2017, dylech ddefnyddio ‘cyfrifyddu ar sail arian parod’
 incomeSources.add.FP.AccountingMethod.drop-down-text-bp-2     = os daeth yr incwm i law ym mis Mawrth 2017, dylech ddefnyddio ‘cyfrifyddu traddodiadol’
 
-incomeSources.ceaseUKProperty.checkDetails.heading               = Gwirio’ch manylion
-incomeSources.ceaseUKProperty.checkDetails.caption               = Y busnes eiddo yn y DU a nodwyd gennych
-incomeSources.ceaseUKProperty.checkDetails.dateStopped           = Dyddiad y gwnaeth y busnes stopio
-incomeSources.ceaseUKProperty.checkDetails.confirm               = Cadarnhau ac yn eich blaen
-incomeSources.ceaseUKProperty.checkDetails.change                = Newid
-
 # add Business page
-# heading is used only in the old journey
-add-business-name.heading                                         = Beth yw enw’ch busnes?
 
-# heading1 and heading 2 are used for the new journey
 add-business-name.heading1                                        = Enw’r busnes
 add-business-name.heading2                                        = Beth yw enw’ch busnes?
 
@@ -1821,21 +1800,6 @@ incomeSources.add.SE.AccountingMethod.drop-down-text-bp-2     = os daeth yr incw
 
 incomeSources.add.AccountingMethod.no-selection               = Dewiswch a ydych yn defnyddio cyfrifyddu arian parod neu gyfrifyddu traddodiadol
 
-incomeSources.ceaseBusiness.checkDetails.heading                    = Gwirio’ch manylion
-incomeSources.ceaseBusiness.checkDetails.caption                    = Busnesau unig fasnachwr
-incomeSources.ceaseBusiness.checkDetails.dateStopped                = Dyddiad y gwnaeth y busnes stopio
-incomeSources.ceaseBusiness.checkDetails.businessName               = Busnes sydd wedi stopio
-incomeSources.ceaseBusiness.checkDetails.businessAddress            = Cyfeiriad y busnes
-incomeSources.ceaseBusiness.checkDetails.confirm                    = Cadarnhau ac yn eich blaen
-incomeSources.ceaseBusiness.checkDetails.change                     = Newid
-incomeSources.ceaseBusiness.checkDetails.unknown                    = Anhysbys
-
-incomeSources.ceaseForeignProperty.checkDetails.heading               = Gwirio’ch manylion
-incomeSources.ceaseForeignProperty.checkDetails.caption               = Y busnes eiddo tramor a nodwyd gennych
-incomeSources.ceaseForeignProperty.checkDetails.dateStopped           = Dyddiad y gwnaeth y busnes stopio
-incomeSources.ceaseForeignProperty.checkDetails.confirm               = Cadarnhau ac yn eich blaen
-incomeSources.ceaseForeignProperty.checkDetails.change                = Newid
-
 ## Cease - Check Answers ##
 cease-check-answers.title                                     = Gwirio’ch atebion
 cease-check-answers.caption                                   = Unig fasnachwr
@@ -1880,33 +1844,6 @@ check-details-fp.cash-accounting                        = Cyfrifyddu ar sail ari
 check-details-fp.traditional-accounting                 = Cyfrifyddu traddodiadol
 check-details-fp.change                                 = Newid
 check-details-fp.description                            = Unwaith y byddwch yn cadarnhau’r manylion hyn, ni fyddwch yn gallu eu diwygio yn y cam nesaf a bydd angen i chi gysylltu â CThEF i wneud hynny.
-
-check-business-details.title                            = Gwirio’ch manylion
-check-business-details.heading                          = Y busnes unig fasnachwr a nodwyd gennych
-check-business-details.business-name                    = Enw’r busnes
-check-business-details.change                           = Newid
-check-business-details.start-date                       = Dyddiad dechrau masnachu’r busnes
-check-business-details.business-description             = Disgrifiad o’r busnes
-check-business-details.business-address                 = Cyfeiriad y busnes
-check-business-details.confirm-button                   = Cadarnhau ac yn eich blaen
-check-business-details.accounting-method                = Dull cyfrifyddu ar gyfer incwm unig fasnachwr
-check-business-details.cash-accounting                  = Cyfrifyddu ar sail arian parod
-check-business-details.traditional-accounting           = Cyfrifyddu traddodiadol
-
-incomeSources.add.checkUKPropertyDetails.title                  = Gwirio’ch manylion
-incomeSources.add.checkUKPropertyDetails.heading                = Y busnes eiddo yn y DU a nodwyd gennych
-incomeSources.add.checkUKPropertyDetails.start-date             = Dyddiad dechrau’r busnes eiddo yn y DU
-incomeSources.add.checkUKPropertyDetails.accounting-method      = Dull cyfrifyddu’r busnes eiddo yn y DU
-incomeSources.add.checkUKPropertyDetails.change                 = Newid
-incomeSources.add.checkUKPropertyDetails.confirm                = Cadarnhau ac yn eich blaen
-
-incomeSources.add.foreign-property-check-details.cash-basis-accounting      = Cyfrifyddu ar sail arian parod
-incomeSources.add.foreign-property-check-details.traditional-accounting     = Cyfrifyddu traddodiadol
-incomeSources.add.foreign-property-check-details.heading                    = Y busnes eiddo tramor a nodwyd gennych
-incomeSources.add.foreign-property-check-details.title                      = Gwirio’ch manylion
-incomeSources.add.foreign-property-check-details.start-date                 = Dyddiad dechrau’r busnes eiddo tramor
-incomeSources.add.foreign-property-check-details.accounting-method          = Dull cyfrifyddu’r busnes eiddo tramor
-incomeSources.add.foreign-property-check-details.change                     = Newid
 
 # business added page
 business.added.text                                     = Yr hyn y mae’n rhaid i chi ei wneud

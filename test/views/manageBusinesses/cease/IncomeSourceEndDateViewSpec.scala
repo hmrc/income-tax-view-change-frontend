@@ -17,7 +17,7 @@
 package views.manageBusinesses.cease
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import forms.incomeSources.cease.CeaseIncomeSourceEndDateFormProvider
+import forms.manageBusinesses.cease.CeaseIncomeSourceEndDateFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.{Form, FormError}
@@ -70,27 +70,27 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
 
   "BusinessEndDateView - Individual" should {
     "render the heading - Self employment" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
-      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.endDate.selfEmployment.heading")
-      document.getElementById(s"$prefixSoleTrader-caption").text() shouldBe messages("accessibility.this-section-is") + " " + messages(s"$ceasePrefix.${SelfEmployment.messagesSuffix}")
+      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe "Date your self-employed business stopped"
+      document.getElementById(s"$prefixSoleTrader-caption").text() shouldBe "This section is: Sole trader"
     }
     "render the heading - Foreign property" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
-      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.endDate.foreignProperty.heading")
-      document.getElementById(s"$prefixForeignProperty-caption").text() shouldBe messages("accessibility.this-section-is") + " " + messages(s"$ceasePrefix.${ForeignProperty.messagesSuffix}")
+      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe "Date your foreign property business stopped"
+      document.getElementById(s"$prefixForeignProperty-caption").text() shouldBe "This section is: Foreign property"
     }
     "render the heading - Uk Property " in new Setup(isAgent = false, incomeSourceType = UkProperty) {
-      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.endDate.ukProperty.heading")
-      document.getElementById(s"$prefixUKProperty-caption").text() shouldBe messages("accessibility.this-section-is") + " " + messages(s"$ceasePrefix.${UkProperty.messagesSuffix}")
+      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe "Date your UK property business stopped"
+      document.getElementById(s"$prefixUKProperty-caption").text() shouldBe "This section is: UK property"
     }
     "render the hint - Self Employment" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
-      document.getElementById("income-source-end-date-hint-example").text() shouldBe messages("dateForm.hint")
+      document.getElementById("income-source-end-date-hint-example").text() shouldBe "For example, 27 3 2020"
     }
     "render the hint - Uk Property" in new Setup(isAgent = false, incomeSourceType = UkProperty) {
-      document.getElementById("income-source-end-date-hint").text() shouldBe messages(s"$prefixUKProperty.hint-1")
-      document.getElementById("income-source-end-date-hint-example").text() shouldBe messages("dateForm.hint")
+      document.getElementById("income-source-end-date-hint").text() shouldBe "This is the date you last received rental income or made an expense related to your UK property business."
+      document.getElementById("income-source-end-date-hint-example").text() shouldBe "For example, 27 3 2020"
     }
     "render the hint - Foreign Property" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
-      document.getElementById("income-source-end-date-hint").text() shouldBe messages(s"$prefixForeignProperty.hint-1")
-      document.getElementById("income-source-end-date-hint-example").text() shouldBe messages("dateForm.hint")
+      document.getElementById("income-source-end-date-hint").text() shouldBe "This is the date you last received rental income or made an expense related to your foreign property business."
+      document.getElementById("income-source-end-date-hint-example").text() shouldBe "For example, 27 3 2020"
     }
     "render the date form" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
       document.getElementsByClass("govuk-label govuk-date-input__label").eq(0).text() shouldBe "Day"
@@ -99,40 +99,40 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
       document.getElementsByClass("govuk-date-input__item").size() shouldBe 3
     }
     "render the back link with the correct URL" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
-      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").text() shouldBe "Back"
       document.getElementById("back-fallback").attr("href") shouldBe testBackUrl
     }
     "render the continue button" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
-      document.getElementById("continue-button").text() shouldBe messages("base.continue")
+      document.getElementById("continue-button").text() shouldBe "Continue"
     }
     "render the error summary" in new Setup(isAgent = false, error = true, incomeSourceType = SelfEmployment) {
-      document.getElementById("error-summary").text() shouldBe messages("base.error_summary.heading") + " " + messages("dateForm.error.monthAndYear.required")
+      document.getElementById("error-summary").text() shouldBe "There is a problem The date must include a month and a year"
     }
   }
 
   "BusinessEndDateView - Agent" should {
     "render the heading - Self employment" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
-      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.endDate.selfEmployment.heading")
-      document.getElementById(s"$prefixSoleTrader-caption").text() shouldBe messages("accessibility.this-section-is") + " " + messages(s"$ceasePrefix.${SelfEmployment.messagesSuffix}")
+      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe "Date your self-employed business stopped"
+      document.getElementById(s"$prefixSoleTrader-caption").text() shouldBe "This section is: Sole trader"
     }
     "render the heading - Foreign property" in new Setup(isAgent = true, incomeSourceType = ForeignProperty) {
-      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.endDate.foreignProperty.heading")
-      document.getElementById(s"$prefixForeignProperty-caption").text() shouldBe messages("accessibility.this-section-is") + " " + messages(s"$ceasePrefix.${ForeignProperty.messagesSuffix}")
+      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe "Date your foreign property business stopped"
+      document.getElementById(s"$prefixForeignProperty-caption").text() shouldBe "This section is: Foreign property"
     }
     "render the heading - Uk Property " in new Setup(isAgent = true, incomeSourceType = UkProperty) {
-      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.endDate.ukProperty.heading")
-      document.getElementById(s"$prefixUKProperty-caption").text() shouldBe messages("accessibility.this-section-is") + " " + messages(s"$ceasePrefix.${UkProperty.messagesSuffix}")
+      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe "Date your UK property business stopped"
+      document.getElementById(s"$prefixUKProperty-caption").text() shouldBe "This section is: UK property"
     }
     "render the hint - Self Employment" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
-      document.getElementById("income-source-end-date-hint-example").text() shouldBe messages("dateForm.hint")
+      document.getElementById("income-source-end-date-hint-example").text() shouldBe "For example, 27 3 2020"
     }
     "render the hint - Uk Property" in new Setup(isAgent = true, incomeSourceType = UkProperty) {
-      document.getElementById("income-source-end-date-hint").text() shouldBe messages(s"$prefixUKProperty.hint-1")
-      document.getElementById("income-source-end-date-hint-example").text() shouldBe messages("dateForm.hint")
+      document.getElementById("income-source-end-date-hint").text() shouldBe "This is the date you last received rental income or made an expense related to your UK property business."
+      document.getElementById("income-source-end-date-hint-example").text() shouldBe "For example, 27 3 2020"
     }
     "render the hint - Foreign Property" in new Setup(isAgent = true, incomeSourceType = ForeignProperty) {
-      document.getElementById("income-source-end-date-hint").text() shouldBe messages(s"$prefixForeignProperty.hint-1")
-      document.getElementById("income-source-end-date-hint-example").text() shouldBe messages("dateForm.hint")
+      document.getElementById("income-source-end-date-hint").text() shouldBe "This is the date you last received rental income or made an expense related to your foreign property business."
+      document.getElementById("income-source-end-date-hint-example").text() shouldBe "For example, 27 3 2020"
     }
     "render the date form" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
       document.getElementsByClass("govuk-label govuk-date-input__label").eq(0).text() shouldBe "Day"
@@ -141,14 +141,14 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
       document.getElementsByClass("govuk-date-input__item").size() shouldBe 3
     }
     "render the back link with the correct URL" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
-      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").text() shouldBe "Back"
       document.getElementById("back-fallback").attr("href") shouldBe testBackUrl
     }
     "render the continue button" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
-      document.getElementById("continue-button").text() shouldBe messages("base.continue")
+      document.getElementById("continue-button").text() shouldBe "Continue"
     }
     "render the error summary" in new Setup(isAgent = true, error = true, incomeSourceType = SelfEmployment) {
-      document.getElementById("error-summary").text() shouldBe messages("base.error_summary.heading") + " " + messages("dateForm.error.monthAndYear.required")
+      document.getElementById("error-summary").text() shouldBe "There is a problem The date must include a month and a year"
     }
   }
 

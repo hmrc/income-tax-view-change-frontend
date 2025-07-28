@@ -16,13 +16,11 @@
 
 package controllers.manageBusinesses.add
 
-import enums.IncomeSourceJourney.SelfEmployment
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesNewJourney
+import models.admin.{AccountingMethodJourney, IncomeSourcesNewJourney}
 import models.core.{CheckMode, NormalMode}
-import models.admin.AccountingMethodJourney
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, BusinessAddressModel, UIJourneySessionData}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -46,8 +44,6 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
   val postAction: Call = controllers.manageBusinesses.add.routes.AddBusinessAddressController.submit(None, mode = NormalMode)
   val postActionCheck: Call = controllers.manageBusinesses.add.routes.AddBusinessAddressController.submit(None, mode = CheckMode)
-  val redirectAction: Call = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-  val redirectActionAgent: Call = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
   lazy val mockAddressLookupService: AddressLookupService = mock(classOf[AddressLookupService])
 
   override lazy val app: Application = applicationBuilderWithAuthBindings

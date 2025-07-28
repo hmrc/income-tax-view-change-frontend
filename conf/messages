@@ -1511,7 +1511,6 @@ incomeSources.add.reportingFrequency.r17.li1                            = you ar
 incomeSources.add.reportingFrequency.r17.li2                            = your total gross income from self-employment or property, or both, exceed the {0} threshold
 incomeSources.add.reportingFrequency.r17.form.no-select.error           = Select yes if you want to sign this new business up to Making Tax Digital for Income Tax
 
-
 incomeSources.add.error.standardError                            = Sorry, there is a problem with the service
 incomeSources.add.error.incomeSourceNotSaved.p1                  = Your {0} business could not be added. We have not saved your answers. Please try again later.
 incomeSources.add.error.incomeSourceNotSaved.se                  = sole trader
@@ -1548,18 +1547,6 @@ cease-income-sources.foreign-property.p1      = You should only cease your forei
 cease-income-sources.ceased-businesses.h1     = Businesses that have ceased
 cease-income-sources.table-head.date-ended    = Date ended
 cease-income-sources.unknown                  = Unknown
-
-## view Income Sources
-view-income-sources.heading                  = View and manage income sources
-view-income-sources.self-employed-h2         = Sole trader businesses
-view-income-sources.uk-property-h2           = UK property
-view-income-sources.foreign-property-h2      = Foreign property
-view-income-sources.ceased-businesses-h2     = Businesses that have ceased
-view-income-sources.table-head.business-name = Business name
-view-income-sources.table-head.date-started  = Date started
-view-income-sources.table-head.date-ended    = Date ended
-view-income-sources.choose                   = Choose
-view-income-sources.unknown-field            = Unknown
 
 ## Add business trade page
 add-trade.heading                               = What is the trade of your business?
@@ -1764,17 +1751,8 @@ incomeSources.add.FP.AccountingMethod.drop-down-text          = You created an i
 incomeSources.add.FP.AccountingMethod.drop-down-text-bp-1     = May 2017, you use ’cash basis accounting’
 incomeSources.add.FP.AccountingMethod.drop-down-text-bp-2     = March 2017, you use ’traditional accounting’
 
-incomeSources.ceaseUKProperty.checkDetails.heading               = Check your details
-incomeSources.ceaseUKProperty.checkDetails.caption               = UK property business you entered
-incomeSources.ceaseUKProperty.checkDetails.dateStopped           = Date business stopped
-incomeSources.ceaseUKProperty.checkDetails.confirm               = Confirm and continue
-incomeSources.ceaseUKProperty.checkDetails.change                = Change
-
 # add Business page
-# heading is used only in the old journey
-add-business-name.heading                                         = What is the name of your business?
 
-# heading1 and heading 2 are used for the new journey
 add-business-name.heading1                                        = Business name
 add-business-name.heading2                                        = What is your business name?
 
@@ -1823,21 +1801,6 @@ incomeSources.add.SE.AccountingMethod.drop-down-text-bp-2     = March 2017, you 
 
 incomeSources.add.AccountingMethod.no-selection               = Select if you use cash basis or traditional accounting
 
-incomeSources.ceaseBusiness.checkDetails.heading                    = Check your details
-incomeSources.ceaseBusiness.checkDetails.caption                    = Sole trader business
-incomeSources.ceaseBusiness.checkDetails.dateStopped                = Date business stopped
-incomeSources.ceaseBusiness.checkDetails.businessName               = Business that’s stopped
-incomeSources.ceaseBusiness.checkDetails.businessAddress            = Business address
-incomeSources.ceaseBusiness.checkDetails.confirm                    = Confirm and continue
-incomeSources.ceaseBusiness.checkDetails.change                     = Change
-incomeSources.ceaseBusiness.checkDetails.unknown                    = Unknown
-
-incomeSources.ceaseForeignProperty.checkDetails.heading               = Check your details
-incomeSources.ceaseForeignProperty.checkDetails.caption               = Foreign property business you entered
-incomeSources.ceaseForeignProperty.checkDetails.dateStopped           = Date business stopped
-incomeSources.ceaseForeignProperty.checkDetails.confirm               = Confirm and continue
-incomeSources.ceaseForeignProperty.checkDetails.change                = Change
-
 ## Cease - Check Answers ##
 cease-check-answers.title                                     = Check your answers
 cease-check-answers.caption                                   = Sole trader
@@ -1883,33 +1846,6 @@ check-details-fp.cash-accounting                        = Cash basis accounting
 check-details-fp.traditional-accounting                 = Traditional accounting
 check-details-fp.change                                 = Change
 check-details-fp.description                            = Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so.
-
-check-business-details.title                            = Check your details
-check-business-details.heading                          = Sole trader business you entered
-check-business-details.business-name                    = Business name
-check-business-details.change                           = Change
-check-business-details.start-date                       = Business trading start date
-check-business-details.business-description             = Business description
-check-business-details.business-address                 = Business address
-check-business-details.confirm-button                   = Confirm and Continue
-check-business-details.accounting-method                = Accounting method for sole trader income
-check-business-details.cash-accounting                  = Cash basis accounting
-check-business-details.traditional-accounting           = Traditional accounting
-
-incomeSources.add.checkUKPropertyDetails.title                  = Check your details
-incomeSources.add.checkUKPropertyDetails.heading                = UK property business you entered
-incomeSources.add.checkUKPropertyDetails.start-date             = UK property business start date
-incomeSources.add.checkUKPropertyDetails.accounting-method      = UK property business accounting method
-incomeSources.add.checkUKPropertyDetails.change                 = Change
-incomeSources.add.checkUKPropertyDetails.confirm                = Confirm and continue
-
-incomeSources.add.foreign-property-check-details.cash-basis-accounting      = Cash basis accounting
-incomeSources.add.foreign-property-check-details.traditional-accounting     = Traditional accounting
-incomeSources.add.foreign-property-check-details.heading                    = Foreign property business you entered
-incomeSources.add.foreign-property-check-details.title                      = Check your details
-incomeSources.add.foreign-property-check-details.start-date                 = Foreign property business start date
-incomeSources.add.foreign-property-check-details.accounting-method          = Foreign property business accounting method
-incomeSources.add.foreign-property-check-details.change                     = Change
 
 business.added.text                                           = What you must do
 business.added.deadlines                                      = Your revised deadlines

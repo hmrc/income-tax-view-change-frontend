@@ -19,7 +19,7 @@ package utils
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
-import models.admin.{IncomeSourcesFs, IncomeSourcesNewJourney}
+import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.PropertyDetailsModel
 import play.api.Logger
 import play.api.mvc.Result
@@ -29,17 +29,6 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import scala.concurrent.Future
 
 trait IncomeSourcesUtils extends FeatureSwitching {
-
-  def withIncomeSourcesFS(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
-    if (!isEnabled(IncomeSourcesFs)) {
-      user.userType match {
-        case Some(Agent) => Future.successful(Redirect(controllers.routes.HomeController.showAgent()))
-        case _ => Future.successful(Redirect(controllers.routes.HomeController.show()))
-      }
-    } else {
-      codeBlock
-    }
-  }
 
   def withNewIncomeSourcesFS(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
     if (!isEnabled(IncomeSourcesNewJourney)) {
