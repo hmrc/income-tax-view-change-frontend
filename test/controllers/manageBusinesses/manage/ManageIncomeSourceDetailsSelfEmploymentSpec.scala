@@ -41,7 +41,6 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(2024)
-            setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
             mockUkPlusForeignPlusSoleTraderNoLatency()
             setupMockCreateSession(true)
             setupMockSetSessionKeyMongo(Right(true))
@@ -65,15 +64,14 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             manageDetailsSummaryRows.eq(7).isEmpty
             document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
           }
-          "the user does not have reporting frequency related content when RF FS is off" in {
-            enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney)
-            disable(ReportingFrequencyPage)
+
+          "the user has a valid id parameter and latency information but user is not in latency period" in {
+            enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
             setupMockSuccess(mtdUserRole)
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(2024)
-            setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
-            mockUkPlusForeignPlusSoleTraderNoLatency()
+            mockUkPlusForeignPlusSoleTraderWithLatencyExpired()
             setupMockCreateSession(true)
             setupMockSetSessionKeyMongo(Right(true))
 
@@ -90,11 +88,11 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             val manageDetailsSummaryRows = getManageDetailsSummaryRows(document)
 
             manageDetailsSummaryRows.get(1).getElementsByTag("dt").text() shouldBe "Address"
-            manageDetailsSummaryRows.get(1).getElementsByTag("dd").text() shouldBe businessWithLatencyAddress
-            getManageDetailsSummaryValues(document).get(5).text() shouldBe calendar
+            manageDetailsSummaryRows.get(1).getElementsByTag("dd").text() shouldBe businessWithLatencyAddress2
+            manageDetailsSummaryRows.eq(5).isEmpty
             manageDetailsSummaryRows.eq(6).isEmpty
             manageDetailsSummaryRows.eq(7).isEmpty
-            hasReportingFrequencyContent(document) shouldBe false
+            document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
           }
 
           "the user has a valid id parameter, valid latency information and two tax years not crystallised" in {

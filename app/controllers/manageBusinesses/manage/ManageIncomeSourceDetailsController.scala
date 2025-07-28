@@ -301,27 +301,33 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
         .filterNot(_.isCeased)
         .find(_.incomeSourceId == incomeSourceId.value)
 
+    def defaultViewModel(desiredIncomeSource: BusinessDetailsModel): Future[ManageIncomeSourceDetailsViewModel] = Future.successful(
+      variableViewModelSEBusiness(
+      incomeSource = desiredIncomeSource,
+      latencyYearsQuarterly = LatencyYearsQuarterly(
+        firstYear = Some(false),
+        secondYear = Some(false)
+      ),
+      latencyYearsAnnual = LatencyYearsAnnual(
+        firstYear = Some(false),
+        secondYear = Some(false)
+      ),
+      latencyYearsCrystallised = LatencyYearsCrystallised(
+        firstYear = None,
+        secondYear = None
+      )
+    ))
+
     desiredIncomeSourceMaybe match {
       case Some(desiredIncomeSource) =>
         desiredIncomeSource.latencyDetails match {
           case Some(latencyDetails) =>
-            handleLatencyAndCrystallisationDetails(desiredIncomeSource, latencyDetails)
+            if(latencyDetails.isBusinessOrPropertyInLatency(dateService.getCurrentTaxYearEnd))
+              handleLatencyAndCrystallisationDetails(desiredIncomeSource, latencyDetails)
+            else
+              defaultViewModel(desiredIncomeSource)
           case None =>
-            Future.successful(variableViewModelSEBusiness(
-              incomeSource = desiredIncomeSource,
-              latencyYearsQuarterly = LatencyYearsQuarterly(
-                firstYear = Some(false),
-                secondYear = Some(false)
-              ),
-              latencyYearsAnnual = LatencyYearsAnnual(
-                firstYear = Some(false),
-                secondYear = Some(false)
-              ),
-              latencyYearsCrystallised = LatencyYearsCrystallised(
-                firstYear = None,
-                secondYear = None
-              )
-            ))
+            defaultViewModel(desiredIncomeSource)
         }
       case None =>
         Future.failed(new Error("Unable to find income source"))
@@ -384,19 +390,26 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
       }
     }
 
+    def defaultViewModel(desiredIncomeSource: PropertyDetailsModel): Future[ManageIncomeSourceDetailsViewModel] = Future.successful(
+      variableViewModelPropertyBusiness(
+      incomeSource = desiredIncomeSource,
+      latencyYearsQuarterly = LatencyYearsQuarterly(Some(false), Some(false)),
+      latencyYearsAnnual = LatencyYearsAnnual(Some(false), Some(false)),
+      latencyYearsCrystallised = LatencyYearsCrystallised(Some(false), Some(false)),
+      incomeSourceType = incomeSourceType
+    ))
+
     desiredIncomeSourceMaybe match {
       case Some(desiredIncomeSource) =>
         desiredIncomeSource.latencyDetails match {
           case Some(latencyDetails) =>
-            handleLatencyAndCrystallisationDetailsForProperty(desiredIncomeSource, latencyDetails, incomeSourceType)
+            if(latencyDetails.isBusinessOrPropertyInLatency(dateService.getCurrentTaxYearEnd))
+              handleLatencyAndCrystallisationDetailsForProperty(desiredIncomeSource, latencyDetails, incomeSourceType)
+            else
+              defaultViewModel(desiredIncomeSource)
+
           case None =>
-            Future.successful(variableViewModelPropertyBusiness(
-              incomeSource = desiredIncomeSource,
-              latencyYearsQuarterly = LatencyYearsQuarterly(Some(false), Some(false)),
-              latencyYearsAnnual = LatencyYearsAnnual(Some(false), Some(false)),
-              latencyYearsCrystallised = LatencyYearsCrystallised(Some(false), Some(false)),
-              incomeSourceType = incomeSourceType
-            ))
+            defaultViewModel(desiredIncomeSource)
 
         }
       case None =>

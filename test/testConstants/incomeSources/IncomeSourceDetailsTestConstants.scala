@@ -74,6 +74,7 @@ object IncomeSourceDetailsTestConstants {
   val singleForeignPropertyIncome2024 = IncomeSourceDetailsModel(testNino, testMtditid, Some("2024"), Nil, List(foreignPropertyWithLatencyDetails2))
   val ukPlusForeignPropertyAndSoleTraderNoLatency = IncomeSourceDetailsModel(testNino, testMtditid, Some("2023"), List(soleTraderBusiness), List(ukPropertyDetails, foreignPropertyDetails))
   val ukPlusForeignPropertyAndSoleTraderWithLatency = IncomeSourceDetailsModel(testNino, testMtditid, Some("2024"), List(businessWithLatency2), List(ukPropertyWithLatencyDetails2, foreignPropertyWithLatencyDetails2))
+  val ukPlusForeignPropertyAndSoleTraderWithLatencyExpired = IncomeSourceDetailsModel(testNino, testMtditid, Some("2024"), List(businessWithLatency2019), List(ukPropertyWithLatencyPeriodExpired, foreignPropertyWithLatencyPeriodExpired))
   val ukPlusForeignPropertyAndSoleTraderWithLatencyAnnual = IncomeSourceDetailsModel(testNino, testMtditid, Some("2024"), List(businessWithOneYearInLatency), List(ukPropertyWithLatencyDetails2, foreignPropertyWithLatencyDetails2))
   val ukPlusForeignPropertyAndSoleTrader2023WithUnknowns = IncomeSourceDetailsModel(testNino, testMtditid, Some("2023"), List(businessWithLatencyAndUnknowns), List(ukPropertyWithLatencyDetailsAndUnknowns, foreignPropertyWithLatencyDetailsAndUnknowns))
   val twoActiveUkPropertyBusinesses = IncomeSourceDetailsModel(testNino, testMtditid, Some("2023"), List(), List(ukPropertyDetails2, ukPropertyDetails))

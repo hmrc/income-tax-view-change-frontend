@@ -58,7 +58,7 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
   }
 
   def isBusinessInLatency: Boolean = {
-    !latencyDetails.forall(_.taxYear2.toInt < currentTaxYearEnd)
+    latencyDetails.exists(_.isBusinessOrPropertyInLatency(currentTaxYearEnd))
   }
 
   def showLatencyDetails: Boolean = {

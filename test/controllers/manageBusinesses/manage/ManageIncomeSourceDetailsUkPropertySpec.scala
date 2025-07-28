@@ -65,9 +65,32 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
             }
 
-            "the user does not have reporting frequency related content when RF FS is off" in {
+            "the user has a valid id parameter and latency period expired" in {
+              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+              setupMockSuccess(mtdUserRole)
+              setupMockCreateSession(true)
+
+              setupMockGetCurrentTaxYearEnd(2024)
+              mockUkPlusForeignPlusSoleTraderWithLatencyExpired()
+              setupMockCreateSession(true)
+              setupMockSetSessionKeyMongo(Right(true))
+
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, UkProperty)))))
+
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.OK
+              val document: Document = Jsoup.parse(contentAsString(result))
+              document.title shouldBe title()
+              getHeading(document) shouldBe heading
+              hasChangeFirstYearReportingMethodLink(document) shouldBe false
+              hasChangeSecondYearReportingMethodLink(document) shouldBe false
+              hasGracePeriodInfo(document) shouldBe false
+              getManageDetailsSummaryValues(document).get(2).text() shouldBe calendar
+              document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
+            }
+
+            "the user does not have reporting frequency related content" in {
               enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney)
-              disable(ReportingFrequencyPage)
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
 

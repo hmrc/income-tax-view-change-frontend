@@ -46,7 +46,6 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               setupMockCreateSession(true)
 
               setupMockGetCurrentTaxYearEnd(2024)
-              setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
               mockUkPlusForeignPlusSoleTraderNoLatency()
               setupMockCreateSession(true)
               setupMockSetSessionKeyMongo(Right(true))
@@ -64,9 +63,31 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               getManageDetailsSummaryValues(document).get(2).text() shouldBe calendar
               document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
             }
-            "the user does not have Reporting frequency content/link when FS is disabled" in {
+            "the user has a valid id parameter and latency information expired" in {
+              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+              setupMockSuccess(mtdUserRole)
+              setupMockCreateSession(true)
+
+              setupMockGetCurrentTaxYearEnd(2024)
+              mockUkPlusForeignPlusSoleTraderWithLatencyExpired()
+              setupMockCreateSession(true)
+              setupMockSetSessionKeyMongo(Right(true))
+
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, ForeignProperty)))))
+
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.OK
+              val document: Document = Jsoup.parse(contentAsString(result))
+              document.title shouldBe title()
+              getHeading(document) shouldBe heading
+              hasChangeFirstYearReportingMethodLink(document) shouldBe false
+              hasChangeSecondYearReportingMethodLink(document) shouldBe false
+              hasGracePeriodInfo(document) shouldBe false
+              getManageDetailsSummaryValues(document).get(2).text() shouldBe standard
+              document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
+            }
+            "the user does not have Reporting frequency content/link" in {
               enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney)
-              disable(ReportingFrequencyPage)
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
 
