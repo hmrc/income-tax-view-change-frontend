@@ -58,16 +58,14 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   }
 
   // TODO: we need to identify this on the chargeItem level -> mark as deprecated
-  def isReviewAndReconcilePoaOneDebit(documentId: String, reviewAndReconcileIsEnabled: Boolean): Boolean = {
-    reviewAndReconcileIsEnabled &&
+  def isReviewAndReconcilePoaOneDebit(documentId: String): Boolean = {
       financialDetails.exists { fd =>
         fd.transactionId.contains(documentId) && isReviewAndReconcilePoaOne(fd.mainTransaction)
       }
   }
 
   // TODO: we need to identify this on the chargeItem level -> mark as deprecated
-  def isReviewAndReconcilePoaTwoDebit(documentId: String, reviewAndReconcileIsEnabled: Boolean): Boolean = {
-    reviewAndReconcileIsEnabled &&
+  def isReviewAndReconcilePoaTwoDebit(documentId: String): Boolean = {
       financialDetails.exists { fd =>
         fd.transactionId.contains(documentId) && isReviewAndReconcilePoaTwo(fd.mainTransaction)
       }
@@ -89,13 +87,13 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   }
 
   // TODO: drop usage of DocumentDetailWithDueDate / and use ChargeItem/TransactionItem instead
-  def getAllDocumentDetailsWithDueDates(reviewAndReconcileEnabled: Boolean = false)(implicit dateService: DateServiceInterface): List[DocumentDetailWithDueDate] = {
+  def getAllDocumentDetailsWithDueDates()(implicit dateService: DateServiceInterface): List[DocumentDetailWithDueDate] = {
     documentDetails.map(documentDetail =>
       DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate(),
         documentDetail.isLatePaymentInterest, dunningLockExists(documentDetail.transactionId),
         isMFADebit = isMFADebit(documentDetail.transactionId),
-        isReviewAndReconcilePoaOneDebit = isReviewAndReconcilePoaOneDebit(documentDetail.transactionId, reviewAndReconcileEnabled),
-        isReviewAndReconcilePoaTwoDebit = isReviewAndReconcilePoaTwoDebit(documentDetail.transactionId, reviewAndReconcileEnabled)))
+        isReviewAndReconcilePoaOneDebit = isReviewAndReconcilePoaOneDebit(documentDetail.transactionId),
+        isReviewAndReconcilePoaTwoDebit = isReviewAndReconcilePoaTwoDebit(documentDetail.transactionId)))
   }
 
   def filterPayments(): FinancialDetailsModel = {
