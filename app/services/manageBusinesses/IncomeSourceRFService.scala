@@ -101,7 +101,7 @@ class IncomeSourceRFService @Inject()(val sessionService: SessionService,
         codeBlock(sessionData)
       } else {
         for {
-          statusTaxYearMap <- itsaStatusService. getStatusTillAvailableFutureYears(TaxYear(currentTaxYearEnd - 1, currentTaxYearEnd))
+          statusTaxYearMap <- itsaStatusService.getStatusTillAvailableFutureYears(TaxYear(currentTaxYearEnd - 1, currentTaxYearEnd))
           accountLevelITSAStatusCurrentTaxYear = statusTaxYearMap.get(currentTy)
           accountLevelITSAStatusNextTaxYear = statusTaxYearMap.get(nextTy)
           someIncomeSourceId <- Future(sessionData.addIncomeSourceData.flatMap(_.incomeSourceId))
