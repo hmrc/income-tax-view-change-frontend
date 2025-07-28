@@ -20,10 +20,10 @@ import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
-import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm
-import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm.{responseNo, responseYes}
+import forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm.{responseNo, responseYes}
+import forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSourcesFs, NavBarFs, AccountingMethodJourney, IncomeSourcesNewJourney}
+import models.admin.{NavBarFs, AccountingMethodJourney, IncomeSourcesNewJourney}
 import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData.{accountingPeriodEndDateField, accountingPeriodStartDateField, dateStartedField}
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}

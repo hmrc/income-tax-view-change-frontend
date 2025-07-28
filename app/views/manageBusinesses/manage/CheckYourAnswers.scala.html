@@ -14,16 +14,14 @@
  * limitations under the License.
  *@
 
-@import views.html.layouts.unifiedLayout
-@import uk.gov.hmrc.govukfrontend.views.html.components._
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import java.time.LocalDate
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
-@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import enums.IncomeSourceJourney._
 @import models.incomeSourceDetails.viewmodels.CheckYourAnswersViewModel
-@import play.twirl.api.HtmlFormat
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import views.html.components._
+@import views.html.layouts.unifiedLayout
 
 @this(
         mainTemplate: unifiedLayout,
@@ -44,7 +42,6 @@
 @getMessage(key: String, args: String*) = @{
     messages(s"manageBusinesses.check-answers.$key", args: _*)
 }
-@import implicitDateFormatter.longDate
 
 @getChangeHref = @{
     val url = incomeSourceType match {

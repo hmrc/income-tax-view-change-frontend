@@ -19,7 +19,7 @@ package controllers.manageBusinesses.cease
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.MTDIndividual
-import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
+import forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.admin.IncomeSourcesNewJourney

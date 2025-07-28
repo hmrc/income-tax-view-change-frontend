@@ -18,7 +18,6 @@ package services
 
 import config.featureswitch.FeatureSwitching
 import mocks.connectors.MockObligationsConnector
-import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.obligations._
 import org.mockito.ArgumentMatchers.any
@@ -484,7 +483,6 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
   "getObligationDates" should {
     "return the correct set of dates given an ObligationsModel" in {
       disableAllSwitches()
-      enable(IncomeSourcesFs)
 
       val day = LocalDate.of(2023, 1, 1)
       val nextModel: ObligationsModel = ObligationsModel(Seq(
@@ -501,7 +499,6 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
     }
     "show correct error when given a NextUpdatesErrorModel" in {
       disableAllSwitches()
-      enable(IncomeSourcesFs)
 
       val nextModel: ObligationsErrorModel = ObligationsErrorModel(1, "fail")
       when(mockObligationsConnector.getOpenObligations()(any(), any())).
@@ -516,7 +513,6 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
 
     "return a valid view model with quarterly obligations and final declaration(s)" in {
       disableAllSwitches()
-      enable(IncomeSourcesFs)
 
       val day = LocalDate.of(2023, 1, 1)
       val nextModel: ObligationsModel = ObligationsModel(Seq(
@@ -553,7 +549,6 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
 
     "return a valid view model if no final declaration" in {
       disableAllSwitches()
-      enable(IncomeSourcesFs)
 
       val day = LocalDate.of(2023, 1, 1)
       val nextModel: ObligationsModel = ObligationsModel(Seq(
@@ -576,7 +571,6 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
 
     "return a valid view model if no quarterly obligations" in {
       disableAllSwitches()
-      enable(IncomeSourcesFs)
 
       val day = LocalDate.of(2023, 1, 1)
       val nextModel: ObligationsModel = ObligationsModel(Seq(

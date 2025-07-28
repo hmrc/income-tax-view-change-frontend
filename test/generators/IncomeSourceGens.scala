@@ -16,7 +16,7 @@
 
 package generators
 
-import forms.incomeSources.add.BusinessTradeForm
+import forms.manageBusinesses.add.BusinessTradeForm
 import org.scalacheck.Gen
 
 import java.time.LocalDate

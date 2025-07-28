@@ -17,8 +17,8 @@
 package views.manageBusinesses.cease
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
-import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm.declaration
+import forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm.declaration
+import forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.mvc.Call

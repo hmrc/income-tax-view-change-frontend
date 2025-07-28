@@ -89,7 +89,6 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
                   dunningLockExists: Boolean = false,
                   currentTaxYear: Int = currentTaxYear,
                   displayCeaseAnIncome: Boolean = false,
-                  incomeSourcesEnabled: Boolean = false,
                   incomeSourcesNewJourneyEnabled: Boolean = false,
                   creditAndRefundEnabled: Boolean = false,
                   user: MtdItUser[_] = testMtdItUserNotMigrated,
@@ -108,7 +107,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
     val nextPaymentsTileViewModel = NextPaymentsTileViewModel(nextPaymentDueDate, overDuePaymentsCount, paymentsAccruingInterestCount, reviewAndReconcileEnabled, yourSelfAssessmentChargesEnabled)
 
-    val yourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome, incomeSourcesEnabled, incomeSourcesNewJourneyEnabled)
+    val yourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome, incomeSourcesNewJourneyEnabled)
 
     val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), reportingFrequencyEnabled, currentITSAStatus)
 
@@ -451,9 +450,6 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
       "not have a link to previous payments in the tax years tile" in new TestSetup(ITSASubmissionIntegrationEnabled = false) {
         document.getOptionalSelector("tax-years-tile").flatMap(_.getOptionalSelector("a:nth-of-type(2)")) shouldBe None
       }
-      "not have an Income Sources tile" in new TestSetup(incomeSourcesEnabled = false) {
-        getElementById("income-sources-tile") shouldBe None
-      }
     }
 
     "the feature switches are enabled" should {
@@ -474,25 +470,13 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
       "dont display the saViewLandPTile when isAgent is true and UTR is present" in new TestSetup(ITSASubmissionIntegrationEnabled = true) {
         getElementById("saViewLandPTile") shouldBe None
       }
-      "have an Income Sources tile" which {
-        "has a heading" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesEnabled = true) {
-          getElementById("income-sources-tile").map(_.select("h2").first().text()) shouldBe Some("Income Sources")
-        }
-        "has a link to AddIncomeSourceController.showAgent()" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesEnabled = true) {
-          getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some("Add a new sole trader or property income source")
-          getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url)
-        }
-        "has a link to ManageIncomeSourceController.showAgent()" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesEnabled = true) {
-          getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").text()) shouldBe Some("View and manage income sources")
-          getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").attr("href")) shouldBe Some(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url)
-        }
-      }
+
       "have a Your Businesses tile" when {
         "the new income sources journey FS is enabled" which {
-          "has a heading" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesEnabled = true, incomeSourcesNewJourneyEnabled = true) {
+          "has a heading" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesNewJourneyEnabled = true) {
             getElementById("income-sources-tile").map(_.select("h2").first().text()) shouldBe Some("Your businesses")
           }
-          "has a link to ManageYourBusinessController.show()" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesEnabled = true, incomeSourcesNewJourneyEnabled = true) {
+          "has a link to ManageYourBusinessController.show()" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesNewJourneyEnabled = true) {
             getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some("Add, manage or cease a business or income source")
             getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url)
           }
