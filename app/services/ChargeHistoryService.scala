@@ -74,14 +74,13 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
   // TODO-[1]: move feature switch check up the calling stack
   // TODO-[2]: we might need to move this function on the TransactionItem/ChargeItem level
   def getReviewAndReconcileCredit(targetChargeItem: ChargeItem,
-                                  chargeDetailsForTaxYear: FinancialDetailsModel,
-                                  reviewAndReconcileEnabled: Boolean): Option[ChargeItem] = {
+                                  chargeDetailsForTaxYear: FinancialDetailsModel): Option[ChargeItem] = {
     chargeDetailsForTaxYear
       .asChargeItems
       .find { charge =>
         targetChargeItem.transactionType match {
-          case PoaOneDebit => reviewAndReconcileEnabled && charge.transactionType == PoaOneReconciliationCredit
-          case PoaTwoDebit => reviewAndReconcileEnabled && charge.transactionType == PoaTwoReconciliationCredit
+          case PoaOneDebit => charge.transactionType == PoaOneReconciliationCredit
+          case PoaTwoDebit => charge.transactionType == PoaTwoReconciliationCredit
           case _ => false
         }
       }
