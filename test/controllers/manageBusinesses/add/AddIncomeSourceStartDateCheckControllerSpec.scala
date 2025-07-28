@@ -19,7 +19,7 @@ package controllers.manageBusinesses.add
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.MTDIndividual
-import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm
+import forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService

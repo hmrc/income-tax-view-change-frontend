@@ -19,7 +19,7 @@ package controllers.manageBusinesses.add
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import forms.incomeSources.add.BusinessNameForm
+import forms.manageBusinesses.add.BusinessNameForm
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.admin.IncomeSourcesNewJourney

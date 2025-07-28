@@ -24,7 +24,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.ReportingMethod
-import forms.incomeSources.manage.ChangeReportingMethodForm
+import forms.manageBusinesses.manage.ChangeReportingMethodForm
 import models.admin.OptInOptOutContentUpdateR17
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.TaxYear.getTaxYearModel

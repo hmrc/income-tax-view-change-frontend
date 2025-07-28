@@ -22,7 +22,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney.{InitialPage, SelfEmployment}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import forms.incomeSources.add.BusinessNameForm
+import forms.manageBusinesses.add.BusinessNameForm
 import models.core.{Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger

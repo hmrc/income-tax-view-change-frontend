@@ -20,7 +20,7 @@ import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
-import forms.incomeSources.add.BusinessNameForm
+import forms.manageBusinesses.add.BusinessNameForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.{IncomeSourcesNewJourney, NavBarFs}
 import models.core.{CheckMode, Mode, NormalMode}

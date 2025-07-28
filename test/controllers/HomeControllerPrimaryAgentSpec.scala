@@ -30,7 +30,7 @@ import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers._
 import play.api.test.Injecting
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, businessesAndPropertyIncomeCeased}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -539,78 +539,10 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
         }
       }
 
-      "render the home page with the Income Sources tile" that {
-        "has `Cease an income source`" when {
-          "the user has non-ceased businesses or property and income sources is enabled" in new Setup {
-            setupMockAgentWithClientAuth(isSupportingAgent)
-            enable(IncomeSourcesFs)
-            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-            mockGetDueDates(Right(futureDueDates))
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
-              .thenReturn(Future.successful(List(FinancialDetailsModel(
-                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-                documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", None, None, 1000.00, 0, LocalDate.of(2018, 3, 29))),
-                financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
-                  items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
-              ))))
-            setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
-            setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
-            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
-            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
-            setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
-            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
-            val result: Future[Result] = controller.showAgent()(fakeRequest)
-            status(result) shouldBe Status.OK
-            val document: Document = Jsoup.parse(contentAsString(result))
-            document.title shouldBe homePageTitle
-            document.select("#income-sources-tile h2:nth-child(1)").text() shouldBe messages("home.incomeSources.heading")
-            document.select("#income-sources-tile > div > p:nth-child(2) > a").text() shouldBe messages("home.incomeSources.addIncomeSource.view")
-            document.select("#income-sources-tile > div > p:nth-child(2) > a").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
-            document.select("#income-sources-tile > div > p:nth-child(3) > a").text() shouldBe messages("home.incomeSources.manageIncomeSource.view")
-            document.select("#income-sources-tile > div > p:nth-child(3) > a").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url
-            document.select("#income-sources-tile > div > p:nth-child(4) > a").text() shouldBe messages("home.incomeSources.ceaseIncomeSource.view")
-            document.select("#income-sources-tile > div > p:nth-child(4) > a").attr("href") shouldBe controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url
-          }
-        }
-
-        "does not have a `Cease an income source`" when {
-          "the user has ceased businesses or property and income sources is enabled" in new Setup {
-            setupMockAgentWithClientAuth(isSupportingAgent)
-            enable(IncomeSourcesFs)
-            setupMockGetIncomeSourceDetails(businessesAndPropertyIncomeCeased)
-            mockGetDueDates(Right(futureDueDates))
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
-              .thenReturn(Future.successful(List(FinancialDetailsModel(
-                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-                documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", None, None, 1000.00, 0, LocalDate.of(2018, 3, 29))),
-                financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
-                  items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
-              ))))
-            setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
-            setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
-            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
-            setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
-            setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
-            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
-            val result: Future[Result] = controller.showAgent()(fakeRequest)
-            status(result) shouldBe Status.OK
-            val document: Document = Jsoup.parse(contentAsString(result))
-            document.title shouldBe homePageTitle
-            document.select("#income-sources-tile h2:nth-child(1)").text() shouldBe messages("home.incomeSources.heading")
-            document.select("#income-sources-tile > div > p:nth-child(2) > a").text() shouldBe messages("home.incomeSources.addIncomeSource.view")
-            document.select("#income-sources-tile > div > p:nth-child(2) > a").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
-            document.select("#income-sources-tile > div > p:nth-child(3) > a").text() shouldBe messages("home.incomeSources.manageIncomeSource.view")
-            document.select("#income-sources-tile > div > p:nth-child(3) > a").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url
-            document.select("#income-sources-tile > div > p:nth-child(4) > a").text() should not be messages("home.incomeSources.ceaseIncomeSource.view")
-            document.select("#income-sources-tile > div > p:nth-child(4) > a").attr("href") should not be controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url
-          }
-        }
-      }
-
       "render the home page with the Your Businesses tile with link" when {
         "the IncomeSourcesNewJourney is enabled" in new Setup {
           setupMockAgentWithClientAuth(isSupportingAgent)
-          enable(IncomeSourcesFs, IncomeSourcesNewJourney)
+          enable(IncomeSourcesNewJourney)
           mockGetDueDates(Right(futureDueDates))
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))

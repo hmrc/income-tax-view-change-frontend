@@ -23,7 +23,7 @@ import enums.MTDSupportingAgent
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.admin.{IncomeSourcesFs, IncomeSourcesNewJourney, NavBarFs}
+import models.admin.{IncomeSourcesNewJourney, NavBarFs}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
@@ -183,47 +183,11 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
               verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
             }
           }
-          "display Income Sources tile" when {
-            "IncomeSources feature switch is enabled" in {
-              disable(NavBarFs)
-              stubAuthorised(mtdUserRole)
-              enable(IncomeSourcesFs)
-
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                status = OK,
-                response = incomeSourceDetailsModel
-              )
-
-              val currentObligations: ObligationsModel = ObligationsModel(Seq(
-                GroupedObligationsModel(
-                  identification = "testId",
-                  obligations = List(
-                    SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
-                  ))
-              ))
-
-              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
-
-              IncomeTaxViewChangeStub.stubGetNextUpdates(
-                nino = testNino,
-                deadlines = currentObligations
-              )
-
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-              result should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, "home.agent.heading"),
-                elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
-                elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Income Sources")
-              )
-            }
-          }
           "display Your Businesses tile" when {
-            "IncomeSources and IncomeSourcesNewJourney feature switches are enabled" in {
+            "IncomeSourcesNewJourney feature switches are enabled" in {
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
-              enable(IncomeSourcesFs, IncomeSourcesNewJourney)
+              enable(IncomeSourcesNewJourney)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                 status = OK,
                 response = incomeSourceDetailsModel
@@ -280,7 +244,6 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
           }
           "retrieving the income sources was unsuccessful" in {
             disable(NavBarFs)
-            enable(IncomeSourcesFs)
             stubAuthorised(mtdUserRole)
 
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))

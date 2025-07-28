@@ -21,7 +21,7 @@ import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm => form}
+import forms.manageBusinesses.add.{AddIncomeSourceStartDateCheckForm => form}
 import implicits.ImplicitDateFormatter
 import models.core.{Mode, NormalMode}
 import models.admin.AccountingMethodJourney

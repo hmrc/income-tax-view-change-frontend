@@ -18,7 +18,6 @@ package connectors
 
 import config.featureswitch.FeatureSwitching
 import mocks.MockHttpV2
-import models.admin.IncomeSourcesFs
 import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
 import models.incomeSourceDetails.{Address, BusinessAddressModel}
@@ -40,7 +39,6 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
     "addressLookupInitializeUrl" should {
       "return the initialising address" in {
         disableAllSwitches()
-        enable(IncomeSourcesFs)
 
         val result = TestAddressLookupConnector.addressLookupInitializeUrl
         result shouldBe s"$baseUrl/api/v2/init"
@@ -50,7 +48,6 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
     "getAddressDetailsUrl" should {
       "return the get url" in {
         disableAllSwitches()
-        enable(IncomeSourcesFs)
 
         val result = TestAddressLookupConnector.getAddressDetailsUrl("123")
         result shouldBe s"$baseUrl/api/v2/confirmed?id=123"
@@ -61,7 +58,6 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
       "return the redirect location" when {
         "location returned from the lookup-service (individual)" in {
           disableAllSwitches()
-          enable(IncomeSourcesFs)
           beforeEach()
 
           setupMockHttpV2Post(TestAddressLookupConnector.addressLookupInitializeUrl)(HttpResponse(status = ACCEPTED,
@@ -75,7 +71,6 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
         }
         "location returned from lookup-service (agent)" in { //this is the only specific agent test, just to test that everything works with both possible json payloads
           disableAllSwitches()
-          enable(IncomeSourcesFs)
           beforeEach()
 
           setupMockHttpV2Post(TestAddressLookupConnector.addressLookupInitializeUrl)(HttpResponse(status = ACCEPTED,
@@ -91,7 +86,6 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
       "return the redirect location when on the Check page" when {
         "location returned from the lookup-service (individual) and mode = CheckMode" in {
           disableAllSwitches()
-          enable(IncomeSourcesFs)
           beforeEach()
 
           setupMockHttpV2Post(TestAddressLookupConnector.addressLookupInitializeUrl)(HttpResponse(status = ACCEPTED,
@@ -105,7 +99,6 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
         }
         "location returned from lookup-service (agent) when mode = CheckMode" in { //this is the only specific agent test, just to test that everything works with both possible json payloads
           disableAllSwitches()
-          enable(IncomeSourcesFs)
           beforeEach()
 
           setupMockHttpV2Post(TestAddressLookupConnector.addressLookupInitializeUrl)(HttpResponse(status = ACCEPTED,
@@ -122,7 +115,6 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
       "return an error" when {
         "non-standard status returned from lookup-service" in {
           disableAllSwitches()
-          enable(IncomeSourcesFs)
           beforeEach()
 
           setupMockHttpV2Post(TestAddressLookupConnector.addressLookupInitializeUrl)(HttpResponse(status = OK,
@@ -136,7 +128,6 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
         }
         "non-standard status returned from lookup-service on Check page" in {
           disableAllSwitches()
-          enable(IncomeSourcesFs)
           beforeEach()
 
           setupMockHttpV2Post(TestAddressLookupConnector.addressLookupInitializeUrl)(HttpResponse(status = OK,
