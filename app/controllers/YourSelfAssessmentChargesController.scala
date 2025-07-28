@@ -90,7 +90,6 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
             whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
             backUrl = backUrl,
             dunningLock = whatYouOweChargesList.hasDunningLock,
-            reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
             penaltiesEnabled = isEnabled(PenaltiesAndAppeals),
             LPP2Url = lpp2Url,
             creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
