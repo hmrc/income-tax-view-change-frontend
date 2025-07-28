@@ -21,7 +21,6 @@ import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.{MockNextUpdatesService, MockSessionService}
-import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails._
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.obligations._
@@ -167,7 +166,6 @@ class IncomeSourceCeasedObligationsControllerSpec extends MockAuthActions
     super.beforeEach()
     reset(mockIncomeSourceDetailsService)
     disableAllSwitches()
-    enable(IncomeSourcesNewJourney)
   }
 
   val incomeSourceTypes = List(SelfEmployment, UkProperty, ForeignProperty)
@@ -183,7 +181,6 @@ class IncomeSourceCeasedObligationsControllerSpec extends MockAuthActions
             if (incomeSourceType == SelfEmployment) {
               "all required data is available" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesNewJourney)
                 setUpBusiness(isAgent)
                 setMongoSessionData(incomeSourceType)
                 val result: Future[Result] = action(fakeRequest)
@@ -192,7 +189,6 @@ class IncomeSourceCeasedObligationsControllerSpec extends MockAuthActions
             } else {
               "all required data is available" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesNewJourney)
                 setUpProperty(isAgent = isAgent, isUkProperty = incomeSourceType == UkProperty)
                 setMongoSessionData(incomeSourceType)
                 val result: Future[Result] = action(fakeRequest)
@@ -205,7 +201,6 @@ class IncomeSourceCeasedObligationsControllerSpec extends MockAuthActions
             if (incomeSourceType == SelfEmployment) {
               s"income source ID is missing in session for $SelfEmployment business" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesNewJourney)
                 setMongoSessionData(incomeSourceId = None, incomeSourceType = incomeSourceType)
                 setUpBusiness(isAgent = isAgent)
 
@@ -215,7 +210,6 @@ class IncomeSourceCeasedObligationsControllerSpec extends MockAuthActions
 
               s"business end date is missing in session" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesNewJourney)
                 setMongoSessionData(incomeSourceId = Some(testId), ceaseDate = None, incomeSourceType = incomeSourceType)
                 setUpBusiness(isAgent = isAgent)
                 val result: Future[Result] = action(fakeRequest)
@@ -224,7 +218,6 @@ class IncomeSourceCeasedObligationsControllerSpec extends MockAuthActions
             } else {
               s"income source ID doesn't match any business for $incomeSourceType business" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesNewJourney)
                 setMongoSessionData(incomeSourceId = None, incomeSourceType = incomeSourceType)
                 setUpBusiness(isAgent = isAgent)
                 val result: Future[Result] = action(fakeRequest)
@@ -233,7 +226,6 @@ class IncomeSourceCeasedObligationsControllerSpec extends MockAuthActions
               if(incomeSourceType == UkProperty) {
                 s"business end date and income source ID is missing in session" in {
                   setupMockSuccess(mtdRole)
-                  enable(IncomeSourcesNewJourney)
                   setMongoSessionData(incomeSourceId = None, ceaseDate = None, incomeSourceType = incomeSourceType)
                   setUpProperty(isAgent = isAgent, isUkProperty = false)
                   val result: Future[Result] = action(fakeRequest)

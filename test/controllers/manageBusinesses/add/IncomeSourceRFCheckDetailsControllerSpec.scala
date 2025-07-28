@@ -21,7 +21,6 @@ import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockIncomeSourceRFService, MockSessionService}
-import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData, UIJourneySessionData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseError
 import org.mockito.ArgumentMatchers.any
@@ -66,8 +65,6 @@ class IncomeSourceRFCheckDetailsControllerSpec
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRedirectChecksForIncomeSourceRF()
 
-            enable(IncomeSourcesNewJourney)
-
             setupMockGetMongo(Right(Some(UIJourneySessionData("", ""))))
 
             val result = action(fakeRequest)
@@ -85,8 +82,6 @@ class IncomeSourceRFCheckDetailsControllerSpec
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRedirectChecksForIncomeSourceRF()
             setupMockGetCurrentTaxYearEnd(2025)
-
-            enable(IncomeSourcesNewJourney)
 
             setupMockGetMongo(Right(Some(UIJourneySessionData("", "", Some(AddIncomeSourceData(incomeSourceId = Some("ID")))))))
 
@@ -111,8 +106,6 @@ class IncomeSourceRFCheckDetailsControllerSpec
             mockRedirectChecksForIncomeSourceRF()
             setupMockGetCurrentTaxYearEnd(2025)
 
-            enable(IncomeSourcesNewJourney)
-
             setupMockGetMongo(Right(Some(UIJourneySessionData(
               "",
               "",
@@ -136,8 +129,6 @@ class IncomeSourceRFCheckDetailsControllerSpec
             mockRedirectChecksForIncomeSourceRF()
 
             setupMockGetMongo(Right(Some(UIJourneySessionData("", "", Some(AddIncomeSourceData(incomeSourceId = None))))))
-
-            enable(IncomeSourcesNewJourney)
 
             val result = action(fakeRequest)
             status(result) shouldBe INTERNAL_SERVER_ERROR

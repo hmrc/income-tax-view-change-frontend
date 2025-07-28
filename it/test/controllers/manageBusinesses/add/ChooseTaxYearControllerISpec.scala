@@ -23,7 +23,7 @@ import enums.{MTDIndividual, MTDUserRole}
 import helpers.IncomeSourceCheckDetailsConstants.{testBusinessName, testBusinessStartDate, testBusinessTrade}
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import models.admin.{IncomeSourcesNewJourney, OptInOptOutContentUpdateR17}
+import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus.Voluntary
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -110,10 +110,9 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
 
             "OptInOptOutContentUpdateR17 is enabled" when {
 
-              "income sources new journey is enabled" in {
+              "using the manage businesses journey" in {
 
                 enable(OptInOptOutContentUpdateR17)
-                enable(IncomeSourcesNewJourney)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
@@ -130,29 +129,13 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
                   elementTextByID("continue-button")("Continue"),
                 )
               }
-
-              "income sources new journey is disabled" in {
-                disable(IncomeSourcesNewJourney)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  if (mtdUserRole == MTDIndividual) redirectURI("/report-quarterly/income-and-expenses/view") else redirectURI("/report-quarterly/income-and-expenses/view/agents/client-income-tax")
-                )
-              }
             }
 
             "OptInOptOutContentUpdateR17 is disabled" when {
 
-              "income sources new journey is enabled" in {
+              "using the manage businesses journey" in {
 
                 disable(OptInOptOutContentUpdateR17)
-                enable(IncomeSourcesNewJourney)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
@@ -167,22 +150,6 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
                   elementTextBySelector("[for='current-year-checkbox']")(s"${currentTaxYear - 1} to $currentTaxYear"),
                   elementTextBySelector("[for='next-year-checkbox']")(s"$currentTaxYear to ${currentTaxYear + 1}"),
                   elementTextByID("continue-button")("Continue"),
-                )
-              }
-
-              "income sources new journey is disabled" in {
-
-                disable(IncomeSourcesNewJourney)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  if (mtdUserRole == MTDIndividual) redirectURI("/report-quarterly/income-and-expenses/view") else redirectURI("/report-quarterly/income-and-expenses/view/agents/client-income-tax")
                 )
               }
             }

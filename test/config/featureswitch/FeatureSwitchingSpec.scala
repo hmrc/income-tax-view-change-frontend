@@ -48,7 +48,6 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
     NavBarFs,
     CreditsRefundsRepay,
     PaymentHistoryRefunds,
-    IncomeSourcesNewJourney,
     OptOutFs,
     AdjustPaymentsOnAccount,
     FilterCodedOutPoas,

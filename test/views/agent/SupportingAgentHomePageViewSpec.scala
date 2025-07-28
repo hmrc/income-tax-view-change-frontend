@@ -79,7 +79,6 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
   class TestSetup(nextPaymentDueDate: Option[LocalDate] = Some(nextPaymentDue),
                   nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture,
                   displayCeaseAnIncome: Boolean = false,
-                  incomeSourcesNewJourneyEnabled: Boolean = false,
                   reportingFrequencyEnabled: Boolean = false,
                   currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary,
                   user: MtdItUser[_] = testMtdItUserNotMigrated
@@ -87,7 +86,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
 
     val agentHome: SupportingAgentHome = app.injector.instanceOf[SupportingAgentHome]
 
-    val yourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome, incomeSourcesNewJourneyEnabled)
+    val yourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome)
 
     val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), reportingFrequencyEnabled, currentITSAStatus)
 
@@ -268,7 +267,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
       }
 
       "not have a payment history tile" in new TestSetup() {
-          getElementById("payment-history-tile") shouldBe None
+        getElementById("payment-history-tile") shouldBe None
       }
 
       s"have a change client link" in new TestSetup {
@@ -286,13 +285,13 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
       }
     }
 
-    "the feature switches are enabled" should {
+    "using the manage businesses journey" should {
       "have a Your Businesses tile" when {
         "the new income sources journey FS is enabled" which {
-          "has a heading" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesNewJourneyEnabled = true) {
+          "has a heading" in new TestSetup(user = testMtdItUserMigrated) {
             getElementById("income-sources-tile").map(_.select("h2").first().text()) shouldBe Some(messages("home.incomeSources.newJourneyHeading"))
           }
-          "has a link to ManageYourBusinessController.show()" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesNewJourneyEnabled = true) {
+          "has a link to ManageYourBusinessController.show()" in new TestSetup(user = testMtdItUserMigrated) {
             getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some(messages("home.incomeSources.newJourney.view"))
             getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url)
           }

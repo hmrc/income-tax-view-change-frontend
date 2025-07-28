@@ -20,7 +20,7 @@ import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSourcesNewJourney, NavBarFs}
+import models.admin.NavBarFs
 import models.incomeSourceDetails.{ManageIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -60,8 +60,7 @@ class ReportingMethodErrorControllerISpec extends ControllerISpecHelper {
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
             "render the reporting method error page" when {
-              "the income sources is enabled" in {
-                enable(IncomeSourcesNewJourney)
+              "using the manage businesses journey" in {
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
@@ -78,32 +77,9 @@ class ReportingMethodErrorControllerISpec extends ControllerISpecHelper {
               }
             }
 
-            "redirect to the home page" when {
-              "the income sources feature switch is disabled" in {
-                disable(IncomeSourcesNewJourney)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
-
-                if (incomeSourceType == SelfEmployment) {
-                  await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-                    manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
-                }
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
-                )
-              }
-            }
-
             "render the error page" when {
               if (incomeSourceType == SelfEmployment) {
                 "the Income Source Id does not exist" in {
-                  enable(IncomeSourcesNewJourney)
                   disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
                   await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
@@ -119,7 +95,6 @@ class ReportingMethodErrorControllerISpec extends ControllerISpecHelper {
                 }
               } else {
                 "the user does not have a property Income Source" in {
-                  enable(IncomeSourcesNewJourney)
                   disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)

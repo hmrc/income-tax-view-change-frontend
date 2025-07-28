@@ -21,7 +21,6 @@ import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockIncomeSourceRFService, MockSessionService}
-import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.AddIncomeSourceData
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import org.mockito.ArgumentMatchers
@@ -167,7 +166,6 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
   }
 
   def setupMockCalls(isAgent: Boolean, incomeSourceType: IncomeSourceType, mtdRole: MTDUserRole, scenario: Scenario): Unit = {
-    enable(IncomeSourcesNewJourney)
     setupMockSuccess(mtdRole)
     setupMockIncomeSourceDetailsCall(scenario, incomeSourceType)
     setupMockDateServiceCall(scenario)

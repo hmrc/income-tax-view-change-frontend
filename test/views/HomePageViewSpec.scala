@@ -99,7 +99,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
   class Setup(paymentDueDate: LocalDate = nextPaymentDueDate, overDuePaymentsCount: Int = 0, paymentsAccruingInterestCount: Int = 0, reviewAndReconcileEnabled: Boolean = false,
               nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture, utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
               user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, creditAndRefundEnabled: Boolean = false, displayCeaseAnIncome: Boolean = false,
-              incomeSourcesNewJourneyEnabled: Boolean = false, reportingFrequencyEnabled: Boolean = false, penaltiesAndAppealsIsEnabled: Boolean = true,
+              reportingFrequencyEnabled: Boolean = false, penaltiesAndAppealsIsEnabled: Boolean = true,
               penaltyPoints: Int = 0, submissionFrequency: String = "Annual", currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary, yourSelfAssessmentChargesEnabled: Boolean = false) {
 
     val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear - 1, currentTaxYear), iTSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
@@ -108,7 +108,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
     val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(List(financialDetailsModel()), creditAndRefundEnabled, paymentHistoryEnabled, isUserMigrated = user.incomeSources.yearOfMigration.isDefined)
 
-    val yourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome, incomeSourcesNewJourneyEnabled)
+    val yourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome)
 
     val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), reportingFrequencyEnabled, currentITSAStatus)
 
@@ -499,12 +499,21 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
     }
 
+    "have a Your Businesses tile" which {
+      "has a heading" in new Setup(user = testMtdItUserMigrated()) {
+        getElementById("income-sources-tile").map(_.select("h2").first().text()) shouldBe Some("Your businesses")
+      }
+      "has a link to AddIncomeSourceController.show()" in new Setup(user = testMtdItUserMigrated()) {
+        getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some("Add, manage or cease a business or income source")
+        getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/manage-your-businesses")
+      }
+    }
     "have a Your Businesses tile" when {
       "the new income sources journey FS is enabled" which {
-        "has a heading" in new Setup(user = testMtdItUserMigrated(), incomeSourcesNewJourneyEnabled = true) {
+        "has a heading" in new Setup(user = testMtdItUserMigrated()) {
           getElementById("income-sources-tile").map(_.select("h2").first().text()) shouldBe Some("Your businesses")
         }
-        "has a link to ManageYourBusinessController.show()" in new Setup(user = testMtdItUserMigrated(), incomeSourcesNewJourneyEnabled = true) {
+        "has a link to ManageYourBusinessController.show()" in new Setup(user = testMtdItUserMigrated()) {
           getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some("Add, manage or cease a business or income source")
           getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/manage-your-businesses")
         }

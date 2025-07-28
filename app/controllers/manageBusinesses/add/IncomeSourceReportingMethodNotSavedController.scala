@@ -41,16 +41,15 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val authActions: A
   with I18nSupport with IncomeSourcesUtils {
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] =
-    withNewIncomeSourcesFS {
-      val action: Call =
-        if (isAgent)
-          controllers.manageBusinesses.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType)
-        else
-          controllers.manageBusinesses.add.routes.IncomeSourceAddedController.show(incomeSourceType)
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+    val action: Call =
+      if (isAgent)
+        controllers.manageBusinesses.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType)
+      else
+        controllers.manageBusinesses.add.routes.IncomeSourceAddedController.show(incomeSourceType)
 
-      Future.successful(Ok(view(incomeSourceType = incomeSourceType, continueAction = action, isAgent = isAgent)))
-    }
+    Future.successful(Ok(view(incomeSourceType = incomeSourceType, continueAction = action, isAgent = isAgent)))
+  }
 
 
   def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {

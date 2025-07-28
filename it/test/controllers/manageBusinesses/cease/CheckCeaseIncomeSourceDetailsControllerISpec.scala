@@ -22,7 +22,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.Cease
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.admin.{IncomeSourcesNewJourney, NavBarFs}
+import models.admin.NavBarFs
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
@@ -84,8 +84,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           "render the Cease Business Details Page" when {
-            "income source is enabled" in {
-              enable(IncomeSourcesNewJourney)
+            "using the manage businesses journey" in {
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -119,8 +118,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
             }
           }
           "render the Cease Business Page with unknown address and title and trade" when {
-            "income source is enabled" in {
-              enable(IncomeSourcesNewJourney)
+            "using the manage businesses journey" in {
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponseWithUnknownAddressName)
@@ -151,29 +149,6 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
               )
             }
           }
-          "redirect to Home Page" when {
-            "Income source is disabled" in {
-              disable(IncomeSourcesNewJourney)
-              disable(NavBarFs)
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                status = OK,
-                response = businessAndPropertyResponse
-              )
-
-              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
-                Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(false))))))
-
-              When(s"I call GET ${selfEmploymentPath}")
-              val result = buildGETMTDClient(selfEmploymentPath, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-              result should have(
-                httpStatus(SEE_OTHER),
-                redirectURI(homeUrl(mtdUserRole))
-              )
-            }
-          }
           testAuthFailures(selfEmploymentPath, mtdUserRole)
         }
       }
@@ -183,8 +158,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           "render the Cease UK Property Details Page" when {
-            "income source is enabled" in {
-              enable(IncomeSourcesNewJourney)
+            "using the manage businesses journey" in {
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -206,28 +180,6 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
               )
             }
           }
-
-          "redirect to Home Page" when {
-            "Income source is disabled" in {
-              disable(IncomeSourcesNewJourney)
-              disable(NavBarFs)
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
-                Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
-
-
-              When(s"I call GET $ukPropertyPath")
-              val result = buildGETMTDClient(ukPropertyPath, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-              result should have(
-                httpStatus(SEE_OTHER),
-                redirectURI(homeUrl(mtdUserRole))
-              )
-            }
-          }
           testAuthFailures(ukPropertyPath, mtdUserRole)
         }
       }
@@ -237,8 +189,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           "render the Cease Foreign Property Details Page" when {
-            "income sources is enabled" in {
-              enable(IncomeSourcesNewJourney)
+            "using the manage businesses journey" in {
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
@@ -260,26 +211,6 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
               )
             }
           }
-          "redirect to Home Page" when {
-            "Income source is disabled" in {
-              disable(IncomeSourcesNewJourney)
-              disable(NavBarFs)
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
-
-              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
-                Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
-
-              When(s"I call GET $foreignPropertyPath")
-              val result = buildGETMTDClient(foreignPropertyPath, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-              result should have(
-                httpStatus(SEE_OTHER),
-                redirectURI(homeUrl(mtdUserRole))
-              )
-            }
-          }
           testAuthFailures(foreignPropertyPath, mtdUserRole)
         }
       }
@@ -290,7 +221,6 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
         "is authenticated, with a valid enrolment" should {
           val redirectUrl = getExpectedRedirectUri(mtdUserRole, SelfEmployment)
           s"redirect to $redirectUrl" in {
-            enable(IncomeSourcesNewJourney)
             disable(NavBarFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -320,7 +250,6 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
         "is authenticated, with a valid enrolment" should {
           val redirectUrl = getExpectedRedirectUri(mtdUserRole, UkProperty)
           s"redirect to $redirectUrl" in {
-            enable(IncomeSourcesNewJourney)
             disable(NavBarFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -350,7 +279,6 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
         "is authenticated, with a valid enrolment" should {
           val redirectUrl = getExpectedRedirectUri(mtdUserRole, ForeignProperty)
           s"redirect to $redirectUrl" in {
-            enable(IncomeSourcesNewJourney)
             disable(NavBarFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)

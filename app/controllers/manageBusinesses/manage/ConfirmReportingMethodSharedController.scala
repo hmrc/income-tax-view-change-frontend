@@ -62,9 +62,8 @@ class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActi
            taxYear: String,
            changeTo: String,
            incomeSourceType: IncomeSourceType
-          ): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
-    withNewIncomeSourcesFS {
-      withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
+          ): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user => {
+      withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
         val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
         val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
         handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, incomeSourceIdOpt)
@@ -76,9 +75,8 @@ class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActi
              taxYear: String,
              changeTo: String,
              incomeSourceType: IncomeSourceType
-            ): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
-    withNewIncomeSourcesFS {
-      withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Manage, incomeSourceType), BeforeSubmissionPage) { sessionData =>
+            ): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user => {
+      withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), BeforeSubmissionPage) { sessionData =>
         val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
         val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
         handleSubmitRequest(taxYear, changeTo, isAgent, incomeSourceIdOpt, incomeSourceType)
@@ -260,29 +258,28 @@ class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActi
   private def handleSubmitRequest(taxYear: String, changeTo: String, isAgent: Boolean, maybeIncomeSourceId: Option[IncomeSourceId],
                                   incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
 
-    withNewIncomeSourcesFS {
-      val incomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, maybeIncomeSourceId.map(m => m.value))
-      val (_, successCall) = getRedirectCalls(isAgent, incomeSourceId, incomeSourceType, isEnabled(OptInOptOutContentUpdateR17))
+    val incomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, maybeIncomeSourceId.map(m => m.value))
+    val (_, successCall) = getRedirectCalls(isAgent, incomeSourceId, incomeSourceType, isEnabled(OptInOptOutContentUpdateR17))
 
-      (getTaxYearModel(taxYear), getReportingMethod(changeTo)) match {
-        case (Some(taxModel), Some(reportingMethod)) => {
-          if(isEnabled(OptInOptOutContentUpdateR17)) {
-            handleChangeMethodForm(
-              taxYearModel = taxModel,
-              reportingMethod = reportingMethod,
-              id = incomeSourceId,
-              isAgent = isAgent,
-              changeTo = changeTo,
-              incomeSourceType = incomeSourceType
-            )
-          }else{
-            Future.successful (Redirect(successCall))
-          }
+    (getTaxYearModel(taxYear), getReportingMethod(changeTo)) match {
+      case (Some(taxModel), Some(reportingMethod)) => {
+        if(isEnabled(OptInOptOutContentUpdateR17)) {
+          handleChangeMethodForm(
+            taxYearModel = taxModel,
+            reportingMethod = reportingMethod,
+            id = incomeSourceId,
+            isAgent = isAgent,
+            changeTo = changeTo,
+            incomeSourceType = incomeSourceType
+          )
+        }else{
+          Future.successful (Redirect(successCall))
         }
-        case (None, _) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse taxYear: $taxYear"))
-        case (_, None) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse reporting method: $changeTo"))
       }
+      case (None, _) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse taxYear: $taxYear"))
+      case (_, None) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse reporting method: $changeTo"))
     }
+
   }
 
   private def getReportingMethod(reportingMethod: String): Option[String] = {

@@ -22,7 +22,7 @@ import enums.MTDIndividual
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub, MTDIndividualAuthStub, PenaltyDetailsStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.admin.{IncomeSourcesNewJourney, NavBarFs, ReportingFrequencyPage}
+import models.admin.{NavBarFs, ReportingFrequencyPage}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
@@ -462,12 +462,85 @@ class HomeControllerISpec extends ControllerISpecHelper {
             verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
           }
         }
+
+        "display Income Sources tile" when {
+          "using the manage businesses journey" in {
+            disable(NavBarFs)
+            ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
+            MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
+
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              status = OK,
+              response = incomeSourceDetailsModel
+            )
+
+            val currentObligations: ObligationsModel = ObligationsModel(Seq(
+              GroupedObligationsModel(
+                identification = "testId",
+                obligations = List(
+                  SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey", StatusFulfilled)
+                ))
+            ))
+
+            IncomeTaxViewChangeStub.stubGetNextUpdates(
+              nino = testNino,
+              deadlines = currentObligations
+            )
+
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+              nino = testNino,
+              from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+              to = getCurrentTaxYearEnd.toString
+            )(
+              status = OK,
+              response = Json.toJson(FinancialDetailsModel(
+                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+                documentDetails = List(
+                  DocumentDetail(
+                    taxYear = getCurrentTaxYearEnd.getYear,
+                    transactionId = "testTransactionId",
+                    documentDescription = Some("ITSA- POA 1"),
+                    documentText = Some("documentText"),
+                    outstandingAmount = 500.00,
+                    originalAmount = 1000.00,
+                    documentDate = LocalDate.of(2018, 3, 29),
+                    effectiveDateOfPayment = Some(currentDate),
+                    documentDueDate = Some(currentDate)
+                  )
+                ),
+                financialDetails = List(
+                  FinancialDetail(
+                    taxYear = getCurrentTaxYearEnd.getYear.toString,
+                    mainType = Some("SA Payment on Account 1"),
+                    mainTransaction = Some("4920"),
+                    transactionId = Some("testTransactionId"),
+                    items = Some(Seq(SubItem(Some(currentDate))))
+                  )
+                )
+              ))
+            )
+
+            IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+              "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+            PenaltyDetailsStub.stubNoPenaltiesDataResponse(testMtditid)
+
+            val result = buildGETMTDClient(path).futureValue
+
+            result should have(
+              httpStatus(OK),
+              pageTitleInd("home.heading"),
+              elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+              elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate),
+              elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Your businesses")
+            )
+          }
+        }
         "display Your Businesses tile" when {
-          "IncomeSourcesNewJourney feature switches are enabled" in {
+          "IncomeSources feature switch is enabled" in {
             disable(NavBarFs)
             MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
-            enable(IncomeSourcesNewJourney)
 
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,
