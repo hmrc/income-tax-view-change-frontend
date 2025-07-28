@@ -28,7 +28,6 @@ sealed trait IncomeSourceType {
   val reportingMethodChangeErrorPrefix: String
   val newReportingMethodChangeErrorPrefixAnnual: String
   val newReportingMethodChangeErrorPrefixQuarterly: String
-  val ceaseCheckDetailsPrefix: String
   val ceaseCheckAnswersPrefix: String
   val messagesSuffix: String
   val messagesCamel: String
@@ -43,7 +42,6 @@ case object SelfEmployment extends IncomeSourceType {
   override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.businessReportingMethodError"
   override val newReportingMethodChangeErrorPrefixAnnual: String = "manageBusinesses.manage.propertyReportingMethod.new.form.error.annual"
   override val newReportingMethodChangeErrorPrefixQuarterly: String = "manageBusinesses.manage.propertyReportingMethod.new.form.error.quarterly"
-  override val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseBusiness.checkDetails"
   override val ceaseCheckAnswersPrefix: String = "cease-check-answers"
   override val messagesSuffix: String = "sole-trader"
   override val messagesCamel: String = "selfEmployment"
@@ -58,7 +56,6 @@ case object UkProperty extends IncomeSourceType {
   override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.uKPropertyReportingMethodError"
   override val newReportingMethodChangeErrorPrefixAnnual: String = "manageBusinesses.manage.propertyReportingMethod.new.form.error.annual"
   override val newReportingMethodChangeErrorPrefixQuarterly: String = "manageBusinesses.manage.propertyReportingMethod.new.form.error.quarterly"
-  override val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseUKProperty.checkDetails"
   override val ceaseCheckAnswersPrefix: String = "cease-check-answers-uk"
   override val messagesSuffix: String = "uk-property"
   override val messagesCamel: String = "ukProperty"
@@ -73,7 +70,6 @@ case object ForeignProperty extends IncomeSourceType {
   override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.foreignPropertyReportingMethodError"
   override val newReportingMethodChangeErrorPrefixAnnual: String = "manageBusinesses.manage.propertyReportingMethod.new.form.error.annual"
   override val newReportingMethodChangeErrorPrefixQuarterly: String = "manageBusinesses.manage.propertyReportingMethod.new.form.error.quarterly"
-  override val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseForeignProperty.checkDetails"
   override val ceaseCheckAnswersPrefix: String = "cease-check-answers-fp"
   override val messagesSuffix: String = "foreign-property"
   override val messagesCamel: String = "foreignProperty"

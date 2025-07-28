@@ -26,49 +26,12 @@
 
 @(yourBusinessesTileViewModel: YourBusinessesTileViewModel, isAgent: Boolean)(implicit messages: Messages)
 
-@addIncomeSourceControllerURL = @{
-    if(isAgent) {
-        controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
-    } else {
-        controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
-    }
-}
-
-@ceaseIncomeSourceControllerURL = @{
-    if(isAgent) {
-        controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url
-    } else {
-        controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
-    }
-}
-
 @manageBusinessesControllerURL = @{
     if(isAgent) {
         controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
     } else {
         controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
     }
-}
-
-@addIncomeSourceLink = @{
-    link(
-        link = addIncomeSourceControllerURL,
-        messageKey = "home.incomeSources.addIncomeSource.view"
-    )
-}
-
-@ceaseIncomeSourceLink = @{
-    link(
-        link = ceaseIncomeSourceControllerURL,
-        messageKey = "home.incomeSources.ceaseIncomeSource.view"
-    )
-}
-
-@manageIncomeSourceLink = @{
-    link(
-        link = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(isAgent).url,
-        messageKey = "home.incomeSources.manageIncomeSource.view"
-    )
 }
 
 @manageYourBusinessesLink = @{
@@ -78,28 +41,13 @@
     )
 }
 
-@if(yourBusinessesTileViewModel.incomeSourcesEnabled) {
-    @if(yourBusinessesTileViewModel.incomeSourcesNewJourneyEnabled) {
-        @home_tile("income-sources-tile", messages("home.incomeSources.newJourneyHeading")) {
-            @p(classes = "govuk-!-margin-bottom-4") {
-                @manageYourBusinessesLink
-            }
-        }
-    } else {
-        @home_tile("income-sources-tile", messages("home.incomeSources.heading")) {
-            @p(classes = "govuk-!-margin-bottom-4") {
-                @addIncomeSourceLink
-            }
-            @p(classes = "govuk-!-margin-bottom-4") {
-                @manageIncomeSourceLink
-            }
-            @if(yourBusinessesTileViewModel.displayCeaseAnIncome) {
-                @p(classes = "govuk-!-margin-bottom-4") {
-                    @ceaseIncomeSourceLink
-                }
-            }
+@if(yourBusinessesTileViewModel.incomeSourcesNewJourneyEnabled) {
+    @home_tile("income-sources-tile", messages("home.incomeSources.newJourneyHeading")) {
+        @p(classes = "govuk-!-margin-bottom-4") {
+            @manageYourBusinessesLink
         }
     }
 }
+
 
 

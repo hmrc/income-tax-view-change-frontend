@@ -21,7 +21,7 @@ import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{IncomeSourceType, InitialPage, SelfEmployment}
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
-import forms.incomeSources.cease.DeclareIncomeSourceCeasedForm
+import forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{Mode, NormalMode}
 import models.incomeSourceDetails.CeaseIncomeSourceData

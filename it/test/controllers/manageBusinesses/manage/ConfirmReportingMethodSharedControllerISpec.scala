@@ -21,7 +21,7 @@ import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
-import forms.incomeSources.manage.ConfirmReportingMethodForm
+import forms.manageBusinesses.manage.ChangeReportingMethodForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.{IncomeSourcesNewJourney, NavBarFs, OptInOptOutContentUpdateR17}
 import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData, UIJourneySessionData}
@@ -426,24 +426,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             }
 
             "redirect to home page" when {
-              "Income Sources FS is disabled" in {
-                disable(IncomeSourcesNewJourney)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-                IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
-                val formData = Map("change-reporting-method-check" -> Seq("Yes"))
-
-                val result = buildPOSTMTDPostClient(pathSE, additionalCookies, body = formData).futureValue
-
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
-                )
-              }
               "Income Sources New JourneyFS is disabled" in {
                 disable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
@@ -453,7 +435,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
                 IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-                val formData = Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("RANDOM"))
+                val formData = Map(ChangeReportingMethodForm.response -> Seq("Yes"))
 
                 val result = buildPOSTMTDPostClient(pathSE, additionalCookies, body = formData).futureValue
 
@@ -467,7 +449,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
           }
 
           testAuthFailures(pathSE, mtdUserRole, optBody = Some(Map
-          (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
+          (ChangeReportingMethodForm.response -> Seq("Yes")
           )))
         }
       }
@@ -507,7 +489,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
                 await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
-                val formData = Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("RANDOM"))
+                val formData = Map(ChangeReportingMethodForm.response -> Seq("Yes"))
 
                 val result = buildPOSTMTDPostClient(pathUK, additionalCookies, body = formData).futureValue
 
@@ -528,7 +510,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
                 await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
-                val formData = Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
+                val formData = Map(ChangeReportingMethodForm.response -> Seq("Yes"))
 
                 val result = buildPOSTMTDPostClient(pathUK, additionalCookies, body = formData).futureValue
 
@@ -540,7 +522,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             }
 
             testAuthFailures(pathUK, mtdUserRole, optBody = Some(Map
-            (ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
+            (ChangeReportingMethodForm.response -> Seq("Yes")
             )))
           }
         }
@@ -581,7 +563,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
                 await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
-                val formData = Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("RANDOM"))
+                val formData = Map(ChangeReportingMethodForm.response -> Seq("Yes"))
 
                 val result = buildPOSTMTDPostClient(pathFP, additionalCookies, body = formData).futureValue
 
@@ -602,7 +584,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
                 await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
-                val formData = Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
+                val formData = Map(ChangeReportingMethodForm.response -> Seq("Yes"))
 
                 val result = buildPOSTMTDPostClient(pathFP, additionalCookies, body = formData).futureValue
 
@@ -614,7 +596,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             }
 
             testAuthFailures(pathFP, mtdUserRole,
-              Some(Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("Test Business")
+              Some(Map(ChangeReportingMethodForm.response -> Seq("Yes")
               )))
           }
         }

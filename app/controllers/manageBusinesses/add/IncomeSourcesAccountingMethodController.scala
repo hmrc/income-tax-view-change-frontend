@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import enums.AccountingMethod.fromApiField
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import forms.incomeSources.add.IncomeSourcesAccountingMethodForm
+import forms.manageBusinesses.add.IncomeSourcesAccountingMethodForm
 import models.core.{CheckMode, Mode, NormalMode}
 import play.api.Logger
 import play.api.i18n.I18nSupport
