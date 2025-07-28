@@ -26,8 +26,7 @@ object ITSAStatusRepositorySupport {
       // Grouping NoStatus, Exempt and DigitallyExempt statuses as "Unknown"
       case ITSAStatus.NoStatus
            | ITSAStatus.Exempt
-           | ITSAStatus.DigitallyExempt
-           | ITSAStatus.Dormant => "U"
+           | ITSAStatus.DigitallyExempt => "U"
       case ITSAStatus.Voluntary => "V"
       case ITSAStatus.Annual    => "A"
       case ITSAStatus.Mandated  => "M"
