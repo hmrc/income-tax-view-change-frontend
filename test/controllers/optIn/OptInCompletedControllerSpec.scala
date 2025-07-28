@@ -19,6 +19,7 @@ package controllers.optIn
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockOptInService
+import models.admin.ReportingFrequencyPage
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import play.api
@@ -50,6 +51,7 @@ class OptInCompletedControllerSpec extends MockAuthActions
       s"the user is authenticated as a $mtdRole" should {
         s"render the optInCompleted page" that {
           "is for the current year" in {
+            enable(ReportingFrequencyPage)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -62,6 +64,7 @@ class OptInCompletedControllerSpec extends MockAuthActions
           }
 
           "is for next year" in {
+            enable(ReportingFrequencyPage)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -75,6 +78,7 @@ class OptInCompletedControllerSpec extends MockAuthActions
         }
         "render the error page" when {
           "no proposition returned" in {
+            enable(ReportingFrequencyPage)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -86,6 +90,7 @@ class OptInCompletedControllerSpec extends MockAuthActions
           }
 
           "FetchSavedChosenTaxYear fails" in {
+            enable(ReportingFrequencyPage)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -95,6 +100,25 @@ class OptInCompletedControllerSpec extends MockAuthActions
 
             val result = action(fakeRequest)
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          }
+        }
+
+        "render the home page" when {
+          "the ReportingFrequencyPage feature switch is disabled" in {
+            disable(ReportingFrequencyPage)
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+            val result = action(fakeRequest)
+
+            val redirectUrl = if (isAgent) {
+              "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
+            } else {
+              "/report-quarterly/income-and-expenses/view"
+            }
+
+            status(result) shouldBe Status.SEE_OTHER
+            redirectLocation(result) shouldBe Some(redirectUrl)
           }
         }
         testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)

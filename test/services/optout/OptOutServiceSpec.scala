@@ -315,7 +315,14 @@ class OptOutServiceSpec
               previousYearCrystallisedStatus = false
             )
 
-            val model = response.futureValue._2
+            response.futureValue._2 shouldBe Some(
+              OptOutOneYearViewModel(
+                oneYearOptOutTaxYear = taxYear2023_2024,
+                state = Some(OneYearOptOutFollowedByMandated)
+              )
+            )
+
+            val model = response.futureValue._3
             model match {
               case m: OptOutProposition =>
                 m.previousTaxYear shouldBe PreviousOptOutTaxYear(Annual, taxYear2023_2024.previousYear, crystallised = false)
