@@ -125,7 +125,9 @@ class IncomeSourceRFCheckDetailsControllerSpec
             val result = action(fakeRequest)
             status(result) shouldBe SEE_OTHER
 
-            val redirectUrl = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(incomeSource).url else routes.IncomeSourceNotAddedController.show(incomeSource).url
+            val redirectUrl =
+              if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(incomeSource).url
+              else routes.IncomeSourceReportingMethodNotSavedController.show(incomeSource).url
 
             redirectLocation(result) shouldBe Some(redirectUrl)
           }
@@ -139,8 +141,12 @@ class IncomeSourceRFCheckDetailsControllerSpec
 
             enable(IncomeSourcesNewJourney)
 
+            val redirectUrl =
+              if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(incomeSource).url
+              else routes.IncomeSourceReportingMethodNotSavedController.show(incomeSource).url
+
             val result = action(fakeRequest)
-            status(result) shouldBe INTERNAL_SERVER_ERROR
+            redirectLocation(result) shouldBe Some(redirectUrl)
           }
         }
       }
