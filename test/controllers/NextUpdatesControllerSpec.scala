@@ -247,6 +247,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
 
           setupMockUserAuth
           mockNoIncomeSources()
+          mockSingleBusinessIncomeSourceWithDeadlines()
           val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
           val document = Jsoup.parse(contentAsString(result))
 

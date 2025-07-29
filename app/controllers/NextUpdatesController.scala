@@ -22,7 +22,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage}
+import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage}
 import models.obligations._
 import play.api.Logger
 import play.api.i18n.I18nSupport
