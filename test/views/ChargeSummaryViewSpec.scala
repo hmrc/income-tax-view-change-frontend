@@ -56,7 +56,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
                   payments: FinancialDetailsModel = payments,
                   chargeHistoryEnabled: Boolean = true,
                   latePaymentInterestCharge: Boolean = false,
-                  reviewAndReconcileEnabled: Boolean = false,
                   isAgent: Boolean = false,
                   adjustmentHistory: AdjustmentHistoryModel = defaultAdjustmentHistory,
                   poaExtraChargeLink: Option[String] = None,
@@ -717,15 +716,15 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       }
     }
 
-    "charge is a POA 1 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PoaOneReconciliationDebit), reviewAndReconcileEnabled = true) {
+    "charge is a POA 1 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PoaOneReconciliationDebit)) {
       document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
       document.select("h1").text() shouldBe poa1ReconcileHeading
     }
-    "charge is a POA 2 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PoaTwoReconciliationDebit), reviewAndReconcileEnabled = true) {
+    "charge is a POA 2 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PoaTwoReconciliationDebit)) {
       document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
       document.select("h1").text() shouldBe poa2ReconcileHeading
     }
-    "charge is interest for a POA 1 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PoaOneReconciliationDebit), reviewAndReconcileEnabled = true, latePaymentInterestCharge = true) {
+    "charge is interest for a POA 1 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PoaOneReconciliationDebit), latePaymentInterestCharge = true) {
       document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
       document.select("h1").text() shouldBe poa1ReconcileInterestHeading
 
@@ -743,7 +742,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       document.select("tbody tr td:nth-child(2)").text() shouldBe hmrcCreated
       document.select("tbody tr td:nth-child(3)").text() shouldBe "£100.00"
     }
-    "charge is interest for a POA 2 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PoaTwoReconciliationDebit), reviewAndReconcileEnabled = true, latePaymentInterestCharge = true) {
+    "charge is interest for a POA 2 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PoaTwoReconciliationDebit), latePaymentInterestCharge = true) {
       document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
       document.select("h1").text() shouldBe poa2ReconcileInterestHeading
 
@@ -780,7 +779,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       document.selectById("first-payment-penalty-p2").attr("href") shouldBe "testLPPUrl"
     }
 
-    "charge is a POA 1 reconciliation credit" in new TestSetup(chargeItem = chargeItemModel(transactionType = PoaOneReconciliationCredit, originalAmount = -100), reviewAndReconcileEnabled = true) {
+    "charge is a POA 1 reconciliation credit" in new TestSetup(chargeItem = chargeItemModel(transactionType = PoaOneReconciliationCredit, originalAmount = -100)) {
       document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
       document.select("h1").text() shouldBe poa1ReconciliationCreditHeading
 
@@ -793,7 +792,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
       document.selectById("poa-allocation-link").attr("href") shouldBe "testUrl1"
     }
-    "charge is a POA 2 reconciliation credit" in new TestSetup(chargeItem = chargeItemModel(transactionType = PoaTwoReconciliationCredit, originalAmount = -100), reviewAndReconcileEnabled = true) {
+    "charge is a POA 2 reconciliation credit" in new TestSetup(chargeItem = chargeItemModel(transactionType = PoaTwoReconciliationCredit, originalAmount = -100)) {
       document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
       document.select("h1").text() shouldBe poa2ReconciliationCreditHeading
 
