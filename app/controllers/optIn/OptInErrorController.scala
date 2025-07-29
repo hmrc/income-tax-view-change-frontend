@@ -21,6 +21,7 @@ import config.FrontendAppConfig
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.ReportingObligationsUtils
 import views.html.optIn.OptInError
 
 import javax.inject.Inject
@@ -31,12 +32,13 @@ class OptInErrorController @Inject()(val view: OptInError,
                                     (implicit val appConfig: FrontendAppConfig,
                                       val ec: ExecutionContext,
                                       val mcc: MessagesControllerComponents
-                                     ) extends FrontendController(mcc) with I18nSupport {
+                                     ) extends FrontendController(mcc) with I18nSupport with ReportingObligationsUtils {
 
 
   def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      Future.successful(Ok(view(isAgent)))
+      withReportingObligationsFS {
+        Future.successful(Ok(view(isAgent)))
+      }
   }
-
 }

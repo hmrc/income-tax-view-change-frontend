@@ -29,6 +29,7 @@ import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.optIn.OptInService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.ReportingObligationsUtils
 import views.html.optIn.ChooseTaxYearView
 
 import javax.inject.Inject
@@ -42,7 +43,7 @@ class ChooseYearController @Inject()(val optInService: OptInService,
                                     (implicit val appConfig: FrontendAppConfig,
                                      mcc: MessagesControllerComponents,
                                      val ec: ExecutionContext)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ReportingObligationsUtils {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -56,14 +57,16 @@ class ChooseYearController @Inject()(val optInService: OptInService,
 
   def show(isAgent: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      withRecover(isAgent) {
+      withReportingObligationsFS {
+        withRecover(isAgent) {
 
-        optInService.availableOptInTaxYear().flatMap { taxYears =>
-          (for {
-            savedTaxYear <- OptionT(optInService.fetchSavedChosenTaxYear())
-          } yield {
-            createResult(Some(savedTaxYear), taxYears, isAgent)
-          }).getOrElse(createResult(None, taxYears, isAgent))
+          optInService.availableOptInTaxYear().flatMap { taxYears =>
+            (for {
+              savedTaxYear <- OptionT(optInService.fetchSavedChosenTaxYear())
+            } yield {
+              createResult(Some(savedTaxYear), taxYears, isAgent)
+            }).getOrElse(createResult(None, taxYears, isAgent))
+          }
         }
       }
   }
@@ -77,14 +80,16 @@ class ChooseYearController @Inject()(val optInService: OptInService,
 
   def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      optInService.availableOptInTaxYear().flatMap { taxYears =>
-        ChooseTaxYearForm(taxYears.map(_.toString)).bindFromRequest().fold(
-          formWithError => Future.successful(BadRequest(view(formWithError, viewModel(taxYears, isAgent)))),
-          form => saveTaxYearChoice(form).map {
-            case true => redirectToCheckpointPage(isAgent)
-            case false => itvcErrorHandler.showInternalServerError()
-          }
-        )
+      withReportingObligationsFS {
+        optInService.availableOptInTaxYear().flatMap { taxYears =>
+          ChooseTaxYearForm(taxYears.map(_.toString)).bindFromRequest().fold(
+            formWithError => Future.successful(BadRequest(view(formWithError, viewModel(taxYears, isAgent)))),
+            form => saveTaxYearChoice(form).map {
+              case true => redirectToCheckpointPage(isAgent)
+              case false => itvcErrorHandler.showInternalServerError()
+            }
+          )
+        }
       }
   }
 

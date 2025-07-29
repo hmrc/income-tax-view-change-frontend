@@ -18,9 +18,10 @@ package controllers.optOut
 
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
+import models.admin.OptOutFs
 import play.api.Application
 import play.api.http.Status
-import play.api.test.Helpers.{defaultAwaitTimeout, status}
+import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 class OptOutErrorControllerSpec extends MockAuthActions {
@@ -37,12 +38,30 @@ class OptOutErrorControllerSpec extends MockAuthActions {
       val action = testController.show(isAgent)
       s"the user is authenticated as a $mtdRole" should {
         s"render the opt out error page" in {
+          enable(OptOutFs)
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           val result = action(fakeRequest)
 
           status(result) shouldBe Status.OK
+        }
+
+        "redirect to the home page when the feature switch is disabled" in {
+          disable(OptOutFs)
+          setupMockSuccess(mtdRole)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+          val result = action(fakeRequest)
+
+          val redirectUrl = if (isAgent) {
+            "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
+          } else {
+            "/report-quarterly/income-and-expenses/view"
+          }
+
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(redirectUrl)
         }
       }
       testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)

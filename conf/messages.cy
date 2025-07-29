@@ -807,6 +807,8 @@ nextUpdates.business            							    = Incwm busnes
 
 nextUpdates.optOutOneYear.p.message                             = Ar hyn o bryd, rydych yn adrodd bob chwarter ar sail wirfoddol ar gyfer blwyddyn dreth {0} i {1}. Gallwch ddewis
 nextUpdates.optOutOneYear.p.link                                = optio allan o ddiweddariadau bob chwarter ac adrodd yn flynyddol yn lle hynny.
+nextUpdates.optOutMultiYear.p.message                           = Ar hyn o bryd rhydych yn cyflwyno adroddiadau’n chwarterol ar sail wirfoddol. Cadarnhewch eich bod am
+nextUpdates.optOutMultiYear.p.link                              = optio allan o ddiweddariadau chwarterol ac am gyflwyno’n flynyddol yn lle hynny.
 
 nextUpdates.reporting.obligations.p.message                     = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
 nextUpdates.reporting.obligations.p.link                        = bwrw golwg dros eich ymrwymiadau adrodd.
@@ -1047,6 +1049,8 @@ selfAssessmentCharges.adjust-poa.paid-3                                       = 
 selfAssessmentCharges.adjust-poa.paid-4                                       = 31 Ionawr {0}
 selfAssessmentCharges.adjust-poa.paid-5                                       = fan bellaf.
 selfAssessmentCharges.interestChargesWarning                                  = Bydd taliadau llog yn parhau i gynyddu bob dydd nes bod y taliadau y maent yn ymwneud â nhw yn cael eu talu’n llawn.
+selfAssessmentCharges.lpi.firstLatePaymentPenalty.text                        = Llog am dalu’n hwyr ar y gosb gyntaf am dalu’n hwyr
+selfAssessmentCharges.lpi.secondLatePaymentPenalty.text                       = Llog am dalu’n hwyr ar yr ail gosb am dalu’n hwyr
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad cyntaf ar gyfrif
@@ -1977,9 +1981,8 @@ income.source.added.scenario.two.account.updated.p.a                            
 income.source.added.scenario.two.account.updated.p.link                                     = diweddariadau a dyddiadau cau,
 income.source.added.scenario.two.account.updated.p.b                                        = mae’ch cyfrif wedi’i ddiweddaru.
 
-income.source.added.scenario.two.view.reporting.obligations.p.a                             = Mae’r busnes newydd hwn wedi optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Gallwch benderfynu ar unrhyw adeg i optio eich holl fusnes allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar eich tudalen
-income.source.added.scenario.two.view.reporting.obligations.link                            = ymrwymiadau adrodd.
-income.source.added.scenario.two.view.reporting.obligations.p.b                             =
+income.source.added.scenario.two.view.reporting.obligations.p.a                             = Mae’r busnes newydd hwn wedi optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Dysgwch ragor am
+income.source.added.scenario.two.view.reporting.obligations.link                            = eich ymrwymiadau adrodd
 
 income.source.added.scenario.two.view.businesses.link                                       = Bwrw golwg dros eich busnesau
 income.source.added.scenario.two.view.businesses.p                                          = er mwyn ychwanegu, rheoli neu ddod â busnes neu ffynhonnell incwm i ben.
@@ -2913,9 +2916,9 @@ optIn.confirmNextTaxYear.heading                    = Cadarnhau ac optio i mewn 
 optIn.confirmNextTaxYear.desc                       = Os byddwch yn optio i mewn ar gyfer y flwyddyn dreth nesaf, o {0} ymlaen, bydd angen i chi gyflwyno’ch adroddiadau chwarterol drwy ddefnyddio meddalwedd sy’n cydweddu.
 
 # Reporting Frequency Page
-reporting.frequency.title = Amlder eich adroddiadau
-reporting.frequency.h1    = Amlder eich adroddiadau
-reporting.frequency.h2    = Rheoli amlder eich adroddiadau ar gyfer eich holl fusnesau
+reporting.frequency.title       = Amlder eich adroddiadau
+reporting.frequency.title.R17   = Eich ymrwymiadau o ran rhoi gwybod i ni
+reporting.frequency.h2          = Rheoli amlder eich adroddiadau ar gyfer eich holl fusnesau
 
 reporting.frequency.manageReportingFrequency.p1 = Os ydych yn adrodd yn flynyddol, neu’n adrodd yn chwarterol yn wirfoddol, mae’n bosibl y byddwch yn gallu newid amlder eich adroddiadau ar gyfer blynyddoedd treth penodol.
 reporting.frequency.manageReportingFrequency.p2 = Yr hyn y gallwch ei wneud ar gyfer eich holl fusnesau:
@@ -2928,10 +2931,26 @@ reporting.frequency.manageReportingFrequency.optOut.link.onwards = Optio allan o
 reporting.frequency.manageReportingFrequency.b1.link = Optio i mewn i adrodd yn chwarterol ar gyfer blwyddyn dreth {0} i {1}
 reporting.frequency.manageReportingFrequency.b2.link = Optio allan o adrodd yn chwarterol, a mynd ati i adrodd yn flynyddol o flwyddyn dreth {0} i {1} ymlaen
 
+#different obligations
+reporting.frequency.different.obligations.heading                           = Yr ymrwymiadau o ran rhoi gwybod i ni
+reporting.frequency.different.obligations.p1                                = Pan fyddwch yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, bydd angen i chi gyflwyno’r canlynol:
+reporting.frequency.different.obligations.li1                               = 4 diweddariad y flwyddyn ar gyfer pob ffynhonnell o incwm o hunangyflogaeth ac eiddo
+reporting.frequency.different.obligations.li2                               = Ffurflen Dreth
+reporting.frequency.different.obligations.p2                                = Ar gyfer blynyddoedd treth yr ydych wedi optio allan ohonynt, bydd dim ond angen i chi gyflwyno Ffurflen Dreth.
+reporting.frequency.different.obligations.p3                                = Gallwch fwrw golwg dros yr hyn sy’n ddyledus ar y dudalen
+reporting.frequency.different.obligations.link.text                         = diweddariadau a dyddiadau cau.
+reporting.frequency.different.obligations.link.text.additional.english      =
+
 reporting.frequency.mandatoryReporting.heading    = Pan fydd adrodd yn chwarterol yn ofynnol
 reporting.frequency.mandatoryReporting.inset      = Mae angen adrodd yn chwarterol os yw’ch incwm o hunangyflogaeth neu’ch incwm o eiddo, neu’r ddau, y tu hwn i’r trothwy incwm.
 reporting.frequency.mandatoryReporting.text       = Gallwch wirio’r trothwy ar gyfer pryd y bydd adrodd yn chwarterol yn ofynnol yn y
 reporting.frequency.mandatoryReporting.link.text  = meini prawf ar gyfer pobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+
+#new mandatory reporting messages for reporting frequency with OptInOptOutContentUpdateR17 enabled:
+reporting.frequency.mandatoryReporting.heading.R17      = Pan fydd angen defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+reporting.frequency.mandatoryReporting.inset.R17        = Mae’n rhaid i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm os yw cyfanswm eich incwm gros o hunangyflogaeth neu eiddo, neu’r ddau, yn fwy na’r trothwy o £50,000.
+reporting.frequency.mandatoryReporting.p1               = Os bydd hyn yn digwydd yn y flwyddyn dreth {0} i {1}, byddai’n ofynnol i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer y flwyddyn dreth {2} i {3}.
+reporting.frequency.mandatoryReporting.p2               = Dysgwch ragor am y trothwy yn y
 
 reporting.frequency.compatibleSoftware.heading   = Pan fydd angen meddalwedd sy’n cydweddu
 reporting.frequency.compatibleSoftware.p1        = Os ydych yn adrodd yn chwarterol, bydd angen i chi ddefnyddio
@@ -2939,7 +2958,16 @@ reporting.frequency.compatibleSoftware.link.text = meddalwedd sy’n cydweddu â
 reporting.frequency.compatibleSoftware.p2        =
 reporting.frequency.compatibleSoftware.p3        = Gallwch chi, neu’ch asiant, ddewis o blith amrywiaeth o becynnau meddalwedd, gan gynnwys rhai sy’n rhad ac am ddim a rhai y mae angen talu amdanynt.
 
+#new compatible software messages for reporting frequency with OptInOptOutContentUpdateR17 enabled:
+reporting.frequency.compatibleSoftware.heading.R17                      = Pan fydd angen meddalwedd sy’n cydweddu arnoch
+reporting.frequency.compatibleSoftware.p1.R17                           = P’un a oes angen i chi gofrestru neu wedi cofrestru’n wirfoddol, mae angen
+reporting.frequency.compatibleSoftware.link.text.R17                    = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm arnoch
+reporting.frequency.compatibleSoftware.p2.R17                           = Gallwch chi, neu’ch asiant, ddewis o blith amrywiaeth o becynnau meddalwedd, gan gynnwys rhai sy’n rhad ac am ddim a rhai y mae angen talu amdanynt.
+reporting.frequency.compatibleSoftware.p3.R17                           = Os ydych chi wedi optio allan, gallwch ddarganfod yma sut i
+reporting.frequency.compatibleSoftware.link2.text                       = gyflwyno’ch Ffurflen Dreth Hunanasesiad
+
 reporting.frequency.table.h2                                        = Pa mor aml y mae angen i chi gyflwyno adroddiadau
+reporting.frequency.table.h2.R17                                    = Sut rydych yn rhoi gwybod ar gyfer pob blwyddyn dreth
 reporting.frequency.table.heading.taxyear                           = Blwyddyn Dreth
 reporting.frequency.table.heading.status                            = Amlder cyflwyno adroddiadau
 
@@ -2947,6 +2975,15 @@ reporting.frequency.table.taxYear                                   = {0} i {1}
 reporting.frequency.table.mandated                                  = Yn chwarterol (gorfodol)
 reporting.frequency.table.voluntary                                 = Yn chwarterol
 reporting.frequency.table.annual                                    = Yn flynyddol
+
+#new table messages for reporting frequency with OptInOptOutContentUpdateR17 enabled:
+reporting.frequency.table.heading.usingMTD                          = Defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+reporting.frequency.table.heading.status.R17                        = Eich statws
+reporting.frequency.table.MTD.isUsingMTD                            = Iawn
+reporting.frequency.table.MTD.isNotUsingMTD                         = Na
+reporting.frequency.table.mandated.r17                              = Yn ofynnol
+reporting.frequency.table.voluntary.r17                             = Wedi cofrestru’n wirfoddol
+reporting.frequency.table.annual.r17                                = Wedi optio allan
 
 reporting.frequency.ceasedBusiness.warning.text.1                   = Nid oes unrhyw fusnesau ar y cyfrif hwn ar hyn o bryd. Gallwch ychwanegu unig fasnachwr neu fusnes eiddo ar y dudalen
 reporting.frequency.ceasedBusiness.warning.link                     = bob busnes.

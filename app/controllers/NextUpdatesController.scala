@@ -31,6 +31,7 @@ import services.NextUpdatesService
 import services.optout.OptOutService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import viewUtils.NextUpdatesViewUtils
 import views.html.nextUpdates.{NextUpdates, NextUpdatesOptOut, NoNextUpdates}
 
 import javax.inject.{Inject, Singleton}
@@ -45,6 +46,7 @@ class NextUpdatesController @Inject()(
                                        nextUpdatesService: NextUpdatesService,
                                        itvcErrorHandler: ItvcErrorHandler,
                                        optOutService: OptOutService,
+                                       nextUpdatesViewUtils: NextUpdatesViewUtils,
                                        val appConfig: FrontendAppConfig,
                                        val authActions: AuthActions
                                      )
@@ -74,6 +76,7 @@ class NextUpdatesController @Inject()(
           case _ => ObligationsModel(Nil)
         }
         isR17ContentEnabled = isEnabled(OptInOptOutContentUpdateR17)
+        isOptOutEnabled = isEnabled(OptOutFs)
 
         result <- nextUpdates.obligations match {
           case Nil =>
@@ -83,9 +86,11 @@ class NextUpdatesController @Inject()(
 
             val optOutSetup = {
               for {
-                (checks, optOutProposition) <- optOutService.nextUpdatesPageChecksAndProposition()
+                (checks, optOutOneYearViewModel, optOutProposition) <- optOutService.nextUpdatesPageChecksAndProposition()
                 viewModel = nextUpdatesService.getNextUpdatesViewModel(nextUpdates, isR17ContentEnabled)
               } yield {
+                val whatTheUserCanDoContent = if (isOptOutEnabled) nextUpdatesViewUtils.whatTheUserCanDo(optOutOneYearViewModel, isAgent) else None
+
                 Ok(
                 nextUpdatesOptOutView(
                   viewModel = viewModel,
@@ -95,8 +100,7 @@ class NextUpdatesController @Inject()(
                   isAgent = isAgent,
                   isSupportingAgent = user.isSupportingAgent,
                   origin = origin,
-                  reportingFrequencyLink = controllers.routes.ReportingFrequencyPageController.show(isAgent).url,
-                  reportingFrequencyEnabled = isEnabled(ReportingFrequencyPage),
+                  whatTheUserCanDo = whatTheUserCanDoContent,
                   optInOptOutContentR17Enabled = isR17ContentEnabled
                 )
               )

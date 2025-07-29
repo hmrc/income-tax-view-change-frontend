@@ -59,7 +59,7 @@ object PenaltiesTestConstants extends TestSupport {
     communicationsDate = Some(LocalDate.of(2069, 10, 30)),
     penaltyChargeReference = Some("1234567890"),
     penaltyChargeDueDate = Some(LocalDate.of(2069, 10, 30)),
-    appealInformation = Seq(appealInformation),
+    appealInformation = Some(Seq(appealInformation)),
     principalChargeDocNumber = "123456789012",
     principalChargeMainTransaction = "4700",
     principalChargeSubTransaction = "1174",
@@ -67,7 +67,7 @@ object PenaltiesTestConstants extends TestSupport {
     principalChargeBillingTo = LocalDate.of(2069, 10, 30),
     principalChargeDueDate = LocalDate.of(2069, 10, 30),
     principalChargeLatestClearing = None,
-    timeToPay = Seq(timeToPay)
+    timeToPay = Some(Seq(timeToPay))
   )
 
   val lppDetailsJson: JsObject = Json.obj(
@@ -160,7 +160,7 @@ object PenaltiesTestConstants extends TestSupport {
   val latePaymentPenaltyModel: LatePaymentPenalty =
     LatePaymentPenalty(
       details = Some(Seq(lppDetailsFull)),
-      manualLPPIndicator = false)
+      manualLPPIndicator = Some(false))
 
   val breathingSpace: BreathingSpace = BreathingSpace(
     BSStartDate = LocalDate.of(2020, 4, 6),

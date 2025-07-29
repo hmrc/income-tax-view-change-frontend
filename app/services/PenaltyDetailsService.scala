@@ -38,15 +38,15 @@ class PenaltyDetailsService @Inject()(getPenaltyDetailsConnector: GetPenaltyDeta
     }
   }
 
-  def getPenaltyDetails(mtdItId: String)(implicit hc: HeaderCarrier): Future[GetPenaltyDetailsResponse] = {
-    getPenaltyDetailsConnector.getPenaltyDetails(mtdItId)
+  def getPenaltyDetails(nino: String)(implicit hc: HeaderCarrier): Future[GetPenaltyDetailsResponse] = {
+    getPenaltyDetailsConnector.getPenaltyDetails(nino)
   }
 
   def getPenaltiesCount(penaltiesCallEnabled: Boolean)(implicit user: MtdItUser[_],
                                                        hc: HeaderCarrier,
                                                        ec: ExecutionContext): Future[Int] = {
     if (penaltiesCallEnabled) {
-      getPenaltyDetails(user.mtditid).map(_.fold(
+      getPenaltyDetails(user.nino).map(_.fold(
         {
           case error: GetPenaltyDetailsFailureResponse =>
             throw new Exception(s"Get penalty details call failed with status of : ${error.status}")

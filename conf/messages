@@ -807,6 +807,8 @@ nextUpdates.business            							       = Business income
 
 nextUpdates.optOutOneYear.p.message                                = You are currently reporting quarterly on a voluntary basis for the {0} to {1} tax year. You can choose to
 nextUpdates.optOutOneYear.p.link                                   = opt out of quarterly updates and report annually instead.
+nextUpdates.optOutMultiYear.p.message                              = You are currently reporting quarterly on a voluntary basis. You can choose to
+nextUpdates.optOutMultiYear.p.link                                 = opt out of quarterly updates and report annually instead.
 
 nextUpdates.reporting.obligations.p.message                        = Depending on your circumstances,
 nextUpdates.reporting.obligations.p.link                           = you may be able to view and change your reporting obligations.
@@ -1048,7 +1050,8 @@ selfAssessmentCharges.adjust-poa.paid-3                                       = 
 selfAssessmentCharges.adjust-poa.paid-4                                       = 31 January {0}.
 selfAssessmentCharges.adjust-poa.paid-5                                       =
 selfAssessmentCharges.interestChargesWarning                                  = Interest charges will keep increasing every day until the charges they relate to are paid in full.
-
+selfAssessmentCharges.lpi.firstLatePaymentPenalty.text                        = Late payment interest on first late payment penalty
+selfAssessmentCharges.lpi.secondLatePaymentPenalty.text                       = Late payment interest on second late payment penalty
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = First payment on account
@@ -1980,9 +1983,8 @@ income.source.added.scenario.two.account.updated.p.a                            
 income.source.added.scenario.two.account.updated.p.link                                     = updates and deadlines
 income.source.added.scenario.two.account.updated.p.b                                        = page, your account has been updated.
 
-income.source.added.scenario.two.view.reporting.obligations.p.a                             = This new business is opted out of Making Tax Digital for Income Tax. You can decide at any time to opt all your businesses out of Making Tax Digital for Income Tax on
+income.source.added.scenario.two.view.reporting.obligations.p.a                             = This new business is opted out of Making Tax Digital for Income Tax. Find out more about
 income.source.added.scenario.two.view.reporting.obligations.link                            = your reporting obligations
-income.source.added.scenario.two.view.reporting.obligations.p.b                             = page.
 
 income.source.added.scenario.two.view.businesses.link                                       = View your businesses
 income.source.added.scenario.two.view.businesses.p                                          = to add, manage or cease a business or income source.
@@ -2924,10 +2926,10 @@ optIn.confirmNextTaxYear.heading                    = Confirm and opt in from {0
 optIn.confirmNextTaxYear.desc                       = If you opt in for the next tax year, from {0} you will need to submit your quarterly updates through compatible software.
 
 ########  Reporting Frequency Page  ########
-
-reporting.frequency.title = Your reporting frequency
-reporting.frequency.h1    = Your reporting frequency
-reporting.frequency.h2    = Manage your reporting frequency for all your businesses
+# Reporting Frequency Page
+reporting.frequency.title       = Your reporting frequency
+reporting.frequency.title.R17   = Your reporting obligations
+reporting.frequency.h2          = Manage your reporting frequency for all your businesses
 
 reporting.frequency.manageReportingFrequency.p1                     = If you are reporting annually or voluntarily reporting quarterly, you may be able to change your reporting frequency for specific tax years.
 reporting.frequency.manageReportingFrequency.p2                     = This is what you can do for all your businesses:
@@ -2940,10 +2942,26 @@ reporting.frequency.manageReportingFrequency.optOut.link.onwards    = Opt out of
 reporting.frequency.manageReportingFrequency.b1.link                = Opt in to quarterly reporting for the {0} to {1} tax year
 reporting.frequency.manageReportingFrequency.b2.link                = Opt out of quarterly reporting and report annually from the {0} to {1} tax year onwards
 
+#different obligations
+reporting.frequency.different.obligations.heading                           = What the different reporting obligations are
+reporting.frequency.different.obligations.p1                                = When you are using Making Tax Digital for Income Tax you need to submit:
+reporting.frequency.different.obligations.li1                               = 4 updates a year for each source of self employment and property income
+reporting.frequency.different.obligations.li2                               = a tax return
+reporting.frequency.different.obligations.p2                                = For tax years you are opted out of, you only need to file a tax return.
+reporting.frequency.different.obligations.p3                                = You can see what is due on the
+reporting.frequency.different.obligations.link.text                         = updates and deadlines
+reporting.frequency.different.obligations.link.text.additional.english      = page.
+
 reporting.frequency.mandatoryReporting.heading    = When reporting quarterly is mandatory
 reporting.frequency.mandatoryReporting.inset      = Reporting quarterly is required if your income from self-employment or property, or both, exceeds the income threshold.
 reporting.frequency.mandatoryReporting.text       = You can check the threshold for when reporting quarterly is mandatory in the
 reporting.frequency.mandatoryReporting.link.text  = criteria for people who will need to sign up for Making Tax Digital for Income Tax
+
+#new mandatory reporting messages for reporting frequency with OptInOptOutContentUpdateR17 enabled:
+reporting.frequency.mandatoryReporting.heading.R17      = When Making Tax Digital for Income Tax is required
+reporting.frequency.mandatoryReporting.inset.R17        = You must use Making Tax Digital for Income Tax if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold.
+reporting.frequency.mandatoryReporting.p1               = If this happens in the {0} to {1} tax year, you would be required to use Making Tax Digital for Income Tax for the {2} to {3} tax year.
+reporting.frequency.mandatoryReporting.p2               = Find out more about the threshold in the
 
 reporting.frequency.compatibleSoftware.heading   = When compatible software is required
 reporting.frequency.compatibleSoftware.p1        = If you are reporting quarterly, you will need to use
@@ -2951,7 +2969,17 @@ reporting.frequency.compatibleSoftware.link.text = software compatible with Maki
 reporting.frequency.compatibleSoftware.p2        = There are both paid and free options for you or your agent to choose from.
 reporting.frequency.compatibleSoftware.p3        = For reporting annually, you can use either compatible software or your HMRC online account to submit your tax return.
 
+#new compatible software messages for reporting frequency with OptInOptOutContentUpdateR17 enabled:
+reporting.frequency.compatibleSoftware.heading.R17                      = When you need compatible software
+reporting.frequency.compatibleSoftware.p1.R17                           = Whether you are required or voluntarily signed up, you need
+reporting.frequency.compatibleSoftware.link.text.R17                    = software compatible with Making Tax Digital for Income Tax
+reporting.frequency.compatibleSoftware.p2.R17                           = There are both paid and free options for you or your agent to choose from.
+reporting.frequency.compatibleSoftware.p3.R17                           = If you are opted out, you can find out here how to
+reporting.frequency.compatibleSoftware.link2.text                       = file your Self Assessment tax return
+
+
 reporting.frequency.table.h2                                        = How often you need to report
+reporting.frequency.table.h2.R17                                    = How you report for each tax year
 reporting.frequency.table.heading.taxyear                           = Tax year
 reporting.frequency.table.heading.status                            = Reporting frequency
 
@@ -2959,6 +2987,15 @@ reporting.frequency.table.taxYear                                   = {0} to {1}
 reporting.frequency.table.mandated                                  = Quarterly (mandatory)
 reporting.frequency.table.voluntary                                 = Quarterly
 reporting.frequency.table.annual                                    = Annual
+
+#new table messages for reporting frequency with OptInOptOutContentUpdateR17 enabled:
+reporting.frequency.table.heading.usingMTD                          = Using Making Tax Digital for Income Tax
+reporting.frequency.table.heading.status.R17                        = Your status
+reporting.frequency.table.MTD.isUsingMTD                            = Yes
+reporting.frequency.table.MTD.isNotUsingMTD                         = No
+reporting.frequency.table.mandated.r17                              = Required
+reporting.frequency.table.voluntary.r17                             = Voluntarily signed up
+reporting.frequency.table.annual.r17                                = Opted out
 
 reporting.frequency.ceasedBusiness.warning.text.1                   = There are currently no businesses on this account. You can add a sole trader or property business on the
 reporting.frequency.ceasedBusiness.warning.link                     = all businesses
@@ -2989,9 +3026,6 @@ reporting.frequency.latency.details.section.text.para3.heading.updateR17      = 
 reporting.frequency.latency.details.section.text.para3.text.1.updateR17       = You can do this at any time in the
 reporting.frequency.latency.details.section.text.para3.link.text.updateR17    = your businesses
 reporting.frequency.latency.details.section.text.para3.text.2.updateR17       = section.
-
-########  Reporting Frequency Page Feature Switched Content  ########
-
 
 
 yourSelfAssessmentChargeSummary.tax-year                            = {0} to {1} tax year
