@@ -75,8 +75,8 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
   val poa2Text: String = messages("selfAssessmentCharges.paymentOnAccount2.text")
   val poaExtra1Text: String = messages("selfAssessmentCharges.reviewAndReconcilePoa1.text")
   val poaExtra2Text: String = messages("selfAssessmentCharges.reviewAndReconcilePoa2.text")
-  val poa1ReconcileInterest: String = messages("selfAssessmentCharges.lpi.reviewAndReconcilePoa1.text")
-  val poa2ReconcileInterest: String = messages("selfAssessmentCharges.lpi.reviewAndReconcilePoa2.text")
+  val poa1ReconcileIreviewAndReconcilenterest: String = messages("selfAssessmentCharges.lpi.reviewAndReconcilePoa1.text")
+  val poa2ReconcileInterest: String = messages("selfAssessmentCharges.lpi.Poa2.text")
   val lateSubmissionPenaltyText: String = messages("selfAssessmentCharges.lateSubmissionPenalty.text")
   val firstLPPText: String = messages("selfAssessmentCharges.firstLatePaymentPenalty.text")
   val secondLPPText: String = messages("selfAssessmentCharges.secondLatePaymentPenalty.text")
@@ -136,7 +136,6 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
                   hasLpiWithDunningLock: Boolean = false,
                   dunningLock: Boolean = false,
                   migrationYear: Int = fixedDate.getYear - 1,
-                  reviewAndReconcileEnabled: Boolean = false,
                   penaltiesEnabled: Boolean = false,
                   adjustPaymentsOnAccountFSEnabled: Boolean = false,
                   claimToAdjustViewModel: Option[WYOClaimToAdjustViewModel] = None
@@ -182,7 +181,6 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
   class AgentTestSetup(charges: WhatYouOweChargesList,
                        currentTaxYear: Int = fixedDate.getYear,
                        migrationYear: Int = fixedDate.getYear - 1,
-                       reviewAndReconcileEnabled: Boolean = false,
                        dunningLock: Boolean = false,
                        hasLpiWithDunningLock: Boolean = false,
                        adjustPaymentsOnAccountFSEnabled: Boolean = false,
@@ -512,7 +510,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
           paymentPlan.text() shouldBe paymentPlanText
         }
 
-        "display poa reconciliation charges if accruing interest" in new TestSetup(charges = whatYouOweWithReviewReconcileData, reviewAndReconcileEnabled = true) {
+        "display poa reconciliation charges if accruing interest" in new TestSetup(charges = whatYouOweWithReviewReconcileData) {
           val firstReconcileCharge = pageDocument.getElementsByClass("govuk-table__row").get(1)
           firstReconcileCharge.select("td").get(1).text() shouldBe s"$poaExtra1Text 1"
         }
