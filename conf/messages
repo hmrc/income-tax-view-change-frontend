@@ -807,6 +807,8 @@ nextUpdates.business            							       = Business income
 
 nextUpdates.optOutOneYear.p.message                                = You are currently reporting quarterly on a voluntary basis for the {0} to {1} tax year. You can choose to
 nextUpdates.optOutOneYear.p.link                                   = opt out of quarterly updates and report annually instead.
+nextUpdates.optOutMultiYear.p.message                              = You are currently reporting quarterly on a voluntary basis. You can choose to
+nextUpdates.optOutMultiYear.p.link                                 = opt out of quarterly updates and report annually instead.
 
 nextUpdates.reporting.obligations.p.message                        = Depending on your circumstances,
 nextUpdates.reporting.obligations.p.link                           = you may be able to view and change your reporting obligations.
@@ -1048,7 +1050,8 @@ selfAssessmentCharges.adjust-poa.paid-3                                       = 
 selfAssessmentCharges.adjust-poa.paid-4                                       = 31 January {0}.
 selfAssessmentCharges.adjust-poa.paid-5                                       =
 selfAssessmentCharges.interestChargesWarning                                  = Interest charges will keep increasing every day until the charges they relate to are paid in full.
-
+selfAssessmentCharges.lpi.firstLatePaymentPenalty.text                        = Late payment interest on first late payment penalty
+selfAssessmentCharges.lpi.secondLatePaymentPenalty.text                       = Late payment interest on second late payment penalty
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = First payment on account
@@ -1516,8 +1519,12 @@ incomeSources.add.error.incomeSourceNotSaved.uk                  = UK property
 incomeSources.add.error.incomeSourceNotSaved.fp                  = foreign property
 incomeSources.add.error.incomeSourceNotSaved.incomeSources       = Your income sources
 
-incomeSources.add.error.reportingMethodNotSaved.p1                               = Your {0} business was added, but we were unable to save the reporting frequency for one or more tax years.
-incomeSources.add.error.reportingMethodNotSaved.p2                               = For those tax years where we were unable to save the reporting method, your frequency of income and expense updates will default to annual. You can change this later in ’view and manage income sources’.
+incomeSources.add.error.reportingMethodNotSaved.heading                          = Sorry, there is a problem with the service
+incomeSources.add.error.reportingMethodNotSaved.p1                               = Your {0} business was added, but we were unable to save any separate reporting obligations you may have set for it.
+incomeSources.add.error.reportingMethodNotSaved.p2                               = For its first two tax years, this business by default is opted out of Making Tax Digital for Income Tax.
+incomeSources.add.error.reportingMethodNotSaved.p3.firstHalf                     = You can change this at any time in the
+incomeSources.add.error.reportingMethodNotSaved.p3.linkText                      = your businesses
+incomeSources.add.error.reportingMethodNotSaved.p3.secondHalf                    = section.
 incomeSources.add.error.reportingMethodNotSaved.se.incomeSource                  = sole trader
 incomeSources.add.error.reportingMethodNotSaved.uk.incomeSource                  = UK property
 incomeSources.add.error.reportingMethodNotSaved.fp.incomeSource                  = foreign property
@@ -1976,9 +1983,8 @@ income.source.added.scenario.two.account.updated.p.a                            
 income.source.added.scenario.two.account.updated.p.link                                     = updates and deadlines
 income.source.added.scenario.two.account.updated.p.b                                        = page, your account has been updated.
 
-income.source.added.scenario.two.view.reporting.obligations.p.a                             = This new business is opted out of Making Tax Digital for Income Tax. You can decide at any time to opt all your businesses out of Making Tax Digital for Income Tax on
+income.source.added.scenario.two.view.reporting.obligations.p.a                             = This new business is opted out of Making Tax Digital for Income Tax. Find out more about
 income.source.added.scenario.two.view.reporting.obligations.link                            = your reporting obligations
-income.source.added.scenario.two.view.reporting.obligations.p.b                             = page.
 
 income.source.added.scenario.two.view.businesses.link                                       = View your businesses
 income.source.added.scenario.two.view.businesses.p                                          = to add, manage or cease a business or income source.

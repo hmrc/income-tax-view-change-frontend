@@ -21,7 +21,7 @@ import enums.{MTDIndividual, MTDUserRole}
 import forms.optOut.ConfirmOptOutMultiTaxYearChoiceForm
 import helpers.OptOutSessionRepositoryHelper
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.NavBarFs
+import models.admin.{NavBarFs, OptOutFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
@@ -62,6 +62,7 @@ class OptOutChooseTaxYearControllerISpec extends ControllerISpecHelper {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           "render the choose tax year page" in {
+            enable(OptOutFs)
             disable(NavBarFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -94,6 +95,7 @@ class OptOutChooseTaxYearControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "redirect to check your answers page" when {
             "previous tax year selected" in {
+              enable(OptOutFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -120,6 +122,7 @@ class OptOutChooseTaxYearControllerISpec extends ControllerISpecHelper {
             }
 
             "current tax year selected" in {
+              enable(OptOutFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -146,6 +149,7 @@ class OptOutChooseTaxYearControllerISpec extends ControllerISpecHelper {
             }
 
               "next tax year selected" in {
+                enable(OptOutFs)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -174,6 +178,7 @@ class OptOutChooseTaxYearControllerISpec extends ControllerISpecHelper {
 
           "return a BadRequest" when {
             "the form is invalid" in {
+              enable(OptOutFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)

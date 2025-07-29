@@ -807,6 +807,8 @@ nextUpdates.business            							    = Incwm busnes
 
 nextUpdates.optOutOneYear.p.message                             = Ar hyn o bryd, rydych yn adrodd bob chwarter ar sail wirfoddol ar gyfer blwyddyn dreth {0} i {1}. Gallwch ddewis
 nextUpdates.optOutOneYear.p.link                                = optio allan o ddiweddariadau bob chwarter ac adrodd yn flynyddol yn lle hynny.
+nextUpdates.optOutMultiYear.p.message                           = Ar hyn o bryd rhydych yn cyflwyno adroddiadau’n chwarterol ar sail wirfoddol. Cadarnhewch eich bod am
+nextUpdates.optOutMultiYear.p.link                              = optio allan o ddiweddariadau chwarterol ac am gyflwyno’n flynyddol yn lle hynny.
 
 nextUpdates.reporting.obligations.p.message                     = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
 nextUpdates.reporting.obligations.p.link                        = bwrw golwg dros eich ymrwymiadau adrodd.
@@ -1047,6 +1049,8 @@ selfAssessmentCharges.adjust-poa.paid-3                                       = 
 selfAssessmentCharges.adjust-poa.paid-4                                       = 31 Ionawr {0}
 selfAssessmentCharges.adjust-poa.paid-5                                       = fan bellaf.
 selfAssessmentCharges.interestChargesWarning                                  = Bydd taliadau llog yn parhau i gynyddu bob dydd nes bod y taliadau y maent yn ymwneud â nhw yn cael eu talu’n llawn.
+selfAssessmentCharges.lpi.firstLatePaymentPenalty.text                        = Llog am dalu’n hwyr ar y gosb gyntaf am dalu’n hwyr
+selfAssessmentCharges.lpi.secondLatePaymentPenalty.text                       = Llog am dalu’n hwyr ar yr ail gosb am dalu’n hwyr
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad cyntaf ar gyfrif
@@ -1485,8 +1489,12 @@ incomeSources.add.error.incomeSourceNotSaved.uk                  = eiddo yn y DU
 incomeSources.add.error.incomeSourceNotSaved.fp                  = eiddo tramor
 incomeSources.add.error.incomeSourceNotSaved.incomeSources       = Eich ffynonellau incwm
 
-incomeSources.add.error.reportingMethodNotSaved.p1                              = Ychwanegwyd eich busnes {0}, ond nid oedd modd i ni gadw’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer un neu fwy o flynyddoedd treth.
-incomeSources.add.error.reportingMethodNotSaved.p2                              = Ar gyfer y blynyddoedd treth lle nad oedd modd i ni gadw’r dull o gyflwyno adroddiadau, bydd y manylion ynghylch amlder cyflwyno diweddariadau o ran incwm a threuliau yn newid i ’blynyddol’ yn ddiofyn. Gallwch newid hyn yn nes ymlaen yn yr ’adran i weld a rheoli ffynonellau incwm’.
+incomeSources.add.error.reportingMethodNotSaved.heading                         = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
+incomeSources.add.error.reportingMethodNotSaved.p1                              = Ychwanegwyd eich busnes newydd, ond nid oedd modd i ni gadw unrhyw rwymedigaethau adrodd ar wahân y gallech fod wedi’u gosod ar ei gyfer.
+incomeSources.add.error.reportingMethodNotSaved.p2                              = Ar gyfer ei ddwy flynedd dreth gyntaf, mae’r busnes hwn yn ddiofyn yn cael ei optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm.
+incomeSources.add.error.reportingMethodNotSaved.p3.firstHalf                    = Gallwch newid hyn ar unrhyw adeg o’r adran
+incomeSources.add.error.reportingMethodNotSaved.p3.linkText                     = eich busnesau.
+incomeSources.add.error.reportingMethodNotSaved.p3.secondHalf                   =
 incomeSources.add.error.reportingMethodNotSaved.se.incomeSource                 = unig fasnachwr
 incomeSources.add.error.reportingMethodNotSaved.uk.incomeSource                 = eiddo yn y DU
 incomeSources.add.error.reportingMethodNotSaved.fp.incomeSource                 = eiddo tramor
@@ -1973,9 +1981,8 @@ income.source.added.scenario.two.account.updated.p.a                            
 income.source.added.scenario.two.account.updated.p.link                                     = diweddariadau a dyddiadau cau,
 income.source.added.scenario.two.account.updated.p.b                                        = mae’ch cyfrif wedi’i ddiweddaru.
 
-income.source.added.scenario.two.view.reporting.obligations.p.a                             = Mae’r busnes newydd hwn wedi optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Gallwch benderfynu ar unrhyw adeg i optio eich holl fusnes allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar eich tudalen
-income.source.added.scenario.two.view.reporting.obligations.link                            = ymrwymiadau adrodd.
-income.source.added.scenario.two.view.reporting.obligations.p.b                             =
+income.source.added.scenario.two.view.reporting.obligations.p.a                             = Mae’r busnes newydd hwn wedi optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Dysgwch ragor am
+income.source.added.scenario.two.view.reporting.obligations.link                            = eich ymrwymiadau adrodd
 
 income.source.added.scenario.two.view.businesses.link                                       = Bwrw golwg dros eich busnesau
 income.source.added.scenario.two.view.businesses.p                                          = er mwyn ychwanegu, rheoli neu ddod â busnes neu ffynhonnell incwm i ben.

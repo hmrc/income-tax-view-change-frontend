@@ -29,6 +29,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.twirl.api.Html
 import services.optout.{OptOutProposition, OptOutService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.ReportingObligationsUtils
 import viewUtils.ConfirmedOptOutViewUtils
 import views.html.optOut.ConfirmedOptOut
 
@@ -47,7 +48,7 @@ class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
                                           mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext
                                          )
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with ReportingObligationsUtils {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -61,31 +62,33 @@ class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
 
   def show(isAgent: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      withRecover(isAgent) {
+      withOptOutFS {
+        withRecover(isAgent) {
 
-        val showReportingFrequencyContent = isEnabled(ReportingFrequencyPage)
+          val showReportingFrequencyContent = isEnabled(ReportingFrequencyPage)
 
-        for {
-          proposition: OptOutProposition <- optOutService.fetchOptOutProposition()
-          chosenTaxYear: ChosenTaxYear <- optOutService.determineOptOutIntentYear()
-          viewModel: Option[ConfirmedOptOutViewModel] <- optOutService.optOutConfirmedPageViewModel()
-          submitYourTaxReturnContent: Option[Html] =
-            confirmedOptOutViewUtils
-              .submitYourTaxReturnContent(
-                `itsaStatusCY-1` = proposition.previousTaxYear.status,
-                `itsaStatusCY` = proposition.currentTaxYear.status,
-                `itsaStatusCY+1` = proposition.nextTaxYear.status,
-                chosenTaxYear = chosenTaxYear,
-                isMultiYear = proposition.isMultiYearOptOut,
-                isPreviousYearCrystallised = proposition.previousTaxYear.crystallised
-              )
-        } yield {
-          viewModel match {
-            case Some(viewModel) =>
-              Ok(view(viewModel, isAgent, showReportingFrequencyContent, submitYourTaxReturnContent))
-            case None =>
-              Logger("application").error(s"error, invalid Opt-out journey")
-              errorHandler(isAgent).showInternalServerError()
+          for {
+            proposition: OptOutProposition <- optOutService.fetchOptOutProposition()
+            chosenTaxYear: ChosenTaxYear <- optOutService.determineOptOutIntentYear()
+            viewModel: Option[ConfirmedOptOutViewModel] <- optOutService.optOutConfirmedPageViewModel()
+            submitYourTaxReturnContent: Option[Html] =
+              confirmedOptOutViewUtils
+                .submitYourTaxReturnContent(
+                  `itsaStatusCY-1` = proposition.previousTaxYear.status,
+                  `itsaStatusCY` = proposition.currentTaxYear.status,
+                  `itsaStatusCY+1` = proposition.nextTaxYear.status,
+                  chosenTaxYear = chosenTaxYear,
+                  isMultiYear = proposition.isMultiYearOptOut,
+                  isPreviousYearCrystallised = proposition.previousTaxYear.crystallised
+                )
+          } yield {
+            viewModel match {
+              case Some(viewModel) =>
+                Ok(view(viewModel, isAgent, showReportingFrequencyContent, submitYourTaxReturnContent))
+              case None =>
+                Logger("application").error(s"error, invalid Opt-out journey")
+                errorHandler(isAgent).showInternalServerError()
+            }
           }
         }
       }

@@ -28,6 +28,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.optout.OptOutService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.ReportingObligationsUtils
 import views.html.optOut.{CheckOptOutAnswers, ConfirmOptOut}
 
 import javax.inject.Inject
@@ -42,25 +43,27 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
                                        (implicit val appConfig: FrontendAppConfig,
                                         val ec: ExecutionContext,
                                         val mcc: MessagesControllerComponents)
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with ReportingObligationsUtils {
 
   def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      withRecover(isAgent) {
-        val cancelURL =
-          if (isAgent){
-            controllers.optOut.routes.OptOutCancelledController.showAgent().url
-          } else {
-            controllers.optOut.routes.OptOutCancelledController.show().url
-          }
+      withOptOutFS {
+        withRecover(isAgent) {
+          val cancelURL =
+            if (isAgent) {
+              controllers.optOut.routes.OptOutCancelledController.showAgent().url
+            } else {
+              controllers.optOut.routes.OptOutCancelledController.show().url
+            }
 
-        val resultToReturn = for {
-          viewModel <- OptionT(optOutService.optOutCheckPointPageViewModel())
-          result <- OptionT(Future(Option(toPropositionView(isAgent, viewModel, cancelURL))))
-        } yield result
+          val resultToReturn = for {
+            viewModel <- OptionT(optOutService.optOutCheckPointPageViewModel())
+            result <- OptionT(Future(Option(toPropositionView(isAgent, viewModel, cancelURL))))
+          } yield result
 
-        resultToReturn.getOrElse(handleError("No qualified tax year available for opt out", isAgent))
+          resultToReturn.getOrElse(handleError("No qualified tax year available for opt out", isAgent))
 
+        }
       }
   }
 
@@ -73,9 +76,11 @@ class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
   def submit(isAgent: Boolean): Action[AnyContent] =
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
       implicit user =>
-        optOutService.makeOptOutUpdateRequest().map {
-          case ITSAStatusUpdateResponseSuccess(_) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
-          case _ => Redirect(routes.OptOutErrorController.show(isAgent))
+        withOptOutFS {
+          optOutService.makeOptOutUpdateRequest().map {
+            case ITSAStatusUpdateResponseSuccess(_) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
+            case _ => Redirect(routes.OptOutErrorController.show(isAgent))
+          }
         }
     }
 
