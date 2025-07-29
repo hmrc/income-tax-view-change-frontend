@@ -80,7 +80,6 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
                   overduePaymentExists: Boolean = true,
                   overDuePaymentsCount: Int = 0,
                   paymentsAccruingInterestCount: Int = 0,
-                  reviewAndReconcileEnabled: Boolean = false,
                   yourSelfAssessmentChargesEnabled: Boolean = false,
                   nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture,
                   utr: Option[String] = None,
@@ -177,7 +176,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
           "is overdue" in new TestSetup(nextPaymentDueDate = Some(nextPaymentDue), overDuePaymentsCount = 1) {
             getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"Overdue 31 January $year2019")
           }
-          "has payments accruing interest" in new TestSetup(nextPaymentDueDate = Some(nextPaymentDue), paymentsAccruingInterestCount = 2, reviewAndReconcileEnabled = true) {
+          "has payments accruing interest" in new TestSetup(nextPaymentDueDate = Some(nextPaymentDue), paymentsAccruingInterestCount = 2) {
             getElementById("accrues-interest-tag").map(_.text()) shouldBe Some(s"Daily interest charges")
           }
           "is not overdue" in new TestSetup(nextPaymentDueDate = Some(nextPaymentDue)) {
@@ -216,7 +215,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
         getTextOfElementById("overdue-warning") shouldBe Some(overdueMessageWithDunningLock)
       }
 
-      "display daily interest warning when payments are accruing interest" in new TestSetup(paymentsAccruingInterestCount = 2, reviewAndReconcileEnabled = true) {
+      "display daily interest warning when payments are accruing interest" in new TestSetup(paymentsAccruingInterestCount = 2) {
         val dailyInterestMessage = "! Warning You have charges with added daily interest. These charges will be accruing interest until they are paid in full."
         getTextOfElementById("accrues-interest-warning") shouldBe Some(dailyInterestMessage)
       }
