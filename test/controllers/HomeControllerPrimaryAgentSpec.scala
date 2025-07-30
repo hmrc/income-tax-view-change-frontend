@@ -540,9 +540,8 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
       }
 
       "render the home page with the Your Businesses tile with link" when {
-        "the IncomeSourcesNewJourney is enabled" in new Setup {
+        "using the manage businesses journey" in new Setup {
           setupMockAgentWithClientAuth(isSupportingAgent)
-          enable(IncomeSourcesNewJourney)
           mockGetDueDates(Right(futureDueDates))
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))

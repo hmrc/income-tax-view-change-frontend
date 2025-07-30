@@ -41,10 +41,7 @@ class IncomeSourceCeasedBackErrorController @Inject()(val authActions: AuthActio
 
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] =
-    withNewIncomeSourcesFS(
-      Future.successful(Ok(cannotGoBackCeasedError(isAgent, incomeSourceType)))
-    )
+                   (implicit user: MtdItUser[_]): Future[Result] = Future.successful(Ok(cannotGoBackCeasedError(isAgent, incomeSourceType)))
 
   def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>

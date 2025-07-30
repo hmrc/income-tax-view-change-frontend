@@ -19,7 +19,7 @@ package controllers.manageBusinesses.manage
 import enums.IncomeSourceJourney.ForeignProperty
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.MTDIndividual
-import models.admin.{AccountingMethodJourney, DisplayBusinessStartDate, IncomeSourcesNewJourney, OptInOptOutContentUpdateR17, ReportingFrequencyPage}
+import models.admin.{AccountingMethodJourney, DisplayBusinessStartDate, OptInOptOutContentUpdateR17, ReportingFrequencyPage}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status
@@ -41,7 +41,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
         s"the user is authenticated as a $mtdUserRole" should {
           "render the appropriate IncomeSourceDetails page" when {
             "the user has a valid id parameter and no latency information" in {
-              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+              enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
 
@@ -64,7 +64,8 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
             }
             "the user has a valid id parameter and latency information expired" in {
-              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+              enable(DisplayBusinessStartDate, AccountingMethodJourney)
+              disable(ReportingFrequencyPage)
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
 
@@ -87,7 +88,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
             }
             "the user does not have Reporting frequency content/link" in {
-              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney)
+              enable(DisplayBusinessStartDate, AccountingMethodJourney)
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
 
@@ -112,7 +113,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
             }
 
             "the user has a valid id parameter and AccountingMethodJourney is disabled" in {
-              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, ReportingFrequencyPage)
+              enable(DisplayBusinessStartDate, ReportingFrequencyPage)
               disable(AccountingMethodJourney)
 
               setupMockSuccess(mtdUserRole)
@@ -135,7 +136,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
             }
 
             "the user has a valid id parameter and OptInOptOutContentUpdateR17 is enabled" in {
-              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate,
+              enable(DisplayBusinessStartDate,
                 AccountingMethodJourney, OptInOptOutContentUpdateR17, ReportingFrequencyPage)
 
               setupMockSuccess(mtdUserRole)
@@ -173,7 +174,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
 
 
             "the user has a valid id parameter, valid latency information and two tax years not crystallised" in {
-              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+              enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
 
@@ -199,7 +200,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
             }
 
             "valid latency information and two tax years not crystallised and ITSA status for TY2 is Annual" in {
-              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+              enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
 
@@ -225,7 +226,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
             }
 
             "the user has a valid id parameter, valid latency information and two tax years crystallised" in {
-              enable(IncomeSourcesNewJourney, ReportingFrequencyPage)
+              enable(ReportingFrequencyPage)
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
 
@@ -251,7 +252,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
             }
 
             "the user has a valid id parameter, but non eligable itsa status" in {
-              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+              enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
 
@@ -278,7 +279,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
             }
 
             "the user has a valid id parameter, latency expired" in {
-              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+              enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
 
@@ -303,29 +304,8 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
             }
           }
 
-          "redirect to the home page" when {
-            "incomeSources FS is disabled" in {
-              disable(IncomeSourcesNewJourney)
-              setupMockSuccess(mtdUserRole)
-              mockBothPropertyBothBusiness()
-              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, ForeignProperty)))))
-              setupMockSetSessionKeyMongo(Right(true))
-
-              val result = action(fakeRequest)
-
-              status(result) shouldBe Status.SEE_OTHER
-              val homeUrl = if (isAgent) {
-                controllers.routes.HomeController.showAgent().url
-              } else {
-                controllers.routes.HomeController.show().url
-              }
-              redirectLocation(result) shouldBe Some(homeUrl)
-            }
-          }
-
           "render the error page" when {
             "the user has no income source of the called type" in {
-              enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
               mockBusinessIncomeSource()

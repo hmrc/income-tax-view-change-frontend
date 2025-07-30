@@ -45,10 +45,9 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
     s"$baseUrl/api/v2/confirmed?id=$id"
   }
 
-  def continueUrl(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): String = if (isAgent) {
-    controllers.manageBusinesses.add.routes.AddBusinessAddressController.agentSubmit(None, mode = mode).url
-  } else {
-    controllers.manageBusinesses.add.routes.AddBusinessAddressController.submit(None, mode = mode).url
+  def continueUrl(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): String = {
+    if(isAgent) controllers.manageBusinesses.add.routes.AddBusinessAddressController.agentSubmit(None, mode = mode).url
+    else controllers.manageBusinesses.add.routes.AddBusinessAddressController.submit(None, mode = mode).url
   }
 
   lazy val individualFeedbackUrl: String = controllers.feedback.routes.FeedbackController.show().url

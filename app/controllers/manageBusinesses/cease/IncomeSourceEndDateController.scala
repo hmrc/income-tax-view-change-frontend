@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import forms.manageBusinesses.cease.CeaseIncomeSourceEndDateFormProvider
-import models.admin.IncomeSourcesNewJourney
+
 import models.core.IncomeSourceIdHash.mkFromQueryString
 import models.core.{IncomeSourceId, IncomeSourceIdHash, Mode}
 import models.incomeSourceDetails.CeaseIncomeSourceData
@@ -90,7 +90,7 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
 
   def handleRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, mode: Mode, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] =
-    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Cease, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
+    withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
 
       val hashCompareResult: Option[Either[Throwable, IncomeSourceId]] = id.map(x => user.incomeSources.compareHashToQueryString(x))
 
@@ -107,8 +107,8 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
               val dateStartedOpt = sessionData.ceaseIncomeSourceData.flatMap(_.endDate)
               val newForm = dateStartedOpt match {
                 case Some(date) =>
-                  form(incomeSourceType, incomeSourceIdMaybe.map(_.value), isEnabled(IncomeSourcesNewJourney)).fill(date)
-                case None => form(incomeSourceType, incomeSourceIdMaybe.map(_.value), isEnabled(IncomeSourcesNewJourney))
+                  form(incomeSourceType, incomeSourceIdMaybe.map(_.value)).fill(date)
+                case None => form(incomeSourceType, incomeSourceIdMaybe.map(_.value))
               }
               Future.successful(Ok(
                 incomeSourceEndDate(
@@ -170,44 +170,43 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
   }
 
   def handleSubmitRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, incomeSourceType: IncomeSourceType, mode: Mode)
-                         (implicit user: MtdItUser[_]): Future[Result] =
-    withNewIncomeSourcesFS {
+                         (implicit user: MtdItUser[_]): Future[Result] = {
 
-      val hashCompareResult: Option[Either[Throwable, IncomeSourceId]] = id.map(x => user.incomeSources.compareHashToQueryString(x))
+    val hashCompareResult: Option[Either[Throwable, IncomeSourceId]] = id.map(x => user.incomeSources.compareHashToQueryString(x))
 
-      hashCompareResult match {
-        case Some(Left(exception: Exception)) => Future.failed(exception)
-        case _ =>
-          val incomeSourceIdMaybe: Option[IncomeSourceId] = IncomeSourceId.toOption(hashCompareResult)
+    hashCompareResult match {
+      case Some(Left(exception: Exception)) => Future.failed(exception)
+      case _ =>
+        val incomeSourceIdMaybe: Option[IncomeSourceId] = IncomeSourceId.toOption(hashCompareResult)
 
-          (incomeSourceType, id) match {
-            case (SelfEmployment, None) =>
-              Future.failed(new Exception(s"Missing income source ID for hash: <$id>"))
-            case _ =>
-              form(incomeSourceType, incomeSourceIdMaybe.map(_.value), isEnabled(IncomeSourcesNewJourney)).bindFromRequest().fold(
-                hasErrors => {
-                  Future.successful(BadRequest(incomeSourceEndDate(
-                    form = hasErrors,
-                    postAction = getPostAction(isAgent, mode, incomeSourceIdMaybe, incomeSourceType),
-                    backUrl = getBackCall(isAgent).url,
-                    isAgent = isAgent,
-                    incomeSourceType = incomeSourceType
-                  )))
-                },
-                validatedInput =>
-                  handleValidatedInput(
-                    validatedInput,
-                    incomeSourceType,
-                    incomeSourceIdMaybe,
-                    getRedirectCall(isAgent, incomeSourceType)
-                  )
-              )
-          }
-      }
-    } recover {
-      case ex: Exception =>
-        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-          s"Error getting IncomeSourceEndDate page: ${ex.getMessage} ${ex.getCause}")
-        errorHandler(isAgent).showInternalServerError()
+        (incomeSourceType, id) match {
+          case (SelfEmployment, None) =>
+            Future.failed(new Exception(s"Missing income source ID for hash: <$id>"))
+          case _ =>
+            form(incomeSourceType, incomeSourceIdMaybe.map(_.value)).bindFromRequest().fold(
+              hasErrors => {
+                Future.successful(BadRequest(incomeSourceEndDate(
+                  form = hasErrors,
+                  postAction = getPostAction(isAgent, mode, incomeSourceIdMaybe, incomeSourceType),
+                  backUrl = getBackCall(isAgent).url,
+                  isAgent = isAgent,
+                  incomeSourceType = incomeSourceType
+                )))
+              },
+              validatedInput =>
+                handleValidatedInput(
+                  validatedInput,
+                  incomeSourceType,
+                  incomeSourceIdMaybe,
+                  getRedirectCall(isAgent, incomeSourceType)
+                )
+            )
+        }
     }
+  } recover {
+    case ex: Exception =>
+      Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+        s"Error getting IncomeSourceEndDate page: ${ex.getMessage} ${ex.getCause}")
+      errorHandler(isAgent).showInternalServerError()
+  }
 }

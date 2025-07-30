@@ -21,7 +21,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.Cease
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSourcesNewJourney, NavBarFs, ReportingFrequencyPage}
+import models.admin.{NavBarFs, ReportingFrequencyPage}
 import models.incomeSourceDetails.{CeaseIncomeSourceData, IncomeSourceDetailsModel, UIJourneySessionData}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -96,7 +96,6 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
               stubAuthorised(mtdUserRole)
               disable(NavBarFs)
               enable(ReportingFrequencyPage)
-              enable(IncomeSourcesNewJourney)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
               IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
               setupTestMongoData(incomeSourceType)
@@ -116,7 +115,6 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
               stubAuthorised(mtdUserRole)
               disable(NavBarFs)
               disable(ReportingFrequencyPage)
-              enable(IncomeSourcesNewJourney)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
               IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
               setupTestMongoData(incomeSourceType)
@@ -136,7 +134,6 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
               stubAuthorised(mtdUserRole)
               disable(NavBarFs)
               enable(ReportingFrequencyPage)
-              enable(IncomeSourcesNewJourney)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType, true))
               IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
               setupTestMongoData(incomeSourceType)
@@ -156,7 +153,6 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
               stubAuthorised(mtdUserRole)
               disable(NavBarFs)
               disable(ReportingFrequencyPage)
-              enable(IncomeSourcesNewJourney)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType, true))
               IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
               setupTestMongoData(incomeSourceType)

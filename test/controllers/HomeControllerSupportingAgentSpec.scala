@@ -17,7 +17,7 @@
 package controllers
 
 import enums.MTDSupportingAgent
-import models.admin.{IncomeSourcesNewJourney, OptInOptOutContentUpdateR17, ReportingFrequencyPage}
+import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import org.jsoup.Jsoup
@@ -217,9 +217,8 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
       }
 
       "render the home page with the Your Businesses tile with link" when {
-        "the IncomeSourcesNewJourney is enabled" in new Setup {
+        "using the manage businesses journey" in new Setup {
           setupMockAgentWithClientAuth(isSupportingAgent)
-          enable(IncomeSourcesNewJourney)
           mockGetDueDates(Right(futureDueDates))
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))

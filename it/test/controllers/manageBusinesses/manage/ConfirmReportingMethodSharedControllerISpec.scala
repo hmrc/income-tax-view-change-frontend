@@ -23,7 +23,7 @@ import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
 import forms.manageBusinesses.manage.ChangeReportingMethodForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSourcesNewJourney, NavBarFs, OptInOptOutContentUpdateR17}
+import models.admin.{NavBarFs, OptInOptOutContentUpdateR17}
 import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData, UIJourneySessionData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -97,7 +97,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
           "is authenticated, with a valid enrolment" should {
             "render the Confirm Reporting Method page" when {
               "all query parameters are valid (OptInOptOutContentUpdateR17 FS enabled)" in {
-                enable(IncomeSourcesNewJourney)
                 enable(OptInOptOutContentUpdateR17)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
@@ -120,7 +119,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
               }
 
               "all query parameters are valid (OptInOptOutContentUpdateR17 FS disabled)" in {
-                enable(IncomeSourcesNewJourney)
                 disable(OptInOptOutContentUpdateR17)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
@@ -139,46 +137,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
                   pageTitle(mtdUserRole, oldMainPageTitle(reportingMethod)),
                   elementTextByID("confirm-button")(oldConfirmButtonText)
 
-                )
-              }
-            }
-
-            "redirect to home page" when {
-              "Income Sources FS is Disabled" in {
-                disable(IncomeSourcesNewJourney)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-                  manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
-
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-                IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
-                val result = buildGETMTDClient(pathSE, additionalCookies).futureValue
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
-                )
-              }
-              "Income Sources New Journey FS is Disabled" in {
-                disable(IncomeSourcesNewJourney)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-
-                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-                  manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
-
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-                IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
-                val result = buildGETMTDClient(pathSE, additionalCookies).futureValue
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
                 )
               }
             }
@@ -194,7 +152,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
           "is authenticated, with a valid enrolment" should {
             "render the Confirm Reporting Method page" when {
               "all query parameters are valid (OptInOptOutContentUpdateR17 FS enabled)" in {
-                enable(IncomeSourcesNewJourney)
                 enable(OptInOptOutContentUpdateR17)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
@@ -216,7 +173,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
               }
 
               "all query parameters are valid (OptInOptOutContentUpdateR17 FS disabled)" in {
-                enable(IncomeSourcesNewJourney)
                 disable(OptInOptOutContentUpdateR17)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
@@ -234,45 +190,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
                   httpStatus(OK),
                   pageTitle(mtdUserRole, oldMainPageTitle(reportingMethod)),
                   elementTextByID("confirm-button")(oldConfirmButtonText)
-                )
-              }
-            }
-
-            "redirect to home page" when {
-              "Income Sources FS is Disabled" in {
-                disable(IncomeSourcesNewJourney)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails))
-
-                IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
-                await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
-
-                val result = buildGETMTDClient(pathUK, additionalCookies).futureValue
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
-                )
-              }
-              "Income Sources New Journey FS is Disabled" in {
-                disable(IncomeSourcesNewJourney)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails))
-
-                IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
-                await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
-
-                val result = buildGETMTDClient(pathUK, additionalCookies).futureValue
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
                 )
               }
             }
@@ -288,7 +205,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
           "is authenticated, with a valid enrolment" should {
             "render the Confirm Reporting Method page" when {
               "all query parameters are valid (OptInOptOutContentUpdateR17 FS enabled)" in {
-                enable(IncomeSourcesNewJourney)
                 enable(OptInOptOutContentUpdateR17)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
@@ -309,7 +225,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
                 )
               }
               "all query parameters are valid (OptInOptOutContentUpdateR17 FS disabled)" in {
-                enable(IncomeSourcesNewJourney)
                 disable(OptInOptOutContentUpdateR17)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
@@ -332,45 +247,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
 
             }
 
-            "redirect to home page" when {
-              "Income Sources FS is Disabled" in {
-                disable(IncomeSourcesNewJourney)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
-
-                IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
-                await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
-
-                val result = buildGETMTDClient(pathFP, additionalCookies).futureValue
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
-                )
-              }
-              "Income Sources New Journey FS is Disabled" in {
-                disable(IncomeSourcesNewJourney)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
-
-                IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
-                await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
-
-                val result = buildGETMTDClient(pathFP, additionalCookies).futureValue
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
-                )
-              }
-            }
-
           }
           testAuthFailures(pathFP, mtdUserRole)
         }
@@ -382,7 +258,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
           "is authenticated, with a valid enrolment" should {
             s"redirect to business will report (completion) page" when {
               "called with a valid form (OptInOptOutContentUpdateR17 FS enabled)" in {
-                enable(IncomeSourcesNewJourney)
                 enable(OptInOptOutContentUpdateR17)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
@@ -404,7 +279,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
                 )
               }
               "called with a valid form (OptInOptOutContentUpdateR17 FS disabled)" in {
-                enable(IncomeSourcesNewJourney)
                 disable(OptInOptOutContentUpdateR17)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
@@ -424,28 +298,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
                 )
               }
             }
-
-            "redirect to home page" when {
-              "Income Sources New JourneyFS is disabled" in {
-                disable(IncomeSourcesNewJourney)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-                IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
-                val formData = Map(ChangeReportingMethodForm.response -> Seq("Yes"))
-
-                val result = buildPOSTMTDPostClient(pathSE, additionalCookies, body = formData).futureValue
-
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
-                )
-              }
-            }
-
           }
 
           testAuthFailures(pathSE, mtdUserRole, optBody = Some(Map
@@ -459,7 +311,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
           "is authenticated, with a valid enrolment" should {
             s"redirect to business will report (completion) page (OptInOptOutContentUpdateR17 FS enabled)" when {
               "called with a valid form" in {
-                enable(IncomeSourcesNewJourney)
                 enable(OptInOptOutContentUpdateR17)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
@@ -480,7 +331,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             }
             s"redirect to business will report (completion) page (OptInOptOutContentUpdateR17 FS disabled)" when {
               "called with a valid form" in {
-                enable(IncomeSourcesNewJourney)
                 disable(OptInOptOutContentUpdateR17)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
@@ -500,27 +350,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
               }
             }
 
-            "redirect to home page" when {
-              "Income Sources New Journey FS is disabled" in {
-                disable(IncomeSourcesNewJourney)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-                await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
-
-                val formData = Map(ChangeReportingMethodForm.response -> Seq("Yes"))
-
-                val result = buildPOSTMTDPostClient(pathUK, additionalCookies, body = formData).futureValue
-
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
-                )
-              }
-            }
-
             testAuthFailures(pathUK, mtdUserRole, optBody = Some(Map
             (ChangeReportingMethodForm.response -> Seq("Yes")
             )))
@@ -533,7 +362,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
           "is authenticated, with a valid enrolment" should {
             s"redirect to business will report (completion) page (OptInOptOutContentUpdateR17 FS enabled)" when {
               "called with a valid form" in {
-                enable(IncomeSourcesNewJourney)
                 enable(OptInOptOutContentUpdateR17)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
@@ -554,7 +382,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             }
             s"redirect to business will report (completion) page (OptInOptOutContentUpdateR17 FS disabled)" when {
               "called with a valid form" in {
-                enable(IncomeSourcesNewJourney)
                 disable(OptInOptOutContentUpdateR17)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
@@ -573,28 +400,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
                 )
               }
             }
-
-            "redirect to home page" when {
-              "Income Sources New Journey FS is disabled" in {
-                disable(IncomeSourcesNewJourney)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
-
-                await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
-
-                val formData = Map(ChangeReportingMethodForm.response -> Seq("Yes"))
-
-                val result = buildPOSTMTDPostClient(pathFP, additionalCookies, body = formData).futureValue
-
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
-                )
-              }
-            }
-
             testAuthFailures(pathFP, mtdUserRole,
               Some(Map(ChangeReportingMethodForm.response -> Seq("Yes")
               )))

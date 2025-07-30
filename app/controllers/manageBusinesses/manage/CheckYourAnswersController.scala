@@ -57,7 +57,7 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
   def show(isAgent: Boolean,
            incomeSourceType: IncomeSourceType): Action[AnyContent] =
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
-      withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
+      withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
         val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
         val chnageToStringOpt = sessionData.manageIncomeSourceData.flatMap(_.reportingMethod)
         val taxYearStringOpt = sessionData.manageIncomeSourceData.flatMap(_.taxYear)
@@ -118,7 +118,7 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
     val successCall = getSuccessCall(isAgent, incomeSourceType)
     val errorCall = getErrorCall(incomeSourceType, isAgent)
 
-    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
+    withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
       sessionData.manageIncomeSourceData.map(x => (x.taxYear, x.reportingMethod, x.incomeSourceId)) match {
         case Some((Some(taxYear), Some(reportingMethod), incomeSourceIdStringOpt)) =>
           val incomeSourceBusinessName: Option[String] = user.incomeSources.getIncomeSourceBusinessName(incomeSourceType, incomeSourceIdStringOpt)
@@ -190,7 +190,7 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
                                      incomeSourceBusinessName: Option[String],
                                      incomeSourceType: IncomeSourceType
                                     )(implicit user: MtdItUser[_]): Future[Result] = {
-    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = BeforeSubmissionPage) { uiJourneySessionData =>
+    withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = BeforeSubmissionPage) { uiJourneySessionData =>
       val newUIJourneySessionData = uiJourneySessionData.copy(manageIncomeSourceData =
         Some(ManageIncomeSourceData(Some(incomeSourceId.value), Some(reportingMethod.name), Some(taxYear.endYear), Some(true))))
 
