@@ -23,7 +23,7 @@ import models.admin.OptOutFs
 import models.obligations._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.when
 import org.mockito.stubbing.OngoingStubbing
 import play.api
 import play.api.Application
@@ -80,10 +80,6 @@ class NextUpdatesControllerSpec extends MockAuthActions
       .thenReturn(nextUpdatesViewModel)
   }
 
-  override def beforeEach(): Unit = {
-    reset()
-    super.beforeEach()
-  }
   /* INDIVIDUAL **/
   "The NextUpdatesController.show function" when {
 
@@ -251,18 +247,32 @@ class NextUpdatesControllerSpec extends MockAuthActions
 
           setupMockUserAuth
           mockNoIncomeSources()
+          mockSingleBusinessIncomeSourceWithDeadlines()
           val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
           val document = Jsoup.parse(contentAsString(result))
 
           "return Status OK (200)" in {
             status(result) shouldBe Status.OK
+          }
+
+          "return HTML" in {
             contentType(result) shouldBe Some("text/html")
             charset(result) shouldBe Some("utf-8")
+          }
+
+          "render the NoNextUpdates page" in {
             document.title shouldBe NextUpdatesTestConstants.noNextUpdatesTitle
+          }
+
+          s"have the heading ${NextUpdatesTestConstants.noNextUpdatesHeading}" in {
             document.select("h1").text() shouldBe NextUpdatesTestConstants.noNextUpdatesHeading
+          }
+
+          s"have the correct no next updates message ${NextUpdatesTestConstants.noNextUpdatesText}" in {
             document.select("p.govuk-body").text shouldBe NextUpdatesTestConstants.noNextUpdatesText
           }
         }
+
       }
 
       "Called with an Unauthenticated User" should {
