@@ -26,12 +26,12 @@ import enums.GatewayPage.WhatYouOwePage
 import forms.utils.SessionKeys.gatewayPage
 import models.admin._
 import models.core.Nino
-import models.financialDetails.{ChargeItem, SecondLatePaymentPenalty}
+import models.financialDetails.{ChargeItem, SecondLatePaymentPenalty, WhatYouOweViewModel}
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{ClaimToAdjustService, DateServiceInterface, WhatYouOweService}
+import services.{ClaimToAdjustService, DateServiceInterface, SelfServeTimeToPayService, WhatYouOweService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.WhatYouOwe
@@ -43,6 +43,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class WhatYouOweController @Inject()(val authActions: AuthActions,
                                      val whatYouOweService: WhatYouOweService,
+                                     val selfServeTimeToPayService: SelfServeTimeToPayService,
                                      val claimToAdjustService: ClaimToAdjustService,
                                      val itvcErrorHandler: ItvcErrorHandler,
                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler,
@@ -65,6 +66,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
         isEnabled(FilterCodedOutPoas),
         isEnabled(PenaltiesAndAppeals),
         mainChargeIsNotPaidFilter)
+      selfServeTimeToPayUrl <- selfServeTimeToPayService.startSelfServeTimeToPayJourney(isEnabled(YourSelfAssessmentCharges))
       ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
     } yield {
 
@@ -72,13 +74,20 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
 
       val hasOverdueCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
       val hasAccruingInterestReviewAndReconcileCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isNotPaidAndNotOverduePoaReconciliationDebit()(dateService))
-      getLPP2Link(whatYouOweChargesList.chargesList, isAgent) match {
-        case Some(lpp2Url) =>
-          Ok(whatYouOwe(
+      (selfServeTimeToPayUrl, getLPP2Link(whatYouOweChargesList.chargesList, isAgent)) match {
+        case (Left(ex), _) =>
+          Logger("application").error(s"Unable to retrieve selfServeTimeToPayStartUrl: ${ex.getMessage} - ${ex.getCause}")
+          itvcErrorHandler.showInternalServerError()
+        case (Right(startUrl), Some(lpp2Url)) =>
+
+          val wyoViewModel: WhatYouOweViewModel = WhatYouOweViewModel(
             currentDate = dateService.getCurrentDate,
             hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
-            whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
-            currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,
+            whatYouOweChargesList = whatYouOweChargesList,
+            hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
+            currentTaxYear = dateService.getCurrentTaxYearEnd,
+            backUrl = backUrl,
+            utr = user.saUtr,
             dunningLock = whatYouOweChargesList.hasDunningLock,
             reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
             creditAndRefundUrl = (user.isAgent() match {
@@ -92,17 +101,22 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
               if (user.isAgent()) TaxYearSummaryController.renderAgentTaxYearSummaryPage(_).url
               else                TaxYearSummaryController.renderTaxYearSummaryPage(_, origin).url
             },
-            origin = origin,
+            claimToAdjustViewModel = ctaViewModel,
+            lpp2Url = lpp2Url,
             adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url,
             chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) => {
               if (user.isAgent()) ChargeSummaryController.showAgent(taxYearEnd, transactionId, isInterest).url
               else                ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url
             },
             paymentHandOffUrl = PaymentController.paymentHandoff(_, origin).url,
-            claimToAdjustViewModel = ctaViewModel,
-            LPP2Url = lpp2Url)(user, user, messages, dateService)
-          ).addingToSession(gatewayPage -> WhatYouOwePage.name)
-        case None =>
+            selfServeTimeToPayEnabled  = isEnabled(SelfServeTimeToPayR17),
+            selfServeTimeToPayStartUrl = startUrl
+          )
+          Ok(whatYouOwe(
+            viewModel = wyoViewModel,
+            origin = origin)(user, user, messages, dateService))
+            .addingToSession(gatewayPage -> WhatYouOwePage.name)
+        case (_, None) =>
           Logger("application").error("No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
           itvcErrorHandler.showInternalServerError()
       }

@@ -378,7 +378,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
     "one year opt-out scenarios" when {
 
-      "show opt-out message if reporting frequency FS is enabled" in {
+      "show reporting frequency message if reporting frequency FS is enabled" in {
 
         enable(OptOutFs)
         enable(ReportingFrequencyPage)
@@ -406,9 +406,112 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         Then("the quarterly updates info sections")
         res should have(
-          elementTextBySelector("#what-the-user-can-do")(expectedValue = "Depending on your circumstances, you may be able to view and change your reporting obligations.")
+          elementTextBySelector("#what-the-user-can-do")(expectedValue = "Depending on your circumstances, you may be able to view and change your reporting obligations."),
+          elementTextBySelector("#reporting-frequency-link")("you may be able to view and change your reporting obligations.")
         )
 
+      }
+
+      "show one year opt out message if reporting frequency FS is disabled" in {
+
+        enable(OptOutFs)
+        disable(ReportingFrequencyPage)
+        MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
+
+        val currentTaxYear = dateService.getCurrentTaxYearEnd
+        val previousYear = currentTaxYear - 1
+
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+
+        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
+        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
+        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+
+        val res = buildGETMTDClient(path).futureValue
+
+        AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
+
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
+        IncomeTaxViewChangeStub.verifyGetObligations(testNino)
+
+        Then("the quarterly updates info sections")
+        res should have(
+          elementTextBySelector("#what-the-user-can-do")(expectedValue = "You are currently reporting quarterly on a voluntary basis for the 2021 to 2022 tax year. You can choose to opt out of quarterly updates and report annually instead."),
+          elementTextBySelector("#confirm-opt-out-link")("opt out of quarterly updates and report annually instead.")
+        )
+
+      }
+
+      "show one year opt out message if reporting frequency FS is disabled and its following mandated" in {
+
+        enable(OptOutFs)
+        disable(ReportingFrequencyPage)
+        MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
+
+        val currentTaxYear = dateService.getCurrentTaxYearEnd
+        val previousYear = currentTaxYear - 1
+
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+
+        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Mandated, ITSAStatus.Mandated)
+        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
+        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+
+        val res = buildGETMTDClient(path).futureValue
+
+        AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
+
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
+        IncomeTaxViewChangeStub.verifyGetObligations(testNino)
+
+        Then("the quarterly updates info sections")
+        res should have(
+          elementTextBySelector("#what-the-user-can-do")(expectedValue = "You are currently reporting quarterly on a voluntary basis for the 2021 to 2022 tax year. You can choose to opt out of quarterly updates and report annually instead."),
+          elementTextBySelector("#single-year-opt-out-warning-link")("opt out of quarterly updates and report annually instead.")
+        )
+      }
+    }
+
+    "multi year opt-out scenario" when {
+      "show one year opt out message if reporting frequency FS is disabled" in {
+
+        enable(OptOutFs)
+        disable(ReportingFrequencyPage)
+        MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
+
+        val currentTaxYear = dateService.getCurrentTaxYearEnd
+        val previousYear = currentTaxYear - 1
+
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+
+        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
+        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
+        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+
+        val res = buildGETMTDClient(path).futureValue
+
+        AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
+
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
+        IncomeTaxViewChangeStub.verifyGetObligations(testNino)
+
+        Then("the quarterly updates info sections")
+        res should have(
+          elementTextBySelector("#what-the-user-can-do")(expectedValue = "You are currently reporting quarterly on a voluntary basis. You can choose to opt out of quarterly updates and report annually instead."),
+          elementTextBySelector("#opt-out-link")("opt out of quarterly updates and report annually instead.")
+        )
       }
     }
 

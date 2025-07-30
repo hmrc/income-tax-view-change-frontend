@@ -20,7 +20,7 @@ import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.{OptOutSessionRepositoryHelper, WiremockHelper}
-import models.admin.NavBarFs
+import models.admin.{NavBarFs, OptOutFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
 import play.api.http.Status.OK
@@ -54,7 +54,7 @@ class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           s"render confirm single year opt out page" in {
-
+            enable(OptOutFs)
             disable(NavBarFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)

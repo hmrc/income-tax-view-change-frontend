@@ -242,8 +242,8 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
   }
 
   //payment-plan
-  val selfServeTimeToPayjourneyStartUrl: String = "/essttp-backend/sa/itsa/journey/start"
+  val selfServeTimeToPayJourneyStartUrl: String = "/essttp-backend/sa/itsa/journey/start"
   def stubPostStartSelfServeTimeToPayJourney()(status: Int, response: JsValue): StubMapping = {
-    WiremockHelper.stubPost(selfServeTimeToPayjourneyStartUrl, status, response.toString())
+    WiremockHelper.stubPost(selfServeTimeToPayJourneyStartUrl, status, response.toString())
   }
 }

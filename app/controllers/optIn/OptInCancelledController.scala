@@ -24,6 +24,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.optIn.OptInService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.ReportingObligationsUtils
 import views.html.errorPages.templates.ErrorTemplate
 import views.html.optIn.OptInCancelledView
 
@@ -40,7 +41,7 @@ class OptInCancelledController @Inject()(val authActions: AuthActions,
                                            val ec: ExecutionContext
                                          )
 
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with ReportingObligationsUtils {
 
   private def pageRender(isAgent: Boolean = false)
                         (implicit user: MtdItUser[AnyContent]): Future[Result] = {
@@ -78,12 +79,16 @@ class OptInCancelledController @Inject()(val authActions: AuthActions,
 
   def show(): Action[AnyContent] = {
     authActions.asMTDIndividual.async { implicit user =>
-      pageRender()
+      withReportingObligationsFS {
+        pageRender()
+      }
     }
   }
 
   def showAgent(): Action[AnyContent] =
     authActions.asMTDAgentWithConfirmedClient.async { implicit user =>
-      pageRender(isAgent = true)
+      withReportingObligationsFS {
+        pageRender(isAgent = true)
+      }
     }
 }

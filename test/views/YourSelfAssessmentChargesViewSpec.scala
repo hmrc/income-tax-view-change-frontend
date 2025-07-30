@@ -971,6 +971,9 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       "not have button Pay now with charges" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
         findAgentElementById("payment-button") shouldBe None
       }
+      "not have Payment plan option" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
+        findAgentElementById("payment-plan") shouldBe None
+      }
 
       "money in your account section with available credits" in new AgentTestSetup(charges = whatYouOweDataWithAvailableCredits()) {
         pageDocument.getElementById("money-in-your-account").text shouldBe messages("selfAssessmentCharges.moneyOnAccount-agent") + " " +

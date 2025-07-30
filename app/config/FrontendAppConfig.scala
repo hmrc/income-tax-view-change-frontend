@@ -238,6 +238,10 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val saPayTaxBillUrl = "https://www.gov.uk/pay-self-assessment-tax-bill"
 
+  lazy val preThreshold2027 = servicesConfig.getString("thresholds.prethreshold2027")
+  lazy val threshold2027 = servicesConfig.getString("thresholds.threshold2027")
+  lazy val threshold2028 = servicesConfig.getString("thresholds.threshold2028")
+
   private final def getFiniteDuration(config: Configuration, path: String): FiniteDuration = {
     val string = config.get[String](path)
 

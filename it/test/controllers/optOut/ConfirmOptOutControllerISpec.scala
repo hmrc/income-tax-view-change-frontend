@@ -25,7 +25,7 @@ import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.AuditStub.verifyAuditEvent
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.{ITSAStatusUpdateConnectorStub, OptOutSessionRepositoryHelper}
-import models.admin.NavBarFs
+import models.admin.{NavBarFs, OptOutFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
 import play.api.http.Status
@@ -59,6 +59,7 @@ class ConfirmOptOutControllerISpec extends ControllerISpecHelper {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           s"render confirm single year opt out page" in {
+            enable(OptOutFs)
             disable(NavBarFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -81,6 +82,7 @@ class ConfirmOptOutControllerISpec extends ControllerISpecHelper {
           }
 
           s"render confirm multi-year opt out page" in {
+            enable(OptOutFs)
             disable(NavBarFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -114,6 +116,7 @@ class ConfirmOptOutControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "redirect to confirmed page" when {
             "user confirms opt-out for one-year scenario" in {
+              enable(OptOutFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               val taxYear = TaxYear(2022, 2023)
@@ -166,6 +169,7 @@ class ConfirmOptOutControllerISpec extends ControllerISpecHelper {
             }
 
             "user confirms opt-out for one-year scenario and missing header" in {
+              enable(OptOutFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -193,6 +197,7 @@ class ConfirmOptOutControllerISpec extends ControllerISpecHelper {
           "Redirect to OptOut Error page" when {
 
             "user confirms opt-out for one-year scenario and update fails" in {
+              enable(OptOutFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -219,6 +224,7 @@ class ConfirmOptOutControllerISpec extends ControllerISpecHelper {
           }
 
           "user confirms opt-out for multi-year scenario and update fails" in {
+            enable(OptOutFs)
             disable(NavBarFs)
             stubAuthorised(mtdUserRole)
             val taxYear: TaxYear = TaxYear(2023, 2024)
