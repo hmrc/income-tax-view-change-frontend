@@ -248,12 +248,13 @@ class NextUpdatesControllerSpec extends MockAuthActions
         }
 
         "doesn't have any Income Source" should {
+
+          setupMockUserAuth
+          mockNoIncomeSources()
+          val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
+          val document = Jsoup.parse(contentAsString(result))
+
           "return Status OK (200)" in {
-            setupMockUserAuth
-            mockNoIncomeSources()
-            mockSingleBusinessIncomeSourceWithDeadlines()
-            val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
-            val document = Jsoup.parse(contentAsString(result))
             status(result) shouldBe Status.OK
             contentType(result) shouldBe Some("text/html")
             charset(result) shouldBe Some("utf-8")
