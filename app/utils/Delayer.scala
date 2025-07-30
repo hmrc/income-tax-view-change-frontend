@@ -33,5 +33,4 @@ trait Delayer {
 
     promise.future
   }
-
 }
