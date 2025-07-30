@@ -62,20 +62,18 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
   def handleRequest(isAgent: Boolean, mode: Mode)
                    (implicit user: MtdItUser[_],
                     errorHandler: ShowInternalServerError): Future[Result] = {
-    withNewIncomeSourcesFS {
-      addressLookupService.initialiseAddressJourney(
-        isAgent = isAgent,
-        mode = mode
-      ) map {
-        case Right(Some(location)) =>
-          Redirect(location)
-        case Right(None) =>
-          Logger("application").error("No redirect location returned from connector")
-          errorHandler.showInternalServerError()
-        case Left(_) =>
-          Logger("application").error("Unexpected response")
-          errorHandler.showInternalServerError()
-      }
+    addressLookupService.initialiseAddressJourney(
+      isAgent = isAgent,
+      mode = mode
+    ) map {
+      case Right(Some(location)) =>
+        Redirect(location)
+      case Right(None) =>
+        Logger("application").error("No redirect location returned from connector")
+        errorHandler.showInternalServerError()
+      case Left(_) =>
+        Logger("application").error("Unexpected response")
+        errorHandler.showInternalServerError()
     }
   }
 
@@ -125,8 +123,7 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
   }
 
   def submit(id: Option[String], mode: Mode): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
-      withNewIncomeSourcesFS {
+    implicit user => {
         val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
         handleSubmitRequest(isAgent = false, incomeSourceIdMaybe, mode = mode)(implicitly, itvcErrorHandler)
       }
@@ -134,9 +131,7 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
 
   def agentSubmit(id: Option[String], mode: Mode): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
-      withNewIncomeSourcesFS {
-        val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
-        handleSubmitRequest(isAgent = true, incomeSourceIdMaybe, mode = mode)(implicitly, itvcErrorHandlerAgent)
-      }
+      val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
+      handleSubmitRequest(isAgent = true, incomeSourceIdMaybe, mode = mode)(implicitly, itvcErrorHandlerAgent)
   }
 }

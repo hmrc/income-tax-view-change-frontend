@@ -94,7 +94,7 @@ class IncomeSourceRFCheckDetailsController @Inject()(val checkDetailsView: Incom
                             isAgent: Boolean,
                             incomeSourceType: IncomeSourceType)
                            (implicit user: MtdItUser[_]): Future[Result] = {
-    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
+    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
 
       val backUrl: String = controllers.manageBusinesses.add.routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent).url
       val postAction: Call = if (isAgent) controllers.manageBusinesses.add.routes.IncomeSourceRFCheckDetailsController.submit(isAgent, incomeSourceType) else {
@@ -122,7 +122,7 @@ class IncomeSourceRFCheckDetailsController @Inject()(val checkDetailsView: Incom
   }
 
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
-    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, incomeSourceType), ReportingFrequencyPages) { sessionData =>
+    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), ReportingFrequencyPages) { sessionData =>
       sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
         case Some(id) =>
           val newReportingMethods: Seq[TaxYearSpecific] = sessionData.incomeSourceReportingFrequencyData.map(

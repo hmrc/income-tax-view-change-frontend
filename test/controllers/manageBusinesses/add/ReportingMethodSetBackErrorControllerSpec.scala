@@ -21,7 +21,6 @@ import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
 import play.api
@@ -79,7 +78,6 @@ class ReportingMethodSetBackErrorControllerSpec extends MockAuthActions with Moc
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
           "render the you cannot go back error page" in {
-            enable(IncomeSourcesNewJourney)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -91,19 +89,6 @@ class ReportingMethodSetBackErrorControllerSpec extends MockAuthActions with Moc
             val document = Jsoup.parse(contentAsString(result))
             document.title shouldBe getTitle(incomeSourceType, isAgent)
             document.getElementById("subheading").text() shouldBe getSubHeading(incomeSourceType)
-          }
-
-          "redirect to home page" when {
-            "feature switch is disabled"in {
-              setupMockSuccess(mtdRole)
-              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-
-              val result = action(fakeRequest)
-
-              status(result) shouldBe SEE_OTHER
-              val homeUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
-              redirectLocation(result) shouldBe Some(homeUrl)
-            }
           }
         }
         testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)

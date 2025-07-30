@@ -111,50 +111,48 @@ class IncomeSourceAddedController @Inject()(
     val errorView = errorHandler.showInternalServerError()
     val agentPrefix = if (isAgent) "[Agent]" else ""
 
-    withNewIncomeSourcesFS {
-      val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
+    val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
 
-      for {
-        sessionData: Either[Throwable, Option[UIJourneySessionData]] <- sessionService.getMongo(journeyType)
-        signedUpForMTD: SignedUpForMTD <- contentLogicHelper(incomeSourceType)
-        result <-
-          sessionData match {
-            case Right(Some(_)) if signedUpForMTD == Unknown =>
-              Future(errorView)
-            case Right(Some(sessionData)) =>
-              lazy val result: Future[Result] = {
-                for {
-                  incomeSourceId: Option[IncomeSourceId] <- getIncomeSourceIdFromSession(incomeSourceType)
-                  incomeSourceFromUser: Option[IncomeSourceFromUser] <-
-                    Future(incomeSourceId.flatMap(id => incomeSourceDetailsService.getIncomeSource(incomeSourceType, id, user.incomeSources)))
-                  showPreviousTaxYears: Boolean = incomeSourceFromUser.exists(_.startDate.isBefore(dateService.getCurrentTaxYearStart))
-                  showView: Result <-
-                    (incomeSourceId, incomeSourceFromUser) match {
-                      case (Some(incomeSourceId), Some(incomeSource)) =>
-                        handleSuccess(
-                          isAgent = isAgent,
-                          businessName = incomeSource.businessName,
-                          incomeSourceType = incomeSourceType,
-                          incomeSourceId = incomeSourceId,
-                          showPreviousTaxYears = showPreviousTaxYears,
-                          sessionData = sessionData,
-                          signedUpForMTD = signedUpForMTD
-                        )
-                      case _ =>
-                        Future(errorView)
-                    }
-                } yield {
-                  showView
-                }
+    for {
+      sessionData: Either[Throwable, Option[UIJourneySessionData]] <- sessionService.getMongo(journeyType)
+      signedUpForMTD: SignedUpForMTD <- contentLogicHelper(incomeSourceType)
+      result <-
+        sessionData match {
+          case Right(Some(_)) if signedUpForMTD == Unknown =>
+            Future(errorView)
+          case Right(Some(sessionData)) =>
+            lazy val result: Future[Result] = {
+              for {
+                incomeSourceId: Option[IncomeSourceId] <- getIncomeSourceIdFromSession(incomeSourceType)
+                incomeSourceFromUser: Option[IncomeSourceFromUser] <-
+                  Future(incomeSourceId.flatMap(id => incomeSourceDetailsService.getIncomeSource(incomeSourceType, id, user.incomeSources)))
+                showPreviousTaxYears: Boolean = incomeSourceFromUser.exists(_.startDate.isBefore(dateService.getCurrentTaxYearStart))
+                showView: Result <-
+                  (incomeSourceId, incomeSourceFromUser) match {
+                    case (Some(incomeSourceId), Some(incomeSource)) =>
+                      handleSuccess(
+                        isAgent = isAgent,
+                        businessName = incomeSource.businessName,
+                        incomeSourceType = incomeSourceType,
+                        incomeSourceId = incomeSourceId,
+                        showPreviousTaxYears = showPreviousTaxYears,
+                        sessionData = sessionData,
+                        signedUpForMTD = signedUpForMTD
+                      )
+                    case _ =>
+                      Future(errorView)
+                  }
+              } yield {
+                showView
               }
-              result
-            case _ =>
-              logger.error(agentPrefix + s"Unable to retrieve Mongo session data for $incomeSourceType")
-              Future(errorView)
-          }
-      } yield {
-        result
-      }
+            }
+            result
+          case _ =>
+            logger.error(agentPrefix + s"Unable to retrieve Mongo session data for $incomeSourceType")
+            Future(errorView)
+        }
+    } yield {
+      result
     }
   }
 

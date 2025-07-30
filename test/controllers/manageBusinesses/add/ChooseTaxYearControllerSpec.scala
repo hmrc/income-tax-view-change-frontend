@@ -20,7 +20,6 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockIncomeSourceRFService, MockSessionService}
-import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.{IncomeSourceReportingFrequencySourceData, TaxYear, UIJourneySessionData}
 import play.api
 import play.api.Application
@@ -60,14 +59,13 @@ class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService w
         s"the user is authenticated as a $mtdRole" should {
           "return 200 OK" when {
             displayList.foreach { displayYears =>
-              s"feature switch is enabled - $displayYears - isChange" in {
+              s"$displayYears - isChange" in {
                 setupMockSuccess(mtdRole)
                 setupMockIncomeSourceDetailsCall(incomeSourceType)
                 setupMockGetCurrentTaxYear(TaxYear(2024, 2025))
                 setupMockGetCurrentTaxYearEnd(2025)
                 mockRedirectChecksForIncomeSourceRF()
                 setupMockGetMongo(Right(Some(UIJourneySessionData("", "", incomeSourceReportingFrequencyData = Some(IncomeSourceReportingFrequencySourceData(displayYears._1, displayYears._2, true, true))))))
-                enable(IncomeSourcesNewJourney)
 
                 val result: Future[Result] = controller.show(isAgent, isChange = true, incomeSourceType)(fakeGetRequestBasedOnMTDUserType(mtdRole))
 
@@ -75,13 +73,12 @@ class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService w
               }
             }
 
-            s"feature switch is enabled - no change" in {
+            s"no change" in {
               setupMockSuccess(mtdRole)
               setupMockIncomeSourceDetailsCall(incomeSourceType)
               setupMockGetCurrentTaxYear(TaxYear(2024, 2025))
               mockRedirectChecksForIncomeSourceRF()
               setupMockGetMongo(Right(Some(UIJourneySessionData("", ""))))
-              enable(IncomeSourcesNewJourney)
 
               val result: Future[Result] = controller.show(isAgent, isChange = false, incomeSourceType)(fakeGetRequestBasedOnMTDUserType(mtdRole))
 
@@ -93,7 +90,6 @@ class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService w
             "the request fails" in {
               setupMockSuccess(mtdRole)
               mockSingleBusinessIncomeSourceError()
-              enable(IncomeSourcesNewJourney)
 
               val result: Future[Result] = controller.show(isAgent, false, incomeSourceType)(fakeGetRequestBasedOnMTDUserType(mtdRole))
 

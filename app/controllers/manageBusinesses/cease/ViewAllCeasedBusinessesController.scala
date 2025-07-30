@@ -61,26 +61,24 @@ class ViewAllCeasedBusinessesController @Inject()(val viewAllCeasedBusinesses: V
                    (implicit user: MtdItUser[_]): Future[Result] = {
     lazy val errorHandler = if(isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-    withNewIncomeSourcesFS {
-      incomeSourceDetailsService.getCeaseIncomeSourceViewModel(sources, isEnabled(DisplayBusinessStartDate)) match {
-        case Right(viewModel) =>
-          sessionService.deleteSession(Manage).map { _ =>
-            Ok(viewAllCeasedBusinesses(
-              sources = viewModel,
-              isAgent = isAgent,
-              backUrl = backUrl
-            ))
-          } recover {
-            case ex: Exception =>
-              Logger("application").error(
-                s"Session Error: ${ex.getMessage} - ${ex.getCause}")
-              errorHandler.showInternalServerError()
-          }
-        case Left(ex) =>
-          Logger("application").error(
-            s"Error: ${ex.getMessage} - ${ex.getCause}")
-          Future(errorHandler.showInternalServerError())
-      }
+    incomeSourceDetailsService.getCeaseIncomeSourceViewModel(sources, isEnabled(DisplayBusinessStartDate)) match {
+      case Right(viewModel) =>
+        sessionService.deleteSession(Manage).map { _ =>
+          Ok(viewAllCeasedBusinesses(
+            sources = viewModel,
+            isAgent = isAgent,
+            backUrl = backUrl
+          ))
+        } recover {
+          case ex: Exception =>
+            Logger("application").error(
+              s"Session Error: ${ex.getMessage} - ${ex.getCause}")
+            errorHandler.showInternalServerError()
+        }
+      case Left(ex) =>
+        Logger("application").error(
+          s"Error: ${ex.getMessage} - ${ex.getCause}")
+        Future(errorHandler.showInternalServerError())
     }
   }
 }

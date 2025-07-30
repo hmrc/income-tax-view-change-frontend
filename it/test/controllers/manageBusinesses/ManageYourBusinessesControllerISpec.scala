@@ -19,7 +19,7 @@ package controllers.manageBusinesses
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{DisplayBusinessStartDate, IncomeSourcesNewJourney, NavBarFs}
+import models.admin.{DisplayBusinessStartDate, NavBarFs}
 import play.api.http.Status.{OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesAndUkProperty}
@@ -50,8 +50,8 @@ class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           "render the manage your businesses page" when {
-            "the income sources is enabled and the user has multiple businesses and uk property with display business start date enabled" in {
-              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate)
+            "the user has multiple businesses and uk property with display business start date enabled" in {
+              enable(DisplayBusinessStartDate)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
@@ -74,8 +74,8 @@ class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
               )
             }
 
-            "the income sources is enabled and the user has foreign property and ceased business with display business start date enabled" in {
-              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate)
+            "the user has foreign property and ceased business with display business start date enabled" in {
+              enable(DisplayBusinessStartDate)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
@@ -92,8 +92,7 @@ class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
               )
             }
 
-            "the income sources is enabled and the user has multiple businesses and uk property with display business start date disabled" in {
-              enable(IncomeSourcesNewJourney)
+            "the user has multiple businesses and uk property with display business start date disabled" in {
               disable(DisplayBusinessStartDate)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
@@ -117,8 +116,7 @@ class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
               )
             }
 
-            "the income sources is enabled and the user has foreign property and ceased business with display business start date disabled" in {
-              enable(IncomeSourcesNewJourney)
+            "the user has foreign property and ceased business with display business start date disabled" in {
               disable(DisplayBusinessStartDate)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
@@ -133,22 +131,6 @@ class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
                 elementTextByID("manage-your-businesses-h1")(messagesAPI(pageTitleMsgKey)),
                 elementTextByID("foreign-date")(""),
                 elementTextByID("ceasedBusinesses-heading")(ceasedBusinessHeading)
-              )
-            }
-          }
-
-          "redirect to the home page" when {
-            "the income sources feature switch is disabled" in {
-              disable(IncomeSourcesNewJourney)
-              disable(NavBarFs)
-              enable(DisplayBusinessStartDate)
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-              result should have(
-                httpStatus(SEE_OTHER),
-                redirectURI(homeUrl(mtdUserRole))
               )
             }
           }

@@ -52,7 +52,7 @@ class CannotGoBackErrorController @Inject()(val authActions: AuthActions,
   }
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] =
-    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = CannotGoBackPage) { data =>
+    withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = CannotGoBackPage) { data =>
       data.manageIncomeSourceData match {
         case Some(manageData) if manageData.reportingMethod.isDefined && manageData.taxYear.isDefined =>
           val subheadingContent = getSubheadingContent(incomeSourceType, manageData.reportingMethod.get, manageData.taxYear.get)

@@ -89,7 +89,6 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
                   dunningLockExists: Boolean = false,
                   currentTaxYear: Int = currentTaxYear,
                   displayCeaseAnIncome: Boolean = false,
-                  incomeSourcesNewJourneyEnabled: Boolean = false,
                   creditAndRefundEnabled: Boolean = false,
                   user: MtdItUser[_] = testMtdItUserNotMigrated,
                   reportingFrequencyEnabled: Boolean = false,
@@ -107,7 +106,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
     val nextPaymentsTileViewModel = NextPaymentsTileViewModel(nextPaymentDueDate, overDuePaymentsCount, paymentsAccruingInterestCount, reviewAndReconcileEnabled, yourSelfAssessmentChargesEnabled)
 
-    val yourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome, incomeSourcesNewJourneyEnabled)
+    val yourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome)
 
     val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), reportingFrequencyEnabled, currentITSAStatus)
 
@@ -472,11 +471,11 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
       }
 
       "have a Your Businesses tile" when {
-        "the new income sources journey FS is enabled" which {
-          "has a heading" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesNewJourneyEnabled = true) {
+        "using the manage businesses journey" which {
+          "has a heading" in new TestSetup(user = testMtdItUserMigrated) {
             getElementById("income-sources-tile").map(_.select("h2").first().text()) shouldBe Some("Your businesses")
           }
-          "has a link to ManageYourBusinessController.show()" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesNewJourneyEnabled = true) {
+          "has a link to ManageYourBusinessController.show()" in new TestSetup(user = testMtdItUserMigrated) {
             getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some("Add, manage or cease a business or income source")
             getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url)
           }

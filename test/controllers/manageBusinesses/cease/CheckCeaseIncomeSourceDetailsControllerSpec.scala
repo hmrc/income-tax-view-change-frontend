@@ -21,7 +21,6 @@ import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesNewJourney
 import models.core.IncomeSourceId
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -96,9 +95,8 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
         val action = if (mtdRole == MTDIndividual) testCeaseCheckIncomeSourceDetailsController.show(incomeSourceType) else testCeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType)
         s"the user is authenticated as a $mtdRole" should {
           "return 200 OK" when {
-            "income source is enabled" in {
+            "using the manage businesses journey" in {
               setupMockSuccess(mtdRole)
-              enable(IncomeSourcesNewJourney)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
@@ -113,29 +111,10 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
               document.select("h1").text shouldBe checkDetailsHeading
             }
           }
-          "redirect to homepage" when {
-            "income source is disabled" in {
-              setupMockSuccess(mtdRole)
-              disable(IncomeSourcesNewJourney)
-              mockPropertyIncomeSource()
-
-              val result: Future[Result] = action(fakeRequest)
-
-              status(result) shouldBe Status.SEE_OTHER
-
-              val homeURL = if (mtdRole == MTDIndividual) {
-                controllers.routes.HomeController.show().url
-              } else {
-                controllers.routes.HomeController.showAgent().url
-              }
-              redirectLocation(result) shouldBe Some(homeURL)
-            }
-          }
 
           "redirect to the Cannot Go Back page" when {
             "the journey is complete" in {
               setupMockSuccess(mtdRole)
-              enable(IncomeSourcesNewJourney)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
@@ -169,9 +148,8 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
             controllers.manageBusinesses.cease.routes.IncomeSourceCeasedObligationsController.showAgent(incomeSourceType).url
           }
           s"return 303 SEE_OTHER and redirect to $expectedRedirect" when {
-            "income source feature is enabled" in {
+            "using the manage businesses journey" in {
               setupMockSuccess(mtdRole)
-              enable(IncomeSourcesNewJourney)
               mockBothPropertyBothBusiness()
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
 
@@ -188,7 +166,6 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
           s"return 303 SEE_OTHER and redirect to Income Source Not Ceased Controller" when {
             "updating Cessation date fails" in {
               setupMockSuccess(mtdRole)
-              enable(IncomeSourcesNewJourney)
               mockBothPropertyBothBusiness()
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
 
@@ -206,7 +183,6 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
           s"return 500 INTERNAL_SERVER_ERROR" when {
             "income source is missing" in {
               setupMockSuccess(mtdRole)
-              enable(IncomeSourcesNewJourney)
               mockNoIncomeSources()
               setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
 

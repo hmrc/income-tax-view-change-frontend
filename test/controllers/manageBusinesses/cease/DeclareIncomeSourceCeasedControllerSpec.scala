@@ -22,7 +22,6 @@ import enums.MTDIndividual
 import forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesNewJourney
 import models.core.NormalMode
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup
@@ -86,7 +85,6 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
         s"the user is authenticated as a $mtdRole" should {
           "render the declare incomeSourceCeased page" in {
             setupMockSuccess(mtdRole)
-            enable(IncomeSourcesNewJourney)
             mockBothPropertyBothBusiness()
 
             setupMockCreateSession(true)
@@ -98,22 +96,10 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
             document.select("h1").text shouldBe getHeader(incomeSourceType)
           }
 
-          "return 303 SEE_OTHER and redirect to home page" when {
-            "income sources FS Disabled" in {
-              setupMockSuccess(mtdRole)
-              disable(IncomeSourcesNewJourney)
-              mockBothPropertyBothBusiness()
-              val result = action(fakeRequest)
-              val expectedRedirectUrl: String = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
-              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-            }
-          }
-
           "redirect to the Cannot Go Back page" when {
             "journey is complete" in {
               setupMockSuccess(mtdRole)
               disableAllSwitches()
-              enable(IncomeSourcesNewJourney)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
@@ -145,7 +131,6 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
           "redirect to end date controller" when {
             "cease declaration is completed" in {
               setupMockSuccess(mtdRole)
-              enable(IncomeSourcesNewJourney)
               mockBothPropertyBothBusiness()
               setupMockSetSessionKeyMongo(Right(true))
 
@@ -160,25 +145,9 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
             }
           }
 
-          "return 303 SEE_OTHER and redirect to home page" when {
-            "income source FS Disabled" in {
-              setupMockSuccess(mtdRole)
-
-              disable(IncomeSourcesNewJourney)
-              mockBothPropertyBothBusiness()
-
-              val result = action(fakeRequest.withFormUrlEncodedBody(validFormData.toSeq: _*))
-              val expectedRedirectUrl: String = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
-
-              status(result) shouldBe Status.SEE_OTHER
-              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-            }
-          }
-
           "return 500 INTERNAL_SERVER_ERROR" when {
             "Exception received from Mongo" in {
               setupMockSuccess(mtdRole)
-              enable(IncomeSourcesNewJourney)
               mockBothPropertyBothBusiness()
               setupMockSetSessionKeyMongo(Left(new Exception))
               val result = action(fakeRequest.withFormUrlEncodedBody(validFormData.toSeq: _*))

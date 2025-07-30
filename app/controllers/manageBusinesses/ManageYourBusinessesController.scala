@@ -64,28 +64,26 @@ class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageY
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
                    (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
 
-    withNewIncomeSourcesFS {
-      incomeSourceDetailsService.getViewIncomeSourceViewModel(sources, isEnabled(DisplayBusinessStartDate)) match {
-        case Right(viewModel) =>
-          Future(hc.sessionId.get).flatMap { sessionId =>
-            sessionService.clearSession(sessionId.value).map { _ =>
-              Ok(manageYourBusinesses(
-                sources = viewModel,
-                isAgent = isAgent,
-                backUrl = backUrl
-              ))
-            }
-          }.recover {
-            case ex: Exception =>
-              Logger("application").error(
-                s"Session Error: ${ex.getMessage} - ${ex.getCause}")
-              errorHandler.showInternalServerError()
+    incomeSourceDetailsService.getViewIncomeSourceViewModel(sources, isEnabled(DisplayBusinessStartDate)) match {
+      case Right(viewModel) =>
+        Future(hc.sessionId.get).flatMap { sessionId =>
+          sessionService.clearSession(sessionId.value).map { _ =>
+            Ok(manageYourBusinesses(
+              sources = viewModel,
+              isAgent = isAgent,
+              backUrl = backUrl
+            ))
           }
-        case Left(ex) =>
-          Logger("application").error(
-            s"Error: ${ex.getMessage} - ${ex.getCause}")
-          Future(errorHandler.showInternalServerError())
-      }
+        }.recover {
+          case ex: Exception =>
+            Logger("application").error(
+              s"Session Error: ${ex.getMessage} - ${ex.getCause}")
+            errorHandler.showInternalServerError()
+        }
+      case Left(ex) =>
+        Logger("application").error(
+          s"Error: ${ex.getMessage} - ${ex.getCause}")
+        Future(errorHandler.showInternalServerError())
     }
   }
 }

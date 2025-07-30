@@ -19,9 +19,9 @@
 @import models.homePage.YourBusinessesTileViewModel
 
 @this(
-    home_tile: home_tile,
-    p: p,
-    link: link
+        home_tile: home_tile,
+        p: p,
+        link: link
 )
 
 @(yourBusinessesTileViewModel: YourBusinessesTileViewModel, isAgent: Boolean)(implicit messages: Messages)
@@ -41,13 +41,12 @@
     )
 }
 
-@if(yourBusinessesTileViewModel.incomeSourcesNewJourneyEnabled) {
-    @home_tile("income-sources-tile", messages("home.incomeSources.newJourneyHeading")) {
-        @p(classes = "govuk-!-margin-bottom-4") {
-            @manageYourBusinessesLink
-        }
+@home_tile("income-sources-tile", messages("home.incomeSources.newJourneyHeading")) {
+    @p(classes = "govuk-!-margin-bottom-4") {
+        @manageYourBusinessesLink
     }
 }
+
 
 
 

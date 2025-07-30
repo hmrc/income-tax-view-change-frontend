@@ -173,7 +173,7 @@ class IncomeSourceRFService @Inject()(val sessionService: SessionService,
                                      )(codeBlock: UIJourneySessionData => Future[Result])
                                      (implicit user: MtdItUser[_],
                                       hc: HeaderCarrier): Future[Result] = {
-    withSessionDataAndNewIncomeSourcesFS(incomeSourceJourneyType, journeyState) { sessionData =>
+    withSessionData(incomeSourceJourneyType, journeyState) { sessionData =>
 
       if (isChange) {
         codeBlock(sessionData)
