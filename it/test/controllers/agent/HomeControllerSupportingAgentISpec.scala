@@ -184,7 +184,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
             }
           }
           "display Income Sources tile" when {
-            "IncomeSources feature switch is enabled" in {
+            "using the manage businesses journey" in {
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
 
@@ -219,7 +219,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
             }
           }
           "display Your Businesses tile" when {
-            "IncomeSources feature switch is enabled" in {
+            "using the manage businesses journey" in {
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(

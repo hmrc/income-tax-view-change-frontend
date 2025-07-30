@@ -456,7 +456,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
               }
             }
             "display Income Sources tile" when {
-              "IncomeSources feature switch is enabled" in {
+              "using the manage businesses journey" in {
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
@@ -526,7 +526,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
               }
             }
             "display Your Businesses tile" when {
-              "IncomeSources feature switch is enabled" in {
+              "using the manage businesses journey" in {
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
 

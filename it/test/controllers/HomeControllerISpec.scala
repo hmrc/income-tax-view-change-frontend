@@ -537,7 +537,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
           }
         }
         "display Your Businesses tile" when {
-          "IncomeSources feature switch is enabled" in {
+          "using the manage businesses journey" in {
             disable(NavBarFs)
             MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))

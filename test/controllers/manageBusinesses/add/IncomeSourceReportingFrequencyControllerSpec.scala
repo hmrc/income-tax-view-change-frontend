@@ -195,7 +195,7 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
           "render the reporting frequency page" when {
-            s"with New Incomesource FS enabled" in {
+            s"using the manage businesses journey" in {
               setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
 
               val result = action(fakeRequest)

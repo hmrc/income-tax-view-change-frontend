@@ -287,7 +287,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
 
     "using the manage businesses journey" should {
       "have a Your Businesses tile" when {
-        "the new income sources journey FS is enabled" which {
+        "using the manage businesses journey" which {
           "has a heading" in new TestSetup(user = testMtdItUserMigrated) {
             getElementById("income-sources-tile").map(_.select("h2").first().text()) shouldBe Some(messages("home.incomeSources.newJourneyHeading"))
           }
