@@ -18,8 +18,8 @@ package models.nrs
 
 import play.api.libs.json.{Format, Json}
 
-case class NRSSuccessResponse(nrSubmissionId: String)
+case class NrsSuccessResponse(nrSubmissionId: String)
 
-object NRSSuccessResponse {
-  implicit val format: Format[NRSSuccessResponse] = Json.format[NRSSuccessResponse]
+object NrsSuccessResponse {
+  implicit val format: Format[NrsSuccessResponse] = Json.format[NrsSuccessResponse]
 }
