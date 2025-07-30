@@ -83,8 +83,6 @@ class NextUpdatesControllerSpec extends MockAuthActions
   /* INDIVIDUAL **/
   "The NextUpdatesController.show function" when {
 
-    disableAllSwitches()
-
     "the Next Updates feature switch is disabled" should {
 
       "called with an Authenticated HMRC-MTD-IT user with NINO" which {

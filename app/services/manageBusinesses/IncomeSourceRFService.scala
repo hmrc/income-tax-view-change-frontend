@@ -54,12 +54,8 @@ class IncomeSourceRFService @Inject()(val sessionService: SessionService,
     else Future.successful(Redirect(routes.IncomeSourceAddedController.show(incomeSourceType)))
   }
 
-  private def isItsaStatusAnnual(itsaStatusDetail: Option[StatusDetail]): Boolean = {
-    itsaStatusDetail.exists(_.isAnnual)
-  }
-
-  private def onlyOneYearInLatency(latencyDetails: Option[LatencyDetails]): Boolean = {
-    latencyDetails.exists(_.taxYear2.toInt == currentTy.endYear)
+  private def onlyOneYearInLatencyPeriod(latencyDetails: Option[LatencyDetails]): Boolean = {
+     latencyDetails.exists(_.taxYear2.toInt == currentTy.endYear)
   }
 
   private def updateChooseTaxYearsModelInSessionData(
@@ -76,14 +72,26 @@ class IncomeSourceRFService @Inject()(val sessionService: SessionService,
     }
   }
 
+  private def latencyDetailsCheckToRedirectToCompletionPage(latencyDetails: Option[LatencyDetails]): Boolean = {
+    latencyDetails.isEmpty ||
+      !latencyDetails.exists(_.isBusinessOrPropertyInLatency(currentTy.endYear)) ||
+      onlyOneYearInLatencyPeriod(latencyDetails)
+  }
+
+  private def itsaStatusChecksToRedirectToCompletionPage(currentTyStatus: Option[StatusDetail],
+                                                         nextTyStatus: Option[StatusDetail]): Boolean = {
+    !currentTyStatus.exists(_.isMandatedOrVoluntary) ||
+      (nextTyStatus.isEmpty && currentTyStatus.exists(_.isMandatedOrVoluntary) && !currentTyStatus.exists(_.statusReasonRollover)) ||
+      (nextTyStatus.isEmpty && !currentTyStatus.exists(_.isMandatedOrVoluntary)) ||
+      (nextTyStatus.nonEmpty && !nextTyStatus.exists(_.isMandatedOrVoluntary))
+  }
+
   private def redirectToCompletionPageChecks(
                                         currentTyStatus: Option[StatusDetail],
                                         nextTyStatus: Option[StatusDetail],
                                         latencyDetails: Option[LatencyDetails]
                                       ): Boolean = {
-    onlyOneYearInLatency(latencyDetails) ||
-      isItsaStatusAnnual(currentTyStatus) ||
-      isItsaStatusAnnual(nextTyStatus)
+    latencyDetailsCheckToRedirectToCompletionPage(latencyDetails) || itsaStatusChecksToRedirectToCompletionPage(currentTyStatus, nextTyStatus)
   }
 
   def redirectChecksForIncomeSourceRF(incomeSourceJourneyType: IncomeSourceJourneyType,
