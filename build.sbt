@@ -8,7 +8,7 @@ import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 val appName = "income-tax-view-change-frontend"
 
-val bootstrapPlayVersion = "9.13.0"
+val bootstrapPlayVersion = "9.18.0"
 val playPartialsVersion = "9.1.0"
 val playFrontendHMRCVersion = "11.13.0"
 val catsVersion = "2.12.0"
