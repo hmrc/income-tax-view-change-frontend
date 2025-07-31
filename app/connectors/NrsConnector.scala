@@ -62,7 +62,7 @@ class NrsConnector @Inject()(http: HttpClientV2, appConfig: FrontendAppConfig)(
             logger.info("NRS submission successful")
             Right(response.json.as[NrsSuccessResponse])
           case response =>
-            logger.info(s"NRS submission failed with status ${response.status}")
+            logger.info(s"NRS submission failed with status: ${response.status}, details: ${response.body}")
             Left(NrsSubmissionFailure.ErrorResponse(response.status))
         }
         .recover {
