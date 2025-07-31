@@ -17,6 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
+import models.nrs.NrsSubmissionResponse.NrsSubmissionResponse
 import models.nrs.{NrsSubmissionFailure, NrsSuccessResponse}
 import org.apache.pekko.actor.Scheduler
 import play.api.Logging
@@ -39,8 +40,6 @@ class NrsConnector @Inject()(http: HttpClientV2, appConfig: FrontendAppConfig)(
 
   private val nrsOrchestratorSubmissionUrl: String = s"${appConfig.nrsBaseUrl}/nrs-orchestrator/submission"
   private val apiKey: String = appConfig.nrsApiKey
-
-  type NrsSubmissionResponse = Either[NrsSubmissionFailure, NrsSuccessResponse]
 
   val retryCondition: Try[NrsSubmissionResponse] => Boolean = {
     case Success(Left(failure)) => failure.retryable
